@@ -25,9 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterators;
-
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
@@ -203,7 +200,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         new IntermediateProcessingStrategy(
                 IntermediateProcessingStrategy.BEFORE_PHASE_4,
                 EnumSet.of(IntermediateLayoutProcessor.PORT_ARRANGER));
-
+    
     /** array of sorted linear segments. */
     private LinearSegment[] linearSegments;
     /** list of regions. */
@@ -552,11 +549,18 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      */
     private void createUnbalancedPlacement(final LayeredGraph layeredGraph) {
         float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
-        int[] nodeCount = new int[layeredGraph.getLayers().size()];
+        float smallSpacing = spacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         boolean straightEdges = layeredGraph.getProperty(Properties.STRAIGHT_EDGES);
+        
+        // How many nodes are currently placed in each layer
+        int[] nodeCount = new int[layeredGraph.getLayers().size()];
+        
+        // If the node most recently placed in a layer was a normal node or a dummy node
+        boolean[] recentNodeNormal = new boolean[layeredGraph.getLayers().size()];
+        
+        // Iterate through the linear segments and place them
         for (LinearSegment segment : linearSegments) {
-            System.out.println("Segment: " + segment);
-            // determine minimal offset of 'segment' as well as the height of the highest node
+            // Determine minimal offset of 'segment' as well as the height of the highest node
             float minOffset = 0;
             double maxHeight = 0.0f;
             
@@ -572,22 +576,31 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 }
             }
 
-            // determine the uppermost placement for the linear segment
+            // Determine the uppermost placement for the linear segment
             double uppermostPlace = 0.0f;
             int nodeCountSum = 0;
             for (LNode node : segment.getNodes()) {
-                uppermostPlace = Math.max(uppermostPlace, node.getLayer().getSize().y);
                 int layerIndex = node.getLayer().getIndex();
                 nodeCountSum += nodeCount[layerIndex];
                 nodeCount[layerIndex]++;
+                
+                // Calculate how much space to leave between the linear segment and the last
+                // node of the given layer
+                float space = 0.0f;
+                if (nodeCount[layerIndex] > 0) {
+                    if (recentNodeNormal[layerIndex]
+                            && node.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL) {
+                        
+                        space = spacing;
+                    } else {
+                        space = smallSpacing;
+                    }
+                }
+                
+                uppermostPlace = Math.max(uppermostPlace, node.getLayer().getSize().y + space);
             }
-            
-            // apply the uppermost placement to all elements
-            double newPos = uppermostPlace;
-            if (nodeCountSum > 0) {
-                newPos += spacing;
-            }
-            
+
+            // Apply the uppermost placement to all elements
             for (LNode node : segment.getNodes()) {
                 double offset = 0.0f;
                 if (straightEdges) {
@@ -599,10 +612,13 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
 
                 // Set the node position. Also, if the segment is not invisible, its nodes
                 // occupies space in the layer (thus, the layer size has to be adjusted)
-                node.getPos().y = newPos + offset;
+                node.getPos().y = uppermostPlace + offset;
                 Layer layer = node.getLayer();
-                layer.getSize().y = newPos + offset + node.getSize().y;
+                layer.getSize().y = uppermostPlace + offset + node.getSize().y;
                 layer.getSize().x = Math.max(layer.getSize().x, node.getSize().x);
+                
+                recentNodeNormal[layer.getIndex()] =
+                    node.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL;
             }
         }
     }
@@ -614,6 +630,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      */
     private void balancePlacement(final LayeredGraph layeredGraph) {
         float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        float smallSpacing = spacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
+        
         // Initialize Regions = Linear segments
         for (int s = 0; s < linearSegments.length; s++) {
             LinearSegment segment = linearSegments[s];
@@ -642,7 +660,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 calculateForce(region);
 
                 // Test for all nodes, if they can be moved that far.
-                checkMovability(region, spacing);
+                checkMovability(region, spacing, smallSpacing);
                 
                 // Move nodes
                 for (LNode node : region.getNodes()) {
@@ -653,7 +671,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             // First 2 iterations are not unioning regions
             if (iterations > 2) {
                 // Test for touching neighbors
-                ready = noNewTouchingRegions(layeredGraph);
+                ready = noNewTouchingRegions(layeredGraph, spacing, smallSpacing);
             }
             
             // If ready, 2 more iterations are performed
@@ -675,6 +693,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         for (LNode node : region.getNodes()) {
             float sum = 0.0f;
             int numEdges = 0;
+            
             // Calculate force for every port/edge
             for (LPort port : node.getPorts()) {
                 if (port.getType() == PortType.OUTPUT) {
@@ -695,6 +714,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                     }
                 }
             }
+            
             // Avoid division by zero
             if (numEdges > 0) {
                 sum /= numEdges;
@@ -712,22 +732,28 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      * 
      * @param region the region to be checked
      * @param spacing the object spacing
+     * @param smallSpacing the dummy object spacing
      */
-    private void checkMovability(final Region region, final float spacing) {
+    private void checkMovability(final Region region, final float spacing, final float smallSpacing) {
         for (LNode node : region.getNodes()) {
+            boolean isNodeNormal = node.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL;
+            
             if (region.force < 0.0f) {
                 // Force is directed upward
                 if (node.getIndex() > 0) {
                     // Node is not topmost node
                     LNode neighbor = node.getLayer().getNodes().get(node.getIndex() - 1);
+                    boolean isNeighborNormal =
+                        neighbor.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL;
+                    float space = isNodeNormal && isNeighborNormal ? spacing : smallSpacing;
                     
                     if (region != neighbor.getProperty(Properties.REGION)
-                            && neighbor.getPos().y + neighbor.getSize().y + spacing 
+                            && neighbor.getPos().y + neighbor.getSize().y + space 
                                 > node.getPos().y + region.force) {
                         
                         // Set force on region to the max possible force
                         region.force = node.getPos().y
-                                - (neighbor.getPos().y + neighbor.getSize().y + spacing);
+                                - (neighbor.getPos().y + neighbor.getSize().y + space);
                     }
                 } else {
                     // Node is topmost node
@@ -739,14 +765,17 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             } else if (region.force > 0.0f && node.getIndex() < node.getLayer().getNodes().size() - 1) {
                 // Force is directed downward and the node is not lowermost
                 LNode neighbor = node.getLayer().getNodes().get(node.getIndex() + 1);
+                boolean isNeighborNormal =
+                    neighbor.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL;
+                float space = isNodeNormal && isNeighborNormal ? spacing : smallSpacing;
                 
                 if (region != neighbor.getProperty(Properties.REGION)
-                        && node.getPos().y + node.getSize().y + spacing + region.force
+                        && node.getPos().y + node.getSize().y + space + region.force
                             > neighbor.getPos().y) {
                     
                     // Set force on region to the max possible force
                     region.force = neighbor.getPos().y
-                            - (node.getPos().y + node.getSize().y + spacing);
+                            - (node.getPos().y + node.getSize().y + space);
                 }
             }
         }
@@ -757,43 +786,46 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      * during the last call.
      * 
      * @param layeredGraph the layered graph
+     * @param spacing the object spacing
+     * @param smallSpacing the dummy object spacing
      * @return {@code false} if regions are newly touching
      */
-    private boolean noNewTouchingRegions(final LayeredGraph layeredGraph) {
+    private boolean noNewTouchingRegions(final LayeredGraph layeredGraph, final float spacing,
+            final float smallSpacing) {
+        
         boolean ready = true;
-        float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         
         for (Layer layer : layeredGraph.getLayers()) {
+            // Immediately skip empty layers
             List<LNode> nodes = layer.getNodes();
             if (nodes.isEmpty()) {
                 continue;
             }
             
-            // Iterator that iterates over nodes belonging to regions
-            // TODO Is this iterator really necessary?
-            //      I thought, at this point all nodes belong to regions...?
-            Iterator<LNode> nodeIter = Iterators.filter(nodes.iterator(), new Predicate<LNode>() {
-                public boolean apply(final LNode node) {
-                    return node.getProperty(Properties.REGION) != null;
-                }
-            });
+            Iterator<LNode> nodeIter = nodes.iterator();
             
             // Get the first node
             LNode node1 = nodeIter.next();
             Region node1Region = node1.getProperty(Properties.REGION);
+            boolean isNode1Normal =
+                node1.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL;
             
             // While there are still nodes following the current node
             while (nodeIter.hasNext()) {
                 // Test if nodes have different regions
                 LNode node2 = nodeIter.next();
                 Region node2Region = node2.getProperty(Properties.REGION);
+                boolean isNode2Normal =
+                    node2.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL;
                 
                 if (node1Region != node2Region) {
+                    // Calculate how much space is allowed between the nodes
+                    float space = isNode1Normal && isNode2Normal ? spacing : smallSpacing;
                     
                     // Test if the nodes are touching
-                    if (node1.getPos().y + node1.getSize().y + spacing > node2.getPos().y - 1.0f) {
+                    if (node1.getPos().y + node1.getSize().y + space > node2.getPos().y - 1.0f) {
                         double overlay = node1.getPos().y + node1.getSize().y
-                            + spacing - node2.getPos().y;
+                            + space - node2.getPos().y;
                         
                         // Adjust position for every member of the neighbors region
                         for (LNode toAdjust : node2.getProperty(Properties.REGION).getNodes()) {

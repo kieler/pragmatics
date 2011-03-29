@@ -77,17 +77,19 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 // Before Phase 2
                 null,
                 // Before Phase 3
-                EnumSet.of(
-                        IntermediateLayoutProcessor.ODD_PORT_SIDE_PREPROCESSOR),
+//                EnumSet.of(
+//                        IntermediateLayoutProcessor.ODD_PORT_SIDE_PREPROCESSOR),
+                null,
                 // Before Phase 4
                 EnumSet.of(
+                        IntermediateLayoutProcessor.ODD_PORT_SIDE_PREPROCESSOR,
                         IntermediateLayoutProcessor.NORTH_SOUTH_SIDE_PREPROCESSOR,
-                        IntermediateLayoutProcessor.HYPEREDGE_DUMMY_JOINER,
-                        IntermediateLayoutProcessor.ODD_PORT_SIDE_POSTPROCESSOR),
+                        IntermediateLayoutProcessor.HYPEREDGE_DUMMY_JOINER),
                 // Before Phase 5
                 null,
                 // After Phase 5
-                EnumSet.of(IntermediateLayoutProcessor.NORTH_SOUTH_SIDE_POSTPROCESSOR));
+                EnumSet.of(
+                        IntermediateLayoutProcessor.NORTH_SOUTH_SIDE_POSTPROCESSOR));
     
     /** weight penalty for conflicts of horizontal line segments. */
     private static final int CONFLICT_PENALTY = 16;
@@ -228,7 +230,9 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
     /** factor for edge spacing used to determine the conflict threshold. */
     private static final double CONFL_THRESH_FACTOR = 0.2;
     
-    /** spacing between edge. */
+    /** spacing between nodes and edges. */
+    private double nodeSpacing;
+    /** spacing between edges. */
     private double edgeSpacing;
     /** threshold at which conflicts of horizontal line segments are detected. */
     private double conflictThreshold;
@@ -246,7 +250,8 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Orthogonal edge routing", 1);
         
-        edgeSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        nodeSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        edgeSpacing = nodeSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         conflictThreshold = CONFL_THRESH_FACTOR * edgeSpacing;
         boolean debug = layeredGraph.getProperty(LayoutOptions.DEBUG_MODE);
         
@@ -264,12 +269,14 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
             // Place the left layer's nodes, if any
             if (leftLayer != null) {
                 leftLayer.placeNodes(xpos);
-                xpos += leftLayer.getSize().x + edgeSpacing;
+                xpos += leftLayer.getSize().x + nodeSpacing;
             }
             
             // Route edges between the two layers
             slotsCount = routeEdges(layeredGraph, leftLayer, rightLayer, xpos, debug);
-            xpos += slotsCount * edgeSpacing;
+            if (slotsCount > 0) {
+                xpos += slotsCount * edgeSpacing - edgeSpacing + nodeSpacing;
+            }
             
             leftLayer = rightLayer;
         } while (leftLayer != null || rightLayer != null);

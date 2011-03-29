@@ -51,22 +51,26 @@ public class OddPortSidePostprocessor extends AbstractAlgorithm implements ILayo
      */
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Odd port side postprocessing", 1);
-        
-        // Iterate through the layers, looking for odd port side dummies
-        Layer[] layerArray = layeredGraph.getLayers().toArray(new Layer[0]);
-        for (Layer layer : layerArray) {
-            // Look for odd port side dummy nodes
-            LNode[] nodeArray = layer.getNodes().toArray(new LNode[0]);
-            for (LNode node : nodeArray) {
-                if (node.getProperty(Properties.NODE_TYPE) == Properties.NodeType.ODD_PORT_SIDE) {
-                    // Restore the edges and remove the dummy node
-                    processOddPortSideDummy(node);
-                    node.setLayer(null);
-                }
-            }
-        }
-        
+
+        // TODO WiP
         getMonitor().done();
+        return;
+        
+//        // Iterate through the layers, looking for odd port side dummies
+//        Layer[] layerArray = layeredGraph.getLayers().toArray(new Layer[0]);
+//        for (Layer layer : layerArray) {
+//            // Look for odd port side dummy nodes
+//            LNode[] nodeArray = layer.getNodes().toArray(new LNode[0]);
+//            for (LNode node : nodeArray) {
+//                if (node.getProperty(Properties.NODE_TYPE) == Properties.NodeType.ODD_PORT_SIDE) {
+//                    // Restore the edges and remove the dummy node
+//                    processOddPortSideDummy(node);
+//                    node.setLayer(null);
+//                }
+//            }
+//        }
+//        
+//        getMonitor().done();
     }
     
     /**

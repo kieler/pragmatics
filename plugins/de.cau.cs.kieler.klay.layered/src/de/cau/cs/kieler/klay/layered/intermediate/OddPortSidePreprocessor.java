@@ -37,9 +37,9 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * <p>The problem is with edges coming from the left of a node being connected to a
  * port that's on its right side, or the other way around. Let a node of that kind
  * be in layer {@code i}. This processor now takes the offending edge and connects
- * it to a new dummy node, also in layer {@code i}. That dummy node is then connected
- * to another new dummy node, in layer {@code i + 1}. Finally, a new edge connects
- * the offending port with the dummy node in layer {@code i + 1}.</p>
+ * it to a new dummy node, also in layer {@code i}. Finally, the dummy is connected
+ * with the offending port. This means that once one of these cases occurs in the
+ * graph, the layering is not proper anymore.</p>
  * 
  * <p>The dummy nodes are decorated with a {@link de.cau.cs.kieler.klay.layered.Properties#NODE_TYPE}
  * property. For nodes in the same layer, it is set to
@@ -52,7 +52,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph.</dd>
  *   <dt>Postcondition:</dt><dd>dummy nodes have been inserted for edges connected to
- *     ports on odd sides.</dd>
+ *     ports on odd sides; the graph's layering may not be proper anymore.</dd>
  * </dl>
  * 
  * @see OddPortSidePostprocessor
@@ -69,33 +69,24 @@ public class OddPortSidePreprocessor extends AbstractAlgorithm implements ILayou
         // Retrieve the layers in the graph
         List<Layer> layers = layeredGraph.getLayers();
         
-        // We may need a new first and last layer
-        Layer prefixLayer = new Layer(layeredGraph);
-        Layer postfixLayer = new Layer(layeredGraph);
-        
         // Iterate through the layers and for each layer create a list of dummy nodes
         // that were created, but not yet assigned to the layer (to avoid concurrent
         // modification exceptions)
         ListIterator<Layer> layerIterator = layers.listIterator();
-        Layer currentLayer = prefixLayer;
-        List<LNode> previousLayerUnassignedNodes = new LinkedList<LNode>();
+        Layer currentLayer = null;
+        List<LNode> unassignedNodes = new LinkedList<LNode>();
         
         while (layerIterator.hasNext()) {
             // Find the current, previous and next layer. If this layer is the last one,
             // use the postfix layer as the next layer
             Layer previousLayer = currentLayer;
             currentLayer = layerIterator.next();
-            Layer nextLayer = postfixLayer;
-            if (layerIterator.hasNext()) {
-                nextLayer = layerIterator.next();
-                layerIterator.previous();
-            }
             
             // If the last layer had unassigned nodes, assign them now and clear the list
-            for (LNode node : previousLayerUnassignedNodes) {
+            for (LNode node : unassignedNodes) {
                 node.setLayer(previousLayer);
             }
-            previousLayerUnassignedNodes.clear();
+            unassignedNodes.clear();
             
             // Iterate through the layer's nodes
             for (LNode node : currentLayer.getNodes()) {
@@ -113,8 +104,7 @@ public class OddPortSidePreprocessor extends AbstractAlgorithm implements ILayou
                     LEdge[] edgeArray = edges.toArray(new LEdge[edges.size()]);
                     
                     for (LEdge edge : edgeArray) {
-                        createEastPortSideDummies(port, edge, previousLayerUnassignedNodes,
-                                nextLayer);
+                        createEastPortSideDummies(port, edge, unassignedNodes);
                     }
                 }
                 
@@ -127,25 +117,15 @@ public class OddPortSidePreprocessor extends AbstractAlgorithm implements ILayou
                     LEdge[] edgeArray = edges.toArray(new LEdge[edges.size()]);
                     
                     for (LEdge edge : edgeArray) {
-                        createWestPortSideDummies(port, edge, previousLayerUnassignedNodes,
-                                previousLayer);
+                        createWestPortSideDummies(port, edge, unassignedNodes);
                     }
                 }
             }
         }
         
         // There may be unassigned nodes left
-        for (LNode node : previousLayerUnassignedNodes) {
+        for (LNode node : unassignedNodes) {
             node.setLayer(currentLayer);
-        }
-        
-        // Add the prefix and postfix layers to the graph, if necessary
-        if (!prefixLayer.getNodes().isEmpty()) {
-            layers.add(0, prefixLayer);
-        }
-        
-        if (!postfixLayer.getNodes().isEmpty()) {
-            layers.add(postfixLayer);
         }
         
         getMonitor().done();
@@ -159,60 +139,37 @@ public class OddPortSidePreprocessor extends AbstractAlgorithm implements ILayou
      * @param layerNodeList list of unassigned nodes belonging to the layer of the node the
      *                      port belongs to. The new dummy node is added to this list and
      *                      must be assigned to the layer later.
-     * @param nextLayer the next layer.
      */
     private void createEastPortSideDummies(final LPort eastwardPort, final LEdge edge,
-            final List<LNode> layerNodeList, final Layer nextLayer) {
+            final List<LNode> layerNodeList) {
         
         // Dummy node in the same layer
-        LNode sameLayerDummy = new LNode();
-        sameLayerDummy.setProperty(Properties.ORIGIN, edge);
-        sameLayerDummy.setProperty(Properties.NODE_TYPE,
+        LNode dummy = new LNode();
+        dummy.setProperty(Properties.ORIGIN, edge);
+        dummy.setProperty(Properties.NODE_TYPE,
                 Properties.NodeType.LONG_EDGE);
-        sameLayerDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-        layerNodeList.add(sameLayerDummy);
+        dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        layerNodeList.add(dummy);
         
-        LPort sameLayerDummyInput = new LPort(PortType.INPUT);
-        sameLayerDummyInput.setNode(sameLayerDummy);
-        sameLayerDummyInput.setSide(PortSide.WEST);
+        LPort dummyInput = new LPort(PortType.INPUT);
+        dummyInput.setNode(dummy);
+        dummyInput.setSide(PortSide.WEST);
         
-        LPort sameLayerDummyOutput = new LPort(PortType.OUTPUT);
-        sameLayerDummyOutput.setNode(sameLayerDummy);
-        sameLayerDummyOutput.setSide(PortSide.EAST);
-        
-        // Dummy node in the next layer
-        LNode nextLayerDummy = new LNode();
-        nextLayerDummy.setProperty(Properties.ORIGIN, edge);
-        nextLayerDummy.setProperty(Properties.NODE_TYPE,
-                Properties.NodeType.ODD_PORT_SIDE);
-        sameLayerDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-        nextLayerDummy.setLayer(nextLayer);
-        
-        LPort nextLayerDummyInput = new LPort(PortType.INPUT);
-        nextLayerDummyInput.setNode(nextLayerDummy);
-        nextLayerDummyInput.setSide(PortSide.WEST);
+        LPort dummyOutput = new LPort(PortType.OUTPUT);
+        dummyOutput.setNode(dummy);
+        dummyOutput.setSide(PortSide.EAST);
         
         // Reroute the original edge
-        edge.setTarget(sameLayerDummyInput);
+        edge.setTarget(dummyInput);
         
-        // Create two new edges to connect the two dummies
+        // Connect the dummy with the original port
         LEdge dummyEdge = new LEdge();
         dummyEdge.copyProperties(edge);
-        dummyEdge.setSource(sameLayerDummyOutput);
-        dummyEdge.setTarget(nextLayerDummyInput);
-        
-        dummyEdge = new LEdge();
-        dummyEdge.copyProperties(edge);
-        dummyEdge.setSource(eastwardPort);
-        dummyEdge.setTarget(nextLayerDummyInput);
+        dummyEdge.setSource(dummyOutput);
+        dummyEdge.setTarget(eastwardPort);
         
         // Set LONG_EDGE_SOURCE and LONG_EDGE_TARGET properties on the LONG_EDGE dummy
-        setLongEdgeSourceAndTarget(sameLayerDummy, sameLayerDummyInput, sameLayerDummyOutput,
-                eastwardPort);
-        
-        // Reconfigure the port
-        eastwardPort.setType(PortType.OUTPUT);
-        eastwardPort.setProperty(Properties.REVERSED, true);
+        setLongEdgeSourceAndTarget(dummy, dummyInput, dummyOutput, eastwardPort);
     }
 
     /**
@@ -223,60 +180,37 @@ public class OddPortSidePreprocessor extends AbstractAlgorithm implements ILayou
      * @param layerNodeList list of unassigned nodes belonging to the layer of the node the
      *                      port belongs to. The new dummy node is added to this list and
      *                      must be assigned to the layer later.
-     * @param previousLayer the previous layer.
      */
     private void createWestPortSideDummies(final LPort westwardPort, final LEdge edge,
-            final List<LNode> layerNodeList, final Layer previousLayer) {
+            final List<LNode> layerNodeList) {
         
         // Dummy node in the same layer
-        LNode sameLayerDummy = new LNode();
-        sameLayerDummy.setProperty(Properties.ORIGIN, edge);
-        sameLayerDummy.setProperty(Properties.NODE_TYPE,
+        LNode dummy = new LNode();
+        dummy.setProperty(Properties.ORIGIN, edge);
+        dummy.setProperty(Properties.NODE_TYPE,
                 Properties.NodeType.LONG_EDGE);
-        sameLayerDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-        layerNodeList.add(sameLayerDummy);
+        dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        layerNodeList.add(dummy);
         
-        LPort sameLayerDummyInput = new LPort(PortType.INPUT);
-        sameLayerDummyInput.setNode(sameLayerDummy);
-        sameLayerDummyInput.setSide(PortSide.WEST);
+        LPort dummyInput = new LPort(PortType.INPUT);
+        dummyInput.setNode(dummy);
+        dummyInput.setSide(PortSide.WEST);
         
-        LPort sameLayerDummyOutput = new LPort(PortType.OUTPUT);
-        sameLayerDummyOutput.setNode(sameLayerDummy);
-        sameLayerDummyOutput.setSide(PortSide.EAST);
-        
-        // Dummy node in the previous layer
-        LNode previousLayerDummy = new LNode();
-        previousLayerDummy.setProperty(Properties.ORIGIN, edge);
-        previousLayerDummy.setProperty(Properties.NODE_TYPE,
-                Properties.NodeType.ODD_PORT_SIDE);
-        sameLayerDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-        previousLayerDummy.setLayer(previousLayer);
-        
-        LPort previousLayerDummyOutput = new LPort(PortType.OUTPUT);
-        previousLayerDummyOutput.setNode(previousLayerDummy);
-        previousLayerDummyOutput.setSide(PortSide.EAST);
+        LPort dummyOutput = new LPort(PortType.OUTPUT);
+        dummyOutput.setNode(dummy);
+        dummyOutput.setSide(PortSide.EAST);
         
         // Reroute the original edge
-        edge.setSource(sameLayerDummyOutput);
+        edge.setSource(dummyOutput);
         
-        // Create two new edges to connect the two dummies
+        // Connect the dummy with the original port
         LEdge dummyEdge = new LEdge();
         dummyEdge.copyProperties(edge);
-        dummyEdge.setSource(previousLayerDummyOutput);
-        dummyEdge.setTarget(westwardPort);
-        
-        dummyEdge = new LEdge();
-        dummyEdge.copyProperties(edge);
-        dummyEdge.setSource(previousLayerDummyOutput);
-        dummyEdge.setTarget(sameLayerDummyInput);
+        dummyEdge.setSource(westwardPort);
+        dummyEdge.setTarget(dummyInput);
         
         // Set LONG_EDGE_SOURCE and LONG_EDGE_TARGET properties on the LONG_EDGE dummy
-        setLongEdgeSourceAndTarget(sameLayerDummy, sameLayerDummyInput, sameLayerDummyOutput,
-                westwardPort);
-        
-        // Reconfigure the port
-        westwardPort.setType(PortType.INPUT);
-        westwardPort.setProperty(Properties.REVERSED, true);
+        setLongEdgeSourceAndTarget(dummy, dummyInput, dummyOutput, westwardPort);
     }
     
     /**
@@ -307,11 +241,8 @@ public class OddPortSidePreprocessor extends AbstractAlgorithm implements ILayou
             // The source is a LONG_EDGE node; use its LONG_EDGE_SOURCE
             longEdgeDummy.setProperty(Properties.LONG_EDGE_SOURCE,
                     sourceNode.getProperty(Properties.LONG_EDGE_SOURCE));
-        } else if (sourceNodeType == Properties.NodeType.ODD_PORT_SIDE) {
-            // The source node is an ODD_PORT_SIDE node; use our odd port as the source
-            longEdgeDummy.setProperty(Properties.LONG_EDGE_SOURCE, oddPort);
         } else {
-            // It's nothing like that, so just use the source port
+            // The target is the original node; use it
             longEdgeDummy.setProperty(Properties.LONG_EDGE_SOURCE, sourcePort);
         }
 
@@ -320,11 +251,8 @@ public class OddPortSidePreprocessor extends AbstractAlgorithm implements ILayou
             // The target is a LONG_EDGE node; use its LONG_EDGE_TARGET
             longEdgeDummy.setProperty(Properties.LONG_EDGE_TARGET,
                     targetNode.getProperty(Properties.LONG_EDGE_TARGET));
-        } else if (targetNodeType == Properties.NodeType.ODD_PORT_SIDE) {
-            // The source node is an ODD_PORT_SIDE node; use our odd port as the target
-            longEdgeDummy.setProperty(Properties.LONG_EDGE_TARGET, oddPort);
         } else {
-            // It's nothing like that, so just use the target port
+            // The target is the original node; use it
             longEdgeDummy.setProperty(Properties.LONG_EDGE_TARGET, targetPort);
         }
     }

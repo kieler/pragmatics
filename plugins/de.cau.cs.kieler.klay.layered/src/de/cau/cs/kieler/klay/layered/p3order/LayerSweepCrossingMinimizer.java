@@ -542,7 +542,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     private int countCrossings(final LNode[] leftLayer, final LNode[] rightLayer,
             final int edgeCount) {
         
-        // assign index values to the ports of the right layer
+        // Assign index values to the ports of the right layer
         int targetCount = 0;
         Map<LPort, Integer> targetMap = new HashMap<LPort, Integer>();
         for (LNode node : rightLayer) {
@@ -560,7 +560,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             }
         }
         
-        // determine the sequence of edge target positions sorted by source and target index
+        // Determine the sequence of edge target positions sorted by source and target index
         int[] southSequence = new int[edgeCount];
         int i = 0;
         for (LNode node : leftLayer) {
@@ -583,7 +583,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             }
         }
         
-        // build the accumulator tree
+        // Build the accumulator tree
         int firstIndex = 1;
         while (firstIndex < targetCount) {
             firstIndex *= 2;
@@ -592,7 +592,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         firstIndex -= 1;
         int[] tree = new int[treeSize];
         
-        // count the crossings
+        // Count the crossings
         int crossCount = 0;
         for (int k = 0; k < edgeCount; k++) {
             int index = southSequence[k] + firstIndex;

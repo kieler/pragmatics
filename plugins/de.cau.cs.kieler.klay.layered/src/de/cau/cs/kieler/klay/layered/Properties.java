@@ -91,6 +91,15 @@ public final class Properties {
     public static final Property<Float> OBJ_SPACING = new Property<Float>(
             LayoutOptions.SPACING, DEF_SPACING);
 
+    /** option identifier for edge spacing factor. */
+    public static final String EDGE_SPACING_FACTOR_ID =
+        "de.cau.cs.kieler.klay.layered.edgeSpacingFactor";
+    /** default value for edge spacing factor. */
+    public static final float DEF_EDGE_SPACING_FACTOR = 0.5f;
+    /** factor for minimal spacing between edges. */
+    public static final Property<Float> EDGE_SPACING_FACTOR = new Property<Float>(
+            EDGE_SPACING_FACTOR_ID, DEF_EDGE_SPACING_FACTOR);
+
     /** priority of elements. */
     public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
 

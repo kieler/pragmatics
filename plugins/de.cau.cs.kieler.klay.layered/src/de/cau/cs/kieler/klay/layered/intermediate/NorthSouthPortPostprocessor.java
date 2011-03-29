@@ -70,6 +70,8 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
                 node.setLayer(null);
             }
         }
+        
+        getMonitor().done();
     }
     
     /**

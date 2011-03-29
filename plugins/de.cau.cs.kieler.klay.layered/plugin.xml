@@ -14,6 +14,9 @@
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.klay.layered.edgeSpacingFactor">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
@@ -149,6 +152,15 @@
             id="de.cau.cs.kieler.klay.layered.layerConstraint"
             name="Layer Constraint"
             type="enum">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0.5"
+            description="Factor by which the object spacing is multiplied to arrive at the minimal spacing between edges"
+            id="de.cau.cs.kieler.klay.layered.edgeSpacingFactor"
+            name="Edge Spacing Factor"
+            type="float">
       </layoutOption>
    </extension>
 
