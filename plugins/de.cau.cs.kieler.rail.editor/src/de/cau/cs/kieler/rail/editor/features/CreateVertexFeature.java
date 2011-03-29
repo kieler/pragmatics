@@ -51,11 +51,7 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
 
         ContainerShape tc = context.getTargetContainer();
         Model model = semanticProvider.fetchModel(tc);
-
         model.getVertices().add(vertex);
-        // the 'vertices' reference is _not_ containment, therefore add the vertex to the resource
-        // FIXME why is the reference not containment?
-        model.eResource().getContents().add(vertex);
 
         // do the add
         vertex.getPorts().addAll(addGraphicalRepresentationForPorts(vertex));

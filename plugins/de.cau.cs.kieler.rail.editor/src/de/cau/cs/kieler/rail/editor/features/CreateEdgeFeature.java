@@ -98,15 +98,10 @@ public class CreateEdgeFeature extends
         
         
         if (source instanceof Port && target instanceof Port) {
-        	Edge edge = BasegraphFactory.eINSTANCE.createEdge();
-        	edge.setFrom((Port) source);
-        	edge.setDestination((Port) target);
-            
-            Model topModel = semanticProvider.fetchModel(getDiagram());
-            
-            // the model has no containment reference for edges, therefore add the edge to the resource
-            // FIXME why is there no such containment?
-            topModel.eResource().getContents().add(edge);
+            Edge edge = BasegraphFactory.eINSTANCE.createEdge();
+            edge.setFrom((Port) source);
+            edge.setDestination((Port) target);
+            ((Port) source).setDestination(edge);
             
             getFeatureProvider().getDirectEditingInfo().setActive(true);
             AddConnectionContext addContext = new AddConnectionContext(context.getSourceAnchor(),
