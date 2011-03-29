@@ -568,16 +568,20 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 for (LPort port : node.getPorts(PortType.OUTPUT)) {
                     int start = i;
                     for (LEdge edge : port.getEdges()) {
-                        int pos = targetMap.get(edge.getTarget());
-                        insert(southSequence, start, i++, pos);
+                        Integer pos = targetMap.get(edge.getTarget());
+                        if (pos != null) {
+                            insert(southSequence, start, i++, pos);
+                        }
                     }
                 }
             } else {
                 int start = i;
                 for (LPort port : node.getPorts(PortType.OUTPUT)) {
                     for (LEdge edge : port.getEdges()) {
-                        int pos = targetMap.get(edge.getTarget());
-                        insert(southSequence, start, i++, pos);
+                        Integer pos = targetMap.get(edge.getTarget());
+                        if (pos != null) {
+                            insert(southSequence, start, i++, pos);
+                        }
                     }
                 }
             }
