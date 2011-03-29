@@ -110,6 +110,42 @@
             parent_category="de.cau.cs.kieler.kaom.ptolemy"
             title="Rendezvous">
       </category>
+      <category
+            description="Synchronous dataflow (SDF) is a special case of dataflow where the flow of control is sufficiently regular to be completely predictable at compile time. An SDF model is an interconnection of actors whose firings are enabled by fixed, pre-specified numbers of tokens on each of their inputs. Moreover, when an actor fires, it produces a fixed, pre-specified number of tokens on each of its outputs. The fact that these numbers are fixed makes it possible for a scheduler to determine the firing sequence at the time the model is initialized. Thus, SDF models are quite efficient, in that there is no multithreading needed, and run-time overhead consists only of a very simple dispatcher that implements the pre-computed schedule."
+            id="de.cau.cs.kieler.kaom.ptolemy.sdf"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Synchronous Dataflow">
+      </category>
+      <category
+            description="no description"
+            id="de.cau.cs.kieler.kaom.ptolemy.sequence"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Sequence">
+      </category>
+      <category
+            description="In the synchronous/reactive (SR) model of computation , the arcs represent data values that are aligned with global clock ticks. Thus, they are discrete signals, but unlike discrete time, a signal need not have a value at every clock tick. The entities represent relations between input and output values at each tick, and are usually partial functions with certain technical restrictions to ensure determinacy. Examples of languages that use the SR model of computation include Esterel, Signal, Lustre, and Argos."
+            id="de.cau.cs.kieler.kaom.ptolemy.sr"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Synchronous Reactive">
+      </category>
+      <category
+      		description="no description"
+            id="de.cau.cs.kieler.kaom.ptolemy.taskpt"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Task PT">
+      </category>
+      <category
+			description="no description"
+            id="de.cau.cs.kieler.kaom.ptolemy.tdl"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="TDL">
+      </category>
+      <category
+			description="no description"
+            id="de.cau.cs.kieler.kaom.ptolemy.tm"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="TM">
+      </category>
        <example
             author="KIELER Workgroup"
             category="de.cau.cs.kieler.kaom.ptolemy.ci"
@@ -2634,11 +2670,6 @@
                local_path="models/ptides/ptides_PtidesBasicTwoPlatformsNetworkSensorEvents.kaom"
                resource_type="file">
          </resource>
-         <resource
-               direct_open="true"
-               local_path="models/ptides/ptides_PtidesBasicTwoPlatformsNetworkSensorEvents.kaod"
-               resource_type="file">
-         </resource>
       </example>
       <example
             author="KIELER Workgroup"
@@ -2694,6 +2725,110 @@
       </example>
       <example
             author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.rendezvous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="???"
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.rendezvous.Barrier"
+            overview_pic="images/rendezvous_Barrier.png"
+            root_directory="models/rendezvous"
+            title="Barrier">
+         <resource
+               direct_open="false"
+               local_path="models/rendezvous/rendezvous_Barrier.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/rendezvous/rendezvous_Barrier.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/rendezvous/rendezvous_Barrier.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+<example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.rendezvous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="???"
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.rendezvous.ResourcePool"
+            overview_pic="images/rendezvous_ResourcePool.png"
+            root_directory="models/rendezvous"
+            title="Resource Pool">
+         <resource
+               direct_open="false"
+               local_path="models/rendezvous/rendezvous_ResourcePool.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/rendezvous/rendezvous_ResourcePool.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/rendezvous/rendezvous_ResourcePool.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+<example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.rendezvous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="???"
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.rendezvous.Sequencing"
+            overview_pic="images/rendezvous_Sequencing.png"
+            root_directory="models/rendezvous"
+            title="Sequencing">
+         <resource
+               direct_open="false"
+               local_path="models/rendezvous/rendezvous_Sequencing.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/rendezvous/rendezvous_Sequencing.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/rendezvous/rendezvous_Sequencing.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+<example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.rendezvous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="???"
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.rendezvous.WriteRegulator"
+            overview_pic="images/rendezvous_WriteRegulator.png"
+            root_directory="models/rendezvous"
+            title="Write Regulator">
+         <resource
+               direct_open="false"
+               local_path="models/rendezvous/rendezvous_WriteRegulator.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/rendezvous/rendezvous_WriteRegulator.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/rendezvous/rendezvous_WriteRegulator.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+<example
+            author="KIELER Workgroup"
             category="de.cau.cs.kieler.kaom.ptolemy"
             contact="kieler@informatik.uni-kiel.de"
             description="???"
@@ -2718,6 +2853,86 @@
                resource_type="file">
          </resource>
       </example>
+<example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy"
+            contact="kieler@informatik.uni-kiel.de"
+            description="???"
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.???"
+            overview_pic="images/???.png"
+            root_directory="models/???"
+            title="???">
+         <resource
+               direct_open="false"
+               local_path="models/???.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/???.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/???.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+<example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy"
+            contact="kieler@informatik.uni-kiel.de"
+            description="???"
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.???"
+            overview_pic="images/???.png"
+            root_directory="models/???"
+            title="???">
+         <resource
+               direct_open="false"
+               local_path="models/???.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/???.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/???.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+<example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy"
+            contact="kieler@informatik.uni-kiel.de"
+            description="???"
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.???"
+            overview_pic="images/???.png"
+            root_directory="models/???"
+            title="???">
+         <resource
+               direct_open="false"
+               local_path="models/???.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/???.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/???.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+
+
    </extension>
 
 </plugin>
