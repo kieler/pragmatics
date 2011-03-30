@@ -20,6 +20,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.kiml.util.FixedLayoutProvider"
+            description="Keeps the current layout as it is, without any automatic modification. Optional coordinates can be given for nodes and edge bend points."
             id="de.cau.cs.kieler.fixed"
             name="Fixed Layout">
          <knownOption
@@ -36,6 +37,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.kiml.util.BoxLayoutProvider"
+            description="Algorithm for packing of unconnected boxes, i.e. graphs without edges."
             id="de.cau.cs.kieler.box"
             name="Box Layout"
             preview="images/box_layout.png">
@@ -72,6 +74,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.kiml.util.RandomLayoutProvider"
+            description="Distributes the nodes randomly on the plane, leading to very obfuscating layouts. Can be useful to demonstrate the power of &quot;real&quot; layout algorithms."
             id="de.cau.cs.kieler.random"
             name="Randomizer"
             preview="images/random.png">
@@ -93,22 +96,27 @@
          </knownOption>
       </layoutAlgorithm>
       <layoutType
+            description="The layer-based method was introduced by Sugiyama, Tagawa and Toda in 1981. It emphasizes the direction of edges by pointing as many edges as possible into the same direction. The nodes are arranged in layers, which are sometimes called &quot;hierarchies&quot;, and then reordered such that the number of edge crossings is minimized. Afterwards, concrete coordinates are computed for the nodes and edge bend points."
             id="de.cau.cs.kieler.type.layered"
             name="Layered">
       </layoutType>
       <layoutType
+            description="Orthogonal methods that follow the &quot;topology-shape-metrics&quot; approach by Batini, Nardelli and Tamassia '86. The first phase determines the topology of the drawing by applying a planarization technique, which results in a planar representation of the graph. The orthogonal shape is computed in the second phase, which aims at minimizing the number of edge bends, and is called orthogonalization. The third phase leads to concrete coordinates for nodes and edge bend points by applying a compaction method, thus defining the metrics."
             id="de.cau.cs.kieler.type.orthogonal"
             name="Orthogonal">
       </layoutType>
       <layoutType
+            description="Layout algorithms that follow physical analogies by simulating a system of attractive and repulsive forces. The first successful method of this kind was proposed by Eades in 1984."
             id="de.cau.cs.kieler.type.force"
             name="Force">
       </layoutType>
       <layoutType
+            description="Circular layout algorithms emphasize cycles or biconnected components of a graph by arranging them in circles. This is useful if a drawing is desired where such components are clearly grouped, or where cycles are shown as prominent properties of the graph."
             id="de.cau.cs.kieler.type.circle"
             name="Circular">
       </layoutType>
       <layoutType
+            description="Specialized layout methods for trees, i.e. acyclic graphs. The regular structure of graphs that have no undirected cycles can be emphasized using an algorithm of this type."
             id="de.cau.cs.kieler.type.tree"
             name="Tree">
       </layoutType>

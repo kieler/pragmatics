@@ -6,6 +6,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.klay.layered.LayeredLayoutProvider"
+            description="Layer-based algorithm of the KIELER Layouters project."
             id="de.cau.cs.kieler.klay.layered"
             name="KLay Layered"
             preview="images/layered.png"
@@ -78,6 +79,7 @@
             type="enum">
       </layoutOption>
       <layoutOption
+            advanced="true"
             appliesTo="parents"
             default="false"
             description="If enabled, edges with priority &gt; 0 are drawn straight instead of keeping the connected nodes in line."

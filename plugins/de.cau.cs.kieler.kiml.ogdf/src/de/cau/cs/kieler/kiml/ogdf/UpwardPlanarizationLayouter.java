@@ -43,7 +43,7 @@ public class UpwardPlanarizationLayouter extends OgdfLayouter {
             DEF_SPACING);
     /** the 'layerDistance' option identifier. */
     private static final String LAYER_DISTANCE_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.layerDistance";
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel";
     /** 'layerDistance' property. */
     private static final IProperty<Float> LAYER_DISTANCE = new Property<Float>(LAYER_DISTANCE_ID,
             20.0f);

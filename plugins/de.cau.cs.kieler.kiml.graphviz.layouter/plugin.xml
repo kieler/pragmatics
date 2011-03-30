@@ -26,7 +26,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
-            description="Layered drawings of directed graphs. The algorithm aims edges in the same direction (top to bottom, or left to right) and then attempts to avoid edge crossings and reduce edge length."
+            description="Layered drawings of directed graphs. The algorithm aims edges in the same direction (top to bottom, or left to right) and then attempts to avoid edge crossings and reduce edge length. Edges are routed as spline curves and are thus drawn very smoothly. This algorithm is very suitable for state machine and activity diagrams, where the direction of edges has an important role."
             id="de.cau.cs.kieler.graphviz.dot"
             name="Dot"
             parameter="DOT"
@@ -172,7 +172,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
-            description="Radial layouts, after Wills &apos;97. The nodes are placed on concentric circles depending on their distance from a given root node.node."
+            description="Radial layouts, after Wills &apos;97. The nodes are placed on concentric circles depending on their distance from a given root node. The algorithm is designed to handle not only small graphs, but also very large ones."
             id="de.cau.cs.kieler.graphviz.twopi"
             name="Twopi"
             parameter="TWOPI"
@@ -212,7 +212,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
-            description="Circular layout, after Six and Tollis &apos;99, Kaufmann and Wiese &apos;02. This is suitable for certain diagrams of multiple cyclic structures such as certain telecommunications networks."
+            description="Circular layout, after Six and Tollis &apos;99, Kaufmann and Wiese &apos;02. The algorithm finds biconnected components and arranges each component in a circle, trying to minimize the number of crossings inside the circle. This is suitable for certain diagrams of multiple cyclic structures such as certain telecommunications networks."
             id="de.cau.cs.kieler.graphviz.circo"
             name="Circo"
             parameter="CIRCO"
