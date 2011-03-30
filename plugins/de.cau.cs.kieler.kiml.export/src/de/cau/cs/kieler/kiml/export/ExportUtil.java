@@ -120,7 +120,7 @@ public final class ExportUtil {
      *            the metamodels involved in the transformation
      * @throws IOException
      *             thrown when the the xtend file could not be found or opened
-     * @throws TransformationException
+     * @throws TransformException
      *             thrown when the execution of the xtend transformation failed
      */
     public static void transformKGraph2Model(final String xtendFile,
