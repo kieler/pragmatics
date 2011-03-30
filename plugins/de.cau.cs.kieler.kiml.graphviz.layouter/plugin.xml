@@ -89,7 +89,7 @@
                type="de.cau.cs.kieler.layout.diagrams.usecaseDiagram">
          </supportedDiagram>
          <knownOption
-               default="16"
+               default="40"
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
@@ -140,7 +140,7 @@
                type="de.cau.cs.kieler.layout.diagrams.usecaseDiagram">
          </supportedDiagram>
          <knownOption
-               default="16"
+               default="40"
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
@@ -187,7 +187,7 @@
                type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
          <knownOption
-               default="16"
+               default="60"
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
@@ -227,7 +227,7 @@
                type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
          <knownOption
-               default="16"
+               default="40"
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption

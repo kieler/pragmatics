@@ -37,7 +37,7 @@ public class TreeLayouter extends OgdfLayouter {
             LayoutOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
     /** the 'siblingDistance' option identifier. */
     private static final String SIBLING_DISTANCE_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.siblingDistance";
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistSibling";
     /** 'siblingDistance' property. */
     private static final IProperty<Float> SIBLING_DISTANCE = new Property<Float>(
             SIBLING_DISTANCE_ID, 20.0f);

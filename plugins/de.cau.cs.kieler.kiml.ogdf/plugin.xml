@@ -108,7 +108,7 @@
             default="20.0"
             description="The spacing between connected components."
             id="de.cau.cs.kieler.kiml.ogdf.option.minDistCC"
-            name="Minimum Connected Component Spacing"
+            name="Connected Component Spacing"
             type="float">
       </layoutOption>
       <layoutOption
@@ -258,25 +258,17 @@
       <layoutOption
             appliesTo="parents"
             default="20.0"
-            description="The minimal distance between father and child circle."
+            description="The minimal distance between father and child components."
             id="de.cau.cs.kieler.kiml.ogdf.option.minDistLevel"
-            name="Minimum Level Spacing"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="10.0"
-            description="The minimal distance between circles on same level."
-            id="de.cau.cs.kieler.kiml.ogdf.option.minDistSibling"
-            name="Minimum Sibling Spacing"
+            name="Level Spacing"
             type="float">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
             default="20.0"
-            description="The minimal distance between nodes on a circle."
-            id="de.cau.cs.kieler.kiml.ogdf.option.minDistCircle"
-            name="Minimum Circle Spacing"
+            description="The minimal distance between siblings on the same level."
+            id="de.cau.cs.kieler.kiml.ogdf.option.minDistSibling"
+            name="Sibling Spacing"
             type="float">
       </layoutOption>
       <layoutOption
@@ -290,33 +282,9 @@
       <layoutOption
             appliesTo="parents"
             default="50.0"
-            description="The vertical spacing between adjacent levels."
-            id="de.cau.cs.kieler.kiml.ogdf.option.levelDistance"
-            name="Level Spacing"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="50.0"
             description="The horizontal spacing between adjacent trees in a forest."
             id="de.cau.cs.kieler.kiml.ogdf.option.treeDistance"
             name="Tree Spacing"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="20.0"
-            description="The horizontal spacing between adjacent sibling nodes."
-            id="de.cau.cs.kieler.kiml.ogdf.option.siblingDistance"
-            name="Sibling Spacing"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="50.0"
-            description="The minimal horizontal distance required between trees in the forest."
-            id="de.cau.cs.kieler.kiml.ogdf.option.ccDistance"
-            name="Connected Component Spacing"
             type="float">
       </layoutOption>
       <layoutAlgorithm
@@ -389,7 +357,7 @@
                option="de.cau.cs.kieler.direction">
          </knownOption>
          <knownOption
-               default="30"
+               default="20"
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
@@ -435,10 +403,6 @@
                option="de.cau.cs.kieler.kiml.ogdf.option.qualityVsSpeed">
          </knownOption>
          <knownOption
-               default="30"
-               option="de.cau.cs.kieler.spacing">
-         </knownOption>
-         <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.newInitialPlacement">
          </knownOption>
          <knownOption
@@ -465,7 +429,7 @@
             preview="images/davidson-harel.png"
             type="de.cau.cs.kieler.type.force">
          <knownOption
-               default="30"
+               default="80"
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
@@ -615,7 +579,8 @@
                option="de.cau.cs.kieler.randomSeed">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.minDistCircle">
+               default="20"
+               option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.minDistSibling">
@@ -662,7 +627,7 @@
                option="de.cau.cs.kieler.edgeRouting">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.siblingDistance">
+               option="de.cau.cs.kieler.kiml.ogdf.option.minDistSibling">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.subtreeDistance">
@@ -700,10 +665,12 @@
                option="de.cau.cs.kieler.randomSeed">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.levelDistance">
+               default="50"
+               option="de.cau.cs.kieler.kiml.ogdf.option.minDistLevel">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.ccDistance">
+               default="50"
+               option="de.cau.cs.kieler.kiml.ogdf.option.minDistCC">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm

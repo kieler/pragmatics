@@ -29,16 +29,12 @@ public class CircularLayouter extends OgdfLayouter {
 
     /** default value for page ratio. */
     public static final float DEF_PAGE_RATIO = 1.3f;
+    /** default value for spacing. */
+    public static final float DEF_MIN_DIST_CIRCLE = 20.0f;
 
     /** 'aspectRatio' property. */
     private static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
             LayoutOptions.ASPECT_RATIO, DEF_PAGE_RATIO);
-    /** the 'minDistCircle' option identifier. */
-    private static final String MIN_DIST_CIRCLE_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistCircle";
-    /** 'minDistCircle' property. */
-    private static final IProperty<Float> MIN_DIST_CIRCLE = new Property<Float>(MIN_DIST_CIRCLE_ID,
-            20.0f);
     /** the 'minDistLevel' option identifier. */
     private static final String MIN_DIST_LEVEL_ID =
             "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel";
@@ -50,7 +46,7 @@ public class CircularLayouter extends OgdfLayouter {
             "de.cau.cs.kieler.kiml.ogdf.option.minDistSibling";
     /** 'minDistSibling' property. */
     private static final IProperty<Float> MIN_DIST_SIBLING = new Property<Float>(
-            MIN_DIST_SIBLING_ID, 10.0f);
+            MIN_DIST_SIBLING_ID, 20.0f);
     /** the 'minDistCC' option identifier. */
     private static final String MIN_DIST_CC_ID = "de.cau.cs.kieler.kiml.ogdf.option.minDistCC";
     /** 'minDistCC' property. */
@@ -75,7 +71,10 @@ public class CircularLayouter extends OgdfLayouter {
         float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
         addOption(OgdfServerAPI.OPTION_PAGE_RATIO, pageRatio);
         // minDistCircle
-        float minDistCircle = parentLayout.getProperty(MIN_DIST_CIRCLE);
+        float minDistCircle = parentLayout.getProperty(LayoutOptions.SPACING);
+        if (minDistCircle < 0) {
+            minDistCircle = DEF_MIN_DIST_CIRCLE;
+        }
         addOption(OgdfServerAPI.OPTION_MIN_DIST_CIRCLE, minDistCircle);
         // minDistLevel
         float minDistLevel = parentLayout.getProperty(MIN_DIST_LEVEL);

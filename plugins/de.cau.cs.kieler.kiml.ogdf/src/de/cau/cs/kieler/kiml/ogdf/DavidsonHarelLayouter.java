@@ -30,7 +30,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 public class DavidsonHarelLayouter extends OgdfLayouter {
 
     /** default value for spacing. */
-    public static final float DEF_SPACING = 30.0f;
+    public static final float DEF_SPACING = 80.0f;
 
     /** 'spacing' property. */
     private static final IProperty<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,

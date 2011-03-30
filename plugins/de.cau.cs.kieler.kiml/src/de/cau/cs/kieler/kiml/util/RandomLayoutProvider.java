@@ -41,7 +41,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
     /** default value for aspect ratio. */
     private static final float DEF_ASPECT_RATIO = 1.6f;
     /** default value for object spacing. */
-    private static final float DEF_SPACING = 20.0f;
+    private static final float DEF_SPACING = 15.0f;
     
     /**
      * {@inheritDoc}
@@ -99,7 +99,9 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
             final float spacing, final float offset) {
         // determine width and height of the drawing
         float nodesArea = 0.0f, maxWidth = 0.0f, maxHeight = 0.0f;
+        int m = 1;
         for (KNode node : parent.getChildren()) {
+            m += node.getOutgoingEdges().size();
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             float width = nodeLayout.getWidth();
             maxWidth = Math.max(maxWidth, width);
@@ -108,7 +110,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
             nodesArea += width * height;
         }
         int n = parent.getChildren().size();
-        float drawArea = nodesArea + 2 * spacing * (float) Math.sqrt(nodesArea * n);
+        float drawArea = nodesArea + 2 * spacing * spacing * m * n;
         float areaSqrt = (float) Math.sqrt(drawArea);
         float drawWidth = Math.max(areaSqrt * aspectRatio, maxWidth);
         float drawHeight = Math.max(areaSqrt / aspectRatio, maxHeight);
@@ -130,6 +132,8 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
                 KNode target = edge.getTarget();
                 if (source.getParent() == target.getParent()) {
                     randomize(edge, source, target, random, totalWidth, totalHeight);
+                } else {
+                    edge.getData(KEdgeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true); 
                 }
             }
         }

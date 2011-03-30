@@ -19,7 +19,6 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ogdf.options.QualityVsSpeed;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * The FMMM layouter from the OGDF library.
@@ -28,12 +27,6 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  */
 public class FMMMLayouter extends OgdfLayouter {
 
-    /** default value for spacing. */
-    public static final float DEF_SPACING = 30.0f;
-    
-    /** 'spacing' property. */
-    private static final IProperty<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
-            DEF_SPACING);
     /** the 'quality vs speed' option identifier. */
     private static final String QUALITY_VS_SPEED_ID =
             "de.cau.cs.kieler.kiml.ogdf.option.qualityVsSpeed";
@@ -64,9 +57,6 @@ public class FMMMLayouter extends OgdfLayouter {
     @Override
     protected void prepareLayouter(final KNode layoutNode) {
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
-        // unitEdgeLength
-        float unitEdgeLength = parentLayout.getProperty(SPACING);
-        addOption(OgdfServerAPI.OPTION_EDGE_LENGTH, unitEdgeLength);
         // qualityVsSpeed
         QualityVsSpeed qualityVsSpeed = parentLayout.getProperty(QUALITY_VS_SPEED);
         int qvs;

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -82,7 +83,7 @@ public class KGraphDotTransformation {
          */
         @Override
         public String toString() {
-            return super.toString().toLowerCase();
+            return super.toString().toLowerCase(Locale.ENGLISH);
         }
     }
     
@@ -93,8 +94,12 @@ public class KGraphDotTransformation {
     public static final IProperty<Float> LABEL_DISTANCE = new Property<Float>(
             LABEL_DISTANCE_ID, 1.0f);
     
-    /** default value for minimal spacing. */
-    public static final float DEF_MIN_SPACING = 16.0f;
+    /** small default value for minimal spacing. */
+    public static final float DEF_SPACING_SMALL = 16.0f;
+    /** large default value for minimal spacing. */
+    public static final float DEF_SPACING_LARGE = 40.0f;
+    /** extra-large default value for minimal spacing. */
+    public static final float DEF_SPACING_XLARGE = 60.0f;
     
 //    /** Style of arrowhead on the head node of an edge. */
 //    private static final String ATTR_ARROWHEAD = "arrowhead";
@@ -392,12 +397,22 @@ public class KGraphDotTransformation {
         // set minimal spacing
         float minSpacing = parentLayout.getProperty(LayoutOptions.SPACING);
         if (minSpacing < 0) {
-            minSpacing = DEF_MIN_SPACING;
+            switch (command) {
+            case CIRCO:
+            case FDP:
+            case NEATO:
+                minSpacing = DEF_SPACING_LARGE;
+                break;
+            case TWOPI:
+                minSpacing = DEF_SPACING_XLARGE;
+                break;
+            default:
+                minSpacing = DEF_SPACING_SMALL;
+            }
         }
         String spacingVal = Float.toString(minSpacing / DPI);
         if (command == Command.DOT || command == Command.TWOPI) {
-            graphAttrs.add(createAttribute(ATTR_RANKSEP,
-                    Float.toString(2 * minSpacing / DPI)));
+            graphAttrs.add(createAttribute(ATTR_RANKSEP, spacingVal));
         }
         if (command == Command.CIRCO) {
             graphAttrs.add(createAttribute(ATTR_MINDIST, spacingVal));
@@ -412,7 +427,7 @@ public class KGraphDotTransformation {
         // set offset to border
         offset = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
         if (offset < 0) {
-            offset = DEF_MIN_SPACING / 2;
+            offset = DEF_SPACING_SMALL / 2;
         }
         // set layout direction
         if (command == Command.DOT) {

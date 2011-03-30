@@ -31,7 +31,7 @@ public class PlanarizationLayouter extends OgdfLayouter {
     /** default value for page ratio. */
     public static final float DEF_PAGE_RATIO = 1.3f;
     /** default value for spacing. */
-    public static final float DEF_SPACING = 30.0f;
+    public static final float DEF_SPACING = 20.0f;
 
     /** 'aspectRatio' property. */
     private static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
