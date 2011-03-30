@@ -17,10 +17,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
@@ -30,12 +28,12 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.model.m2m.ITransformationContext;
 import de.cau.cs.kieler.core.model.m2m.TransformException;
-import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
-import de.cau.cs.kieler.core.model.xtend.transformation.xtend.XtendTransformationFramework;
+import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
+import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationContext;
 import de.cau.cs.kieler.keg.Node;
 
 /**
@@ -143,39 +141,45 @@ public final class ImportUtil {
         EObject model = resource.getContents().get(0);
         monitor.worked(1);
         // find the xtend file
-        Bundle bundle = KEGImporterPlugin.getDefault().getBundle();
-        IPath path = new Path(xtendFile);
-        URL url = FileLocator.find(bundle, path, null);
-        String xtendFilePath = FileLocator.resolve(url).getFile();
+        //Bundle bundle = KEGImporterPlugin.getDefault().getBundle();
+        //IPath path = new Path(xtendFile);
+        //URL url = FileLocator.find(bundle, path, null);
+        //String xtendFilePath = FileLocator.resolve(url).getFile();
         // initialize the xtend framework
-        ITransformationFramework transformationFramework =
-                new XtendTransformationFramework();
+        Object[] params = null;
         if (parameters != null && parameters.size() > 0) {
             // additional parameters
-            Object[] params = new Object[parameters.size() + 1];
+            params = new Object[parameters.size() + 1];
             params[0] = model;
             int i = 1;
             for (Object parameter : parameters) {
                 params[i++] = parameter;
             }
-            transformationFramework.setParameters(params);
         } else {
-            Object[] params = new Object[1];
+            params = new Object[1];
             params[0] = model;
-            transformationFramework.setParameters(params);
         }
-        // initialize the transformation
+        // assemble the list of required metamodels
         String[] metamodels = new String[involvedMetamodels.length + 1];
         metamodels[0] = "de.cau.cs.kieler.keg.KEGPackage";
         int i = 1;
         for (String metamodel : involvedMetamodels) {
             metamodels[i++] = metamodel; 
         }
-        transformationFramework.initializeTransformation(xtendFilePath,
-                extension, metamodels);
+        // initialize the transformation
+        ITransformationContext transformationContext = new XtendTransformationContext(
+                xtendFile,
+                metamodels,
+                null,
+                null
+        );
+        TransformationDescriptor transformationDescriptor = new TransformationDescriptor(
+                extension,
+                params
+        );
         // execute the transformation
-        Object resultModel = null;
-        resultModel = transformationFramework.executeTransformation();
+        transformationContext.execute(transformationDescriptor);
+        Object resultModel = transformationDescriptor.getResult();
         // serialize the model
         Node node = null;
         if (resultModel instanceof Node) {

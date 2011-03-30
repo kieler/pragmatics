@@ -75,7 +75,7 @@ public class KGraphImporter extends AbstractImporter {
     private static final String[] SUPPORTED_FILE_EXTENSIONS = { "kgraph" };
     /** the xtend transformation file. */
     private static final String XTEND_TRANSFORMATION_FILE =
-            "/transformations/kgraph2keg.ext";
+            "kgraph2keg.ext";
     /** the xtend extension which is performing the transformation. */
     private static final String XTEND_TRANSFORMATION = "transform";
 

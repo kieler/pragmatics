@@ -37,7 +37,7 @@ public class GraphMLExporter extends AbstractExporter {
     private static final String[] SUPPORTED_FILE_EXTENSIONS = { "graphml" };
     /** the xtend transformation file. */
     private static final String XTEND_TRANSFORMATION_FILE =
-            "/transformations/kgraph2graphml.ext";
+            "kgraph2graphml.ext";
     /** the xtend extension which is performing the transformation. */
     private static final String XTEND_TRANSFORMATION = "transform";
 

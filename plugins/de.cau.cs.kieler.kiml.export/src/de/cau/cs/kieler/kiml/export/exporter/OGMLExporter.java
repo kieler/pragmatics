@@ -40,7 +40,7 @@ public class OGMLExporter extends AbstractExporter {
     private static final String[] SUPPORTED_FILE_EXTENSIONS = { "ogml" };
     /** the xtend transformation file. */
     private static final String XTEND_TRANSFORMATION_FILE =
-            "/transformations/kgraph2ogml.ext";
+            "kgraph2ogml.ext";
     /** the xtend extension which is performing the transformation. */
     private static final String XTEND_TRANSFORMATION = "transform";
 

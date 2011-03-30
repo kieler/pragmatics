@@ -17,12 +17,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
@@ -33,7 +31,6 @@ import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.XMLResource;
-import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -134,10 +131,10 @@ public final class ExportUtil {
                 MONITOR_TRANSFORMATION_WORK);
 
         // find the xtend file
-        Bundle bundle = ExportPlugin.getDefault().getBundle();
-        IPath path = new Path(xtendFile);
-        URL url = FileLocator.find(bundle, path, null);
-        String xtendFilePath = FileLocator.resolve(url).getFile();
+        //Bundle bundle = ExportPlugin.getDefault().getBundle();
+        //IPath path = new Path(xtendFile);
+        //URL url = FileLocator.find(bundle, path, null);
+        //String xtendFilePath = FileLocator.resolve(url).getFile();
         // initialize the xtend framework
         Object[] params = null;
         if (parameters != null && parameters.size() > 0) {
@@ -161,7 +158,7 @@ public final class ExportUtil {
         }
         // initialize the transformation
         ITransformationContext transformationContext = new XtendTransformationContext(
-                xtendFilePath,
+                xtendFile,
                 metamodels,
                 null,
                 null

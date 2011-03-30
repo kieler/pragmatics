@@ -36,7 +36,7 @@ public class GraphMLImporter extends AbstractImporter {
     private static final String[] SUPPORTED_FILE_EXTENSIONS = { "graphml" };
     /** the xtend transformation file. */
     private static final String XTEND_TRANSFORMATION_FILE =
-            "/transformations/graphml2keg.ext";
+            "graphml2keg.ext";
     /** the xtend extension which is performing the transformation. */
     private static final String XTEND_TRANSFORMATION = "transform";
     
