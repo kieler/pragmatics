@@ -724,20 +724,20 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             } else {
                 sourceElem = graphElem2EditPartMap.inverse().get(sourceObj);
             }
+            KNode sourceNode = null;
+            KPort sourcePort = null;
             if (sourceElem instanceof KNode) {
-                edge.setSource((KNode) sourceElem);
+                sourceNode = (KNode) sourceElem;
             } else if (sourceElem instanceof KPort) {
-                KPort sourcePort = (KPort) sourceElem;
-                edge.setSourcePort(sourcePort);
-                sourcePort.getEdges().add(edge);
-                edge.setSource(sourcePort.getNode());
+                sourcePort = (KPort) sourceElem;
+                sourceNode = sourcePort.getNode();
             } else {
                 continue;
             }
             
             // calculate offset for edge and label coordinates
             float offsetx = 0, offsety = 0;
-            KNode sourceParentNode = edge.getSource().getParent();
+            KNode sourceParentNode = sourceNode.getParent();
             IGraphicalEditPart sourceParent = graphElem2EditPartMap.get(sourceParentNode);
             if (sourceParent != null) {
                 Rectangle sourceParentBounds = KimlUiUtil.getAbsoluteBounds(sourceParent.getFigure());
@@ -747,6 +747,13 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             }
 
             if (!isOppositeEdge) {
+                // set source node and source port
+                edge.setSource(sourceNode);
+                if (sourcePort != null) {
+                    edge.setSourcePort(sourcePort);
+                    sourcePort.getEdges().add(edge);
+                }
+                
                 // find a proper target node and target port
                 KGraphElement targetElem;
                 EditPart targetObj = connection.getTarget();

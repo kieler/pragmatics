@@ -105,19 +105,14 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 float xbound = layoutRequest.getXBound();
                 float ybound = layoutRequest.getYBound();
 
-                // retrieve layout data from the request and compute layout data
-                // for the command
+                // retrieve layout data from the request and compute layout data for the command
                 for (Pair<KGraphElement, GraphicalEditPart> layoutPair : layoutRequest
                         .getElements()) {
                     if (layoutPair.getFirst() instanceof KNode) {
                         addShapeLayout(command, layoutPair.getFirst(), layoutPair.getSecond(), null);
                     } else if (layoutPair.getFirst() instanceof KPort) {
-                        addShapeLayout(
-                                command,
-                                layoutPair.getFirst(),
-                                layoutPair.getSecond(),
-                                ((KPort) layoutPair.getFirst()).getNode().getData(
-                                        KShapeLayout.class));
+                        addShapeLayout(command, layoutPair.getFirst(), layoutPair.getSecond(),
+                                ((KPort) layoutPair.getFirst()).getNode().getData(KShapeLayout.class));
                     } else if (layoutPair.getFirst() instanceof KEdge) {
                         addEdgeLayout(command, (KEdge) layoutPair.getFirst(),
                                 (ConnectionEditPart) layoutPair.getSecond());

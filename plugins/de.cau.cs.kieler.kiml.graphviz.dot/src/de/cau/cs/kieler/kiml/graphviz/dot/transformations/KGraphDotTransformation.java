@@ -458,10 +458,14 @@ public class KGraphDotTransformation {
         graphAttrs.add(createAttribute(ATTR_SPLINES,
                 Boolean.toString(useSplines)));
         // configure initial placement of nodes
-        if (command == Command.NEATO || command == Command.FDP) {
+        if (command == Command.NEATO) {
             Integer seed = parentLayout.getProperty(LayoutOptions.RANDOM_SEED);
-            if (seed == null || seed < 0) {
+            if (seed == null) {
                 seed = 1;
+            } else if (seed == 0) {
+                seed = -1;
+            } else if (seed < 0) {
+                seed = -seed;
             }
             graphAttrs.add(createAttribute(ATTR_START, "random" + seed));
         }

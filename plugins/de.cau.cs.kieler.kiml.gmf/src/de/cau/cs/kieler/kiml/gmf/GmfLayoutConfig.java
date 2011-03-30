@@ -18,6 +18,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart;
@@ -163,7 +164,10 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
         }
         super.setFocus(element);
         if (element instanceof IGraphicalEditPart) {
-            super.setFocus(((IGraphicalEditPart) element).getNotationView().getElement());
+            EObject object = ((IGraphicalEditPart) element).getNotationView().getElement();
+            if (object != null) {
+                super.setFocus(object);
+            }
         }
     }
     

@@ -292,7 +292,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            description="Seed used for pseudo-random number generators to control the layout algorithm"
+            description="Seed used for pseudo-random number generators to control the layout algorithm; 0 means a new seed is generated"
             id="de.cau.cs.kieler.randomSeed"
             name="Randomization Seed"
             type="int">
@@ -328,6 +328,11 @@
             class="org.eclipse.emf.ecore.EPackage"
             option="de.cau.cs.kieler.diagramType"
             value="de.cau.cs.kieler.layout.diagrams.classDiagram">
+      </option>
+      <option
+            class="org.eclipse.emf.ecore.EPackage"
+            option="de.cau.cs.kieler.spacing"
+            value="40">
       </option>
       <option
             class="org.eclipse.emf.ecore.EReference"
