@@ -55,7 +55,7 @@ public class FMMMLayouter extends OgdfLayouter {
      * Constructs a FMMMLayouter.
      */
     public FMMMLayouter() {
-        super("FRUCHTERMAN_REINGOLD");
+        super("FMMM");
     }
 
     /**
