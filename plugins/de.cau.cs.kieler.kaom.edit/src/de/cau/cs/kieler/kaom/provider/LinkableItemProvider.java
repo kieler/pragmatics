@@ -18,6 +18,7 @@ package de.cau.cs.kieler.kaom.provider;
 
 import de.cau.cs.kieler.kaom.KaomPackage;
 
+import de.cau.cs.kieler.kaom.Linkable;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,7 +34,9 @@ import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
+import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ItemProviderAdapter;
+import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
  * This is the item provider adapter for a {@link de.cau.cs.kieler.kaom.Linkable} object.
@@ -70,8 +73,31 @@ public class LinkableItemProvider
         if (itemPropertyDescriptors == null) {
             super.getPropertyDescriptors(object);
 
+            addIdPropertyDescriptor(object);
         }
         return itemPropertyDescriptors;
+    }
+
+    /**
+     * This adds a property descriptor for the Id feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected void addIdPropertyDescriptor(Object object) {
+        itemPropertyDescriptors.add
+            (createItemPropertyDescriptor
+                (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+                 getResourceLocator(),
+                 getString("_UI_Linkable_id_feature"),
+                 getString("_UI_PropertyDescriptor_description", "_UI_Linkable_id_feature", "_UI_Linkable_type"),
+                 KaomPackage.Literals.LINKABLE__ID,
+                 true,
+                 false,
+                 false,
+                 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+                 null,
+                 null));
     }
 
     /**
@@ -82,7 +108,10 @@ public class LinkableItemProvider
      */
     @Override
     public String getText(Object object) {
-        return getString("_UI_Linkable_type");
+        String label = ((Linkable)object).getId();
+        return label == null || label.length() == 0 ?
+            getString("_UI_Linkable_type") :
+            getString("_UI_Linkable_type") + " " + label;
     }
 
     /**
@@ -95,6 +124,12 @@ public class LinkableItemProvider
     @Override
     public void notifyChanged(Notification notification) {
         updateChildren(notification);
+
+        switch (notification.getFeatureID(Linkable.class)) {
+            case KaomPackage.LINKABLE__ID:
+                fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
+                return;
+        }
         super.notifyChanged(notification);
     }
 

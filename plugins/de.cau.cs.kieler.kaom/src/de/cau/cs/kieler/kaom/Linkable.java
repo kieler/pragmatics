@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kaom.Linkable#getOutgoingLinks <em>Outgoing Links</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kaom.Linkable#getIncomingLinks <em>Incoming Links</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kaom.Linkable#getId <em>Id</em>}</li>
  * </ul>
  * </p>
  *
@@ -72,5 +73,31 @@ public interface Linkable extends EObject {
      * @generated
      */
     EList<Link> getIncomingLinks();
+
+    /**
+     * Returns the value of the '<em><b>Id</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Id</em>' attribute isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Id</em>' attribute.
+     * @see #setId(String)
+     * @see de.cau.cs.kieler.kaom.KaomPackage#getLinkable_Id()
+     * @model
+     * @generated
+     */
+    String getId();
+
+    /**
+     * Sets the value of the '{@link de.cau.cs.kieler.kaom.Linkable#getId <em>Id</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Id</em>' attribute.
+     * @see #getId()
+     * @generated
+     */
+    void setId(String value);
 
 } // Linkable

@@ -21,6 +21,7 @@ import de.cau.cs.kieler.kaom.Linkable;
 
 import java.util.Collection;
 
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
@@ -28,6 +29,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
@@ -42,6 +44,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kaom.impl.LinkableImpl#getOutgoingLinks <em>Outgoing Links</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kaom.impl.LinkableImpl#getIncomingLinks <em>Incoming Links</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kaom.impl.LinkableImpl#getId <em>Id</em>}</li>
  * </ul>
  * </p>
  *
@@ -67,6 +70,26 @@ public abstract class LinkableImpl extends EObjectImpl implements Linkable {
      * @ordered
      */
     protected EList<Link> incomingLinks;
+
+    /**
+     * The default value of the '{@link #getId() <em>Id</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getId()
+     * @generated
+     * @ordered
+     */
+    protected static final String ID_EDEFAULT = null;
+
+    /**
+     * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getId()
+     * @generated
+     * @ordered
+     */
+    protected String id = ID_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -116,6 +139,27 @@ public abstract class LinkableImpl extends EObjectImpl implements Linkable {
      * <!-- end-user-doc -->
      * @generated
      */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setId(String newId) {
+        String oldId = id;
+        id = newId;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, KaomPackage.LINKABLE__ID, oldId, id));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     @SuppressWarnings("unchecked")
     @Override
     public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -156,6 +200,8 @@ public abstract class LinkableImpl extends EObjectImpl implements Linkable {
                 return getOutgoingLinks();
             case KaomPackage.LINKABLE__INCOMING_LINKS:
                 return getIncomingLinks();
+            case KaomPackage.LINKABLE__ID:
+                return getId();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -177,6 +223,9 @@ public abstract class LinkableImpl extends EObjectImpl implements Linkable {
                 getIncomingLinks().clear();
                 getIncomingLinks().addAll((Collection<? extends Link>)newValue);
                 return;
+            case KaomPackage.LINKABLE__ID:
+                setId((String)newValue);
+                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -195,6 +244,9 @@ public abstract class LinkableImpl extends EObjectImpl implements Linkable {
             case KaomPackage.LINKABLE__INCOMING_LINKS:
                 getIncomingLinks().clear();
                 return;
+            case KaomPackage.LINKABLE__ID:
+                setId(ID_EDEFAULT);
+                return;
         }
         super.eUnset(featureID);
     }
@@ -211,8 +263,26 @@ public abstract class LinkableImpl extends EObjectImpl implements Linkable {
                 return outgoingLinks != null && !outgoingLinks.isEmpty();
             case KaomPackage.LINKABLE__INCOMING_LINKS:
                 return incomingLinks != null && !incomingLinks.isEmpty();
+            case KaomPackage.LINKABLE__ID:
+                return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
         }
         return super.eIsSet(featureID);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public String toString() {
+        if (eIsProxy()) return super.toString();
+
+        StringBuffer result = new StringBuffer(super.toString());
+        result.append(" (id: ");
+        result.append(id);
+        result.append(')');
+        return result.toString();
     }
 
 } //LinkableImpl

@@ -14,9 +14,14 @@
          <command
             categoryId="de.cau.cs.kieler"
             defaultHandler="de.cau.cs.kieler.kaom.diagram.custom.commands.ReInitKaomDiagramCommand"
-            description="(Re)Initialize the diagram for the selected KAOM file, overwriting any old KAOD file."
+            description="Initialize a GMF diagram for the selected KAOM model, overwriting any old &apos;kaod&apos; file."
             id="de.cau.cs.kieler.kaom.ui.reinitDiagram"
-            name="Initialize KAOD diagram">
+            name="Initialize GMF diagram">
+            <commandParameter
+                  id="de.cau.cs.kieler.kaom.ui.reinitDiagram.source"
+                  name="Source"
+                  optional="true">
+            </commandParameter>
       </command>
          </extension>
             <extension
@@ -28,7 +33,7 @@
                commandId="de.cau.cs.kieler.kaom.ui.reinitDiagram"
                label="Initialize GMF Diagram File (kaod)"
                style="push"
-               tooltip="(Re)Initialize the diagram for the selected KAOM file, overwriting any old KAOD file.">
+               tooltip="(Re)Initialize the diagram for the selected &apos;kaom&apos; file, overwriting any old &apos;kaod&apos; file.">
             <visibleWhen
                   checkEnabled="false">
                <iterate>
@@ -42,6 +47,33 @@
                   </adapt>
                </iterate>
             </visibleWhen>
+            <parameter
+                  name="de.cau.cs.kieler.kaom.ui.reinitDiagram.source"
+                  value="kaom">
+            </parameter>
+         </command>
+         <command
+               commandId="de.cau.cs.kieler.kaom.ui.reinitDiagram"
+               label="Initialize GMF Diagram File (kaod)"
+               style="push"
+               tooltip="(Re)Initialize the diagram for the selected &apos;kaot&apos; file, overwriting any old &apos;kaod&apos; file.">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                     <test
+                           forcePluginActivation="false"
+                           property="org.eclipse.core.resources.name"
+                           value="*.kaot">
+                     </test>
+                  </adapt>
+               </iterate>
+            </visibleWhen>
+            <parameter
+                  name="de.cau.cs.kieler.kaom.ui.reinitDiagram.source"
+                  value="kaot">
+            </parameter>
          </command>
                      </menuContribution>
                         </extension>

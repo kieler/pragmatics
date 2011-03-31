@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.resources.IFile;
@@ -58,13 +59,42 @@ import de.cau.cs.kieler.kaom.diagram.part.Messages;
 public class ReInitKaomDiagramCommand extends AbstractReInitDiagramCommand {
 
     /** File extension for diagram files. */
-    private static final String DIAGRAM_EXTENSION = "kaod";
+    public static final String DIAGRAM_EXTENSION = "kaod";
+    /** File extension for XMI model files. */
+    public static final String MODEL_EXTENSION = "kaom";
+    /** File extension for Xtext model files. */
+    public static final String TEXT_EXTENSION = "kaot";
+    
+    /** parameter for initialization source. */
+    private static final String SOURCE_PARAM = "de.cau.cs.kieler.kaom.ui.reinitDiagram.source";
 
-    /** File extension for model files. */
-    private static final String MODEL_EXTENSION = "kaom";
-
+    /** the currently set source file extension. */
+    private String sourceExtension = MODEL_EXTENSION;
+    
     /**
+     * Sets the source file extension to the given format. This must be either
+     * {@link #MODEL_EXTENSION} or {@link #TEXT_EXTENSION}.
      * 
+     * @param extension the source file extension
+     */
+    public void setSourceExtension(final String extension) {
+        if (TEXT_EXTENSION.equals(extension)) {
+            this.sourceExtension = TEXT_EXTENSION;
+        } else {
+            this.sourceExtension = MODEL_EXTENSION;
+        } 
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object execute(final ExecutionEvent event) throws ExecutionException {
+        setSourceExtension(event.getParameter(SOURCE_PARAM));
+        return super.execute(event);
+    }
+    
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -174,6 +204,6 @@ public class ReInitKaomDiagramCommand extends AbstractReInitDiagramCommand {
      */
     @Override
     protected String getModelExtension() {
-        return MODEL_EXTENSION;
+        return sourceExtension;
     }
 }

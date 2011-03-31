@@ -24,6 +24,7 @@ import de.cau.cs.kieler.kaom.Port;
 
 import java.util.Collection;
 
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
@@ -31,6 +32,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
 
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -44,6 +46,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kaom.impl.PortImpl#getOutgoingLinks <em>Outgoing Links</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kaom.impl.PortImpl#getIncomingLinks <em>Incoming Links</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kaom.impl.PortImpl#getId <em>Id</em>}</li>
  * </ul>
  * </p>
  *
@@ -69,6 +72,26 @@ public class PortImpl extends NamedObjectImpl implements Port {
      * @ordered
      */
     protected EList<Link> incomingLinks;
+
+    /**
+     * The default value of the '{@link #getId() <em>Id</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getId()
+     * @generated
+     * @ordered
+     */
+    protected static final String ID_EDEFAULT = null;
+
+    /**
+     * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getId()
+     * @generated
+     * @ordered
+     */
+    protected String id = ID_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -118,6 +141,27 @@ public class PortImpl extends NamedObjectImpl implements Port {
      * <!-- end-user-doc -->
      * @generated
      */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setId(String newId) {
+        String oldId = id;
+        id = newId;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, KaomPackage.PORT__ID, oldId, id));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     @SuppressWarnings("unchecked")
     @Override
     public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -158,6 +202,8 @@ public class PortImpl extends NamedObjectImpl implements Port {
                 return getOutgoingLinks();
             case KaomPackage.PORT__INCOMING_LINKS:
                 return getIncomingLinks();
+            case KaomPackage.PORT__ID:
+                return getId();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -179,6 +225,9 @@ public class PortImpl extends NamedObjectImpl implements Port {
                 getIncomingLinks().clear();
                 getIncomingLinks().addAll((Collection<? extends Link>)newValue);
                 return;
+            case KaomPackage.PORT__ID:
+                setId((String)newValue);
+                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -197,6 +246,9 @@ public class PortImpl extends NamedObjectImpl implements Port {
             case KaomPackage.PORT__INCOMING_LINKS:
                 getIncomingLinks().clear();
                 return;
+            case KaomPackage.PORT__ID:
+                setId(ID_EDEFAULT);
+                return;
         }
         super.eUnset(featureID);
     }
@@ -213,6 +265,8 @@ public class PortImpl extends NamedObjectImpl implements Port {
                 return outgoingLinks != null && !outgoingLinks.isEmpty();
             case KaomPackage.PORT__INCOMING_LINKS:
                 return incomingLinks != null && !incomingLinks.isEmpty();
+            case KaomPackage.PORT__ID:
+                return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
         }
         return super.eIsSet(featureID);
     }
@@ -228,6 +282,7 @@ public class PortImpl extends NamedObjectImpl implements Port {
             switch (derivedFeatureID) {
                 case KaomPackage.PORT__OUTGOING_LINKS: return KaomPackage.LINKABLE__OUTGOING_LINKS;
                 case KaomPackage.PORT__INCOMING_LINKS: return KaomPackage.LINKABLE__INCOMING_LINKS;
+                case KaomPackage.PORT__ID: return KaomPackage.LINKABLE__ID;
                 default: return -1;
             }
         }
@@ -245,10 +300,27 @@ public class PortImpl extends NamedObjectImpl implements Port {
             switch (baseFeatureID) {
                 case KaomPackage.LINKABLE__OUTGOING_LINKS: return KaomPackage.PORT__OUTGOING_LINKS;
                 case KaomPackage.LINKABLE__INCOMING_LINKS: return KaomPackage.PORT__INCOMING_LINKS;
+                case KaomPackage.LINKABLE__ID: return KaomPackage.PORT__ID;
                 default: return -1;
             }
         }
         return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public String toString() {
+        if (eIsProxy()) return super.toString();
+
+        StringBuffer result = new StringBuffer(super.toString());
+        result.append(" (id: ");
+        result.append(id);
+        result.append(')');
+        return result.toString();
     }
 
 } //PortImpl

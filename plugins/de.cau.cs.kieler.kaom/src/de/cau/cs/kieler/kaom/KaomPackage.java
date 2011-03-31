@@ -17,6 +17,7 @@ package de.cau.cs.kieler.kaom;
 
 import de.cau.cs.kieler.core.annotations.AnnotationsPackage;
 
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
@@ -126,13 +127,22 @@ public interface KaomPackage extends EPackage {
     int ENTITY__INCOMING_LINKS = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 1;
 
     /**
+     * The feature id for the '<em><b>Id</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int ENTITY__ID = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 2;
+
+    /**
      * The feature id for the '<em><b>Child Entities</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int ENTITY__CHILD_ENTITIES = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 2;
+    int ENTITY__CHILD_ENTITIES = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 3;
 
     /**
      * The feature id for the '<em><b>Child Links</b></em>' containment reference list.
@@ -141,7 +151,7 @@ public interface KaomPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int ENTITY__CHILD_LINKS = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 3;
+    int ENTITY__CHILD_LINKS = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 4;
 
     /**
      * The feature id for the '<em><b>Child Ports</b></em>' containment reference list.
@@ -150,7 +160,7 @@ public interface KaomPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int ENTITY__CHILD_PORTS = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 4;
+    int ENTITY__CHILD_PORTS = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 5;
 
     /**
      * The feature id for the '<em><b>Child Relations</b></em>' containment reference list.
@@ -159,7 +169,7 @@ public interface KaomPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int ENTITY__CHILD_RELATIONS = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 5;
+    int ENTITY__CHILD_RELATIONS = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 6;
 
     /**
      * The number of structural features of the '<em>Entity</em>' class.
@@ -168,7 +178,7 @@ public interface KaomPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int ENTITY_FEATURE_COUNT = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 6;
+    int ENTITY_FEATURE_COUNT = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 7;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.kaom.impl.PortImpl <em>Port</em>}' class.
@@ -217,13 +227,22 @@ public interface KaomPackage extends EPackage {
     int PORT__INCOMING_LINKS = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 1;
 
     /**
+     * The feature id for the '<em><b>Id</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int PORT__ID = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 2;
+
+    /**
      * The number of structural features of the '<em>Port</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int PORT_FEATURE_COUNT = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 2;
+    int PORT_FEATURE_COUNT = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 3;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.kaom.impl.RelationImpl <em>Relation</em>}' class.
@@ -272,13 +291,22 @@ public interface KaomPackage extends EPackage {
     int RELATION__INCOMING_LINKS = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 1;
 
     /**
+     * The feature id for the '<em><b>Id</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int RELATION__ID = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 2;
+
+    /**
      * The number of structural features of the '<em>Relation</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int RELATION_FEATURE_COUNT = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 2;
+    int RELATION_FEATURE_COUNT = AnnotationsPackage.NAMED_OBJECT_FEATURE_COUNT + 3;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.kaom.impl.LinkImpl <em>Link</em>}' class.
@@ -354,13 +382,22 @@ public interface KaomPackage extends EPackage {
     int LINKABLE__INCOMING_LINKS = 1;
 
     /**
+     * The feature id for the '<em><b>Id</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int LINKABLE__ID = 2;
+
+    /**
      * The number of structural features of the '<em>Linkable</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int LINKABLE_FEATURE_COUNT = 2;
+    int LINKABLE_FEATURE_COUNT = 3;
 
 
     /**
@@ -502,6 +539,17 @@ public interface KaomPackage extends EPackage {
     EReference getLinkable_IncomingLinks();
 
     /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kaom.Linkable#getId <em>Id</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Id</em>'.
+     * @see de.cau.cs.kieler.kaom.Linkable#getId()
+     * @see #getLinkable()
+     * @generated
+     */
+    EAttribute getLinkable_Id();
+
+    /**
      * Returns the factory that creates the instances of the model.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -636,6 +684,14 @@ public interface KaomPackage extends EPackage {
          * @generated
          */
         EReference LINKABLE__INCOMING_LINKS = eINSTANCE.getLinkable_IncomingLinks();
+
+        /**
+         * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute LINKABLE__ID = eINSTANCE.getLinkable_Id();
 
     }
 

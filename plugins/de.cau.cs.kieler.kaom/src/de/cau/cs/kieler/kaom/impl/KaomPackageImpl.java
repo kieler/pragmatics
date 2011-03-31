@@ -27,6 +27,7 @@ import de.cau.cs.kieler.kaom.Linkable;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.Relation;
 
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
@@ -262,6 +263,15 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
      * <!-- end-user-doc -->
      * @generated
      */
+    public EAttribute getLinkable_Id() {
+        return (EAttribute)linkableEClass.getEStructuralFeatures().get(2);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public KaomFactory getKaomFactory() {
         return (KaomFactory)getEFactoryInstance();
     }
@@ -302,6 +312,7 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
         linkableEClass = createEClass(LINKABLE);
         createEReference(linkableEClass, LINKABLE__OUTGOING_LINKS);
         createEReference(linkableEClass, LINKABLE__INCOMING_LINKS);
+        createEAttribute(linkableEClass, LINKABLE__ID);
     }
 
     /**
@@ -361,6 +372,7 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
         initEClass(linkableEClass, Linkable.class, "Linkable", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getLinkable_OutgoingLinks(), this.getLink(), this.getLink_Source(), "outgoingLinks", null, 0, -1, Linkable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getLinkable_IncomingLinks(), this.getLink(), this.getLink_Target(), "incomingLinks", null, 0, -1, Linkable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getLinkable_Id(), ecorePackage.getEString(), "id", null, 0, 1, Linkable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         // Create resource
         createResource(eNS_URI);
