@@ -581,9 +581,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
      * @param edgeCount the total number of edges in the layer
      * @return the number of edge crossings
      */
-    private int countCrossings(final LNode[] leftLayer, final LNode[] rightLayer,
-            final int edgeCount) {
-
+    private int countCrossings(final LNode[] leftLayer, final LNode[] rightLayer, final int edgeCount) {
         Map<LPort, Integer> targetMap = new HashMap<LPort, Integer>();
         
         // Assign index values to the ports of the right layer
