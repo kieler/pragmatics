@@ -90,6 +90,12 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
                     continue;
                 }
                 
+                // Skip nodes whose port sides are not fixed (because in that case, the odd
+                // port side problem won't appear)
+                if (!node.getProperty(Properties.PORT_CONS).isSideFixed()) {
+                    continue;
+                }
+                
                 // Look for input ports on the right side
                 for (LPort port : node.getPorts(PortType.INPUT, PortSide.EAST)) {
                     // For every edge connected to this port, insert dummy nodes (do this using

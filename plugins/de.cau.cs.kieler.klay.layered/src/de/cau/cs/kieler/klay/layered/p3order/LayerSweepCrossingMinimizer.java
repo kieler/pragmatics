@@ -439,30 +439,25 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     private int minimizeCrossings(final LNode[] fixedLayer, final LNode[] freeLayer,
             final boolean forward, final boolean preOrdered) {
         
+        // Ignore empty free layers
+        if (freeLayer.length == 0) {
+            return 0;
+        }
+        Layer freeLayerLayer = freeLayer[0].getLayer();
+        
         int totalEdges = 0;
         for (LNode node : freeLayer) {
             // The node's barycenter will be calculated; nodes without edges connected
             // to them will have a barycenter value of -1
             nodeBarycenter[node.id] = -1;
             
-            // Remember the summed barycenter values of the node's ports, as well
-            // as the number of edges connected to the ports
-            float nodeSum = 0;
-            int edgeCount = 0;
-            
-            for (LPort freePort : node.getPorts(forward ? PortType.INPUT : PortType.OUTPUT)) {
-                for (LPort fixedPort : freePort.getConnectedPorts()) {
-                    nodeSum += portPos[fixedPort.id];
-                }
-                
-                edgeCount += freePort.getEdges().size();
-            }
+            Pair<Float, Integer> rawBarycenter = calculateNodeSum(freeLayerLayer, node, forward);
             
             // If any edges are connected to the node, divide the barycenter sum by
             // the number of edges to arrive at the final value.
-            if (edgeCount > 0) {
-                nodeBarycenter[node.id] = nodeSum / edgeCount;
-                totalEdges += edgeCount;
+            if (rawBarycenter.getSecond() > 0) {
+                nodeBarycenter[node.id] = rawBarycenter.getFirst() / rawBarycenter.getSecond();
+                totalEdges += rawBarycenter.getSecond();
             }
         }
         
@@ -476,7 +471,44 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         LNode[] leftLayer = forward ? fixedLayer : freeLayer;
         LNode[] rightLayer = forward ? freeLayer : fixedLayer;
         
-        return countCrossings(leftLayer, rightLayer, totalEdges);
+        return countCrossings(leftLayer, rightLayer, totalEdges) + countCrossings(freeLayer);
+    }
+    
+    /**
+     * Calculates the sum of the port positions the given node is connected to.
+     * 
+     * @param layer the layer the node is part of.
+     * @param node the node.
+     * @param forward {@code true} if the current sweep moves forward.
+     * @return a pair containing the summed port positions of the connected ports as the
+     *         first, and the number of connected edges as the second entry.
+     */
+    private Pair<Float, Integer> calculateNodeSum(final Layer layer, final LNode node,
+            final boolean forward) {
+        
+        float nodeSum = 0.0f;
+        int edgeCount = 0;
+        
+        for (LPort freePort : node.getPorts(forward ? PortType.INPUT : PortType.OUTPUT)) {
+            for (LPort fixedPort : freePort.getConnectedPorts()) {
+                // If the node the fixed port belongs to is part of the free layer (thus, if
+                // we have an in-layer edge), use that node's barycenter calculation instead
+                LNode fixedNode = fixedPort.getNode();
+                
+                if (fixedNode.getLayer() == layer) {
+                    Pair<Float, Integer> rawBarycenter = calculateNodeSum(layer, fixedNode, forward);
+                    
+                    nodeSum += rawBarycenter.getFirst();
+                    edgeCount += rawBarycenter.getSecond() - 1;
+                } else {
+                    nodeSum += portPos[fixedPort.id];
+                }
+            }
+            
+            edgeCount += freePort.getEdges().size();
+        }
+        
+        return new Pair<Float, Integer>(nodeSum, edgeCount);
     }
     
     /**
@@ -524,15 +556,25 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         // sort all nodes by the filtered ranks
         Arrays.sort(layer, new Comparator<LNode>() {
             public int compare(final LNode node1, final LNode node2) {
-                return Float.compare(nodeBarycenter[node1.id], nodeBarycenter[node2.id]);
+                float barycenter1 = nodeBarycenter[node1.id];
+                float barycenter2 = nodeBarycenter[node2.id];
+                
+                // Nodes with equal barycenter values are randomized. This is not a stable
+                // comparison, but we don't care.
+                if (barycenter1 == barycenter2) {
+                    return random.nextBoolean() ? 1 : -1;
+                } else {
+                    return Float.compare(nodeBarycenter[node1.id], nodeBarycenter[node2.id]);
+                }
             }
         });
     }
     
     /**
      * Calculate the number of crossings between the two given layers.
-     * Taken from W. Barth , M. Juenger, P. Mutzel: <em>Simple and efficient
-     * bilayer cross counting</em>, LNCS 2528, pp. 331-360, 2002.
+     * 
+     * Taken from W. Barth , M. Juenger, P. Mutzel: <em>Simple and efficient bilayer
+     * cross counting</em>, LNCS 2528, pp. 331-360, 2002.
      * 
      * @param leftLayer the left layer
      * @param rightLayer the right layer
@@ -541,10 +583,11 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
      */
     private int countCrossings(final LNode[] leftLayer, final LNode[] rightLayer,
             final int edgeCount) {
+
+        Map<LPort, Integer> targetMap = new HashMap<LPort, Integer>();
         
         // Assign index values to the ports of the right layer
         int targetCount = 0;
-        Map<LPort, Integer> targetMap = new HashMap<LPort, Integer>();
         for (LNode node : rightLayer) {
             if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
                 List<LPort> inputPorts = getSortedInputPorts(node);
@@ -609,7 +652,163 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 tree[index]++;
             }
         }
+        
         return crossCount;
+    }
+    
+    /**
+     * Calculates the worst case for the number of crossings caused by in-layer edges in
+     * the given layer. The actual number of crossings may be lower.
+     * 
+     * @param layer the layer whose in-layer crossings to estimate.
+     * @return the worst possible number of crossings.
+     */
+    private int countCrossings(final LNode[] layer) {
+        /* The algorithm used to count crossings within a layer is rather simple. A normal
+         * node cannot be connected to another normal node in the same layer due to how
+         * layering is performed. It remains that at least one of the two nodes must be a
+         * dummy node. Currently, that can only happen due to odd port side handling. Because
+         * of the way dummies are created, there are only two cases:
+         * 
+         *  - An eastern port can be connected to another eastern port.
+         *  - A western port can be connected to another western port.
+         * 
+         * The algorithm now works by assigning indices to eastern ports top-down, and to
+         * western ports bottom-up. (the direction is not that important) Then we traverse
+         * the ports. If we find an eastern port connected to another eastern port, the
+         * difference of their indices tells us how many other ports with incident edges
+         * lie between them and can cause crossings.
+         */
+        int crossings = 0;
+        
+        // Assign indices to the layer's eastern and western ports
+        Map<LPort, Integer> easternPortIndices = new HashMap<LPort, Integer>();
+        Map<LPort, Integer> westernPortIndices = new HashMap<LPort, Integer>();
+        
+        assignEastWestPortIndices(layer, easternPortIndices, westernPortIndices);
+        
+        // Iterate through the ports
+        for (LNode node : layer) {
+            for (LPort port : node.getPorts()) {
+                switch (port.getSide()) {
+                case EAST:
+                    crossings += countPortCrossings(port, easternPortIndices);
+                    break;
+                
+                case WEST:
+                    crossings += countPortCrossings(port, westernPortIndices);
+                    break;
+                }
+            }
+        }
+        
+        return crossings;
+    }
+    
+    /**
+     * Assigns indices to the eastern ports of a layer, and to the western ports of a layer. An
+     * index is assigned to a port if it has incident edges. Eastern ports are indexed top-down,
+     * while western ports are indexed bottom-up.
+     * 
+     * @param layer the layer whose ports to index.
+     * @param easternMap map to put the eastern ports' indices in.
+     * @param westernMap map to put the western ports' indices in.
+     */
+    private void assignEastWestPortIndices(final LNode[] layer, final Map<LPort, Integer> easternMap,
+            final Map<LPort, Integer> westernMap) {
+
+        int currentEasternIndex = 0;
+        int currentWesternIndex = 0;
+        
+        // Assign indices to eastern ports, top-down
+        for (int nodeIndex = 0; nodeIndex < layer.length; nodeIndex++) {
+            LNode node = layer[nodeIndex];
+
+            if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
+                for (LPort easternPort : node.getPorts(PortSide.EAST)) {
+                    if (!easternPort.getEdges().isEmpty()) {
+                        easternMap.put(easternPort, currentEasternIndex++);
+                    }
+                }
+            } else {
+                boolean easternPorts = false;
+
+                for (LPort easternPort : node.getPorts(PortSide.EAST)) {
+                    if (!easternPort.getEdges().isEmpty()) {
+                        easternMap.put(easternPort, currentEasternIndex);
+                    }
+                }
+                
+                if (easternPorts) {
+                    currentEasternIndex++;
+                }
+            }
+        }
+        
+        // Assign indices to western ports, bottom-up
+        for (int nodeIndex = layer.length - 1; nodeIndex >= 0; nodeIndex--) {
+            LNode node = layer[nodeIndex];
+
+            if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
+                for (LPort westernPort : node.getPorts(PortSide.WEST)) {
+                    if (!westernPort.getEdges().isEmpty()) {
+                        westernMap.put(westernPort, currentWesternIndex++);
+                    }
+                }
+            } else {
+                boolean westernPorts = false;
+
+                for (LPort westernPort : node.getPorts(PortSide.WEST)) {
+                    if (!westernPort.getEdges().isEmpty()) {
+                        westernMap.put(westernPort, currentWesternIndex);
+                    }
+                }
+                
+                if (westernPorts) {
+                    currentWesternIndex++;
+                }
+            }
+        }
+    }
+    
+    /**
+     * Counts the crossings caused by in-layer edges connected to the given port. An edge
+     * is only counted once.
+     * 
+     * @param port the port whose edge crossings to count.
+     * @param portIndices map of ports to their respective indices as calculated by
+     *                    {@link #assignEastWestPortIndices(LNode[], Map, Map)}.
+     * @return the maximum number of crossings for this port.
+     */
+    private int countPortCrossings(final LPort port, final Map<LPort, Integer> portIndices) {
+        int maxCrossings = 0;
+        
+        // Find this port's index
+        Integer portIndex = portIndices.get(port);
+        if (portIndex == null) {
+            return 0;
+        }
+        
+        // Find the maximum distance between two connected ports
+        Integer connectedPortIndex = null;
+        for (LEdge edge : port.getEdges()) {
+            if (edge.getSource() == port) {
+                connectedPortIndex = portIndices.get(edge.getTarget());
+            } else {
+                connectedPortIndex = portIndices.get(edge.getSource());
+            }
+            
+            // Check if the edge is connected to another port in the same layer
+            if (connectedPortIndex != null) {
+                // Only count the edge once
+                if (portIndex.intValue() > connectedPortIndex.intValue()) {
+                    maxCrossings = Math.max(maxCrossings,
+                            portIndex.intValue() - connectedPortIndex.intValue() - 1);
+                }
+            }
+        }
+        
+        return maxCrossings;
     }
     
     
@@ -752,59 +951,4 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         }
         return -(low + 1); // key not found
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
 }
