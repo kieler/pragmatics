@@ -1,0 +1,43 @@
+grammar de.cau.cs.kieler.kaom.text.Kaom with de.cau.cs.kieler.core.annotations.Annotations 
+
+import "platform:/resource/de.cau.cs.kieler.kaom/model/kaom.ecore" 
+import "platform:/resource/de.cau.cs.kieler.core.annotations/model/annotations.ecore" as annotations
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+TopLevelEntity returns Entity:
+	{Entity}
+	((annotations += Annotation)*
+	'entity' id=ID name=STRING?
+	(( '{'
+		(childEntities += Entity | childLinks += Link
+		| childPorts += Port | childRelations += Relation)*
+    '}' ) | ';'))?;
+
+Entity returns Entity:
+	{Entity}
+	(annotations += Annotation)*
+	'entity' id=ID name=STRING?
+	(( '{'
+		(childEntities += Entity | childLinks += Link
+		| childPorts += Port | childRelations += Relation)*
+    '}' ) | ';');
+
+Linkable returns Linkable:
+	Entity | Port | Relation;
+
+Link returns Link:
+	(annotations += Annotation)*
+	'link' name=STRING?
+    source = [Linkable|ID]
+	'to' target=[Linkable|ID] ';';
+
+Port returns Port:
+	{Port}
+	(annotations += Annotation)*
+	'port' id=ID name=STRING? ';';
+
+Relation returns Relation:
+	{Relation}
+	(annotations += Annotation)*
+	'relation' id=ID name=STRING? ';';
