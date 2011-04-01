@@ -97,8 +97,13 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
             for (LNode node : nodeArray) {
                 pointer++;
                 
-                // We only care about non-dummy nodes
-                if (!node.getProperty(Properties.NODE_TYPE).equals(Properties.NodeType.NORMAL)) {
+                // Nodes form their own layout unit
+                node.setProperty(Properties.LAYER_LAYOUT_UNIT, node);
+                
+                // We only care about non-dummy nodes with fixed port sides
+                if (!node.getProperty(Properties.NODE_TYPE).equals(Properties.NodeType.NORMAL)
+                        && node.getProperty(Properties.PORT_CONS).isSideFixed()) {
+                    
                     continue;
                 }
                 
@@ -113,9 +118,29 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                 List<LNode> dummyNodes = createDummyNodes(portList);
                 
                 int insertPoint = pointer;
+                LNode previousDummy = null;
                 for (LNode dummy : dummyNodes) {
                     dummy.setLayer(insertPoint, layer);
                     pointer++;
+                    
+                    // The dummy nodes form a layout unit identified by the node they
+                    // were created from. In addition, the order of the dummy nodes must
+                    // be fixed.
+                    dummy.setProperty(Properties.LAYER_LAYOUT_UNIT, node);
+                    if (previousDummy != null) {
+                        previousDummy.setProperty(
+                                Properties.LAYER_NODE_SUCCESSOR_CONSTRAINT,
+                                dummy);
+                    }
+                    
+                    previousDummy = dummy;
+                }
+                
+                // The last of the northern dummies has the current node as its successor
+                if (previousDummy != null) {
+                    previousDummy.setProperty(
+                            Properties.LAYER_NODE_SUCCESSOR_CONSTRAINT,
+                            node);
                 }
                 
                 // Do the same for ports on the southern side; the list of ports must
@@ -128,7 +153,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                 
                 dummyNodes = createDummyNodes(portList);
                 
-                LNode previousDummy = null;
+                previousDummy = null;
                 for (LNode dummy : dummyNodes) {
                     dummy.setLayer(++pointer, layer);
                     
@@ -141,6 +166,14 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                                 Properties.LAYER_NODE_SUCCESSOR_CONSTRAINT,
                                 dummy);
                     }
+                    
+                    previousDummy = dummy;
+                }
+                
+                // If there are south dummies, the node has a successor constraint to
+                // the first of them
+                if (!dummyNodes.isEmpty()) {
+                    node.setProperty(Properties.LAYER_NODE_SUCCESSOR_CONSTRAINT, dummyNodes.get(0));
                 }
             }
         }

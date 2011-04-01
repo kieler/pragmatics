@@ -76,8 +76,8 @@ public final class Properties {
     public static final IProperty<LNode> LAYER_LAYOUT_UNIT = new Property<LNode>(
             "layerLayoutUnit", null);
     /**
-     * Indicates that a node {@code y} may only appear inside a layer after the node {@code x} the
-     * property is set on. That is, having {@code y} appear before {@code x} would violate this
+     * Indicates that a node {@code x} may only appear inside a layer before the node {@code y} the
+     * property is set to. That is, having {@code x} appear after {@code y} would violate this
      * constraint. This property only makes sense for nodes.
      */
     public static final IProperty<LNode> LAYER_NODE_SUCCESSOR_CONSTRAINT = new Property<LNode>(

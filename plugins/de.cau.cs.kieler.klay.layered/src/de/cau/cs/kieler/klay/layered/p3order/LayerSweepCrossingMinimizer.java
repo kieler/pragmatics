@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Random;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
@@ -58,6 +57,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
  * </dl>
  *
  * @author msp
+ * @author cds
  */
 public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements ILayoutPhase {
     
@@ -68,31 +68,79 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
      * 
      * @author cds
      */
-    private static class Vertex {
+    private class Vertex implements Comparable<Vertex> {
         /**
          * List of nodes this vertex consists of.
          */
         private List<LNode> nodes = new LinkedList<LNode>();
         
         /**
-         * A list of node barycenters and node degrees.
+         * The sum of the node weights. Each node weight is the sum of the weights of the
+         * ports the node's ports are connected to.
          */
-        private Map<LNode, Pair<Double, Integer>> nodeInformation =
-            new HashMap<LNode, Pair<Double, Integer>>();
+        private float summedWeight = 0.0f;
         
         /**
-         * This vertex' barycenter value.
+         * The number of ports relevant to the barycenter calculation.
          */
-        private double barycenter = -1;
+        private int degree = 0;
         
+        /**
+         * This vertex' barycenter value. (summedWeight / degree)
+         */
+        private float barycenter = -1.0f;
+        
+        
+        /**
+         * Constructs an empty vertex.
+         */
+        public Vertex() {
+            
+        }
         
         /**
          * Constructs a new instance containing the given node.
          * 
-         * @param node
+         * @param node the node the vertex should contain.
          */
         public Vertex(final LNode node) {
             nodes.add(node);
+        }
+        
+        /**
+         * Constructs a new vertex that is the concatenation of the given two vertices.
+         * 
+         * @param vertex1 the first vertex.
+         * @param vertex2 the second vertex.
+         */
+        public Vertex(final Vertex vertex1, final Vertex vertex2) {
+            nodes.addAll(vertex1.nodes);
+            nodes.addAll(vertex2.nodes);
+            
+            summedWeight = vertex1.summedWeight + vertex2.summedWeight;
+            degree = vertex1.degree + vertex2.degree;
+            
+            if (degree > 0) {
+                barycenter = summedWeight / degree;
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public int compareTo(final Vertex other) {
+            // Empty vertices are placed at the end of all things ((c) by J. R. R. Tolkien)
+            if (nodes.isEmpty() || other.nodes.isEmpty()) {
+                return other.nodes.size() - nodes.size();
+            }
+            
+            // Nodes with equal barycenter values are randomized. This is not a stable
+            // comparison, but we don't care.
+            if (barycenter == other.barycenter) {
+                return random.nextBoolean() ? 1 : -1;
+            } else {
+                return Float.compare(barycenter, other.barycenter);
+            }
         }
     }
     
@@ -118,8 +166,13 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     private float[] portBarycenter;
     /** port position array. */
     private float[] portPos;
-    /** barycenter values for nodes. */
-    private float[] nodeBarycenter;
+    /** A map associating nodes with their respective layout units. */
+    private Map<LNode, LNode> layoutUnits;
+    /**
+     * A map of single-node vertices for each layer. This provides the vertices used at the
+     * beginning of each crossing reduction run.
+     */
+    private Map<LNode, Vertex>[] singleNodeVertices;
     /** the random number generator. */
     private Random random;
     
@@ -133,6 +186,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Layer sweep crossing minimization", 1);
         
@@ -153,11 +207,14 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         int curSweepCrossings = Integer.MAX_VALUE;
         int prevSweepCrossings = Integer.MAX_VALUE;
         
+        layoutUnits = new HashMap<LNode, LNode>();
+        singleNodeVertices = new HashMap[layerCount];
+        
         int nodeCount = 0;
         int portCount = 0;
 
-        // Iterate through the layers, initializing port and node IDs and collecting
-        // the nodes into the current sweep
+        // Iterate through the layers, initializing port and node IDs, collecting
+        // the nodes into the current sweep and building the layout unit map
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         while (layerIter.hasNext()) {
             Layer layer = layerIter.next();
@@ -170,12 +227,16 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             prevSweep[layerIndex] = new LNode[layerNodeCount];
             curSweep[layerIndex] = new LNode[layerNodeCount];
             
+            singleNodeVertices[layerIndex] = new HashMap<LNode, Vertex>();
+            
             ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
             while (nodeIter.hasNext()) {
                 LNode node = nodeIter.next();
                 
                 curSweep[layerIndex][nodeIter.previousIndex()] = node;
                 node.id = nodeCount++;
+                layoutUnits.put(node, node.getProperty(Properties.LAYER_LAYOUT_UNIT));
+                singleNodeVertices[layerIndex].put(node, new Vertex(node));
                 
                 for (LPort port : node.getPorts()) {
                     port.id = portCount++;
@@ -183,10 +244,9 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             }
         }
         
-        // Initialize the position and barycenter arrays
+        // Initialize the position arrays
         portBarycenter = new float[portCount];
         portPos = new float[portCount];
-        nodeBarycenter = new float[nodeCount];
         
         // Fetch the graph's randomizer and determine the requested number of runs
         random = layeredGraph.getProperty(Properties.RANDOM);
@@ -221,7 +281,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                     for (int layerIndex = 1; layerIndex < layerCount; layerIndex++) {
                         LNode[] freeLayer = curSweep[layerIndex];
                         curSweepCrossings += minimizeCrossings(
-                                fixedLayer, freeLayer, true, !firstSweep);
+                                fixedLayer, freeLayer, layerIndex, true, !firstSweep);
                         fixedLayer = freeLayer;
                     }
                 } else {
@@ -229,7 +289,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                     for (int layerIndex = layerCount - 2; layerIndex >= 0; layerIndex--) {
                         LNode[] freeLayer = curSweep[layerIndex];
                         curSweepCrossings += minimizeCrossings(
-                                fixedLayer, freeLayer, false, !firstSweep);
+                                fixedLayer, freeLayer, layerIndex, false, !firstSweep);
                         fixedLayer = freeLayer;
                     }
                 }
@@ -275,151 +335,10 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
      * Release all created resources so the GC can reap them.
      */
     private void dispose() {
-        this.nodeBarycenter = null;
         this.portBarycenter = null;
         this.portPos = null;
-    }
-    
-
-    ///////////////////////////////////////////////////////////////////////////////
-    // Port Position Assignment
-    
-    /**
-     * Determine positions for all ports in the given layer. Input and output ports are processed
-     * separately.
-     * 
-     * @param layer a layer
-     */
-    private void assignPortPos(final LNode[] layer) {
-        int nodeIx = 0;
-        for (LNode node : layer) {
-            // count the input and output ports
-            int inputPorts = 0, outputPorts = 0;
-            for (LPort port : node.getPorts()) {
-                switch (port.getType()) {
-                case INPUT:
-                    inputPorts++;
-                    break;
-                case OUTPUT:
-                    outputPorts++;
-                    break;
-                }
-            }
-            // set positions for the input ports
-            if (inputPorts > 0) {
-                assignPortPos(node, nodeIx, PortType.INPUT, inputPorts);
-            }
-            // set positions for the output ports
-            if (outputPorts > 0) {
-                assignPortPos(node, nodeIx, PortType.OUTPUT, outputPorts);
-            }
-            nodeIx++;
-        }
-    }
-    
-    /**
-     * Assign port positions for the input or output ports of the given node.
-     * 
-     * @param node a node
-     * @param nodeIx the node's index in its layer
-     * @param type the type of ports to process
-     * @param count the number of ports of that type
-     */
-    private void assignPortPos(final LNode node, final int nodeIx,
-            final PortType type, final int count) {
-        if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
-            float incr = 1.0f / count;
-            
-            if (type == PortType.INPUT) {
-                // Start at the top right port, going counter-clockwise
-                List<LPort> portList = getSortedInputPorts(node);
-                float pos = nodeIx + 1 - incr;
-                
-                for (LPort port : portList) {
-                    portPos[port.id] = pos;
-                    pos -= incr;
-                }
-                
-            } else {
-                // Start at the top left port, going clockwise
-                float pos = nodeIx;
-                
-                for (LPort port : node.getPorts(type)) {
-                    portPos[port.id] = pos;
-                    pos += incr;
-                }
-            }
-        } else {
-            for (LPort port : node.getPorts(type)) {
-                portPos[port.id] = nodeIx + getPortIncr(type, port.getSide());
-            }
-        }
-    }
-
-    /**
-     * Returns a list of input ports, beginning at the top right port of the eastern
-     * side, going clockwise.
-     * 
-     * @param node the node whose input ports to return.
-     * @return list of input ports.
-     */
-    private List<LPort> getSortedInputPorts(final LNode node) {
-        List<LPort> northPorts = new LinkedList<LPort>();
-        List<LPort> portList = new LinkedList<LPort>();
-        
-        for (LPort port : node.getPorts(PortType.INPUT)) {
-            if (port.getSide() == PortSide.NORTH) {
-                northPorts.add(port);
-            } else {
-                portList.add(port);
-            }
-        }
-        
-        // Append the list of northern ports to the other ports
-        portList.addAll(northPorts);
-        return portList;
-    }
-    
-    private static final float INCR_ONE = 0.3f;
-    private static final float INCR_TWO = 0.5f;
-    private static final float INCR_THREE = 0.7f;
-    private static final float INCR_FOUR = 0.9f;
-    
-    /**
-     * Return an increment value for the position of a port with given type and side.
-     * 
-     * @param type the port type
-     * @param side the port side
-     * @return a position increment for the port
-     */
-    private static float getPortIncr(final PortType type, final PortSide side) {
-        switch (type) {
-        case INPUT:
-            switch (side) {
-            case NORTH:
-                return INCR_ONE;
-            case WEST:
-                return INCR_TWO;
-            case SOUTH:
-                return INCR_THREE;
-            case EAST:
-                return INCR_FOUR;
-            }
-            break;
-        case OUTPUT:
-            switch (side) {
-            case NORTH:
-                return INCR_ONE;
-            case EAST:
-                return INCR_TWO;
-            case SOUTH:
-                return INCR_THREE;
-            case WEST:
-                return INCR_FOUR;
-            }
-            break;
-        }
-        return 0;
+        this.layoutUnits = null;
+        this.singleNodeVertices = null;
     }
     
     
@@ -432,39 +351,48 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
      * 
      * @param fixedLayer the fixed layer
      * @param freeLayer the free layer whose nodes are reordered
+     * @param freeLayerIndex the free layer's index.
      * @param forward whether the free layer is after the fixed layer
      * @param preOrdered whether the nodes have been ordered in a previous run
      * @return the new number of crossings between the two layers
      */
     private int minimizeCrossings(final LNode[] fixedLayer, final LNode[] freeLayer,
-            final boolean forward, final boolean preOrdered) {
+            final int freeLayerIndex, final boolean forward, final boolean preOrdered) {
         
         // Ignore empty free layers
         if (freeLayer.length == 0) {
             return 0;
         }
-        Layer freeLayerLayer = freeLayer[0].getLayer();
         
-        int totalEdges = 0;
-        for (LNode node : freeLayer) {
-            // The node's barycenter will be calculated; nodes without edges connected
-            // to them will have a barycenter value of -1
-            nodeBarycenter[node.id] = -1;
-            
-            Pair<Float, Integer> rawBarycenter = calculateNodeSum(freeLayerLayer, node, forward);
-            
-            // If any edges are connected to the node, divide the barycenter sum by
-            // the number of edges to arrive at the final value.
-            if (rawBarycenter.getSecond() > 0) {
-                nodeBarycenter[node.id] = rawBarycenter.getFirst() / rawBarycenter.getSecond();
-                totalEdges += rawBarycenter.getSecond();
-            }
+        /* We start with the list of single-node vertices. For each vertex, we calculate
+         * the new barycenter value. We then sort the vertices using that value and
+         * build a map of successor constraints using the nodes' individual successor
+         * constraints as well as information about the layout units. Once that is
+         * done, we look for violated constraints and handle them until we don't find
+         * any anymore.
+         * 
+         * For performance reasons, we're using an array of vertices. Since the number
+         * of vertices will almost certainly decrease during the algorithm, we'll have
+         * to take care later to ignore vertices not containing any nodes.
+         */
+        
+        Vertex[] vertices = new Vertex[freeLayer.length];
+        for (int index = 0; index < vertices.length; index++) {
+            vertices[index] = singleNodeVertices[freeLayerIndex].get(freeLayer[index]);
         }
         
-        // TODO: Insert constraint handling code.
+        // Calculate barycenters, assign barycenters to barycenterless vertices and sort
+        // the vertices accordingly
+        int totalEdges = calculateBarycenters(vertices, freeLayerIndex, forward);
+        fillInUnknownBarycenters(vertices, preOrdered);
+        Arrays.sort(vertices);
         
-        // Sort nodes by barycenter value
-        sortNodes(freeLayer, preOrdered);
+        // TODO: Build constraints graph.
+        
+        // TODO: Handle violated constraints.
+        
+        // Apply the node order to the free layer array and assign port positions
+        applyVertexOrderingToNodeArray(vertices, freeLayer);
         assignPortPos(freeLayer);
         
         // Return the number of crossings
@@ -473,21 +401,44 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         
         return countCrossings(leftLayer, rightLayer, totalEdges) + countCrossings(freeLayer);
     }
+
+    /**
+     * Calculates the barycenters of the given vertices.
+     * 
+     * @param vertices the vertices.
+     * @param vertexLayerIndex index of the layer the vertices appear in.
+     * @param forward {@code true} if the current sweep moves forward.
+     * @return the total number of encountered edges.
+     */
+    private int calculateBarycenters(final Vertex[] vertices, final int vertexLayerIndex,
+            final boolean forward) {
+        
+        int totalEdges = 0;
+        for (Vertex vertex : vertices) {
+            // Calculate the vertex's new barycenter (may be -1)
+            calculateBarycenter(vertex, vertexLayerIndex, forward);
+            totalEdges += vertex.degree;
+        }
+        
+        return totalEdges;
+    }
     
     /**
-     * Calculates the sum of the port positions the given node is connected to.
+     * Calculates the barycenter of the given single-node-vertex.
      * 
-     * @param layer the layer the node is part of.
-     * @param node the node.
+     * @param vertex the vertex, consisting of a single node.
+     * @param vertexLayerIndex index of the layer the vertex is part of.
      * @param forward {@code true} if the current sweep moves forward.
      * @return a pair containing the summed port positions of the connected ports as the
      *         first, and the number of connected edges as the second entry.
      */
-    private Pair<Float, Integer> calculateNodeSum(final Layer layer, final LNode node,
+    private void calculateBarycenter(final Vertex vertex, final int vertexLayerIndex,
             final boolean forward) {
         
-        float nodeSum = 0.0f;
-        int edgeCount = 0;
+        vertex.degree = 0;
+        vertex.summedWeight = 0.0f;
+        vertex.barycenter = -1.0f;
+        LNode node = vertex.nodes.get(0);
         
         for (LPort freePort : node.getPorts(forward ? PortType.INPUT : PortType.OUTPUT)) {
             for (LPort fixedPort : freePort.getConnectedPorts()) {
@@ -495,79 +446,87 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 // we have an in-layer edge), use that node's barycenter calculation instead
                 LNode fixedNode = fixedPort.getNode();
                 
-                if (fixedNode.getLayer() == layer) {
-                    Pair<Float, Integer> rawBarycenter = calculateNodeSum(layer, fixedNode, forward);
+                if (fixedNode.getLayer() == node.getLayer()) {
+                    // Find the fixed node's vertex and calculate its barycenter (perhaps again)
+                    Vertex fixedVertex = singleNodeVertices[vertexLayerIndex].get(fixedNode);
+                    calculateBarycenter(fixedVertex, vertexLayerIndex, forward);
                     
-                    nodeSum += rawBarycenter.getFirst();
-                    edgeCount += rawBarycenter.getSecond() - 1;
+                    // Update this vertex's values
+                    vertex.degree += fixedVertex.degree - 1;
+                    vertex.summedWeight += fixedVertex.summedWeight;
                 } else {
-                    nodeSum += portPos[fixedPort.id];
+                    vertex.summedWeight += portPos[fixedPort.id];
                 }
             }
             
-            edgeCount += freePort.getEdges().size();
+            vertex.degree += freePort.getEdges().size();
         }
         
-        return new Pair<Float, Integer>(nodeSum, edgeCount);
+        if (vertex.degree > 0) {
+            vertex.barycenter = vertex.summedWeight / vertex.degree;
+        }
     }
     
     /**
-     * Sort the nodes of the given layer. A heuristic tries to find appropriate position values
-     * for nodes whose position value is < 0.
+     * Try to find appropriate barycenter values for vertices whose barycenter is < 0.
      * 
-     * @param layer layer whose nodes shall be sorted
-     * @param preOrdered whether the nodes have been ordered in a previous run
+     * @param vertices the vertices to fill in barycenters for.
+     * @param preOrdered whether the vertices have been ordered in a previous run.
      */
-    private void sortNodes(final LNode[] layer, final boolean preOrdered) {
-        // determine placements for nodes with undefined position value
+    private void fillInUnknownBarycenters(final Vertex[] vertices, final boolean preOrdered) {
+        // Determine placements for vertices with undefined position value
         if (preOrdered) {
             float lastValue = -1;
-            for (int i = 0; i < layer.length; i++) {
-                int nodeid = layer[i].id;
-                float value = nodeBarycenter[nodeid];
+            for (int i = 0; i < vertices.length; i++) {
+                float value = vertices[i].barycenter;
+                
                 if (value < 0) {
                     float nextValue = lastValue + 1;
-                    for (int j = i + 1; j < layer.length; j++) {
-                        float x = nodeBarycenter[layer[j].id];
+                    for (int j = i + 1; j < vertices.length; j++) {
+                        float x = vertices[j].barycenter;
                         if (x >= 0) {
                             nextValue = x;
                             break;
                         }
                     }
+                    
                     value = (lastValue + nextValue) / 2;
-                    nodeBarycenter[nodeid] = value;
+                    vertices[i].barycenter = value;
                 }
+                
                 lastValue = value;
             }
         } else {
-            // no previous ordering - determine random placement for new nodes
+            // No previous ordering - determine random placement for new nodes
             float maxBary = 0;
-            for (LNode node : layer) {
-                maxBary = Math.max(maxBary, nodeBarycenter[node.id]);
+            for (Vertex vertex : vertices) {
+                maxBary = Math.max(maxBary, vertex.barycenter);
             }
+            
             maxBary += 2;
-            for (LNode node : layer) {
-                if (nodeBarycenter[node.id] < 0) {
-                    nodeBarycenter[node.id] = random.nextFloat() * maxBary - 1;
+            for (Vertex vertex : vertices) {
+                if (vertex.barycenter < 0) {
+                    vertex.barycenter = random.nextFloat() * maxBary - 1;
                 }
             }
         }
-
-        // sort all nodes by the filtered ranks
-        Arrays.sort(layer, new Comparator<LNode>() {
-            public int compare(final LNode node1, final LNode node2) {
-                float barycenter1 = nodeBarycenter[node1.id];
-                float barycenter2 = nodeBarycenter[node2.id];
-                
-                // Nodes with equal barycenter values are randomized. This is not a stable
-                // comparison, but we don't care.
-                if (barycenter1 == barycenter2) {
-                    return random.nextBoolean() ? 1 : -1;
-                } else {
-                    return Float.compare(nodeBarycenter[node1.id], nodeBarycenter[node2.id]);
-                }
+    }
+    
+    /**
+     * Apply the node order as determined by the sorted list of vertices to the free layer
+     * array.
+     * 
+     * @param vertices sorted array of vertices.
+     * @param freeLayer array of nodes to apply the ordering to.
+     */
+    private void applyVertexOrderingToNodeArray(final Vertex[] vertices, final LNode[] freeLayer) {
+        int index = 0;
+        
+        for (Vertex vertex : vertices) {
+            for (LNode node : vertex.nodes) {
+                freeLayer[index++] = node;
             }
-        });
+        }
     }
     
     /**
@@ -807,6 +766,148 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         }
         
         return maxCrossings;
+    }
+    
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // Port Position Assignment
+    
+    /**
+     * Determine positions for all ports in the given layer. Input and output ports are processed
+     * separately.
+     * 
+     * @param layer a layer
+     */
+    private void assignPortPos(final LNode[] layer) {
+        int nodeIx = 0;
+        for (LNode node : layer) {
+            // count the input and output ports
+            int inputPorts = 0, outputPorts = 0;
+            for (LPort port : node.getPorts()) {
+                switch (port.getType()) {
+                case INPUT:
+                    inputPorts++;
+                    break;
+                case OUTPUT:
+                    outputPorts++;
+                    break;
+                }
+            }
+            // set positions for the input ports
+            if (inputPorts > 0) {
+                assignPortPos(node, nodeIx, PortType.INPUT, inputPorts);
+            }
+            // set positions for the output ports
+            if (outputPorts > 0) {
+                assignPortPos(node, nodeIx, PortType.OUTPUT, outputPorts);
+            }
+            nodeIx++;
+        }
+    }
+    
+    /**
+     * Assign port positions for the input or output ports of the given node.
+     * 
+     * @param node a node
+     * @param nodeIx the node's index in its layer
+     * @param type the type of ports to process
+     * @param count the number of ports of that type
+     */
+    private void assignPortPos(final LNode node, final int nodeIx,
+            final PortType type, final int count) {
+        if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
+            float incr = 1.0f / count;
+            
+            if (type == PortType.INPUT) {
+                // Start at the top right port, going counter-clockwise
+                List<LPort> portList = getSortedInputPorts(node);
+                float pos = nodeIx + 1 - incr;
+                
+                for (LPort port : portList) {
+                    portPos[port.id] = pos;
+                    pos -= incr;
+                }
+                
+            } else {
+                // Start at the top left port, going clockwise
+                float pos = nodeIx;
+                
+                for (LPort port : node.getPorts(type)) {
+                    portPos[port.id] = pos;
+                    pos += incr;
+                }
+            }
+        } else {
+            for (LPort port : node.getPorts(type)) {
+                portPos[port.id] = nodeIx + getPortIncr(type, port.getSide());
+            }
+        }
+    }
+
+    /**
+     * Returns a list of input ports, beginning at the top right port of the eastern
+     * side, going clockwise.
+     * 
+     * @param node the node whose input ports to return.
+     * @return list of input ports.
+     */
+    private List<LPort> getSortedInputPorts(final LNode node) {
+        List<LPort> northPorts = new LinkedList<LPort>();
+        List<LPort> portList = new LinkedList<LPort>();
+        
+        for (LPort port : node.getPorts(PortType.INPUT)) {
+            if (port.getSide() == PortSide.NORTH) {
+                northPorts.add(port);
+            } else {
+                portList.add(port);
+            }
+        }
+        
+        // Append the list of northern ports to the other ports
+        portList.addAll(northPorts);
+        return portList;
+    }
+    
+    private static final float INCR_ONE = 0.3f;
+    private static final float INCR_TWO = 0.5f;
+    private static final float INCR_THREE = 0.7f;
+    private static final float INCR_FOUR = 0.9f;
+    
+    /**
+     * Return an increment value for the position of a port with given type and side.
+     * 
+     * @param type the port type
+     * @param side the port side
+     * @return a position increment for the port
+     */
+    private static float getPortIncr(final PortType type, final PortSide side) {
+        switch (type) {
+        case INPUT:
+            switch (side) {
+            case NORTH:
+                return INCR_ONE;
+            case WEST:
+                return INCR_TWO;
+            case SOUTH:
+                return INCR_THREE;
+            case EAST:
+                return INCR_FOUR;
+            }
+            break;
+        case OUTPUT:
+            switch (side) {
+            case NORTH:
+                return INCR_ONE;
+            case EAST:
+                return INCR_TWO;
+            case SOUTH:
+                return INCR_THREE;
+            case WEST:
+                return INCR_FOUR;
+            }
+            break;
+        }
+        return 0;
     }
     
     
