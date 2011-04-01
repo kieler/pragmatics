@@ -35,7 +35,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *     being directly next to each other are merged.</dd>
  * </dl>
  *
- * @author msp
+ * @author cds
  */
 public class HyperedgeDummyJoiner extends AbstractAlgorithm implements ILayoutProcessor {
 

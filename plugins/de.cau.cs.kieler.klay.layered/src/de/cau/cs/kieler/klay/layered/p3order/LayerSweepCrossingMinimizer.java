@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.layered.p3order;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,7 +22,11 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
@@ -75,6 +78,16 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         private List<LNode> nodes = new LinkedList<LNode>();
         
         /**
+         * List of outgoing constraints.
+         */
+        private List<Vertex> outgoingConstraints = new LinkedList<Vertex>();
+        
+        /**
+         * The number of incoming constraints.
+         */
+        private int incomingConstraintsCount = 0;
+        
+        /**
          * The sum of the node weights. Each node weight is the sum of the weights of the
          * ports the node's ports are connected to.
          */
@@ -108,7 +121,10 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         }
         
         /**
-         * Constructs a new vertex that is the concatenation of the given two vertices.
+         * Constructs a new vertex that is the concatenation of the given two vertices. The
+         * incoming constraints count is set to zero, while the list of successors are merged,
+         * updating the successors' incoming count appropriately if both vertices are
+         * predecessors.
          * 
          * @param vertex1 the first vertex.
          * @param vertex2 the second vertex.
@@ -116,6 +132,22 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         public Vertex(final Vertex vertex1, final Vertex vertex2) {
             nodes.addAll(vertex1.nodes);
             nodes.addAll(vertex2.nodes);
+            
+            // Add constraints, taking care not to add any constraints to vertex1 or vertex2
+            // and to decrement the incoming constraints count of those that are successors
+            // to both
+            outgoingConstraints.addAll(vertex1.outgoingConstraints);
+            outgoingConstraints.remove(vertex2);
+            for (Vertex candidate : vertex2.outgoingConstraints) {
+                if (candidate == vertex1) {
+                    continue;
+                } else if (outgoingConstraints.contains(candidate)) {
+                    // The candidate was in both vertice's successor list
+                    candidate.incomingConstraintsCount--;
+                } else {
+                    outgoingConstraints.add(candidate);
+                }
+            }
             
             summedWeight = vertex1.summedWeight + vertex2.summedWeight;
             degree = vertex1.degree + vertex2.degree;
@@ -166,8 +198,8 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     private float[] portBarycenter;
     /** port position array. */
     private float[] portPos;
-    /** A map associating nodes with their respective layout units. */
-    private Map<LNode, LNode> layoutUnits;
+    /** A map associating layout units with their respective members. */
+    private Multimap<LNode, LNode> layoutUnits;
     /**
      * A map of single-node vertices for each layer. This provides the vertices used at the
      * beginning of each crossing reduction run.
@@ -207,7 +239,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         int curSweepCrossings = Integer.MAX_VALUE;
         int prevSweepCrossings = Integer.MAX_VALUE;
         
-        layoutUnits = new HashMap<LNode, LNode>();
+        layoutUnits = HashMultimap.create();
         singleNodeVertices = new HashMap[layerCount];
         
         int nodeCount = 0;
@@ -235,7 +267,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 
                 curSweep[layerIndex][nodeIter.previousIndex()] = node;
                 node.id = nodeCount++;
-                layoutUnits.put(node, node.getProperty(Properties.LAYER_LAYOUT_UNIT));
+                layoutUnits.put(node.getProperty(Properties.LAYER_LAYOUT_UNIT), node);
                 singleNodeVertices[layerIndex].put(node, new Vertex(node));
                 
                 for (LPort port : node.getPorts()) {
@@ -376,22 +408,31 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
          * to take care later to ignore vertices not containing any nodes.
          */
         
+        Map<LNode, Vertex> layerVertices = singleNodeVertices[freeLayerIndex];
+        
         Vertex[] vertices = new Vertex[freeLayer.length];
         for (int index = 0; index < vertices.length; index++) {
-            vertices[index] = singleNodeVertices[freeLayerIndex].get(freeLayer[index]);
+            vertices[index] = layerVertices.get(freeLayer[index]);
         }
         
         // Calculate barycenters, assign barycenters to barycenterless vertices and sort
         // the vertices accordingly
-        int totalEdges = calculateBarycenters(vertices, freeLayerIndex, forward);
+        int totalEdges = calculateBarycenters(vertices, layerVertices, forward);
         fillInUnknownBarycenters(vertices, preOrdered);
         Arrays.sort(vertices);
         
-        // TODO: Build constraints graph.
+        // Build the constraints graph
+        buildConstraintsGraph(vertices, layerVertices);
         
-        // TODO: Handle violated constraints.
+        // Find violated vertices
+        Pair<Vertex, Vertex> violatedConstraint = null;
+        while ((violatedConstraint = findViolatedConstraint(vertices)) != null) {
+            handleViolatedConstraint(violatedConstraint, vertices);
+            Arrays.sort(vertices);
+        }
         
-        // Apply the node order to the free layer array and assign port positions
+        // Sort the vertices again, apply the node order to the free layer array and
+        // assign port positions
         applyVertexOrderingToNodeArray(vertices, freeLayer);
         assignPortPos(freeLayer);
         
@@ -406,17 +447,17 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
      * Calculates the barycenters of the given vertices.
      * 
      * @param vertices the vertices.
-     * @param vertexLayerIndex index of the layer the vertices appear in.
+     * @param layerVertices map of the layer's nodes to their single-node vertices.
      * @param forward {@code true} if the current sweep moves forward.
      * @return the total number of encountered edges.
      */
-    private int calculateBarycenters(final Vertex[] vertices, final int vertexLayerIndex,
+    private int calculateBarycenters(final Vertex[] vertices, final Map<LNode, Vertex> layerVertices,
             final boolean forward) {
         
         int totalEdges = 0;
         for (Vertex vertex : vertices) {
             // Calculate the vertex's new barycenter (may be -1)
-            calculateBarycenter(vertex, vertexLayerIndex, forward);
+            calculateBarycenter(vertex, layerVertices, forward);
             totalEdges += vertex.degree;
         }
         
@@ -427,12 +468,12 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
      * Calculates the barycenter of the given single-node-vertex.
      * 
      * @param vertex the vertex, consisting of a single node.
-     * @param vertexLayerIndex index of the layer the vertex is part of.
+     * @param layerVertices map of the layer's nodes to their single-node vertices.
      * @param forward {@code true} if the current sweep moves forward.
      * @return a pair containing the summed port positions of the connected ports as the
      *         first, and the number of connected edges as the second entry.
      */
-    private void calculateBarycenter(final Vertex vertex, final int vertexLayerIndex,
+    private void calculateBarycenter(final Vertex vertex, final Map<LNode, Vertex> layerVertices,
             final boolean forward) {
         
         vertex.degree = 0;
@@ -448,8 +489,8 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 
                 if (fixedNode.getLayer() == node.getLayer()) {
                     // Find the fixed node's vertex and calculate its barycenter (perhaps again)
-                    Vertex fixedVertex = singleNodeVertices[vertexLayerIndex].get(fixedNode);
-                    calculateBarycenter(fixedVertex, vertexLayerIndex, forward);
+                    Vertex fixedVertex = layerVertices.get(fixedNode);
+                    calculateBarycenter(fixedVertex, layerVertices, forward);
                     
                     // Update this vertex's values
                     vertex.degree += fixedVertex.degree - 1;
@@ -511,6 +552,143 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             }
         }
     }
+
+    /**
+     * Builds the vertex graph for the given vertices.
+     * 
+     * @param vertices the array of single-node vertices sorted by their barycenter values.
+     * @param layerVertices map mapping the nodes in the current layer to their vertices.
+     */
+    private void buildConstraintsGraph(final Vertex[] vertices, final Map<LNode, Vertex> layerVertices) {
+        // Reset the constraint fields
+        for (Vertex vertex : vertices) {
+            vertex.outgoingConstraints.clear();
+            vertex.incomingConstraintsCount = 0;
+        }
+        
+        // Iterate through the vertices, adding the necessary constraints
+        LNode lastNonDummyNode = null;
+        for (Vertex vertex : vertices) {
+            LNode vertexNode = vertex.nodes.get(0);
+            
+            // Add the constraints given by the vertex's node
+            LNode successor = vertexNode.getProperty(Properties.LAYER_NODE_SUCCESSOR_CONSTRAINT);
+            if (successor != null) {
+                Vertex successorVertex = layerVertices.get(successor);
+                vertex.outgoingConstraints.add(successorVertex);
+                successorVertex.incomingConstraintsCount++;
+            }
+            
+            // Check if we're processing a a normal, none-dummy node
+            if (vertexNode.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL) {
+                // If we already processed another normal, non-dummy node, we need to add
+                // constraints from all of that other node's layout unit's vertices to this
+                // node's layout unit's vertices
+                if (lastNonDummyNode != null) {
+                    for (LNode lastUnitNode : layoutUnits.get(lastNonDummyNode)) {
+                        Vertex lastUnitVertex = layerVertices.get(lastUnitNode);
+                        
+                        for (LNode currentUnitNode : layoutUnits.get(vertexNode)) {
+                            Vertex currentUnitVertex = layerVertices.get(currentUnitNode);
+                            lastUnitVertex.outgoingConstraints.add(currentUnitVertex);
+                            currentUnitVertex.incomingConstraintsCount++;
+                        }
+                    }
+                }
+                
+                lastNonDummyNode = vertexNode;
+            }
+        }
+    }
+
+    /**
+     * Handles the case of a violated constraint.
+     * 
+     * @param violatedConstraint the violated constraint.
+     * @param vertices the array of vertices.
+     */
+    private void handleViolatedConstraint(final Pair<Vertex, Vertex> violatedConstraint,
+            final Vertex[] vertices) {
+        
+        Vertex firstVertex = violatedConstraint.getFirst();
+        Vertex secondVertex = violatedConstraint.getSecond();
+        
+        // Create a new vertex from the two constrain-violating vertices; this also
+        // automatically calculates the new vertex's barycenter value
+        Vertex newVertex = new Vertex(violatedConstraint.getFirst(), violatedConstraint.getSecond());
+        
+        // Iterate through the vertices. One of the two constrained vertices will be
+        // replaced by the new vertex, the other by an empty vertex. Along the way,
+        // constraint relationships will be updated
+        for (int index = 0; index < vertices.length; index++) {
+            if (vertices[index] == firstVertex) {
+                vertices[index] = newVertex;
+            } else if (vertices[index] == secondVertex) {
+                vertices[index] = new Vertex();
+            } else {
+                // Check if the vertex has any constraints with the former two vertices
+                boolean addConstraint = false;
+                addConstraint = vertices[index].outgoingConstraints.remove(firstVertex)
+                        || vertices[index].outgoingConstraints.remove(secondVertex);
+                
+                if (addConstraint) {
+                    vertices[index].outgoingConstraints.add(newVertex);
+                    newVertex.incomingConstraintsCount++;
+                }
+            }
+        }
+    }
+    
+    /**
+     * Returns a violated constraint, if any is left.
+     * 
+     * @param vertices list of vertices.
+     * @return the two vertices whose constraint is violated, or {@code null} if none
+     *         could be found. The two vertices are returned in the order they should
+     *         appear in, not in the order that violates their constraint.
+     */
+    private Pair<Vertex, Vertex> findViolatedConstraint(final Vertex[] vertices) {
+        List<Vertex> activeVertices = new LinkedList<Vertex>();
+        Map<Vertex, List<Vertex>> incoming = new HashMap<Vertex, List<Vertex>>();
+        
+        // Iterate through the constrained vertices
+        for (Vertex vertex : vertices) {
+            // Ignore unconstrained vertices
+            if (vertex.incomingConstraintsCount == 0 && vertex.outgoingConstraints.isEmpty()) {
+                continue;
+            }
+            
+            incoming.put(vertex, new LinkedList<Vertex>());
+            if (vertex.incomingConstraintsCount == 0) {
+                activeVertices.add(vertex);
+            }
+        }
+        
+        // Iterate through the active vertices to find one with violated constraints
+        while (!activeVertices.isEmpty()) {
+            Vertex vertex = activeVertices.remove(0);
+            
+            // See if we can find a violated constraint
+            for (Vertex predecessor : incoming.get(vertex)) {
+                if (predecessor.barycenter > vertex.barycenter) {
+                    return new Pair<Vertex, Vertex>(predecessor, vertex);
+                }
+            }
+            
+            // No violated constraints; add outgoing constraints to the respective incoming list
+            for (Vertex successor : vertex.outgoingConstraints) {
+                List<Vertex> successorIncomingList = incoming.get(successor);
+                successorIncomingList.add(0, vertex);
+                
+                if (successor.incomingConstraintsCount == successorIncomingList.size()) {
+                    activeVertices.add(successor);
+                }
+            }
+        }
+        
+        // No violated constraints found
+        return null;
+    }
     
     /**
      * Apply the node order as determined by the sorted list of vertices to the free layer
@@ -528,6 +706,10 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             }
         }
     }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Crossing Counting
     
     /**
      * Calculate the number of crossings between the two given layers.
