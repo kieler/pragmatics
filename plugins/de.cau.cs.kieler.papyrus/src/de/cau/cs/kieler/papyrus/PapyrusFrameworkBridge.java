@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.papyrus.core.editor.IMultiDiagramEditor;
 import org.eclipse.ui.IWorkbenchPart;
 
-import de.cau.cs.kieler.core.model.GmfFrameworkBridge;
+import de.cau.cs.kieler.core.model.gmf.GmfFrameworkBridge;
 
 /**
  * An extension of the GMF editing bridge for Papyrus multi-page editors.
