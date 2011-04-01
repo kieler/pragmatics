@@ -44,6 +44,7 @@ Require-Bundle: org.eclipse.core.runtime,
  de.cau.cs.kieler.core.annotations,
  de.cau.cs.kieler.core.annotations.edit,
  de.cau.cs.kieler.karma,
- de.cau.cs.kieler.core.ui
+ de.cau.cs.kieler.core.ui,
+ de.cau.cs.kieler.core.model.gmf
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy

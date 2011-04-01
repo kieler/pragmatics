@@ -15,7 +15,7 @@ package de.cau.cs.kieler.keg.ksbase.copypaste;
 
 import org.eclipse.gmf.runtime.diagram.ui.providers.DiagramGlobalActionHandler;
 
-import de.cau.cs.kieler.core.ui.handler.AbstractCutCopyPasteHandlerProvider;
+import de.cau.cs.kieler.core.model.gmf.handler.AbstractCutCopyPasteHandlerProvider;
 
 /**
  * Handler for passing cut, copy and paste request to the appropriate KSbase

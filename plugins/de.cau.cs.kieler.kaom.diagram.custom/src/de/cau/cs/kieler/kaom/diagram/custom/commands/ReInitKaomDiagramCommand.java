@@ -35,6 +35,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gmf.runtime.common.core.command.CommandResult;
 import org.eclipse.gmf.runtime.diagram.core.services.ViewService;
 import org.eclipse.gmf.runtime.emf.commands.core.command.AbstractTransactionalCommand;
+import org.eclipse.gmf.runtime.emf.core.GMFEditingDomainFactory;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
@@ -205,5 +206,13 @@ public class ReInitKaomDiagramCommand extends AbstractReInitDiagramCommand {
     @Override
     protected String getModelExtension() {
         return sourceExtension;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected TransactionalEditingDomain createEditingDomain() {
+        return GMFEditingDomainFactory.INSTANCE.createEditingDomain();
     }
 }

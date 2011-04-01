@@ -17,7 +17,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.core.model.trigger.ReInitDiagramTriggerState;
+import de.cau.cs.kieler.core.model.triggers.ReInitDiagramTriggerState;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 
 /**

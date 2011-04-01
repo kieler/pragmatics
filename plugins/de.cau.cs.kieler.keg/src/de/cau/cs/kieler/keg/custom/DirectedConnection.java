@@ -18,7 +18,7 @@ import org.eclipse.draw2d.RotatableDecoration;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 
-import de.cau.cs.kieler.core.ui.figures.SplineConnection;
+import de.cau.cs.kieler.core.model.gmf.figures.SplineConnection;
 
 /**
  * A spline connection with an arrow head.

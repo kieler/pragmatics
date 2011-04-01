@@ -14,6 +14,8 @@ main() {
 	
 	// some general plugin settings
 	model.plugin.requiredPlugins += "de.cau.cs.kieler.core.ui";
+    model.plugin.requiredPlugins += "de.cau.cs.kieler.core.model";
+    model.plugin.requiredPlugins += "de.cau.cs.kieler.core.model.gmf";
 	model.plugin.requiredPlugins += "de.cau.cs.kieler.karma";
 	model.plugin.version := "0.2.0.qualifier";
 	model.plugin.provider := "Christian-Albrechts-Universität zu Kiel";

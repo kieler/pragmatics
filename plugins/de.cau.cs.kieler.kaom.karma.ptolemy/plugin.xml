@@ -5,7 +5,7 @@
          point="de.cau.cs.kieler.karma">
       <configuration
             Priority="2"
-            RenderingProvider="de.cau.cs.kieler.kaom.karma.renderingprovider.KaomRenderingProvider">
+            RenderingProvider="de.cau.cs.kieler.kaom.karma.ptolemy.renderingprovider.KaomRenderingProvider">
          <conditions>
             <customCondition
                   condition="de.cau.cs.kieler.karma.AnnotationCondition"
@@ -162,7 +162,7 @@
       </configuration>
       <configuration
             Priority="3"
-            RenderingProvider="de.cau.cs.kieler.kaom.karma.renderingprovider.KaomRenderingProvider">
+            RenderingProvider="de.cau.cs.kieler.kaom.karma.ptolemy.renderingprovider.KaomRenderingProvider">
          <conditions>
             <compoundCondition
                   figureParam="Director"
@@ -188,7 +188,7 @@
          </editPart>
       </configuration>
       <configuration
-            RenderingProvider="de.cau.cs.kieler.kaom.karma.renderingprovider.KaomPortProvider">
+            RenderingProvider="de.cau.cs.kieler.kaom.karma.ptolemy.renderingprovider.KaomPortProvider">
          <conditions>
             <compoundCondition
                   borderItemParam="NORTH"
@@ -296,7 +296,7 @@
          </editPart>
       </configuration>
       <configuration
-            RenderingProvider="de.cau.cs.kieler.kaom.karma.renderingprovider.KaomRenderingProvider">
+            RenderingProvider="de.cau.cs.kieler.kaom.karma.ptolemy.renderingprovider.KaomRenderingProvider">
          <conditions>
             <compoundCondition
                   figureParam="stateConnection">
@@ -326,7 +326,7 @@
       </configuration>
       <configuration
             Priority="3"
-            RenderingProvider="de.cau.cs.kieler.kaom.karma.renderingprovider.PtolemyStateMachineProvider">
+            RenderingProvider="de.cau.cs.kieler.kaom.karma.ptolemy.renderingprovider.PtolemyStateMachineProvider">
          <conditions>
             <compoundCondition
                   figureParam="initialFinalState"

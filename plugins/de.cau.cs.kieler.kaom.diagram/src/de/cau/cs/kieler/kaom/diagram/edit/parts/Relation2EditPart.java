@@ -35,7 +35,7 @@ import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 
-import de.cau.cs.kieler.core.ui.figures.layout.LabelLocator;
+import de.cau.cs.kieler.core.model.gmf.figures.layout.LabelLocator;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.custom.figures.DiamondFigure;
 import de.cau.cs.kieler.kaom.diagram.edit.policies.Relation2ItemSemanticEditPolicy;

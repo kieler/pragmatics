@@ -53,7 +53,7 @@
 «REM» * exchanged default label locator and set smaller default offset
       * overridden method for ports locator in order to allow ports to cover the node label
 «ENDREM»
-                de.cau.cs.kieler.core.ui.figures.layout.LabelLocator locator = new de.cau.cs.kieler.core.ui.figures.layout.LabelLocator(getMainFigure(), org.eclipse.draw2d.PositionConstants.SOUTH);
+                de.cau.cs.kieler.core.model.gmf.figures.layout.LabelLocator locator = new de.cau.cs.kieler.core.model.gmf.figures.layout.LabelLocator(getMainFigure(), org.eclipse.draw2d.PositionConstants.SOUTH);
                 «IF self.getDomainMetaClass().ecoreClass.name = 'Port'-»
                     locator.setPortBehavior(true);
                     locator.setBorderItemOffset(new org.eclipse.draw2d.geometry.Dimension(-2, -2));

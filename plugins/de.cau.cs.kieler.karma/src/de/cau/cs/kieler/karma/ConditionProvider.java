@@ -36,8 +36,8 @@ import org.eclipse.emf.ecore.impl.EAttributeImpl;
 import org.eclipse.emf.mwe.core.ConfigurationException;
 import org.eclipse.xtend.typesystem.emf.EcoreUtil2;
 
-import de.cau.cs.kieler.core.ui.util.FeatureValueCondition;
-import de.cau.cs.kieler.core.ui.util.ListSizeCondition;
+import de.cau.cs.kieler.core.model.util.FeatureValueCondition;
+import de.cau.cs.kieler.core.model.util.ListSizeCondition;
 import de.cau.cs.kieler.core.util.CompoundCondition;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;

@@ -24,9 +24,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.core.kivi.UndoEffect;
+import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
+import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.ui.GraphicalFrameworkService;
-import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 import de.cau.cs.kieler.kiml.VolatileLayoutConfig;
 

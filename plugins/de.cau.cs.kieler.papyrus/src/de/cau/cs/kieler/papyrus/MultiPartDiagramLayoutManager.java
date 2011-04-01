@@ -18,7 +18,7 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
+import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager;
 
 /**

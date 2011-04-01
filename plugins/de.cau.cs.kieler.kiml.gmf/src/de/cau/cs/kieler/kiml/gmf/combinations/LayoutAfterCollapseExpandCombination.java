@@ -19,7 +19,7 @@ import org.eclipse.emf.transaction.NotificationFilter;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.core.model.trigger.ModelChangeTrigger.DiagramChangeState;
+import de.cau.cs.kieler.core.model.gmf.triggers.ModelChangeTrigger.DiagramChangeState;
 import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
 
 /**

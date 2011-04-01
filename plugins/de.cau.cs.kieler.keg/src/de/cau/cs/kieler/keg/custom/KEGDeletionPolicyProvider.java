@@ -15,7 +15,7 @@ package de.cau.cs.kieler.keg.custom;
 
 import org.eclipse.emf.ecore.EPackage;
 
-import de.cau.cs.kieler.core.ui.policies.AbstractDeletionPolicyProvider;
+import de.cau.cs.kieler.core.model.gmf.policies.AbstractDeletionPolicyProvider;
 import de.cau.cs.kieler.keg.impl.KEGPackageImpl;
 
 /**

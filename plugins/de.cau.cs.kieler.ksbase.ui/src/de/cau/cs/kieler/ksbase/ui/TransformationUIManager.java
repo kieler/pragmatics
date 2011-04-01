@@ -33,7 +33,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.core.model.util.ModelingUtil;
+import de.cau.cs.kieler.core.model.gmf.util.GmfModelingUtil;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
@@ -128,7 +128,7 @@ public final class TransformationUIManager {
                 .getActiveWorkbenchWindow().getActivePage().getActiveEditor();
         EditPart selectedEditPart = null;
         if (selection != null) {
-            selectedEditPart = ModelingUtil.getEditPart(selection.get(0));
+            selectedEditPart = GmfModelingUtil.getEditPart(selection.get(0));
         } else {
             // retrieve selection:
             ISelection sel = PlatformUI.getWorkbench()

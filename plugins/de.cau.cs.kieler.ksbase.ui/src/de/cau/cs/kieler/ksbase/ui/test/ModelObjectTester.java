@@ -20,8 +20,8 @@ import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.PlatformUI;
 
+import de.cau.cs.kieler.core.model.gmf.util.GmfModelingUtil;
 import de.cau.cs.kieler.core.model.m2m.TransformException;
-import de.cau.cs.kieler.core.model.util.ModelingUtil;
 import de.cau.cs.kieler.core.model.xtend.transformation.AbstractTransformation;
 import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
@@ -76,7 +76,7 @@ public class ModelObjectTester extends PropertyTester {
                     .getTransformationById((String) args[1]);
             if (t != null) {
                 // Convert selection to model elements:
-                List<EObject> modelElements = ModelingUtil
+                List<EObject> modelElements = GmfModelingUtil
                         .getModelElementsFromSelection();
                 boolean executable = false;
                 for (List<String> params : t.getParameterList()) {

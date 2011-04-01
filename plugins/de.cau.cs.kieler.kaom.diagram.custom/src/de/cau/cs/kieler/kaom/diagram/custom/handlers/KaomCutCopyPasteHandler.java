@@ -18,8 +18,8 @@ import java.util.Iterator;
 import org.eclipse.gef.EditPart;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-import de.cau.cs.kieler.core.ui.handler.AbstractCutCopyPasteHandler;
-import de.cau.cs.kieler.core.ui.handler.ICutCopyPasteCommandFactory;
+import de.cau.cs.kieler.core.model.gmf.handler.AbstractCutCopyPasteHandler;
+import de.cau.cs.kieler.core.model.gmf.handler.ICutCopyPasteCommandFactory;
 import de.cau.cs.kieler.kaom.diagram.custom.commands.KaomCutCopyPasteCommandFactory;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity2EditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart;

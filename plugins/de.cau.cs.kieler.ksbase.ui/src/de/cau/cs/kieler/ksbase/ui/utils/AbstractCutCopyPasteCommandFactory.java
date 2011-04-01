@@ -43,10 +43,10 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 
-import de.cau.cs.kieler.core.model.util.ModelingUtil;
+import de.cau.cs.kieler.core.model.gmf.handler.ICutCopyPasteCommandFactory;
+import de.cau.cs.kieler.core.model.gmf.util.GmfModelingUtil;
 import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
 import de.cau.cs.kieler.core.model.xtend.transformation.xtend.XtendTransformationFramework;
-import de.cau.cs.kieler.core.ui.handler.ICutCopyPasteCommandFactory;
 import de.cau.cs.kieler.ksbase.ui.handler.TransformationCommand;
 
 /**
@@ -430,7 +430,7 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
      *            the element
      */
     private void refreshPolicy(final EObject sel) {
-        EditPart editPart = ModelingUtil.getEditPart(sel);
+        EditPart editPart = GmfModelingUtil.getEditPart(sel);
         // get all registered edit parts in order to get transitions as well
         Collection<?> parts = editPart.getViewer().getEditPartRegistry()
                 .values();

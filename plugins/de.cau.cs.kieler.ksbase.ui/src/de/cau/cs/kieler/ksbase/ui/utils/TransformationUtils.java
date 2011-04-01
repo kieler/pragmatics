@@ -25,7 +25,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import de.cau.cs.kieler.core.model.util.ModelingUtil;
+import de.cau.cs.kieler.core.model.gmf.util.GmfModelingUtil;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
 
@@ -86,7 +86,7 @@ public class TransformationUtils implements ITransformationEventListener {
             if (args != null && args.length == 2 && args[1] instanceof IEditorPart) {
                 IEditorPart activeEditor = (IEditorPart) args[1];
                 if (activeEditor instanceof IDiagramWorkbenchPart) {
-                    EditPart p = ModelingUtil.getEditPart(selection,
+                    EditPart p = GmfModelingUtil.getEditPart(selection,
                             ((IDiagramWorkbenchPart) activeEditor).getDiagramGraphicalViewer()
                                     .getRootEditPart());
                     if (p != null) {

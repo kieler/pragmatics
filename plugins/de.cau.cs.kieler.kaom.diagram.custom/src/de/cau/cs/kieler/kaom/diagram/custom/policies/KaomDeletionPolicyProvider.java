@@ -15,7 +15,7 @@ package de.cau.cs.kieler.kaom.diagram.custom.policies;
 
 import org.eclipse.emf.ecore.EPackage;
 
-import de.cau.cs.kieler.core.ui.policies.AbstractDeletionPolicyProvider;
+import de.cau.cs.kieler.core.model.gmf.policies.AbstractDeletionPolicyProvider;
 import de.cau.cs.kieler.kaom.impl.KaomPackageImpl;
 
 /**
@@ -35,4 +35,5 @@ public class KaomDeletionPolicyProvider extends AbstractDeletionPolicyProvider {
     protected EPackage getEPackage() {
         return KaomPackageImpl.eINSTANCE;
     }
+    
 }

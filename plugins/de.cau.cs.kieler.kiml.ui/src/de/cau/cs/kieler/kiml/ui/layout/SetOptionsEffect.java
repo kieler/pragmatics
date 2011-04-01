@@ -20,11 +20,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
-import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.core.model.util.ModelingUtil;
-import de.cau.cs.kieler.core.util.Maybe;
+import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.ui.Messages;
@@ -70,18 +68,15 @@ public class SetOptionsEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        final Maybe<EditPart> editPart = new Maybe<EditPart>();
-        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-            public void run() {
-                editPart.set(ModelingUtil.getEditPart(modelElement));
-            }
-        });
+        // FIXME this is quite inefficient
+        EditPart editPart = GraphicalFrameworkService.getInstance().getBridge(modelElement)
+                .getEditPart(modelElement);
         final EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
-        DiagramLayoutManager manager = layoutServices.getManager(null, editPart.get());
+        DiagramLayoutManager manager = layoutServices.getManager(null, editPart);
         if (manager != null) {
-            final ILayoutConfig layoutConfig = manager.getLayoutConfig(editPart.get());
+            final ILayoutConfig layoutConfig = manager.getLayoutConfig(editPart);
             if (layoutConfig != null) {
-                EditingDomain editingDomain = manager.getBridge().getEditingDomain(editPart.get());
+                EditingDomain editingDomain = manager.getBridge().getEditingDomain(editPart);
                 KimlUiUtil.runModelChange(new Runnable() {
                     public void run() {
                         for (Map.Entry<String, Object> entry : optionMap.entrySet()) {

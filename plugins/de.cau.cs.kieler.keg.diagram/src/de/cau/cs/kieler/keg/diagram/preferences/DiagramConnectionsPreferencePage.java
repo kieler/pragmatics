@@ -15,7 +15,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.core.ui.figures.SplineConnection;
+import de.cau.cs.kieler.core.model.gmf.figures.SplineConnection;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditor;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin;
 

@@ -26,9 +26,8 @@ import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.kivi.menu.MenuItemEnableStateEffect;
-import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
-import de.cau.cs.kieler.core.model.effects.FocusContextEffect;
-import de.cau.cs.kieler.core.model.trigger.DiagramTrigger.DiagramState;
+import de.cau.cs.kieler.core.model.triggers.DiagramTrigger.DiagramState;
+import de.cau.cs.kieler.core.model.triggers.SelectionTrigger.SelectionState;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 
 /**
@@ -132,10 +131,11 @@ public class ManualFocusCombination extends AbstractCombination {
                     focus.add(diagram.getSemanticModel());
                 }
             }
-            FocusContextEffect focusEffect = new FocusContextEffect(diagram.getDiagramPart());
-            focusEffect.addFocus(focus, level);
-            this.schedule(focusEffect);
-            this.schedule(new LayoutEffect(diagram.getDiagramPart(), null, true, false, true));
+            // FIXME resolve dependencies for focus & context effect
+//            FocusContextEffect focusEffect = new FocusContextEffect(diagram.getDiagramPart());
+//            focusEffect.addFocus(focus, level);
+//            this.schedule(focusEffect);
+//            this.schedule(new LayoutEffect(diagram.getDiagramPart(), null, true, false, true));
         } else {
             doNothing();
         }

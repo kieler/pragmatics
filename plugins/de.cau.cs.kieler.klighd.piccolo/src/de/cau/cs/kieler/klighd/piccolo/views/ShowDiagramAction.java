@@ -20,8 +20,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 
-import de.cau.cs.kieler.core.ui.GraphicalFrameworkService;
-import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
+import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
+import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.klighd.piccolo.Draw2DNode;
 
 /**

@@ -7,7 +7,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.ITreeBranchEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
 import org.eclipse.gmf.runtime.notation.View;
 
-import de.cau.cs.kieler.core.ui.figures.SplineConnection;
+import de.cau.cs.kieler.core.model.gmf.figures.SplineConnection;
 import de.cau.cs.kieler.keg.custom.KEGConnection;
 import de.cau.cs.kieler.keg.diagram.edit.policies.Edge6ItemSemanticEditPolicy;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin;

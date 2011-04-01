@@ -15,6 +15,8 @@ main() {
 	model.diagramFileExtension := "kaod"; // kieler actor oriented modeling diagram
 	
 	// some general plugin settings	
+    model.plugin.requiredPlugins += "de.cau.cs.kieler.core.model";
+    model.plugin.requiredPlugins += "de.cau.cs.kieler.core.model.gmf";
 	model.plugin.requiredPlugins += "de.cau.cs.kieler.kaom.custom";
 	model.plugin.requiredPlugins += "de.cau.cs.kieler.core.annotations";
 	model.plugin.requiredPlugins += "de.cau.cs.kieler.core.annotations.edit";
