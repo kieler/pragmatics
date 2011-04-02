@@ -13,23 +13,26 @@
  */
 package de.cau.cs.kieler.kiml.export.handlers;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.kiml.export.AbstractExporter;
+import de.cau.cs.kieler.kiml.export.ExportPlugin;
 import de.cau.cs.kieler.kiml.export.ExportUtil;
 import de.cau.cs.kieler.kiml.export.ui.ExportDialog;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
@@ -40,6 +43,9 @@ import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
  * @author mri
  */
 public class ExportHandler extends AbstractHandler {
+
+    /** the message for a failed export. */
+    private static final String MESSAGE_EXPORT_FAILED = "The export failed.";
 
     /**
      * {@inheritDoc}
@@ -55,8 +61,7 @@ public class ExportHandler extends AbstractHandler {
             try {
                 // retrieve a kgraph representation of the diagram
                 KNode graph =
-                        EclipseLayoutServices.getInstance()
-                                .getManager(editorPart, null)
+                        EclipseLayoutServices.getInstance().getManager(editorPart, null)
                                 .buildLayoutGraph(editorPart, null, false);
                 // get the selected configuration
                 AbstractExporter exporter = exportDialog.getExporter();
@@ -64,17 +69,18 @@ public class ExportHandler extends AbstractHandler {
                 boolean isWorkspacePath = exportDialog.isExportWorkspacePath();
                 MapPropertyHolder options = exportDialog.getOptions();
                 // open the export file
-                OutputStream stream =
-                        ExportUtil
-                                .createOutputStream(filePath, isWorkspacePath);
+                OutputStream stream = ExportUtil.createOutputStream(filePath, isWorkspacePath);
                 // perform the export
                 IKielerProgressMonitor monitor =
                         new KielerProgressMonitor(new NullProgressMonitor());
                 exporter.doExport(graph, stream, options, monitor);
                 stream.close();
-            } catch (IOException e) {
-                // TODO handle this properly
-                e.printStackTrace();
+            } catch (Throwable exception) {
+                Status myStatus =
+                        new Status(IStatus.WARNING, ExportPlugin.PLUGIN_ID, MESSAGE_EXPORT_FAILED,
+                                exception);
+                StatusManager.getManager().handle(myStatus,
+                        StatusManager.BLOCK | StatusManager.SHOW);
             }
         }
         return null;

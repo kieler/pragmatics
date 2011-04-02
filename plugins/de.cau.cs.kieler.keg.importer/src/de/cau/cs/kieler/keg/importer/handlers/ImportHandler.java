@@ -42,12 +42,10 @@ public class ImportHandler extends AbstractHandler {
     private static final String MESSAGE_NO_INPUT =
             "Failed to import graph. Could not determine input file.";
     /**
-     * the message for telling the user that the no file was selected when
-     * invoking this handler.
+     * the message for telling the user that the no file was selected when invoking this handler.
      */
-    private static final String MESSAGE_NO_FILE_SELECTED =
-            "Failed to import graph. "
-                    + "Could not determine input file. No file selected.";
+    private static final String MESSAGE_NO_FILE_SELECTED = "Failed to import graph. "
+            + "Could not determine input file. No file selected.";
 
     /**
      * {@inheritDoc}
@@ -59,22 +57,20 @@ public class ImportHandler extends AbstractHandler {
         try {
             // get input model from currently selected file in package explorer
             ISelection selection =
-                    PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                            .getSelectionService().getSelection();
+                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService()
+                            .getSelection();
             IFile file = (IFile) ((TreeSelection) selection).getFirstElement();
             // open the wizard
-            ImportGraphWizard wizard =
-                    new ImportGraphWizard(file.getFullPath().toOSString());
-            wizard.init(PlatformUI.getWorkbench(),
-                    (IStructuredSelection) selection);
+            ImportGraphWizard wizard = new ImportGraphWizard(file.getFullPath().toOSString());
+            wizard.init(PlatformUI.getWorkbench(), (IStructuredSelection) selection);
             WizardDialog dialog = new WizardDialog(shell, wizard);
             dialog.create();
             dialog.open();
         } catch (NullPointerException exception) {
             exception.printStackTrace();
             myStatus =
-                    new Status(IStatus.ERROR, KEGImporterPlugin.PLUGIN_ID,
-                            MESSAGE_NO_INPUT, exception);
+                    new Status(IStatus.ERROR, KEGImporterPlugin.PLUGIN_ID, MESSAGE_NO_INPUT,
+                            exception);
         } catch (ClassCastException exception) {
             exception.printStackTrace();
             myStatus =
@@ -82,7 +78,8 @@ public class ImportHandler extends AbstractHandler {
                             MESSAGE_NO_FILE_SELECTED, exception);
         } finally {
             if (myStatus != null) {
-                StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
+                StatusManager.getManager().handle(myStatus,
+                        StatusManager.BLOCK | StatusManager.SHOW);
             }
         }
         return null;

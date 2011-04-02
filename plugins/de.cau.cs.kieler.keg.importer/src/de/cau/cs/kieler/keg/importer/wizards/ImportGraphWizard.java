@@ -140,9 +140,10 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
             options.setProperty(ImportManager.OPTION_OPEN_DIAGRAM, true);
             importer.doDiagramPostProcess(diagramFile, options);
         } catch (Throwable throwable) {
-            IStatus status = new Status(IStatus.ERROR, KEGImporterPlugin.PLUGIN_ID,
-                    "Failed importing model file", throwable);
-            StatusManager.getManager().handle(status, StatusManager.SHOW);
+            IStatus status =
+                    new Status(IStatus.ERROR, KEGImporterPlugin.PLUGIN_ID,
+                            "Failed importing model file", throwable);
+            StatusManager.getManager().handle(status, StatusManager.BLOCK | StatusManager.SHOW);
         }
 
         return true;
