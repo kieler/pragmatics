@@ -600,44 +600,6 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             }
         }
     }
-
-    /**
-     * Handles the case of a violated constraint.
-     * 
-     * @param violatedConstraint the violated constraint.
-     * @param vertices the array of vertices.
-     */
-    private void handleViolatedConstraint(final Pair<Vertex, Vertex> violatedConstraint,
-            final Vertex[] vertices) {
-        
-        Vertex firstVertex = violatedConstraint.getFirst();
-        Vertex secondVertex = violatedConstraint.getSecond();
-        
-        // Create a new vertex from the two constrain-violating vertices; this also
-        // automatically calculates the new vertex's barycenter value
-        Vertex newVertex = new Vertex(violatedConstraint.getFirst(), violatedConstraint.getSecond());
-        
-        // Iterate through the vertices. One of the two constrained vertices will be
-        // replaced by the new vertex, the other by an empty vertex. Along the way,
-        // constraint relationships will be updated
-        for (int index = 0; index < vertices.length; index++) {
-            if (vertices[index] == firstVertex) {
-                vertices[index] = newVertex;
-            } else if (vertices[index] == secondVertex) {
-                vertices[index] = new Vertex();
-            } else {
-                // Check if the vertex has any constraints with the former two vertices
-                boolean addConstraint = false;
-                addConstraint = vertices[index].outgoingConstraints.remove(firstVertex)
-                        || vertices[index].outgoingConstraints.remove(secondVertex);
-                
-                if (addConstraint) {
-                    vertices[index].outgoingConstraints.add(newVertex);
-                    newVertex.incomingConstraintsCount++;
-                }
-            }
-        }
-    }
     
     /**
      * Returns a violated constraint, if any is left.
@@ -688,6 +650,44 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         
         // No violated constraints found
         return null;
+    }
+
+    /**
+     * Handles the case of a violated constraint.
+     * 
+     * @param violatedConstraint the violated constraint.
+     * @param vertices the array of vertices.
+     */
+    private void handleViolatedConstraint(final Pair<Vertex, Vertex> violatedConstraint,
+            final Vertex[] vertices) {
+        
+        Vertex firstVertex = violatedConstraint.getFirst();
+        Vertex secondVertex = violatedConstraint.getSecond();
+        
+        // Create a new vertex from the two constrain-violating vertices; this also
+        // automatically calculates the new vertex's barycenter value
+        Vertex newVertex = new Vertex(violatedConstraint.getFirst(), violatedConstraint.getSecond());
+        
+        // Iterate through the vertices. One of the two constrained vertices will be
+        // replaced by the new vertex, the other by an empty vertex. Along the way,
+        // constraint relationships will be updated
+        for (int index = 0; index < vertices.length; index++) {
+            if (vertices[index] == firstVertex) {
+                vertices[index] = newVertex;
+            } else if (vertices[index] == secondVertex) {
+                vertices[index] = new Vertex();
+            } else {
+                // Check if the vertex has any constraints with the former two vertices
+                boolean addConstraint = false;
+                addConstraint = vertices[index].outgoingConstraints.remove(firstVertex);
+                addConstraint |= vertices[index].outgoingConstraints.remove(secondVertex);
+                
+                if (addConstraint) {
+                    vertices[index].outgoingConstraints.add(newVertex);
+                    newVertex.incomingConstraintsCount++;
+                }
+            }
+        }
     }
     
     /**
