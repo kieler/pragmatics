@@ -57,12 +57,11 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
      *            to {@code StructuredSelection.EMPTY}.
      */
     public void init(final IWorkbench workbench, final IStructuredSelection selection) {
-        setWindowTitle("Kieler Example Export");
+        setWindowTitle(Messages.getString("exportWizardTitle"));
         setNeedsProgressMonitor(true);
-
-        examplePage = new ExampleAttributesPage("Example Export", selection);
-        resourcePage = new ExampleResourcesPage("Example Resources", selection);
-        exportPage = new ExampleExportPage("Destination Choice", selection);
+        examplePage = new ExampleAttributesPage(Messages.getString("attributePageTitle"), selection);
+        resourcePage = new ExampleResourcesPage(Messages.getString("resourcePageTitle"), selection);
+        exportPage = new ExampleExportPage(Messages.getString("exportPageTitle"), selection);
     }
 
     @Override
@@ -96,7 +95,7 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
             ExampleManager.get().export(result);
         } catch (RuntimeException e) {
             IStatus status = new Status(IStatus.WARNING, KEXUIPlugin.PLUGIN_ID,
-                    "Error while exporting example.", e);
+                    Messages.getString("exportErrorMsg"), e);
             StatusManager.getManager().handle(status, StatusManager.SHOW);
             return false;
         }

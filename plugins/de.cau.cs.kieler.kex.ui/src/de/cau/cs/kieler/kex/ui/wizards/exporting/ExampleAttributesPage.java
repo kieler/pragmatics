@@ -54,7 +54,7 @@ public class ExampleAttributesPage extends WizardPage {
     public ExampleAttributesPage(final String pageName, final IStructuredSelection selection) {
         super(pageName);
         setTitle(pageName);
-        setDescription("Please enter example attributes.");
+        setDescription(Messages.getString("attributePageDesc"));
     }
 
     /**
