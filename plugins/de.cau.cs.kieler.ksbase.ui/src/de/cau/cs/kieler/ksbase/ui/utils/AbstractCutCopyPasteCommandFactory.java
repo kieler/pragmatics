@@ -43,7 +43,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 
-import de.cau.cs.kieler.core.model.gmf.handler.ICutCopyPasteCommandFactory;
+import de.cau.cs.kieler.core.model.gmf.handlers.ICutCopyPasteCommandFactory;
 import de.cau.cs.kieler.core.model.gmf.util.GmfModelingUtil;
 import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
 import de.cau.cs.kieler.core.model.xtend.transformation.xtend.XtendTransformationFramework;
