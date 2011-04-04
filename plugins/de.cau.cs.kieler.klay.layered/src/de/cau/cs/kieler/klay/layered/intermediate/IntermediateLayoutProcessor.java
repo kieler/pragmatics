@@ -22,7 +22,9 @@ import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
  * @author cds
  */
 public enum IntermediateLayoutProcessor {
-    
+
+    /** Sets port sides and orders the ports, if necessary. */
+    PORT_SIDE_AND_ORDER_PROCESSOR,
     /** Merges long edge dummy nodes belonging to the same hyperedge. */
     HYPEREDGE_DUMMY_JOINER,
     /** Takes a properly layered graph and removes the dummy nodes due to proper layering. */
@@ -37,8 +39,6 @@ public enum IntermediateLayoutProcessor {
     ODD_PORT_SIDE_PROCESSOR,
     /** Sets the positions of ports. */
     PORT_ARRANGER,
-    /** Sets port sides and orders the ports, if necessary. */
-    PORT_SIDE_AND_ORDER_PROCESSOR,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER;
     

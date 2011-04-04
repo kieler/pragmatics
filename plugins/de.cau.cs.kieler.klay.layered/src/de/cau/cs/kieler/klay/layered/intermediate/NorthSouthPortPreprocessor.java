@@ -115,11 +115,11 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                     portList.add(port);
                 }
                 
-                List<LNode> dummyNodes = createDummyNodes(portList);
+                List<LNode> northDummyNodes = createDummyNodes(portList);
                 
                 int insertPoint = pointer;
-                LNode previousDummy = null;
-                for (LNode dummy : dummyNodes) {
+                LNode successor = node;
+                for (LNode dummy : northDummyNodes) {
                     dummy.setLayer(insertPoint, layer);
                     pointer++;
                     
@@ -127,20 +127,11 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                     // were created from. In addition, the order of the dummy nodes must
                     // be fixed.
                     dummy.setProperty(Properties.LAYER_LAYOUT_UNIT, node);
-                    if (previousDummy != null) {
-                        previousDummy.setProperty(
-                                Properties.LAYER_NODE_SUCCESSOR_CONSTRAINT,
-                                dummy);
-                    }
-                    
-                    previousDummy = dummy;
-                }
-                
-                // The last of the northern dummies has the current node as its successor
-                if (previousDummy != null) {
-                    previousDummy.setProperty(
+                    dummy.setProperty(
                             Properties.LAYER_NODE_SUCCESSOR_CONSTRAINT,
-                            node);
+                            successor);
+                    
+                    successor = dummy;
                 }
                 
                 // Do the same for ports on the southern side; the list of ports must
@@ -151,29 +142,21 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                     portList.add(0, port);
                 }
                 
-                dummyNodes = createDummyNodes(portList);
+                List<LNode> southDummyNodes = createDummyNodes(portList);
                 
-                previousDummy = null;
-                for (LNode dummy : dummyNodes) {
+                LNode predecessor = node;
+                for (LNode dummy : southDummyNodes) {
                     dummy.setLayer(++pointer, layer);
                     
                     // The dummy nodes form a layout unit identified by the node they
                     // were created from. In addition, the order of the dummy nodes must
                     // be fixed.
                     dummy.setProperty(Properties.LAYER_LAYOUT_UNIT, node);
-                    if (previousDummy != null) {
-                        previousDummy.setProperty(
-                                Properties.LAYER_NODE_SUCCESSOR_CONSTRAINT,
-                                dummy);
-                    }
+                    predecessor.setProperty(
+                            Properties.LAYER_NODE_SUCCESSOR_CONSTRAINT,
+                            dummy);
                     
-                    previousDummy = dummy;
-                }
-                
-                // If there are south dummies, the node has a successor constraint to
-                // the first of them
-                if (!dummyNodes.isEmpty()) {
-                    node.setProperty(Properties.LAYER_NODE_SUCCESSOR_CONSTRAINT, dummyNodes.get(0));
+                    predecessor = dummy;
                 }
             }
         }
