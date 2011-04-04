@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
+import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
@@ -36,6 +37,8 @@ import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
  */
 public class SetOptionsEffect extends AbstractEffect {
 
+    /** the workbench part for which options are set. */
+    private IWorkbenchPart workbenchPart;
     /** map of layout option identifiers to values. */
     private Map<String, Object> optionMap;
     /** the model element for which options are set. */
@@ -44,11 +47,13 @@ public class SetOptionsEffect extends AbstractEffect {
     /**
      * Creates an effect to set a single option.
      * 
+     * @param part the workbench part for which options are set
      * @param element the model element for which options shall be set
      * @param optionId layout option identifier
      * @param value the new value ({@code null} to remove the option value)
      */
-    public SetOptionsEffect(final EObject element, final String optionId, final Object value) {
+    public SetOptionsEffect(final IWorkbenchPart part, final EObject element,
+            final String optionId, final Object value) {
         optionMap = Collections.singletonMap(optionId, value);
         this.modelElement = element;
     }
@@ -56,10 +61,12 @@ public class SetOptionsEffect extends AbstractEffect {
     /**
      * Creates an effect to set multiple options.
      * 
+     * @param part the workbench part for which options are set
      * @param element the model element for which options shall be set
      * @param options map of layout option identifiers to values
      */
-    public SetOptionsEffect(final EObject element, final Map<String, Object> options) {
+    public SetOptionsEffect(final IWorkbenchPart part, final EObject element,
+            final Map<String, Object> options) {
         this.optionMap = options;
         this.modelElement = element;
     }
@@ -68,8 +75,7 @@ public class SetOptionsEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        // FIXME this is quite inefficient
-        EditPart editPart = GraphicalFrameworkService.getInstance().getBridge(modelElement)
+        EditPart editPart = GraphicalFrameworkService.getInstance().getBridge(workbenchPart)
                 .getEditPart(modelElement);
         final EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
         DiagramLayoutManager manager = layoutServices.getManager(null, editPart);
