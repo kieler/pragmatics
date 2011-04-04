@@ -94,6 +94,7 @@ public class ImportExamplePage extends WizardPage {
     private static final int WIZARD_MIN_HEIGHT = 720;
 
     private static final int IMAGE_LABEL_DESC_HEIGHT = 25;
+    private static final int TREE_MIN_WIDTH = 200;
 
     private Text exampleDescField;
 
@@ -147,7 +148,10 @@ public class ImportExamplePage extends WizardPage {
     private void createLeft(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());
-        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+        gridData.minimumWidth = TREE_MIN_WIDTH;
+
+        composite.setLayoutData(gridData);
         // create filter text
         final Text filterText = new Text(composite, SWT.BORDER);
         filterText.setText(Messages.getString("initialFilterText"));
@@ -539,6 +543,7 @@ public class ImportExamplePage extends WizardPage {
         @Override
         public Image getImage(final Object element) {
             if (element instanceof Pair) {
+                @SuppressWarnings("unchecked")
                 Pair<Category, List<Object>> pair = (Pair<Category, List<Object>>) element;
                 Category first = pair.getFirst();
                 return computeImage(first.getIconPath(), first.getNamespaceId(), ICON_WIDTH,

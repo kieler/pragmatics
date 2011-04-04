@@ -157,9 +157,10 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
                                                 .getActivePart(), null, true, true);
                             }
                         } catch (PartInitException e) {
-                            IStatus status = new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID,
+                            IStatus status = new Status(IStatus.WARNING, KEXUIPlugin.PLUGIN_ID,
                                     "Could not open editor.", e);
                             StatusManager.getManager().handle(status, StatusManager.SHOW);
+                            return true;
                         }
                     }
                 }
@@ -168,6 +169,10 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
             if (e.getLocalizedMessage().equals(ErrorMessage.DUPLICATE_EXAMPLE)) {
                 checkDuplicate = !MessageDialog.openQuestion(getShell(), ERROR_TITLE,
                         e.getLocalizedMessage() + " Do you want to override it?");
+            } else if (e instanceof UnsupportedOperationException) {
+                IStatus status = new Status(IStatus.WARNING, KEXUIPlugin.PLUGIN_ID, ERROR_TITLE, e);
+                StatusManager.getManager().handle(status, StatusManager.SHOW);
+                return true;
             } else {
                 IStatus status = new Status(IStatus.WARNING, KEXUIPlugin.PLUGIN_ID, ERROR_TITLE, e);
                 StatusManager.getManager().handle(status, StatusManager.SHOW);
