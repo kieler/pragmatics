@@ -128,7 +128,7 @@ public final class DynamicMenuContributions {
                     .createElement("editpolicyProvider");
             policyProvider
                     .setAttribute("class",
-                            "de.cau.cs.kieler.core.ui.policies.BalloonPopupEditPolicyProvider");
+                            "de.cau.cs.kieler.core.model.gmf.policies.BalloonPopupEditPolicyProvider");
             Element policyProviderPrio = extension.createElement("Priority");
             policyProviderPrio.setAttribute("name", "Lowest");
             policyProvider.appendChild(policyProviderPrio);
