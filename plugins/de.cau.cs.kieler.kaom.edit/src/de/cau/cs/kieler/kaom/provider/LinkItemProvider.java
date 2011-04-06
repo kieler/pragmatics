@@ -92,6 +92,8 @@ public class LinkItemProvider
     /**
      * This returns the label text for the adapted class.
      * <!-- begin-user-doc -->
+     * Added a check for source and target reference so the Xtext editor doesn't run into
+     * NullPointerExceptions.
      * <!-- end-user-doc -->
      */
     @Override
@@ -100,15 +102,17 @@ public class LinkItemProvider
         StringBuffer label = new StringBuffer();
         label.append(link.getName() == null ? "" : link.getName());
         
-        NamedObject source = (NamedObject)link.getSource();
-        Entity sourceParent = (Entity)source.eContainer();
-        NamedObject target = (NamedObject)link.getTarget();
-        Entity targetParent = (Entity)target.eContainer();
-        
-        label.append(": ");
-        label.append(sourceParent.getName()+"."+source.getName());
-        label.append(" -> ");
-        label.append(targetParent.getName()+"."+target.getName());
+        if (link.getSource() != null && link.getTarget() != null) {
+            NamedObject source = (NamedObject)link.getSource();
+            Entity sourceParent = (Entity)source.eContainer();
+            NamedObject target = (NamedObject)link.getTarget();
+            Entity targetParent = (Entity)target.eContainer();
+            
+            label.append(": ");
+            label.append(sourceParent.getName()+"."+source.getName());
+            label.append(" -> ");
+            label.append(targetParent.getName()+"."+target.getName());
+        }
         return label == null || label.length() == 0 ?
             getString("_UI_Link_type") :
             getString("_UI_Link_type") + " " + label;

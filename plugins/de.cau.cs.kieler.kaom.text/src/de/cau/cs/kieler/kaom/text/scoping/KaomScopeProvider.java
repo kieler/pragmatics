@@ -75,12 +75,12 @@ public class KaomScopeProvider extends AbstractDeclarativeScopeProvider {
      * @param objects a list of object descriptions
      */
     private void addLinkables(final Entity parent, final List<IEObjectDescription> objects) {
-        objects.add(EObjectDescription.create("entity", parent));
+        objects.add(EObjectDescription.create(parent.getId(), parent));
         for (Port port : parent.getChildPorts()) {
-            objects.add(EObjectDescription.create("port", port));
+            objects.add(EObjectDescription.create(port.getId(), port));
         }
         for (Relation relation : parent.getChildRelations()) {
-            objects.add(EObjectDescription.create("relation", relation));
+            objects.add(EObjectDescription.create(relation.getId(), relation));
         }
         for (Entity child : parent.getChildEntities()) {
             addLinkables(child, objects);
