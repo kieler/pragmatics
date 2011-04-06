@@ -845,11 +845,13 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
      * @return the worst possible number of crossings.
      */
     private int countCrossings(final LNode[] layer) {
-        /* The algorithm used to count crossings within a layer is rather simple. A normal
-         * node cannot be connected to another normal node in the same layer due to how
-         * layering is performed. It remains that at least one of the two nodes must be a
-         * dummy node. Currently, that can only happen due to odd port side handling. Because
-         * of the way dummies are created, there are only two cases:
+        /* The algorithm used to count crossings within a layer has two parts
+         * 
+         * Part 1
+         * A normal node cannot be connected to another normal node in the same layer due
+         * to how layering is performed. It remains that at least one of the two nodes must
+         * be a dummy node. Currently, that can only happen due to odd port side handling.
+         * Because of the way dummies are created, there are only two cases:
          * 
          *  - An eastern port can be connected to another eastern port.
          *  - A western port can be connected to another western port.
@@ -859,10 +861,26 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
          * the ports. If we find an eastern port connected to another eastern port, the
          * difference of their indices tells us how many other ports with incident edges
          * lie between them and can cause crossings.
+         * 
+         * Part 2
+         * Additional crossings can happen due to nodes being placed between a node and
+         * its north / south dummies. The idea here is to use the first node sweep from
+         * part 1 to count the number of northern and southern North/South dummies for
+         * each node. Each north dummy is assigned a position in the list of northern
+         * dummies for its node. South dummies are treated accordingly.
+         * 
+         * In a second sweep, for each non-north/south dummy, the most recently encountered
+         * north/south dummy or normal node is retrieved. Its index is subtracted from the
+         * number of northern or southern dummies of its node. The result gives the number
+         * of crossings caused by the node being placed between a node and its north/south
+         * dummies.
          */
         int crossings = 0;
         
-        // TODO Also estimate crossings due to north/south dummies.
+        // Number of north/south dummies and indices
+        Map<LNode, Pair<Integer, Integer>> northSouthDummyCount =
+            new HashMap<LNode, Pair<Integer, Integer>>();
+        Map<LNode, Integer> dummyIndices = new HashMap<LNode, Integer>();
         
         // Assign indices to the layer's eastern and western ports
         Map<LPort, Integer> easternPortIndices = new HashMap<LPort, Integer>();
@@ -870,8 +888,15 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         
         assignEastWestPortIndices(layer, easternPortIndices, westernPortIndices);
         
-        // Iterate through the ports
+        // Iterate through the nodes
+        LNode currentNormalNode = null;
+        int northDummies = 0;
+        int southDummies = 0;
+        boolean northernSide = true;
+        int currentIndex = 0;
+        
         for (LNode node : layer) {
+            // Part 1 of the crossing counting algorithm
             for (LPort port : node.getPorts()) {
                 switch (port.getSide()) {
                 case EAST:
@@ -882,6 +907,81 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                     crossings += countPortCrossings(port, westernPortIndices);
                     break;
                 }
+            }
+
+            // Part 2 of the crossing counting algorithm
+            Properties.NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
+            if (nodeType == Properties.NodeType.NORMAL
+                    || nodeType == Properties.NodeType.NORTH_SOUTH_PORT) {
+                
+                LNode newNormalNode = node.getProperty(Properties.LAYER_LAYOUT_UNIT);
+                
+                // Check if this node belongs to a new normal node
+                if (currentNormalNode != newNormalNode) {
+                    // Save the old normal node's values
+                    if (currentNormalNode != null) {
+                        northSouthDummyCount.put(currentNormalNode, new Pair<Integer, Integer>(
+                                northDummies, southDummies - 1));
+                    }
+                    
+                    // Reset the counters
+                    currentNormalNode = newNormalNode;
+                    northDummies = 0;
+                    southDummies = 0;
+                    northernSide = true;
+                    currentIndex = 0;
+                }
+                
+                // If the node is the normal node, we're entering its south side
+                if (node == currentNormalNode) {
+                    northernSide = false;
+                    currentIndex = 0;
+                }
+                
+                // Save node index and increment north / south counters
+                dummyIndices.put(node, currentIndex++);
+                if (northernSide) {
+                    northDummies++;
+                } else {
+                    // This also counts the node itself. We'll subtract it again when saving the
+                    // north/south dummy counts
+                    southDummies++;
+                }
+            }
+        }
+        
+        // Remember to save the values for the last normal node
+        northSouthDummyCount.put(currentNormalNode, new Pair<Integer, Integer>(
+                northDummies, southDummies - 1));
+        
+        // Second sweep of Part 2 of the algorithm
+        LNode lastDummyNormalNode = null;
+        int lastDummyIndex = 0;
+        int dummyCount = 0;
+        
+        for (LNode node : layer) {
+            Properties.NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
+            
+            switch (nodeType) {
+            case NORMAL:
+                lastDummyIndex = dummyIndices.get(node);
+                
+                lastDummyNormalNode = node;
+                dummyCount = northSouthDummyCount.get(node).getSecond();
+                break;
+                
+            case NORTH_SOUTH_PORT:
+                lastDummyIndex = dummyIndices.get(node);
+                
+                LNode newNormalNode = node.getProperty(Properties.LAYER_LAYOUT_UNIT);
+                if (newNormalNode != lastDummyNormalNode) {
+                    dummyCount = northSouthDummyCount.get(newNormalNode).getFirst();
+                    lastDummyNormalNode = newNormalNode;
+                }
+                break;
+                
+            default:
+                crossings += dummyCount - lastDummyIndex;
             }
         }
         
