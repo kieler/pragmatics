@@ -399,12 +399,6 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             return 0;
         }
         
-        // TODO Remove debug statements
-        System.out.println();
-        System.out.println();
-        System.out.println("CROSSING MINIMIZATION ON LAYER " + layerIndex);
-        System.out.println();
-        
         /* We start with the list of single-node vertices. For each vertex, we calculate
          * the new barycenter value. We then sort the vertices using that value and
          * build a map of successor constraints using the nodes' individual successor
@@ -592,9 +586,6 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     private void buildConstraintsGraph(final List<Vertex> vertices,
             final Map<LNode, Vertex> layerVertices) {
         
-        // TODO Remove debug output
-        System.out.println("Building constraints graph...");
-        
         // Reset the constraint fields
         for (Vertex vertex : vertices) {
             vertex.outgoingConstraints.clear();
@@ -612,8 +603,6 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 Vertex successorVertex = layerVertices.get(successor);
                 vertex.outgoingConstraints.add(successorVertex);
                 successorVertex.incomingConstraintsCount++;
-                
-                System.out.println("  " + vertex.nodes + " ---> " + successorVertex.nodes);
             }
             
             // Check if we're processing a a normal, none-dummy node
@@ -636,8 +625,6 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 lastNonDummyNode = vertexNode;
             }
         }
-        
-        System.out.println();
     }
     
     /**
@@ -652,9 +639,6 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         List<Vertex> activeVertices = new LinkedList<Vertex>();
         Map<Vertex, List<Vertex>> incoming = new HashMap<Vertex, List<Vertex>>();
         
-        // TODO Remove debug statements.
-        System.out.println("Finding violated constraints...");
-        
         // Iterate through the constrained vertices
         for (Vertex vertex : vertices) {
             // Ignore unconstrained vertices
@@ -662,42 +646,30 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 continue;
             }
             
-            System.out.print("  " + vertex.nodes + " (" + vertex.barycenter + ") is constrained");
-            
             incoming.put(vertex, new LinkedList<Vertex>());
             if (vertex.incomingConstraintsCount == 0) {
                 activeVertices.add(vertex);
-                System.out.print(" and active");
             }
-            
-            System.out.println(".");
         }
         
         // Iterate through the active vertices to find one with violated constraints
         while (!activeVertices.isEmpty()) {
             Vertex vertex = activeVertices.remove(0);
-            System.out.println("  Looking at " + vertex.nodes);
             
             // See if we can find a violated constraint
             for (Vertex predecessor : incoming.get(vertex)) {
                 if (predecessor.barycenter >= vertex.barycenter) {
-                    System.out.println("    " + predecessor.nodes + " has a higher or equal barycenter!");
-                    System.out.println();
                     return new Pair<Vertex, Vertex>(predecessor, vertex);
                 }
-
-                System.out.println("    " + predecessor.nodes + " has a lower barycenter.");
             }
             
             // No violated constraints; add outgoing constraints to the respective incoming list
             for (Vertex successor : vertex.outgoingConstraints) {
                 List<Vertex> successorIncomingList = incoming.get(successor);
                 successorIncomingList.add(0, vertex);
-                System.out.println("    Adding to incoming list of " + successor.nodes);
                 
                 if (successor.incomingConstraintsCount == successorIncomingList.size()) {
                     activeVertices.add(successor);
-                    System.out.println("    " + successor.nodes + " is now active.");
                 }
             }
         }
@@ -721,12 +693,6 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         // Create a new vertex from the two constrain-violating vertices; this also
         // automatically calculates the new vertex's barycenter value
         Vertex newVertex = new Vertex(violatedConstraint.getFirst(), violatedConstraint.getSecond());
-        
-        // TODO Remove debug output
-        System.out.println("Handling violated constraint...");
-        System.out.println("  " + firstVertex.nodes + " + " + secondVertex.nodes + " ---> "
-                + newVertex.nodes);
-        System.out.println();
         
         // Iterate through the vertices. Remove the old vertices. Insert the new one
         // according to the barycenter value, thereby keeping the list sorted. Along
@@ -776,18 +742,11 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     private void applyVertexOrderingToNodeArray(final List<Vertex> vertices, final LNode[] freeLayer) {
         int index = 0;
         
-        // TODO Remove debug output
-        System.out.println("Applying vertex ordering...");
-        System.out.print("  ");
-        
         for (Vertex vertex : vertices) {
             for (LNode node : vertex.nodes) {
                 freeLayer[index++] = node;
-                System.out.print(node + " ");
             }
         }
-        
-        System.out.println();
     }
     
     
