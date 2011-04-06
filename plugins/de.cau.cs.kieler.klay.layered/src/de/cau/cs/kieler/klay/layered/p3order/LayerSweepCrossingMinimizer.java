@@ -445,7 +445,6 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         
         // Sort the vertices again, apply the node order to the free layer array and
         // assign port positions
-        Collections.sort(vertices);
         applyVertexOrderingToNodeArray(vertices, layer);
         assignPortPos(layer);
         
@@ -460,6 +459,8 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     private void randomizeBarycenters(final List<Vertex> vertices) {
         for (Vertex vertex : vertices) {
             vertex.barycenter = random.nextFloat();
+            vertex.summedWeight = vertex.barycenter;
+            vertex.degree = 1;
         }
     }
 
@@ -661,7 +662,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 continue;
             }
             
-            System.out.print("  " + vertex.nodes + " is constrained");
+            System.out.print("  " + vertex.nodes + " (" + vertex.barycenter + ") is constrained");
             
             incoming.put(vertex, new LinkedList<Vertex>());
             if (vertex.incomingConstraintsCount == 0) {
@@ -679,8 +680,8 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             
             // See if we can find a violated constraint
             for (Vertex predecessor : incoming.get(vertex)) {
-                if (predecessor.barycenter > vertex.barycenter) {
-                    System.out.println("    " + predecessor.nodes + " has a higher barycenter!");
+                if (predecessor.barycenter >= vertex.barycenter) {
+                    System.out.println("    " + predecessor.nodes + " has a higher or equal barycenter!");
                     System.out.println();
                     return new Pair<Vertex, Vertex>(predecessor, vertex);
                 }
@@ -738,7 +739,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             if (vertex == firstVertex || vertex == secondVertex) {
                 // If the vertex is either the first or the second vertex, remove it
                 vertexIterator.remove();
-            } else if (!alreadyInserted && vertex.barycenter < newVertex.barycenter) {
+            } else if (!alreadyInserted && vertex.barycenter > newVertex.barycenter) {
                 // If we haven't inserted the new vertex into the list already, do that now. Note:
                 // we're not calling next() again. This means that during the next iteration, we
                 // will again be looking at the current vertex. But then, alreadyInserted will be
@@ -749,11 +750,10 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 alreadyInserted = true;
             } else {
                 // Check if the vertex has any constraints with the former two vertices
-                boolean addConstraint = false;
-                addConstraint = vertex.outgoingConstraints.remove(firstVertex);
-                addConstraint |= vertex.outgoingConstraints.remove(secondVertex);
+                boolean firstVertexConstraint = vertex.outgoingConstraints.remove(firstVertex);
+                boolean secondVertexConstraint = vertex.outgoingConstraints.remove(secondVertex);
                 
-                if (addConstraint) {
+                if (firstVertexConstraint || secondVertexConstraint) {
                     vertex.outgoingConstraints.add(newVertex);
                     newVertex.incomingConstraintsCount++;
                 }
@@ -776,11 +776,18 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     private void applyVertexOrderingToNodeArray(final List<Vertex> vertices, final LNode[] freeLayer) {
         int index = 0;
         
+        // TODO Remove debug output
+        System.out.println("Applying vertex ordering...");
+        System.out.print("  ");
+        
         for (Vertex vertex : vertices) {
             for (LNode node : vertex.nodes) {
                 freeLayer[index++] = node;
+                System.out.print(node + " ");
             }
         }
+        
+        System.out.println();
     }
     
     
