@@ -225,7 +225,6 @@ litigation.
 
    <requires>
       <import feature="net.ogdf.bin" version="1.0.0" match="greaterOrEqual"/>
-      <import feature="net.sourceforge.lpsolve" version="5.5.2" match="greaterOrEqual"/>
       <import plugin="org.apache.commons.logging"/>
       <import plugin="org.antlr.runtime"/>
       <import plugin="org.apache.log4j"/>

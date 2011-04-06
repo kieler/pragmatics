@@ -22,8 +22,6 @@ public enum LayeringStrategy {
 
     /** All nodes will be layered with minimal edge length by using the network-simplex-algorithm. */
     NETWORK_SIMPLEX,
-    /** All nodes will be layered with minimal edge length by using an LpSolver. */
-    LP_SOLVER,
     /** All nodes will be layered according to the longest path. */
     LONGEST_PATH;
     

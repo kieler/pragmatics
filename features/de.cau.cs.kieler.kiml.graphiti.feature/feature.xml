@@ -229,7 +229,6 @@ litigation.
       <import plugin="org.apache.log4j"/>
       <import feature="com.google.guava.runtime.feature" version="8.0.0" match="greaterOrEqual"/>
       <import feature="net.ogdf.bin" version="1.0.0" match="greaterOrEqual"/>
-      <import feature="net.sourceforge.lpsolve" version="5.5.2" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf.common" version="2.6.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf.ecore" version="2.6.0" match="greaterOrEqual"/>

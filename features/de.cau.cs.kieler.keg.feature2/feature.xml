@@ -238,7 +238,6 @@ litigation.
       <import feature="org.eclipse.xtext.runtime" version="1.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.xtext.ui" version="1.0.0" match="greaterOrEqual"/>
       <import feature="net.ogdf.bin" version="1.0.0" match="greaterOrEqual"/>
-      <import feature="net.sourceforge.lpsolve" version="5.5.2" match="greaterOrEqual"/>
    </requires>
 
    <plugin

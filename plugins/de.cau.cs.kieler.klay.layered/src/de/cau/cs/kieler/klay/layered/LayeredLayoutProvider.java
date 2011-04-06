@@ -34,12 +34,9 @@ import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
-import de.cau.cs.kieler.klay.layered.p2layers.LPSolveLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
-import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
-import de.cau.cs.kieler.klay.layered.p3order.LPSolveCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.p5edges.ComplexSplineEdgeRouter;
@@ -84,7 +81,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     /** phase 2: layering module. */
     private ILayoutPhase layerer;
     /** phase 3: crossing minimization module. */
-    private ILayoutPhase crossingMinimizer;
+    private ILayoutPhase crossingMinimizer = new LayerSweepCrossingMinimizer();
     /** phase 4: node placement module. */
     private ILayoutPhase nodePlacer = new LinearSegmentsNodePlacer();
     /** phase 5: Edge routing module. */
@@ -144,18 +141,6 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                 phasesChanged = true;
             }
             break;
-        case LP_SOLVER:
-            if (!(layerer instanceof LPSolveLayerer)) {
-                try {
-                    layerer = new LPSolveLayerer();
-                    phasesChanged = true;
-                } catch (Throwable throwable) {
-                    // this will only occur if the required LpSolve classes can't be loaded
-                    throw new UnsupportedOperationException("The LpSolve plug-in is not installed."
-                            + " Please choose another layering method.", throwable); 
-                }
-            }
-            break;
         default:
             if (!(layerer instanceof NetworkSimplexLayerer)) {
                 layerer = new NetworkSimplexLayerer();
@@ -163,22 +148,6 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             }
         }
         
-        // check which crossing minimization strategy to use
-        CrossingMinimizationStrategy crossMin = parentLayout.getProperty(Properties.CROSS_MIN);
-        switch (crossMin) {
-        case LP_SOLVER:
-            if (!(crossingMinimizer instanceof LPSolveCrossingMinimizer)) {
-                crossingMinimizer = new LPSolveCrossingMinimizer();
-                phasesChanged = true;
-            }
-            break;
-        default:
-            if (!(crossingMinimizer instanceof LayerSweepCrossingMinimizer)) {
-                crossingMinimizer = new LayerSweepCrossingMinimizer();
-                phasesChanged = true;
-            }
-        }
-
         // check which edge router to use
         EdgeRoutingStrategy routing = parentLayout.getProperty(Properties.EDGE_ROUTING);
         switch (routing) {
