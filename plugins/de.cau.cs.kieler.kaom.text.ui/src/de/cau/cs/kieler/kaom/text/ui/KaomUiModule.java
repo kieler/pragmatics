@@ -9,7 +9,14 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * Use this class to register components to be used within the IDE.
  */
 public class KaomUiModule extends de.cau.cs.kieler.kaom.text.ui.AbstractKaomUiModule {
-	public KaomUiModule(AbstractUIPlugin plugin) {
-		super(plugin);
-	}
+    
+    public KaomUiModule(AbstractUIPlugin plugin) {
+        super(plugin);
+    }
+
+    /* get rid of the dawn XtextNature question */
+    public Class<? extends org.eclipse.xtext.ui.editor.IXtextEditorCallback> bindIXtextEditorCallback() {
+        return org.eclipse.xtext.ui.editor.IXtextEditorCallback.NullImpl.class;
+    }
+
 }

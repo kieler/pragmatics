@@ -52,6 +52,7 @@ Workflow {
 			fragment = parser.antlr.XtextAntlrGeneratorFragment {
 				options = {
 					classSplitting = true
+                    backtrack = true
 				}
 			}
 
@@ -92,6 +93,7 @@ Workflow {
 			fragment = parser.antlr.XtextAntlrUiGeneratorFragment {
 				options = {
 					classSplitting = true
+					backtrack = true
 				}
 			}
 

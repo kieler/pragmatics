@@ -16,10 +16,10 @@
   <eClassifiers xsi:type="ecore:EClass" name="Port" eSuperTypes="../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//NamedObject #//Linkable"/>
   <eClassifiers xsi:type="ecore:EClass" name="Relation" eSuperTypes="../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//NamedObject #//Linkable"/>
   <eClassifiers xsi:type="ecore:EClass" name="Link" eSuperTypes="../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//NamedObject">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
-        eType="#//Linkable" eOpposite="#//Linkable/outgoingLinks"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="target" lowerBound="1"
-        eType="#//Linkable" eOpposite="#//Linkable/incomingLinks"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="source" eType="#//Linkable"
+        eOpposite="#//Linkable/outgoingLinks"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="#//Linkable"
+        eOpposite="#//Linkable/incomingLinks"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Linkable" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EReference" name="outgoingLinks" upperBound="-1"

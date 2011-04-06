@@ -21,107 +21,115 @@ public class KaomGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "TopLevelEntity");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Action cEntityAction_0 = (Action)cGroup.eContents().get(0);
-		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Assignment cAnnotationsAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
-		private final RuleCall cAnnotationsAnnotationParserRuleCall_1_0_0 = (RuleCall)cAnnotationsAssignment_1_0.eContents().get(0);
-		private final Keyword cEntityKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
-		private final Assignment cIdAssignment_1_2 = (Assignment)cGroup_1.eContents().get(2);
-		private final RuleCall cIdIDTerminalRuleCall_1_2_0 = (RuleCall)cIdAssignment_1_2.eContents().get(0);
-		private final Assignment cNameAssignment_1_3 = (Assignment)cGroup_1.eContents().get(3);
-		private final RuleCall cNameSTRINGTerminalRuleCall_1_3_0 = (RuleCall)cNameAssignment_1_3.eContents().get(0);
-		private final Alternatives cAlternatives_1_4 = (Alternatives)cGroup_1.eContents().get(4);
-		private final Group cGroup_1_4_0 = (Group)cAlternatives_1_4.eContents().get(0);
-		private final Keyword cLeftCurlyBracketKeyword_1_4_0_0 = (Keyword)cGroup_1_4_0.eContents().get(0);
-		private final Alternatives cAlternatives_1_4_0_1 = (Alternatives)cGroup_1_4_0.eContents().get(1);
-		private final Assignment cChildEntitiesAssignment_1_4_0_1_0 = (Assignment)cAlternatives_1_4_0_1.eContents().get(0);
-		private final RuleCall cChildEntitiesEntityParserRuleCall_1_4_0_1_0_0 = (RuleCall)cChildEntitiesAssignment_1_4_0_1_0.eContents().get(0);
-		private final Assignment cChildLinksAssignment_1_4_0_1_1 = (Assignment)cAlternatives_1_4_0_1.eContents().get(1);
-		private final RuleCall cChildLinksLinkParserRuleCall_1_4_0_1_1_0 = (RuleCall)cChildLinksAssignment_1_4_0_1_1.eContents().get(0);
-		private final Assignment cChildPortsAssignment_1_4_0_1_2 = (Assignment)cAlternatives_1_4_0_1.eContents().get(2);
-		private final RuleCall cChildPortsPortParserRuleCall_1_4_0_1_2_0 = (RuleCall)cChildPortsAssignment_1_4_0_1_2.eContents().get(0);
-		private final Assignment cChildRelationsAssignment_1_4_0_1_3 = (Assignment)cAlternatives_1_4_0_1.eContents().get(3);
-		private final RuleCall cChildRelationsRelationParserRuleCall_1_4_0_1_3_0 = (RuleCall)cChildRelationsAssignment_1_4_0_1_3.eContents().get(0);
-		private final Keyword cRightCurlyBracketKeyword_1_4_0_2 = (Keyword)cGroup_1_4_0.eContents().get(2);
-		private final Keyword cSemicolonKeyword_1_4_1 = (Keyword)cAlternatives_1_4.eContents().get(1);
+		private final Assignment cAnnotationsAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cAnnotationsImportAnnotationParserRuleCall_1_0 = (RuleCall)cAnnotationsAssignment_1.eContents().get(0);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Assignment cAnnotationsAssignment_2_0 = (Assignment)cGroup_2.eContents().get(0);
+		private final RuleCall cAnnotationsAnnotationParserRuleCall_2_0_0 = (RuleCall)cAnnotationsAssignment_2_0.eContents().get(0);
+		private final Keyword cEntityKeyword_2_1 = (Keyword)cGroup_2.eContents().get(1);
+		private final Assignment cIdAssignment_2_2 = (Assignment)cGroup_2.eContents().get(2);
+		private final RuleCall cIdIDTerminalRuleCall_2_2_0 = (RuleCall)cIdAssignment_2_2.eContents().get(0);
+		private final Assignment cNameAssignment_2_3 = (Assignment)cGroup_2.eContents().get(3);
+		private final RuleCall cNameSTRINGTerminalRuleCall_2_3_0 = (RuleCall)cNameAssignment_2_3.eContents().get(0);
+		private final Alternatives cAlternatives_2_4 = (Alternatives)cGroup_2.eContents().get(4);
+		private final Group cGroup_2_4_0 = (Group)cAlternatives_2_4.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_2_4_0_0 = (Keyword)cGroup_2_4_0.eContents().get(0);
+		private final Alternatives cAlternatives_2_4_0_1 = (Alternatives)cGroup_2_4_0.eContents().get(1);
+		private final Assignment cChildEntitiesAssignment_2_4_0_1_0 = (Assignment)cAlternatives_2_4_0_1.eContents().get(0);
+		private final RuleCall cChildEntitiesEntityParserRuleCall_2_4_0_1_0_0 = (RuleCall)cChildEntitiesAssignment_2_4_0_1_0.eContents().get(0);
+		private final Assignment cChildLinksAssignment_2_4_0_1_1 = (Assignment)cAlternatives_2_4_0_1.eContents().get(1);
+		private final RuleCall cChildLinksLinkParserRuleCall_2_4_0_1_1_0 = (RuleCall)cChildLinksAssignment_2_4_0_1_1.eContents().get(0);
+		private final Assignment cChildPortsAssignment_2_4_0_1_2 = (Assignment)cAlternatives_2_4_0_1.eContents().get(2);
+		private final RuleCall cChildPortsPortParserRuleCall_2_4_0_1_2_0 = (RuleCall)cChildPortsAssignment_2_4_0_1_2.eContents().get(0);
+		private final Assignment cChildRelationsAssignment_2_4_0_1_3 = (Assignment)cAlternatives_2_4_0_1.eContents().get(3);
+		private final RuleCall cChildRelationsRelationParserRuleCall_2_4_0_1_3_0 = (RuleCall)cChildRelationsAssignment_2_4_0_1_3.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_2_4_0_2 = (Keyword)cGroup_2_4_0.eContents().get(2);
+		private final Keyword cSemicolonKeyword_2_4_1 = (Keyword)cAlternatives_2_4.eContents().get(1);
 		
 		//TopLevelEntity returns Entity:
-		//	{Entity} (annotations+=Annotation* "entity" id=ID name=STRING? ("{" (childEntities+=Entity | childLinks+=Link |
-		//	childPorts+=Port | childRelations+=Relation)* "}" | ";"))?;
+		//	{Entity} annotations+=ImportAnnotation* (annotations+=Annotation* "entity" id=ID name=STRING? ("{"
+		//	(childEntities+=Entity | childLinks+=Link | childPorts+=Port | childRelations+=Relation)* "}" | ";"))?;
 		public ParserRule getRule() { return rule; }
 
-		//{Entity} (annotations+=Annotation* "entity" id=ID name=STRING? ("{" (childEntities+=Entity | childLinks+=Link |
-		//childPorts+=Port | childRelations+=Relation)* "}" | ";"))?
+		//{Entity} annotations+=ImportAnnotation* (annotations+=Annotation* "entity" id=ID name=STRING? ("{"
+		//(childEntities+=Entity | childLinks+=Link | childPorts+=Port | childRelations+=Relation)* "}" | ";"))?
 		public Group getGroup() { return cGroup; }
 
 		//{Entity}
 		public Action getEntityAction_0() { return cEntityAction_0; }
 
+		//annotations+=ImportAnnotation*
+		public Assignment getAnnotationsAssignment_1() { return cAnnotationsAssignment_1; }
+
+		//ImportAnnotation
+		public RuleCall getAnnotationsImportAnnotationParserRuleCall_1_0() { return cAnnotationsImportAnnotationParserRuleCall_1_0; }
+
 		//(annotations+=Annotation* "entity" id=ID name=STRING? ("{" (childEntities+=Entity | childLinks+=Link | childPorts+=Port
 		//| childRelations+=Relation)* "}" | ";"))?
-		public Group getGroup_1() { return cGroup_1; }
+		public Group getGroup_2() { return cGroup_2; }
 
 		//annotations+=Annotation*
-		public Assignment getAnnotationsAssignment_1_0() { return cAnnotationsAssignment_1_0; }
+		public Assignment getAnnotationsAssignment_2_0() { return cAnnotationsAssignment_2_0; }
 
 		//Annotation
-		public RuleCall getAnnotationsAnnotationParserRuleCall_1_0_0() { return cAnnotationsAnnotationParserRuleCall_1_0_0; }
+		public RuleCall getAnnotationsAnnotationParserRuleCall_2_0_0() { return cAnnotationsAnnotationParserRuleCall_2_0_0; }
 
 		//"entity"
-		public Keyword getEntityKeyword_1_1() { return cEntityKeyword_1_1; }
+		public Keyword getEntityKeyword_2_1() { return cEntityKeyword_2_1; }
 
 		//id=ID
-		public Assignment getIdAssignment_1_2() { return cIdAssignment_1_2; }
+		public Assignment getIdAssignment_2_2() { return cIdAssignment_2_2; }
 
 		//ID
-		public RuleCall getIdIDTerminalRuleCall_1_2_0() { return cIdIDTerminalRuleCall_1_2_0; }
+		public RuleCall getIdIDTerminalRuleCall_2_2_0() { return cIdIDTerminalRuleCall_2_2_0; }
 
 		//name=STRING?
-		public Assignment getNameAssignment_1_3() { return cNameAssignment_1_3; }
+		public Assignment getNameAssignment_2_3() { return cNameAssignment_2_3; }
 
 		//STRING
-		public RuleCall getNameSTRINGTerminalRuleCall_1_3_0() { return cNameSTRINGTerminalRuleCall_1_3_0; }
+		public RuleCall getNameSTRINGTerminalRuleCall_2_3_0() { return cNameSTRINGTerminalRuleCall_2_3_0; }
 
 		//"{" (childEntities+=Entity | childLinks+=Link | childPorts+=Port | childRelations+=Relation)* "}" | ";"
-		public Alternatives getAlternatives_1_4() { return cAlternatives_1_4; }
+		public Alternatives getAlternatives_2_4() { return cAlternatives_2_4; }
 
 		//"{" (childEntities+=Entity | childLinks+=Link | childPorts+=Port | childRelations+=Relation)* "}"
-		public Group getGroup_1_4_0() { return cGroup_1_4_0; }
+		public Group getGroup_2_4_0() { return cGroup_2_4_0; }
 
 		//"{"
-		public Keyword getLeftCurlyBracketKeyword_1_4_0_0() { return cLeftCurlyBracketKeyword_1_4_0_0; }
+		public Keyword getLeftCurlyBracketKeyword_2_4_0_0() { return cLeftCurlyBracketKeyword_2_4_0_0; }
 
 		//(childEntities+=Entity | childLinks+=Link | childPorts+=Port | childRelations+=Relation)*
-		public Alternatives getAlternatives_1_4_0_1() { return cAlternatives_1_4_0_1; }
+		public Alternatives getAlternatives_2_4_0_1() { return cAlternatives_2_4_0_1; }
 
 		//childEntities+=Entity
-		public Assignment getChildEntitiesAssignment_1_4_0_1_0() { return cChildEntitiesAssignment_1_4_0_1_0; }
+		public Assignment getChildEntitiesAssignment_2_4_0_1_0() { return cChildEntitiesAssignment_2_4_0_1_0; }
 
 		//Entity
-		public RuleCall getChildEntitiesEntityParserRuleCall_1_4_0_1_0_0() { return cChildEntitiesEntityParserRuleCall_1_4_0_1_0_0; }
+		public RuleCall getChildEntitiesEntityParserRuleCall_2_4_0_1_0_0() { return cChildEntitiesEntityParserRuleCall_2_4_0_1_0_0; }
 
 		//childLinks+=Link
-		public Assignment getChildLinksAssignment_1_4_0_1_1() { return cChildLinksAssignment_1_4_0_1_1; }
+		public Assignment getChildLinksAssignment_2_4_0_1_1() { return cChildLinksAssignment_2_4_0_1_1; }
 
 		//Link
-		public RuleCall getChildLinksLinkParserRuleCall_1_4_0_1_1_0() { return cChildLinksLinkParserRuleCall_1_4_0_1_1_0; }
+		public RuleCall getChildLinksLinkParserRuleCall_2_4_0_1_1_0() { return cChildLinksLinkParserRuleCall_2_4_0_1_1_0; }
 
 		//childPorts+=Port
-		public Assignment getChildPortsAssignment_1_4_0_1_2() { return cChildPortsAssignment_1_4_0_1_2; }
+		public Assignment getChildPortsAssignment_2_4_0_1_2() { return cChildPortsAssignment_2_4_0_1_2; }
 
 		//Port
-		public RuleCall getChildPortsPortParserRuleCall_1_4_0_1_2_0() { return cChildPortsPortParserRuleCall_1_4_0_1_2_0; }
+		public RuleCall getChildPortsPortParserRuleCall_2_4_0_1_2_0() { return cChildPortsPortParserRuleCall_2_4_0_1_2_0; }
 
 		//childRelations+=Relation
-		public Assignment getChildRelationsAssignment_1_4_0_1_3() { return cChildRelationsAssignment_1_4_0_1_3; }
+		public Assignment getChildRelationsAssignment_2_4_0_1_3() { return cChildRelationsAssignment_2_4_0_1_3; }
 
 		//Relation
-		public RuleCall getChildRelationsRelationParserRuleCall_1_4_0_1_3_0() { return cChildRelationsRelationParserRuleCall_1_4_0_1_3_0; }
+		public RuleCall getChildRelationsRelationParserRuleCall_2_4_0_1_3_0() { return cChildRelationsRelationParserRuleCall_2_4_0_1_3_0; }
 
 		//"}"
-		public Keyword getRightCurlyBracketKeyword_1_4_0_2() { return cRightCurlyBracketKeyword_1_4_0_2; }
+		public Keyword getRightCurlyBracketKeyword_2_4_0_2() { return cRightCurlyBracketKeyword_2_4_0_2; }
 
 		//";"
-		public Keyword getSemicolonKeyword_1_4_1() { return cSemicolonKeyword_1_4_1; }
+		public Keyword getSemicolonKeyword_2_4_1() { return cSemicolonKeyword_2_4_1; }
 	}
 
 	public class EntityElements extends AbstractParserRuleElementFinder {
@@ -440,8 +448,8 @@ public class KaomGrammarAccess extends AbstractGrammarElementFinder {
 
 	
 	//TopLevelEntity returns Entity:
-	//	{Entity} (annotations+=Annotation* "entity" id=ID name=STRING? ("{" (childEntities+=Entity | childLinks+=Link |
-	//	childPorts+=Port | childRelations+=Relation)* "}" | ";"))?;
+	//	{Entity} annotations+=ImportAnnotation* (annotations+=Annotation* "entity" id=ID name=STRING? ("{"
+	//	(childEntities+=Entity | childLinks+=Link | childPorts+=Port | childRelations+=Relation)* "}" | ";"))?;
 	public TopLevelEntityElements getTopLevelEntityAccess() {
 		return (pTopLevelEntity != null) ? pTopLevelEntity : (pTopLevelEntity = new TopLevelEntityElements());
 	}
@@ -507,8 +515,8 @@ public class KaomGrammarAccess extends AbstractGrammarElementFinder {
 	////
 	//// --------------------------
 	//Annotation:
-	//	CommentAnnotation | TagAnnotation | KeyStringValueAnnotation | KeyBooleanValueAnnotation | KeyIntValueAnnotation |
-	//	KeyFloatValueAnnotation;
+	//	CommentAnnotation | TagAnnotation | KeyStringValueAnnotation | TypedStringAnnotation | KeyBooleanValueAnnotation |
+	//	KeyIntValueAnnotation | KeyFloatValueAnnotation;
 	public AnnotationsGrammarAccess.AnnotationElements getAnnotationAccess() {
 		return gaAnnotations.getAnnotationAccess();
 	}
@@ -517,11 +525,6 @@ public class KaomGrammarAccess extends AbstractGrammarElementFinder {
 		return getAnnotationAccess().getRule();
 	}
 
-	//// introduction of parsing rules for annotations
-	////StringAnnotation returns Annotation:
-	////	CommentAnnotation
-	////	| KeyStringValueAnnotation
-	////	;
 	//// e.g.: / ** semantic comment * /
 	//CommentAnnotation returns StringAnnotation:
 	//	value=COMMENT_ANNOTATION;
@@ -534,8 +537,8 @@ public class KaomGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//// e.g.: @HVlayout
-	//TagAnnotation returns StringAnnotation:
-	//	"@" name=ID;
+	//TagAnnotation returns Annotation:
+	//	"@" name=ID ("(" annotations+=Annotation* ")")?;
 	public AnnotationsGrammarAccess.TagAnnotationElements getTagAnnotationAccess() {
 		return gaAnnotations.getTagAnnotationAccess();
 	}
@@ -546,7 +549,7 @@ public class KaomGrammarAccess extends AbstractGrammarElementFinder {
 
 	//// e.g.: @layouter dot;   
 	//KeyStringValueAnnotation returns StringAnnotation:
-	//	"@" name=ID value=EString;
+	//	"@" name=ID value=EString ("(" annotations+=Annotation* ")")?;
 	public AnnotationsGrammarAccess.KeyStringValueAnnotationElements getKeyStringValueAnnotationAccess() {
 		return gaAnnotations.getKeyStringValueAnnotationAccess();
 	}
@@ -555,9 +558,20 @@ public class KaomGrammarAccess extends AbstractGrammarElementFinder {
 		return getKeyStringValueAnnotationAccess().getRule();
 	}
 
+	//// e.g.: @position[de.cau.cs.kieler.core.math.KVector] "(3,2)"
+	//TypedStringAnnotation:
+	//	"@" name=ID type=TypeId? value=EString ("(" annotations+=Annotation* ")")?;
+	public AnnotationsGrammarAccess.TypedStringAnnotationElements getTypedStringAnnotationAccess() {
+		return gaAnnotations.getTypedStringAnnotationAccess();
+	}
+	
+	public ParserRule getTypedStringAnnotationRule() {
+		return getTypedStringAnnotationAccess().getRule();
+	}
+
 	//// e.g.: @visible true;
 	//KeyBooleanValueAnnotation returns BooleanAnnotation:
-	//	"@" name=ID value=Boolean;
+	//	"@" name=ID value=Boolean ("(" annotations+=Annotation* ")")?;
 	public AnnotationsGrammarAccess.KeyBooleanValueAnnotationElements getKeyBooleanValueAnnotationAccess() {
 		return gaAnnotations.getKeyBooleanValueAnnotationAccess();
 	}
@@ -568,7 +582,7 @@ public class KaomGrammarAccess extends AbstractGrammarElementFinder {
 
 	//// e.g.: @minSpace 10;    
 	//KeyIntValueAnnotation returns IntAnnotation:
-	//	"@" name=ID value=INT;
+	//	"@" name=ID value=INT ("(" annotations+=Annotation* ")")?;
 	public AnnotationsGrammarAccess.KeyIntValueAnnotationElements getKeyIntValueAnnotationAccess() {
 		return gaAnnotations.getKeyIntValueAnnotationAccess();
 	}
@@ -579,7 +593,7 @@ public class KaomGrammarAccess extends AbstractGrammarElementFinder {
 
 	//// e.g.: @minSpace 10.0;    
 	//KeyFloatValueAnnotation returns FloatAnnotation:
-	//	"@" name=ID value=Float;
+	//	"@" name=ID value=Float ("(" annotations+=Annotation* ")")?;
 	public AnnotationsGrammarAccess.KeyFloatValueAnnotationElements getKeyFloatValueAnnotationAccess() {
 		return gaAnnotations.getKeyFloatValueAnnotationAccess();
 	}
@@ -639,9 +653,6 @@ public class KaomGrammarAccess extends AbstractGrammarElementFinder {
 		return gaAnnotations.getINTRule();
 	} 
 
-	////// redefine INT terminal to allow negative numbers
-	////terminal NINT returns ecore::EInt:
-	////    '-'?('0'..'9')+;
 	//// make sure the Float rule does not shadow the INT rule
 	//terminal Float returns ecore::EFloatObject:
 	//	"-"? "0".."9"+ ("." "0".."9"*) (("e" | "E") ("+" | "-")? "0".."9"+)? "f"? | "-"? "0".."9"+ "f";
@@ -656,17 +667,24 @@ public class KaomGrammarAccess extends AbstractGrammarElementFinder {
 		return gaAnnotations.getBooleanRule();
 	} 
 
+	//// custom terminal rule for strings
+	//terminal STRING:
+	//	"\"" ("\\" ("b" | "t" | "n" | "f" | "r" | "\"" | "\'" | "\\") | !("\\" | "\""))* "\"";
+	public TerminalRule getSTRINGRule() {
+		return gaAnnotations.getSTRINGRule();
+	} 
+
+	//// type identifiers can reference Java classes
+	//terminal TypeId:
+	//	"[" ("a".."z" | "A".."Z" | "_" | ".") ("a".."z" | "A".."Z" | "_" | "." | "0".."9")* "]";
+	public TerminalRule getTypeIdRule() {
+		return gaAnnotations.getTypeIdRule();
+	} 
+
 	//terminal ID:
 	//	"^"? ("a".."z" | "A".."Z" | "_") ("a".."z" | "A".."Z" | "_" | "0".."9")*;
 	public TerminalRule getIDRule() {
 		return gaAnnotations.getIDRule();
-	} 
-
-	//terminal STRING:
-	//	"\"" ("\\" ("b" | "t" | "n" | "f" | "r" | "\"" | "\'" | "\\") | !("\\" | "\""))* "\"" | "\'" ("\\" ("b" | "t" | "n" |
-	//	"f" | "r" | "\"" | "\'" | "\\") | !("\\" | "\'"))* "\'";
-	public TerminalRule getSTRINGRule() {
-		return gaAnnotations.getSTRINGRule();
 	} 
 
 	//terminal SL_COMMENT:

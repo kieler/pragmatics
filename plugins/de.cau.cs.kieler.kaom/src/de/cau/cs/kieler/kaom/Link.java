@@ -48,7 +48,7 @@ public interface Link extends NamedObject {
      * @see #setSource(Linkable)
      * @see de.cau.cs.kieler.kaom.KaomPackage#getLink_Source()
      * @see de.cau.cs.kieler.kaom.Linkable#getOutgoingLinks
-     * @model opposite="outgoingLinks" required="true"
+     * @model opposite="outgoingLinks"
      * @generated
      */
     Linkable getSource();
@@ -76,7 +76,7 @@ public interface Link extends NamedObject {
      * @see #setTarget(Linkable)
      * @see de.cau.cs.kieler.kaom.KaomPackage#getLink_Target()
      * @see de.cau.cs.kieler.kaom.Linkable#getIncomingLinks
-     * @model opposite="incomingLinks" required="true"
+     * @model opposite="incomingLinks"
      * @generated
      */
     Linkable getTarget();
