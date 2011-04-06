@@ -119,7 +119,7 @@ public final class DynamicMenuContributions {
             handlerExtension.setAttribute("point", "org.eclipse.ui.handlers");
             Element popupExtension = extension.createElement("extension");
             popupExtension.setAttribute("point",
-                    "de.cau.cs.kieler.core.ui.balloonPopupBarContribution");
+                    "de.cau.cs.kieler.core.model.gmf.balloonPopupBarContribution");
             Element popupEditPolicyProvider = extension
                     .createElement("extension");
             popupEditPolicyProvider.setAttribute("point",

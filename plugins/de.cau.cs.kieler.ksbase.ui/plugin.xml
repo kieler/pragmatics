@@ -11,7 +11,7 @@
          </Priority>
       </editpolicyProvider>
       <editpolicyProvider
-            class="de.cau.cs.kieler.core.ui.policies.BalloonPopupEditPolicyProvider">
+            class="de.cau.cs.kieler.core.model.gmf.policies.BalloonPopupEditPolicyProvider">
          <Priority
                name="Lowest">
          </Priority>
