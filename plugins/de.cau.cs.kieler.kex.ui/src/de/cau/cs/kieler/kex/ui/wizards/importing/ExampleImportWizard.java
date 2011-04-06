@@ -160,7 +160,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
                             IStatus status = new Status(IStatus.WARNING, KEXUIPlugin.PLUGIN_ID,
                                     "Could not open editor.", e);
                             StatusManager.getManager().handle(status, StatusManager.SHOW);
-                            return true;
+                            continue;
                         }
                     }
                 }

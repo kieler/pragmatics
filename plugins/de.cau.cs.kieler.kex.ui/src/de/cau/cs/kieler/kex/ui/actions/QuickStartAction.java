@@ -45,6 +45,7 @@ import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.SourceType;
 import de.cau.cs.kieler.kex.ui.KEXUIPlugin;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 
 /**
  * This class contains the contents to run a quick start example.
@@ -89,6 +90,10 @@ public class QuickStartAction implements IIntroAction {
             showError("Introtag Error", "Missing property projectName.");
         }
 
+        if (projectName == null) {
+            showError("Introtag Error", "Missing property projectName.");
+        }
+
         Example quickStarter = null;
         try {
             quickStarter = ExampleManager.get().getExample(sourcetype, exampleId);
@@ -109,7 +114,7 @@ public class QuickStartAction implements IIntroAction {
         try {
             List<String> directOpens = ExampleManager.get().importExamples(projectPath, examples,
                     false);
-            postfix(directOpens);
+            postfix(directOpens, params.getProperty("autoLayout") != null);
         } catch (RuntimeException e) {
             StatusManager.getManager()
                     .handle(new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID,
@@ -118,7 +123,7 @@ public class QuickStartAction implements IIntroAction {
     }
 
     /**
-     * opens up a error dialog with given title and message.
+     * Opens up a error dialog with given title and message.
      * 
      * @param title
      *            , String
@@ -132,11 +137,13 @@ public class QuickStartAction implements IIntroAction {
     }
 
     /**
-     * refreshes the workspace and opens up the direct open files with an editor.
+     * Refreshes the workspace and opens up the direct open files with an editor.
      * 
      * @param directOpens
+     * @param autoLayout
+     *            , set if direct opening models should be layout.
      */
-    private void postfix(final List<String> directOpens) {
+    private void postfix(final List<String> directOpens, final boolean autoLayout) {
         // refresh workspace
         IContainer element = ResourcesPlugin.getWorkspace().getRoot();
         try {
@@ -163,10 +170,16 @@ public class QuickStartAction implements IIntroAction {
                     }
                     try {
                         page.openEditor(new FileEditorInput(files[0]), defaultEditor.getId());
+                        if (autoLayout) {
+                            EclipseLayoutServices.getInstance().layout(
+                                    PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                                            .getPartService().getActivePart(), null, true, true);
+                        }
                     } catch (PartInitException e) {
-                        IStatus status = new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID,
-                                "Could not open editor", e);
+                        IStatus status = new Status(IStatus.WARNING, KEXUIPlugin.PLUGIN_ID,
+                                "Could not open editor.", e);
                         StatusManager.getManager().handle(status, StatusManager.SHOW);
+                        continue;
                     }
                 }
             }

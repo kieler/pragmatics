@@ -201,7 +201,7 @@ public class ImportDestPage extends WizardResourceImportPage {
     }
 
     /**
-     * Checks if the autoLayout field
+     * Checks if the autoLayout field is selected.
      * 
      * @return
      */
