@@ -87,6 +87,65 @@ public final class ImportUtil {
     }
 
     private static final int MONITOR_TRANSFORMATION_WORK = 3;
+    
+    /**
+     * Transforms a model to a KEG graph using a given Xtend transformation
+     * file. The model instance is read from a file given its path.
+     * 
+     * @param xtendFile
+     *            the xtend file containing the transformation
+     * @param extension
+     *            the name of the extension that starts the transformation
+     *            inside the xtend file
+     * @param parameters
+     *            a list of additional parameters for the transformation or null
+     *            if no additional parameters are required
+     * @param path
+     *            the file path
+     * @param isWorkspacePath
+     *            true if the file path is relative to the workspace
+     * @param resourceFactory
+     *            the resource factory used to read the model or null for the
+     *            standard factory
+     * @param monitor
+     *            the progress monitor
+     * @param involvedMetamodels
+     *            the metamodels involved in the transformation
+     * @return the parent node of the KEG graph
+     * @throws IOException
+     *             thrown when the the xtend file could not be found or opened
+     * @throws TransformException
+     *             thrown when the execution of the xtend transformation failed
+     */
+    public static Node transformModel2KEGGraph(final String xtendFile,
+            final String extension, final List<Object> parameters,
+            final String path,
+            final boolean isWorkspacePath,
+            final Resource.Factory resourceFactory,
+            final IKielerProgressMonitor monitor,
+            final String... involvedMetamodels) throws IOException,
+            TransformException {
+        monitor.begin("KEG Model2Model transformation",
+                MONITOR_TRANSFORMATION_WORK);
+
+        // read the model
+        ResourceSet resourceSet = new ResourceSetImpl();
+        IPath filePath = new Path(path);
+        URI fileURI = isWorkspacePath 
+                    ? URI.createPlatformResourceURI(filePath.toOSString(), true)
+                    : URI.createFileURI(path);
+        if (resourceFactory != null && fileURI.fileExtension() == null) {
+            resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
+                    .put(null, resourceFactory);
+        }
+        Resource resource = resourceSet.createResource(fileURI);
+        // Map<String, Object> options = new HashMap<String, Object>();
+        // options.put(XMLResource.OPTION_ENCODING, "UTF-8");
+        // read from the stream
+        resource.load(null);
+        return transformModel2KEGGraph(xtendFile, extension, parameters, resource, monitor,
+                involvedMetamodels);
+    }
 
     /**
      * Transforms a model to a KEG graph using a given Xtend transformation
@@ -138,6 +197,39 @@ public final class ImportUtil {
         // options.put(XMLResource.OPTION_ENCODING, "UTF-8");
         // read from the stream
         resource.load(inputStream, null);
+        return transformModel2KEGGraph(xtendFile, extension, parameters, resource, monitor,
+                involvedMetamodels);
+    }
+    
+    /**
+     * Transforms a model to a KEG graph using a given Xtend transformation
+     * file. The model instance is read from a resource.
+     * 
+     * @param xtendFile
+     *            the xtend file containing the transformation
+     * @param extension
+     *            the name of the extension that starts the transformation
+     *            inside the xtend file
+     * @param parameters
+     *            a list of additional parameters for the transformation or null
+     *            if no additional parameters are required
+     * @param resource the resource from which to read the model
+     * @param monitor
+     *            the progress monitor
+     * @param involvedMetamodels
+     *            the metamodels involved in the transformation
+     * @return the parent node of the KEG graph
+     * @throws IOException
+     *             thrown when the the xtend file could not be found or opened
+     * @throws TransformException
+     *             thrown when the execution of the xtend transformation failed
+     */
+    public static Node transformModel2KEGGraph(final String xtendFile,
+            final String extension, final List<Object> parameters,
+            final Resource resource,
+            final IKielerProgressMonitor monitor,
+            final String... involvedMetamodels) throws IOException,
+            TransformException {
         EObject model = resource.getContents().get(0);
         monitor.worked(1);
         // find the xtend file
@@ -190,4 +282,5 @@ public final class ImportUtil {
         monitor.done();
         return node;
     }
+    
 }

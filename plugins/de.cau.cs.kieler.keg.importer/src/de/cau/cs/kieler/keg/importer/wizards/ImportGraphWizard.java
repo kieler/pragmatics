@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.keg.importer.wizards;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -121,12 +120,9 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
             String filePath = importPage.getImportFile();
             boolean isWorkspacePath = importPage.isImportWorkspacePath();
             MapPropertyHolder options = importPage.getOptions();
-            // open the import file
-            InputStream stream = ImportUtil.createInputStream(filePath, isWorkspacePath);
             // perform the import
             IKielerProgressMonitor monitor = new KielerProgressMonitor(new NullProgressMonitor());
-            Node graph = importer.doImport(stream, options, monitor);
-            stream.close();
+            Node graph = importer.doImport(filePath, isWorkspacePath, options, monitor);
             // serialize KEG graph
             serializeKEGGraph(graph);
             // post process the model file
@@ -142,8 +138,8 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
         } catch (Throwable throwable) {
             IStatus status =
                     new Status(IStatus.ERROR, KEGImporterPlugin.PLUGIN_ID,
-                            "Failed importing model file", throwable);
-            StatusManager.getManager().handle(status, StatusManager.BLOCK | StatusManager.SHOW);
+                            "Failed importing model file.", throwable);
+            StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.BLOCK);
         }
 
         return true;

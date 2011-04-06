@@ -13,11 +13,12 @@
  */
 package de.cau.cs.kieler.keg.importer;
 
-import java.io.InputStream;
+import java.io.IOException;
 
 import org.eclipse.core.runtime.IPath;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.model.m2m.TransformException;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.keg.Node;
 
@@ -32,16 +33,21 @@ public interface IImporter {
      * Performs the actual KEG import using the given options and retrieving the
      * source from the stream.
      * 
-     * @param stream
-     *            the input stream
+     * @param path
+     *            the file path
+     * @param isWorkspacePath
+     *            true if the file path is relative to the workspace
      * @param options
      *            the import options
      * @param monitor
      *            the progress monitor
      * @return the KEG graph
+     * @throws TransformException if the transformation fails for some reason
+     * @throws IOException if reading from the input stream fails for some reason
      */
-    Node doImport(final InputStream stream, final MapPropertyHolder options,
-            final IKielerProgressMonitor monitor);
+    Node doImport(final String path, final boolean isWorkspacePath,
+            final MapPropertyHolder options, final IKielerProgressMonitor monitor)
+            throws IOException, TransformException;
 
     /**
      * Performs a post processing on the created KEG model instance file using

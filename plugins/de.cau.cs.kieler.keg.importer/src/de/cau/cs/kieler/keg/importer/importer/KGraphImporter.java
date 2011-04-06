@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.keg.importer.importer;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -134,7 +133,7 @@ public class KGraphImporter extends AbstractImporter {
     /**
      * {@inheritDoc}
      */
-    public Node doImport(final InputStream stream,
+    public Node doImport(final String path, final boolean isWorkspacePath,
             final MapPropertyHolder options,
             final IKielerProgressMonitor monitor) {
         Node node = null;
@@ -145,7 +144,7 @@ public class KGraphImporter extends AbstractImporter {
             node =
                     ImportUtil.transformModel2KEGGraph(
                             XTEND_TRANSFORMATION_FILE, XTEND_TRANSFORMATION,
-                            parameters, stream, null, monitor,
+                            parameters, path, isWorkspacePath, null, monitor,
                             "de.cau.cs.kieler.core.kgraph.KGraphPackage");
         } catch (IOException e) {
             throw new RuntimeException(ERROR_MESSAGE_IMPORT_FAILED, e);
@@ -315,4 +314,5 @@ public class KGraphImporter extends AbstractImporter {
             targetLayout.getBendPoints().add(targetBendPoint);
         }
     }
+    
 }

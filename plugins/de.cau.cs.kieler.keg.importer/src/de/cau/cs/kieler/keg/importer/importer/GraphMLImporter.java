@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.keg.importer.importer;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.graphdrawing.graphml.util.GraphMLResourceFactoryImpl;
 
@@ -67,21 +66,14 @@ public class GraphMLImporter extends AbstractImporter {
     /**
      * {@inheritDoc}
      */
-    public Node doImport(final InputStream stream,
-            final MapPropertyHolder options,
-            final IKielerProgressMonitor monitor) {
+    public Node doImport(final String path, final boolean isWorkspacePath,
+            final MapPropertyHolder options, final IKielerProgressMonitor monitor)
+            throws IOException, TransformException {
         Node node = null;
-        try {
-            node =
-                    ImportUtil.transformModel2KEGGraph(
-                            XTEND_TRANSFORMATION_FILE, XTEND_TRANSFORMATION,
-                            null, stream, new GraphMLResourceFactoryImpl(),
-                            monitor, "org.graphdrawing.graphml.GraphMLPackage");
-        } catch (IOException e) {
-            throw new RuntimeException(ERROR_MESSAGE_IMPORT_FAILED, e);
-        } catch (TransformException e) {
-            throw new RuntimeException(ERROR_MESSAGE_IMPORT_FAILED, e);
-        }
+        node = ImportUtil.transformModel2KEGGraph(
+                    XTEND_TRANSFORMATION_FILE, XTEND_TRANSFORMATION,
+                    null, path, isWorkspacePath, new GraphMLResourceFactoryImpl(),
+                    monitor, "org.graphdrawing.graphml.GraphMLPackage");
         return node;
     }
 }
