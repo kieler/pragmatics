@@ -73,6 +73,14 @@ public class ReInitKaomDiagramCommand extends AbstractReInitDiagramCommand {
     private String sourceExtension = MODEL_EXTENSION;
     
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setEnabled(final Object evaluationContext) {
+        // do nothing - don't disable the command since its visibility is managed by extension
+    }
+    
+    /**
      * Sets the source file extension to the given format. This must be either
      * {@link #MODEL_EXTENSION} or {@link #TEXT_EXTENSION}.
      * 

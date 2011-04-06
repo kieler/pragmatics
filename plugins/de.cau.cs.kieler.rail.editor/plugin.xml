@@ -69,17 +69,25 @@
          point="org.eclipse.ui.menus">
             <menuContribution
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
-         <menu
-               id="de.cau.cs.kieler"
-               label="KIELER"
-               mnemonic="K">
-         </menu>
          <command
                commandId="de.cau.cs.kieler.rail.editor.reinitDiagram"
                label="Initialize rail diagram file (krail)"
                style="push"
                tooltip="Reinitialize the diagram for the selected topologie file, overwriting the old krail file.">
-         </command>
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                     <test
+                           forcePluginActivation="false"
+                           property="org.eclipse.core.resources.name"
+                           value="*.topologie">
+                     </test>
+                  </adapt>
+               </iterate>
+            </visibleWhen>
+          </command>
       </menuContribution>
    </extension>
 </plugin>

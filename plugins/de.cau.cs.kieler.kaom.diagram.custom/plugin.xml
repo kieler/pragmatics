@@ -52,29 +52,6 @@
                   value="kaom">
             </parameter>
          </command>
-         <command
-               commandId="de.cau.cs.kieler.kaom.ui.reinitDiagram"
-               label="Initialize GMF Diagram File (kaod)"
-               style="push"
-               tooltip="(Re)Initialize the diagram for the selected &apos;kaot&apos; file, overwriting any old &apos;kaod&apos; file.">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate>
-                  <adapt
-                        type="org.eclipse.core.resources.IResource">
-                     <test
-                           forcePluginActivation="false"
-                           property="org.eclipse.core.resources.name"
-                           value="*.kaot">
-                     </test>
-                  </adapt>
-               </iterate>
-            </visibleWhen>
-            <parameter
-                  name="de.cau.cs.kieler.kaom.ui.reinitDiagram.source"
-                  value="kaot">
-            </parameter>
-         </command>
                      </menuContribution>
                         </extension>
                         
