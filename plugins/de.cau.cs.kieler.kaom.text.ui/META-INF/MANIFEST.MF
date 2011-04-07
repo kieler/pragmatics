@@ -5,7 +5,8 @@ Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Bundle-Version: 0.1.0
 Bundle-SymbolicName: de.cau.cs.kieler.kaom.text.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
-Require-Bundle: de.cau.cs.kieler.kaom.text;visibility:=reexport,
+Require-Bundle: de.cau.cs.kieler.kaom,
+ de.cau.cs.kieler.kaom.text;visibility:=reexport,
  de.cau.cs.kieler.core.annotations,
  de.cau.cs.kieler.core.annotations.ui,
  de.cau.cs.kieler.core.model,
