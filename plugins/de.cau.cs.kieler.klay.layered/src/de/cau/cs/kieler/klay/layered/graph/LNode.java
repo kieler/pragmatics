@@ -19,7 +19,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KInsets;
 import de.cau.cs.kieler.core.util.CompoundCondition;
 import de.cau.cs.kieler.core.util.FilteredIterator;
 import de.cau.cs.kieler.core.util.ICondition;
@@ -31,16 +31,16 @@ import de.cau.cs.kieler.kiml.options.PortType;
  *
  * @author msp
  */
-public class LNode extends LGraphElement {
+public class LNode extends LSizedGraphElement {
     
     /** the owning layer. */
     private Layer owner;
-    /** the current position of the node. */
-    private KVector pos = new KVector();
-    /** the size of the node. */
-    private KVector size = new KVector();
     /** the ports of the node. */
     private List<LPort> ports = new LinkedList<LPort>();
+    /** this node's label, if any. */
+    private LLabel label = null;
+    /** this node's insets. */
+    private KInsets.Double margin = new KInsets.Double();
     /** name of the node. */
     private String name;
 
@@ -138,24 +138,6 @@ public class LNode extends LGraphElement {
     }
 
     /**
-     * Returns the current position of the node.
-     * 
-     * @return the position
-     */
-    public KVector getPos() {
-        return pos;
-    }
-
-    /**
-     * Returns the current size of the node.
-     * 
-     * @return the size
-     */
-    public KVector getSize() {
-        return size;
-    }
-
-    /**
      * Returns the list of ports of this node. The order of ports in this list
      * corresponds to the order in which they are drawn, assuming clockwise order,
      * starting with the north side. That order is potentially affected during
@@ -202,6 +184,38 @@ public class LNode extends LGraphElement {
         conditions.add(new LPort.SideCondition(side));
         
         return new FilteredIterator.Iterable<LPort>(ports, new CompoundCondition<LPort>(conditions));
+    }
+    
+    /**
+     * Sets this node's label.
+     * 
+     * @param label the new label. May be {@code null}.
+     */
+    public void setLabel(final LLabel label) {
+        this.label = label;
+    }
+    
+    /**
+     * Returns this node's label, if any.
+     * 
+     * @return this node's label.
+     */
+    public LLabel getLabel() {
+        return label;
+    }
+    
+    /**
+     * Returns the node's margin. The margin is the space around the node that is to be reserved
+     * for ports and labels.
+     * 
+     * <p>The margin is not automatically updated. Rather, the margin has to be calculated once
+     * the port and label positions are fixed. Usually this is right before the node placement
+     * starts.</p>
+     *  
+     * @return the node's margin. May be modified.
+     */
+    public KInsets.Double getMargin() {
+        return margin;
     }
     
     /**

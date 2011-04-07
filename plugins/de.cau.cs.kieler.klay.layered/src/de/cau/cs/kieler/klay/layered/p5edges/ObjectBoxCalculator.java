@@ -111,11 +111,11 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
      * {@inheritDoc}
      */
     public boolean addEdge(final LEdge edge) {
-        Line2D.Double newEdge = new Line2D.Double(edge.getSource().getNode().getPos().x
-                + edge.getSource().getPos().x, edge.getSource().getNode().getPos().y
-                + edge.getSource().getPos().y, edge.getTarget().getNode().getPos().x
-                + edge.getTarget().getPos().x, edge.getTarget().getNode().getPos().y
-                + edge.getTarget().getPos().y);
+        Line2D.Double newEdge = new Line2D.Double(edge.getSource().getNode().getPosition().x
+                + edge.getSource().getPosition().x, edge.getSource().getNode().getPosition().y
+                + edge.getSource().getPosition().y, edge.getTarget().getNode().getPosition().x
+                + edge.getTarget().getPosition().x, edge.getTarget().getNode().getPosition().y
+                + edge.getTarget().getPosition().y);
         allEdges.add(newEdge);
         lineToEdge.put(newEdge, edge);
         LinkedList<Line2D.Double> list = new LinkedList<Line2D.Double>();
@@ -138,7 +138,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
         int defaultboxwidth = (int) Math.max(2 + 2 + 1, (int) spacing / BOX_WIDTH_DIVISION_FACTOR);
 
         // where are we currently
-        double reachedx = currentSource.getPos().x + currentSource.getNode().getPos().x;
+        double reachedx = currentSource.getPosition().x + currentSource.getNode().getPosition().x;
 
         Rectangle2D.Double newBox = null, previousBox = null;
 
@@ -148,7 +148,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
         // wander along the edge
         do {
-            double targetx = currentTarget.getPos().x + currentTarget.getNode().getPos().x;
+            double targetx = currentTarget.getPosition().x + currentTarget.getNode().getPosition().x;
 
             // only take care of edges that can hit us
             edges.clear();
@@ -174,19 +174,19 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
             drawOnDebug(
                     new Line2D.Double(
-                            (currentSource.getNode().getPos().x + currentSource.getPos().x),
-                            (currentSource.getNode().getPos().y + currentSource.getPos().y),
-                            (currentTarget.getNode().getPos().x + currentTarget.getPos().x),
-                            (currentTarget.getNode().getPos().y + currentTarget.getPos().y)),
+                            (currentSource.getNode().getPosition().x + currentSource.getPosition().x),
+                            (currentSource.getNode().getPosition().y + currentSource.getPosition().y),
+                            (currentTarget.getNode().getPosition().x + currentTarget.getPosition().x),
+                            (currentTarget.getNode().getPosition().y + currentTarget.getPosition().y)),
                             Color.YELLOW, false);
 
             if (currentTarget.getNode().getProperty(Properties.NODE_TYPE)
                     == Properties.NodeType.LONG_EDGE) {
                 drawOnDebug(
                         new Ellipse2D.Double(
-                                (currentTarget.getNode().getPos().x + currentTarget.getPos().x
+                                (currentTarget.getNode().getPosition().x + currentTarget.getPosition().x
                                         - DUMMY_NODE_DEBUG_SIZE / 2),
-                                (currentTarget.getNode().getPos().y + currentTarget.getPos().y
+                                (currentTarget.getNode().getPosition().y + currentTarget.getPosition().y
                                         - DUMMY_NODE_DEBUG_SIZE / 2),
                                 DUMMY_NODE_DEBUG_SIZE, DUMMY_NODE_DEBUG_SIZE),
                                 Color.CYAN, true);
@@ -336,8 +336,8 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
                 // the first box has to cover the complete first node
                 if (globBarray.isEmpty()) {
-                    if (newBox.y > currentSource.getNode().getPos().y) {
-                        double diff = newBox.y - currentSource.getNode().getPos().y;
+                    if (newBox.y > currentSource.getNode().getPosition().y) {
+                        double diff = newBox.y - currentSource.getNode().getPosition().y;
                         newBox.y -= diff;
                         newBox.height += diff;
                     }
@@ -346,8 +346,8 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
                 // the last box has to cover the last node
                 if (reachedx + newBox.width > targetx - 1) {
-                    if (newBox.y > currentTarget.getNode().getPos().y) {
-                        double diff = newBox.y - currentTarget.getNode().getPos().y;
+                    if (newBox.y > currentTarget.getNode().getPosition().y) {
+                        double diff = newBox.y - currentTarget.getNode().getPosition().y;
                         newBox.y -= diff;
                         newBox.height += diff;
                     }
@@ -497,7 +497,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
      * {@inheritDoc}
      */
     public void addNode(final LNode node) {
-        allNodes.add(new Rectangle2D.Double(node.getPos().x, node.getPos().y, node.getSize().x,
+        allNodes.add(new Rectangle2D.Double(node.getPosition().x, node.getPosition().y, node.getSize().x,
                 node.getSize().y));
     }
 
@@ -525,10 +525,13 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                     // }
                     addNode(node);
                 } else {
-                    allDummyNodes.add(new Rectangle2D.Double(node.getPos().x, node.getPos().y, node
-                            .getSize().x, node.getSize().y));
-                    if (node.getPos().y > layeredGraph.getSize().y) {
-                        layeredGraph.getSize().y = node.getPos().y;
+                    allDummyNodes.add(new Rectangle2D.Double(
+                            node.getPosition().x,
+                            node.getPosition().y,
+                            node.getSize().x,
+                            node.getSize().y));
+                    if (node.getPosition().y > layeredGraph.getSize().y) {
+                        layeredGraph.getSize().y = node.getPosition().y;
                     }
                 }
             }
@@ -638,11 +641,12 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
      */
     private static double pointOnLine(final LPort src, final LPort dst, final double x) {
         // this is basically the line-equation for this direct path between source and target Ports
-        double starty = (src.getPos().y + src.getNode().getPos().y)
-                + (((dst.getPos().y + dst.getNode().getPos().y) - (src.getPos().y + src.getNode()
-                        .getPos().y)) * (x - (src.getPos().x + src.getNode().getPos().x)))
-                / ((dst.getPos().x + dst.getNode().getPos().x) - (src.getPos().x + src.getNode()
-                        .getPos().x));
+        double starty = (src.getPosition().y + src.getNode().getPosition().y)
+                + (((dst.getPosition().y + dst.getNode().getPosition().y)
+                        - (src.getPosition().y + src.getNode().getPosition().y))
+                    * (x - (src.getPosition().x + src.getNode().getPosition().x)))
+                / ((dst.getPosition().x + dst.getNode().getPosition().x)
+                        - (src.getPosition().x + src.getNode().getPosition().x));
         return starty;
     }
 
@@ -652,10 +656,10 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
     private void addAllIntersectingLines(final LPort currentSource, final LPort currentTarget,
             final LinkedList<Line2D.Double> edges, final LinkedList<Line2D.Double> ignoredEdges) {
         for (Line2D.Double intLine : allIntersectingLines(new Line2D.Double((currentSource
-                .getNode().getPos().x + currentSource.getPos().x), (currentSource.getNode()
-                .getPos().y + currentSource.getPos().y),
-                (currentTarget.getNode().getPos().x + currentTarget.getPos().x), (currentTarget
-                        .getNode().getPos().y + currentTarget.getPos().y)), edges)) {
+                .getNode().getPosition().x + currentSource.getPosition().x), (currentSource.getNode()
+                .getPosition().y + currentSource.getPosition().y),
+                (currentTarget.getNode().getPosition().x + currentTarget.getPosition().x), (currentTarget
+                        .getNode().getPosition().y + currentTarget.getPosition().y)), edges)) {
             Object key = lineToEdge.get(intLine);
             LinkedList<Line2D.Double> list = edgeToLine.get(key);
             for (Line2D.Double line : list) {

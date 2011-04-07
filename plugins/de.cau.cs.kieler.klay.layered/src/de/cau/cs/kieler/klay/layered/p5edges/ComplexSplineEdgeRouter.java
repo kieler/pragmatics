@@ -142,11 +142,10 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements ILayou
                 LNode startNode = start.getNode();
                 LPort end = edge.getTarget();
                 LNode endNode = end.getNode();
-                KVector startVec = new KVector(startNode.getPos().x + start.getPos().x, startNode
-                        .getPos().y
-                        + start.getPos().y);
-                KVector endVec = new KVector(endNode.getPos().x + end.getPos().x,
-                        endNode.getPos().y + end.getPos().y);
+                KVector startVec = new KVector(startNode.getPosition().x + start.getPosition().x,
+                        startNode.getPosition().y + start.getPosition().y);
+                KVector endVec = new KVector(endNode.getPosition().x + end.getPosition().x,
+                        endNode.getPosition().y + end.getPosition().y);
 
                 // it is enough to check one vector, as the angle at the other node is the same
                 KVector startToEnd = KVector.sub(endVec, startVec);
@@ -205,10 +204,11 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements ILayou
                 d++;
             }
             // compute the actual spline
-            computeSpline(boxes, new KVector(source.getNode().getPos().x + source.getPos().x,
-                    source.getNode().getPos().y + source.getPos().y), new KVector(target.getNode()
-                    .getPos().x
-                    + target.getPos().x, target.getNode().getPos().y + target.getPos().y));
+            computeSpline(boxes,
+                    new KVector(source.getNode().getPosition().x + source.getPosition().x,
+                            source.getNode().getPosition().y + source.getPosition().y),
+                    new KVector(target.getNode().getPosition().x + target.getPosition().x,
+                            target.getNode().getPosition().y + target.getPosition().y));
             subMon.done();
             cumSplineTime += subMon.getExecutionTime();
 

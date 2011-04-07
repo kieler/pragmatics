@@ -117,8 +117,8 @@ public class KGraphImporter implements IGraphImporter {
             
             LNode newNode = new LNode(child.getLabel().getText());
             newNode.setProperty(Properties.ORIGIN, child);
-            newNode.getPos().x = nodeLayout.getXpos();
-            newNode.getPos().y = nodeLayout.getYpos();
+            newNode.getPosition().x = nodeLayout.getXpos();
+            newNode.getPosition().y = nodeLayout.getYpos();
             newNode.getSize().x = nodeLayout.getWidth();
             newNode.getSize().y = nodeLayout.getHeight();
             layeredNodes.add(newNode);
@@ -155,8 +155,8 @@ public class KGraphImporter implements IGraphImporter {
                 // create layered port, copying its position
                 LPort newPort = new LPort(type, kport.getLabel().getText());
                 newPort.setProperty(Properties.ORIGIN, kport);
-                newPort.getPos().x = portLayout.getXpos() + portLayout.getWidth() / 2;
-                newPort.getPos().y = portLayout.getYpos() + portLayout.getHeight() / 2;
+                newPort.getPosition().x = portLayout.getXpos() + portLayout.getWidth() / 2;
+                newPort.getPosition().y = portLayout.getYpos() + portLayout.getHeight() / 2;
                 newPort.setNode(newNode);
                 
                 elemMap.put(kport, newPort);
@@ -216,8 +216,8 @@ public class KGraphImporter implements IGraphImporter {
                             sourcePort = new LPort(PortType.OUTPUT);
                             sourcePort.setNode(sourceNode);
                             KPoint sourcePoint = edgeLayout.getSourcePoint();
-                            sourcePort.getPos().x = sourcePoint.getX() - sourceNode.getPos().x;
-                            sourcePort.getPos().y = sourcePoint.getY() - sourceNode.getPos().y;
+                            sourcePort.getPosition().x = sourcePoint.getX() - sourceNode.getPosition().x;
+                            sourcePort.getPosition().y = sourcePoint.getY() - sourceNode.getPosition().y;
                             sourcePort.setSide(calcPortSide(sourceNode, sourcePort));
                         }
                     }
@@ -231,8 +231,8 @@ public class KGraphImporter implements IGraphImporter {
                             targetPort = new LPort(PortType.INPUT);
                             targetPort.setNode(targetNode);
                             KPoint targetPoint = edgeLayout.getTargetPoint();
-                            targetPort.getPos().x = targetPoint.getX() - targetNode.getPos().x;
-                            targetPort.getPos().y = targetPoint.getY() - targetNode.getPos().y;
+                            targetPort.getPosition().x = targetPoint.getX() - targetNode.getPosition().x;
+                            targetPort.getPosition().y = targetPoint.getY() - targetNode.getPosition().y;
                             targetPort.setSide(calcPortSide(targetNode, targetPort));
                         }
                     }
@@ -247,8 +247,8 @@ public class KGraphImporter implements IGraphImporter {
                     for (KLabel klabel : kedge.getLabels()) {
                         KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
                         LLabel newLabel = new LLabel(klabel.getText());
-                        newLabel.getPos().x = labelLayout.getXpos();
-                        newLabel.getPos().y = labelLayout.getYpos();
+                        newLabel.getPosition().x = labelLayout.getXpos();
+                        newLabel.getPosition().y = labelLayout.getYpos();
                         newLabel.getSize().x = labelLayout.getWidth();
                         newLabel.getSize().y = labelLayout.getHeight();
                         newLabel.setProperty(Properties.ORIGIN, klabel);
@@ -273,8 +273,8 @@ public class KGraphImporter implements IGraphImporter {
      * @return the side of the node on which the port is situated
      */
     private static PortSide calcPortSide(final LNode node, final LPort port) {
-        double widthPercent = port.getPos().x / node.getSize().x;
-        double heightPercent = port.getPos().y / node.getSize().y;
+        double widthPercent = port.getPosition().x / node.getSize().x;
+        double heightPercent = port.getPosition().y / node.getSize().y;
         if (widthPercent + heightPercent <= 1
                 && widthPercent - heightPercent <= 0) {
             // port is on the left
@@ -324,8 +324,8 @@ public class KGraphImporter implements IGraphImporter {
                     // set the node position
                     KShapeLayout nodeLayout = ((KNode) origin).getData(KShapeLayout.class);
                     
-                    nodeLayout.setXpos((float) (lnode.getPos().x + offset.x));
-                    nodeLayout.setYpos((float) (lnode.getPos().y + offset.y));
+                    nodeLayout.setXpos((float) (lnode.getPosition().x + offset.x));
+                    nodeLayout.setYpos((float) (lnode.getPosition().y + offset.y));
                     
                     // set port positions
                     if (!nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
@@ -353,8 +353,8 @@ public class KGraphImporter implements IGraphImporter {
                                     yoffset = -portLayout.getHeight() / 2;
                                     break;
                                 }
-                                portLayout.setXpos((float) lport.getPos().x + xoffset);
-                                portLayout.setYpos((float) lport.getPos().y + yoffset);
+                                portLayout.setXpos((float) lport.getPosition().x + xoffset);
+                                portLayout.setYpos((float) lport.getPosition().y + yoffset);
                             }
                         }
                     }
@@ -380,9 +380,11 @@ public class KGraphImporter implements IGraphImporter {
             
             // add the source port and target port positions to the vector chain
             LPort sourcePort = ledge.getSource();
-            bendPoints.addFirst(KVector.add(sourcePort.getPos(), sourcePort.getNode().getPos()));
+            bendPoints.addFirst(KVector.add(sourcePort.getPosition(),
+                    sourcePort.getNode().getPosition()));
             LPort targetPort = ledge.getTarget();
-            bendPoints.addLast(KVector.add(targetPort.getPos(), targetPort.getNode().getPos()));
+            bendPoints.addLast(KVector.add(targetPort.getPosition(),
+                    targetPort.getNode().getPosition()));
             
             // translate the bend points by the offset and apply the bend points
             bendPoints.translate(offset);
@@ -393,10 +395,10 @@ public class KGraphImporter implements IGraphImporter {
                 KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
                 KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
                 
-                KVector labelPos = new KVector(ledge.getSource().getPos().x, ledge
-                        .getSource().getPos().y);
-                labelPos.add(ledge.getSource().getNode().getPos());
-                labelPos.add(label.getPos());
+                KVector labelPos = new KVector(ledge.getSource().getPosition().x, ledge
+                        .getSource().getPosition().y);
+                labelPos.add(ledge.getSource().getNode().getPosition());
+                labelPos.add(label.getPosition());
                 klabelLayout.setXpos((float) (labelPos.x + offset.x));
                 klabelLayout.setYpos((float) (labelPos.y + offset.y));
             }

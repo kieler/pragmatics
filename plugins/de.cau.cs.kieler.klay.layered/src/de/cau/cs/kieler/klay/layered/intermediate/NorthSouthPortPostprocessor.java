@@ -33,6 +33,8 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *     placements and edge routing.</dd>
  *   <dt>Postcondition:</dt><dd>north south port dummy nodes are removed, their edges
  *     properly reconnected and routed.</dd>
+ *   <dt>Slots:</dt><dd>After phase 5.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
  * </dl>
  * 
  * @see NorthSouthPortPreprocessor
@@ -85,8 +87,8 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
         LPort originPort = (LPort) inputPort.getProperty(Properties.ORIGIN);
         
         // Calculate the bend point
-        KVector bendPoint = inputPort.getNode().getPos();
-        bendPoint.x = originPort.getNode().getPos().x + originPort.getPos().x;
+        KVector bendPoint = inputPort.getNode().getPosition();
+        bendPoint.x = originPort.getNode().getPosition().x + originPort.getPosition().x;
         
         // Reroute the edges, inserting a new bend point at the position of
         // the dummy node
@@ -108,8 +110,8 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
         LPort originPort = (LPort) outputPort.getProperty(Properties.ORIGIN);
         
         // Calculate the bend point
-        KVector bendPoint = outputPort.getNode().getPos();
-        bendPoint.x = originPort.getNode().getPos().x + originPort.getPos().x;
+        KVector bendPoint = outputPort.getNode().getPosition();
+        bendPoint.x = originPort.getNode().getPosition().x + originPort.getPosition().x;
         
         // Reroute the edges, inserting a new bend point at the position of
         // the dummy node

@@ -53,41 +53,41 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
                             }
                             
                             //Get source port position
-                            KVector source = new KVector(edge.getSource().getPos().x, edge.getSource()
-                                    .getPos().y);
+                            KVector source = new KVector(edge.getSource().getPosition().x,
+                                    edge.getSource().getPosition().y);
                             
                             //Get target port position, distinguish between short edge or spline target
                             KVector target;
                             if (longEdge == null) {
-                                target = new KVector(edge.getTarget().getPos().x, edge.getTarget()
-                                        .getPos().y);
+                                target = new KVector(edge.getTarget().getPosition().x, edge.getTarget()
+                                        .getPosition().y);
                             } else {
-                                target = new KVector(longEdge.getTarget().getPos().x, longEdge
-                                        .getTarget().getPos().y);
+                                target = new KVector(longEdge.getTarget().getPosition().x, longEdge
+                                        .getTarget().getPosition().y);
                             }
                             
                             //Get source port absolute position
-                            source = source.add(edge.getSource().getNode().getPos());
+                            source = source.add(edge.getSource().getNode().getPosition());
                             
                             //Get target port absolute position
                             if (longEdge == null) {
-                                target = target.add(edge.getTarget().getNode().getPos());
+                                target = target.add(edge.getTarget().getNode().getPosition());
                             } else {
-                                target = target.add(longEdge.getTarget().getNode().getPos());
+                                target = target.add(longEdge.getTarget().getNode().getPosition());
                             }
                             
                             //Compute new horizontal position for label
-                            label.getPos().x = Math.abs(source.x - target.x) / 2;
+                            label.getPosition().x = Math.abs(source.x - target.x) / 2;
                             
                             //Compute new vertcial position for label
                             if (longEdge == null) {
-                                label.getPos().y = (target.y - source.y) / 2;
+                                label.getPosition().y = (target.y - source.y) / 2;
                             } else {
                                 //Or compute label position on a spline by using bend points
                                 //Therefore, find bendpoint with max distance to source AND target node
-                                KVector portPosition = new KVector(edge.getSource().getPos().x,
-                                        edge.getSource().getPos().y);
-                                portPosition.add(edge.getSource().getNode().getPos());
+                                KVector portPosition = new KVector(edge.getSource().getPosition().x,
+                                        edge.getSource().getPosition().y);
+                                portPosition.add(edge.getSource().getNode().getPosition());
                                 double minDistanceDifference = Float.POSITIVE_INFINITY;
                                 KVector middlePoint = null;
                                 for (KVector bPoint : longEdge.getEdge().getBendPoints()) {
@@ -103,12 +103,12 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
                                         middlePoint = bPoint;
                                     }
                                 }
-                                label.getPos().x = middlePoint.x - portPosition.x;
-                                label.getPos().y = middlePoint.y - portPosition.y;
+                                label.getPosition().x = middlePoint.x - portPosition.x;
+                                label.getPosition().y = middlePoint.y - portPosition.y;
                             }
                             
                             //Move label horizontally to put the middle of the label on the computed spot
-                            label.getPos().x -= label.getSize().x / 2;
+                            label.getPosition().x -= label.getSize().x / 2;
                         }
                     }
                 }

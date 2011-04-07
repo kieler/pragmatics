@@ -135,7 +135,7 @@ public class Layer extends LGraphElement {
                     x += room * outports / (inports + outports);
                 }
             }
-            node.getPos().x = x;
+            node.getPosition().x = x;
         }
     }
 

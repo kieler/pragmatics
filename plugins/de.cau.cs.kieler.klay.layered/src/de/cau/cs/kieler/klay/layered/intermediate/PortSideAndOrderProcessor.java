@@ -35,6 +35,8 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *   <dt>Precondition:</dt><dd>a layered graph.</dd>
  *   <dt>Postcondition:</dt><dd>all nodes have their ports distributed, with port constraints
  *     set to fixed sides at the least.</dd>
+ *   <dt>Slots:</dt><dd>Before phase 3.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
  * </dl>
  * 
  * @author cds
@@ -64,19 +66,19 @@ public class PortSideAndOrderProcessor extends AbstractAlgorithm implements ILay
             switch (port1.getSide()) {
             case NORTH:
                 // Compare x coordinates
-                return convertDifferenceToInt(port1.getPos().x - port2.getPos().x);
+                return convertDifferenceToInt(port1.getPosition().x - port2.getPosition().x);
             
             case EAST:
                 // Compare y coordinates
-                return convertDifferenceToInt(port1.getPos().y - port2.getPos().y);
+                return convertDifferenceToInt(port1.getPosition().y - port2.getPosition().y);
             
             case SOUTH:
                 // Compare x coordinates
-                return convertDifferenceToInt(port2.getPos().x - port1.getPos().x);
+                return convertDifferenceToInt(port2.getPosition().x - port1.getPosition().x);
             
             case WEST:
                 // Compare y coordinates
-                return convertDifferenceToInt(port2.getPos().y - port1.getPos().y);
+                return convertDifferenceToInt(port2.getPosition().y - port1.getPosition().y);
             }
             
             // Port side undefined; shouldn't happen. EVER!

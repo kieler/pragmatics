@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
@@ -35,7 +34,7 @@ import de.cau.cs.kieler.kiml.options.PortType;
  *
  * @author msp
  */
-public class LPort extends LGraphElement {
+public class LPort extends LSizedGraphElement {
 
     /** the owning node. */
     private LNode owner;
@@ -43,8 +42,6 @@ public class LPort extends LGraphElement {
     private PortType type;
     /** the port side. */
     private PortSide side = PortSide.UNDEFINED;
-    /** the current position of the port. */
-    private KVector pos = new KVector();
     /** the edges connected to the port. */
     private List<LEdge> edges = new LinkedList<LEdge>();
     /** name of the port. */
@@ -186,16 +183,6 @@ public class LPort extends LGraphElement {
      */
     public void setSide(final PortSide theside) {
         this.side = theside;
-    }
-
-    /**
-     * Returns the position of the port, which is relative to the containing
-     * node's position.
-     * 
-     * @return the position
-     */
-    public KVector getPos() {
-        return pos;
     }
 
     /**

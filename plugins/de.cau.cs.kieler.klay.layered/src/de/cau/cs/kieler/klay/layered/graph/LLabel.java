@@ -13,19 +13,13 @@
  */
 package de.cau.cs.kieler.klay.layered.graph;
 
-import de.cau.cs.kieler.core.math.KVector;
-
 /**
  * A label in the layered graph structure.
  * 
  * @author jjc
  */
-public class LLabel extends LGraphElement {
+public class LLabel extends LSizedGraphElement {
 
-    /** the current position of the label. */
-    private KVector pos = new KVector();
-    /** the size of the label. */
-    private KVector size = new KVector();
     /** text of the label. */
     private String text;
     
@@ -43,24 +37,6 @@ public class LLabel extends LGraphElement {
      */
     public LLabel() {
         this("");
-    }
-    
-    /**
-     * Returns the current position of the label.
-     * 
-     * @return the position
-     */
-    public KVector getPos() {
-        return pos;
-    }
-
-    /**
-     * Returns the current size of the label.
-     * 
-     * @return the size
-     */
-    public KVector getSize() {
-        return size;
     }
     
     /**

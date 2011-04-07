@@ -46,11 +46,15 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * {@link de.cau.cs.kieler.klay.layered.Properties.NodeType#LONG_EDGE} dummy nodes</p>
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph.</dd>
+ *   <dt>Precondition:</dt><dd>a layered graph with fixed port sides; nodes are not
+ *     placed yet, since new dummy nodes may be created.</dd>
  *   <dt>Postcondition:</dt><dd>dummy nodes have been inserted for edges connected to
  *     ports on odd sides; the graph's layering may not be proper anymore.</dd>
+ *   <dt>Slots:</dt><dd>Before phase 3 or phase 4.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link PortSideAndOrderProcessor}</dd>
  * </dl>
  * 
+ * @see PortSideAndOrderProcessor
  * @author cds
  */
 public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutProcessor {

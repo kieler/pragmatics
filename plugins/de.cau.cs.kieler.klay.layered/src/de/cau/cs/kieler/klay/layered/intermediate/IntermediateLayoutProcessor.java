@@ -22,23 +22,45 @@ import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
  * @author cds
  */
 public enum IntermediateLayoutProcessor {
-
-    /** Sets port sides and orders the ports, if necessary. */
-    PORT_SIDE_AND_ORDER_PROCESSOR,
-    /** Merges long edge dummy nodes belonging to the same hyperedge. */
-    HYPEREDGE_DUMMY_JOINER,
-    /** Takes a properly layered graph and removes the dummy nodes due to proper layering. */
-    LONG_EDGE_JOINER,
+    
+    /* In this enumeration, intermediate layout processors are listed by the earliest
+     * slot in which they can sensibly be used. The order in which they are listed is
+     * determined by the preconditions they specify. Each intermediate processor lists
+     * those processors it must come after.
+     */
+    
+    // Before Phase 1
+    
+    // Before Phase 2
+    
+    // Before Phase 3
+    
     /** Takes a layered graph and turns it into a properly layered graph. */
     LONG_EDGE_SPLITTER,
-    /** Removes dummy nodes inserted by the north south side preprocessor and routes edges. */
-    NORTH_SOUTH_SIDE_POSTPROCESSOR,
-    /** Inserts dummy nodes to take care of northern and southern ports. */
-    NORTH_SOUTH_SIDE_PREPROCESSOR,
-    /** Takes a layered graph and inserts dummy nodes for edges connected to ports on odd sides. */
-    ODD_PORT_SIDE_PROCESSOR,
+    /** Sets port sides and orders the ports, if necessary. */
+    PORT_SIDE_AND_ORDER_PROCESSOR,
     /** Sets the positions of ports. */
     PORT_ARRANGER,
+    /** Calculates the margins of nodes according to the sizes of ports and labels. */
+    NODE_MARGIN_CALCULATOR,
+    /** Takes a layered graph and inserts dummy nodes for edges connected to ports on odd sides. */
+    ODD_PORT_SIDE_PROCESSOR,
+    /** Inserts dummy nodes to take care of northern and southern ports. */
+    NORTH_SOUTH_SIDE_PREPROCESSOR,
+    
+    // Before Phase 4
+    
+    /** Merges long edge dummy nodes belonging to the same hyperedge. */
+    HYPEREDGE_DUMMY_JOINER,
+    
+    // Before Phase 5
+    
+    // After Phase 5
+    
+    /** Takes a properly layered graph and removes the dummy nodes due to proper layering. */
+    LONG_EDGE_JOINER,
+    /** Removes dummy nodes inserted by the north south side preprocessor and routes edges. */
+    NORTH_SOUTH_SIDE_POSTPROCESSOR,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER;
     
@@ -69,6 +91,9 @@ public enum IntermediateLayoutProcessor {
             
         case LONG_EDGE_SPLITTER:
             return new LongEdgeSplitter();
+        
+        case NODE_MARGIN_CALCULATOR:
+            return new NodeMarginCalculator();
         
         case NORTH_SOUTH_SIDE_POSTPROCESSOR:
             return new NorthSouthPortPostprocessor();

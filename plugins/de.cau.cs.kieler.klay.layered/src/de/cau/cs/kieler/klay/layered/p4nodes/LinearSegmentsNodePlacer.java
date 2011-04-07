@@ -199,7 +199,9 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
         new IntermediateProcessingStrategy(
                 IntermediateProcessingStrategy.BEFORE_PHASE_4,
-                EnumSet.of(IntermediateLayoutProcessor.PORT_ARRANGER));
+                EnumSet.of(
+                        IntermediateLayoutProcessor.NODE_MARGIN_CALCULATOR,
+                        IntermediateLayoutProcessor.PORT_ARRANGER));
     
     /** array of sorted linear segments. */
     private LinearSegment[] linearSegments;
@@ -510,8 +512,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             LNode nextNode = highestPrioEdge.getTarget().getNode();
             
             // Calculate and set offset
-            int offset = (int) Math.round(highestPrioEdge.getSource().getPos().y
-                    - (highestPrioEdge.getTarget().getPos().y)
+            int offset = (int) Math.round(highestPrioEdge.getSource().getPosition().y
+                    - (highestPrioEdge.getTarget().getPosition().y)
                     + node.getProperty(Properties.LINSEG_OFFSET));
             nextNode.setProperty(Properties.LINSEG_OFFSET, offset);
             
@@ -612,7 +614,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
 
                 // Set the node position. Also, if the segment is not invisible, its nodes
                 // occupies space in the layer (thus, the layer size has to be adjusted)
-                node.getPos().y = uppermostPlace + offset;
+                node.getPosition().y = uppermostPlace + offset;
                 Layer layer = node.getLayer();
                 layer.getSize().y = uppermostPlace + offset + node.getSize().y;
                 layer.getSize().x = Math.max(layer.getSize().x, node.getSize().x);
@@ -664,7 +666,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 
                 // Move nodes
                 for (LNode node : region.getNodes()) {
-                    node.getPos().y += region.force;
+                    node.getPosition().y += region.force;
                 }
             }
 
@@ -700,16 +702,16 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                     for (LEdge edge : port.getEdges()) {
                         LPort otherPort = edge.getTarget();
                         LNode otherNode = otherPort.getNode();
-                        sum += (otherNode.getPos().y + otherPort.getPos().y)
-                                - (node.getPos().y + port.getPos().y);
+                        sum += (otherNode.getPosition().y + otherPort.getPosition().y)
+                                - (node.getPosition().y + port.getPosition().y);
                         numEdges++;
                     }
                 } else if (port.getType() == PortType.INPUT) {
                     for (LEdge edge : port.getEdges()) {
                         LPort otherPort = edge.getSource();
                         LNode otherNode = otherPort.getNode();
-                        sum += (otherNode.getPos().y + otherPort.getPos().y)
-                                - (node.getPos().y + port.getPos().y);
+                        sum += (otherNode.getPosition().y + otherPort.getPosition().y)
+                                - (node.getPosition().y + port.getPosition().y);
                         numEdges++;
                     }
                 }
@@ -748,18 +750,18 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                     float space = isNodeNormal && isNeighborNormal ? spacing : smallSpacing;
                     
                     if (region != neighbor.getProperty(Properties.REGION)
-                            && neighbor.getPos().y + neighbor.getSize().y + space 
-                                > node.getPos().y + region.force) {
+                            && neighbor.getPosition().y + neighbor.getSize().y + space 
+                                > node.getPosition().y + region.force) {
                         
                         // Set force on region to the max possible force
-                        region.force = node.getPos().y
-                                - (neighbor.getPos().y + neighbor.getSize().y + space);
+                        region.force = node.getPosition().y
+                                - (neighbor.getPosition().y + neighbor.getSize().y + space);
                     }
                 } else {
                     // Node is topmost node
-                    if (node.getPos().y + region.force < 0.0f) {
+                    if (node.getPosition().y + region.force < 0.0f) {
                         // Node would like to go out of frame
-                        region.force = -node.getPos().y;
+                        region.force = -node.getPosition().y;
                     }
                 }
             } else if (region.force > 0.0f && node.getIndex() < node.getLayer().getNodes().size() - 1) {
@@ -770,12 +772,12 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 float space = isNodeNormal && isNeighborNormal ? spacing : smallSpacing;
                 
                 if (region != neighbor.getProperty(Properties.REGION)
-                        && node.getPos().y + node.getSize().y + space + region.force
-                            > neighbor.getPos().y) {
+                        && node.getPosition().y + node.getSize().y + space + region.force
+                            > neighbor.getPosition().y) {
                     
                     // Set force on region to the max possible force
-                    region.force = neighbor.getPos().y
-                            - (node.getPos().y + node.getSize().y + space);
+                    region.force = neighbor.getPosition().y
+                            - (node.getPosition().y + node.getSize().y + space);
                 }
             }
         }
@@ -823,13 +825,15 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                     float space = isNode1Normal && isNode2Normal ? spacing : smallSpacing;
                     
                     // Test if the nodes are touching
-                    if (node1.getPos().y + node1.getSize().y + space > node2.getPos().y - 1.0f) {
-                        double overlay = node1.getPos().y + node1.getSize().y
-                            + space - node2.getPos().y;
+                    if (node1.getPosition().y + node1.getSize().y + space
+                            > node2.getPosition().y - 1.0f) {
+                        
+                        double overlay = node1.getPosition().y + node1.getSize().y
+                            + space - node2.getPosition().y;
                         
                         // Adjust position for every member of the neighbors region
                         for (LNode toAdjust : node2.getProperty(Properties.REGION).getNodes()) {
-                            toAdjust.getPos().y = toAdjust.getPos().y + overlay;
+                            toAdjust.getPosition().y = toAdjust.getPosition().y + overlay;
                         }
                         
                         // Union the regions of the neighbors

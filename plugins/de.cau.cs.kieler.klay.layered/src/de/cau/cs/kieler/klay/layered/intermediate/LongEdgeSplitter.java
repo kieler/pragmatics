@@ -38,9 +38,11 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * source and target ports.</p>
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph.</dd>
+ *   <dt>Precondition:</dt><dd>a layered graph without crossing reduction applied.</dd>
  *   <dt>Postcondition:</dt><dd>the graph is properly layered; that is, each edge
  *     connects nodes in neighbouring layers.</dd>
+ *   <dt>Slots:</dt><dd>Before phase 3.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
  * </dl>
  *
  * @author msp

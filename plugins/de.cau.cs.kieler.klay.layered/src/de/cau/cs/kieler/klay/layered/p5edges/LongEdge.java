@@ -69,19 +69,21 @@ public class LongEdge {
         LPort end = edge.getTarget();
         LNode endNode = end.getNode();
 
-        startPoint = new KVector((startNode.getPos().x + start.getPos().x),
-                (startNode.getPos().y + start.getPos().y));
-        startTangent = new KVector((endNode.getPos().x + end.getPos().x)
-                - (startNode.getPos().x + start.getPos().x), (endNode.getPos().y + end.getPos().y)
-                - (startNode.getPos().y + start.getPos().y));
+        startPoint = new KVector((startNode.getPosition().x + start.getPosition().x),
+                (startNode.getPosition().y + start.getPosition().y));
+        startTangent = new KVector(
+                (endNode.getPosition().x + end.getPosition().x)
+                - (startNode.getPosition().x + start.getPosition().x),
+                (endNode.getPosition().y + end.getPosition().y)
+                - (startNode.getPosition().y + start.getPosition().y));
         startTangent.normalize();
 
         // calc endTangent
         LEdge intermediateEdge = edge;
         LNode currentTarget = edge.getSource().getNode();
         LPort port = edge.getSource();
-        points.add(new KVector(currentTarget.getPos().x + port.getPos().x, currentTarget.getPos().y
-                + port.getPos().y));
+        points.add(new KVector(currentTarget.getPosition().x + port.getPosition().x,
+                currentTarget.getPosition().y + port.getPosition().y));
         // run along the edge till end point is found
         do {
             // currently doesnt handle hypergraphs here
@@ -96,9 +98,9 @@ public class LongEdge {
                 }
                 break;
             }
-            points.add(new KVector(currentTarget.getPos().x + port.getPos().x, currentTarget
-                    .getPos().y
-                    + port.getPos().y));
+            points.add(new KVector(currentTarget.getPosition().x + port.getPosition().x, currentTarget
+                    .getPosition().y
+                    + port.getPosition().y));
         } while (intermediateEdge.getTarget().getNode().getProperty(Properties.NODE_TYPE) 
                 == Properties.NodeType.LONG_EDGE);
 
@@ -106,17 +108,21 @@ public class LongEdge {
         startNode = start.getNode();
         end = intermediateEdge.getTarget();
         endNode = end.getNode();
-        endPoint = new KVector((endNode.getPos().x + end.getPos().x), (endNode.getPos().y + end
-                .getPos().y));
-        endTangent = new KVector((startNode.getPos().x + start.getPos().x)
-                - (endNode.getPos().x + end.getPos().x), (startNode.getPos().y + start.getPos().y)
-                - (endNode.getPos().y + end.getPos().y));
+        endPoint = new KVector(
+                (endNode.getPosition().x + end.getPosition().x),
+                (endNode.getPosition().y + end.getPosition().y));
+        endTangent = new KVector(
+                (startNode.getPosition().x + start.getPosition().x)
+                - (endNode.getPosition().x + end.getPosition().x),
+                (startNode.getPosition().y + start.getPosition().y)
+                - (endNode.getPosition().y + end.getPosition().y));
         endTangent.normalize();
         target = end;
 
         currentTarget = end.getNode();
-        points.add(new KVector(currentTarget.getPos().x + end.getPos().x, currentTarget.getPos().y
-                + end.getPos().y));
+        points.add(new KVector(
+                currentTarget.getPosition().x + end.getPosition().x,
+                currentTarget.getPosition().y + end.getPosition().y));
     }
 
     /**

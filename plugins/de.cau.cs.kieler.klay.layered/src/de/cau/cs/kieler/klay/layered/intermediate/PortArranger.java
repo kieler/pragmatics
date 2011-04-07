@@ -28,11 +28,15 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * {@link de.cau.cs.kieler.kiml.options.PortConstraints#FIXED_POS})
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph.</dd>
+ *   <dt>Precondition:</dt><dd>a layered graph with an established side and order
+ *     for ports; edges are not routed yet.</dd>
  *   <dt>Postcondition:</dt><dd>the ports in the layered graph have had their
  *     exact positions set.</dd>
+ *   <dt>Slots:</dt><dd>Before phase 3, phase 4 or phase 5</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link PortSideAndOrderProcessor}</dd>
  * </dl>
- *
+ * 
+ * @see PortSideAndOrderProcessor
  * @author msp
  */
 public class PortArranger extends AbstractAlgorithm implements ILayoutProcessor {
@@ -82,23 +86,23 @@ public class PortArranger extends AbstractAlgorithm implements ILayoutProcessor 
                     for (LPort port : node.getPorts()) {
                         switch (port.getSide()) {
                         case NORTH:
-                            port.getPos().x = northX;
-                            port.getPos().y = 0;
+                            port.getPosition().x = northX;
+                            port.getPosition().y = 0;
                             northX += northDelta;
                             break;
                         case EAST:
-                            port.getPos().x = nodeSize.x;
-                            port.getPos().y = eastY;
+                            port.getPosition().x = nodeSize.x;
+                            port.getPosition().y = eastY;
                             eastY += eastDelta;
                             break;
                         case SOUTH:
-                            port.getPos().x = southX;
-                            port.getPos().y = nodeSize.y;
+                            port.getPosition().x = southX;
+                            port.getPosition().y = nodeSize.y;
                             southX -= southDelta;
                             break;
                         default:
-                            port.getPos().x = 0;
-                            port.getPos().y = westY;
+                            port.getPosition().x = 0;
+                            port.getPosition().y = westY;
                             westY -= westDelta;
                         }
                     }

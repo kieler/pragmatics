@@ -71,9 +71,13 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *   <dt>Postcondition:</dt><dd>dummy nodes have been inserted for edges connected to
  *     ports on north and south sides; the dummy nodes form layout units with the nodes
  *     they were created from; also, the dummy nodes have a certain order.</dd>
+ *   <dt>Slots:</dt><dd>Before phase 3 or phase 4, depending on whether the crossing
+ *     minimizer supports node successor constraints and layout units.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link PortArranger}</dd>
  * </dl>
  * 
  * @see NorthSouthPortPostprocessor
+ * @see PortArranger
  * @author cds
  */
 public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILayoutProcessor {

@@ -128,7 +128,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         void addPortPosis(final LPort port, final Map<LPort, HyperNode> hyperNodeMap) {
             hyperNodeMap.put(port, this);
             ports.add(port);
-            double pos = port.getNode().getPos().y + port.getPos().y;
+            double pos = port.getNode().getPosition().y + port.getPosition().y;
             
             // set new start position
             if (Double.isNaN(start)) {
@@ -350,11 +350,11 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
             double x = xpos + node.rank * edgeSpacing;
             for (LPort port : node.ports) {
                 if (port.getType() == PortType.OUTPUT) {
-                    double sourcey = port.getNode().getPos().y + port.getPos().y;
+                    double sourcey = port.getNode().getPosition().y + port.getPosition().y;
                     
                     for (LEdge edge : port.getEdges()) {
-                        double targety = edge.getTarget().getNode().getPos().y
-                                + edge.getTarget().getPos().y;
+                        double targety = edge.getTarget().getNode().getPosition().y
+                                + edge.getTarget().getPosition().y;
                         if (Math.abs(sourcey - targety) > edgeSpacing / STRAIGHT_TOLERANCE) {
                             KVector point1 = new KVector(x, sourcey);
                             edge.getBendPoints().add(point1);

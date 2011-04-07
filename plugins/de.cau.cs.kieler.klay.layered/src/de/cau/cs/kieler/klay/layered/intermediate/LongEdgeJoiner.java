@@ -29,20 +29,12 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * Removes dummy nodes due to edge splitting. (dummy nodes that have the node
  * type {@link de.cau.cs.kieler.klay.layered.Properties.NodeType#LONG_EDGE})
  * 
- * <p>It is assumed that the edges connected to such dummy nodes were created by
- * the {@link LongEdgeSplitter}, which implies that such a dummy node has exactly
- * one incoming and one outgoing edge, and that these edges were created from
- * the same source edge. It should thus make no difference which of the edges
- * is dropped.</p>
- * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph; dummy nodes with the
- *     {@link de.cau.cs.kieler.klay.layered.Properties.NodeType#LONG_EDGE} node
- *     type have exactly one incoming and one outgoing edge, both resulting from
- *     splitting a single "unproper" edge.</dd>
- *   <dt>Postcondition:</dt><dd>the graph is layered; there are no dummy nodes
- *     of type {@link de.cau.cs.kieler.klay.layered.Properties.NodeType#LONG_EDGE};
- *     the graph may not be properly layered.</dd>
+ *   <dt>Precondition:</dt><dd>a layered graph; nodes are placed; edges are routed.</dd>
+ *   <dt>Postcondition:</dt><dd>there are no dummy nodes of type
+ *     {@link de.cau.cs.kieler.klay.layered.Properties.NodeType#LONG_EDGE}.</dd>
+ *   <dt>Slots:</dt><dd>After phase 5.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
  * </dl>
  *
  * @author cds

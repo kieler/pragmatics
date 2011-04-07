@@ -70,11 +70,11 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements ILayoutPhas
                 if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
                     LEdge edge = (LEdge) node.getProperty(Properties.ORIGIN);
                     if (isEndnode(node, PortType.INPUT)) {
-                        edge.getBendPoints().add(new KVector(xpos, node.getPos().y));
+                        edge.getBendPoints().add(new KVector(xpos, node.getPosition().y));
                     }
                     if (isEndnode(node, PortType.OUTPUT)) {
                         edge.getBendPoints().add(new KVector(xpos + layer.getSize().x,
-                                node.getPos().y));
+                                node.getPosition().y));
                     }
                 }
             }
@@ -102,7 +102,7 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements ILayoutPhas
             for (LPort connectedPort : port.getConnectedPorts()) {
                 LNode otherNode = connectedPort.getNode();
                 if (otherNode.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
-                        && node.getPos().y == otherNode.getPos().y) {
+                        && node.getPosition().y == otherNode.getPosition().y) {
                     return false;
                 }
             }

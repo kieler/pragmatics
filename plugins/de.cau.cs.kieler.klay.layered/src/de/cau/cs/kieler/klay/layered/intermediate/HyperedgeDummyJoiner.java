@@ -30,9 +30,12 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * TODO Document
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph.</dd>
+ *   <dt>Precondition:</dt><dd>a layered graph; crossing minmization must be finished;
+ *     nodes must not have been placed yet, since some may be removed.</dd>
  *   <dt>Postcondition:</dt><dd>long edge dummy nodes belonging to the same hyperedge and
  *     being directly next to each other are merged.</dd>
+ *   <dt>Slots:</dt><dd>Before phase 4.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
  * </dl>
  *
  * @author cds
