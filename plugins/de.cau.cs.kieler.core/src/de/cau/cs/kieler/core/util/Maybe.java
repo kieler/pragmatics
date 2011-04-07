@@ -57,6 +57,16 @@ package de.cau.cs.kieler.core.util;
  * @author msp
  */
 public class Maybe<T> {
+    
+    /**
+     * Create a maybe with inferred generic type.
+     * 
+     * @param <D> the generic type
+     * @return a new instance of given type
+     */
+    public static <D> Maybe<D> create() {
+        return new Maybe<D>();
+    }
 
     /** the contained object, which may be {@code null}. */
     private T object;

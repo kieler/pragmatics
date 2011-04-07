@@ -15,14 +15,14 @@ package de.cau.cs.kieler.kaom.graphiti.diagram;
 
 import org.eclipse.emf.ecore.EObject;
 
-import de.cau.cs.kieler.core.model.graphiti.ui.AbstractReInitGraphitiDiagramCommand;
+import de.cau.cs.kieler.core.model.graphiti.ui.AbstractInitGraphitiDiagramHandler;
 import de.cau.cs.kieler.kaom.Link;
 
 /**
  * @author soh
  */
 public class ReInitKaomDiagramCommand extends
-        AbstractReInitGraphitiDiagramCommand {
+        AbstractInitGraphitiDiagramHandler {
 
     /**
      * Creates a new ReInitKaomDiagramCommand.java.
@@ -46,14 +46,6 @@ public class ReInitKaomDiagramCommand extends
     @Override
     protected String getDiagramExtension() {
         return KaomDiagramEditor.DIAGRAM_FILE_EXTENSION;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String getModelExtension() {
-        return KaomDiagramEditor.MODEL_FILE_EXTENSION;
     }
 
     /**

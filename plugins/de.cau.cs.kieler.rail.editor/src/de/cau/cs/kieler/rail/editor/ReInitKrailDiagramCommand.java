@@ -29,7 +29,7 @@ import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 import org.eclipse.graphiti.ui.internal.parts.DiagramEditPart;
 import org.eclipse.ui.IEditorPart;
 
-import de.cau.cs.kieler.core.model.graphiti.ui.AbstractReInitGraphitiDiagramCommand;
+import de.cau.cs.kieler.core.model.graphiti.ui.AbstractInitGraphitiDiagramHandler;
 import de.menges.topologie.Topologie.Basegraph.Edge;
 import de.menges.topologie.Topologie.SpecializedVertices.Einbruchsknoten;
 
@@ -38,7 +38,7 @@ import de.menges.topologie.Topologie.SpecializedVertices.Einbruchsknoten;
  * @author soh
  */
 public class ReInitKrailDiagramCommand extends
-        AbstractReInitGraphitiDiagramCommand {
+        AbstractInitGraphitiDiagramHandler {
 
     /**
      * Creates a new ReInitKrailDiagramCommand.
@@ -151,14 +151,6 @@ public class ReInitKrailDiagramCommand extends
     @Override
     protected final String getDiagramExtension() {
         return KrailDiagramEditor.DIAGRAM_FILE_EXTENSION;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected final String getModelExtension() {
-        return KrailDiagramEditor.MODEL_FILE_EXTENSION;
     }
 
     @Override

@@ -57,7 +57,7 @@ import de.cau.cs.kieler.core.model.xtend.util.XtendStatus;
 import de.cau.cs.kieler.core.model.xtend.util.XtendTransformationUtil;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.kaom.KaomPackage;
-import de.cau.cs.kieler.kaom.diagram.custom.commands.ReInitKaomDiagramCommand;
+import de.cau.cs.kieler.kaom.diagram.custom.commands.InitKaomDiagramHandler;
 import de.cau.cs.kieler.kaom.importer.ptolemy.utils.Utils;
 import de.cau.cs.kieler.kaom.importer.ptolemy.wizards.ImportDiagramsWizard;
 
@@ -590,7 +590,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
         EObject diagramRoot = (EObject) sourceResource.getContents().get(0);
         
         // Create and save diagram
-        ReInitKaomDiagramCommand diagramInitializer = new ReInitKaomDiagramCommand();
+        InitKaomDiagramHandler diagramInitializer = new InitKaomDiagramHandler();
         diagramInitializer.createNewDiagram(diagramRoot, editingDomain, targetFile, null);
     }
 }

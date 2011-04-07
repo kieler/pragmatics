@@ -106,17 +106,23 @@
                commandId="de.cau.cs.kieler.kaom.graphiti.reinitDiagram"
                label="Initialize Graphiti Diagram File (kaog)"
                style="push"
-               tooltip="Reinitialize the diagram for the selected kaom file, overwriting the old kaog file.">
+               tooltip="Reinitialize the Graphiti diagram for the selected KAOM model, overwriting any old &apos;kaog&apos; file.pos; file.">
            <visibleWhen
                   checkEnabled="false">
                <iterate>
                   <adapt
                         type="org.eclipse.core.resources.IResource">
-                     <test
-                           forcePluginActivation="false"
-                           property="org.eclipse.core.resources.name"
-                           value="*.kaom">
-                     </test>
+                     <or>
+                        <test
+                              forcePluginActivation="false"
+                              property="org.eclipse.core.resources.extension"
+                              value="kaom">
+                        </test>
+                        <test
+                              forcePluginActivation="false"
+                              property="org.eclipse.core.resources.extension"
+                              value="kaot">
+                        </test></or>
                   </adapt>
                </iterate>
             </visibleWhen>

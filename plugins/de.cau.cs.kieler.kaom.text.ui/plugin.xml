@@ -102,31 +102,8 @@
          <menuContribution
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
          <command
-               commandId="de.cau.cs.kieler.kaom.ui.reinitDiagram"
-               label="Initialize GMF Diagram File (kaod)"
-               style="push"
-               tooltip="Initialize the diagram for the selected &apos;kaot&apos; file, overwriting any old &apos;kaod&apos; file.pos;kaod&apos; file.">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate>
-                  <adapt
-                        type="org.eclipse.core.resources.IResource">
-                     <test
-                           forcePluginActivation="false"
-                           property="org.eclipse.core.resources.name"
-                           value="*.kaot">
-                     </test>
-                  </adapt>
-               </iterate>
-            </visibleWhen>
-            <parameter
-                  name="de.cau.cs.kieler.kaom.ui.reinitDiagram.source"
-                  value="kaot">
-            </parameter>
-         </command>
-         <command
                commandId="de.cau.cs.kieler.core.model.convert"
-               label="Convert to Textual"
+               label="Convert to Textual Model (kaot)"
                style="push"
                tooltip="Convert the model to textual KAOM format">
             <visibleWhen
@@ -145,6 +122,29 @@
             <parameter
                   name="de.cau.cs.kieler.convert.targetExtension"
                   value="kaot">
+            </parameter>
+         </command>
+                  <command
+               commandId="de.cau.cs.kieler.core.model.convert"
+               label="Convert to XMI Model (kaom)"
+               style="push"
+               tooltip="Convert the model to XMI-based KAOM format">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                     <test
+                           forcePluginActivation="false"
+                           property="org.eclipse.core.resources.extension"
+                           value="kaot">
+                     </test>
+                  </adapt>
+               </iterate>
+            </visibleWhen>
+            <parameter
+                  name="de.cau.cs.kieler.convert.targetExtension"
+                  value="kaom">
             </parameter>
          </command>
      </menuContribution>
