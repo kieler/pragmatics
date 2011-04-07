@@ -10,7 +10,7 @@
 #
 
 # mac: /Users/rtsys/workspace/mri/ogdf/OGDF
-OGDF = /Users/rtsys/workspace/mri/ogdf/OGDF
+OGDF = /home/mri/shared/OGDF_SVN/SVNOGDF/OGDF
 
 BIN = ogdf-server
 SRC_DIR = src

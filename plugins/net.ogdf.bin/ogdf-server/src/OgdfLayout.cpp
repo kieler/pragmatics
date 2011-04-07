@@ -541,7 +541,7 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 				TRANSFORM_QUALITY_VS_SPEED(qualityVsSpeed, qvs);
 				layouter.qualityVersusSpeed(qualityVsSpeed);
 			}
-			layouter.call(*GA);
+			layouter.call(*LGA);
 			break;
 		}
 		case DAVIDSON_HAREL: {
