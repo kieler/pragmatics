@@ -21,7 +21,7 @@
       <commonWizard
             menuGroupId="de.cau.cs.kieler"
             type="new"
-            wizardId="de.cau.cs.kieler.keg.wizards.randomGraph">
+            wizardId="de.cau.cs.kieler.keg.diagram.custom.randomKEGGraph">
          <enablement>
             <or>
                <adapt
@@ -49,6 +49,19 @@
                name="Lowest">
          </Priority>
       </editpolicyProvider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            canFinishEarly="false"
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.keg.diagram.custom.wizards.RandomGraphWizard"
+            hasPages="true"
+            icon="icons/obj16/random.gif"
+            id="de.cau.cs.kieler.keg.diagram.custom.randomKEGGraph"
+            name="Random KEG Graph"
+            project="false">
+      </wizard>
    </extension>
 
 </plugin>

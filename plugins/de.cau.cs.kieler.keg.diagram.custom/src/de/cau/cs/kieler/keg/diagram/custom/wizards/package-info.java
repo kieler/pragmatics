@@ -13,6 +13,7 @@
  */
 
 /**
- * Custom code for KEG diagram.
+ * Wizards for KEG.
  */
-package de.cau.cs.kieler.keg.diagram.custom;
+package de.cau.cs.kieler.keg.diagram.custom.wizards;
+
