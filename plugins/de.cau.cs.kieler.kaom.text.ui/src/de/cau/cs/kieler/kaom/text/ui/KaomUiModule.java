@@ -18,5 +18,17 @@ public class KaomUiModule extends de.cau.cs.kieler.kaom.text.ui.AbstractKaomUiMo
     public Class<? extends org.eclipse.xtext.ui.editor.IXtextEditorCallback> bindIXtextEditorCallback() {
         return org.eclipse.xtext.ui.editor.IXtextEditorCallback.NullImpl.class;
     }
+    
+    /* introduces new highlighting profiles (e.g. annotationKey) */
+    public Class<? extends org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfiguration> bindIHighlightingConfiguration() {
+        return KaomHighlightingConfiguration.class;
+    }
+
+    /* provides a few additional highlighting rules */
+    public Class<? extends org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
+        return KaomSemanticHighlightingCalculator.class;
+    }
+
+    
 
 }
