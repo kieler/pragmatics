@@ -163,8 +163,34 @@ public class KGraphImporter implements IGraphImporter {
                 
                 elemMap.put(kport, newPort);
                 
+                // create layered label, if any
+                KLabel klabel = kport.getLabel();
+                if (klabel != null) {
+                    KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
+                    
+                    LLabel llabel = new LLabel(klabel.getText());
+                    llabel.setProperty(Properties.ORIGIN, klabel);
+                    llabel.getSize().x = labelLayout.getWidth();
+                    llabel.getSize().y = labelLayout.getHeight();
+                    llabel.getPosition().x = labelLayout.getXpos() - portLayout.getWidth() / 2;
+                    llabel.getPosition().y = labelLayout.getYpos() - portLayout.getHeight() / 2;
+                }
+                
                 // calculate port side
                 newPort.setSide(KimlUtil.calcPortSide(kport));
+            }
+            
+            // add the node's label, if any
+            KLabel klabel = child.getLabel();
+            if (klabel != null) {
+                KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
+                
+                LLabel llabel = new LLabel(klabel.getText());
+                llabel.setProperty(Properties.ORIGIN, child);
+                llabel.getSize().x = labelLayout.getWidth();
+                llabel.getSize().y = labelLayout.getHeight();
+                llabel.getPosition().x = labelLayout.getXpos();
+                llabel.getPosition().y = labelLayout.getYpos();
             }
             
             // set properties of the new node
@@ -302,6 +328,8 @@ public class KGraphImporter implements IGraphImporter {
      * {@inheritDoc}
      */
     public void applyLayout() {
+        // TODO Apply layout to labels.
+        
         // determine the border spacing, which influences the offset
         KNode parentNode = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);

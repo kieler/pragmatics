@@ -43,6 +43,8 @@ public class LPort extends LSizedGraphElement {
     private PortType type;
     /** the port side. */
     private PortSide side = PortSide.UNDEFINED;
+    /** this port's label, if any. */
+    private LLabel label = null;
     /** the edges connected to the port. */
     private List<LEdge> edges = new LinkedList<LEdge>();
     /** name of the port. */
@@ -184,6 +186,24 @@ public class LPort extends LSizedGraphElement {
      */
     public void setSide(final PortSide theside) {
         this.side = theside;
+    }
+    
+    /**
+     * Sets this port's label.
+     * 
+     * @param label the new label. May be {@code null}.
+     */
+    public void setLabel(final LLabel label) {
+        this.label = label;
+    }
+    
+    /**
+     * Returns this port's label, if any.
+     * 
+     * @return this port's label.
+     */
+    public LLabel getLabel() {
+        return label;
     }
 
     /**

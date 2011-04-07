@@ -14,9 +14,12 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 
+import java.awt.geom.Rectangle2D;
+
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KInsets;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -49,43 +52,64 @@ public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutPr
         for (Layer layer : layeredGraph.getLayers()) {
             // Iterate through the layer's nodes
             for (LNode node : layer.getNodes()) {
-                // Reset the margin
-                KInsets.Double margin = node.getMargin();
-                margin.top = 0.0;
-                margin.bottom = 0.0;
-                margin.left = 0.0;
-                margin.right = 0.0;
+                // This will be our bounding box. We'll start with one that's the same size
+                // as our node, and at the same position.
+                Rectangle2D.Double boundingBox = new Rectangle2D.Double(
+                        node.getPosition().x,
+                        node.getPosition().y,
+                        node.getSize().x,
+                        node.getSize().y);
                 
-                // Ports
+                // We'll reuse this rectangle as our box for elements to add to the bounding box
+                Rectangle2D.Double elementBox = new Rectangle2D.Double();
+                
+                // Put the node's label into the bounding box
+                LLabel label = node.getLabel();
+                if (label != null) {
+                    elementBox.x = label.getPosition().x + node.getPosition().x;
+                    elementBox.y = label.getPosition().y + node.getPosition().y;
+                    elementBox.width = label.getSize().x;
+                    elementBox.height = label.getSize().y;
+                    
+                    Rectangle2D.union(boundingBox, elementBox, boundingBox);
+                }
+                
+                // Do the same for ports and their labels
                 for (LPort port : node.getPorts()) {
-                    switch (port.getSide()) {
-                    case NORTH:
-                        margin.top = Math.max(margin.top,
-                                -(port.getPosition().y - port.getSize().y / 2.0));
-                        break;
+                    // Calculate the port's upper left corner's x and y coordinate
+                    double portX = port.getPosition().x - port.getSize().x / 2.0 + node.getPosition().x;
+                    double portY = port.getPosition().y - port.getSize().y / 2.0 + node.getPosition().y;
                     
-                    case EAST:
-                        margin.right = Math.max(margin.right,
-                                port.getPosition().x + port.getSize().x / 2.0 - node.getSize().x);
-                        break;
+                    // The port itself
+                    elementBox.x = portX;
+                    elementBox.y = portY;
+                    elementBox.width = port.getSize().x;
+                    elementBox.height = port.getSize().y;
                     
-                    case SOUTH:
-                        margin.bottom = Math.max(margin.bottom,
-                                port.getPosition().y + port.getSize().x / 2.0 - node.getSize().y);
-                        break;
+                    Rectangle2D.union(boundingBox, elementBox, boundingBox);
                     
-                    case WEST:
-                        margin.left = Math.max(margin.left,
-                                -(port.getPosition().x - port.getSize().x / 2.0));
-                        break;
+                    // The port's label, if any
+                    label = port.getLabel();
+                    if (label != null) {
+                        elementBox.x = label.getPosition().x + portX;
+                        elementBox.y = label.getPosition().y + portY;
+                        elementBox.width = label.getSize().x;
+                        elementBox.height = label.getSize().y;
+                        
+                        Rectangle2D.union(boundingBox, elementBox, boundingBox);
                     }
                 }
                 
-                // TODO Take labels into account as well.
+                // Reset the margin
+                KInsets.Double margin = node.getMargin();
+                margin.top = node.getPosition().y - boundingBox.y;
+                margin.bottom = boundingBox.getMaxY() - (node.getPosition().y + node.getSize().y);
+                margin.left = node.getPosition().x - boundingBox.x;
+                margin.right = boundingBox.getMaxX() - (node.getPosition().x + node.getSize().x);
             }
         }
         
         getMonitor().done();
     }
-
+    
 }
