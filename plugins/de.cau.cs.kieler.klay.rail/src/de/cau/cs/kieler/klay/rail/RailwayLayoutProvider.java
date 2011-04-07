@@ -223,62 +223,62 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                     switch (node.getProperty(Properties.SWITCH_ROTATION)) {
                     case 0:
                         if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)) {
-                            port.getPos().x = nodeX * (3.0 / 4.0);
-                            port.getPos().y = 0;
+                            port.getPosition().x = nodeX * (3.0 / 4.0);
+                            port.getPosition().y = 0;
                         } else if (port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT)) {
-                            port.getPos().x = nodeX;
-                            port.getPos().y = nodeY / 2.0;
+                            port.getPosition().x = nodeX;
+                            port.getPosition().y = nodeY / 2.0;
                         } else {
-                            port.getPos().x = 0;
-                            port.getPos().y = nodeY / 2.0;
+                            port.getPosition().x = 0;
+                            port.getPosition().y = nodeY / 2.0;
                         }
                         break;
                     case 2:
                         if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)) {
-                            port.getPos().x = 0;
-                            port.getPos().y = nodeY / 2.0;
+                            port.getPosition().x = 0;
+                            port.getPosition().y = nodeY / 2.0;
                         } else if (port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT)) {
-                            port.getPos().x = nodeX * (1.0 / 4.0);
-                            port.getPos().y = 0;
+                            port.getPosition().x = nodeX * (1.0 / 4.0);
+                            port.getPosition().y = 0;
                         } else {
-                            port.getPos().x = nodeX * (3.0 / 4.0);
-                            port.getPos().y = nodeY;
+                            port.getPosition().x = nodeX * (3.0 / 4.0);
+                            port.getPosition().y = nodeY;
                         }
                         break;
                     case 3:
                         if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)) {
-                            port.getPos().x = nodeX * (1.0 / 4.0);
-                            port.getPos().y = nodeY;
+                            port.getPosition().x = nodeX * (1.0 / 4.0);
+                            port.getPosition().y = nodeY;
                         } else if (port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT)) {
-                            port.getPos().x = 0.0;
-                            port.getPos().y = nodeY / 2.0;
+                            port.getPosition().x = 0.0;
+                            port.getPosition().y = nodeY / 2.0;
                         } else {
-                            port.getPos().x = nodeX;
-                            port.getPos().y = nodeY / 2.0;
+                            port.getPosition().x = nodeX;
+                            port.getPosition().y = nodeY / 2.0;
                         }
                         break;
                     case 5:
                         if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)) {
-                            port.getPos().x = nodeX;
-                            port.getPos().y = nodeY / 2.0;
+                            port.getPosition().x = nodeX;
+                            port.getPosition().y = nodeY / 2.0;
                         } else if (port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT)) {
-                            port.getPos().x = nodeX * (3.0 / 4.0);
-                            port.getPos().y = nodeY;
+                            port.getPosition().x = nodeX * (3.0 / 4.0);
+                            port.getPosition().y = nodeY;
                         } else {
-                            port.getPos().x = nodeX * (1.0 / 4.0);
-                            port.getPos().y = 0;
+                            port.getPosition().x = nodeX * (1.0 / 4.0);
+                            port.getPosition().y = 0;
                         }
                         break;
                     }
-                    if (port.getPos().x == 0) {
-                        port.getPos().x -= portWidth;
-                    } else if (port.getPos().x < nodeX) {
-                        port.getPos().x -= portWidth / 2;
+                    if (port.getPosition().x == 0) {
+                        port.getPosition().x -= portWidth;
+                    } else if (port.getPosition().x < nodeX) {
+                        port.getPosition().x -= portWidth / 2;
                     }
-                    if (port.getPos().y == 0) {
-                        port.getPos().y -= portHeight;
-                    } else if (port.getPos().y < nodeY) {
-                        port.getPos().y -= portHeight / 2;
+                    if (port.getPosition().y == 0) {
+                        port.getPosition().y -= portHeight;
+                    } else if (port.getPosition().y < nodeY) {
+                        port.getPosition().y -= portHeight / 2;
                     }
                 }
             } else if (node.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_RIGHT)) {
@@ -286,66 +286,66 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                     switch (node.getProperty(Properties.SWITCH_ROTATION)) {
                     case 0:
                         if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)) {
-                            port.getPos().x = nodeX * (3.0 / 4.0);
-                            port.getPos().y = nodeY;
+                            port.getPosition().x = nodeX * (3.0 / 4.0);
+                            port.getPosition().y = nodeY;
                         } else if (port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT)) {
-                            port.getPos().x = nodeX;
-                            port.getPos().y = nodeY / 2.0;
+                            port.getPosition().x = nodeX;
+                            port.getPosition().y = nodeY / 2.0;
                         } else {
-                            port.getPos().x = 0;
-                            port.getPos().y = nodeY / 2.0;
+                            port.getPosition().x = 0;
+                            port.getPosition().y = nodeY / 2.0;
                         }
                         break;
                     case 1:
                         if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)) {
-                            port.getPos().x = nodeX;
-                            port.getPos().y = nodeY / 2.0;
+                            port.getPosition().x = nodeX;
+                            port.getPosition().y = nodeY / 2.0;
                         } else if (port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT)) {
-                            port.getPos().x = nodeX * (3.0 / 4.0);
-                            port.getPos().y = 0;
+                            port.getPosition().x = nodeX * (3.0 / 4.0);
+                            port.getPosition().y = 0;
                         } else {
-                            port.getPos().x = nodeX * (1.0 / 4.0);
-                            port.getPos().y = nodeY;
+                            port.getPosition().x = nodeX * (1.0 / 4.0);
+                            port.getPosition().y = nodeY;
                         }
                         break;
                     case 3:
                         if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)) {
-                            port.getPos().x = nodeX * (1.0 / 4.0);
-                            port.getPos().y = 0;
+                            port.getPosition().x = nodeX * (1.0 / 4.0);
+                            port.getPosition().y = 0;
                         } else if (port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT)) {
-                            port.getPos().x = 0;
-                            port.getPos().y = nodeY / 2.0;
+                            port.getPosition().x = 0;
+                            port.getPosition().y = nodeY / 2.0;
                         } else {
-                            port.getPos().x = nodeX;
-                            port.getPos().y = nodeY / 2.0;
+                            port.getPosition().x = nodeX;
+                            port.getPosition().y = nodeY / 2.0;
                         }
                         break;
                     case 4:
                         if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)) {
-                            port.getPos().x = 0;
-                            port.getPos().y = nodeY / 2.0;
+                            port.getPosition().x = 0;
+                            port.getPosition().y = nodeY / 2.0;
                         } else if (port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT)) {
-                            port.getPos().x = nodeX * (1.0 / 4.0);
-                            port.getPos().y = nodeY;
+                            port.getPosition().x = nodeX * (1.0 / 4.0);
+                            port.getPosition().y = nodeY;
                         } else {
-                            port.getPos().x = nodeX * (3.0 / 4.0);
-                            port.getPos().y = 0;
+                            port.getPosition().x = nodeX * (3.0 / 4.0);
+                            port.getPosition().y = 0;
                         }
                         break;
                     }
-                    if (port.getPos().x == 0) {
-                        port.getPos().x -= portWidth;
-                    } else if (port.getPos().x < nodeX) {
-                        port.getPos().x -= portWidth / 2;
+                    if (port.getPosition().x == 0) {
+                        port.getPosition().x -= portWidth;
+                    } else if (port.getPosition().x < nodeX) {
+                        port.getPosition().x -= portWidth / 2;
                     }
-                    if (port.getPos().y == 0) {
-                        port.getPos().y -= portHeight;
-                    } else if (port.getPos().y < nodeY) {
-                        port.getPos().y -= portHeight / 2;
+                    if (port.getPosition().y == 0) {
+                        port.getPosition().y -= portHeight;
+                    } else if (port.getPosition().y < nodeY) {
+                        port.getPosition().y -= portHeight / 2;
                     }
                 }
             } else {
-                node.getPorts().get(0).getPos().y = nodeY / 2 - (portHeight / 2);
+                node.getPorts().get(0).getPosition().y = nodeY / 2 - (portHeight / 2);
             }
         }
         // CHECKSTYLEON MagicNumber

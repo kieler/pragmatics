@@ -138,7 +138,7 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements ILayoutPhase
             int position = layer.getRowList().getPosition(node);
             int offset = (-1) * minPos;
             value = offset * (node.getSize().y + spacing) + position * (node.getSize().y + spacing);
-            node.getPos().y = value;
+            node.getPosition().y = value;
         }
     }
 

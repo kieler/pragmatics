@@ -135,8 +135,8 @@ public class KRailGraphImporter implements IGraphImporter {
                 newPort.setProperty(Properties.ORIGIN, kport);
                 newPort.setProperty(Properties.PORT_TYPE,
                         portLayout.getProperty(Properties.PORT_TYPE));
-                newPort.getPos().x = portLayout.getXpos();
-                newPort.getPos().y = portLayout.getYpos();
+                newPort.getPosition().x = portLayout.getXpos();
+                newPort.getPosition().y = portLayout.getYpos();
                 newPort.setNode(newNode);
                 elemMap.put(kport, newPort);
                 if (portConstraints != PortConstraints.UNDEFINED) {
@@ -220,8 +220,8 @@ public class KRailGraphImporter implements IGraphImporter {
                 if (origin instanceof KNode) {
                     KNode knode = (KNode) origin;
                     KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-                    nodeLayout.setXpos((float) (lnode.getPos().x + offset.x));
-                    nodeLayout.setYpos((float) (lnode.getPos().y + offset.y));
+                    nodeLayout.setXpos((float) (lnode.getPosition().x + offset.x));
+                    nodeLayout.setYpos((float) (lnode.getPosition().y + offset.y));
                 }
                 for (LPort port : lnode.getPorts(PortType.OUTPUT)) {
                     for (LEdge edge : port.getEdges()) {
@@ -235,8 +235,8 @@ public class KRailGraphImporter implements IGraphImporter {
                     if (original instanceof KPort) {
                         KPort kport = (KPort) original;
                         KShapeLayout portLayout = kport.getData(KShapeLayout.class);
-                        portLayout.setXpos((float) (port.getPos().x));
-                        portLayout.setYpos((float) (port.getPos().y));
+                        portLayout.setXpos((float) (port.getPosition().x));
+                        portLayout.setYpos((float) (port.getPosition().y));
                     }
                 }
 
@@ -262,10 +262,10 @@ public class KRailGraphImporter implements IGraphImporter {
                             for (LLabel label : ledge.getLabels()) {
                                 KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
                                 KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
-                                KVector labelPos = new KVector(ledge.getSource().getPos().x, ledge
-                                        .getSource().getPos().y);
-                                labelPos.add(ledge.getSource().getNode().getPos());
-                                labelPos.add(label.getPos());
+                                KVector labelPos = new KVector(ledge.getSource().getPosition().x, ledge
+                                        .getSource().getPosition().y);
+                                labelPos.add(ledge.getSource().getNode().getPosition());
+                                labelPos.add(label.getPosition());
                                 klabelLayout.setXpos((float) (labelPos.x + offset.x));
                                 klabelLayout.setYpos((float) (labelPos.y + offset.y));
                             }
@@ -283,23 +283,23 @@ public class KRailGraphImporter implements IGraphImporter {
             // set source and target points, considering direction of the edge
             LEdge firstEdge = edgeList.get(0);
             LPort sourcePort = firstEdge.getSource();
-            sourcePort.getPos().add(sourcePort.getNode().getPos());
+            sourcePort.getPosition().add(sourcePort.getNode().getPosition());
             LEdge lastEdge = edgeList.get(edgeList.size() - 1);
             LPort targetPort = lastEdge.getTarget();
-            targetPort.getPos().add(targetPort.getNode().getPos());
+            targetPort.getPosition().add(targetPort.getNode().getPosition());
             KShapeLayout standardPort = kedge.getSourcePort().getData(KShapeLayout.class);
             KVector sourcePortOffset = new KVector(standardPort.getWidth(),
                     standardPort.getHeight() / 2);
             KVector targetPortOffset = new KVector(0, standardPort.getHeight() / 2);
             if (firstEdge.getProperty(Properties.REVERSED)) {
-                applyLayout(edgeLayout.getSourcePoint(), targetPort.getPos().add(targetPortOffset),
+                applyLayout(edgeLayout.getSourcePoint(), targetPort.getPosition().add(targetPortOffset),
                         offset);
-                applyLayout(edgeLayout.getTargetPoint(), sourcePort.getPos().add(sourcePortOffset),
+                applyLayout(edgeLayout.getTargetPoint(), sourcePort.getPosition().add(sourcePortOffset),
                         offset);
             } else {
-                applyLayout(edgeLayout.getSourcePoint(), sourcePort.getPos().add(sourcePortOffset),
+                applyLayout(edgeLayout.getSourcePoint(), sourcePort.getPosition().add(sourcePortOffset),
                         offset);
-                applyLayout(edgeLayout.getTargetPoint(), targetPort.getPos().add(targetPortOffset),
+                applyLayout(edgeLayout.getTargetPoint(), targetPort.getPosition().add(targetPortOffset),
                         offset);
             }
             // set bend points, considering direction of the edge

@@ -75,9 +75,9 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements ILayoutPhase
                             continue NodeLoop;
                         }
                         if (edge.getSource() == port) {
-                            KVector srcPos = new KVector(port.getPos()).add(node.getPos());
-                            KVector trgPos = new KVector(edge.getTarget().getPos()).add(edge
-                                    .getTarget().getNode().getPos());
+                            KVector srcPos = new KVector(port.getPosition()).add(node.getPosition());
+                            KVector trgPos = new KVector(edge.getTarget().getPosition()).add(edge
+                                    .getTarget().getNode().getPosition());
 
                             double slope = Double.POSITIVE_INFINITY;
                             if (trgPos.x != srcPos.x) {
@@ -118,12 +118,12 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements ILayoutPhase
     private void pushBackLayers(final int startAtLayer, final double amount,
             final LayeredGraph layeredGraph) {
         double xpos = amount
-                + layeredGraph.getLayers().get(startAtLayer).getNodes().get(0).getPos().x;
+                + layeredGraph.getLayers().get(startAtLayer).getNodes().get(0).getPosition().x;
         for (int i = startAtLayer; i < layeredGraph.getLayers().size(); i++) {
             Layer layer = layeredGraph.getLayers().get(i);
 
             for (LNode node : layer.getNodes()) {
-                node.getPos().x = xpos;
+                node.getPosition().x = xpos;
             }
             xpos += layer.getSize().x + minLayerDist;
             layeredGraph.getSize().x = xpos;
