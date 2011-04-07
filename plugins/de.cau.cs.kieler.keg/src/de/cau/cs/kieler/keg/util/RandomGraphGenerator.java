@@ -26,8 +26,6 @@ import de.cau.cs.kieler.keg.Port;
 /**
  * A generator class for graph models.
  * 
- * @author haf
- * @author msp
  * @author mri
  */
 public class RandomGraphGenerator {

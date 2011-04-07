@@ -18,19 +18,6 @@
    </extension>
 
    <extension
-         point="org.eclipse.ui.newWizards">
-      <wizard
-            canFinishEarly="false"
-            category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.keg.wizards.CreateRandomModelWizard"
-            hasPages="true"
-            icon="icons/obj16/random.gif"
-            id="de.cau.cs.kieler.keg.wizards.randomGraph"
-            name="Create Random Graph"
-            project="false">
-      </wizard>
-   </extension>
-   <extension
          point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
       <editpolicyProvider
             class="de.cau.cs.kieler.keg.custom.KEGDeletionPolicyProvider">

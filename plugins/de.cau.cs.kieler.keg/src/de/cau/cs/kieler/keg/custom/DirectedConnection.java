@@ -26,22 +26,23 @@ import de.cau.cs.kieler.core.model.gmf.figures.SplineConnection;
  * @author mri
  */
 public class DirectedConnection extends SplineConnection {
-    
+
     /**
      * The constructor.
      */
     public DirectedConnection() {
         super();
-        
+
         RotatableDecoration arrowDeco = createArrowDecoration();
         setTargetDecoration(arrowDeco);
     }
-    
+
     /**
      * Create the arrow decoration.
      * 
      * @return The decoration.
      */
+    // CHECKSTYLEOFF MagicNumber
     private RotatableDecoration createArrowDecoration() {
         PolygonDecoration arrowDecoration = new PolygonDecoration();
         PointList arrowDecorationPoints = new PointList();
@@ -52,4 +53,5 @@ public class DirectedConnection extends SplineConnection {
         arrowDecoration.setTemplate(arrowDecorationPoints);
         return arrowDecoration;
     }
+    // CHECKSTYLEON MagicNumber
 }
