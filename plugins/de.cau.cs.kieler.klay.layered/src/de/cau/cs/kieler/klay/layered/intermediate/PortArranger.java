@@ -87,23 +87,24 @@ public class PortArranger extends AbstractAlgorithm implements ILayoutProcessor 
                         switch (port.getSide()) {
                         case NORTH:
                             port.getPosition().x = northX;
-                            port.getPosition().y = 0;
+                            port.getPosition().y = -port.getSize().y / 2.0;
                             northX += northDelta;
                             break;
                         case EAST:
-                            port.getPosition().x = nodeSize.x;
+                            port.getPosition().x = nodeSize.x + port.getSize().x / 2.0;
                             port.getPosition().y = eastY;
                             eastY += eastDelta;
                             break;
                         case SOUTH:
                             port.getPosition().x = southX;
-                            port.getPosition().y = nodeSize.y;
+                            port.getPosition().y = nodeSize.y + port.getSize().y / 2.0;
                             southX -= southDelta;
                             break;
-                        default:
-                            port.getPosition().x = 0;
+                        case WEST:
+                            port.getPosition().x = -port.getSize().x / 2.0;
                             port.getPosition().y = westY;
                             westY -= westDelta;
+                            break;
                         }
                     }
                 }

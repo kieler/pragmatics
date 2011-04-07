@@ -155,6 +155,8 @@ public class KGraphImporter implements IGraphImporter {
                 // create layered port, copying its position
                 LPort newPort = new LPort(type, kport.getLabel().getText());
                 newPort.setProperty(Properties.ORIGIN, kport);
+                newPort.getSize().x = portLayout.getWidth();
+                newPort.getSize().y = portLayout.getHeight();
                 newPort.getPosition().x = portLayout.getXpos() + portLayout.getWidth() / 2;
                 newPort.getPosition().y = portLayout.getYpos() + portLayout.getHeight() / 2;
                 newPort.setNode(newNode);
@@ -333,28 +335,10 @@ public class KGraphImporter implements IGraphImporter {
                             origin = lport.getProperty(Properties.ORIGIN);
                             if (origin instanceof KPort) {
                                 KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
-                                float portOffset = portLayout.getProperty(LayoutOptions.OFFSET);
-                                float xoffset = 0, yoffset = 0;
-                                switch (lport.getSide()) {
-                                case NORTH:
-                                    xoffset = -portLayout.getWidth() / 2;
-                                    yoffset = -portLayout.getHeight() - portOffset;
-                                    break;
-                                case EAST:
-                                    xoffset = portOffset;
-                                    yoffset = -portLayout.getHeight() / 2;
-                                    break;
-                                case SOUTH:
-                                    xoffset = -portLayout.getWidth() / 2;
-                                    yoffset = portOffset;
-                                    break;
-                                case WEST:
-                                    xoffset = -portLayout.getWidth() - portOffset;
-                                    yoffset = -portLayout.getHeight() / 2;
-                                    break;
-                                }
-                                portLayout.setXpos((float) lport.getPosition().x + xoffset);
-                                portLayout.setYpos((float) lport.getPosition().y + yoffset);
+                                portLayout.setXpos(
+                                        (float) (lport.getPosition().x - lport.getSize().x / 2.0));
+                                portLayout.setYpos(
+                                        (float) (lport.getPosition().y - lport.getSize().y / 2.0));
                             }
                         }
                     }

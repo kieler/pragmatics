@@ -97,14 +97,14 @@ public class Layer extends LGraphElement {
     /**
      * Determines a horizontal placement for all nodes of this layer. The size
      * of the layer is assumed to be already set to the maximal width of the
-     * contained nodes.
+     * contained nodes. (usually done during node placement)
      * 
      * @param xpos horizontal offset for layer placement
      */
     public void placeNodes(final double xpos) {
         for (LNode node : nodes) {
             Alignment alignment = node.getProperty(LayoutOptions.ALIGNMENT);
-            double room = size.x - node.getSize().x;
+            double room = size.x - node.getSize().x - node.getMargin().left - node.getMargin().right;
             double x = xpos;
             switch (alignment) {
             case LEFT:
@@ -128,6 +128,7 @@ public class Layer extends LGraphElement {
                         break;
                     }
                 }
+                
                 // calculate node placement based on the port numbers
                 if (inports + outports == 0) {
                     x += room / 2;
@@ -135,7 +136,7 @@ public class Layer extends LGraphElement {
                     x += room * outports / (inports + outports);
                 }
             }
-            node.getPosition().x = x;
+            node.getPosition().x = x + node.getMargin().left;
         }
     }
 

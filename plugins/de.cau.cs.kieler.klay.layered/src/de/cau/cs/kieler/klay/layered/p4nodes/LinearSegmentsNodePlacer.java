@@ -550,8 +550,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      * @param layeredGraph the layered graph to create an unbalanced placement for.
      */
     private void createUnbalancedPlacement(final LayeredGraph layeredGraph) {
-        float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
-        float smallSpacing = spacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
+        float normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        float smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         boolean straightEdges = layeredGraph.getProperty(Properties.STRAIGHT_EDGES);
         
         // How many nodes are currently placed in each layer
@@ -569,21 +569,21 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             // Determine the minimum offset and maximum height of the segment's nodes
             for (LNode node : segment.getNodes()) {
                 float offset = (float) node.getProperty(Properties.LINSEG_OFFSET);
+                double nodeHeight = node.getSize().y + node.getMargin().top + node.getMargin().bottom;
+                
                 if (offset < minOffset) {
                     minOffset = offset;
                 }
                 
-                if (node.getSize().y > maxHeight) {
-                    maxHeight = node.getSize().y;
+                if (nodeHeight > maxHeight) {
+                    maxHeight = nodeHeight;
                 }
             }
 
             // Determine the uppermost placement for the linear segment
             double uppermostPlace = 0.0f;
-            int nodeCountSum = 0;
             for (LNode node : segment.getNodes()) {
                 int layerIndex = node.getLayer().getIndex();
-                nodeCountSum += nodeCount[layerIndex];
                 nodeCount[layerIndex]++;
                 
                 // Calculate how much space to leave between the linear segment and the last
@@ -593,7 +593,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                     if (recentNodeNormal[layerIndex]
                             && node.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL) {
                         
-                        space = spacing;
+                        space = normalSpacing;
                     } else {
                         space = smallSpacing;
                     }
@@ -612,12 +612,13 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                     offset = maxHeight / 2 - node.getSize().y / 2;
                 }
 
-                // Set the node position. Also, if the segment is not invisible, its nodes
-                // occupies space in the layer (thus, the layer size has to be adjusted)
-                node.getPosition().y = uppermostPlace + offset;
+                // Set the node position
+                node.getPosition().y = uppermostPlace + offset + node.getMargin().top;
                 Layer layer = node.getLayer();
-                layer.getSize().y = uppermostPlace + offset + node.getSize().y;
-                layer.getSize().x = Math.max(layer.getSize().x, node.getSize().x);
+                layer.getSize().y = uppermostPlace + offset + node.getMargin().top + node.getSize().y
+                        + node.getMargin().bottom;
+                layer.getSize().x = Math.max(layer.getSize().x,
+                        node.getSize().x + node.getMargin().left + node.getMargin().right);
                 
                 recentNodeNormal[layer.getIndex()] =
                     node.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL;
@@ -733,10 +734,12 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      * necessary for it to not overlap with other regions.
      * 
      * @param region the region to be checked
-     * @param spacing the object spacing
+     * @param normalSpacing the object spacing
      * @param smallSpacing the dummy object spacing
      */
-    private void checkMovability(final Region region, final float spacing, final float smallSpacing) {
+    private void checkMovability(final Region region, final float normalSpacing,
+            final float smallSpacing) {
+        
         for (LNode node : region.getNodes()) {
             boolean isNodeNormal = node.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL;
             
@@ -747,21 +750,25 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                     LNode neighbor = node.getLayer().getNodes().get(node.getIndex() - 1);
                     boolean isNeighborNormal =
                         neighbor.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL;
-                    float space = isNodeNormal && isNeighborNormal ? spacing : smallSpacing;
+                    float space = isNodeNormal && isNeighborNormal ? normalSpacing : smallSpacing;
                     
-                    if (region != neighbor.getProperty(Properties.REGION)
-                            && neighbor.getPosition().y + neighbor.getSize().y + space 
-                                > node.getPosition().y + region.force) {
+                    if (region != neighbor.getProperty(Properties.REGION)) {
+                        // Calculate by how much space the nodes would overlay each other
+                        double overlay = neighbor.getPosition().y + neighbor.getSize().y
+                            + neighbor.getMargin().bottom + space 
+                            - (node.getPosition().y - node.getMargin().top + region.force);
                         
-                        // Set force on region to the max possible force
-                        region.force = node.getPosition().y
-                                - (neighbor.getPosition().y + neighbor.getSize().y + space);
+                        if (overlay > 0.0) {
+                            region.force += overlay;
+                        }
                     }
                 } else {
-                    // Node is topmost node
-                    if (node.getPosition().y + region.force < 0.0f) {
-                        // Node would like to go out of frame
-                        region.force = -node.getPosition().y;
+                    // Node is topmost node; calculate how much the node would be outside the
+                    // drawing area
+                    double overlay = 0.0 - (node.getPosition().y - node.getMargin().top + region.force);
+                    
+                    if (overlay > 0.0) {
+                        region.force += overlay;
                     }
                 }
             } else if (region.force > 0.0f && node.getIndex() < node.getLayer().getNodes().size() - 1) {
@@ -769,15 +776,16 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 LNode neighbor = node.getLayer().getNodes().get(node.getIndex() + 1);
                 boolean isNeighborNormal =
                     neighbor.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL;
-                float space = isNodeNormal && isNeighborNormal ? spacing : smallSpacing;
+                float space = isNodeNormal && isNeighborNormal ? normalSpacing : smallSpacing;
                 
-                if (region != neighbor.getProperty(Properties.REGION)
-                        && node.getPosition().y + node.getSize().y + space + region.force
-                            > neighbor.getPosition().y) {
+                if (region != neighbor.getProperty(Properties.REGION)) {
+                    // Calculate by how much the nodes would overlay each other
+                    double overlay = node.getPosition().y + node.getSize().y + node.getMargin().bottom
+                        + space - (neighbor.getPosition().y - neighbor.getMargin().top);
                     
-                    // Set force on region to the max possible force
-                    region.force = neighbor.getPosition().y
-                            - (node.getPosition().y + node.getSize().y + space);
+                    if (overlay > 0.0) {
+                        region.force -= overlay;
+                    }
                 }
             }
         }
@@ -788,11 +796,11 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      * during the last call.
      * 
      * @param layeredGraph the layered graph
-     * @param spacing the object spacing
+     * @param normalSpacing the object spacing
      * @param smallSpacing the dummy object spacing
      * @return {@code false} if regions are newly touching
      */
-    private boolean noNewTouchingRegions(final LayeredGraph layeredGraph, final float spacing,
+    private boolean noNewTouchingRegions(final LayeredGraph layeredGraph, final float normalSpacing,
             final float smallSpacing) {
         
         boolean ready = true;
@@ -822,15 +830,14 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 
                 if (node1Region != node2Region) {
                     // Calculate how much space is allowed between the nodes
-                    float space = isNode1Normal && isNode2Normal ? spacing : smallSpacing;
+                    float space = isNode1Normal && isNode2Normal ? normalSpacing : smallSpacing;
                     
                     // Test if the nodes are touching
-                    if (node1.getPosition().y + node1.getSize().y + space
-                            > node2.getPosition().y - 1.0f) {
-                        
-                        double overlay = node1.getPosition().y + node1.getSize().y
-                            + space - node2.getPosition().y;
-                        
+                    double overlay = node1.getPosition().y + node1.getSize().y
+                        + node1.getMargin().bottom + space
+                        - (node2.getPosition().y - node2.getMargin().top);
+                    
+                    if (overlay > 0.0) {
                         // Adjust position for every member of the neighbors region
                         for (LNode toAdjust : node2.getProperty(Properties.REGION).getNodes()) {
                             toAdjust.getPosition().y = toAdjust.getPosition().y + overlay;

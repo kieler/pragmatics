@@ -82,7 +82,8 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                         IntermediateLayoutProcessor.ODD_PORT_SIDE_PROCESSOR),
                 // Before Phase 4
                 EnumSet.of(
-                        IntermediateLayoutProcessor.HYPEREDGE_DUMMY_JOINER),
+                        IntermediateLayoutProcessor.HYPEREDGE_DUMMY_JOINER,
+                        IntermediateLayoutProcessor.NODE_MARGIN_CALCULATOR),
                 // Before Phase 5
                 null,
                 // After Phase 5
@@ -277,7 +278,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
             }
             
             leftLayer = rightLayer;
-        } while (leftLayer != null || rightLayer != null);
+        } while (rightLayer != null);
         
         layeredGraph.getSize().x = xpos;
         getMonitor().done();
