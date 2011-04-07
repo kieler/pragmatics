@@ -27,13 +27,13 @@ import de.cau.cs.kieler.keg.Edge;
 import de.cau.cs.kieler.keg.Node;
 
 /**
- * Utility class for cut, copy and paste. The main purpose is to provide funcitionality to
- * work with the clipboard.
+ * Utility class for cut, copy and paste. The main purpose is to provide funcitionality to work with
+ * the clipboard.
  * 
  * @author soh (synccharts version)
  * @author mri
  */
-public class Utils {
+public final class Utils {
 
     /**
      * 
@@ -135,7 +135,7 @@ public class Utils {
         if (object instanceof EObject) {
             EObject o = EcoreUtil.copy((EObject) object);
             if (o instanceof Node) {
-                //cloneEdges((Node) object, (Node) o);
+                // cloneEdges((Node) object, (Node) o);
                 nodeClipBoard = o;
             } else if (o instanceof Edge) {
                 edgeClipBoard = o;
@@ -152,8 +152,7 @@ public class Utils {
     }
 
     /**
-     * Copy pure edge list to clipboard. If node is encountered copy
-     * node list instead.
+     * Copy pure edge list to clipboard. If node is encountered copy node list instead.
      * 
      * @param list
      *            the list that should be added to clipboard
@@ -232,10 +231,9 @@ public class Utils {
             for (Node node : nodes) {
                 dummy.add(node);
                 // remove edges that leave the current selection
-                Iterator<KEdge> iter = node.getOutgoingEdges()
-                        .iterator();
+                Iterator<KEdge> iter = node.getOutgoingEdges().iterator();
                 while (iter.hasNext()) {
-                    Edge trans = (Edge)iter.next();
+                    Edge trans = (Edge) iter.next();
                     if (!nodes.contains(trans.getTarget())) {
                         iter.remove();
                     }
@@ -253,8 +251,7 @@ public class Utils {
      */
     public static Edge getEdgeFromClipboard() {
         if (edgeClipBoard != null) {
-            Edge newTrans = (Edge) EcoreUtil
-                    .copy(edgeClipBoard);
+            Edge newTrans = (Edge) EcoreUtil.copy(edgeClipBoard);
             return newTrans;
         }
         return null;
@@ -267,8 +264,7 @@ public class Utils {
      */
     public static List<Edge> getEdgesFromClipboard() {
         if (edgesClipBoard != null && !edgesClipBoard.isEmpty()) {
-            Collection<Edge> edges = EcoreUtil
-                    .copyAll(edgesClipBoard);
+            Collection<Edge> edges = EcoreUtil.copyAll(edgesClipBoard);
 
             List<Edge> dummy = new LinkedList<Edge>();
             for (Edge edge : edges) {

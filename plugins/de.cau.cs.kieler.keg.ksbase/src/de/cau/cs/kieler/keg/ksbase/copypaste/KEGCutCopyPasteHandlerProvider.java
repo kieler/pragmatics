@@ -18,20 +18,18 @@ import org.eclipse.gmf.runtime.diagram.ui.providers.DiagramGlobalActionHandler;
 import de.cau.cs.kieler.core.model.gmf.handlers.AbstractCutCopyPasteHandlerProvider;
 
 /**
- * Handler for passing cut, copy and paste request to the appropriate KSbase
- * handler if applicable.
+ * Handler for passing cut, copy and paste request to the appropriate KSbase handler if applicable.
  * 
  * @author mri
  */
-public class KEGCutCopyPasteHandlerProvider extends
-		AbstractCutCopyPasteHandlerProvider {
+public class KEGCutCopyPasteHandlerProvider extends AbstractCutCopyPasteHandlerProvider {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected DiagramGlobalActionHandler getHandler() {
-		return new KEGCutCopyPasteHandler();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected DiagramGlobalActionHandler getHandler() {
+        return new KEGCutCopyPasteHandler();
+    }
 
 }

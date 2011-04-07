@@ -36,12 +36,12 @@ public class KEGCutCopyPasteHandler extends AbstractCutCopyPasteHandler {
     public KEGCutCopyPasteHandler() {
         super();
     }
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected boolean isValidSelection(IStructuredSelection selection) {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean isValidSelection(final IStructuredSelection selection) {
         Iterator<?> iter = selection.iterator();
 
         while (iter.hasNext()) {
@@ -59,14 +59,14 @@ public class KEGCutCopyPasteHandler extends AbstractCutCopyPasteHandler {
         }
         // no invalid parts found
         return true;
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected ICutCopyPasteCommandFactory getCommandFactory() {
-		return new KEGCutCopyPasteCommandFactory();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ICutCopyPasteCommandFactory getCommandFactory() {
+        return new KEGCutCopyPasteCommandFactory();
+    }
 
 }

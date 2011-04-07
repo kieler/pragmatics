@@ -83,8 +83,8 @@ public class KEGCutCopyPasteCommandFactory extends
     }
 
     @Override
-    public ICommand buildCopyCommand(IDiagramWorkbenchPart part,
-            List<EObject> selection) {
+    public ICommand buildCopyCommand(final IDiagramWorkbenchPart part,
+            final List<EObject> selection) {
         return super.buildCopyCommand(part, selection);
     }
 }
