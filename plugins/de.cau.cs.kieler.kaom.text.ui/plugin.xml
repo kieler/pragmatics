@@ -84,12 +84,6 @@
             id="de.cau.cs.kieler.kaom.text.Kaom.validate"
             name="Validate">
       </command>
-      <command
-            category="de.cau.cs.kieler"
-            defaultHandler="de.cau.cs.kieler.kaom.text.ui.ConvertKaomModelHandler"
-            id="de.cau.cs.kieler.kaom.text.ui.convert"
-            name="Convert to Textual">
-      </command>
     </extension>
     <extension point="org.eclipse.ui.menus">
         <menuContribution
@@ -131,7 +125,7 @@
             </parameter>
          </command>
          <command
-               commandId="de.cau.cs.kieler.kaom.text.ui.convert"
+               commandId="de.cau.cs.kieler.core.model.convert"
                label="Convert to Textual"
                style="push"
                tooltip="Convert the model to textual KAOM format">
@@ -142,12 +136,16 @@
                         type="org.eclipse.core.resources.IResource">
                      <test
                            forcePluginActivation="false"
-                           property="org.eclipse.core.resources.name"
-                           value="*.kaom">
+                           property="org.eclipse.core.resources.extension"
+                           value="kaom">
                      </test>
                   </adapt>
                </iterate>
             </visibleWhen>
+            <parameter
+                  name="de.cau.cs.kieler.convert.targetExtension"
+                  value="kaot">
+            </parameter>
          </command>
      </menuContribution>
     </extension>

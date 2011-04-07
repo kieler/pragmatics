@@ -67,6 +67,18 @@
                </with>
             </visibleWhen>
          </command>
+         <command
+               commandId="de.cau.cs.kieler.kiml.grana.command.setupBatch"
+               label="Setup Analysis Batch..."
+               style="push"
+               tooltip="Analyze multiple graphs in batch mode">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="de.cau.cs.kieler.kiml.grana.canSetupBatch">
+               </reference>
+            </visibleWhen>
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="menu:de.cau.cs.kieler.kiml.grana.menu.analysis">
@@ -74,21 +86,6 @@
                commandId="de.cau.cs.kieler.kiml.grana.command.configureAnalyses"
                label="Configure..."
                style="push">
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:de.cau.cs.kieler">
-         <command
-               commandId="de.cau.cs.kieler.kiml.grana.command.setupBatch"
-               label="Setup Analysis Batch..."
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="de.cau.cs.kieler.kiml.grana.canSetupBatch">
-               </reference>
-            </visibleWhen>
          </command>
       </menuContribution>
    </extension>
