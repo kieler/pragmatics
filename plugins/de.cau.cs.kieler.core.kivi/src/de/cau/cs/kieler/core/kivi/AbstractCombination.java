@@ -25,9 +25,17 @@ import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
 import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 
 /**
- * Abstract base implementation for combinations.
+ * Abstract base implementation for combinations. It implements many methods of
+ * ICombination and adds much extra convenience for Combination developers. 
+ * <p>
+ * In the {@link ICombination} the developer has to implement {@link ICombination#getTriggerStates()}
+ * and {@link ICombination#trigger(ITriggerState)}. In this abstract implementation both methods are
+ * implemented such that developer instead implements {@link #execute()} where the abstract implementation
+ * uses reflection to find out (1) which are the trigger classes that the combination listens to
+ * (by the execute parameters) and (2) what are other current {@link ITriggerState}s. Such way the
+ * execute method has direct access to all states that it requires.
  * 
- * @author mmu
+ * @author mmu, haf
  * 
  */
 public abstract class AbstractCombination implements ICombination {
@@ -158,7 +166,7 @@ public abstract class AbstractCombination implements ICombination {
      * @param compoundEffect
      *            the compound effect to schedule
      */
-    protected void schedule(final ICompoundEffect compoundEffect){
+    protected void schedule(final IEffectCompound compoundEffect){
             effects.addAll(compoundEffect.getPrimitiveEffects());
     }
 

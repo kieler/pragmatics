@@ -27,7 +27,7 @@ import java.util.List;
  * 
  * @author haf
  */
-public interface ICompoundEffect {
+public interface IEffectCompound {
 
     /**
      * Get the list of primitive IEffects that this compound effect is composed of.
