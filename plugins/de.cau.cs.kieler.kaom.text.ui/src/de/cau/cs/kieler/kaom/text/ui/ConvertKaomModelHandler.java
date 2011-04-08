@@ -104,8 +104,10 @@ public class ConvertKaomModelHandler extends ConvertModelHandler {
                 id = ID_PREFIX_ENTITY;
             }
             id += nextNumber();
-            linkable.setId(id);
+        } else {
+            id = checkId(id);
         }
+        linkable.setId(id);
         usedIds.add(id);
     }
     
@@ -119,8 +121,10 @@ public class ConvertKaomModelHandler extends ConvertModelHandler {
             String id = annotation.getName();
             if (id == null || id.length() == 0) {
                 id = ID_PREFIX_ANNOT + nextNumber();
-                annotation.setName(id);
+            } else {
+                id = checkId(id);
             }
+            annotation.setName(id);
             usedIds.add(id);
             // recursively check the sub-annotations
             checkAnnotationsId(annotation);
@@ -153,6 +157,26 @@ public class ConvertKaomModelHandler extends ConvertModelHandler {
      */
     private int nextNumber() {
         return nr++;
+    }
+    
+    /**
+     * Check for illegal characters in the given identifier and replace them.
+     * 
+     * @param id an identifier
+     * @return a checked identifier with only legal characters
+     */
+    private String checkId(final String id) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < id.length(); i++) {
+            char c = id.charAt(i);
+            if (c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+                    || (i > 0 && c >= '0' && c <= '9')) {
+                builder.append(c);
+            } else {
+                builder.append('_');
+            }
+        }
+        return builder.toString();
     }
 
 }
