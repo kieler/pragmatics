@@ -225,7 +225,6 @@ public class KGraphImporter implements IGraphImporter {
                 KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
                 
                 // exclude edges that pass hierarchy bounds and self-loops
-                // TODO self loops shouldn't be excluded once the edge router can handle them
                 if (kedge.getTarget().getParent() == child.getParent()) {
                     // retrieve source and target
                     LNode sourceNode = (LNode) elemMap.get(child);
