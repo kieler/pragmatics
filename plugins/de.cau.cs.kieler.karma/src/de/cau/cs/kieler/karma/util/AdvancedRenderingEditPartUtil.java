@@ -177,7 +177,9 @@ public class AdvancedRenderingEditPartUtil {
                         } else {
                             Dimension size = renderingProvider.getSizeByString(figureParam,
                                     modelElement, editPart);
-                            setFixedNodeSize(switchableFigure, figure, size);
+                            if (size != null) {
+                                setFixedNodeSize(switchableFigure, figure, size);
+                            }
                         }
 
                         return true;
