@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.keg.diagram.custom.wizards;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -35,7 +34,7 @@ import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
  * 
  * @author mri
  */
-public class RandomGraphUtilityPage extends WizardPage {
+public class RandomGraphUtilityPage extends AbstractRandomGraphPage {
 
     /** the page title. */
     private static final String TITLE = "Utility";
@@ -54,6 +53,29 @@ public class RandomGraphUtilityPage extends WizardPage {
     private static final String LABEL_EDGE_DIRECTED_CHANCE = "&Directed Edge Chance:";
     /** the label for the ports option. */
     private static final String LABEL_PORTS = "Use &Ports";
+
+    /** the description for the hierarchy chance. */
+    private static final String DESCRIPTION_HIERARCHY_CHANCE =
+            "The chance that a node in the generated graph turns into a compound node.\n"
+                    + "A graph is generated for every such node recursively using the same algorithm.";
+    /** the description for the maximum hierarchy level. */
+    private static final String DESCRIPTION_MAX_HIERARCHY_LEVEL =
+            "The maximum depth for nested compound nodes in the generated graph.";
+    /** the description for the hierarchy nodes factor. */
+    private static final String DESCRIPTION_HIERARCHY_NODES_FACTOR =
+            "This factor is used to determine the number of nodes of graphs inside compound nodes.\n"
+                    + "The number is between 1 and the factor multiplied by the number"
+                    + " of nodes in the parent graph.";
+    /** the description for the hypernode chance. */
+    private static final String DESCRIPTION_HYPERNODE_CHANCE =
+            "The chance for every node in the generated graph to become a hypernode.";
+    /** the description for the edge directed chance. */
+    private static final String DESCRIPTION_EDGE_DIRECTED_CHANCE =
+            "The chance for every edge in the generated graph to become a directed edge.\n"
+                    + "In particular a 1 makes every edge directed and a 0 makes every edge undirected.";
+    /** the description for the ports option. */
+    private static final String DESCRIPTION_PORTS =
+            "Whether edges are not connected directly to nodes but through ports.";
 
     /** the selected hierarchy chance. */
     private float hierarchyChance;
@@ -103,6 +125,7 @@ public class RandomGraphUtilityPage extends WizardPage {
         Label label = new Label(composite, SWT.NULL);
         label.setText(LABEL_HIERARCHY_CHANCE);
         final Spinner hierarchySpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
+        addHelp(hierarchySpinner, DESCRIPTION_HIERARCHY_CHANCE);
         hierarchySpinner.setValues((int) (hierarchyChance * 100), 0, 100, 2, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 30;
@@ -111,6 +134,7 @@ public class RandomGraphUtilityPage extends WizardPage {
         label = new Label(composite, SWT.NULL);
         label.setText(LABEL_MAX_HIERARCHY_LEVEL);
         final Spinner hierarchyLevelSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
+        addHelp(hierarchyLevelSpinner, DESCRIPTION_MAX_HIERARCHY_LEVEL);
         hierarchyLevelSpinner.setValues(maxHierarchyLevel, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 50;
@@ -125,6 +149,7 @@ public class RandomGraphUtilityPage extends WizardPage {
         label = new Label(composite, SWT.NULL);
         label.setText(LABEL_HIERARCHY_NODES_FACTOR);
         final Spinner hierarchyFactorSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
+        addHelp(hierarchyFactorSpinner, DESCRIPTION_HIERARCHY_NODES_FACTOR);
         hierarchyFactorSpinner.setValues((int) (hierarchyNodesFactor * 100), 0, Integer.MAX_VALUE,
                 2, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
@@ -153,6 +178,7 @@ public class RandomGraphUtilityPage extends WizardPage {
         label = new Label(composite, SWT.NULL);
         label.setText(LABEL_HYPERNODE_CHANCE);
         final Spinner hypernodeSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
+        addHelp(hypernodeSpinner, DESCRIPTION_HYPERNODE_CHANCE);
         hypernodeSpinner.setValues((int) (hypernodeChance * 100), 0, 100, 2, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 30;
@@ -166,6 +192,7 @@ public class RandomGraphUtilityPage extends WizardPage {
         label = new Label(composite, SWT.NULL);
         label.setText(LABEL_EDGE_DIRECTED_CHANCE);
         final Spinner edgeDirectedSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
+        addHelp(edgeDirectedSpinner, DESCRIPTION_EDGE_DIRECTED_CHANCE);
         edgeDirectedSpinner.setValues((int) (edgeDirectedChance * 100), 0, 100, 2, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 30;
@@ -177,6 +204,7 @@ public class RandomGraphUtilityPage extends WizardPage {
         });
         // add PORTS option
         final Button portsButton = new Button(composite, SWT.CHECK);
+        addHelp(portsButton, DESCRIPTION_PORTS);
         portsButton.setText(LABEL_PORTS);
         portsButton.setSelection(ports);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);

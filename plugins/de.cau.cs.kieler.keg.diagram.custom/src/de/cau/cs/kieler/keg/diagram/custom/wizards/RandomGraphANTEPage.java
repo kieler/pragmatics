@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.keg.diagram.custom.wizards;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -35,7 +34,7 @@ import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
  * 
  * @author mri
  */
-public class RandomGraphANTEPage extends WizardPage {
+public class RandomGraphANTEPage extends AbstractRandomGraphPage {
 
     /** the page title. */
     private static final String TITLE = "Acyclic Graph without Transitiv Edges";
@@ -49,6 +48,16 @@ public class RandomGraphANTEPage extends WizardPage {
     private static final String LABEL_NUMBER_OF_EDGES = "Number Of &Edges:";
     /** the label for the force planarity option. */
     private static final String LABEL_FORCE_PLANARITY = "Force &Planarity";
+
+    /** the description for the number of nodes. */
+    private static final String DESCRIPTION_NUMBER_OF_NODES =
+            "The precise number of nodes in the generated graph.";
+    /** the description for the number of edges. */
+    private static final String DESCRIPTION_NUMBER_OF_EDGES =
+            "The number of edges in the generated graph. The actual number can differ slightly.";
+    /** the description for the force planarity option. */
+    private static final String DESCRIPTION_FORCE_PLANARITY =
+            "Whether the created graph will be planar.";
 
     /** the selected number of nodes. */
     private int numberOfNodes;
@@ -92,6 +101,7 @@ public class RandomGraphANTEPage extends WizardPage {
         Label label = new Label(composite, SWT.NULL);
         label.setText(LABEL_NUMBER_OF_NODES);
         final Spinner nodesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
+        addHelp(nodesSpinner, DESCRIPTION_NUMBER_OF_NODES);
         nodesSpinner.setValues(numberOfNodes, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 50;
@@ -105,6 +115,7 @@ public class RandomGraphANTEPage extends WizardPage {
         label = new Label(composite, SWT.NULL);
         label.setText(LABEL_NUMBER_OF_EDGES);
         final Spinner edgesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
+        addHelp(edgesSpinner, DESCRIPTION_NUMBER_OF_EDGES);
         edgesSpinner.setValues(numberOfEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 50;
@@ -116,6 +127,7 @@ public class RandomGraphANTEPage extends WizardPage {
         });
         // add PLANAR option
         final Button planarButton = new Button(composite, SWT.CHECK);
+        addHelp(planarButton, DESCRIPTION_FORCE_PLANARITY);
         planarButton.setText(LABEL_FORCE_PLANARITY);
         planarButton.setSelection(planar);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);

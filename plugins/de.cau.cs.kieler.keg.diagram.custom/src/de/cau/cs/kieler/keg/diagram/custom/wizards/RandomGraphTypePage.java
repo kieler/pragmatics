@@ -14,12 +14,10 @@
 package de.cau.cs.kieler.keg.diagram.custom.wizards;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -33,24 +31,40 @@ import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
  * 
  * @author mri
  */
-public class RandomGraphTypePage extends WizardPage {
+public class RandomGraphTypePage extends AbstractRandomGraphPage {
 
     /** the page title. */
     private static final String TITLE = "Graph Type";
     /** the description message for this page. */
     private static final String DESCRIPTION =
-            "Select a graph type (defines what algorithm is used for generation)";
+            "Select a graph type (defines which algorithm is used for generation)";
+
+    /** the label for the graph type 'ANY'. */
+    private static final String LABEL_ANY = "Any graph";
+    /** the label for the graph type 'TREE'. */
+    private static final String LABEL_TREE = "Tree";
+    /** the label for the graph type 'BICONNECTED'. */
+    private static final String LABEL_BICONNECTED = "Biconnected graph";
+    /** the label for the graph type 'TRICONNECTED'. */
+    private static final String LABEL_TRICONNECTED = "Triconnected graph";
+    /** the label for the graph type 'ACYCLIC_NO_TRANSITIV_EDGES'. */
+    private static final String LABEL_ANTE = "Acyclic graph without transitiv edges";
 
     /** the description for the graph type 'ANY'. */
-    private static final String ANY_DESCRIPTION = "Any graph";
+    private static final String DESCRIPTION_ANY =
+            "A customizable algorithm that can generate any kind of graphs.";
     /** the description for the graph type 'TREE'. */
-    private static final String TREE_DESCRIPTION = "Tree";
+    private static final String DESCRIPTION_TREE =
+            "This algorithm generates trees and has special options to limit the randomness.";
     /** the description for the graph type 'BICONNECTED'. */
-    private static final String BICONNECTED_DESCRIPTION = "Biconnected graph";
+    private static final String DESCRIPTION_BICONNECTED =
+            "This algorithm generates biconnected graphs.";
     /** the description for the graph type 'TRICONNECTED'. */
-    private static final String TRICONNECTED_DESCRIPTION = "Triconnected graph";
+    private static final String DESCRIPTION_TRICONNECTED =
+            "This algorithm generates triconnected graphs.";
     /** the description for the graph type 'ACYCLIC_NO_TRANSITIV_EDGES'. */
-    private static final String ANTE_DESCRIPTION = "Acyclic graph without transitiv edges";
+    private static final String DESCRIPTION_ANTE =
+            "This algorithm generates acyclic graphs without transitiv edges.";
 
     /** the selected graph type. */
     private RandomGraphGenerator.GraphType graphType = RandomGraphGenerator.GraphType.ANY;
@@ -77,28 +91,37 @@ public class RandomGraphTypePage extends WizardPage {
         setControl(composite);
     }
 
+    // CHECKSTYLEOFF MagicNumber
     private void createGraphTypeGroup(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
+        rowLayout.spacing = 20;
         composite.setLayout(rowLayout);
         // create buttons
-        addRadioButton(composite, ANY_DESCRIPTION, RandomGraphGenerator.GraphType.ANY, graphType);
-        addRadioButton(composite, TREE_DESCRIPTION, RandomGraphGenerator.GraphType.TREE, graphType);
-        addRadioButton(composite, BICONNECTED_DESCRIPTION,
-                RandomGraphGenerator.GraphType.BICONNECTED, graphType);
-        addRadioButton(composite, TRICONNECTED_DESCRIPTION,
-                RandomGraphGenerator.GraphType.TRICONNECTED, graphType);
-        addRadioButton(composite, ANTE_DESCRIPTION,
-                RandomGraphGenerator.GraphType.ACYCLIC_NO_TRANSITIV_EDGES, graphType);
+        Button anyButton =
+                addRadioButton(composite, LABEL_ANY, RandomGraphGenerator.GraphType.ANY, graphType);
+        addHelp(anyButton, DESCRIPTION_ANY);
+        Button treeButton =
+                addRadioButton(composite, LABEL_TREE, RandomGraphGenerator.GraphType.TREE,
+                        graphType);
+        addHelp(treeButton, DESCRIPTION_TREE);
+        Button biconnectedButton =
+                addRadioButton(composite, LABEL_BICONNECTED,
+                        RandomGraphGenerator.GraphType.BICONNECTED, graphType);
+        addHelp(biconnectedButton, DESCRIPTION_BICONNECTED);
+        Button triconnectedButton =
+                addRadioButton(composite, LABEL_TRICONNECTED,
+                        RandomGraphGenerator.GraphType.TRICONNECTED, graphType);
+        addHelp(triconnectedButton, DESCRIPTION_TRICONNECTED);
+        Button anteButton =
+                addRadioButton(composite, LABEL_ANTE,
+                        RandomGraphGenerator.GraphType.ACYCLIC_NO_TRANSITIV_EDGES, graphType);
+        addHelp(anteButton, DESCRIPTION_ANTE);
     }
 
-    // CHECKSTYLEOFF MagicNumber
-    private void addRadioButton(final Composite parent, final String description,
+    private Button addRadioButton(final Composite parent, final String description,
             final RandomGraphGenerator.GraphType type, final RandomGraphGenerator.GraphType selected) {
         final Button radio = new Button(parent, SWT.RADIO | SWT.LEFT);
-        RowData rowData = new RowData();
-        rowData.height = 40;
-        radio.setLayoutData(rowData);
         radio.setText(description);
         if (type.equals(selected)) {
             radio.setSelection(true);
@@ -115,6 +138,7 @@ public class RandomGraphTypePage extends WizardPage {
                 // do nothing
             }
         });
+        return radio;
     }
 
     // CHECKSTYLEON MagicNumber

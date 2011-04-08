@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.keg.diagram.custom.wizards;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -32,7 +31,7 @@ import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
  * 
  * @author mri
  */
-public class RandomGraphTreePage extends WizardPage {
+public class RandomGraphTreePage extends AbstractRandomGraphPage {
 
     /** the page title. */
     private static final String TITLE = "Tree";
@@ -45,6 +44,16 @@ public class RandomGraphTreePage extends WizardPage {
     private static final String LABEL_MAXIMUM_DEGREE = "Maximum &Degree:";
     /** the label for the maximum width. */
     private static final String LABEL_MAXIMUM_WIDTH = "Maximum &Width:";
+
+    /** the description for the number of nodes. */
+    private static final String DESCRIPTION_NUMBER_OF_NODES =
+            "The precise number of nodes in the generated graph.";
+    /** the description for the maximum degree. */
+    private static final String DESCRIPTION_MAXIMUM_DEGREE =
+            "The maximum node degree in the generated tree.";
+    /** the description for the maximum width. */
+    private static final String DESCRIPTION_MAXIMUM_WIDTH =
+            "The maximum width of the generated tree.";
 
     /** the selected number of nodes. */
     private int numberOfNodes;
@@ -88,6 +97,7 @@ public class RandomGraphTreePage extends WizardPage {
         Label label = new Label(composite, SWT.NULL);
         label.setText(LABEL_NUMBER_OF_NODES);
         final Spinner nodesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
+        addHelp(nodesSpinner, DESCRIPTION_NUMBER_OF_NODES);
         nodesSpinner.setValues(numberOfNodes, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 50;
@@ -101,6 +111,7 @@ public class RandomGraphTreePage extends WizardPage {
         label = new Label(composite, SWT.NULL);
         label.setText(LABEL_MAXIMUM_DEGREE);
         final Spinner degreeSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
+        addHelp(degreeSpinner, DESCRIPTION_MAXIMUM_DEGREE);
         degreeSpinner.setValues(maxDegree, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 50;
@@ -114,6 +125,7 @@ public class RandomGraphTreePage extends WizardPage {
         label = new Label(composite, SWT.NULL);
         label.setText(LABEL_MAXIMUM_WIDTH);
         final Spinner widthSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
+        addHelp(widthSpinner, DESCRIPTION_MAXIMUM_WIDTH);
         widthSpinner.setValues(maxWidth, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 50;

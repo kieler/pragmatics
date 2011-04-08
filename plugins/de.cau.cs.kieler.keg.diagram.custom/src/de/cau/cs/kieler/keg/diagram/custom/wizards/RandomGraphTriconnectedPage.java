@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.keg.diagram.custom.wizards;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -32,7 +31,7 @@ import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
  * 
  * @author mri
  */
-public class RandomGraphTriconnectedPage extends WizardPage {
+public class RandomGraphTriconnectedPage extends AbstractRandomGraphPage {
 
     /** the page title. */
     private static final String TITLE = "Triconnected Graph";
@@ -41,6 +40,10 @@ public class RandomGraphTriconnectedPage extends WizardPage {
 
     /** the label for the number of nodes. */
     private static final String LABEL_NUMBER_OF_NODES = "Number Of &Nodes:";
+
+    /** the description for the number of nodes. */
+    private static final String DESCRIPTION_NUMBER_OF_NODES =
+            "The precise number of nodes in the generated graph.";
     
     /** the selected number of nodes. */
     private int numberOfNodes;
@@ -80,6 +83,7 @@ public class RandomGraphTriconnectedPage extends WizardPage {
         Label label = new Label(composite, SWT.NULL);
         label.setText(LABEL_NUMBER_OF_NODES);
         final Spinner nodesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
+        addHelp(nodesSpinner, DESCRIPTION_NUMBER_OF_NODES);
         nodesSpinner.setValues(numberOfNodes, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 50;

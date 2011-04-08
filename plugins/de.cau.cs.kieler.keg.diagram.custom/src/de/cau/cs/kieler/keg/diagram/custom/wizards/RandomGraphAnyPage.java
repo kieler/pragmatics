@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.keg.diagram.custom.wizards;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -35,7 +34,7 @@ import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
  * 
  * @author mri
  */
-public class RandomGraphAnyPage extends WizardPage {
+public class RandomGraphAnyPage extends AbstractRandomGraphPage {
 
     /** the page title. */
     private static final String TITLE = "Customizable Random Graph";
@@ -55,9 +54,35 @@ public class RandomGraphAnyPage extends WizardPage {
     /** the label for the self-loops option. */
     private static final String LABEL_SELF_LOOPS = "Allow &Self-Loops";
     /** the label for the multi-edges option. */
-    private static final String LABEL_MULTI_EDGES = "Allow Multi-&Edges";
+    private static final String LABEL_MULTI_EDGES = "Allow M&ulti-Edges";
     /** the label for the cycles option. */
     private static final String LABEL_CYCLES = "Allow &Cycles";
+
+    /** the description for the number of nodes. */
+    private static final String DESCRIPTION_NUMBER_OF_NODES =
+            "The precise number of nodes in the generated graph.";
+    /** the description for the number of edges. */
+    private static final String DESCRIPTION_NUMBER_OF_EDGES =
+            "The number of edges in the generated graph. The actual number can differ slightly.";
+    /** the description for the density. */
+    private static final String DESCRIPTION_DENSITY =
+            "An alternative way to specify the number of edges in the generated graph.\n"
+                    + "The density d of a graph G=(V,E) with n=|V| and m=|E| is defined as d=m/(n*n).";
+    /** the description for the minimum number of outgoing edges. */
+    private static final String DESCRIPTION_MIN_OUTGOING =
+            "The minimum number of outgoing edges per node in the generated graph.";
+    /** the description for the maximum number of outgoing edges. */
+    private static final String DESCRIPTION_MAX_OUTGOING =
+            "The maximum number of outgoing edges per node in the generated graph.";
+    /** the description for the self-loops option. */
+    private static final String DESCRIPTION_SELF_LOOPS =
+            "Whether self-loops can appear in the generated graph.";
+    /** the description for the multi-edges option. */
+    private static final String DESCRIPTION_MULTI_EDGES =
+            "Whether multi-edges can appear in the generated graph.";
+    /** the description for the cycles option. */
+    private static final String DESCRIPTION_CYCLES =
+            "Whether cycles can appear in the generated graph.";
 
     /** the id of the NUMBER_OF_EDGES edge determination for the preferences. */
     public static final int EDGE_DETERMINATION_EDGES = 0;
@@ -122,9 +147,13 @@ public class RandomGraphAnyPage extends WizardPage {
         // add NUMBER_OF_NODES option
         // empty label to fill first column
         Label label = new Label(composite, SWT.NULL);
+        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
+        gridData.widthHint = 16;
+        label.setLayoutData(gridData);
         label = new Label(composite, SWT.NULL);
         label.setText(LABEL_NUMBER_OF_NODES);
         final Spinner nodesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
+        addHelp(nodesSpinner, DESCRIPTION_NUMBER_OF_NODES);
         nodesSpinner.setValues(numberOfNodes, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 50;
@@ -136,9 +165,12 @@ public class RandomGraphAnyPage extends WizardPage {
         });
         // add NUMBER_OF_EDGES option
         Button edgesSwitch = new Button(composite, SWT.RADIO | SWT.LEFT);
-        label = new Label(composite, SWT.NULL);
-        label.setText(LABEL_NUMBER_OF_EDGES);
+        edgesSwitch.setText(LABEL_NUMBER_OF_EDGES);
+        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
+        gridData.horizontalSpan = 2;
+        edgesSwitch.setLayoutData(gridData);
         final Spinner edgesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
+        addHelp(edgesSpinner, DESCRIPTION_NUMBER_OF_EDGES);
         edgesSpinner.setValues(numberOfEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
         edgesSpinner.setEnabled(false);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
@@ -151,9 +183,12 @@ public class RandomGraphAnyPage extends WizardPage {
         });
         // add another way to specify the NUMBER_OF_EDGES option
         Button densitySwitch = new Button(composite, SWT.RADIO | SWT.LEFT);
-        label = new Label(composite, SWT.NULL);
-        label.setText(LABEL_DENSITY);
+        densitySwitch.setText(LABEL_DENSITY);
+        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
+        gridData.horizontalSpan = 2;
+        densitySwitch.setLayoutData(gridData);
         final Spinner densitySpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
+        addHelp(densitySpinner, DESCRIPTION_DENSITY);
         densitySpinner.setValues((int) (density * 100), 0, Integer.MAX_VALUE, 2, 1, 10);
         densitySpinner.setEnabled(false);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
@@ -166,9 +201,12 @@ public class RandomGraphAnyPage extends WizardPage {
         });
         // add MIN_OUTGOING_EDGES option
         Button outgoingSwitch = new Button(composite, SWT.RADIO | SWT.LEFT);
-        label = new Label(composite, SWT.NULL);
-        label.setText(LABEL_MIN_OUTGOING);
+        outgoingSwitch.setText(LABEL_MIN_OUTGOING);
+        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
+        gridData.horizontalSpan = 2;
+        outgoingSwitch.setLayoutData(gridData);
         final Spinner minOutSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
+        addHelp(minOutSpinner, DESCRIPTION_MIN_OUTGOING);
         minOutSpinner.setValues(minOutgoingEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
         minOutSpinner.setEnabled(false);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
@@ -185,6 +223,7 @@ public class RandomGraphAnyPage extends WizardPage {
         label = new Label(composite, SWT.NULL);
         label.setText(LABEL_MAX_OUTGOING);
         final Spinner maxOutSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
+        addHelp(maxOutSpinner, DESCRIPTION_MAX_OUTGOING);
         maxOutSpinner.setValues(maxOutgoingEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
         maxOutSpinner.setEnabled(false);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
@@ -241,6 +280,7 @@ public class RandomGraphAnyPage extends WizardPage {
         }
         // add SELF_LOOPS option
         final Button selfLoopsButton = new Button(composite, SWT.CHECK);
+        addHelp(selfLoopsButton, DESCRIPTION_SELF_LOOPS);
         selfLoopsButton.setText(LABEL_SELF_LOOPS);
         selfLoopsButton.setSelection(selfLoops);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
@@ -253,6 +293,7 @@ public class RandomGraphAnyPage extends WizardPage {
         });
         // add MULTI_EDGES option
         final Button multiEdgesButton = new Button(composite, SWT.CHECK);
+        addHelp(multiEdgesButton, DESCRIPTION_MULTI_EDGES);
         multiEdgesButton.setText(LABEL_MULTI_EDGES);
         multiEdgesButton.setSelection(multiEdges);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
@@ -265,6 +306,7 @@ public class RandomGraphAnyPage extends WizardPage {
         });
         // add CYCLES option
         final Button cyclesButton = new Button(composite, SWT.CHECK);
+        addHelp(cyclesButton, DESCRIPTION_CYCLES);
         cyclesButton.setText(LABEL_CYCLES);
         cyclesButton.setSelection(cycles);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
