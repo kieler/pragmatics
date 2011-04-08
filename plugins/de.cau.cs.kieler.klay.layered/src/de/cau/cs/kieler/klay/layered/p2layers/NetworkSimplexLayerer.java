@@ -16,9 +16,11 @@ package de.cau.cs.kieler.klay.layered.p2layers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
@@ -172,6 +174,12 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
      * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#cutvalues() cutvalues()
      */
     private int[] cutvalue;
+    
+    /**
+     * A map storing self-loops that were removed prior to executing the actual algorithm. The
+     * map stores the edges' source and target ports so they can be reinserted later.
+     */
+    private Map<LEdge, Pair<LPort, LPort>> removedSelfLoops;
 
     // ================================== Constructor =============================================
 
@@ -289,6 +297,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
         poID = new int[numNodes];
         lowestPoID = new int[numNodes];
         Arrays.fill(revLayer, numNodes);
+        removedSelfLoops = new HashMap<LEdge, Pair<LPort, LPort>>();
 
         sources = new LinkedList<LNode>();
         sinks = new LinkedList<LNode>();
@@ -302,14 +311,22 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
             for (LPort port : node.getPorts()) {
                 if (port.getType() == PortType.OUTPUT) {
                     for (LEdge edge : port.getEdges()) {
-                        if (edge.getSource().getNode() != edge.getTarget().getNode()) {
+                        if (edge.getSource().getNode() == edge.getTarget().getNode()) {
+                            // Self loops are stored in a map and removed later
+                            removedSelfLoops.put(edge,
+                                    new Pair<LPort, LPort>(edge.getSource(), edge.getTarget()));
+                        } else {
                             theEdges.add(edge);
                             outDegree[node.id]++;
                         }
                     }
                 } else if (port.getType() == PortType.INPUT) {
                     for (LEdge edge : port.getEdges()) {
-                        if (edge.getSource().getNode() != edge.getTarget().getNode()) {
+                        if (edge.getSource().getNode() == edge.getTarget().getNode()) {
+                            // Self loops are stored in a map and removed later
+                            removedSelfLoops.put(edge,
+                                    new Pair<LPort, LPort>(edge.getSource(), edge.getTarget()));
+                        } else {
                             inDegree[node.id]++;
                         }
                     }
@@ -341,6 +358,24 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
         }
         edges = theEdges;
         postOrder = 1;
+        
+        // remove self loops
+        for (LEdge edge : removedSelfLoops.keySet()) {
+            edge.setSource(null);
+            edge.setTarget(null);
+        }
+    }
+    
+    /**
+     * Restores the self loops removed prior to the actual algorithm's execution.
+     */
+    private void restoreSelfLoops() {
+        for (LEdge edge : removedSelfLoops.keySet()) {
+            Pair<LPort, LPort> endpoints = removedSelfLoops.get(edge);
+            
+            edge.setSource(endpoints.getFirst());
+            edge.setTarget(endpoints.getSecond());
+        }
     }
     
     /**
@@ -365,6 +400,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
         this.sources = null;
         this.treeEdge = null;
         this.treeNode = null;
+        this.removedSelfLoops = null;
     }
 
     // ============================== Network-Simplex Algorithm ===================================
@@ -441,6 +477,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
         if (enhancer != null) {
             enhancer.postProcess();
         }
+        
+        // restore the self loops
+        restoreSelfLoops();
         
         // empty the list of unlayered nodes
         theNodes.clear();
