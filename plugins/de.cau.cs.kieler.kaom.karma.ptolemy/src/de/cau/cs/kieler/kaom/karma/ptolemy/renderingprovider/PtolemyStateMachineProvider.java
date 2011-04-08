@@ -214,4 +214,11 @@ public class PtolemyStateMachineProvider implements IRenderingProvider {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public Dimension getSizeByString(final String input, final EObject object, final EditPart part) {
+        return null;
+    }
+
 }

@@ -22,7 +22,6 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
@@ -36,16 +35,12 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.IBorderItemLocator;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.Bounds;
-import org.eclipse.gmf.runtime.notation.DrawerStyle;
 import org.eclipse.gmf.runtime.notation.IdentityAnchor;
 import org.eclipse.gmf.runtime.notation.RelativeBendpoints;
-import org.eclipse.ui.IEditorPart;
 
-import de.cau.cs.kieler.core.ui.util.EditorUtils;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.karma.AdvancedRenderingLabelEditPart;
-import de.cau.cs.kieler.karma.AdvancedRenderingShapeNodeEditPart;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.karma.SwitchableFigure;
 
@@ -176,7 +171,13 @@ public class AdvancedRenderingEditPartUtil {
                         // setting a fixed node size
                         if (((figureSize.getFirst() >= 0) && (figureSize.getSecond() >= 0))
                                 && switchableFigure != null) {
-                            setFixedNodeSize(switchableFigure, figure, figureSize);
+                            Dimension size = new Dimension(figureSize.getFirst(),
+                                    figureSize.getSecond());
+                            setFixedNodeSize(switchableFigure, figure, size);
+                        } else {
+                            Dimension size = renderingProvider.getSizeByString(figureParam,
+                                    modelElement, editPart);
+                            setFixedNodeSize(switchableFigure, figure, size);
                         }
 
                         return true;
@@ -305,12 +306,11 @@ public class AdvancedRenderingEditPartUtil {
      *            enclosing figure of the figure whose size should be set.
      * @param figure
      *            the figure whose size should be set.
-     * @param figureSize
+     * @param dim
      *            the new fixed size
      */
     private void setFixedNodeSize(final SwitchableFigure switchableFigure, final IFigure figure,
-            final Pair<Integer, Integer> figureSize) {
-        Dimension dim = new Dimension(figureSize.getFirst(), figureSize.getSecond());
+            final Dimension dim) {
         figure.getBounds().setSize(dim);
         figure.setMaximumSize(dim.getCopy());
         figure.setMinimumSize(dim.getCopy());
@@ -335,7 +335,7 @@ public class AdvancedRenderingEditPartUtil {
             for (EditPart compartment : resizeableCompartments) {
                 if (compartment instanceof IResizableCompartmentEditPart) {
                     IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
-                    if(resizeComp.getFigure() instanceof ResizableCompartmentFigure) {
+                    if (resizeComp.getFigure() instanceof ResizableCompartmentFigure) {
                         ResizableCompartmentFigure f = (ResizableCompartmentFigure) resizeComp.getFigure();
                         boolean expanded = f.isExpanded();
                         if (expanded) {

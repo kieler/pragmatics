@@ -24,6 +24,7 @@ import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.PolygonShape;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RectangleFigure;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.emf.common.util.EList;
@@ -338,4 +339,12 @@ public class KaomPortProvider implements IRenderingProvider {
             throw new Exception("Couldn't load Ptolemy Entity '" + className + "'.");
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Dimension getSizeByString(final String input, final EObject object, final EditPart part) {
+        return null;
+    }
+    
 }

@@ -110,4 +110,11 @@ public class KEGFigureProvider implements IRenderingProvider {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public Dimension getSizeByString(final String input, final EObject object, final EditPart part) {
+        return null;
+    }
+
 }

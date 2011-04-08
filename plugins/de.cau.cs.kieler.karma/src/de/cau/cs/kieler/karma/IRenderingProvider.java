@@ -17,6 +17,7 @@ package de.cau.cs.kieler.karma;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.IBorderItemLocator;
@@ -30,7 +31,7 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.IBorderItemLocator;
 public interface IRenderingProvider {
 
     /**
-     * Method that returns a figure according to a given string.
+     * Returns a figure according to a given string.
      * 
      * @param input
      *            a string representation of the figure
@@ -42,10 +43,28 @@ public interface IRenderingProvider {
      *            the corresponding editPart
      * @return the figure
      */
-    IFigure getFigureByString(final String input, final IFigure oldFigure, final EObject object, final EditPart part);
+    IFigure getFigureByString(final String input, final IFigure oldFigure, final EObject object,
+            final EditPart part);
+    
+    /**
+     * Returns the size of a figure according to a given string. The fixed size given in the
+     * extension point has priority over the one given here. If no fixed size shall be set or
+     * the fixed size is defined in the plugin extension, this method returns {@code null}.
+     * The string input is the same as the one for
+     * {@link #getFigureByString(String, IFigure, EObject, EditPart) getFigureByString}.
+     * 
+     * @param input
+     *            a string representation of the figure
+     * @param object
+     *            the model element
+     * @param part
+     *            the corresponding editPart
+     * @return the fixed size, or {@code null} if no fixed size shall be set
+     */
+    Dimension getSizeByString(final String input, final EObject object, final EditPart part);
 
     /**
-     * Method that returns a LayoutManager according to a given string.
+     * Returns a LayoutManager according to a given string.
      * 
      * @param input
      *            a string representation of the LayoutManager
@@ -59,7 +78,7 @@ public interface IRenderingProvider {
             final LayoutManager oldLayoutManager, final EObject object);
 
     /**
-     * Method that returns a BorderItemLocator according to a given string.
+     * Returns a BorderItemLocator according to a given string.
      * 
      * @param input
      *            a string representation of the BorderItemLocator
@@ -74,6 +93,4 @@ public interface IRenderingProvider {
     IBorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parentFigure,
             final Object locator, final EObject object);
 
-
-    
 }
