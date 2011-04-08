@@ -301,10 +301,21 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
             node.id = index++;
             for (LPort port : node.getPorts()) {
                 if (port.getType() == PortType.OUTPUT) {
-                    theEdges.addAll(port.getEdges());
-                    outDegree[node.id] += port.getEdges().size();
+                    int edgeCount = 0;
+                    for (LEdge edge : port.getEdges()) {
+                        if (edge.getSource().getNode() != edge.getTarget().getNode()) {
+                            theEdges.add(edge);
+                            edgeCount++;
+                        }
+                    }
+                    
+                    outDegree[node.id] += edgeCount;
                 } else if (port.getType() == PortType.INPUT) {
-                    inDegree[node.id] += port.getEdges().size();
+                    for (LEdge edge : port.getEdges()) {
+                        if (edge.getSource().getNode() != edge.getTarget().getNode()) {
+                            inDegree[node.id]++;
+                        }
+                    }
                 }
             }
             // add node to sinks, resp. sources
@@ -559,6 +570,12 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
             for (LPort port : node.getPorts(PortType.INPUT)) {
                 for (LEdge edge : port.getEdges()) {
                     target = edge.getSource().getNode();
+                    
+                    // Beware of self loops
+                    if (edge.getSource().getNode() == target) {
+                        continue;
+                    }
+                    
                     revLayer[target.id] = Math.min(revLayer[target.id], revLayer[node.id] - 1);
                     layeringDFS(target, true);
                 }
@@ -567,6 +584,12 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
             for (LPort port : node.getPorts(PortType.OUTPUT)) {
                 for (LEdge edge : port.getEdges()) {
                     target = edge.getTarget().getNode();
+                    
+                    // Beware of self loops
+                    if (edge.getSource().getNode() == target) {
+                        continue;
+                    }
+                    
                     layer[target.id] = Math.max(layer[target.id], layer[node.id] + 1);
                     layeringDFS(target, false);
                 }

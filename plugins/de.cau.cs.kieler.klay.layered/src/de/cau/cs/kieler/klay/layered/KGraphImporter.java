@@ -226,9 +226,7 @@ public class KGraphImporter implements IGraphImporter {
                 
                 // exclude edges that pass hierarchy bounds and self-loops
                 // TODO self loops shouldn't be excluded once the edge router can handle them
-                if (kedge.getTarget().getParent() == child.getParent()
-                        && kedge.getSource() != kedge.getTarget()) {
-                    
+                if (kedge.getTarget().getParent() == child.getParent()) {
                     // retrieve source and target
                     LNode sourceNode = (LNode) elemMap.get(child);
                     LPort sourcePort = (LPort) elemMap.get(kedge.getSourcePort());
@@ -328,8 +326,6 @@ public class KGraphImporter implements IGraphImporter {
      * {@inheritDoc}
      */
     public void applyLayout() {
-        // TODO Apply layout to labels.
-        
         // determine the border spacing, which influences the offset
         KNode parentNode = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);

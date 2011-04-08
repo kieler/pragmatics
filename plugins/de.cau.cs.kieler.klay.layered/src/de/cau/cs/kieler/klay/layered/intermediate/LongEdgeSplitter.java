@@ -38,7 +38,8 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * source and target ports.</p>
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph without crossing reduction applied.</dd>
+ *   <dt>Precondition:</dt><dd>a layered graph without crossing reduction applied; self-loops
+ *     are allowed.</dd>
  *   <dt>Postcondition:</dt><dd>the graph is properly layered; that is, each edge
  *     connects nodes in neighbouring layers.</dd>
  *   <dt>Slots:</dt><dd>Before phase 3.</dd>
@@ -59,6 +60,7 @@ public class LongEdgeSplitter extends AbstractAlgorithm implements ILayoutProces
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         while (layerIter.hasNext()) {
             Layer layer = layerIter.next();
+            int layerIndex = layerIter.previousIndex();
             
             // Iterate through the nodes
             for (LNode node : layer.getNodes()) {
@@ -70,7 +72,7 @@ public class LongEdgeSplitter extends AbstractAlgorithm implements ILayoutProces
                         int targetIndex = targetPort.getNode().getLayer().getIndex();
                         
                         // If the edge doesn't go to the next layer, split it
-                        if (targetIndex != layerIter.nextIndex()) {
+                        if (layerIndex != targetIndex && targetIndex != layerIter.nextIndex()) {
                             // Get the next layer
                             Layer nextLayer = layerIter.next();
                             
