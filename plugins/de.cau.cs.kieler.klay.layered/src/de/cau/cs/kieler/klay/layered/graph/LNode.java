@@ -19,7 +19,6 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.math.KInsets;
 import de.cau.cs.kieler.core.util.CompoundCondition;
 import de.cau.cs.kieler.core.util.FilteredIterator;
 import de.cau.cs.kieler.core.util.ICondition;
@@ -40,7 +39,7 @@ public class LNode extends LSizedGraphElement {
     /** this node's label, if any. */
     private LLabel label = null;
     /** this node's insets. */
-    private KInsets.Double margin = new KInsets.Double();
+    private Insets.Double margin = new Insets.Double();
     /** name of the node. */
     private String name;
 
@@ -214,7 +213,7 @@ public class LNode extends LSizedGraphElement {
      *  
      * @return the node's margin. May be modified.
      */
-    public KInsets.Double getMargin() {
+    public Insets.Double getMargin() {
         return margin;
     }
     

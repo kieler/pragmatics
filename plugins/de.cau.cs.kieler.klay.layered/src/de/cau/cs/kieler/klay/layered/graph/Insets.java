@@ -11,16 +11,16 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.math;
+package de.cau.cs.kieler.klay.layered.graph;
 
 /**
  * Stores the insets of an object. This is only the abstract superclass. The actual storage
  * representation of the insets is left to subclasses.
  * 
  * @author cds
- * @see KInsets.Double
+ * @see Insets.Double
  */
-public class KInsets {
+public class Insets {
     // Allow public fields in this utility classes.
     // CHECKSTYLEOFF VisibilityModifier
     
@@ -29,7 +29,7 @@ public class KInsets {
      * 
      * @author cds
      */
-    public static class Double extends KInsets {
+    public static class Double extends Insets {
         /**
          * The inset from the top.
          */
@@ -79,8 +79,8 @@ public class KInsets {
          */
         @Override
         public boolean equals(final Object obj) {
-            if (obj instanceof KInsets.Double) {
-                KInsets.Double other = (KInsets.Double) obj;
+            if (obj instanceof Insets.Double) {
+                Insets.Double other = (Insets.Double) obj;
                 
                 return this.top == other.top
                     && this.bottom == other.bottom
