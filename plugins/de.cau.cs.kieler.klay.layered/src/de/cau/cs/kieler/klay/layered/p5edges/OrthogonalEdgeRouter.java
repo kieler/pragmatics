@@ -79,7 +79,8 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 // Before Phase 3
                 EnumSet.of(
                         IntermediateLayoutProcessor.NORTH_SOUTH_SIDE_PREPROCESSOR,
-                        IntermediateLayoutProcessor.ODD_PORT_SIDE_PROCESSOR),
+                        IntermediateLayoutProcessor.ODD_PORT_SIDE_PROCESSOR,
+                        IntermediateLayoutProcessor.SELF_LOOP_PROCESSOR),
                 // Before Phase 4
                 EnumSet.of(
                         IntermediateLayoutProcessor.HYPEREDGE_DUMMY_JOINER,

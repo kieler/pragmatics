@@ -39,7 +39,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * @see PortSideAndOrderProcessor
  * @author msp
  */
-public class PortArranger extends AbstractAlgorithm implements ILayoutProcessor {
+public class PortPositionProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}

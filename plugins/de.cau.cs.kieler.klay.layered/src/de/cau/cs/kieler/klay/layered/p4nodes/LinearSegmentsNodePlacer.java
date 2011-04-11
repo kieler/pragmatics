@@ -201,7 +201,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 IntermediateProcessingStrategy.BEFORE_PHASE_4,
                 EnumSet.of(
                         IntermediateLayoutProcessor.NODE_MARGIN_CALCULATOR,
-                        IntermediateLayoutProcessor.PORT_ARRANGER));
+                        IntermediateLayoutProcessor.PORT_POSITION_PROCESSOR));
     
     /** array of sorted linear segments. */
     private LinearSegment[] linearSegments;

@@ -16,12 +16,14 @@ package de.cau.cs.kieler.klay.layered.p3order;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -469,10 +471,12 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     private int calculateBarycenters(final List<Vertex> vertices, final Map<LNode, Vertex> layerVertices,
             final boolean forward) {
         
+        Set<Vertex> workingSet = new HashSet<Vertex>();
+        
         int totalEdges = 0;
         for (Vertex vertex : vertices) {
             // Calculate the vertex's new barycenter (may be -1)
-            calculateBarycenter(vertex, layerVertices, forward);
+            calculateBarycenter(vertex, layerVertices, forward, workingSet);
             totalEdges += vertex.degree;
         }
         
@@ -485,11 +489,21 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
      * @param vertex the vertex, consisting of a single node.
      * @param layerVertices map of the layer's nodes to their single-node vertices.
      * @param forward {@code true} if the current sweep moves forward.
+     * @param workingSet a set where vertices whose values are being computed are put into.
+     *                   When this method is called on a vertex that's already in the set,
+     *                   it immediately returns.
      * @return a pair containing the summed port positions of the connected ports as the
      *         first, and the number of connected edges as the second entry.
      */
     private void calculateBarycenter(final Vertex vertex, final Map<LNode, Vertex> layerVertices,
-            final boolean forward) {
+            final boolean forward, final Set<Vertex> workingSet) {
+
+        // Check if the vertex's barycenter was already computed
+        if (workingSet.contains(vertex)) {
+            return;
+        } else {
+            workingSet.add(vertex);
+        }
         
         vertex.degree = 0;
         vertex.summedWeight = 0.0f;
@@ -505,7 +519,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 if (fixedNode.getLayer() == node.getLayer()) {
                     // Find the fixed node's vertex and calculate its barycenter (perhaps again)
                     Vertex fixedVertex = layerVertices.get(fixedNode);
-                    calculateBarycenter(fixedVertex, layerVertices, forward);
+                    calculateBarycenter(fixedVertex, layerVertices, forward, workingSet);
                     
                     // Update this vertex's values
                     vertex.degree += fixedVertex.degree - 1;

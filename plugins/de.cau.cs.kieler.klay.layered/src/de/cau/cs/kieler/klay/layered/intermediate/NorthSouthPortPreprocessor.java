@@ -73,11 +73,11 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *     they were created from; also, the dummy nodes have a certain order.</dd>
  *   <dt>Slots:</dt><dd>Before phase 3 or phase 4, depending on whether the crossing
  *     minimizer supports node successor constraints and layout units.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link PortArranger}</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link PortPositionProcessor}</dd>
  * </dl>
  * 
  * @see NorthSouthPortPostprocessor
- * @see PortArranger
+ * @see PortPositionProcessor
  * @author cds
  */
 public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILayoutProcessor {

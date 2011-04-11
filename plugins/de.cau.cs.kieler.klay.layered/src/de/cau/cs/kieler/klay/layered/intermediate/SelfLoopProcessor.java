@@ -15,9 +15,10 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
@@ -69,7 +70,9 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
             for (LNode node : layer.getNodes()) {
                 // Iterate through all ports, looking for east-west self-loops
                 for (LPort port : node.getPorts()) {
-                    for (LEdge edge : port.getEdges()) {
+                    LEdge[] edges = port.getEdges().toArray(new LEdge[0]);
+                    
+                    for (LEdge edge : edges) {
                         // If it's not a self-loop, we're not interested
                         if (edge.getSource().getNode() != edge.getTarget().getNode()) {
                             continue;
@@ -121,10 +124,39 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
     private LNode handleInterestingCase(final LEdge edge, final LPort sourcePort,
             final LPort targetPort) {
         
+        // If we reverse the edge, the source port is the new target port
+        LPort realTargetPort = targetPort;
+        
         // If the edge goes from west to east, it must be reversed
+        if (sourcePort.getSide() == PortSide.EAST) {
+            edge.reverse();
+            
+            realTargetPort = sourcePort;
+        }
         
+        // Create a dummy node with an input port and an output port
+        LNode dummyNode = new LNode();
+        dummyNode.setProperty(Properties.ORIGIN, edge);
+        dummyNode.setProperty(Properties.NODE_TYPE, Properties.NodeType.LONG_EDGE);
+        dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         
-        return null;
+        LPort dummyInput = new LPort(PortType.INPUT);
+        dummyInput.setSide(PortSide.WEST);
+        dummyInput.setNode(dummyNode);
+        
+        LPort dummyOutput = new LPort(PortType.OUTPUT);
+        dummyOutput.setSide(PortSide.EAST);
+        dummyOutput.setNode(dummyNode);
+        
+        edge.setTarget(dummyInput);
+        
+        // Create a dummy edge
+        LEdge dummyEdge = new LEdge();
+        dummyEdge.copyProperties(edge);
+        dummyEdge.setSource(dummyOutput);
+        dummyEdge.setTarget(realTargetPort);
+        
+        return dummyNode;
     }
     
 }

@@ -34,10 +34,10 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *   <dt>Postcondition:</dt><dd>the node margins are properly set to form a bounding box
  *     around the node and its ports and labels.</dd>
  *   <dt>Slots:</dt><dd>Before phase 4.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link PortArranger}</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link PortPositionProcessor}</dd>
  * </dl>
  *
- * @see PortArranger
+ * @see PortPositionProcessor
  * @author cds
  */
 public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutProcessor {
