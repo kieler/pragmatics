@@ -22,7 +22,6 @@ import org.eclipse.ui.PlatformUI;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.kiml.ui.triggers.LayoutGraphTrigger;
 import de.cau.cs.kieler.kiml.viewer.views.ExecutionView;
 import de.cau.cs.kieler.kiml.viewer.views.LayoutGraphView;
 
@@ -34,9 +33,9 @@ import de.cau.cs.kieler.kiml.viewer.views.LayoutGraphView;
 public class UpdateViewerEffect extends AbstractEffect {
 
     /** Constant indicating that a layout is about to be performed. */
-    public static final String PRE_LAYOUT = LayoutGraphTrigger.PRE_LAYOUT;
+    public static final String PRE_LAYOUT = "PRE_LAYOUT";
     /** Constant indicating that a layout is just finished. */
-    public static final String POST_LAYOUT = LayoutGraphTrigger.POST_LAYOUT;
+    public static final String POST_LAYOUT = "POST_LAYOUT";
 
     private KNode layoutGraph;
 
@@ -153,4 +152,5 @@ public class UpdateViewerEffect extends AbstractEffect {
             executionView = (ExecutionView) viewPart;
         }
     }
+    
 }

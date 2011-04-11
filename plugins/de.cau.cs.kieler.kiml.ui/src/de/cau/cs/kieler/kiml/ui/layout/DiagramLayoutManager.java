@@ -40,7 +40,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.triggers.LayoutGraphTrigger;
 import de.cau.cs.kieler.kiml.ui.util.DebugCanvas;
 
 /**
@@ -167,8 +166,7 @@ public abstract class DiagramLayoutManager {
                 // first phase: build the layout graph
                 @Override
                 protected void preUIexec() {
-                    KNode graph = buildLayoutGraph(workbenchPart, editPart, layoutAncestors);
-                    LayoutGraphTrigger.triggerPreLayout(graph);
+                    buildLayoutGraph(workbenchPart, editPart, layoutAncestors);
                 }
 
                 // second phase: execute layout algorithms
@@ -202,8 +200,7 @@ public abstract class DiagramLayoutManager {
             MonitoredOperation.runInUI(new Runnable() {
                 // first phase: build the layout graph
                 public void run() {
-                    KNode graph = buildLayoutGraph(workbenchPart, editPart, layoutAncestors);
-                    LayoutGraphTrigger.triggerPreLayout(graph);
+                    buildLayoutGraph(workbenchPart, editPart, layoutAncestors);
                 }
             }, true);
             // second phase: execute layout algorithms
@@ -439,7 +436,6 @@ public abstract class DiagramLayoutManager {
         try {
             // get the layout graph instance
             KNode layoutGraph = getLayoutGraph();
-            LayoutGraphTrigger.triggerPostLayout(layoutGraph);
 
             // perform layout on the layout graph
             DEBUG_CANVAS.setManager(this);
