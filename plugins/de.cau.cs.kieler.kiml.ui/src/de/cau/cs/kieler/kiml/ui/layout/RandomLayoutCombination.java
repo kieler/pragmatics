@@ -51,9 +51,9 @@ public class RandomLayoutCombination extends AbstractCombination {
         ImageDescriptor iconRandom = KimlUiPlugin.imageDescriptorFromPlugin(KimlUiPlugin.PLUGIN_ID,
                 "icons/menu16/random-arrange.gif");
 
-        KiviMenuContributionService.INSTANCE.addToolbarButton(this, RANDOM_BUTTON, "RandomLayout",
+        KiviMenuContributionService.INSTANCE.addToolbarButton(this, RANDOM_BUTTON, "Random Layout",
                 "Do a random layout on the current diagram. "
-                        + "Invalidates all positions but keeps the original layout options.",
+                + "Invalidates all positions but keeps the original layout options.",
                 iconRandom, SWT.PUSH, null, EDITOR_IDS.toArray(new String[2]));
     }
 
