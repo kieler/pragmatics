@@ -160,8 +160,8 @@ public class «getClassName()»«EXPAND extendsList»«EXPAND implementsList» {
             figure.setBackgroundColor(bgColor);
         }
         for (Object child : part.getChildren()) {
-            if (child instanceof final org.eclipse.gef.EditPart) {
-                applyColor((final org.eclipse.gef.EditPart) child, fgColor, bgColor);
+            if (child instanceof org.eclipse.gef.EditPart) {
+                applyColor((org.eclipse.gef.EditPart) child, fgColor, bgColor);
             }
         }
     }
