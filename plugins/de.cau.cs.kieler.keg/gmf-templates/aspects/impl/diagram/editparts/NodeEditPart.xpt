@@ -73,7 +73,7 @@
 	«EXPAND xpt::Common::generatedMemberComment»
 	protected org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure createNodePlate() {
 		«IF editPartClassName = 'Node2EditPart' or editPartClassName = 'Node4EditPart'-»
-		de.cau.cs.kieler.core.ui.figures.RoundedRectangleFigure result = new de.cau.cs.kieler.core.ui.figures.RoundedRectangleFigure();
+		de.cau.cs.kieler.core.model.gmf.figures.RoundedRectangleFigure result = new de.cau.cs.kieler.core.model.gmf.figures.RoundedRectangleFigure();
 		result.setCornerDimensions(new org.eclipse.draw2d.geometry.Dimension(40, 40));
 		«ELSEIF editPartClassName = 'Node3EditPart' or editPartClassName = 'Node5EditPart'-»
 		org.eclipse.gmf.runtime.gef.ui.internal.figures.OvalFigure result = new org.eclipse.gmf.runtime.gef.ui.internal.figures.OvalFigure() {

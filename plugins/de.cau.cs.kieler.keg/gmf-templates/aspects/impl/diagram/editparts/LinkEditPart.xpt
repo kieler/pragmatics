@@ -18,8 +18,8 @@
 		protected org.eclipse.draw2d.Connection createConnectionFigure() {
 			org.eclipse.draw2d.Connection figure = new «fqn»();
 			«REM»temporary spline code«ENDREM»
-			if (figure instanceof de.cau.cs.kieler.core.ui.figures.SplineConnection) {
-				((de.cau.cs.kieler.core.ui.figures.SplineConnection) figure).setSplineMode(de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin.getInstance().getPreferenceStore().getInt(de.cau.cs.kieler.core.ui.figures.SplineConnection.PREF_SPLINE_MODE));
+			if (figure instanceof de.cau.cs.kieler.core.model.gmf.figures.SplineConnection) {
+				((de.cau.cs.kieler.core.model.gmf.figures.SplineConnection) figure).setSplineMode(de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin.getInstance().getPreferenceStore().getInt(de.cau.cs.kieler.core.model.gmf.figures.SplineConnection.PREF_SPLINE_MODE));
 			}
 			return figure;
 		}
@@ -35,8 +35,8 @@
 	protected org.eclipse.draw2d.Connection createConnectionFigure() {
 		org.eclipse.draw2d.Connection figure = new «className»();
 		«REM»temporary spline code«ENDREM»
-			if (figure instanceof de.cau.cs.kieler.core.ui.figures.SplineConnection) {
-				((de.cau.cs.kieler.core.ui.figures.SplineConnection) figure).setSplineMode(de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin.getInstance().getPreferenceStore().getInt(de.cau.cs.kieler.core.ui.figures.SplineConnection.PREF_SPLINE_MODE));
+			if (figure instanceof de.cau.cs.kieler.core.model.gmf.figures.SplineConnection) {
+				((de.cau.cs.kieler.core.model.gmf.figures.SplineConnection) figure).setSplineMode(de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin.getInstance().getPreferenceStore().getInt(de.cau.cs.kieler.core.model.gmf.figures.SplineConnection.PREF_SPLINE_MODE));
 			}
 		return figure;
 	}

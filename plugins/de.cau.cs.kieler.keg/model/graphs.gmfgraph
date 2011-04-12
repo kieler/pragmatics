@@ -78,7 +78,7 @@
       <actualFigure
           xsi:type="gmfgraph:CustomFigure"
           name="UndirectedEdgeFigure"
-          qualifiedClassName="de.cau.cs.kieler.core.ui.figures.SplineConnection">
+          qualifiedClassName="de.cau.cs.kieler.core.model.gmf.figures.SplineConnection">
         <foregroundColor
             xsi:type="gmfgraph:ConstantColor"
             value="black"/>
