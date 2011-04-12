@@ -114,6 +114,8 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
     private Boolean hasChildren;
     /** indicates whether the selected node contains any ports. */
     private Boolean hasPorts;
+    /** suggested value for aspect ratio. */
+    private Float aspectRatio;
     
     /**
      * Create a stand-alone Eclipse layout configuration.
@@ -173,6 +175,21 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      */
     public void setPorts(final boolean ports) {
         this.hasPorts = ports;
+    }
+    
+    private static final float ASPECT_RATIO_ROUND = 100;
+    
+    /**
+     * Set the suggested aspect ratio.
+     * 
+     * @param ratio the suggested value for aspect ratio
+     */
+    public void setAspectRatio(final float ratio) {
+        if (ratio > 0) {
+            this.aspectRatio = Math.round(ASPECT_RATIO_ROUND * ratio) / ASPECT_RATIO_ROUND;
+        } else {
+            this.aspectRatio = ratio;
+        }
     }
     
     /**
@@ -284,6 +301,8 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
             return getFixedSizeValue();
         } else if (LayoutOptions.PORT_CONSTRAINTS_ID.equals(optionData.getId())) {
             return getPortConstraintsValue();
+        } else if (LayoutOptions.ASPECT_RATIO_ID.equals(optionData.getId())) {
+            return aspectRatio > 0 ? aspectRatio : null;
         }
         return null;
     }
@@ -293,7 +312,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      * 
      * @return {@code true} if the selected node has no children, and {@code false} otherwise
      */
-    private Boolean getFixedSizeValue() {
+    protected Boolean getFixedSizeValue() {
         if (hasChildren != null) {
             return Boolean.valueOf(!hasChildren);
         }
@@ -306,7 +325,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      * @return {@code FIXED_POS} if the selected node has ports and no children,
      *          and {@code FREE} otherwise
      */
-    private PortConstraints getPortConstraintsValue() {
+    protected PortConstraints getPortConstraintsValue() {
         if (hasChildren != null && hasPorts != null) {
             if (!hasChildren && hasPorts) {
                 return PortConstraints.FIXED_POS;
@@ -349,6 +368,9 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
         value = getPortConstraintsValue();
         if (value != null) {
             options.put(LayoutOptions.PORT_CONSTRAINTS, value);
+        }
+        if (aspectRatio != null && aspectRatio > 0) {
+            options.put(LayoutOptions.ASPECT_RATIO, aspectRatio);
         }
 
         // get default layout options for the diagram type

@@ -30,6 +30,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.gmf.runtime.notation.Style;
 import org.eclipse.gmf.runtime.notation.View;
+import org.eclipse.swt.graphics.Point;
 
 import de.cau.cs.kieler.core.model.gmf.GmfFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -227,6 +228,14 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
             }
             
             setPorts(hasPorts.get());
+            
+            // get aspect ratio for the current diagram
+            Point size = editPart.getViewer().getControl().getSize();
+            if (size.x > 0 || size.y > 0) {
+                setAspectRatio((float) size.x / size.y);
+            } else {
+                setAspectRatio(-1);
+            }
         }
     }
     
