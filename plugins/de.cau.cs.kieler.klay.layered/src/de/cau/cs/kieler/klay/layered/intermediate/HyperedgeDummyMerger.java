@@ -27,11 +27,16 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
- * TODO Document
+ * Looks for long edge dummy nodes that can be joined together. The aim is to reduce the
+ * amount of edges by having edges originating from the same port or going into the same
+ * port joined. This should be done after crossing minimization. Only those dummy nodes
+ * are joined that the crossing minimizer placed right next to each other.
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph; crossing minmization must be finished;
- *     nodes must not have been placed yet, since some may be removed.</dd>
+ *   <dt>Precondition:</dt><dd>a layered graph; node orders are fixed; for long edge dummies
+ *     to be joined, their {@link de.cau.cs.kieler.klay.layered.Properties#LONG_EDGE_SOURCE}
+ *     and {@link de.cau.cs.kieler.klay.layered.Properties#LONG_EDGE_TARGET} properties must
+ *     be set.</dd>
  *   <dt>Postcondition:</dt><dd>long edge dummy nodes belonging to the same hyperedge and
  *     being directly next to each other are merged.</dd>
  *   <dt>Slots:</dt><dd>Before phase 4.</dd>
@@ -40,7 +45,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *
  * @author cds
  */
-public class HyperedgeDummyJoiner extends AbstractAlgorithm implements ILayoutProcessor {
+public class HyperedgeDummyMerger extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}

@@ -86,7 +86,7 @@ public enum IntermediateLayoutProcessor {
     public ILayoutProcessor create() {
         switch (this) {
         case HYPEREDGE_DUMMY_JOINER:
-            return new HyperedgeDummyJoiner();
+            return new HyperedgeDummyMerger();
 
         case LONG_EDGE_JOINER:
             return new LongEdgeJoiner();

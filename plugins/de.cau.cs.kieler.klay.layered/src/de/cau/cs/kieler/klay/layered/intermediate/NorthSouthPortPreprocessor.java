@@ -31,7 +31,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
- * Inserts dummy nodes to cope with north and south ports.
+ * Inserts dummy nodes to cope with northern and southern ports.
  * 
  * <p>For each node with northern or southern ports, dummy nodes are inserted in the node's
  * layer above or below the node. (for northern and southern ports, respectively) Assume
@@ -66,14 +66,12 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * </pre>
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph, with an established node order in each
- *     layer; port orders are fixed.</dd>
+ *   <dt>Precondition:</dt><dd>a layered graph; nodes have fixed port sides.</dd>
  *   <dt>Postcondition:</dt><dd>dummy nodes have been inserted for edges connected to
- *     ports on north and south sides; the dummy nodes form layout units with the nodes
- *     they were created from; also, the dummy nodes have a certain order.</dd>
- *   <dt>Slots:</dt><dd>Before phase 3 or phase 4, depending on whether the crossing
- *     minimizer supports node successor constraints and layout units.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link PortPositionProcessor}</dd>
+ *     ports on north and south sides, with layout groups and node successor constraints
+ *     set.</dd>
+ *   <dt>Slots:</dt><dd>Before phase 3.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link PortSideAndOrderProcessor}</dd>
  * </dl>
  * 
  * @see NorthSouthPortPostprocessor

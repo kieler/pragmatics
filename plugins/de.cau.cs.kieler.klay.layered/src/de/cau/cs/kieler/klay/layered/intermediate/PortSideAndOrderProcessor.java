@@ -31,11 +31,15 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * to the left and output ports to the right side. If the port order is fixed, the node's
  * list of ports is sorted, beginning at the leftmost northern port, going clockwise.
  * 
+ * <p>Note that this processor is placed before phase 3. Another instance may be used
+ * before phase 4. This is because in phase 3, nodes may have their port orders assigned.
+ * This processor can then be used to sort the port lists accordingly.</p>
+ * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph.</dd>
  *   <dt>Postcondition:</dt><dd>all nodes have their ports distributed, with port constraints
  *     set to fixed sides at the least.</dd>
- *   <dt>Slots:</dt><dd>Before phase 3.</dd>
+ *   <dt>Slots:</dt><dd>Before phase 3. May additionally be used before phase 4 as well.</dd>
  *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
  * </dl>
  * 

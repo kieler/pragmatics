@@ -29,8 +29,8 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * edges properly.
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph, with finished node placements, port
- *     placements and edge routing.</dd>
+ *   <dt>Precondition:</dt><dd>a layered graph; nodes are placed; edges are routed; port positions
+ *     are fixed.</dd>
  *   <dt>Postcondition:</dt><dd>north south port dummy nodes are removed, their edges
  *     properly reconnected and routed.</dd>
  *   <dt>Slots:</dt><dd>After phase 5.</dd>

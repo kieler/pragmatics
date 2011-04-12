@@ -45,12 +45,13 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * property. They are treated just like ordinary
  * {@link de.cau.cs.kieler.klay.layered.Properties.NodeType#LONG_EDGE} dummy nodes</p>
  * 
+ * <p>Note: the following phases must support in-layer connections for this to work.</p>
+ * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph with fixed port sides; nodes are not
- *     placed yet, since new dummy nodes may be created.</dd>
+ *   <dt>Precondition:</dt><dd>a layered graph; nodes have fixed port sides.</dd>
  *   <dt>Postcondition:</dt><dd>dummy nodes have been inserted for edges connected to
- *     ports on odd sides; the graph's layering may not be proper anymore.</dd>
- *   <dt>Slots:</dt><dd>Before phase 3 or phase 4.</dd>
+ *     ports on odd sides; the graph may contain new in-layer connections.</dd>
+ *   <dt>Slots:</dt><dd>Before phase 3.</dd>
  *   <dt>Same-slot dependencies:</dt><dd>{@link PortSideAndOrderProcessor}</dd>
  * </dl>
  * 
@@ -222,7 +223,7 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
      * Properly sets the {@link de.cau.cs.kieler.klay.layered.Properties#LONG_EDGE_SOURCE}
      * and {@link de.cau.cs.kieler.klay.layered.Properties#LONG_EDGE_TARGET} properties for
      * the given long edge dummy. This is required for the
-     * {@link de.cau.cs.kieler.klay.layered.intermediate.HyperedgeDummyJoiner} to work
+     * {@link de.cau.cs.kieler.klay.layered.intermediate.HyperedgeDummyMerger} to work
      * correctly.
      * 
      * @param longEdgeDummy the long edge dummy whose properties to set.

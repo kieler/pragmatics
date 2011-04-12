@@ -31,8 +31,8 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * they are restored, the ports they are connected to being restored as well.</p>
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph with finished edge routing.</dd>
- *   <dt>Postcondition:</dt><dd>a layered graph without reversed edges.</dd>
+ *   <dt>Precondition:</dt><dd>a layered graph.</dd>
+ *   <dt>Postcondition:</dt><dd>Reversed edges are restored to their original direction.</dd>
  *   <dt>Slots:</dt><dd>After phase 5.</dd>
  *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
  * </dl>

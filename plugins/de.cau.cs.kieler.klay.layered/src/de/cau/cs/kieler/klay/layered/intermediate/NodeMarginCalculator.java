@@ -26,11 +26,12 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
- * TODO Document
+ * Sets the node margins. Node margins are influenced by both port positions and sizes
+ * and label positions and sizes.
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph; the positions and sizes of ports and
- *     labels are fixed; nodes are not placed yet; edges are not routed yet.</dd>
+ *   <dt>Precondition:</dt><dd>a layered graph; nodes have fixed port positions; labels
+ *     have fixed positions.</dd>
  *   <dt>Postcondition:</dt><dd>the node margins are properly set to form a bounding box
  *     around the node and its ports and labels.</dd>
  *   <dt>Slots:</dt><dd>Before phase 4.</dd>

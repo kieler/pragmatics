@@ -28,11 +28,9 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * {@link de.cau.cs.kieler.kiml.options.PortConstraints#FIXED_POS})
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph with an established side and order
- *     for ports; edges are not routed yet.</dd>
- *   <dt>Postcondition:</dt><dd>the ports in the layered graph have had their
- *     exact positions set.</dd>
- *   <dt>Slots:</dt><dd>Before phase 3, phase 4 or phase 5</dd>
+ *   <dt>Precondition:</dt><dd>a layered graph; nodes have fixed port orders.</dd>
+ *   <dt>Postcondition:</dt><dd>nodes have fixed port positions.</dd>
+ *   <dt>Slots:</dt><dd>Before phase 4.</dd>
  *   <dt>Same-slot dependencies:</dt><dd>{@link PortSideAndOrderProcessor}</dd>
  * </dl>
  * 
