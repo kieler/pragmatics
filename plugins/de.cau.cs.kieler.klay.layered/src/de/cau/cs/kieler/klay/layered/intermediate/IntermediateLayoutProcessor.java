@@ -25,8 +25,7 @@ public enum IntermediateLayoutProcessor {
     
     /* In this enumeration, intermediate layout processors are listed by the earliest
      * slot in which they can sensibly be used. The order in which they are listed is
-     * determined by the preconditions they specify. Each intermediate processor lists
-     * those processors it must come after.
+     * determined by the dependencies on other processors.
      */
     
     // Before Phase 1
@@ -37,23 +36,23 @@ public enum IntermediateLayoutProcessor {
     
     /** Takes a layered graph and turns it into a properly layered graph. */
     LONG_EDGE_SPLITTER,
-    /** Takes care of self loops. */
-    SELF_LOOP_PROCESSOR,
     /** Sets port sides and orders the ports, if necessary. */
     PORT_SIDE_AND_ORDER_PROCESSOR,
-    /** Sets the positions of ports. */
-    PORT_POSITION_PROCESSOR,
-    /** Calculates the margins of nodes according to the sizes of ports and labels. */
-    NODE_MARGIN_CALCULATOR,
+    /** Inserts dummy nodes to take care of northern and southern ports. */
+    NORTH_SOUTH_PORT_PREPROCESSOR,
     /** Takes a layered graph and inserts dummy nodes for edges connected to ports on odd sides. */
     ODD_PORT_SIDE_PROCESSOR,
-    /** Inserts dummy nodes to take care of northern and southern ports. */
-    NORTH_SOUTH_SIDE_PREPROCESSOR,
+    /** Takes care of self loops. */
+    SELF_LOOP_PROCESSOR,
     
     // Before Phase 4
     
     /** Merges long edge dummy nodes belonging to the same hyperedge. */
-    HYPEREDGE_DUMMY_JOINER,
+    HYPEREDGE_DUMMY_MERGER,
+    /** Sets the positions of ports. */
+    PORT_POSITION_PROCESSOR,
+    /** Calculates the margins of nodes according to the sizes of ports and labels. */
+    NODE_MARGIN_CALCULATOR,
     
     // Before Phase 5
     
@@ -62,7 +61,7 @@ public enum IntermediateLayoutProcessor {
     /** Takes a properly layered graph and removes the dummy nodes due to proper layering. */
     LONG_EDGE_JOINER,
     /** Removes dummy nodes inserted by the north south side preprocessor and routes edges. */
-    NORTH_SOUTH_SIDE_POSTPROCESSOR,
+    NORTH_SOUTH_PORT_POSTPROCESSOR,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER;
     
@@ -85,7 +84,7 @@ public enum IntermediateLayoutProcessor {
      */
     public ILayoutProcessor create() {
         switch (this) {
-        case HYPEREDGE_DUMMY_JOINER:
+        case HYPEREDGE_DUMMY_MERGER:
             return new HyperedgeDummyMerger();
 
         case LONG_EDGE_JOINER:
@@ -97,10 +96,10 @@ public enum IntermediateLayoutProcessor {
         case NODE_MARGIN_CALCULATOR:
             return new NodeMarginCalculator();
         
-        case NORTH_SOUTH_SIDE_POSTPROCESSOR:
+        case NORTH_SOUTH_PORT_POSTPROCESSOR:
             return new NorthSouthPortPostprocessor();
         
-        case NORTH_SOUTH_SIDE_PREPROCESSOR:
+        case NORTH_SOUTH_PORT_PREPROCESSOR:
             return new NorthSouthPortPreprocessor();
         
         case ODD_PORT_SIDE_PROCESSOR:
