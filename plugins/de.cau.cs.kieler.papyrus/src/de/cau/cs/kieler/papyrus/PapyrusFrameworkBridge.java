@@ -49,6 +49,17 @@ public class PapyrusFrameworkBridge extends GmfFrameworkBridge {
     /**
      * {@inheritDoc}
      */
+    public EditPart getEditPart(final IWorkbenchPart workbenchPart, final Object object) {
+        if (workbenchPart instanceof IMultiDiagramEditor) {
+            return super.getEditPart(((IMultiDiagramEditor) workbenchPart).getActiveEditor(), object);
+        }
+        return super.getEditPart(workbenchPart, object);
+    }
+
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ISelection getSelection(final IWorkbenchPart workbenchPart) {
         if (workbenchPart instanceof IMultiDiagramEditor) {
