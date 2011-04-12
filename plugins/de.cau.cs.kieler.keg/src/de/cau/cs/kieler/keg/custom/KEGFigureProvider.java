@@ -32,17 +32,20 @@ import de.cau.cs.kieler.karma.IRenderingProvider;
  * @author mri
  */
 public class KEGFigureProvider implements IRenderingProvider {
-    
+
     private static final int ROUNDED_RECTANGLE_CORNER_WIDTH = 40;
     private static final int ROUNDED_RECTANGLE_CORNER_HEIGHT = 40;
-    
-    private static final Color BG_COLOR = new Color(null, 80, 230, 154);
+
+    /** the currently selected foreground color. */
+    private static Color fgColor = ColorConstants.black;
+    /** the currently selected background color. */
+    private static Color bgColor = ColorConstants.white;
 
     /**
      * {@inheritDoc}
      */
-    public IFigure getFigureByString(final String input,
-            final IFigure oldFigure, final EObject object, final EditPart editPart) {
+    public IFigure getFigureByString(final String input, final IFigure oldFigure,
+            final EObject object, final EditPart editPart) {
         if (input.equals("noPorts")) {
             return createNodeWithoutPortsFigure();
         }
@@ -65,8 +68,8 @@ public class KEGFigureProvider implements IRenderingProvider {
         RectangleFigure figure = new RectangleFigure();
         figure.setOpaque(false);
         figure.setLineWidth(1);
-        figure.setBackgroundColor(BG_COLOR);
-        figure.setForegroundColor(ColorConstants.black);
+        figure.setBackgroundColor(bgColor);
+        figure.setForegroundColor(fgColor);
         return figure;
     }
 
@@ -77,12 +80,12 @@ public class KEGFigureProvider implements IRenderingProvider {
      */
     private IFigure createNodeWithoutPortsFigure() {
         RoundedRectangle figure = new RoundedRectangle();
-        figure.setCornerDimensions(new Dimension(
-                ROUNDED_RECTANGLE_CORNER_WIDTH, ROUNDED_RECTANGLE_CORNER_HEIGHT));
+        figure.setCornerDimensions(new Dimension(ROUNDED_RECTANGLE_CORNER_WIDTH,
+                ROUNDED_RECTANGLE_CORNER_HEIGHT));
         figure.setOpaque(false);
         figure.setLineWidth(1);
-        figure.setBackgroundColor(BG_COLOR);
-        figure.setForegroundColor(ColorConstants.black);
+        figure.setBackgroundColor(bgColor);
+        figure.setForegroundColor(fgColor);
         return figure;
     }
 
@@ -105,8 +108,7 @@ public class KEGFigureProvider implements IRenderingProvider {
      * {@inheritDoc}
      */
     public IBorderItemLocator getBorderItemLocatorByString(final String input,
-            final IFigure parentFigure, final Object locator,
-            final EObject object) {
+            final IFigure parentFigure, final Object locator, final EObject object) {
         return null;
     }
 
@@ -117,4 +119,23 @@ public class KEGFigureProvider implements IRenderingProvider {
         return null;
     }
 
+    /**
+     * Sets the current foreground color.
+     * 
+     * @param color
+     *            the color
+     */
+    public static void setForegroundColor(final Color color) {
+        fgColor = color;
+    }
+
+    /**
+     * Sets the current background color.
+     * 
+     * @param color
+     *            the color
+     */
+    public static void setBackgroundColor(final Color color) {
+        bgColor = color;
+    }
 }

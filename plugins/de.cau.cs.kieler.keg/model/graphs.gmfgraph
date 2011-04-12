@@ -14,14 +14,6 @@
         <layout
             xsi:type="gmfgraph:CustomLayout"
             qualifiedClassName="de.cau.cs.kieler.keg.custom.NodeLayout"/>
-        <foregroundColor
-            xsi:type="gmfgraph:RGBColor"
-            green="20"/>
-        <backgroundColor
-            xsi:type="gmfgraph:RGBColor"
-            red="113"
-            green="250"
-            blue="179"/>
         <preferredSize
             dx="40"
             dy="40"/>
@@ -76,13 +68,6 @@
       <actualFigure
           xsi:type="gmfgraph:Rectangle"
           name="PortFigure">
-        <foregroundColor
-            xsi:type="gmfgraph:RGBColor"/>
-        <backgroundColor
-            xsi:type="gmfgraph:RGBColor"
-            red="120"
-            green="200"
-            blue="150"/>
         <preferredSize
             dx="8"
             dy="8"/>

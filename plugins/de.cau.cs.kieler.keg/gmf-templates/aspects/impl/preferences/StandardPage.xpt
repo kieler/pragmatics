@@ -51,22 +51,24 @@ public class «getClassName()»«EXPAND extendsList»«EXPAND implementsList» {
     @Override
     public boolean performOk() {
         boolean ok = super.performOk();
-        org.eclipse.ui.IWorkbench wb = org.eclipse.ui.PlatformUI.getWorkbench();
-        if (wb != null) {
-            org.eclipse.ui.IWorkbenchWindow wbw = wb.getActiveWorkbenchWindow();
-            if (wbw != null) {
-                org.eclipse.ui.IWorkbenchPage wbp = wbw.getActivePage();
-                if (wbp != null) {
-                    org.eclipse.ui.IEditorReference[] ers = wbp.getEditorReferences();
-                    for (org.eclipse.ui.IEditorReference er : ers) {
-                        org.eclipse.ui.IEditorPart editor = er.getEditor(true);
-                        if (editor instanceof de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditor) {
-                            de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditor gde = (de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditor) editor;
-                            applySplineMode(gde.getDiagramEditPart());
-                        }
-                    }
-                }
-            }
+        if (ok) {
+	        org.eclipse.ui.IWorkbench wb = org.eclipse.ui.PlatformUI.getWorkbench();
+	        if (wb != null) {
+	            org.eclipse.ui.IWorkbenchWindow wbw = wb.getActiveWorkbenchWindow();
+	            if (wbw != null) {
+	                org.eclipse.ui.IWorkbenchPage wbp = wbw.getActivePage();
+	                if (wbp != null) {
+	                    org.eclipse.ui.IEditorReference[] ers = wbp.getEditorReferences();
+	                    for (org.eclipse.ui.IEditorReference er : ers) {
+	                        org.eclipse.ui.IEditorPart editor = er.getEditor(true);
+	                        if (editor instanceof de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditor) {
+	                            de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditor gde = (de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditor) editor;
+	                            applySplineMode(gde.getDiagramEditPart());
+	                        }
+	                    }
+	                }
+	            }
+	        }
         }
         return ok;
     }
@@ -100,6 +102,86 @@ public class «getClassName()»«EXPAND extendsList»«EXPAND implementsList» {
         }
     }
     «ENDIF-»
+    
+    «IF gmfgen::StandardPreferencePages::Appearance = kind-»
+    public boolean performOk() {
+        boolean ok = super.performOk();
+        if (ok) {
+            org.eclipse.swt.graphics.RGB rgb =
+                    org.eclipse.jface.preference.PreferenceConverter.getColor(getPreferenceStore(),
+                            org.eclipse.gmf.runtime.diagram.ui.preferences.IPreferenceConstants.PREF_LINE_COLOR);
+            org.eclipse.swt.graphics.Color fgColor = new org.eclipse.swt.graphics.Color(null, rgb);
+            rgb =
+                    org.eclipse.jface.preference.PreferenceConverter.getColor(getPreferenceStore(),
+                            org.eclipse.gmf.runtime.diagram.ui.preferences.IPreferenceConstants.PREF_FILL_COLOR);
+            org.eclipse.swt.graphics.Color bgColor = new org.eclipse.swt.graphics.Color(null, rgb);
+            // set the color for in the KEG figure provider
+            de.cau.cs.kieler.keg.custom.KEGFigureProvider.setForegroundColor(fgColor);
+            de.cau.cs.kieler.keg.custom.KEGFigureProvider.setBackgroundColor(bgColor);
+            // set the color for the open editors
+            org.eclipse.ui.IWorkbench wb = org.eclipse.ui.PlatformUI.getWorkbench();
+            if (wb != null) {
+                org.eclipse.ui.IWorkbenchWindow wbw = wb.getActiveWorkbenchWindow();
+                if (wbw != null) {
+                    org.eclipse.ui.IWorkbenchPage wbp = wbw.getActivePage();
+                    if (wbp != null) {
+                        org.eclipse.ui.IEditorReference[] ers = wbp.getEditorReferences();
+                        for (org.eclipse.ui.IEditorReference er : ers) {
+                            org.eclipse.ui.IEditorPart editor = er.getEditor(true);
+                            if (editor instanceof de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditor) {
+                                de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditor gde = (de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditor) editor;
+                                applyColor(gde.getDiagramEditPart(), fgColor, bgColor);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return ok;
+    }
+
+    private void applyColor(final org.eclipse.gef.EditPart part, final org.eclipse.swt.graphics.Color fgColor, final org.eclipse.swt.graphics.Color bgColor) {
+        if (part instanceof de.cau.cs.kieler.keg.custom.KEGNode) {
+            if (part instanceof de.cau.cs.kieler.keg.diagram.edit.parts.Node2EditPart) {
+                de.cau.cs.kieler.keg.diagram.edit.parts.Node2EditPart nodePart = (de.cau.cs.kieler.keg.diagram.edit.parts.Node2EditPart) part;
+                org.eclipse.draw2d.IFigure figure = nodePart.getPrimaryShape();
+                figure.setForegroundColor(fgColor);
+                figure.setBackgroundColor(bgColor);
+            } else if (part instanceof de.cau.cs.kieler.keg.diagram.edit.parts.Node4EditPart) {
+                de.cau.cs.kieler.keg.diagram.edit.parts.Node4EditPart nodePart = (de.cau.cs.kieler.keg.diagram.edit.parts.Node4EditPart) part;
+                org.eclipse.draw2d.IFigure figure = nodePart.getPrimaryShape();
+                figure.setForegroundColor(fgColor);
+                figure.setBackgroundColor(bgColor);
+            }
+        } else if (part instanceof de.cau.cs.kieler.keg.diagram.edit.parts.PortEditPart) {
+            de.cau.cs.kieler.keg.diagram.edit.parts.PortEditPart portPart = (de.cau.cs.kieler.keg.diagram.edit.parts.PortEditPart) part;
+            org.eclipse.draw2d.IFigure figure = portPart.getPrimaryShape();
+            figure.setForegroundColor(fgColor);
+            figure.setBackgroundColor(bgColor);
+        }
+        for (Object child : part.getChildren()) {
+            if (child instanceof final org.eclipse.gef.EditPart) {
+                applyColor((final org.eclipse.gef.EditPart) child, fgColor, bgColor);
+            }
+        }
+    }
+    
+    public static void initDefaults(org.eclipse.jface.preference.IPreferenceStore store) {
+        org.eclipse.gmf.runtime.diagram.ui.preferences.AppearancePreferencePage.initDefaults(store);
+        // initialize classes which depend on the preferences
+        org.eclipse.swt.graphics.RGB rgb =
+                org.eclipse.jface.preference.PreferenceConverter.getColor(store,
+                        org.eclipse.gmf.runtime.diagram.ui.preferences.IPreferenceConstants.PREF_LINE_COLOR);
+        org.eclipse.swt.graphics.Color fgColor = new org.eclipse.swt.graphics.Color(null, rgb);
+        rgb =
+                org.eclipse.jface.preference.PreferenceConverter.getColor(store,
+                        org.eclipse.gmf.runtime.diagram.ui.preferences.IPreferenceConstants.PREF_FILL_COLOR);
+        org.eclipse.swt.graphics.Color bgColor = new org.eclipse.swt.graphics.Color(null, rgb);
+        // set the color for in the KEG figure provider
+        de.cau.cs.kieler.keg.custom.KEGFigureProvider.setForegroundColor(fgColor);
+        de.cau.cs.kieler.keg.custom.KEGFigureProvider.setBackgroundColor(bgColor);
+    }
+    «ENDIF»
 }
 «ENDDEFINE»
 

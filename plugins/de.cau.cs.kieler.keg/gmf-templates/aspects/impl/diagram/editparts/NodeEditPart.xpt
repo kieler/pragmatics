@@ -114,3 +114,33 @@
 	result.getBounds().setSize(result.getPreferredSize());
 «ENDDEFINE»
 
+«DEFINE createFigure FOR gmfgen::GenNode-»
+	«EXPAND xpt::Common::generatedMemberComment(
+		'Creates figure for this edit part.\n' + 
+		'\n' + 
+		'Body of this method does not depend on settings in generation model\n' + 
+		'so you may safely remove <i>generated</i> tag and modify it.\n'
+	)»
+	protected org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure create«IF hasBorderItems(self)»Main«ELSE»Node«ENDIF»Figure() {
+		org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure figure = createNodePlate();
+		figure.setLayoutManager(new org.eclipse.draw2d.StackLayout());
+		org.eclipse.draw2d.IFigure shape = createNodeShape();
+		«IF editPartClassName = 'PortEditPart'-»
+		// set color
+        org.eclipse.swt.graphics.RGB rgb =
+                org.eclipse.jface.preference.PreferenceConverter.getColor(de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin.getInstance()
+                        .getPreferenceStore(), org.eclipse.gmf.runtime.diagram.ui.preferences.IPreferenceConstants.PREF_LINE_COLOR);
+        org.eclipse.swt.graphics.Color fgColor = new org.eclipse.swt.graphics.Color(null, rgb);
+        rgb =
+                org.eclipse.jface.preference.PreferenceConverter.getColor(de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin.getInstance()
+                        .getPreferenceStore(), org.eclipse.gmf.runtime.diagram.ui.preferences.IPreferenceConstants.PREF_FILL_COLOR);
+        org.eclipse.swt.graphics.Color bgColor = new org.eclipse.swt.graphics.Color(null, rgb);
+        primaryShape.setForegroundColor(fgColor);
+        primaryShape.setBackgroundColor(bgColor);
+		«ENDIF»
+		figure.add(shape);
+		contentPane = setupContentPane(shape);
+		return figure;
+	}
+«ENDDEFINE»
+

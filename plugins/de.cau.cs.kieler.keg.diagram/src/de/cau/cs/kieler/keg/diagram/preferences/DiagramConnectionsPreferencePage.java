@@ -64,18 +64,20 @@ public class DiagramConnectionsPreferencePage extends ConnectionsPreferencePage 
     @Override
     public boolean performOk() {
         boolean ok = super.performOk();
-        IWorkbench wb = PlatformUI.getWorkbench();
-        if (wb != null) {
-            IWorkbenchWindow wbw = wb.getActiveWorkbenchWindow();
-            if (wbw != null) {
-                IWorkbenchPage wbp = wbw.getActivePage();
-                if (wbp != null) {
-                    IEditorReference[] ers = wbp.getEditorReferences();
-                    for (IEditorReference er : ers) {
-                        IEditorPart editor = er.getEditor(true);
-                        if (editor instanceof GraphsDiagramEditor) {
-                            GraphsDiagramEditor gde = (GraphsDiagramEditor) editor;
-                            applySplineMode(gde.getDiagramEditPart());
+        if (ok) {
+            IWorkbench wb = PlatformUI.getWorkbench();
+            if (wb != null) {
+                IWorkbenchWindow wbw = wb.getActiveWorkbenchWindow();
+                if (wbw != null) {
+                    IWorkbenchPage wbp = wbw.getActivePage();
+                    if (wbp != null) {
+                        IEditorReference[] ers = wbp.getEditorReferences();
+                        for (IEditorReference er : ers) {
+                            IEditorPart editor = er.getEditor(true);
+                            if (editor instanceof GraphsDiagramEditor) {
+                                GraphsDiagramEditor gde = (GraphsDiagramEditor) editor;
+                                applySplineMode(gde.getDiagramEditPart());
+                            }
                         }
                     }
                 }
