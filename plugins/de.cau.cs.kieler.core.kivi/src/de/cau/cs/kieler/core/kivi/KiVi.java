@@ -247,6 +247,14 @@ public class KiVi {
     }
 
     /**
+     * Get the current size of the effects queue.
+     * @return size of the effects queue
+     */
+    public int getEffectsQueueSize(){
+        return effectsWorker.getQueueSize();
+    }
+    
+    /**
      * Register or unregister a combination when it is activated or deactivated to enable or disable
      * reception of trigger events.
      * 
@@ -335,7 +343,8 @@ public class KiVi {
         }
         for (ICombination combo : relevantCombos) {
             try {
-                List<IEffect> effects = combo.trigger(triggerState);
+                combo.handle(triggerState);
+                List<IEffect> effects = combo.getEffects();
                 for (IEffect effect : effects) {
                     executeEffect(effect);
                 }
@@ -518,7 +527,6 @@ public class KiVi {
     public static void error(final String m) {
         StatusManager.getManager().handle(new Status(Status.ERROR, KiViPlugin.PLUGIN_ID, m),
                 StatusManager.LOG);
-
     }
 
     /**

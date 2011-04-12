@@ -67,6 +67,17 @@ public class EffectsWorker extends Thread {
     }
 
     /**
+     * Get the current size of the queue.
+     * 
+     * @return size of the queue as an integer
+     */
+    public int getQueueSize() {
+        synchronized (effects) {
+            return effects.size();
+        }
+    }
+
+    /**
      * Enqueue a single effect for execution.
      * 
      * @param effect
