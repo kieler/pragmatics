@@ -1,6 +1,5 @@
 package de.cau.cs.kieler.keg.diagram.preferences;
 
-import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.DiagramColorConstants;
@@ -102,17 +101,21 @@ public class DiagramAppearancePreferencePage extends AppearancePreferencePage {
             }
         }
     }
-    
+
     public static void initDefaults(IPreferenceStore store) {
         AppearancePreferencePage.initDefaults(store);
+        // overwrite the default colors for node line and fill
+        Color fillColor = new Color(null, 90, 255, 164);
+        PreferenceConverter.setDefault(store, IPreferenceConstants.PREF_FILL_COLOR,
+                fillColor.getRGB());
+        fillColor.dispose();
+        Color lineColor = DiagramColorConstants.black;
+        PreferenceConverter.setDefault(store, IPreferenceConstants.PREF_LINE_COLOR,
+                lineColor.getRGB());
         // initialize classes which depend on the preferences
-        RGB rgb =
-                PreferenceConverter.getColor(store,
-                        IPreferenceConstants.PREF_LINE_COLOR);
+        RGB rgb = PreferenceConverter.getColor(store, IPreferenceConstants.PREF_LINE_COLOR);
         Color fgColor = new Color(null, rgb);
-        rgb =
-                PreferenceConverter.getColor(store,
-                        IPreferenceConstants.PREF_FILL_COLOR);
+        rgb = PreferenceConverter.getColor(store, IPreferenceConstants.PREF_FILL_COLOR);
         Color bgColor = new Color(null, rgb);
         // set the color for in the KEG figure provider
         KEGFigureProvider.setForegroundColor(fgColor);

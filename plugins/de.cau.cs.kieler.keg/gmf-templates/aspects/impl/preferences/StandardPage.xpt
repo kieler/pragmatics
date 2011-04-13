@@ -168,6 +168,14 @@ public class «getClassName()»«EXPAND extendsList»«EXPAND implementsList» {
     
     public static void initDefaults(org.eclipse.jface.preference.IPreferenceStore store) {
         org.eclipse.gmf.runtime.diagram.ui.preferences.AppearancePreferencePage.initDefaults(store);
+        // overwrite the default colors for node line and fill
+        org.eclipse.swt.graphics.Color fillColor = new org.eclipse.swt.graphics.Color(null, 90, 255, 164);
+        org.eclipse.jface.preference.PreferenceConverter.setDefault(store, org.eclipse.gmf.runtime.diagram.ui.preferences.IPreferenceConstants.PREF_FILL_COLOR,
+                fillColor.getRGB());
+        fillColor.dispose();
+        org.eclipse.swt.graphics.Color lineColor = org.eclipse.gmf.runtime.diagram.ui.figures.DiagramColorConstants.black;
+        org.eclipse.jface.preference.PreferenceConverter.setDefault(store, org.eclipse.gmf.runtime.diagram.ui.preferences.IPreferenceConstants.PREF_LINE_COLOR,
+                lineColor.getRGB());
         // initialize classes which depend on the preferences
         org.eclipse.swt.graphics.RGB rgb =
                 org.eclipse.jface.preference.PreferenceConverter.getColor(store,
