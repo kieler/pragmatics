@@ -45,6 +45,9 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * property. They are treated just like ordinary
  * {@link de.cau.cs.kieler.klay.layered.Properties.NodeType#LONG_EDGE} dummy nodes</p>
  * 
+ * <p>This processor supports self-loops by not doing anything about them. That is, no
+ * dummy nodes are created for edges whose source and target node are identical.</p>
+ * 
  * <p>Note: the following phases must support in-layer connections for this to work.</p>
  * 
  * <dl>
@@ -138,7 +141,8 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
     }
 
     /**
-     * Creates the necessary dummy nodes for an input port on the east side of a node.
+     * Creates the necessary dummy nodes for an input port on the east side of a node,
+     * provided that the edge connects two different nodes.
      * 
      * @param eastwardPort the offending port.
      * @param edge the edge connected to the port.
@@ -148,6 +152,10 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
      */
     private void createEastPortSideDummies(final LPort eastwardPort, final LEdge edge,
             final List<LNode> layerNodeList) {
+        
+        if (edge.getSource().getNode() == eastwardPort.getNode()) {
+            return;
+        }
         
         // Dummy node in the same layer
         LNode dummy = new LNode();
@@ -179,7 +187,8 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
     }
 
     /**
-     * Creates the necessary dummy nodes for an output port on the west side of a node.
+     * Creates the necessary dummy nodes for an output port on the west side of a node,
+     * provided that the edge connects two different nodes.
      * 
      * @param westwardPort the offending port.
      * @param edge the edge connected to the port.
@@ -189,6 +198,10 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
      */
     private void createWestPortSideDummies(final LPort westwardPort, final LEdge edge,
             final List<LNode> layerNodeList) {
+        
+        if (edge.getTarget().getNode() == westwardPort.getNode()) {
+            return;
+        }
         
         // Dummy node in the same layer
         LNode dummy = new LNode();

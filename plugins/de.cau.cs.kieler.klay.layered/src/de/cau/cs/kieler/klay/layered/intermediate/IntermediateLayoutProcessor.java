@@ -38,12 +38,12 @@ public enum IntermediateLayoutProcessor {
     LONG_EDGE_SPLITTER,
     /** Sets port sides and orders the ports, if necessary. */
     PORT_SIDE_AND_ORDER_PROCESSOR,
-    /** Inserts dummy nodes to take care of northern and southern ports. */
-    NORTH_SOUTH_PORT_PREPROCESSOR,
     /** Takes a layered graph and inserts dummy nodes for edges connected to ports on odd sides. */
     ODD_PORT_SIDE_PROCESSOR,
     /** Takes care of self loops. */
     SELF_LOOP_PROCESSOR,
+    /** Inserts dummy nodes to take care of northern and southern ports. */
+    NORTH_SOUTH_PORT_PREPROCESSOR,
     
     // Before Phase 4
     

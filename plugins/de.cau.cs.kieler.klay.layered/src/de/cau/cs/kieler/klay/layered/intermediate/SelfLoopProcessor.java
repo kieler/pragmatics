@@ -68,25 +68,57 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
             createdDummies.clear();
             
             for (LNode node : layer.getNodes()) {
-                // Iterate through all ports, looking for east-west self-loops
                 for (LPort port : node.getPorts()) {
+                    // We're looking for eastern or western ports
+                    if (port.getSide() != PortSide.EAST && port.getSide() != PortSide.WEST) {
+                        continue;
+                    }
+                    
+                    // Go through the port's edges
                     LEdge[] edges = port.getEdges().toArray(new LEdge[0]);
                     
                     for (LEdge edge : edges) {
-                        // If it's not a self-loop, we're not interested
+                        // We're only interested in edges whose source and target node are identical
                         if (edge.getSource().getNode() != edge.getTarget().getNode()) {
                             continue;
                         }
                         
                         LPort sourcePort = edge.getSource();
                         LPort targetPort = edge.getTarget();
+                        PortSide sourcePortSide = sourcePort.getSide();
+                        PortSide targetPortSide = targetPort.getSide();
                         
-                        // Check if the source and target port are east ant west, opposing each other
-                        if (!isInterestingCase(sourcePort.getSide(), targetPort.getSide())) {
-                            continue;
+                        /* We have to take care of the following cases:
+                         *  1. North or South -> West
+                         *     Reverse the edge.
+                         *  2. East -> North or South
+                         *     Reverse the edge.
+                         *  3. East -> West
+                         *     Reverse the edge, insert dummy.
+                         *  4. West -> East
+                         *     Insert dummy.
+                         *  5. North -> South
+                         *     ???
+                         *  6. South -> North
+                         *     ???
+                         */
+                        
+                        // First, let's deal with the cases where edges have to be reversed
+                        if ((sourcePortSide == PortSide.NORTH || sourcePortSide == PortSide.SOUTH)
+                                && targetPortSide == PortSide.WEST) {
+                            
+                            edge.reverse();
+                        } else if (sourcePortSide == PortSide.EAST && targetPortSide != PortSide.EAST) {
+                            edge.reverse();
                         }
                         
-                        createdDummies.add(handleInterestingCase(edge, sourcePort, targetPort));
+                        // Now, let's see if a dummy has to be inserted
+                        if (sourcePortSide == PortSide.EAST && targetPortSide == PortSide.WEST) {
+                            // Note that the edge was reversed, so source and target port have switched
+                            createdDummies.add(createDummy(edge, targetPort, sourcePort));
+                        } else if (sourcePortSide == PortSide.WEST && targetPortSide == PortSide.EAST) {
+                            createdDummies.add(createDummy(edge, sourcePort, targetPort));
+                        }
                     }
                 }
             }
@@ -101,18 +133,6 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
     }
     
     /**
-     * Checks if the two port sides are east and west.
-     * 
-     * @param sourceSide the source port's side.
-     * @param targetSide the target port's side.
-     * @return {@code true} if one of the sides is east and the other west, {@code false} otherwise.
-     */
-    private boolean isInterestingCase(final PortSide sourceSide, final PortSide targetSide) {
-        return (sourceSide == PortSide.EAST && targetSide == PortSide.WEST)
-            || (sourceSide == PortSide.WEST && targetSide == PortSide.EAST);
-    }
-    
-    /**
      * Creates a dummy for the self-loop edge connecting the two given ports. The dummy is not
      * added to the layer yet.
      * 
@@ -121,19 +141,7 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
      * @param targetPort the target port.
      * @return the dummy node created.
      */
-    private LNode handleInterestingCase(final LEdge edge, final LPort sourcePort,
-            final LPort targetPort) {
-        
-        // If we reverse the edge, the source port is the new target port
-        LPort realTargetPort = targetPort;
-        
-        // If the edge goes from west to east, it must be reversed
-        if (sourcePort.getSide() == PortSide.EAST) {
-            edge.reverse();
-            
-            realTargetPort = sourcePort;
-        }
-        
+    private LNode createDummy(final LEdge edge, final LPort sourcePort, final LPort targetPort) {
         // Create a dummy node with an input port and an output port
         LNode dummyNode = new LNode();
         dummyNode.setProperty(Properties.ORIGIN, edge);
@@ -154,7 +162,7 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
         LEdge dummyEdge = new LEdge();
         dummyEdge.copyProperties(edge);
         dummyEdge.setSource(dummyOutput);
-        dummyEdge.setTarget(realTargetPort);
+        dummyEdge.setTarget(targetPort);
         
         return dummyNode;
     }
