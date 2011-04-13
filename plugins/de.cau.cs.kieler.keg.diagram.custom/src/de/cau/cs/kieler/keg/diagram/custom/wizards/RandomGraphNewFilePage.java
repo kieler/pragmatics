@@ -160,7 +160,7 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
     /**
      * Saves the selected options to the preference store.
      */
-    public void safePreferences() {
+    public void savePreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
         preferenceStore.setValue(PREFERENCE_NUMBER_OF_GRAPHS, numberOfGraphs);
         preferenceStore.setValue(PREFERENCE_DIAGRAM_FILES, diagramFiles);

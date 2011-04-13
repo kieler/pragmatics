@@ -142,7 +142,7 @@ public class RandomGraphTreePage extends AbstractRandomGraphPage {
     /**
      * Saves the selected options to the preference store.
      */
-    public void safePreferences() {
+    public void savePreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
         preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getIdentifier().toString(),
                 numberOfNodes);

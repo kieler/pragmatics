@@ -422,25 +422,25 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
     }
 
     private void safePreferences() {
-        newFilePage.safePreferences();
-        typePage.safePreferences();
+        newFilePage.savePreferences();
+        typePage.savePreferences();
         switch (typePage.getGraphType()) {
         case ANY:
-            anyPage.safePreferences();
+            anyPage.savePreferences();
             break;
         case TREE:
-            treePage.safePreferences();
+            treePage.savePreferences();
             break;
         case BICONNECTED:
-            biconnectedPage.safePreferences();
+            biconnectedPage.savePreferences();
             break;
         case TRICONNECTED:
-            triconnectedPage.safePreferences();
+            triconnectedPage.savePreferences();
             break;
         case ACYCLIC_NO_TRANSITIV_EDGES:
-            antePage.safePreferences();
+            antePage.savePreferences();
             break;
         }
-        utilityPage.safePreferences();
+        utilityPage.savePreferences();
     }
 }
