@@ -78,18 +78,18 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 null,
                 // Before Phase 3
                 EnumSet.of(
-                        IntermediateLayoutProcessor.NORTH_SOUTH_SIDE_PREPROCESSOR,
+                        IntermediateLayoutProcessor.NORTH_SOUTH_PORT_PREPROCESSOR,
                         IntermediateLayoutProcessor.ODD_PORT_SIDE_PROCESSOR,
                         IntermediateLayoutProcessor.SELF_LOOP_PROCESSOR),
                 // Before Phase 4
                 EnumSet.of(
-                        IntermediateLayoutProcessor.HYPEREDGE_DUMMY_JOINER,
+                        IntermediateLayoutProcessor.HYPEREDGE_DUMMY_MERGER,
                         IntermediateLayoutProcessor.NODE_MARGIN_CALCULATOR),
                 // Before Phase 5
                 null,
                 // After Phase 5
                 EnumSet.of(
-                        IntermediateLayoutProcessor.NORTH_SOUTH_SIDE_POSTPROCESSOR));
+                        IntermediateLayoutProcessor.NORTH_SOUTH_PORT_POSTPROCESSOR));
     
     /** weight penalty for conflicts of horizontal line segments. */
     private static final int CONFLICT_PENALTY = 16;
