@@ -128,6 +128,15 @@ public class KiViCoreTest {
     }
 
     /**
+     * Test whether effects re correctly undone, respectively not undone.
+     */
+    @Test
+    public void TestUndo() throws InterruptedException {
+        KiVi.getInstance().registerCombination(new TestCombinationUndo(), true);
+        while(true)
+        Thread.sleep(5000);
+    }
+    /**
      * Spamming of triggers should not overflow the effects queue.
      */
     @Test

@@ -37,7 +37,7 @@ public interface ICombination extends ITriggerListener {
 
     /**
      * Attempt to undo all active effects, for example when shutting down view management or when
-     * disabling this combination.
+     * disabling this combination. Schedules all undo immediately.
      */
     void undo();
 

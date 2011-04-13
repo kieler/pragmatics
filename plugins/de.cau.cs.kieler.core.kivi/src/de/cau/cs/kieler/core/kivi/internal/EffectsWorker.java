@@ -17,7 +17,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.statushandlers.StatusManager;
+
 import de.cau.cs.kieler.core.kivi.IEffect;
+import de.cau.cs.kieler.core.kivi.KiViPlugin;
 import de.cau.cs.kieler.core.kivi.UndoEffect;
 
 /**
@@ -58,7 +63,10 @@ public class EffectsWorker extends Thread {
                         }
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    IStatus status = new Status(IStatus.ERROR, KiViPlugin.PLUGIN_ID,
+                            "View Management effects queue catched an exception from a "
+                                    + effect.getClass().getName() + " effect: " + e.getMessage(), e);
+                    StatusManager.getManager().handle(status);
                 }
             } catch (InterruptedException e) {
                 // got interrupted

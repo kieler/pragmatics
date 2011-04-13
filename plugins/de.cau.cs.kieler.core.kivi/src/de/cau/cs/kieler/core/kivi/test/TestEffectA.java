@@ -22,11 +22,21 @@ import de.cau.cs.kieler.core.kivi.AbstractEffect;
  */
 public class TestEffectA extends AbstractEffect {
 
+    // random ID
+    int id = (int)(Math.random() * 10000);
+    
+    boolean done = false;
+    boolean undone = false;
+    
     /**
      * {@inheritDoc}
      */
     public void execute() {
-        System.out.println("A ");
+        System.out.println("A("+id+")");
+        if(done){
+            throw new UnsupportedOperationException("TestEffectA: was executed already. Tried to execute same effect again!");
+        }
+        done = true;
         try {
             Thread.sleep(10);
         } catch (InterruptedException e) {
@@ -39,7 +49,18 @@ public class TestEffectA extends AbstractEffect {
      */
     @Override
     public void undo() {
-        System.out.print("uA ");
+        System.out.print("uA("+id+")");
+        if(undone){
+            throw new UnsupportedOperationException("TestEffectA: was undone already. Tried to undo again!");
+        }
+        undone = true;
+    }
+    
+    boolean getDone(){
+        return done;
     }
 
+    boolean getUnDone(){
+        return undone;
+    }
 }

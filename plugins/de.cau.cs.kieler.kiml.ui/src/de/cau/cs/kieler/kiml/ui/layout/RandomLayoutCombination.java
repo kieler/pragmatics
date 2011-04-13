@@ -66,7 +66,7 @@ public class RandomLayoutCombination extends AbstractCombination {
      *            react on the current diagram
      */
     public void execute(final ButtonState button, final DiagramState diagram) {
-        dontUndo();
+        //dontUndo();
         if (this.getTriggerState() instanceof ButtonState
                 && button.getButtonId().equals(RANDOM_BUTTON)) {
             LayoutEffect layout = new LayoutEffect(diagram.getDiagramPart(), null, false, true,
@@ -80,8 +80,6 @@ public class RandomLayoutCombination extends AbstractCombination {
                 }
             }
             this.schedule(layout);
-        } else {
-            doNothing();
-        }
+        } 
     }
 }

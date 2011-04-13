@@ -31,7 +31,7 @@ public class UpdateViewerCombination extends AbstractCombination {
      *            the layout effect trigger
      */
     public void execute(final EffectTriggerState<LayoutEffect> effectTrigger) {
-        super.dontUndo();
+        //super.dontUndo();
         LayoutEffect layoutEffect = effectTrigger.getEffect();
         schedule(new UpdateViewerEffect(layoutEffect.getManager().getLayoutGraph(),
                 UpdateViewerEffect.POST_LAYOUT));

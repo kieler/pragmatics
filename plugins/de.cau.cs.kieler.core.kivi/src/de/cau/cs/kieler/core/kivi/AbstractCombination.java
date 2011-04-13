@@ -23,6 +23,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.statushandlers.StatusManager;
+
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
@@ -50,14 +54,38 @@ public abstract class AbstractCombination implements ICombination {
     private Map<Class<? extends Object>, Method> executeCache = Maps.newHashMap(); // speed up
                                                                                    // reflection
 
+    /**
+     * Effects that have been scheduled in one iteration of the handle method.
+     */
     private List<IEffect> effects = new ArrayList<IEffect>();
 
+    /**
+     * Undo effects that have to be executed to undo effects of last round.
+     */
+    private List<IEffect> undoEffects = new ArrayList<IEffect>();
+
+    /**
+     * Merged result of merging all effects and undoEffects.
+     */
+    private List<IEffect> mergedEffects = new ArrayList<IEffect>();
+
+    /**
+     * @deprecated use undo instead
+     */
     private boolean doNothing = false;
 
+    /**
+     * @deprecated use undo instead
+     */
     private boolean noUndo = false;
 
     private ITriggerState triggeringState;
 
+    private boolean enableRecording;
+    private boolean undo;
+
+    private final int MAX_RECORD_LENGTH = 100000;
+    
     /**
      * {@inheritDoc}
      */
@@ -105,13 +133,28 @@ public abstract class AbstractCombination implements ICombination {
                 }
             }
         }
-
         if (!found) {
             effects.clear();
             return;
         }
 
-        List<IEffect> toUndo = effects;
+        // remember old effects for undoing
+        if (enableRecording) {
+            for (IEffect effect : effects) {
+                undoEffects.add(new UndoEffect(effect));
+            }
+            if (undoEffects.size() > MAX_RECORD_LENGTH) {
+                String message = "The View Management Combination "
+                        + this.getClass().getName()
+                        + " records all effects it is scheduling. However, the recorded list has already size "
+                        + undoEffects.size()
+                        + ". This looks like a potential memory leak. You should either diable recording for this combination or explicitly undoRecordedEffects from time to time!";
+                IStatus status = new Status(IStatus.WARNING, KiViPlugin.PLUGIN_ID, message);
+                StatusManager.getManager().handle(status);
+            }
+        }
+
+        // now we ask for new effects
         effects = new ArrayList<IEffect>();
         try {
             if (debug) {
@@ -125,55 +168,90 @@ public abstract class AbstractCombination implements ICombination {
         } catch (InvocationTargetException e) {
             KiVi.error(e);
         }
-        if (doNothing) {
-            doNothing = false;
-            effects = toUndo; // keep old effects
-            return;
-        }
 
-        List<IEffect> result = new ArrayList<IEffect>();
-        if (!noUndo) {
-            for (IEffect effect : toUndo) {
-                result.add(new UndoEffect(effect));
-            }
-        } else {
-            noUndo = false;
-        }
+        // merge all scheduled effects and undo effects
+        mergeScheduledEffects();
 
-        List<IEffect> toRemove = new ArrayList<IEffect>();
-        for (IEffect effect : effects) {
-            if (effect.isMergeable()) {
-                for (Iterator<IEffect> iterator = result.iterator(); iterator.hasNext();) {
-                    IEffect other = iterator.next();
-                    IEffect current = effect.merge(other);
-                    if (current != null) {
-                        effect = current;
-                        iterator.remove();
-                        toRemove.add(other);
-                    }
-                }
-            }
-            result.add(effect);
-        }
-        effects.removeAll(toRemove);
         if (debug) {
-            for (IEffect effect : result) {
+            for (IEffect effect : mergedEffects) {
                 System.out.print(effect);
             }
-            if (!effects.isEmpty()) {
+            if (!mergedEffects.isEmpty()) {
                 System.out.println();
             }
         }
+
         return;
+    }
+
+    /**
+     * manage dontUndo and doNothing flags
+     * 
+     * @deprecated use undo flag instead
+     */
+    private void handleUndoing() {
+        // remember effects of last round to undo the next time this method is called
+        if (doNothing) {
+            // if we do nothing, then we also don't undo anything this round
+            // but keep the old list of effects to be undone later
+            noUndo = true;
+            doNothing = false;
+        } else {
+            // reset list
+            undoEffects.clear();
+        }
+        if (noUndo) {
+            // nothing, toggling is done in mergeScheduledEffects
+        } else {
+            // undo all effects of last round
+            for (IEffect effect : effects) {
+                undoEffects.add(new UndoEffect(effect));
+            }
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public List<IEffect> getEffects() {
-        List<IEffect> result = effects;
-        effects = new ArrayList<IEffect>();
+        List<IEffect> result = mergedEffects;
+        mergedEffects = new ArrayList<IEffect>();
         return result;
+    }
+
+    private void mergeScheduledEffects() {
+        List<IEffect> toRemove = new ArrayList<IEffect>();
+        List<IEffect> allEffects = new ArrayList<IEffect>();
+        mergedEffects.clear();
+        if (undo) {
+            // execute all undo effects and reset the undo list
+            allEffects.addAll(undoEffects);
+            undoEffects.clear();
+        }
+        allEffects.addAll(effects);
+        
+        // iterate from end to start
+        for (int i = allEffects.size()-1; i >= 0; i--) {
+            IEffect effect = allEffects.get(i);
+            boolean removed = toRemove.contains(effect);
+            // only merge if the effect is not already marked to be removed
+            if (!removed && effect.isMergeable()) {
+                // iterate other effects (only the ones before the current)
+                for (int ii = i-1; ii >= 0; ii--) {
+                    IEffect other = allEffects.get(ii);
+                    IEffect current = effect.merge(other);
+                    if (current != null) {
+                        effect = current;
+                        toRemove.add(other);
+                    }
+                }
+            }
+            removed = toRemove.contains(effect);
+            if (!removed) {
+                // put in right order into queue
+                mergedEffects.add(0, effect);
+            }
+        }
     }
 
     /**
@@ -199,20 +277,40 @@ public abstract class AbstractCombination implements ICombination {
         effects.addAll(compoundEffect.getPrimitiveEffects());
     }
 
+    // /**
+    // * Called by execute() to make sure previous effects are not undone when an execution wants to
+    // * perform no changes.
+    // */
+    // protected void doNothing() {
+    // doNothing = true;
+    // }
+    //
+    // /**
+    // * Called by execute() to make sure previous effects are not undone when an execution wants to
+    // * keep those effects visible indefinitely.
+    // */
+    // protected void dontUndo() {
+    // noUndo = true;
+    // }
+
     /**
-     * Called by execute() to make sure previous effects are not undone when an execution wants to
-     * perform no changes.
+     * Activate recording of old effects. This way old effects can be easily undone lateron.
+     * However, if they are never undone, this record may increase over time as arbitrarily many old
+     * effects may be stored.
      */
-    protected void doNothing() {
-        doNothing = true;
+    protected void enableEffectRecording() {
+        enableRecording = true;
     }
 
     /**
-     * Called by execute() to make sure previous effects are not undone when an execution wants to
-     * keep those effects visible indefinitely.
+     * Explicit call to undo all old effects since the last call of this method. This will schedule
+     * new UndoEffects and merge them with new effects of this round. This should be called from
+     * inside the execute method to easily undo old stuff. Don't use the plain undo() method, as it
+     * does not only schedule but also execute the undo immediately.
      */
-    protected void dontUndo() {
-        noUndo = true;
+    protected void undoRecordedEffects() {
+        enableRecording = true;
+        undo = true;
     }
 
     /**
@@ -257,8 +355,9 @@ public abstract class AbstractCombination implements ICombination {
             }
         }
         if (!existsExecute) {
-            throw new IllegalArgumentException(this.getClass().getName()
-                    + " contains no execute methods with valid trigger parameters!");
+            throw new IllegalArgumentException(
+                    this.getClass().getName()
+                            + " contains no execute methods with valid trigger parameters of either types ITriggerState or IEffect!");
         }
         Object result = Array.newInstance(Class.class, types.size());
         for (int i = 0; i < ((Class<? extends ITriggerState>[]) result).length; i++) {
@@ -303,10 +402,10 @@ public abstract class AbstractCombination implements ICombination {
                             continue outer; // execute() takes a
                                             // non-ITriggerState/IEffect-parameter.
                         }
-                        if (triggerState.getKeyClass().isAssignableFrom(parameterType) || 
-                                triggerState.getClass() == parameterType) { 
-                         // EffectTriggerState matches effects parameter or
-                         // EffectTriggerState is same as EffectTriggerState parameter
+                        if (triggerState.getKeyClass().isAssignableFrom(parameterType)
+                                || triggerState.getClass() == parameterType) {
+                            // EffectTriggerState matches effects parameter or
+                            // EffectTriggerState is same as EffectTriggerState parameter
                             relevant = true;
                         }
                     }
@@ -337,6 +436,8 @@ public abstract class AbstractCombination implements ICombination {
             KiVi.getInstance().undoEffect(effect);
         }
         effects.clear();
+        undoEffects.clear();
+        mergedEffects.clear();
     }
 
     /**

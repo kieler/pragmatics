@@ -43,7 +43,7 @@ public class LayoutAfterCollapseExpandCombination extends AbstractCombination {
      *            diagram changed
      */
     public void execute(final DiagramChangeState diagramState) {
-        dontUndo();
+        //dontUndo();
         // diagram changed
         for (Notification notification : diagramState.getChange().getNotifications()) {
             if (diagramFilter.matches(notification)
