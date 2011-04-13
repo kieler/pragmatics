@@ -184,7 +184,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
      */
     @Override
     public boolean performFinish() {
-        safePreferences();
+        savePreferences();
         // if necessary ask the user to verify his decisions on the number of generated graphs
         if (newFilePage.getNumberOfGraphs() > SOFT_LIMIT_GRAPHS) {
             if (!askUser(MESSAGE_HIGH_NUMBER_OF_GRAPHS)) {
@@ -421,7 +421,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         return options;
     }
 
-    private void safePreferences() {
+    private void savePreferences() {
         newFilePage.savePreferences();
         typePage.savePreferences();
         switch (typePage.getGraphType()) {
