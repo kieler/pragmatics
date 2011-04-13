@@ -17,14 +17,15 @@ import de.cau.cs.kieler.core.kivi.AbstractTrigger;
 import de.cau.cs.kieler.core.kivi.AbstractTriggerState;
 import de.cau.cs.kieler.core.kivi.ITrigger;
 import de.cau.cs.kieler.core.kivi.ITriggerState;
+import de.cau.cs.kieler.core.kivi.test.TestTriggerSpammer.SpamState;
 
 /**
  * A simple Trigger for unit tests that runs in an own thread and triggers
- * every 1ms, i.e. it spams the system with quick events. 
+ * every 1ms, i.e. it spams the system with quick events. Is synchronized on the effects queue.
  * @author haf
  *
  */
-public class TestTriggerSpammer extends AbstractTrigger implements Runnable{
+public class TestTriggerSpammerSynchronized extends AbstractTrigger implements Runnable{
 
     /**
      * {@inheritDoc}
@@ -51,7 +52,8 @@ public class TestTriggerSpammer extends AbstractTrigger implements Runnable{
         while(true){
             try {
                 Thread.sleep(1);
-                    this.trigger(new SpamState());
+                // block until all effects corresponding to this trigger have been executed
+                this.synchronizedTrigger(new SynchronizedSpamState());
                 
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -59,26 +61,13 @@ public class TestTriggerSpammer extends AbstractTrigger implements Runnable{
         }
     }
     
-    public static class SpamState extends AbstractTriggerState{
+    public static class SynchronizedSpamState extends SpamState{
 
-        int counter = 1;
-        
         /**
          * {@inheritDoc}
          */
         public Class<? extends ITrigger> getTriggerClass() {
-            return TestTriggerSpammer.class;
-        }
-        
-        @Override
-        public void merge(ITriggerState previous) {
-            if(previous instanceof SpamState){
-                this.counter += ((SpamState)previous).counter;
-            }
-        }
-        
-        public int getCounter(){
-            return counter;
+            return TestTriggerSpammerSynchronized.class;
         }
     }
 

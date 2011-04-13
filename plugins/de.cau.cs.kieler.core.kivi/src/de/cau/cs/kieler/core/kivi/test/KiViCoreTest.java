@@ -133,9 +133,21 @@ public class KiViCoreTest {
     @Test
     public void TestUndo() throws InterruptedException {
         KiVi.getInstance().registerCombination(new TestCombinationUndo(), true);
-        while(true)
         Thread.sleep(5000);
     }
+    
+    /**
+     * Spamming of triggers should not overflow the effects queue.
+     */
+    @Test
+    public void TestSpammerSynchronized() throws InterruptedException {
+        KiVi.getInstance().registerCombination(new TestCombinationSpammerSynchronized(), true);
+        Thread.sleep(3000);
+        int size = KiVi.getInstance().getEffectsQueueSize();
+        assertTrue("Effects queue will overflow. After 3s " + size + " effects on queue.",
+                size < 3);
+    }
+    
     /**
      * Spamming of triggers should not overflow the effects queue.
      */
@@ -144,7 +156,8 @@ public class KiViCoreTest {
         KiVi.getInstance().registerCombination(new TestCombinationSpammer(), true);
         Thread.sleep(3000);
         int size = KiVi.getInstance().getEffectsQueueSize();
-        assertTrue("Effects queue will overflow. After 3s " + size + " effects on queue.",
+        assertFalse("Effects queue did not overflow, although we expected this, because this test" +
+        		"uses a not-synchronized trigger. After 3s " + size + " effects on queue.",
                 size < 100);
     }
 

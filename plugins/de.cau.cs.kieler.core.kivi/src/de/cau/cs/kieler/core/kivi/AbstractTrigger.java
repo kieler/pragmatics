@@ -29,6 +29,23 @@ public abstract class AbstractTrigger implements ITrigger {
     public void trigger(final ITriggerState triggerState) {
         KiVi.getInstance().trigger(triggerState);
     }
+    
+    /**
+     * Triggers a TriggerState just as {@link #trigger(ITriggerState)}, but
+     * blocks this thread until all effects that are created following this trigger
+     * are executed on the effects thread. Hence this method can be used to 
+     * create back pressure and block the triggering of new effects until all
+     * old effects have been executed. Therefore the effects queue will not 
+     * explode.
+     * @param triggerState the new state that KIVi should distribute
+     * @throws InterruptedException if the blocking is interrupted
+     */
+    public void synchronizedTrigger(final ITriggerState triggerState) throws InterruptedException{
+        synchronized (triggerState) {
+            trigger(triggerState);
+            triggerState.wait();
+        }
+    }
 
     /**
      * {@inheritDoc}
