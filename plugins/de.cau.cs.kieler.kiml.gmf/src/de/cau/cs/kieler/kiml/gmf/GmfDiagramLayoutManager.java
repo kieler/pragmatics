@@ -377,9 +377,13 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         } else {
             layoutConfig = new GmfLayoutConfig(getExternalConfig());
         }
-        org.eclipse.swt.graphics.Point size = rootPart.getViewer().getControl().getSize();
-        if (size.x > 0 && size.y > 0) {
-            layoutConfig.setAspectRatio((float) size.x / size.y);
+        try {
+            org.eclipse.swt.graphics.Point size = rootPart.getViewer().getControl().getSize();
+            if (size.x > 0 && size.y > 0) {
+                layoutConfig.setAspectRatio((float) size.x / size.y);
+            }
+        } catch (SWTException exception) {
+            // ignore exception
         }
         
         // traverse the children of the layout root part
