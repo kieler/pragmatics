@@ -174,6 +174,7 @@ public class KGraphImporter implements IGraphImporter {
                     llabel.getSize().y = labelLayout.getHeight();
                     llabel.getPosition().x = labelLayout.getXpos() - portLayout.getWidth() / 2;
                     llabel.getPosition().y = labelLayout.getYpos() - portLayout.getHeight() / 2;
+                    newPort.setLabel(llabel);
                 }
                 
                 // calculate port side

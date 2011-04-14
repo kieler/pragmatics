@@ -30,25 +30,14 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
- * This processor handles certain kinds of self loops. There are several kinds of self-loops
- * one can imagine:
- * <ul>
- *   <li>Both ports on the same side. This case does not require special processing. It must
- *     only be especially handled in upcoming phases.</li>
- *   <li>One of the ports on the eastern or western side, the other port on the northern or
- *     southern side. This is handled well enough with north / south dummies.</li>
- *   <li>One of the ports on the eastern side, the other on the western side. In this case,
- *     we need some special processing as the edge needs some vertical space in the layer to
- *     be routed. Thus, we insert a long edge dummy and also make sure that the edges go from
- *     the western into the eastern port, possibly reversing the edge.</li>
- * </ul>
+ * TODO: Document.
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph.</dd>
  *   <dt>Postcondition:</dt><dd>long edge dummies were inserted for special kinds of self
  *     loops.</dd>
  *   <dt>Slots:</dt><dd>Before phase 3.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link OddPortSideProcessor}</dd>
  * </dl>
  *
  * @author cds
@@ -88,7 +77,7 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
                         PortSide sourcePortSide = sourcePort.getSide();
                         PortSide targetPortSide = targetPort.getSide();
                         
-                        /* We have to take care of the following cases:
+                        /* We have to take care of the following scenarios:
                          *  1. North or South -> West
                          *     Reverse the edge.
                          *  2. East -> North or South
@@ -98,9 +87,9 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
                          *  4. West -> East
                          *     Insert dummy.
                          *  5. North -> South
-                         *     ???
+                         *     Reverse the edge.
                          *  6. South -> North
-                         *     ???
+                         *     Nothing has to be done.
                          */
                         
                         // First, let's deal with the cases where edges have to be reversed
@@ -108,7 +97,13 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
                                 && targetPortSide == PortSide.WEST) {
                             
                             reverseEdge(edge);
-                        } else if (sourcePortSide == PortSide.EAST && targetPortSide != PortSide.EAST) {
+                        } else if (sourcePortSide == PortSide.NORTH
+                                && targetPortSide == PortSide.SOUTH) {
+                            
+                            reverseEdge(edge);
+                        } else if (sourcePortSide == PortSide.EAST
+                                && targetPortSide != PortSide.EAST) {
+                            
                             reverseEdge(edge);
                         }
                         

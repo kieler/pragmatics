@@ -55,10 +55,10 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *   <dt>Postcondition:</dt><dd>dummy nodes have been inserted for edges connected to
  *     ports on odd sides; the graph may contain new in-layer connections.</dd>
  *   <dt>Slots:</dt><dd>Before phase 3.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link PortSideAndOrderProcessor}</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link PortSideProcessor}</dd>
  * </dl>
  * 
- * @see PortSideAndOrderProcessor
+ * @see PortSideProcessor
  * @author cds
  */
 public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutProcessor {

@@ -36,12 +36,14 @@ public enum IntermediateLayoutProcessor {
     
     /** Takes a layered graph and turns it into a properly layered graph. */
     LONG_EDGE_SPLITTER,
-    /** Sets port sides and orders the ports, if necessary. */
-    PORT_SIDE_AND_ORDER_PROCESSOR,
+    /** Makes sure nodes have at least fixed port sides. */
+    PORT_SIDE_PROCESSOR,
     /** Takes a layered graph and inserts dummy nodes for edges connected to ports on odd sides. */
     ODD_PORT_SIDE_PROCESSOR,
     /** Takes care of self loops. */
     SELF_LOOP_PROCESSOR,
+    /** Orders the port lists of nodes with fixed port order. */
+    PORT_ORDER_PROCESSOR,
     /** Inserts dummy nodes to take care of northern and southern ports. */
     NORTH_SOUTH_PORT_PREPROCESSOR,
     
@@ -105,11 +107,14 @@ public enum IntermediateLayoutProcessor {
         case ODD_PORT_SIDE_PROCESSOR:
             return new OddPortSideProcessor();
         
+        case PORT_ORDER_PROCESSOR:
+            return new PortSideProcessor();
+        
         case PORT_POSITION_PROCESSOR:
             return new PortPositionProcessor();
         
-        case PORT_SIDE_AND_ORDER_PROCESSOR:
-            return new PortSideAndOrderProcessor();
+        case PORT_SIDE_PROCESSOR:
+            return new PortSideProcessor();
         
         case REVERSED_EDGE_RESTORER:
             return new ReversedEdgeRestorer();

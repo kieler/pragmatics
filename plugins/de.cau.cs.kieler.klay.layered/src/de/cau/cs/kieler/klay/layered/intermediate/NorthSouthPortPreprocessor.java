@@ -71,11 +71,13 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *     ports on north and south sides, with layout groups and node successor constraints
  *     set.</dd>
  *   <dt>Slots:</dt><dd>Before phase 3.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link PortSideAndOrderProcessor}</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link PortOrderProcessor},
+ *     {@link SelfLoopProcessor}</dd>
  * </dl>
  * 
  * @see NorthSouthPortPostprocessor
- * @see PortPositionProcessor
+ * @see PortOrderProcessor
+ * @see SelfLoopProcessor
  * @author cds
  */
 public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILayoutProcessor {
@@ -180,6 +182,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         List<LPort> inPorts = new ArrayList<LPort>(ports.size());
         List<LPort> outPorts = new ArrayList<LPort>(ports.size());
         List<LPort> inOutPorts = new ArrayList<LPort>(ports.size());
+        List<LEdge> selfloopEdges = new ArrayList<LEdge>(ports.size());
         
         for (LPort port : ports) {
             boolean in = false;
@@ -189,7 +192,16 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
             // ports to stay clear of problems related to cycle breaking. (INPUT ports
             // may have outgoing edges, OUTPUT ports may have incoming edges)
             for (LEdge edge : port.getEdges()) {
-                if (edge.getSource() == port) {
+                // Check if the edge forms a self loop with both end points being on
+                // the same side of the node (for each self loop, only the source port
+                // is added to the list)
+                if (edge.getSource().getNode() == edge.getTarget().getNode()
+                        && edge.getSource().getSide() == edge.getTarget().getSide()) {
+                    
+                    if (edge.getSource() == port) {
+                        selfloopEdges.add(edge);
+                    }
+                } else if (edge.getSource() == port) {
                     out = true;
                 } else {
                     in = true;
@@ -203,6 +215,11 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
             } else if (out) {
                 outPorts.add(port);
             }
+        }
+        
+        // First, create the dummy nodes that handle self loops
+        for (LEdge edge : selfloopEdges) {
+            dummyNodes.add(createDummyNode(edge));
         }
         
         // Iterate through the lists of input and output ports while both lists still
@@ -260,8 +277,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
      */
     private LNode createDummyNode(final LPort inPort, final LPort outPort) {
         LNode dummy = new LNode();
-        dummy.setProperty(Properties.NODE_TYPE,
-                Properties.NodeType.NORTH_SOUTH_PORT);
+        dummy.setProperty(Properties.NODE_TYPE, Properties.NodeType.NORTH_SOUTH_PORT);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         
         // Input port
@@ -300,4 +316,40 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         
         return dummy;
     }
+    
+    /**
+     * Creates a dummy node for the given self-loop edge. The dummy node's {@code ORIGIN} property
+     * is set to the edge. The dummy node has two ports, one for each port the node was connected
+     * to. Their {@code ORIGIN} property is set accordingly.
+     * 
+     * @param selfLoop the self-loop edge.
+     * @return a dummy node.
+     */
+    private LNode createDummyNode(final LEdge selfLoop) {
+        LNode dummy = new LNode();
+        dummy.setProperty(Properties.NODE_TYPE, Properties.NodeType.NORTH_SOUTH_PORT);
+        dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        dummy.setProperty(Properties.ORIGIN, selfLoop);
+        
+        // Input port
+        LPort dummyInputPort = new LPort();
+        dummyInputPort.setProperty(Properties.ORIGIN, selfLoop.getTarget());
+        dummyInputPort.setType(PortType.INPUT);
+        dummyInputPort.setSide(PortSide.WEST);
+        dummyInputPort.setNode(dummy);
+        
+        // Output port
+        LPort dummyOutputPort = new LPort();
+        dummyOutputPort.setProperty(Properties.ORIGIN, selfLoop.getSource());
+        dummyOutputPort.setType(PortType.OUTPUT);
+        dummyOutputPort.setSide(PortSide.EAST);
+        dummyOutputPort.setNode(dummy);
+        
+        // Disconnect the edge
+        selfLoop.setSource(null);
+        selfLoop.setTarget(null);
+        
+        return dummy;
+    }
+    
 }

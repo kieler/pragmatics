@@ -31,10 +31,10 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *   <dt>Precondition:</dt><dd>a layered graph; nodes have fixed port orders.</dd>
  *   <dt>Postcondition:</dt><dd>nodes have fixed port positions.</dd>
  *   <dt>Slots:</dt><dd>Before phase 4.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link PortSideAndOrderProcessor}</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link PortSideProcessor}</dd>
  * </dl>
  * 
- * @see PortSideAndOrderProcessor
+ * @see PortSideProcessor
  * @author msp
  */
 public class PortPositionProcessor extends AbstractAlgorithm implements ILayoutProcessor {

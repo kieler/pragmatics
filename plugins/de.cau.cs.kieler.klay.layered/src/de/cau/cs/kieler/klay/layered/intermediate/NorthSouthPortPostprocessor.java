@@ -59,12 +59,17 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
                     continue;
                 }
                 
-                // Iterate through the ports
-                for (LPort port : node.getPorts()) {
-                    if (port.getType() == PortType.INPUT) {
-                        processInputPort(port);
-                    } else if (port.getType() == PortType.OUTPUT) {
-                        processOutputPort(port);
+                if (node.getProperty(Properties.ORIGIN) instanceof LEdge) {
+                    // It's a self-loop
+                    processSelfLoop(node);
+                } else {
+                    // Iterate through the ports
+                    for (LPort port : node.getPorts()) {
+                        if (port.getType() == PortType.INPUT) {
+                            processInputPort(port);
+                        } else if (port.getType() == PortType.OUTPUT) {
+                            processOutputPort(port);
+                        }
                     }
                 }
                 
@@ -87,7 +92,7 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
         LPort originPort = (LPort) inputPort.getProperty(Properties.ORIGIN);
         
         // Calculate the bend point
-        KVector bendPoint = inputPort.getNode().getPosition();
+        KVector bendPoint = new KVector(inputPort.getNode().getPosition());
         bendPoint.x = originPort.getNode().getPosition().x + originPort.getPosition().x;
         
         // Reroute the edges, inserting a new bend point at the position of
@@ -95,7 +100,7 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
         LEdge[] edgeArray = inputPort.getEdges().toArray(new LEdge[0]);
         for (LEdge inEdge : edgeArray) {
             inEdge.setTarget(originPort);
-            inEdge.getBendPoints().add(bendPoint.x, bendPoint.y);
+            inEdge.getBendPoints().add(bendPoint);
         }
     }
     
@@ -110,7 +115,7 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
         LPort originPort = (LPort) outputPort.getProperty(Properties.ORIGIN);
         
         // Calculate the bend point
-        KVector bendPoint = outputPort.getNode().getPosition();
+        KVector bendPoint = new KVector(outputPort.getNode().getPosition());
         bendPoint.x = originPort.getNode().getPosition().x + originPort.getPosition().x;
         
         // Reroute the edges, inserting a new bend point at the position of
@@ -118,7 +123,34 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
         LEdge[] edgeArray = outputPort.getEdges().toArray(new LEdge[0]);
         for (LEdge outEdge : edgeArray) {
             outEdge.setSource(originPort);
-            outEdge.getBendPoints().addFirst(bendPoint.x, bendPoint.y);
+            outEdge.getBendPoints().addFirst(bendPoint);
         }
+    }
+    
+    /**
+     * Reroutes and reconnects the self-loop edge represented by the given dummy.
+     * 
+     * @param dummy the dummy representing the self-loop edge.
+     */
+    private void processSelfLoop(final LNode dummy) {
+        // Get the edge and the ports it was originally connected to
+        LEdge selfLoop = (LEdge) dummy.getProperty(Properties.ORIGIN);
+        LPort inputPort = dummy.getPorts(PortType.INPUT).iterator().next();
+        LPort outputPort = dummy.getPorts(PortType.OUTPUT).iterator().next();
+        LPort originInputPort = (LPort) inputPort.getProperty(Properties.ORIGIN);
+        LPort originOutputPort = (LPort) outputPort.getProperty(Properties.ORIGIN);
+        
+        // Reconnect the edge
+        selfLoop.setSource(originOutputPort);
+        selfLoop.setTarget(originInputPort);
+        
+        // Add two bend points
+        KVector bendPoint = new KVector(outputPort.getNode().getPosition());
+        bendPoint.x = originOutputPort.getNode().getPosition().x + originOutputPort.getPosition().x;
+        selfLoop.getBendPoints().add(bendPoint);
+        
+        bendPoint = new KVector(inputPort.getNode().getPosition());
+        bendPoint.x = originInputPort.getNode().getPosition().x + originInputPort.getPosition().x;
+        selfLoop.getBendPoints().add(bendPoint);
     }
 }

@@ -181,7 +181,8 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 null,
                 // Before Phase 3
                 EnumSet.of(
-                        IntermediateLayoutProcessor.PORT_SIDE_AND_ORDER_PROCESSOR,
+                        IntermediateLayoutProcessor.PORT_ORDER_PROCESSOR,
+                        IntermediateLayoutProcessor.PORT_SIDE_PROCESSOR,
                         IntermediateLayoutProcessor.LONG_EDGE_SPLITTER),
                 // Before Phase 4
                 null,
