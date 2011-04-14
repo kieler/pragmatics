@@ -297,7 +297,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
         poID = new int[numNodes];
         lowestPoID = new int[numNodes];
         Arrays.fill(revLayer, numNodes);
-        removedSelfLoops = new HashMap<LEdge, Pair<LPort, LPort>>();
 
         sources = new LinkedList<LNode>();
         sinks = new LinkedList<LNode>();
@@ -424,6 +423,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
         getMonitor().begin("Network-Simplex Layering", 1);
         
         layeredGraph = theLayeredGraph;
+
+        removedSelfLoops = new HashMap<LEdge, Pair<LPort, LPort>>();
 
         Collection<LNode> theNodes = layeredGraph.getLayerlessNodes();
         if (theNodes.size() < 1) {
