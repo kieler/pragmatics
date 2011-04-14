@@ -38,6 +38,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -206,16 +207,19 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         }
         // run the generation in the wizard container
         IRunnableWithProgress runnable = new IRunnableWithProgress() {
-            public void run(final IProgressMonitor monitor) throws InvocationTargetException {
+            public void run(final IProgressMonitor monitor) throws InterruptedException,
+                    InvocationTargetException {
                 try {
                     doFinish(new KielerProgressMonitor(monitor));
+                } catch (InterruptedException e) {
+                    throw e;
                 } catch (Throwable e) {
                     throw new InvocationTargetException(e);
                 }
             }
         };
         try {
-            getContainer().run(false, false, runnable);
+            getContainer().run(true, true, runnable);
         } catch (InterruptedException exception) {
             return false;
         } catch (InvocationTargetException exception) {
@@ -237,6 +241,10 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         return response == SWT.YES;
     }
 
+    private String nameWithoutExt;
+    private String ext;
+    private int i;
+
     /**
      * Performs the actual generation and serialization.
      * 
@@ -246,29 +254,63 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
      *             when serializing a graph failed
      * @throws CoreException
      *             when refreshing the resource hierarchy failed
+     * @throws InterruptedException
+     *             when the user cancels the operation
      */
-    private void doFinish(final IKielerProgressMonitor monitor) throws IOException, CoreException {
+    private void doFinish(final IKielerProgressMonitor monitor) throws IOException, CoreException,
+            InterruptedException {
         int numberOfGraphs = newFilePage.getNumberOfGraphs();
         monitor.begin("Generating KEG graphs", numberOfGraphs);
         try {
-            // collect the options from the pages
-            IPropertyHolder options = getOptions();
             // generate and serialize
             if (numberOfGraphs == 1) {
-                IFile file = newFilePage.createNewFile();
-                generateAndSerialize(file, options, monitor.subTask(1));
+                Display.getDefault().syncExec(new Runnable() {
+                    public void run() {
+                        // collect the options from the pages
+                        IPropertyHolder options = getOptions();
+                        IFile file = newFilePage.createNewFile();
+                        try {
+                            generateAndSerialize(file, options, monitor.subTask(1));
+                        } catch (IOException e) {
+                            // ignore
+                        } catch (CoreException e) {
+                            // ignore
+                        }
+                    }
+                });
             } else {
-                IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
                 // prepare to build filenames
-                String name = newFilePage.getFileName();
-                String nameWithoutExt = name.substring(0, name.lastIndexOf("."));
-                String ext = newFilePage.getFileExtension();
-                for (int i = 0; i < numberOfGraphs; ++i) {
-                    IPath path =
-                            newFilePage.getContainerFullPath().append(
-                                    new Path(nameWithoutExt + i + "." + ext));
-                    IFile file = workspaceRoot.getFile(path);
-                    generateAndSerialize(file, options, monitor.subTask(1));
+                Display.getDefault().syncExec(new Runnable() {
+                    public void run() {
+                        String name = newFilePage.getFileName();
+                        nameWithoutExt = name.substring(0, name.lastIndexOf("."));
+                        ext = newFilePage.getFileExtension();
+                    }
+                });
+                // generate the desired number of graphs
+                for (i = 0; i < numberOfGraphs; ++i) {
+                    if (monitor.isCanceled()) {
+                        throw new InterruptedException();
+                    }
+                    Display.getDefault().syncExec(new Runnable() {
+                        public void run() {
+                            IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+                            IPath path =
+                                    newFilePage.getContainerFullPath().append(
+                                            new Path(nameWithoutExt + i + "." + ext));
+                            IFile file = workspaceRoot.getFile(path);
+                            // collect the options from the pages
+                            IPropertyHolder options = getOptions();
+                            // generate and serialize the graph
+                            try {
+                                generateAndSerialize(file, options, monitor.subTask(1));
+                            } catch (IOException e) {
+                                // ignore
+                            } catch (CoreException e) {
+                                // ingore
+                            }
+                        }
+                    });
                 }
             }
         } finally {
