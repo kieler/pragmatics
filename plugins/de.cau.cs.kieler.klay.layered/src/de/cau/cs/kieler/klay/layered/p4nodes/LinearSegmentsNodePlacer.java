@@ -518,7 +518,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             
             // Calculate and set offset
             int offset = (int) Math.round(highestPrioEdge.getSource().getPosition().y
-                    - (highestPrioEdge.getTarget().getPosition().y)
+                    - highestPrioEdge.getTarget().getPosition().y
                     + node.getProperty(Properties.LINSEG_OFFSET));
             nextNode.setProperty(Properties.LINSEG_OFFSET, offset);
             
@@ -578,7 +578,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             // Determine the minimum offset and maximum height of the segment's nodes
             for (LNode node : segment.getNodes()) {
                 float offset = (float) node.getProperty(Properties.LINSEG_OFFSET);
-                double nodeHeight = node.getSize().y + node.getMargin().top + node.getMargin().bottom;
+                double nodeHeight = node.getMargin().top + node.getSize().y + node.getMargin().bottom;
                 
                 if (offset < minOffset) {
                     minOffset = offset;
@@ -618,11 +618,13 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                     // add node offset - minimal offset
                     offset = node.getProperty(Properties.LINSEG_OFFSET) - minOffset;
                 } else {
-                    offset = maxHeight / 2 - node.getSize().y / 2;
+                    offset = (maxHeight - node.getSize().y) / 2;
                 }
 
                 // Set the node position
                 node.getPosition().y = uppermostPlace + offset + node.getMargin().top;
+                
+                // Adjust layer size
                 Layer layer = node.getLayer();
                 layer.getSize().y = uppermostPlace + offset + node.getMargin().top + node.getSize().y
                         + node.getMargin().bottom;
@@ -772,7 +774,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                             - (node.getPosition().y - node.getMargin().top + region.force);
                         
                         if (overlay > 0.0) {
-                            region.force = -overlay - region.force;
+                            region.force += overlay;
                         }
                     }
                 } else {
@@ -781,7 +783,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                     double overlay = -(node.getPosition().y - node.getMargin().top + region.force);
                     
                     if (overlay > 0.0) {
-                        region.force = overlay - region.force;
+                        region.force += overlay;
                     }
                 }
             } else if (region.force > 0.0f && node.getIndex() < node.getLayer().getNodes().size() - 1) {
@@ -797,7 +799,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                         + space + region.force - (neighbor.getPosition().y - neighbor.getMargin().top);
                     
                     if (overlay > 0.0) {
-                        region.force = -overlay + region.force;
+                        region.force -= overlay;
                     }
                 }
             }
