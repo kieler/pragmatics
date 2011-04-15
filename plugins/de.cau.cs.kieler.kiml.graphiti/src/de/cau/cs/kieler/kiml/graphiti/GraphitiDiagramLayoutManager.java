@@ -11,10 +11,8 @@
  */
 package de.cau.cs.kieler.kiml.graphiti;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.emf.common.command.Command;
@@ -34,8 +32,10 @@ import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
 import org.eclipse.ui.IWorkbenchPart;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -43,7 +43,6 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.model.graphiti.GraphitiFrameworkBridge;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
-import de.cau.cs.kieler.kiml.graphiti.ElementInfo.PortInfo;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -73,11 +72,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     private Command applyLayoutCommand;
 
     /** map of pictogram elements to KGraph elements. */
-    private Map<PictogramElement, ElementInfo> pictElem2ElemInfoMap =
-            new HashMap<PictogramElement, ElementInfo>();
-    /** map of KGraph elements to pictogram elements. */
-    private Map<KGraphElement, ElementInfo> graphElem2ElemInfoMap =
-            new HashMap<KGraphElement, ElementInfo>();
+    private BiMap<PictogramElement, KGraphElement> pictElem2graphElemMap = HashBiMap.create();
     /** list of all connections in the diagram. */
     private List<Connection> connections = new LinkedList<Connection>();
 
@@ -98,8 +93,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     }
 
     /** the framework bridge for this layout manager. */
-    private GraphitiFrameworkBridge graphitiBridge =
-            new GraphitiFrameworkBridge();
+    private GraphitiFrameworkBridge graphitiBridge = new GraphitiFrameworkBridge();
 
     /**
      * {@inheritDoc}
@@ -118,9 +112,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         if (editPart instanceof IPictogramElementEditPart) {
             config.initialize((IPictogramElementEditPart) editPart);
         } else {
-            IPictogramElementEditPart rootPart =
-                    GraphitiFrameworkBridge
-                            .getEditPartFromDiagramEditorInternal2(editPart);
+            IPictogramElementEditPart rootPart = GraphitiFrameworkBridge
+                    .getEditPartFromDiagramEditorInternal2(editPart);
             if (rootPart != null) {
                 config.initialize(rootPart);
             }
@@ -132,11 +125,10 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      * {@inheritDoc}
      */
     @Override
-    public KNode buildLayoutGraph(final IWorkbenchPart workbenchPart,
-            final EditPart editPart, final boolean layoutAncestors) {
+    public KNode buildLayoutGraph(final IWorkbenchPart workbenchPart, final EditPart editPart,
+            final boolean layoutAncestors) {
         connections.clear();
-        pictElem2ElemInfoMap.clear();
-        graphElem2ElemInfoMap.clear();
+        pictElem2graphElemMap.clear();
 
         if (workbenchPart instanceof DiagramEditor) {
             diagramEditor = (DiagramEditor) workbenchPart;
@@ -150,13 +142,11 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             layoutRootPart = diagramEditor.getGraphicalViewer().getContents();
         }
         if (!(layoutRootPart instanceof IPictogramElementEditPart)) {
-            throw new UnsupportedOperationException(
-                    "Not supported by this layout manager: Editor "
-                            + workbenchPart + ", Edit part " + editPart);
+            throw new UnsupportedOperationException("Not supported by this layout manager: Editor "
+                    + workbenchPart + ", Edit part " + editPart);
         }
-        PictogramElement element =
-                ((IPictogramElementEditPart) layoutRootPart)
-                        .getPictogramElement();
+        PictogramElement element = ((IPictogramElementEditPart) layoutRootPart)
+                .getPictogramElement();
 
         KNode topNode = KimlUtil.createInitializedNode();
         if (element instanceof ContainerShape) {
@@ -166,9 +156,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             shapeLayout.setHeight(element.getGraphicsAlgorithm().getHeight());
             shapeLayout.setWidth(element.getGraphicsAlgorithm().getWidth());
 
-            ElementInfo info = new ElementInfo(topNode, element);
-            pictElem2ElemInfoMap.put(element, info);
-            graphElem2ElemInfoMap.put(topNode, info);
+            pictElem2graphElemMap.put(element, topNode);
 
             GraphitiLayoutConfig layoutConfig;
             if (getExternalConfig() == null) {
@@ -177,8 +165,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                 layoutConfig = new GraphitiLayoutConfig(getExternalConfig());
             }
 
-            buildLayoutGraphRecursively((ContainerShape) element, topNode,
-                    layoutConfig);
+            buildLayoutGraphRecursively((ContainerShape) element, topNode, layoutConfig);
 
             // set user defined layout options for the diagram
             layoutConfig.setFocus(layoutRootPart);
@@ -191,9 +178,12 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         return layoutGraph;
     }
 
+    /** the fixed minimal size of shapes. */
+    private static final float MIN_SIZE = 15.0f;
+    
     /**
-     * Recursively builds a layout graph by analyzing the children of the given
-     * current pictogram Element.
+     * Recursively builds a layout graph by analyzing the children of the given current pictogram
+     * Element.
      * 
      * @param parentElement
      *            the currently analyzed element
@@ -203,48 +193,41 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      *            the layout configuration
      * @return true if the node has any children
      */
-    private boolean buildLayoutGraphRecursively(
-            final ContainerShape parentElement, final KNode parentNode,
-            final GraphitiLayoutConfig layoutConfig) {
+    private boolean buildLayoutGraphRecursively(final ContainerShape parentElement,
+            final KNode parentNode, final GraphitiLayoutConfig layoutConfig) {
         boolean parentHasChildren = false;
         for (Shape shape : parentElement.getChildren()) {
-            boolean relevantShape = !shape.getAnchors().isEmpty();
-            // all relevant shapes have to be layouted, not just containers
-            // (e.g. KAOM Relations)
-            if (relevantShape) {
+            // relevant shapes are those that can be connected
+            if (!shape.getAnchors().isEmpty()) {
                 parentHasChildren = true;
-                GraphicsAlgorithm containerGa = shape.getGraphicsAlgorithm();
+                GraphicsAlgorithm nodeGa = shape.getGraphicsAlgorithm();
 
                 KNode childnode = KimlUtil.createInitializedNode();
                 childnode.setParent(parentNode);
-                KShapeLayout shapeLayout =
-                        childnode.getData(KShapeLayout.class);
-                shapeLayout.setXpos(containerGa.getX());
-                shapeLayout.setYpos(containerGa.getY());
-                shapeLayout.setHeight(containerGa.getHeight());
-                shapeLayout.setWidth(containerGa.getWidth());
+                KShapeLayout nodeLayout = childnode.getData(KShapeLayout.class);
+                graphicsAlg2ShapeLayout(nodeGa, nodeLayout);
 
-                setInsets(shapeLayout, containerGa);
+                setInsets(nodeLayout, nodeGa);
 
-                // TODO how to get minimal size of the shape
-                shapeLayout.setProperty(LayoutOptions.MIN_WIDTH, 40.0f);
-                shapeLayout.setProperty(LayoutOptions.MIN_HEIGHT, 40.0f);
+                // FIXME find a way to specify the minimal size dynamically
+                nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, MIN_SIZE);
+                nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, MIN_SIZE);
 
-                putElementIntoMap(shape, childnode);
+                pictElem2graphElemMap.put(shape, childnode);
 
                 boolean shapeHasChildren = false;
                 if (shape instanceof ContainerShape) {
-                    shapeHasChildren =
-                            buildLayoutGraphRecursively((ContainerShape) shape,
-                                    childnode, layoutConfig);
+                    shapeHasChildren = buildLayoutGraphRecursively((ContainerShape) shape,
+                            childnode, layoutConfig);
 
                     // find a label for the container shape
                     for (Shape child : ((ContainerShape) shape).getChildren()) {
-                        GraphicsAlgorithm ga = child.getGraphicsAlgorithm();
-                        if (ga instanceof Text) {
-                            String labelText = ((Text) ga).getValue();
+                        GraphicsAlgorithm textGa = child.getGraphicsAlgorithm();
+                        if (textGa instanceof Text) {
+                            String labelText = ((Text) textGa).getValue();
                             KLabel label = childnode.getLabel();
                             label.setText(labelText);
+                            graphicsAlg2ShapeLayout(textGa, label.getData(KShapeLayout.class));
                             break;
                         }
                     }
@@ -252,93 +235,44 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
 
                 boolean shapeHasPorts = false;
                 for (Anchor anchor : shape.getAnchors()) {
+                    // box-relative anchors are interpreted as ports
                     if (anchor instanceof BoxRelativeAnchor) {
                         shapeHasPorts = true;
-                        try {
-                            addPort(containerGa, childnode,
-                                    (BoxRelativeAnchor) anchor, layoutConfig);
-                        } catch (ElementMissingException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-
+                        createPort(nodeGa, childnode, (BoxRelativeAnchor) anchor, layoutConfig);
                     }
-                    for (Connection c : anchor.getIncomingConnections()) {
-                        ElementInfo.ConnectionInfo conInfo =
-                                getConnectionInfo(c);
-                        conInfo.setTarget(anchor);
-                    }
+                    // gather all connections in the diagram
                     for (Connection c : anchor.getOutgoingConnections()) {
-                        ElementInfo.ConnectionInfo conInfo =
-                                getConnectionInfo(c);
-                        conInfo.setSrc(anchor);
                         connections.add(c);
                     }
                 }
 
                 // set user defined layout options
-                layoutConfig.setFocus(diagramEditor
-                        .getEditPartForPictogramElement(shape));
+                layoutConfig.setFocus(diagramEditor.getEditPartForPictogramElement(shape));
                 layoutConfig.setPorts(shapeHasPorts);
                 layoutConfig.setChildren(shapeHasChildren);
-                shapeLayout.copyProperties(layoutConfig);
+                nodeLayout.copyProperties(layoutConfig);
             }
         }
 
         return parentHasChildren;
     }
-
+    
     /**
-     * Get or create the ConnectionInfo for the given Connection.
+     * Transfer layout information from a pictogram graphics algorithm to a shape layout.
      * 
-     * @param c
-     *            the connection
-     * @return the ElementInfo
+     * @param ga a graphics algorithm
+     * @param shapeLayout a shape layout
      */
-    private ElementInfo.ConnectionInfo getConnectionInfo(final Connection c) {
-        ElementInfo.ConnectionInfo conInfo =
-                (ElementInfo.ConnectionInfo) pictElem2ElemInfoMap.get(c);
-        if (conInfo == null) {
-            conInfo = new ElementInfo.ConnectionInfo(null, c);
-            pictElem2ElemInfoMap.put(c, conInfo);
-        }
-        return conInfo;
+    private void graphicsAlg2ShapeLayout(final GraphicsAlgorithm ga, final KShapeLayout shapeLayout) {
+        shapeLayout.setXpos(ga.getX());
+        shapeLayout.setYpos(ga.getY());
+        shapeLayout.setWidth(ga.getWidth());
+        shapeLayout.setHeight(ga.getHeight());
     }
 
     /**
-     * Create a new ElementInfo and put it into both maps.
+     * Create a port for the layout graph.
      * 
-     * @param pe
-     *            the pictogram element
-     * @param ge
-     *            the graph element
-     * @return the created ElementInfo
-     * 
-     */
-    private ElementInfo putElementIntoMap(final PictogramElement pe,
-            final KGraphElement ge) {
-        ElementInfo info = new ElementInfo(ge, pe);
-        putIntoMap(pe, ge, info);
-        return info;
-    }
-
-    /**
-     * Put a tripplet into both maps.
-     * 
-     * @param pe
-     *            the pictogram element
-     * @param ge
-     *            the graph element
-     * @param info
-     *            the info
-     */
-    private void putIntoMap(final PictogramElement pe, final KGraphElement ge,
-            final ElementInfo info) {
-        pictElem2ElemInfoMap.put(pe, info);
-        graphElem2ElemInfoMap.put(ge, info);
-    }
-
-    /**
      * @param containerGa
      *            the containerGa
      * @param childnode
@@ -346,63 +280,38 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      * @param bra
      *            the anchor
      * @param layoutConfig
-     *            the layout config
-     * @throws ElementMissingException
+     *            the layout configuration
      */
-    private void addPort(final GraphicsAlgorithm containerGa,
-            final KNode childnode, final BoxRelativeAnchor bra,
-            final GraphitiLayoutConfig layoutConfig)
-            throws ElementMissingException {
+    private void createPort(final GraphicsAlgorithm containerGa, final KNode childnode,
+            final BoxRelativeAnchor bra, final GraphitiLayoutConfig layoutConfig) {
         KPort port = KimlUtil.createInitializedPort();
         port.setNode(childnode);
         KShapeLayout portLayout = port.getData(KShapeLayout.class);
 
-        GraphicsAlgorithm ga = bra.getReferencedGraphicsAlgorithm();
-        if (ga == null) {
-            throw new ElementMissingException();
+        GraphicsAlgorithm referencedGa = bra.getReferencedGraphicsAlgorithm();
+        if (referencedGa == null) {
+            return;
         }
-        putPortIntoMap(bra, port);
+        pictElem2graphElemMap.put(bra, port);
 
-        // FIXME what about the "port info"?
-//        if (containerGa != findVisibleGa(containerGa)) {
-//            xoffset += ga.getX();
-//            yoffset += ga.getY();
-//            portInfo.setContainerHasInvisibleParent(true);
-//        }
         double relWidth = bra.getRelativeWidth();
         double relHeight = bra.getRelativeHeight();
 
-        double parentWidth = ga.getWidth();
-        double parentHeight = ga.getHeight();
-        float xPos = (float) (relWidth * parentWidth) + bra.getGraphicsAlgorithm().getX();
-        float yPos = (float) (relHeight * parentHeight) + bra.getGraphicsAlgorithm().getY();
+        double parentWidth = referencedGa.getWidth();
+        double parentHeight = referencedGa.getHeight();
+        GraphicsAlgorithm portGa = bra.getGraphicsAlgorithm(); 
+        float xPos = (float) (relWidth * parentWidth) + portGa.getX();
+        float yPos = (float) (relHeight * parentHeight) + portGa.getY();
 
         portLayout.setXpos(xPos);
         portLayout.setYpos(yPos);
 
-        portLayout.setWidth(bra.getGraphicsAlgorithm().getWidth());
-        portLayout.setHeight(bra.getGraphicsAlgorithm().getHeight());
+        portLayout.setWidth(portGa.getWidth());
+        portLayout.setHeight(portGa.getHeight());
 
         // set user defined layout options
-        layoutConfig
-                .setFocus(diagramEditor.getEditPartForPictogramElement(bra));
+        layoutConfig.setFocus(diagramEditor.getEditPartForPictogramElement(bra));
         portLayout.copyProperties(layoutConfig);
-    }
-
-    /**
-     * Creates a new PortInfo and puts the port into both maps.
-     * 
-     * @param bra
-     *            the anchor
-     * @param port
-     *            the corresponding port
-     * @return the port info
-     */
-    private ElementInfo.PortInfo putPortIntoMap(final BoxRelativeAnchor bra,
-            final KPort port) {
-        ElementInfo.PortInfo portInfo = new ElementInfo.PortInfo(port, bra);
-        putIntoMap(bra, port, portInfo);
-        return portInfo;
     }
 
     /**
@@ -414,8 +323,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      * @param containerGa
      *            the invisible GA
      */
-    private void setInsets(final KShapeLayout shapeLayout,
-            final GraphicsAlgorithm containerGa) {
+    private void setInsets(final KShapeLayout shapeLayout, final GraphicsAlgorithm containerGa) {
         GraphicsAlgorithm ga = findVisibleGa(containerGa);
         int left = 0;
         int top = 0;
@@ -432,24 +340,22 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         insets.setRight(right);
         insets.setBottom(bottom);
         insets.setTop(top);
-
     }
 
     /**
      * Find a visible GraphicsAlgorithm to stick the ports on.
+     * FIXME do we need this?
      * 
      * @param graphicsAlgorithm
      *            parent GA
      * @return a visible GA
      */
-    private GraphicsAlgorithm findVisibleGa(
-            final GraphicsAlgorithm graphicsAlgorithm) {
+    private GraphicsAlgorithm findVisibleGa(final GraphicsAlgorithm graphicsAlgorithm) {
         if (graphicsAlgorithm.getLineVisible()) {
             return graphicsAlgorithm;
         }
         GraphicsAlgorithm result = graphicsAlgorithm;
-        for (GraphicsAlgorithm ga : graphicsAlgorithm
-                .getGraphicsAlgorithmChildren()) {
+        for (GraphicsAlgorithm ga : graphicsAlgorithm.getGraphicsAlgorithmChildren()) {
             GraphicsAlgorithm returned = findVisibleGa(ga);
             if (returned.getLineVisible()) {
                 result = returned;
@@ -465,80 +371,64 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     private static final double TAIL_LOCATION = 0.3;
 
     /**
-     * Creates new edges and takes care of the labels for each connection
-     * identified in the {@code buildLayoutGraphRecursively} method.
+     * Creates new edges and takes care of the labels for each connection identified in the
+     * {@code buildLayoutGraphRecursively} method.
      * 
      * @param layoutConfig
      *            the layout configuration
      */
     private void processConnections(final GraphitiLayoutConfig layoutConfig) {
         for (Connection entry : connections) {
-            processConnection(entry, layoutConfig);
+            createEdge(entry, layoutConfig);
         }
     }
 
     /**
-     * @param connection
-     * @param layoutConfig
+     * Create an edge for the layout graph.
+     * 
+     * @param connection a connection
+     * @param layoutConfig the layout configuration
      */
-    private void processConnection(final Connection connection,
+    private void createEdge(final Connection connection,
             final GraphitiLayoutConfig layoutConfig) {
-        ElementInfo.ConnectionInfo info =
-                (ElementInfo.ConnectionInfo) pictElem2ElemInfoMap
-                        .get(connection);
         KEdge edge = KimlUtil.createInitializedEdge();
 
         // set target node and port
         KNode targetNode;
-        Anchor targetAnchor = info.getTarget();
-        if (targetAnchor == null) {
-            // connection leads nowhere, ignore
-            return;
-        }
-        ElementInfo targetInfo = pictElem2ElemInfoMap.get(targetAnchor);
-        if (targetInfo != null) {
-            KPort targetPort = (KPort) targetInfo.getGraphElem();
+        Anchor targetAnchor = connection.getEnd();
+        KPort targetPort = (KPort) pictElem2graphElemMap.get(targetAnchor);
+        if (targetPort != null) {
             edge.setTargetPort(targetPort);
             targetPort.getEdges().add(edge);
             targetNode = targetPort.getNode();
         } else {
-            targetInfo = pictElem2ElemInfoMap.get(targetAnchor.getParent());
-            targetNode = (KNode) targetInfo.getGraphElem();
+            targetNode = (KNode) pictElem2graphElemMap.get(targetAnchor.getParent());
         }
         edge.setTarget(targetNode);
 
         // set source node and port
         KNode sourceNode;
-        Anchor sourceAnchor = info.getSrc();
-        ElementInfo sourceInfo = pictElem2ElemInfoMap.get(sourceAnchor);
-        if (sourceInfo != null) {
-            KPort sourcePort = (KPort) sourceInfo.getGraphElem();
+        Anchor sourceAnchor = connection.getStart();
+        KPort sourcePort = (KPort) pictElem2graphElemMap.get(sourceAnchor);
+        if (sourcePort != null) {
             edge.setSourcePort(sourcePort);
             sourcePort.getEdges().add(edge);
             sourceNode = sourcePort.getNode();
         } else {
-            sourceInfo = pictElem2ElemInfoMap.get(sourceAnchor.getParent());
-            sourceNode = (KNode) sourceInfo.getGraphElem();
+            sourceNode = (KNode) pictElem2graphElemMap.get(sourceAnchor.getParent());
         }
         edge.setSource(sourceNode);
 
         // set source and target point
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-        try {
-            calculateAnchorEnds(edgeLayout.getSourcePoint(), sourceAnchor);
-            calculateAnchorEnds(edgeLayout.getTargetPoint(), targetAnchor);
-        } catch (ElementMissingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return;
-        }
+        calculateAnchorEnds(edgeLayout.getSourcePoint(), sourceAnchor, sourceNode, sourcePort);
+        calculateAnchorEnds(edgeLayout.getTargetPoint(), targetAnchor, targetNode, targetPort);
+        // TODO set bend points for the new edge
 
-        info.setGraphElem(edge);
-        graphElem2ElemInfoMap.put(edge, info);
+        pictElem2graphElemMap.put(connection, edge);
 
         // find labels for the connection
-        for (ConnectionDecorator decorator : connection
-                .getConnectionDecorators()) {
+        for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
             GraphicsAlgorithm ga = decorator.getGraphicsAlgorithm();
             if (ga instanceof Text) {
                 Text text = (Text) ga;
@@ -546,8 +436,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                 KLabel label = KimlUtil.createInitializedLabel(edge);
                 label.setText(labelText);
                 edge.getLabels().add(label);
-                ElementInfo labelInfo = new ElementInfo(label, decorator);
-                graphElem2ElemInfoMap.put(label, labelInfo);
+                pictElem2graphElemMap.put(decorator, label);
 
                 // set label placement
                 KShapeLayout labelLayout = label.getData(KShapeLayout.class);
@@ -559,27 +448,13 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                         placement = EdgeLabelPlacement.TAIL;
                     }
                 }
-                labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
-                        placement);
+                labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, placement);
             }
         }
 
         // set user defined layout options for the edge
-        layoutConfig.setFocus(diagramEditor
-                .getEditPartForPictogramElement(connection));
+        layoutConfig.setFocus(diagramEditor.getEditPartForPictogramElement(connection));
         edgeLayout.copyProperties(layoutConfig);
-
-    }
-
-    /**
-     * @author soh
-     */
-    private static class ElementMissingException extends Exception {
-
-        /**
-         *
-         */
-        private static final long serialVersionUID = 1L;
 
     }
 
@@ -590,36 +465,22 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      *            a start or end point of an edge
      * @param anchor
      *            the corresponding pictogram anchor
-     * @throws ElementMissingException
      */
-    private void calculateAnchorEnds(final KPoint point, final Anchor anchor)
-            throws ElementMissingException {
-        if (anchor instanceof BoxRelativeAnchor) {
-            BoxRelativeAnchor port = (BoxRelativeAnchor) anchor;
-            ElementInfo.PortInfo info =
-                    (PortInfo) pictElem2ElemInfoMap.get(port);
-            if (info == null || info.getGraphElem() == null) {
-                throw new ElementMissingException();
-            }
-            KPort kPort = info.getGraphElem();
-            KShapeLayout portLayout = kPort.getData(KShapeLayout.class);
+    private void calculateAnchorEnds(final KPoint point, final Anchor anchor, final KNode node,
+            final KPort port) {
+        if (anchor instanceof BoxRelativeAnchor && port != null) {
+            KShapeLayout portLayout = port.getData(KShapeLayout.class);
             float x = portLayout.getXpos() + portLayout.getWidth() / 2.0f;
             float y = portLayout.getYpos() + portLayout.getHeight() / 2.0f;
-            if (info.containerHasInvisibleParent()) {
-                KShapeLayout nodeLayout =
-                        kPort.getNode().getData(KShapeLayout.class);
-                x += nodeLayout.getXpos();
-                y += nodeLayout.getYpos();
-            }
+            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+            x += nodeLayout.getXpos();
+            y += nodeLayout.getYpos();
             point.setX(x);
             point.setY(y);
         } else if (anchor instanceof ChopboxAnchor) {
-            KNode kNode =
-                    (KNode) pictElem2ElemInfoMap.get(anchor.getParent())
-                            .getGraphElem();
-            KShapeLayout nodeLayout = kNode.getData(KShapeLayout.class);
-            float x = nodeLayout.getWidth() / 2.0f + nodeLayout.getXpos();
-            float y = nodeLayout.getHeight() / 2.0f + nodeLayout.getYpos();
+            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+            float x = nodeLayout.getWidth() / 2 + nodeLayout.getXpos();
+            float y = nodeLayout.getHeight() / 2 + nodeLayout.getYpos();
             point.setX(x);
             point.setY(y);
         }
@@ -632,20 +493,10 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     @Override
     protected void transferLayout(final boolean cacheLayout) {
         // TODO support caching of layout
-        GraphitiLayoutCommand command =
-                new GraphitiLayoutCommand(diagramEditor.getEditingDomain(),
-                        diagramEditor.getDiagramTypeProvider()
-                                .getFeatureProvider(), pictElem2ElemInfoMap,
-                        graphElem2ElemInfoMap);
-        for (Entry<KGraphElement, ElementInfo> entry : graphElem2ElemInfoMap
-                .entrySet()) {
-            KGraphElement element = entry.getKey();
-            KGraphData layoutData =
-                    element.getData(element instanceof KEdge ? KEdgeLayout.class
-                            : KShapeLayout.class);
-            if (!layoutData.getProperty(LayoutOptions.NO_LAYOUT)) {
-                command.add(element, entry.getValue().getPicElem());
-            }
+        GraphitiLayoutCommand command = new GraphitiLayoutCommand(diagramEditor.getEditingDomain(),
+                diagramEditor.getDiagramTypeProvider().getFeatureProvider());
+        for (Entry<PictogramElement, KGraphElement> entry : pictElem2graphElemMap.entrySet()) {
+            command.add(entry.getValue(), entry.getKey());
         }
         applyLayoutCommand = command;
     }
@@ -655,8 +506,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      */
     @Override
     protected void applyLayout() {
-        TransactionalEditingDomain editingDomain =
-                diagramEditor.getEditingDomain();
+        TransactionalEditingDomain editingDomain = diagramEditor.getEditingDomain();
         editingDomain.getCommandStack().execute(applyLayoutCommand);
     }
 
@@ -678,17 +528,12 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     }
 
     /**
-     * Returns the edit part associated with the given layout node. This is only
-     * valid after {@link #buildLayoutGraph(IEditorPart, EditPart, boolean)} was
-     * called.
-     * 
-     * @param knode
-     *            a node from the layout graph
-     * @return the corresponding edit part, or {@code null}
+     * {@inheritDoc}
      */
     @Override
     public EditPart getEditPart(final KNode knode) {
-        PictogramElement pe = graphElem2ElemInfoMap.get(knode).getPicElem();
+        PictogramElement pe = pictElem2graphElemMap.inverse().get(knode);
         return diagramEditor.getEditPartForPictogramElement(pe);
     }
+    
 }

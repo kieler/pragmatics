@@ -17,4 +17,5 @@ Require-Bundle: de.cau.cs.kieler.core,
  org.eclipse.ui.views.properties.tabbed;bundle-version="3.5.0",
  de.cau.cs.kieler.core.ui,
  de.cau.cs.kieler.core.model.graphiti,
- de.cau.cs.kieler.core.model
+ de.cau.cs.kieler.core.model,
+ com.google.guava;bundle-version="8.0.0"
