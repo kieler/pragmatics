@@ -223,7 +223,7 @@ public final class ExampleManager {
                 }
                 project.open(progressMonitor);
             } catch (CoreException e) {
-                // TODO think about error handling
+                // should not happen :-)
             }
         }
     }

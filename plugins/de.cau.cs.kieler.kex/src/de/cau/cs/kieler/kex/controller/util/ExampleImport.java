@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -81,13 +82,11 @@ public final class ExampleImport {
             for (Example example : selectedExamples) {
 
                 List<ExampleResource> resources = example.getResources();
-
                 String rootDirectory = example.getRootDir();
                 int exampleBeginIndex = 0;
                 if (rootDirectory != null && rootDirectory.length() > 1) {
                     exampleBeginIndex = rootDirectory.length();
                 }
-
                 handleResources(directOpens, resources, destFolder.toString(),
                         example.getNamespaceId(), exampleBeginIndex, checkDuplicate,
                         finishedResources);
@@ -110,12 +109,12 @@ public final class ExampleImport {
             final String nameSpaceId, final int exampleBeginIndex, final boolean checkDuplicate,
             final List<String> finishedResources) {
         Bundle bundle = Platform.getBundle(nameSpaceId);
+        String newDestFolder = new Path(destFolder).toPortableString();
 
         for (ExampleResource resource : resources) {
             try {
                 String localPath = resource.getLocalPath();
                 String destPath = localPath.substring(exampleBeginIndex);
-                String newDestFolder = destFolder;
                 switch (resource.getResourceType()) {
                 case PROJECT:
                     checkDuplicate(destPath);

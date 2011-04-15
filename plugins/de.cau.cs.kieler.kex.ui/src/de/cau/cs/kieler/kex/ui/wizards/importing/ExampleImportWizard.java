@@ -125,6 +125,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
             final List<String> directOpens = ExampleManager.get().importExamples(
                     destinationLocation, checkedExamples, checkDuplicate);
 
+            this.getShell().setVisible(false);
             // refresh workspace
             IContainer element = ResourcesPlugin.getWorkspace().getRoot();
             try {
@@ -177,6 +178,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
                 IStatus status = new Status(IStatus.WARNING, KEXUIPlugin.PLUGIN_ID, ERROR_TITLE, e);
                 StatusManager.getManager().handle(status, StatusManager.SHOW);
             }
+            this.getShell().setVisible(true);
             return false;
         }
         return true;
