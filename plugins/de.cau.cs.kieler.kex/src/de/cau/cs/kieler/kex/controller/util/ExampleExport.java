@@ -82,7 +82,8 @@ public final class ExampleExport {
         validateElement(exportedResources, 1, "Exported Resources");
 
         // first example duplicate check
-        ExampleExport.checkDuplicate((String) map.get(ExampleElement.ID), collectors);
+        // TODO duplicate check should
+        // ExampleExport.checkDuplicate((String) map.get(ExampleElement.ID), collectors);
 
     }
 
@@ -127,19 +128,18 @@ public final class ExampleExport {
      * checks the collectors for given exampleTitle. If exists, a {@link RuntimeException} will
      * thrown.
      * 
-     * @param exampleTitle
-     *            , String
+     * @param id
+     *            , String general containing of categoryid and the example title.
      * @param collectors
      *            , {@link ExampleCollector}...
      * 
      */
-    public static void checkDuplicate(final String exampleTitle,
-            final ExampleCollector... collectors) {
-        if (exampleTitle == null) {
+    public static void checkDuplicate(final String id, final ExampleCollector... collectors) {
+        if (id == null) {
             throw new RuntimeException("Title of an example could not be null.");
         }
         for (ExampleCollector collector : collectors) {
-            if (collector.getExamplePool().containsKey(exampleTitle)) {
+            if (collector.getExamplePool().containsKey(id)) {
                 throw new RuntimeException("Duplicate example title. Please choose an other one!");
             }
         }

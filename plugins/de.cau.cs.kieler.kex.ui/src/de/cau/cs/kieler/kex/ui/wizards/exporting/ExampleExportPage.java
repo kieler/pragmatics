@@ -27,7 +27,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -77,7 +76,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
     private static final String WORKSPACE_DIR = ResourcesPlugin.getWorkspace().getRoot()
             .getLocation().toOSString();
 
-    private Button revertTree;
+    private Button revertTreeButton;
 
     /**
      * contstructor for {@link ExampleExportPage}.
@@ -256,7 +255,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
                     private Combo parentCatCombo;
 
                     @Override
-                    protected Control createDialogArea(Composite parent) {
+                    protected Control createDialogArea(final Composite parent) {
                         // Control createDialogArea = super.createDialogArea(parent);
                         Composite composite = new Composite(parent, SWT.BORDER);
                         GridLayout layout = new GridLayout();
@@ -273,7 +272,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
                         idText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
                         idText.addModifyListener(new ModifyListener() {
 
-                            public void modifyText(ModifyEvent e) {
+                            public void modifyText(final ModifyEvent e) {
                                 // TODO validate
                                 // id should be substringed with points at breaks.
                                 // all signs should be small
@@ -364,16 +363,16 @@ public class ExampleExportPage extends WizardResourceImportPage {
             }
         });
 
-        revertTree = new Button(buttonCompo, SWT.NONE);
-        revertTree.setText("Revert");
-        revertTree.setEnabled(false);
-        revertTree.addSelectionListener(new SelectionAdapter() {
+        revertTreeButton = new Button(buttonCompo, SWT.NONE);
+        revertTreeButton.setText("Revert");
+        revertTreeButton.setEnabled(false);
+        revertTreeButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 categoryTree.removeAll();
                 fillTree(categoryTree);
                 creatableCategories.clear();
-                revertTree.setEnabled(false);
+                revertTreeButton.setEnabled(false);
                 super.widgetSelected(e);
             }
         });
@@ -411,7 +410,6 @@ public class ExampleExportPage extends WizardResourceImportPage {
                             break;
                         }
                     }
-
                     if (removeCount == -1) {
                         checkedCategories.add(category);
                     } else {
@@ -420,15 +418,11 @@ public class ExampleExportPage extends WizardResourceImportPage {
                 }
             }
         });
-        categoryTree.addSelectionListener(new SelectionListener() {
-
+        categoryTree.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(final SelectionEvent e) {
-                revertTree.setEnabled(checkedCategories.size() > 0
+                revertTreeButton.setEnabled(checkedCategories.size() > 0
                         || creatableCategories.size() > 0);
-            }
-
-            public void widgetDefaultSelected(final SelectionEvent e) {
-                widgetSelected(e);
             }
         });
         fillTree(categoryTree);
@@ -457,9 +451,10 @@ public class ExampleExportPage extends WizardResourceImportPage {
         // enable drawing
         tree.setRedraw(true);
         // subcategories.
-        if (notPlacedCategories.size() > 0)
+        if (notPlacedCategories.size() > 0) {
             addCategory(Arrays.asList(tree.getItems()), tree.getItemCount(), notPlacedCategories,
                     categories);
+        }
     }
 
     private void addCategory(final List<TreeItem> items, int itemCount,
@@ -518,8 +513,8 @@ public class ExampleExportPage extends WizardResourceImportPage {
         return SourceType.KIELER;
     }
 
-    private void addNewCategory(String id, String title, String desc, String iconPath,
-            String parentId) {
+    private void addNewCategory(final String id, final String title, final String desc,
+            final String iconPath, final String parentId) {
         creatableCategories.add(new Category(id, title, desc, iconPath, parentId));
     }
 

@@ -170,6 +170,7 @@ public final class ExampleManager {
      */
     public void export(final Map<ExampleElement, Object> properties) {
 
+        // @deprecated this should do the ui part in the wizard directly
         ExampleExport.validate(properties, this.extensionCollector, this.databaseCollector);
 
         if (SourceType.KIELER.equals(properties.get(ExampleElement.SOURCETYPE))) {
