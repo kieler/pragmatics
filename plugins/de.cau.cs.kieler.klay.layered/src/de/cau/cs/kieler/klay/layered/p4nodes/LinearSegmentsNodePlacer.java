@@ -64,6 +64,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
  * @author cds
  */
 public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
+    
     /**
      * A linear segment contains a single regular node or all dummy nodes of a long edge.
      * 
@@ -252,6 +253,10 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         this.linearSegments = null;
         getMonitor().done();
     }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Linear Segments Creation
 
     /**
      * @return the linear segments
@@ -543,6 +548,10 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         
         return true;
     }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Unbalanced Placement
 
     /**
      * Creates an unbalanced placement for the sorted linear segments.
@@ -625,6 +634,10 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             }
         }
     }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Balanced Placement
 
     /**
      * Balance the initial placement by force-based movement of regions.
@@ -857,6 +870,10 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         
         return ready;
     }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Debug Output
     
     /**
      * Writes a debug graph for the given linear segments and their dependencies.
