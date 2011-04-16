@@ -16,12 +16,10 @@ package de.cau.cs.kieler.keg.importer.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -29,6 +27,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.keg.importer.KEGImporterPlugin;
+import de.cau.cs.kieler.keg.importer.Messages;
 import de.cau.cs.kieler.keg.importer.wizards.ImportGraphWizard;
 
 /**
@@ -38,15 +37,6 @@ import de.cau.cs.kieler.keg.importer.wizards.ImportGraphWizard;
  */
 public class ImportHandler extends AbstractHandler {
 
-    /** the message for telling the user that the input couldn't be determined. */
-    private static final String MESSAGE_NO_INPUT =
-            "Failed to import graph. Could not determine input file.";
-    /**
-     * the message for telling the user that the no file was selected when invoking this handler.
-     */
-    private static final String MESSAGE_NO_FILE_SELECTED = "Failed to import graph. "
-            + "Could not determine input file. No file selected.";
-
     /**
      * {@inheritDoc}
      */
@@ -55,13 +45,12 @@ public class ImportHandler extends AbstractHandler {
         Shell shell = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
         Status myStatus = null;
         try {
-            // get input model from currently selected file in package explorer
+            // get input models from currently selected files in package explorer
             ISelection selection =
                     PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService()
                             .getSelection();
-            IFile file = (IFile) ((TreeSelection) selection).getFirstElement();
             // open the wizard
-            ImportGraphWizard wizard = new ImportGraphWizard(file.getFullPath().toOSString());
+            ImportGraphWizard wizard = new ImportGraphWizard();
             wizard.init(PlatformUI.getWorkbench(), (IStructuredSelection) selection);
             WizardDialog dialog = new WizardDialog(shell, wizard);
             dialog.create();
@@ -69,13 +58,13 @@ public class ImportHandler extends AbstractHandler {
         } catch (NullPointerException exception) {
             exception.printStackTrace();
             myStatus =
-                    new Status(IStatus.ERROR, KEGImporterPlugin.PLUGIN_ID, MESSAGE_NO_INPUT,
-                            exception);
+                    new Status(IStatus.ERROR, KEGImporterPlugin.PLUGIN_ID,
+                            Messages.ImportHandler_import_failed_error, exception);
         } catch (ClassCastException exception) {
             exception.printStackTrace();
             myStatus =
                     new Status(IStatus.WARNING, KEGImporterPlugin.PLUGIN_ID,
-                            MESSAGE_NO_FILE_SELECTED, exception);
+                            Messages.ImportHandler_no_input_error, exception);
         } finally {
             if (myStatus != null) {
                 StatusManager.getManager().handle(myStatus,

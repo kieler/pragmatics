@@ -14,12 +14,13 @@
 package de.cau.cs.kieler.keg.importer;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.eclipse.core.runtime.IPath;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.model.m2m.TransformException;
-import de.cau.cs.kieler.core.properties.MapPropertyHolder;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.keg.Node;
 
 /**
@@ -30,47 +31,42 @@ import de.cau.cs.kieler.keg.Node;
 public interface IImporter {
 
     /**
-     * Performs the actual KEG import using the given options and retrieving the
-     * source from the stream.
+     * Performs the actual KEG import using the given options and retrieving the source from the
+     * stream.
      * 
-     * @param path
-     *            the file path
-     * @param isWorkspacePath
-     *            true if the file path is relative to the workspace
+     * @param inputStream
+     *            the input stream
      * @param options
      *            the import options
      * @param monitor
      *            the progress monitor
      * @return the KEG graph
-     * @throws TransformException if the transformation fails for some reason
-     * @throws IOException if reading from the input stream fails for some reason
+     * @throws TransformException
+     *             if the transformation fails for some reason
+     * @throws IOException
+     *             if reading from the input stream fails for some reason
      */
-    Node doImport(final String path, final boolean isWorkspacePath,
-            final MapPropertyHolder options, final IKielerProgressMonitor monitor)
-            throws IOException, TransformException;
+    Node doImport(final InputStream inputStream, final IPropertyHolder options,
+            final IKielerProgressMonitor monitor) throws IOException, TransformException;
 
     /**
-     * Performs a post processing on the created KEG model instance file using
-     * the given options.
+     * Performs a post processing on the created KEG model instance file using the given options.
      * 
      * @param modelPath
      *            the model file path
      * @param options
      *            the options
      */
-    void doModelPostProcess(final IPath modelPath,
-            final MapPropertyHolder options);
+    void doModelPostProcess(final IPath modelPath, final IPropertyHolder options);
 
     /**
-     * Performs a post process on the created KEG diagram file using the given
-     * options; is only called when a diagram file is created automatically in
-     * the import process.
+     * Performs a post process on the created KEG diagram file using the given options; is only
+     * called when a diagram file is created automatically in the import process.
      * 
      * @param diagramPath
      *            the diagram file path
      * @param options
      *            the options
      */
-    void doDiagramPostProcess(final IPath diagramPath,
-            final MapPropertyHolder options);
+    void doDiagramPostProcess(final IPath diagramPath, final IPropertyHolder options);
 }

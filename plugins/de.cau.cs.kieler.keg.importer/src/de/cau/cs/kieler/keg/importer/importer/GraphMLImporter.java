@@ -14,12 +14,13 @@
 package de.cau.cs.kieler.keg.importer.importer;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.graphdrawing.graphml.util.GraphMLResourceFactoryImpl;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.model.m2m.TransformException;
-import de.cau.cs.kieler.core.properties.MapPropertyHolder;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.keg.Node;
 import de.cau.cs.kieler.keg.importer.AbstractImporter;
 import de.cau.cs.kieler.keg.importer.ImportUtil;
@@ -32,19 +33,18 @@ import de.cau.cs.kieler.keg.importer.ImportUtil;
 public class GraphMLImporter extends AbstractImporter {
 
     /** the supported file extensions. */
-    private static final String[] SUPPORTED_FILE_EXTENSIONS = { "graphml" };
+    private static final String[] SUPPORTED_FILE_EXTENSIONS = { "graphml" }; //$NON-NLS-1$
     /** the xtend transformation file. */
-    private static final String XTEND_TRANSFORMATION_FILE =
-            "graphml2keg.ext";
+    private static final String XTEND_TRANSFORMATION_FILE = "graphml2keg.ext"; //$NON-NLS-1$
     /** the xtend extension which is performing the transformation. */
-    private static final String XTEND_TRANSFORMATION = "transform";
-    
+    private static final String XTEND_TRANSFORMATION = "transform"; //$NON-NLS-1$
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String getName() {
-        return "GraphML";
+        return Messages.GraphMLImporter_graphml_name;
     }
 
     /**
@@ -66,14 +66,13 @@ public class GraphMLImporter extends AbstractImporter {
     /**
      * {@inheritDoc}
      */
-    public Node doImport(final String path, final boolean isWorkspacePath,
-            final MapPropertyHolder options, final IKielerProgressMonitor monitor)
-            throws IOException, TransformException {
+    public Node doImport(final InputStream inputStream, final IPropertyHolder options,
+            final IKielerProgressMonitor monitor) throws IOException, TransformException {
         Node node = null;
-        node = ImportUtil.transformModel2KEGGraph(
-                    XTEND_TRANSFORMATION_FILE, XTEND_TRANSFORMATION,
-                    null, path, isWorkspacePath, new GraphMLResourceFactoryImpl(),
-                    monitor, "org.graphdrawing.graphml.GraphMLPackage");
+        node =
+                ImportUtil.transformModel2KEGGraph(XTEND_TRANSFORMATION_FILE, XTEND_TRANSFORMATION,
+                        null, inputStream, new GraphMLResourceFactoryImpl(), monitor,
+                        "org.graphdrawing.graphml.GraphMLPackage"); //$NON-NLS-1$
         return node;
     }
 }

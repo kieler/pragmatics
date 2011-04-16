@@ -18,7 +18,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 
-import de.cau.cs.kieler.core.properties.MapPropertyHolder;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
 
 /**
  * The base class for a KEG importer.
@@ -27,13 +27,8 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
  */
 public abstract class AbstractImporter implements IImporter {
 
-    /** the message for a failed import. */
-    protected static final String ERROR_MESSAGE_IMPORT_FAILED =
-            "The import failed.";
-
     /** the available options. */
-    private List<ImporterOption<?>> options =
-            new LinkedList<ImporterOption<?>>();
+    private List<ImporterOption<?>> options = new LinkedList<ImporterOption<?>>();
 
     /**
      * Returns the name of the file format the exporter is exporting to.
@@ -66,8 +61,8 @@ public abstract class AbstractImporter implements IImporter {
     }
 
     /**
-     * Adds an option to the importer. This option with the chosen values can be
-     * received from the configuration that is passed to the import method.
+     * Adds an option to the importer. This option with the chosen values can be received from the
+     * configuration that is passed to the import method.
      * 
      * @param <T>
      *            the option value type
@@ -89,14 +84,12 @@ public abstract class AbstractImporter implements IImporter {
     /**
      * {@inheritDoc}
      */
-    public void doModelPostProcess(final IPath modelPath,
-            final MapPropertyHolder theOptions) {
+    public void doModelPostProcess(final IPath modelPath, final IPropertyHolder theOptions) {
     }
 
     /**
      * {@inheritDoc}
      */
-    public void doDiagramPostProcess(final IPath diagramPath,
-            final MapPropertyHolder theOptions) {
+    public void doDiagramPostProcess(final IPath diagramPath, final IPropertyHolder theOptions) {
     }
 }

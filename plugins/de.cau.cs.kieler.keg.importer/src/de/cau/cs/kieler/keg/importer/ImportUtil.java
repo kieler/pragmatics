@@ -13,20 +13,14 @@
  */
 package de.cau.cs.kieler.keg.importer;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.URIConverter;
-import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -43,11 +37,8 @@ import de.cau.cs.kieler.keg.Node;
  */
 public final class ImportUtil {
 
-    /** the error message for a wrong xtend transformation result. */
-    private static final String ERROR_MESSAGE_WRONG_XTEND_RESULT =
-            "The xtend transformation returned a result that wasn't of type 'Node'.";
     /** a dummy file extension. */
-    private static final String FILE_EXT_DUMMY = "dummyext";
+    private static final String FILE_EXT_DUMMY = "dummyext"; //$NON-NLS-1$
 
     /**
      * A private constructor to make the class not instantiable.
@@ -57,113 +48,20 @@ public final class ImportUtil {
     }
 
     /**
-     * Creates an input stream to a file that is located in the workspace or in
-     * the file system.
-     * 
-     * @param path
-     *            the file path
-     * @param isWorkspacePath
-     *            true if the file path is relative to the workspace
-     * @return the input stream
-     * @throws IOException
-     *             thrown when the stream could not be opened
-     */
-    public static InputStream createInputStream(final String path,
-            final boolean isWorkspacePath) throws IOException {
-        if (isWorkspacePath) {
-            // workspace path
-            IPath filePath = new Path(path);
-            URI fileURI =
-                    URI.createPlatformResourceURI(filePath.toOSString(), true);
-            URIConverter uriConverter = new ExtensibleURIConverterImpl();
-            InputStream inputStream = uriConverter.createInputStream(fileURI);
-            return inputStream;
-        } else {
-            // file system path
-            File file = new File(path);
-            FileInputStream inputStream = new FileInputStream(file);
-            return inputStream;
-        }
-    }
-
-    private static final int MONITOR_TRANSFORMATION_WORK = 3;
-    
-    /**
-     * Transforms a model to a KEG graph using a given Xtend transformation
-     * file. The model instance is read from a file given its path.
+     * Transforms a model to a KEG graph using a given Xtend transformation file. The model instance
+     * is read from an input stream.
      * 
      * @param xtendFile
      *            the xtend file containing the transformation
      * @param extension
-     *            the name of the extension that starts the transformation
-     *            inside the xtend file
+     *            the name of the extension that starts the transformation inside the xtend file
      * @param parameters
-     *            a list of additional parameters for the transformation or null
-     *            if no additional parameters are required
-     * @param path
-     *            the file path
-     * @param isWorkspacePath
-     *            true if the file path is relative to the workspace
-     * @param resourceFactory
-     *            the resource factory used to read the model or null for the
-     *            standard factory
-     * @param monitor
-     *            the progress monitor
-     * @param involvedMetamodels
-     *            the metamodels involved in the transformation
-     * @return the parent node of the KEG graph
-     * @throws IOException
-     *             thrown when the the xtend file could not be found or opened
-     * @throws TransformException
-     *             thrown when the execution of the xtend transformation failed
-     */
-    public static Node transformModel2KEGGraph(final String xtendFile,
-            final String extension, final List<Object> parameters,
-            final String path,
-            final boolean isWorkspacePath,
-            final Resource.Factory resourceFactory,
-            final IKielerProgressMonitor monitor,
-            final String... involvedMetamodels) throws IOException,
-            TransformException {
-        monitor.begin("KEG Model2Model transformation",
-                MONITOR_TRANSFORMATION_WORK);
-
-        // read the model
-        ResourceSet resourceSet = new ResourceSetImpl();
-        IPath filePath = new Path(path);
-        URI fileURI = isWorkspacePath 
-                    ? URI.createPlatformResourceURI(filePath.toOSString(), true)
-                    : URI.createFileURI(path);
-        if (resourceFactory != null && fileURI.fileExtension() == null) {
-            resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
-                    .put(null, resourceFactory);
-        }
-        Resource resource = resourceSet.createResource(fileURI);
-        // Map<String, Object> options = new HashMap<String, Object>();
-        // options.put(XMLResource.OPTION_ENCODING, "UTF-8");
-        // read from the stream
-        resource.load(null);
-        return transformModel2KEGGraph(xtendFile, extension, parameters, resource, monitor,
-                involvedMetamodels);
-    }
-
-    /**
-     * Transforms a model to a KEG graph using a given Xtend transformation
-     * file. The model instance is read from an input stream.
-     * 
-     * @param xtendFile
-     *            the xtend file containing the transformation
-     * @param extension
-     *            the name of the extension that starts the transformation
-     *            inside the xtend file
-     * @param parameters
-     *            a list of additional parameters for the transformation or null
-     *            if no additional parameters are required
+     *            a list of additional parameters for the transformation or null if no additional
+     *            parameters are required
      * @param inputStream
      *            the input stream the source model instance is read from
      * @param resourceFactory
-     *            the resource factory used to read the model or null for the
-     *            standard factory
+     *            the resource factory used to read the model or null for the standard factory
      * @param monitor
      *            the progress monitor
      * @param involvedMetamodels
@@ -174,16 +72,10 @@ public final class ImportUtil {
      * @throws TransformException
      *             thrown when the execution of the xtend transformation failed
      */
-    public static Node transformModel2KEGGraph(final String xtendFile,
-            final String extension, final List<Object> parameters,
-            final InputStream inputStream,
-            final Resource.Factory resourceFactory,
-            final IKielerProgressMonitor monitor,
-            final String... involvedMetamodels) throws IOException,
-            TransformException {
-        monitor.begin("KEG Model2Model transformation",
-                MONITOR_TRANSFORMATION_WORK);
-
+    public static Node transformModel2KEGGraph(final String xtendFile, final String extension,
+            final List<Object> parameters, final InputStream inputStream,
+            final Resource.Factory resourceFactory, final IKielerProgressMonitor monitor,
+            final String... involvedMetamodels) throws IOException, TransformException {
         // read the model
         ResourceSet resourceSet = new ResourceSetImpl();
         if (resourceFactory != null) {
@@ -191,8 +83,7 @@ public final class ImportUtil {
                     .put(FILE_EXT_DUMMY, resourceFactory);
         }
         Resource resource =
-                resourceSet.createResource(URI.createURI("http:///My."
-                        + FILE_EXT_DUMMY));
+                resourceSet.createResource(URI.createURI("http:///My." + FILE_EXT_DUMMY)); //$NON-NLS-1$
         // Map<String, Object> options = new HashMap<String, Object>();
         // options.put(XMLResource.OPTION_ENCODING, "UTF-8");
         // read from the stream
@@ -202,18 +93,18 @@ public final class ImportUtil {
     }
     
     /**
-     * Transforms a model to a KEG graph using a given Xtend transformation
-     * file. The model instance is read from a resource.
+     * Transforms a model to a KEG graph using a given Xtend transformation file. The model instance
+     * is read from a resource.
      * 
      * @param xtendFile
      *            the xtend file containing the transformation
      * @param extension
-     *            the name of the extension that starts the transformation
-     *            inside the xtend file
+     *            the name of the extension that starts the transformation inside the xtend file
      * @param parameters
-     *            a list of additional parameters for the transformation or null
-     *            if no additional parameters are required
-     * @param resource the resource from which to read the model
+     *            a list of additional parameters for the transformation or null if no additional
+     *            parameters are required
+     * @param resource
+     *            the resource from which to read the model
      * @param monitor
      *            the progress monitor
      * @param involvedMetamodels
@@ -224,19 +115,12 @@ public final class ImportUtil {
      * @throws TransformException
      *             thrown when the execution of the xtend transformation failed
      */
-    public static Node transformModel2KEGGraph(final String xtendFile,
-            final String extension, final List<Object> parameters,
-            final Resource resource,
-            final IKielerProgressMonitor monitor,
-            final String... involvedMetamodels) throws IOException,
-            TransformException {
+    public static Node transformModel2KEGGraph(final String xtendFile, final String extension,
+            final List<Object> parameters, final Resource resource,
+            final IKielerProgressMonitor monitor, final String... involvedMetamodels)
+            throws IOException, TransformException {
+        monitor.begin(Messages.ImportUtil_m2m_task, 1);
         EObject model = resource.getContents().get(0);
-        monitor.worked(1);
-        // find the xtend file
-        //Bundle bundle = KEGImporterPlugin.getDefault().getBundle();
-        //IPath path = new Path(xtendFile);
-        //URL url = FileLocator.find(bundle, path, null);
-        //String xtendFilePath = FileLocator.resolve(url).getFile();
         // initialize the xtend framework
         Object[] params = null;
         if (parameters != null && parameters.size() > 0) {
@@ -253,22 +137,16 @@ public final class ImportUtil {
         }
         // assemble the list of required metamodels
         String[] metamodels = new String[involvedMetamodels.length + 1];
-        metamodels[0] = "de.cau.cs.kieler.keg.KEGPackage";
+        metamodels[0] = "de.cau.cs.kieler.keg.KEGPackage"; //$NON-NLS-1$
         int i = 1;
         for (String metamodel : involvedMetamodels) {
-            metamodels[i++] = metamodel; 
+            metamodels[i++] = metamodel;
         }
         // initialize the transformation
-        ITransformationContext transformationContext = new XtendTransformationContext(
-                xtendFile,
-                metamodels,
-                null,
-                null
-        );
-        TransformationDescriptor transformationDescriptor = new TransformationDescriptor(
-                extension,
-                params
-        );
+        ITransformationContext transformationContext =
+                new XtendTransformationContext(xtendFile, metamodels, null, null);
+        TransformationDescriptor transformationDescriptor =
+                new TransformationDescriptor(extension, params);
         // execute the transformation
         transformationContext.execute(transformationDescriptor);
         Object resultModel = transformationDescriptor.getResult();
@@ -277,10 +155,10 @@ public final class ImportUtil {
         if (resultModel instanceof Node) {
             node = (Node) resultModel;
         } else {
-            throw new RuntimeException(ERROR_MESSAGE_WRONG_XTEND_RESULT);
+            throw new RuntimeException(Messages.ImportUtil_no_node_error);
         }
         monitor.done();
         return node;
     }
-    
+
 }

@@ -13,16 +13,27 @@
  */
 package de.cau.cs.kieler.keg.importer.wizards;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -34,28 +45,35 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.gmf.runtime.diagram.core.services.ViewService;
 import org.eclipse.gmf.runtime.notation.Diagram;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.properties.MapPropertyHolder;
+import de.cau.cs.kieler.core.model.m2m.TransformException;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.keg.Node;
 import de.cau.cs.kieler.keg.diagram.edit.parts.NodeEditPart;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorUtil;
 import de.cau.cs.kieler.keg.importer.AbstractImporter;
+import de.cau.cs.kieler.keg.importer.IImporter;
 import de.cau.cs.kieler.keg.importer.ImportManager;
-import de.cau.cs.kieler.keg.importer.ImportUtil;
 import de.cau.cs.kieler.keg.importer.KEGImporterPlugin;
 
 /**
@@ -65,108 +83,233 @@ import de.cau.cs.kieler.keg.importer.KEGImporterPlugin;
  */
 public class ImportGraphWizard extends Wizard implements IImportWizard {
 
-    // /** the message for telling the user that the specified file was not
-    // valid. */
-    // private static final String MESSAGE_INVALID_FILE =
-    // "The specified file isn't a valid graph file.";
+    /** the page from which to select the import source (file system or workspace). */
+    private ImportGraphSourcesPage sourcesPage;
+    /** the page from which to select the workspace source files and the target folder. */
+    private ImportGraphWorkspaceSourcesPage workspaceSourcesPage;
+    /** the page from which to select the file system source files and the target folder. */
+    private ImportGraphFileSystemSourcesPage fileSystemSourcesPage;
+    /** the page from which to select the import graph type and options. */
+    private ImportGraphOptionsPage optionsPage;
 
     /** the selection the import wizard was called on. */
     private IStructuredSelection selection;
-    /** the wizard page from which to select the import file. */
-    private ImportGraphWizardPage importPage;
-    /** the wizard page from which to select the new file. */
-    private ImportGraphNewFilePage newFilePage;
-    /** the preselected workspace file. */
-    private String workspaceFile = null;
 
     /**
      * Constructs a graph import wizard.
      */
     public ImportGraphWizard() {
         super();
-        setWindowTitle("Import");
-    }
-
-    /**
-     * Constructs a graph import wizard with a preselected workspace file.
-     * 
-     * @param theWorkspaceFile
-     *            the workspace file
-     */
-    public ImportGraphWizard(final String theWorkspaceFile) {
-        super();
-        setWindowTitle("Import");
-        workspaceFile = theWorkspaceFile;
+        setWindowTitle(Messages.ImportGraphWizard_title);
+        setDialogSettings(KEGImporterPlugin.getDefault().getDialogSettings());
+        setNeedsProgressMonitor(true);
     }
 
     /**
      * {@inheritDoc}
      */
     public void addPages() {
-        importPage = new ImportGraphWizardPage(workspaceFile);
-        newFilePage = new ImportGraphNewFilePage(selection, importPage);
-        addPage(importPage);
-        addPage(newFilePage);
+        sourcesPage = new ImportGraphSourcesPage();
+        workspaceSourcesPage = new ImportGraphWorkspaceSourcesPage(selection);
+        fileSystemSourcesPage = new ImportGraphFileSystemSourcesPage(selection);
+        optionsPage = new ImportGraphOptionsPage();
+        addPage(sourcesPage);
+        addPage(workspaceSourcesPage);
+        addPage(fileSystemSourcesPage);
+        addPage(optionsPage);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
+    public IWizardPage getNextPage(final IWizardPage page) {
+        if (page == sourcesPage) {
+            if (sourcesPage.getImportFromWorkspace()) {
+                return workspaceSourcesPage;
+            } else {
+                return fileSystemSourcesPage;
+            }
+        }
+        if (page == workspaceSourcesPage || page == fileSystemSourcesPage) {
+            return optionsPage;
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean canFinish() {
+        if (!optionsPage.isPageComplete()) {
+            return false;
+        }
+        if (sourcesPage.getImportFromWorkspace()) {
+            return workspaceSourcesPage.isPageComplete();
+        } else {
+            return fileSystemSourcesPage.isPageComplete();
+        }
+    }
+
+    private List<IStatus> statuses;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean performFinish() {
-        importPage.savePreferences();
+        workspaceSourcesPage.saveDialogSettings();
+        fileSystemSourcesPage.saveDialogSettings();
+        optionsPage.savePreferences();
+        // run the generation in the wizard container
+        IRunnableWithProgress runnable = new IRunnableWithProgress() {
+            public void run(final IProgressMonitor monitor) throws InterruptedException,
+                    InvocationTargetException {
+                try {
+                    doFinish(new KielerProgressMonitor(monitor));
+                } catch (InterruptedException e) {
+                    throw e;
+                } catch (Throwable e) {
+                    throw new InvocationTargetException(e);
+                }
+            }
+        };
         try {
-            // get the selected configuration
-            AbstractImporter importer = importPage.getImporter();
-            String filePath = importPage.getImportFile();
-            boolean isWorkspacePath = importPage.isImportWorkspacePath();
-            MapPropertyHolder options = importPage.getOptions();
-            // perform the import
-            IKielerProgressMonitor monitor = new KielerProgressMonitor(new NullProgressMonitor());
-            Node graph = importer.doImport(filePath, isWorkspacePath, options, monitor);
-            // serialize KEG graph
-            serializeKEGGraph(graph);
-            // post process the model file
-            importer.doModelPostProcess(newFilePage.createNewFile().getFullPath(), options);
-            // create diagram file
-            IPath diagramFile =
-                    newFilePage.createNewFile().getFullPath().removeFileExtension()
-                            .addFileExtension("kegdi");
-            createKEGDiagram(newFilePage.createNewFile().getFullPath(), diagramFile);
-            // post process the diagram file
-            options.setProperty(ImportManager.OPTION_OPEN_DIAGRAM, true);
-            importer.doDiagramPostProcess(diagramFile, options);
-        } catch (Throwable throwable) {
+            getContainer().run(true, true, runnable);
+        } catch (InterruptedException exception) {
+            return false;
+        } catch (InvocationTargetException exception) {
             IStatus status =
                     new Status(IStatus.ERROR, KEGImporterPlugin.PLUGIN_ID,
-                            "Failed importing model file.", throwable);
-            StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.BLOCK);
+                            Messages.ImportGraphWizard_import_failed_error, exception.getCause());
+            StatusManager.getManager().handle(status, StatusManager.BLOCK | StatusManager.SHOW);
         }
-
+        // show any errors which occured during import
+        if (statuses.size() > 0) {
+            MultiStatus multiStatus =
+                    new MultiStatus(KEGImporterPlugin.PLUGIN_ID, IStatus.WARNING,
+                            statuses.toArray(new Status[0]),
+                            Messages.ImportGraphWizard_errors_occured_error, null);
+            StatusManager.getManager()
+                    .handle(multiStatus, StatusManager.BLOCK | StatusManager.SHOW);
+        }
         return true;
     }
 
-    private void serializeKEGGraph(final Node graph) throws IOException {
-        IFile file = newFilePage.createNewFile();
-        URI fileURI = URI.createPlatformResourceURI(file.getFullPath().toOSString(), true);
+    private void doFinish(final IKielerProgressMonitor monitor) throws InterruptedException,
+            ExecutionException {
+        // collect all statuses
+        statuses = new LinkedList<IStatus>();
+        // get options
+        Pair<AbstractImporter, IPropertyHolder> importerAndOptions = getImporterAndOptions();
+        AbstractImporter importer = importerAndOptions.getFirst();
+        IPropertyHolder options = importerAndOptions.getSecond();
+        if (sourcesPage.getImportFromWorkspace()) {
+            // fetch the files and target folder from the workspace sources page
+            Pair<List<IFile>, IPath> filesAndTarget = getWorkspaceFilesAndTarget();
+            List<IFile> files = filesAndTarget.getFirst();
+            IPath targetPath = filesAndTarget.getSecond();
+            monitor.begin(Messages.ImportGraphWizard_importing_workspace_task, files.size());
+            // try to import all selected files
+            for (IFile file : files) {
+                if (monitor.isCanceled()) {
+                    throw new InterruptedException();
+                }
+                try {
+                    InputStream inputStream = file.getContents(true);
+                    IPath modelFile =
+                            targetPath.append(file.getName()).removeFileExtension()
+                                    .addFileExtension("keg"); //$NON-NLS-1$
+                    importAndSerialize(inputStream, modelFile, importer, options,
+                            monitor.subTask(1));
+                } catch (Throwable throwable) {
+                    IStatus status =
+                            new Status(IStatus.ERROR, KEGImporterPlugin.PLUGIN_ID,
+                                    Messages.ImportGraphWizard_import_failed_workspace_error
+                                            + file.getFullPath(), throwable);
+                    StatusManager.getManager().handle(status, StatusManager.LOG);
+                    statuses.add(status);
+                }
+            }
+        } else {
+            // fetch the files and target folder from the file system sources page
+            Pair<List<File>, IPath> filesAndTarget = getFileSystemFilesAndTarget();
+            List<File> files = filesAndTarget.getFirst();
+            IPath targetPath = filesAndTarget.getSecond();
+            monitor.begin(Messages.ImportGraphWizard_importing_file_system_task, files.size());
+            // try to import all selected files
+            for (File file : files) {
+                if (monitor.isCanceled()) {
+                    throw new InterruptedException();
+                }
+                try {
+                    FileInputStream inputStream = new FileInputStream(file);
+                    // build the KEG model file path
+                    IPath modelFile =
+                            targetPath.append(file.getName()).removeFileExtension()
+                                    .addFileExtension("keg"); //$NON-NLS-1$
+                    // import and serialize the graph
+                    importAndSerialize(inputStream, modelFile, importer, options,
+                            monitor.subTask(1));
+                } catch (Throwable throwable) {
+                    IStatus status =
+                            new Status(IStatus.ERROR, KEGImporterPlugin.PLUGIN_ID,
+                                    Messages.ImportGraphWizard_import_failed_file_system_error
+                                            + file.getPath(), throwable);
+                    StatusManager.getManager().handle(status, StatusManager.LOG);
+                    statuses.add(status);
+                }
+            }
+        }
+    }
+
+    private void importAndSerialize(final InputStream inputStream, final IPath modelPath,
+            final IImporter importer, final IPropertyHolder options,
+            final IKielerProgressMonitor monitor) throws IOException, TransformException,
+            InterruptedException, ExecutionException {
+        // perform the import
+        Node graph = importer.doImport(inputStream, options, monitor);
+        // serialize KEG graph
+        serializeKEGGraph(modelPath, graph);
+        // post process the model file
+        importer.doModelPostProcess(modelPath, options);
+        // create diagram file if selected
+        Pair<Boolean, Boolean> createAndOpenDiagram = getCreateAndOpenDiagram();
+        if (createAndOpenDiagram.getFirst()) {
+            IPath diagramFile = modelPath.removeFileExtension().addFileExtension("kegdi"); //$NON-NLS-1$
+            createKEGDiagram(modelPath, diagramFile);
+            // post process the diagram file
+            options.setProperty(ImportManager.OPTION_OPEN_DIAGRAM, createAndOpenDiagram.getSecond());
+            importer.doDiagramPostProcess(diagramFile, options);
+            // open the diagram in an editor if selected and not already opened by the post process
+            if (createAndOpenDiagram.getSecond()) {
+                openDiagram(diagramFile);
+            }
+        }
+    }
+
+    private void serializeKEGGraph(final IPath modelPath, final Node graph) throws IOException {
+        URI fileURI = URI.createPlatformResourceURI(modelPath.toOSString(), true);
         URIConverter uriConverter = new ExtensibleURIConverterImpl();
         OutputStream outputStream = uriConverter.createOutputStream(fileURI);
         ResourceSet resourceSet = new ResourceSetImpl();
-        Resource resource = resourceSet.createResource(URI.createURI("http:///My.keg"));
+        Resource resource = resourceSet.createResource(URI.createURI("http:///My.keg")); //$NON-NLS-1$
         resource.getContents().add(graph);
         Map<String, Object> resourceOptions = new HashMap<String, Object>();
-        resourceOptions.put(XMLResource.OPTION_ENCODING, "UTF-8");
+        resourceOptions.put(XMLResource.OPTION_ENCODING, "UTF-8"); //$NON-NLS-1$
         resourceOptions.put(XMLResource.OPTION_FORMATTED, true);
         // write to the stream
         resource.save(outputStream, resourceOptions);
         outputStream.close();
     }
 
-    private void createKEGDiagram(final IPath modelFile, final IPath diagramFile)
+    private void createKEGDiagram(final IPath modelPath, final IPath diagramFile)
             throws IOException {
-        closeDiagramEditor(diagramFile);
+        closeDiagram(diagramFile);
         // load the model
         ResourceSet modelResourceSet = new ResourceSetImpl();
-        URI modelFileURI = URI.createPlatformResourceURI(modelFile.toOSString(), true);
+        URI modelFileURI = URI.createPlatformResourceURI(modelPath.toOSString(), true);
         Resource modelResource = modelResourceSet.getResource(modelFileURI, true);
         // create the diagram resource
         ResourceSet diagramResourceSet = new ResourceSetImpl();
@@ -181,7 +324,34 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
         diagramResource.save(GraphsDiagramEditorUtil.getSaveOptions());
     }
 
-    private void closeDiagramEditor(final IPath diagramPath) {
+    private void openDiagram(final IPath diagramPath) {
+        final IFile diagramFile = ResourcesPlugin.getWorkspace().getRoot().getFile(diagramPath);
+        if (diagramFile.exists()) {
+            MonitoredOperation.runInUI(new Runnable() {
+                public void run() {
+                    IWorkbenchPage page =
+                            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    IEditorInput input = new FileEditorInput(diagramFile);
+                    while (page.findEditor(input) == null) {
+                        // open the diagram file in an editor
+                        IEditorDescriptor editorDescriptor = IDE.getDefaultEditor(diagramFile);
+                        if (editorDescriptor == null || editorDescriptor.isOpenExternal()) {
+                            // if no editor to open the diagram is present ignore it
+                            return;
+                        }
+                        try {
+                            IDE.openEditor(page, diagramFile, editorDescriptor.getId(), true);
+                        } catch (PartInitException e) {
+                            // opening the diagram failed but as it is optional it can be safely
+                            // ignored
+                        }
+                    }
+                }
+            }, true);
+        }
+    }
+
+    private void closeDiagram(final IPath diagramPath) {
         final IFile diagramFile = ResourcesPlugin.getWorkspace().getRoot().getFile(diagramPath);
         if (diagramFile.exists()) {
             // close all editors which have the diagram file opened
@@ -199,10 +369,120 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
         }
     }
 
+    private Pair<AbstractImporter, IPropertyHolder> getImporterAndOptions()
+            throws InterruptedException, ExecutionException {
+        return getPairInUi(new Callable<Pair<AbstractImporter, IPropertyHolder>>() {
+            public Pair<AbstractImporter, IPropertyHolder> call() throws Exception {
+                Pair<AbstractImporter, IPropertyHolder> result =
+                        new Pair<AbstractImporter, IPropertyHolder>(optionsPage.getImporter(),
+                                optionsPage.getOptions());
+                return result;
+            }
+        });
+    }
+
+    private Pair<List<IFile>, IPath> getWorkspaceFilesAndTarget() throws InterruptedException,
+            ExecutionException {
+        return getPairInUi(new Callable<Pair<List<IFile>, IPath>>() {
+            public Pair<List<IFile>, IPath> call() throws Exception {
+                Pair<List<IFile>, IPath> result =
+                        new Pair<List<IFile>, IPath>(workspaceSourcesPage.getFiles(null),
+                                workspaceSourcesPage.getTargetContainerPath());
+                return result;
+            }
+        });
+    }
+
+    private Pair<List<File>, IPath> getFileSystemFilesAndTarget() throws InterruptedException,
+            ExecutionException {
+        return getPairInUi(new Callable<Pair<List<File>, IPath>>() {
+            public Pair<List<File>, IPath> call() throws Exception {
+                Pair<List<File>, IPath> result =
+                        new Pair<List<File>, IPath>(fileSystemSourcesPage.getFiles(null),
+                                fileSystemSourcesPage.getTargetContainerPath());
+                return result;
+            }
+        });
+    }
+
+    private Pair<Boolean, Boolean> getCreateAndOpenDiagram() throws InterruptedException,
+            ExecutionException {
+        return getPairInUi(new Callable<Pair<Boolean, Boolean>>() {
+            public Pair<Boolean, Boolean> call() throws Exception {
+                Pair<Boolean, Boolean> result =
+                        new Pair<Boolean, Boolean>(optionsPage.getCreateDiagramFiles(),
+                                optionsPage.getOpenDiagramFiles());
+                return result;
+            }
+        });
+    }
+
+    private <S, T> Pair<S, T> getPairInUi(final Callable<Pair<S, T>> callable)
+            throws InterruptedException, ExecutionException {
+        FutureTask<Pair<S, T>> task = new FutureTask<Pair<S, T>>(callable);
+        MonitoredOperation.runInUI(task, true);
+        return task.get();
+    }
+
     /**
      * {@inheritDoc}
      */
     public void init(final IWorkbench workbench, final IStructuredSelection theselection) {
         selection = theselection;
+    }
+
+    /**
+     * Returns the most common extension among all selected files.
+     * 
+     * @return the extension
+     */
+    public String getCommonSelectedExtension() {
+        // map all extensions on the number of their occurence
+        Map<String, Integer> extensionNumbers = new HashMap<String, Integer>();
+        if (sourcesPage.getImportFromWorkspace()) {
+            for (IResource resource : workspaceSourcesPage.getResources(null)) {
+                String extension = resource.getFileExtension();
+                if (extension != null) {
+                    Integer number = extensionNumbers.get(extension);
+                    if (number == null) {
+                        number = 0;
+                    }
+                    number++;
+                    extensionNumbers.put(extension, number);
+                }
+            }
+        } else {
+            for (File file : fileSystemSourcesPage.getFiles(null)) {
+                String extension = getExtension(file);
+                if (extension != null) {
+                    Integer number = extensionNumbers.get(extension);
+                    if (number == null) {
+                        number = 0;
+                    }
+                    number++;
+                    extensionNumbers.put(extension, number);
+                }
+            }
+        }
+        // find the most common extension among all selected files
+        String topExt = ""; //$NON-NLS-1$
+        int topExtNumber = -1;
+        for (Map.Entry<String, Integer> entry : extensionNumbers.entrySet()) {
+            if (entry.getValue() > topExtNumber) {
+                topExt = entry.getKey();
+                topExtNumber = entry.getValue();
+            }
+        }
+        return topExt;
+    }
+
+    private String getExtension(final File file) {
+        String fileName = file.getName();
+        int dotIndex = fileName.lastIndexOf('.');
+        if (dotIndex == -1 || dotIndex + 1 == fileName.length()) {
+            return null;
+        }
+        String extension = fileName.substring(dotIndex + 1);
+        return extension;
     }
 }

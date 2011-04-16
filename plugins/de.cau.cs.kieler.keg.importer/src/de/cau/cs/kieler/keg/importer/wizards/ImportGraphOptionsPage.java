@@ -13,30 +13,18 @@
  */
 package de.cau.cs.kieler.keg.importer.wizards;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -44,56 +32,36 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.dialogs.ISelectionStatusValidator;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
-import de.cau.cs.kieler.keg.KEGPlugin;
 import de.cau.cs.kieler.keg.importer.AbstractImporter;
 import de.cau.cs.kieler.keg.importer.ImportManager;
 import de.cau.cs.kieler.keg.importer.ImporterOption;
 import de.cau.cs.kieler.keg.importer.KEGImporterPlugin;
 
 /**
- * The wizard page from which to select the graph file and the options to
- * import.
+ * The wizard page from which to select the source graph type and the options for the import.
  * 
  * @author mri
  */
-public class ImportGraphWizardPage extends WizardPage {
+public class ImportGraphOptionsPage extends WizardPage {
 
-    /** the page title. */
-    private static final String TITLE = "Import Graph";
-    /** the message for asking the user to specify a file. */
-    private static final String MESSAGE_SPECIFY_FILE =
-            "Please specify a file to import.";
-    /** the message that is displayed while the input is correct. */
-    private static final String MESSAGE_OK =
-            "Imports a graph from various file formats to a KEG file.";
-    /** the error message for a wrong workspace selection. */
-    private static final String ERROR_NO_FILE_SELECTED = "No file selected.";
-    /** the error message for a not existing file. */
-    private static final String ERROR_NO_SUCH_FILE = "File does not exist.";
-
-    /** the preference key for the file path. */
-    private static final String PREFERENCE_FILE_PATH = "exportDialog.filePath";
-    /** the preference key for the workspace path. */
-    private static final String PREFERENCE_WORKSPACE_PATH =
-            "exportDialog.workspacePath";
     /** the preference key for the selected importer. */
-    private static final String PREFERENCE_IMPORTER = "exportDialog.exporter";
+    private static final String PREFERENCE_IMPORTER = "importWizard.importer"; //$NON-NLS-1$
+    /** the preference key for the create diagrams option. */
+    private static final String PREFERENCE_CREATE_DIAGRAMS = "importWizard.createDiagrams"; //$NON-NLS-1$
+    /** the preference key for the open diagrams option. */
+    private static final String PREFERENCE_OPEN_DIAGRAMS = "importWizard.openDiagrams"; //$NON-NLS-1$
 
     /** the preference store. */
     private IPreferenceStore preferenceStore = null;
-    /** the file selection text. */
-    private Text fileText;
-    /** the workspace path checkbox. */
-    private Button workspacePathCheckbox = null;
+    /** the create diagrams button. */
+    private Button createDiagramsButton;
+    /** the open diagrams button. */
+    private Button openDiagramsButton;
     /** the file format combo. */
     private Combo fileFormatCombo = null;
     /** the import options scrolled composite. */
@@ -104,37 +72,20 @@ public class ImportGraphWizardPage extends WizardPage {
     private Map<AbstractImporter, LinkedList<Control>> optionControls =
             new HashMap<AbstractImporter, LinkedList<Control>>();
     /** the mapping of options on the input elements. */
-    private Map<ImporterOption<?>, Object> optionInputs =
-            new HashMap<ImporterOption<?>, Object>();
+    private Map<ImporterOption<?>, Object> optionInputs = new HashMap<ImporterOption<?>, Object>();
     /** the last selected importer. */
     private AbstractImporter lastImporter = null;
     /** the selected options. */
     private MapPropertyHolder options = null;
-    /** the preselected workspace file. */
-    private String workspaceFile = null;
 
     /**
-     * Constructs the import wizard page.
+     * Constructs the ImportGraphOptionsPage.
      */
-    public ImportGraphWizardPage() {
-        super("importGraphWizardPage");
-        setTitle(TITLE);
-        setDescription(MESSAGE_SPECIFY_FILE);
+    public ImportGraphOptionsPage() {
+        super("importGraphWizardPage"); //$NON-NLS-1$
+        setTitle(Messages.ImportGraphOptionsPage_title);
+        setDescription(Messages.ImportGraphOptionsPage_message);
         preferenceStore = KEGImporterPlugin.getDefault().getPreferenceStore();
-    }
-
-    /**
-     * Constructs the import wizard page with a preselected workspace file.
-     * 
-     * @param theWorkspaceFile
-     *            the workspace file
-     */
-    public ImportGraphWizardPage(final String theWorkspaceFile) {
-        super("importGraphWizardPage");
-        setTitle(TITLE);
-        setDescription(MESSAGE_SPECIFY_FILE);
-        preferenceStore = KEGImporterPlugin.getDefault().getPreferenceStore();
-        workspaceFile = theWorkspaceFile;
     }
 
     /**
@@ -145,113 +96,67 @@ public class ImportGraphWizardPage extends WizardPage {
         Composite composite = new Composite(parent, SWT.NULL);
         GridLayout layout = new GridLayout();
         composite.setLayout(layout);
-        createFileGroup(composite);
-        createImportTypeGroup(composite);
-        createImportOptionsGroup(composite);
+        createImportMetaOptions(composite);
+        createImportType(composite);
+        createImportOptions(composite);
         setControl(composite);
-        validateFileText();
     }
 
-    private static final int FILE_GROUP_COLUMNS = 3;
-    private static final int FILE_TEXT_WIDTH_HINT = 300;
-    private static final int BROWSE_WIDTH_HINT = 150;
-
-    private void createFileGroup(final Composite parent) {
-        Composite composite = createComposite(parent, FILE_GROUP_COLUMNS);
-        // label
-        Label label = new Label(composite, SWT.NONE);
-        label.setText("&File:");
-        // file path text
-        fileText = new Text(composite, SWT.BORDER);
-        // load path from preference store
-        if (workspaceFile == null) {
-            String path = preferenceStore.getString(PREFERENCE_FILE_PATH);
-            fileText.setText(path);
-        } else {
-            fileText.setText(workspaceFile);
-        }
-        fileText.addModifyListener(new ModifyListener() {
-            public void modifyText(final ModifyEvent e) {
-                validateFileText();
-            }
-        });
-        GridData gridData = new GridData(SWT.FILL, SWT.NONE, true, false);
-        gridData.widthHint = FILE_TEXT_WIDTH_HINT;
-        fileText.setLayoutData(gridData);
-        // browse workspace button
-        Button button = new Button(composite, SWT.PUSH);
-        button.setText("&Workspace...");
-        gridData = new GridData(SWT.RIGHT, SWT.NONE, true, false);
-        gridData.widthHint = BROWSE_WIDTH_HINT;
-        button.setLayoutData(gridData);
-        button.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(final SelectionEvent event) {
-                handleWorkspaceBrowse();
-            }
-        });
-        // is workspace path checkbox
-        workspacePathCheckbox = new Button(composite, SWT.CHECK | SWT.LEFT);
-        workspacePathCheckbox.setText("Is a workspace &path");
-        gridData = new GridData(SWT.FILL, SWT.NONE, true, false);
-        gridData.horizontalSpan = 2;
-        workspacePathCheckbox.setLayoutData(gridData);
-        if (workspaceFile == null) {
-            // load option from preference store
-            boolean workspacePath =
-                    preferenceStore.getBoolean(PREFERENCE_WORKSPACE_PATH);
-
-            workspacePathCheckbox.setSelection(workspacePath);
-        } else {
-            workspacePathCheckbox.setSelection(true);
-        }
-        workspacePathCheckbox.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(final SelectionEvent event) {
-                validateFileText();
-            }
-        });
-        // browse file system button
-        button = new Button(composite, SWT.PUSH);
-        button.setText("File &system...");
-        gridData = new GridData(SWT.RIGHT, SWT.NONE, true, false);
-        gridData.widthHint = BROWSE_WIDTH_HINT;
-        button.setLayoutData(gridData);
-        button.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(final SelectionEvent event) {
-                handleFileSystemBrowse();
+    private void createImportMetaOptions(final Composite parent) {
+        Composite composite = createComposite(parent, 1);
+        // open diagrams after import option
+        // add option for creating diagram files for the graphs
+        createDiagramsButton = new Button(composite, SWT.CHECK);
+        createDiagramsButton
+                .setText(Messages.ImportGraphOptionsPage_create_diagrams_message);
+        boolean createDiagrams = preferenceStore.getBoolean(PREFERENCE_CREATE_DIAGRAMS);
+        createDiagramsButton.setSelection(createDiagrams);
+        // add option for creating diagram files for the graphs
+        openDiagramsButton = new Button(composite, SWT.CHECK);
+        openDiagramsButton.setText(Messages.ImportGraphOptionsPage_open_diagrams_message);
+        boolean openDiagrams = preferenceStore.getBoolean(PREFERENCE_OPEN_DIAGRAMS);
+        openDiagramsButton.setSelection(openDiagrams);
+        openDiagramsButton.setEnabled(createDiagrams);
+        createDiagramsButton.addSelectionListener(new SelectionListenerAdapter() {
+            public void widgetSelected(final SelectionEvent e) {
+                if (createDiagramsButton.getSelection()) {
+                    openDiagramsButton.setEnabled(true);
+                } else {
+                    openDiagramsButton.setSelection(false);
+                    openDiagramsButton.setEnabled(false);
+                }
             }
         });
     }
 
     private static final int EXPORT_TYPE_COMBO_WIDTH_HINT = 210;
 
-    private void createImportTypeGroup(final Composite parent) {
+    private void createImportType(final Composite parent) {
         Composite composite = createComposite(parent, 2);
         // label
         Label label = new Label(composite, SWT.NONE);
-        label.setText("File F&ormat:");
+        label.setText(Messages.ImportGraphOptionsPage_file_format_caption);
         fileFormatCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
         String[] importerNames = ImportManager.getInstance().getImporterNames();
         if (importerNames.length > 0) {
             fileFormatCombo.setItems(importerNames);
-            if (workspaceFile == null) {
+            if (!findImporter()) {
                 // load exporter from preference store
-                String importer =
-                        preferenceStore.getString(PREFERENCE_IMPORTER);
+                String importer = preferenceStore.getString(PREFERENCE_IMPORTER);
                 if (ImportManager.getInstance().getImporterByName(importer) != null) {
                     fileFormatCombo.setText(importer);
                 } else {
                     fileFormatCombo.setText(importerNames[0]);
                 }
-            } else {
-                findImporter(false);
             }
         } else {
             fileFormatCombo.setEnabled(false);
+            setPageComplete(false);
+            setErrorMessage(Messages.ImportGraphOptionsPage_no_importer_error);
         }
         fileFormatCombo.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent e) {
                 updateOptions();
-                validateFileText();
             }
         });
         GridData gridData = new GridData(SWT.NONE);
@@ -259,20 +164,29 @@ public class ImportGraphWizardPage extends WizardPage {
         fileFormatCombo.setLayoutData(gridData);
     }
 
+    private boolean findImporter() {
+        ImportGraphWizard wizard = (ImportGraphWizard) getWizard();
+        String extension = wizard.getCommonSelectedExtension();
+        AbstractImporter importer = ImportManager.getInstance().getImporterByExtension(extension);
+        if (importer == null) {
+            return false;
+        }
+        fileFormatCombo.setText(importer.getName());
+        return true;
+    }
+
     private static final int EXPORT_OPTIONS_COMPOSITE_MARGIN = 5;
 
-    private void createImportOptionsGroup(final Composite parent) {
+    private void createImportOptions(final Composite parent) {
         scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL);
         scrolledComposite.setExpandVertical(true);
         scrolledComposite.setExpandHorizontal(true);
         GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
         scrolledComposite.setLayoutData(data);
         optionsComposite =
-                createComposite(scrolledComposite, 2,
-                        EXPORT_OPTIONS_COMPOSITE_MARGIN,
+                createComposite(scrolledComposite, 2, EXPORT_OPTIONS_COMPOSITE_MARGIN,
                         EXPORT_OPTIONS_COMPOSITE_MARGIN);
-        for (AbstractImporter importer : ImportManager.getInstance()
-                .getImporter()) {
+        for (AbstractImporter importer : ImportManager.getInstance().getImporter()) {
             LinkedList<Control> controls = new LinkedList<Control>();
             optionControls.put(importer, controls);
             for (ImporterOption<?> option : importer.getOptions()) {
@@ -284,14 +198,13 @@ public class ImportGraphWizardPage extends WizardPage {
     }
 
     @SuppressWarnings("unchecked")
-    private void createImportOption(final Composite parent,
-            final ImporterOption<?> option, final LinkedList<Control> controls) {
+    private void createImportOption(final Composite parent, final ImporterOption<?> option,
+            final LinkedList<Control> controls) {
         Object value = option.getDefault();
         if (value instanceof Enum<?>) {
             createEnumImportOption(parent, option, controls);
         } else if (value instanceof Boolean) {
-            createBooleanImportOption(parent, (ImporterOption<Boolean>) option,
-                    controls);
+            createBooleanImportOption(parent, (ImporterOption<Boolean>) option, controls);
         } else if (value instanceof Integer) {
             createNumberImportOption(parent, option, controls);
         } else if (value instanceof Float) {
@@ -299,19 +212,18 @@ public class ImportGraphWizardPage extends WizardPage {
         } else if (value instanceof Double) {
             createNumberImportOption(parent, option, controls);
         } else if (value instanceof String) {
-            createStringImportOption(parent, (ImporterOption<String>) option,
-                    controls);
+            createStringImportOption(parent, (ImporterOption<String>) option, controls);
         }
     }
 
-    private void createEnumImportOption(final Composite parent,
-            final ImporterOption<?> option, final LinkedList<Control> controls) {
+    private void createEnumImportOption(final Composite parent, final ImporterOption<?> option,
+            final LinkedList<Control> controls) {
         Object[] constants = option.getDefault().getClass().getEnumConstants();
         // keep track of all created buttons
         LinkedList<Button> buttons = new LinkedList<Button>();
         // description label
         Label label = new Label(parent, SWT.NONE);
-        label.setText(option.getDescription() + ":");
+        label.setText(option.getDescription() + ":"); //$NON-NLS-1$
         GridData gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         label.setLayoutData(gridData);
         controls.add(label);
@@ -326,8 +238,7 @@ public class ImportGraphWizardPage extends WizardPage {
         controls.add(choices);
         setControlVisibility(choices, false);
         // load from preference store
-        String lastConstantString =
-                preferenceStore.getString(option.getIdentifier().toString());
+        String lastConstantString = preferenceStore.getString(option.getIdentifier().toString());
         boolean found = false;
         // choices radio buttons
         for (Object constant : constants) {
@@ -353,15 +264,13 @@ public class ImportGraphWizardPage extends WizardPage {
     }
 
     private void createBooleanImportOption(final Composite parent,
-            final ImporterOption<Boolean> option,
-            final LinkedList<Control> controls) {
+            final ImporterOption<Boolean> option, final LinkedList<Control> controls) {
         // choice checkbox
         Button checkbox = new Button(parent, SWT.CHECK | SWT.LEFT);
         checkbox.setText(option.getDescription());
         // load from preference store
         if (preferenceStore.contains(option.getIdentifier().toString())) {
-            checkbox.setSelection(preferenceStore.getBoolean(option
-                    .getIdentifier().toString()));
+            checkbox.setSelection(preferenceStore.getBoolean(option.getIdentifier().toString()));
         } else {
             checkbox.setSelection(option.getDefault());
         }
@@ -375,11 +284,11 @@ public class ImportGraphWizardPage extends WizardPage {
 
     private static final int OPTION_NUMBER_TEXT_WIDTH = 120;
 
-    private void createNumberImportOption(final Composite parent,
-            final ImporterOption<?> option, final LinkedList<Control> controls) {
+    private void createNumberImportOption(final Composite parent, final ImporterOption<?> option,
+            final LinkedList<Control> controls) {
         // description label
         Label label = new Label(parent, SWT.NONE);
-        label.setText(option.getDescription() + ":");
+        label.setText(option.getDescription() + ":"); //$NON-NLS-1$
         GridData gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         label.setLayoutData(gridData);
         controls.add(label);
@@ -391,8 +300,7 @@ public class ImportGraphWizardPage extends WizardPage {
         input.setLayoutData(gridData);
         // load from preference store
         if (preferenceStore.contains(option.getIdentifier().toString())) {
-            input.setText(preferenceStore.getString(option.getIdentifier()
-                    .toString()));
+            input.setText(preferenceStore.getString(option.getIdentifier().toString()));
         } else {
             input.setText(option.getDefault().toString());
         }
@@ -404,11 +312,10 @@ public class ImportGraphWizardPage extends WizardPage {
     private static final int OPTION_STRING_TEXT_WIDTH = 220;
 
     private void createStringImportOption(final Composite parent,
-            final ImporterOption<String> option,
-            final LinkedList<Control> controls) {
+            final ImporterOption<String> option, final LinkedList<Control> controls) {
         // description label
         Label label = new Label(parent, SWT.NONE);
-        label.setText(option.getDescription() + ":");
+        label.setText(option.getDescription() + ":"); //$NON-NLS-1$
         GridData gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         label.setLayoutData(gridData);
         controls.add(label);
@@ -420,8 +327,7 @@ public class ImportGraphWizardPage extends WizardPage {
         input.setLayoutData(gridData);
         // load from preference store
         if (preferenceStore.contains(option.getIdentifier().toString())) {
-            input.setText(preferenceStore.getString(option.getIdentifier()
-                    .toString()));
+            input.setText(preferenceStore.getString(option.getIdentifier().toString()));
         } else {
             input.setText(option.getDefault().toString());
         }
@@ -443,8 +349,8 @@ public class ImportGraphWizardPage extends WizardPage {
         return composite;
     }
 
-    private Composite createComposite(final Composite parent,
-            final int columns, final int marginWidth, final int marginHeight) {
+    private Composite createComposite(final Composite parent, final int columns,
+            final int marginWidth, final int marginHeight) {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = columns;
@@ -457,99 +363,6 @@ public class ImportGraphWizardPage extends WizardPage {
         return composite;
     }
 
-    private void validateFileText() {
-        IPath filePath = new Path(fileText.getText());
-        if (workspacePathCheckbox.getSelection()) {
-            IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-            IResource resource = root.findMember(filePath);
-            if (resource == null || !resource.exists()) {
-                // file does not exist
-                setErrorMessage(ERROR_NO_SUCH_FILE);
-                setPageComplete(false);
-                return;
-            }
-            if (resource instanceof IContainer) {
-                // file path exists but describes a folder
-                setErrorMessage(ERROR_NO_FILE_SELECTED);
-                setPageComplete(false);
-                return;
-            }
-        } else {
-            File file = new File(filePath.toString());
-            if (!file.exists()) {
-                // file does not exist
-                setErrorMessage(ERROR_NO_SUCH_FILE);
-                setPageComplete(false);
-                return;
-            }
-            if (file.isDirectory()) {
-                // file path exists but describes a folder
-                setErrorMessage(ERROR_NO_FILE_SELECTED);
-                setPageComplete(false);
-                return;
-            }
-        }
-        setErrorMessage(null);
-        setMessage(MESSAGE_OK);
-        setPageComplete(true);
-    }
-
-    private void handleFileSystemBrowse() {
-        FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
-        // open the dialog
-        String selectedFile = fileDialog.open();
-        // dialog has not been canceled
-        if (selectedFile != null) {
-            workspacePathCheckbox.setSelection(false);
-            fileText.setText(selectedFile);
-            findImporter(true);
-            validateFileText();
-        }
-    }
-
-    private void handleWorkspaceBrowse() {
-        ElementTreeSelectionDialog fileSelectionDialog =
-                new ElementTreeSelectionDialog(getShell(),
-                        new WorkbenchLabelProvider(),
-                        new WorkbenchContentProvider());
-        fileSelectionDialog.setAllowMultiple(false);
-        fileSelectionDialog.setValidator(new ISelectionStatusValidator() {
-            public IStatus validate(final Object[] selection) {
-                if (selection.length > 0 && !(selection[0] instanceof IFile)) {
-                    return new Status(IStatus.ERROR, KEGPlugin.PLUGIN_ID,
-                            ERROR_NO_FILE_SELECTED);
-                }
-                return new Status(IStatus.OK, KEGPlugin.PLUGIN_ID, "");
-            }
-        });
-        fileSelectionDialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
-        if (fileSelectionDialog.open() == Dialog.OK) {
-            Object selectedObject = fileSelectionDialog.getFirstResult();
-            if (selectedObject != null && selectedObject instanceof IFile) {
-                IFile file = (IFile) selectedObject;
-                fileText.setText(file.getFullPath().toOSString());
-                workspacePathCheckbox.setSelection(true);
-                findImporter(true);
-                validateFileText();
-            }
-        }
-    }
-
-    private void findImporter(final boolean update) {
-        IPath path = new Path(fileText.getText());
-        AbstractImporter importer =
-                ImportManager.getInstance().getImporterByExtension(
-                        path.getFileExtension());
-        if (importer != null) {
-            if (!fileFormatCombo.getText().equals(importer.getName())) {
-                fileFormatCombo.setText(importer.getName());
-                if (update) {
-                    updateOptions();
-                }
-            }
-        }
-    }
-
     private void updateOptions() {
         if (lastImporter != null) {
             List<Control> controls = optionControls.get(lastImporter);
@@ -559,10 +372,8 @@ public class ImportGraphWizardPage extends WizardPage {
                 }
             }
         }
-        String exporterName =
-                fileFormatCombo.getItem(fileFormatCombo.getSelectionIndex());
-        AbstractImporter exporter =
-                ImportManager.getInstance().getImporterByName(exporterName);
+        String exporterName = fileFormatCombo.getItem(fileFormatCombo.getSelectionIndex());
+        AbstractImporter exporter = ImportManager.getInstance().getImporterByName(exporterName);
         List<Control> controls = optionControls.get(exporter);
         if (controls != null) {
             for (Control control : controls) {
@@ -570,14 +381,12 @@ public class ImportGraphWizardPage extends WizardPage {
             }
         }
         optionsComposite.layout();
-        scrolledComposite.setMinHeight(optionsComposite.computeSize(
-                SWT.DEFAULT, SWT.DEFAULT).y);
+        scrolledComposite.setMinHeight(optionsComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
         lastImporter = exporter;
     }
 
     // this method assumes that the given control has grid layout data attached
-    private void setControlVisibility(final Control control,
-            final boolean visible) {
+    private void setControlVisibility(final Control control, final boolean visible) {
         control.setVisible(visible);
         GridData data = (GridData) control.getLayoutData();
         data.exclude = !visible;
@@ -594,33 +403,29 @@ public class ImportGraphWizardPage extends WizardPage {
     }
 
     /**
-     * Returns the selected import file path.
+     * Returns whether to create diagram files for the created graphs.
      * 
-     * @return the selected path or null if the dialog has not successfully
-     *         finished
+     * @return true if diagram files have to be created for the graphs; false else
      */
-    public String getImportFile() {
-        return fileText.getText();
+    public boolean getCreateDiagramFiles() {
+        return createDiagramsButton.getSelection();
     }
 
     /**
-     * Returns whether the selected import file path is relative to the
-     * workspace.
+     * Returns whether to open the created diagram files.
      * 
-     * @return true if the selected import file path is relative to the
-     *         workspace
+     * @return true if the diagram files have to be opened; false else
      */
-    public boolean isImportWorkspacePath() {
-        return workspacePathCheckbox.getSelection();
+    public boolean getOpenDiagramFiles() {
+        return openDiagramsButton.getSelection();
     }
 
     /**
      * Returns the selected options.
      * 
-     * @return the selected options or null if the dialog has not successfully
-     *         finished
+     * @return the selected options or null if the dialog has not successfully finished
      */
-    public MapPropertyHolder getOptions() {
+    public IPropertyHolder getOptions() {
         // create import configuration
         if (options == null) {
             options = new MapPropertyHolder() {
@@ -637,11 +442,10 @@ public class ImportGraphWizardPage extends WizardPage {
      * Saves the pages preferences.
      */
     public void savePreferences() {
-        preferenceStore.setValue(PREFERENCE_FILE_PATH, fileText.getText());
-        preferenceStore.setValue(PREFERENCE_WORKSPACE_PATH,
-                workspacePathCheckbox.getSelection());
         preferenceStore.setValue(PREFERENCE_IMPORTER,
                 fileFormatCombo.getItem(fileFormatCombo.getSelectionIndex()));
+        preferenceStore.setValue(PREFERENCE_CREATE_DIAGRAMS, createDiagramsButton.getSelection());
+        preferenceStore.setValue(PREFERENCE_OPEN_DIAGRAMS, openDiagramsButton.getSelection());
     }
 
     @SuppressWarnings("unchecked")
@@ -675,16 +479,14 @@ public class ImportGraphWizardPage extends WizardPage {
         }
         // should always be true
         if (choice != null) {
-            for (Object constant : option.getDefault().getClass()
-                    .getEnumConstants()) {
+            for (Object constant : option.getDefault().getClass().getEnumConstants()) {
                 if (constant.toString().equals(choice)) {
                     if (!constant.equals(option.getDefault())) {
                         options.setProperty(option, constant);
-                        preferenceStore.setValue(option.getIdentifier()
-                                .toString(), constant.toString());
+                        preferenceStore.setValue(option.getIdentifier().toString(),
+                                constant.toString());
                     } else {
-                        preferenceStore.setToDefault(option.getIdentifier()
-                                .toString());
+                        preferenceStore.setToDefault(option.getIdentifier().toString());
                     }
                     break;
                 }
@@ -697,8 +499,7 @@ public class ImportGraphWizardPage extends WizardPage {
         Boolean value = checkbox.getSelection();
         if (value != option.getDefault()) {
             options.setProperty(option, value);
-            preferenceStore.setValue(option.getIdentifier().toString(),
-                    value.toString());
+            preferenceStore.setValue(option.getIdentifier().toString(), value.toString());
         } else {
             preferenceStore.setToDefault(option.getIdentifier().toString());
         }
@@ -710,8 +511,7 @@ public class ImportGraphWizardPage extends WizardPage {
             Integer value = Integer.parseInt(input.getText());
             if (value != option.getDefault()) {
                 options.setProperty(option, value);
-                preferenceStore.setValue(option.getIdentifier().toString(),
-                        value.toString());
+                preferenceStore.setValue(option.getIdentifier().toString(), value.toString());
             } else {
                 preferenceStore.setToDefault(option.getIdentifier().toString());
             }
@@ -727,8 +527,7 @@ public class ImportGraphWizardPage extends WizardPage {
             Float value = Float.parseFloat(input.getText());
             if (value != option.getDefault()) {
                 options.setProperty(option, value);
-                preferenceStore.setValue(option.getIdentifier().toString(),
-                        value.toString());
+                preferenceStore.setValue(option.getIdentifier().toString(), value.toString());
             } else {
                 preferenceStore.setToDefault(option.getIdentifier().toString());
             }
@@ -744,8 +543,7 @@ public class ImportGraphWizardPage extends WizardPage {
             Double value = Double.parseDouble(input.getText());
             if (value != option.getDefault()) {
                 options.setProperty(option, value);
-                preferenceStore.setValue(option.getIdentifier().toString(),
-                        value.toString());
+                preferenceStore.setValue(option.getIdentifier().toString(), value.toString());
             } else {
                 preferenceStore.setToDefault(option.getIdentifier().toString());
             }
@@ -763,6 +561,26 @@ public class ImportGraphWizardPage extends WizardPage {
             preferenceStore.setValue(option.getIdentifier().toString(), value);
         } else {
             preferenceStore.setToDefault(option.getIdentifier().toString());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setVisible(final boolean visible) {
+        super.setVisible(visible);
+        findImporter();
+        updateOptions();
+    }
+
+    /**
+     * An adapter class for the SelectionListener.
+     */
+    private abstract static class SelectionListenerAdapter implements SelectionListener {
+
+        public void widgetDefaultSelected(final SelectionEvent e) {
+            // do nothing
         }
     }
 }

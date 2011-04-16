@@ -27,8 +27,8 @@ public final class ImportManager {
 
     /** the option for the automatic opening of the diagram file. */
     public static final ImporterOption<Boolean> OPTION_OPEN_DIAGRAM =
-            new ImporterOption<Boolean>("importer.openDiagram",
-                    "Automatically open diagram after import?", true);
+            new ImporterOption<Boolean>("importer.openDiagram", //$NON-NLS-1$
+                    Messages.ImportManager_open_diagrams_description, true);
 
     /** the singleton instance. */
     private static ImportManager instance = new ImportManager();
@@ -114,7 +114,7 @@ public final class ImportManager {
      * @return the extensions
      */
     public String[] getExtensions() {
-        return (String[]) extensions.toArray();
+        return extensions.toArray(new String[0]);
     }
 
     /**

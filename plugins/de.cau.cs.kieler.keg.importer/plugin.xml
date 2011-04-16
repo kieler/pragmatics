@@ -69,6 +69,9 @@
             icon="icons/menu16/importdiagram.gif"
             id="de.cau.cs.kieler.keg.importer.graphImportWizard"
             name="Import Graph">
+         <description>
+            Import from common graph formats into the KEG file format.
+         </description>
       </wizard>
    </extension>
 
