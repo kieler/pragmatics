@@ -41,14 +41,14 @@ import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformatio
 public class DotExporter extends AbstractExporter {
 
     /** the supported file extensions. */
-    private static final String[] SUPPORTED_FILE_EXTENSIONS = { "dot" };
+    private static final String[] SUPPORTED_FILE_EXTENSIONS = { "dot" }; //$NON-NLS-1$
 
     /**
      * {@inheritDoc}
      */
     @Override
     public String getName() {
-        return "Dot";
+        return Messages.DotExporter_dot_name;
     }
 
     /**
@@ -73,7 +73,7 @@ public class DotExporter extends AbstractExporter {
     public void doExport(final KNode graph, final OutputStream stream,
             final MapPropertyHolder options,
             final IKielerProgressMonitor monitor) {
-        monitor.begin("Exporting KGraph to Dot", 2);
+        monitor.begin(Messages.DotExporter_export_kgraph_to_dot_task, 2);
         try {
             // transform the graph
             KGraphDotTransformation transformation =
@@ -90,10 +90,10 @@ public class DotExporter extends AbstractExporter {
                     injector.getInstance(XtextResourceSet.class);
             XtextResource resource =
                     (XtextResource) resourceSet.createResource(URI
-                            .createURI("http:///My.graphviz-dot"));
+                            .createURI("http:///My.graphviz-dot")); //$NON-NLS-1$
             resource.getContents().add(dotGraph);
             Map<String, Object> resourceOptions = new HashMap<String, Object>();
-            resourceOptions.put(XMLResource.OPTION_ENCODING, "UTF-8");
+            resourceOptions.put(XMLResource.OPTION_ENCODING, "UTF-8"); //$NON-NLS-1$
             // write to the stream
             resource.save(stream, resourceOptions);
         } catch (IOException e) {

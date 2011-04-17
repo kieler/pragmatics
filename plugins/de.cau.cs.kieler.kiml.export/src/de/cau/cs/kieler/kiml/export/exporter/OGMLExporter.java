@@ -37,17 +37,17 @@ import de.cau.cs.kieler.kiml.export.util.XtendUtil;
 public class OGMLExporter extends AbstractExporter {
 
     /** the supported file extensions. */
-    private static final String[] SUPPORTED_FILE_EXTENSIONS = { "ogml" };
+    private static final String[] SUPPORTED_FILE_EXTENSIONS = { "ogml" }; //$NON-NLS-1$
     /** the xtend transformation file. */
     private static final String XTEND_TRANSFORMATION_FILE =
-            "kgraph2ogml.ext";
+            "kgraph2ogml.ext"; //$NON-NLS-1$
     /** the xtend extension which is performing the transformation. */
-    private static final String XTEND_TRANSFORMATION = "transform";
+    private static final String XTEND_TRANSFORMATION = "transform"; //$NON-NLS-1$
 
     /** the option for the include of layout information. */
     private static final ExporterOption<Boolean> OPTION_LAYOUT_INFORMATION =
-            new ExporterOption<Boolean>("ogml.layoutInformation",
-                    "Include layout information?", true);
+            new ExporterOption<Boolean>("ogml.layoutInformation", //$NON-NLS-1$
+                    Messages.OGMLExporter_include_layout_info_message, true);
 
     /**
      * Constructs an OGML exporter.
@@ -61,7 +61,7 @@ public class OGMLExporter extends AbstractExporter {
      */
     @Override
     public String getName() {
-        return "OGML";
+        return Messages.OGMLExporter_ogml_name;
     }
 
     /**
@@ -86,7 +86,7 @@ public class OGMLExporter extends AbstractExporter {
     public void doExport(final KNode graph, final OutputStream stream,
             final MapPropertyHolder options,
             final IKielerProgressMonitor monitor) {
-        monitor.begin("Exporting KGraph to OGML", 1);
+        monitor.begin(Messages.OGMLExporter_export_kgraph_to_ogml_task, 1);
 
         try {
             List<Object> parameters = new LinkedList<Object>();
@@ -101,8 +101,8 @@ public class OGMLExporter extends AbstractExporter {
                     stream,
                     new OgmlResourceFactoryImpl(),
                     monitor.subTask(1),
-                    "net.ogdf.ogml.OgmlPackage",
-                    "de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage");
+                    "net.ogdf.ogml.OgmlPackage", //$NON-NLS-1$
+                    "de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage"); //$NON-NLS-1$
 
         } catch (IOException e) {
             throw new RuntimeException(ERROR_MESSAGE_EXPORT_FAILED, e);

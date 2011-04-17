@@ -40,9 +40,9 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 public class GMLExporter extends AbstractExporter {
 
     /** the supported file extensions. */
-    private static final String[] SUPPORTED_FILE_EXTENSIONS = { "gml" };
+    private static final String[] SUPPORTED_FILE_EXTENSIONS = { "gml" }; //$NON-NLS-1$
     /** the indentation used in the gml file. */
-    private static final String INDENTATION = "    ";
+    private static final String INDENTATION = "    "; //$NON-NLS-1$
     private static final String INDENTATION2 = INDENTATION + INDENTATION;
     private static final String INDENTATION3 = INDENTATION2 + INDENTATION;
     private static final String INDENTATION4 = INDENTATION3 + INDENTATION;
@@ -50,8 +50,8 @@ public class GMLExporter extends AbstractExporter {
 
     /** the option for the include of layout information. */
     private static final ExporterOption<Boolean> OPTION_LAYOUT_INFORMATION =
-            new ExporterOption<Boolean>("gml.layoutInformation",
-                    "Include layout information?", true);
+            new ExporterOption<Boolean>("gml.layoutInformation", //$NON-NLS-1$
+                    Messages.GMLExporter_include_layout_info_message, true);
 
     /**
      * Constructs the GML exporter.
@@ -65,7 +65,7 @@ public class GMLExporter extends AbstractExporter {
      */
     @Override
     public String getName() {
-        return "GML";
+        return Messages.GMLExporter_gml_name;
     }
 
     /**
@@ -88,13 +88,11 @@ public class GMLExporter extends AbstractExporter {
      * {@inheritDoc}
      */
     public void doExport(final KNode graph, final OutputStream stream,
-            final MapPropertyHolder options,
-            final IKielerProgressMonitor monitor) {
-        monitor.begin("Exporting KGraph to GML", 1);
+            final MapPropertyHolder options, final IKielerProgressMonitor monitor) {
+        monitor.begin(Messages.GMLExporter_export_kgraph_to_gml, 1);
 
         try {
-            serializeKGraphAsGML(graph, stream,
-                    options.getProperty(OPTION_LAYOUT_INFORMATION),
+            serializeKGraphAsGML(graph, stream, options.getProperty(OPTION_LAYOUT_INFORMATION),
                     monitor.subTask(1));
 
         } catch (IOException e) {
@@ -104,9 +102,9 @@ public class GMLExporter extends AbstractExporter {
         monitor.done();
     }
 
-    private static final IProperty<Offset> OFFSET_PROPERTY =
-            new Property<Offset>("de.cau.cs.kieler.kiml.export.offsetProperty",
-                    new Offset());
+    private static final IProperty<Offset> OFFSET_PROPERTY = new Property<Offset>(
+            "de.cau.cs.kieler.kiml.export.offsetProperty", //$NON-NLS-1$
+            new Offset());
 
     /**
      * Serializes the given KGraph using GML.
@@ -122,49 +120,47 @@ public class GMLExporter extends AbstractExporter {
      * @throws IOException
      *             thrown when an io operation failed
      */
-    public static void serializeKGraphAsGML(final KNode graph,
-            final OutputStream outputStream, final boolean layoutInformation,
-            final IKielerProgressMonitor monitor) throws IOException {
-        monitor.begin("Serializing KGraph as GML", 2);
-        OutputStreamWriter writer =
-                new OutputStreamWriter(outputStream, "UTF-8");
+    public static void serializeKGraphAsGML(final KNode graph, final OutputStream outputStream,
+            final boolean layoutInformation, final IKielerProgressMonitor monitor)
+            throws IOException {
+        monitor.begin(Messages.GMLExporter_serialize_kgraph_as_gml_task, 2);
+        OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8"); //$NON-NLS-1$
         // serialize
         int currentNodeId = 0;
         Map<KNode, Integer> nodeIds = new HashMap<KNode, Integer>();
-        writer.write("graph [\n");
-        writer.write(INDENTATION + "hierarchic 1\n");
+        writer.write("graph [\n"); //$NON-NLS-1$
+        writer.write(INDENTATION + "hierarchic 1\n"); //$NON-NLS-1$
         // process nodes
         Stack<KNode> nodes = new Stack<KNode>();
         nodes.addAll(graph.getChildren());
         while (!nodes.isEmpty()) {
-            writer.write(INDENTATION + "node [\n");
+            writer.write(INDENTATION + "node [\n"); //$NON-NLS-1$
             KNode node = nodes.pop();
             int id = currentNodeId++;
             nodeIds.put(node, id);
-            writer.write(INDENTATION2 + "id " + id + "\n");
+            writer.write(INDENTATION2 + "id " + id + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
             if (node.getLabel().getText().length() > 0) {
-                writer.write(INDENTATION2 + "label \""
-                        + node.getLabel().getText() + "\"\n");
+                writer.write(INDENTATION2 + "label \"" //$NON-NLS-1$
+                        + node.getLabel().getText() + "\"\n"); //$NON-NLS-1$
             }
             // layout information
             if (layoutInformation) {
-                KShapeLayout parentLayout =
-                        node.getParent().getData(KShapeLayout.class);
+                KShapeLayout parentLayout = node.getParent().getData(KShapeLayout.class);
                 KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
                 Offset offset = parentLayout.getProperty(OFFSET_PROPERTY);
-                writer.write(INDENTATION2 + "graphics [\n");
+                writer.write(INDENTATION2 + "graphics [\n"); //$NON-NLS-1$
+                writer.write(INDENTATION3 + "x " //$NON-NLS-1$
+                        + (offset.getX() + nodeLayout.getXpos() + nodeLayout.getWidth() / 2)
+                        + "\n"); //$NON-NLS-1$
                 writer.write(INDENTATION3
-                        + "x "
-                        + (offset.getX() + nodeLayout.getXpos() + nodeLayout
-                                .getWidth() / 2) + "\n");
-                writer.write(INDENTATION3
-                        + "y "
-                        + (offset.getY() + nodeLayout.getYpos() + nodeLayout
-                                .getHeight() / 2) + "\n");
-                writer.write(INDENTATION3 + "w " + nodeLayout.getWidth() + "\n");
-                writer.write(INDENTATION3 + "h " + nodeLayout.getHeight()
-                        + "\n");
-                writer.write(INDENTATION2 + "]\n");
+                        + "y " //$NON-NLS-1$
+                        + (offset.getY() + nodeLayout.getYpos() + nodeLayout.getHeight() / 2)
+                        + "\n"); //$NON-NLS-1$
+                writer.write(INDENTATION3 + "w " + nodeLayout.getWidth() 
+                        + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+                writer.write(INDENTATION3 + "h " + nodeLayout.getHeight() //$NON-NLS-1$
+                        + "\n"); //$NON-NLS-1$
+                writer.write(INDENTATION2 + "]\n"); //$NON-NLS-1$
                 // attach offset information if the node is a compound node
                 if (node.getChildren().size() > 0) {
                     Offset newOffset = new Offset(offset);
@@ -175,14 +171,14 @@ public class GMLExporter extends AbstractExporter {
             }
             // is the node located inside a compound node?
             if (!node.getParent().equals(graph)) {
-                writer.write(INDENTATION2 + "gid "
-                        + nodeIds.get(node.getParent()) + "\n");
+                writer.write(INDENTATION2 + "gid " //$NON-NLS-1$
+                        + nodeIds.get(node.getParent()) + "\n"); //$NON-NLS-1$
             }
             // is the node a compound node?
             if (node.getChildren().size() > 0) {
-                writer.write(INDENTATION2 + "isGroup 1\n");
+                writer.write(INDENTATION2 + "isGroup 1\n"); //$NON-NLS-1$
             }
-            writer.write(INDENTATION + "]\n");
+            writer.write(INDENTATION + "]\n"); //$NON-NLS-1$
             nodes.addAll(node.getChildren());
         }
         monitor.worked(1);
@@ -192,58 +188,49 @@ public class GMLExporter extends AbstractExporter {
             KNode node = nodes.pop();
             int sourceId = nodeIds.get(node);
             for (KEdge edge : node.getOutgoingEdges()) {
-                writer.write(INDENTATION + "edge [\n");
+                writer.write(INDENTATION + "edge [\n"); //$NON-NLS-1$
                 int targetId = nodeIds.get(edge.getTarget());
-                writer.write(INDENTATION2 + "source " + sourceId + "\n");
-                writer.write(INDENTATION2 + "target " + targetId + "\n");
+                writer.write(INDENTATION2 + "source " + sourceId + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+                writer.write(INDENTATION2 + "target " + targetId + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
                 // layout information
                 if (layoutInformation) {
-                    KShapeLayout parentLayout =
-                            node.getParent().getData(KShapeLayout.class);
+                    KShapeLayout parentLayout = node.getParent().getData(KShapeLayout.class);
                     KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
                     Offset offset = parentLayout.getProperty(OFFSET_PROPERTY);
-                    writer.write(INDENTATION2 + "graphics [\n");
-                    writer.write(INDENTATION3 + "type \"line\"\n");
-                    writer.write(INDENTATION3 + "Line [\n");
+                    writer.write(INDENTATION2 + "graphics [\n"); //$NON-NLS-1$
+                    writer.write(INDENTATION3 + "type \"line\"\n"); //$NON-NLS-1$
+                    writer.write(INDENTATION3 + "Line [\n"); //$NON-NLS-1$
                     // source point
-                    writer.write(INDENTATION4 + "point [\n");
-                    writer.write(INDENTATION5
-                            + "x "
-                            + (offset.getX() + edgeLayout.getSourcePoint()
-                                    .getX()) + "\n");
-                    writer.write(INDENTATION5
-                            + "y "
-                            + (offset.getY() + edgeLayout.getSourcePoint()
-                                    .getY()) + "\n");
-                    writer.write(INDENTATION4 + "]\n");
+                    writer.write(INDENTATION4 + "point [\n"); //$NON-NLS-1$
+                    writer.write(INDENTATION5 + "x " //$NON-NLS-1$
+                            + (offset.getX() + edgeLayout.getSourcePoint().getX()) + "\n"); //$NON-NLS-1$
+                    writer.write(INDENTATION5 + "y " //$NON-NLS-1$
+                            + (offset.getY() + edgeLayout.getSourcePoint().getY()) + "\n"); //$NON-NLS-1$
+                    writer.write(INDENTATION4 + "]\n"); //$NON-NLS-1$
                     // bend points
                     for (KPoint point : edgeLayout.getBendPoints()) {
-                        writer.write(INDENTATION4 + "point [\n");
-                        writer.write(INDENTATION5 + "x "
-                                + (offset.getX() + point.getX()) + "\n");
-                        writer.write(INDENTATION5 + "y "
-                                + (offset.getY() + point.getY()) + "\n");
-                        writer.write(INDENTATION4 + "]\n");
+                        writer.write(INDENTATION4 + "point [\n"); //$NON-NLS-1$
+                        writer.write(INDENTATION5 + "x " //$NON-NLS-1$
+                                + (offset.getX() + point.getX()) + "\n"); //$NON-NLS-1$
+                        writer.write(INDENTATION5 + "y " //$NON-NLS-1$
+                                + (offset.getY() + point.getY()) + "\n"); //$NON-NLS-1$
+                        writer.write(INDENTATION4 + "]\n"); //$NON-NLS-1$
                     }
                     // target point
-                    writer.write(INDENTATION4 + "point [\n");
-                    writer.write(INDENTATION5
-                            + "x "
-                            + (offset.getX() + edgeLayout.getTargetPoint()
-                                    .getX()) + "\n");
-                    writer.write(INDENTATION5
-                            + "y "
-                            + (offset.getY() + edgeLayout.getTargetPoint()
-                                    .getY()) + "\n");
-                    writer.write(INDENTATION4 + "]\n");
-                    writer.write(INDENTATION3 + "]\n");
-                    writer.write(INDENTATION2 + "]\n");
+                    writer.write(INDENTATION4 + "point [\n"); //$NON-NLS-1$
+                    writer.write(INDENTATION5 + "x " //$NON-NLS-1$
+                            + (offset.getX() + edgeLayout.getTargetPoint().getX()) + "\n"); //$NON-NLS-1$
+                    writer.write(INDENTATION5 + "y " //$NON-NLS-1$
+                            + (offset.getY() + edgeLayout.getTargetPoint().getY()) + "\n"); //$NON-NLS-1$
+                    writer.write(INDENTATION4 + "]\n"); //$NON-NLS-1$
+                    writer.write(INDENTATION3 + "]\n"); //$NON-NLS-1$
+                    writer.write(INDENTATION2 + "]\n"); //$NON-NLS-1$
                 }
-                writer.write(INDENTATION + "]\n");
+                writer.write(INDENTATION + "]\n"); //$NON-NLS-1$
             }
             nodes.addAll(node.getChildren());
         }
-        writer.write("]\n");
+        writer.write("]\n"); //$NON-NLS-1$
         writer.close();
         monitor.done();
     }

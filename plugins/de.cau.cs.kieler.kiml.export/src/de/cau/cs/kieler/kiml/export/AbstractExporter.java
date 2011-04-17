@@ -25,7 +25,7 @@ public abstract class AbstractExporter implements IExporter {
 
     /** the message for a failed export. */
     protected static final String ERROR_MESSAGE_EXPORT_FAILED =
-            "The export failed.";
+            Messages.AbstractExporter_export_failed_error;
 
     /** the available options. */
     private List<ExporterOption<?>> options =

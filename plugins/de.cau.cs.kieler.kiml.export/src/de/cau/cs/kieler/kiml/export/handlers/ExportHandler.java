@@ -34,6 +34,7 @@ import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.kiml.export.AbstractExporter;
 import de.cau.cs.kieler.kiml.export.ExportPlugin;
 import de.cau.cs.kieler.kiml.export.ExportUtil;
+import de.cau.cs.kieler.kiml.export.Messages;
 import de.cau.cs.kieler.kiml.export.ui.ExportDialog;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 
@@ -43,9 +44,6 @@ import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
  * @author mri
  */
 public class ExportHandler extends AbstractHandler {
-
-    /** the message for a failed export. */
-    private static final String MESSAGE_EXPORT_FAILED = "The export failed.";
 
     /**
      * {@inheritDoc}
@@ -77,8 +75,8 @@ public class ExportHandler extends AbstractHandler {
                 stream.close();
             } catch (Throwable exception) {
                 Status myStatus =
-                        new Status(IStatus.WARNING, ExportPlugin.PLUGIN_ID, MESSAGE_EXPORT_FAILED,
-                                exception);
+                        new Status(IStatus.WARNING, ExportPlugin.PLUGIN_ID,
+                                Messages.ExportHandler_export_failed_error, exception);
                 StatusManager.getManager().handle(myStatus,
                         StatusManager.BLOCK | StatusManager.SHOW);
             }

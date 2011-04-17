@@ -37,16 +37,16 @@ import de.cau.cs.kieler.kiml.export.AbstractExporter;
 public class KGraphExporter extends AbstractExporter {
 
     /** the supported file extensions. */
-    private static final String[] SUPPORTED_FILE_EXTENSIONS = { "kgraph" };
+    private static final String[] SUPPORTED_FILE_EXTENSIONS = { "kgraph" }; //$NON-NLS-1$
     /** a dummy file extension. */
-    private static final String FILE_EXT_DUMMY = "dummyext";
+    private static final String FILE_EXT_DUMMY = "dummyext"; //$NON-NLS-1$
 
     /**
      * {@inheritDoc}
      */
     @Override
     public String getName() {
-        return "KGraph";
+        return Messages.KGraphExporter_kgraph_name;
     }
 
     /**
@@ -71,15 +71,15 @@ public class KGraphExporter extends AbstractExporter {
     public void doExport(final KNode graph, final OutputStream stream,
             final MapPropertyHolder options,
             final IKielerProgressMonitor monitor) {
-        monitor.begin("Exporting KGraph", 1);
+        monitor.begin(Messages.KGraphExporter_export_kgraph_task, 1);
         try {
             ResourceSet resourceSet = new ResourceSetImpl();
             Resource resource =
-                    resourceSet.createResource(URI.createURI("http:///My."
+                    resourceSet.createResource(URI.createURI("http:///My." //$NON-NLS-1$
                             + FILE_EXT_DUMMY));
             resource.getContents().add(graph);
             Map<String, Object> resourceOptions = new HashMap<String, Object>();
-            resourceOptions.put(XMLResource.OPTION_ENCODING, "UTF-8");
+            resourceOptions.put(XMLResource.OPTION_ENCODING, "UTF-8"); //$NON-NLS-1$
             resourceOptions.put(XMLResource.OPTION_FORMATTED, true);
             // write to the stream
             resource.save(stream, resourceOptions);

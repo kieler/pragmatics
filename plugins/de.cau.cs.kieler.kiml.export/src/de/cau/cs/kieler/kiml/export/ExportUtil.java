@@ -46,11 +46,8 @@ import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationContext;
  */
 public final class ExportUtil {
 
-    /** the error message for a wrong xtend transformation result. */
-    private static final String ERROR_MESSAGE_WRONG_XTEND_RESULT =
-            "The xtend transformation returned a result that wasn't of type 'EObject'.";
     /** a dummy file extension. */
-    private static final String FILE_EXT_DUMMY = "dummyext";
+    private static final String FILE_EXT_DUMMY = "dummyext"; //$NON-NLS-1$
 
     /**
      * A private constructor to make the class not instantiable.
@@ -127,7 +124,7 @@ public final class ExportUtil {
             final IKielerProgressMonitor monitor,
             final String... involvedMetamodels) throws IOException,
             TransformException {
-        monitor.begin("KGraph Model2Model transformation",
+        monitor.begin(Messages.ExportUtil_kgraph_m2m_transformation_task,
                 MONITOR_TRANSFORMATION_WORK);
 
         // find the xtend file
@@ -151,7 +148,7 @@ public final class ExportUtil {
         }
         // assemble the list of required metamodels
         String[] metamodels = new String[involvedMetamodels.length + 1];
-        metamodels[0] = "de.cau.cs.kieler.core.kgraph.KGraphPackage";
+        metamodels[0] = "de.cau.cs.kieler.core.kgraph.KGraphPackage"; //$NON-NLS-1$
         int i = 1;
         for (String metamodel : involvedMetamodels) {
             metamodels[i++] = metamodel; 
@@ -176,19 +173,19 @@ public final class ExportUtil {
         if (resultModel instanceof EObject) {
             model = (EObject) resultModel;
         } else {
-            throw new RuntimeException(ERROR_MESSAGE_WRONG_XTEND_RESULT);
+            throw new RuntimeException(Messages.ExportUtil_no_eobject_error);
         }
         ResourceSet resourceSet = new ResourceSetImpl();
         resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
                 .put(FILE_EXT_DUMMY, resourceFactory);
         Resource resource =
-                resourceSet.createResource(URI.createURI("http:///My."
+                resourceSet.createResource(URI.createURI("http:///My." //$NON-NLS-1$
                         + FILE_EXT_DUMMY));
         resource.getContents().add(model);
         Map<String, Object> options = new HashMap<String, Object>();
         // options.put(XMLResource.OPTION_SCHEMA_LOCATION, Boolean.FALSE);
         // options.put(XMLResource.OPTION_ESCAPE_USING_CDATA, Boolean.TRUE);
-        options.put(XMLResource.OPTION_ENCODING, "UTF-8");
+        options.put(XMLResource.OPTION_ENCODING, "UTF-8"); //$NON-NLS-1$
         options.put(XMLResource.OPTION_FORMATTED, true);
         // write to the stream
         resource.save(outputStream, options);

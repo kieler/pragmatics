@@ -34,12 +34,12 @@ import de.cau.cs.kieler.kiml.export.util.XtendUtil;
 public class GraphMLExporter extends AbstractExporter {
 
     /** the supported file extensions. */
-    private static final String[] SUPPORTED_FILE_EXTENSIONS = { "graphml" };
+    private static final String[] SUPPORTED_FILE_EXTENSIONS = { "graphml" }; //$NON-NLS-1$
     /** the xtend transformation file. */
     private static final String XTEND_TRANSFORMATION_FILE =
-            "kgraph2graphml.ext";
+            "kgraph2graphml.ext"; //$NON-NLS-1$
     /** the xtend extension which is performing the transformation. */
-    private static final String XTEND_TRANSFORMATION = "transform";
+    private static final String XTEND_TRANSFORMATION = "transform"; //$NON-NLS-1$
 
     /**
      * Constructs a GML exporter.
@@ -52,7 +52,7 @@ public class GraphMLExporter extends AbstractExporter {
      */
     @Override
     public String getName() {
-        return "GraphML";
+        return Messages.GraphMLExporter_graphml_name;
     }
 
     /**
@@ -77,7 +77,7 @@ public class GraphMLExporter extends AbstractExporter {
     public void doExport(final KNode graph, final OutputStream stream,
             final MapPropertyHolder options,
             final IKielerProgressMonitor monitor) {
-        monitor.begin("Exporting KGraph to GraphML", 1);
+        monitor.begin(Messages.GraphMLExporter_export_kgraph_to_graphml_task, 1);
 
         try {
             XtendUtil.resetGenerators();
@@ -89,7 +89,7 @@ public class GraphMLExporter extends AbstractExporter {
                     stream,
                     new GraphMLResourceFactoryImpl(),
                     monitor.subTask(1),
-                    "org.graphdrawing.graphml.GraphMLPackage");
+                    "org.graphdrawing.graphml.GraphMLPackage"); //$NON-NLS-1$
         } catch (IOException e) {
             throw new RuntimeException(ERROR_MESSAGE_EXPORT_FAILED, e);
         } catch (TransformException e) {

@@ -63,40 +63,24 @@ import de.cau.cs.kieler.kiml.export.ExporterOption;
  */
 public class ExportDialog extends Dialog {
 
-    /** the dialogs title. */
-    private static final String TITLE = "Export Graph";
     /** the default dialog width. */
     private static final int DEFAULT_WIDTH = 500;
     /** the default dialog height. */
     private static final int DEFAULT_HEIGHT = 350;
-    /** the file system save dialog. */
-    private static final String FILE_SYSTEM_SAVE_TITLE = "Save As";
-    /** the error message for an invalid file path. */
-    private static final String ERROR_MESSAGE_INVALID_FILE =
-            "The specified file path is not valid.";
-    /** the error message for a not existing container. */
-    private static final String ERROR_MESSAGE_CONTAINER_NOT_EXIST =
-            "The specified container does not exist.";
-    /** the error message for a file outside a project. */
-    private static final String ERROR_MESSAGE_OUTSIDE_PROJECT =
-            "The file has to be located inside a project.";
-    /** the error message for no registered exporter. */
-    private static final String ERROR_MESSAGE_NO_EXPORTER =
-            "No exporter has been registered.";
-
+    
     /** the preference key for the dialog width. */
     private static final String PREFERENCE_DIALOG_WIDTH =
-            "exportDialog.dialogWidth";
+            "exportDialog.dialogWidth"; //$NON-NLS-1$
     /** the preference key for the dialog height. */
     private static final String PREFERENCE_DIALOG_HEIGHT =
-            "exportDialog.dialogHeight";
+            "exportDialog.dialogHeight"; //$NON-NLS-1$
     /** the preference key for the file path. */
-    private static final String PREFERENCE_FILE_PATH = "exportDialog.filePath";
+    private static final String PREFERENCE_FILE_PATH = "exportDialog.filePath"; //$NON-NLS-1$
     /** the preference key for the workspace path. */
     private static final String PREFERENCE_WORKSPACE_PATH =
-            "exportDialog.workspacePath";
+            "exportDialog.workspacePath"; //$NON-NLS-1$
     /** the preference key for the selected exporter. */
-    private static final String PREFERENCE_EXPORTER = "exportDialog.exporter";
+    private static final String PREFERENCE_EXPORTER = "exportDialog.exporter"; //$NON-NLS-1$
 
     /** the preference store. */
     private IPreferenceStore preferenceStore = null;
@@ -167,7 +151,7 @@ public class ExportDialog extends Dialog {
     protected Control createContents(final Composite parent) {
         Control control = super.createContents(parent);
         if (noExporter) {
-            setErrorStatus(ERROR_MESSAGE_NO_EXPORTER);
+            setErrorStatus(Messages.ExportDialog_no_exporter_error);
         } else {
             validateFileText();
         }
@@ -196,7 +180,7 @@ public class ExportDialog extends Dialog {
         Composite composite = createComposite(parent, FILE_GROUP_COLUMNS);
         // label
         Label label = new Label(composite, SWT.NONE);
-        label.setText("&File:");
+        label.setText(Messages.ExportDialog_file_caption);
         // file path text
         fileText = new Text(composite, SWT.BORDER);
         // load path from preference store
@@ -215,7 +199,7 @@ public class ExportDialog extends Dialog {
         fileText.setLayoutData(gridData);
         // browse workspace button
         Button button = new Button(composite, SWT.PUSH);
-        button.setText("&Workspace...");
+        button.setText(Messages.ExportDialog_workspace_caption);
         gridData = new GridData(SWT.RIGHT, SWT.NONE, true, false);
         gridData.widthHint = BROWSE_WIDTH_HINT;
         button.setLayoutData(gridData);
@@ -229,7 +213,7 @@ public class ExportDialog extends Dialog {
         }
         // is workspace path checkbox
         workspacePathCheckbox = new Button(composite, SWT.CHECK | SWT.LEFT);
-        workspacePathCheckbox.setText("Is a workspace &path");
+        workspacePathCheckbox.setText(Messages.ExportDialog_workspace_path_caption);
         gridData = new GridData(SWT.FILL, SWT.NONE, true, false);
         gridData.horizontalSpan = 2;
         workspacePathCheckbox.setLayoutData(gridData);
@@ -247,7 +231,7 @@ public class ExportDialog extends Dialog {
         }
         // browse file system button
         button = new Button(composite, SWT.PUSH);
-        button.setText("File &system...");
+        button.setText(Messages.ExportDialog_file_system_caption);
         gridData = new GridData(SWT.RIGHT, SWT.NONE, true, false);
         gridData.widthHint = BROWSE_WIDTH_HINT;
         button.setLayoutData(gridData);
@@ -267,7 +251,7 @@ public class ExportDialog extends Dialog {
         Composite composite = createComposite(parent, 2);
         // label
         Label label = new Label(composite, SWT.NONE);
-        label.setText("File F&ormat:");
+        label.setText(Messages.ExportDialog_file_format_caption);
         fileFormatCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
         String[] exporterNames = ExportManager.getInstance().getExporterNames();
         if (exporterNames.length > 0) {
@@ -350,7 +334,7 @@ public class ExportDialog extends Dialog {
         LinkedList<Button> buttons = new LinkedList<Button>();
         // description label
         Label label = new Label(parent, SWT.NONE);
-        label.setText(option.getDescription() + ":");
+        label.setText(option.getDescription() + ":"); //$NON-NLS-1$
         GridData gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         label.setLayoutData(gridData);
         controls.add(label);
@@ -418,7 +402,7 @@ public class ExportDialog extends Dialog {
             final ExporterOption<?> option, final LinkedList<Control> controls) {
         // description label
         Label label = new Label(parent, SWT.NONE);
-        label.setText(option.getDescription() + ":");
+        label.setText(option.getDescription() + ":"); //$NON-NLS-1$
         GridData gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         label.setLayoutData(gridData);
         controls.add(label);
@@ -447,7 +431,7 @@ public class ExportDialog extends Dialog {
             final LinkedList<Control> controls) {
         // description label
         Label label = new Label(parent, SWT.NONE);
-        label.setText(option.getDescription() + ":");
+        label.setText(option.getDescription() + ":"); //$NON-NLS-1$
         GridData gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         label.setLayoutData(gridData);
         controls.add(label);
@@ -518,14 +502,14 @@ public class ExportDialog extends Dialog {
             IPath containerPath = filePath.removeLastSegments(1);
             if (filePath.hasTrailingSeparator()) {
                 // file describes a folder
-                setErrorStatus(ERROR_MESSAGE_INVALID_FILE);
+                setErrorStatus(Messages.ExportDialog_path_not_valid_error);
                 return;
             }
             if (workspacePathCheckbox.getSelection()) {
                 // workspace path
                 if (containerPath.segmentCount() == 0) {
                     // file path describes file outside a project
-                    setErrorStatus(ERROR_MESSAGE_OUTSIDE_PROJECT);
+                    setErrorStatus(Messages.ExportDialog_outside_project_error);
                     return;
                 }
                 IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -533,32 +517,32 @@ public class ExportDialog extends Dialog {
                 if (resource != null && resource.exists()
                         && resource instanceof IContainer) {
                     // file path exists but describes a folder
-                    setErrorStatus(ERROR_MESSAGE_INVALID_FILE);
+                    setErrorStatus(Messages.ExportDialog_path_not_valid_error);
                     return;
                 }
                 resource = root.findMember(containerPath);
                 if (resource == null || !resource.exists()
                         || !(resource instanceof IContainer)) {
                     // container does not exist
-                    setErrorStatus(ERROR_MESSAGE_CONTAINER_NOT_EXIST);
+                    setErrorStatus(Messages.ExportDialog_container_not_exist_error);
                     return;
                 }
             } else {
                 File file = new File(filePath.toString());
                 if (file.isDirectory()) {
                     // file path exists but describes a folder
-                    setErrorStatus(ERROR_MESSAGE_INVALID_FILE);
+                    setErrorStatus(Messages.ExportDialog_path_not_valid_error);
                     return;
                 }
                 File container = new File(containerPath.toString());
                 if (!container.exists()) {
                     // container does not exist
-                    setErrorStatus(ERROR_MESSAGE_CONTAINER_NOT_EXIST);
+                    setErrorStatus(Messages.ExportDialog_container_not_exist_error);
                     return;
                 }
             }
         } else {
-            setErrorStatus(ERROR_MESSAGE_INVALID_FILE);
+            setErrorStatus(Messages.ExportDialog_path_not_valid_error);
             return;
         }
         setOKStatus();
@@ -572,10 +556,10 @@ public class ExportDialog extends Dialog {
         // extensions passed to the dialog have to include the '.'
         String[] extensions = lastExporter.getExtensions().clone();
         for (int i = 0; i < extensions.length; ++i) {
-            extensions[i] = "." + extensions[i];
+            extensions[i] = "." + extensions[i]; //$NON-NLS-1$
         }
         fileDialog.setFilterExtensions(extensions);
-        fileDialog.setText(FILE_SYSTEM_SAVE_TITLE);
+        fileDialog.setText(Messages.ExportDialog_save_as_title);
         // open the dialog
         String selectedFile = fileDialog.open();
         // dialog has not been canceled
@@ -598,7 +582,7 @@ public class ExportDialog extends Dialog {
                 fileText.setText(filePath.toString());
             } else {
                 // if no file extension was specified take the default one
-                fileText.setText(filePath.toString() + "."
+                fileText.setText(filePath.toString() + "." //$NON-NLS-1$
                         + lastExporter.getDefaultExtension());
             }
         }
@@ -681,7 +665,7 @@ public class ExportDialog extends Dialog {
     @Override
     protected void configureShell(final Shell shell) {
         super.configureShell(shell);
-        shell.setText(TITLE);
+        shell.setText(Messages.ExportDialog_title);
     }
 
     /**
