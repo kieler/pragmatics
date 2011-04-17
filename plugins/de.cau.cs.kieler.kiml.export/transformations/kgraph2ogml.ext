@@ -128,41 +128,42 @@ Void transformEdgeLabel(KLabel label, ogml::EdgeType edge):
 create ogml::LayoutType transformLayout(KNode graph):
 	let styles = new ogml::StylesType:
 	this.setStyles(styles) ->
-	graph.children.transformNodeLayout(styles)
+	graph.children.transformNodeLayout(styles, 0.0, 0.0)
 ;
 
 // transforms the node layout information and also the layout information
 // of outgoing edges
-Void transformNodeLayout(KNode node, ogml::StylesType styles):
+Void transformNodeLayout(KNode node, ogml::StylesType styles, Real xOffset, Real yOffset):
 	let shapeLayout = node.getShapeLayout():
 	let nodeStyle = new ogml::NodeLayoutType:
 	let location = new ogml::LocationType:
 	let shapeType = new ogml::ShapeType1:
 	nodeStyle.setIdRef(getId(node)) ->
-	location.setX(shapeLayout.xpos + shapeLayout.width / 2) ->
-	location.setY(shapeLayout.ypos + shapeLayout.height / 2) ->
+	location.setX(xOffset + shapeLayout.xpos + shapeLayout.width / 2) ->
+	location.setY(yOffset + shapeLayout.ypos + shapeLayout.height / 2) ->
 	shapeType.setShapeBounds(shapeLayout) ->
 	nodeStyle.setLocation(location) ->
 	nodeStyle.setShape(shapeType) ->
 	styles.nodeStyle.add(nodeStyle) ->
-	node.children.transformNodeLayout(styles) ->
-	node.outgoingEdges.transformEdgeLayout(styles)
+	node.children.transformNodeLayout(styles, xOffset + shapeLayout.xpos,
+		yOffset + shapeLayout.ypos) ->
+	node.outgoingEdges.transformEdgeLayout(styles, xOffset, yOffset)
 ;
 
 // transforms the edge layout information
-Void transformEdgeLayout(KEdge edge, ogml::StylesType styles):
+Void transformEdgeLayout(KEdge edge, ogml::StylesType styles, Real xOffset, Real yOffset):
 	let edgeLayout = edge.getEdgeLayout():
 	let edgeStyle = new ogml::EdgeLayoutType:
 	edgeStyle.setIdRef(getId(edge)) ->
-	edgeLayout.bendPoints.transformBendPoint(edgeStyle) ->
+	edgeLayout.bendPoints.transformBendPoint(edgeStyle, xOffset, yOffset) ->
 	styles.edgeStyle.add(edgeStyle)
 ;
 
 // transforms a bend point
-Void transformBendPoint(KPoint point, ogml::EdgeLayoutType edgeStyle):
+Void transformBendPoint(KPoint point, ogml::EdgeLayoutType edgeStyle, Real xOffset, Real yOffset):
 	let ogmlPoint = new ogml::PointType:
-	ogmlPoint.setX(point.x) ->
-	ogmlPoint.setY(point.y) ->
+	ogmlPoint.setX(xOffset + point.x) ->
+	ogmlPoint.setY(yOffset + point.y) ->
 	edgeStyle.point.add(ogmlPoint)
 ; 
 
