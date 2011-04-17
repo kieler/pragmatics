@@ -90,6 +90,7 @@ public class KiviContributionItem extends CompoundContributionItem implements
     // CHECKSTYLEOFF MaximumLineLength
     private static Map<String, IContributionItem> idButtonMap = new HashMap<String, IContributionItem>();
     private static Map<IContributionItem, ButtonHandler> buttonsHandlerMap = new HashMap<IContributionItem, ButtonHandler>();
+    private static Map<IContributionItem, ButtonHandler> oldButtonsHandlerMap;
     private static List<IContributionItem> buttons = new ArrayList<IContributionItem>();
 
     // CHECKSTYLEON MaximumLineLength
@@ -125,7 +126,8 @@ public class KiviContributionItem extends CompoundContributionItem implements
          * which also requires to clear the local memories.
          */
         buttons.clear();
-        buttonsHandlerMap.clear();
+        oldButtonsHandlerMap = buttonsHandlerMap;
+        buttonsHandlerMap = new HashMap<IContributionItem, ButtonHandler>();
 
         List<ButtonConfiguration> buttonConfigurations = KiviMenuContributionService.INSTANCE
                 .getButtonConfigurations();
@@ -153,6 +155,9 @@ public class KiviContributionItem extends CompoundContributionItem implements
                 // this is the button
                 IContributionItem item;
                 item = new CommandContributionItem(parameter);
+
+                //deactivate the old button if it exists
+                unload(config.getId());
                 // remember some relations between button, its handler and the
                 // corresponding configuration
                 idButtonMap.put(config.getId(), item);
@@ -221,6 +226,20 @@ public class KiviContributionItem extends CompoundContributionItem implements
             ButtonHandler handler = buttonsHandlerMap.get(item);
             if (handler != null) {
                 handler.setEnabled(enabled);
+            }
+        }
+    }
+    
+    /**
+     * Unload old buttons, i.e. send a not-pushed trigger if it was pushed before.
+     * @param buttonID
+     */
+    private static void unload(String buttonID){
+        IContributionItem item = idButtonMap.get(buttonID);
+        if (item != null) {
+            ButtonHandler handler = oldButtonsHandlerMap.get(item);
+            if (handler != null) {
+                handler.unload();
             }
         }
     }
