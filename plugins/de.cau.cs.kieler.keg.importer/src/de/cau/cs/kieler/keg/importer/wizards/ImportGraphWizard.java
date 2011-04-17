@@ -23,9 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -66,7 +64,7 @@ import de.cau.cs.kieler.core.model.m2m.TransformException;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
-import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.keg.Node;
 import de.cau.cs.kieler.keg.diagram.edit.parts.NodeEditPart;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin;
@@ -202,27 +200,42 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
         // collect all statuses
         statuses = new LinkedList<IStatus>();
         // get options
-        Pair<AbstractImporter, IPropertyHolder> importerAndOptions = getImporterAndOptions();
-        AbstractImporter importer = importerAndOptions.getFirst();
-        IPropertyHolder options = importerAndOptions.getSecond();
+        final Maybe<AbstractImporter> importer = new Maybe<AbstractImporter>();
+        final Maybe<IPropertyHolder> options = new Maybe<IPropertyHolder>();
+        final Maybe<Boolean> createDiagram = new Maybe<Boolean>();
+        final Maybe<Boolean> openDiagram = new Maybe<Boolean>();
+        MonitoredOperation.runInUI(new Runnable() {
+            public void run() {
+                importer.set(optionsPage.getImporter());
+                options.set(optionsPage.getOptions());
+                createDiagram.set(optionsPage.getCreateDiagramFiles());
+                openDiagram.set(optionsPage.getOpenDiagramFiles());
+            }
+        }, true);
+        // import from workspace or file system
         if (sourcesPage.getImportFromWorkspace()) {
             // fetch the files and target folder from the workspace sources page
-            Pair<List<IFile>, IPath> filesAndTarget = getWorkspaceFilesAndTarget();
-            List<IFile> files = filesAndTarget.getFirst();
-            IPath targetPath = filesAndTarget.getSecond();
-            monitor.begin(Messages.ImportGraphWizard_importing_workspace_task, files.size());
+            final Maybe<List<IFile>> files = new Maybe<List<IFile>>();
+            final Maybe<IPath> targetPath = new Maybe<IPath>();
+            MonitoredOperation.runInUI(new Runnable() {
+                public void run() {
+                    files.set(workspaceSourcesPage.getFiles(null));
+                    targetPath.set(workspaceSourcesPage.getTargetContainerPath());
+                }
+            }, true);
+            monitor.begin(Messages.ImportGraphWizard_importing_workspace_task, files.get().size());
             // try to import all selected files
-            for (IFile file : files) {
+            for (IFile file : files.get()) {
                 if (monitor.isCanceled()) {
                     throw new InterruptedException();
                 }
                 try {
                     InputStream inputStream = file.getContents(true);
                     IPath modelFile =
-                            targetPath.append(file.getName()).removeFileExtension()
+                            targetPath.get().append(file.getName()).removeFileExtension()
                                     .addFileExtension("keg"); //$NON-NLS-1$
-                    importAndSerialize(inputStream, modelFile, importer, options,
-                            monitor.subTask(1));
+                    importAndSerialize(inputStream, modelFile, importer.get(), createDiagram.get(),
+                            openDiagram.get(), options.get(), monitor.subTask(1));
                 } catch (Throwable throwable) {
                     IStatus status =
                             new Status(IStatus.ERROR, KEGImporterPlugin.PLUGIN_ID,
@@ -234,12 +247,17 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
             }
         } else {
             // fetch the files and target folder from the file system sources page
-            Pair<List<File>, IPath> filesAndTarget = getFileSystemFilesAndTarget();
-            List<File> files = filesAndTarget.getFirst();
-            IPath targetPath = filesAndTarget.getSecond();
-            monitor.begin(Messages.ImportGraphWizard_importing_file_system_task, files.size());
+            final Maybe<List<File>> files = new Maybe<List<File>>();
+            final Maybe<IPath> targetPath = new Maybe<IPath>();
+            MonitoredOperation.runInUI(new Runnable() {
+                public void run() {
+                    files.set(fileSystemSourcesPage.getFiles(null));
+                    targetPath.set(fileSystemSourcesPage.getTargetContainerPath());
+                }
+            }, true);
+            monitor.begin(Messages.ImportGraphWizard_importing_file_system_task, files.get().size());
             // try to import all selected files
-            for (File file : files) {
+            for (File file : files.get()) {
                 if (monitor.isCanceled()) {
                     throw new InterruptedException();
                 }
@@ -247,11 +265,11 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
                     FileInputStream inputStream = new FileInputStream(file);
                     // build the KEG model file path
                     IPath modelFile =
-                            targetPath.append(file.getName()).removeFileExtension()
+                            targetPath.get().append(file.getName()).removeFileExtension()
                                     .addFileExtension("keg"); //$NON-NLS-1$
                     // import and serialize the graph
-                    importAndSerialize(inputStream, modelFile, importer, options,
-                            monitor.subTask(1));
+                    importAndSerialize(inputStream, modelFile, importer.get(), createDiagram.get(),
+                            openDiagram.get(), options.get(), monitor.subTask(1));
                 } catch (Throwable throwable) {
                     IStatus status =
                             new Status(IStatus.ERROR, KEGImporterPlugin.PLUGIN_ID,
@@ -265,9 +283,9 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
     }
 
     private void importAndSerialize(final InputStream inputStream, final IPath modelPath,
-            final IImporter importer, final IPropertyHolder options,
-            final IKielerProgressMonitor monitor) throws IOException, TransformException,
-            InterruptedException, ExecutionException {
+            final IImporter importer, final boolean createDiagram, final boolean openDiagram,
+            final IPropertyHolder options, final IKielerProgressMonitor monitor)
+            throws IOException, TransformException, InterruptedException, ExecutionException {
         // perform the import
         Node graph = importer.doImport(inputStream, options, monitor);
         // serialize KEG graph
@@ -275,15 +293,14 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
         // post process the model file
         importer.doModelPostProcess(modelPath, options);
         // create diagram file if selected
-        Pair<Boolean, Boolean> createAndOpenDiagram = getCreateAndOpenDiagram();
-        if (createAndOpenDiagram.getFirst()) {
+        if (createDiagram) {
             IPath diagramFile = modelPath.removeFileExtension().addFileExtension("kegdi"); //$NON-NLS-1$
-            createKEGDiagram(modelPath, diagramFile);
+            createDiagram(modelPath, diagramFile);
             // post process the diagram file
-            options.setProperty(ImportManager.OPTION_OPEN_DIAGRAM, createAndOpenDiagram.getSecond());
+            options.setProperty(ImportManager.OPTION_OPEN_DIAGRAM, openDiagram);
             importer.doDiagramPostProcess(diagramFile, options);
             // open the diagram in an editor if selected and not already opened by the post process
-            if (createAndOpenDiagram.getSecond()) {
+            if (openDiagram) {
                 openDiagram(diagramFile);
             }
         }
@@ -304,8 +321,7 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
         outputStream.close();
     }
 
-    private void createKEGDiagram(final IPath modelPath, final IPath diagramFile)
-            throws IOException {
+    private void createDiagram(final IPath modelPath, final IPath diagramFile) throws IOException {
         closeDiagram(diagramFile);
         // load the model
         ResourceSet modelResourceSet = new ResourceSetImpl();
@@ -367,61 +383,6 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
                 }
             }, true);
         }
-    }
-
-    private Pair<AbstractImporter, IPropertyHolder> getImporterAndOptions()
-            throws InterruptedException, ExecutionException {
-        return getPairInUi(new Callable<Pair<AbstractImporter, IPropertyHolder>>() {
-            public Pair<AbstractImporter, IPropertyHolder> call() throws Exception {
-                Pair<AbstractImporter, IPropertyHolder> result =
-                        new Pair<AbstractImporter, IPropertyHolder>(optionsPage.getImporter(),
-                                optionsPage.getOptions());
-                return result;
-            }
-        });
-    }
-
-    private Pair<List<IFile>, IPath> getWorkspaceFilesAndTarget() throws InterruptedException,
-            ExecutionException {
-        return getPairInUi(new Callable<Pair<List<IFile>, IPath>>() {
-            public Pair<List<IFile>, IPath> call() throws Exception {
-                Pair<List<IFile>, IPath> result =
-                        new Pair<List<IFile>, IPath>(workspaceSourcesPage.getFiles(null),
-                                workspaceSourcesPage.getTargetContainerPath());
-                return result;
-            }
-        });
-    }
-
-    private Pair<List<File>, IPath> getFileSystemFilesAndTarget() throws InterruptedException,
-            ExecutionException {
-        return getPairInUi(new Callable<Pair<List<File>, IPath>>() {
-            public Pair<List<File>, IPath> call() throws Exception {
-                Pair<List<File>, IPath> result =
-                        new Pair<List<File>, IPath>(fileSystemSourcesPage.getFiles(null),
-                                fileSystemSourcesPage.getTargetContainerPath());
-                return result;
-            }
-        });
-    }
-
-    private Pair<Boolean, Boolean> getCreateAndOpenDiagram() throws InterruptedException,
-            ExecutionException {
-        return getPairInUi(new Callable<Pair<Boolean, Boolean>>() {
-            public Pair<Boolean, Boolean> call() throws Exception {
-                Pair<Boolean, Boolean> result =
-                        new Pair<Boolean, Boolean>(optionsPage.getCreateDiagramFiles(),
-                                optionsPage.getOpenDiagramFiles());
-                return result;
-            }
-        });
-    }
-
-    private <S, T> Pair<S, T> getPairInUi(final Callable<Pair<S, T>> callable)
-            throws InterruptedException, ExecutionException {
-        FutureTask<Pair<S, T>> task = new FutureTask<Pair<S, T>>(callable);
-        MonitoredOperation.runInUI(task, true);
-        return task.get();
     }
 
     /**
