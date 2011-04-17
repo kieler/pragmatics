@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.keg.diagram.custom.wizards;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -31,24 +32,7 @@ import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
  * 
  * @author mri
  */
-public class RandomGraphBiconnectedPage extends AbstractRandomGraphPage {
-
-    /** the page title. */
-    private static final String TITLE = "Biconnected Graph";
-    /** the description message for this page. */
-    private static final String DESCRIPTION = "Select options for creating a biconnected graph";
-
-    /** the label for the number of nodes. */
-    private static final String LABEL_NUMBER_OF_NODES = "Number Of &Nodes:";
-    /** the label for the number of edges. */
-    private static final String LABEL_NUMBER_OF_EDGES = "Number Of &Edges:";
-
-    /** the description for the number of nodes. */
-    private static final String DESCRIPTION_NUMBER_OF_NODES =
-            "The precise number of nodes in the generated graph.";
-    /** the description for the number of edges. */
-    private static final String DESCRIPTION_NUMBER_OF_EDGES =
-            "The number of edges in the generated graph. The actual number can differ slightly.";
+public class RandomGraphBiconnectedPage extends WizardPage {
 
     /** the selected number of nodes. */
     private int numberOfNodes;
@@ -59,9 +43,9 @@ public class RandomGraphBiconnectedPage extends AbstractRandomGraphPage {
      * Constructs a RandomGraphBiconnectedPage.
      */
     public RandomGraphBiconnectedPage() {
-        super("randomGraphBiconnectedPage");
-        setTitle(TITLE);
-        setDescription(DESCRIPTION);
+        super("randomGraphBiconnectedPage"); //$NON-NLS-1$
+        setTitle(Messages.RandomGraphBiconnectedPage_title);
+        setDescription(Messages.RandomGraphBiconnectedPage_description);
         setDefaultPreferences();
         loadPreferences();
     }
@@ -88,9 +72,9 @@ public class RandomGraphBiconnectedPage extends AbstractRandomGraphPage {
         composite.setLayout(layout);
         // add NUMBER_OF_NODES option
         Label label = new Label(composite, SWT.NULL);
-        label.setText(LABEL_NUMBER_OF_NODES);
+        label.setText(Messages.RandomGraphBiconnectedPage_number_of_nodes_caption);
         final Spinner nodesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        addHelp(nodesSpinner, DESCRIPTION_NUMBER_OF_NODES);
+        Util.addHelp(nodesSpinner, Messages.RandomGraphBiconnectedPage_number_of_nodes_help);
         nodesSpinner.setValues(numberOfNodes, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 50;
@@ -102,9 +86,9 @@ public class RandomGraphBiconnectedPage extends AbstractRandomGraphPage {
         });
         // add NUMBER_OF_EDGES option
         label = new Label(composite, SWT.NULL);
-        label.setText(LABEL_NUMBER_OF_EDGES);
+        label.setText(Messages.RandomGraphBiconnectedPage_number_of_edges_caption);
         final Spinner edgesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        addHelp(edgesSpinner, DESCRIPTION_NUMBER_OF_EDGES);
+        Util.addHelp(edgesSpinner, Messages.RandomGraphBiconnectedPage_number_of_edges_help);
         edgesSpinner.setValues(numberOfEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 50;

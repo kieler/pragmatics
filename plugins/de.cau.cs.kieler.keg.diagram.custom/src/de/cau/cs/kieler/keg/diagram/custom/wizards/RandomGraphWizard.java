@@ -38,7 +38,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -57,6 +56,7 @@ import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.keg.diagram.custom.KEGDiagramPlugin;
 import de.cau.cs.kieler.keg.Node;
 import de.cau.cs.kieler.keg.diagram.custom.random.IRandomGraphGenerator;
@@ -71,25 +71,6 @@ import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorUtil;
  * @author mri
  */
 public class RandomGraphWizard extends Wizard implements INewWizard {
-
-    /** the wizard title. */
-    private static final String TITLE = "New Random Graph";
-
-    /** the title for the dialog asking about revising settings. */
-    private static final String QUESTION_TITLE = "Revise settings";
-    /** the message for asking the user to revise settings when surpassing the graphs soft-limit. */
-    private static final String MESSAGE_HIGH_NUMBER_OF_GRAPHS =
-            "You entered a very high number of generated graphs."
-                    + " This can cause significant delay. Do you want to continue?";
-    /** the message for asking the user to revise settings when surpassing the diagrams soft-limit. */
-    private static final String MESSAGE_HIGH_NUMBER_OF_GRAPHS_AND_DIAGRAMS =
-            "You entered a high number of generated graphs and selected to generate diagram files."
-                    + " This can cause significant delay. Do you want to continue?";
-    /** the message for asking the user to revise settings when surpassing the open soft-limit. */
-    private static final String MESSAGE_HIGH_NUMBER_OF_GRAPHS_AND_OPEN_DIAGRAMS =
-            "You selected to open all generated diagram files."
-                    + " This can cause significant delay for the entered number of generated graphs."
-                    + " Do you want to continue?";
 
     /** the soft-limit for the number of generated graphs. */
     private static final int SOFT_LIMIT_GRAPHS = 10000;
@@ -124,7 +105,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
     public RandomGraphWizard() {
         super();
         setNeedsProgressMonitor(true);
-        setWindowTitle(TITLE);
+        setWindowTitle(Messages.RandomGraphWizard_title);
     }
 
     /**
@@ -188,19 +169,19 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         savePreferences();
         // if necessary ask the user to verify his decisions on the number of generated graphs
         if (newFilePage.getNumberOfGraphs() > SOFT_LIMIT_GRAPHS) {
-            if (!askUser(MESSAGE_HIGH_NUMBER_OF_GRAPHS)) {
+            if (!askUser(Messages.RandomGraphWizard_soft_limit_graphs_message)) {
                 getContainer().showPage(newFilePage);
                 return false;
             }
         } else if (newFilePage.getCreateDiagramFiles()
                 && newFilePage.getNumberOfGraphs() > SOFT_LIMIT_DIAGRAMS) {
-            if (!askUser(MESSAGE_HIGH_NUMBER_OF_GRAPHS_AND_DIAGRAMS)) {
+            if (!askUser(Messages.RandomGraphWizard_soft_limit_diagrams_message)) {
                 getContainer().showPage(newFilePage);
                 return false;
             }
         } else if (newFilePage.getOpenDiagramFiles()
                 && newFilePage.getNumberOfGraphs() > SOFT_LIMIT_OPEN_DIAGRAMS) {
-            if (!askUser(MESSAGE_HIGH_NUMBER_OF_GRAPHS_AND_OPEN_DIAGRAMS)) {
+            if (!askUser(Messages.RandomGraphWizard_soft_limit_open_diagrams_message)) {
                 getContainer().showPage(newFilePage);
                 return false;
             }
@@ -225,7 +206,8 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         } catch (InvocationTargetException exception) {
             IStatus status =
                     new Status(IStatus.ERROR, KEGDiagramPlugin.PLUGIN_ID,
-                            "Failed generating graphs", exception.getCause());
+                            Messages.RandomGraphWizard_graph_generated_failed_error,
+                            exception.getCause());
             StatusManager.getManager().handle(status, StatusManager.BLOCK | StatusManager.SHOW);
         }
 
@@ -236,14 +218,10 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         MessageBox messageBox =
                 new MessageBox(getContainer().getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
         messageBox.setMessage(question);
-        messageBox.setText(QUESTION_TITLE);
+        messageBox.setText(Messages.RandomGraphWizard_revise_settings_title);
         int response = messageBox.open();
         return response == SWT.YES;
     }
-
-    private String nameWithoutExt;
-    private String ext;
-    private int i;
 
     /**
      * Performs the actual generation and serialization.
@@ -260,57 +238,66 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
     private void doFinish(final IKielerProgressMonitor monitor) throws IOException, CoreException,
             InterruptedException {
         int numberOfGraphs = newFilePage.getNumberOfGraphs();
-        monitor.begin("Generating KEG graphs", numberOfGraphs);
+        monitor.begin(Messages.RandomGraphWizard_generating_graphs_task, numberOfGraphs);
+        // retrieve options
+        IPropertyHolder options = getOptions();
+        final Maybe<Boolean> createDiagram = new Maybe<Boolean>();
+        final Maybe<Boolean> openDiagram = new Maybe<Boolean>();
+        MonitoredOperation.runInUI(new Runnable() {
+            public void run() {
+                createDiagram.set(newFilePage.getCreateDiagramFiles());
+                openDiagram.set(newFilePage.getOpenDiagramFiles());
+            }
+        }, true);
+        // do the generation
         try {
-            // generate and serialize
             if (numberOfGraphs == 1) {
-                Display.getDefault().syncExec(new Runnable() {
+                final Maybe<IFile> file = new Maybe<IFile>();
+                MonitoredOperation.runInUI(new Runnable() {
                     public void run() {
-                        // collect the options from the pages
-                        IPropertyHolder options = getOptions();
-                        IFile file = newFilePage.createNewFile();
-                        try {
-                            generateAndSerialize(file, options, monitor.subTask(1));
-                        } catch (IOException e) {
-                            // ignore
-                        } catch (CoreException e) {
-                            // ignore
-                        }
+                        file.set(newFilePage.createNewFile());
                     }
-                });
+                }, true);
+                // generate and serialize the graph
+                try {
+                    generateAndSerialize(file.get(), createDiagram.get(), openDiagram.get(),
+                            options, monitor.subTask(1));
+                } catch (Throwable throwable) {
+                    throwable.printStackTrace();
+                }
+
             } else {
                 // prepare to build filenames
-                Display.getDefault().syncExec(new Runnable() {
+                final Maybe<String> name = new Maybe<String>();
+                final Maybe<String> ext = new Maybe<String>();
+                final Maybe<IPath> containerPath = new Maybe<IPath>();
+                MonitoredOperation.runInUI(new Runnable() {
                     public void run() {
-                        String name = newFilePage.getFileName();
-                        nameWithoutExt = name.substring(0, name.lastIndexOf("."));
-                        ext = newFilePage.getFileExtension();
+                        name.set(newFilePage.getFileName());
+                        ext.set(newFilePage.getFileExtension());
+                        containerPath.set(newFilePage.getContainerFullPath());
                     }
-                });
+                }, true);
+                String nameWithoutExt = 
+                    name.get().substring(0, name.get().lastIndexOf(".")); //$NON-NLS-1$
                 // generate the desired number of graphs
-                for (i = 0; i < numberOfGraphs; ++i) {
+                for (int i = 0; i < numberOfGraphs; ++i) {
                     if (monitor.isCanceled()) {
                         throw new InterruptedException();
                     }
-                    Display.getDefault().syncExec(new Runnable() {
-                        public void run() {
-                            IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-                            IPath path =
-                                    newFilePage.getContainerFullPath().append(
-                                            new Path(nameWithoutExt + i + "." + ext));
-                            IFile file = workspaceRoot.getFile(path);
-                            // collect the options from the pages
-                            IPropertyHolder options = getOptions();
-                            // generate and serialize the graph
-                            try {
-                                generateAndSerialize(file, options, monitor.subTask(1));
-                            } catch (IOException e) {
-                                // ignore
-                            } catch (CoreException e) {
-                                // ingore
-                            }
-                        }
-                    });
+                    // contruct the file path
+                    IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+                    IPath path =
+                            containerPath.get().append(
+                                    new Path(nameWithoutExt + i + "." + ext.get())); //$NON-NLS-1$
+                    IFile file = workspaceRoot.getFile(path);
+                    // generate and serialize the graph
+                    try {
+                        generateAndSerialize(file, createDiagram.get(), openDiagram.get(), options,
+                                monitor.subTask(1));
+                    } catch (Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
                 }
             }
         } finally {
@@ -318,9 +305,10 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         }
     }
 
-    private void generateAndSerialize(final IFile file, final IPropertyHolder options,
+    private void generateAndSerialize(final IFile file, final boolean createDiagram,
+            final boolean openDiagram, final IPropertyHolder options,
             final IKielerProgressMonitor monitor) throws IOException, CoreException {
-        monitor.begin("Generating and serializing: " + file.getName(), 1);
+        monitor.begin(Messages.RandomGraphWizard_generate_and_serialize_task + file.getName(), 1);
         try {
             // generate
             IRandomGraphGenerator generator = new RandomGraphGenerator();
@@ -333,12 +321,12 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
             resource.save(Collections.EMPTY_MAP);
             file.refreshLocal(1, null);
             // create diagram file if requested
-            if (newFilePage.getCreateDiagramFiles()) {
+            if (createDiagram) {
                 IPath path = file.getFullPath();
-                IPath diagramPath = path.removeFileExtension().addFileExtension("kegdi");
-                createKEGDiagram(path, diagramPath);
+                IPath diagramPath = path.removeFileExtension().addFileExtension("kegdi"); //$NON-NLS-1$
+                createDiagram(path, diagramPath);
                 // open diagram file if requested
-                if (newFilePage.getOpenDiagramFiles()) {
+                if (openDiagram) {
                     openDiagram(diagramPath);
                 }
             }
@@ -347,9 +335,8 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         }
     }
 
-    private void createKEGDiagram(final IPath modelFile, final IPath diagramFile)
-            throws IOException {
-        closeDiagramEditor(diagramFile);
+    private void createDiagram(final IPath modelFile, final IPath diagramFile) throws IOException {
+        closeDiagram(diagramFile);
         // load the model
         ResourceSet modelResourceSet = new ResourceSetImpl();
         URI modelFileURI = URI.createPlatformResourceURI(modelFile.toOSString(), true);
@@ -367,12 +354,12 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         diagramResource.save(GraphsDiagramEditorUtil.getSaveOptions());
     }
 
-    private void closeDiagramEditor(final IPath diagramPath) {
+    private void closeDiagram(final IPath diagramPath) {
         final IFile diagramFile = ResourcesPlugin.getWorkspace().getRoot().getFile(diagramPath);
         if (diagramFile.exists()) {
-            // close all editors which have the diagram file opened
             MonitoredOperation.runInUI(new Runnable() {
                 public void run() {
+                    // close all editors which have the diagram file opened
                     IWorkbenchPage page =
                             PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
                     IEditorInput input = new FileEditorInput(diagramFile);
@@ -394,7 +381,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
                 // open the diagram file in an editor
                 IEditorDescriptor editorDescriptor = IDE.getDefaultEditor(diagramFile);
                 if (editorDescriptor == null || editorDescriptor.isOpenExternal()) {
-                    // if not editor to open the diagram is present ignore it
+                    // if no editor to open the diagram is present ignore it
                     return;
                 }
                 try {

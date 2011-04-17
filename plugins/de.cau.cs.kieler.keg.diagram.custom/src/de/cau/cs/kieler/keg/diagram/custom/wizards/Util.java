@@ -16,25 +16,21 @@ package de.cau.cs.kieler.keg.diagram.custom.wizards;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * The abstract base class for random graph pages providing comfort functionality.
+ * Utility functionality for the random graph wizard.
  * 
  * @author mri
  */
-public abstract class AbstractRandomGraphPage extends WizardPage {
+public final class Util {
 
     /**
-     * Constructs an AbstractRandomGraphPage.
-     * 
-     * @param pageName
-     *            the page name
+     * A private constructor to prevent instantiation.
      */
-    protected AbstractRandomGraphPage(final String pageName) {
-        super(pageName);
+    private Util() {
+        // do nothing
     }
 
     /**
@@ -47,7 +43,7 @@ public abstract class AbstractRandomGraphPage extends WizardPage {
      *            the help text
      */
     // CHECKSTYLEOFF MagicNumber
-    protected void addHelp(final Control control, final String help) {
+    public static void addHelp(final Control control, final String help) {
         ControlDecoration dec = new ControlDecoration(control, SWT.TOP | SWT.RIGHT);
         FieldDecoration errorFieldIndicator =
                 FieldDecorationRegistry.getDefault().getFieldDecoration(

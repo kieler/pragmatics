@@ -37,31 +37,17 @@ import de.cau.cs.kieler.keg.diagram.custom.KEGDiagramPlugin;
  */
 public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
 
-    /** the page title. */
-    private static final String TITLE = "KEG File";
-    /** the message that is displayed while the input is correct. */
-    private static final String MESSAGE_OK = "Create a new KEG file to generate into (*.keg).";
-
-    /** the label for the number of graphs. */
-    private static final String LABEL_NUMBER_OF_GRAPHS = "&Number Of Graphs:";
-    /** the label for the diagram files option. */
-    private static final String LABEL_DIAGRAM_FILES =
-            "Automatically create diagram files (*.kegdi) for the KEG graphs";
-    /** the label for the open diagram files option. */
-    private static final String LABEL_OPEN_DIAGRAM_FILES =
-            "Automatically open the diagram files in editors";
-
-    /** the extension for the file to create. */
-    private static final String NEW_FILE_EXTENSION = "keg";
-
     /** the preference key for the number of graphs. */
-    private static final String PREFERENCE_NUMBER_OF_GRAPHS = "randomWizard.numberOfGraphs";
+    private static final String PREFERENCE_NUMBER_OF_GRAPHS =
+        "randomWizard.numberOfGraphs"; //$NON-NLS-1$
     /** the preference key for the automatic creation of diagram files. */
-    private static final String PREFERENCE_DIAGRAM_FILES = "randomWizard.diagramFiles";
+    private static final String PREFERENCE_DIAGRAM_FILES = 
+        "randomWizard.diagramFiles"; //$NON-NLS-1$
     /** the preference key for the automatic opening of diagram files. */
-    private static final String PREFERENCE_OPEN_DIAGRAM_FILES = "randomWizard.openDiagramFiles";
+    private static final String PREFERENCE_OPEN_DIAGRAM_FILES = 
+        "randomWizard.openDiagramFiles"; //$NON-NLS-1$
     /** the preference key for the filename. */
-    private static final String PREFERENCE_FILENAME = "randomWizard.filename";
+    private static final String PREFERENCE_FILENAME = "randomWizard.filename"; //$NON-NLS-1$
 
     /** the number of graphs to be created. */
     private int numberOfGraphs;
@@ -77,10 +63,10 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
      *            the selection the wizard is called on
      */
     public RandomGraphNewFilePage(final IStructuredSelection selection) {
-        super("randomGraphNewFilePage", selection);
-        setTitle(TITLE);
-        setDescription(MESSAGE_OK);
-        setFileExtension(NEW_FILE_EXTENSION);
+        super("randomGraphNewFilePage", selection); //$NON-NLS-1$
+        setTitle(Messages.RandomGraphNewFilePage_title);
+        setDescription(Messages.RandomGraphNewFilePage_description);
+        setFileExtension("keg"); //$NON-NLS-1$
         setAllowExistingResources(true);
         setDefaultPreferences();
         loadPreferences();
@@ -101,7 +87,7 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
         composite.setLayout(layout);
         // add option for a number of graphs to be created
         Label label = new Label(composite, SWT.NULL);
-        label.setText(LABEL_NUMBER_OF_GRAPHS);
+        label.setText(Messages.RandomGraphNewFilePage_number_of_graphs_caption);
         final Spinner graphsSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
         graphsSpinner.setValues(numberOfGraphs, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
@@ -114,14 +100,14 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
         });
         // add option for creating diagram files for the graphs
         final Button diagramButton = new Button(composite, SWT.CHECK);
-        diagramButton.setText(LABEL_DIAGRAM_FILES);
+        diagramButton.setText(Messages.RandomGraphNewFilePage_create_diagrams_caption);
         diagramButton.setSelection(diagramFiles);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.horizontalSpan = 2;
         diagramButton.setLayoutData(gridData);
         // add option for creating diagram files for the graphs
         final Button openButton = new Button(composite, SWT.CHECK);
-        openButton.setText(LABEL_OPEN_DIAGRAM_FILES);
+        openButton.setText(Messages.RandomGraphNewFilePage_open_diagrams_caption);
         openButton.setSelection(openDiagramFiles);
         openButton.setEnabled(diagramFiles);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
@@ -181,7 +167,7 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
         preferenceStore.setDefault(PREFERENCE_NUMBER_OF_GRAPHS, 1);
         preferenceStore.setDefault(PREFERENCE_DIAGRAM_FILES, false);
         preferenceStore.setDefault(PREFERENCE_OPEN_DIAGRAM_FILES, false);
-        preferenceStore.setDefault(PREFERENCE_FILENAME, "random.keg");
+        preferenceStore.setDefault(PREFERENCE_FILENAME, "random.keg"); //$NON-NLS-1$
     }
 
     /**

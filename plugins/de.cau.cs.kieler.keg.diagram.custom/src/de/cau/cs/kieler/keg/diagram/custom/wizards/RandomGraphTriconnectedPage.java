@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.keg.diagram.custom.wizards;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -31,20 +32,8 @@ import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
  * 
  * @author mri
  */
-public class RandomGraphTriconnectedPage extends AbstractRandomGraphPage {
+public class RandomGraphTriconnectedPage extends WizardPage {
 
-    /** the page title. */
-    private static final String TITLE = "Triconnected Graph";
-    /** the description message for this page. */
-    private static final String DESCRIPTION = "Select options for creating a triconnected graph";
-
-    /** the label for the number of nodes. */
-    private static final String LABEL_NUMBER_OF_NODES = "Number Of &Nodes:";
-
-    /** the description for the number of nodes. */
-    private static final String DESCRIPTION_NUMBER_OF_NODES =
-            "The precise number of nodes in the generated graph.";
-    
     /** the selected number of nodes. */
     private int numberOfNodes;
 
@@ -52,9 +41,9 @@ public class RandomGraphTriconnectedPage extends AbstractRandomGraphPage {
      * Constructs a RandomGraphTriconnectedPage.
      */
     public RandomGraphTriconnectedPage() {
-        super("randomGraphTriconnectedPage");
-        setTitle(TITLE);
-        setDescription(DESCRIPTION);
+        super("randomGraphTriconnectedPage"); //$NON-NLS-1$
+        setTitle(Messages.RandomGraphTriconnectedPage_title);
+        setDescription(Messages.RandomGraphTriconnectedPage_description);
         setDefaultPreferences();
         loadPreferences();
     }
@@ -81,9 +70,9 @@ public class RandomGraphTriconnectedPage extends AbstractRandomGraphPage {
         composite.setLayout(layout);
         // add NUMBER_OF_NODES option
         Label label = new Label(composite, SWT.NULL);
-        label.setText(LABEL_NUMBER_OF_NODES);
+        label.setText(Messages.RandomGraphTriconnectedPage_number_of_nodes_caption);
         final Spinner nodesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        addHelp(nodesSpinner, DESCRIPTION_NUMBER_OF_NODES);
+        Util.addHelp(nodesSpinner, Messages.RandomGraphTriconnectedPage_number_of_nodes_help);
         nodesSpinner.setValues(numberOfNodes, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 50;

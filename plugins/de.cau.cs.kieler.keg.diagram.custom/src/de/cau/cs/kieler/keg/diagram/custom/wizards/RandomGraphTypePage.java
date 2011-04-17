@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.keg.diagram.custom.wizards;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -31,40 +32,7 @@ import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
  * 
  * @author mri
  */
-public class RandomGraphTypePage extends AbstractRandomGraphPage {
-
-    /** the page title. */
-    private static final String TITLE = "Graph Type";
-    /** the description message for this page. */
-    private static final String DESCRIPTION =
-            "Select a graph type (defines which algorithm is used for generation)";
-
-    /** the label for the graph type 'ANY'. */
-    private static final String LABEL_ANY = "Any graph";
-    /** the label for the graph type 'TREE'. */
-    private static final String LABEL_TREE = "Tree";
-    /** the label for the graph type 'BICONNECTED'. */
-    private static final String LABEL_BICONNECTED = "Biconnected graph";
-    /** the label for the graph type 'TRICONNECTED'. */
-    private static final String LABEL_TRICONNECTED = "Triconnected graph";
-    /** the label for the graph type 'ACYCLIC_NO_TRANSITIV_EDGES'. */
-    private static final String LABEL_ANTE = "Acyclic graph without transitiv edges";
-
-    /** the description for the graph type 'ANY'. */
-    private static final String DESCRIPTION_ANY =
-            "A customizable algorithm that can generate any kind of graphs.";
-    /** the description for the graph type 'TREE'. */
-    private static final String DESCRIPTION_TREE =
-            "This algorithm generates trees and has special options to limit the randomness.";
-    /** the description for the graph type 'BICONNECTED'. */
-    private static final String DESCRIPTION_BICONNECTED =
-            "This algorithm generates biconnected graphs.";
-    /** the description for the graph type 'TRICONNECTED'. */
-    private static final String DESCRIPTION_TRICONNECTED =
-            "This algorithm generates triconnected graphs.";
-    /** the description for the graph type 'ACYCLIC_NO_TRANSITIV_EDGES'. */
-    private static final String DESCRIPTION_ANTE =
-            "This algorithm generates acyclic graphs without transitiv edges.";
+public class RandomGraphTypePage extends WizardPage {
 
     /** the selected graph type. */
     private RandomGraphGenerator.GraphType graphType = RandomGraphGenerator.GraphType.ANY;
@@ -73,9 +41,9 @@ public class RandomGraphTypePage extends AbstractRandomGraphPage {
      * Constructs a RandomGraphTypePage.
      */
     public RandomGraphTypePage() {
-        super("randomGraphTypePage");
-        setTitle(TITLE);
-        setDescription(DESCRIPTION);
+        super("randomGraphTypePage"); //$NON-NLS-1$
+        setTitle(Messages.RandomGraphTypePage_title);
+        setDescription(Messages.RandomGraphTypePage_description);
         setDefaultPreferences();
         loadPreferences();
     }
@@ -99,24 +67,27 @@ public class RandomGraphTypePage extends AbstractRandomGraphPage {
         composite.setLayout(rowLayout);
         // create buttons
         Button anyButton =
-                addRadioButton(composite, LABEL_ANY, RandomGraphGenerator.GraphType.ANY, graphType);
-        addHelp(anyButton, DESCRIPTION_ANY);
+                addRadioButton(composite, Messages.RandomGraphTypePage_any_graph_type_caption,
+                        RandomGraphGenerator.GraphType.ANY, graphType);
+        Util.addHelp(anyButton, Messages.RandomGraphTypePage_any_graph_type_help);
         Button treeButton =
-                addRadioButton(composite, LABEL_TREE, RandomGraphGenerator.GraphType.TREE,
-                        graphType);
-        addHelp(treeButton, DESCRIPTION_TREE);
+                addRadioButton(composite, Messages.RandomGraphTypePage_tree_graph_type_caption,
+                        RandomGraphGenerator.GraphType.TREE, graphType);
+        Util.addHelp(treeButton, Messages.RandomGraphTypePage_tree_graph_type_help);
         Button biconnectedButton =
-                addRadioButton(composite, LABEL_BICONNECTED,
+                addRadioButton(composite,
+                        Messages.RandomGraphTypePage_biconnected_graph_type_caption,
                         RandomGraphGenerator.GraphType.BICONNECTED, graphType);
-        addHelp(biconnectedButton, DESCRIPTION_BICONNECTED);
+        Util.addHelp(biconnectedButton, Messages.RandomGraphTypePage_biconnected_graph_type_help);
         Button triconnectedButton =
-                addRadioButton(composite, LABEL_TRICONNECTED,
+                addRadioButton(composite,
+                        Messages.RandomGraphTypePage_triconnected_graph_type_caption,
                         RandomGraphGenerator.GraphType.TRICONNECTED, graphType);
-        addHelp(triconnectedButton, DESCRIPTION_TRICONNECTED);
+        Util.addHelp(triconnectedButton, Messages.RandomGraphTypePage_triconnected_graph_type_help);
         Button anteButton =
-                addRadioButton(composite, LABEL_ANTE,
+                addRadioButton(composite, Messages.RandomGraphTypePage_ante_graph_type_caption,
                         RandomGraphGenerator.GraphType.ACYCLIC_NO_TRANSITIV_EDGES, graphType);
-        addHelp(anteButton, DESCRIPTION_ANTE);
+        Util.addHelp(anteButton, Messages.RandomGraphTypePage_ante_graph_type_help);
     }
 
     private Button addRadioButton(final Composite parent, final String description,

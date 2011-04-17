@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.keg.diagram.custom.wizards;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -31,29 +32,7 @@ import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
  * 
  * @author mri
  */
-public class RandomGraphTreePage extends AbstractRandomGraphPage {
-
-    /** the page title. */
-    private static final String TITLE = "Tree";
-    /** the description message for this page. */
-    private static final String DESCRIPTION = "Select options for creating a tree";
-
-    /** the label for the number of nodes. */
-    private static final String LABEL_NUMBER_OF_NODES = "Number Of &Nodes:";
-    /** the label for the maximum degree. */
-    private static final String LABEL_MAXIMUM_DEGREE = "Maximum &Degree:";
-    /** the label for the maximum width. */
-    private static final String LABEL_MAXIMUM_WIDTH = "Maximum &Width:";
-
-    /** the description for the number of nodes. */
-    private static final String DESCRIPTION_NUMBER_OF_NODES =
-            "The precise number of nodes in the generated graph.";
-    /** the description for the maximum degree. */
-    private static final String DESCRIPTION_MAXIMUM_DEGREE =
-            "The maximum node degree in the generated tree.";
-    /** the description for the maximum width. */
-    private static final String DESCRIPTION_MAXIMUM_WIDTH =
-            "The maximum width of the generated tree.";
+public class RandomGraphTreePage extends WizardPage {
 
     /** the selected number of nodes. */
     private int numberOfNodes;
@@ -66,9 +45,9 @@ public class RandomGraphTreePage extends AbstractRandomGraphPage {
      * Constructs a RandomGraphTreePage.
      */
     public RandomGraphTreePage() {
-        super("randomGraphTreePage");
-        setTitle(TITLE);
-        setDescription(DESCRIPTION);
+        super("randomGraphTreePage"); //$NON-NLS-1$
+        setTitle(Messages.RandomGraphTreePage_title);
+        setDescription(Messages.RandomGraphTreePage_description);
         setDefaultPreferences();
         loadPreferences();
     }
@@ -95,9 +74,9 @@ public class RandomGraphTreePage extends AbstractRandomGraphPage {
         composite.setLayout(layout);
         // add NUMBER_OF_NODES option
         Label label = new Label(composite, SWT.NULL);
-        label.setText(LABEL_NUMBER_OF_NODES);
+        label.setText(Messages.RandomGraphTreePage_number_of_nodes_caption);
         final Spinner nodesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        addHelp(nodesSpinner, DESCRIPTION_NUMBER_OF_NODES);
+        Util.addHelp(nodesSpinner, Messages.RandomGraphTreePage_number_of_nodes_help);
         nodesSpinner.setValues(numberOfNodes, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 50;
@@ -109,9 +88,9 @@ public class RandomGraphTreePage extends AbstractRandomGraphPage {
         });
         // add MAX_DEGREE option
         label = new Label(composite, SWT.NULL);
-        label.setText(LABEL_MAXIMUM_DEGREE);
+        label.setText(Messages.RandomGraphTreePage_max_degree_caption);
         final Spinner degreeSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        addHelp(degreeSpinner, DESCRIPTION_MAXIMUM_DEGREE);
+        Util.addHelp(degreeSpinner, Messages.RandomGraphTreePage_max_degree_help);
         degreeSpinner.setValues(maxDegree, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 50;
@@ -123,9 +102,9 @@ public class RandomGraphTreePage extends AbstractRandomGraphPage {
         });
         // add MAX_WIDTH option
         label = new Label(composite, SWT.NULL);
-        label.setText(LABEL_MAXIMUM_WIDTH);
+        label.setText(Messages.RandomGraphTreePage_max_width_caption);
         final Spinner widthSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        addHelp(widthSpinner, DESCRIPTION_MAXIMUM_WIDTH);
+        Util.addHelp(widthSpinner, Messages.RandomGraphTreePage_max_width_help);
         widthSpinner.setValues(maxWidth, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 50;
