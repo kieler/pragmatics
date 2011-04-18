@@ -165,24 +165,17 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @param parentLayout the parent layout data
      */
     private void updateModules(final LayeredGraph graph, final KShapeLayout parentLayout) {
-        // we'll keep track of whether at least one of the phases has changed; this
-        // would mean that we'd have to recalculate the intermediate processing
-        // strategy as well, which we would like to avoid
-        boolean phasesChanged = false;
-        
         // check which layering strategy to use
         LayeringStrategy placing = parentLayout.getProperty(Properties.NODE_LAYERING);
         switch (placing) {
         case LONGEST_PATH:
             if (!(layerer instanceof LongestPathLayerer)) {
                 layerer = new LongestPathLayerer();
-                phasesChanged = true;
             }
             break;
         default:
             if (!(layerer instanceof NetworkSimplexLayerer)) {
                 layerer = new NetworkSimplexLayerer();
-                phasesChanged = true;
             }
         }
         
@@ -192,57 +185,52 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         case ORTHOGONAL:
             if (!(edgeRouter instanceof OrthogonalEdgeRouter)) {
                 edgeRouter = new OrthogonalEdgeRouter();
-                phasesChanged = true;
             }
             break;
         case SIMPLE_SPLINES:
             if (!(edgeRouter instanceof SimpleSplineEdgeRouter)) {
                 edgeRouter = new SimpleSplineEdgeRouter();
-                phasesChanged = true;
             }
             break;
         case COMPLEX_SPLINES:
             if (!(edgeRouter instanceof ComplexSplineEdgeRouter)) {
                 edgeRouter = new ComplexSplineEdgeRouter();
-                phasesChanged = true;
             }
             break;
         default:
             if (!(edgeRouter instanceof PolylineEdgeRouter)) {
                 edgeRouter = new PolylineEdgeRouter();
-                phasesChanged = true;
             }
         }
         
-        if (phasesChanged) {
-            // update intermediate processor strategy
-            intermediateProcessingStrategy.clear();
-            intermediateProcessingStrategy.addAll(cycleBreaker.getIntermediateProcessingStrategy(graph))
-                .addAll(layerer.getIntermediateProcessingStrategy(graph))
-                .addAll(crossingMinimizer.getIntermediateProcessingStrategy(graph))
-                .addAll(nodePlacer.getIntermediateProcessingStrategy(graph))
-                .addAll(edgeRouter.getIntermediateProcessingStrategy(graph));
-            
-            // construct the list of processors that make up the algorithm
-            algorithm.clear();
-            algorithm.addAll(
-                    getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_1));
-            algorithm.add(cycleBreaker);
-            algorithm.addAll(
-                    getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_2));
-            algorithm.add(layerer);
-            algorithm.addAll(
-                    getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_3));
-            algorithm.add(crossingMinimizer);
-            algorithm.addAll(
-                    getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_4));
-            algorithm.add(nodePlacer);
-            algorithm.addAll(
-                    getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_5));
-            algorithm.add(edgeRouter);
-            algorithm.addAll(
-                    getIntermediateProcessorList(IntermediateProcessingStrategy.AFTER_PHASE_5));
-        }
+        // update intermediate processor strategy
+        intermediateProcessingStrategy.clear();
+        intermediateProcessingStrategy
+            .addAll(cycleBreaker.getIntermediateProcessingStrategy(graph))
+            .addAll(layerer.getIntermediateProcessingStrategy(graph))
+            .addAll(crossingMinimizer.getIntermediateProcessingStrategy(graph))
+            .addAll(nodePlacer.getIntermediateProcessingStrategy(graph))
+            .addAll(edgeRouter.getIntermediateProcessingStrategy(graph));
+        
+        // construct the list of processors that make up the algorithm
+        algorithm.clear();
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_1));
+        algorithm.add(cycleBreaker);
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_2));
+        algorithm.add(layerer);
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_3));
+        algorithm.add(crossingMinimizer);
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_4));
+        algorithm.add(nodePlacer);
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_5));
+        algorithm.add(edgeRouter);
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingStrategy.AFTER_PHASE_5));
     }
     
     /**
