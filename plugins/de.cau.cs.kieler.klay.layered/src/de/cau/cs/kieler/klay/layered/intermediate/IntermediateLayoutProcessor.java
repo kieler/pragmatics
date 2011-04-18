@@ -108,7 +108,7 @@ public enum IntermediateLayoutProcessor {
             return new OddPortSideProcessor();
         
         case PORT_ORDER_PROCESSOR:
-            return new PortSideProcessor();
+            return new PortOrderProcessor();
         
         case PORT_POSITION_PROCESSOR:
             return new PortPositionProcessor();
