@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
+import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+
 
 /**
  * A layout phase is a special kind of layout processor that encapsulates an
@@ -28,8 +30,10 @@ public interface ILayoutPhase extends ILayoutProcessor {
     /**
      * Returns the intermediate layout processors this phase depends on.
      * 
+     * @param graph the layered graph to be processed. The strategy may vary
+     *              depending on certain properties of the graph.
      * @return intermediate processing strategy. May be {@code null}.
      */
-    IntermediateProcessingStrategy getIntermediateProcessingStrategy();
+    IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph);
     
 }

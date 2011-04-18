@@ -212,7 +212,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
         return INTERMEDIATE_PROCESSING_STRATEGY;
     }
     

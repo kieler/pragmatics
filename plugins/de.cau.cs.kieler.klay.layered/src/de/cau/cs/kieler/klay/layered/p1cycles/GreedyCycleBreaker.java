@@ -67,7 +67,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
         return INTERMEDIATE_PROCESSING_STRATEGY;
     }
 

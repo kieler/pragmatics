@@ -101,12 +101,28 @@ public class IntermediateProcessingStrategy {
     }
     
     /**
+     * Constructs a new strategy that has the given processor in the given slot, but
+     * is otherwise empty.
+     * 
+     * @param slotIndex the slot index. Must be {@code >= 0} and
+     *                  {@code < INTERMEDIATE_PHASE_SLOTS}.
+     * @param processor the layout processor to add.
+     */
+    public IntermediateProcessingStrategy(final int slotIndex,
+            final IntermediateLayoutProcessor processor) {
+        
+        this();
+        
+        addAll(slotIndex, EnumSet.of(processor));
+    }
+    
+    /**
      * Constructs a new strategy that has the given processors in the given slot, but
      * is otherwise empty.
      * 
      * @param slotIndex the slot index. Must be {@code >= 0} and
      *                  {@code < INTERMEDIATE_PHASE_SLOTS}.
-     * @param processors the layout processors to add. May be {@code null}.
+     * @param processors the layout processors to add.
      */
     public IntermediateProcessingStrategy(final int slotIndex,
             final Collection<IntermediateLayoutProcessor> processors) {

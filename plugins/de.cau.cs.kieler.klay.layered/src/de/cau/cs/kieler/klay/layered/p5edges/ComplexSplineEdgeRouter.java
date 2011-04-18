@@ -83,7 +83,7 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements ILayou
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
         return null;
     }
 

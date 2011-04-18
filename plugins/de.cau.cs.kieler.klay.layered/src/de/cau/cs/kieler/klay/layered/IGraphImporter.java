@@ -17,6 +17,9 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
  * Interface for importer classes for the layered graph structure.
+ * 
+ * <p>Graph importers are encouraged to set the {@link Properties#GRAPH_PROPERTIES}
+ * property on imported graphs.</p>
  *
  * @author msp
  */

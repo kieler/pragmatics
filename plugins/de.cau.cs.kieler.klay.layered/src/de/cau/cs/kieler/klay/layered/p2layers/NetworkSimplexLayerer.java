@@ -195,7 +195,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
         return null;
     }
 

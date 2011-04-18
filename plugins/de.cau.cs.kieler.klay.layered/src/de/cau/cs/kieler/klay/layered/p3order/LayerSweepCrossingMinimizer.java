@@ -208,7 +208,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
         return INTERMEDIATE_PROCESSING_STRATEGY;
     }
     

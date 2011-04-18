@@ -86,12 +86,14 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     private ILayoutPhase nodePlacer = new LinearSegmentsNodePlacer();
     /** phase 5: Edge routing module. */
     private ILayoutPhase edgeRouter;
+    
     /** intermediate layout processor strategy. */
     private IntermediateProcessingStrategy intermediateProcessingStrategy =
         new IntermediateProcessingStrategy();
     /** collection of instantiated intermediate modules. */
     private Map<IntermediateLayoutProcessor, ILayoutProcessor> intermediateLayoutProcessorCache =
         new HashMap<IntermediateLayoutProcessor, ILayoutProcessor>();
+    
     /** list of layout processors that compose the current algorithm. */
     private List<ILayoutProcessor> algorithm = new LinkedList<ILayoutProcessor>();
     
@@ -102,15 +104,15 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Layered layout", 1);
 
-        // update the modules depending on user options
-        updateModules(layoutNode.getData(KShapeLayout.class));
-
         // transform the input graph
         IGraphImporter graphImporter = new KGraphImporter(layoutNode);
         LayeredGraph layeredGraph = graphImporter.getGraph();
 
         // set special properties for the layered graph
         setOptions(layeredGraph, layoutNode);
+
+        // update the modules depending on user options
+        updateModules(layeredGraph, layoutNode.getData(KShapeLayout.class));
 
         // perform the actual layout
         layout(graphImporter, progressMonitor.subTask(1));
@@ -120,13 +122,49 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
         progressMonitor.done();
     }
+
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Options and Modules Management
+    
+    /**
+     * Set special layout options for the layered graph.
+     * 
+     * @param layeredGraph a new layered graph
+     * @param parent the original parent node
+     */
+    private void setOptions(final LayeredGraph layeredGraph, final KNode parent) {
+        // set the random number generator based on the random seed option
+        Integer randomSeed = layeredGraph.getProperty(LayoutOptions.RANDOM_SEED);
+        if (randomSeed != null) {
+            int val = randomSeed;
+            if (val == 0) {
+                layeredGraph.setProperty(Properties.RANDOM, new Random());
+            } else {
+                layeredGraph.setProperty(Properties.RANDOM, new Random(val));
+            }
+        } else {
+            layeredGraph.setProperty(Properties.RANDOM, new Random(1));
+        }
+
+        // set the debug canvas based on the debug mode option
+        Boolean debugMode = layeredGraph.getProperty(LayoutOptions.DEBUG_MODE);
+        if (debugMode) {
+            IDebugCanvas debugCanvas = getDebugCanvas();
+            layeredGraph.setProperty(Properties.DEBUG_CANVAS, debugCanvas);
+            float borderSpacing = layeredGraph.getProperty(LayoutOptions.BORDER_SPACING);
+            debugCanvas.setOffset(parent, borderSpacing, borderSpacing);
+            debugCanvas.setBuffered(true);
+        }
+    }
     
     /**
      * Update the modules depending on user options.
      * 
+     * @param graph the graph to be laid out.
      * @param parentLayout the parent layout data
      */
-    private void updateModules(final KShapeLayout parentLayout) {
+    private void updateModules(final LayeredGraph graph, final KShapeLayout parentLayout) {
         // we'll keep track of whether at least one of the phases has changed; this
         // would mean that we'd have to recalculate the intermediate processing
         // strategy as well, which we would like to avoid
@@ -179,11 +217,11 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         if (phasesChanged) {
             // update intermediate processor strategy
             intermediateProcessingStrategy.clear();
-            intermediateProcessingStrategy.addAll(cycleBreaker.getIntermediateProcessingStrategy())
-                .addAll(layerer.getIntermediateProcessingStrategy())
-                .addAll(crossingMinimizer.getIntermediateProcessingStrategy())
-                .addAll(nodePlacer.getIntermediateProcessingStrategy())
-                .addAll(edgeRouter.getIntermediateProcessingStrategy());
+            intermediateProcessingStrategy.addAll(cycleBreaker.getIntermediateProcessingStrategy(graph))
+                .addAll(layerer.getIntermediateProcessingStrategy(graph))
+                .addAll(crossingMinimizer.getIntermediateProcessingStrategy(graph))
+                .addAll(nodePlacer.getIntermediateProcessingStrategy(graph))
+                .addAll(edgeRouter.getIntermediateProcessingStrategy(graph));
             
             // construct the list of processors that make up the algorithm
             algorithm.clear();
@@ -238,37 +276,10 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         
         return result;
     }
-    
-    /**
-     * Set special layout options for the layered graph.
-     * 
-     * @param layeredGraph a new layered graph
-     * @param parent the original parent node
-     */
-    private void setOptions(final LayeredGraph layeredGraph, final KNode parent) {
-        // set the random number generator based on the random seed option
-        Integer randomSeed = layeredGraph.getProperty(LayoutOptions.RANDOM_SEED);
-        if (randomSeed != null) {
-            int val = randomSeed;
-            if (val == 0) {
-                layeredGraph.setProperty(Properties.RANDOM, new Random());
-            } else {
-                layeredGraph.setProperty(Properties.RANDOM, new Random(val));
-            }
-        } else {
-            layeredGraph.setProperty(Properties.RANDOM, new Random(1));
-        }
 
-        // set the debug canvas based on the debug mode option
-        Boolean debugMode = layeredGraph.getProperty(LayoutOptions.DEBUG_MODE);
-        if (debugMode) {
-            IDebugCanvas debugCanvas = getDebugCanvas();
-            layeredGraph.setProperty(Properties.DEBUG_CANVAS, debugCanvas);
-            float borderSpacing = layeredGraph.getProperty(LayoutOptions.BORDER_SPACING);
-            debugCanvas.setOffset(parent, borderSpacing, borderSpacing);
-            debugCanvas.setBuffered(true);
-        }
-    }
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Layout
 
     /**
      * Perform the five phases of the layered layouter.
@@ -327,6 +338,10 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
         monitor.done();
     }
+
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Debug
     
     /**
      * Creates a writer for the given graph. The file name to be written to is assembled

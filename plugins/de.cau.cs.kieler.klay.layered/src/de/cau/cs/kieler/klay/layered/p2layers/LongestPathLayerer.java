@@ -49,7 +49,7 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
         return null;
     }
     

@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,9 +46,11 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
 
 /**
- * Manages the transformation of KGraphs to LayeredGraphs.
+ * Manages the transformation of KGraphs to LayeredGraphs. Sets the
+ * {@link Properties#GRAPH_PROPERTIES} property on imported graphs.
  *
  * @author msp
+ * @author cds
  */
 public class KGraphImporter implements IGraphImporter {
 
@@ -94,9 +97,16 @@ public class KGraphImporter implements IGraphImporter {
         List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
         Map<KGraphElement, LGraphElement> elemMap = new HashMap<KGraphElement, LGraphElement>();
         
+        // the graph properties discovered during the transformations
+        EnumSet<Properties.GraphProperties> graphProperties =
+            EnumSet.noneOf(Properties.GraphProperties.class);
+        
         // transform everything
-        transformNodesAndPorts(layoutNode, layeredNodes, elemMap);
-        transformEdges(layoutNode, elemMap);
+        transformNodesAndPorts(layoutNode, layeredNodes, elemMap, graphProperties);
+        transformEdges(layoutNode, elemMap, graphProperties);
+        
+        // set the graph properties property
+        layeredGraph.setProperty(Properties.GRAPH_PROPERTIES, graphProperties);
     }
 
 
@@ -107,9 +117,11 @@ public class KGraphImporter implements IGraphImporter {
      * @param layeredNodes list of nodes created.
      * @param elemMap the element map that maps the original {@code KGraph} elements to the
      *                transformed {@code LGraph} elements.
+     * @param graphProperties graph properties updated during the transformation.
      */
     private void transformNodesAndPorts(final KNode layoutNode, final List<LNode> layeredNodes,
-            final Map<KGraphElement, LGraphElement> elemMap) {
+            final Map<KGraphElement, LGraphElement> elemMap,
+            final EnumSet<Properties.GraphProperties> graphProperties) {
         
         for (KNode child : layoutNode.getChildren()) {
             // add a new node to the layered graph, copying its size
@@ -125,12 +137,20 @@ public class KGraphImporter implements IGraphImporter {
             
             elemMap.put(child, newNode);
             
-            // add the node's ports
+            // port constraints cannot be undefined
             PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
             if (portConstraints == PortConstraints.UNDEFINED) {
                 portConstraints = PortConstraints.FREE;
             }
+            
+            // get a sorted list of the node's ports; if there are any with non-free port
+            // constraints, set the appropriate graph property
             KPort[] sortedPorts = KimlUtil.getSortedPorts(child);
+            if (sortedPorts.length > 0 && portConstraints != PortConstraints.FREE) {
+                graphProperties.add(Properties.GraphProperties.NON_FREE_PORTS);
+            }
+            
+            // transform the ports
             for (KPort kport : sortedPorts) {
                 KShapeLayout portLayout = kport.getData(KShapeLayout.class);
                 
@@ -217,9 +237,10 @@ public class KGraphImporter implements IGraphImporter {
      * @param layoutNode the layout node whose edges to transform.
      * @param elemMap the element map that maps the original {@code KGraph} elements to the
      *                transformed {@code LGraph} elements.
+     * @param graphProperties graph properties updated during the transformation.
      */
-    private void transformEdges(final KNode layoutNode,
-            final Map<KGraphElement, LGraphElement> elemMap) {
+    private void transformEdges(final KNode layoutNode, final Map<KGraphElement, LGraphElement> elemMap,
+            final EnumSet<Properties.GraphProperties> graphProperties) {
         
         for (KNode child : layoutNode.getChildren()) {
             for (KEdge kedge : child.getOutgoingEdges()) {
@@ -232,6 +253,11 @@ public class KGraphImporter implements IGraphImporter {
                     LPort sourcePort = (LPort) elemMap.get(kedge.getSourcePort());
                     LNode targetNode = (LNode) elemMap.get(kedge.getTarget());
                     LPort targetPort = (LPort) elemMap.get(kedge.getTargetPort());
+                    
+                    // if we have a self-loop, set the appropriate graph property
+                    if (sourceNode != null && sourceNode == targetNode) {
+                        graphProperties.add(Properties.GraphProperties.SELF_LOOPS);
+                    }
                     
                     // create source port
                     if (sourcePort == null) {

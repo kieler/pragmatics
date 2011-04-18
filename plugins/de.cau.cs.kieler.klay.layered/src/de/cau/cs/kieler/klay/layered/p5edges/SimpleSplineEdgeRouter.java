@@ -73,7 +73,7 @@ public class SimpleSplineEdgeRouter extends AbstractAlgorithm implements ILayout
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
         return null;
     }
 

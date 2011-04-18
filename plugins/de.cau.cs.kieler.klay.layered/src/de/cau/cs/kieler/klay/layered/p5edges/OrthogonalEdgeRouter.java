@@ -69,27 +69,66 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
  */
 public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
     
-    /** intermediate processing strategy. */
-    private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
+    /** intermediate processing strategy for basic graphs. */
+    private static final IntermediateProcessingStrategy BASELINE_PROCESSING_STRATEGY =
         new IntermediateProcessingStrategy(
                 // Before Phase 1
                 null,
+                
                 // Before Phase 2
                 null,
+                
                 // Before Phase 3
-                EnumSet.of(
-                        IntermediateLayoutProcessor.NORTH_SOUTH_PORT_PREPROCESSOR,
-                        IntermediateLayoutProcessor.ODD_PORT_SIDE_PROCESSOR,
-                        IntermediateLayoutProcessor.SELF_LOOP_PROCESSOR),
+                /* For non-free ports:
+                 *  - NORTH_SOUTH_PORT_PREPROCESSOR
+                 *  - ODD_PORT_SIDE_PROCESSOR
+                 * 
+                 * For self-loops:
+                 *  - SELF_LOOP_PROCESSOR
+                 */
+                null,
+                
                 // Before Phase 4
                 EnumSet.of(
                         IntermediateLayoutProcessor.HYPEREDGE_DUMMY_MERGER,
                         IntermediateLayoutProcessor.NODE_MARGIN_CALCULATOR),
+                
                 // Before Phase 5
                 null,
+                
+                // After Phase 5
+                /* For non-free ports:
+                 *  - NORTH_SOUTH_PORT_POSTPROCESSOR
+                 */
+                null);
+    /** additional processor dependencies for graphs with non-free ports. */
+    private static final IntermediateProcessingStrategy PORT_PROCESSING_ADDITIONS =
+        new IntermediateProcessingStrategy(
+                // Before Phase 1
+                null,
+                
+                // Before Phase 2
+                null,
+                
+                // Before Phase 3
+                EnumSet.of(
+                        IntermediateLayoutProcessor.NORTH_SOUTH_PORT_PREPROCESSOR,
+                        IntermediateLayoutProcessor.ODD_PORT_SIDE_PROCESSOR),
+                
+                // Before Phase 4
+                null,
+                
+                // Before Phase 5
+                null,
+                
                 // After Phase 5
                 EnumSet.of(
                         IntermediateLayoutProcessor.NORTH_SOUTH_PORT_POSTPROCESSOR));
+    /** additional processor dependencies for graphs with self-loops. */
+    private static final IntermediateProcessingStrategy SELF_LOOP_PROCESSING_ADDITIONS =
+        new IntermediateProcessingStrategy(IntermediateProcessingStrategy.BEFORE_PHASE_3,
+                IntermediateLayoutProcessor.SELF_LOOP_PROCESSOR);
+    
     
     /** weight penalty for conflicts of horizontal line segments. */
     private static final int CONFLICT_PENALTY = 16;
@@ -240,8 +279,23 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
-        return INTERMEDIATE_PROCESSING_STRATEGY;
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
+        Set<Properties.GraphProperties> graphProperties = graph.getProperty(Properties.GRAPH_PROPERTIES);
+        
+        // Basic strategy
+        IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy(
+                BASELINE_PROCESSING_STRATEGY);
+        
+        // Additional dependencies
+        if (graphProperties.contains(Properties.GraphProperties.NON_FREE_PORTS)) {
+            strategy.addAll(PORT_PROCESSING_ADDITIONS);
+        }
+
+        if (graphProperties.contains(Properties.GraphProperties.SELF_LOOPS)) {
+            strategy.addAll(SELF_LOOP_PROCESSING_ADDITIONS);
+        }
+        
+        return strategy;
     }
     
     /**

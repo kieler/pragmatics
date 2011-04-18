@@ -13,7 +13,9 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
+import java.util.EnumSet;
 import java.util.Random;
+import java.util.Set;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
@@ -32,8 +34,12 @@ import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
  * Container for priority definitions.
  * 
  * @author msp
+ * @author cds
  */
 public final class Properties {
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // ENUMERATIONS
 
     /** Definition of node types used in the layered approach. */
     public enum NodeType {
@@ -46,27 +52,57 @@ public final class Properties {
         /** a dummy node created to cope with ports at the northern or southern side. */
         NORTH_SOUTH_PORT;
     }
+    
+    /**
+     * An enumeration of properties a graph may have. These can be used as part of an
+     * {@code EnumSet} to base decisions on graph properties. For example, self-loop
+     * processing may be skipped if the graph doesn't contain self-loops in the first
+     * place.
+     * 
+     * <p>An {@code EnumSet} for this enumeration can be attached to a graph via the
+     * {@link Properties#GRAPH_PROPERTIES} property.</p>
+     * 
+     * @author cds
+     */
+    public enum GraphProperties {
+        /** The graph contains ports that are not free for positioning. */
+        NON_FREE_PORTS,
+        /** The graph contains self-loops. */
+        SELF_LOOPS;
+    }
+
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // INTERNAL PROPERTIES
 
     /** the original object from which a graph element was created. */
     public static final IProperty<Object> ORIGIN = new Property<Object>("origin");
+    
     /** node type. */
     public static final IProperty<NodeType> NODE_TYPE = new Property<NodeType>("nodeType",
             NodeType.NORMAL);
+    
     /** offset for nodes in linear segments. */
     public static final IProperty<Integer> LINSEG_OFFSET = new Property<Integer>("linsegOffset", 0);
+    
     /** owning region for node. */
     public static final IProperty<Region> REGION = new Property<Region>("region", null);
+    
     /** flag for reversed edges. */
     public static final IProperty<Boolean> REVERSED = new Property<Boolean>("reversed", false);
+    
     /** debug canvas. */
     public static final IProperty<IDebugCanvas> DEBUG_CANVAS = new Property<IDebugCanvas>(
             "debugCanvas");
+    
     /** random number generator for the algorithm. */
     public static final IProperty<Random> RANDOM = new Property<Random>("random");
+    
     /** the source port of a long edge before it was broken into multiple segments. */
     public static final IProperty<LPort> LONG_EDGE_SOURCE = new Property<LPort>("longEdgeSource", null);
     /** the target port of a long edge before it was broken into multiple segments. */
     public static final IProperty<LPort> LONG_EDGE_TARGET = new Property<LPort>("longEdgeTarget", null);
+    
     /**
      * The layout unit a node belongs to. This property only makes sense for nodes. A layout unit
      * is a set of nodes between which no nodes belonging to other layout units may be placed. Nodes
@@ -75,6 +111,7 @@ public final class Properties {
      */
     public static final IProperty<LNode> LAYER_LAYOUT_UNIT = new Property<LNode>(
             "layerLayoutUnit", null);
+    
     /**
      * Indicates that a node {@code x} may only appear inside a layer before the node {@code y} the
      * property is set to. That is, having {@code x} appear after {@code y} would violate this
@@ -82,8 +119,14 @@ public final class Properties {
      */
     public static final IProperty<LNode> LAYER_NODE_SUCCESSOR_CONSTRAINT = new Property<LNode>(
             "layerNodeSuccessorConstraint", null);
+    
+    /** Flags indicating the properties of a graph. */
+    public static final IProperty<Set<GraphProperties>> GRAPH_PROPERTIES =
+        new Property<Set<GraphProperties>>("graphProperties", EnumSet.allOf(GraphProperties.class));
 
-    // / USER INTERFACE OPTIONS
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // USER INTERFACE OPTIONS
 
     /** default value for object spacing. */
     public static final float DEF_SPACING = 20.0f;
@@ -168,6 +211,10 @@ public final class Properties {
     public static final IProperty<LayerConstraint> LAYER_CONSTRAINT = new Property<LayerConstraint>(
             LAYER_CONSTRAINT_ID, LayerConstraint.NONE);
 
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // CONSTRUCTOR
+    
     /**
      * Hidden default constructor.
      */
