@@ -527,14 +527,15 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         } else if (nodeType == NodeType.LONG_EDGE || nodeType == NodeType.NORTH_SOUTH_PORT) {
             // This is a LONG_EDGE or NORTH_SOUTH_PORT dummy; check if any of its successors
             // are of one of these types too. If so, we can form a linear segment with one of
-            // them (not with more than one, though)
+            // them. (not with more than one, though) Note: we must take care not to make
+            // a segment out of nodes that are in the same layer
             for (LPort sourcePort : node.getPorts(PortType.OUTPUT)) {
                 for (LPort targetPort : sourcePort.getConnectedPorts()) {
                     LNode targetNode = targetPort.getNode();
                     NodeType targetNodeType = targetNode.getProperty(Properties.NODE_TYPE);
                     
-                    if (targetNodeType == NodeType.LONG_EDGE
-                            || targetNodeType == NodeType.NORTH_SOUTH_PORT) {
+                    if (node.getLayer() != targetNode.getLayer() && (targetNodeType == NodeType.LONG_EDGE
+                            || targetNodeType == NodeType.NORTH_SOUTH_PORT)) {
                         
                         if (fillSegment(targetNode, segment)) {
                             // We just added another node to this node's linear segment. That's

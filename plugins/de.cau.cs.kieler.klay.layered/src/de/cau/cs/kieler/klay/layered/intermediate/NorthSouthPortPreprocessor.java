@@ -88,21 +88,22 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Odd port side processing", 1);
         
+        int pointer;
+        List<LNode> northDummyNodes = new LinkedList<LNode>();
+        List<LNode> southDummyNodes = new LinkedList<LNode>();
+        
         // Iterate through the layers
         for (Layer layer : layeredGraph.getLayers()) {
             // The pointer indicates the index of the current node while northern ports are
             // processed, and the index of the most recently inserted dummy while south ports
             // are processed
-            int pointer = -1;
+            pointer = -1;
             
             // Iterate through the nodes (use an array to avoid concurrent modification
             // exceptions)
             LNode[] nodeArray = layer.getNodes().toArray(new LNode[0]);
             for (LNode node : nodeArray) {
                 pointer++;
-                
-                // Nodes form their own layout unit
-                node.setProperty(Properties.LAYER_LAYOUT_UNIT, node);
                 
                 // We only care about non-dummy nodes with fixed port sides
                 if (!node.getProperty(Properties.NODE_TYPE).equals(Properties.NodeType.NORMAL)
@@ -111,6 +112,13 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                     continue;
                 }
                 
+                // Nodes form their own layout unit
+                node.setProperty(Properties.LAYER_LAYOUT_UNIT, node);
+                
+                // Clear the lists of northern and southern dummy nodes
+                northDummyNodes.clear();
+                southDummyNodes.clear();
+                
                 // Prepare a list of ports on the northern side, sorted from left
                 // to right (when viewed in the diagram); create the appropriate
                 // dummy nodes and assign them to the layer
@@ -118,8 +126,8 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                 for (LPort port : node.getPorts(PortSide.NORTH)) {
                     portList.add(port);
                 }
-                
-                List<LNode> northDummyNodes = createDummyNodes(portList);
+
+                createDummyNodes(portList, northDummyNodes, southDummyNodes);
                 
                 int insertPoint = pointer;
                 LNode successor = node;
@@ -146,7 +154,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                     portList.add(0, port);
                 }
                 
-                List<LNode> southDummyNodes = createDummyNodes(portList);
+                createDummyNodes(portList, southDummyNodes, null);
                 
                 LNode predecessor = node;
                 for (LNode dummy : southDummyNodes) {
@@ -171,18 +179,21 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
      * sorted by position from left to right.
      * 
      * @param ports the list of ports to create dummy nodes for.
-     * @return a list of dummy nodes.
+     * @param dummyNodes all created dummy nodes are added to this list.
+     * @param opposingSideDummyNodes all dummy nodes created due to north-south self-loops
+     *                               for the southern side are placed in this list. When
+     *                               called for southern ports, this may be {@code null}.
      */
-    private List<LNode> createDummyNodes(final List<LPort> ports) {
-        // We'll create at most as many dummy nodes as there are ports
-        List<LNode> dummyNodes = new ArrayList<LNode>(ports.size());
+    private void createDummyNodes(final List<LPort> ports, final List<LNode> dummyNodes,
+            final List<LNode> opposingSideDummyNodes) {
         
         // We'll assemble lists of ports with only incoming, ports with only outgoing
         // and ports with both, incoming and outgoing edges
         List<LPort> inPorts = new ArrayList<LPort>(ports.size());
         List<LPort> outPorts = new ArrayList<LPort>(ports.size());
         List<LPort> inOutPorts = new ArrayList<LPort>(ports.size());
-        List<LEdge> selfloopEdges = new ArrayList<LEdge>(ports.size());
+        List<LEdge> sameSideSelfLoopEdges = new ArrayList<LEdge>(ports.size());
+        List<LEdge> northSouthSelfLoopEdges = new ArrayList<LEdge>(ports.size());
         
         for (LPort port : ports) {
             boolean in = false;
@@ -192,16 +203,30 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
             // ports to stay clear of problems related to cycle breaking. (INPUT ports
             // may have outgoing edges, OUTPUT ports may have incoming edges)
             for (LEdge edge : port.getEdges()) {
-                // Check if the edge forms a self loop with both end points being on
-                // the same side of the node (for each self loop, only the source port
-                // is added to the list)
-                if (edge.getSource().getNode() == edge.getTarget().getNode()
-                        && edge.getSource().getSide() == edge.getTarget().getSide()) {
-                    
+                // Check for self loops we'd be interested in
+                if (edge.getSource().getNode() == edge.getTarget().getNode()) {
+                    // Only do this for the source port
                     if (edge.getSource() == port) {
-                        selfloopEdges.add(edge);
+                        // Check which sides the ports are on
+                        if (port.getSide() == edge.getTarget().getSide()) {
+                            // Same side
+                            sameSideSelfLoopEdges.add(edge);
+                            continue;
+                            
+                        } else if (port.getSide() == PortSide.NORTH
+                                && edge.getTarget().getSide() == PortSide.SOUTH) {
+                            
+                            // North->South self-loop. Due to the SelfLoopProcessor, a
+                            // South->North self-loop cannot happen
+                            northSouthSelfLoopEdges.add(edge);
+                            continue;
+                        }
                     }
-                } else if (edge.getSource() == port) {
+                }
+                
+                // Once we get here, we haven't found a self-loop that would require
+                // additional measures
+                if (edge.getSource() == port) {
                     out = true;
                 } else {
                     in = true;
@@ -217,9 +242,16 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
             }
         }
         
-        // First, create the dummy nodes that handle self loops
-        for (LEdge edge : selfloopEdges) {
-            dummyNodes.add(createDummyNode(edge));
+        // First, create the dummy nodes that handle north->south self-loops. For now,
+        // we always route north->south self-loops west to the node. This could later
+        // change, though.
+        for (LEdge edge : northSouthSelfLoopEdges) {
+            createDummyNode(edge, dummyNodes, opposingSideDummyNodes, PortSide.WEST);
+        }
+        
+        // Second, create the dummy nodes that handle same-side self-loops
+        for (LEdge edge : sameSideSelfLoopEdges) {
+            createDummyNode(edge, dummyNodes);
         }
         
         // Iterate through the lists of input and output ports while both lists still
@@ -239,7 +271,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
             }
             
             // Otherwise, create a dummy node for them
-            dummyNodes.add(createDummyNode(inPort, outPort));
+            createDummyNode(inPort, outPort, dummyNodes);
             
             inPortsIndex++;
             outPortsIndex--;
@@ -247,21 +279,19 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         
         // Give the rest of input and output ports their dummy nodes
         while (inPortsIndex < inPorts.size()) {
-            dummyNodes.add(createDummyNode(inPorts.get(inPortsIndex), null));
+            createDummyNode(inPorts.get(inPortsIndex), null, dummyNodes);
             inPortsIndex++;
         }
         
         while (outPortsIndex >= 0) {
-            dummyNodes.add(createDummyNode(null, outPorts.get(outPortsIndex)));
+            createDummyNode(null, outPorts.get(outPortsIndex), dummyNodes);
             outPortsIndex--;
         }
         
         // in / out ports get their own dummy nodes
         for (LPort inOutPort : inOutPorts) {
-            dummyNodes.add(createDummyNode(inOutPort, inOutPort));
+            createDummyNode(inOutPort, inOutPort, dummyNodes);
         }
-        
-        return dummyNodes;
     }
     
     /**
@@ -273,9 +303,11 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
      * 
      * @param inPort the input port whose edges to reroute. May be {@code null}.
      * @param outPort the output port whose edges to reroute. May be {@code null}.
-     * @return a dummy node.
+     * @param dummyNodes list the created dummy node should be added to.
      */
-    private LNode createDummyNode(final LPort inPort, final LPort outPort) {
+    private void createDummyNode(final LPort inPort, final LPort outPort,
+            final List<LNode> dummyNodes) {
+        
         LNode dummy = new LNode();
         dummy.setProperty(Properties.NODE_TYPE, Properties.NodeType.NORTH_SOUTH_PORT);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
@@ -314,18 +346,18 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
             }
         }
         
-        return dummy;
+        dummyNodes.add(dummy);
     }
     
     /**
-     * Creates a dummy node for the given self-loop edge. The dummy node's {@code ORIGIN} property
-     * is set to the edge. The dummy node has two ports, one for each port the node was connected
-     * to. Their {@code ORIGIN} property is set accordingly.
+     * Creates a dummy node for the given non-north-south self-loop edge. The dummy node's
+     * {@code ORIGIN} property is set to the edge. The dummy node has two ports, one for each
+     * port the node was connected to. Their {@code ORIGIN} property is set accordingly.
      * 
      * @param selfLoop the self-loop edge.
-     * @return a dummy node.
+     * @param dummyNodes list the created dummy node should be added to.
      */
-    private LNode createDummyNode(final LEdge selfLoop) {
+    private void createDummyNode(final LEdge selfLoop, final List<LNode> dummyNodes) {
         LNode dummy = new LNode();
         dummy.setProperty(Properties.NODE_TYPE, Properties.NodeType.NORTH_SOUTH_PORT);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
@@ -349,7 +381,51 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         selfLoop.setSource(null);
         selfLoop.setTarget(null);
         
-        return dummy;
+        dummyNodes.add(dummy);
+    }
+    
+    /**
+     * Creates two dummy nodes for the given north-south self-loop edge. Each dummy node has
+     * only one port, on the specified side of the node. Their {@code ORIGIN} property is set
+     * accordingly.
+     * 
+     * @param selfLoop the self-loop edge.
+     * @param northDummyNodes list the created northern dummy node should be added to.
+     * @param southDummyNodes list the created southern dummy node should be added to.
+     * @param portSide on which sides on the dummy nodes the self-loop ports should be
+     *                 placed.
+     */
+    private void createDummyNode(final LEdge selfLoop, final List<LNode> northDummyNodes,
+            final List<LNode> southDummyNodes, final PortSide portSide) {
+        
+        // North dummy
+        LNode northDummy = new LNode();
+        northDummy.setProperty(Properties.NODE_TYPE, Properties.NodeType.NORTH_SOUTH_PORT);
+        northDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        
+        LPort northDummyOutputPort = new LPort();
+        northDummyOutputPort.setProperty(Properties.ORIGIN, selfLoop.getSource());
+        northDummyOutputPort.setType(PortType.OUTPUT);
+        northDummyOutputPort.setSide(portSide);
+        northDummyOutputPort.setNode(northDummy);
+        
+        // South dummy
+        LNode southDummy = new LNode();
+        southDummy.setProperty(Properties.NODE_TYPE, Properties.NodeType.NORTH_SOUTH_PORT);
+        southDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        
+        LPort southDummyInputPort = new LPort();
+        southDummyInputPort.setProperty(Properties.ORIGIN, selfLoop.getTarget());
+        southDummyInputPort.setType(PortType.INPUT);
+        southDummyInputPort.setSide(portSide);
+        southDummyInputPort.setNode(southDummy);
+        
+        // Reroute the edge
+        selfLoop.setSource(northDummyOutputPort);
+        selfLoop.setTarget(southDummyInputPort);
+        
+        northDummyNodes.add(0, northDummy);
+        southDummyNodes.add(southDummy);
     }
     
 }

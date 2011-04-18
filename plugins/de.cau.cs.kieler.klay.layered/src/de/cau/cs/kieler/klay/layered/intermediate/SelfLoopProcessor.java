@@ -87,9 +87,9 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
                          *  4. West -> East
                          *     Insert dummy.
                          *  5. North -> South
-                         *     Reverse the edge.
-                         *  6. South -> North
                          *     Nothing has to be done.
+                         *  6. South -> North
+                         *     Reverse the edge.
                          */
                         
                         // First, let's deal with the cases where edges have to be reversed
@@ -97,8 +97,8 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
                                 && targetPortSide == PortSide.WEST) {
                             
                             reverseEdge(edge);
-                        } else if (sourcePortSide == PortSide.NORTH
-                                && targetPortSide == PortSide.SOUTH) {
+                        } else if (sourcePortSide == PortSide.SOUTH
+                                && targetPortSide == PortSide.NORTH) {
                             
                             reverseEdge(edge);
                         } else if (sourcePortSide == PortSide.EAST

@@ -101,6 +101,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                  *  - NORTH_SOUTH_PORT_POSTPROCESSOR
                  */
                 null);
+    
     /** additional processor dependencies for graphs with non-free ports. */
     private static final IntermediateProcessingStrategy PORT_PROCESSING_ADDITIONS =
         new IntermediateProcessingStrategy(
@@ -124,6 +125,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 // After Phase 5
                 EnumSet.of(
                         IntermediateLayoutProcessor.NORTH_SOUTH_PORT_POSTPROCESSOR));
+    
     /** additional processor dependencies for graphs with self-loops. */
     private static final IntermediateProcessingStrategy SELF_LOOP_PROCESSING_ADDITIONS =
         new IntermediateProcessingStrategy(IntermediateProcessingStrategy.BEFORE_PHASE_3,
