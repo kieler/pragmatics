@@ -872,7 +872,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
          *  - A western port can be connected to another western port.
          * 
          * The algorithm now works by assigning indices to eastern ports top-down, and to
-         * western ports bottom-up. (the direction is not that important) Then we traverse
+         * western ports bottom-up. (the link direction is not important) Then we traverse
          * the ports. If we find an eastern port connected to another eastern port, the
          * difference of their indices tells us how many other ports with incident edges
          * lie between them and can cause crossings.
@@ -889,6 +889,9 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
          * number of northern or southern dummies of its node. The result gives the number
          * of crossings caused by the node being placed between a node and its north/south
          * dummies.
+         * 
+         * Note that part two relies on information about layer layout units. If we find
+         * that they have not been set, we can skip this part.
          */
         int crossings = 0;
         
@@ -909,27 +912,33 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         int southDummies = 0;
         boolean northernSide = true;
         int currentIndex = 0;
+        boolean layerLayoutUnitsSet = true;
         
         for (LNode node : layer) {
             // Part 1 of the crossing counting algorithm
             for (LPort port : node.getPorts()) {
                 switch (port.getSide()) {
                 case EAST:
-                    crossings += countPortCrossings(port, easternPortIndices);
+                    crossings += countInLayerCrossings(port, easternPortIndices);
                     break;
                 
                 case WEST:
-                    crossings += countPortCrossings(port, westernPortIndices);
+                    crossings += countInLayerCrossings(port, westernPortIndices);
                     break;
                 }
             }
 
             // Part 2 of the crossing counting algorithm
             Properties.NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
-            if (nodeType == Properties.NodeType.NORMAL
-                    || nodeType == Properties.NodeType.NORTH_SOUTH_PORT) {
+            if (layerLayoutUnitsSet && (nodeType == Properties.NodeType.NORMAL
+                    || nodeType == Properties.NodeType.NORTH_SOUTH_PORT)) {
                 
                 LNode newNormalNode = node.getProperty(Properties.LAYER_LAYOUT_UNIT);
+                if (newNormalNode == null) {
+                    // Layer layout units don't seem to have been set
+                    layerLayoutUnitsSet = false;
+                    continue;
+                }
                 
                 // Check if this node belongs to a new normal node
                 if (currentNormalNode != newNormalNode) {
@@ -966,37 +975,41 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         }
         
         // Remember to save the values for the last normal node
-        northSouthDummyCount.put(currentNormalNode, new Pair<Integer, Integer>(
-                northDummies, southDummies - 1));
+        if (currentNormalNode != null) {
+            northSouthDummyCount.put(currentNormalNode, new Pair<Integer, Integer>(
+                    northDummies, southDummies - 1));
+        }
         
         // Second sweep of Part 2 of the algorithm
-        LNode lastDummyNormalNode = null;
-        int lastDummyIndex = 0;
-        int dummyCount = 0;
-        
-        for (LNode node : layer) {
-            Properties.NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
+        if (layerLayoutUnitsSet) {
+            LNode lastDummyNormalNode = null;
+            int lastDummyIndex = 0;
+            int dummyCount = 0;
             
-            switch (nodeType) {
-            case NORMAL:
-                lastDummyIndex = dummyIndices.get(node);
+            for (LNode node : layer) {
+                Properties.NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
                 
-                lastDummyNormalNode = node;
-                dummyCount = northSouthDummyCount.get(node).getSecond();
-                break;
-                
-            case NORTH_SOUTH_PORT:
-                lastDummyIndex = dummyIndices.get(node);
-                
-                LNode newNormalNode = node.getProperty(Properties.LAYER_LAYOUT_UNIT);
-                if (newNormalNode != lastDummyNormalNode) {
-                    dummyCount = northSouthDummyCount.get(newNormalNode).getFirst();
-                    lastDummyNormalNode = newNormalNode;
+                switch (nodeType) {
+                case NORMAL:
+                    lastDummyIndex = dummyIndices.get(node);
+                    
+                    lastDummyNormalNode = node;
+                    dummyCount = northSouthDummyCount.get(node).getSecond();
+                    break;
+                    
+                case NORTH_SOUTH_PORT:
+                    lastDummyIndex = dummyIndices.get(node);
+                    
+                    LNode newNormalNode = node.getProperty(Properties.LAYER_LAYOUT_UNIT);
+                    if (newNormalNode != lastDummyNormalNode) {
+                        dummyCount = northSouthDummyCount.get(newNormalNode).getFirst();
+                        lastDummyNormalNode = newNormalNode;
+                    }
+                    break;
+                    
+                default:
+                    crossings += dummyCount - lastDummyIndex;
                 }
-                break;
-                
-            default:
-                crossings += dummyCount - lastDummyIndex;
             }
         }
         
@@ -1078,7 +1091,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
      *                    {@link #assignEastWestPortIndices(LNode[], Map, Map)}.
      * @return the maximum number of crossings for this port.
      */
-    private int countPortCrossings(final LPort port, final Map<LPort, Integer> portIndices) {
+    private int countInLayerCrossings(final LPort port, final Map<LPort, Integer> portIndices) {
         int maxCrossings = 0;
         
         // Find this port's index
