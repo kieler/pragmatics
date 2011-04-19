@@ -95,7 +95,11 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
         graphsSpinner.setLayoutData(gridData);
         graphsSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                numberOfGraphs = Integer.parseInt(graphsSpinner.getText());
+                try {
+                    numberOfGraphs = Integer.parseInt(graphsSpinner.getText());
+                } catch (NumberFormatException exception) {
+                    numberOfGraphs = 1;
+                }
             }
         });
         // add option for creating diagram files for the graphs
