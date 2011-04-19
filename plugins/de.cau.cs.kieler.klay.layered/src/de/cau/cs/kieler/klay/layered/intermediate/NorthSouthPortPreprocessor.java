@@ -53,6 +53,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * and thus introduce ambiguity) Thus, P4 and P3 each get their own dummy node.</p>
  * 
  * <p>Once in and out ports are processed, in/out ports are given their own dummy node.</p>
+ * 
  * <pre>
  *                      ------------------------------
  *                      |
@@ -64,6 +65,23 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *              |   |   |   |   |   |
  *              P1  P2  P3  P4  P5  P6
  * </pre>
+ * 
+ * <p>Self-loops are a special case that is handled party by this processor. For this to
+ * work, the {@link SelfLoopProcessor} must have been executed prior to this processor's
+ * execution. Then, this processor correctly processes all kinds of self-loops involving
+ * northern or southern ports as follows: (due to the {@link SelfLoopProcessor}, only the
+ * cases detailled below must be handled)</p>
+ * 
+ * <ul>
+ *   <li>West-north, west-south, north-east and south-east self-loops are handled just
+ *     like every other connection.</li>
+ *   <li>North-north and south-south self-loops are handled by creating a dummy node just
+ *     for that self-loop.</li>
+ *   <li>North-south self-loops are handled by adding a northern and a southern dummy,
+ *     both having just one port via which they are connected. At the moment, the port
+ *     is created on the eastern side of the dummy node, but that could be handled more
+ *     clerverly later.</li>
+ * </ul>
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph; nodes have fixed port sides.</dd>
@@ -243,10 +261,10 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         }
         
         // First, create the dummy nodes that handle north->south self-loops. For now,
-        // we always route north->south self-loops west to the node. This could later
+        // we always route north->south self-loops east to the node. This could later
         // change, though.
         for (LEdge edge : northSouthSelfLoopEdges) {
-            createDummyNode(edge, dummyNodes, opposingSideDummyNodes, PortSide.WEST);
+            createDummyNode(edge, dummyNodes, opposingSideDummyNodes, PortSide.EAST);
         }
         
         // Second, create the dummy nodes that handle same-side self-loops

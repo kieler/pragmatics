@@ -30,7 +30,26 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
- * TODO: Document.
+ * This processor does some work to ensure that other phases and processors can handle
+ * self-loops correctly. In detail, it handles the following cases:
+ * 
+ * <dl>
+ *   <dt>North / South to West</dt>
+ *     <dd>The edge is reversed to maintain a left-to-right data flow.</dd>
+ *   <dt>East to North / South</dt>
+ *     <dd>The edge is reversed to maintain a left-to-right data flow.</dd>
+ *   <dt>East to West</dt>
+ *     <dd>The edge is reversed to maintain a left-to-right data flow. A long-edge dummy
+ *       node is placed in between.</dd>
+ *   <dt>West to East</dt>
+ *     <dd>A long-edge dummy is placed in between.</dd>
+ *   <dt>North to South</dt>
+ *     <dd>Nothing is done.</dd>
+ *   <dt>South to North</dt>
+ *     <dd>The edge is reversed to maintain a top-down data flow.</dd>
+ * </dl>
+ * 
+ * <p>The processor thus reduces the number of different cases of self-loops.</p>
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph.</dd>
@@ -58,11 +77,6 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
             
             for (LNode node : layer.getNodes()) {
                 for (LPort port : node.getPorts()) {
-                    // We're looking for eastern or western ports
-                    if (port.getSide() != PortSide.EAST && port.getSide() != PortSide.WEST) {
-                        continue;
-                    }
-                    
                     // Go through the port's edges
                     LEdge[] edges = port.getEdges().toArray(new LEdge[0]);
                     
