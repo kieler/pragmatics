@@ -185,7 +185,7 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
         return null;
     }
 

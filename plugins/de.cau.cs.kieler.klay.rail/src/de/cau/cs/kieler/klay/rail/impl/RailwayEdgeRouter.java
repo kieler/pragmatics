@@ -41,7 +41,7 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements ILayoutPhase
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
         return null;
     }
 
