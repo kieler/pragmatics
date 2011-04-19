@@ -30,6 +30,12 @@ public enum PortConstraints {
     FIXED_SIDE,
     /** the side is fixed for each port, and the order of ports is fixed for each side. */
     FIXED_ORDER,
+    /**
+     * the side is fixed for each port, the order or ports is fixed for each side and
+     * the position of each port must preserve the ratio defined by the two segments the
+     * port divides the side into.
+     */
+    FIXED_RATIO,
     /** the exact position is fixed for each port. */
     FIXED_POS;
     
@@ -53,12 +59,21 @@ public enum PortConstraints {
     }
     
     /**
+     * Returns whether the ratio of port positions is fixed.
+     * 
+     * @return true if the ratio is fixed
+     */
+    public boolean isRatioFixed() {
+        return this == FIXED_RATIO || this == FIXED_POS;
+    }
+    
+    /**
      * Returns whether the order of ports is fixed.
      * 
      * @return true if the order of ports is fixed
      */
     public boolean isOrderFixed() {
-        return this == FIXED_ORDER || this == FIXED_POS;
+        return this == FIXED_ORDER || this == FIXED_RATIO || this == FIXED_POS;
     }
     
     /**
