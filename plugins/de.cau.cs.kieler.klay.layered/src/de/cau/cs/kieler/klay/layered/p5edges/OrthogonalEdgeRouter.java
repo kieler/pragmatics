@@ -103,7 +103,12 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 null);
     
     /** additional processor dependencies for graphs with non-free ports. */
-    private static final IntermediateProcessingStrategy PORT_PROCESSING_ADDITIONS =
+    private static final IntermediateProcessingStrategy NON_FREE_PORT_PROCESSING_ADDITIONS =
+        new IntermediateProcessingStrategy(IntermediateProcessingStrategy.BEFORE_PHASE_3,
+                IntermediateLayoutProcessor.ODD_PORT_SIDE_PROCESSOR);
+    
+    /** additional processor dependencies for graphs with northern / southern non-free ports. */
+    private static final IntermediateProcessingStrategy NORTH_SOUTH_PORT_PROCESSING_ADDITIONS =
         new IntermediateProcessingStrategy(
                 // Before Phase 1
                 null,
@@ -112,9 +117,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 null,
                 
                 // Before Phase 3
-                EnumSet.of(
-                        IntermediateLayoutProcessor.NORTH_SOUTH_PORT_PREPROCESSOR,
-                        IntermediateLayoutProcessor.ODD_PORT_SIDE_PROCESSOR),
+                EnumSet.of(IntermediateLayoutProcessor.NORTH_SOUTH_PORT_PREPROCESSOR),
                 
                 // Before Phase 4
                 null,
@@ -123,8 +126,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 null,
                 
                 // After Phase 5
-                EnumSet.of(
-                        IntermediateLayoutProcessor.NORTH_SOUTH_PORT_POSTPROCESSOR));
+                EnumSet.of(IntermediateLayoutProcessor.NORTH_SOUTH_PORT_POSTPROCESSOR));
     
     /** additional processor dependencies for graphs with self-loops. */
     private static final IntermediateProcessingStrategy SELF_LOOP_PROCESSING_ADDITIONS =
@@ -290,7 +292,11 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         
         // Additional dependencies
         if (graphProperties.contains(Properties.GraphProperties.NON_FREE_PORTS)) {
-            strategy.addAll(PORT_PROCESSING_ADDITIONS);
+            strategy.addAll(NON_FREE_PORT_PROCESSING_ADDITIONS);
+
+            if (graphProperties.contains(Properties.GraphProperties.NORTH_SOUTH_PORTS)) {
+                strategy.addAll(NORTH_SOUTH_PORT_PROCESSING_ADDITIONS);
+            }
         }
 
         if (graphProperties.contains(Properties.GraphProperties.SELF_LOOPS)) {

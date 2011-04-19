@@ -198,7 +198,12 @@ public class KGraphImporter implements IGraphImporter {
                 }
                 
                 // calculate port side
-                newPort.setSide(KimlUtil.calcPortSide(kport));
+                PortSide newPortSide = KimlUtil.calcPortSide(kport);
+                newPort.setSide(newPortSide);
+                
+                if (newPortSide == PortSide.NORTH || newPortSide == PortSide.SOUTH) {
+                    graphProperties.add(Properties.GraphProperties.NORTH_SOUTH_PORTS);
+                }
             }
             
             // add the node's label, if any
