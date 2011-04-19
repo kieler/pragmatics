@@ -35,7 +35,9 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.LongEdgeJoiner;
 import de.cau.cs.kieler.klay.layered.intermediate.LongEdgeSplitter;
+import de.cau.cs.kieler.klay.layered.intermediate.ReversedEdgeRestorer;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.rail.impl.RailwayEdgeRouter;
 import de.cau.cs.kieler.klay.rail.impl.RailwayNetworkSimplexLayerer;
@@ -65,6 +67,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
      * dependencies, this is hardcoded into the layout provider.
      */
     private ILayoutProcessor edgeSplitter = new LongEdgeSplitter();
+    private ILayoutProcessor reversedEdgeRestorer = new ReversedEdgeRestorer();
+    private ILayoutProcessor edgeJoiner = new LongEdgeJoiner();
 
     private static final int SWITCH_PORTS = 3;
 
@@ -155,7 +159,15 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         // phase 4: edge routing
         edgeRouter.reset(monitor.subTask(1));
         edgeRouter.process(layeredGraph);
-
+        
+/*
+    Proposal by CDS:
+        reversedEdgeRestorer.reset(monitor.subTask(1));
+        reversedEdgeRestorer.process(layeredGraph);
+        
+        edgeJoiner.reset(monitor.subTask(1));
+        edgeJoiner.process(layeredGraph);
+*/
         swapBackSwappedEdges();
         monitor.done();
     }
