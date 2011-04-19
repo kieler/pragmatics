@@ -70,8 +70,8 @@ public class ExampleExportPage extends WizardResourceImportPage {
     private static final int HEIGHT_HINT = 160;
 
     private Tree categoryTree;
-    private final List<String> checkedCategories;
-    private final List<Category> creatableCategories;
+    private Category checkedCategory = null;
+    private final List<Category> creatableCategories = new ArrayList<Category>();
 
     private static final String WORKSPACE_DIR = ResourcesPlugin.getWorkspace().getRoot()
             .getLocation().toOSString();
@@ -91,8 +91,6 @@ public class ExampleExportPage extends WizardResourceImportPage {
         setTitle(name);
         setDescription("Set destination and preview picture "
                 + "for exported example and determine example categories.");
-        checkedCategories = new ArrayList<String>();
-        creatableCategories = new ArrayList<Category>();
     }
 
     @Override
@@ -159,6 +157,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
                 }
             }
         });
+
     }
 
     private void createMiddleGroup(final Composite composite) {
@@ -400,28 +399,17 @@ public class ExampleExportPage extends WizardResourceImportPage {
         // categoryTree.setExpanded(true);
         categoryTree.addListener(SWT.Selection, new Listener() {
             public void handleEvent(final Event event) {
-                // fill per hand checked elements list
                 if (event.detail == SWT.CHECK) {
-                    int removeCount = -1;
-                    String category = ((TreeItem) event.item).getText();
-                    for (int i = 0; i < checkedCategories.size(); i++) {
-                        if (category.equals(checkedCategories.get(i))) {
-                            removeCount = i;
-                            break;
-                        }
-                    }
-                    if (removeCount == -1) {
-                        checkedCategories.add(category);
-                    } else {
-                        checkedCategories.remove(removeCount);
-                    }
+                    TreeItem item = ((TreeItem) event.item);
+                    Category choosenCategory = (Category) item.getData();
+                    checkedCategory = checkedCategory == choosenCategory ? null : choosenCategory;
                 }
             }
         });
         categoryTree.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                revertTreeButton.setEnabled(checkedCategories.size() > 0
+                revertTreeButton.setEnabled(checkedCategory != null
                         || creatableCategories.size() > 0);
             }
         });
@@ -484,12 +472,12 @@ public class ExampleExportPage extends WizardResourceImportPage {
     }
 
     /**
-     * Getter for checked categories.
+     * Getter for checked category.
      * 
-     * @return {@link List} of {@link String}s
+     * @return {@link Category}
      */
-    public List<String> getCheckedCategories() {
-        return checkedCategories;
+    public Category getCheckedCategory() {
+        return checkedCategory;
     }
 
     /**

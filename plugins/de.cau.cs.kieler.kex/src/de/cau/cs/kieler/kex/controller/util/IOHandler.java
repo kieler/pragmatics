@@ -113,6 +113,25 @@ public final class IOHandler {
     }
 
     /**
+     * searches for a java project, therefore the ".project" file is searched.
+     * 
+     * @param location
+     *            , File into a plugin project.
+     * @return File, plugin project
+     */
+    public static File filterPluginProject(final File location) {
+        File childDir = searchUP(location, IOHandler.PROJECT_FILE);
+        if (childDir == null) {
+            throw new RuntimeException("Could not find any java project.");
+        }
+        File project = childDir.getParentFile();
+        if (project == null) {
+            throw new RuntimeException("Could not find any java project.");
+        }
+        return project;
+    }
+
+    /**
      * 
      * filters the plugin.xml of plugin project for given destination.<br>
      * Searches first for a java project by checking parent dirs for containing ".project" file. <br>
@@ -124,19 +143,7 @@ public final class IOHandler {
      * @return plugin.xml if found otherwise parent java project directory
      */
     public static File filterPluginXML(final File location) {
-
-        // TODO hier ansetzen project rausholen lokale rootresource filtern und
-        // bei example einsetzen sowie beim plugin schreiben ber�cksichtigen,
-        // bei resources und bei example attribute rootresource
-        File childDir = searchUP(location, IOHandler.PROJECT_FILE);
-        if (childDir == null) {
-            throw new RuntimeException("Could not find any java project.");
-        }
-
-        File project = childDir.getParentFile();
-        if (project == null) {
-            throw new RuntimeException("Could not find any java project.");
-        }
+        File project = filterPluginProject(location);
         if (getFile(project, IOHandler.MANIFEST_MF) != null) {
             File result = getFile(project, IOHandler.PLUGIN_XML);
             if (result != null) {

@@ -86,7 +86,7 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 
             result.put(ExampleElement.SOURCETYPE, exportPage.getSourceType());
             result.put(ExampleElement.DEST_LOCATION, exportPage.getDestLocation());
-            result.put(ExampleElement.CATEGORY, exportPage.getCheckedCategories().get(0));
+            result.put(ExampleElement.CATEGORY, exportPage.getCheckedCategory());
             // TODO temporarily works wrong, it is now even longer a String, it is a Category
             result.put(ExampleElement.CREATE_CATEGORIES, exportPage.getCreatableCategories());
 
@@ -102,5 +102,79 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
         return true;
 
     }
+
+    // TODO validate auf wizardpages verteilen
+    // private static final int EXAMPLE_TITLE_MIN = 4;
+    // private static final int AUTHOR_MIN = 3;
+    // private static final int DESCRIPTION_MIN = 10;
+    // private static final int CONTACT_MIN = 5;
+    // /**
+    // * Method for validating given map elements. This contains minimumlengths- and
+    // duplicate-checks.
+    // *
+    // * @param map
+    // * , Map of {@link ExampleElement} and an arbitrary {@link Object}.
+    // * @param collectors
+    // * , {@link ExampleCollector}s
+    // */
+    // @SuppressWarnings("unchecked")
+    // public static void validate(final Map<ExampleElement, Object> map,
+    // final ExampleCollector... collectors) {
+    // checkAttributes(map);
+    //
+    // Object sourceType = map.get(ExampleElement.SOURCETYPE);
+    // if (!(sourceType instanceof SourceType)) {
+    // throw new RuntimeException("No source type has been defined.");
+    // }
+    //
+    // String destLocation = (String) map.get(ExampleElement.DEST_LOCATION);
+    // validateField(destLocation, 2, "Destination Location");
+    //
+    // // List<String> categories = (List<String>) map.get(ExampleElement.CATEGORY);
+    // // validateElement(categories, 1, "Categories");
+    //
+    // List<ExportResource> exportedResources = (List<ExportResource>) map
+    // .get(ExampleElement.RESOURCES);
+    // validateElement(exportedResources, 1, "Exported Resources");
+    //
+    //
+    // }
+    //
+    // private static void checkAttributes(final Map<ExampleElement, Object> map) {
+    // String exampleTitle = (String) map.get(ExampleElement.TITLE);
+    // validateField(exampleTitle, EXAMPLE_TITLE_MIN, "Example Title");
+    //
+    // String author = (String) map.get(ExampleElement.AUTHOR);
+    // // min. uni abbreviations like pkl
+    // validateField(author, AUTHOR_MIN, "Author");
+    //
+    // String exampleDescription = (String) map.get(ExampleElement.DESCRIPTION);
+    // validateField(exampleDescription, DESCRIPTION_MIN, "Example Description");
+    //
+    // String exampleContact = (String) map.get(ExampleElement.CONTACT);
+    // // min 5 chars a@b.c
+    // validateField(exampleContact, CONTACT_MIN, "Example Contact");
+    // }
+    //
+    // private static void validateElement(final List<?> list, final int minLength,
+    // final String listName) {
+    // if (list == null || list.size() < minLength) {
+    // StringBuilder errorMsg = new StringBuilder();
+    // errorMsg.append("No ").append(listName).append(" has been selected.\n")
+    // .append("Please choose at least ").append(String.valueOf(minLength));
+    // throw new RuntimeException(errorMsg.toString());
+    // }
+    // }
+    //
+    // private static void validateField(final String checkable, final int minLength,
+    // final String checkableName) {
+    // if (checkable == null || checkable.length() < minLength) {
+    // StringBuilder errorMsg = new StringBuilder();
+    // errorMsg.append("The field ").append(checkableName)
+    // .append(" has to be set with at least ").append(String.valueOf(minLength))
+    // .append(" characters.");
+    // throw new RuntimeException(errorMsg.toString());
+    // }
+    // }
 
 }

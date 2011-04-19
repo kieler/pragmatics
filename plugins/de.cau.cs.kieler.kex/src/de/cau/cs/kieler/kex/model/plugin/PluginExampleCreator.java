@@ -285,8 +285,7 @@ public class PluginExampleCreator {
     }
 
     private boolean addExampleCategories(final Node node, final List<Category> creatableCategories) {
-        List<Category> creates = creatableCategories;
-        for (Category creatable : creates) {
+        for (Category creatable : creatableCategories) {
             Element createdCategory = parsedXML.createElement(PluginConstants.Category.CATEGORY);
             createdCategory.setAttribute(PluginConstants.Category.ID, creatable.getId());
             createdCategory.setAttribute(PluginConstants.Category.TITLE, creatable.getTitle());
