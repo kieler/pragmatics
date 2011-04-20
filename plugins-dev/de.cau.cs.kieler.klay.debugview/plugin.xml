@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="de.cau.cs.kieler"
+            defaultHandler="de.cau.cs.kieler.klay.debugview.CommandHandler"
+            description="commands.openDebugView.description"
+            id="de.cau.cs.kieler.klay.debugview.open"
+            name="%commands.openDebugView.label">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:de.cau.cs.kieler">
+         <command
+               commandId="de.cau.cs.kieler.klay.debugview.open"
+               label="%commands.openDebugView.label"
+               style="push"
+               tooltip="%commands.openDebugView.description">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>
