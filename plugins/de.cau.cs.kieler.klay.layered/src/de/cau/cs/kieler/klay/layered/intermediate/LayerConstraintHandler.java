@@ -16,7 +16,6 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -111,9 +110,6 @@ public class LayerConstraintHandler extends AbstractAlgorithm implements ILayout
         
         // Iterate through the node's edges and reverse them, if necessary
         for (LPort port : node.getPorts()) {
-            // Make sure the port type is correct
-            port.setType(first ? PortType.OUTPUT : PortType.INPUT);
-            
             // Iterate over an array of edges to avoid ConcurrentModificationExceptions
             LEdge[] edges = port.getEdges().toArray(new LEdge[0]);
             
