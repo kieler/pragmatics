@@ -43,6 +43,8 @@ public final class Properties {
 
     /** Definition of node types used in the layered approach. */
     public enum NodeType {
+        /** a node representing an external port. */
+        EXTERNAL_PORT,
         /** a normal node is created from a node of the original graph. */
         NORMAL,
         /** a dummy node created to split a long edge. */
@@ -65,6 +67,8 @@ public final class Properties {
      * @author cds
      */
     public enum GraphProperties {
+        /** The graph contains dummy nodes representing external ports. */
+        EXTERNAL_PORTS,
         /** The graph contains ports that are not free for positioning. */
         NON_FREE_PORTS,
         /** The graph contains ports on the northern or southern side. */
