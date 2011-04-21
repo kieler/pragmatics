@@ -37,7 +37,8 @@ public class Layer extends LGraphElement {
     private List<LNode> nodes = new LinkedList<LNode>();
     
     /**
-     * Creates a layer for the given layered graph.
+     * Creates a layer for the given layered graph. The layer is not added to the
+     * given graph yet; the graph is just saved as the layer's owner.
      * 
      * @param graph the owning layered graph
      */

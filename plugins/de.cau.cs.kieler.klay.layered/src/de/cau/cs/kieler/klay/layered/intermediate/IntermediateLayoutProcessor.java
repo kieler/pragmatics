@@ -34,6 +34,8 @@ public enum IntermediateLayoutProcessor {
     
     // Before Phase 3
     
+    /** Makes sure that layer constraints are taken care of. */
+    LAYER_CONSTRAINT_HANDLER,
     /** Takes a layered graph and turns it into a properly layered graph. */
     LONG_EDGE_SPLITTER,
     /** Makes sure nodes have at least fixed port sides. */
@@ -88,6 +90,9 @@ public enum IntermediateLayoutProcessor {
         switch (this) {
         case HYPEREDGE_DUMMY_MERGER:
             return new HyperedgeDummyMerger();
+        
+        case LAYER_CONSTRAINT_HANDLER:
+            return new LayerConstraintHandler();
 
         case LONG_EDGE_JOINER:
             return new LongEdgeJoiner();

@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered.p2layers;
 
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
@@ -26,6 +27,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 
 /**
  * The most basic layering algorithm, which assign layers according to the
@@ -40,6 +42,11 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * @author msp
  */
 public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhase {
+    
+    /** intermediate processing strategy. */
+    private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
+        new IntermediateProcessingStrategy(IntermediateProcessingStrategy.BEFORE_PHASE_3,
+                EnumSet.of(IntermediateLayoutProcessor.LAYER_CONSTRAINT_HANDLER));
 
     /** the layered graph to which layers are added. */
     private LayeredGraph layeredGraph;
@@ -50,7 +57,7 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
      * {@inheritDoc}
      */
     public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
-        return null;
+        return INTERMEDIATE_PROCESSING_STRATEGY;
     }
     
     /**

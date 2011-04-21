@@ -24,7 +24,11 @@ public enum LayerConstraint {
     NONE,
     /** put into the first layer. */
     FIRST,
+    /** put into a separate first layer; used internally. */
+    FIRST_SEPARATE,
     /** put into the last layer. */
-    LAST;
+    LAST,
+    /** put into a separate last layer; used internally. */
+    LAST_SEPARATE;
     
 }

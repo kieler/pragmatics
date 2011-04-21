@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.layered.p2layers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -33,6 +34,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 
 /**
  * The main class of the network simplex layerer component. It offers an algorithm to determine an
@@ -52,7 +54,12 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * @author pdo
  */
 public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutPhase {
-
+    
+    /** intermediate processing strategy. */
+    private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
+        new IntermediateProcessingStrategy(IntermediateProcessingStrategy.BEFORE_PHASE_3,
+                EnumSet.of(IntermediateLayoutProcessor.LAYER_CONSTRAINT_HANDLER));
+    
     // ================================== Attributes ==============================================
 
     /** The layered graph all methods in this class operate on. */
@@ -196,7 +203,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
      * {@inheritDoc}
      */
     public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
-        return null;
+        return INTERMEDIATE_PROCESSING_STRATEGY;
     }
 
     /**
