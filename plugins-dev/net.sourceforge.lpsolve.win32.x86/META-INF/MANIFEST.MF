@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Lpsolve for Win32 x86 Fragment
+Bundle-SymbolicName: net.sourceforge.lpsolve.win32.x86
+Bundle-Version: 5.5.2
+Fragment-Host: net.sourceforge.lpsolve;bundle-version="5.5.0"
+Eclipse-PlatformFilter: (& (osgi.os=win32) (osgi.arch=x86))
+Bundle-NativeCode: /lib/lpsolve55j.dll; /lib/lpsolve55.dll
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
