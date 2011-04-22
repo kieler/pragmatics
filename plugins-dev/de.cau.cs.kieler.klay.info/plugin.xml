@@ -27,7 +27,7 @@
       <combination
             active="true"
             class="de.cau.cs.kieler.kiml.viewer.UpdateViewerCombination"
-            description="Shows a finished layout graph in the KIML Viewer"
+            description="Shows a finished layout graph in the KLay Info view"
             name="Show Layout Graph in Viewer">
       </combination>
    </extension>
