@@ -16,7 +16,9 @@ package de.cau.cs.kieler.klay.layered;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
- * Interface for importer classes for the layered graph structure.
+ * Interface for importer classes for the layered graph structure. Graph importers
+ * should usually subclass {@link AbstractGraphImporter} instead of implementing this
+ * interface directly.
  * 
  * <p>Graph importers are encouraged to set the {@link Properties#GRAPH_PROPERTIES}
  * property on imported graphs.</p>

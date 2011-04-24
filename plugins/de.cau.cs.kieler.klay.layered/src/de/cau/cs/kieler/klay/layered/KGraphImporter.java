@@ -52,43 +52,27 @@ import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
  * @author msp
  * @author cds
  */
-public class KGraphImporter implements IGraphImporter {
+public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
-    /** the created layered graph. */
-    private LayeredGraph layeredGraph;
-    
-    
     /**
-     * Imports a KGraph to a layered graph.
+     * Constructs a new instance that transforms the given node into a layered graph.
      * 
-     * @param knode the top level node of the KGraph
+     * @param node the node to import.
      */
-    public KGraphImporter(final KNode knode) {
-        layeredGraph = new LayeredGraph();
-        layeredGraph.setProperty(Properties.ORIGIN, knode);
-        transformGraph(knode);
+    public KGraphImporter(final KNode node) {
+        super(node);
     }
-    
+
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // Transformation KGraph -> LGraph
 
     /**
      * {@inheritDoc}
      */
-    public LayeredGraph getGraph() {
-        return layeredGraph;
-    }
-
-    
-    ///////////////////////////////////////////////////////////////////////////////
-    // Transformation KGraph -> LGraph
-    
-    /**
-     * Transform the given KGraph to a layered graph.
-     * 
-     * @param layoutNode parent node of the KGraph
-     */
-    private void transformGraph(final KNode layoutNode) {
+    protected void transform(final KNode source, final LayeredGraph layeredGraph) {
         // copy the properties of the KGraph to the layered graph
-        layeredGraph.copyProperties(layoutNode.getData(KShapeLayout.class));
+        layeredGraph.copyProperties(source.getData(KShapeLayout.class));
         layeredGraph.checkProperties(Properties.OBJ_SPACING, Properties.THOROUGHNESS,
                 LayoutOptions.BORDER_SPACING);
 
@@ -102,8 +86,8 @@ public class KGraphImporter implements IGraphImporter {
             EnumSet.noneOf(Properties.GraphProperties.class);
         
         // transform everything
-        transformNodesAndPorts(layoutNode, layeredNodes, elemMap, graphProperties);
-        transformEdges(layoutNode, elemMap, graphProperties);
+        transformNodesAndPorts(source, layeredNodes, elemMap, graphProperties);
+        transformEdges(source, elemMap, graphProperties);
         
         // set the graph properties property
         layeredGraph.setProperty(Properties.GRAPH_PROPERTIES, graphProperties);
@@ -123,6 +107,16 @@ public class KGraphImporter implements IGraphImporter {
             final Map<KGraphElement, LGraphElement> elemMap,
             final EnumSet<Properties.GraphProperties> graphProperties) {
         
+        // First, transform the external ports
+        for (KPort kport : layoutNode.getPorts()) {
+            // TODO: Fill in parameters.
+            LNode dummy = createExternalPortDummy(null, null, 0, 0);
+            
+            layeredNodes.add(dummy);
+            elemMap.put(kport, dummy);
+        }
+        
+        // Now transform the node's children
         for (KNode child : layoutNode.getChildren()) {
             // add a new node to the layered graph, copying its size
             KShapeLayout nodeLayout = child.getData(KShapeLayout.class);
@@ -357,6 +351,8 @@ public class KGraphImporter implements IGraphImporter {
      * {@inheritDoc}
      */
     public void applyLayout() {
+        LayeredGraph layeredGraph = getGraph();
+        
         // determine the border spacing, which influences the offset
         KNode parentNode = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
