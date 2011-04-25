@@ -15,7 +15,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -137,8 +137,8 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
     private void processSelfLoop(final LNode dummy) {
         // Get the edge and the ports it was originally connected to
         LEdge selfLoop = (LEdge) dummy.getProperty(Properties.ORIGIN);
-        LPort inputPort = dummy.getPorts(PortType.INPUT).iterator().next();
-        LPort outputPort = dummy.getPorts(PortType.OUTPUT).iterator().next();
+        LPort inputPort = dummy.getPorts(PortSide.WEST).iterator().next();
+        LPort outputPort = dummy.getPorts(PortSide.EAST).iterator().next();
         LPort originInputPort = (LPort) inputPort.getProperty(Properties.ORIGIN);
         LPort originOutputPort = (LPort) outputPort.getProperty(Properties.ORIGIN);
         

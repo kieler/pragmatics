@@ -34,7 +34,6 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
@@ -259,8 +258,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                     // create source port
                     if (sourcePort == null) {
                         if (sourceNode.getProperty(LayoutOptions.HYPERNODE)) {
-                            // Hypernodes have an input port
-                            sourcePort = sourceNode.getPorts(PortType.OUTPUT).iterator().next();
+                            // Hypernodes have a western input port
+                            sourcePort = sourceNode.getPorts(PortSide.WEST).iterator().next();
                         } else {
                             sourcePort = new LPort();
                             sourcePort.setNode(sourceNode);
@@ -274,8 +273,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                     // create target port
                     if (targetPort == null) {
                         if (targetNode.getProperty(LayoutOptions.HYPERNODE)) {
-                            // Hypernodes have an input port
-                            targetPort = targetNode.getPorts(PortType.INPUT).iterator().next();
+                            // Hypernodes have a western input port
+                            targetPort = targetNode.getPorts(PortSide.WEST).iterator().next();
                         } else {
                             targetPort = new LPort();
                             targetPort.setNode(targetNode);

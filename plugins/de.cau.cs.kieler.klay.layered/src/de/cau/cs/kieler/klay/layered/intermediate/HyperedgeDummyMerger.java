@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -131,8 +131,9 @@ public class HyperedgeDummyMerger extends AbstractAlgorithm implements ILayoutPr
     private void mergeNodes(final LNode mergeTarget, final LNode mergeSource,
             final boolean keepSourcePort, final boolean keepTargetPort) {
         
-        LPort mergeTargetInputPort = mergeTarget.getPorts(PortType.INPUT).iterator().next();
-        LPort mergeTargetOutputPort = mergeTarget.getPorts(PortType.OUTPUT).iterator().next();
+        // We assume that the input port is west, and the output port east
+        LPort mergeTargetInputPort = mergeTarget.getPorts(PortSide.WEST).iterator().next();
+        LPort mergeTargetOutputPort = mergeTarget.getPorts(PortSide.EAST).iterator().next();
         
         for (LPort port : mergeSource.getPorts()) {
             if (!port.getIncomingEdges().isEmpty()) {

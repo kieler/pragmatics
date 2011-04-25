@@ -164,8 +164,9 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
         index = 0;
         for (LNode node : nodes) {
             for (LPort port : node.getPorts()) {
-                // TODO: Won't this cause a ConcurrentModificationException?
-                for (LEdge edge : port.getOutgoingEdges()) {
+                LEdge[] outgoingEdges = port.getOutgoingEdges().toArray(new LEdge[0]);
+                
+                for (LEdge edge : outgoingEdges) {
                     int targetIx = edge.getTarget().getNode().id;
                     if (mark[index] > mark[targetIx]) {
                         // TODO extend this to support port constraints
@@ -173,6 +174,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
                     }
                 }                
             }
+            
             index++;
         }
 
