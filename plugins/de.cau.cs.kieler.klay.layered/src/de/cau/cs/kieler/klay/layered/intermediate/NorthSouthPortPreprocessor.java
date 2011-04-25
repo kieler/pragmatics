@@ -21,7 +21,6 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -323,7 +322,6 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         if (inPort != null) {
             LPort dummyInputPort = new LPort();
             dummyInputPort.setProperty(Properties.ORIGIN, inPort);
-            dummyInputPort.setType(PortType.INPUT);
             dummyInputPort.setSide(PortSide.WEST);
             dummyInputPort.setNode(dummy);
             
@@ -338,7 +336,6 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         if (outPort != null) {
             LPort dummyOutputPort = new LPort();
             dummyOutputPort.setProperty(Properties.ORIGIN, outPort);
-            dummyOutputPort.setType(PortType.OUTPUT);
             dummyOutputPort.setSide(PortSide.EAST);
             dummyOutputPort.setNode(dummy);
             
@@ -369,14 +366,12 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         // Input port
         LPort dummyInputPort = new LPort();
         dummyInputPort.setProperty(Properties.ORIGIN, selfLoop.getTarget());
-        dummyInputPort.setType(PortType.INPUT);
         dummyInputPort.setSide(PortSide.WEST);
         dummyInputPort.setNode(dummy);
         
         // Output port
         LPort dummyOutputPort = new LPort();
         dummyOutputPort.setProperty(Properties.ORIGIN, selfLoop.getSource());
-        dummyOutputPort.setType(PortType.OUTPUT);
         dummyOutputPort.setSide(PortSide.EAST);
         dummyOutputPort.setNode(dummy);
         
@@ -408,7 +403,6 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         
         LPort northDummyOutputPort = new LPort();
         northDummyOutputPort.setProperty(Properties.ORIGIN, selfLoop.getSource());
-        northDummyOutputPort.setType(PortType.OUTPUT);
         northDummyOutputPort.setSide(portSide);
         northDummyOutputPort.setNode(northDummy);
         
@@ -419,7 +413,6 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         
         LPort southDummyInputPort = new LPort();
         southDummyInputPort.setProperty(Properties.ORIGIN, selfLoop.getTarget());
-        southDummyInputPort.setType(PortType.INPUT);
         southDummyInputPort.setSide(portSide);
         southDummyInputPort.setNode(southDummy);
         

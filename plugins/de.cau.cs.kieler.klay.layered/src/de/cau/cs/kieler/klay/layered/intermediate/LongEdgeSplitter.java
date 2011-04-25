@@ -19,7 +19,6 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -84,11 +83,11 @@ public class LongEdgeSplitter extends AbstractAlgorithm implements ILayoutProces
                             dummyNode.setLayer(nextLayer);
                             
                             // Create dummy input and output ports
-                            LPort dummyInput = new LPort(PortType.INPUT);
+                            LPort dummyInput = new LPort();
                             dummyInput.setSide(PortSide.WEST);
                             dummyInput.setNode(dummyNode);
                             
-                            LPort dummyOutput = new LPort(PortType.OUTPUT);
+                            LPort dummyOutput = new LPort();
                             dummyOutput.setSide(PortSide.EAST);
                             dummyOutput.setNode(dummyNode);
                             

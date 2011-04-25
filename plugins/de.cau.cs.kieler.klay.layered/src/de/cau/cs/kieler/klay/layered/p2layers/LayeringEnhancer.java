@@ -18,7 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -151,9 +150,9 @@ public class LayeringEnhancer extends AbstractAlgorithm {
             LNode source = candSort[i];
             LNode target = candSort[i + 1];
             if (!reach[source.id][target.id]) {
-                LPort sourcePort = new LPort(PortType.OUTPUT);
+                LPort sourcePort = new LPort();
                 sourcePort.setNode(source);
-                LPort targetPort = new LPort(PortType.INPUT);
+                LPort targetPort = new LPort();
                 targetPort.setNode(target);
                 LEdge newEdge = new LEdge();
                 newEdge.setSource(sourcePort);

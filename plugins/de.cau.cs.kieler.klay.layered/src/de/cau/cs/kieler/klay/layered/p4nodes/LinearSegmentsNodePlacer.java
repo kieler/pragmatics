@@ -715,22 +715,20 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             
             // Calculate force for every port/edge
             for (LPort port : node.getPorts()) {
-                if (port.getType() == PortType.OUTPUT) {
-                    for (LEdge edge : port.getOutgoingEdges()) {
-                        LPort otherPort = edge.getTarget();
-                        LNode otherNode = otherPort.getNode();
-                        sum += (otherNode.getPosition().y + otherPort.getPosition().y)
-                                - (node.getPosition().y + port.getPosition().y);
-                        numEdges++;
-                    }
-                } else if (port.getType() == PortType.INPUT) {
-                    for (LEdge edge : port.getIncomingEdges()) {
-                        LPort otherPort = edge.getSource();
-                        LNode otherNode = otherPort.getNode();
-                        sum += (otherNode.getPosition().y + otherPort.getPosition().y)
-                                - (node.getPosition().y + port.getPosition().y);
-                        numEdges++;
-                    }
+                for (LEdge edge : port.getOutgoingEdges()) {
+                    LPort otherPort = edge.getTarget();
+                    LNode otherNode = otherPort.getNode();
+                    sum += (otherNode.getPosition().y + otherPort.getPosition().y)
+                            - (node.getPosition().y + port.getPosition().y);
+                    numEdges++;
+                }
+                
+                for (LEdge edge : port.getIncomingEdges()) {
+                    LPort otherPort = edge.getSource();
+                    LNode otherNode = otherPort.getNode();
+                    sum += (otherNode.getPosition().y + otherPort.getPosition().y)
+                            - (node.getPosition().y + port.getPosition().y);
+                    numEdges++;
                 }
             }
             

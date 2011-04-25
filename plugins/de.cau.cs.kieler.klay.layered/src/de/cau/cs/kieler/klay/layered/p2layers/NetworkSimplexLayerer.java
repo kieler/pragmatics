@@ -315,26 +315,24 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
         for (LNode node : theNodes) {
             node.id = index++;
             for (LPort port : node.getPorts()) {
-                if (port.getType() == PortType.OUTPUT) {
-                    for (LEdge edge : port.getOutgoingEdges()) {
-                        if (edge.getSource().getNode() == edge.getTarget().getNode()) {
-                            // Self loops are stored in a map and removed later
-                            removedSelfLoops.put(edge,
-                                    new Pair<LPort, LPort>(edge.getSource(), edge.getTarget()));
-                        } else {
-                            theEdges.add(edge);
-                            outDegree[node.id]++;
-                        }
+                for (LEdge edge : port.getOutgoingEdges()) {
+                    if (edge.getSource().getNode() == edge.getTarget().getNode()) {
+                        // Self loops are stored in a map and removed later
+                        removedSelfLoops.put(edge,
+                                new Pair<LPort, LPort>(edge.getSource(), edge.getTarget()));
+                    } else {
+                        theEdges.add(edge);
+                        outDegree[node.id]++;
                     }
-                } else if (port.getType() == PortType.INPUT) {
-                    for (LEdge edge : port.getIncomingEdges()) {
-                        if (edge.getSource().getNode() == edge.getTarget().getNode()) {
-                            // Self loops are stored in a map and removed later
-                            removedSelfLoops.put(edge,
-                                    new Pair<LPort, LPort>(edge.getSource(), edge.getTarget()));
-                        } else {
-                            inDegree[node.id]++;
-                        }
+                }
+                
+                for (LEdge edge : port.getIncomingEdges()) {
+                    if (edge.getSource().getNode() == edge.getTarget().getNode()) {
+                        // Self loops are stored in a map and removed later
+                        removedSelfLoops.put(edge,
+                                new Pair<LPort, LPort>(edge.getSource(), edge.getTarget()));
+                    } else {
+                        inDegree[node.id]++;
                     }
                 }
             }
@@ -652,7 +650,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
             for (LEdge edge : port.getConnectedEdges()) {
                 currentSpan = layer[edge.getTarget().getNode().id]
                         - layer[edge.getSource().getNode().id];
-                if (port.getType() == PortType.INPUT && currentSpan < minSpanIn) {
+                if (edge.getTarget() == port && currentSpan < minSpanIn) {
                     minSpanIn = currentSpan;
                 } else if (currentSpan < minSpanOut) {
                     minSpanOut = currentSpan;

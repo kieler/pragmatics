@@ -120,13 +120,12 @@ public class Layer extends LGraphElement {
                 // determine the number of input and output ports for the node
                 int inports = 0, outports = 0;
                 for (LPort port : node.getPorts()) {
-                    switch (port.getType()) {
-                    case INPUT:
+                    if (!port.getIncomingEdges().isEmpty()) {
                         inports++;
-                        break;
-                    case OUTPUT:
+                    }
+                    
+                    if (port.getOutgoingEdges().isEmpty()) {
                         outports++;
-                        break;
                     }
                 }
                 

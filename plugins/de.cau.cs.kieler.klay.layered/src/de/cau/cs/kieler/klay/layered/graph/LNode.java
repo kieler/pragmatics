@@ -19,6 +19,8 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.collect.Iterables;
+
 import de.cau.cs.kieler.core.util.CompoundCondition;
 import de.cau.cs.kieler.core.util.FilteredIterator;
 import de.cau.cs.kieler.core.util.ICondition;
@@ -186,6 +188,48 @@ public class LNode extends LSizedGraphElement {
     }
     
     /**
+     * Returns an iterable for all inomcing edges.
+     * 
+     * @return an iterable for all incoming edges.
+     */
+    public Iterable<LEdge> getIncomingEdges() {
+        List<Iterable<LEdge>> iterables = new LinkedList<Iterable<LEdge>>();
+        for (LPort port : ports) {
+            iterables.add(port.getIncomingEdges());
+        }
+        
+        return Iterables.concat(iterables);
+    }
+    
+    /**
+     * Returns an iterable for all outgoing edges.
+     * 
+     * @return an iterable for all outgoing edges.
+     */
+    public Iterable<LEdge> getOutgoingEdges() {
+        List<Iterable<LEdge>> iterables = new LinkedList<Iterable<LEdge>>();
+        for (LPort port : ports) {
+            iterables.add(port.getOutgoingEdges());
+        }
+        
+        return Iterables.concat(iterables);
+    }
+    
+    /**
+     * Returns an iterable for all connected edges, both incoming and outgoing.
+     * 
+     * @return an iterable for all connected edges.
+     */
+    public Iterable<LEdge> getConnectedEdges() {
+        List<Iterable<LEdge>> iterables = new LinkedList<Iterable<LEdge>>();
+        for (LPort port : ports) {
+            iterables.add(port.getConnectedEdges());
+        }
+        
+        return Iterables.concat(iterables);
+    }
+    
+    /**
      * Sets this node's label.
      * 
      * @param label the new label. May be {@code null}.
@@ -242,9 +286,14 @@ public class LNode extends LSizedGraphElement {
         Collections.sort(ports, new Comparator<LPort>() {
             public int compare(final LPort port1, final LPort port2) {
                 PortSide side1 = port1.getSide();
-                PortType type1 = port1.getType();
+                PortType type1 = port1.getIncomingEdges().size() > port1.getOutgoingEdges().size()
+                    ? PortType.INPUT
+                    : PortType.OUTPUT;
                 PortSide side2 = port2.getSide();
-                PortType type2 = port2.getType();
+                PortType type2 = port2.getIncomingEdges().size() > port2.getOutgoingEdges().size()
+                    ? PortType.INPUT
+                    : PortType.OUTPUT;
+                
                 if (side1 != side2) {
                     // sort according to the node side 
                     return side1.ordinal() - side2.ordinal();

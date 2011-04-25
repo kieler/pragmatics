@@ -18,7 +18,6 @@ import java.util.EnumSet;
 import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Properties;
@@ -171,8 +170,6 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
                     if (mark[index] > mark[targetIx]) {
                         // TODO extend this to support port constraints
                         edge.reverse();
-                        edge.getSource().setType(PortType.OUTPUT);
-                        edge.getTarget().setType(PortType.INPUT);
                     }
                 }                
             }
@@ -210,7 +207,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
                 }
                 int index = endpoint.id;
                 if (mark[index] == 0) {
-                    if (port.getType() == PortType.OUTPUT) {
+                    if (edge.getTarget() == connectedPort) {
                         indeg[index] -= priority + 1;
                         if (indeg[index] <= 0 && outdeg[index] > 0) {
                             sources.add(endpoint);

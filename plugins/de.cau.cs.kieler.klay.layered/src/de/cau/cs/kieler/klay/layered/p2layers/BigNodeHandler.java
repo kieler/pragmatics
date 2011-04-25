@@ -181,8 +181,8 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
                     dummy.getSize().y = node.getSize().y;
                     dummy.getSize().x = minWidth;
                     // add ports to connect it with the previous node
-                    LPort outPort = new LPort(PortType.OUTPUT);
-                    LPort inPort = new LPort(PortType.INPUT);
+                    LPort outPort = new LPort();
+                    LPort inPort = new LPort();
                     outPort.setNode((d == 1) ? node : dummyNodes.getLast());
                     inPort.setNode(dummy);
                     // add edge to connect it with the previous node

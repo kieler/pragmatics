@@ -164,15 +164,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                     }
                 }
                 
-                PortType type = PortType.UNDEFINED;
-                if (outEdges > 0 && inEdges == 0) {
-                    type = PortType.OUTPUT;
-                } else if (inEdges > 0 && outEdges == 0) {
-                    type = PortType.INPUT;
-                }
-                
                 // create layered port, copying its position
-                LPort newPort = new LPort(type, kport.getLabel().getText());
+                LPort newPort = new LPort(kport.getLabel().getText());
                 newPort.setProperty(Properties.ORIGIN, kport);
                 newPort.getSize().x = portLayout.getWidth();
                 newPort.getSize().y = portLayout.getHeight();
@@ -223,11 +216,11 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             
             // if we have a hypernode without ports, create a default input and output port
             if (newNode.getProperty(LayoutOptions.HYPERNODE) && newNode.getPorts().isEmpty()) {
-                LPort inputPort = new LPort(PortType.INPUT);
+                LPort inputPort = new LPort();
                 inputPort.setSide(PortSide.WEST);
                 inputPort.setNode(newNode);
                 
-                LPort outputPort = new LPort(PortType.OUTPUT);
+                LPort outputPort = new LPort();
                 outputPort.setSide(PortSide.EAST);
                 outputPort.setNode(newNode);
             }
@@ -269,7 +262,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                             // Hypernodes have an input port
                             sourcePort = sourceNode.getPorts(PortType.OUTPUT).iterator().next();
                         } else {
-                            sourcePort = new LPort(PortType.OUTPUT);
+                            sourcePort = new LPort();
                             sourcePort.setNode(sourceNode);
                             KPoint sourcePoint = edgeLayout.getSourcePoint();
                             sourcePort.getPosition().x = sourcePoint.getX() - sourceNode.getPosition().x;
@@ -284,7 +277,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                             // Hypernodes have an input port
                             targetPort = targetNode.getPorts(PortType.INPUT).iterator().next();
                         } else {
-                            targetPort = new LPort(PortType.INPUT);
+                            targetPort = new LPort();
                             targetPort.setNode(targetNode);
                             KPoint targetPoint = edgeLayout.getTargetPoint();
                             targetPort.getPosition().x = targetPoint.getX() - targetNode.getPosition().x;

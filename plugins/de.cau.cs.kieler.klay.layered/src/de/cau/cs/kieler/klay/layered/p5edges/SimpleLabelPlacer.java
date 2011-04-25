@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered.p5edges;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -123,18 +122,15 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
     public LLabel longestLabel(final Layer thelayer) {
         LLabel longest = new LLabel("");
         for (LNode node : thelayer.getNodes()) {
-            for (LPort port : node.getPorts()) {
-                for (LEdge edge : port.getConnectedEdges()) {
-                    for (LLabel label : edge.getLabels()) {
-                        //Only consider source ports
-                        if (label.getSize().x > longest.getSize().x
-                                && port.getType() == PortType.OUTPUT) {
-                            longest = label;
-                        }
+            for (LEdge edge : node.getOutgoingEdges()) {
+                for (LLabel label : edge.getLabels()) {
+                    if (label.getSize().x > longest.getSize().x) {
+                        longest = label;
                     }
                 }
             }
         }
+        
         return longest;
     }
 

@@ -18,7 +18,6 @@ import java.util.EnumSet;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Properties;
@@ -103,7 +102,7 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
                     && node.getLayer().getIndex() > 0) {
                 boolean hasInputs = false;
                 for (LPort port : node.getPorts()) {
-                    if (port.getType() == PortType.INPUT) {
+                    if (!port.getIncomingEdges().isEmpty()) {
                         hasInputs = true;
                         break;
                     }

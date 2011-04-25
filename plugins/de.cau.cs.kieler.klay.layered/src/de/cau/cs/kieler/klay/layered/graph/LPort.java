@@ -41,8 +41,6 @@ public class LPort extends LSizedGraphElement {
 
     /** the owning node. */
     private LNode owner;
-    /** the port condType. */
-    private PortType type;
     /** the port side. */
     private PortSide side = PortSide.UNDEFINED;
     /** this port's label, if any. */
@@ -57,6 +55,7 @@ public class LPort extends LSizedGraphElement {
     /** A condition that checks the type of ports. */
     public static class TypeCondition implements ICondition<LPort> {
         private PortType condType;
+        
         /**
          * Creates a type condition.
          * @param thetype the type of port to admit
@@ -69,7 +68,16 @@ public class LPort extends LSizedGraphElement {
          * {@inheritDoc}
          */
         public boolean evaluate(final LPort object) {
-            return object.type == condType;
+            switch (condType) {
+            case INPUT:
+                return object.getNetFlow() < 0;
+            
+            case OUTPUT:
+                return object.getNetFlow() >= 0;
+            
+            default:
+                return true;
+            }
         }
     }
     
@@ -95,28 +103,17 @@ public class LPort extends LSizedGraphElement {
     /**
      * Creates a port.
      * 
-     * @param thetype the type of port
      * @param thename name of the port, or {@code null}
      */
-    public LPort(final PortType thetype, final String thename) {
-        this.type = thetype;
+    public LPort(final String thename) {
         this.name = thename;
-    }
-    
-    /**
-     * Creates a port.
-     * 
-     * @param thetype the type of port
-     */
-    public LPort(final PortType thetype) {
-        this(thetype, null);
     }
     
     /**
      * Creates a port.
      */
     public LPort() {
-        this(PortType.UNDEFINED, null);
+        this(null);
     }
 
     /**
@@ -154,24 +151,6 @@ public class LPort extends LSizedGraphElement {
         }
         this.owner = node;
         owner.getPorts().add(this);
-    }
-
-    /**
-     * Returns the type of port.
-     * 
-     * @return the port type
-     */
-    public PortType getType() {
-        return type;
-    }
-
-    /**
-     * Sets the type of port.
-     * 
-     * @param thetype the port type to set
-     */
-    public void setType(final PortType thetype) {
-        this.type = thetype;
     }
 
     /**
@@ -217,6 +196,16 @@ public class LPort extends LSizedGraphElement {
      */
     public int getDegree() {
         return incomingEdges.size() + outgoingEdges.size();
+    }
+    
+    /**
+     * Returns the number of outgoing edges minus the number of incoming edges. This
+     * is the net flow of the port.
+     * 
+     * @return the port's net flow.
+     */
+    public int getNetFlow() {
+        return outgoingEdges.size() - incomingEdges.size();
     }
 
     /**

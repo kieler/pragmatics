@@ -20,7 +20,6 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -148,9 +147,6 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
      */
     private void reverseEdge(final LEdge edge) {
         edge.reverse();
-        
-        edge.getSource().setType(PortType.OUTPUT);
-        edge.getTarget().setType(PortType.INPUT);
     }
     
     /**
@@ -169,11 +165,11 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
         dummyNode.setProperty(Properties.NODE_TYPE, Properties.NodeType.LONG_EDGE);
         dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         
-        LPort dummyInput = new LPort(PortType.INPUT);
+        LPort dummyInput = new LPort();
         dummyInput.setSide(PortSide.WEST);
         dummyInput.setNode(dummyNode);
         
-        LPort dummyOutput = new LPort(PortType.OUTPUT);
+        LPort dummyOutput = new LPort();
         dummyOutput.setSide(PortSide.EAST);
         dummyOutput.setNode(dummyNode);
         

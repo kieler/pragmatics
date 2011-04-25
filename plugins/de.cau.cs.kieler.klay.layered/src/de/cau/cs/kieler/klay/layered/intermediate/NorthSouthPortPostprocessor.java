@@ -65,9 +65,11 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
                 } else {
                     // Iterate through the ports
                     for (LPort port : node.getPorts()) {
-                        if (port.getType() == PortType.INPUT) {
+                        if (!port.getIncomingEdges().isEmpty()) {
                             processInputPort(port);
-                        } else if (port.getType() == PortType.OUTPUT) {
+                        }
+                        
+                        if (!port.getOutgoingEdges().isEmpty()) {
                             processOutputPort(port);
                         }
                     }

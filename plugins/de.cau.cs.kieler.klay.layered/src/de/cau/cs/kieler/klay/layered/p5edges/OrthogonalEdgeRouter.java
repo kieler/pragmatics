@@ -413,18 +413,16 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
             // Calculate coordinates for each port's bend points
             double x = xpos + node.rank * edgeSpacing;
             for (LPort port : node.ports) {
-                if (port.getType() == PortType.OUTPUT) {
-                    double sourcey = port.getNode().getPosition().y + port.getPosition().y;
-                    
-                    for (LEdge edge : port.getOutgoingEdges()) {
-                        double targety = edge.getTarget().getNode().getPosition().y
-                                + edge.getTarget().getPosition().y;
-                        if (Math.abs(sourcey - targety) > edgeSpacing / STRAIGHT_TOLERANCE) {
-                            KVector point1 = new KVector(x, sourcey);
-                            edge.getBendPoints().add(point1);
-                            KVector point2 = new KVector(x, targety);
-                            edge.getBendPoints().add(point2);
-                        }
+                double sourcey = port.getNode().getPosition().y + port.getPosition().y;
+                
+                for (LEdge edge : port.getOutgoingEdges()) {
+                    double targety = edge.getTarget().getNode().getPosition().y
+                            + edge.getTarget().getPosition().y;
+                    if (Math.abs(sourcey - targety) > edgeSpacing / STRAIGHT_TOLERANCE) {
+                        KVector point1 = new KVector(x, sourcey);
+                        edge.getBendPoints().add(point1);
+                        KVector point2 = new KVector(x, targety);
+                        edge.getBendPoints().add(point2);
                     }
                 }
             }

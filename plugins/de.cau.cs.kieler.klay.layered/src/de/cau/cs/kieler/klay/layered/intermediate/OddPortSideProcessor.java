@@ -21,7 +21,6 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.Properties.NodeType;
@@ -165,11 +164,11 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         layerNodeList.add(dummy);
         
-        LPort dummyInput = new LPort(PortType.INPUT);
+        LPort dummyInput = new LPort();
         dummyInput.setNode(dummy);
         dummyInput.setSide(PortSide.WEST);
         
-        LPort dummyOutput = new LPort(PortType.OUTPUT);
+        LPort dummyOutput = new LPort();
         dummyOutput.setNode(dummy);
         dummyOutput.setSide(PortSide.EAST);
         
@@ -211,11 +210,11 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         layerNodeList.add(dummy);
         
-        LPort dummyInput = new LPort(PortType.INPUT);
+        LPort dummyInput = new LPort();
         dummyInput.setNode(dummy);
         dummyInput.setSide(PortSide.WEST);
         
-        LPort dummyOutput = new LPort(PortType.OUTPUT);
+        LPort dummyOutput = new LPort();
         dummyOutput.setNode(dummy);
         dummyOutput.setSide(PortSide.EAST);
         
