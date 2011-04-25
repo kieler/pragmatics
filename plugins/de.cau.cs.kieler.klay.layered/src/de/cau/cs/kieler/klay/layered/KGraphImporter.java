@@ -107,10 +107,15 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             final Map<KGraphElement, LGraphElement> elemMap,
             final EnumSet<Properties.GraphProperties> graphProperties) {
         
+        List<KPort> ports = layoutNode.getPorts();
+        if (!ports.isEmpty()) {
+            graphProperties.add(Properties.GraphProperties.EXTERNAL_PORTS);
+        }
+        
         // First, transform the external ports
-        for (KPort kport : layoutNode.getPorts()) {
+        for (KPort kport : ports) {
             // TODO: Fill in parameters.
-            LNode dummy = createExternalPortDummy(null, null, 0, 0);
+            LNode dummy = createExternalPortDummy(kport, null, null, 0, 0);
             
             layeredNodes.add(dummy);
             elemMap.put(kport, dummy);

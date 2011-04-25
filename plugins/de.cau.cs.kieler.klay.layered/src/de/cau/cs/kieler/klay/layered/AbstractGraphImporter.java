@@ -16,7 +16,9 @@ package de.cau.cs.kieler.klay.layered;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint;
 
 /**
  * Abstract implementation of {@link IGraphImporter}, containing commonly used functionality.
@@ -77,28 +79,69 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
     public LayeredGraph getGraph() {
         return graph;
     }
-
-
+    
+    
     ///////////////////////////////////////////////////////////////////////////////
     // External Ports
     
     /**
      * Creates a dummy for an external port.
      * 
+     * @param port the port object the dummy will represent.
      * @param portConstraints constraints for external ports.
      * @param portSide the side of the external port.
      * @param incomingEdges number of edges coming into the external port from within the node.
      * @param outgoingEdges number of edges going out of the external port to targets within the node.
      * @return a dummy node representing the external port.
      */
-    protected LNode createExternalPortDummy(final PortConstraints portConstraints,
+    protected LNode createExternalPortDummy(final Object port, final PortConstraints portConstraints,
             final PortSide portSide, final int incomingEdges, final int outgoingEdges) {
         
-        LNode dummy = new LNode();
+        PortSide finalPortSide = portSide;
         
-        // TODO: Implement.
+        // Create the dummy with one port
+        LNode dummy = new LNode();
+        dummy.setProperty(Properties.NODE_TYPE, Properties.NodeType.EXTERNAL_PORT);
+        dummy.setProperty(Properties.ORIGIN, port);
+        dummy.setProperty(Properties.PORT_CONS, PortConstraints.FIXED_POS);
+        
+        LPort dummyPort = new LPort();
+        dummyPort.setSide(PortSide.WEST);
+        dummyPort.setNode(dummy);
+        
+        // If the port constraints are free, we need to determine where to put the dummy (and its port)
+        if (portConstraints == PortConstraints.FREE || portConstraints == PortConstraints.UNDEFINED) {
+            if (incomingEdges > outgoingEdges) {
+                finalPortSide = PortSide.EAST;
+            } else {
+                finalPortSide = PortSide.WEST;
+            }
+        }
+        
+        // With the port side at hand, set the necessary properties
+        switch (finalPortSide) {
+        case WEST:
+            dummy.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.FIRST_SEPARATE);
+            dummyPort.setSide(PortSide.EAST);
+            break;
+        
+        case EAST:
+            dummy.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.LAST_SEPARATE);
+            break;
+        
+        case NORTH:
+            // TODO: Set in-layer constraints.
+            break;
+        
+        case SOUTH:
+            // TODO: Set in-layer constraints.
+            break;
+        }
+        
+        // TODO: In case of FIXED_RATIO or FIXED_POSITION, store appropriate ratio or position values
+        
         
         return dummy;
     }
-
+    
 }
