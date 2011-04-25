@@ -97,7 +97,7 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
         
         // Reroute the edges, inserting a new bend point at the position of
         // the dummy node
-        LEdge[] edgeArray = inputPort.getEdges().toArray(new LEdge[0]);
+        LEdge[] edgeArray = inputPort.getIncomingEdges().toArray(new LEdge[0]);
         for (LEdge inEdge : edgeArray) {
             inEdge.setTarget(originPort);
             inEdge.getBendPoints().add(bendPoint);
@@ -120,7 +120,7 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
         
         // Reroute the edges, inserting a new bend point at the position of
         // the dummy node
-        LEdge[] edgeArray = outputPort.getEdges().toArray(new LEdge[0]);
+        LEdge[] edgeArray = outputPort.getOutgoingEdges().toArray(new LEdge[0]);
         for (LEdge outEdge : edgeArray) {
             outEdge.setSource(originPort);
             outEdge.getBendPoints().addFirst(bendPoint);

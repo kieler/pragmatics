@@ -77,8 +77,8 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
             
             for (LNode node : layer.getNodes()) {
                 for (LPort port : node.getPorts()) {
-                    // Go through the port's edges
-                    LEdge[] edges = port.getEdges().toArray(new LEdge[0]);
+                    // Go through the port's outgoing edges
+                    LEdge[] edges = port.getOutgoingEdges().toArray(new LEdge[0]);
                     
                     for (LEdge edge : edges) {
                         // We're only interested in edges whose source and target node are identical

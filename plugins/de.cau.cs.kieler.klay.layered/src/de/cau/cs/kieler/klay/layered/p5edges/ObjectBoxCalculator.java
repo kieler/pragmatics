@@ -365,7 +365,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
             currentSource = currentTarget;
             for (LPort iterPort : currentTarget.getNode().getPorts(PortType.OUTPUT)) {
-                for (LEdge iterEdge : iterPort.getEdges()) {
+                for (LEdge iterEdge : iterPort.getOutgoingEdges()) {
                     if (iterEdge.getProperty(Properties.ORIGIN) != null) {
                         currentTarget = iterEdge.getTarget();
                         break;

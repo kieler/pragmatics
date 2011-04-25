@@ -416,7 +416,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 if (port.getType() == PortType.OUTPUT) {
                     double sourcey = port.getNode().getPosition().y + port.getPosition().y;
                     
-                    for (LEdge edge : port.getEdges()) {
+                    for (LEdge edge : port.getOutgoingEdges()) {
                         double targety = edge.getTarget().getNode().getPosition().y
                                 + edge.getTarget().getPosition().y;
                         if (Math.abs(sourcey - targety) > edgeSpacing / STRAIGHT_TOLERANCE) {

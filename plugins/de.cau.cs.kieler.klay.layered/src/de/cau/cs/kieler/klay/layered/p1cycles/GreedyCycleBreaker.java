@@ -98,15 +98,14 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
         for (LNode node : nodes) {
             node.id = index;
             for (LPort port : node.getPorts()) {
-                int weight = 0;
-                for (LEdge edge : port.getEdges()) {
+                for (LEdge edge : port.getIncomingEdges()) {
                     int priority = edge.getProperty(Properties.PRIORITY);
-                    weight += priority > 0 ? priority + 1 : 1;
+                    indeg[index] += priority > 0 ? priority + 1 : 1;
                 }
-                if (port.getType() == PortType.OUTPUT) {
-                    outdeg[index] += weight;
-                } else {
-                    indeg[index] += weight;
+                
+                for (LEdge edge : port.getOutgoingEdges()) {
+                    int priority = edge.getProperty(Properties.PRIORITY);
+                    outdeg[index] += priority > 0 ? priority + 1 : 1;
                 }
             }
             LayerConstraint constraint = node.getProperty(Properties.LAYER_CONSTRAINT);
@@ -165,8 +164,9 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
         // reverse edges that point left
         index = 0;
         for (LNode node : nodes) {
-            for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                for (LEdge edge : port.getEdges()) {
+            for (LPort port : node.getPorts()) {
+                // TODO: Won't this cause a ConcurrentModificationException?
+                for (LEdge edge : port.getOutgoingEdges()) {
                     int targetIx = edge.getTarget().getNode().id;
                     if (mark[index] > mark[targetIx]) {
                         // TODO extend this to support port constraints
@@ -201,7 +201,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
      */
     private void updateNeighbors(final LNode node) {
         for (LPort port : node.getPorts()) {
-            for (LEdge edge : port.getEdges()) {
+            for (LEdge edge : port.getConnectedEdges()) {
                 LPort connectedPort = edge.getSource() == port ? edge.getTarget() : edge.getSource();
                 LNode endpoint = connectedPort.getNode();
                 int priority = edge.getProperty(Properties.PRIORITY);

@@ -214,42 +214,31 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         List<LEdge> northSouthSelfLoopEdges = new ArrayList<LEdge>(ports.size());
         
         for (LPort port : ports) {
-            boolean in = false;
-            boolean out = false;
             
-            // This is completely independent of ports being marked as INPUT or OUTPUT
-            // ports to stay clear of problems related to cycle breaking. (INPUT ports
-            // may have outgoing edges, OUTPUT ports may have incoming edges)
-            for (LEdge edge : port.getEdges()) {
+            // Go through the port's outgoing edges, looking for self-loops
+            for (LEdge edge : port.getOutgoingEdges()) {
                 // Check for self loops we'd be interested in
                 if (edge.getSource().getNode() == edge.getTarget().getNode()) {
-                    // Only do this for the source port
-                    if (edge.getSource() == port) {
-                        // Check which sides the ports are on
-                        if (port.getSide() == edge.getTarget().getSide()) {
-                            // Same side
-                            sameSideSelfLoopEdges.add(edge);
-                            continue;
-                            
-                        } else if (port.getSide() == PortSide.NORTH
-                                && edge.getTarget().getSide() == PortSide.SOUTH) {
-                            
-                            // North->South self-loop. Due to the SelfLoopProcessor, a
-                            // South->North self-loop cannot happen
-                            northSouthSelfLoopEdges.add(edge);
-                            continue;
-                        }
+                    // Check which sides the ports are on
+                    if (port.getSide() == edge.getTarget().getSide()) {
+                        // Same side
+                        sameSideSelfLoopEdges.add(edge);
+                        continue;
+                        
+                    } else if (port.getSide() == PortSide.NORTH
+                            && edge.getTarget().getSide() == PortSide.SOUTH) {
+                        
+                        // North->South self-loop. Due to the SelfLoopProcessor, a
+                        // South->North self-loop cannot happen
+                        northSouthSelfLoopEdges.add(edge);
+                        continue;
                     }
                 }
-                
-                // Once we get here, we haven't found a self-loop that would require
-                // additional measures
-                if (edge.getSource() == port) {
-                    out = true;
-                } else {
-                    in = true;
-                }
             }
+            
+            // Find out if the port has incoming or outgoing edges
+            boolean in = !port.getIncomingEdges().isEmpty();
+            boolean out = !port.getOutgoingEdges().isEmpty();
             
             if (in && out) {
                 inOutPorts.add(port);
@@ -339,11 +328,9 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
             dummyInputPort.setNode(dummy);
             
             // Reroute edges
-            LEdge[] edgeArray = inPort.getEdges().toArray(new LEdge[0]);
+            LEdge[] edgeArray = inPort.getIncomingEdges().toArray(new LEdge[0]);
             for (LEdge edge : edgeArray) {
-                if (edge.getTarget() == inPort) {
-                    edge.setTarget(dummyInputPort);
-                }
+                edge.setTarget(dummyInputPort);
             }
         }
         
@@ -356,11 +343,9 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
             dummyOutputPort.setNode(dummy);
             
             // Reroute edges
-            LEdge[] edgeArray = outPort.getEdges().toArray(new LEdge[0]);
+            LEdge[] edgeArray = outPort.getOutgoingEdges().toArray(new LEdge[0]);
             for (LEdge edge : edgeArray) {
-                if (edge.getSource() == outPort) {
-                    edge.setSource(dummyOutputPort);
-                }
+                edge.setSource(dummyOutputPort);
             }
         }
         

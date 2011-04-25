@@ -272,7 +272,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
         LNode opposite;
         // continue with next nodes, if not already visited
         for (LPort port : node.getPorts()) {
-            for (LEdge edge : port.getEdges()) {
+            for (LEdge edge : port.getConnectedEdges()) {
                 opposite = getOpposite(port, edge).getNode();
                 if (!nodeVisited[opposite.id]) {
                     connectedComponentsDFS(opposite);
@@ -316,7 +316,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
             node.id = index++;
             for (LPort port : node.getPorts()) {
                 if (port.getType() == PortType.OUTPUT) {
-                    for (LEdge edge : port.getEdges()) {
+                    for (LEdge edge : port.getOutgoingEdges()) {
                         if (edge.getSource().getNode() == edge.getTarget().getNode()) {
                             // Self loops are stored in a map and removed later
                             removedSelfLoops.put(edge,
@@ -327,7 +327,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
                         }
                     }
                 } else if (port.getType() == PortType.INPUT) {
-                    for (LEdge edge : port.getEdges()) {
+                    for (LEdge edge : port.getIncomingEdges()) {
                         if (edge.getSource().getNode() == edge.getTarget().getNode()) {
                             // Self loops are stored in a map and removed later
                             removedSelfLoops.put(edge,
@@ -612,7 +612,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
         LNode target = null;
         if (reverse) {
             for (LPort port : node.getPorts(PortType.INPUT)) {
-                for (LEdge edge : port.getEdges()) {
+                for (LEdge edge : port.getIncomingEdges()) {
                     target = edge.getSource().getNode();
                     revLayer[target.id] = Math.min(revLayer[target.id], revLayer[node.id] - 1);
                     layeringDFS(target, true);
@@ -620,7 +620,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
             }
         } else {
             for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                for (LEdge edge : port.getEdges()) {
+                for (LEdge edge : port.getOutgoingEdges()) {
                     target = edge.getTarget().getNode();
                     layer[target.id] = Math.max(layer[target.id], layer[node.id] + 1);
                     layeringDFS(target, false);
@@ -649,7 +649,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
         int currentSpan;
 
         for (LPort port : node.getPorts()) {
-            for (LEdge edge : port.getEdges()) {
+            for (LEdge edge : port.getConnectedEdges()) {
                 currentSpan = layer[edge.getTarget().getNode().id]
                         - layer[edge.getSource().getNode().id];
                 if (port.getType() == PortType.INPUT && currentSpan < minSpanIn) {
@@ -688,7 +688,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
         treeNode[node.id] = true;
         LNode opposite = null;
         for (LPort port : node.getPorts()) {
-            for (LEdge edge : port.getEdges()) {
+            for (LEdge edge : port.getConnectedEdges()) {
                 if (!edgeVisited[edge.id]) {
                     edgeVisited[edge.id] = true;
                     opposite = getOpposite(port, edge).getNode();
@@ -756,7 +756,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
 
         int lowest = Integer.MAX_VALUE;
         for (LPort port : node.getPorts()) {
-            for (LEdge edge : port.getEdges()) {
+            for (LEdge edge : port.getConnectedEdges()) {
                 if (treeEdge[edge.id] && !edgeVisited[edge.id]) {
                     edgeVisited[edge.id] = true;
                     lowest = Math
@@ -826,7 +826,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
             treeEdgeCount = 0;
             unknownCutvalues.add(new HashSet<LEdge>());
             for (LPort port : node.getPorts()) {
-                for (LEdge edge : port.getEdges()) {
+                for (LEdge edge : port.getConnectedEdges()) {
                     if (treeEdge[edge.id]) {
                         unknownCutvalues.get(node.id).add(edge);
                         treeEdgeCount++;
@@ -848,7 +848,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
                 source = toDetermine.getSource().getNode();
                 target = toDetermine.getTarget().getNode();
                 for (LPort port : node.getPorts()) {
-                    for (LEdge edge : port.getEdges()) {
+                    for (LEdge edge : port.getConnectedEdges()) {
                         if (!edge.equals(toDetermine)) {
                             if (treeEdge[edge.id]) {
                                 // edge is tree edge

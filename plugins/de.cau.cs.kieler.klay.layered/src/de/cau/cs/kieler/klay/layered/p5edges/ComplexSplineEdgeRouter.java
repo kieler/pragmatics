@@ -107,7 +107,7 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements ILayou
                 // filter out start points of long edges
                 if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
                     for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                        for (LEdge edge : port.getEdges()) {
+                        for (LEdge edge : port.getOutgoingEdges()) {
                             if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) 
                                     == Properties.NodeType.LONG_EDGE) {
                                 longEdges.add(edge);

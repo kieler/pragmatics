@@ -81,8 +81,8 @@ public class LayeringEnhancer extends AbstractAlgorithm {
         // calculate the subgraph that is reachable from the first node
         int[] mark = new int[n];
         while (!bfsQueue.isEmpty()) {
-            for (LPort port : bfsQueue.poll().getPorts(PortType.OUTPUT)) {
-                for (LEdge edge : port.getEdges()) {
+            for (LPort port : bfsQueue.poll().getPorts()) {
+                for (LEdge edge : port.getOutgoingEdges()) {
                     LNode target = edge.getTarget().getNode();
                     if (mark[target.id] == 0) {
                         mark[target.id] = 1;
@@ -96,8 +96,8 @@ public class LayeringEnhancer extends AbstractAlgorithm {
         List<LNode> candidates = new LinkedList<LNode>();
         bfsQueue.offer(node2);
         while (!bfsQueue.isEmpty()) {
-            for (LPort port : bfsQueue.poll().getPorts(PortType.OUTPUT)) {
-                for (LEdge edge : port.getEdges()) {
+            for (LPort port : bfsQueue.poll().getPorts()) {
+                for (LEdge edge : port.getOutgoingEdges()) {
                     LNode target = edge.getTarget().getNode();
                     if (target != node1) {
                         if (mark[target.id] == 0) {
@@ -201,8 +201,8 @@ public class LayeringEnhancer extends AbstractAlgorithm {
         List<LNode> sinks = new LinkedList<LNode>();
         int[] outdeg = new int[n];
         for (LNode node : nodes) {
-            for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                outdeg[node.id] += port.getEdges().size();
+            for (LPort port : node.getPorts()) {
+                outdeg[node.id] += port.getOutgoingEdges().size();
             }
             if (outdeg[node.id] == 0) {
                 sinks.add(node);
@@ -211,8 +211,8 @@ public class LayeringEnhancer extends AbstractAlgorithm {
         
         while (!sinks.isEmpty()) {
             LNode sink = sinks.remove(0);
-            for (LPort port1 : sink.getPorts(PortType.INPUT)) {
-                for (LPort port2 : port1.getConnectedPorts()) {
+            for (LPort port1 : sink.getPorts()) {
+                for (LPort port2 : port1.getPredecessorPorts()) {
                     LNode source = port2.getNode();
                     outdeg[source.id]--;
                     if (outdeg[source.id] <= 0) {

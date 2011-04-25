@@ -135,16 +135,18 @@ public class HyperedgeDummyMerger extends AbstractAlgorithm implements ILayoutPr
         LPort mergeTargetOutputPort = mergeTarget.getPorts(PortType.OUTPUT).iterator().next();
         
         for (LPort port : mergeSource.getPorts()) {
-            if (port.getType() == PortType.INPUT) {
+            if (!port.getIncomingEdges().isEmpty()) {
                 // Use an array of edges to avoid concurrent modification exceptions
-                LEdge[] edgeArray = port.getEdges().toArray(new LEdge[0]);
+                LEdge[] edgeArray = port.getIncomingEdges().toArray(new LEdge[0]);
                 
                 for (LEdge edge : edgeArray) {
                     edge.setTarget(mergeTargetInputPort);
                 }
-            } else {
+            }
+            
+            if (!port.getOutgoingEdges().isEmpty()) {
                 // Use an array of edges to avoid concurrent modification exceptions
-                LEdge[] edgeArray = port.getEdges().toArray(new LEdge[0]);
+                LEdge[] edgeArray = port.getOutgoingEdges().toArray(new LEdge[0]);
                 
                 for (LEdge edge : edgeArray) {
                     edge.setSource(mergeTargetOutputPort);

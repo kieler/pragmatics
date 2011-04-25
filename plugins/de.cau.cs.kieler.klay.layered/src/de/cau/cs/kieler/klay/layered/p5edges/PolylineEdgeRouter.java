@@ -65,7 +65,7 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements ILayoutPhas
             int edgeCount = 0;
             for (LNode node : layer.getNodes()) {
                 for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                    edgeCount += port.getEdges().size();
+                    edgeCount += port.getOutgoingEdges().size();
                 }
                 if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
                     LEdge edge = (LEdge) node.getProperty(Properties.ORIGIN);

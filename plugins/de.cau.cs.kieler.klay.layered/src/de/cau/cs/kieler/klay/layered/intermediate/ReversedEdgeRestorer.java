@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -51,21 +50,16 @@ public class ReversedEdgeRestorer extends AbstractAlgorithm implements ILayoutPr
         for (Layer layer : layeredGraph.getLayers()) {
             // Iterate through the nodes
             for (LNode node : layer.getNodes()) {
-                // Iterate through the node's OUTPUT ports (which only makes a slight
-                // difference, because when we actually find reversed edges, the port
-                // type is reversed as well, the other ports becoming output ports too
-                // and possibly being iterated over again)
-                for (LPort port : node.getPorts(PortType.OUTPUT)) {
+                // Iterate over all the port's, looking for outgoing edges that should
+                // be reversed
+                for (LPort port : node.getPorts()) {
                     // Iterate over a copy of the edges to avoid concurrent modification
                     // exceptions
-                    LEdge[] edgeArray = port.getEdges().toArray(new LEdge[0]);
+                    LEdge[] edgeArray = port.getOutgoingEdges().toArray(new LEdge[0]);
                     
                     for (LEdge edge : edgeArray) {
                         if (edge.getProperty(Properties.REVERSED)) {
                             edge.reverse();
-
-                            edge.getTarget().setType(PortType.INPUT);
-                            edge.getSource().setType(PortType.OUTPUT);
                         }
                     }
                 }

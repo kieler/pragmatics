@@ -331,8 +331,8 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
 
         // traverse edges from source to target
         layer[node.id] = Math.max(layer[node.id], start);
-        for (LPort port : node.getPorts(PortType.OUTPUT)) {
-            for (LEdge edge : port.getEdges()) {
+        for (LPort port : node.getPorts()) {
+            for (LEdge edge : port.getOutgoingEdges()) {
                 minimalLayer(edge.getTarget().getNode(), start + 1);
             }
         }

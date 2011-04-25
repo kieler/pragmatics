@@ -90,7 +90,7 @@ public class LongEdge {
             port = intermediateEdge.getTarget();
             currentTarget = port.getNode();
             for (LPort iterPort : currentTarget.getPorts(PortType.OUTPUT)) {
-                for (LEdge iterEdge : iterPort.getEdges()) {
+                for (LEdge iterEdge : iterPort.getOutgoingEdges()) {
                     if (iterEdge.getProperty(Properties.ORIGIN) != null) {
                         intermediateEdge = iterEdge;
                         break;

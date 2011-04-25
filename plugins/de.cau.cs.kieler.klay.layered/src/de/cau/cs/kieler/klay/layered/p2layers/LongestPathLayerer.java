@@ -148,8 +148,8 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
             return height;
         } else {
             int maxHeight = 1;
-            for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                for (LEdge edge : port.getEdges()) {
+            for (LPort port : node.getPorts()) {
+                for (LEdge edge : port.getOutgoingEdges()) {
                     LNode targetNode = edge.getTarget().getNode();
                     
                     // Beware of self-loops

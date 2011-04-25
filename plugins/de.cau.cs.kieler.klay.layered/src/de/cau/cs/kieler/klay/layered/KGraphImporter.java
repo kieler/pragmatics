@@ -401,8 +401,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 }
                 
                 // collect edges
-                for (LPort port : lnode.getPorts(PortType.OUTPUT)) {
-                    edgeList.addAll(port.getEdges());
+                for (LPort port : lnode.getPorts()) {
+                    edgeList.addAll(port.getOutgoingEdges());
                 }
             }
         }

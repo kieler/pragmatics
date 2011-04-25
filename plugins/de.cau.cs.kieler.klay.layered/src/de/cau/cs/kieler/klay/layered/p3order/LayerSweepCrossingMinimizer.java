@@ -530,7 +530,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 }
             }
             
-            vertex.degree += freePort.getEdges().size();
+            vertex.degree += freePort.getDegree();
         }
         
         if (vertex.degree > 0) {
@@ -806,7 +806,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
                 for (LPort port : node.getPorts(PortType.OUTPUT)) {
                     int start = i;
-                    for (LEdge edge : port.getEdges()) {
+                    for (LEdge edge : port.getOutgoingEdges()) {
                         Integer pos = targetMap.get(edge.getTarget());
                         if (pos != null) {
                             insert(southSequence, start, i++, pos);
@@ -816,7 +816,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             } else {
                 int start = i;
                 for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                    for (LEdge edge : port.getEdges()) {
+                    for (LEdge edge : port.getOutgoingEdges()) {
                         Integer pos = targetMap.get(edge.getTarget());
                         if (pos != null) {
                             insert(southSequence, start, i++, pos);
@@ -1037,7 +1037,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
 
             if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
                 for (LPort easternPort : node.getPorts(PortSide.EAST)) {
-                    if (!easternPort.getEdges().isEmpty()) {
+                    if (easternPort.getDegree() > 0) {
                         easternMap.put(easternPort, currentEasternIndex++);
                     }
                 }
@@ -1045,7 +1045,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 boolean easternPorts = false;
 
                 for (LPort easternPort : node.getPorts(PortSide.EAST)) {
-                    if (!easternPort.getEdges().isEmpty()) {
+                    if (easternPort.getDegree() > 0) {
                         easternMap.put(easternPort, currentEasternIndex);
                     }
                 }
@@ -1062,7 +1062,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
 
             if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
                 for (LPort westernPort : node.getPorts(PortSide.WEST)) {
-                    if (!westernPort.getEdges().isEmpty()) {
+                    if (westernPort.getDegree() > 0) {
                         westernMap.put(westernPort, currentWesternIndex++);
                     }
                 }
@@ -1070,7 +1070,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 boolean westernPorts = false;
 
                 for (LPort westernPort : node.getPorts(PortSide.WEST)) {
-                    if (!westernPort.getEdges().isEmpty()) {
+                    if (westernPort.getDegree() > 0) {
                         westernMap.put(westernPort, currentWesternIndex);
                     }
                 }
@@ -1102,7 +1102,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         
         // Find the maximum distance between two connected ports
         Integer connectedPortIndex = null;
-        for (LEdge edge : port.getEdges()) {
+        for (LEdge edge : port.getConnectedEdges()) {
             if (edge.getSource() == port) {
                 connectedPortIndex = portIndices.get(edge.getTarget());
             } else {
@@ -1312,10 +1312,10 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             for (LPort connectedPort : port.getConnectedPorts()) {
                 sum += portPos[connectedPort.id];
             }
-            if (port.getEdges().isEmpty()) {
+            if (port.getDegree() == 0) {
                 portBarycenter[port.id] = -1;
             } else {
-                portBarycenter[port.id] = sum / port.getEdges().size();
+                portBarycenter[port.id] = sum / port.getDegree();
             }
         }
         // sort the ports by considering the side, type, and barycenter values

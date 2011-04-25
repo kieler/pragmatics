@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.collect.Iterables;
+
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
@@ -45,8 +47,10 @@ public class LPort extends LSizedGraphElement {
     private PortSide side = PortSide.UNDEFINED;
     /** this port's label, if any. */
     private LLabel label = null;
-    /** the edges connected to the port. */
-    private List<LEdge> edges = new LinkedList<LEdge>();
+    /** the edges going into the port. */
+    private List<LEdge> incomingEdges = new LinkedList<LEdge>();
+    /** the edges going out of the port. */
+    private List<LEdge> outgoingEdges = new LinkedList<LEdge>();
     /** name of the port. */
     private String name;
     
@@ -205,46 +209,102 @@ public class LPort extends LSizedGraphElement {
     public LLabel getLabel() {
         return label;
     }
-
+    
     /**
-     * Returns the list of edges that are incident to this port. If the port
-     * type is {@code INPUT}, this list must only contain incoming edges; if
-     * the port is {@code OUTPUT}, this list must only contain outgoing edges.
+     * Returns this port's degree, that is, the number of edges connected to it.
      * 
-     * @return the edges
+     * @return the number of edges connected to this port.
      */
-    public List<LEdge> getEdges() {
-        return edges;
+    public int getDegree() {
+        return incomingEdges.size() + outgoingEdges.size();
     }
 
     /**
-     * Returns an iterable over all connected ports.
+     * Returns the list of edges going into this port.
      * 
-     * @return an iterable over the connected ports
+     * @return the incoming edges
      */
-    public Iterable<LPort> getConnectedPorts() {
+    public List<LEdge> getIncomingEdges() {
+        return incomingEdges;
+    }
+
+    /**
+     * Returns the list of edges going out of this port.
+     * 
+     * @return the outgoing edges
+     */
+    public List<LEdge> getOutgoingEdges() {
+        return outgoingEdges;
+    }
+    
+    /**
+     * Returns an iterable over all connected edges, both incoming and outgoing.
+     * 
+     * @return an iterable over all connected edges.
+     */
+    public Iterable<LEdge> getConnectedEdges() {
+        return Iterables.concat(incomingEdges, outgoingEdges);
+    }
+    
+    /**
+     * Returns an iterable over all the port's predecessor ports.
+     * 
+     * @return an iterable over all predecessor ports.
+     */
+    public Iterable<LPort> getPredecessorPorts() {
         return new Iterable<LPort>() {
             public Iterator<LPort> iterator() {
-                final Iterator<LEdge> edgeIter = edges.iterator();
+                final Iterator<LEdge> edgesIter = incomingEdges.iterator();
+                
                 return new Iterator<LPort>() {
                     public boolean hasNext() {
-                        return edgeIter.hasNext();
+                        return edgesIter.hasNext();
                     }
                     public LPort next() {
-                        LEdge nextEdge = edgeIter.next();
-                        if (nextEdge.getSource() == LPort.this) {
-                            return nextEdge.getTarget();
-                        } else {
-                            return nextEdge.getSource();
-                        }
+                        return edgesIter.next().getSource();
                     }
                     public void remove() {
-                        edgeIter.remove();
+                        edgesIter.remove();
                     }
                 };
             }
             
         };
+    }
+    
+    /**
+     * Returns an iterable over all the port's successor ports.
+     * 
+     * @return an iterable over all successor ports.
+     */
+    public Iterable<LPort> getSuccessorPorts() {
+        return new Iterable<LPort>() {
+            public Iterator<LPort> iterator() {
+                final Iterator<LEdge> edgesIter = outgoingEdges.iterator();
+                
+                return new Iterator<LPort>() {
+                    public boolean hasNext() {
+                        return edgesIter.hasNext();
+                    }
+                    public LPort next() {
+                        return edgesIter.next().getTarget();
+                    }
+                    public void remove() {
+                        edgesIter.remove();
+                    }
+                };
+            }
+            
+        };
+    }
+
+    /**
+     * Returns an iterable over all connected ports, both predecessors and successors.
+     * 
+     * @return an iterable over the connected ports
+     */
+    public Iterable<LPort> getConnectedPorts() {
+        return Iterables.concat(getPredecessorPorts(), getSuccessorPorts());
     }
     
     /**

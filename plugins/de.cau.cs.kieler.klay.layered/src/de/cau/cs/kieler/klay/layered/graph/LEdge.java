@@ -85,13 +85,13 @@ public class LEdge extends LGraphElement {
      */
     public void setSource(final LPort source) {
         if (this.source != null) {
-            this.source.getEdges().remove(this);
+            this.source.getOutgoingEdges().remove(this);
         }
         
         this.source = source;
         
         if (this.source != null) {
-            this.source.getEdges().add(this);
+            this.source.getOutgoingEdges().add(this);
         }
     }
 
@@ -115,13 +115,13 @@ public class LEdge extends LGraphElement {
      */
     public void setTarget(final LPort target) {
         if (this.target != null) {
-            this.target.getEdges().remove(this);
+            this.target.getIncomingEdges().remove(this);
         }
         
         this.target = target;
         
         if (this.target != null) {
-            this.target.getEdges().add(this);
+            this.target.getIncomingEdges().add(this);
         }
     }
 

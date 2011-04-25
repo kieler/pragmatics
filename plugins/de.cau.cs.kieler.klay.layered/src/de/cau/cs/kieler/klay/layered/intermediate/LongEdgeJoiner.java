@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -58,12 +58,12 @@ public class LongEdgeJoiner extends AbstractAlgorithm implements ILayoutProcesso
                 
                 // Check if it's a dummy edge we're looking for
                 if (node.getProperty(Properties.NODE_TYPE).equals(Properties.NodeType.LONG_EDGE)) {
-                    // Get the input and output port (of which we assume to be
-                    // exactly one)
+                    // Get the input and output port (of which we assume to have only one,
+                    // on the western side and on the eastern side, respectively)
                     List<LEdge> inputPortEdges =
-                        node.getPorts(PortType.INPUT).iterator().next().getEdges();
+                        node.getPorts(PortSide.WEST).iterator().next().getIncomingEdges();
                     List<LEdge> outputPortEdges =
-                        node.getPorts(PortType.OUTPUT).iterator().next().getEdges();
+                        node.getPorts(PortSide.EAST).iterator().next().getOutgoingEdges();
                     int edgeCount = inputPortEdges.size();
                     
                     // The following code assumes that edges with the same indices in the two

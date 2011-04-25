@@ -41,7 +41,7 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
         for (Layer layer : thelayeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 for (LPort port : node.getPorts()) {
-                    for (LEdge edge : port.getEdges()) {
+                    for (LEdge edge : port.getConnectedEdges()) {
                         for (LLabel label : edge.getLabels()) {
                             
                             LongEdge longEdge = null;
@@ -124,7 +124,7 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
         LLabel longest = new LLabel("");
         for (LNode node : thelayer.getNodes()) {
             for (LPort port : node.getPorts()) {
-                for (LEdge edge : port.getEdges()) {
+                for (LEdge edge : port.getConnectedEdges()) {
                     for (LLabel label : edge.getLabels()) {
                         //Only consider source ports
                         if (label.getSize().x > longest.getSize().x

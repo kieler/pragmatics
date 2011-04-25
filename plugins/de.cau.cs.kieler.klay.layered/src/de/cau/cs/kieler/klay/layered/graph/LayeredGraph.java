@@ -208,14 +208,11 @@ public class LayeredGraph extends LGraphElement {
         
         // Write the edges
         for (LNode node : nodes) {
-            // Go through all ports and edges and output those that have this
-            // node as their source
+            // Go through all edges and output those that have this node as their source
             for (LPort port : node.getPorts()) {
-                for (LEdge edge : port.getEdges()) {
-                    if (edge.getSource() == port) {
-                        writer.write("    " + node.hashCode() + " -> "
-                                + edge.getTarget().getNode().hashCode() + ";\n");
-                    }
+                for (LEdge edge : port.getOutgoingEdges()) {
+                    writer.write("    " + node.hashCode() + " -> "
+                            + edge.getTarget().getNode().hashCode() + ";\n");
                 }
             }
         }

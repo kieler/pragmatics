@@ -105,11 +105,11 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
                 }
                 
                 // Look for input ports on the right side
-                for (LPort port : node.getPorts(PortType.INPUT, PortSide.EAST)) {
-                    // For every edge connected to this port, insert dummy nodes (do this using
+                for (LPort port : node.getPorts(PortSide.EAST)) {
+                    // For every edge going into this port, insert dummy nodes (do this using
                     // a copy of the current list of edges, since the edges are modified when
                     // dummy nodes are created)
-                    List<LEdge> edges = port.getEdges();
+                    List<LEdge> edges = port.getIncomingEdges();
                     LEdge[] edgeArray = edges.toArray(new LEdge[edges.size()]);
                     
                     for (LEdge edge : edgeArray) {
@@ -118,11 +118,11 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
                 }
                 
                 // Look for ports on the left side connected to edges going to higher layers
-                for (LPort port : node.getPorts(PortType.OUTPUT, PortSide.WEST)) {
-                    // For every edge connected to this port, insert dummy nodes (do this using
+                for (LPort port : node.getPorts(PortSide.WEST)) {
+                    // For every edge going out of this port, insert dummy nodes (do this using
                     // a copy of the current list of edges, since the edges are modified when
                     // dummy nodes are created)
-                    List<LEdge> edges = port.getEdges();
+                    List<LEdge> edges = port.getOutgoingEdges();
                     LEdge[] edgeArray = edges.toArray(new LEdge[edges.size()]);
                     
                     for (LEdge edge : edgeArray) {
@@ -248,10 +248,10 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
             final LPort dummyOutputPort, final LPort oddPort) {
         
         // There's exactly one edge connected to the input and output port
-        LPort sourcePort = dummyInputPort.getEdges().get(0).getSource();
+        LPort sourcePort = dummyInputPort.getIncomingEdges().get(0).getSource();
         LNode sourceNode = sourcePort.getNode();
         Properties.NodeType sourceNodeType = sourceNode.getProperty(Properties.NODE_TYPE);
-        LPort targetPort = dummyOutputPort.getEdges().get(0).getTarget();
+        LPort targetPort = dummyOutputPort.getOutgoingEdges().get(0).getTarget();
         LNode targetNode = targetPort.getNode();
         Properties.NodeType targetNodeType = targetNode.getProperty(Properties.NODE_TYPE);
         

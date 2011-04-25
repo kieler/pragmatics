@@ -502,7 +502,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         LEdge highestPrioEdge = null;
         int highestPrio = 0;
         for (LPort sourcePort : node.getPorts(PortType.OUTPUT)) {
-            for (LEdge targetEdge : sourcePort.getEdges()) {
+            for (LEdge targetEdge : sourcePort.getOutgoingEdges()) {
                 int prio = targetEdge.getProperty(Properties.PRIORITY);
                 if (prio > highestPrio) {
                     highestPrioEdge = targetEdge;
@@ -716,7 +716,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             // Calculate force for every port/edge
             for (LPort port : node.getPorts()) {
                 if (port.getType() == PortType.OUTPUT) {
-                    for (LEdge edge : port.getEdges()) {
+                    for (LEdge edge : port.getOutgoingEdges()) {
                         LPort otherPort = edge.getTarget();
                         LNode otherNode = otherPort.getNode();
                         sum += (otherNode.getPosition().y + otherPort.getPosition().y)
@@ -724,7 +724,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                         numEdges++;
                     }
                 } else if (port.getType() == PortType.INPUT) {
-                    for (LEdge edge : port.getEdges()) {
+                    for (LEdge edge : port.getIncomingEdges()) {
                         LPort otherPort = edge.getSource();
                         LNode otherNode = otherPort.getNode();
                         sum += (otherNode.getPosition().y + otherPort.getPosition().y)

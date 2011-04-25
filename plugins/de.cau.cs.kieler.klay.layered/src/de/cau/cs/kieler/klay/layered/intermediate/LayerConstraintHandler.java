@@ -110,13 +110,20 @@ public class LayerConstraintHandler extends AbstractAlgorithm implements ILayout
         
         // Iterate through the node's edges and reverse them, if necessary
         for (LPort port : node.getPorts()) {
-            // Iterate over an array of edges to avoid ConcurrentModificationExceptions
-            LEdge[] edges = port.getEdges().toArray(new LEdge[0]);
+            // In the first layer, incoming edges are not OK
+            if (first && !port.getIncomingEdges().isEmpty()) {
+                LEdge[] edges = port.getIncomingEdges().toArray(new LEdge[0]);
+
+                for (LEdge edge : edges) {
+                    edge.reverse();
+                }
+            }
             
-            for (LEdge edge : edges) {
-                if ((first && edge.getSource().getNode() != node)
-                        || (!first && edge.getTarget().getNode() != node)) {
-                    
+            // In the last layer, outgoing edges are not OK
+            if (!first && !port.getOutgoingEdges().isEmpty()) {
+                LEdge[] edges = port.getOutgoingEdges().toArray(new LEdge[0]);
+
+                for (LEdge edge : edges) {
                     edge.reverse();
                 }
             }
