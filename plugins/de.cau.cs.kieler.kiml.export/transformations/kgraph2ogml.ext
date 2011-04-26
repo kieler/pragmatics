@@ -155,7 +155,9 @@ Void transformEdgeLayout(KEdge edge, ogml::StylesType styles, Real xOffset, Real
 	let edgeLayout = edge.getEdgeLayout():
 	let edgeStyle = new ogml::EdgeLayoutType:
 	edgeStyle.setIdRef(getId(edge)) ->
+	edgeLayout.sourcePoint.transformBendPoint(edgeStyle, xOffset, yOffset) ->
 	edgeLayout.bendPoints.transformBendPoint(edgeStyle, xOffset, yOffset) ->
+	edgeLayout.targetPoint.transformBendPoint(edgeStyle, xOffset, yOffset) ->
 	styles.edgeStyle.add(edgeStyle)
 ;
 
