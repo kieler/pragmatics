@@ -22,7 +22,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -169,8 +168,11 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
             if (width[node.id] > 1) {
                 // save outgoing ports of wide node to reassign them later
                 ports = new LinkedList<LPort>();
-                for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                    ports.add(port);
+                for (LPort port : node.getPorts()) {
+                    // TODO: This originally iterated over output ports; check if this replacement works.
+                    if (!port.getOutgoingEdges().isEmpty()) {
+                        ports.add(port);
+                    }
                 }
                 // expand node by one dummy node per iteration
                 for (int d = 1; d < width[node.id]; d++) {

@@ -16,7 +16,6 @@ package de.cau.cs.kieler.klay.layered.p5edges;
 import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -89,7 +88,7 @@ public class LongEdge {
             // currently doesnt handle hypergraphs here
             port = intermediateEdge.getTarget();
             currentTarget = port.getNode();
-            for (LPort iterPort : currentTarget.getPorts(PortType.OUTPUT)) {
+            for (LPort iterPort : currentTarget.getPorts()) {
                 for (LEdge iterEdge : iterPort.getOutgoingEdges()) {
                     if (iterEdge.getProperty(Properties.ORIGIN) != null) {
                         intermediateEdge = iterEdge;
