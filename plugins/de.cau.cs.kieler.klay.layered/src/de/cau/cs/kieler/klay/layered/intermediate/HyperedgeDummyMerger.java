@@ -40,7 +40,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *   <dt>Postcondition:</dt><dd>long edge dummy nodes belonging to the same hyperedge and
  *     being directly next to each other are merged.</dd>
  *   <dt>Slots:</dt><dd>Before phase 4.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link InLayerConstraintProcessor}</dd>
  * </dl>
  *
  * @author cds

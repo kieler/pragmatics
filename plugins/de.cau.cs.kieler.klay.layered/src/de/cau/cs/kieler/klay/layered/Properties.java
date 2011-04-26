@@ -24,7 +24,6 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer.Region;
@@ -77,6 +76,38 @@ public final class Properties {
         SELF_LOOPS;
     }
 
+    /**
+     * Enumeration of layer constraint types.
+     *
+     * @author msp
+     */
+    public enum LayerConstraint {
+        /** no constraint on the layering. */
+        NONE,
+        /** put into the first layer. */
+        FIRST,
+        /** put into a separate first layer; used internally. */
+        FIRST_SEPARATE,
+        /** put into the last layer. */
+        LAST,
+        /** put into a separate last layer; used internally. */
+        LAST_SEPARATE;
+    }
+    
+    /**
+     * Enumeration of in-layer constraint types.
+     * 
+     * @author cds
+     */
+    public enum InLayerConstraint {
+        /** no constraint on in-layer placement. */
+        NONE,
+        /** float node to the top of the layer, along with other nodes posessing this constraint. */
+        TOP,
+        /** float node to the bottom of the layer, along with other nodes posessing this constraint. */
+        BOTTOM
+    }
+
     
     ///////////////////////////////////////////////////////////////////////////////
     // INTERNAL PROPERTIES
@@ -115,16 +146,28 @@ public final class Properties {
      * not belonging to any layout unit may be placed arbitrarily between nodes of a layout unit.
      * Layer layout units are identified through one of their nodes.
      */
-    public static final IProperty<LNode> LAYER_LAYOUT_UNIT = new Property<LNode>(
-            "layerLayoutUnit", null);
+    public static final IProperty<LNode> IN_LAYER_LAYOUT_UNIT = new Property<LNode>(
+            "inLayerLayoutUnit", null);
+    
+    /**
+     * The in-layer constraint placed on a node. This indicates whether this node should be handled
+     * like any other node, or if it must be placed at the top or bottom of a layer. This is important
+     * for external port dummy nodes. Crossing minimizers are not required to respect this constraint.
+     * If they don't, however, they must include a dependency on
+     * {@link de.cau.cs.kieler.klay.layered.intermediate.InLayerConstraintProcessor}.
+     */
+    public static final IProperty<InLayerConstraint> IN_LAYER_CONSTRAINT =
+        new Property<InLayerConstraint>("inLayerConstraint", InLayerConstraint.NONE);
     
     /**
      * Indicates that a node {@code x} may only appear inside a layer before the node {@code y} the
      * property is set to. That is, having {@code x} appear after {@code y} would violate this
      * constraint. This property only makes sense for nodes.
      */
-    public static final IProperty<LNode> LAYER_NODE_SUCCESSOR_CONSTRAINT = new Property<LNode>(
-            "layerNodeSuccessorConstraint", null);
+    public static final IProperty<LNode> IN_LAYER_SUCCESSOR_CONSTRAINT = new Property<LNode>(
+            "inLayerSuccessorConstraint", null);
+    
+    
     
     /** Flags indicating the properties of a graph. */
     public static final IProperty<Set<GraphProperties>> GRAPH_PROPERTIES =

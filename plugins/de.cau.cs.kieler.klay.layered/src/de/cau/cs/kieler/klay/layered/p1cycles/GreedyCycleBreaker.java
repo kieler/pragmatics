@@ -26,7 +26,6 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
-import de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint;
 
 /**
  * Cycle breaker implementation that uses a greedy algorithm. Inspired by Section 9.4 of
@@ -36,12 +35,20 @@ import de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint;
  *     Prentice Hall, New Jersey, 1999
  * </ul>
  * 
+ * <p>This cycle breaker doesn't support layer constraints out of the box. If layer
+ * constraints should be observed,
+ * {@link de.cau.cs.kieler.klay.layered.intermediate.LayerConstraintEdgeReverser} and
+ * {@link de.cau.cs.kieler.klay.layered.intermediate.LayerConstraintProcessor} should
+ * be used.</p>
+ * 
  * <dl>
  *   <dt>Precondition:</dt><dd>none</dd>
  *   <dt>Postcondition:</dt><dd>the graph has no cycles, but possibly
  *     new nodes and edges</dd>
  * </dl>
- *
+ * 
+ * @see de.cau.cs.kieler.klay.layered.intermediate.LayerConstraintEdgeReverser
+ * @see de.cau.cs.kieler.klay.layered.intermediate.LayerConstraintProcessor
  * @author msp
  */
 public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhase {
@@ -107,10 +114,10 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
                     outdeg[index] += priority > 0 ? priority + 1 : 1;
                 }
             }
-            LayerConstraint constraint = node.getProperty(Properties.LAYER_CONSTRAINT);
-            if (outdeg[index] == 0 || constraint == LayerConstraint.LAST) {
+            
+            if (outdeg[index] == 0) {
                 sinks.add(node);
-            } else if (indeg[index] == 0 || constraint == LayerConstraint.FIRST) {
+            } else if (indeg[index] == 0) {
                 sources.add(node);
             }
             index++;

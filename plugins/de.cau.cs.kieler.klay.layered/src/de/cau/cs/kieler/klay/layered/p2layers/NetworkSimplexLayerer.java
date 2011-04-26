@@ -64,7 +64,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
                 null,
                 
                 // Before Phase 3
-                EnumSet.of(IntermediateLayoutProcessor.LAYER_CONSTRAINT_APPLICATION_PROCESSOR),
+                EnumSet.of(IntermediateLayoutProcessor.LAYER_CONSTRAINT_PROCESSOR),
                 
                 // Before Phase 4
                 null,

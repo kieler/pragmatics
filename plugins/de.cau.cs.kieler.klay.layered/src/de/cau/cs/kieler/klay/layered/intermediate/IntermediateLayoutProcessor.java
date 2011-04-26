@@ -38,7 +38,7 @@ public enum IntermediateLayoutProcessor {
     // Before Phase 3
     
     /** Makes sure that layer constraints are taken care of. */
-    LAYER_CONSTRAINT_APPLICATION_PROCESSOR,
+    LAYER_CONSTRAINT_PROCESSOR,
     /** Takes a layered graph and turns it into a properly layered graph. */
     LONG_EDGE_SPLITTER,
     /** Makes sure nodes have at least fixed port sides. */
@@ -54,6 +54,8 @@ public enum IntermediateLayoutProcessor {
     
     // Before Phase 4
     
+    /** Makes sure that in-layer constraints are handled. */
+    IN_LAYER_CONSTRAINT_PROCESSOR,
     /** Merges long edge dummy nodes belonging to the same hyperedge. */
     HYPEREDGE_DUMMY_MERGER,
     /** Sets the positions of ports. */
@@ -94,8 +96,11 @@ public enum IntermediateLayoutProcessor {
         case HYPEREDGE_DUMMY_MERGER:
             return new HyperedgeDummyMerger();
         
-        case LAYER_CONSTRAINT_APPLICATION_PROCESSOR:
-            return new LayerConstraintApplicationProcessor();
+        case IN_LAYER_CONSTRAINT_PROCESSOR:
+            return new InLayerConstraintProcessor();
+        
+        case LAYER_CONSTRAINT_PROCESSOR:
+            return new LayerConstraintProcessor();
         
         case LAYER_CONSTRAINT_EDGE_REVERSER:
             return new LayerConstraintEdgeReverser();

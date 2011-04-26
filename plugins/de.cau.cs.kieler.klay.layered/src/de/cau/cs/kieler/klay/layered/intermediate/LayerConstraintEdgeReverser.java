@@ -20,13 +20,12 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint;
 
 /**
  * Makes sure nodes with layer constraints have only incoming or only outgoing edges,
  * as appropriate. This is done even before cycle breaking because the result may
  * already break some cycles. This processor is required for
- * {@link LayerConstraintApplicationProcessor} to work correctly.
+ * {@link LayerConstraintProcessor} to work correctly.
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>an unlayered graph.</dd>
@@ -36,7 +35,7 @@ import de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint;
  *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
  * </dl>
  * 
- * @see LayerConstraintApplicationProcessor
+ * @see LayerConstraintProcessor
  * @author cds
  */
 public class LayerConstraintEdgeReverser extends AbstractAlgorithm implements ILayoutProcessor {
@@ -49,7 +48,7 @@ public class LayerConstraintEdgeReverser extends AbstractAlgorithm implements IL
         
         // Iterate through the list of nodes
         for (LNode node : layeredGraph.getLayerlessNodes()) {
-            LayerConstraint constraint = node.getProperty(Properties.LAYER_CONSTRAINT);
+            Properties.LayerConstraint constraint = node.getProperty(Properties.LAYER_CONSTRAINT);
             
             // Check if there is a layer constraint
             switch (constraint) {

@@ -53,7 +53,7 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
                 null,
                 
                 // Before Phase 3
-                EnumSet.of(IntermediateLayoutProcessor.LAYER_CONSTRAINT_APPLICATION_PROCESSOR),
+                EnumSet.of(IntermediateLayoutProcessor.LAYER_CONSTRAINT_PROCESSOR),
                 
                 // Before Phase 4
                 null,
@@ -115,7 +115,7 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
         // nodes with layering constraints need to be moved
         Layer firstLayer = layeredGraph.getLayers().get(0);
         for (LNode node : nodes) {
-            if (node.getProperty(Properties.LAYER_CONSTRAINT) == LayerConstraint.FIRST
+            if (node.getProperty(Properties.LAYER_CONSTRAINT) == Properties.LayerConstraint.FIRST
                     && node.getLayer().getIndex() > 0) {
                 
                 Iterator<LEdge> inputEdgeIterator = node.getIncomingEdges().iterator();

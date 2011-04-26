@@ -151,7 +151,7 @@
       <layoutOption
             advanced="true"
             appliesTo="nodes"
-            class="de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint"
+            class="de.cau.cs.kieler.klay.layered.Properties.LayerConstraint"
             default="NONE"
             description="Determines a constraint on the placement of the node regarding the layering."
             id="de.cau.cs.kieler.klay.layered.layerConstraint"

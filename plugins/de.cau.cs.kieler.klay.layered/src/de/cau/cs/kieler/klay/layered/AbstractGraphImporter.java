@@ -18,7 +18,6 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint;
 
 /**
  * Abstract implementation of {@link IGraphImporter}, containing commonly used functionality.
@@ -121,20 +120,20 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
         // With the port side at hand, set the necessary properties
         switch (finalPortSide) {
         case WEST:
-            dummy.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.FIRST_SEPARATE);
+            dummy.setProperty(Properties.LAYER_CONSTRAINT, Properties.LayerConstraint.FIRST_SEPARATE);
             dummyPort.setSide(PortSide.EAST);
             break;
         
         case EAST:
-            dummy.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.LAST_SEPARATE);
+            dummy.setProperty(Properties.LAYER_CONSTRAINT, Properties.LayerConstraint.LAST_SEPARATE);
             break;
         
         case NORTH:
-            // TODO: Set in-layer constraints.
+            dummy.setProperty(Properties.IN_LAYER_CONSTRAINT, Properties.InLayerConstraint.TOP);
             break;
         
         case SOUTH:
-            // TODO: Set in-layer constraints.
+            dummy.setProperty(Properties.IN_LAYER_CONSTRAINT, Properties.InLayerConstraint.BOTTOM);
             break;
         }
         

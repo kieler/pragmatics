@@ -130,7 +130,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                 }
                 
                 // Nodes form their own layout unit
-                node.setProperty(Properties.LAYER_LAYOUT_UNIT, node);
+                node.setProperty(Properties.IN_LAYER_LAYOUT_UNIT, node);
                 
                 // Clear the lists of northern and southern dummy nodes
                 northDummyNodes.clear();
@@ -155,9 +155,9 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                     // The dummy nodes form a layout unit identified by the node they
                     // were created from. In addition, the order of the dummy nodes must
                     // be fixed.
-                    dummy.setProperty(Properties.LAYER_LAYOUT_UNIT, node);
+                    dummy.setProperty(Properties.IN_LAYER_LAYOUT_UNIT, node);
                     dummy.setProperty(
-                            Properties.LAYER_NODE_SUCCESSOR_CONSTRAINT,
+                            Properties.IN_LAYER_SUCCESSOR_CONSTRAINT,
                             successor);
                     
                     successor = dummy;
@@ -180,9 +180,9 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                     // The dummy nodes form a layout unit identified by the node they
                     // were created from. In addition, the order of the dummy nodes must
                     // be fixed.
-                    dummy.setProperty(Properties.LAYER_LAYOUT_UNIT, node);
+                    dummy.setProperty(Properties.IN_LAYER_LAYOUT_UNIT, node);
                     predecessor.setProperty(
-                            Properties.LAYER_NODE_SUCCESSOR_CONSTRAINT,
+                            Properties.IN_LAYER_SUCCESSOR_CONSTRAINT,
                             dummy);
                     
                     predecessor = dummy;

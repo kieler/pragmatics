@@ -185,7 +185,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                         IntermediateLayoutProcessor.PORT_SIDE_PROCESSOR,
                         IntermediateLayoutProcessor.LONG_EDGE_SPLITTER),
                 // Before Phase 4
-                null,
+                EnumSet.of(IntermediateLayoutProcessor.IN_LAYER_CONSTRAINT_PROCESSOR),
                 // Before Phase 5
                 null,
                 // After Phase 5
@@ -264,7 +264,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 
                 curSweep[layerIndex][nodeIter.previousIndex()] = node;
                 node.id = nodeCount++;
-                layoutUnits.put(node.getProperty(Properties.LAYER_LAYOUT_UNIT), node);
+                layoutUnits.put(node.getProperty(Properties.IN_LAYER_LAYOUT_UNIT), node);
                 singleNodeVertices[layerIndex].put(node, new Vertex(node));
                 
                 for (LPort port : node.getPorts()) {
@@ -613,7 +613,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             LNode vertexNode = vertex.nodes.get(0);
             
             // Add the constraints given by the vertex's node
-            LNode successor = vertexNode.getProperty(Properties.LAYER_NODE_SUCCESSOR_CONSTRAINT);
+            LNode successor = vertexNode.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINT);
             if (successor != null) {
                 Vertex successorVertex = layerVertices.get(successor);
                 vertex.outgoingConstraints.add(successorVertex);
@@ -933,7 +933,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             if (layerLayoutUnitsSet && (nodeType == Properties.NodeType.NORMAL
                     || nodeType == Properties.NodeType.NORTH_SOUTH_PORT)) {
                 
-                LNode newNormalNode = node.getProperty(Properties.LAYER_LAYOUT_UNIT);
+                LNode newNormalNode = node.getProperty(Properties.IN_LAYER_LAYOUT_UNIT);
                 if (newNormalNode == null) {
                     // Layer layout units don't seem to have been set
                     layerLayoutUnitsSet = false;
@@ -1000,7 +1000,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 case NORTH_SOUTH_PORT:
                     lastDummyIndex = dummyIndices.get(node);
                     
-                    LNode newNormalNode = node.getProperty(Properties.LAYER_LAYOUT_UNIT);
+                    LNode newNormalNode = node.getProperty(Properties.IN_LAYER_LAYOUT_UNIT);
                     if (newNormalNode != lastDummyNormalNode) {
                         dummyCount = northSouthDummyCount.get(newNormalNode).getFirst();
                         lastDummyNormalNode = newNormalNode;

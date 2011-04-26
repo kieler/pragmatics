@@ -21,7 +21,6 @@ import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint;
 
 /**
  * Moves nodes with layer constraints to the appropriate layers. To meet the preconditions of
@@ -39,7 +38,7 @@ import de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint;
  * @see LayerConstraintEdgeReverser
  * @author cds
  */
-public class LayerConstraintApplicationProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class LayerConstraintProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
@@ -63,7 +62,7 @@ public class LayerConstraintApplicationProcessor extends AbstractAlgorithm imple
             LNode [] nodes = layer.getNodes().toArray(new LNode[0]);
             
             for (LNode node : nodes) {
-                LayerConstraint constraint = node.getProperty(Properties.LAYER_CONSTRAINT);
+                Properties.LayerConstraint constraint = node.getProperty(Properties.LAYER_CONSTRAINT);
                 
                 // Check if there is a layer constraint
                 switch (constraint) {
