@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered.p5edges;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Properties;
@@ -64,15 +63,15 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements ILayoutPhas
             layer.placeNodes(xpos);
             int edgeCount = 0;
             for (LNode node : layer.getNodes()) {
-                for (LPort port : node.getPorts(PortType.OUTPUT)) {
+                for (LPort port : node.getPorts()) {
                     edgeCount += port.getOutgoingEdges().size();
                 }
                 if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
                     LEdge edge = (LEdge) node.getProperty(Properties.ORIGIN);
-                    if (isEndnode(node, PortType.INPUT)) {
+                    if (isEndnode(node, true)) {
                         edge.getBendPoints().add(new KVector(xpos, node.getPosition().y));
                     }
-                    if (isEndnode(node, PortType.OUTPUT)) {
+                    if (isEndnode(node, false)) {
                         edge.getBendPoints().add(new KVector(xpos + layer.getSize().x,
                                 node.getPosition().y));
                     }
@@ -92,17 +91,22 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements ILayoutPhas
      * a series of aligned long edge parts, depending on the port type.
      * 
      * @param node a dummy node of a long edge
-     * @param portType if {@code INPUT}, the result is true if the node is the
-     *     first node of the long edge part; if {@code OUTPUT}, the result is true if
+     * @param first if {@code true}, the result is true if the node is the
+     *     first node of the long edge part; if {@code false}, the result is true if
      *     the node is the last node of the long edge part
      * @return true if the node is an end-node
      */
-    private boolean isEndnode(final LNode node, final PortType portType) {
-        for (LPort port : node.getPorts(portType)) {
-            for (LPort connectedPort : port.getConnectedPorts()) {
+    private boolean isEndnode(final LNode node, final boolean first) {
+        for (LPort port : node.getPorts()) {
+            Iterable<LPort> connectedPorts = first
+                ? port.getPredecessorPorts()
+                : port.getSuccessorPorts();
+            
+            for (LPort connectedPort : connectedPorts) {
                 LNode otherNode = connectedPort.getNode();
                 if (otherNode.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
                         && node.getPosition().y == otherNode.getPosition().y) {
+                    
                     return false;
                 }
             }
