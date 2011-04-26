@@ -25,7 +25,6 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Properties;
@@ -609,7 +608,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
 
         LNode target = null;
         if (reverse) {
-            for (LPort port : node.getPorts(PortType.INPUT)) {
+            for (LPort port : node.getPorts()) {
                 for (LEdge edge : port.getIncomingEdges()) {
                     target = edge.getSource().getNode();
                     revLayer[target.id] = Math.min(revLayer[target.id], revLayer[node.id] - 1);
@@ -617,7 +616,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
                 }
             }
         } else {
-            for (LPort port : node.getPorts(PortType.OUTPUT)) {
+            for (LPort port : node.getPorts()) {
                 for (LEdge edge : port.getOutgoingEdges()) {
                     target = edge.getTarget().getNode();
                     layer[target.id] = Math.max(layer[target.id], layer[node.id] + 1);

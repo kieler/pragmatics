@@ -25,7 +25,6 @@ import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.math.BezierSpline.BezierCurve;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Properties;
@@ -106,7 +105,7 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements ILayou
             for (LNode node : layer.getNodes()) {
                 // filter out start points of long edges
                 if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
-                    for (LPort port : node.getPorts(PortType.OUTPUT)) {
+                    for (LPort port : node.getPorts()) {
                         for (LEdge edge : port.getOutgoingEdges()) {
                             if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) 
                                     == Properties.NodeType.LONG_EDGE) {

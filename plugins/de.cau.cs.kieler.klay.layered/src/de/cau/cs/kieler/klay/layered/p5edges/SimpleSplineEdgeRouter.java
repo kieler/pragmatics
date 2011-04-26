@@ -19,7 +19,6 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Properties;
@@ -96,7 +95,7 @@ public class SimpleSplineEdgeRouter extends AbstractAlgorithm implements ILayout
             for (LNode node : layer.getNodes()) {
                 // filter out start points of long edges
                 if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
-                    for (LPort port : node.getPorts(PortType.OUTPUT)) {
+                    for (LPort port : node.getPorts()) {
                         for (LEdge edge : port.getOutgoingEdges()) {
                             if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) 
                                     == Properties.NodeType.LONG_EDGE) {
