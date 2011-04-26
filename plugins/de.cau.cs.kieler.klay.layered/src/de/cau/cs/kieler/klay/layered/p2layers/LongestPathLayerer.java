@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klay.layered.p2layers;
 
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
@@ -100,14 +101,9 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
         for (LNode node : nodes) {
             if (node.getProperty(Properties.LAYER_CONSTRAINT) == LayerConstraint.FIRST
                     && node.getLayer().getIndex() > 0) {
-                boolean hasInputs = false;
-                for (LPort port : node.getPorts()) {
-                    if (!port.getIncomingEdges().isEmpty()) {
-                        hasInputs = true;
-                        break;
-                    }
-                }
-                if (!hasInputs) {
+                
+                Iterator<LEdge> inputEdgeIterator = node.getIncomingEdges().iterator();
+                if (!inputEdgeIterator.hasNext()) {
                     node.setLayer(firstLayer);
                 }
             }

@@ -124,7 +124,7 @@ public class Layer extends LGraphElement {
                         inports++;
                     }
                     
-                    if (port.getOutgoingEdges().isEmpty()) {
+                    if (!port.getOutgoingEdges().isEmpty()) {
                         outports++;
                     }
                 }

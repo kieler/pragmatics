@@ -286,13 +286,9 @@ public class LNode extends LSizedGraphElement {
         Collections.sort(ports, new Comparator<LPort>() {
             public int compare(final LPort port1, final LPort port2) {
                 PortSide side1 = port1.getSide();
-                PortType type1 = port1.getIncomingEdges().size() > port1.getOutgoingEdges().size()
-                    ? PortType.INPUT
-                    : PortType.OUTPUT;
+                PortType type1 = port1.getNetFlow() >= 0 ? PortType.INPUT : PortType.OUTPUT;
                 PortSide side2 = port2.getSide();
-                PortType type2 = port2.getIncomingEdges().size() > port2.getOutgoingEdges().size()
-                    ? PortType.INPUT
-                    : PortType.OUTPUT;
+                PortType type2 = port2.getNetFlow() >= 0 ? PortType.INPUT : PortType.OUTPUT;
                 
                 if (side1 != side2) {
                     // sort according to the node side 

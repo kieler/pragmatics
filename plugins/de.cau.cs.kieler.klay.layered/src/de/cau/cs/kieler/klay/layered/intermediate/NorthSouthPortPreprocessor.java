@@ -213,7 +213,6 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         List<LEdge> northSouthSelfLoopEdges = new ArrayList<LEdge>(ports.size());
         
         for (LPort port : ports) {
-            
             // Go through the port's outgoing edges, looking for self-loops
             for (LEdge edge : port.getOutgoingEdges()) {
                 // Check for self loops we'd be interested in

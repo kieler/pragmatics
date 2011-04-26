@@ -21,6 +21,7 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.Properties.NodeType;
@@ -104,7 +105,7 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
                 }
                 
                 // Look for input ports on the right side
-                for (LPort port : node.getPorts(PortSide.EAST)) {
+                for (LPort port : node.getPorts(PortType.INPUT, PortSide.EAST)) {
                     // For every edge going into this port, insert dummy nodes (do this using
                     // a copy of the current list of edges, since the edges are modified when
                     // dummy nodes are created)
@@ -117,7 +118,7 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
                 }
                 
                 // Look for ports on the left side connected to edges going to higher layers
-                for (LPort port : node.getPorts(PortSide.WEST)) {
+                for (LPort port : node.getPorts(PortType.OUTPUT, PortSide.WEST)) {
                     // For every edge going out of this port, insert dummy nodes (do this using
                     // a copy of the current list of edges, since the edges are modified when
                     // dummy nodes are created)

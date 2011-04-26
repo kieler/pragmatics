@@ -53,9 +53,9 @@ public class LPort extends LSizedGraphElement {
     private String name;
     
     /**
-     * A condition that checks the type of ports. The type is derived from the port's
-     * net flow. If the net flow is {@code < 0}, the port is considered an output port.
-     * Otherwise, it is considered an input port.
+     * A condition that checks the type of ports. If a port has incoming edges, it is considered
+     * an input port. If a port has outgoing edges, it is considered an output port. A port may
+     * be both, input and output port, or none.
      */
     public static class TypeCondition implements ICondition<LPort> {
         private PortType condType;
@@ -74,10 +74,10 @@ public class LPort extends LSizedGraphElement {
         public boolean evaluate(final LPort object) {
             switch (condType) {
             case INPUT:
-                return object.getNetFlow() >= 0;
+                return !object.incomingEdges.isEmpty();
             
             case OUTPUT:
-                return object.getNetFlow() < 0;
+                return !object.outgoingEdges.isEmpty();
             
             default:
                 return true;
