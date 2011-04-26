@@ -29,7 +29,6 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Properties;
@@ -501,7 +500,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         // Check if outgoing edge has priority > 0
         LEdge highestPrioEdge = null;
         int highestPrio = 0;
-        for (LPort sourcePort : node.getPorts(PortType.OUTPUT)) {
+        for (LPort sourcePort : node.getPorts()) {
             for (LEdge targetEdge : sourcePort.getOutgoingEdges()) {
                 int prio = targetEdge.getProperty(Properties.PRIORITY);
                 if (prio > highestPrio) {
@@ -529,8 +528,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             // are of one of these types too. If so, we can form a linear segment with one of
             // them. (not with more than one, though) Note: we must take care not to make
             // a segment out of nodes that are in the same layer
-            for (LPort sourcePort : node.getPorts(PortType.OUTPUT)) {
-                for (LPort targetPort : sourcePort.getConnectedPorts()) {
+            for (LPort sourcePort : node.getPorts()) {
+                for (LPort targetPort : sourcePort.getSuccessorPorts()) {
                     LNode targetNode = targetPort.getNode();
                     NodeType targetNodeType = targetNode.getProperty(Properties.NODE_TYPE);
                     
