@@ -42,6 +42,7 @@ import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
@@ -134,6 +135,11 @@ public class GraphitiLayoutCommand extends RecordingCommand {
 
             double offsetx = anchor.getGraphicsAlgorithm().getX();
             double offsety = anchor.getGraphicsAlgorithm().getY();
+            // node insets need to be considered
+            KInsets insets = kport.getNode().getData(KShapeLayout.class).getInsets();
+            offsetx += insets.getLeft();
+            offsety += insets.getTop();
+            
             double relWidth = (shapeLayout.getXpos() - offsetx) / ga.getWidth();
             if (relWidth < 0) {
                 relWidth = 0;
@@ -167,8 +173,15 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     private void applyNodeLayout(final KNode knode, final PictogramElement pelem) {
         KShapeLayout shapeLayout = knode.getData(KShapeLayout.class);
         GraphicsAlgorithm ga = pelem.getGraphicsAlgorithm();
-        ga.setX(Math.round(shapeLayout.getXpos()));
-        ga.setY(Math.round(shapeLayout.getYpos()));
+        float xpos = shapeLayout.getXpos();
+        float ypos = shapeLayout.getYpos();
+        if (knode.getParent() != null) {
+            KInsets parentInsets = knode.getParent().getData(KShapeLayout.class).getInsets();
+            xpos += parentInsets.getLeft();
+            ypos += parentInsets.getRight();
+        }
+        ga.setX(Math.round(xpos));
+        ga.setY(Math.round(ypos));
         ga.setHeight(Math.round(shapeLayout.getHeight()));
         ga.setWidth(Math.round(shapeLayout.getWidth()));
         featureProvider.layoutIfPossible(new LayoutContext(pelem));

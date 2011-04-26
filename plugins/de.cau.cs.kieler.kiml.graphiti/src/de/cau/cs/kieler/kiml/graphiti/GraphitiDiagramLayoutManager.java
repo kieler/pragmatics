@@ -26,6 +26,7 @@ import org.eclipse.graphiti.mm.pictograms.ChopboxAnchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
@@ -148,32 +149,33 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         PictogramElement element = ((IPictogramElementEditPart) layoutRootPart)
                 .getPictogramElement();
 
-        KNode topNode = KimlUtil.createInitializedNode();
-        if (element instanceof ContainerShape) {
+        GraphitiLayoutConfig layoutConfig;
+        if (getExternalConfig() == null) {
+            layoutConfig = new GraphitiLayoutConfig();
+        } else {
+            layoutConfig = new GraphitiLayoutConfig(getExternalConfig());
+        }
+        if (element instanceof Diagram) {
+            KNode topNode = KimlUtil.createInitializedNode();
             KShapeLayout shapeLayout = topNode.getData(KShapeLayout.class);
-            shapeLayout.setXpos(element.getGraphicsAlgorithm().getX());
-            shapeLayout.setYpos(element.getGraphicsAlgorithm().getY());
-            shapeLayout.setHeight(element.getGraphicsAlgorithm().getHeight());
-            shapeLayout.setWidth(element.getGraphicsAlgorithm().getWidth());
-
+            GraphicsAlgorithm ga = element.getGraphicsAlgorithm();
+            shapeLayout.setXpos(ga.getX());
+            shapeLayout.setYpos(ga.getY());
+            shapeLayout.setHeight(ga.getHeight());
+            shapeLayout.setWidth(ga.getWidth());
             pictElem2graphElemMap.put(element, topNode);
 
-            GraphitiLayoutConfig layoutConfig;
-            if (getExternalConfig() == null) {
-                layoutConfig = new GraphitiLayoutConfig();
-            } else {
-                layoutConfig = new GraphitiLayoutConfig(getExternalConfig());
-            }
-
-            buildLayoutGraphRecursively((ContainerShape) element, topNode, layoutConfig);
-
+            buildLayoutGraphRecursively((Diagram) element, topNode, layoutConfig);
+            
             // set user defined layout options for the diagram
             layoutConfig.setFocus(layoutRootPart);
             shapeLayout.copyProperties(layoutConfig);
-
-            processConnections(layoutConfig);
+            layoutGraph = topNode;
+        } else if (element instanceof Shape) {
+            layoutGraph = createNode(null, (Shape) element, layoutConfig);
         }
-        layoutGraph = topNode;
+
+        processConnections(layoutConfig);
 
         return layoutGraph;
     }
@@ -200,57 +202,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             // relevant shapes are those that can be connected
             if (!shape.getAnchors().isEmpty()) {
                 parentHasChildren = true;
-                GraphicsAlgorithm nodeGa = shape.getGraphicsAlgorithm();
-
-                KNode childnode = KimlUtil.createInitializedNode();
-                childnode.setParent(parentNode);
-                KShapeLayout nodeLayout = childnode.getData(KShapeLayout.class);
-                graphicsAlg2ShapeLayout(nodeGa, nodeLayout);
-
-                setInsets(nodeLayout, nodeGa);
-
-                // FIXME find a way to specify the minimal size dynamically
-                nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, MIN_SIZE);
-                nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, MIN_SIZE);
-
-                pictElem2graphElemMap.put(shape, childnode);
-
-                boolean shapeHasChildren = false;
-                if (shape instanceof ContainerShape) {
-                    shapeHasChildren = buildLayoutGraphRecursively((ContainerShape) shape,
-                            childnode, layoutConfig);
-
-                    // find a label for the container shape
-                    for (Shape child : ((ContainerShape) shape).getChildren()) {
-                        GraphicsAlgorithm textGa = child.getGraphicsAlgorithm();
-                        if (textGa instanceof Text) {
-                            String labelText = ((Text) textGa).getValue();
-                            KLabel label = childnode.getLabel();
-                            label.setText(labelText);
-                            graphicsAlg2ShapeLayout(textGa, label.getData(KShapeLayout.class));
-                            break;
-                        }
-                    }
-                }
-
-                boolean shapeHasPorts = false;
-                for (Anchor anchor : shape.getAnchors()) {
-                    // box-relative anchors are interpreted as ports
-                    if (anchor instanceof BoxRelativeAnchor) {
-                        shapeHasPorts = true;
-                        createPort(nodeGa, childnode, (BoxRelativeAnchor) anchor, layoutConfig);
-                    }
-                    // gather all connections in the diagram
-                    for (Connection c : anchor.getOutgoingConnections()) {
-                        connections.add(c);
-                    }
-                }
-
-                // set user defined layout options
-                layoutConfig.setFocus(diagramEditor.getEditPartForPictogramElement(shape));
-                layoutConfig.setPorts(shapeHasPorts);
-                layoutConfig.setChildren(shapeHasChildren);
-                nodeLayout.copyProperties(layoutConfig);
+                createNode(parentNode, shape, layoutConfig);
             }
         }
 
@@ -258,14 +210,81 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     }
     
     /**
+     * Create a node for the layout graph.
+     * 
+     * @param parentNode the parent node
+     * @param shape the shape for a new node
+     * @param layoutConfig the layout configuration
+     */
+    private KNode createNode(final KNode parentNode, final Shape shape,
+            final GraphitiLayoutConfig layoutConfig) {
+        GraphicsAlgorithm nodeGa = shape.getGraphicsAlgorithm();
+
+        KNode childnode = KimlUtil.createInitializedNode();
+        childnode.setParent(parentNode);
+        KShapeLayout nodeLayout = childnode.getData(KShapeLayout.class);
+        KInsets parentInsets = parentNode.getData(KShapeLayout.class).getInsets();
+        graphicsAlg2ShapeLayout(nodeGa, nodeLayout, -parentInsets.getLeft(), -parentInsets.getTop());
+        setInsets(nodeLayout, nodeGa);
+
+        // FIXME find a way to specify the minimal size dynamically
+        nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, MIN_SIZE);
+        nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, MIN_SIZE);
+
+        pictElem2graphElemMap.put(shape, childnode);
+
+        boolean shapeHasChildren = false;
+        if (shape instanceof ContainerShape) {
+            shapeHasChildren = buildLayoutGraphRecursively((ContainerShape) shape,
+                    childnode, layoutConfig);
+
+            // find a label for the container shape
+            for (Shape child : ((ContainerShape) shape).getChildren()) {
+                GraphicsAlgorithm textGa = child.getGraphicsAlgorithm();
+                if (textGa instanceof Text) {
+                    String labelText = ((Text) textGa).getValue();
+                    KLabel label = childnode.getLabel();
+                    label.setText(labelText);
+                    graphicsAlg2ShapeLayout(textGa, label.getData(KShapeLayout.class), 0, 0);
+                    break;
+                }
+            }
+        }
+
+        boolean shapeHasPorts = false;
+        for (Anchor anchor : shape.getAnchors()) {
+            // box-relative anchors are interpreted as ports
+            if (anchor instanceof BoxRelativeAnchor) {
+                shapeHasPorts = true;
+                createPort(childnode, (BoxRelativeAnchor) anchor, layoutConfig);
+            }
+            // gather all connections in the diagram
+            for (Connection c : anchor.getOutgoingConnections()) {
+                connections.add(c);
+            }
+        }
+
+        // set user defined layout options
+        layoutConfig.setFocus(diagramEditor.getEditPartForPictogramElement(shape));
+        layoutConfig.setPorts(shapeHasPorts);
+        layoutConfig.setChildren(shapeHasChildren);
+        nodeLayout.copyProperties(layoutConfig);
+        
+        return childnode;
+    }
+    
+    /**
      * Transfer layout information from a pictogram graphics algorithm to a shape layout.
      * 
      * @param ga a graphics algorithm
      * @param shapeLayout a shape layout
+     * @param xoffset x coordinate offset
+     * @param yoffset y coordinate offset
      */
-    private void graphicsAlg2ShapeLayout(final GraphicsAlgorithm ga, final KShapeLayout shapeLayout) {
-        shapeLayout.setXpos(ga.getX());
-        shapeLayout.setYpos(ga.getY());
+    private void graphicsAlg2ShapeLayout(final GraphicsAlgorithm ga, final KShapeLayout shapeLayout,
+            final float xoffset, final float yoffset) {
+        shapeLayout.setXpos(ga.getX() + xoffset);
+        shapeLayout.setYpos(ga.getY() + yoffset);
         shapeLayout.setWidth(ga.getWidth());
         shapeLayout.setHeight(ga.getHeight());
     }
@@ -273,24 +292,19 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     /**
      * Create a port for the layout graph.
      * 
-     * @param containerGa
-     *            the containerGa
-     * @param childnode
-     *            the parent node
-     * @param bra
-     *            the anchor
-     * @param layoutConfig
-     *            the layout configuration
+     * @param parentNode the parent node
+     * @param bra the anchor
+     * @param layoutConfig the layout configuration
      */
-    private void createPort(final GraphicsAlgorithm containerGa, final KNode childnode,
-            final BoxRelativeAnchor bra, final GraphitiLayoutConfig layoutConfig) {
+    private KPort createPort(final KNode parentNode, final BoxRelativeAnchor bra,
+            final GraphitiLayoutConfig layoutConfig) {
         KPort port = KimlUtil.createInitializedPort();
-        port.setNode(childnode);
+        port.setNode(parentNode);
         KShapeLayout portLayout = port.getData(KShapeLayout.class);
 
         GraphicsAlgorithm referencedGa = bra.getReferencedGraphicsAlgorithm();
         if (referencedGa == null) {
-            return;
+            return null;
         }
         pictElem2graphElemMap.put(bra, port);
 
@@ -302,6 +316,26 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         GraphicsAlgorithm portGa = bra.getGraphicsAlgorithm(); 
         float xPos = (float) (relWidth * parentWidth) + portGa.getX();
         float yPos = (float) (relHeight * parentHeight) + portGa.getY();
+        
+        // node insets need to be considered
+        KInsets insets = parentNode.getData(KShapeLayout.class).getInsets();
+        xPos += insets.getLeft();
+        yPos += insets.getTop();
+        float offset = 0;
+        if (relWidth + relHeight <= 1 && relWidth - relHeight <= 0) {
+            // port is on the left
+            offset = -insets.getLeft();
+        } else if (relWidth + relHeight >= 1 && relWidth - relHeight >= 0) {
+            // port is on the right
+            offset = -insets.getRight();
+        } else if (relHeight < 1.0f / 2) {
+            // port is on the top
+            offset = -insets.getTop();
+        } else {
+            // port is on the bottom
+            offset = -insets.getBottom();
+        }
+        portLayout.setProperty(LayoutOptions.OFFSET, offset);
 
         portLayout.setXpos(xPos);
         portLayout.setYpos(yPos);
@@ -312,28 +346,29 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         // set user defined layout options
         layoutConfig.setFocus(diagramEditor.getEditPartForPictogramElement(bra));
         portLayout.copyProperties(layoutConfig);
+        
+        return port;
     }
 
     /**
-     * Calculate insets from the invisible rectangle to the visible shape.
-     * FIXME this doesn't seem to work correctly
+     * Calculate insets from an invisible rectangle to the visible shape.
      * 
-     * @param shapeLayout
-     *            the shape layout
-     * @param containerGa
-     *            the invisible GA
+     * @param shapeLayout the shape layout
+     * @param containerGa the container's graphics algorithm
      */
     private void setInsets(final KShapeLayout shapeLayout, final GraphicsAlgorithm containerGa) {
-        GraphicsAlgorithm ga = findVisibleGa(containerGa);
+        GraphicsAlgorithm visibleGa = findVisibleGa(containerGa);
         int left = 0;
         int top = 0;
         int right = 0;
         int bottom = 0;
-        if (ga != containerGa) {
-            left = ga.getX();
-            top = ga.getY();
-            right = containerGa.getWidth() - ga.getX() - ga.getWidth();
-            bottom = containerGa.getHeight() - ga.getY() - ga.getHeight();
+        while (visibleGa != containerGa) {
+            left += visibleGa.getX();
+            top += visibleGa.getY();
+            GraphicsAlgorithm parentGa = visibleGa.getParentGraphicsAlgorithm();
+            right += parentGa.getWidth() - visibleGa.getX() - visibleGa.getWidth();
+            bottom += parentGa.getHeight() - visibleGa.getY() - visibleGa.getHeight();
+            visibleGa = parentGa;
         }
         KInsets insets = shapeLayout.getInsets();
         insets.setLeft(left);
@@ -343,26 +378,23 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     }
 
     /**
-     * Find a visible GraphicsAlgorithm to stick the ports on.
-     * FIXME do we need this?
+     * Given a graphics algorithm, find the first child that is not invisible. If the GA itself
+     * is visible, it is returned
      * 
-     * @param graphicsAlgorithm
-     *            parent GA
-     * @return a visible GA
+     * @param graphicsAlgorithm the parent graphics algorithm
+     * @return a visible graphics algorithm
      */
     private GraphicsAlgorithm findVisibleGa(final GraphicsAlgorithm graphicsAlgorithm) {
-        if (graphicsAlgorithm.getLineVisible()) {
+        if (graphicsAlgorithm.getLineVisible() || graphicsAlgorithm.getFilled()) {
             return graphicsAlgorithm;
         }
-        GraphicsAlgorithm result = graphicsAlgorithm;
         for (GraphicsAlgorithm ga : graphicsAlgorithm.getGraphicsAlgorithmChildren()) {
-            GraphicsAlgorithm returned = findVisibleGa(ga);
-            if (returned.getLineVisible()) {
-                result = returned;
-                break;
+            GraphicsAlgorithm result = findVisibleGa(ga);
+            if (result != null) {
+                return result;
             }
         }
-        return result;
+        return null;
     }
 
     /** minimal value for the relative location of head labels. */

@@ -628,6 +628,20 @@ public final class KielerMath {
     }
     
     /**
+     * Determines the average for an arbitrary number of integers.
+     * 
+     * @param values integer values
+     * @return the average of the given values
+     */
+    public static int averagei(final int ... values) {
+        int avg = 0;
+        for (int i = 0; i < values.length; i++) {
+            avg += values[i];
+        }
+        return avg / values.length;
+    }
+    
+    /**
      * Determines the maximum for an arbitrary number of floats.
      * 
      * @param values float values
@@ -660,6 +674,20 @@ public final class KielerMath {
     }
     
     /**
+     * Determines the average for an arbitrary number of floats.
+     * 
+     * @param values float values
+     * @return the average of the given values
+     */
+    public static float averagef(final float ... values) {
+        float avg = 0;
+        for (int i = 0; i < values.length; i++) {
+            avg += values[i];
+        }
+        return avg / values.length;
+    }
+    
+    /**
      * Determines the maximum for an arbitrary number of doubles.
      * 
      * @param values double values
@@ -689,6 +717,20 @@ public final class KielerMath {
             }
         }
         return min;
+    }
+    
+    /**
+     * Determines the average for an arbitrary number of doubles.
+     * 
+     * @param values double values
+     * @return the average of the given values
+     */
+    public static double averaged(final double ... values) {
+        double avg = 0;
+        for (int i = 0; i < values.length; i++) {
+            avg += values[i];
+        }
+        return avg / values.length;
     }
 
 }
