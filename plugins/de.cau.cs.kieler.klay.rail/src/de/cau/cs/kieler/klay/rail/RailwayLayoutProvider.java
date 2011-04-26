@@ -24,7 +24,6 @@ import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -201,7 +200,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                 }
             }
             for (LPort lPort : lNode.getPorts()) {
-                if (lPort.getEdges().size() != 1) {
+                if (lPort.getDegree() != 1) {
                     System.out.println("Each port may only have one edge");
                     throw new IllegalArgumentException("Each port may only have one edge");
                 }
@@ -380,12 +379,12 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                 // can do this because validation was executed earlier
                 LNode entryNode = lNode;
                 entryPort = entryNode.getPorts().get(0);
-                if (entryPort.getType().equals(de.cau.cs.kieler.kiml.options.PortType.INPUT)) {
+                if (!entryPort.getIncomingEdges().isEmpty()) {
                     // entry port has to be output since all edges
                     // are directed right bound coming from here
-                    swapPorts(entryPort.getEdges().get(0));
-                    // remember that edge was swapped
-                    swappedEdges.add(entryPort.getEdges().get(0));
+                    LEdge edge = entryPort.getIncomingEdges().get(0);
+                    edge.reverse();
+                    swappedEdges.add(edge);
                 }
             }
             for (LPort lPort : lNode.getPorts()) {
@@ -396,35 +395,21 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         visited.put(entryPort, true);
         while (!queue.isEmpty()) {
             LPort currentPort = queue.poll();
-            LPort currentTarget = currentPort.getEdges().get(0).getTarget();
+            LPort currentTarget = currentPort.getOutgoingEdges().get(0).getTarget();
             visited.put(currentTarget, true);
             LNode nextNode = currentTarget.getNode();
             for (LPort lPort : nextNode.getPorts()) {
                 if (!visited.get(lPort)) {
-                    if (lPort.getType().equals(de.cau.cs.kieler.kiml.options.PortType.INPUT)) {
-                        swapPorts(lPort.getEdges().get(0));
-                        // remember that edge was swapped
-                        swappedEdges.add(lPort.getEdges().get(0));
+                    if (lPort.getIncomingEdges().isEmpty()) {
+                        LEdge edge = lPort.getIncomingEdges().get(0);
+                        edge.reverse();
+                        swappedEdges.add(edge);
                     }
                     queue.add(lPort);
                     visited.put(lPort, true);
                 }
             }
         }
-    }
-
-    /**
-     * Swaps the direction of an edges and changes the port types while doing so.
-     * 
-     * @param theedge
-     *            The edge to use.
-     */
-    private void swapPorts(final LEdge theedge) {
-        LPort swap = theedge.getSource();
-        swap.setType(de.cau.cs.kieler.kiml.options.PortType.INPUT);
-        theedge.setSource(theedge.getTarget());
-        theedge.setTarget(swap);
-        theedge.getSource().setType(de.cau.cs.kieler.kiml.options.PortType.OUTPUT);
     }
 
     /** Holds all swapped edges for later reversing. */
@@ -438,24 +423,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         while (iter.hasNext()) {
             LEdge edge = iter.next();
             iter.remove();
-            swapBack(edge);
+            edge.reverse();
         }
-    }
-
-    /**
-     * Swaps the direction of an edges and changes the port types while doing so.
-     * 
-     * @param theedge
-     *            The edge to use.
-     */
-    private void swapBack(final LEdge theedge) {
-        swapPorts(theedge);
-        // also swap the list of bendpoints
-        List<KVector> points = theedge.getBendPoints();
-        List<KVector> newPoints = new LinkedList<KVector>();
-        for (int i = points.size() - 1; i >= 0; i--) {
-            newPoints.add(points.get(i));
-        }
-        theedge.setProperty(LayoutOptions.BEND_POINTS, newPoints);
     }
 }

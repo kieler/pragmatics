@@ -31,7 +31,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.IGraphImporter;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -116,22 +115,8 @@ public class KRailGraphImporter implements IGraphImporter {
             KPort[] sortedPorts = KimlUtil.getSortedPorts(child);
             for (KPort kport : sortedPorts) {
                 KShapeLayout portLayout = kport.getData(KShapeLayout.class);
-                PortType type = PortType.UNDEFINED;
-                int outBalance = 0;
-                for (KEdge edge : kport.getEdges()) {
-                    if (edge.getSourcePort() == kport) {
-                        outBalance++;
-                    }
-                    if (edge.getTargetPort() == kport) {
-                        outBalance--;
-                    }
-                }
-                if (outBalance > 0) {
-                    type = PortType.OUTPUT;
-                } else if (outBalance < 0) {
-                    type = PortType.INPUT;
-                }
-                LPort newPort = new LPort(type, kport.getLabel().getText());
+                
+                LPort newPort = new LPort(kport.getLabel().getText());
                 newPort.setProperty(Properties.ORIGIN, kport);
                 newPort.setProperty(Properties.PORT_TYPE,
                         portLayout.getProperty(Properties.PORT_TYPE));
@@ -160,22 +145,29 @@ public class KRailGraphImporter implements IGraphImporter {
                     LPort sourcePort = (LPort) elemMap.get(kedge.getSourcePort());
                     LNode targetNode = (LNode) elemMap.get(kedge.getTarget());
                     LPort targetPort = (LPort) elemMap.get(kedge.getTargetPort());
+                    
                     if (sourcePort == null) {
-                        sourcePort = new LPort(PortType.OUTPUT);
+                        sourcePort = new LPort();
                         sourcePort.setNode(sourceNode);
-                    } else if (sourcePort.getType() != PortType.OUTPUT) {
+                    }
+                    // TODO: Check if the following case can safely be ignored.
+                    /*else if (sourcePort.getType() != PortType.OUTPUT) {
                         // ignore ports with incoming as well as outgoing edges
                         edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                         continue;
-                    }
+                    }*/
+                    
                     if (targetPort == null) {
-                        targetPort = new LPort(PortType.INPUT);
+                        targetPort = new LPort();
                         targetPort.setNode(targetNode);
-                    } else if (targetPort.getType() != PortType.INPUT) {
+                    }
+                    // TODO: Check if the following case can safely be ignored.
+                    /*else if (targetPort.getType() != PortType.INPUT) {
                         // ignore ports with incoming as well as outgoing edges
                         edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                         continue;
-                    }
+                    }*/
+                    
                     LEdge newEdge = new LEdge();
                     newEdge.setProperty(Properties.ORIGIN, kedge);
                     newEdge.setSource(sourcePort);
@@ -223,8 +215,8 @@ public class KRailGraphImporter implements IGraphImporter {
                     nodeLayout.setXpos((float) (lnode.getPosition().x + offset.x));
                     nodeLayout.setYpos((float) (lnode.getPosition().y + offset.y));
                 }
-                for (LPort port : lnode.getPorts(PortType.OUTPUT)) {
-                    for (LEdge edge : port.getEdges()) {
+                for (LPort port : lnode.getPorts()) {
+                    for (LEdge edge : port.getOutgoingEdges()) {
                         edge.id = -1;
                     }
                 }
@@ -247,8 +239,8 @@ public class KRailGraphImporter implements IGraphImporter {
         Map<KEdge, List<LEdge>> edgeMap = new HashMap<KEdge, List<LEdge>>();
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode lnode : layer.getNodes()) {
-                for (LPort port : lnode.getPorts(PortType.OUTPUT)) {
-                    for (LEdge ledge : port.getEdges()) {
+                for (LPort port : lnode.getPorts()) {
+                    for (LEdge ledge : port.getOutgoingEdges()) {
                         Object origin = ledge.getProperty(Properties.ORIGIN);
                         if (ledge.id < 0 && origin instanceof KEdge) {
                             KEdge kedge = (KEdge) origin;

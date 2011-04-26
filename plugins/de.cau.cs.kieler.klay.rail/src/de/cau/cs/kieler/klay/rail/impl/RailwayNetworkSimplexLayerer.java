@@ -22,7 +22,6 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Properties;
@@ -257,7 +256,7 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
         LNode opposite;
         // continue with next nodes, if not already visited
         for (LPort port : node.getPorts()) {
-            for (LEdge edge : port.getEdges()) {
+            for (LEdge edge : port.getConnectedEdges()) {
                 opposite = getOpposite(port, edge).getNode();
                 if (!nodeVisited[opposite.id]) {
                     connectedComponentsDFS(opposite);
@@ -300,12 +299,10 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
         for (LNode node : theNodes) {
             node.id = index++;
             for (LPort port : node.getPorts()) {
-                if (port.getType() == PortType.OUTPUT) {
-                    theEdges.addAll(port.getEdges());
-                    outDegree[node.id] += port.getEdges().size();
-                } else if (port.getType() == PortType.INPUT) {
-                    inDegree[node.id] += port.getEdges().size();
-                }
+                theEdges.addAll(port.getOutgoingEdges());
+                outDegree[node.id] += port.getOutgoingEdges().size();
+                
+                inDegree[node.id] += port.getIncomingEdges().size();
             }
             // add node to sinks, resp. sources
             if (outDegree[node.id] == 0) {
@@ -557,16 +554,16 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
 
         LNode target = null;
         if (reverse) {
-            for (LPort port : node.getPorts(PortType.INPUT)) {
-                for (LEdge edge : port.getEdges()) {
+            for (LPort port : node.getPorts()) {
+                for (LEdge edge : port.getIncomingEdges()) {
                     target = edge.getSource().getNode();
                     revLayer[target.id] = Math.min(revLayer[target.id], revLayer[node.id] - 1);
                     layeringDFS(target, true);
                 }
             }
         } else {
-            for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                for (LEdge edge : port.getEdges()) {
+            for (LPort port : node.getPorts()) {
+                for (LEdge edge : port.getOutgoingEdges()) {
                     target = edge.getTarget().getNode();
                     layer[target.id] = Math.max(layer[target.id], layer[node.id] + 1);
                     layeringDFS(target, false);
@@ -595,10 +592,10 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
         int currentSpan;
 
         for (LPort port : node.getPorts()) {
-            for (LEdge edge : port.getEdges()) {
+            for (LEdge edge : port.getConnectedEdges()) {
                 currentSpan = layer[edge.getTarget().getNode().id]
                         - layer[edge.getSource().getNode().id];
-                if (port.getType() == PortType.INPUT && currentSpan < minSpanIn) {
+                if (port.getNetFlow() >= 0 && currentSpan < minSpanIn) {
                     minSpanIn = currentSpan;
                 } else if (currentSpan < minSpanOut) {
                     minSpanOut = currentSpan;
@@ -634,7 +631,7 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
         treeNode[node.id] = true;
         LNode opposite = null;
         for (LPort port : node.getPorts()) {
-            for (LEdge edge : port.getEdges()) {
+            for (LEdge edge : port.getConnectedEdges()) {
                 if (!edgeVisited[edge.id]) {
                     edgeVisited[edge.id] = true;
                     opposite = getOpposite(port, edge).getNode();
@@ -702,7 +699,7 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
 
         int lowest = Integer.MAX_VALUE;
         for (LPort port : node.getPorts()) {
-            for (LEdge edge : port.getEdges()) {
+            for (LEdge edge : port.getConnectedEdges()) {
                 if (treeEdge[edge.id] && !edgeVisited[edge.id]) {
                     edgeVisited[edge.id] = true;
                     lowest = Math
@@ -772,7 +769,7 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
             treeEdgeCount = 0;
             unknownCutvalues.add(new HashSet<LEdge>());
             for (LPort port : node.getPorts()) {
-                for (LEdge edge : port.getEdges()) {
+                for (LEdge edge : port.getConnectedEdges()) {
                     if (treeEdge[edge.id]) {
                         unknownCutvalues.get(node.id).add(edge);
                         treeEdgeCount++;
@@ -794,7 +791,7 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
                 source = toDetermine.getSource().getNode();
                 target = toDetermine.getTarget().getNode();
                 for (LPort port : node.getPorts()) {
-                    for (LEdge edge : port.getEdges()) {
+                    for (LEdge edge : port.getConnectedEdges()) {
                         if (!edge.equals(toDetermine)) {
                             if (treeEdge[edge.id]) {
                                 // edge is tree edge

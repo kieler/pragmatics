@@ -68,7 +68,7 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements ILayoutPhase
             NodeLoop:
             for (LNode node : layer.getNodes()) {
                 for (LPort port : node.getPorts()) {
-                    for (LEdge edge : port.getEdges()) {
+                    for (LEdge edge : port.getConnectedEdges()) {
                         if (node.getProperty(de.cau.cs.kieler.klay.layered.Properties.NODE_TYPE).equals(
                                 de.cau.cs.kieler.klay.layered.Properties.NodeType.LONG_EDGE)) {
                             edge.getBendPoints().clear();

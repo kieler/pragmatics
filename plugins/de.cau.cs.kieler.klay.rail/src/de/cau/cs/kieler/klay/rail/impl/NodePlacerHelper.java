@@ -56,7 +56,7 @@ public class NodePlacerHelper {
     public boolean allNeighborsKnown(final LNode node, final List<LNode> known) {
         boolean result = true;
         for (LPort port : node.getPorts()) {
-            result &= known.contains(port.getEdges().get(0).getTarget().getNode());
+            result &= known.contains(port.getOutgoingEdges().get(0).getTarget().getNode());
         }
         return result;
     }
@@ -88,8 +88,8 @@ public class NodePlacerHelper {
                 continue;
             }
             for (LPort port : walker.getPorts()) {
-                LNode target = port.getEdges().get(0).getTarget().getNode();
-                LPort targetPort = port.getEdges().get(0).getTarget();
+                LPort targetPort = port.getOutgoingEdges().get(0).getTarget();
+                LNode target = targetPort.getNode();
                 if ((port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT) || port
                         .getProperty(Properties.PORT_TYPE).equals(PortType.STUMP))
                         && !known.contains(target)) {
@@ -108,8 +108,8 @@ public class NodePlacerHelper {
             }
             if (!found) {
                 for (LPort port : walker.getPorts()) {
-                    LNode target = port.getEdges().get(0).getTarget().getNode();
-                    LPort targetPort = port.getEdges().get(0).getTarget();
+                    LPort targetPort = port.getOutgoingEdges().get(0).getTarget();
+                    LNode target = targetPort.getNode();
                     if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)
                             && !known.contains(target)) {
                         stillTrunk = false;
