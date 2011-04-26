@@ -45,8 +45,24 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
     
     /** intermediate processing strategy. */
     private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
-        new IntermediateProcessingStrategy(IntermediateProcessingStrategy.BEFORE_PHASE_3,
-                EnumSet.of(IntermediateLayoutProcessor.LAYER_CONSTRAINT_HANDLER));
+        new IntermediateProcessingStrategy(
+                // Before Phase 1
+                EnumSet.of(IntermediateLayoutProcessor.LAYER_CONSTRAINT_EDGE_REVERSER),
+                
+                // Before Phase 2
+                null,
+                
+                // Before Phase 3
+                EnumSet.of(IntermediateLayoutProcessor.LAYER_CONSTRAINT_APPLICATION_PROCESSOR),
+                
+                // Before Phase 4
+                null,
+                
+                // Before Phase 5
+                null,
+                
+                // After Phase 5
+                null);
 
     /** the layered graph to which layers are added. */
     private LayeredGraph layeredGraph;
