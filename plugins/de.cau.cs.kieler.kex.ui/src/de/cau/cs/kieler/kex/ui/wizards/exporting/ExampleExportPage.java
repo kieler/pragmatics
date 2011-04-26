@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -143,14 +145,15 @@ public class ExampleExportPage extends WizardResourceImportPage {
         this.destPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         Button addDestPath = new Button(topGroup, SWT.NONE);
         addDestPath.setText("Browse...");
-
         addDestPath.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent event) {
                 DirectoryDialog dirDiag = new DirectoryDialog(composite.getShell());
                 dirDiag.setText("Choose destination directory");
                 dirDiag.setMessage("Select a directory in a java plugin project.");
-                dirDiag.setFilterPath(WORKSPACE_DIR);
+                String choosenPath = destPath.getText();
+                dirDiag.setFilterPath(choosenPath == null || choosenPath.length() < 2 ? WORKSPACE_DIR
+                        : choosenPath);
                 String dir = dirDiag.open();
                 if (dir != null) {
                     destPath.setText(dir);
@@ -168,11 +171,6 @@ public class ExampleExportPage extends WizardResourceImportPage {
         bottomGroup.setToolTipText("Enter a picture like a screenshot of example diagram.");
         bottomGroup.setLayout(bottomLayout);
         bottomGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        final FileDialog picDialog = new FileDialog(bottomGroup.getShell());
-        // ResourcesPlugin.getWorkspace().getRoot(), "Search a picture!"
-        picDialog.setFilterPath(WORKSPACE_DIR);
-        String[] extensions = { "*.png;*.jpg;*.gif" };
-        picDialog.setFilterExtensions(extensions);
         Label label = new Label(bottomGroup, SWT.NONE);
         label.setText("Set Picture:");
         this.previewPic = new Text(bottomGroup, SWT.BORDER);
@@ -184,6 +182,19 @@ public class ExampleExportPage extends WizardResourceImportPage {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 super.widgetSelected(e);
+                String choosenPath = previewPic.getText();
+                final FileDialog picDialog = new FileDialog(composite.getShell());
+                picDialog.setFilterPath(WORKSPACE_DIR);
+                String[] extensions = { "*.png;*.jpg;*.gif" };
+                IPath path = new Path(choosenPath);
+                picDialog.setFilterExtensions(extensions);
+                if (choosenPath == null || choosenPath.length() < 2) {
+                    picDialog.setFilterPath(WORKSPACE_DIR);
+                } else {
+                    String portableString = path.removeLastSegments(1).toPortableString();
+                    picDialog.setFilterPath(choosenPath == null || choosenPath.length() < 2 ? WORKSPACE_DIR
+                            : portableString);
+                }
                 String pic = picDialog.open();
                 if (pic != null) {
                     getPreviewPic().setText(pic);
@@ -192,28 +203,6 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
         });
 
-        /* mylyn bridge to generate pictures automatically */
-        // final Button testButton = new Button(bottomGroup, SWT.NONE);
-        // testButton.setText("mylyn adapter");
-        // testButton.addSelectionListener(new SelectionAdapter() {
-        // @SuppressWarnings("restriction")
-        // @Override
-        // public void widgetSelected(SelectionEvent e) {
-        // super.widgetSelected(e);
-        // TODO Mylyn picture cutter
-        // TaskRepository taskRepository = new TaskRepository("local", "http://127.0.0.1");
-        // ITask task = TasksUiPlugin.getRepositoryModel()
-        // .createTask(taskRepository, "myTask");
-        // TaskAttributeMapper mapper = new TaskAttributeMapper(taskRepository);
-        // TaskData data = new TaskData(mapper, "local", "http://127.0.0.1", "myTask");
-        // TaskAttachmentWizard taskAttachmentWizard = new TaskAttachmentWizard(
-        // taskRepository, task, data.getRoot());
-        // taskAttachmentWizard.getModel().setAttachContext(true);
-        // taskAttachmentWizard.setMode(Mode.SCREENSHOT);
-        // new NewAttachmentWizardDialog(testButton.getShell(), taskAttachmentWizard, true)
-        // .open();
-        // }
-        // });
     }
 
     private void createButtonComposite(final Group middleGroup) {

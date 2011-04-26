@@ -87,6 +87,9 @@ public class PluginExampleCreator {
      * NOTE: parseElement could only be a type of Example or a example category in String
      * representation.
      * 
+     * @param extensionKEX
+     *            , plugin.xml KEX-extension root.
+     * 
      * @param location
      *            , {@link File}
      * @param parseElement
@@ -96,26 +99,32 @@ public class PluginExampleCreator {
      * @param absOverviewPic
      *            , {@link String}
      */
-    public void addExtension(final File location, final Example parseElement,
-            final List<Category> creatableCategories, final String absOverviewPic) {
-
-        this.pluginXML = IOHandler.filterPluginXML(location);
-        Node pluginNode = getPluginNode();
-        Node extensionKEX = filterExtensionKEX(pluginNode);
-
-        checkDuplicate(extensionKEX, parseElement.getId(), creatableCategories);
+    public void addExtension(final Node extensionKEX, final File location,
+            final Example parseElement, final List<Category> creatableCategories,
+            final String absOverviewPic) {
         if (absOverviewPic != null) {
             parseElement.setOverviewPic(createLocalPluginPath(absOverviewPic));
         }
         addExampleCategories(extensionKEX, creatableCategories);
-
         extensionKEX.appendChild(toNode(parseElement, location));
         writePluginXML(pluginXML.getAbsolutePath());
     }
 
-    // TODO testen...
-    private void checkDuplicate(final Node extensionKEX, final String exampleId,
+    /**
+     * Searches in a given file with node extensionKEX for duplicates. The exampleIds of the file
+     * examples must not match with the id of the exporting one, for exporting new categories count
+     * the same.
+     * 
+     * @param extensionKEX
+     *            , the KEX-extension node of a plugin.xml file.
+     * @param exampleId
+     *            , the id of the exporting example.
+     * @param creatableCategories
+     *            , a list of categories to create
+     */
+    public void checkDuplicate(final Node extensionKEX, final String exampleId,
             final List<Category> creatableCategories) {
+        // TODO test.
         NodeList childNodes = extensionKEX.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
@@ -127,7 +136,8 @@ public class PluginExampleCreator {
                         if (creatableCategory.getId().equals(namedItem.getNodeValue())) {
                             throw new RuntimeException(ErrorMessage.DUPLICATE_ELEMENT
                                     + "The category \"" + creatableCategory.getId()
-                                    + "\" exists already in choosen plugin project.");
+                                    + "\" exists already, please choose an other id or"
+                                    + " take the existing category.");
                         }
                     }
                 }
@@ -154,7 +164,7 @@ public class PluginExampleCreator {
                 : relativeLocation);
     }
 
-    private Node getPluginNode() {
+    public Node getPluginNode() {
 
         try {
             if (IOHandler.PLUGIN_XML.equals(this.pluginXML.getName())) {
@@ -183,7 +193,7 @@ public class PluginExampleCreator {
         throw new RuntimeException("Could not filter plugin node. " + pluginXML.getPath());
     }
 
-    private Node filterExtensionKEX(final Node pluginNode) {
+    public Node filterExtensionKEX(final Node pluginNode) {
         Node extensionKEX = null;
         NodeList nodes = pluginNode.getChildNodes();
         int length = nodes.getLength();
@@ -430,6 +440,16 @@ public class PluginExampleCreator {
         // der muss hier herein gereicht werden und der vom absolutenpath
         // abgetrennt werden.
         return null;
+    }
+
+    /**
+     * setter for the pluginXML.
+     * 
+     * @param pluginXML
+     */
+    public void setPluginXML(final File pluginXML) {
+        this.pluginXML = pluginXML;
+
     }
 
 }

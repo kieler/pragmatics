@@ -20,13 +20,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
+import org.w3c.dom.Node;
 
 import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExampleElement;
 import de.cau.cs.kieler.kex.controller.ExportResource;
 import de.cau.cs.kieler.kex.model.Category;
 import de.cau.cs.kieler.kex.model.Example;
-import de.cau.cs.kieler.kex.model.ExampleCollector;
 import de.cau.cs.kieler.kex.model.ExampleResource;
 import de.cau.cs.kieler.kex.model.ExampleResource.Type;
 import de.cau.cs.kieler.kex.model.SourceType;
@@ -51,27 +51,6 @@ public final class ExampleExport {
     }
 
     /**
-     * checks the collectors for given exampleTitle. If exists, a {@link RuntimeException} will
-     * thrown.
-     * 
-     * @param id
-     *            , String general containing of categoryid and the example title.
-     * @param collectors
-     *            , {@link ExampleCollector}...
-     * 
-     */
-    public static void checkDuplicate(final String id, final ExampleCollector... collectors) {
-        if (id == null) {
-            throw new RuntimeException("Title of an example could not be null.");
-        }
-        for (ExampleCollector collector : collectors) {
-            if (collector.getExamplePool().containsKey(id)) {
-                throw new RuntimeException("Duplicate example title. Please choose an other one!");
-            }
-        }
-    }
-
-    /**
      * extends a plugin with a new example.
      * 
      * @param properties
@@ -87,10 +66,16 @@ public final class ExampleExport {
         if (!destFile.exists()) {
             throw new RuntimeException(ErrorMessage.DESTFILE_NOT_EXIST + destFile.getPath());
         }
+
         Example mappedExample = ExampleExport.mapToExample(properties);
+        List<Category> creatableCategories = (List<Category>) properties
+                .get(ExampleElement.CREATE_CATEGORIES);
+
+        extensionCreator.setPluginXML(IOHandler.filterPluginXML(destFile));
+        Node extensionKEX = extensionCreator.filterExtensionKEX(extensionCreator.getPluginNode());
+        extensionCreator.checkDuplicate(extensionKEX, mappedExample.getId(), creatableCategories);
 
         File project = IOHandler.filterPluginProject(destFile);
-
         List<ExportResource> exportResources = (List<ExportResource>) properties
                 .get(ExampleElement.RESOURCES);
         List<IPath> finishedResources = new ArrayList<IPath>();
@@ -104,7 +89,8 @@ public final class ExampleExport {
                 absOverviewPic = copyOverviewPic(picPath, extensionCreator, project,
                         finishedResources);
             }
-            extensionCreator.addExtension(destFile, mappedExample,
+
+            extensionCreator.addExtension(extensionKEX, destFile, mappedExample,
                     (List<Category>) properties.get(ExampleElement.CREATE_CATEGORIES),
                     absOverviewPic);
         } catch (RuntimeException e) {
