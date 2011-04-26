@@ -43,13 +43,11 @@ public class DiagramAppearancePreferencePage extends AppearancePreferencePage {
     public boolean performOk() {
         boolean ok = super.performOk();
         if (ok) {
-            RGB rgb =
-                    PreferenceConverter.getColor(getPreferenceStore(),
-                            IPreferenceConstants.PREF_LINE_COLOR);
+            org.eclipse.swt.graphics.RGB rgb = PreferenceConverter.getColor(getPreferenceStore(),
+                    IPreferenceConstants.PREF_LINE_COLOR);
             Color fgColor = new Color(null, rgb);
-            rgb =
-                    PreferenceConverter.getColor(getPreferenceStore(),
-                            IPreferenceConstants.PREF_FILL_COLOR);
+            rgb = PreferenceConverter.getColor(getPreferenceStore(),
+                    IPreferenceConstants.PREF_FILL_COLOR);
             Color bgColor = new Color(null, rgb);
             // set the color for in the KEG figure provider
             KEGFigureProvider.setForegroundColor(fgColor);

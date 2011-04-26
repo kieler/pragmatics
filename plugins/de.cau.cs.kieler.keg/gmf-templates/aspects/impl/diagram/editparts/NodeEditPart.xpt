@@ -68,6 +68,31 @@
 	}
 «ENDDEFINE»
 
+«DEFINE addBorderItem FOR gmfgen::GenNode-»
+    «IF getExternalLabels(self)->size() > 0-»
+        «EXPAND xpt::Common::generatedMemberComment»
+        protected void addBorderItem(org.eclipse.draw2d.IFigure borderItemContainer, org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart borderItemEditPart) {
+            if («FOREACH getExternalLabels(self) AS label SEPARATOR ' || '»borderItemEditPart instanceof «label.getEditPartQualifiedClassName()»«ENDFOREACH») {
+«REM» * exchanged default label locator and set smaller default offset
+      * overridden method for ports locator in order to allow ports to cover the node label
+«ENDREM»
+                de.cau.cs.kieler.core.model.gmf.figures.layout.LabelLocator locator = new de.cau.cs.kieler.core.model.gmf.figures.layout.LabelLocator(getMainFigure(), org.eclipse.draw2d.PositionConstants.SOUTH);
+                «IF self.getDomainMetaClass().ecoreClass.name = 'Port'-»
+                    locator.setPortBehavior(true);
+                    locator.setBorderItemOffset(new org.eclipse.draw2d.geometry.Dimension(-2, -2));
+                «ELSE-»
+                    locator.setBorderItemOffset(new org.eclipse.draw2d.geometry.Dimension(-4, -4));
+                «ENDIF-»
+                borderItemContainer.add(borderItemEditPart.getFigure(), locator);
+            } else {
+                    borderItemContainer.add(borderItemEditPart.getFigure(),
+                            new org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator(getMainFigure()));
+            }
+«REM» end of changes «ENDREM»
+        }
+    «ENDIF-»
+«ENDDEFINE»
+
 «REM»Changed default size of 40 to 20«ENDREM»
 «DEFINE createNodePlate FOR gmfgen::GenNode-»
 	«EXPAND xpt::Common::generatedMemberComment»

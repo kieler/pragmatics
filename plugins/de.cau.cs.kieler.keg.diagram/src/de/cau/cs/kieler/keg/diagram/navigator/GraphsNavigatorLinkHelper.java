@@ -59,6 +59,9 @@ public class GraphsNavigatorLinkHelper implements ILinkHelper {
             return StructuredSelection.EMPTY;
         }
         Diagram diagram = document.getDiagram();
+        if (diagram == null || diagram.eResource() == null) {
+            return StructuredSelection.EMPTY;
+        }
         IFile file = WorkspaceSynchronizer.getFile(diagram.eResource());
         if (file != null) {
             GraphsNavigatorItem item = new GraphsNavigatorItem(diagram, file, false);

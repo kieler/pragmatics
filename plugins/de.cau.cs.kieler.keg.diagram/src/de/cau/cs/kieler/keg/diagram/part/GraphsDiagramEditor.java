@@ -255,6 +255,9 @@ public class GraphsDiagramEditor extends DiagramDocumentEditor implements IGotoM
             return StructuredSelection.EMPTY;
         }
         Diagram diagram = document.getDiagram();
+        if (diagram == null || diagram.eResource() == null) {
+            return StructuredSelection.EMPTY;
+        }
         IFile file = WorkspaceSynchronizer.getFile(diagram.eResource());
         if (file != null) {
             GraphsNavigatorItem item = new GraphsNavigatorItem(diagram, file, false);

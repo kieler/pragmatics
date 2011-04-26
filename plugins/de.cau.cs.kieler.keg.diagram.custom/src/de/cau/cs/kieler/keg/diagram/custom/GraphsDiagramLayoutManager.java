@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
@@ -25,12 +24,17 @@ import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.commands.CompoundCommand;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.notation.View;
+import org.eclipse.swt.SWTException;
 import org.eclipse.ui.IWorkbenchPart;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -47,8 +51,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -62,11 +64,9 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
     /** map of original graph elements to corresponding layout graph elements. */
     private Map<KGraphElement, KGraphElement> graphMap = new HashMap<KGraphElement, KGraphElement>();
     /** map of original graph elements to notation views. */
-    private Map<KGraphElement, View> graphElem2ViewMap = new HashMap<KGraphElement, View>();
+    private Multimap<KGraphElement, View> graphElem2ViewMap = HashMultimap.create();
     /** edges of the original graph. */
     private List<KEdge> edges = new LinkedList<KEdge>();
-    /** map of hyperedges to the representing hypernodes in the original graph. */
-    private Map<Set<KNode>, List<KNode>> hyperedgeMap;
 
     /**
      * {@inheritDoc}
@@ -92,9 +92,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
     private void buildViewMap(final View view) {
         if (view.getElement() instanceof KGraphElement) {
             KGraphElement graphElem = (KGraphElement) view.getElement();
-            if (!graphElem2ViewMap.containsKey(graphElem)) {
-                graphElem2ViewMap.put(graphElem, view);
-            }
+            graphElem2ViewMap.put(graphElem, view);
         }
         for (Object child : view.getChildren()) {
             if (child instanceof View) {
@@ -122,37 +120,31 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
         
         EObject rootNode = rootPart.getNotationView().getElement();
         if (rootNode instanceof KNode) {
+            // create a layout configuration
+            GmfLayoutConfig layoutConfig;
+            if (getExternalConfig() == null) {
+                layoutConfig = new GmfLayoutConfig();
+            } else {
+                layoutConfig = new GmfLayoutConfig(getExternalConfig());
+            }
+            try {
+                org.eclipse.swt.graphics.Point size = rootPart.getViewer().getControl().getSize();
+                if (size.x > 0 && size.y > 0) {
+                    layoutConfig.setAspectRatio((float) size.x / size.y);
+                }
+            } catch (SWTException exception) {
+                // ignore exception
+            }
+            
             // traverse the children of the layout root
-            GmfLayoutConfig layoutConfig = new GmfLayoutConfig();
             KNode topNode = buildLayoutGraphRecursively((KNode) rootNode, rootPart, layoutConfig);
             // transform all connections in the selected area
             processConnections(rootPart, layoutConfig);
     
             cleanupAncestryPath(topNode);
-            hyperedgeMap = HypernodesEditPolicy.createHyperedgeMap(topNode);
             return topNode;
         } else {
             return super.doBuildLayoutGraph(rootPart);
-        }
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void transferLayout(final boolean cacheLayout) {
-        // first update the hypernodes structure in the domain model
-        HypernodesRequest request = new HypernodesRequest(getLayoutGraph(), hyperedgeMap);
-        Command updateHypernodesCommand = null;//getDiagramEditPart().getCommand(request);
-        
-        // then layout the rest of the diagram
-        super.transferLayout(cacheLayout);
-        if (updateHypernodesCommand != null) {
-            CompoundCommand compoundCommand = new CompoundCommand(Messages.getString("kiml.ui.5"));
-            compoundCommand.add(updateHypernodesCommand);
-            Command layoutCommand = getLayoutCommand();
-            compoundCommand.add(layoutCommand);
-            setLayoutCommand(compoundCommand);
         }
     }
     
@@ -165,10 +157,10 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
      * @return a layout node that is linked with the given graph node
      */
     private KNode buildLayoutGraphRecursively(final KNode graphNode,
-            final IGraphicalEditPart editPart, final ILayoutConfig layoutConfig) {
+            final IGraphicalEditPart editPart, final GmfLayoutConfig layoutConfig) {
         Map<?, ?> editPartRegistry = editPart.getViewer().getEditPartRegistry();
         KNode layoutNode = KimlUtil.createInitializedNode();
-        // store the connection to process them later
+        // store the connections to process them later
         edges.addAll(graphNode.getOutgoingEdges());
         
         // set location and size
@@ -187,7 +179,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
         getGraphElem2EditPartMap().put(layoutNode, editPart);
         graphMap.put(graphNode, layoutNode);
         
-        // set label text
+        // set node label
         String label = ((Node) graphNode).getNodeLabel();
         if (label != null) {
             layoutNode.getLabel().setText(label);
@@ -195,65 +187,98 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
         
         // process ports
         for (KPort port : graphNode.getPorts()) {
-            Object obj = editPartRegistry.get(graphElem2ViewMap.get(port));
-            if (obj instanceof IGraphicalEditPart) {
-                IGraphicalEditPart portEP = (IGraphicalEditPart) obj;
-                KPort layoutPort = KimlUtil.createInitializedPort();
-                layoutPort.setNode(layoutNode);
-                getGraphElem2EditPartMap().put(layoutPort, portEP);
-                graphMap.put(port, layoutPort);
-                
-                // set the port's layout, relative to the node position
-                KShapeLayout portLayout = layoutPort.getData(KShapeLayout.class);
-                Rectangle portBounds = KimlUiUtil.getAbsoluteBounds(portEP.getFigure());
-                portLayout.setXpos(portBounds.x - nodeBounds.x);
-                portLayout.setYpos(portBounds.y - nodeBounds.y);
-                portLayout.setWidth(portBounds.width);
-                portLayout.setHeight(portBounds.height);
-                
-                // set label text
-                layoutPort.getLabel().setText(((Port) port).getPortLabel());
-                
-                // set user defined layout options for the port
-                layoutConfig.setFocus(portEP);
-                portLayout.copyProperties(layoutConfig);
+            for (View view : graphElem2ViewMap.get(port)) {
+                Object obj = editPartRegistry.get(view);
+                if (obj instanceof AbstractBorderItemEditPart) {
+                    createPort(port, layoutNode, (IGraphicalEditPart) obj, nodeBounds, layoutConfig);
+                    break;
+                }
             }
         }
         
         // process child nodes
         KInsets kinsets = null;
         for (KNode child : graphNode.getChildren()) {
-            Object obj = editPartRegistry.get(graphElem2ViewMap.get(child));
-            if (obj instanceof IGraphicalEditPart) {
-                IGraphicalEditPart childEP = (IGraphicalEditPart) obj;
-                KNode layoutChild = buildLayoutGraphRecursively(child, childEP, layoutConfig);
-                layoutChild.setParent(layoutNode);
-                if (kinsets == null) {
-                    kinsets = nodeLayout.getInsets();
-                    Insets insets = KimlUiUtil.calcInsets(nodeFigure, childEP.getFigure());
-                    kinsets.setLeft(insets.left);
-                    kinsets.setTop(insets.top);
-                    kinsets.setRight(insets.right);
-                    kinsets.setBottom(insets.bottom);
+            for (View view : graphElem2ViewMap.get(child)) {
+                Object obj = editPartRegistry.get(view);
+                if (obj instanceof ShapeNodeEditPart) {
+                    IGraphicalEditPart childEP = (IGraphicalEditPart) obj;
+                    KNode layoutChild = buildLayoutGraphRecursively(child, childEP, layoutConfig);
+                    layoutChild.setParent(layoutNode);
+                    if (kinsets == null) {
+                        kinsets = nodeLayout.getInsets();
+                        Insets insets = KimlUiUtil.calcInsets(nodeFigure, childEP.getFigure());
+                        kinsets.setLeft(insets.left);
+                        kinsets.setTop(insets.top);
+                        kinsets.setRight(insets.right);
+                        kinsets.setBottom(insets.bottom);
+                    }
+                    break;
                 }
             }
         }
 
         // set all layout options for the node
-        nodeLayout.setProperty(LayoutOptions.FIXED_SIZE, graphNode.getChildren().isEmpty());
-        if (!graphNode.getPorts().isEmpty()) {
-            if (graphNode.getChildren().isEmpty()) {
-                nodeLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-            } else {
-                nodeLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
-            }
-        }
-        if (((Node) graphNode).isHypernode()) {
-            nodeLayout.setProperty(LayoutOptions.HYPERNODE, true);
-        }
         layoutConfig.setFocus(editPart);
+        layoutConfig.setChildren(!graphNode.getChildren().isEmpty());
+        layoutConfig.setPorts(!graphNode.getPorts().isEmpty());
         nodeLayout.copyProperties(layoutConfig);
         return layoutNode;
+    }
+    
+    /**
+     * Create a port for the layout graph.
+     * 
+     * @param port the original port of the graphs model
+     * @param layoutNode the parent node in the layout graph
+     * @param portEP the port's edit part
+     * @param nodeBounds the bounds of the layout node
+     * @param layoutConfig a layout configuration
+     * @return
+     */
+    private KPort createPort(final KPort port, final KNode layoutNode, final IGraphicalEditPart portEP,
+            final Rectangle nodeBounds, final GmfLayoutConfig layoutConfig) {
+        KPort layoutPort = KimlUtil.createInitializedPort();
+        layoutPort.setNode(layoutNode);
+        getGraphElem2EditPartMap().put(layoutPort, portEP);
+        graphMap.put(port, layoutPort);
+        
+        // set the port's layout, relative to the node position
+        KShapeLayout portLayout = layoutPort.getData(KShapeLayout.class);
+        Rectangle portBounds = KimlUiUtil.getAbsoluteBounds(portEP.getFigure());
+        portLayout.setXpos(portBounds.x - nodeBounds.x);
+        portLayout.setYpos(portBounds.y - nodeBounds.y);
+        portLayout.setWidth(portBounds.width);
+        portLayout.setHeight(portBounds.height);
+        
+        // set the port label
+        String label = ((Port) port).getPortLabel();
+        if (label != null && label.length() > 0) {
+            layoutPort.getLabel().setText(label);
+            Map<?, ?> editPartRegistry = portEP.getViewer().getEditPartRegistry();
+            for (View view : graphElem2ViewMap.get(port)) {
+                Object obj = editPartRegistry.get(view);
+                if (obj instanceof LabelEditPart) {
+                    IFigure labelFigure = ((LabelEditPart) obj).getFigure();
+                    Rectangle labelBounds = KimlUiUtil.getAbsoluteBounds(labelFigure);
+                    KShapeLayout labelLayout = layoutPort.getLabel().getData(KShapeLayout.class);
+                    labelLayout.setXpos(labelBounds.x - portBounds.x);
+                    labelLayout.setYpos(labelBounds.y - portBounds.y);
+                    try {
+                        Dimension size = labelFigure.getPreferredSize();
+                        labelLayout.setWidth(size.width);
+                        labelLayout.setHeight(size.height);
+                    } catch (SWTException exception) {
+                        // ignore exception and leave the label size to (0, 0)
+                    }
+                }
+            }
+        }
+        
+        // set user defined layout options for the port
+        layoutConfig.setFocus(portEP);
+        portLayout.copyProperties(layoutConfig);
+        return layoutPort;
     }
     
     /**
@@ -266,50 +291,53 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
             final ILayoutConfig layoutConfig) {
         Map<?, ?> editPartRegistry = rootPart.getViewer().getEditPartRegistry();
         for (KEdge graphEdge : edges) {
-            Object obj = editPartRegistry.get(graphElem2ViewMap.get(graphEdge));
-            if (obj instanceof ConnectionEditPart) {
-                KEdge layoutEdge = KimlUtil.createInitializedEdge();
-                KPort sourcePort = (KPort) graphMap.get(graphEdge.getSourcePort());
-                if (sourcePort == null) {
-                    layoutEdge.setSource((KNode) graphMap.get(graphEdge.getSource()));
-                } else {
-                    layoutEdge.setSourcePort(sourcePort);
-                    sourcePort.getEdges().add(layoutEdge);
-                    layoutEdge.setSource(sourcePort.getNode());
-                }
-                KPort targetPort = (KPort) graphMap.get(graphEdge.getTargetPort());
-                if (targetPort == null) {
-                    layoutEdge.setTarget((KNode) graphMap.get(graphEdge.getTarget()));
-                } else {
-                    layoutEdge.setTargetPort(targetPort);
-                    targetPort.getEdges().add(layoutEdge);
-                    layoutEdge.setTarget(targetPort.getNode());
-                }
-                
-                ConnectionEditPart connection = (ConnectionEditPart) obj;
-                getGraphElem2EditPartMap().put(layoutEdge, connection);
-    
-                // calculate offset for edge and label coordinates
-                KNode sourceParent = layoutEdge.getSource().getParent();
-                if (sourceParent != null) {
-                    IGraphicalEditPart sourceParentEP = getGraphElem2EditPartMap().get(sourceParent);
-                    Rectangle sourceParentBounds = sourceParentEP == null ? new Rectangle()
-                            : KimlUiUtil.getAbsoluteBounds(sourceParentEP.getFigure());
-                    KInsets insets = sourceParent.getData(KShapeLayout.class).getInsets();
-                    float offsetx = sourceParentBounds.x + insets.getLeft();
-                    float offsety = sourceParentBounds.y + insets.getTop();
-        
-                    // store the current coordinates of the edge
-                    KEdgeLayout edgeLayout = layoutEdge.getData(KEdgeLayout.class);
-                    setEdgeLayout(edgeLayout, connection, offsetx, offsety);
+            for (View view : graphElem2ViewMap.get(graphEdge)) {
+                Object obj = editPartRegistry.get(view);
+                if (obj instanceof ConnectionEditPart) {
+                    KEdge layoutEdge = KimlUtil.createInitializedEdge();
+                    KPort sourcePort = (KPort) graphMap.get(graphEdge.getSourcePort());
+                    if (sourcePort == null) {
+                        layoutEdge.setSource((KNode) graphMap.get(graphEdge.getSource()));
+                    } else {
+                        layoutEdge.setSourcePort(sourcePort);
+                        sourcePort.getEdges().add(layoutEdge);
+                        layoutEdge.setSource(sourcePort.getNode());
+                    }
+                    KPort targetPort = (KPort) graphMap.get(graphEdge.getTargetPort());
+                    if (targetPort == null) {
+                        layoutEdge.setTarget((KNode) graphMap.get(graphEdge.getTarget()));
+                    } else {
+                        layoutEdge.setTargetPort(targetPort);
+                        targetPort.getEdges().add(layoutEdge);
+                        layoutEdge.setTarget(targetPort.getNode());
+                    }
                     
-                    // set edge labels
-                    processEdgeLabels(connection, layoutEdge, EdgeLabelPlacement.UNDEFINED,
-                            offsetx, offsety);
+                    ConnectionEditPart connection = (ConnectionEditPart) obj;
+                    getGraphElem2EditPartMap().put(layoutEdge, connection);
         
-                    // set user defined layout options for the edge
-                    layoutConfig.setFocus(connection);
-                    edgeLayout.copyProperties(layoutConfig);
+                    // calculate offset for edge and label coordinates
+                    KNode sourceParent = layoutEdge.getSource().getParent();
+                    if (sourceParent != null) {
+                        IGraphicalEditPart sourceParentEP = getGraphElem2EditPartMap().get(sourceParent);
+                        Rectangle sourceParentBounds = sourceParentEP == null ? new Rectangle()
+                                : KimlUiUtil.getAbsoluteBounds(sourceParentEP.getFigure());
+                        KInsets insets = sourceParent.getData(KShapeLayout.class).getInsets();
+                        float offsetx = sourceParentBounds.x + insets.getLeft();
+                        float offsety = sourceParentBounds.y + insets.getTop();
+            
+                        // store the current coordinates of the edge
+                        KEdgeLayout edgeLayout = layoutEdge.getData(KEdgeLayout.class);
+                        setEdgeLayout(edgeLayout, connection, offsetx, offsety);
+                        
+                        // set edge labels
+                        processEdgeLabels(connection, layoutEdge, EdgeLabelPlacement.UNDEFINED,
+                                offsetx, offsety);
+            
+                        // set user defined layout options for the edge
+                        layoutConfig.setFocus(connection);
+                        edgeLayout.copyProperties(layoutConfig);
+                    }
+                    break;
                 }
             }
         }

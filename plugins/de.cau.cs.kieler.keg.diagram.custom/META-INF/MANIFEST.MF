@@ -13,6 +13,7 @@ Require-Bundle: org.eclipse.ui.navigator;bundle-version="3.5.0",
  de.cau.cs.kieler.keg.diagram,
  de.cau.cs.kieler.kiml.ui,
  de.cau.cs.kieler.kiml.gmf,
- de.cau.cs.kieler.core.model
+ de.cau.cs.kieler.core.model,
+ com.google.guava;bundle-version="8.0.0"
 Bundle-Activator: de.cau.cs.kieler.keg.diagram.custom.KEGDiagramPlugin
 Bundle-ActivationPolicy: lazy

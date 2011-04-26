@@ -211,6 +211,7 @@ implements KEGNode
         org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure figure = createNodePlate();
         figure.setLayoutManager(new StackLayout());
         IFigure shape = createNodeShape();
+
         figure.add(shape);
         contentPane = setupContentPane(shape);
         return figure;
