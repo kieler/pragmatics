@@ -1138,7 +1138,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             // count the input and output ports
             int inputPorts = 0, outputPorts = 0;
             for (LPort port : node.getPorts()) {
-                if (port.getNetFlow() >= 0) {
+                if (port.getNetFlow() < 0) {
                     outputPorts++;
                 } else {
                     inputPorts++;
@@ -1169,6 +1169,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
      */
     private void assignPortPos(final LNode node, final int nodeIx,
             final PortType type, final int count) {
+        
         if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
             float incr = 1.0f / count;
             
@@ -1285,14 +1286,14 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                     // the order of ports on each side is variable, so distribute the ports
                     distributePorts(node);
                     node.setProperty(Properties.PORT_CONS, PortConstraints.FIXED_ORDER);
-                    int portCount = 0;
+                    int outputPortCount = 0;
                     for (LPort port : node.getPorts()) {
-                        if (port.getNetFlow() >= 0) {
-                            portCount++;
+                        if (port.getNetFlow() < 0) {
+                            outputPortCount++;
                         }
                     }
-                    if (portCount > 0) {
-                        assignPortPos(node, i, PortType.OUTPUT, portCount);
+                    if (outputPortCount > 0) {
+                        assignPortPos(node, i, PortType.OUTPUT, outputPortCount);
                     }
                 }
             }
