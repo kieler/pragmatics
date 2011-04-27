@@ -21,6 +21,7 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -170,6 +171,12 @@ public final class Properties {
     /** Flags indicating the properties of a graph. */
     public static final IProperty<Set<GraphProperties>> GRAPH_PROPERTIES =
         new Property<Set<GraphProperties>>("graphProperties", EnumSet.allOf(GraphProperties.class));
+    
+    /**
+     * The side of an external port a dummy node was created for.
+     */
+    public static final IProperty<PortSide> EXT_PORT_SIDE = new Property<PortSide>(
+            "externalPortSide", PortSide.UNDEFINED);
     
     /**
      * The original position or position-to-node-size ratio of an external port. This is a

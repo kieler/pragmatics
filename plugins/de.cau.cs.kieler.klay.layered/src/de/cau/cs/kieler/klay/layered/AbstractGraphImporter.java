@@ -204,6 +204,9 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
             dummy.setProperty(Properties.EXT_PORT_RATIO_OR_POSITION, positionOrRatio);
         }
         
+        // Set the port side of the dummy
+        dummy.setProperty(Properties.EXT_PORT_SIDE, finalPortSide);
+        
         return dummy;
     }
     
