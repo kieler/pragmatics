@@ -50,7 +50,8 @@ public enum PortConstraints {
     }
     
     /**
-     * Returns whether the position of the ports is fixed.
+     * Returns whether the position of the ports is fixed. Note that this is not true
+     * if port ratios are fixed.
      * 
      * @return true if the position is fixed
      */
@@ -59,12 +60,13 @@ public enum PortConstraints {
     }
     
     /**
-     * Returns whether the ratio of port positions is fixed.
+     * Returns whether the ratio of port positions is fixed. Note that this is not true
+     * if the port positions are fixed.
      * 
      * @return true if the ratio is fixed
      */
     public boolean isRatioFixed() {
-        return this == FIXED_RATIO || this == FIXED_POS;
+        return this == FIXED_RATIO;
     }
     
     /**

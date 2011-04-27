@@ -167,11 +167,19 @@ public final class Properties {
     public static final IProperty<LNode> IN_LAYER_SUCCESSOR_CONSTRAINT = new Property<LNode>(
             "inLayerSuccessorConstraint", null);
     
-    
-    
     /** Flags indicating the properties of a graph. */
     public static final IProperty<Set<GraphProperties>> GRAPH_PROPERTIES =
         new Property<Set<GraphProperties>>("graphProperties", EnumSet.allOf(GraphProperties.class));
+    
+    /**
+     * The original position or position-to-node-size ratio of an external port. This is a
+     * property usually used for external port dummy nodes. There is only one coordinate since
+     * the side of the port determines the other coordinate. (for eastern and western ports,
+     * the x coordinate is determined automatically; for northern and southern ports, the y
+     * coordinate is determined automatically)
+     */
+    public static final IProperty<Double> EXT_PORT_RATIO_OR_POSITION = new Property<Double>(
+            "externalPortRatioOrPosition", 0.0);
 
     
     ///////////////////////////////////////////////////////////////////////////////
