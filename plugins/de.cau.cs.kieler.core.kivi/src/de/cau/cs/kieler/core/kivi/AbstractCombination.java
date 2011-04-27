@@ -141,7 +141,7 @@ public abstract class AbstractCombination implements ICombination {
         // remember old effects for undoing
         if (enableRecording) {
             for (IEffect effect : effects) {
-                undoEffects.add(new UndoEffect(effect));
+                undoEffects.add(0,new UndoEffect(effect));
             }
             if (undoEffects.size() > MAX_RECORD_LENGTH) {
                 String message = "The View Management Combination "
@@ -229,7 +229,7 @@ public abstract class AbstractCombination implements ICombination {
             undoEffects.clear();
         }
         allEffects.addAll(effects);
-        
+
         // iterate from end to start
         for (int i = allEffects.size()-1; i >= 0; i--) {
             IEffect effect = allEffects.get(i);
