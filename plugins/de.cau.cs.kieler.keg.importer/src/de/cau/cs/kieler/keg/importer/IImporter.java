@@ -13,13 +13,11 @@
  */
 package de.cau.cs.kieler.keg.importer;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.core.runtime.IPath;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.model.m2m.TransformException;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.keg.Node;
 
@@ -41,13 +39,9 @@ public interface IImporter {
      * @param monitor
      *            the progress monitor
      * @return the KEG graph
-     * @throws TransformException
-     *             if the transformation fails for some reason
-     * @throws IOException
-     *             if reading from the input stream fails for some reason
      */
     Node doImport(final InputStream inputStream, final IPropertyHolder options,
-            final IKielerProgressMonitor monitor) throws IOException, TransformException;
+            final IKielerProgressMonitor monitor);
 
     /**
      * Performs a post processing on the created KEG model instance file using the given options.

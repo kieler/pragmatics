@@ -1,21 +1,11 @@
 import keg;
 import kgraph;
 
-Void transferKGraphNode(KNode node, Node kegNode):
-	JAVA de.cau.cs.kieler.keg.importer.util.XtendUtil.transferKGraphNode(de.cau.cs.kieler.core.kgraph.KNode, de.cau.cs.kieler.keg.Node)
-;
-
-Void transferKGraphEdge(KEdge edge, Edge kegEdge):
-	JAVA de.cau.cs.kieler.keg.importer.util.XtendUtil.transferKGraphEdge(de.cau.cs.kieler.core.kgraph.KEdge, de.cau.cs.kieler.keg.Edge)
-;
-
-Void transferKGraphPort(KPort port, Port kegPort):
-	JAVA de.cau.cs.kieler.keg.importer.util.XtendUtil.transferKGraphPort(de.cau.cs.kieler.core.kgraph.KPort, de.cau.cs.kieler.keg.Port)
-;
+extension org::eclipse::xtend::util::stdlib::cloning;
 
 Node transform(KNode node, Boolean directed):
 	let graph = new Node:
-	node.transferKGraphNode(graph) ->
+	node.data.addAll(node.data.clone()) ->
 	node.children.transformNode(graph, directed) ->
 	graph
 ;
@@ -34,7 +24,7 @@ Void transformEdge(KEdge edge, Boolean directed):
 	let target = getNode(edge.target):
 	source.outgoingEdges.add(kegEdge) ->
 	kegEdge.setTarget(target) ->
-	edge.transferKGraphEdge(kegEdge) ->
+    kegEdge.data.addAll(edge.data.clone()) ->
 	(if directed then kegEdge.setDirected(true)) ->
 	(if edge.sourcePort != null then kegEdge.setSourcePort(getPort(edge.sourcePort))) ->
 	(if edge.targetPort != null then kegEdge.setTargetPort(getPort(edge.targetPort))) ->
@@ -53,9 +43,10 @@ Void transformPort(KPort port, Node node):
 ;
 
 create Node getNode(KNode node):
-	node.transferKGraphNode(this)
+	(if node.label != null then this.setNodeLabel(node.label.text)) ->
+	this.data.addAll(node.data.clone())
 ;
 
 create Port getPort(KPort port):
-	port.transferKGraphPort(this)
+	this.data.addAll(port.data.clone())
 ;

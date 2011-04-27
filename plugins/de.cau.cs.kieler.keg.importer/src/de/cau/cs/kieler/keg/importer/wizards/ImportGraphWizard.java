@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -115,6 +116,23 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
         addPage(workspaceSourcesPage);
         addPage(fileSystemSourcesPage);
         addPage(optionsPage);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IWizardPage getStartingPage() {
+        // determine the starting page depending on the selection
+        @SuppressWarnings("unchecked")
+        Iterator<Object> iterator = selection.iterator();
+        while (iterator.hasNext()) {
+            Object object = iterator.next();
+            if (object instanceof IFile) {
+                return workspaceSourcesPage;
+            }
+        }
+        return sourcesPage;
     }
 
     /**

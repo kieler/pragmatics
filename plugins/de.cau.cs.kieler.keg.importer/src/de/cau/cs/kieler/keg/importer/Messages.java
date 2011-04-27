@@ -26,6 +26,8 @@ public class Messages extends NLS {
     public static String ImportManager_open_diagrams_description;
     public static String ImportUtil_m2m_task;
     public static String ImportUtil_no_node_error;
+    public static String ImportUtil_open_diagram_failed_error;
+    public static String ImportUtil_unsupported_editor_error;
     
     static {
         // initialize resource bundle

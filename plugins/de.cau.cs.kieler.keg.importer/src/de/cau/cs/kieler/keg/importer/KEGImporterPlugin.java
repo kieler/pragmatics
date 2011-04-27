@@ -16,8 +16,10 @@ package de.cau.cs.kieler.keg.importer;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import de.cau.cs.kieler.keg.importer.importer.DotImporter;
 import de.cau.cs.kieler.keg.importer.importer.GraphMLImporter;
 import de.cau.cs.kieler.keg.importer.importer.KGraphImporter;
+import de.cau.cs.kieler.keg.importer.importer.OGMLImporter;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -47,6 +49,8 @@ public class KEGImporterPlugin extends AbstractUIPlugin {
 
         ImportManager.getInstance().addImporter(new GraphMLImporter());
         ImportManager.getInstance().addImporter(new KGraphImporter());
+        ImportManager.getInstance().addImporter(new OGMLImporter());
+        ImportManager.getInstance().addImporter(new DotImporter());
     }
 
     /**

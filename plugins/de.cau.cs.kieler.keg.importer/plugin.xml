@@ -55,6 +55,16 @@
                            property="org.eclipse.core.resources.name"
                            value="*.graphml">
                      </test>
+                     <test
+                           forcePluginActivation="false"
+                           property="org.eclipse.core.resources.name"
+                           value="*.ogml">
+                     </test>
+                     <test
+                           forcePluginActivation="false"
+                           property="org.eclipse.core.resources.name"
+                           value="*.dot">
+                     </test>
                   </or>
                </and>
             </iterate>

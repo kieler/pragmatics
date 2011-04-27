@@ -1,0 +1,153 @@
+import keg;
+import ogml;
+import kgraph;
+import klayoutdata;
+
+KShapeLayout getShapeLayout(Node node):
+	JAVA de.cau.cs.kieler.keg.importer.util.XtendUtil.getShapeLayout(de.cau.cs.kieler.core.kgraph.KNode)
+;
+
+KEdgeLayout getEdgeLayout(Edge node):
+	JAVA de.cau.cs.kieler.keg.importer.util.XtendUtil.getEdgeLayout(de.cau.cs.kieler.core.kgraph.KEdge)
+; 
+
+Node transform(ogml::DocumentRoot doc):
+	transformOGML(doc.ogml)
+;
+
+Node transformOGML(ogml::OgmlType ogml):
+	transformOGMLGraph(ogml.graph)
+;
+
+// transforms the OGML graph
+Node transformOGMLGraph(ogml::GraphType ogmlGraph):
+	let graph = new Node:
+	transformStructure(ogmlGraph.structure, graph) ->
+	transformLayout(ogmlGraph.layout, graph) ->
+	graph
+;
+
+// transforms the structure of the OGML graph
+Void transformStructure(ogml::StructureType structure, Node graph):
+	structure.node.transformNode(graph) ->
+	structure.edge.transformEdge()
+;
+
+// transforms a node
+Void transformNode(ogml::NodeType ogmlNode, Node parent):
+	let node = getNode(ogmlNode):
+	parent.children.add(node) ->
+	ogmlNode.node.transformNode(node)
+;
+
+// returns the KEG counterpart for the given OGML node
+cached Node getNode(ogml::NodeType ogmlNode):
+	let node = getNodeById(ogmlNode.id):
+	(if ogmlNode.label.size > 0 then node.setNodeLabel(ogmlNode.label.get(0).content)) ->
+	node
+;
+
+// transforms an edge
+Void transformEdge(ogml::EdgeType ogmlEdge):
+	let source = getNodeById(ogmlEdge.source.get(0).idRef):
+	let target = getNodeById(ogmlEdge.target.get(0).idRef):
+	let edge = getEdge(ogmlEdge):
+	edge.setSource(source) ->
+	edge.setTarget(target) ->
+	ogmlEdge.label.transformLabel(edge)
+;
+
+// transforms a label
+Void transformLabel(ogml::LabelType ogmlLabel, Edge edge):
+	//TODO this can't be done until the label positions can be determined somehow
+	null
+;
+
+// returns the KEG counterpart for the given OGML edge
+cached Edge getEdge(ogml::EdgeType ogmlEdge):
+	let edge = getEdgeById(ogmlEdge.id):
+	edge
+;
+
+// transforms the layout of the OGML graph
+Void transformLayout(ogml::LayoutType layout, Node graph):
+	layout.styles.transformStyles(graph)
+;
+
+// transforms the styles of the OGML graph
+Void transformStyles(ogml::StylesType styles, Node graph):
+	styles.nodeStyle.transformNodeStyle() ->
+	styles.edgeStyle.transformEdgeStyle() ->
+	graph.children.correctCoordinates(0.0, 0.0)
+;
+
+// transforms the layout of a node
+Void transformNodeStyle(ogml::NodeLayoutType ogmlNodeLayout):
+	let node = getNodeById(ogmlNodeLayout.idRef):
+	let nodeLayout = new KShapeLayout:
+	let location = ogmlNodeLayout.location:
+	let shape = ogmlNodeLayout.shape:
+	nodeLayout.setXpos(location.x - shape.width / 2) ->
+	nodeLayout.setYpos(location.y - shape.height / 2) ->
+	nodeLayout.setWidth(shape.width) ->
+	nodeLayout.setHeight(shape.height) ->
+	node.data.add(nodeLayout)
+;
+
+// transforms the layout of an edge
+Void transformEdgeStyle(ogml::EdgeLayoutType ogmlEdgeLayout):
+	let edge = getEdgeById(ogmlEdgeLayout.idRef):
+	let edgeLayout = new KEdgeLayout:
+	(if ogmlEdgeLayout.point.size >= 2 then 
+		(ogmlEdgeLayout.point.withoutFirst().withoutLast().transformBendPoint(edgeLayout) ->
+		edgeLayout.setSourcePoint(transformPoint(ogmlEdgeLayout.point.get(0))) ->
+		edgeLayout.setTargetPoint(transformPoint(ogmlEdgeLayout.point.get(ogmlEdgeLayout.point.size - 1))))) -> 
+	edge.data.add(edgeLayout)
+;
+
+// transforms a bend point
+Void transformBendPoint(ogml::PointType ogmlPoint, KEdgeLayout edgeLayout):
+	let point = transformPoint(ogmlPoint):
+	edgeLayout.bendPoints.add(point)
+;
+
+// transforms a point
+create KPoint transformPoint(ogml::PointType ogmlPoint):
+	this.setX(ogmlPoint.x) ->
+	this.setY(ogmlPoint.y)
+;
+
+// makes the coordinates of the node relative to fit the KIML format
+Void correctCoordinates(KNode node, Real xOffset, Real yOffset):
+	let nodeLayout = getShapeLayout(node):
+	let x = nodeLayout.xpos:
+	let y = nodeLayout.ypos:
+	nodeLayout.setXpos(x - xOffset) ->
+	nodeLayout.setYpos(y - yOffset) ->
+	node.outgoingEdges.correctCoordinates(xOffset, yOffset) ->
+	node.children.correctCoordinates(x, y)
+;
+
+// makes the coordinates of the edge relative to fit the KIML format
+Void correctCoordinates(KEdge edge, Real xOffset, Real yOffset):
+	let edgeLayout = getEdgeLayout(edge):
+	edgeLayout.sourcePoint.correctCoordinates(xOffset, yOffset) ->
+	edgeLayout.targetPoint.correctCoordinates(xOffset, yOffset) ->
+	edgeLayout.bendPoints.correctCoordinates(xOffset, yOffset)
+;
+
+// makes the coordinates of the point relative to fit the KIML format
+Void correctCoordinates(KPoint point, Real xOffset, Real yOffset):
+	point.setX(point.x - xOffset) ->
+	point.setY(point.y - yOffset)
+;
+
+// returns the KEG node which is the counterpart to the OGML node with the given id
+create Node getNodeById(String id):
+	this
+;
+
+// returns the KEG edge which is the counterpart to the OGML edge with the given id
+create Edge getEdgeById(String id):
+	this
+;

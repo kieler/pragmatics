@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2011 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -17,7 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.eclipse.core.runtime.IPath;
+
+import net.ogdf.ogml.util.OgmlResourceFactoryImpl;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.model.m2m.TransformException;
@@ -29,43 +32,30 @@ import de.cau.cs.kieler.keg.importer.ImportUtil;
 import de.cau.cs.kieler.keg.importer.ImporterOption;
 
 /**
- * A KEG importer for the KGraph.
+ * A KEG importer for the OGML file format.
  * 
  * @author mri
+ * 
  */
-public class KGraphImporter extends AbstractImporter {
+public class OGMLImporter extends AbstractImporter {
 
     /** the supported file extensions. */
-    private static final String[] SUPPORTED_FILE_EXTENSIONS = { "kgraph" }; //$NON-NLS-1$
+    private static final String[] SUPPORTED_FILE_EXTENSIONS = { "ogml" }; //$NON-NLS-1$
     /** the xtend transformation file. */
-    private static final String XTEND_TRANSFORMATION_FILE = "kgraph2keg.ext"; //$NON-NLS-1$
+    private static final String XTEND_TRANSFORMATION_FILE = "ogml2keg.ext"; //$NON-NLS-1$
     /** the xtend extension which is performing the transformation. */
     private static final String XTEND_TRANSFORMATION = "transform"; //$NON-NLS-1$
 
     /** the option for the transfer of layout information. */
     private static final ImporterOption<Boolean> OPTION_TRANSFER_LAYOUT =
-            new ImporterOption<Boolean>("kgraph.transferLayout", //$NON-NLS-1$
-                    Messages.KGraphImporter_transfer_layout_description, true);
-
-    /**
-     * The edge direction.
-     */
-    private enum EdgeDirection {
-        DIRECTED, UNDIRECTED
-    }
-
-    /** the option for the edge direction. */
-    private static final ImporterOption<EdgeDirection> OPTION_EDGE_DIRECTION =
-            new ImporterOption<EdgeDirection>("kgraph.edgeDirection", //$NON-NLS-1$
-                    Messages.KGraphImporter_edge_direction_description, //$NON-NLS-1$
-                    EdgeDirection.DIRECTED);
+            new ImporterOption<Boolean>("ogml.transferLayout", //$NON-NLS-1$
+                    Messages.OGMLImporter_transfer_layout_description, true);
 
     /**
      * Constructs a KGraphImporter.
      */
-    public KGraphImporter() {
+    public OGMLImporter() {
         addOption(OPTION_TRANSFER_LAYOUT);
-        addOption(OPTION_EDGE_DIRECTION);
     }
 
     /**
@@ -73,7 +63,7 @@ public class KGraphImporter extends AbstractImporter {
      */
     @Override
     public String getName() {
-        return Messages.KGraphImporter_kgraph_name;
+        return Messages.OGMLImporter_ogml_name;
     }
 
     /**
@@ -100,15 +90,17 @@ public class KGraphImporter extends AbstractImporter {
         Node node = null;
         try {
             List<Object> parameters = new LinkedList<Object>();
-            parameters.add(options.getProperty(OPTION_EDGE_DIRECTION) == EdgeDirection.DIRECTED);
             node =
                     ImportUtil.transformModel2KEGGraph(XTEND_TRANSFORMATION_FILE,
-                            XTEND_TRANSFORMATION, parameters, inputStream, null, monitor,
-                            "de.cau.cs.kieler.core.kgraph.KGraphPackage"); //$NON-NLS-1$
+                            XTEND_TRANSFORMATION, parameters, inputStream,
+                            new OgmlResourceFactoryImpl(), monitor,
+                            "net.ogdf.ogml.OgmlPackage", //$NON-NLS-1$
+                            "de.cau.cs.kieler.core.kgraph.KGraphPackage", //$NON-NLS-1$
+                            "de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage"); //$NON-NLS-1$
         } catch (IOException e) {
-            throw new RuntimeException(Messages.KGraphImporter_io_error, e);
+            throw new RuntimeException(Messages.OGMLImporter_io_error, e);
         } catch (TransformException e) {
-            throw new RuntimeException(Messages.KGraphImporter_transformation_error, e);
+            throw new RuntimeException(Messages.OGMLImporter_transformation_error, e);
         }
         return node;
     }

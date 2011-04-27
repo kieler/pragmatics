@@ -1,0 +1,127 @@
+import keg;
+import dot;
+
+extension org::eclipse::xtend::util::stdlib::io; 
+
+// transforms a graphviz model
+keg::Node transform(dot::GraphvizModel graphvizModel):
+	if graphvizModel.graphs.size > 0
+		then transformDotGraph(graphvizModel.graphs.get(0))
+		else new keg::Node
+;
+
+// transforms a dot graph
+keg::Node transformDotGraph(dot::Graph dotGraph):
+	let graph = new keg::Node:
+	dotGraph.statements.transformStatement(graph) ->
+	graph
+;
+
+// transforms a node statement
+Void transformStatement(dot::NodeStatement dotNodeStatement, keg::Node parent):
+	getNode(dotNodeStatement.node.name, parent)
+;
+
+// transforms an edge statement
+Void transformStatement(dot::EdgeStatement dotEdgeStatement, keg::Node parent):
+	createEdges(dotEdgeStatement, parent)
+;
+
+// creates the edges for the given edge statement
+Void createEdges(dot::EdgeStatement dotEdgeStatement, keg::Node parent):
+	let source = getNode(dotEdgeStatement.sourceNode.name, parent):
+	if dotEdgeStatement.sourceNode.port != null then (
+		let port = getPort(dotEdgeStatement.sourceNode.port.name, source):
+		createEdge(source, port, dotEdgeStatement.edgeTargets, 0, parent)
+	) else createEdge(source, null, dotEdgeStatement.edgeTargets, 0, parent)
+;
+
+// recursively creates all edges for the edge target list
+Void createEdge(keg::Node source, keg::Port sourcePort, List[EdgeTarget] dotTargets,
+	Integer i, keg::Node parent):
+	if i < dotTargets.size then (
+		let dotTarget = dotTargets.get(i):
+		if dotTarget.targetnode != null then (
+			// target is node
+			let target = getNode(dotTarget.targetnode.name, parent):
+			if dotTarget.targetnode.port != null then (
+				let targetPort = getPort(dotTarget.targetnode.port.name, target):
+				createEdge(source, sourcePort, target, targetPort,
+					dotTarget.operator == dot::EdgeOperator::directed) ->
+				createEdge(target, targetPort, dotTargets, i + 1, parent)
+			) else (
+				createEdge(source, sourcePort, target, null, 
+					dotTarget.operator == dot::EdgeOperator::directed) ->
+				createEdge(target, null, dotTargets, i + 1, parent)
+			)
+		) else if dotTarget.targetSubgraph != null then (
+			// target is subgraph
+			let target = getNodeForSubgraph(dotTarget.targetSubgraph, parent):
+			createEdge(source, sourcePort, target, null, dotTarget.operator == dot::EdgeOperator::directed) ->
+			createEdge(target, null, dotTargets, i + 1, parent)			
+		)
+	)
+;
+
+// creates a single edge
+create keg::Edge createEdge(keg::Node source, keg::Port sourcePort,
+	keg::Node target, keg::Port targetPort, Boolean directed):
+	this.setDirected(directed) ->
+	this.setSource(source) ->
+	if sourcePort != null then this.setSourcePort(sourcePort) ->
+	this.setTarget(target) ->
+	if targetPort != null then this.setTargetPort(targetPort) ->
+	if sourcePort != null then (
+		if targetPort != null
+		then this.setType(keg::EdgeType::Port2Port)
+		else this.setType(keg::EdgeType::Port2Node) 
+	) else (
+		if targetPort != null
+		then this.setType(keg::EdgeType::Node2Port)
+		else this.setType(keg::EdgeType::Node2Node) 
+	)
+;
+
+// transforms a subgraph statement
+Void transformStatement(dot::Subgraph dotSubgraph, keg::Node parent):
+	let graph = getNodeForSubgraph(dotSubgraph, parent):
+	dotSubgraph.statements.transformStatement(graph)
+;
+
+// returns a KEG node representation for the given subgraph 
+keg::Node getNodeForSubgraph(dot::Subgraph dotSubgraph, keg::Node parent):
+	if dotSubgraph.name == null || dotSubgraph.name.length == 0
+	then (
+		let node = new Node:
+		parent.children.add(node) ->
+		node
+	) else getSubgraph(dotSubgraph.name, parent)
+;
+
+// transforms an attribute
+Void transformStatement(dot::Attribute dotAttribute, keg::Node parent):
+	null 
+;
+
+// transforms an attribute statement
+Void transformStatement(dot::AttributeStatement dotAttribute, keg::Node parent):
+	null
+;
+
+// returns the KEG node which is the counterpart for the dot node with the given name
+create keg::Node getNode(String name, keg::Node parent):
+	this.setNodeLabel(name) ->
+	parent.children.add(this)
+;
+
+// returns the KEG port which is the counterpart for the dot port with the given name
+create keg::Port getPort(String name, keg::Node parent):
+	this.setPortLabel(name) ->
+	parent.ports.add(this)
+;
+
+// returns the KEG node which is the counterpart for the dot subgraph with the given name
+create keg::Node getSubgraph(String name, keg::Node parent):
+	this.setNodeLabel(name) ->
+	parent.children.add(this)
+;

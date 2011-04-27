@@ -13,14 +13,10 @@
  */
 package de.cau.cs.kieler.keg.importer.util;
 
-import org.eclipse.emf.ecore.util.EcoreUtil;
-
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.keg.Edge;
-import de.cau.cs.kieler.keg.Node;
-import de.cau.cs.kieler.keg.Port;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 /**
  * A utility class that provides functionality that can be accessed by xtend
@@ -37,42 +33,26 @@ public final class XtendUtil {
     }
 
     /**
-     * Transfers the data from a KNode to a KEG Node.
+     * Returns the shape layout for the given node.
      * 
      * @param node
-     *            the KNode
-     * @param kegNode
-     *            the KEG Node
+     *            the node
+     * @return the shape layout
      */
-    public static void transferKGraphNode(final KNode node, final Node kegNode) {
-        kegNode.setNodeLabel(node.getLabel().getText());
-        // copy layout data
-        kegNode.getData().addAll(EcoreUtil.copyAll(node.getData()));
+    public static KShapeLayout getShapeLayout(final KNode node) {
+        KShapeLayout shapeLayout = node.getData(KShapeLayout.class);
+        return shapeLayout;
     }
 
     /**
-     * Transfers the data from a KEdge to a KEG Edge.
+     * Returns the edge layout for the given edge.
      * 
      * @param edge
-     *            the KEdge
-     * @param kegEdge
-     *            the KEG Edge
+     *            the edge
+     * @return the edge layout
      */
-    public static void transferKGraphEdge(final KEdge edge, final Edge kegEdge) {
-        // copy layout data
-        kegEdge.getData().addAll(EcoreUtil.copyAll(edge.getData()));
-    }
-
-    /**
-     * Transfers the data from a KPort to a KEG Port.
-     * 
-     * @param port
-     *            the KPort
-     * @param kegPort
-     *            the KEG Port
-     */
-    public static void transferKGraphPort(final KPort port, final Port kegPort) {
-        // copy layout data
-        kegPort.getData().addAll(EcoreUtil.copyAll(port.getData()));
+    public static KEdgeLayout getEdgeLayout(final KEdge edge) {
+        KEdgeLayout shapeLayout = edge.getData(KEdgeLayout.class);
+        return shapeLayout;
     }
 }

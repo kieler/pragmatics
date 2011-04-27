@@ -21,15 +21,22 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
     
     private static final String BUNDLE_NAME = "de.cau.cs.kieler.keg.importer.importer.messages"; //$NON-NLS-1$
+    public static String DotImporter_dot_name;
+    public static String DotImporter_io_error;
+    public static String DotImporter_transformation_error;
     public static String GraphMLImporter_graphml_name;
+    public static String GraphMLImporter_io_error;
+    public static String GraphMLImporter_transformation_error;
     public static String KGraphImporter_edge_direction_description;
-    public static String KGraphImporter_import_failed_error;
+    public static String KGraphImporter_io_error;
     public static String KGraphImporter_kgraph_name;
-    public static String KGraphImporter_open_diagram_failed_error;
     public static String KGraphImporter_transfer_layout_description;
-    public static String KGraphImporter_transfer_layout_failed_error;
-    public static String KGraphImporter_unsupported_editor_error;
-    
+    public static String KGraphImporter_transformation_error;
+    public static String OGMLImporter_io_error;
+    public static String OGMLImporter_ogml_name;
+    public static String OGMLImporter_transfer_layout_description;
+    public static String OGMLImporter_transformation_error;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
