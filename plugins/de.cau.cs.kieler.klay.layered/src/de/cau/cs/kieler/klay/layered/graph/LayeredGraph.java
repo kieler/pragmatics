@@ -37,6 +37,8 @@ public class LayeredGraph extends LGraphElement {
 
     /** the total size of the drawing, without offset. */
     private KVector size = new KVector();
+    /** the graph's insets. */
+    private Insets.Double insets = new Insets.Double(0, 0, 0, 0);
     /** the offset to be added to all positions. */
     private KVector offset = new KVector();
     /** nodes that are not currently part of a layer. */
@@ -61,10 +63,21 @@ public class LayeredGraph extends LGraphElement {
     public KVector getSize() {
         return size;
     }
+    
+    /**
+     * Returns the insets of the graph. The insets determine the amount of space between
+     * the content area and the graph's actual border.
+     * 
+     * @return the insets.
+     */
+    public Insets.Double getInsets() {
+        return insets;
+    }
 
     /**
      * Returns the offset for the graph, that is a coordinate vector that has
-     * to be added to all position values of nodes and edges.
+     * to be added to all position values of nodes and edges. It is usually used
+     * to reserve some space in the content area for additional edge routing.
      * 
      * @return the offset of the layered graph
      */

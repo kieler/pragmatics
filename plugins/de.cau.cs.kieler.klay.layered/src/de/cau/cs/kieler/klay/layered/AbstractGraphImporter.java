@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.layered;
 
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -65,6 +64,26 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
     
     
     /**
+     * Returns the object from which the layered graph was created.
+     * 
+     * @return the origin.
+     */
+    public final T getOrigin() {
+        return origin;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public final LayeredGraph getGraph() {
+        return graph;
+    }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Graph Transformation
+    
+    /**
      * Transforms the given origin object into a layered graph.
      * 
      * @param source the object to transform.
@@ -72,21 +91,27 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
      */
     protected abstract void transform(final T source, final LayeredGraph layeredGraph);
     
-    /**
-     * Returns the object from which the layered graph was created.
-     * 
-     * @return the origin.
-     */
-    public T getOrigin() {
-        return origin;
-    }
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Layout Application
     
     /**
      * {@inheritDoc}
      */
-    public LayeredGraph getGraph() {
-        return graph;
+    public final void applyLayout() {
+        // Set positions for external ports
+        
+        // Apply the layout
+        applyLayout(getGraph(), getOrigin());
     }
+    
+    /**
+     * Applies the layout data to the original graph.
+     * 
+     * @param layeredGraph the laid out layered graph.
+     * @param target the original graph to apply the layout to.
+     */
+    protected abstract void applyLayout(final LayeredGraph layeredGraph, final T target);
     
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -101,15 +126,15 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
      * @param portSide the side of the external port.
      * @param incomingEdges number of edges coming into the external port from within the node.
      * @param outgoingEdges number of edges going out of the external port to targets within the node.
-     * @param portNodeLayout layout data of the node the port belongs to. The node's size and insets
-     *                       are taken from this if the port constraints are set to {@code FIXED_RATIO}.
+     * @param portNodeSize The size of the node the port belongs to. Only relevant if the port
+     *                     constraints are {@code FIXED_RATIO}.
      * @param portPosition the current port position. Only relevant if the port constraints are
      *                     {@code FIXED_ORDER}, {@code FIXED_RATIO} or {@code FIXED_POSITION}.
      * @return a dummy node representing the external port.
      */
     protected LNode createExternalPortDummy(final Object port, final PortConstraints portConstraints,
             final PortSide portSide, final int incomingEdges, final int outgoingEdges,
-            final KShapeLayout portNodeLayout, final KVector portPosition) {
+            final KVector portNodeSize, final KVector portPosition) {
         
         PortSide finalPortSide = portSide;
         
@@ -161,7 +186,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
             case EAST:
                 positionOrRatio = portPosition.y;
                 if (portConstraints.isRatioFixed()) {
-                    positionOrRatio /= portNodeLayout.getHeight();
+                    positionOrRatio /= portNodeSize.y;
                 }
                 
                 break;
@@ -170,7 +195,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
             case SOUTH:
                 positionOrRatio = portPosition.x;
                 if (portConstraints.isRatioFixed()) {
-                    positionOrRatio /= portNodeLayout.getWidth();
+                    positionOrRatio /= portNodeSize.x;
                 }
                 
                 break;

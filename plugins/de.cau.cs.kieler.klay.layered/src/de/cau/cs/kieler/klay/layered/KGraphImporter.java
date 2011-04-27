@@ -35,6 +35,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.klay.layered.graph.Insets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -70,10 +71,21 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      * {@inheritDoc}
      */
     protected void transform(final KNode source, final LayeredGraph layeredGraph) {
+        KShapeLayout sourceShapeLayout = source.getData(KShapeLayout.class);
+        
         // copy the properties of the KGraph to the layered graph
-        layeredGraph.copyProperties(source.getData(KShapeLayout.class));
+        layeredGraph.copyProperties(sourceShapeLayout);
         layeredGraph.checkProperties(Properties.OBJ_SPACING, Properties.THOROUGHNESS,
                 LayoutOptions.BORDER_SPACING);
+        
+        // copy the insets to the layered graph
+        KInsets kinsets = sourceShapeLayout.getInsets();
+        Insets.Double linsets = layeredGraph.getInsets();
+        
+        linsets.left = kinsets.getLeft();
+        linsets.right = kinsets.getRight();
+        linsets.top = kinsets.getTop();
+        linsets.bottom = kinsets.getBottom();
 
         // keep a list of created nodes in the layered graph, as well as a map between KGraph
         // nodes / ports and LGraph nodes / ports
@@ -107,6 +119,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             final EnumSet<Properties.GraphProperties> graphProperties) {
         
         KShapeLayout layoutNodeLayout = layoutNode.getData(KShapeLayout.class);
+        KVector layoutNodeSize = new KVector(layoutNodeLayout.getWidth(), layoutNodeLayout.getHeight());
         
         // Find out if there are external ports
         List<KPort> ports = layoutNode.getPorts();
@@ -140,7 +153,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                     KimlUtil.calcPortSide(kport),
                     inEdges,
                     outEdges,
-                    layoutNodeLayout,
+                    layoutNodeSize,
                     kportPosition);
             layeredNodes.add(dummy);
             elemMap.put(kport, dummy);
@@ -421,16 +434,14 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
     
     ///////////////////////////////////////////////////////////////////////////////
     // Apply Layout Results
-
+    
     /**
      * {@inheritDoc}
      */
-    public void applyLayout() {
-        LayeredGraph layeredGraph = getGraph();
-        
+    @Override
+    protected void applyLayout(final LayeredGraph layeredGraph, final KNode target) {
         // determine the border spacing, which influences the offset
-        KNode parentNode = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
-        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
+        KShapeLayout parentLayout = target.getData(KShapeLayout.class);
         float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
         if (borderSpacing < 0) {
             borderSpacing = Properties.DEF_SPACING;

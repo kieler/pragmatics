@@ -99,6 +99,9 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 // After Phase 5
                 /* For non-free ports:
                  *  - NORTH_SOUTH_PORT_POSTPROCESSOR
+                 * 
+                 * For external ports:
+                 *  - EXTERNAL_PORT_ORTHOGONAL_EDGE_ROUTER
                  */
                 null);
     
@@ -127,6 +130,27 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 
                 // After Phase 5
                 EnumSet.of(IntermediateLayoutProcessor.NORTH_SOUTH_PORT_POSTPROCESSOR));
+    
+    /** additional processor dependencies for graphs with external ports. */
+    private static final IntermediateProcessingStrategy EXTERNAL_PORT_PROCESSING_ADDITIONS =
+        new IntermediateProcessingStrategy(
+                // Before Phase 1
+                null,
+                
+                // Before Phase 2
+                null,
+                
+                // Before Phase 3
+                null,
+                
+                // Before Phase 4
+                null,
+                
+                // Before Phase 5
+                null,
+                
+                // After Phase 5
+                EnumSet.of(IntermediateLayoutProcessor.EXTERNAL_PORT_ORTHOGONAL_EDGE_ROUTER));
     
     /** additional processor dependencies for graphs with self-loops. */
     private static final IntermediateProcessingStrategy SELF_LOOP_PROCESSING_ADDITIONS =
@@ -297,6 +321,10 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
             if (graphProperties.contains(Properties.GraphProperties.NORTH_SOUTH_PORTS)) {
                 strategy.addAll(NORTH_SOUTH_PORT_PROCESSING_ADDITIONS);
             }
+        }
+
+        if (graphProperties.contains(Properties.GraphProperties.EXTERNAL_PORTS)) {
+            strategy.addAll(EXTERNAL_PORT_PROCESSING_ADDITIONS);
         }
 
         if (graphProperties.contains(Properties.GraphProperties.SELF_LOOPS)) {

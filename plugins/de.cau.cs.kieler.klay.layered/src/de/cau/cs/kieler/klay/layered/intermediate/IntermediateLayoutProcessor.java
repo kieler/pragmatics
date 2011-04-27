@@ -67,6 +67,8 @@ public enum IntermediateLayoutProcessor {
     
     // After Phase 5
     
+    /** Routes edges incident to external ports orthogonally. */
+    EXTERNAL_PORT_ORTHOGONAL_EDGE_ROUTER,
     /** Takes a properly layered graph and removes the dummy nodes due to proper layering. */
     LONG_EDGE_JOINER,
     /** Removes dummy nodes inserted by the north south side preprocessor and routes edges. */
@@ -93,6 +95,9 @@ public enum IntermediateLayoutProcessor {
      */
     public ILayoutProcessor create() {
         switch (this) {
+        case EXTERNAL_PORT_ORTHOGONAL_EDGE_ROUTER:
+            return new ExternalPortOrthogonalEdgeRouter();
+            
         case HYPEREDGE_DUMMY_MERGER:
             return new HyperedgeDummyMerger();
         
