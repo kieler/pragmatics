@@ -80,6 +80,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 
                 // Before Phase 3
                 /* For non-free ports:
+                 *  - CONSTRAINED_EXTERNAL_PORT_PROCESSOR
                  *  - NORTH_SOUTH_PORT_PREPROCESSOR
                  *  - ODD_PORT_SIDE_PROCESSOR
                  * 
@@ -141,7 +142,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 null,
                 
                 // Before Phase 3
-                null,
+                EnumSet.of(IntermediateLayoutProcessor.CONSTRAINED_EXTERNAL_PORT_PROCESSOR),
                 
                 // Before Phase 4
                 null,

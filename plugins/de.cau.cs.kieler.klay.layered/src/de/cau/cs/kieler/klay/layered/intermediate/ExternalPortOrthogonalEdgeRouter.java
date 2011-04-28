@@ -22,7 +22,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>A layered graph, with edge routing finished for edges not incident
- *     to external ports.</dd>
+ *     to external ports; long edge dummies are not yet joined.</dd>
  *   <dt>Postcondition:</dt><dd>All external port dummy nodes left map onto an actual external port;
  *    the coordinates of external port dummy nodes specify the coordinates of their respective
  *    external port; all external port dummy nodes have a size of (0, 0); edges connected to
@@ -42,6 +42,29 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
         getMonitor().begin("Orthogonally routing external port edges", 1);
         
         // TODO: Implement.
+        
+        /* This processor works in four steps.
+         * 
+         * Step 1
+         * If port constraints are FIXED_ORDER or more, northern and southern external ports may
+         * be represented by multiple dummies each. These dummies are converted to long edge
+         * dummies, and the original external port dummy nodes are reinserted into the graph.
+         * They are just appended to the fifth layer.
+         * 
+         * Step 2
+         * The hyperedges for all external port dummies are calculated. The hyperedges to not yet
+         * include the external port dummies themselves. For western and eastern dummy nodes, this
+         * will just be a single line. 
+         * 
+         * Step 3
+         * The exact positions of the dummies is calculated, if necessary.
+         * 
+         * Step 4
+         * Bend points for all edges are set.
+         */
+        
+        
+        
         
         getMonitor().done();
     }

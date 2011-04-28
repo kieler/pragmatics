@@ -22,10 +22,11 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
- * Makes sure nodes with layer constraints have only incoming or only outgoing edges,
+ * Makes sure nodes with edge or layer constraints have only incoming or only outgoing edges,
  * as appropriate. This is done even before cycle breaking because the result may
  * already break some cycles. This processor is required for
- * {@link LayerConstraintProcessor} to work correctly.
+ * {@link LayerConstraintProcessor} to work correctly. If edge constraints are in conflict
+ * with layer constraints, the latter take precedence.
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>an unlayered graph.</dd>
@@ -38,35 +39,38 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * @see LayerConstraintProcessor
  * @author cds
  */
-public class LayerConstraintEdgeReverser extends AbstractAlgorithm implements ILayoutProcessor {
+public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
     public void process(final LayeredGraph layeredGraph) {
-        getMonitor().begin("Layer constraint edge reversal", 1);
+        getMonitor().begin("Edge and layer constraint edge reversal", 1);
         
         // Iterate through the list of nodes
         for (LNode node : layeredGraph.getLayerlessNodes()) {
-            Properties.LayerConstraint constraint = node.getProperty(Properties.LAYER_CONSTRAINT);
-            
             // Check if there is a layer constraint
-            switch (constraint) {
-            case FIRST:
-                reverseEdges(node, true);
-                break;
+            Properties.LayerConstraint layerConstraint = node.getProperty(Properties.LAYER_CONSTRAINT);
             
+            switch (layerConstraint) {
+            case FIRST:
             case FIRST_SEPARATE:
-                reverseEdges(node, true);
+                node.setProperty(Properties.EDGE_CONSTRAINT, Properties.EdgeConstraint.OUTGOING_ONLY);
                 break;
             
             case LAST:
-                reverseEdges(node, false);
-                break;
-            
             case LAST_SEPARATE:
-                reverseEdges(node, false);
+                node.setProperty(Properties.EDGE_CONSTRAINT, Properties.EdgeConstraint.INCOMING_ONLY);
                 break;
+            }
+            
+            // Check if there is an edge constraint
+            Properties.EdgeConstraint edgeConstraint = node.getProperty(Properties.EDGE_CONSTRAINT);
+            
+            if (edgeConstraint == Properties.EdgeConstraint.INCOMING_ONLY) {
+                reverseEdges(node, true);
+            } else if (edgeConstraint == Properties.EdgeConstraint.OUTGOING_ONLY) {
+                reverseEdges(node, false);
             }
         }
         
@@ -74,27 +78,27 @@ public class LayerConstraintEdgeReverser extends AbstractAlgorithm implements IL
     }
     
     /**
-     * Places the node in the given layer, taking care to reverse the necessary edges.
+     * Reverses edges as appropriate.
      * 
      * @param node the node to place in the layer.
-     * @param first {@code true} if the node is only allowed to have outgoing edges,
-     *              {@code false} if it is only allowed to have incoming edges.
+     * @param onlyIncoming {@code true} if the node is only allowed to have incoming edges,
+     *                     {@code false} if it is only allowed to have outgoing edges.
      */
-    private void reverseEdges(final LNode node, final boolean first) {
+    private void reverseEdges(final LNode node, final boolean onlyIncoming) {
         // Iterate through the node's edges and reverse them, if necessary
         for (LPort port : node.getPorts()) {
-            // In the first layer, incoming edges are not OK
-            if (first && !port.getIncomingEdges().isEmpty()) {
-                LEdge[] edges = port.getIncomingEdges().toArray(new LEdge[0]);
+            // Only incoming edges
+            if (onlyIncoming && !port.getOutgoingEdges().isEmpty()) {
+                LEdge[] edges = port.getOutgoingEdges().toArray(new LEdge[0]);
 
                 for (LEdge edge : edges) {
                     edge.reverse();
                 }
             }
             
-            // In the last layer, outgoing edges are not OK
-            if (!first && !port.getOutgoingEdges().isEmpty()) {
-                LEdge[] edges = port.getOutgoingEdges().toArray(new LEdge[0]);
+            // Only outgoing edges
+            if (!onlyIncoming && !port.getIncomingEdges().isEmpty()) {
+                LEdge[] edges = port.getIncomingEdges().toArray(new LEdge[0]);
 
                 for (LEdge edge : edges) {
                     edge.reverse();

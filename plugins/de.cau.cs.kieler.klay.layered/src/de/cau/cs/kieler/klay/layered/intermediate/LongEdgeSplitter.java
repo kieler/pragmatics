@@ -40,7 +40,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *   <dt>Precondition:</dt><dd>a layered graph.</dd>
  *   <dt>Postcondition:</dt><dd>the graph is properly layered.</dd>
  *   <dt>Slots:</dt><dd>Before phase 3.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link LayerConstraintProcessor}</dd>
  * </dl>
  *
  * @author msp

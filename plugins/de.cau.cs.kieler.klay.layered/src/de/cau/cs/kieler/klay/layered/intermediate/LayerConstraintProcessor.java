@@ -24,7 +24,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
  * Moves nodes with layer constraints to the appropriate layers. To meet the preconditions of
- * this processor, the {@link LayerConstraintEdgeReverser} can be used.
+ * this processor, the {@link EdgeAndLayerConstraintEdgeReverser} can be used.
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph; nodes to be placed in the first layer have only
@@ -32,10 +32,10 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *   <dt>Postcondition:</dt><dd>nodes with layer constraints have been placed in the
  *     appropriate layers.</dd>
  *   <dt>Slots:</dt><dd>Before phase 3.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link LongEdgeSplitter}</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link ConstrainedExternalPortProcessor}</dd>
  * </dl>
  * 
- * @see LayerConstraintEdgeReverser
+ * @see EdgeAndLayerConstraintEdgeReverser
  * @author cds
  */
 public class LayerConstraintProcessor extends AbstractAlgorithm implements ILayoutProcessor {

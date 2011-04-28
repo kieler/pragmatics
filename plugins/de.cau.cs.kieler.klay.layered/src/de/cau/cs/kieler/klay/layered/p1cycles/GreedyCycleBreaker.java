@@ -37,7 +37,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
  * 
  * <p>This cycle breaker doesn't support layer constraints out of the box. If layer
  * constraints should be observed,
- * {@link de.cau.cs.kieler.klay.layered.intermediate.LayerConstraintEdgeReverser} and
+ * {@link de.cau.cs.kieler.klay.layered.intermediate.EdgeAndLayerConstraintEdgeReverser} and
  * {@link de.cau.cs.kieler.klay.layered.intermediate.LayerConstraintProcessor} should
  * be used.</p>
  * 
@@ -47,7 +47,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
  *     new nodes and edges</dd>
  * </dl>
  * 
- * @see de.cau.cs.kieler.klay.layered.intermediate.LayerConstraintEdgeReverser
+ * @see de.cau.cs.kieler.klay.layered.intermediate.EdgeAndLayerConstraintEdgeReverser
  * @see de.cau.cs.kieler.klay.layered.intermediate.LayerConstraintProcessor
  * @author msp
  */

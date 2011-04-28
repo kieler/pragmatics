@@ -47,7 +47,7 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
     private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
         new IntermediateProcessingStrategy(
                 // Before Phase 1
-                EnumSet.of(IntermediateLayoutProcessor.LAYER_CONSTRAINT_EDGE_REVERSER),
+                EnumSet.of(IntermediateLayoutProcessor.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER),
                 
                 // Before Phase 2
                 null,

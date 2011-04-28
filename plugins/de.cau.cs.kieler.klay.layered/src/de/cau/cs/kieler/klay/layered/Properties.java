@@ -108,6 +108,20 @@ public final class Properties {
         /** float node to the bottom of the layer, along with other nodes posessing this constraint. */
         BOTTOM
     }
+    
+    /**
+     * Enumeration of edge constraints.
+     * 
+     * @author cds
+     */
+    public enum EdgeConstraint {
+        /** no constraint on incident edges. */
+        NONE,
+        /** node may have only incoming edges. */
+        INCOMING_ONLY,
+        /** node may have only outgoing edges. */
+        OUTGOING_ONLY
+    }
 
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -140,6 +154,10 @@ public final class Properties {
     public static final IProperty<LPort> LONG_EDGE_SOURCE = new Property<LPort>("longEdgeSource", null);
     /** the target port of a long edge before it was broken into multiple segments. */
     public static final IProperty<LPort> LONG_EDGE_TARGET = new Property<LPort>("longEdgeTarget", null);
+    
+    /** edge constraints for nodes. */
+    public static final IProperty<EdgeConstraint> EDGE_CONSTRAINT = new Property<EdgeConstraint>(
+            "edgeConstraint", EdgeConstraint.NONE);
     
     /**
      * The layout unit a node belongs to. This property only makes sense for nodes. A layout unit

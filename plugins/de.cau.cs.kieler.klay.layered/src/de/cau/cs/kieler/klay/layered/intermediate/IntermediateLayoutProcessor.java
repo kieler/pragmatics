@@ -31,12 +31,14 @@ public enum IntermediateLayoutProcessor {
     // Before Phase 1
     
     /** Makes sure nodes with layer constraints have only incoming or only outgoing edges. */
-    LAYER_CONSTRAINT_EDGE_REVERSER,
+    EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
     
     // Before Phase 2
     
     // Before Phase 3
     
+    /** Handles northern and southern external ports. */
+    CONSTRAINED_EXTERNAL_PORT_PROCESSOR,
     /** Makes sure that layer constraints are taken care of. */
     LAYER_CONSTRAINT_PROCESSOR,
     /** Takes a layered graph and turns it into a properly layered graph. */
@@ -95,6 +97,9 @@ public enum IntermediateLayoutProcessor {
      */
     public ILayoutProcessor create() {
         switch (this) {
+        case CONSTRAINED_EXTERNAL_PORT_PROCESSOR:
+            return new ConstrainedExternalPortProcessor();
+            
         case EXTERNAL_PORT_ORTHOGONAL_EDGE_ROUTER:
             return new ExternalPortOrthogonalEdgeRouter();
             
@@ -107,8 +112,8 @@ public enum IntermediateLayoutProcessor {
         case LAYER_CONSTRAINT_PROCESSOR:
             return new LayerConstraintProcessor();
         
-        case LAYER_CONSTRAINT_EDGE_REVERSER:
-            return new LayerConstraintEdgeReverser();
+        case EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER:
+            return new EdgeAndLayerConstraintEdgeReverser();
             
         case LONG_EDGE_JOINER:
             return new LongEdgeJoiner();

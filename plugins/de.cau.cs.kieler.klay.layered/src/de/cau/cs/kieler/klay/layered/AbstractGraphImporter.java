@@ -121,6 +121,23 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
      * Creates a dummy for an external port. The dummy will have just one port. The port is on
      * the eastern side for western external ports, and on the western side for all other ports.
      * 
+     * <p>The returned dummy node is decorated with some properties. Its {@link Properties#NODE_TYPE}
+     * is set to {@link Properties.NodeType#EXTERNAL_PORT}. Its {@link Properties#ORIGIN} is set
+     * to the external port object. The {@link LayoutOptions#PORT_CONSTRAINTS} are set to
+     * {@link PortConstraints#FIXED_POS}. For western and eastern port dummies, the
+     * {@link Properties#LAYER_CONSTRAINT} is set to{@link Properties.LayerConstraint#FIRST_SEPARATE}
+     * and {@link Properties.LayerConstraint#LAST_SEPARATE}, respectively. For northern and southern
+     * port dummies, the {@link Properties#IN_LAYER_CONSTRAINT} is set to
+     * {@link Properties.InLayerConstraint#TOP} and {@link Properties.InLayerConstraint#BOTTOM},
+     * respectively. For eastern dummies, the {@link Properties#EDGE_CONSTRAINT} is set to
+     * {@link Properties.EdgeConstraint#OUTGOING_ONLY}; for all other dummies, it is set to
+     * {@link Properties.EdgeConstraint#INCOMING_ONLY}. {@link Properties#EXT_PORT_SIDE} is
+     * set to the side of the external port represented. If the port constraints of the original
+     * port's node are set to {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS},
+     * the dummy node's {@link Properties#EXT_PORT_RATIO_OR_POSITION} property is set to the port's
+     * original position, defined relative to the original node's origin. (as opposed to relative to
+     * the node's content area)</p>
+     * 
      * @param port the port object the dummy will represent.
      * @param portConstraints constraints for external ports.
      * @param portSide the side of the external port.
@@ -161,19 +178,23 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
         switch (finalPortSide) {
         case WEST:
             dummy.setProperty(Properties.LAYER_CONSTRAINT, Properties.LayerConstraint.FIRST_SEPARATE);
+            dummy.setProperty(Properties.EDGE_CONSTRAINT, Properties.EdgeConstraint.OUTGOING_ONLY);
             dummyPort.setSide(PortSide.EAST);
             break;
         
         case EAST:
             dummy.setProperty(Properties.LAYER_CONSTRAINT, Properties.LayerConstraint.LAST_SEPARATE);
+            dummy.setProperty(Properties.EDGE_CONSTRAINT, Properties.EdgeConstraint.INCOMING_ONLY);
             break;
         
         case NORTH:
             dummy.setProperty(Properties.IN_LAYER_CONSTRAINT, Properties.InLayerConstraint.TOP);
+            dummy.setProperty(Properties.EDGE_CONSTRAINT, Properties.EdgeConstraint.INCOMING_ONLY);
             break;
         
         case SOUTH:
             dummy.setProperty(Properties.IN_LAYER_CONSTRAINT, Properties.InLayerConstraint.BOTTOM);
+            dummy.setProperty(Properties.EDGE_CONSTRAINT, Properties.EdgeConstraint.INCOMING_ONLY);
             break;
         }
         
