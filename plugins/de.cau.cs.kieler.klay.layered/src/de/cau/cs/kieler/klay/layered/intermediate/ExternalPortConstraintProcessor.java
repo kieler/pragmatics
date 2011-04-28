@@ -50,10 +50,11 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
  * </dl>
  * 
+ * @see ExternalPortDummySizeProcessor
  * @see ExternalPortOrthogonalEdgeRouter
  * @author cds
  */
-public class ConstrainedExternalPortProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class ExternalPortConstraintProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
@@ -123,7 +124,8 @@ public class ConstrainedExternalPortProcessor extends AbstractAlgorithm implemen
             }
         }
         
-        // See if there are nodes that have to be added to a new last layer
+        // See if there are nodes that have to be added to a new last layer (this actually shouldn't
+        // happen, but as the old saying I just invented goes: when in doubt, opt for the safe side!)
         if (!nextLayerNodesToAdd.isEmpty()) {
             Layer newLastLayer = new Layer(layeredGraph);
             layeredGraph.getLayers().add(newLastLayer);

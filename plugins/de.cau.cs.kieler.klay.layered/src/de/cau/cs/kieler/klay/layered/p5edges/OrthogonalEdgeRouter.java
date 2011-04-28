@@ -80,11 +80,11 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 
                 // Before Phase 3
                 /* For non-free ports:
-                 *  - CONSTRAINED_EXTERNAL_PORT_PROCESSOR
                  *  - NORTH_SOUTH_PORT_PREPROCESSOR
                  *  - ODD_PORT_SIDE_PROCESSOR
                  * 
                  * For self-loops:
+                 *  - EXTERNAL_PORT_CONSTRAINT_PROCESSOR
                  *  - SELF_LOOP_PROCESSOR
                  */
                 null,
@@ -95,6 +95,9 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                         IntermediateLayoutProcessor.NODE_MARGIN_CALCULATOR),
                 
                 // Before Phase 5
+                /* For self-loops:
+                 *  - EXTERNAL_PORT_DUMMY_SIZE_PROCESSOR
+                 */
                 null,
                 
                 // After Phase 5
@@ -142,13 +145,13 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 null,
                 
                 // Before Phase 3
-                EnumSet.of(IntermediateLayoutProcessor.CONSTRAINED_EXTERNAL_PORT_PROCESSOR),
+                EnumSet.of(IntermediateLayoutProcessor.EXTERNAL_PORT_CONSTRAINT_PROCESSOR),
                 
                 // Before Phase 4
                 null,
                 
                 // Before Phase 5
-                null,
+                EnumSet.of(IntermediateLayoutProcessor.EXTERNAL_PORT_DUMMY_SIZE_PROCESSOR),
                 
                 // After Phase 5
                 EnumSet.of(IntermediateLayoutProcessor.EXTERNAL_PORT_ORTHOGONAL_EDGE_ROUTER));

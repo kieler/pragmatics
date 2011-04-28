@@ -38,7 +38,7 @@ public enum IntermediateLayoutProcessor {
     // Before Phase 3
     
     /** Handles northern and southern external ports. */
-    CONSTRAINED_EXTERNAL_PORT_PROCESSOR,
+    EXTERNAL_PORT_CONSTRAINT_PROCESSOR,
     /** Makes sure that layer constraints are taken care of. */
     LAYER_CONSTRAINT_PROCESSOR,
     /** Takes a layered graph and turns it into a properly layered graph. */
@@ -66,6 +66,9 @@ public enum IntermediateLayoutProcessor {
     NODE_MARGIN_CALCULATOR,
     
     // Before Phase 5
+    
+    /** Adjusts the width of external port dummy nodes. */
+    EXTERNAL_PORT_DUMMY_SIZE_PROCESSOR,
     
     // After Phase 5
     
@@ -97,8 +100,11 @@ public enum IntermediateLayoutProcessor {
      */
     public ILayoutProcessor create() {
         switch (this) {
-        case CONSTRAINED_EXTERNAL_PORT_PROCESSOR:
-            return new ConstrainedExternalPortProcessor();
+        case EXTERNAL_PORT_CONSTRAINT_PROCESSOR:
+            return new ExternalPortConstraintProcessor();
+        
+        case EXTERNAL_PORT_DUMMY_SIZE_PROCESSOR:
+            return new ExternalPortDummySizeProcessor();
             
         case EXTERNAL_PORT_ORTHOGONAL_EDGE_ROUTER:
             return new ExternalPortOrthogonalEdgeRouter();

@@ -30,7 +30,9 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *   <dt>Slots:</dt><dd>After phase 5.</dd>
  *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
  * </dl>
- *
+ * 
+ * @see ExternalPortConstraintProcessor
+ * @see ExternalPortDummySizeProcessor
  * @author cds
  */
 public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutProcessor {

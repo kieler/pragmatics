@@ -32,7 +32,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *   <dt>Postcondition:</dt><dd>nodes with layer constraints have been placed in the
  *     appropriate layers.</dd>
  *   <dt>Slots:</dt><dd>Before phase 3.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link ConstrainedExternalPortProcessor}</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link ExternalPortConstraintProcessor}</dd>
  * </dl>
  * 
  * @see EdgeAndLayerConstraintEdgeReverser
