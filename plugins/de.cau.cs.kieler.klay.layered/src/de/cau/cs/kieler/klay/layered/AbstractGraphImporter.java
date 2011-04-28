@@ -141,17 +141,16 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
      * @param port the port object the dummy will represent.
      * @param portConstraints constraints for external ports.
      * @param portSide the side of the external port.
-     * @param incomingEdges number of edges coming into the external port from within the node.
-     * @param outgoingEdges number of edges going out of the external port to targets within the node.
-     * @param portNodeSize The size of the node the port belongs to. Only relevant if the port
+     * @param netFlow the number of incoming minus the number of outgoing edges.
+     * @param portNodeSize the size of the node the port belongs to. Only relevant if the port
      *                     constraints are {@code FIXED_RATIO}.
      * @param portPosition the current port position. Only relevant if the port constraints are
      *                     {@code FIXED_ORDER}, {@code FIXED_RATIO} or {@code FIXED_POSITION}.
      * @return a dummy node representing the external port.
      */
     protected LNode createExternalPortDummy(final Object port, final PortConstraints portConstraints,
-            final PortSide portSide, final int incomingEdges, final int outgoingEdges,
-            final KVector portNodeSize, final KVector portPosition) {
+            final PortSide portSide, final int netFlow, final KVector portNodeSize,
+            final KVector portPosition) {
         
         PortSide finalPortSide = portSide;
         
@@ -167,7 +166,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
         
         // If the port constraints are free, we need to determine where to put the dummy (and its port)
         if (portConstraints == PortConstraints.FREE || portConstraints == PortConstraints.UNDEFINED) {
-            if (incomingEdges > outgoingEdges) {
+            if (netFlow > 0) {
                 finalPortSide = PortSide.EAST;
             } else {
                 finalPortSide = PortSide.WEST;

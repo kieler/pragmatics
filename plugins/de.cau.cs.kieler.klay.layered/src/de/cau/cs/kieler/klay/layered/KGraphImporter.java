@@ -89,7 +89,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // keep a list of created nodes in the layered graph, as well as a map between KGraph
         // nodes / ports and LGraph nodes / ports
-        List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
         Map<KGraphElement, LGraphElement> elemMap = new HashMap<KGraphElement, LGraphElement>();
         
         // the graph properties discovered during the transformations
@@ -97,7 +96,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             EnumSet.noneOf(Properties.GraphProperties.class);
         
         // transform everything
-        transformNodesAndPorts(source, layeredNodes, elemMap, graphProperties);
+        transformNodesAndPorts(source, layeredGraph, elemMap, graphProperties);
         transformEdges(source, elemMap, graphProperties);
         
         // set the graph properties property
@@ -109,14 +108,16 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      * Transforms the nodes and ports defined by the given layout node.
      * 
      * @param layoutNode the layout node whose edges to transform.
-     * @param layeredNodes list of nodes created.
+     * @param layeredGraph the layered graph.
      * @param elemMap the element map that maps the original {@code KGraph} elements to the
      *                transformed {@code LGraph} elements.
      * @param graphProperties graph properties updated during the transformation.
      */
-    private void transformNodesAndPorts(final KNode layoutNode, final List<LNode> layeredNodes,
+    private void transformNodesAndPorts(final KNode layoutNode, final LayeredGraph layeredGraph,
             final Map<KGraphElement, LGraphElement> elemMap,
             final EnumSet<Properties.GraphProperties> graphProperties) {
+        
+        List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
         
         KShapeLayout layoutNodeLayout = layoutNode.getData(KShapeLayout.class);
         KVector layoutNodeSize = new KVector(layoutNodeLayout.getWidth(), layoutNodeLayout.getHeight());
@@ -151,8 +152,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             LNode dummy = createExternalPortDummy(kport,
                     kportLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS),
                     KimlUtil.calcPortSide(kport),
-                    inEdges,
-                    outEdges,
+                    inEdges - outEdges,
                     layoutNodeSize,
                     kportPosition);
             layeredNodes.add(dummy);
