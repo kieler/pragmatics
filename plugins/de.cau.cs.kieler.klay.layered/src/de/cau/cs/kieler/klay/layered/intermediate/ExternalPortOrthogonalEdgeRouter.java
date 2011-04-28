@@ -24,9 +24,9 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *   <dt>Precondition:</dt><dd>A layered graph, with edge routing finished for edges not incident
  *     to external ports; long edge dummies are not yet joined.</dd>
  *   <dt>Postcondition:</dt><dd>All external port dummy nodes left map onto an actual external port;
- *    the coordinates of external port dummy nodes specify the coordinates of their respective
- *    external port; all external port dummy nodes have a size of (0, 0); edges connected to
- *    external ports have their bend points set.</dd>
+ *     the coordinates of external port dummy nodes specify the coordinates of their respective
+ *     external port; all external port dummy nodes have a size of (0, 0); edges connected to
+ *     external ports have their bend points set.</dd>
  *   <dt>Slots:</dt><dd>After phase 5.</dd>
  *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
  * </dl>
