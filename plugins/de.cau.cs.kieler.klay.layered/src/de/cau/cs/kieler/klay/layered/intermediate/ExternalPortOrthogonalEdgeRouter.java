@@ -20,6 +20,15 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 /**
  * TODO: Document.
  * 
+ * <p><i>Note:</i> Some of this code may seem similar to the code seen in
+ * {@link de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter}. That's because it
+ * is indeed similar. The concept of hyper nodes is used there as well, for instance. If
+ * that is the case, why not integrate external port handling into the edge router? Well,
+ * for one, the edge router is complex enough as it is. Furthermore, by factoring external
+ * port edge routing out of the edge router, edge routers are freed from having to implement
+ * this functionality and can simply reuse one of the appropriate processors to do the work
+ * for them.
+ * 
  * <dl>
  *   <dt>Precondition:</dt><dd>A layered graph, with edge routing finished for edges not incident
  *     to external ports; long edge dummies are not yet joined.</dd>
@@ -36,39 +45,32 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * @author cds
  */
 public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutProcessor {
-
+    
     /**
      * {@inheritDoc}
      */
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Orthogonally routing external port edges", 1);
         
-        // TODO: Implement.
-        
-        /* This processor works in four steps.
+        /* This processor splits its work into multiple steps:
          * 
          * Step 1
-         * If port constraints are FIXED_ORDER or more, northern and southern external ports may
-         * be represented by multiple dummies each. These dummies are converted to long edge
-         * dummies, and the original external port dummy nodes are reinserted into the graph.
-         * They are just appended to the fifth layer.
+         * Restore any north / south port dummies removed by the ExternalPortConstraintProcessor
+         * and connect them to the dummies created in their stead. Assign them an x coordinate
+         * (which may be temporary if the port constraints are < FIXED_RATIO). Remove the dummies
+         * created in their stead and reroute their incident edges.
          * 
          * Step 2
-         * The hyperedges for all external port dummies are calculated. The hyperedges to not yet
-         * include the external port dummies themselves. For western and eastern dummy nodes, this
-         * will just be a single line. 
+         * Calculate hyper edges for northern and southern external ports. Connect the external
+         * port dummies last, assigning them an x coordinate beforehand if necessary.
          * 
          * Step 3
-         * The exact positions of the dummies is calculated, if necessary.
-         * 
-         * Step 4
-         * Bend points for all edges are set.
+         * Set bend points.
          */
         
-        
-        
+        // TODO: Implement.
         
         getMonitor().done();
     }
-
+    
 }
