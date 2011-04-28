@@ -60,7 +60,7 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
      * {@inheritDoc}
      */
     public void process(final LayeredGraph layeredGraph) {
-        getMonitor().begin("Constrained external port processing", 1);
+        getMonitor().begin("External port constraint processing", 1);
         
         // If the port constraints are not at least FIXED_ORDER, there's nothing to do
         if (layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
