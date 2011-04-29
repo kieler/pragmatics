@@ -315,11 +315,10 @@
          </dependency>
       </provider>
       <provider
-            category="de.cau.cs.kieler.kiml.evol.metricCategory"
-            class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric"
+            class="de.cau.cs.kieler.kiml.evol.metrics.StandaloneUpwardnessMetric"
             description="Measures the fraction of upward edges."
-            id="de.cau.cs.kieler.kiml.evol.upwardnessMetric"
-            name="Upwardness Metric">
+            id="de.cau.cs.kieler.kiml.evol.standaloneUpwardnessMetric"
+            name="Standalone Upwardness Metric">
       </provider>
       <provider
             class="de.cau.cs.kieler.kiml.evol.metrics.WeightedAggregation"
@@ -350,6 +349,19 @@
             name="Edge Uniformity Metric">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeLength">
+         </dependency>
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
+            class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric"
+            description="Measures the fraction of upward edges."
+            id="de.cau.cs.kieler.kiml.evol.upwardnessMetric"
+            name="Upwardness Metric">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeDirections">
          </dependency>
       </provider>
    </extension>

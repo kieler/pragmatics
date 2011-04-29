@@ -16,29 +16,29 @@
  */
 package de.cau.cs.kieler.kiml.evol.metrics;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-
-import org.eclipse.emf.common.util.EList;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+
 
 /**
- * Experimental upwardness metric. Measures the fraction of upward edges. A more
- * sophisticated, fuzzy metric would take angles into account, so that for
- * example an edge that is pointing diagonally upward would be counted as a
- * "50% upward" edge.
- *
  * @author bdu
  *
  */
 public class UpwardnessMetric implements IAnalysis {
+
+    /**
+     * Identifier for "edge count analysis".
+     */
+    private static final String GRANA_EDGE_COUNT = "de.cau.cs.kieler.kiml.grana.edgeCount";
+
+    /**
+     * Identifier for "edge direction analysis".
+     */
+    private static final String GRANA_EDGE_DIRECTION_COUNT =
+            "de.cau.cs.kieler.kiml.grana.edgeDirections";
 
     /**
      * {@inheritDoc}
@@ -52,36 +52,16 @@ public class UpwardnessMetric implements IAnalysis {
         Float result;
 
         try {
-            Queue<KNode> nodes = new LinkedList<KNode>();
-            List<KEdge> totalEdges = new LinkedList<KEdge>();
-            List<KEdge> upwardEdges = new LinkedList<KEdge>();
+            // load numbers from analyses
+            Object edgesResult = results.get(GRANA_EDGE_COUNT);
+            Object[] edgeDirectionResult = (Object[]) results.get(GRANA_EDGE_DIRECTION_COUNT);
 
-            nodes.add(parentNode);
-            while (!nodes.isEmpty()) {
-                KNode current = nodes.remove();
+            int totalEdgesCount = (Integer) edgesResult;
 
-                EList<KEdge> edges = current.getOutgoingEdges();
+            // edgeDirectionResult: TOP (0), LEFT (1), BOTTOM (2), RIGHT (3)
+            int upwardEdgesCount = (Integer) edgeDirectionResult[0];
 
-                KShapeLayout currentLayout = current.getData(KShapeLayout.class);
-                float currentYpos = currentLayout.getYpos();
-
-                for (final KEdge edge : edges) {
-                    totalEdges.add(edge);
-                    KNode target = edge.getTarget();
-
-                    KShapeLayout targetLayout = target.getData(KShapeLayout.class);
-                    float targetYpos = targetLayout.getYpos();
-
-                    if (targetYpos < currentYpos) {
-                        // this is an upward edge
-                        upwardEdges.add(edge);
-                    }
-                }
-
-                nodes.addAll(current.getChildren());
-            }
-
-            result = (float) upwardEdges.size() / totalEdges.size();
+            result = (float) upwardEdgesCount / totalEdgesCount;
 
         } finally {
             // We must close the monitor.
@@ -90,4 +70,5 @@ public class UpwardnessMetric implements IAnalysis {
 
         return result;
     }
+
 }
