@@ -81,8 +81,8 @@ import de.cau.cs.kieler.kex.ui.util.ImageConverter;
  */
 public class ImportExamplePage extends WizardPage {
 
-    private static final int IMAGE_PRE_WIDTH = 440;
-    private static final int IMAGE_PRE_HEIGHT = 248;
+    private static final int IMAGE_PRE_WIDTH = 426;
+    private static final int IMAGE_PRE_HEIGHT = 238;
 
     private static final int DESC_HEIGHT_HINT = 200;
     private static final int DESC_MIN_HEIGHT = 160;
