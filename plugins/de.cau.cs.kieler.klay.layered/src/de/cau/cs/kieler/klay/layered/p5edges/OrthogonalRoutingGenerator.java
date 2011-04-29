@@ -33,7 +33,6 @@ import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
@@ -48,9 +47,15 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *     hyperedge segment graph)
  * </ul>
  * 
- * <p>This is a generic implementation that can be applied to all four directions. When
- * instantiating a new routing generator, the concrete directional strategy must be
- * specified. Once that is done, {@link #routeEdges(LayeredGraph, Layer, Layer, double, boolean)}
+ * <p>This is a generic implementation that can be applied to all four routing directions.
+ * Usually, edges will be routed from west to east. However, with northern and southern
+ * external ports, this changes: edges are routed from south to north and north to south,
+ * respectively. To support these different requirements, the routing direction-related
+ * code is factored out into {@link IRoutingDirectionStrategy routing strategies}.</p>
+ * 
+ * 
+ * <p>When instantiating a new routing generator, the concrete directional strategy must be
+ * specified. Once that is done, {@link #routeEdges(LayeredGraph, List, int, List, double)}
  * is called repeatedly to route edges between given lists of nodes.</p>
  * 
  * @author msp
@@ -58,14 +63,231 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  */
 public class OrthogonalRoutingGenerator {
     
+    ///////////////////////////////////////////////////////////////////////////////
+    // Routing Strategies
+    
+    /**
+     * A routing direction strategy adapts the {@link OrthogonalRoutingGenerator} to different
+     * routing directions. Usually, but not always, edges will be routes from west to east.
+     * However, with northern and southern external ports, this changes. Routing strategies
+     * support that.
+     * 
+     * @author cds
+     */
+    public interface IRoutingDirectionStrategy {
+        /**
+         * Returns the port's position on a hyper edge axis. In the west-to-east routing
+         * case, this would be the port's exact y coordinate.
+         * 
+         * @param port the port.
+         * @return the port's coordinate on the hyper edge axis.
+         */
+        double getPortPositionOnHyperNode(final LPort port);
+        
+        /**
+         * Returns the side of ports that should be considered on a source layer. For a
+         * west-to-east routing, this would probably be the eastern ports of each western
+         * layer.
+         * 
+         * @return the side of ports to be considered in the source layer.
+         */
+        PortSide getSourcePortSide();
+        
+        /**
+         * Returns the side of ports that should be considered on a target layer. For a
+         * west-to-east routing, this would probably be the western ports of each eastern
+         * layer.
+         * 
+         * @return the side of ports to be considered in the target layer.
+         */
+        PortSide getTargetPortSide();
+        
+        /**
+         * Calculates and assigns bend points for edges incident to the ports belonging
+         * to the given hyper edge.
+         * 
+         * @param hyperNode the hyper edge.
+         * @param startPos the position of the trunk of the first hyper edge between the
+         *                 layers. This position, together with the current hyper node's
+         *                 rank allows the calculation of the hyper node's trunk's position.
+         * @param edgeSpacing the space between two edges.
+         */
+        void calculateBendPoints(final HyperNode hyperNode, final double startPos,
+                final double edgeSpacing);
+    }
+    
+    /**
+     * Routing strategy for routing layers from west to east.
+     * 
+     * @author cds
+     */
+    public static class WestToEastRoutingStrategy implements IRoutingDirectionStrategy {
+
+        /**
+         * {@inheritDoc}
+         */
+        public double getPortPositionOnHyperNode(final LPort port) {
+            return port.getNode().getPosition().y + port.getPosition().y;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public PortSide getSourcePortSide() {
+            return PortSide.EAST;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public PortSide getTargetPortSide() {
+            return PortSide.WEST;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public void calculateBendPoints(final HyperNode hyperNode, final double startPos,
+                final double edgeSpacing) {
+            
+            // Calculate coordinates for each port's bend points
+            double x = startPos + hyperNode.rank * edgeSpacing;
+            
+            for (LPort port : hyperNode.ports) {
+                double sourcey = port.getNode().getPosition().y + port.getPosition().y;
+                
+                for (LEdge edge : port.getOutgoingEdges()) {
+                    double targety = edge.getTarget().getNode().getPosition().y
+                            + edge.getTarget().getPosition().y;
+                    if (Math.abs(sourcey - targety) > edgeSpacing / STRAIGHT_TOLERANCE) {
+                        KVector point1 = new KVector(x, sourcey);
+                        edge.getBendPoints().add(point1);
+                        KVector point2 = new KVector(x, targety);
+                        edge.getBendPoints().add(point2);
+                    }
+                }
+            }
+        }
+        
+    }
+    
+    /**
+     * Routing strategy for routing layers from north to south.
+     * 
+     * @author cds
+     */
+    public static class NorthToSouthRoutingStrategy implements IRoutingDirectionStrategy {
+
+        /**
+         * {@inheritDoc}
+         */
+        public double getPortPositionOnHyperNode(final LPort port) {
+            return port.getNode().getPosition().x + port.getPosition().x;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public PortSide getSourcePortSide() {
+            return PortSide.SOUTH;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public PortSide getTargetPortSide() {
+            return PortSide.NORTH;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public void calculateBendPoints(final HyperNode hyperNode, final double startPos,
+                final double edgeSpacing) {
+            
+            // Calculate coordinates for each port's bend points
+            double y = startPos + hyperNode.rank * edgeSpacing;
+            
+            for (LPort port : hyperNode.ports) {
+                double sourcex = port.getNode().getPosition().x + port.getPosition().x;
+                
+                for (LEdge edge : port.getOutgoingEdges()) {
+                    double targetx = edge.getTarget().getNode().getPosition().x
+                            + edge.getTarget().getPosition().x;
+                    if (Math.abs(sourcex - targetx) > edgeSpacing / STRAIGHT_TOLERANCE) {
+                        KVector point1 = new KVector(sourcex, y);
+                        edge.getBendPoints().add(point1);
+                        KVector point2 = new KVector(targetx, y);
+                        edge.getBendPoints().add(point2);
+                    }
+                }
+            }
+        }
+        
+    }
+    
+    /**
+     * Routing strategy for routing layers from south to north.
+     * 
+     * @author cds
+     */
+    public static class SouthToNorthRoutingStrategy implements IRoutingDirectionStrategy {
+
+        /**
+         * {@inheritDoc}
+         */
+        public double getPortPositionOnHyperNode(final LPort port) {
+            return port.getNode().getPosition().x + port.getPosition().x;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public PortSide getSourcePortSide() {
+            return PortSide.NORTH;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public PortSide getTargetPortSide() {
+            return PortSide.SOUTH;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public void calculateBendPoints(final HyperNode hyperNode, final double startPos,
+                final double edgeSpacing) {
+            
+            // Calculate coordinates for each port's bend points
+            double y = startPos - hyperNode.rank * edgeSpacing;
+            
+            for (LPort port : hyperNode.ports) {
+                double sourcex = port.getNode().getPosition().x + port.getPosition().x;
+                
+                for (LEdge edge : port.getOutgoingEdges()) {
+                    double targetx = edge.getTarget().getNode().getPosition().x
+                            + edge.getTarget().getPosition().x;
+                    if (Math.abs(sourcex - targetx) > edgeSpacing / STRAIGHT_TOLERANCE) {
+                        KVector point1 = new KVector(sourcex, y);
+                        edge.getBendPoints().add(point1);
+                        KVector point2 = new KVector(targetx, y);
+                        edge.getBendPoints().add(point2);
+                    }
+                }
+            }
+        }
+        
+    }
     
     ///////////////////////////////////////////////////////////////////////////////
-    // Graph Transformation
+    // Hyper Node Graph Structures
 
     /**
      * A hypernode used for routing a hyperedge.
      */
-    private static class HyperNode implements Comparable<HyperNode> {
+    private class HyperNode implements Comparable<HyperNode> {
         /** ports represented by this hypernode. */
         private List<LPort> ports = new LinkedList<LPort>();
         /** mark value used for cycle breaking. */
@@ -98,7 +320,7 @@ public class OrthogonalRoutingGenerator {
         void addPortPosis(final LPort port, final Map<LPort, HyperNode> hyperNodeMap) {
             hyperNodeMap.put(port, this);
             ports.add(port);
-            double pos = port.getNode().getPosition().y + port.getPosition().y;
+            double pos = routingStrategy.getPortPositionOnHyperNode(port);
             
             // set new start position
             if (Double.isNaN(start)) {
@@ -115,10 +337,10 @@ public class OrthogonalRoutingGenerator {
             }
             
             // add the new port position to the respective list
-            if (port.getSide() == PortSide.WEST) {
-                insertSorted(targetPosis, pos);
-            } else {
+            if (port.getSide() == routingStrategy.getSourcePortSide()) {
                 insertSorted(sourcePosis, pos);
+            } else {
+                insertSorted(targetPosis, pos);
             }
             
             // add connected ports
@@ -179,6 +401,7 @@ public class OrthogonalRoutingGenerator {
          */
         private Dependency(final HyperNode thesource, final HyperNode thetarget,
                 final int theweight) {
+            
             this.target = thetarget;
             this.source = thesource;
             this.weight = theweight;
@@ -195,6 +418,10 @@ public class OrthogonalRoutingGenerator {
         }
     }
     
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Constants and Variables
+    
     /** factor for edge spacing used to determine the conflict threshold. */
     private static final double CONFL_THRESH_FACTOR = 0.2;
     /** denominator for edge spacing to determine when an edge shall be drawn without bends. */
@@ -202,46 +429,63 @@ public class OrthogonalRoutingGenerator {
     /** weight penalty for conflicts of horizontal line segments. */
     private static final int CONFLICT_PENALTY = 16;
     
+    /** routing direction strategy. */
+    private IRoutingDirectionStrategy routingStrategy = null;
     /** spacing between edges. */
     private double edgeSpacing;
     /** threshold at which conflicts of horizontal line segments are detected. */
     private double conflictThreshold;
     
-    private boolean debug = false;
+    private String debugPrefix = null;
     
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Constructor
     
     /**
      * Constructs a new instance.
      * 
+     * @param routingStrategy the routing strategy to use. This will usually be one of the strategies
+     *                        defined by this class.
      * @param edgeSpacing the space between edges.
-     * @param debug {@code true} if debug output should be written.
+     * @param debugPrefix prefix of debug output files, or {@code null} if no debug output should
+     *                    be generated.
      */
-    public OrthogonalRoutingGenerator(final double edgeSpacing, final boolean debug) {
+    public OrthogonalRoutingGenerator(final IRoutingDirectionStrategy routingStrategy,
+            final double edgeSpacing, final String debugPrefix) {
+        
+        this.routingStrategy = routingStrategy;
         this.edgeSpacing = edgeSpacing;
-        conflictThreshold = CONFL_THRESH_FACTOR * edgeSpacing;
-        this.debug = debug;
+        this.conflictThreshold = CONFL_THRESH_FACTOR * edgeSpacing;
+        this.debugPrefix = debugPrefix;
     }
+
     
+    ///////////////////////////////////////////////////////////////////////////////
+    // Edge Routing
     
     /**
      * Route edges between the given layers.
      * 
      * @param layeredGraph the layered graph.
-     * @param leftLayer the left layer. May be {@code null}.
-     * @param rightLayer the right layer. May be {@code null}.
+     * @param sourceLayerNodes the left layer. May be {@code null}.
+     * @param sourceLayerIndex the source layer's index. Ignored if there is no source layer.
+     * @param targetLayerNodes the right layer. May be {@code null}.
      * @param startPos horizontal position of the first routing slot
      * @return the number of routing slots for this layer
      */
-    public int routeEdges(final LayeredGraph layeredGraph, final Layer leftLayer,
-            final Layer rightLayer, final double startPos) {
+    public int routeEdges(final LayeredGraph layeredGraph, final List<LNode> sourceLayerNodes,
+            final int sourceLayerIndex, final List<LNode> targetLayerNodes, final double startPos) {
         
         Map<LPort, HyperNode> portToHyperNodeMap = new HashMap<LPort, HyperNode>();
         List<HyperNode> hyperNodes = new LinkedList<HyperNode>();
         
         // create hypernodes for eastern output ports of the left layer and for western
         // output ports of the right layer
-        createHyperNodes(leftLayer, PortSide.EAST, hyperNodes, portToHyperNodeMap);
-        createHyperNodes(rightLayer, PortSide.WEST, hyperNodes, portToHyperNodeMap);
+        createHyperNodes(
+                sourceLayerNodes, routingStrategy.getSourcePortSide(), hyperNodes, portToHyperNodeMap);
+        createHyperNodes(
+                targetLayerNodes, routingStrategy.getTargetPortSide(), hyperNodes, portToHyperNodeMap);
         
         // create dependencies for the hypernode ordering graph
         ListIterator<HyperNode> iter1 = hyperNodes.listIterator();
@@ -255,16 +499,18 @@ public class OrthogonalRoutingGenerator {
         }
         
         // write the full dependency graph to an output file
-        if (debug) {
-            writeDebugGraph(layeredGraph, leftLayer, hyperNodes, "full");
+        if (debugPrefix != null) {
+            writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0 : sourceLayerIndex + 1,
+                    hyperNodes, "full");
         }
         
         // break cycles
         breakCycles(hyperNodes);
 
         // write the acyclic dependency graph to an output file
-        if (debug) {
-            writeDebugGraph(layeredGraph, leftLayer, hyperNodes, "acyc");
+        if (debugPrefix != null) {
+            writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0 : sourceLayerIndex + 1,
+                    hyperNodes, "full");
         }
         
         // assign ranks to the hypernodes
@@ -281,40 +527,30 @@ public class OrthogonalRoutingGenerator {
             
             rankCount = Math.max(rankCount, node.rank);
             
-            // Calculate coordinates for each port's bend points
-            double x = startPos + node.rank * edgeSpacing;
-            for (LPort port : node.ports) {
-                double sourcey = port.getNode().getPosition().y + port.getPosition().y;
-                
-                for (LEdge edge : port.getOutgoingEdges()) {
-                    double targety = edge.getTarget().getNode().getPosition().y
-                            + edge.getTarget().getPosition().y;
-                    if (Math.abs(sourcey - targety) > edgeSpacing / STRAIGHT_TOLERANCE) {
-                        KVector point1 = new KVector(x, sourcey);
-                        edge.getBendPoints().add(point1);
-                        KVector point2 = new KVector(x, targety);
-                        edge.getBendPoints().add(point2);
-                    }
-                }
-            }
+            routingStrategy.calculateBendPoints(node, startPos, edgeSpacing);
         }
+        
         return rankCount + 1;
     }
-
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Hyper Node Graph Creation
+    
     /**
      * Creates hypernodes for the given layer.
      * 
-     * @param layer the layer. May be {@code null}, in which case nothing happens.
+     * @param nodes the layer. May be {@code null}, in which case nothing happens.
      * @param portSide side of the output ports for whose outgoing edges hypernodes should
      *                 be created.
      * @param hyperNodes list the created hypernodes should be added to.
      * @param portToHyperNodeMap map from ports to hypernodes that should be filled.
      */
-    private void createHyperNodes(final Layer layer, final PortSide portSide,
+    private void createHyperNodes(final List<LNode> nodes, final PortSide portSide,
             final List<HyperNode> hyperNodes, final Map<LPort, HyperNode> portToHyperNodeMap) {
         
-        if (layer != null) {
-            for (LNode node : layer.getNodes()) {
+        if (nodes != null) {
+            for (LNode node : nodes) {
                 for (LPort port : node.getPorts(PortType.OUTPUT, portSide)) {
                     HyperNode hyperNode = portToHyperNodeMap.get(port);
                     if (hyperNode == null) {
@@ -426,6 +662,10 @@ public class OrthogonalRoutingGenerator {
         }
         return crossings;
     }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Cycle Breaking
     
     /**
      * Breaks all cycles in the given hypernode structure by reversing or removing
@@ -561,6 +801,10 @@ public class OrthogonalRoutingGenerator {
         }
     }
     
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Topological Ordering
+    
     /**
      * Perform a topological numbering of the given hypernodes.
      * 
@@ -637,6 +881,10 @@ public class OrthogonalRoutingGenerator {
         }
     }
     
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Utilities
+    
     /**
      * Inserts a given value into a sorted list.
      * 
@@ -657,19 +905,23 @@ public class OrthogonalRoutingGenerator {
         listIter.add(Double.valueOf(value));
     }
     
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Debugging
+    
     /**
      * Writes a debug graph for the given list of hypernodes.
      * 
      * @param layeredGraph the layered graph
-     * @param layer the currently processed layer
+     * @param layerIndex the currently processed layer's index
      * @param hypernodes a list of hypernodes
      * @param label a label to append to the output files
      */
-    private static void writeDebugGraph(final LayeredGraph layeredGraph, final Layer layer,
+    private void writeDebugGraph(final LayeredGraph layeredGraph, final int layerIndex,
             final List<HyperNode> hypernodes, final String label) {
         
         try {
-            Writer writer = createWriter(layeredGraph, layer, label);
+            Writer writer = createWriter(layeredGraph, layerIndex, label);
             writer.write("digraph {\n");
             
             // Write hypernode information
@@ -697,20 +949,19 @@ public class OrthogonalRoutingGenerator {
      * Create a writer for debug output.
      * 
      * @param layeredGraph the layered graph
-     * @param layer the currently processed layer
+     * @param layerIndex the currently processed layer's index
      * @param label a label to append to the output files
      * @return a file writer for debug output
      * @throws IOException if creating the output file fails
      */
-    private static Writer createWriter(final LayeredGraph layeredGraph, final Layer layer,
+    private Writer createWriter(final LayeredGraph layeredGraph, final int layerIndex,
             final String label) throws IOException {
         
         String path = Util.getDebugOutputPath();
         new File(path).mkdirs();
         
-        int layerIndex = (layer == null) ? 0 : layer.getIndex() + 1;
         String debugFileName = Util.getDebugOutputFileBaseName(layeredGraph)
-                + "l" + layerIndex + "-" + label;
+                + debugPrefix + "-l" + layerIndex + "-" + label;
         return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }
 

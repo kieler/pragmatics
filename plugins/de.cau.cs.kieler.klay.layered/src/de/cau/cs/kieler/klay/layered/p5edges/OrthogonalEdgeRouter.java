@@ -14,13 +14,15 @@
 package de.cau.cs.kieler.klay.layered.p5edges;
 
 import java.util.EnumSet;
-import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Properties;
+import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
@@ -186,11 +188,17 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         boolean debug = layeredGraph.getProperty(LayoutOptions.DEBUG_MODE);
         
         // Prepare for iteration!
-        OrthogonalRoutingGenerator routingGenerator = new OrthogonalRoutingGenerator(edgeSpacing, debug);
+        OrthogonalRoutingGenerator routingGenerator = new OrthogonalRoutingGenerator(
+                new OrthogonalRoutingGenerator.WestToEastRoutingStrategy(), edgeSpacing,
+                debug ? "phase5" : null);
         float xpos = 0.0f;
-        Iterator<Layer> layerIter = layeredGraph.getLayers().iterator();
+        ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         Layer leftLayer = null;
         Layer rightLayer = null;
+        List<LNode> leftLayerNodes = null;
+        List<LNode> rightLayerNodes = null;
+        int leftLayerIndex = -1;
+        int rightLayerIndex = -1;
         
         // Iterate!
         do {
@@ -198,6 +206,8 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
             
             // Fetch the next layer, if any
             rightLayer = layerIter.hasNext() ? layerIter.next() : null;
+            rightLayerNodes = rightLayer == null ? null : rightLayer.getNodes();
+            rightLayerIndex = layerIter.previousIndex();
             
             // Place the left layer's nodes, if any
             if (leftLayer != null) {
@@ -206,15 +216,19 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
             }
             
             // Route edges between the two layers
-            slotsCount = routingGenerator.routeEdges(layeredGraph, leftLayer, rightLayer, xpos);
+            slotsCount = routingGenerator.routeEdges(layeredGraph, leftLayerNodes, leftLayerIndex,
+                    rightLayerNodes, xpos);
             if (slotsCount > 0) {
                 xpos += slotsCount * edgeSpacing - edgeSpacing + nodeSpacing;
             }
             
             leftLayer = rightLayer;
+            leftLayerNodes = rightLayerNodes;
+            leftLayerIndex = rightLayerIndex;
         } while (rightLayer != null);
         
         layeredGraph.getSize().x = xpos;
+        
         getMonitor().done();
     }
     
