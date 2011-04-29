@@ -159,8 +159,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
 
         // Memorize important options.
         // The ALGORITHM option is needed to find out if the new one is compatible.
-        IProperty<?>[] importantOptions =
-                new IProperty<?>[] { LayoutOptions.ALGORITHM };
+        IProperty<?>[] importantOptions = new IProperty<?>[] { LayoutOptions.ALGORITHM };
         ILayoutConfig oldValues = new VolatileLayoutConfig();
         for (IProperty<?> property : importantOptions) {
             oldValues.setProperty(property, shapeLayout.getProperty(property));
@@ -188,7 +187,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
 
             // Treat layout hint.
             if (LayoutOptions.ALGORITHM_ID.equalsIgnoreCase((String) id)) {
-                handleLayouterHint(gene, shapeLayout);
+                handleAlgorithm(gene, shapeLayout);
                 continue;
             }
 
@@ -234,7 +233,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
      * @param targetGraphData
      *            the graph data for which the layout algorithm shall be set
      */
-    private static void handleLayouterHint(final IGene<?> gene, final KGraphData targetGraphData) {
+    private static void handleAlgorithm(final IGene<?> gene, final KGraphData targetGraphData) {
 
         // Cannot use the int value of the gene because it
         // is the index for the internal list in the gene.
@@ -258,9 +257,9 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
 
         String newLayoutHintId = gene.toString();
 
-        IProperty<String> data = LayoutOptions.ALGORITHM;
+        IProperty<String> property = LayoutOptions.ALGORITHM;
 
-        String oldLayoutHintId = targetGraphData.getProperty(data);
+        String oldLayoutHintId = targetGraphData.getProperty(property);
         if (oldLayoutHintId == null) {
             System.err.println("Layout hint was null");
         }
@@ -278,7 +277,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
             return;
         }
 
-        targetGraphData.setProperty(data, newLayoutHintId);
+        targetGraphData.setProperty(property, newLayoutHintId);
     }
 
     /**
@@ -299,7 +298,6 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
 
         // a normal string option
         targetGraphData.setProperty(data, value.toString());
-
     }
 
     /**

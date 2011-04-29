@@ -103,10 +103,11 @@ public final class EnumGene extends AbstractGene<Integer> {
     }
 
     // private fields
+    /** The cashed hash value. */
     private Integer cachedHash;
-
+    
     /**
-     * A formatter for
+     * A formatter for Enum valued genes.
      */
     private static final IValueFormatter ENUM_FORMATTER = new IValueFormatter() {
         /**

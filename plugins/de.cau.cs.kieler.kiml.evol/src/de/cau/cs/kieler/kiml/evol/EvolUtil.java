@@ -99,13 +99,14 @@ public final class EvolUtil {
             // TODO: layout might fail
             KNode layoutResult =
                     engine.calculateLayout(individual, (DiagramEditor) editor, monitor, false /* shouldCopyGraph */);
+            // we could do something with the layout result ...
 
             DiagramLayoutManager manager = engine.getManager();
 
             assert manager != null : "Could not get a layout manager for " + editor.getTitle();
 
             int nodeCount = 0;
-            manager.applyAndZoom(nodeCount, true /* animate */, false /* cacheLayout */);
+            manager.applyAndZoom(nodeCount, false /* animate */, false /* cacheLayout */);
 
             return manager;
         }
@@ -175,11 +176,12 @@ public final class EvolUtil {
                 assert expectedLayoutTypeId.equalsIgnoreCase(layoutTypeId) || useDifferentType;
 
                 DiagramLayoutManager manager = adoptAndApplyLayout(individual, editor);
+                // so now we have a manager ...
             }
         }
 
         /**
-         * Tries to find a layout algorithm for the given editor.
+         * Tries to find a generic layout algorithm for the given editor.
          *
          * @param editor
          *            an editor
@@ -187,6 +189,7 @@ public final class EvolUtil {
          */
         private static LayoutAlgorithmData getLayoutAlgorithmData(final IEditorPart editor) {
             EditPart editPart = getCurrentEditPart(editor);
+            // TODO use root edit part
 
             // See which layout algorithm suits for the editor.
             LayoutAlgorithmData data = EvolUtil.getLayoutAlgorithmData(editor, editPart);
@@ -208,7 +211,9 @@ public final class EvolUtil {
          * Creates a new {@link IndividualApplierRunnable} instance.
          *
          * @param theIndividual
+         *            the individual to be applied
          * @param theLayoutAlgorithmId
+         *            ID of expected algorithm
          */
         IndividualApplierRunnable(final Genome theIndividual, final String theLayoutAlgorithmId) {
             this.layoutAlgorithmId = theLayoutAlgorithmId;
@@ -1152,6 +1157,7 @@ public final class EvolUtil {
             try {
                 writer = new FileWriter(file);
 
+                // Save options from current individual.
                 Genome genome = model.getCurrentIndividual();
 
                 String newLine = EvolPlugin.LINE_DELIMITER;

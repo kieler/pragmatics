@@ -121,9 +121,8 @@ public class EvolPlugin extends AbstractUIPlugin {
      */
     public static void showError(final String message, final Throwable exception) {
         exception.printStackTrace();
-        Status myStatus =
-                new Status(IStatus.ERROR, EvolPlugin.PLUGIN_ID, message, exception);
-        StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
+        Status status = new Status(IStatus.ERROR, EvolPlugin.PLUGIN_ID, message, exception);
+        StatusManager.getManager().handle(status, StatusManager.SHOW);
     }
 
     /**
@@ -133,8 +132,8 @@ public class EvolPlugin extends AbstractUIPlugin {
      *            the message
      */
     public static final void logStatus(final String message) {
-        StatusManager.getManager().handle(new Status(IStatus.INFO, PLUGIN_ID, message, null),
-                StatusManager.LOG);
+        Status status = new Status(IStatus.INFO, PLUGIN_ID, message, null);
+        StatusManager.getManager().handle(status, StatusManager.LOG);
     }
 
     /**

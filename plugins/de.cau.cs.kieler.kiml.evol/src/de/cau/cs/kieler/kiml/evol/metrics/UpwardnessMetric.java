@@ -22,10 +22,18 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 
-
 /**
- * @author bdu
+ * Measures the fraction of upward edges in the given KGraph. Returns a Float
+ * object that indicates the degree of 'upwardness' within the range of (0.0,
+ * 1.0), where 0.0 means no upwardness and 1.0 means maximum upwardness.
  *
+ * This metric is based on the edge count and on the edge direction analysis.
+ *
+ * NOTE: A more sophisticated, fuzzy metric could take angles into account, so
+ * that for example an edge that is pointing diagonally upward would be counted
+ * as a "50% upward" edge.
+ * 
+ * @author bdu
  */
 public class UpwardnessMetric implements IAnalysis {
 

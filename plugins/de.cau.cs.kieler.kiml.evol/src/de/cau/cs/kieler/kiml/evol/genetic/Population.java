@@ -97,6 +97,7 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
 
         int i = 0;
         for (final Genome ind : this) {
+            // assuming individual is not null
             result.append("Individual #" + ++i + " (" + ind.getGeneration() + "." + ind.getId()
                     + "): " + ind.getUserRating() + newLine);
             for (final IGene<?> gene : ind) {

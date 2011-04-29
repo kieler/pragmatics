@@ -31,7 +31,7 @@ public class UniversalNumberGene extends AbstractGene<Float> {
             if (o instanceof Boolean) {
                 return o.toString();
             } else if (o instanceof UniversalNumberGene) {
-                return (Boolean.valueOf(((UniversalNumberGene) o).getBoolValue()).toString());
+                return Boolean.valueOf(((UniversalNumberGene) o).getBoolValue()).toString();
             }
             return null;
         }
@@ -102,7 +102,7 @@ public class UniversalNumberGene extends AbstractGene<Float> {
             Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY,
             FLOAT_FORMATTER, Float.class);
 
-    /** Cached has value. */
+    /** Cached hash value. */
     private Integer cachedHash;
 
     @Override
@@ -278,7 +278,7 @@ public class UniversalNumberGene extends AbstractGene<Float> {
      *
      * @author bdu
      *
-     */
+     */   
     private static class FloatMutator implements IMutator {
         /**
          * Creates a {@link FloatMutator} instance.
@@ -287,6 +287,9 @@ public class UniversalNumberGene extends AbstractGene<Float> {
             // Nothing to do here.
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public IGene<Float> newMutation(
                 final UniversalNumberGene template, final MutationInfo mutationInfo) {
 
@@ -361,12 +364,12 @@ public class UniversalNumberGene extends AbstractGene<Float> {
                     do {
                         // produce a new value within the valid bounds.
                         double gauss = random.nextGaussian() * Math.sqrt(var);
-                        double newValue = (value.doubleValue() + gauss);
+                        double newValue = value.doubleValue() + gauss;
                         newInt = Integer.valueOf((int) Math.round(newValue));
-                    } while (!typeInfo.isValueWithinBounds((Float.valueOf(newInt.floatValue()))));
+                    } while (!typeInfo.isValueWithinBounds(Float.valueOf(newInt.floatValue())));
                     break;
                 case UNIFORM:
-                    newInt = (random.nextInt((upperBound - lowerBound + 1)) + lowerBound);
+                    newInt = random.nextInt(upperBound - lowerBound + 1) + lowerBound;
                     break;
                 default:
                     // execution should never reach this line.
