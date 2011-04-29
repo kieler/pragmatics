@@ -35,8 +35,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
- * Processes constraints imposed on external node dummies. There are constraints when the
- * graph's port constraints are at least at {@code FIXED_ORDER}.
+ * Processes constraints imposed on external node dummies.
  * 
  * <p>Eastern and western ports cannot be ordered arbitrarily by the crossing minimizer if
  * the port order is fixed. Thus, this processor inserts appropriate in-layer successor
@@ -47,7 +46,9 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * external port dummies. For each node connected to a northern or southern external port
  * dummy, we need to place a new dummy in the next layer, rerouting the edges appropriately.
  * The original dummies are removed, to be reinserted later by
- * {@link ExternalPortOrthogonalEdgeRouter}.</p>
+ * {@link ExternalPortOrthogonalEdgeRouter}. For simplification, this is also done in all
+ * other port constraint cases. This saves us the trouble of having to differentiate between
+ * the different port constraints later on.</p>
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>A layered graph; long edge dummies have not yet been inserted;
@@ -101,11 +102,8 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("External port constraint processing", 1);
         
-        // If the port constraints are not at least FIXED_ORDER, there's nothing to do
-        if (layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-            processEasternAndWesternPortDummies(layeredGraph);
-            processNorthernAndSouthernPortDummies(layeredGraph);
-        }
+        processEasternAndWesternPortDummies(layeredGraph);
+        processNorthernAndSouthernPortDummies(layeredGraph);
         
         getMonitor().done();
     }
@@ -120,6 +118,11 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
      * @param layeredGraph the layered graph
      */
     private void processEasternAndWesternPortDummies(final LayeredGraph layeredGraph) {
+        // If the port constraints are not at least FIXED_ORDER, there's nothing to do here
+        if (!layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            return;
+        }
+        
         List<Layer> layers = layeredGraph.getLayers();
         
         // This affects the first and last layer
@@ -167,8 +170,19 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
      * @param layeredGraph the layered graph.
      */
     private void processNorthernAndSouthernPortDummies(final LayeredGraph layeredGraph) {
+        // If the port constraints are not at least FIXED_SIDE, there's nothing to do here
+        PortConstraints portConstraints = layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+        if (!portConstraints.isSideFixed()) {
+            return;
+        }
+        
+        // If the port order is not fixed, we don't need to insert an external port dummy
+        // after every node that's connected to an external port. Instead, we just replace
+        // the original dummy
+        boolean onlyReplaceOriginalDummy = !portConstraints.isOrderFixed();
+        
         Map<Object, LNode> nextLayerNodesToAdd = new HashMap<Object, LNode>();
-        Set<LNode> externalNodeDummiesToRemove = new HashSet<LNode>();
+        Set<LNode> externalNodeDummies = new HashSet<LNode>();
         
         // Iterate through each layer
         ListIterator<Layer> layerIterator = layeredGraph.getLayers().listIterator();
@@ -185,7 +199,7 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
                 nextLayerNodesToAdd.clear();
             }
             
-            // Iterate through the layer's ndoes, looking for normal nodes connected to
+            // Iterate through the layer's nodes, looking for normal nodes connected to
             // northern / southern external port dummies
             for (LNode currentNode : currentLayer.getNodes()) {
                 // Iterate through the node's outgoing edges
@@ -196,21 +210,24 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
                     if (!isNorthernSouthernDummy(targetNode)) {
                         continue;
                     }
-                    externalNodeDummiesToRemove.add(targetNode);
+                    externalNodeDummies.add(targetNode);
                     
-                    // See if a dummy has already been created for the next layer
-                    LNode nextLayerDummy = nextLayerNodesToAdd.get(
-                            targetNode.getProperty(Properties.ORIGIN));
-                    
-                    if (nextLayerDummy == null) {
-                        // No. Create one.
-                        nextLayerDummy = createDummy(targetNode);
-                        nextLayerNodesToAdd.put(
-                                targetNode.getProperty(Properties.ORIGIN), nextLayerDummy);
+                    // Check if new dummies should be created
+                    if (!onlyReplaceOriginalDummy) {
+                        // See if a dummy has already been created for the next layer
+                        LNode nextLayerDummy = nextLayerNodesToAdd.get(
+                                targetNode.getProperty(Properties.ORIGIN));
+                        
+                        if (nextLayerDummy == null) {
+                            // No. Create one.
+                            nextLayerDummy = createDummy(targetNode);
+                            nextLayerNodesToAdd.put(
+                                    targetNode.getProperty(Properties.ORIGIN), nextLayerDummy);
+                        }
+                        
+                        // Reroute the edge
+                        edge.setTarget(nextLayerDummy.getPorts().get(0));
                     }
-                    
-                    // Reroute the edge
-                    edge.setTarget(nextLayerDummy.getPorts().get(0));
                 }
             }
         }
@@ -226,9 +243,27 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
             }
         }
         
-        // Remove external node dummies
-        for (LNode dummy : externalNodeDummiesToRemove) {
-            dummy.setLayer(null);
+        // Iterate through the external port dummies
+        for (LNode originalDummy : externalNodeDummies) {
+            if (onlyReplaceOriginalDummy) {
+                // Create a new dummy node and replace the original dummy with it. This simplifies
+                // handling them when routing external port edges.
+                LNode newDummy = createDummy(originalDummy);
+                newDummy.setLayer(originalDummy.getLayer());
+                
+                // Reroute all incident edges; this assumes that the original dummy only has
+                // one port, with only incoming edges
+                LPort originalPort = originalDummy.getPorts().get(0);
+                LPort newPort = newDummy.getPorts().get(0);
+                
+                LEdge[] edges = originalPort.getIncomingEdges().toArray(new LEdge[0]);
+                for (LEdge edge : edges) {
+                    edge.setTarget(newPort);
+                }
+            }
+            
+            // Remove the original dummy; new dummy nodes have already been created for it
+            originalDummy.setLayer(null);
         }
     }
     

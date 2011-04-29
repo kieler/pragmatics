@@ -16,18 +16,10 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalRoutingGenerator;
 
 /**
  * TODO: Document.
- * 
- * <p><i>Note:</i> Some of this code may seem similar to the code seen in
- * {@link de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter}. That's because it
- * is indeed similar. The concept of hyper nodes is used there as well, for instance. If
- * that is the case, why not integrate external port handling into the edge router? Well,
- * for one, the edge router is complex enough as it is. Furthermore, by factoring external
- * port edge routing out of the edge router, edge routers are freed from having to implement
- * this functionality and can simply reuse one of the appropriate processors to do the work
- * for them.
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>A layered graph, with edge routing finished for edges not incident
@@ -42,6 +34,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * 
  * @see ExternalPortConstraintProcessor
  * @see ExternalPortDummySizeProcessor
+ * @see OrthogonalRoutingGenerator
  * @author cds
  */
 public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutProcessor {
@@ -69,6 +62,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
          */
         
         // TODO: Implement.
+        OrthogonalRoutingGenerator routingGenerator;
         
         getMonitor().done();
     }
