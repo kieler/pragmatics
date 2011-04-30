@@ -169,12 +169,6 @@ public final class ExampleManager {
      *            , {@link Map} with {@link ExampleElement} as key and {@link Object} as value.
      */
     public void export(final Map<ExampleElement, Object> properties) {
-
-        // @deprecated this should do the ui part in the wizard directly
-        // ExampleExport.validate(properties, this.extensionCollector, this.databaseCollector);
-        // // first example duplicate check
-        // // TODO duplicate check should
-        // // ExampleExport.checkDuplicate((String) map.get(ExampleElement.ID), collectors);
         if (SourceType.KIELER.equals(properties.get(ExampleElement.SOURCETYPE))) {
             ExampleExport.exportInPlugin(properties, this.extensionCreator);
             // } else if

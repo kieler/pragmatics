@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kex.ui.wizards.exporting;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -51,4 +52,22 @@ public final class Messages extends NLS {
             return '!' + key + '!';
         }
     }
+
+    /**
+     * Returns the String associated with the given key.
+     * 
+     * @param key
+     *            key to look up in the {@code messages.properties} file
+     * @param params
+     *            parameters for the text
+     * @return the associated string
+     */
+    public static String getString(final String key, final Object... params) {
+        try {
+            return MessageFormat.format(RESOURCE_BUNDLE.getString(key), params);
+        } catch (MissingResourceException e) {
+            return '!' + key + '!';
+        }
+    }
+
 }

@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kex.ui.wizards.exporting;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.TypedEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -31,9 +32,10 @@ public class ExampleAttributesPage extends WizardPage {
 
     private static final int EX_DESC_HEIGHT = 100;
     private static final int EX_DESC_MINHEIGHT = 80;
-
     private static final int MIN_WIDTH = 540;
     private static final int MIN_HEIGHT = 600;
+
+    private static final String WANTS_COMPLETE = "wantsComplete";
 
     private Text exampleTitle;
     private static final int EXAMPLE_TITLE_MIN = 4;
@@ -73,6 +75,7 @@ public class ExampleAttributesPage extends WizardPage {
         setControl(composite);
         addAttributeFields(composite);
         getShell().setMinimumSize(MIN_WIDTH, MIN_HEIGHT);
+        setPageComplete(false);
     }
 
     /**
@@ -94,9 +97,15 @@ public class ExampleAttributesPage extends WizardPage {
         exampleTitle.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         exampleTitle.setText("ExportedExample1");
         exampleTitle.setToolTipText("Think about a meaningful title of the new example.");
-        // FIXME use Messages way of Stringloading, with variable that uses 4.
-        exampleTitle.addModifyListener(new TextBoxValidator(exampleTitle, "Give at least 4 chars",
-                EXAMPLE_TITLE_MIN));
+        exampleTitle.addModifyListener(new TextBoxValidator(exampleTitle, Messages.getString(
+                "titleToShort", EXAMPLE_TITLE_MIN)) {
+
+            @Override
+            public boolean check(final TypedEvent e) {
+                return doCheck((Text) e.getSource(), EXAMPLE_TITLE_MIN);
+            }
+        });
+
         Label authorLab = new Label(composite, SWT.NONE);
         authorLab.setText("Author:");
         authorLab.setToolTipText("The person or organisation who created that example.");
@@ -105,7 +114,14 @@ public class ExampleAttributesPage extends WizardPage {
         String user = System.getProperty("user.name");
         author.setText(System.getProperty("user.name"));
         author.setToolTipText("The person or organisation/group who created that example.");
-        author.addModifyListener(new TextBoxValidator(author, "Give at least 3 chars", AUTHOR_MIN));
+        author.addModifyListener(new TextBoxValidator(author, Messages.getString("titleToShort",
+                AUTHOR_MIN)) {
+            @Override
+            public boolean check(final TypedEvent e) {
+                return doCheck((Text) e.getSource(), AUTHOR_MIN);
+            }
+        });
+
         Label contactLab = new Label(composite, SWT.NONE);
         contactLab.setText("Contact:");
         contactLab.setToolTipText("Here you usually give an emailaddress or a url "
@@ -113,26 +129,61 @@ public class ExampleAttributesPage extends WizardPage {
         contact = new Text(composite, SWT.BORDER);
         contact.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         contact.setText((user != null && user.length() > 1 ? user + "@informatik.uni-kiel.de" : ""));
-        contact.addModifyListener(new TextBoxValidator(contact, "Give at least 5 chars",
-                CONTACT_MIN));
         contact.setToolTipText("Here you usually give an emailaddress or a "
                 + "url of a homepage for support and additional informations.");
+        contact.addModifyListener(new TextBoxValidator(contact, Messages.getString("titleToShort",
+                CONTACT_MIN)) {
+            @Override
+            public boolean check(final TypedEvent e) {
+                return doCheck((Text) e.getSource(), CONTACT_MIN);
+            }
+        });
+
         Label descLab = new Label(composite, SWT.NONE);
         descLab.setText("Description:");
         descLab.setToolTipText("The description gives an overview about the "
-                + "created example. This should help users by finding the desired example.");
+                + "created example. This should help users at finding the desired example.");
         exampleDescription = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL
                 | SWT.H_SCROLL);
         GridData descData = new GridData(GridData.FILL_HORIZONTAL);
         descData.heightHint = EX_DESC_HEIGHT;
         descData.minimumHeight = EX_DESC_MINHEIGHT;
-        exampleDescription.addModifyListener(new TextBoxValidator(exampleDescription,
-                "Give at least 10 chars", DESCRIPTION_MIN));
         exampleDescription.setLayoutData(descData);
         exampleDescription.setToolTipText("The description gives an overview "
                 + "about the created example. This should help users "
-                + "by finding the desired example.");
+                + "at finding the desired example.");
+        exampleDescription.addModifyListener(new TextBoxValidator(exampleDescription, Messages
+                .getString("titleToShort", DESCRIPTION_MIN)) {
+            @Override
+            public boolean check(final TypedEvent e) {
+                return doCheck((Text) e.getSource(), DESCRIPTION_MIN);
+            }
+        });
 
+        // initial checks
+        doSingleCheck(exampleTitle, EXAMPLE_TITLE_MIN);
+        doSingleCheck(author, AUTHOR_MIN);
+        doSingleCheck(contact, CONTACT_MIN);
+        doSingleCheck(exampleDescription, DESCRIPTION_MIN);
+    }
+
+    private boolean doSingleCheck(final Text field, final int minLength) {
+        boolean decorate = field.getText().length() < minLength;
+        field.setData(WANTS_COMPLETE, !decorate);
+        return decorate;
+    }
+
+    private boolean doCheck(final Text field, final int minLength) {
+        boolean decorate = doSingleCheck(field, minLength);
+        triggerPageComplete();
+        return decorate;
+    }
+
+    private void triggerPageComplete() {
+        setPageComplete((Boolean) exampleTitle.getData(WANTS_COMPLETE)
+                && (Boolean) author.getData(WANTS_COMPLETE)
+                && (Boolean) contact.getData(WANTS_COMPLETE)
+                && (Boolean) exampleDescription.getData(WANTS_COMPLETE));
     }
 
     /**

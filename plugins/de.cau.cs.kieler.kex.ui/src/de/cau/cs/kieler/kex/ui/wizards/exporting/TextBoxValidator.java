@@ -17,10 +17,13 @@ package de.cau.cs.kieler.kex.ui.wizards.exporting;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.TypedEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * This class can be used for nice swt text widget validation. A small image decorates the textfield
@@ -32,7 +35,6 @@ import org.eclipse.swt.widgets.Text;
 public class TextBoxValidator implements ModifyListener {
 
     private final ControlDecoration decoration;
-    private final int fieldLength;
     private final String msg;
     private String decorationType = FieldDecorationRegistry.DEC_ERROR;
 
@@ -43,17 +45,28 @@ public class TextBoxValidator implements ModifyListener {
      *            , text-field widget which should become decorate.
      * @param msg
      *            , the popup msg.
-     * @param fieldLength
-     *            , the allowed minimum length.
      */
-    public TextBoxValidator(final Text text, final String msg, final int fieldLength) {
-        this.fieldLength = fieldLength;
+    public TextBoxValidator(final Control text, final String msg) {
         Image errorImg = FieldDecorationRegistry.getDefault().getFieldDecoration(decorationType)
                 .getImage();
         decoration = new ControlDecoration(text, SWT.LEFT | SWT.TOP);
         decoration.setImage(errorImg);
         decoration.hide();
         this.msg = msg;
+
+        // used to show hover when focus is set otherwise hide hover.
+        text.addFocusListener(new FocusListener() {
+
+            public void focusLost(final FocusEvent e) {
+                decoration.hideHover();
+            }
+
+            public void focusGained(final FocusEvent e) {
+                if (check(e)) {
+                    decoration.showHoverText(msg);
+                }
+            }
+        });
     }
 
     /**
@@ -61,9 +74,8 @@ public class TextBoxValidator implements ModifyListener {
      * @param e
      *            ModifyEvent
      */
-    public void modifyText(final ModifyEvent e) {
-        String textContent = ((Text) e.getSource()).getText();
-        if (textContent.length() < fieldLength) {
+    public final void modifyText(final ModifyEvent e) {
+        if (check(e)) {
             decoration.show();
             decoration.showHoverText(msg);
         } else {
@@ -73,12 +85,24 @@ public class TextBoxValidator implements ModifyListener {
     }
 
     /**
+     * Has to override for custom validation. This check will be used to show decoration or not,
+     * 
+     * @param e
+     *            the triggered typed-event
+     * 
+     * @return true, if decoration should be shown otherwise return false.
+     */
+    public boolean check(final TypedEvent e) {
+        return true;
+    }
+
+    /**
      * Set the decoration-type. Here you can specify, what decoration should be used.
      * 
      * @param decorationType
      *            String
      */
-    public void setDecorationType(final String decorationType) {
+    public final void setDecorationType(final String decorationType) {
         this.decorationType = decorationType;
     }
 
@@ -87,7 +111,7 @@ public class TextBoxValidator implements ModifyListener {
      * 
      * @return String of current decorationType.
      */
-    public String getDecorationType() {
+    public final String getDecorationType() {
         return decorationType;
     }
 
