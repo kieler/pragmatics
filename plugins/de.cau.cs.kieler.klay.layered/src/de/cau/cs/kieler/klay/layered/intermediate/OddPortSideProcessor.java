@@ -100,7 +100,7 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
                 
                 // Skip nodes whose port sides are not fixed (because in that case, the odd
                 // port side problem won't appear)
-                if (!node.getProperty(Properties.PORT_CONS).isSideFixed()) {
+                if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
                     continue;
                 }
                 

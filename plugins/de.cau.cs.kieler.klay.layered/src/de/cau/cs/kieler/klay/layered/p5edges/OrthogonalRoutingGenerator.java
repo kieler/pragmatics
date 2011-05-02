@@ -474,8 +474,8 @@ public class OrthogonalRoutingGenerator {
      * @param startPos horizontal position of the first routing slot
      * @return the number of routing slots for this layer
      */
-    public int routeEdges(final LayeredGraph layeredGraph, final List<LNode> sourceLayerNodes,
-            final int sourceLayerIndex, final List<LNode> targetLayerNodes, final double startPos) {
+    public int routeEdges(final LayeredGraph layeredGraph, final Iterable<LNode> sourceLayerNodes,
+            final int sourceLayerIndex, final Iterable<LNode> targetLayerNodes, final double startPos) {
         
         Map<LPort, HyperNode> portToHyperNodeMap = new HashMap<LPort, HyperNode>();
         List<HyperNode> hyperNodes = new LinkedList<HyperNode>();
@@ -546,7 +546,7 @@ public class OrthogonalRoutingGenerator {
      * @param hyperNodes list the created hypernodes should be added to.
      * @param portToHyperNodeMap map from ports to hypernodes that should be filled.
      */
-    private void createHyperNodes(final List<LNode> nodes, final PortSide portSide,
+    private void createHyperNodes(final Iterable<LNode> nodes, final PortSide portSide,
             final List<HyperNode> hyperNodes, final Map<LPort, HyperNode> portToHyperNodeMap) {
         
         if (nodes != null) {

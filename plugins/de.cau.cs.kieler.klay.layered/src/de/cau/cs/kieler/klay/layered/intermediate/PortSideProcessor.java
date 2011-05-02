@@ -14,10 +14,10 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -48,10 +48,10 @@ public class PortSideProcessor extends AbstractAlgorithm implements ILayoutProce
         // Iterate through the nodes of all layers
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-                if (!node.getProperty(Properties.PORT_CONS).isSideFixed()) {
+                if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
                     // We need to distribute the ports
                     distributePorts(node);
-                    node.setProperty(Properties.PORT_CONS, PortConstraints.FIXED_SIDE);
+                    node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
                 }
             }
         }

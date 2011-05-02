@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -158,7 +159,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
         LNode dummy = new LNode();
         dummy.setProperty(Properties.NODE_TYPE, Properties.NodeType.EXTERNAL_PORT);
         dummy.setProperty(Properties.ORIGIN, port);
-        dummy.setProperty(Properties.PORT_CONS, PortConstraints.FIXED_POS);
+        dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         
         LPort dummyPort = new LPort();
         dummyPort.setSide(PortSide.WEST);

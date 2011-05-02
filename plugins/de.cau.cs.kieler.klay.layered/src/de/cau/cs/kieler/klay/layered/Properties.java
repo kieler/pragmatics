@@ -20,7 +20,6 @@ import java.util.Set;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -227,10 +226,6 @@ public final class Properties {
 
     /** priority of elements. */
     public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
-
-    /** port constraints. */
-    public static final Property<PortConstraints> PORT_CONS = new Property<PortConstraints>(
-            LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
 
     /** option identifier for minimal angle. */
     public static final String MIN_EDGE_ANGLE_ID = "de.cau.cs.kieler.klay.layered.minimalAngle";

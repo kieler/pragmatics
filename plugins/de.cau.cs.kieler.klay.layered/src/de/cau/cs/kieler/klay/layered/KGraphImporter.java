@@ -75,8 +75,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         
         // copy the properties of the KGraph to the layered graph
         layeredGraph.copyProperties(sourceShapeLayout);
-        layeredGraph.checkProperties(Properties.OBJ_SPACING, Properties.THOROUGHNESS,
-                LayoutOptions.BORDER_SPACING);
+        layeredGraph.checkProperties(Properties.OBJ_SPACING, Properties.THOROUGHNESS);
+        
+        float borderSpacing = layeredGraph.getProperty(LayoutOptions.BORDER_SPACING);
+        if (borderSpacing < 0) {
+            borderSpacing = Properties.DEF_SPACING;
+        }
+        layeredGraph.setProperty(LayoutOptions.BORDER_SPACING, borderSpacing);
         
         // copy the insets to the layered graph
         KInsets kinsets = sourceShapeLayout.getInsets();
@@ -442,10 +447,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
     protected void applyLayout(final LayeredGraph layeredGraph, final KNode target) {
         // determine the border spacing, which influences the offset
         KShapeLayout parentLayout = target.getData(KShapeLayout.class);
-        float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
-        if (borderSpacing < 0) {
-            borderSpacing = Properties.DEF_SPACING;
-        }
+        float borderSpacing = layeredGraph.getProperty(LayoutOptions.BORDER_SPACING);
         
         // calculate the offset
         KVector offset = new KVector(borderSpacing + layeredGraph.getOffset().x,

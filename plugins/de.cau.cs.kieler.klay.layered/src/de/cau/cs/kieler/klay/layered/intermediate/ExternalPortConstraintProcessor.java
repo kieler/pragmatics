@@ -212,7 +212,8 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
                     }
                     externalNodeDummies.add(targetNode);
                     
-                    // Check if new dummies should be created
+                    // If only the original dummy should be replaced by a new one, we'll
+                    // do that below, after the for loop
                     if (!onlyReplaceOriginalDummy) {
                         // See if a dummy has already been created for the next layer
                         LNode nextLayerDummy = nextLayerNodesToAdd.get(

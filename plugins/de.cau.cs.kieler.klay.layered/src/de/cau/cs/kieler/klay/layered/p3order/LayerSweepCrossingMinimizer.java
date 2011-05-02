@@ -30,6 +30,7 @@ import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
@@ -785,7 +786,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         // Assign index values to the ports of the right layer
         int targetCount = 0;
         for (LNode node : rightLayer) {
-            if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
+            if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 List<LPort> inputPorts = getSortedInputPorts(node);
                 ListIterator<LPort> portIter = inputPorts.listIterator(inputPorts.size());
                 while (portIter.hasPrevious()) {
@@ -803,7 +804,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         int[] southSequence = new int[edgeCount];
         int i = 0;
         for (LNode node : leftLayer) {
-            if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
+            if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 for (LPort port : node.getPorts(PortType.OUTPUT)) {
                     int start = i;
                     for (LEdge edge : port.getOutgoingEdges()) {
@@ -1035,7 +1036,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         for (int nodeIndex = 0; nodeIndex < layer.length; nodeIndex++) {
             LNode node = layer[nodeIndex];
 
-            if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
+            if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 for (LPort easternPort : node.getPorts(PortSide.EAST)) {
                     if (easternPort.getDegree() > 0) {
                         easternMap.put(easternPort, currentEasternIndex++);
@@ -1060,7 +1061,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         for (int nodeIndex = layer.length - 1; nodeIndex >= 0; nodeIndex--) {
             LNode node = layer[nodeIndex];
 
-            if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
+            if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 for (LPort westernPort : node.getPorts(PortSide.WEST)) {
                     if (westernPort.getDegree() > 0) {
                         westernMap.put(westernPort, currentWesternIndex++);
@@ -1170,7 +1171,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     private void assignPortPos(final LNode node, final int nodeIx,
             final PortType type, final int count) {
         
-        if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
+        if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
             float incr = 1.0f / count;
             
             if (type == PortType.INPUT) {
@@ -1282,10 +1283,10 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             LNode[] layer = layeredGraph[l];
             for (int i = 0; i < layer.length; i++) {
                 LNode node = layer[i];
-                if (!node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
+                if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                     // the order of ports on each side is variable, so distribute the ports
                     distributePorts(node);
-                    node.setProperty(Properties.PORT_CONS, PortConstraints.FIXED_ORDER);
+                    node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
                     int outputPortCount = 0;
                     for (LPort port : node.getPorts()) {
                         if (port.getNetFlow() < 0) {

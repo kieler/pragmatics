@@ -124,7 +124,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                 
                 // We only care about non-dummy nodes with fixed port sides
                 if (!node.getProperty(Properties.NODE_TYPE).equals(Properties.NodeType.NORMAL)
-                        && node.getProperty(Properties.PORT_CONS).isSideFixed()) {
+                        && node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
                     
                     continue;
                 }

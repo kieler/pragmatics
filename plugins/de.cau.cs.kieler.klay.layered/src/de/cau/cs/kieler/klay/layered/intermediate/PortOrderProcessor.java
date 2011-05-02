@@ -17,8 +17,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -114,7 +114,7 @@ public class PortOrderProcessor extends AbstractAlgorithm implements ILayoutProc
         // Iterate through the nodes of all layers
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-                if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
+                if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                     // We need to sort the port list accordingly
                     sortPorts(node);
                 }
