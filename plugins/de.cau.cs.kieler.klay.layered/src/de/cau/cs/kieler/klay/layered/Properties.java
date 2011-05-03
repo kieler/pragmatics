@@ -48,8 +48,6 @@ public final class Properties {
         NORMAL,
         /** a dummy node created to split a long edge. */
         LONG_EDGE,
-        /** a dummy node created to cope with ports eastern input or western output ports. */
-        ODD_PORT_SIDE,
         /** a dummy node created to cope with ports at the northern or southern side. */
         NORTH_SOUTH_PORT;
     }

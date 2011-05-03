@@ -70,7 +70,9 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
         /* Step 2
          * Calculate coordinates for the north / south port dummies. Coordinates for the
          * east / west port dummies have already been calculated prior to this processor's
-         * execution.
+         * execution. The coordinates are relative to the node's content area, just like
+         * normal node coordinates. (the content area is the node size minues insets minus
+         * border spacing minus offset)
          */
         setNorthSouthDummyCoordinates(layeredGraph, northSouthDummies);
         
@@ -206,7 +208,9 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
         
         PortConstraints constraints = layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         KVector graphSize = layeredGraph.getSize();
+        Insets.Double graphInsets = layeredGraph.getInsets();
         float borderSpacing = layeredGraph.getProperty(LayoutOptions.BORDER_SPACING);
+        double nodeWidth = graphSize.x + graphInsets.left + graphInsets.right + 2 * borderSpacing;
         
         for (LNode dummy : northSouthDummies) {
             // Set x coordinate
@@ -218,11 +222,13 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
                 break;
             
             case FIXED_RATIO:
-                applyNorthSouthDummyRatio(dummy, graphSize.x + 2 * borderSpacing);
+                applyNorthSouthDummyRatio(dummy, nodeWidth);
+                borderToContentAreaCoordinates(dummy, layeredGraph, true, false);
                 break;
             
             case FIXED_POS:
                 applyNorthSouthDummyPosition(dummy);
+                borderToContentAreaCoordinates(dummy, layeredGraph, true, false);
                 break;
             }
         }
@@ -244,6 +250,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
      */
     private void applyNorthSouthDummyRatio(final LNode dummy, final double width) {
         dummy.getPosition().x = width * dummy.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
+        
     }
     
     /**
@@ -425,21 +432,17 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
      */
     private void fixCoordinates(final LayeredGraph layeredGraph) {
         PortConstraints constraints = layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS);
-        KVector graphSize = layeredGraph.getSize();
-        Insets.Double graphInsets = layeredGraph.getInsets();
         
         // East port dummies are in the first layer; all other dummies are in the last layer
         List<Layer> layers = layeredGraph.getLayers();
         fixCoordinates(
                 layers.get(0),
                 constraints,
-                graphSize,
-                graphInsets);
+                layeredGraph);
         fixCoordinates(
                 layers.get(layers.size() - 1),
                 constraints,
-                graphSize,
-                graphInsets);
+                layeredGraph);
     }
     
     /**
@@ -447,11 +450,16 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
      * 
      * @param layer the layer.
      * @param constraints external port constraints.
-     * @param graphSize the graph's size.
-     * @param graphInsets the graph's insets.
+     * @param graph the graph.
      */
     private void fixCoordinates(final Layer layer, final PortConstraints constraints,
-            final KVector graphSize, final Insets.Double graphInsets) {
+            final LayeredGraph graph) {
+        
+        // Get some geometric values from the graph
+        Insets.Double insets = graph.getInsets();
+        float borderSpacing = graph.getProperty(LayoutOptions.BORDER_SPACING);
+        KVector offset = graph.getOffset();
+        double graphHeight = graph.getSize().y + insets.top + insets.bottom + (2 * borderSpacing);
         
         for (LNode node : layer.getNodes()) {
             if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.EXTERNAL_PORT) {
@@ -465,11 +473,12 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
             // Set x coordinate
             switch (extPortSide) {
             case EAST:
-                nodePosition.x = graphSize.x + graphInsets.right;
+                nodePosition.x = graph.getSize().x + borderSpacing + insets.right - offset.x;
                 break;
             
             case WEST:
-                nodePosition.x = -graphInsets.left;
+                nodePosition.x = -offset.x - borderSpacing - insets.left;
+                break;
             }
             
             // Set y coordinate
@@ -478,21 +487,51 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
             case WEST:
                 if (constraints == PortConstraints.FIXED_RATIO) {
                     double ratio = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
-                    nodePosition.y = graphSize.y + graphInsets.top + graphInsets.bottom;
-                    nodePosition.y = nodePosition.y * ratio - graphInsets.top;
-                    
-                    // TODO: This may have to include the graph offset.
+                    nodePosition.y = graphHeight * ratio;
+                    borderToContentAreaCoordinates(node, graph, false, true);
                 }
                 break;
             
             case NORTH:
-                nodePosition.y = -graphInsets.top;
+                nodePosition.y = -offset.y - borderSpacing - insets.top;
                 break;
             
             case SOUTH:
-                nodePosition.y = graphSize.y + graphInsets.bottom;
+                nodePosition.y = graph.getSize().y + borderSpacing + insets.bottom - offset.y;
                 break;
             }
+        }
+    }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Coordinate Conversions
+    
+    /**
+     * Converts the position of the given node from coordinates relative to the hierarchical node
+     * border to coordinates relative to that node's content area. The content area is the
+     * hierarchical node minus insets minus border spacing minus offset.
+     * 
+     * @param node the node whose coordinates to convert.
+     * @param graph the layered graph.
+     * @param horizontal if {@code true}, the x coordinate will be translated.
+     * @param vertical if {@code true}, the y coordinate will be translated.
+     */
+    private void borderToContentAreaCoordinates(final LNode node, final LayeredGraph graph,
+            final boolean horizontal, final boolean vertical) {
+        
+        Insets.Double insets = graph.getInsets();
+        float borderSpacing = graph.getProperty(LayoutOptions.BORDER_SPACING);
+        KVector offset = graph.getOffset();
+        
+        KVector pos = node.getPosition();
+        
+        if (horizontal) {
+            pos.x = pos.x - insets.left - borderSpacing - offset.x;
+        }
+        
+        if (vertical) {
+            pos.y = pos.y - insets.top - borderSpacing - offset.y;
         }
     }
     

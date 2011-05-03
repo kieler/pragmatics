@@ -194,10 +194,6 @@ public class LayeredGraph extends LGraphElement {
                     options.append("color=\"#eaed00\",");
                     break;
                     
-                case ODD_PORT_SIDE:
-                    options.append("color=\"#00cbbf\",");
-                    break;
-                
                 case NORTH_SOUTH_PORT:
                     options.append("color=\"#0034de\",");
                     break;
