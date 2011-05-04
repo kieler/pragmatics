@@ -37,7 +37,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * <p>When a graph importer supports external ports, it must create dummies for those ports by calling
  * {@link #createExternalPortDummy(Object, PortConstraints, PortSide, int, int, KInsets, KVector)}.
- * The correct position of those ports can later be retrieved by calling TODO.</p>
+ * The correct position of those ports can later be retrieved by calling
+ * {@link #getExternalPortPosition(LNode, double, double)}.</p>
  * 
  * @param <T> the type of graph that this importer can transform into a layered graph.
  * @author cds
