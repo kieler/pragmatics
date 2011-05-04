@@ -25,7 +25,6 @@ import org.eclipse.graphiti.features.context.impl.LayoutContext;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
-import org.eclipse.graphiti.mm.pictograms.ChopboxAnchor;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.FreeFormConnection;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -196,49 +195,80 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      *            the corresponding pictogram element
      */
     private void applyEdgeLayout(final KEdge kedge, final PictogramElement pelem) {
-        KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-        FreeFormConnection conn = (FreeFormConnection) pelem;
-        List<Point> pointList = conn.getBendpoints();
-        pointList.clear();
+        // create bend points for the edge
+        KVectorChain bendPoints = getBendPoints(kedge);
 
-        // determine the offset for all bend points
-        KNode parent = kedge.getSource();
-        if (!KimlUtil.isDescendant(kedge.getTarget(), parent)) {
-            parent = parent.getParent();
+        if (pelem instanceof FreeFormConnection) {
+            FreeFormConnection connection = (FreeFormConnection) pelem;
+            List<Point> pointList = connection.getBendpoints();
+            // add the bend points to the connection, reusing existing points
+            for (int i = 0; i < bendPoints.size(); i++) {
+                KVector kpoint = bendPoints.get(i);
+                if (i >= pointList.size()) {
+                    Point point = Graphiti.getGaService().createPoint((int) Math.round(kpoint.x),
+                                    (int) Math.round(kpoint.y));
+                    pointList.add(point);
+                } else {
+                    Point point = pointList.get(i);
+                    point.setX((int) Math.round(kpoint.x));
+                    point.setY((int) Math.round(kpoint.y));
+                }
+            }
+            while (pointList.size() > bendPoints.size()) {
+                pointList.remove(pointList.size() - 1);
+            }
         }
-        KVector offset = new KVector();
-        KimlUtil.toAbsolute(offset, parent);
+    }
+    
+    /**
+     * Get a vector chain holding the bend points for the given edge.
+     * 
+     * @param edge a layout edge
+     * @return the bend points for the edge
+     */
+    public KVectorChain getBendPoints(final KEdge edge) {
+        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+        KVectorChain bendPoints = bendpointsMap.get(edgeLayout);
+        if (bendPoints == null) {
+            // determine the offset for all bend points
+            KNode parent = edge.getSource();
+            if (!KimlUtil.isDescendant(edge.getTarget(), parent)) {
+                parent = parent.getParent();
+            }
+            KVector offset = new KVector();
+            KimlUtil.toAbsolute(offset, parent);
 
-        // gather the bend points of the edge
-        KVectorChain allPoints = new KVectorChain();
-        if (conn.getStart() instanceof ChopboxAnchor) {
+            // gather the bend points of the edge
+            bendPoints = new KVectorChain();
             KPoint sourcePoint = edgeLayout.getSourcePoint();
-            allPoints.add(sourcePoint.getX(), sourcePoint.getY());
-            moveBendpointOutofNode(kedge.getSource(), allPoints.get(0));
-        }
-        for (KPoint bendPoint : edgeLayout.getBendPoints()) {
-            allPoints.add(bendPoint.getX(), bendPoint.getY());
-        }
-        if (conn.getEnd() instanceof ChopboxAnchor) {
+            bendPoints.add(sourcePoint.getX() + offset.x, sourcePoint.getY() + offset.y);
+            for (KPoint bendPoint : edgeLayout.getBendPoints()) {
+                bendPoints.add(bendPoint.getX() + offset.x, bendPoint.getY() + offset.y);
+            }
             KPoint targetPoint = edgeLayout.getTargetPoint();
-            allPoints.add(targetPoint.getX(), targetPoint.getY());
-            moveBendpointOutofNode(kedge.getTarget(), allPoints.get(allPoints.size() - 1));
-        }
+            bendPoints.add(targetPoint.getX() + offset.x, targetPoint.getY() + offset.y);
 
-        // transform spline control points into approximated bend points
-        EdgeRouting edgeRouting = edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
-        if (edgeRouting == EdgeRouting.SPLINES
-                && edgeLayout.getBendPoints().size() >= 1) {
-            allPoints = KielerMath.appoximateSpline(allPoints);
+            // transform spline control points into approximated bend points
+            EdgeRouting edgeRouting = edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
+            if (edgeRouting == EdgeRouting.SPLINES
+                    && edgeLayout.getBendPoints().size() >= 1) {
+                bendPoints = KielerMath.appoximateSpline(bendPoints);
+            }
+            
+            // remove source and target point if ports are present, else move them a little
+            if (edge.getSourcePort() == null) {
+                moveBendpointOutofNode(edge.getSource(), bendPoints.getFirst());
+            } else {
+                bendPoints.removeFirst();
+            }
+            if (edge.getTargetPort() == null) {
+                moveBendpointOutofNode(edge.getTarget(), bendPoints.getLast());
+            } else {
+                bendPoints.removeLast();
+            }
+            bendpointsMap.put(edgeLayout, bendPoints);
         }
-
-        // add the bend points to the connection
-        for (KVector kpoint : allPoints) {
-            Point point = Graphiti.getGaService().createPoint(
-                            (int) Math.round(kpoint.x + offset.x),
-                            (int) Math.round(kpoint.y + offset.y));
-            pointList.add(point);
-        }
+        return bendPoints;
     }
 
     /** how much to move bend points out of the source or target node. */
@@ -289,12 +319,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         KEdge kedge = (KEdge) klabel.getParent();
 
         // get vector chain for the bend points of the edge
-        KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-        KVectorChain bendPoints = bendpointsMap.get(edgeLayout);
-        if (bendPoints == null) {
-            bendPoints = KimlUtil.toVectorChain(edgeLayout);
-            bendpointsMap.put(edgeLayout, bendPoints);
-        }
+        KVectorChain bendPoints = getBendPoints(kedge);
 
         // calculate reference point for the label
         KVector referencePoint;
@@ -306,8 +331,14 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         }
 
         KShapeLayout shapeLayout = klabel.getData(KShapeLayout.class);
-        ga.setX((int) Math.round(shapeLayout.getXpos() - referencePoint.x));
-        ga.setY((int) Math.round(shapeLayout.getYpos() - referencePoint.y));
+        KVector position = new KVector(shapeLayout.getXpos(), shapeLayout.getYpos());
+        KNode parent = kedge.getSource();
+        if (!KimlUtil.isDescendant(kedge.getTarget(), parent)) {
+            parent = parent.getParent();
+        }
+        KimlUtil.toAbsolute(position, parent);
+        ga.setX((int) Math.round(position.x - referencePoint.x));
+        ga.setY((int) Math.round(position.y - referencePoint.y));
     }
 
 }

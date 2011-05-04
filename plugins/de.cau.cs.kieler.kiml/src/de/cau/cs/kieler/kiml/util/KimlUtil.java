@@ -554,7 +554,8 @@ public final class KimlUtil {
     }
     
     /**
-     * Converts the given relative point to an absolute location.
+     * Converts the given relative point to an absolute location. The insets of the parent node
+     * are included in this calculation.
      * 
      * @param point a relative point
      * @param parent the parent node to which the point is relative to
@@ -571,7 +572,8 @@ public final class KimlUtil {
     }
     
     /**
-     * Converts the given absolute point to a relative location.
+     * Converts the given absolute point to a relative location. The insets of the parent node
+     * are included in this calculation.
      * 
      * @param point an absolute point
      * @param parent the parent node to which the point shall be made relative to

@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2011 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kaom.custom;
 
 import java.util.ArrayList;
@@ -5,6 +18,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
+
+import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
@@ -12,8 +27,16 @@ import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.SemanticLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
-public class TypeLayoutConfig extends SemanticLayoutConfig{
+/**
+ * A semantic layout configuration for the diagram type of entities.
+ *
+ * @author ckru
+ */
+public class TypeLayoutConfig extends SemanticLayoutConfig {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected List<LayoutOptionData<?>> getOptionData(final EObject semanticElem) {
         if (semanticElem instanceof Entity) {
@@ -26,29 +49,34 @@ public class TypeLayoutConfig extends SemanticLayoutConfig{
         return Collections.emptyList();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected Object getSemanticProperty(final EObject semanticElem, final LayoutOptionData<?> layoutOption) {
+    protected Object getSemanticProperty(final EObject semanticElem,
+            final LayoutOptionData<?> layoutOption) {
         if (semanticElem instanceof Entity && layoutOption.getId()
                 .equals(LayoutOptions.DIAGRAM_TYPE_ID)) {
             Entity entity = (Entity) semanticElem;
-            StringAnnotation typeAnn = (StringAnnotation) entity.getAnnotation("DiagramType"); 
-            if ((typeAnn == null) || (typeAnn.getValue().equals("DataFlow"))) {
-                return "de.cau.cs.kieler.layout.diagrams.dataFlow";
-            } else if (typeAnn.getValue().equals("StateMachine")) {
-                return "de.cau.cs.kieler.layout.diagrams.stateMachine";
-            } else {
-                return "de.cau.cs.kieler.layout.diagrams.dataFlow";
+            Annotation annotation = entity.getAnnotation("DiagramType");
+            if (annotation instanceof StringAnnotation) {
+                StringAnnotation typeAnn = (StringAnnotation) annotation; 
+                if (typeAnn.getValue().equals("StateMachine")) {
+                    return "de.cau.cs.kieler.layout.diagrams.stateMachine";
+                }
             }
+            return "de.cau.cs.kieler.layout.diagrams.dataFlow";
         }
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected void setSemanticProperty(final EObject semanticElem, final LayoutOptionData<?> layoutOption,
-            final Object value) {
-        // TODO Auto-generated method stub
-        
+    protected void setSemanticProperty(final EObject semanticElem,
+            final LayoutOptionData<?> layoutOption, final Object value) {
+        // not supported by this layout configuration
     }
-
     
 }
