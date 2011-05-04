@@ -481,6 +481,14 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                             }
                         }
                     }
+                } else if (origin instanceof KPort) {
+                    // It's an external port. Set its position
+                    KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
+                    KVector portPosition = getExternalPortPosition(lnode, portLayout.getWidth(),
+                            portLayout.getHeight());
+                    
+                    portLayout.setXpos((float) portPosition.x);
+                    portLayout.setYpos((float) portPosition.y);
                 }
                 
                 // collect edges

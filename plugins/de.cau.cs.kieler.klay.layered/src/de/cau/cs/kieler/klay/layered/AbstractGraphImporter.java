@@ -17,6 +17,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.klay.layered.graph.Insets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
@@ -229,6 +230,53 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
         dummy.setProperty(Properties.EXT_PORT_SIDE, finalPortSide);
         
         return dummy;
+    }
+    
+    /**
+     * Calculates the position of the external port's top left corner from the position of the
+     * given dummy node that represents the port. The position is relative to the graph node's
+     * top left corner.
+     * 
+     * @param portDummy the dummy node representing the external port.
+     * @param portWidth the external port's width.
+     * @param portHeight the external port's height.
+     * @return the external port's position.
+     */
+    protected KVector getExternalPortPosition(final LNode portDummy, final double portWidth,
+            final double portHeight) {
+        
+        KVector portPosition = new KVector();
+        
+        // Get some properties of the graph
+        KVector size = graph.getSize();
+        Insets.Double insets = graph.getInsets();
+        float borderSpacing = graph.getProperty(LayoutOptions.BORDER_SPACING);
+        KVector offset = graph.getOffset();
+        
+        // The exact coordinates depend on the port's side...
+        switch (portDummy.getProperty(Properties.EXT_PORT_SIDE)) {
+        case NORTH:
+            portPosition.x += insets.left + borderSpacing + offset.x - (portWidth / 2.0);
+            portPosition.y = -portHeight;
+            break;
+        
+        case EAST:
+            portPosition.x = size.x + insets.left + insets.right + 2 * borderSpacing;
+            portPosition.y += insets.top + borderSpacing + offset.y - (portHeight / 2.0);
+            break;
+        
+        case SOUTH:
+            portPosition.x += insets.left + borderSpacing + offset.x - (portWidth / 2.0);
+            portPosition.y = size.y + insets.top + insets.bottom + 2 * borderSpacing;
+            break;
+        
+        case WEST:
+            portPosition.x = -portWidth;
+            portPosition.y += insets.top + borderSpacing + offset.y - (portHeight / 2.0);
+            break;
+        }
+        
+        return portPosition;
     }
     
 }
