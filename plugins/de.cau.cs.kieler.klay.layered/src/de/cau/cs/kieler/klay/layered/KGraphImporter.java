@@ -55,7 +55,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author cds
  */
 public class KGraphImporter extends AbstractGraphImporter<KNode> {
-
+    
     /**
      * Constructs a new instance that transforms the given node into a layered graph.
      * 
@@ -64,11 +64,11 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
     public KGraphImporter(final KNode node) {
         super(node);
     }
-
-
+    
+    
     ///////////////////////////////////////////////////////////////////////////////
     // Transformation KGraph -> LGraph
-
+    
     /**
      * {@inheritDoc}
      */
@@ -109,8 +109,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         // set the graph properties property
         layeredGraph.setProperty(Properties.GRAPH_PROPERTIES, graphProperties);
     }
-
-
+    
     /**
      * Transforms the nodes and ports defined by the given layout node.
      * 
@@ -137,7 +136,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         
         // Transform the external ports
         for (KPort kport : ports) {
-            transformExternalPort(kport, layeredNodes, layoutNodeSize, elemMap);
+            transformExternalPort(kport, layeredNodes, layoutNode, layoutNodeSize, elemMap);
         }
         
         // Now transform the node's children
@@ -145,19 +144,20 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             transformNode(child, layeredNodes, elemMap, graphProperties);
         }
     }
-
-
+    
     /**
      * Transforms the given external port into a dummy node.
      * 
      * @param kport the port.
      * @param layeredNodes the list of nodes to add the dummy node to.
+     * @param layoutNode the layout node.
      * @param layoutNodeSize the layout node's size.
      * @param elemMap the element map that maps the original {@code KGraph} elements to the
      *                transformed {@code LGraph} elements.
      */
     private void transformExternalPort(final KPort kport, final List<LNode> layeredNodes,
-            final KVector layoutNodeSize, final Map<KGraphElement, LGraphElement> elemMap) {
+            final KNode layoutNode, final KVector layoutNodeSize,
+            final Map<KGraphElement, LGraphElement> elemMap) {
         
         KShapeLayout kportLayout = kport.getData(KShapeLayout.class);
         
@@ -169,10 +169,10 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         // Count the number of incoming and outgoing edges
         int inEdges = 0, outEdges = 0;
         for (KEdge edge : kport.getEdges()) {
-            if (edge.getSourcePort() == kport) {
+            if (edge.getSourcePort() == kport && edge.getTarget().getParent() == layoutNode) {
                 outEdges++;
             }
-            if (edge.getTargetPort() == kport) {
+            if (edge.getTargetPort() == kport && edge.getSource().getParent() == layoutNode) {
                 inEdges++;
             }
         }
@@ -303,7 +303,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             outputPort.setNode(newNode);
         }
     }
-
+    
     /**
      * Transforms the edges defined by the given layout node.
      * 
@@ -324,9 +324,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             for (KEdge kedge : child.getOutgoingEdges()) {
                 // exclude edges that pass hierarchy bounds (except for those going into an
                 // external port)
-                if (kedge.getTarget() != layoutNode
-                        && kedge.getTarget().getParent() == child.getParent()) {
-                    
+                if (kedge.getTarget().getParent() == child.getParent()) {
                     transformEdge(kedge, layoutNode, elemMap, graphProperties);
                 } else {
                     // the edge is excluded from layout
@@ -336,8 +334,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             }
         }
     }
-
-
+    
     /**
      * Transforms the given list of edges connected to the layout node's external ports.
      * 
@@ -365,7 +362,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             }
         }
     }
-
+    
     /**
      * Transforms the given edge.
      * 
@@ -488,7 +485,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             return PortSide.SOUTH;
         }
     }
-
+    
     
     ///////////////////////////////////////////////////////////////////////////////
     // Apply Layout Results
@@ -508,7 +505,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         
         // along the way, we collect the list of edges to be processed later
         List<LEdge> edgeList = new LinkedList<LEdge>();
-
+        
         // process the nodes
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode lnode : layer.getNodes()) {
@@ -592,7 +589,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
             }
         }
-
+        
         // set up the parent node
         KInsets insets = parentLayout.getInsets();
         parentLayout.setWidth((float) layeredGraph.getSize().x + 2 * borderSpacing
