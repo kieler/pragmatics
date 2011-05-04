@@ -250,7 +250,8 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
     protected KVector getExternalPortPosition(final LNode portDummy, final double portWidth,
             final double portHeight) {
         
-        KVector portPosition = new KVector();
+        KVector dummyPosition = portDummy.getPosition();
+        KVector portPosition = new KVector(dummyPosition.x, dummyPosition.y);
         
         // Get some properties of the graph
         KVector size = graph.getSize();

@@ -284,18 +284,9 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
     private void transformEdges(final KNode layoutNode, final Map<KGraphElement, LGraphElement> elemMap,
             final EnumSet<GraphProperties> graphProperties) {
         
-        // Transform edges originating in the layout node's external ports
-        for (KEdge kedge : layoutNode.getOutgoingEdges()) {
-            // Only transform edges going into the layout node's direct children
-            // (self-loops of the layout node will be processed on level higher)
-            if (kedge.getTarget().getParent() == layoutNode) {
-                transformEdge(kedge, layoutNode, elemMap, graphProperties);
-            } else {
-                // the edge is excluded from layout
-                KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-                edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
-            }
-        }
+        // Transform external port edges
+        transformExternalPortEdges(layoutNode, layoutNode.getIncomingEdges(),  elemMap, graphProperties);
+        transformExternalPortEdges(layoutNode, layoutNode.getOutgoingEdges(),  elemMap, graphProperties);
         
         // Transform edges originating in the layout node's children
         for (KNode child : layoutNode.getChildren()) {
@@ -311,6 +302,35 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                     KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
                     edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 }
+            }
+        }
+    }
+
+
+    /**
+     * Transforms the given list of edges connected to the layout node's external ports.
+     * 
+     * @param layoutNode the layout node.
+     * @param edges the list of edges, each connected to an external port of the layout node.
+     * @param elemMap the element map that maps the original {@code KGraph} elements to the
+     *                transformed {@code LGraph} elements.
+     * @param graphProperties graph properties updated during the transformation.
+     */
+    private void transformExternalPortEdges(final KNode layoutNode, final List<KEdge> edges,
+            final Map<KGraphElement, LGraphElement> elemMap,
+            final EnumSet<GraphProperties> graphProperties) {
+        
+        for (KEdge kedge : edges) {
+            // Only transform edges going into the layout node's direct children
+            // (self-loops of the layout node will be processed on level higher)
+            if (kedge.getSource().getParent() == layoutNode
+                    || kedge.getTarget().getParent() == layoutNode) {
+                
+                transformEdge(kedge, layoutNode, elemMap, graphProperties);
+            } else {
+                // the edge is excluded from layout
+                KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+                edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
             }
         }
     }
