@@ -137,14 +137,101 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         
         // Transform the external ports
         for (KPort kport : ports) {
-            KShapeLayout kportLayout = kport.getData(KShapeLayout.class);
+            transformExternalPort(kport, layeredNodes, layoutNodeSize, elemMap);
+        }
+        
+        // Now transform the node's children
+        for (KNode child : layoutNode.getChildren()) {
+            transformNode(child, layeredNodes, elemMap, graphProperties);
+        }
+    }
+
+
+    /**
+     * Transforms the given external port into a dummy node.
+     * 
+     * @param kport the port.
+     * @param layeredNodes the list of nodes to add the dummy node to.
+     * @param layoutNodeSize the layout node's size.
+     * @param elemMap the element map that maps the original {@code KGraph} elements to the
+     *                transformed {@code LGraph} elements.
+     */
+    private void transformExternalPort(final KPort kport, final List<LNode> layeredNodes,
+            final KVector layoutNodeSize, final Map<KGraphElement, LGraphElement> elemMap) {
+        
+        KShapeLayout kportLayout = kport.getData(KShapeLayout.class);
+        
+        // Calculate the position of the port's center
+        KVector kportPosition = new KVector(
+                kportLayout.getXpos() + kportLayout.getWidth() / 2.0,
+                kportLayout.getYpos() + kportLayout.getHeight() / 2.0);
+        
+        // Count the number of incoming and outgoing edges
+        int inEdges = 0, outEdges = 0;
+        for (KEdge edge : kport.getEdges()) {
+            if (edge.getSourcePort() == kport) {
+                outEdges++;
+            }
+            if (edge.getTargetPort() == kport) {
+                inEdges++;
+            }
+        }
+        
+        // Create dummy
+        LNode dummy = createExternalPortDummy(kport,
+                kportLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS),
+                KimlUtil.calcPortSide(kport),
+                inEdges - outEdges,
+                layoutNodeSize,
+                kportPosition);
+        layeredNodes.add(dummy);
+        elemMap.put(kport, dummy);
+    }
+    
+    /**
+     * Transforms the given node.
+     * 
+     * @param node the node to transform.
+     * @param layeredNodes the list of nodes to add the transformed node to.
+     * @param elemMap the element map that maps the original {@code KGraph} elements to the
+     *                transformed {@code LGraph} elements.
+     * @param graphProperties graph properties updated during the transformation.
+     */
+    private void transformNode(final KNode node, final List<LNode> layeredNodes,
+            final Map<KGraphElement, LGraphElement> elemMap,
+            final EnumSet<GraphProperties> graphProperties) {
+        
+        // add a new node to the layered graph, copying its size
+        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+        
+        LNode newNode = new LNode(node.getLabel().getText());
+        newNode.setProperty(Properties.ORIGIN, node);
+        newNode.getPosition().x = nodeLayout.getXpos();
+        newNode.getPosition().y = nodeLayout.getYpos();
+        newNode.getSize().x = nodeLayout.getWidth();
+        newNode.getSize().y = nodeLayout.getHeight();
+        layeredNodes.add(newNode);
+        
+        elemMap.put(node, newNode);
+        
+        // port constraints cannot be undefined
+        PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+        if (portConstraints == PortConstraints.UNDEFINED) {
+            portConstraints = PortConstraints.FREE;
+        }
+        
+        // get a sorted list of the node's ports; if there are any with non-free port
+        // constraints, set the appropriate graph property
+        KPort[] sortedPorts = KimlUtil.getSortedPorts(node);
+        if (sortedPorts.length > 0 && portConstraints != PortConstraints.FREE) {
+            graphProperties.add(GraphProperties.NON_FREE_PORTS);
+        }
+        
+        // transform the ports
+        for (KPort kport : sortedPorts) {
+            KShapeLayout portLayout = kport.getData(KShapeLayout.class);
             
-            // Calculate the position of the port's center
-            KVector kportPosition = new KVector(
-                    kportLayout.getXpos() + kportLayout.getWidth() / 2.0,
-                    kportLayout.getYpos() + kportLayout.getHeight() / 2.0);
-            
-            // Count the number of incoming and outgoing edges
+            // determine the port type
             int inEdges = 0, outEdges = 0;
             for (KEdge edge : kport.getEdges()) {
                 if (edge.getSourcePort() == kport) {
@@ -155,123 +242,67 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 }
             }
             
-            // Create dummy
-            LNode dummy = createExternalPortDummy(kport,
-                    kportLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS),
-                    KimlUtil.calcPortSide(kport),
-                    inEdges - outEdges,
-                    layoutNodeSize,
-                    kportPosition);
-            layeredNodes.add(dummy);
-            elemMap.put(kport, dummy);
-        }
-        
-        // Now transform the node's children
-        for (KNode child : layoutNode.getChildren()) {
-            // add a new node to the layered graph, copying its size
-            KShapeLayout nodeLayout = child.getData(KShapeLayout.class);
+            // create layered port, copying its position
+            LPort newPort = new LPort(kport.getLabel().getText());
+            newPort.setProperty(Properties.ORIGIN, kport);
+            newPort.getSize().x = portLayout.getWidth();
+            newPort.getSize().y = portLayout.getHeight();
+            newPort.getPosition().x = portLayout.getXpos() + portLayout.getWidth() / 2;
+            newPort.getPosition().y = portLayout.getYpos() + portLayout.getHeight() / 2;
+            newPort.setNode(newNode);
             
-            LNode newNode = new LNode(child.getLabel().getText());
-            newNode.setProperty(Properties.ORIGIN, child);
-            newNode.getPosition().x = nodeLayout.getXpos();
-            newNode.getPosition().y = nodeLayout.getYpos();
-            newNode.getSize().x = nodeLayout.getWidth();
-            newNode.getSize().y = nodeLayout.getHeight();
-            layeredNodes.add(newNode);
+            elemMap.put(kport, newPort);
             
-            elemMap.put(child, newNode);
-            
-            // port constraints cannot be undefined
-            PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
-            if (portConstraints == PortConstraints.UNDEFINED) {
-                portConstraints = PortConstraints.FREE;
-            }
-            
-            // get a sorted list of the node's ports; if there are any with non-free port
-            // constraints, set the appropriate graph property
-            KPort[] sortedPorts = KimlUtil.getSortedPorts(child);
-            if (sortedPorts.length > 0 && portConstraints != PortConstraints.FREE) {
-                graphProperties.add(GraphProperties.NON_FREE_PORTS);
-            }
-            
-            // transform the ports
-            for (KPort kport : sortedPorts) {
-                KShapeLayout portLayout = kport.getData(KShapeLayout.class);
-                
-                // determine the port type
-                int inEdges = 0, outEdges = 0;
-                for (KEdge edge : kport.getEdges()) {
-                    if (edge.getSourcePort() == kport) {
-                        outEdges++;
-                    }
-                    if (edge.getTargetPort() == kport) {
-                        inEdges++;
-                    }
-                }
-                
-                // create layered port, copying its position
-                LPort newPort = new LPort(kport.getLabel().getText());
-                newPort.setProperty(Properties.ORIGIN, kport);
-                newPort.getSize().x = portLayout.getWidth();
-                newPort.getSize().y = portLayout.getHeight();
-                newPort.getPosition().x = portLayout.getXpos() + portLayout.getWidth() / 2;
-                newPort.getPosition().y = portLayout.getYpos() + portLayout.getHeight() / 2;
-                newPort.setNode(newNode);
-                
-                elemMap.put(kport, newPort);
-                
-                // create layered label, if any
-                KLabel klabel = kport.getLabel();
-                if (klabel != null) {
-                    KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
-                    
-                    LLabel llabel = new LLabel(klabel.getText());
-                    llabel.setProperty(Properties.ORIGIN, klabel);
-                    llabel.getSize().x = labelLayout.getWidth();
-                    llabel.getSize().y = labelLayout.getHeight();
-                    llabel.getPosition().x = labelLayout.getXpos() - portLayout.getWidth() / 2;
-                    llabel.getPosition().y = labelLayout.getYpos() - portLayout.getHeight() / 2;
-                    newPort.setLabel(llabel);
-                }
-                
-                // calculate port side
-                PortSide newPortSide = KimlUtil.calcPortSide(kport);
-                newPort.setSide(newPortSide);
-                
-                if (newPortSide == PortSide.NORTH || newPortSide == PortSide.SOUTH) {
-                    graphProperties.add(GraphProperties.NORTH_SOUTH_PORTS);
-                }
-            }
-            
-            // add the node's label, if any
-            KLabel klabel = child.getLabel();
+            // create layered label, if any
+            KLabel klabel = kport.getLabel();
             if (klabel != null) {
                 KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
                 
                 LLabel llabel = new LLabel(klabel.getText());
-                llabel.setProperty(Properties.ORIGIN, child);
+                llabel.setProperty(Properties.ORIGIN, klabel);
                 llabel.getSize().x = labelLayout.getWidth();
                 llabel.getSize().y = labelLayout.getHeight();
-                llabel.getPosition().x = labelLayout.getXpos();
-                llabel.getPosition().y = labelLayout.getYpos();
+                llabel.getPosition().x = labelLayout.getXpos() - portLayout.getWidth() / 2;
+                llabel.getPosition().y = labelLayout.getYpos() - portLayout.getHeight() / 2;
+                newPort.setLabel(llabel);
             }
             
-            // set properties of the new node
-            newNode.copyProperties(nodeLayout);
+            // calculate port side
+            PortSide newPortSide = KimlUtil.calcPortSide(kport);
+            newPort.setSide(newPortSide);
             
-            // if we have a hypernode without ports, create a default input and output port
-            if (newNode.getProperty(LayoutOptions.HYPERNODE) && newNode.getPorts().isEmpty()) {
-                LPort inputPort = new LPort();
-                inputPort.setSide(PortSide.WEST);
-                inputPort.setNode(newNode);
-                
-                LPort outputPort = new LPort();
-                outputPort.setSide(PortSide.EAST);
-                outputPort.setNode(newNode);
+            if (newPortSide == PortSide.NORTH || newPortSide == PortSide.SOUTH) {
+                graphProperties.add(GraphProperties.NORTH_SOUTH_PORTS);
             }
         }
+        
+        // add the node's label, if any
+        KLabel klabel = node.getLabel();
+        if (klabel != null) {
+            KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
+            
+            LLabel llabel = new LLabel(klabel.getText());
+            llabel.setProperty(Properties.ORIGIN, node);
+            llabel.getSize().x = labelLayout.getWidth();
+            llabel.getSize().y = labelLayout.getHeight();
+            llabel.getPosition().x = labelLayout.getXpos();
+            llabel.getPosition().y = labelLayout.getYpos();
+        }
+        
+        // set properties of the new node
+        newNode.copyProperties(nodeLayout);
+        
+        // if we have a hypernode without ports, create a default input and output port
+        if (newNode.getProperty(LayoutOptions.HYPERNODE) && newNode.getPorts().isEmpty()) {
+            LPort inputPort = new LPort();
+            inputPort.setSide(PortSide.WEST);
+            inputPort.setNode(newNode);
+            
+            LPort outputPort = new LPort();
+            outputPort.setSide(PortSide.EAST);
+            outputPort.setNode(newNode);
+        }
     }
-
 
     /**
      * Transforms the edges defined by the given layout node.
