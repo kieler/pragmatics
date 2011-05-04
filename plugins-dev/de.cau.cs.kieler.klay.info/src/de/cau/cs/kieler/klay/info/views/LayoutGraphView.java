@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.viewer.views;
+package de.cau.cs.kieler.klay.info.views;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -45,11 +45,11 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
-import de.cau.cs.kieler.kiml.viewer.KimlViewerPlugin;
-import de.cau.cs.kieler.kiml.viewer.Messages;
-import de.cau.cs.kieler.kiml.viewer.actions.GmfDebugGraphicsAction;
-import de.cau.cs.kieler.kiml.viewer.actions.ImageExportAction;
-import de.cau.cs.kieler.kiml.viewer.actions.PerformLayoutAction;
+import de.cau.cs.kieler.klay.info.KimlViewerPlugin;
+import de.cau.cs.kieler.klay.info.Messages;
+import de.cau.cs.kieler.klay.info.actions.GmfDebugGraphicsAction;
+import de.cau.cs.kieler.klay.info.actions.ImageExportAction;
+import de.cau.cs.kieler.klay.info.actions.PerformLayoutAction;
 
 /**
  * A viewer for layout graphs.

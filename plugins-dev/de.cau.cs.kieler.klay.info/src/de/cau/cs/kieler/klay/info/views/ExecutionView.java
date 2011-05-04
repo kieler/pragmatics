@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.viewer.views;
+package de.cau.cs.kieler.klay.info.views;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.kiml.viewer.actions.ClearExecutionsAction;
+import de.cau.cs.kieler.klay.info.actions.ClearExecutionsAction;
 
 /**
  * View that can be used to display execution results of an algorithm.

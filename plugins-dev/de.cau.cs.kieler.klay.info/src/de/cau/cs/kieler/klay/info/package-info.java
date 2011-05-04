@@ -13,6 +13,6 @@
  */
 
 /**
- * Actions for the KIML debug views.
+ * Base package of the KIML viewer plug-in, which is used for debugging.
  */
-package de.cau.cs.kieler.kiml.viewer.actions;
+package de.cau.cs.kieler.klay.info;

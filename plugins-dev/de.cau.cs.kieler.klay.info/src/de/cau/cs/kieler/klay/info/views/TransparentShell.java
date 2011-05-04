@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-package de.cau.cs.kieler.kiml.viewer.views;
+package de.cau.cs.kieler.klay.info.views;
 
 import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.swt.SWT;

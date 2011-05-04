@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.viewer;
+package de.cau.cs.kieler.klay.info;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.ui.IViewPart;
@@ -22,8 +22,8 @@ import org.eclipse.ui.PlatformUI;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.kiml.viewer.views.ExecutionView;
-import de.cau.cs.kieler.kiml.viewer.views.LayoutGraphView;
+import de.cau.cs.kieler.klay.info.views.ExecutionView;
+import de.cau.cs.kieler.klay.info.views.LayoutGraphView;
 
 /**
  * Effect for updating the KIML Viewer.

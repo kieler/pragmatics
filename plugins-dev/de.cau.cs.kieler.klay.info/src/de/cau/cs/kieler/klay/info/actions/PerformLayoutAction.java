@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.viewer.actions;
+package de.cau.cs.kieler.klay.info.actions;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -27,9 +27,9 @@ import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.RecursiveLayouterEngine;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
-import de.cau.cs.kieler.kiml.viewer.KimlViewerPlugin;
-import de.cau.cs.kieler.kiml.viewer.Messages;
-import de.cau.cs.kieler.kiml.viewer.views.LayoutGraphView;
+import de.cau.cs.kieler.klay.info.KimlViewerPlugin;
+import de.cau.cs.kieler.klay.info.Messages;
+import de.cau.cs.kieler.klay.info.views.LayoutGraphView;
 
 /**
  * Action that performs layout on the currently loaded XMI resource.

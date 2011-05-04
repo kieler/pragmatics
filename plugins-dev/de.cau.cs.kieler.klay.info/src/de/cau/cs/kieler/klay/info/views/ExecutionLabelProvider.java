@@ -11,13 +11,13 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.viewer.views;
+package de.cau.cs.kieler.klay.info.views;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.kiml.viewer.KimlViewerPlugin;
+import de.cau.cs.kieler.klay.info.KimlViewerPlugin;
 
 /**
  * Label provider for execution times retrieved from KIELER progress monitors.

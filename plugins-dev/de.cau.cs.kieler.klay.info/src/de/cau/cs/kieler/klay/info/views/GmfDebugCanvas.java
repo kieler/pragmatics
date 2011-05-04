@@ -12,7 +12,7 @@
  * See the file LICENSE.txt or see http://www.eclipse.org/legal/ for the
  * license text.
  */
-package de.cau.cs.kieler.kiml.viewer.views;
+package de.cau.cs.kieler.klay.info.views;
 
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.FigureCanvas;

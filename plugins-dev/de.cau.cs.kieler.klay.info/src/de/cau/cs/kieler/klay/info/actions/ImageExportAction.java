@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.viewer.actions;
+package de.cau.cs.kieler.klay.info.actions;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -29,10 +29,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 
-import de.cau.cs.kieler.kiml.viewer.KimlViewerPlugin;
-import de.cau.cs.kieler.kiml.viewer.Messages;
-import de.cau.cs.kieler.kiml.viewer.views.LayoutGraphCanvas;
-import de.cau.cs.kieler.kiml.viewer.views.LayoutGraphView;
+import de.cau.cs.kieler.klay.info.KimlViewerPlugin;
+import de.cau.cs.kieler.klay.info.Messages;
+import de.cau.cs.kieler.klay.info.views.LayoutGraphCanvas;
+import de.cau.cs.kieler.klay.info.views.LayoutGraphView;
 
 /**
  * Action that exports the currently displayed layout graph into an image file.

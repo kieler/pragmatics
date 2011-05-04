@@ -6,7 +6,7 @@
       <view
             allowMultiple="false"
             category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.kiml.viewer.views.LayoutGraphView"
+            class="de.cau.cs.kieler.klay.info.views.LayoutGraphView"
             icon="icons/graph.gif"
             id="de.cau.cs.kieler.kiml.viewer.layoutGraph"
             name="Layout Graph"
@@ -15,7 +15,7 @@
       <view
             allowMultiple="false"
             category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.kiml.viewer.views.ExecutionView"
+            class="de.cau.cs.kieler.klay.info.views.ExecutionView"
             icon="icons/clock.gif"
             id="de.cau.cs.kieler.kiml.viewer.execution"
             name="Layout Time"
@@ -26,7 +26,7 @@
          point="de.cau.cs.kieler.core.kivi.combinations">
       <combination
             active="true"
-            class="de.cau.cs.kieler.kiml.viewer.UpdateViewerCombination"
+            class="de.cau.cs.kieler.klay.info.UpdateViewerCombination"
             description="Shows a finished layout graph in the KLay Info view"
             name="Show Layout Graph in Viewer">
       </combination>

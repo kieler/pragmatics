@@ -12,13 +12,13 @@
  * See the file LICENSE.txt or see http://www.eclipse.org/legal/ for the
  * license text.
  */
-package de.cau.cs.kieler.kiml.viewer.actions;
+package de.cau.cs.kieler.klay.info.actions;
 
 import org.eclipse.jface.action.Action;
 
-import de.cau.cs.kieler.kiml.viewer.KimlViewerPlugin;
-import de.cau.cs.kieler.kiml.viewer.Messages;
-import de.cau.cs.kieler.kiml.viewer.views.LayoutGraphView;
+import de.cau.cs.kieler.klay.info.KimlViewerPlugin;
+import de.cau.cs.kieler.klay.info.Messages;
+import de.cau.cs.kieler.klay.info.views.LayoutGraphView;
 
 /**
  * Action to trigger the debug view to overlay the GMF Editor canvas with a view

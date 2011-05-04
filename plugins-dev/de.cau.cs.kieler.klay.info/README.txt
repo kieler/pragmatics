@@ -1,4 +1,4 @@
-| de.cau.cs.kieler.kiml.viewer
+| de.cau.cs.kieler.klay.info
 \______________________________________
 
 Layout listener for debugging of KIML and layout algorithms. Includes a
