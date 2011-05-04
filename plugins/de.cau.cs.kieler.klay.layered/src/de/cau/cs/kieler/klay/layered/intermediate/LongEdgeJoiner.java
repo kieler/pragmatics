@@ -19,20 +19,21 @@ import java.util.ListIterator;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Removes dummy nodes due to edge splitting. (dummy nodes that have the node
- * type {@link de.cau.cs.kieler.klay.layered.Properties.NodeType#LONG_EDGE})
+ * type {@link de.cau.cs.kieler.klay.layered.properties.NodeType#LONG_EDGE})
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph; nodes are placed; edges are routed.</dd>
  *   <dt>Postcondition:</dt><dd>there are no dummy nodes of type
- *     {@link de.cau.cs.kieler.klay.layered.Properties.NodeType#LONG_EDGE}.</dd>
+ *     {@link de.cau.cs.kieler.klay.layered.properties.NodeType#LONG_EDGE}.</dd>
  *   <dt>Slots:</dt><dd>After phase 5.</dd>
  *   <dt>Same-slot dependencies:</dt><dd>{@link ExternalPortOrthogonalEdgeRouter}</dd>
  * </dl>
@@ -57,7 +58,7 @@ public class LongEdgeJoiner extends AbstractAlgorithm implements ILayoutProcesso
                 LNode node = nodeIterator.next();
                 
                 // Check if it's a dummy edge we're looking for
-                if (node.getProperty(Properties.NODE_TYPE).equals(Properties.NodeType.LONG_EDGE)) {
+                if (node.getProperty(Properties.NODE_TYPE).equals(NodeType.LONG_EDGE)) {
                     // Get the input and output port (of which we assume to have only one,
                     // on the western side and on the eastern side, respectively)
                     List<LEdge> inputPortEdges =

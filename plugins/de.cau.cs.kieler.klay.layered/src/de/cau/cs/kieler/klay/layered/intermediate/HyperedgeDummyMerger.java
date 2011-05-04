@@ -19,12 +19,13 @@ import java.util.ListIterator;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Looks for long edge dummy nodes that can be joined together. The aim is to reduce the
@@ -34,8 +35,8 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph; node orders are fixed; for long edge dummies
- *     to be joined, their {@link de.cau.cs.kieler.klay.layered.Properties#LONG_EDGE_SOURCE}
- *     and {@link de.cau.cs.kieler.klay.layered.Properties#LONG_EDGE_TARGET} properties must
+ *     to be joined, their {@link de.cau.cs.kieler.klay.layered.properties.Properties#LONG_EDGE_SOURCE}
+ *     and {@link de.cau.cs.kieler.klay.layered.properties.Properties#LONG_EDGE_TARGET} properties must
  *     be set.</dd>
  *   <dt>Postcondition:</dt><dd>long edge dummy nodes belonging to the same hyperedge and
  *     being directly next to each other are merged.</dd>
@@ -65,9 +66,9 @@ public class HyperedgeDummyMerger extends AbstractAlgorithm implements ILayoutPr
             }
             
             LNode currentNode = null;
-            Properties.NodeType currentNodeType = null;
+            NodeType currentNodeType = null;
             LNode lastNode = null;
-            Properties.NodeType lastNodeType = null;
+            NodeType lastNodeType = null;
             
             // Iterate through the remaining nodes
             for (int nodeIndex = 0; nodeIndex < nodes.size(); nodeIndex++) {
@@ -76,8 +77,8 @@ public class HyperedgeDummyMerger extends AbstractAlgorithm implements ILayoutPr
                 currentNodeType = currentNode.getProperty(Properties.NODE_TYPE);
                 
                 // We're only interested if the current and last nodes are long edge dummies
-                if (currentNodeType == Properties.NodeType.LONG_EDGE
-                        && lastNodeType == Properties.NodeType.LONG_EDGE) {
+                if (currentNodeType == NodeType.LONG_EDGE
+                        && lastNodeType == NodeType.LONG_EDGE) {
                     
                     // Get long edge source and target ports
                     LPort currentNodeSource = currentNode.getProperty(Properties.LONG_EDGE_SOURCE);

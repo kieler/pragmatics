@@ -17,13 +17,13 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
-import de.cau.cs.kieler.klay.layered.Properties;
-import de.cau.cs.kieler.klay.layered.Properties.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Edge router module that draws edges with non-orthogonal line segments.

@@ -16,10 +16,11 @@ package de.cau.cs.kieler.klay.layered.p5edges;
 import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Class for convenient use of "long edges", this are edges covering more than one layer. In the
@@ -101,7 +102,7 @@ public class LongEdge {
                     .getPosition().y
                     + port.getPosition().y));
         } while (intermediateEdge.getTarget().getNode().getProperty(Properties.NODE_TYPE) 
-                == Properties.NodeType.LONG_EDGE);
+                == NodeType.LONG_EDGE);
 
         start = intermediateEdge.getSource();
         startNode = start.getNode();

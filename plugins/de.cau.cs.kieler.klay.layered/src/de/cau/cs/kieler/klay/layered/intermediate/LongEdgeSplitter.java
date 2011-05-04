@@ -20,12 +20,13 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Splits the long edges of the layered graph to obtain a proper layering.
@@ -77,7 +78,7 @@ public class LongEdgeSplitter extends AbstractAlgorithm implements ILayoutProces
                             LNode dummyNode = new LNode();
                             dummyNode.setProperty(Properties.ORIGIN, edge);
                             dummyNode.setProperty(Properties.NODE_TYPE,
-                                    Properties.NodeType.LONG_EDGE);
+                                    NodeType.LONG_EDGE);
                             dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS,
                                     PortConstraints.FIXED_POS);
                             dummyNode.setLayer(nextLayer);
@@ -122,7 +123,7 @@ public class LongEdgeSplitter extends AbstractAlgorithm implements ILayoutProces
     private void setDummyProperties(final LNode dummy, final LEdge inEdge, final LEdge outEdge) {
         LNode inEdgeSourceNode = inEdge.getSource().getNode();
         
-        if (inEdgeSourceNode.getProperty(Properties.NODE_TYPE) == Properties.NodeType.LONG_EDGE) {
+        if (inEdgeSourceNode.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
             // The incoming edge originates from a long edge dummy node, so we can
             // just copy its properties
             dummy.setProperty(Properties.LONG_EDGE_SOURCE,

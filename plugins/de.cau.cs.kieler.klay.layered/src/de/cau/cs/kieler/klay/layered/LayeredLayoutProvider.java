@@ -44,6 +44,7 @@ import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.PolylineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.SimpleSplineEdgeRouter;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Layout provider to connect the layered layouter to the Eclipse based layout services.

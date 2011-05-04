@@ -18,10 +18,11 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.InLayerConstraint;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Makes sure that in-layer constraints are respected. This processor is only necessary
@@ -68,17 +69,17 @@ public class InLayerConstraintProcessor extends AbstractAlgorithm implements ILa
             LNode[] nodes = layer.getNodes().toArray(new LNode[0]);
             
             for (int i = 0; i < nodes.length; i++) {
-                Properties.InLayerConstraint constraint =
+                InLayerConstraint constraint =
                     nodes[i].getProperty(Properties.IN_LAYER_CONSTRAINT);
                 
                 if (topInsertionIndex == -1) {
                     // See if this node is the first non-top-constrained node
-                    if (constraint != Properties.InLayerConstraint.TOP) {
+                    if (constraint != InLayerConstraint.TOP) {
                         topInsertionIndex = i;
                     }
                 } else {
                     // We have already encountered non-top-constrained nodes before
-                    if (constraint == Properties.InLayerConstraint.TOP) {
+                    if (constraint == InLayerConstraint.TOP) {
                         // Move the node to the top insertion point
                         nodes[i].setLayer(null);
                         nodes[i].setLayer(topInsertionIndex++, layer);

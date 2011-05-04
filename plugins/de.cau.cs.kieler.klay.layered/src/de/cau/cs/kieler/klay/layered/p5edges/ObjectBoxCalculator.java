@@ -26,12 +26,13 @@ import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.math.BezierSpline.BezierCurve;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas.Color;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * @author car
@@ -180,7 +181,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                             Color.YELLOW, false);
 
             if (currentTarget.getNode().getProperty(Properties.NODE_TYPE)
-                    == Properties.NodeType.LONG_EDGE) {
+                    == NodeType.LONG_EDGE) {
                 drawOnDebug(
                         new Ellipse2D.Double(
                                 (currentTarget.getNode().getPosition().x + currentTarget.getPosition().x
@@ -374,7 +375,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
             }
 
         } while (currentSource.getNode().getProperty(Properties.NODE_TYPE)
-                == Properties.NodeType.LONG_EDGE);
+                == NodeType.LONG_EDGE);
         if (debugCanvas != null) {
             debugCanvas.drawBuffer();
         }
@@ -516,7 +517,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 // filter out start points of long edges
-                if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
+                if (node.getProperty(Properties.NODE_TYPE) != NodeType.LONG_EDGE) {
                     // for (LPort port : node.getPorts(PortType.OUTPUT)) {
                     // for (LEdge edge : port.getEdges()) {
                     // addEdge(edge);

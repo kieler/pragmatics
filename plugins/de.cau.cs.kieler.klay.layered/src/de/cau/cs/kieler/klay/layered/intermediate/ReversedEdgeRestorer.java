@@ -15,16 +15,16 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Restores the direction of reversed edges. (edges with the property
- * {@link de.cau.cs.kieler.klay.layered.Properties#REVERSED} set to {@code true})
+ * {@link de.cau.cs.kieler.klay.layered.properties.Properties#REVERSED} set to {@code true})
  * 
  * <p>All edges are traversed to look for reversed edges. If such edges are found,
  * they are restored, the ports they are connected to being restored as well.</p>

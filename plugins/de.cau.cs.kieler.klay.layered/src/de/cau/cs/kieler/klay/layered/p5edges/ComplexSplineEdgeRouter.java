@@ -27,7 +27,6 @@ import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.math.BezierSpline.BezierCurve;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -35,6 +34,8 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.p5edges.ISplineGenerator.curvature;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Edge router module that draws splines (hopefully).
@@ -104,11 +105,11 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements ILayou
             layer.placeNodes(xpos);
             for (LNode node : layer.getNodes()) {
                 // filter out start points of long edges
-                if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
+                if (node.getProperty(Properties.NODE_TYPE) != NodeType.LONG_EDGE) {
                     for (LPort port : node.getPorts()) {
                         for (LEdge edge : port.getOutgoingEdges()) {
                             if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) 
-                                    == Properties.NodeType.LONG_EDGE) {
+                                    == NodeType.LONG_EDGE) {
                                 longEdges.add(edge);
 
                                 realLongEdges.add(new LongEdge(edge));

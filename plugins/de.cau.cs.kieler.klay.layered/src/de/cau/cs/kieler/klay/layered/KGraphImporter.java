@@ -44,6 +44,8 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
+import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Manages the transformation of KGraphs to LayeredGraphs. Sets the
@@ -97,8 +99,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         Map<KGraphElement, LGraphElement> elemMap = new HashMap<KGraphElement, LGraphElement>();
         
         // the graph properties discovered during the transformations
-        EnumSet<Properties.GraphProperties> graphProperties =
-            EnumSet.noneOf(Properties.GraphProperties.class);
+        EnumSet<GraphProperties> graphProperties =
+            EnumSet.noneOf(GraphProperties.class);
         
         // transform everything
         transformNodesAndPorts(source, layeredGraph, elemMap, graphProperties);
@@ -120,7 +122,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      */
     private void transformNodesAndPorts(final KNode layoutNode, final LayeredGraph layeredGraph,
             final Map<KGraphElement, LGraphElement> elemMap,
-            final EnumSet<Properties.GraphProperties> graphProperties) {
+            final EnumSet<GraphProperties> graphProperties) {
         
         List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
         
@@ -130,7 +132,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         // Find out if there are external ports
         List<KPort> ports = layoutNode.getPorts();
         if (!ports.isEmpty()) {
-            graphProperties.add(Properties.GraphProperties.EXTERNAL_PORTS);
+            graphProperties.add(GraphProperties.EXTERNAL_PORTS);
         }
         
         // Transform the external ports
@@ -189,7 +191,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             // constraints, set the appropriate graph property
             KPort[] sortedPorts = KimlUtil.getSortedPorts(child);
             if (sortedPorts.length > 0 && portConstraints != PortConstraints.FREE) {
-                graphProperties.add(Properties.GraphProperties.NON_FREE_PORTS);
+                graphProperties.add(GraphProperties.NON_FREE_PORTS);
             }
             
             // transform the ports
@@ -237,7 +239,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 newPort.setSide(newPortSide);
                 
                 if (newPortSide == PortSide.NORTH || newPortSide == PortSide.SOUTH) {
-                    graphProperties.add(Properties.GraphProperties.NORTH_SOUTH_PORTS);
+                    graphProperties.add(GraphProperties.NORTH_SOUTH_PORTS);
                 }
             }
             
@@ -280,7 +282,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      * @param graphProperties graph properties updated during the transformation.
      */
     private void transformEdges(final KNode layoutNode, final Map<KGraphElement, LGraphElement> elemMap,
-            final EnumSet<Properties.GraphProperties> graphProperties) {
+            final EnumSet<GraphProperties> graphProperties) {
         
         // Transform edges originating in the layout node's external ports
         for (KEdge kedge : layoutNode.getOutgoingEdges()) {
@@ -324,7 +326,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      */
     private void transformEdge(final KEdge kedge, final KNode layoutNode,
             final Map<KGraphElement, LGraphElement> elemMap,
-            final EnumSet<Properties.GraphProperties> graphProperties) {
+            final EnumSet<GraphProperties> graphProperties) {
         
         KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
         
@@ -354,7 +356,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         
         // if we have a self-loop, set the appropriate graph property
         if (sourceNode != null && sourceNode != layoutNode && sourceNode == targetNode) {
-            graphProperties.add(Properties.GraphProperties.SELF_LOOPS);
+            graphProperties.add(GraphProperties.SELF_LOOPS);
         }
         
         // create source port

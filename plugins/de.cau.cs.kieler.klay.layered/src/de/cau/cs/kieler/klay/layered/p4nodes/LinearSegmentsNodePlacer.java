@@ -31,15 +31,15 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.Util;
-import de.cau.cs.kieler.klay.layered.Properties.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Node placement implementation that aligns long edges using linear segments. Inspired by Section 4
@@ -600,7 +600,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 float space = 0.0f;
                 if (nodeCount[layerIndex] > 0) {
                     if (recentNodeNormal[layerIndex]
-                            && node.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL) {
+                            && node.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL) {
                         
                         space = normalSpacing;
                     } else {
@@ -632,7 +632,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                         node.getSize().x + node.getMargin().left + node.getMargin().right);
                 
                 recentNodeNormal[layer.getIndex()] =
-                    node.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL;
+                    node.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL;
             }
         }
     }
@@ -754,7 +754,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             final float smallSpacing) {
         
         for (LNode node : region.getNodes()) {
-            boolean isNodeNormal = node.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL;
+            boolean isNodeNormal = node.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL;
             
             if (region.force < 0.0f) {
                 // Force is directed upward
@@ -762,7 +762,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                     // Node is not topmost node
                     LNode neighbor = node.getLayer().getNodes().get(node.getIndex() - 1);
                     boolean isNeighborNormal =
-                        neighbor.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL;
+                        neighbor.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL;
                     float space = isNodeNormal && isNeighborNormal ? normalSpacing : smallSpacing;
                     
                     if (region != neighbor.getProperty(Properties.REGION)) {
@@ -788,7 +788,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 // Force is directed downward and the node is not lowermost
                 LNode neighbor = node.getLayer().getNodes().get(node.getIndex() + 1);
                 boolean isNeighborNormal =
-                    neighbor.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL;
+                    neighbor.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL;
                 float space = isNodeNormal && isNeighborNormal ? normalSpacing : smallSpacing;
                 
                 if (region != neighbor.getProperty(Properties.REGION)) {
@@ -831,7 +831,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             LNode node1 = nodeIter.next();
             Region node1Region = node1.getProperty(Properties.REGION);
             boolean isNode1Normal =
-                node1.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL;
+                node1.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL;
             
             // While there are still nodes following the current node
             while (nodeIter.hasNext()) {
@@ -839,7 +839,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 LNode node2 = nodeIter.next();
                 Region node2Region = node2.getProperty(Properties.REGION);
                 boolean isNode2Normal =
-                    node2.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL;
+                    node2.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL;
                 
                 if (node1Region != node2Region) {
                     // Calculate how much space is allowed between the nodes

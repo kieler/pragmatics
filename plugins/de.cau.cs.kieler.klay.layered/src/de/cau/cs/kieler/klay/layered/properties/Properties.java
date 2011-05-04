@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered;
+package de.cau.cs.kieler.klay.layered.properties;
 
 import java.util.EnumSet;
 import java.util.Random;
@@ -37,93 +37,6 @@ import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
  */
 public final class Properties {
     
-    ///////////////////////////////////////////////////////////////////////////////
-    // ENUMERATIONS
-
-    /** Definition of node types used in the layered approach. */
-    public enum NodeType {
-        /** a node representing an external port. */
-        EXTERNAL_PORT,
-        /** a normal node is created from a node of the original graph. */
-        NORMAL,
-        /** a dummy node created to split a long edge. */
-        LONG_EDGE,
-        /** a dummy node created to cope with ports at the northern or southern side. */
-        NORTH_SOUTH_PORT;
-    }
-    
-    /**
-     * An enumeration of properties a graph may have. These can be used as part of an
-     * {@code EnumSet} to base decisions on graph properties. For example, self-loop
-     * processing may be skipped if the graph doesn't contain self-loops in the first
-     * place.
-     * 
-     * <p>An {@code EnumSet} for this enumeration can be attached to a graph via the
-     * {@link Properties#GRAPH_PROPERTIES} property.</p>
-     * 
-     * @author cds
-     */
-    public enum GraphProperties {
-        /** The graph contains dummy nodes representing external ports. */
-        EXTERNAL_PORTS,
-        /** The graph contains ports that are not free for positioning. */
-        NON_FREE_PORTS,
-        /** The graph contains ports on the northern or southern side. */
-        NORTH_SOUTH_PORTS,
-        /** The graph contains self-loops. */
-        SELF_LOOPS;
-    }
-
-    /**
-     * Enumeration of layer constraint types.
-     *
-     * @author msp
-     */
-    public enum LayerConstraint {
-        /** no constraint on the layering. */
-        NONE,
-        /** put into the first layer. */
-        FIRST,
-        /** put into a separate first layer; used internally. */
-        FIRST_SEPARATE,
-        /** put into the last layer. */
-        LAST,
-        /** put into a separate last layer; used internally. */
-        LAST_SEPARATE;
-    }
-    
-    /**
-     * Enumeration of in-layer constraint types.
-     * 
-     * @author cds
-     */
-    public enum InLayerConstraint {
-        /** no constraint on in-layer placement. */
-        NONE,
-        /** float node to the top of the layer, along with other nodes posessing this constraint. */
-        TOP,
-        /** float node to the bottom of the layer, along with other nodes posessing this constraint. */
-        BOTTOM
-    }
-    
-    /**
-     * Enumeration of edge constraints.
-     * 
-     * @author cds
-     */
-    public enum EdgeConstraint {
-        /** no constraint on incident edges. */
-        NONE,
-        /** node may have only incoming edges. */
-        INCOMING_ONLY,
-        /** node may have only outgoing edges. */
-        OUTGOING_ONLY
-    }
-
-    
-    ///////////////////////////////////////////////////////////////////////////////
-    // INTERNAL PROPERTIES
-
     /** the original object from which a graph element was created. */
     public static final IProperty<Object> ORIGIN = new Property<Object>("origin");
     

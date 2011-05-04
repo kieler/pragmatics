@@ -21,6 +21,11 @@ import de.cau.cs.kieler.klay.layered.graph.Insets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.EdgeConstraint;
+import de.cau.cs.kieler.klay.layered.properties.InLayerConstraint;
+import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Abstract implementation of {@link IGraphImporter}, containing commonly used functionality.
@@ -124,16 +129,16 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
      * the eastern side for western external ports, and on the western side for all other ports.
      * 
      * <p>The returned dummy node is decorated with some properties. Its {@link Properties#NODE_TYPE}
-     * is set to {@link Properties.NodeType#EXTERNAL_PORT}. Its {@link Properties#ORIGIN} is set
+     * is set to {@link NodeType#EXTERNAL_PORT}. Its {@link Properties#ORIGIN} is set
      * to the external port object. The {@link LayoutOptions#PORT_CONSTRAINTS} are set to
      * {@link PortConstraints#FIXED_POS}. For western and eastern port dummies, the
-     * {@link Properties#LAYER_CONSTRAINT} is set to{@link Properties.LayerConstraint#FIRST_SEPARATE}
-     * and {@link Properties.LayerConstraint#LAST_SEPARATE}, respectively. For northern and southern
+     * {@link Properties#LAYER_CONSTRAINT} is set to{@link LayerConstraint#FIRST_SEPARATE}
+     * and {@link LayerConstraint#LAST_SEPARATE}, respectively. For northern and southern
      * port dummies, the {@link Properties#IN_LAYER_CONSTRAINT} is set to
-     * {@link Properties.InLayerConstraint#TOP} and {@link Properties.InLayerConstraint#BOTTOM},
+     * {@link InLayerConstraint#TOP} and {@link InLayerConstraint#BOTTOM},
      * respectively. For eastern dummies, the {@link Properties#EDGE_CONSTRAINT} is set to
-     * {@link Properties.EdgeConstraint#OUTGOING_ONLY}; for all other dummies, it is set to
-     * {@link Properties.EdgeConstraint#INCOMING_ONLY}. {@link Properties#EXT_PORT_SIDE} is
+     * {@link EdgeConstraint#OUTGOING_ONLY}; for all other dummies, it is set to
+     * {@link EdgeConstraint#INCOMING_ONLY}. {@link Properties#EXT_PORT_SIDE} is
      * set to the side of the external port represented. If the port constraints of the original
      * port's node are set to {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS},
      * the dummy node's {@link Properties#EXT_PORT_RATIO_OR_POSITION} property is set to the port's
@@ -158,7 +163,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
         
         // Create the dummy with one port
         LNode dummy = new LNode();
-        dummy.setProperty(Properties.NODE_TYPE, Properties.NodeType.EXTERNAL_PORT);
+        dummy.setProperty(Properties.NODE_TYPE, NodeType.EXTERNAL_PORT);
         dummy.setProperty(Properties.ORIGIN, port);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         
@@ -178,24 +183,24 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
         // With the port side at hand, set the necessary properties
         switch (finalPortSide) {
         case WEST:
-            dummy.setProperty(Properties.LAYER_CONSTRAINT, Properties.LayerConstraint.FIRST_SEPARATE);
-            dummy.setProperty(Properties.EDGE_CONSTRAINT, Properties.EdgeConstraint.OUTGOING_ONLY);
+            dummy.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.FIRST_SEPARATE);
+            dummy.setProperty(Properties.EDGE_CONSTRAINT, EdgeConstraint.OUTGOING_ONLY);
             dummyPort.setSide(PortSide.EAST);
             break;
         
         case EAST:
-            dummy.setProperty(Properties.LAYER_CONSTRAINT, Properties.LayerConstraint.LAST_SEPARATE);
-            dummy.setProperty(Properties.EDGE_CONSTRAINT, Properties.EdgeConstraint.INCOMING_ONLY);
+            dummy.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.LAST_SEPARATE);
+            dummy.setProperty(Properties.EDGE_CONSTRAINT, EdgeConstraint.INCOMING_ONLY);
             break;
         
         case NORTH:
-            dummy.setProperty(Properties.IN_LAYER_CONSTRAINT, Properties.InLayerConstraint.TOP);
-            dummy.setProperty(Properties.EDGE_CONSTRAINT, Properties.EdgeConstraint.INCOMING_ONLY);
+            dummy.setProperty(Properties.IN_LAYER_CONSTRAINT, InLayerConstraint.TOP);
+            dummy.setProperty(Properties.EDGE_CONSTRAINT, EdgeConstraint.INCOMING_ONLY);
             break;
         
         case SOUTH:
-            dummy.setProperty(Properties.IN_LAYER_CONSTRAINT, Properties.InLayerConstraint.BOTTOM);
-            dummy.setProperty(Properties.EDGE_CONSTRAINT, Properties.EdgeConstraint.INCOMING_ONLY);
+            dummy.setProperty(Properties.IN_LAYER_CONSTRAINT, InLayerConstraint.BOTTOM);
+            dummy.setProperty(Properties.EDGE_CONSTRAINT, EdgeConstraint.INCOMING_ONLY);
             break;
         }
         

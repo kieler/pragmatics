@@ -21,12 +21,13 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * This processor does some work to ensure that other phases and processors can handle
@@ -162,7 +163,7 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
         // Create a dummy node with an input port and an output port
         LNode dummyNode = new LNode();
         dummyNode.setProperty(Properties.ORIGIN, edge);
-        dummyNode.setProperty(Properties.NODE_TYPE, Properties.NodeType.LONG_EDGE);
+        dummyNode.setProperty(Properties.NODE_TYPE, NodeType.LONG_EDGE);
         dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         
         LPort dummyInput = new LPort();

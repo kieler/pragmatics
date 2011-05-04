@@ -22,12 +22,13 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Inserts dummy nodes to cope with northern and southern ports.
@@ -123,7 +124,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                 pointer++;
                 
                 // We only care about non-dummy nodes with fixed port sides
-                if (!node.getProperty(Properties.NODE_TYPE).equals(Properties.NodeType.NORMAL)
+                if (!node.getProperty(Properties.NODE_TYPE).equals(NodeType.NORMAL)
                         && node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
                     
                     continue;
@@ -314,7 +315,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
             final List<LNode> dummyNodes) {
         
         LNode dummy = new LNode();
-        dummy.setProperty(Properties.NODE_TYPE, Properties.NodeType.NORTH_SOUTH_PORT);
+        dummy.setProperty(Properties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         
         // Input port
@@ -358,7 +359,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
      */
     private void createDummyNode(final LEdge selfLoop, final List<LNode> dummyNodes) {
         LNode dummy = new LNode();
-        dummy.setProperty(Properties.NODE_TYPE, Properties.NodeType.NORTH_SOUTH_PORT);
+        dummy.setProperty(Properties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         dummy.setProperty(Properties.ORIGIN, selfLoop);
         
@@ -397,7 +398,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         
         // North dummy
         LNode northDummy = new LNode();
-        northDummy.setProperty(Properties.NODE_TYPE, Properties.NodeType.NORTH_SOUTH_PORT);
+        northDummy.setProperty(Properties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
         northDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         
         LPort northDummyOutputPort = new LPort();
@@ -407,7 +408,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         
         // South dummy
         LNode southDummy = new LNode();
-        southDummy.setProperty(Properties.NODE_TYPE, Properties.NodeType.NORTH_SOUTH_PORT);
+        southDummy.setProperty(Properties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
         southDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         
         LPort southDummyInputPort = new LPort();

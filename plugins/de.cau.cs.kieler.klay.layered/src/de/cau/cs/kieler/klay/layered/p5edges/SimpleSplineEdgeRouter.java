@@ -21,13 +21,14 @@ import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Implements a naive way of routing the edges with splines. Uses the dummy nodes as reference
@@ -94,11 +95,11 @@ public class SimpleSplineEdgeRouter extends AbstractAlgorithm implements ILayout
             layer.placeNodes(xpos);
             for (LNode node : layer.getNodes()) {
                 // filter out start points of long edges
-                if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
+                if (node.getProperty(Properties.NODE_TYPE) != NodeType.LONG_EDGE) {
                     for (LPort port : node.getPorts()) {
                         for (LEdge edge : port.getOutgoingEdges()) {
                             if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) 
-                                    == Properties.NodeType.LONG_EDGE) {
+                                    == NodeType.LONG_EDGE) {
                                 longEdges.add(edge);
                                 realLongEdges.add(new LongEdge(edge));
                             } else {

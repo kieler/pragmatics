@@ -22,6 +22,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.rail.Properties;
 
 /**
@@ -69,8 +70,10 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements ILayoutPhase
             for (LNode node : layer.getNodes()) {
                 for (LPort port : node.getPorts()) {
                     for (LEdge edge : port.getConnectedEdges()) {
-                        if (node.getProperty(de.cau.cs.kieler.klay.layered.Properties.NODE_TYPE).equals(
-                                de.cau.cs.kieler.klay.layered.Properties.NodeType.LONG_EDGE)) {
+                        if (node.getProperty(
+                                de.cau.cs.kieler.klay.layered.properties.Properties.NODE_TYPE).equals(
+                                        NodeType.LONG_EDGE)) {
+                            
                             edge.getBendPoints().clear();
                             continue NodeLoop;
                         }

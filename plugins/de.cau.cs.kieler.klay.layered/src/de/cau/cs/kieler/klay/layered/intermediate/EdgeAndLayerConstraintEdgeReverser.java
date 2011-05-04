@@ -15,11 +15,13 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.EdgeConstraint;
+import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Makes sure nodes with edge or layer constraints have only incoming or only outgoing edges,
@@ -50,26 +52,26 @@ public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implem
         // Iterate through the list of nodes
         for (LNode node : layeredGraph.getLayerlessNodes()) {
             // Check if there is a layer constraint
-            Properties.LayerConstraint layerConstraint = node.getProperty(Properties.LAYER_CONSTRAINT);
+            LayerConstraint layerConstraint = node.getProperty(Properties.LAYER_CONSTRAINT);
             
             switch (layerConstraint) {
             case FIRST:
             case FIRST_SEPARATE:
-                node.setProperty(Properties.EDGE_CONSTRAINT, Properties.EdgeConstraint.OUTGOING_ONLY);
+                node.setProperty(Properties.EDGE_CONSTRAINT, EdgeConstraint.OUTGOING_ONLY);
                 break;
             
             case LAST:
             case LAST_SEPARATE:
-                node.setProperty(Properties.EDGE_CONSTRAINT, Properties.EdgeConstraint.INCOMING_ONLY);
+                node.setProperty(Properties.EDGE_CONSTRAINT, EdgeConstraint.INCOMING_ONLY);
                 break;
             }
             
             // Check if there is an edge constraint
-            Properties.EdgeConstraint edgeConstraint = node.getProperty(Properties.EDGE_CONSTRAINT);
+            EdgeConstraint edgeConstraint = node.getProperty(Properties.EDGE_CONSTRAINT);
             
-            if (edgeConstraint == Properties.EdgeConstraint.INCOMING_ONLY) {
+            if (edgeConstraint == EdgeConstraint.INCOMING_ONLY) {
                 reverseEdges(node, true);
-            } else if (edgeConstraint == Properties.EdgeConstraint.OUTGOING_ONLY) {
+            } else if (edgeConstraint == EdgeConstraint.OUTGOING_ONLY) {
                 reverseEdges(node, false);
             }
         }

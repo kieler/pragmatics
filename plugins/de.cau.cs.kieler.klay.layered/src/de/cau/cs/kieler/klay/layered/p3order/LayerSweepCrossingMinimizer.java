@@ -36,13 +36,14 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Crossing minimization module that performs one or more sweeps over the layers
@@ -622,7 +623,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             }
             
             // Check if we're processing a a normal, none-dummy node
-            if (vertexNode.getProperty(Properties.NODE_TYPE) == Properties.NodeType.NORMAL) {
+            if (vertexNode.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL) {
                 // If we already processed another normal, non-dummy node, we need to add
                 // constraints from all of that other node's layout unit's vertices to this
                 // node's layout unit's vertices
@@ -930,9 +931,9 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             }
 
             // Part 2 of the crossing counting algorithm
-            Properties.NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
-            if (layerLayoutUnitsSet && (nodeType == Properties.NodeType.NORMAL
-                    || nodeType == Properties.NodeType.NORTH_SOUTH_PORT)) {
+            NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
+            if (layerLayoutUnitsSet && (nodeType == NodeType.NORMAL
+                    || nodeType == NodeType.NORTH_SOUTH_PORT)) {
                 
                 LNode newNormalNode = node.getProperty(Properties.IN_LAYER_LAYOUT_UNIT);
                 if (newNormalNode == null) {
@@ -988,7 +989,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             int dummyCount = 0;
             
             for (LNode node : layer) {
-                Properties.NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
+                NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
                 
                 switch (nodeType) {
                 case NORMAL:

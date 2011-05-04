@@ -17,12 +17,13 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Removes dummy nodes created by {@link NorthSouthPortPreprocessor} and routes the
@@ -55,7 +56,7 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
             LNode[] nodeArray = layer.getNodes().toArray(new LNode[0]);
             for (LNode node : nodeArray) {
                 // We only care for North/South Port dummy nodes
-                if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.NORTH_SOUTH_PORT) {
+                if (node.getProperty(Properties.NODE_TYPE) != NodeType.NORTH_SOUTH_PORT) {
                     continue;
                 }
                 

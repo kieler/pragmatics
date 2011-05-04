@@ -21,13 +21,14 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
+import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * The most basic layering algorithm, which assign layers according to the
@@ -115,7 +116,7 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
         // nodes with layering constraints need to be moved
         Layer firstLayer = layeredGraph.getLayers().get(0);
         for (LNode node : nodes) {
-            if (node.getProperty(Properties.LAYER_CONSTRAINT) == Properties.LayerConstraint.FIRST
+            if (node.getProperty(Properties.LAYER_CONSTRAINT) == LayerConstraint.FIRST
                     && node.getLayer().getIndex() > 0) {
                 
                 Iterator<LEdge> inputEdgeIterator = node.getIncomingEdges().iterator();

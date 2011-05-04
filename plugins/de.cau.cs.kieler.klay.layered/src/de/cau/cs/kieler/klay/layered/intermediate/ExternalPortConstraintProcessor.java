@@ -27,12 +27,13 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Processes constraints imposed on external node dummies.
@@ -76,14 +77,14 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
          * {@inheritDoc}
          */
         public int compare(final LNode node1, final LNode node2) {
-            Properties.NodeType nodeType1 = node1.getProperty(Properties.NODE_TYPE);
+            NodeType nodeType1 = node1.getProperty(Properties.NODE_TYPE);
             double nodePos1 = node1.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
-            Properties.NodeType nodeType2 = node2.getProperty(Properties.NODE_TYPE);
+            NodeType nodeType2 = node2.getProperty(Properties.NODE_TYPE);
             double nodePos2 = node2.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
             
-            if (nodeType2 != Properties.NodeType.EXTERNAL_PORT) {
+            if (nodeType2 != NodeType.EXTERNAL_PORT) {
                 return -1;
-            } else if (nodeType1 != Properties.NodeType.EXTERNAL_PORT) {
+            } else if (nodeType1 != NodeType.EXTERNAL_PORT) {
                 return 1;
             } else {
                 if (nodePos1 == nodePos2) {
@@ -147,7 +148,7 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
         LNode lastExternalDummy = null;
         
         for (LNode node : nodes) {
-            if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.EXTERNAL_PORT) {
+            if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
                 // No external port dummy nodes any more
                 break;
             }
@@ -276,9 +277,9 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
      *         {@code false} otherwise.
      */
     private boolean isNorthernSouthernDummy(final LNode node) {
-        Properties.NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
+        NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
         
-        if (nodeType == Properties.NodeType.EXTERNAL_PORT) {
+        if (nodeType == NodeType.EXTERNAL_PORT) {
             PortSide portSide = node.getProperty(Properties.EXT_PORT_SIDE);
             
             return portSide == PortSide.NORTH || portSide == PortSide.SOUTH;

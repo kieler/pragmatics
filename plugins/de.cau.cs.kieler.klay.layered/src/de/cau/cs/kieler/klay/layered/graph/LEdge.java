@@ -17,7 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.klay.layered.Properties;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * An edge in a layered graph. Edges may only be connected to ports of a node, which represent the

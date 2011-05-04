@@ -19,8 +19,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.klay.layered.Properties;
-import de.cau.cs.kieler.klay.layered.Properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * A layered graph has a set of layers that contain the nodes, as well as a

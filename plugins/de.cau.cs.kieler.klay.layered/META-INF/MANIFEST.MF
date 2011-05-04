@@ -15,4 +15,5 @@ Export-Package: de.cau.cs.kieler.klay.layered,
  de.cau.cs.kieler.klay.layered.p2layers,
  de.cau.cs.kieler.klay.layered.p3order,
  de.cau.cs.kieler.klay.layered.p4nodes,
- de.cau.cs.kieler.klay.layered.p5edges
+ de.cau.cs.kieler.klay.layered.p5edges,
+ de.cau.cs.kieler.klay.layered.properties

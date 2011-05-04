@@ -17,10 +17,11 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Moves nodes with layer constraints to the appropriate layers. To meet the preconditions of
@@ -62,7 +63,7 @@ public class LayerConstraintProcessor extends AbstractAlgorithm implements ILayo
             LNode [] nodes = layer.getNodes().toArray(new LNode[0]);
             
             for (LNode node : nodes) {
-                Properties.LayerConstraint constraint = node.getProperty(Properties.LAYER_CONSTRAINT);
+                LayerConstraint constraint = node.getProperty(Properties.LAYER_CONSTRAINT);
                 
                 // Check if there is a layer constraint
                 switch (constraint) {

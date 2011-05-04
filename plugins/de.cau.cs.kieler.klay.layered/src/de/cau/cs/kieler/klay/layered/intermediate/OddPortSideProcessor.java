@@ -23,13 +23,13 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Properties;
-import de.cau.cs.kieler.klay.layered.Properties.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Inserts dummy nodes to cope with odd port sides.
@@ -41,9 +41,10 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * with the offending port. This means that once one of these cases occurs in the
  * graph, the layering is not proper anymore.</p>
  * 
- * <p>The dummy nodes are decorated with a {@link de.cau.cs.kieler.klay.layered.Properties#NODE_TYPE}
- * property. They are treated just like ordinary
- * {@link de.cau.cs.kieler.klay.layered.Properties.NodeType#LONG_EDGE} dummy nodes</p>
+ * <p>The dummy nodes are decorated with a
+ * {@link de.cau.cs.kieler.klay.layered.properties.Properties#NODE_TYPE} property. They
+ * are treated just like ordinary {@link de.cau.cs.kieler.klay.layered.properties.NodeType#LONG_EDGE}
+ * dummy nodes</p>
  * 
  * <p>This processor supports self-loops by not doing anything about them. That is, no
  * dummy nodes are created for edges whose source and target node are identical.</p>
@@ -161,7 +162,7 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
         LNode dummy = new LNode();
         dummy.setProperty(Properties.ORIGIN, edge);
         dummy.setProperty(Properties.NODE_TYPE,
-                Properties.NodeType.LONG_EDGE);
+                NodeType.LONG_EDGE);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         layerNodeList.add(dummy);
         
@@ -207,7 +208,7 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
         LNode dummy = new LNode();
         dummy.setProperty(Properties.ORIGIN, edge);
         dummy.setProperty(Properties.NODE_TYPE,
-                Properties.NodeType.LONG_EDGE);
+                NodeType.LONG_EDGE);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         layerNodeList.add(dummy);
         
@@ -233,8 +234,8 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
     }
     
     /**
-     * Properly sets the {@link de.cau.cs.kieler.klay.layered.Properties#LONG_EDGE_SOURCE}
-     * and {@link de.cau.cs.kieler.klay.layered.Properties#LONG_EDGE_TARGET} properties for
+     * Properly sets the {@link de.cau.cs.kieler.klay.layered.properties.Properties#LONG_EDGE_SOURCE}
+     * and {@link de.cau.cs.kieler.klay.layered.properties.Properties#LONG_EDGE_TARGET} properties for
      * the given long edge dummy. This is required for the
      * {@link de.cau.cs.kieler.klay.layered.intermediate.HyperedgeDummyMerger} to work
      * correctly.
@@ -250,13 +251,13 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
         // There's exactly one edge connected to the input and output port
         LPort sourcePort = dummyInputPort.getIncomingEdges().get(0).getSource();
         LNode sourceNode = sourcePort.getNode();
-        Properties.NodeType sourceNodeType = sourceNode.getProperty(Properties.NODE_TYPE);
+        NodeType sourceNodeType = sourceNode.getProperty(Properties.NODE_TYPE);
         LPort targetPort = dummyOutputPort.getOutgoingEdges().get(0).getTarget();
         LNode targetNode = targetPort.getNode();
-        Properties.NodeType targetNodeType = targetNode.getProperty(Properties.NODE_TYPE);
+        NodeType targetNodeType = targetNode.getProperty(Properties.NODE_TYPE);
         
         // Set the LONG_EDGE_SOURCE property
-        if (sourceNodeType == Properties.NodeType.LONG_EDGE) {
+        if (sourceNodeType == NodeType.LONG_EDGE) {
             // The source is a LONG_EDGE node; use its LONG_EDGE_SOURCE
             longEdgeDummy.setProperty(Properties.LONG_EDGE_SOURCE,
                     sourceNode.getProperty(Properties.LONG_EDGE_SOURCE));
@@ -266,7 +267,7 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
         }
 
         // Set the LONG_EDGE_TARGET property
-        if (targetNodeType == Properties.NodeType.LONG_EDGE) {
+        if (targetNodeType == NodeType.LONG_EDGE) {
             // The target is a LONG_EDGE node; use its LONG_EDGE_TARGET
             longEdgeDummy.setProperty(Properties.LONG_EDGE_TARGET,
                     targetNode.getProperty(Properties.LONG_EDGE_TARGET));

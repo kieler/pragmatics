@@ -25,7 +25,6 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.Insets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -33,6 +32,8 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalRoutingGenerator;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * TODO: Document.
@@ -118,7 +119,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
         // another external port dummy
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-                if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.EXTERNAL_PORT) {
+                if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
                     // Not an external port dummy - we're not interested. Move along,
                     // please, there's nothing to see here.
                     continue;
@@ -128,7 +129,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
                     LNode origin = (LNode) node.getProperty(Properties.ORIGIN);
                     
                     // The origin should be an external port dummy. Better check that
-                    if (origin.getProperty(Properties.NODE_TYPE) != Properties.NodeType.EXTERNAL_PORT) {
+                    if (origin.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
                         continue;
                     }
                     
@@ -365,7 +366,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
         // Iterate through all layers
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-                if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.EXTERNAL_PORT) {
+                if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
                     // We're only looking for external port dummies
                     continue;
                 }
@@ -462,7 +463,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
         double graphHeight = graph.getSize().y + insets.top + insets.bottom + (2 * borderSpacing);
         
         for (LNode node : layer.getNodes()) {
-            if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.EXTERNAL_PORT) {
+            if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
                 // We're only looking for external port dummies
                 continue;
             }

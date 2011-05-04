@@ -21,11 +21,12 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
+import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Edge routing implementation that creates orthogonal bend points. Inspired by
@@ -150,26 +151,26 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      * {@inheritDoc}
      */
     public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
-        Set<Properties.GraphProperties> graphProperties = graph.getProperty(Properties.GRAPH_PROPERTIES);
+        Set<GraphProperties> graphProperties = graph.getProperty(Properties.GRAPH_PROPERTIES);
         
         // Basic strategy
         IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy(
                 BASELINE_PROCESSING_STRATEGY);
         
         // Additional dependencies
-        if (graphProperties.contains(Properties.GraphProperties.NON_FREE_PORTS)) {
+        if (graphProperties.contains(GraphProperties.NON_FREE_PORTS)) {
             strategy.addAll(NON_FREE_PORT_PROCESSING_ADDITIONS);
 
-            if (graphProperties.contains(Properties.GraphProperties.NORTH_SOUTH_PORTS)) {
+            if (graphProperties.contains(GraphProperties.NORTH_SOUTH_PORTS)) {
                 strategy.addAll(NORTH_SOUTH_PORT_PROCESSING_ADDITIONS);
             }
         }
 
-        if (graphProperties.contains(Properties.GraphProperties.EXTERNAL_PORTS)) {
+        if (graphProperties.contains(GraphProperties.EXTERNAL_PORTS)) {
             strategy.addAll(EXTERNAL_PORT_PROCESSING_ADDITIONS);
         }
 
-        if (graphProperties.contains(Properties.GraphProperties.SELF_LOOPS)) {
+        if (graphProperties.contains(GraphProperties.SELF_LOOPS)) {
             strategy.addAll(SELF_LOOP_PROCESSING_ADDITIONS);
         }
         

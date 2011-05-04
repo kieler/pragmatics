@@ -15,13 +15,14 @@ package de.cau.cs.kieler.klay.layered.p5edges;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * A simple label placement implementation.
@@ -46,7 +47,7 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
                             LongEdge longEdge = null;
                             //Check whether edge is spline or short edge
                             if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE)
-                                    == Properties.NodeType.LONG_EDGE) {
+                                    == NodeType.LONG_EDGE) {
                                 longEdge = new LongEdge(edge);
                                 longEdge.initialize();
                             }
