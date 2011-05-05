@@ -31,6 +31,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -171,6 +172,20 @@ public final class KimlUtil {
         label.setText("");
         label.setParent(parent);
         return label;
+    }
+    
+    /**
+     * Create a unique identifier for the given graph element.
+     * 
+     * @param element a graph element
+     */
+    public static void createIdentifier(final KGraphElement element) {
+        KIdentifier identifier = element.getData(KIdentifier.class);
+        if (identifier == null) {
+            identifier = KLayoutDataFactory.eINSTANCE.createKIdentifier();
+            element.getData().add(identifier);
+        }
+        identifier.setId(Integer.toString(element.hashCode()));
     }
 
     /**

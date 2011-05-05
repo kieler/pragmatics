@@ -73,6 +73,15 @@ public interface KLayoutDataFactory extends EFactory {
     KInsets createKInsets();
 
     /**
+     * Returns a new object of class '<em>KIdentifier</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>KIdentifier</em>'.
+     * @generated
+     */
+    KIdentifier createKIdentifier();
+
+    /**
      * Returns the package supported by this factory.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->

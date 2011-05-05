@@ -103,6 +103,10 @@ public class KLayoutDataAdapterFactory extends AdapterFactoryImpl {
                 return createKInsetsAdapter();
             }
             @Override
+            public Adapter caseKIdentifier(KIdentifier object) {
+                return createKIdentifierAdapter();
+            }
+            @Override
             public Adapter caseIPropertyHolder(IPropertyHolder object) {
                 return createIPropertyHolderAdapter();
             }
@@ -187,6 +191,20 @@ public class KLayoutDataAdapterFactory extends AdapterFactoryImpl {
      * @generated
      */
     public Adapter createKInsetsAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.klayoutdata.KIdentifier <em>KIdentifier</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see de.cau.cs.kieler.kiml.klayoutdata.KIdentifier
+     * @generated
+     */
+    public Adapter createKIdentifierAdapter() {
         return null;
     }
 

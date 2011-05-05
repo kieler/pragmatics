@@ -132,6 +132,15 @@ public class KLayoutDataSwitch<T> {
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
+            case KLayoutDataPackage.KIDENTIFIER: {
+                KIdentifier kIdentifier = (KIdentifier)theEObject;
+                T result = caseKIdentifier(kIdentifier);
+                if (result == null) result = caseKGraphData(kIdentifier);
+                if (result == null) result = caseEMapPropertyHolder(kIdentifier);
+                if (result == null) result = caseIPropertyHolder(kIdentifier);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
             default: return defaultCase(theEObject);
         }
     }
@@ -193,6 +202,21 @@ public class KLayoutDataSwitch<T> {
      * @generated
      */
     public T caseKInsets(KInsets object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>KIdentifier</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>KIdentifier</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseKIdentifier(KIdentifier object) {
         return null;
     }
 

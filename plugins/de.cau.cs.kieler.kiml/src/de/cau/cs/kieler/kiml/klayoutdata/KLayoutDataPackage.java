@@ -313,6 +313,53 @@ public interface KLayoutDataPackage extends EPackage {
 
 
     /**
+     * The meta object id for the '{@link de.cau.cs.kieler.kiml.klayoutdata.impl.KIdentifierImpl <em>KIdentifier</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kiml.klayoutdata.impl.KIdentifierImpl
+     * @see de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl#getKIdentifier()
+     * @generated
+     */
+    int KIDENTIFIER = 4;
+
+    /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KIDENTIFIER__PROPERTIES = KGraphPackage.KGRAPH_DATA__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KIDENTIFIER__PERSISTENT_ENTRIES = KGraphPackage.KGRAPH_DATA__PERSISTENT_ENTRIES;
+
+    /**
+     * The feature id for the '<em><b>Id</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KIDENTIFIER__ID = KGraphPackage.KGRAPH_DATA_FEATURE_COUNT + 0;
+
+    /**
+     * The number of structural features of the '<em>KIdentifier</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KIDENTIFIER_FEATURE_COUNT = KGraphPackage.KGRAPH_DATA_FEATURE_COUNT + 1;
+
+
+    /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout <em>KShape Layout</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -507,6 +554,27 @@ public interface KLayoutDataPackage extends EPackage {
     EAttribute getKInsets_Right();
 
     /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.klayoutdata.KIdentifier <em>KIdentifier</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>KIdentifier</em>'.
+     * @see de.cau.cs.kieler.kiml.klayoutdata.KIdentifier
+     * @generated
+     */
+    EClass getKIdentifier();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.klayoutdata.KIdentifier#getId <em>Id</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Id</em>'.
+     * @see de.cau.cs.kieler.kiml.klayoutdata.KIdentifier#getId()
+     * @see #getKIdentifier()
+     * @generated
+     */
+    EAttribute getKIdentifier_Id();
+
+    /**
      * Returns the factory that creates the instances of the model.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -679,6 +747,24 @@ public interface KLayoutDataPackage extends EPackage {
          * @generated
          */
         EAttribute KINSETS__RIGHT = eINSTANCE.getKInsets_Right();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.kiml.klayoutdata.impl.KIdentifierImpl <em>KIdentifier</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.kiml.klayoutdata.impl.KIdentifierImpl
+         * @see de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl#getKIdentifier()
+         * @generated
+         */
+        EClass KIDENTIFIER = eINSTANCE.getKIdentifier();
+
+        /**
+         * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KIDENTIFIER__ID = eINSTANCE.getKIdentifier_Id();
 
     }
 

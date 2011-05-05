@@ -123,6 +123,26 @@
     <element xmi:type="ecore:EClass" href="klayoutdata.ecore#//KInsets"/>
     <layoutConstraint xmi:type="notation:Bounds" xmi:id="_5Mf2c078EeCO3_1yIReUFg" x="44" y="231"/>
   </children>
+  <children xmi:type="notation:Node" xmi:id="_90f8oHcaEeC6trSIlXJJfg" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_90iY4HcaEeC6trSIlXJJfg" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_90i_8HcaEeC6trSIlXJJfg" type="5001">
+      <children xmi:type="notation:Node" xmi:id="_GMLZQHcbEeC6trSIlXJJfg" type="2001">
+        <element xmi:type="ecore:EAttribute" href="klayoutdata.ecore#//KIdentifier/id"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_GMLZQXcbEeC6trSIlXJJfg"/>
+      </children>
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_90i_8XcaEeC6trSIlXJJfg"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_90i_8ncaEeC6trSIlXJJfg"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_90i_83caEeC6trSIlXJJfg"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_90jnAHcaEeC6trSIlXJJfg" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_90jnAXcaEeC6trSIlXJJfg"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_90jnAncaEeC6trSIlXJJfg"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_90jnA3caEeC6trSIlXJJfg"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_90f8oXcaEeC6trSIlXJJfg" fontColor="4210752" fontName="Sans" fontHeight="10" fillColor="13761016" lineColor="8421504"/>
+    <element xmi:type="ecore:EClass" href="klayoutdata.ecore#//KIdentifier"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_90f8oncaEeC6trSIlXJJfg" x="396" y="55"/>
+  </children>
   <styles xmi:type="notation:DiagramStyle" xmi:id="_OppXkSImEeCYrM4w4A986Q"/>
   <element xmi:type="ecore:EPackage" href="klayoutdata.ecore#/"/>
   <edges xmi:type="notation:Edge" xmi:id="_Or8doCImEeCYrM4w4A986Q" type="3002" source="_Or4MMiImEeCYrM4w4A986Q" target="_Or5aUCImEeCYrM4w4A986Q">
@@ -190,5 +210,11 @@
     <styles xmi:type="notation:FontStyle" xmi:id="_5MxjQk78EeCO3_1yIReUFg" fontColor="4210752" fontName="Sans" fontHeight="10"/>
     <element xmi:type="ecore:EReference" href="klayoutdata.ecore#//KShapeLayout/insets"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_5MxjQ078EeCO3_1yIReUFg" points="[-51, -50, 56, 55]$[-106, -104, 1, 1]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_EkCWwHcbEeC6trSIlXJJfg" type="3003" source="_90f8oHcaEeC6trSIlXJJfg" target="_cjA7ICImEeCYrM4w4A986Q">
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_EkCWwXcbEeC6trSIlXJJfg" routing="Rectilinear" lineColor="4210752"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_EkCWwncbEeC6trSIlXJJfg" fontName="Sans"/>
+    <element xsi:nil="true"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_EkCWw3cbEeC6trSIlXJJfg" points="[-6, -24, 255, 98]$[-6, -57, 255, 65]$[-259, -57, 2, 65]$[-259, -93, 2, 29]"/>
   </edges>
 </notation:Diagram>

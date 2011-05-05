@@ -75,6 +75,7 @@ public class KLayoutDataFactoryImpl extends EFactoryImpl implements KLayoutDataF
             case KLayoutDataPackage.KEDGE_LAYOUT: return createKEdgeLayout();
             case KLayoutDataPackage.KPOINT: return createKPoint();
             case KLayoutDataPackage.KINSETS: return createKInsets();
+            case KLayoutDataPackage.KIDENTIFIER: return createKIdentifier();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
@@ -118,6 +119,16 @@ public class KLayoutDataFactoryImpl extends EFactoryImpl implements KLayoutDataF
     public KInsets createKInsets() {
         KInsetsImpl kInsets = new KInsetsImpl();
         return kInsets;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public KIdentifier createKIdentifier() {
+        KIdentifierImpl kIdentifier = new KIdentifierImpl();
+        return kIdentifier;
     }
 
     /**

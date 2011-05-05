@@ -18,6 +18,7 @@ package de.cau.cs.kieler.kiml.klayoutdata.impl;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
@@ -67,6 +68,13 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
      * @generated
      */
     private EClass kInsetsEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass kIdentifierEClass = null;
 
     /**
      * Creates an instance of the model <b>Package</b>, registered with
@@ -299,6 +307,24 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
      * <!-- end-user-doc -->
      * @generated
      */
+    public EClass getKIdentifier() {
+        return kIdentifierEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getKIdentifier_Id() {
+        return (EAttribute)kIdentifierEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public KLayoutDataFactory getKLayoutDataFactory() {
         return (KLayoutDataFactory)getEFactoryInstance();
     }
@@ -343,6 +369,9 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
         createEAttribute(kInsetsEClass, KINSETS__BOTTOM);
         createEAttribute(kInsetsEClass, KINSETS__LEFT);
         createEAttribute(kInsetsEClass, KINSETS__RIGHT);
+
+        kIdentifierEClass = createEClass(KIDENTIFIER);
+        createEAttribute(kIdentifierEClass, KIDENTIFIER__ID);
     }
 
     /**
@@ -378,6 +407,7 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
         // Add supertypes to classes
         kShapeLayoutEClass.getESuperTypes().add(theKGraphPackage.getKGraphData());
         kEdgeLayoutEClass.getESuperTypes().add(theKGraphPackage.getKGraphData());
+        kIdentifierEClass.getESuperTypes().add(theKGraphPackage.getKGraphData());
 
         // Initialize classes and features; add operations and parameters
         initEClass(kShapeLayoutEClass, KShapeLayout.class, "KShapeLayout", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -401,6 +431,9 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
         initEAttribute(getKInsets_Bottom(), ecorePackage.getEFloat(), "bottom", null, 0, 1, KInsets.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getKInsets_Left(), ecorePackage.getEFloat(), "left", null, 0, 1, KInsets.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getKInsets_Right(), ecorePackage.getEFloat(), "right", null, 0, 1, KInsets.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(kIdentifierEClass, KIdentifier.class, "KIdentifier", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getKIdentifier_Id(), ecorePackage.getEString(), "id", null, 1, 1, KIdentifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         // Create resource
         createResource(eNS_URI);
