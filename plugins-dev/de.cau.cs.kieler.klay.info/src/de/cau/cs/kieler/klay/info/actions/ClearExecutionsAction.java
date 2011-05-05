@@ -27,7 +27,7 @@ import de.cau.cs.kieler.klay.info.views.ExecutionView;
 public class ClearExecutionsAction extends Action {
 
     /** identifier string for this action. */
-    private static final String ACTION_ID = "de.cau.cs.kieler.kiml.viewer.clearExecutions";
+    private static final String ACTION_ID = "de.cau.cs.kieler.klay.info.clearExecutions";
     /** relative path to the icon to use for this action. */
     private static final String ICON_PATH = "icons/clear_exec.gif";
 

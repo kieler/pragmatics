@@ -14,7 +14,7 @@
 package de.cau.cs.kieler.klay.info;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
+import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
 
 /**
@@ -27,14 +27,11 @@ public class UpdateViewerCombination extends AbstractCombination {
     /**
      * Update the viewer.
      * 
-     * @param effectTrigger
-     *            the layout effect trigger
+     * @param layoutEffect the layout effect that was just performed
      */
-    public void execute(final EffectTriggerState<LayoutEffect> effectTrigger) {
-        //super.dontUndo();
-        LayoutEffect layoutEffect = effectTrigger.getEffect();
-        schedule(new UpdateViewerEffect(layoutEffect.getManager().getLayoutGraph(),
-                UpdateViewerEffect.POST_LAYOUT));
+    public void execute(final LayoutEffect layoutEffect) {
+        DiagramLayoutManager manager = layoutEffect.getManager();
+        schedule(new UpdateViewerEffect(manager.getLayoutGraph(), manager.getProgressMonitor()));
     }
     
 }

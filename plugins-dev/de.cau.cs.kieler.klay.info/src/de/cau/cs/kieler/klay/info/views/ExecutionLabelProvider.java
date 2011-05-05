@@ -61,13 +61,33 @@ public class ExecutionLabelProvider extends LabelProvider {
             IKielerProgressMonitor monitor = (IKielerProgressMonitor) element;
             String baseText = monitor.getTaskName() + ": ";
             double time = monitor.getExecutionTime();
-            if (time >= 1.0) {
-                return baseText + String.format("%1$.3f s", time);
+            if (monitor.getSubMonitors().isEmpty()) {
+                return baseText + toString(time);
             } else {
-                return baseText + String.format("%1$.3f ms", time * 1000);
+                double childrenTime = 0;
+                for (IKielerProgressMonitor child : monitor.getSubMonitors()) {
+                    childrenTime += child.getExecutionTime();
+                }
+                double localTime = Math.max(time - childrenTime, 0);
+                return baseText + toString(time) + " [" + toString(localTime) + " local]";
             }
         } else {
             return null;
+        }
+    }
+    
+    /**
+     * Convert the given time (in seconds) into a string.
+     * 
+     * @param time time in seconds
+     * @return a string representation
+     */
+    private String toString(final double time) {
+        if (time >= 1.0) {
+            return String.format("%1$.3f s", time);
+        } else {
+            // SUPPRESS CHECKSTYLE NEXT MagicNumber
+            return String.format("%1$.3f ms", time * 1000);
         }
     }
 

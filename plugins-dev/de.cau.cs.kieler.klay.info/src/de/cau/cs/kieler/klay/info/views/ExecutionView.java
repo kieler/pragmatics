@@ -31,7 +31,7 @@ import de.cau.cs.kieler.klay.info.actions.ClearExecutionsAction;
 public class ExecutionView extends ViewPart {
 
     /** the view identifier. */
-    public static final String VIEW_ID = "de.cau.cs.kieler.kiml.viewer.execution";
+    public static final String VIEW_ID = "de.cau.cs.kieler.klay.info.execution";
 
     /** the tree viewer used to display content. */
     private TreeViewer viewer;

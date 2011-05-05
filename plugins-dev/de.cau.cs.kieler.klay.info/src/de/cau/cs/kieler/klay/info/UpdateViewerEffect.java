@@ -26,43 +26,47 @@ import de.cau.cs.kieler.klay.info.views.ExecutionView;
 import de.cau.cs.kieler.klay.info.views.LayoutGraphView;
 
 /**
- * Effect for updating the KIML Viewer.
+ * Effect for updating the layout graph view.
  * 
  * @author soh
  */
 public class UpdateViewerEffect extends AbstractEffect {
 
-    /** Constant indicating that a layout is about to be performed. */
-    public static final String PRE_LAYOUT = "PRE_LAYOUT";
-    /** Constant indicating that a layout is just finished. */
-    public static final String POST_LAYOUT = "POST_LAYOUT";
-
+    /** the layout graph that should be displayed. */
     private KNode layoutGraph;
-
-    private String state;
+    /** the progress monitor that was used for layout. */
+    private IKielerProgressMonitor progressMonitor;
 
     /**
+     * Creates a new update viewer effect, updating only the layout graph.
      * 
-     * Creates a new UpdateViewerEffect.
-     * 
+     * @param layoutGraph the layout graph
      */
-    public UpdateViewerEffect() {
+    public UpdateViewerEffect(final KNode layoutGraph) {
         super();
+        this.layoutGraph = layoutGraph;
     }
-
+    
     /**
-     * Creates a new UpdateViewerEffect.
+     * Creates a new update viewer effect, updating only the execution time.
      * 
-     * @param layoutGraphParam
-     *            the layout graph
-     * @param stateParam
-     *            the state
+     * @param progressMonitor the progress monitor
      */
-    public UpdateViewerEffect(final KNode layoutGraphParam,
-            final String stateParam) {
+    public UpdateViewerEffect(final IKielerProgressMonitor progressMonitor) {
         super();
-        this.layoutGraph = layoutGraphParam;
-        this.state = stateParam;
+        this.progressMonitor = progressMonitor;
+    }
+    
+    /**
+     * Creates a new update viewer effect, updating both the layout graph and the execution time.
+     * 
+     * @param layoutGraph the layout graph
+     * @param progressMonitor the progress monitor
+     */
+    public UpdateViewerEffect(final KNode layoutGraph, final IKielerProgressMonitor progressMonitor) {
+        super();
+        this.layoutGraph = layoutGraph;
+        this.progressMonitor = progressMonitor;
     }
 
     /**
@@ -70,12 +74,18 @@ public class UpdateViewerEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        if (state.equals(POST_LAYOUT)) {
-            layoutPerformed(null);
-        } else if (state.equals(PRE_LAYOUT)) {
-            layoutRequested();
-        }
-
+        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+            public void run() {
+                findViews();
+                if (layoutGraph != null && layoutGraphView != null) {
+                    KNode nodeCopy = EcoreUtil.copy(layoutGraph);
+                    layoutGraphView.getCanvas().setLayoutGraph(nodeCopy);
+                }
+                if (progressMonitor != null && executionView != null) {
+                    executionView.addExecution(progressMonitor);
+                }
+            }
+        });
     }
 
     /** the currently open layout graph view. */
@@ -84,56 +94,13 @@ public class UpdateViewerEffect extends AbstractEffect {
     private ExecutionView executionView;
 
     /**
-     * A layout is requested an the layout graph built.
-     */
-    private void layoutRequested() {
-        final KNode nodeCopy = EcoreUtil.copy(layoutGraph);
-        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-            public void run() {
-                findViews();
-                if (layoutGraphView != null) {
-                    layoutGraphView.setLayoutGraph(nodeCopy,
-                            LayoutGraphView.PRE);
-                    // the last post-layout graph is deleted to avoid
-                    // inconsistent
-                    // graphs
-                    layoutGraphView.setLayoutGraph(null, LayoutGraphView.POST);
-                }
-            }
-        });
-    }
-
-    /**
-     * The layout has finished.
-     * 
-     * @param monitor
-     *            optional progress monitor
-     */
-    private void layoutPerformed(final IKielerProgressMonitor monitor) {
-        final KNode nodeCopy = EcoreUtil.copy(layoutGraph);
-        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-            public void run() {
-                findViews();
-                if (layoutGraphView != null) {
-                    layoutGraphView.setLayoutGraph(nodeCopy,
-                            LayoutGraphView.POST);
-                }
-                if (executionView != null) {
-                    executionView.addExecution(monitor);
-                }
-            }
-        });
-    }
-
-    /**
      * Tries to find the relevant currently open views.
      */
     private void findViews() {
         layoutGraphView = null;
         executionView = null;
 
-        IWorkbenchWindow activeWindow =
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         if (activeWindow == null) {
             return;
         }
@@ -143,13 +110,17 @@ public class UpdateViewerEffect extends AbstractEffect {
             return;
         }
 
-        IViewPart viewPart = activePage.findView(LayoutGraphView.VIEW_ID);
-        if (viewPart instanceof LayoutGraphView) {
-            layoutGraphView = (LayoutGraphView) viewPart;
+        if (layoutGraph != null) {
+            IViewPart viewPart = activePage.findView(LayoutGraphView.VIEW_ID);
+            if (viewPart instanceof LayoutGraphView) {
+                layoutGraphView = (LayoutGraphView) viewPart;
+            }
         }
-        viewPart = activePage.findView(ExecutionView.VIEW_ID);
-        if (viewPart instanceof ExecutionView) {
-            executionView = (ExecutionView) viewPart;
+        if (progressMonitor != null) {
+            IViewPart viewPart = activePage.findView(ExecutionView.VIEW_ID);
+            if (viewPart instanceof ExecutionView) {
+                executionView = (ExecutionView) viewPart;
+            }
         }
     }
     

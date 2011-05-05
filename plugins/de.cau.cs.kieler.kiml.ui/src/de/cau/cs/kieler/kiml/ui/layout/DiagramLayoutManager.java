@@ -438,6 +438,7 @@ public abstract class DiagramLayoutManager {
             KNode layoutGraph = getLayoutGraph();
 
             // perform layout on the layout graph
+            lastProgressMonitor = progressMonitor;
             DEBUG_CANVAS.setManager(this);
             LAYOUTER_ENGINE.layout(layoutGraph, progressMonitor,
                     layoutAncestors);
@@ -462,6 +463,18 @@ public abstract class DiagramLayoutManager {
             return new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID, message,
                     exception);
         }
+    }
+    
+    /** the last used progress monitor. */
+    private IKielerProgressMonitor lastProgressMonitor;
+    
+    /**
+     * Returns the last used progress monitor.
+     * 
+     * @return the last used progress monitor
+     */
+    public IKielerProgressMonitor getProgressMonitor() {
+        return lastProgressMonitor;
     }
 
     /**

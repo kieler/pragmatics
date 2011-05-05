@@ -24,7 +24,7 @@ import org.osgi.framework.BundleContext;
 public class KimlViewerPlugin extends AbstractUIPlugin {
 
     /** the plug-in ID. */
-    public static final String PLUGIN_ID = "de.cau.cs.kieler.kiml.viewer";
+    public static final String PLUGIN_ID = "de.cau.cs.kieler.klay.info";
 
     /** the shared instance. */
     private static KimlViewerPlugin plugin;

@@ -29,8 +29,10 @@ public final class Messages {
     private Messages() {
     }
 
-    private static final String BUNDLE_NAME = "de.cau.cs.kieler.kiml.viewer.messages"; //$NON-NLS-1$
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+    /** the properties file to use for messages. */
+    private static final String BUNDLE_NAME = "de.cau.cs.kieler.klay.info.messages"; //$NON-NLS-1$
+    /** the resource bundle. */
+    private static ResourceBundle resourceBundle; 
 
     /**
      * Gets the string associated with the given key.
@@ -40,7 +42,10 @@ public final class Messages {
      */
     public static String getString(final String key) {
         try {
-            return RESOURCE_BUNDLE.getString(key);
+            if (resourceBundle == null) {
+                resourceBundle = ResourceBundle.getBundle(BUNDLE_NAME);
+            }
+            return resourceBundle.getString(key);
         } catch (MissingResourceException e) {
             return '!' + key + '!';
         }

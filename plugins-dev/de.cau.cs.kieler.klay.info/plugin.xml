@@ -8,7 +8,7 @@
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.klay.info.views.LayoutGraphView"
             icon="icons/graph.gif"
-            id="de.cau.cs.kieler.kiml.viewer.layoutGraph"
+            id="de.cau.cs.kieler.klay.info.layoutGraph"
             name="Layout Graph"
             restorable="true">
       </view>
@@ -17,7 +17,7 @@
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.klay.info.views.ExecutionView"
             icon="icons/clock.gif"
-            id="de.cau.cs.kieler.kiml.viewer.execution"
+            id="de.cau.cs.kieler.klay.info.execution"
             name="Layout Time"
             restorable="true">
       </view>

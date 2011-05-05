@@ -29,6 +29,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klay.info.KimlViewerPlugin;
 import de.cau.cs.kieler.klay.info.Messages;
 import de.cau.cs.kieler.klay.info.views.LayoutGraphCanvas;
@@ -42,7 +43,7 @@ import de.cau.cs.kieler.klay.info.views.LayoutGraphView;
 public class ImageExportAction extends Action {
 
     /** identifier string for this action. */
-    private static final String ACTION_ID = "de.cau.cs.kieler.kiml.viewer.imageExport";
+    private static final String ACTION_ID = "de.cau.cs.kieler.klay.info.imageExport";
     /** relative path to the icon to use for this action. */
     private static final String ICON_PATH = "icons/pngfile.gif";
     /** preference identifier for the last used file name. */
@@ -70,24 +71,26 @@ public class ImageExportAction extends Action {
      */
     @Override
     public void run() {
-        final LayoutGraphCanvas canvas = view.getActiveCanvas();
+        final LayoutGraphCanvas canvas = view.getCanvas();
         if (canvas != null) {
             // let the user select an output file
             final String fileName = getFileName(canvas.getDisplay());
 
             if (fileName != null) {
-                final Point size = canvas.getSize();
-                final Image image = new Image(canvas.getDisplay(), size.x, size.y);
-
                 // create a job for painting and exporting the image
                 Job saveJob = new Job(Messages.getString("kiml.viewer.6")) {
                     protected IStatus run(final IProgressMonitor monitor) {
                         try {
-                            monitor.beginTask(Messages.getString("kiml.viewer.6"), 100);
+                            monitor.beginTask(Messages.getString("kiml.viewer.6"), 2);
 
                             // paint the layout graph
+                            KShapeLayout graphSize = canvas.getLayoutGraph()
+                                    .getData(KShapeLayout.class);
+                            Point size = new Point((int) graphSize.getWidth() + 1,
+                                    (int) graphSize.getHeight() + 1);
+                            Image image = new Image(canvas.getDisplay(), size.x, size.y);
                             canvas.paintLayoutGraph(new GC(image), size);
-                            monitor.worked(50);
+                            monitor.worked(1);
                             if (monitor.isCanceled()) {
                                 return new Status(IStatus.INFO, KimlViewerPlugin.PLUGIN_ID, 0,
                                         "Aborted", null);
@@ -98,12 +101,12 @@ public class ImageExportAction extends Action {
                             ImageData[] imageData = new ImageData[] {image.getImageData()};
                             imageLoader.data = imageData;
                             imageLoader.save(fileName, SWT.IMAGE_PNG);
-                            monitor.worked(50);
+                            monitor.worked(1);
 
                             return new Status(IStatus.INFO, KimlViewerPlugin.PLUGIN_ID, 0, "OK", null);
                         } catch (SWTException exception) {
-                            return new Status(IStatus.ERROR, KimlViewerPlugin.PLUGIN_ID, exception.code,
-                                    Messages.getString("kiml.viewer.7"), exception);
+                            return new Status(IStatus.ERROR, KimlViewerPlugin.PLUGIN_ID,
+                                    exception.code, Messages.getString("kiml.viewer.7"), exception);
                         } finally {
                             monitor.done();
                         }
@@ -112,7 +115,7 @@ public class ImageExportAction extends Action {
 
                 // process the image export job
                 IProgressMonitor monitor = Job.getJobManager().createProgressGroup();
-                saveJob.setProgressGroup(monitor, 100);
+                saveJob.setProgressGroup(monitor, 2);
                 saveJob.setPriority(Job.SHORT);
                 saveJob.setUser(true);
                 saveJob.schedule();
