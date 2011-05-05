@@ -384,17 +384,17 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     // Crossing Minimization
 
     /**
-     * Minimize the number of crossings for the edges between the two given layers.
-     * Currently the barycenter heuristic is used for this.
+     * Minimize the number of crossings for the edges between the given layer and either
+     * its predecessor or its successor. Currently the barycenter heuristic is used here.
      * 
-     * @param layer the free layer whose nodes are reordered
+     * @param layer the free layer whose nodes are reordered.
      * @param layerIndex the free layer's index.
-     * @param forward whether the free layer is after the fixed layer
-     * @param preOrdered whether the nodes have been ordered in a previous run
+     * @param forward whether the free layer is after the fixed layer.
+     * @param preOrdered whether the nodes have been ordered in a previous run.
      * @param randomize {@code true} if this layer's node order should just be randomized. In that
      *                  case, {@code preOrdered} is assumed to be {@code false} and the return value
      *                  is {@code 0}.
-     * @return the total number of edges going either in or out of the layer.
+     * @return the total number of edges going either in or out of the given layer.
      */
     private int minimizeCrossings(final LNode[] layer, final int layerIndex, final boolean forward,
             final boolean preOrdered, final boolean randomize) {
@@ -412,21 +412,21 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
          * any anymore.
          */
         
-        Map<LNode, Vertex> layerVertices = singleNodeVertices[layerIndex];
-        
         List<Vertex> vertices = new LinkedList<Vertex>();
         for (LNode node : layer) {
-            vertices.add(layerVertices.get(node));
+            vertices.add(singleNodeVertices[layerIndex].get(node));
         }
         
         // Barycenters!
         int totalEdges = 0;
         if (randomize) {
-            // Randomize barycenters
+            // Randomize barycenters (we don't need to update the edge count in this case;
+            // there are no edges of interest since we're only concerned with this one
+            // layer anyway)
             randomizeBarycenters(vertices);
         } else {
             // Calculate barycenters and assign barycenters to barycenterless vertices
-            totalEdges = calculateBarycenters(vertices, layerVertices, forward);
+            totalEdges = calculateBarycenters(vertices, singleNodeVertices[layerIndex], forward);
             fillInUnknownBarycenters(vertices, preOrdered);
         }
         
@@ -434,7 +434,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         Collections.sort(vertices);
         
         // Build the constraints graph
-        buildConstraintsGraph(vertices, layerVertices);
+        buildConstraintsGraph(vertices, singleNodeVertices[layerIndex]);
         
         // Find violated vertices
         Pair<Vertex, Vertex> violatedConstraint = null;
@@ -525,7 +525,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                     calculateBarycenter(fixedVertex, layerVertices, forward, workingSet);
                     
                     // Update this vertex's values
-                    vertex.degree += fixedVertex.degree - 1;
+                    vertex.degree += Math.max(0, fixedVertex.degree - 1);
                     vertex.summedWeight += fixedVertex.summedWeight;
                 } else {
                     vertex.summedWeight += portPos[fixedPort.id];
@@ -1359,7 +1359,12 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         for (int j = end - 1; j >= insx; j--) {
             array[j + 1] = array[j];
         }
-        array[insx] = n;
+        
+        if (insx >= array.length) {
+            System.out.println("BLA!");
+        } else {
+            array[insx] = n;
+        }
     }
     
     /**

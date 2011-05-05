@@ -291,7 +291,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             // Prints the algorithm configuration and outputs the whole graph to a file
             // before each slot execution
             
-            System.out.println("Klay Layered uses the following configuration:");
+            System.out.println("KLay Layered uses the following " + algorithm.size() + " modules:");
             for (int i = 0; i < algorithm.size(); i++) {
                 System.out.println("   Slot " + String.format("%1$02d", i) + ": "
                         + algorithm.get(i).getClass().getName());

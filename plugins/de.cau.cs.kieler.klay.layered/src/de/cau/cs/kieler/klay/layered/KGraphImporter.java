@@ -597,6 +597,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         parentLayout.setHeight((float) layeredGraph.getSize().y + 2 * borderSpacing
                 + insets.getTop() + insets.getBottom());
         parentLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
+        parentLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
     }
     
 }
