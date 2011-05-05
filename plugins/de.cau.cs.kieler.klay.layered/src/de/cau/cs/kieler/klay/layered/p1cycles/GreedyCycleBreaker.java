@@ -13,9 +13,12 @@
  */
 package de.cau.cs.kieler.klay.layered.p1cycles;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
@@ -124,6 +127,8 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
         }
 
         // assign marks to all nodes
+        List<LNode> maxNodes = new ArrayList<LNode>();
+        Random random = layeredGraph.getProperty(Properties.RANDOM);
         while (unprocessedNodes > 0) {
             while (!sinks.isEmpty()) {
                 LNode sink = sinks.removeFirst();
@@ -139,21 +144,21 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
             }
             if (unprocessedNodes > 0) {
                 int maxOutflow = Integer.MIN_VALUE;
-                LNode maxNode = null;
-                int maxIndex = 0;
-                index = 0;
                 for (LNode node : nodes) {
-                    if (mark[index] == 0) {
-                        int outflow = outdeg[index] - indeg[index];
-                        if (outflow > maxOutflow) {
-                            maxOutflow = outflow;
-                            maxNode = node;
-                            maxIndex = index;
+                    if (mark[node.id] == 0) {
+                        int outflow = outdeg[node.id] - indeg[node.id];
+                        if (outflow >= maxOutflow) {
+                            if (outflow > maxOutflow) {
+                                maxNodes.clear();
+                                maxOutflow = outflow;
+                            }
+                            maxNodes.add(node);
                         }
                     }
-                    index++;
                 }
-                mark[maxIndex] = nextLeft++;
+                // randomly select a node from the ones with maximal outflow
+                LNode maxNode = maxNodes.get(random.nextInt(maxNodes.size()));
+                mark[maxNode.id] = nextLeft++;
                 updateNeighbors(maxNode);
                 unprocessedNodes--;
             }
@@ -176,7 +181,6 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
                 for (LEdge edge : outgoingEdges) {
                     int targetIx = edge.getTarget().getNode().id;
                     if (mark[index] > mark[targetIx]) {
-                        // TODO extend this to support port constraints
                         edge.reverse();
                     }
                 }                
