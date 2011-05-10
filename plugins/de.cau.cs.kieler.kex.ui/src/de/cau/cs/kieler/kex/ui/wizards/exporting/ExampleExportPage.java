@@ -21,14 +21,14 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TypedEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -233,7 +234,6 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
                     }
                 };
-
                 Dialog diag = new Dialog(getShell()) {
 
                     private Text titleText;
@@ -242,40 +242,55 @@ public class ExampleExportPage extends WizardResourceImportPage {
                     private Text descText;
                     private Combo parentCatCombo;
 
+                    private static final int DESCRIPTION_MIN = 10;
+                    private static final int ID_MIN = 3;
+                    private static final int TITLE_MIN = 3;
+
+                    private static final int DIALOG_WIDTH = 540;
+                    private static final int DIALOG_HEIGHT = 300;
+
+                    private static final int CAT_DESC_HEIGHT = 100;
+                    private static final int CAT_DESC_MINHEIGHT = 80;
+
                     @Override
                     protected Control createDialogArea(final Composite parent) {
                         // Control createDialogArea = super.createDialogArea(parent);
-                        Composite composite = new Composite(parent, SWT.BORDER);
+                        Composite composite = new Composite(parent, SWT.NONE);
                         GridLayout layout = new GridLayout();
                         layout.numColumns = 2;
+
                         composite.setLayout(layout);
                         composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-                        composite.setSize(PAGE_MIN_WIDTH, PAGE_MIN_HEIGHT);
-                        // TODO meaningful tips for the fields.
+
                         Label idLab = new Label(composite, SWT.NONE);
                         idLab.setText("Id: ");
                         idLab.setToolTipText("");
 
                         idText = new Text(composite, SWT.BORDER);
                         idText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-                        idText.addModifyListener(new ModifyListener() {
-
-                            public void modifyText(final ModifyEvent e) {
-                                // TODO validate
-                                // id should be substringed with points at breaks.
-                                // all signs should be small
-                                // and min. number is 4.
-
+                        doSingleCheck(idText, ID_MIN);
+                        idText.addModifyListener(new TextBoxValidator(idText, Messages.getString(
+                                "titleToShort", ID_MIN)) {
+                            @Override
+                            public boolean check(final TypedEvent e) {
+                                return doCheck((Text) e.getSource(), ID_MIN);
                             }
                         });
+
                         Label titleLab = new Label(composite, SWT.NONE);
                         titleLab.setText("Title: ");
                         titleLab.setToolTipText("");
 
                         titleText = new Text(composite, SWT.BORDER);
                         titleText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-                        // maybe listener for validation.
+                        doSingleCheck(titleText, TITLE_MIN);
+                        titleText.addModifyListener(new TextBoxValidator(titleText, Messages
+                                .getString("titleToShort", TITLE_MIN)) {
+                            @Override
+                            public boolean check(final TypedEvent e) {
+                                return doCheck((Text) e.getSource(), TITLE_MIN);
+                            }
+                        });
 
                         // TODO browse field.
                         Label iconLab = new Label(composite, SWT.NONE);
@@ -296,35 +311,24 @@ public class ExampleExportPage extends WizardResourceImportPage {
                             parentCatCombo.add(cat.getId());
                             parentCatCombo.getText();
                         }
-
-                        // final FileDialog picDialog = new FileDialog(bottomGroup.getShell());
-                        // // ResourcesPlugin.getWorkspace().getRoot(), "Search a picture!"
-                        // picDialog.setFilterPath(WORKSPACE_DIR);
-                        // String[] extensions = { "*.png;*.jpg;*.gif" };
-                        // picDialog.setFilterExtensions(extensions);
-                        // Label label = new Label(bottomGroup, SWT.NONE);
-                        // label.setText("Set Picture:");
-                        // this.previewPic = new Text(bottomGroup, SWT.BORDER);
-                        // previewPic.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-                        // Button browse = new Button(bottomGroup, SWT.NONE);
-                        // browse.setText("Browse...");
-                        // browse.addSelectionListener(new SelectionAdapter() {
-                        //
-                        // @Override
-                        // public void widgetSelected(final SelectionEvent e) {
-                        // super.widgetSelected(e);
-                        // String pic = picDialog.open();
-                        // if (pic != null) {
-                        // getPreviewPic().setText(pic);
-                        // }
-                        // }
-
-                        // });
-
                         Label descLab = new Label(composite, SWT.NONE);
                         descLab.setText("Description: ");
+
                         descText = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL
                                 | SWT.H_SCROLL);
+                        GridData descData = new GridData(GridData.FILL_HORIZONTAL);
+                        descData.heightHint = CAT_DESC_HEIGHT;
+                        descData.minimumHeight = CAT_DESC_MINHEIGHT;
+                        descText.setLayoutData(descData);
+                        doSingleCheck(descText, DESCRIPTION_MIN);
+                        descText.addModifyListener(new TextBoxValidator(descText, Messages
+                                .getString("titleToShort", DESCRIPTION_MIN)) {
+                            @Override
+                            public boolean check(final TypedEvent e) {
+                                return doCheck((Text) e.getSource(), DESCRIPTION_MIN);
+                            }
+                        });
+
                         return parent;
                     }
 
@@ -335,19 +339,37 @@ public class ExampleExportPage extends WizardResourceImportPage {
                         super.okPressed();
                     }
 
+                    @Override
+                    protected void configureShell(final Shell newShell) {
+                        super.configureShell(newShell);
+                        newShell.setMinimumSize(DIALOG_WIDTH, DIALOG_HEIGHT);
+                        newShell.setText("Category creation");
+                    }
+
+                    private boolean doSingleCheck(final Text field, final int minLength) {
+                        boolean decorate = field.getText().length() < minLength;
+                        field.setData(TextBoxValidator.WANTS_COMPLETE, !decorate);
+                        return decorate;
+                    }
+
+                    private boolean doCheck(final Text field, final int minLength) {
+                        boolean decorate = doSingleCheck(field, minLength);
+                        triggerDialogComplete();
+                        return decorate;
+                    }
+
+                    private void triggerDialogComplete() {
+                        getButton(IDialogConstants.OK_ID).setEnabled(
+                                (Boolean) idText.getData(TextBoxValidator.WANTS_COMPLETE)
+                                        && (Boolean) titleText
+                                                .getData(TextBoxValidator.WANTS_COMPLETE)
+                                        && (Boolean) descText
+                                                .getData(TextBoxValidator.WANTS_COMPLETE));
+
+                    }
+
                 };
                 diag.open();
-                // InputDialog dialog = new InputDialog(getShell(), "Create New Category",
-                // "Please enter a new Category.", "", validator) {
-                // };
-                // String value = dialog.getValue();
-                // if (value != null && value.length() >= CATEGORY_MINLENGTH) {
-                // TreeItem item = new TreeItem(categoryTree, SWT.NONE);
-                // item.setText(value);
-                // creatableCategories.add(value);
-                // revertTree.setEnabled(checkedCategories.size() > 0
-                // || creatableCategories.size() > 0);
-                // }
             }
         });
 

@@ -35,8 +35,6 @@ public class ExampleAttributesPage extends WizardPage {
     private static final int MIN_WIDTH = 540;
     private static final int MIN_HEIGHT = 600;
 
-    private static final String WANTS_COMPLETE = "wantsComplete";
-
     private Text exampleTitle;
     private static final int EXAMPLE_TITLE_MIN = 4;
 
@@ -97,6 +95,7 @@ public class ExampleAttributesPage extends WizardPage {
         exampleTitle.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         exampleTitle.setText("ExportedExample1");
         exampleTitle.setToolTipText("Think about a meaningful title of the new example.");
+        doSingleCheck(exampleTitle, EXAMPLE_TITLE_MIN);
         exampleTitle.addModifyListener(new TextBoxValidator(exampleTitle, Messages.getString(
                 "titleToShort", EXAMPLE_TITLE_MIN)) {
 
@@ -114,6 +113,7 @@ public class ExampleAttributesPage extends WizardPage {
         String user = System.getProperty("user.name");
         author.setText(System.getProperty("user.name"));
         author.setToolTipText("The person or organisation/group who created that example.");
+        doSingleCheck(author, AUTHOR_MIN);
         author.addModifyListener(new TextBoxValidator(author, Messages.getString("titleToShort",
                 AUTHOR_MIN)) {
             @Override
@@ -131,6 +131,7 @@ public class ExampleAttributesPage extends WizardPage {
         contact.setText((user != null && user.length() > 1 ? user + "@informatik.uni-kiel.de" : ""));
         contact.setToolTipText("Here you usually give an emailaddress or a "
                 + "url of a homepage for support and additional informations.");
+        doSingleCheck(contact, CONTACT_MIN);
         contact.addModifyListener(new TextBoxValidator(contact, Messages.getString("titleToShort",
                 CONTACT_MIN)) {
             @Override
@@ -152,6 +153,7 @@ public class ExampleAttributesPage extends WizardPage {
         exampleDescription.setToolTipText("The description gives an overview "
                 + "about the created example. This should help users "
                 + "at finding the desired example.");
+        doSingleCheck(exampleDescription, DESCRIPTION_MIN);
         exampleDescription.addModifyListener(new TextBoxValidator(exampleDescription, Messages
                 .getString("titleToShort", DESCRIPTION_MIN)) {
             @Override
@@ -160,16 +162,11 @@ public class ExampleAttributesPage extends WizardPage {
             }
         });
 
-        // initial checks
-        doSingleCheck(exampleTitle, EXAMPLE_TITLE_MIN);
-        doSingleCheck(author, AUTHOR_MIN);
-        doSingleCheck(contact, CONTACT_MIN);
-        doSingleCheck(exampleDescription, DESCRIPTION_MIN);
     }
 
     private boolean doSingleCheck(final Text field, final int minLength) {
         boolean decorate = field.getText().length() < minLength;
-        field.setData(WANTS_COMPLETE, !decorate);
+        field.setData(TextBoxValidator.WANTS_COMPLETE, !decorate);
         return decorate;
     }
 
@@ -180,10 +177,10 @@ public class ExampleAttributesPage extends WizardPage {
     }
 
     private void triggerPageComplete() {
-        setPageComplete((Boolean) exampleTitle.getData(WANTS_COMPLETE)
-                && (Boolean) author.getData(WANTS_COMPLETE)
-                && (Boolean) contact.getData(WANTS_COMPLETE)
-                && (Boolean) exampleDescription.getData(WANTS_COMPLETE));
+        setPageComplete((Boolean) exampleTitle.getData(TextBoxValidator.WANTS_COMPLETE)
+                && (Boolean) author.getData(TextBoxValidator.WANTS_COMPLETE)
+                && (Boolean) contact.getData(TextBoxValidator.WANTS_COMPLETE)
+                && (Boolean) exampleDescription.getData(TextBoxValidator.WANTS_COMPLETE));
     }
 
     /**

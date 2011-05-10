@@ -22,7 +22,6 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.TypedEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 
 /**
@@ -39,23 +38,38 @@ public class TextBoxValidator implements ModifyListener {
     private String decorationType = FieldDecorationRegistry.DEC_ERROR;
 
     /**
-     * constructor for the {@link TextBoxValidator}.
+     * You can use that field for adding boolean flag to your control widget. All you have to do is
+     * to use the control with {@link Control.setData(String key)}. When creating a new
+     * {@link TextBoxValidator} object a first check will be triggered and depending on that flag
+     * the decoration will show or not.
      * 
-     * @param text
-     *            , text-field widget which should become decorate.
+     */
+    public static final String WANTS_COMPLETE = "wantsComplete";
+
+    /**
+     * When creating a new {@link TextBoxValidator} object the data Object of the control will check
+     * and depending on that flag the decoration will show or not. Note: if WANTS_COMPLETE is not
+     * set it will be ignored and not shown as initial.
+     * 
+     * @param control
+     *            , control-field widget which should become decorate.
      * @param msg
      *            , the popup msg.
      */
-    public TextBoxValidator(final Control text, final String msg) {
-        Image errorImg = FieldDecorationRegistry.getDefault().getFieldDecoration(decorationType)
-                .getImage();
-        decoration = new ControlDecoration(text, SWT.LEFT | SWT.TOP);
-        decoration.setImage(errorImg);
-        decoration.hide();
+    public TextBoxValidator(final Control control, final String msg) {
         this.msg = msg;
-
+        decoration = new ControlDecoration(control, SWT.LEFT | SWT.TOP);
+        decoration.setImage(FieldDecorationRegistry.getDefault().getFieldDecoration(decorationType)
+                .getImage());
+        if (control.getData(WANTS_COMPLETE) instanceof Boolean) {
+            if ((Boolean) control.getData(WANTS_COMPLETE)) {
+                decoration.hide();
+            } else {
+                decoration.show();
+            }
+        }
         // used to show hover when focus is set otherwise hide hover.
-        text.addFocusListener(new FocusListener() {
+        control.addFocusListener(new FocusListener() {
 
             public void focusLost(final FocusEvent e) {
                 decoration.hideHover();
@@ -85,7 +99,7 @@ public class TextBoxValidator implements ModifyListener {
     }
 
     /**
-     * Has to override for custom validation. This check will be used to show decoration or not,
+     * Has to override for custom validation. This check will be used to show decoration or not.
      * 
      * @param e
      *            the triggered typed-event
@@ -104,6 +118,8 @@ public class TextBoxValidator implements ModifyListener {
      */
     public final void setDecorationType(final String decorationType) {
         this.decorationType = decorationType;
+        decoration.setImage(FieldDecorationRegistry.getDefault().getFieldDecoration(decorationType)
+                .getImage());
     }
 
     /**
