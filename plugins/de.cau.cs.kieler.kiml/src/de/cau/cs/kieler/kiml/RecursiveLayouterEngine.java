@@ -51,38 +51,30 @@ public class RecursiveLayouterEngine {
     }
     
     /**
-     * Performs recursive layout on the given layout graph.
+     * Performs recursive layout on the given layout graph. Layout is not only performed
+     * for the selected node, but also for its ancestors, if there are any.
      * 
      * @param layoutGraph instance of a layout graph
      * @param progressMonitor monitor to which progress of the layout algorithms is reported
-     * @param layoutAncestors if true, layout is not only performed for the selected
-     *         node, but also for its ancestors
      */
-    public void layout(final KNode layoutGraph, final IKielerProgressMonitor progressMonitor,
-            final boolean layoutAncestors) {
+    public void layout(final KNode layoutGraph, final IKielerProgressMonitor progressMonitor) {
         lastLayoutProvider = null;
-        int nodeCount = countNodes(layoutGraph);
-        String label = "Recursive graph layout";
-        if (layoutGraph.getLabel().getText() != null) {
-            label += " (" + layoutGraph.getLabel().getText() + ")";
-        }
-        progressMonitor.begin(label, nodeCount);
+        int nodeCount = countNodes(layoutGraph, true);
+        progressMonitor.begin("Recursive Graph Layout", nodeCount);
         
         // perform recursive layout of the whole substructure of the given node
         layoutRecursively(layoutGraph, progressMonitor);
         
-        // optionally layout the path of ancestors
-        if (layoutAncestors) {
-            KNode parent = layoutGraph.getParent();
-            while (parent != null) {
-                if (progressMonitor.isCanceled()) {
-                    break;
-                }
-                lastLayoutProvider = getLayoutProvider(parent);
-                lastLayoutProvider.doLayout(parent, progressMonitor.subTask(0));
-                checkLayout(parent);
-                parent = parent.getParent();
+        // layout the path of ancestors
+        KNode parent = layoutGraph.getParent();
+        while (parent != null) {
+            if (progressMonitor.isCanceled()) {
+                break;
             }
+            lastLayoutProvider = getLayoutProvider(parent);
+            lastLayoutProvider.doLayout(parent, progressMonitor.subTask(parent.getChildren().size()));
+            checkLayout(parent);
+            parent = parent.getParent();
         }
         
         progressMonitor.done();
@@ -102,7 +94,7 @@ public class RecursiveLayouterEngine {
             // if the layout provider supports hierarchy, it is expected to layout the children
             int nodeCount;
             if (layoutProvider.supportsHierarchy(layoutNode)) {
-                nodeCount = countNodes(layoutNode);
+                nodeCount = countNodes(layoutNode, false);
             } else {
                 nodeCount = layoutNode.getChildren().size();
                 for (KNode child : layoutNode.getChildren()) {
@@ -162,13 +154,23 @@ public class RecursiveLayouterEngine {
      * Determines the total number of layout nodes in the given layout graph.
      * 
      * @param layoutNode parent layout node to examine
+     * @param countAncestors if true, the nodes on the ancestors path are also counted
      * @return total number of child layout nodes
      */
-    private int countNodes(final KNode layoutNode) {
+    private int countNodes(final KNode layoutNode, final boolean countAncestors) {
+        // count the content of the given node
         int count = layoutNode.getChildren().size();
         for (KNode childNode : layoutNode.getChildren()) {
             if (!childNode.getChildren().isEmpty()) {
-                count += countNodes(childNode);
+                count += countNodes(childNode, false);
+            }
+        }
+        // count the ancestors path
+        if (countAncestors) {
+            KNode parent = layoutNode.getParent();
+            while (parent != null) {
+                count += parent.getChildren().size();
+                parent = parent.getParent();
             }
         }
         return count;

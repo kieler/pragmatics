@@ -107,7 +107,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
         IKielerProgressMonitor monitor =
                 progressMonitor != null ? progressMonitor : new BasicProgressMonitor();
         try {
-            layout(adopted, monitor, false /* layoutAncestors */);
+            layout(adopted, monitor);
 
         } catch (final Throwable exception) {
             // layout failed
