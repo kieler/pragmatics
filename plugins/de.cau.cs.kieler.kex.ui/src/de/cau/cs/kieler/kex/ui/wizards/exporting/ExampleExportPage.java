@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
@@ -68,6 +67,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
     private static final int PAGE_MIN_WIDTH = 540;
     private static final int PAGE_MIN_HEIGHT = 600;
+    private static final String NO_PARENT = "No Parent";
 
     // preferred height
     private static final int HEIGHT_HINT = 160;
@@ -219,21 +219,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
             @Override
             public void widgetSelected(final SelectionEvent event) {
-                IInputValidator validator = new IInputValidator() {
-                    public String isValid(final String newText) {
-                        if (newText.length() < CATEGORY_MINLENGTH) {
-                            return "Category name has to " + "have at least 4 characters.";
-                        }
-                        for (TreeItem item : categoryTree.getItems()) {
-                            if (newText.equals(item.getText())) {
-                                return "Category exists already! " + "Please enter another name.";
-                            }
-                        }
 
-                        return null;
-
-                    }
-                };
                 Dialog diag = new Dialog(getShell()) {
 
                     private Text titleText;
@@ -303,7 +289,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
                         parentCatLab.setText("Parent Category: ");
                         parentCatCombo = new Combo(composite, SWT.BORDER);
                         parentCatCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-                        parentCatCombo.add("No Parent");
+                        parentCatCombo.add(NO_PARENT);
                         parentCatCombo.select(0);
                         // FIXME save performance, if loading categories only one time.
                         List<Category> categories = ExampleManager.get().getCategories();
@@ -447,6 +433,17 @@ public class ExampleExportPage extends WizardResourceImportPage {
                 notPlacedCategories.add(category);
             }
         }
+
+        for (Category cat : creatableCategories) {
+            if (cat.getParentId() == null) {
+                TreeItem item = new TreeItem(tree, SWT.NONE);
+                item.setText(cat.getTitle());
+                item.setData(cat);
+            } else {
+                notPlacedCategories.add(cat);
+            }
+        }
+
         // enable drawing
         tree.setRedraw(true);
         // subcategories.
@@ -514,7 +511,16 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
     private void addNewCategory(final String id, final String title, final String desc,
             final String iconPath, final String parentId) {
-        creatableCategories.add(new Category(id, title, desc, iconPath, parentId));
+        creatableCategories.add(new Category(id, title, desc, iconPath,
+                parentId.equals(NO_PARENT) ? null : parentId));
+        updateCategoryTree();
+    }
+
+    private void updateCategoryTree() {
+        // FIXME looses all dependencies and checked elements before.
+        categoryTree.removeAll();
+        fillTree(categoryTree);
+
     }
 
     /**
