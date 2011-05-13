@@ -177,11 +177,9 @@ public abstract class DiagramLayoutManager {
                         int nodeCount =
                                 status == null ? 0 : status.getCode();
                         if (zoom) {
-                            applyAndZoom(nodeCount, animate,
-                                    cacheLayout);
+                            applyAndZoom(animate, cacheLayout, nodeCount);
                         } else {
-                            applyAnimatedLayout(animate, cacheLayout,
-                                    nodeCount);
+                            applyAnimatedLayout(animate, cacheLayout, nodeCount);
                         }
                     }
                 }
@@ -203,7 +201,7 @@ public abstract class DiagramLayoutManager {
                 public void run() {
                     int nodeCount = status == null ? 0 : status.getCode();
                     if (zoom) {
-                        applyAndZoom(nodeCount, animate, cacheLayout);
+                        applyAndZoom(animate, cacheLayout, nodeCount);
                     } else {
                         applyAnimatedLayout(animate, cacheLayout, nodeCount);
                     }
@@ -222,8 +220,8 @@ public abstract class DiagramLayoutManager {
      * @param nodeCount
      *            the number of nodes in the layouted diagram
      */
-    public final void applyAndZoom(final int nodeCount, final boolean animate,
-            final boolean cacheLayout) {
+    public final void applyAndZoom(final boolean animate, final boolean cacheLayout,
+            final int nodeCount) {
         // determine pre- or post-layout zoom
         final ZoomManager zoomManager =
                 getBridge().getZoomManager(getEditPart(getLayoutGraph()));
