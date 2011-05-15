@@ -106,7 +106,7 @@ public final class EvolUtil {
             assert manager != null : "Could not get a layout manager for " + editor.getTitle();
 
             int nodeCount = 0;
-            manager.applyAndZoom(nodeCount, false /* animate */, false /* cacheLayout */);
+            manager.applyAndZoom(false /* animate */, false /* cacheLayout */, nodeCount);
 
             return manager;
         }
