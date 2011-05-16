@@ -326,8 +326,11 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 // external port)
                 if (kedge.getTarget().getParent() == child.getParent()) {
                     transformEdge(kedge, layoutNode, elemMap, graphProperties);
-                } else {
-                    // the edge is excluded from layout
+                } else if (kedge.getTarget().getParent() != kedge.getSource()
+                        && kedge.getTarget() != kedge.getSource().getParent()) {
+                    
+                    // the edge is excluded from layout since it does not connect two adjacent
+                    // hierarchy levels
                     KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
                     edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 }
@@ -355,10 +358,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                     || kedge.getTarget().getParent() == layoutNode) {
                 
                 transformEdge(kedge, layoutNode, elemMap, graphProperties);
-            } else {
-                // the edge is excluded from layout
-                KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-                edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
             }
         }
     }
