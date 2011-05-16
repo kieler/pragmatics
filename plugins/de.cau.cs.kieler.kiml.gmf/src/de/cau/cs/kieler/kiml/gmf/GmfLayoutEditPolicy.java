@@ -421,35 +421,11 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             List<KPoint> bendPoints = edgeLayout.getBendPoints();
 
             pointList = new PointList(bendPoints.size() + 2);
-            KNode sourceNode = edge.getSource(), targetNode = edge.getTarget();
-            if (KimlUtil.isDescendant(targetNode, sourceNode)) {
-                // in this case the insets are not yet considered in the source point
-                KVector point = new KVector(sourcePoint.getX(), sourcePoint.getY());
-                translatePoint(point, point, sourceNode);
-                pointList.addPoint((int) point.x, (int) point.y);
-            } else {
-                pointList.addPoint((int) sourcePoint.getX(), (int) sourcePoint.getY());
-            }
+            pointList.addPoint((int) sourcePoint.getX(), (int) sourcePoint.getY());
             for (KPoint bendPoint : bendPoints) {
                 pointList.addPoint((int) bendPoint.getX(), (int) bendPoint.getY());
             }
-            if (KimlUtil.isDescendant(sourceNode, targetNode)) {
-                // in this case the insets are not yet considered in the target point
-                KVector point = new KVector(targetPoint.getX(), targetPoint.getY());
-                KVector referencePoint = new KVector(point);
-                KNode node = sourceNode;
-                while (node.getParent() != targetNode) {
-                    node = node.getParent();
-                    KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-                    KInsets insets = nodeLayout.getInsets();
-                    referencePoint.translate(nodeLayout.getXpos() + insets.getLeft(),
-                            nodeLayout.getYpos() + insets.getTop());
-                }
-                translatePoint(referencePoint, point, targetNode);
-                pointList.addPoint((int) point.x, (int) point.y);
-            } else {
-                pointList.addPoint((int) targetPoint.getX(), (int) targetPoint.getY());
-            }
+            pointList.addPoint((int) targetPoint.getX(), (int) targetPoint.getY());
             
             // for connections that support splines the control points are passed without change
             EdgeRouting edgeRouting = edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
@@ -467,36 +443,6 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             pointListMap.put(edgeLayout, pointList);
         }
         return pointList;
-    }
-    
-    /**
-     * Translate the given point by the parent insets towards the node border.
-     * 
-     * @param referencePoint the reference point relative to the given parent node
-     * @param objectPoint the point that shall be translated
-     * @param parentNode a parent node
-     */
-    private void translatePoint(final KVector referencePoint, final KVector objectPoint,
-            final KNode parentNode) {
-        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-        KInsets insets = parentLayout.getInsets();
-        double widthPercent = referencePoint.x / parentLayout.getWidth();
-        double heightPercent = referencePoint.y / parentLayout.getHeight();
-        if (widthPercent + heightPercent <= 1
-                && widthPercent - heightPercent <= 0) {
-            // point is on the left
-            objectPoint.x -= insets.getLeft();
-        } else if (widthPercent + heightPercent >= 1
-                && widthPercent - heightPercent >= 0) {
-            // point is on the right
-            objectPoint.x += insets.getRight();
-        } else if (heightPercent < 1.0f / 2) {
-            // point is on the top
-            objectPoint.y -= insets.getTop();
-        } else {
-            // point is on the bottom
-            objectPoint.y += insets.getBottom();
-        }
     }
 
     /**
