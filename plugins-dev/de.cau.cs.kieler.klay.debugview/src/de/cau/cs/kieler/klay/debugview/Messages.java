@@ -42,6 +42,7 @@ public final class Messages extends NLS {
     public static String DebugWindow_Toolbar_BrowseFolder_Text;
     public static String DebugWindow_Toolbar_BrowseFolder_ToolTip;
     public static String DebugWindow_Toolbar_RefreshFolder_ToolTip;
+    public static String DebugWindow_Toolbar_RemoveAll_ToolTip;
     public static String DebugWindow_Toolbar_ZoomIn_ToolTip;
     public static String DebugWindow_Toolbar_ZoomOut_ToolTip;
     

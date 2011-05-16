@@ -269,6 +269,8 @@ public class DebugWindow extends Window {
     private ToolItem folderBrowseButton = null;
     private Image folderRefreshImage = null;
     private ToolItem folderRefreshButton = null;
+    private Image folderRemoveAllImage = null;
+    private ToolItem folderRemoveAllButton = null;
     private Image zoomInImage = null;
     private ToolItem zoomInButton = null;
     private Image zoomOutImage = null;
@@ -373,7 +375,39 @@ public class DebugWindow extends Window {
         // Show the new path to the user
         currentPath = thePath;
         folderRefreshButton.setEnabled(fileTableInput != null);
+        folderRemoveAllButton.setEnabled(fileTableInput != null);
         statusBar.setText(currentPath);
+    }
+    
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // File Operations
+    
+    /**
+     * Deletes all dot and png files in the current directory.
+     */
+    private void removeFiles() {
+        // Check if we have a file to display
+        File pathFile = (File) fileTableViewer.getInput();
+        if (pathFile == null) {
+            return;
+        }
+        
+        // Enumerate all subfiles
+        for (File file : pathFile.listFiles()) {
+            if (!file.isFile()) {
+                // We're not interested in directories
+                continue;
+            }
+            
+            // We're only removing .dot and .png files
+            String fileName = file.getName();
+            if (fileName.endsWith(".dot") || fileName.endsWith(".png")) { //$NON-NLS-1$
+                file.delete();
+            }
+        }
+        
+        refresh();
     }
     
 
@@ -628,6 +662,10 @@ public class DebugWindow extends Window {
                 folderRefreshImage.dispose();
             }
             
+            if (folderRemoveAllImage != null) {
+                folderRemoveAllImage.dispose();
+            }
+            
             if (zoomInImage != null) {
                 zoomInImage.dispose();
             }
@@ -758,27 +796,38 @@ public class DebugWindow extends Window {
         folderBrowseButton = new ToolItem(toolBar, SWT.NULL);
         folderBrowseButton.setText(Messages.DebugWindow_Toolbar_BrowseFolder_Text);
         folderBrowseButton.setToolTipText(Messages.DebugWindow_Toolbar_BrowseFolder_ToolTip);
-        folderBrowseButton.setImage(KlayDebugViewPlugin.loadImage("open.png")); //$NON-NLS-1$
+        folderBrowseImage = KlayDebugViewPlugin.loadImage("open.png"); //$NON-NLS-1$
+        folderBrowseButton.setImage(folderBrowseImage);
         
         // Folder Refresh Button
         folderRefreshButton = new ToolItem(toolBar, SWT.NULL);
         folderRefreshButton.setEnabled(false);
         folderRefreshButton.setToolTipText(Messages.DebugWindow_Toolbar_RefreshFolder_ToolTip);
-        folderRefreshButton.setImage(KlayDebugViewPlugin.loadImage("refresh.gif")); //$NON-NLS-1$
+        folderRefreshImage = KlayDebugViewPlugin.loadImage("refresh.gif"); //$NON-NLS-1$
+        folderRefreshButton.setImage(folderRefreshImage);
+        
+        // Folder Remove All Button
+        folderRemoveAllButton = new ToolItem(toolBar, SWT.NULL);
+        folderRemoveAllButton.setEnabled(false);
+        folderRemoveAllButton.setToolTipText(Messages.DebugWindow_Toolbar_RemoveAll_ToolTip);
+        folderRemoveAllImage = KlayDebugViewPlugin.loadImage("remall.gif"); //$NON-NLS-1$
+        folderRemoveAllButton.setImage(folderRemoveAllImage);
         
         // Separator
         new ToolItem(toolBar, SWT.SEPARATOR);
         
         // Zoom Buttons
         zoomInButton = new ToolItem(toolBar, SWT.NULL);
-        zoomInButton.setToolTipText(Messages.DebugWindow_Toolbar_ZoomIn_ToolTip);
-        zoomInButton.setImage(KlayDebugViewPlugin.loadImage("zoomin.gif")); //$NON-NLS-1$
         zoomInButton.setEnabled(false);
+        zoomInButton.setToolTipText(Messages.DebugWindow_Toolbar_ZoomIn_ToolTip);
+        zoomInImage = KlayDebugViewPlugin.loadImage("zoomin.gif"); //$NON-NLS-1$
+        zoomInButton.setImage(zoomInImage);
 
         zoomOutButton = new ToolItem(toolBar, SWT.NULL);
-        zoomOutButton.setToolTipText(Messages.DebugWindow_Toolbar_ZoomOut_ToolTip);
-        zoomOutButton.setImage(KlayDebugViewPlugin.loadImage("zoomout.gif")); //$NON-NLS-1$
         zoomOutButton.setEnabled(false);
+        zoomOutButton.setToolTipText(Messages.DebugWindow_Toolbar_ZoomOut_ToolTip);
+        zoomOutImage = KlayDebugViewPlugin.loadImage("zoomout.gif"); //$NON-NLS-1$
+        zoomOutButton.setImage(zoomOutImage);
         
         // Event listeners
         folderBrowseButton.addSelectionListener(new SelectionAdapter() {
@@ -798,6 +847,16 @@ public class DebugWindow extends Window {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 refresh();
+            }
+        });
+
+        folderRemoveAllButton.addSelectionListener(new SelectionAdapter() {
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                removeFiles();
             }
         });
 
