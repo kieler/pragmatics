@@ -224,31 +224,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         KShapeLayout sourceLayout = sourceNode.getData(KShapeLayout.class);
         
         if (KimlUtil.isDescendant(targetNode, sourceNode)) {
-            // in this case the edge points are given without the source insets, so add them
-            KInsets insets = sourceLayout.getInsets();
-            double width = Math.max(sourceLayout.getWidth() - insets.getLeft()
-                    - insets.getRight(), 1);
-            double widthPercent = sourceRel.x / width;
-            double height = Math.max(sourceLayout.getHeight() - insets.getTop()
-                    - insets.getBottom(), 1);
-            double heightPercent = sourceRel.y / height;
-            if (widthPercent + heightPercent <= 1
-                    && widthPercent - heightPercent <= 0) {
-                // source point is on the left
-                sourceRel.y += insets.getTop();
-            } else if (widthPercent + heightPercent >= 1
-                    && widthPercent - heightPercent >= 0) {
-                // source point is on the right
-                sourceRel.x += insets.getLeft() + insets.getRight();
-                sourceRel.y += insets.getTop();
-            } else if (heightPercent < 1.0f / 2) {
-                // source point is on the top
-                sourceRel.x += insets.getLeft();
-            } else {
-                // source point is on the bottom
-                sourceRel.x += insets.getLeft();
-                sourceRel.y += insets.getTop() + insets.getBottom();
-            }
+            translateDescendantPoint(sourceRel, sourceLayout);
         } else {
             sourceRel.translate(-sourceLayout.getXpos(), -sourceLayout.getYpos());
         }
@@ -297,24 +273,8 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         }
         targetRel.translate(-targetLayout.getXpos(), -targetLayout.getYpos());
         
-        if (KimlUtil.isDescendant(sourceNode, targetNode)) {
-            // in this case the edge points are given without the target insets, so add them
-            KInsets insets = targetLayout.getInsets();
-            double width = Math.max(targetLayout.getWidth() - insets.getLeft()
-                    - insets.getRight(), 1);
-            double widthPercent = (targetRel.x - insets.getLeft()) / width;
-            double height = Math.max(targetLayout.getHeight() - insets.getTop()
-                    - insets.getBottom(), 1);
-            double heightPercent = (targetRel.y - insets.getTop()) / height;
-            if (widthPercent + heightPercent >= 1) {
-                if (widthPercent - heightPercent >= 0) {
-                    // target point is on the right
-                    targetRel.x += insets.getRight();
-                } else {
-                    // target point is on the bottom
-                    targetRel.y += insets.getBottom();
-                }
-            }
+        if (KimlUtil.isDescendant(targetNode, sourceNode)) {
+            translateDescendantPoint(targetRel, targetLayout);
         }
         
         if (edge.getTargetPort() != null) {
@@ -338,6 +298,42 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         
         // check the bound of the relative position
         return targetRel.applyBounds(0, 0, 1, 1);
+    }
+
+    /**
+     * Adds the necessary insets of the layout to the given point.
+     * 
+     * @param point the point to translate.
+     * @param layout layout of the node the point is relative to.
+     */
+    private void translateDescendantPoint(final KVector point, final KShapeLayout layout) {
+        // in this case the edge points are given without the source insets, so add them
+        KInsets insets = layout.getInsets();
+        double width = Math.max(layout.getWidth() - insets.getLeft()
+                - insets.getRight(), 1);
+        double widthPercent = point.x / width;
+        double height = Math.max(layout.getHeight() - insets.getTop()
+                - insets.getBottom(), 1);
+        double heightPercent = point.y / height;
+        if (widthPercent + heightPercent <= 1
+                && widthPercent - heightPercent <= 0) {
+            // source point is on the left
+            point.x += insets.getLeft();
+            point.y += insets.getTop();
+        } else if (widthPercent + heightPercent >= 1
+                && widthPercent - heightPercent >= 0) {
+            // source point is on the right
+            point.x += insets.getLeft() + insets.getRight();
+            point.y += insets.getTop();
+        } else if (heightPercent < 1.0f / 2) {
+            // source point is on the top
+            point.x += insets.getLeft();
+            point.y += insets.getTop();
+        } else {
+            // source point is on the bottom
+            point.x += insets.getLeft();
+            point.y += insets.getTop() + insets.getBottom();
+        }
     }
 
     /** see LabelViewConstants.TARGET_LOCATION. */

@@ -118,7 +118,7 @@ public class LayerConnection {
                 sourcePoint.setY(sourceElement.getPosition().getY() + sourcePortLayout.getHeight() / 2);
                 float portOffset = sourcePortLayout.getProperty(LayoutOptions.OFFSET);
                 toExternalEndpoint(sourcePoint, sourcePortLayout.getProperty(LayoutOptions.PORT_SIDE),
-                        portOffset);
+                        portOffset, insets);
             } else {
                 sourcePoint.setX(sourcePortLayout.getXpos() + sourcePortLayout.getWidth() / 2
                         + sourceElement.getPosition().getX() + sourceElement.getPosOffset().getX());
@@ -147,7 +147,7 @@ public class LayerConnection {
                 targetPoint.setY(targetElement.getPosition().getY() + targetPortLayout.getHeight() / 2);
                 float portOffset = targetPortLayout.getProperty(LayoutOptions.OFFSET);
                 toExternalEndpoint(targetPoint, targetPortLayout.getProperty(LayoutOptions.PORT_SIDE),
-                        portOffset);
+                        portOffset, insets);
             } else {
                 targetPoint.setX(targetPortLayout.getXpos() + targetPortLayout.getWidth() / 2
                         + targetElement.getPosition().getX() + targetElement.getPosOffset().getX());
@@ -305,19 +305,19 @@ public class LayerConnection {
      * @param portOffset additional offset of the port
      */
     private void toExternalEndpoint(final KPoint endpoint, final PortSide portSide,
-            final float portOffset) {
+            final float portOffset, final KInsets insets) {
         switch (portSide) {
         case NORTH:
-            endpoint.setY(endpoint.getY() - portOffset);
+            endpoint.setY(endpoint.getY() - portOffset - insets.getTop());
             break;
         case EAST:
-            endpoint.setX(endpoint.getX() + portOffset);
+            endpoint.setX(endpoint.getX() + portOffset + insets.getRight());
             break;
         case SOUTH:
-            endpoint.setY(endpoint.getY() + portOffset);
+            endpoint.setY(endpoint.getY() + portOffset + insets.getBottom());
             break;
         case WEST:
-            endpoint.setX(endpoint.getX() - portOffset);
+            endpoint.setX(endpoint.getX() - portOffset - insets.getLeft());
             break;
         }
     }
