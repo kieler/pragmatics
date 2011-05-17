@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.ui.LayouterHintDialog;
 import de.cau.cs.kieler.kiml.ui.Messages;
@@ -73,7 +73,7 @@ public class LayouterHintCellEditor extends DialogCellEditor {
     protected void updateContents(final Object value) {
         if (value instanceof String) {
             String newText;
-            LayoutServices layoutServices = LayoutServices.getInstance();
+            LayoutDataService layoutServices = LayoutDataService.getInstance();
             LayoutTypeData layoutType = layoutServices.getTypeData((String) value);
             if (layoutType != null) {
                 newText = layoutType.toString();

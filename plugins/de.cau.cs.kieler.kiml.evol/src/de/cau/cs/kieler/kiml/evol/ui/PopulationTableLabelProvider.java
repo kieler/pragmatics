@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.evol.EvolModel;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
@@ -115,7 +115,7 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
                 final String hintId = hintGene.toString();
 
                 final LayoutAlgorithmData algorithm =
-                        LayoutServices.getInstance().getAlgorithmData(hintId);
+                        LayoutDataService.getInstance().getAlgorithmData(hintId);
                 if (algorithm != null) {
                     algorithmName = algorithm.getName();
                 }

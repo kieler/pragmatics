@@ -37,10 +37,10 @@ import org.eclipse.ui.dialogs.ListDialog;
 
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 import de.cau.cs.kieler.kiml.ui.preferences.OptionsTableProvider.DataEntry;
 
 /**
@@ -262,7 +262,7 @@ public class NewOptionDialog extends Dialog {
         dialog.setTitle(Messages.getString("kiml.ui.57")); //$NON-NLS-1$
         dialog.setContentProvider(ArrayContentProvider.getInstance());
         dialog.setLabelProvider(new LabelProvider());
-        List<Pair<String, String>> diagramTypes = EclipseLayoutServices
+        List<Pair<String, String>> diagramTypes = EclipseLayoutDataService
                 .getInstance().getDiagramTypes();
         SelectionData[] input = new SelectionData[diagramTypes.size()];
         int i = 0;
@@ -311,7 +311,7 @@ public class NewOptionDialog extends Dialog {
                 return null;
             }
         });
-        Collection<LayoutOptionData<?>> data = EclipseLayoutServices
+        Collection<LayoutOptionData<?>> data = EclipseLayoutDataService
                 .getInstance().getOptionData();
         SelectionData[] input = new SelectionData[data.size()];
         int i = 0;
@@ -337,7 +337,7 @@ public class NewOptionDialog extends Dialog {
      */
     public DataEntry createDataEntry() {
         if (elementValue != null && optionValue != null) {
-            LayoutServices layoutServices = LayoutServices.getInstance();
+            LayoutDataService layoutServices = LayoutDataService.getInstance();
             String name;
             if (elementType == ElementType.DIAG_TYPE) {
                 name = layoutServices.getDiagramTypeName(elementValue);

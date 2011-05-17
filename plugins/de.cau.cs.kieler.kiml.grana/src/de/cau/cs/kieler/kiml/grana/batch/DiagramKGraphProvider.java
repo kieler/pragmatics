@@ -32,7 +32,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 
 /**
  * The KGraph provider that retrieves a KGraph by opening a diagram file in an
@@ -98,7 +98,7 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
                 }
                 // get the layout manager for the editor
                 DiagramLayoutManager layoutManager =
-                        EclipseLayoutServices.getInstance().getManager(
+                        EclipseLayoutDataService.getInstance().getManager(
                                 editorPart, null);
                 if (layoutManager == null) {
                     if (!initialEditors.contains(editorPart)) {

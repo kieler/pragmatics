@@ -51,7 +51,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 
 /**
  * A utility class for KEG import.
@@ -215,7 +215,7 @@ public final class ImportUtil {
                 }
                 // get the layout manager for the editor
                 DiagramLayoutManager layoutManager =
-                        EclipseLayoutServices.getInstance().getManager(editorPart, null);
+                        EclipseLayoutDataService.getInstance().getManager(editorPart, null);
                 if (layoutManager == null) {
                     lastException.set(new RuntimeException(
                             Messages.ImportUtil_unsupported_editor_error));

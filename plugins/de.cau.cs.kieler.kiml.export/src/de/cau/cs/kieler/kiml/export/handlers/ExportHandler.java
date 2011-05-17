@@ -36,7 +36,7 @@ import de.cau.cs.kieler.kiml.export.ExportPlugin;
 import de.cau.cs.kieler.kiml.export.ExportUtil;
 import de.cau.cs.kieler.kiml.export.Messages;
 import de.cau.cs.kieler.kiml.export.ui.ExportDialog;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 
 /**
  * The handler that is responsible for exporting graphs from graphical diagrams.
@@ -59,7 +59,7 @@ public class ExportHandler extends AbstractHandler {
             try {
                 // retrieve a kgraph representation of the diagram
                 KNode graph =
-                        EclipseLayoutServices.getInstance().getManager(editorPart, null)
+                        EclipseLayoutDataService.getInstance().getManager(editorPart, null)
                                 .buildLayoutGraph(editorPart, null, false);
                 // get the selected configuration
                 AbstractExporter exporter = exportDialog.getExporter();

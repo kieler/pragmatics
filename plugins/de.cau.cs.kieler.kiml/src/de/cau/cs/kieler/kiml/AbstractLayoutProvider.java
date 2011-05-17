@@ -21,7 +21,7 @@ import de.cau.cs.kieler.kiml.util.IDebugCanvas;
  * A layout provider executes a layout algorithm to layout the child elements of a node.
  * <p>When used in Eclipse, layout providers must register through the {@code layoutProviders}
  * extension point. All layout providers published to Eclipse this way are collected in the
- * {@link LayoutServices} singleton, provided the UI plugin is loaded.
+ * {@link LayoutDataService} singleton, provided the UI plugin is loaded.
  * 
  * @kieler.rating 2011-01-17 proposed yellow
  *     reviewed by haf, cmot, soh

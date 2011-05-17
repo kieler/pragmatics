@@ -33,86 +33,43 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutServices;
-import de.cau.cs.kieler.kiml.LayoutTypeData;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.SemanticLayoutConfig;
+import de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService;
 import de.cau.cs.kieler.kiml.ui.EclipseLayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 
 /**
- * This class is responsible for reading all extension point elements for layout
- * services.
+ * A special layout data service for use in an Eclipse instance.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
-public class EclipseLayoutServices extends LayoutServices {
+public class EclipseLayoutDataService extends ExtensionLayoutDataService {
 
-    /** identifier of the extension point for layout providers. */
-    public static final String EXTP_ID_LAYOUT_PROVIDERS = "de.cau.cs.kieler.kiml.layoutProviders";
     /** identifier of the extension point for layout info. */
     public static final String EXTP_ID_LAYOUT_INFO = "de.cau.cs.kieler.kiml.layoutInfo";
     /** identifier of the extension point for layout managers. */
     public static final String EXTP_ID_LAYOUT_MANAGERS = "de.cau.cs.kieler.kiml.ui.layoutManagers";
-    /** name of the 'layout algorithm' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_LAYOUT_ALGORITHM = "layoutAlgorithm";
-    /** name of the 'layout type' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_LAYOUT_TYPE = "layoutType";
     /** name of the 'binding' element in the 'layout info' extension point. */
     public static final String ELEMENT_BINDING = "binding";
-    /** name of the 'category' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_CATEGORY = "category";
-    /** name of the 'diagram type' element in the 'layout info' extension point. */
-    public static final String ELEMENT_DIAGRAM_TYPE = "diagramType";
-    /** name of the 'known option' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_KNOWN_OPTION = "knownOption";
-    /** name of the 'layout  option' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_LAYOUT_OPTION = "layoutOption";
     /** name of the 'manager' element in the 'layout managers' extension point. */
     public static final String ELEMENT_MANAGER = "manager";
     /** name of the 'option' element in the 'layout info' extension point. */
     public static final String ELEMENT_OPTION = "option";
     /** name of the 'semantic option' element in the 'layout info' extension point. */
     public static final String ELEMENT_SEMANTIC_OPTION = "semanticOption";
-    /** name of the 'supported diagram' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_SUPPORTED_DIAGRAM = "supportedDiagram";
-    /** name of the 'advanced' attribute in the extension points. */
-    public static final String ATTRIBUTE_ADVANCED = "advanced";
-    /** name of the 'appliesTo' attribute in the extension points. */
-    public static final String ATTRIBUTE_APPLIESTO = "appliesTo";
-    /** name of the 'category' attribute in the extension points. */
-    public static final String ATTRIBUTE_CATEGORY = "category";
-    /** name of the 'class' attribute in the extension points. */
-    public static final String ATTRIBUTE_CLASS = "class";
     /** name of the 'config' attribute in the extension points. */
     public static final String ATTRIBUTE_CONFIG = "config";
-    /** name of the 'default' attribute in the extension points. */
-    public static final String ATTRIBUTE_DEFAULT = "default";
-    /** name of the 'description' attribute in the extension points. */
-    public static final String ATTRIBUTE_DESCRIPTION = "description";
-    /** name of the 'id' attribute in the extension points. */
-    public static final String ATTRIBUTE_ID = "id";
-    /** name of the 'name' attribute in the extension points. */
-    public static final String ATTRIBUTE_NAME = "name";
-    /** name of the 'option' attribute in the extension points. */
-    public static final String ATTRIBUTE_OPTION = "option";
-    /** name of the 'parameter' attribute in the extension points. */
-    public static final String ATTRIBUTE_PARAMETER = "parameter";
     /** name of the 'preview' attribute in the extension points. */
     public static final String ATTRIBUTE_PREVIEW = "preview";
-    /** name of the 'priority' attribute in the extension points. */
-    public static final String ATTRIBUTE_PRIORITY = "priority";
-    /** name of the 'type' attribute in the extension points. */
-    public static final String ATTRIBUTE_TYPE = "type";
     /** name of the 'value' attribute in the extension points. */
     public static final String ATTRIBUTE_VALUE = "value";
 
@@ -133,8 +90,8 @@ public class EclipseLayoutServices extends LayoutServices {
      */
     public static void createLayoutServices() {
         // create instance of the layout service holder class
-        EclipseLayoutServices layoutServices = new EclipseLayoutServices();
-        LayoutServices.createLayoutServices(layoutServices);
+        EclipseLayoutDataService layoutServices = new EclipseLayoutDataService();
+        LayoutDataService.createLayoutServices(layoutServices);
         // build layout services for all extension points
         layoutServices.loadLayoutProviderExtensions();
         layoutServices.loadLayoutInfoExtensions();
@@ -150,10 +107,10 @@ public class EclipseLayoutServices extends LayoutServices {
      * @return the singleton instance, or {@code null} if the instance is not
      *         of Eclipse layout services
      */
-    public static EclipseLayoutServices getInstance() {
-        LayoutServices instance = LayoutServices.getInstance();
-        if (instance instanceof EclipseLayoutServices) {
-            return (EclipseLayoutServices) instance;
+    public static EclipseLayoutDataService getInstance() {
+        LayoutDataService instance = LayoutDataService.getInstance();
+        if (instance instanceof EclipseLayoutDataService) {
+            return (EclipseLayoutDataService) instance;
         } else {
             return null;
         }
@@ -466,15 +423,10 @@ public class EclipseLayoutServices extends LayoutServices {
     }
 
     /**
-     * Reports an error that occurred while reading extensions.
-     * 
-     * @param extensionPoint the identifier of the extension point
-     * @param element the configuration element
-     * @param attribute the attribute that contains an invalid entry
-     * @param exception an optional exception that was caused by the invalid
-     *            entry
+     * {@inheritDoc}
      */
-    private static void reportError(final String extensionPoint,
+    @Override
+    protected void reportError(final String extensionPoint,
             final IConfigurationElement element, final String attribute, final Throwable exception) {
         String message;
         if (element != null && attribute != null) {
@@ -488,189 +440,31 @@ public class EclipseLayoutServices extends LayoutServices {
         IStatus status = new Status(IStatus.WARNING, KimlUiPlugin.PLUGIN_ID, 0, message, exception);
         StatusManager.getManager().handle(status);
     }
-
+    
     /**
-     * Loads and registers all layout providers from the extension point.
+     * {@inheritDoc}
      */
-    private void loadLayoutProviderExtensions() {
-        List<String[]> knownOptions = new LinkedList<String[]>();
-        IConfigurationElement[] extensions = Platform.getExtensionRegistry()
-                .getConfigurationElementsFor(EXTP_ID_LAYOUT_PROVIDERS);
-        Registry registry = getRegistry();
-
-        for (IConfigurationElement element : extensions) {
-            if (ELEMENT_LAYOUT_ALGORITHM.equals(element.getName())) {
-                // register a layout algorithm from the extension
-                loadLayoutAlgorihtm(element, knownOptions);
-            } else if (ELEMENT_LAYOUT_OPTION.equals(element.getName())) {
-                // register a layout option from the extension
-                loadLayoutOption(element);
-            } else if (ELEMENT_LAYOUT_TYPE.equals(element.getName())) {
-                // register a layout type from the extension
-                String id = element.getAttribute(ATTRIBUTE_ID);
-                if (id == null || id.length() == 0) {
-                    reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
-                } else {
-                    LayoutTypeData typeData = new LayoutTypeData();
-                    typeData.setId(id);
-                    typeData.setName(element.getAttribute(ATTRIBUTE_NAME));
-                    typeData.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
-                    registry.addLayoutType(typeData);
-                }
-            } else if (ELEMENT_CATEGORY.equals(element.getName())) {
-                // register a category from the extension
-                String id = element.getAttribute(ATTRIBUTE_ID);
-                String name = element.getAttribute(ATTRIBUTE_NAME);
-                if (id == null || id.length() == 0) {
-                    reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
-                } else if (name == null) {
-                    reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_NAME, null);
-                } else {
-                    registry.addCategory(id, name);
-                }
-            }
-        }
-        
-        // load layout algorithm options
-        for (String[] entry : knownOptions) {
-            LayoutAlgorithmData algoData = getAlgorithmData(entry[0]);
-            LayoutOptionData<?> optionData = getOptionData(entry[1]);
-            if (algoData != null && optionData != null) {
-                try {
-                    Object defaultValue = optionData.parseValue(entry[2]);
-                    algoData.setOption(optionData, defaultValue);
-                } catch (IllegalStateException exception) {
-                    reportError(EXTP_ID_LAYOUT_PROVIDERS, null, null, exception);
-                }
-            }
-        }
-    }
-    
-    private void loadLayoutAlgorihtm(final IConfigurationElement element,
-            final List<String[]> knownOptions) {
-        try {
-            AbstractLayoutProvider layoutProvider = (AbstractLayoutProvider) element
-                    .createExecutableExtension(ATTRIBUTE_CLASS);
-            if (layoutProvider != null) {
-                EclipseLayoutAlgorithmData algoData = new EclipseLayoutAlgorithmData();
-                algoData.setProvider(layoutProvider);
-                String layouterId = element.getAttribute(ATTRIBUTE_ID);
-                if (layouterId == null || layouterId.length() == 0) {
-                    reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
-                    return;
-                }
-                algoData.setId(layouterId);
-                algoData.setName(element.getAttribute(ATTRIBUTE_NAME));
-                algoData.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
-                algoData.setCategory(element.getAttribute(ATTRIBUTE_CATEGORY));
-                String previewPath = element.getAttribute(ATTRIBUTE_PREVIEW);
-                if (previewPath != null) {
-                    algoData.setPreviewImage(AbstractUIPlugin.imageDescriptorFromPlugin(
-                            element.getContributor().getName(), previewPath));
-                }
-                
-                // process the layout type
-                String layoutType = element.getAttribute(ATTRIBUTE_TYPE);
-                if (layoutType == null) {
-                    layoutType = "";
-                }
-                LayoutTypeData typeData = getTypeData(layoutType);
-                if (typeData == null) {
-                    typeData = new LayoutTypeData();
-                    typeData.setId(layoutType);
-                    getRegistry().addLayoutType(typeData);
-                }
-                algoData.setType(layoutType);
-                typeData.getLayouters().add(algoData);
-                
-                // process child elements (known options and supported diagrams)
-                for (IConfigurationElement child : element.getChildren()) {
-                    if (ELEMENT_KNOWN_OPTION.equals(child.getName())) {
-                        String option = child.getAttribute(ATTRIBUTE_OPTION);
-                        if (option != null && option.length() > 0) {
-                            String defaultValue = child.getAttribute(ATTRIBUTE_DEFAULT);
-                            knownOptions.add(new String[] { layouterId, option, defaultValue });
-                        } else {
-                            reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
-                                    ATTRIBUTE_OPTION, null);
-                        }
-                    } else if (ELEMENT_SUPPORTED_DIAGRAM.equals(child.getName())) {
-                        String type = child.getAttribute(ATTRIBUTE_TYPE);
-                        if (type == null || type.length() == 0) {
-                            reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
-                                    ATTRIBUTE_TYPE, null);
-                        } else {
-                            String priority = child.getAttribute(ATTRIBUTE_PRIORITY);
-                            try {
-                                algoData.setDiagramSupport(type,
-                                        Integer.parseInt(priority));
-                            } catch (NumberFormatException exception) {
-                                reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
-                                        ATTRIBUTE_PRIORITY, exception);
-                            }
-                        }
-                    }
-                }
-                
-                // initialize the layout provider (which can fail)
-                try {
-                    layoutProvider.initialize(element.getAttribute(ATTRIBUTE_PARAMETER));
-                    getRegistry().addLayoutProvider(algoData);
-                } catch (Throwable exception) {
-                    reportError(EXTP_ID_LAYOUT_PROVIDERS, element,
-                            ATTRIBUTE_PARAMETER, exception);
-                }
-            }
-        } catch (CoreException exception) {
-            StatusManager.getManager().handle(exception, KimlUiPlugin.PLUGIN_ID);
-        } catch (Throwable throwable) {
-            reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_CLASS, throwable);
-        }
-    }
-    
-    private void loadLayoutOption(final IConfigurationElement element) {
-        LayoutOptionData<Object> optionData = new LayoutOptionData<Object>();
-        String optionId = element.getAttribute(ATTRIBUTE_ID);
-        if (optionId == null || optionId.length() == 0) {
-            reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
-            return;
-        }
-        optionData.setId(optionId);
-        try {
-            optionData.setType(element.getAttribute(ATTRIBUTE_TYPE));
-        } catch (IllegalArgumentException exception) {
-            reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_TYPE, exception);
-            return;
-        }
-        String className = element.getAttribute(ATTRIBUTE_CLASS);
-        if (className != null && className.length() > 0) {
-            Bundle contributor = Platform.getBundle(element.getContributor().getName());
-            if (contributor != null) {
-                try {
-                    Class<?> clazz = contributor.loadClass(className);
-                    optionData.setOptionClass(clazz);
-                } catch (ClassNotFoundException exception) {
-                    reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_CLASS, exception);
-                }
-            }
-        }
-        try {
-            Object defaultValue = optionData.parseValue(
-                    element.getAttribute(ATTRIBUTE_DEFAULT));
-            optionData.setDefault(defaultValue);
-        } catch (IllegalStateException exception) {
-            reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_CLASS, exception);
-        }
-        optionData.setName(element.getAttribute(ATTRIBUTE_NAME));
-        optionData.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
-        optionData.setTargets(element.getAttribute(ATTRIBUTE_APPLIESTO));
-        String advanced = element.getAttribute(ATTRIBUTE_ADVANCED);
-        optionData.setAdvanced(advanced != null && advanced.equals("true"));
-        getRegistry().addLayoutOption(optionData);
+    @Override
+    protected void reportError(final CoreException exception) {
+        StatusManager.getManager().handle(exception, KimlUiPlugin.PLUGIN_ID);
     }
 
     /**
-     * Loads and registers all layout information from the extension point.
+     * {@inheritDoc}
+     */
+    @Override
+    protected LayoutAlgorithmData createLayoutAlgorithmData(final IConfigurationElement element) {
+        EclipseLayoutAlgorithmData algoData = new EclipseLayoutAlgorithmData();
+        String previewPath = element.getAttribute(ATTRIBUTE_PREVIEW);
+        if (previewPath != null) {
+            algoData.setPreviewImage(AbstractUIPlugin.imageDescriptorFromPlugin(
+                    element.getContributor().getName(), previewPath));
+        }
+        return algoData;
+    }
+
+    /**
+     * Loads and registers all layout info extensions from the extension point.
      */
     private void loadLayoutInfoExtensions() {
         IConfigurationElement[] extensions = Platform.getExtensionRegistry()
@@ -720,7 +514,7 @@ public class EclipseLayoutServices extends LayoutServices {
     }
     
     /**
-     * Loads all diagram layout managers from the extension point.
+     * Loads all diagram layout manager extensions from the extension point.
      */
     private void loadLayoutManagerExtensions() {
         IConfigurationElement[] extensions = Platform.getExtensionRegistry()

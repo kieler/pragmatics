@@ -77,7 +77,7 @@ public class SetOptionsEffect extends AbstractEffect {
     public void execute() {
         EditPart editPart = GraphicalFrameworkService.getInstance().getBridge(workbenchPart)
                 .getEditPart(modelElement);
-        final EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
+        final EclipseLayoutDataService layoutServices = EclipseLayoutDataService.getInstance();
         DiagramLayoutManager manager = layoutServices.getManager(null, editPart);
         if (manager != null) {
             final ILayoutConfig layoutConfig = manager.getLayoutConfig(editPart);

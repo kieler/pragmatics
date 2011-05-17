@@ -87,7 +87,7 @@ public class LayoutAlgorithmData implements ILayoutData {
     @Override
     public String toString() {
         if (name != null && name.length() > 0) {
-            String categoryName = LayoutServices.getInstance().getCategoryName(category);
+            String categoryName = LayoutDataService.getInstance().getCategoryName(category);
             if (categoryName == null) {
                 return name;
             } else {

@@ -39,7 +39,7 @@ public abstract class SemanticLayoutConfig implements ILayoutConfig {
      */
     protected final List<LayoutOptionData<?>> makeList(final String ... ids) {
         ArrayList<LayoutOptionData<?>> result = new ArrayList<LayoutOptionData<?>>(ids.length);
-        LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutDataService layoutServices = LayoutDataService.getInstance();
         for (String id : ids) {
             LayoutOptionData<?> data = layoutServices.getOptionData(id);
             if (data != null) {

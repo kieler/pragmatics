@@ -30,7 +30,7 @@ import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.kiml.ILayoutData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.SemanticLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -54,7 +54,7 @@ public class AnnotationsLayoutConfig extends SemanticLayoutConfig {
     private LayoutOptionData<?> getOptionData(final String id) {
         if (optionDataMap == null) {
             optionDataMap = new HashMap<String, LayoutOptionData<?>>();
-            LayoutServices layoutServices = LayoutServices.getInstance();
+            LayoutDataService layoutServices = LayoutDataService.getInstance();
             for (LayoutOptionData<?> optionData : layoutServices.getOptionData()) {
                 String optionId = optionData.getId();
                 int dotIndex = optionId.lastIndexOf('.');
@@ -149,7 +149,7 @@ public class AnnotationsLayoutConfig extends SemanticLayoutConfig {
     private ILayoutData getAlgorithmData(final String id) {
         if (algorithmDataMap == null) {
             algorithmDataMap = new HashMap<String, ILayoutData>();
-            LayoutServices layoutServices = LayoutServices.getInstance();
+            LayoutDataService layoutServices = LayoutDataService.getInstance();
             // add layout type data to the cache
             for (LayoutTypeData typeData : layoutServices.getTypeData()) {
                 String typeId = typeData.getId();

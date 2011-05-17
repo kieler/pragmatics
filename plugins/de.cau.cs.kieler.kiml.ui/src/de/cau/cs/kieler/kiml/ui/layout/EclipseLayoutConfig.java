@@ -26,7 +26,7 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.SemanticLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -48,7 +48,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      * @return the current value for the given option, or {@code null}
      */
     public static Object getOption(final EditPart editPart, final IProperty<?> optionData) {
-        IGraphicalFrameworkBridge bridge = EclipseLayoutServices.getInstance()
+        IGraphicalFrameworkBridge bridge = EclipseLayoutDataService.getInstance()
                 .getFrameworkBridge(editPart);
         if (bridge != null) {
             return getOption(bridge.getEditPart(editPart),
@@ -68,7 +68,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      */
     public static Object getOption(final EditPart editPart, final EObject modelElement,
             final IProperty<?> property) {
-        LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutDataService layoutServices = LayoutDataService.getInstance();
         String id = (String) property.getIdentifier();
         if (editPart != null) {
             // get option for the edit part class
@@ -205,7 +205,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
             final EditPart editPart, final String theLayoutHint) {
         String diagramType = (String) getOption(editPart, LayoutOptions.DIAGRAM_TYPE);
         if (diagramType == null) {
-            diagramType = LayoutServices.DIAGRAM_TYPE_GENERAL;
+            diagramType = LayoutDataService.DIAGRAM_TYPE_GENERAL;
         }
         if (targetType == LayoutOptionData.Target.PARENTS) {
             contentDiagramType = diagramType;
@@ -258,7 +258,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      */
     @SuppressWarnings("unchecked")
     protected <T> T doGetProperty(final LayoutOptionData<T> optionData) {
-        EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
+        EclipseLayoutDataService layoutServices = EclipseLayoutDataService.getInstance();
         Object result = null;
         
         // check default value set for the actual edit part or its model element
@@ -357,7 +357,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      * @param options a map of layout option values
      */
     protected void addProperties(final Map<IProperty<?>, Object> options) {
-        LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutDataService layoutServices = LayoutDataService.getInstance();
         Object value;
         
         // get dynamic values for specific options

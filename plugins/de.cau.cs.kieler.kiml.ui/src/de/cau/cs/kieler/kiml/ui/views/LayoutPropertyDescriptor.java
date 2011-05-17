@@ -27,7 +27,7 @@ import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
@@ -78,7 +78,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         public String getText(final Object element) {
             switch (optionData.getType()) {
             case STRING:
-                LayoutServices layoutServices = LayoutServices.getInstance();
+                LayoutDataService layoutServices = LayoutDataService.getInstance();
                 if (LayoutOptions.ALGORITHM_ID.equals(optionData.getId())) {
                     String layoutHint = (String) element;
                     LayoutTypeData layoutType = layoutServices.getTypeData(layoutHint);

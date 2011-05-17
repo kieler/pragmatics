@@ -61,13 +61,13 @@ import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 
 /**
  * A view that displays layout options for selected objects.
@@ -330,7 +330,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
      * {@inheritDoc}
      */
     public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
-        DiagramLayoutManager manager = EclipseLayoutServices.getInstance().getManager(part, null);
+        DiagramLayoutManager manager = EclipseLayoutDataService.getInstance().getManager(part, null);
         if (manager != null) {
             this.currentWorkbenchPart = part;
             this.currentManager = manager;
@@ -448,7 +448,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                     }
                 }
                 // add the "set as default for diagram type" action
-                LayoutServices layoutServices = LayoutServices.getInstance();
+                LayoutDataService layoutServices = LayoutDataService.getInstance();
                 IGraphicalFrameworkBridge editingProvider = currentManager.getBridge();
                 String diagramType = (String) EclipseLayoutConfig.getOption(
                         currentEditPart, editingProvider.getElement(currentEditPart),

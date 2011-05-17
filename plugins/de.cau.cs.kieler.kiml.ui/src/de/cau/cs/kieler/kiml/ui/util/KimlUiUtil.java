@@ -29,13 +29,13 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 
 /**
  * Utility methods used for the KIML UI.
@@ -166,14 +166,14 @@ public final class KimlUiUtil {
     public static LayoutOptionData<?> getOptionData(final LayoutAlgorithmData[] providerDataArray,
             final String displayName) {
         for (LayoutAlgorithmData providerData : providerDataArray) {
-            LayoutOptionData<?> optionData = EclipseLayoutServices.getInstance().getOptionData(
+            LayoutOptionData<?> optionData = EclipseLayoutDataService.getInstance().getOptionData(
                     providerData, displayName);
             if (optionData != null) {
                 return optionData;
             }
         }
         // the only option data that is added without explicit support by layouters is layout hint
-        return LayoutServices.getInstance().getOptionData(LayoutOptions.ALGORITHM_ID);
+        return LayoutDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM_ID);
     }
     
     

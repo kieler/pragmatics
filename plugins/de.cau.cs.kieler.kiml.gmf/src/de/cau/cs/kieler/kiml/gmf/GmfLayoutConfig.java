@@ -39,7 +39,7 @@ import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.gmf.layoutoptions.KOption;
 import de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyle;
 import de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsFactory;
@@ -337,7 +337,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
                 if (LayoutOptions.ALGORITHM_ID.equals(koption.getKey())) {
                     partLayoutHint = koption.getValue();
                 }
-                LayoutOptionData<?> optionData = LayoutServices.getInstance()
+                LayoutOptionData<?> optionData = LayoutDataService.getInstance()
                         .getOptionData(koption.getKey());
                 if (optionData != null) {
                     koptionMap.put(optionData, koption);
@@ -616,7 +616,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
      */
     private static void addOptions(final Map<IProperty<?>, Object> options,
             final LayoutOptionStyle optionStyle, final boolean onlyDefault) {
-        LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutDataService layoutServices = LayoutDataService.getInstance();
         if (optionStyle != null) {
             for (KOption option : optionStyle.getOptions()) {
                 if (!onlyDefault || option.isDefault()) {

@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.Text;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.ILayoutData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 
 /**
  * A dialog to browse and select layout algorithms or layout types.
@@ -113,7 +113,7 @@ public class LayouterHintDialog extends Dialog {
      * @param value the current value string
      */
     private void updateValue(final String value) {
-        LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutDataService layoutServices = LayoutDataService.getInstance();
         ILayoutData layoutData = layoutServices.getAlgorithmData(value);
         if (layoutData == null) {
             layoutData = layoutServices.getTypeData(value);
@@ -204,7 +204,7 @@ public class LayouterHintDialog extends Dialog {
         treeViewer.setLabelProvider(new LabelProvider());
         treeViewer.setSorter(new ViewerSorter());
         treeViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        treeViewer.setInput(LayoutServices.getInstance());
+        treeViewer.setInput(LayoutDataService.getInstance());
         treeViewer.expandAll();
         treeViewer.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(final DoubleClickEvent event) {

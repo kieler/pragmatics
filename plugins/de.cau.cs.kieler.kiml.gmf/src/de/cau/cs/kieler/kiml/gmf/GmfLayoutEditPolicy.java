@@ -64,7 +64,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.ApplyLayoutRequest;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -125,7 +125,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 // set further options
                 IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
                 command.setObliqueRouting(preferenceStore
-                        .getBoolean(EclipseLayoutServices.PREF_OBLIQUE_ROUTE));
+                        .getBoolean(EclipseLayoutDataService.PREF_OBLIQUE_ROUTE));
 
                 pointListMap.clear();
                 return new ICommandProxy(command);

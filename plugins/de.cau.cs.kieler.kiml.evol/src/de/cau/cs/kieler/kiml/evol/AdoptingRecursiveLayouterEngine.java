@@ -28,7 +28,7 @@ import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
-import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.RecursiveLayouterEngine;
 import de.cau.cs.kieler.kiml.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
@@ -38,7 +38,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.UniversalNumberGene;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 
 /**
  * A recursive layout engine that can adopt an individual.
@@ -89,7 +89,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
 
         if (this.manager == null) {
             this.manager =
-                EclipseLayoutServices.getInstance().getManager(editor, null);
+                EclipseLayoutDataService.getInstance().getManager(editor, null);
         }
 
         KNode layoutGraph = this.manager.buildLayoutGraph(editor, null, false);
@@ -173,7 +173,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
             shapeLayout.setProperty((IProperty<?>) entry.getKey(), entry.getValue());
         }
 
-        LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutDataService layoutServices = LayoutDataService.getInstance();
 
         // Set layout options according to the genome.
         for (final IGene<?> gene : individual) {

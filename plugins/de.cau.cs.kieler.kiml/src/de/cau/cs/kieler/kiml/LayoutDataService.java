@@ -27,7 +27,7 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
- * Singleton class for access to the KIML layout services. This class is used
+ * Singleton class for access to the KIML layout data. This class is used
  * globally to retrieve data for automatic layout through KIML. The class cannot
  * be instantiated directly, but only through a subclass that calls
  * {@link createLayoutServices()}. The subclass is then responsible to add
@@ -37,13 +37,13 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  *     reviewed by cmot, cds
  * @author msp
  */
-public class LayoutServices {
+public class LayoutDataService {
 
     /** identifier of the 'general' diagram type, which applies to all diagrams. */
     public static final String DIAGRAM_TYPE_GENERAL = "de.cau.cs.kieler.layout.diagrams.general";
 
     /** the singleton instance of the layout service. */
-    private static LayoutServices instance = null;
+    private static LayoutDataService instance = null;
 
     /** the instance of the registry class. */
     private Registry registry = null;
@@ -71,7 +71,7 @@ public class LayoutServices {
      * The default constructor is hidden to prevent others from instantiating
      * this singleton class.
      */
-    protected LayoutServices() {
+    protected LayoutDataService() {
     }
 
     /**
@@ -79,7 +79,7 @@ public class LayoutServices {
      * instance of the registry.
      */
     public static void createLayoutServices() {
-        instance = new LayoutServices();
+        instance = new LayoutDataService();
         instance.registry = instance.new Registry();
     }
     
@@ -89,7 +89,7 @@ public class LayoutServices {
      * 
      * @param subclassInstance an instance created by a subclass
      */
-    protected static void createLayoutServices(final LayoutServices subclassInstance) {
+    protected static void createLayoutServices(final LayoutDataService subclassInstance) {
         instance = subclassInstance;
         instance.registry = instance.new Registry();
     }
@@ -99,7 +99,7 @@ public class LayoutServices {
      * 
      * @return the singleton instance, or {@code null} if no instance has been created yet
      */
-    public static LayoutServices getInstance() {
+    public static LayoutDataService getInstance() {
         return instance;
     }
 

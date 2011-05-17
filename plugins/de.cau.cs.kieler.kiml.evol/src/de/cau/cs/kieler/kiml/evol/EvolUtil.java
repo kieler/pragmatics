@@ -53,7 +53,7 @@ import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
@@ -61,7 +61,7 @@ import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.util.DiagramAnalyzer;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
@@ -128,7 +128,7 @@ public final class EvolUtil {
                 throw new IllegalArgumentException();
             }
 
-            final LayoutServices layoutServices = LayoutServices.getInstance();
+            final LayoutDataService layoutServices = LayoutDataService.getInstance();
             // presuming layoutServices != null
 
             // Get the expected layout type id.
@@ -902,7 +902,7 @@ public final class EvolUtil {
     public static LayoutAlgorithmData getLayoutAlgorithmData(
             final IEditorPart editor, final EditPart editPart) {
         final DiagramLayoutManager manager =
-                EclipseLayoutServices.getInstance().getManager(editor, editPart);
+                EclipseLayoutDataService.getInstance().getManager(editor, editPart);
         if (manager != null) {
             ILayoutConfig config = manager.getLayoutConfig(editPart);
             return config.getContentLayouterData();
@@ -926,7 +926,7 @@ public final class EvolUtil {
 
         List<String> result = new LinkedList<String>();
 
-        LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutDataService layoutServices = LayoutDataService.getInstance();
 
         for (final LayoutAlgorithmData data : layoutServices.getAlgorithmData()) {
             if (data.getType().equalsIgnoreCase(layoutType)) {
@@ -952,7 +952,7 @@ public final class EvolUtil {
             throw new IllegalArgumentException();
         }
 
-        LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutDataService layoutServices = LayoutDataService.getInstance();
         // presuming layoutServices != null
         LayoutAlgorithmData algorithmData = layoutServices.getAlgorithmData(algorithmId);
         // presuming algorithmData != null
@@ -1039,7 +1039,7 @@ public final class EvolUtil {
      */
     private static List<ILayoutConfig> getLayoutConfigs(final Set<IEditorPart> editors) {
         List<ILayoutConfig> configs = new LinkedList<ILayoutConfig>();
-        EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
+        EclipseLayoutDataService layoutServices = EclipseLayoutDataService.getInstance();
 
         // Handle current editor.
         IEditorPart currentEditor = getCurrentEditor();
@@ -1080,7 +1080,7 @@ public final class EvolUtil {
     private static Set<Object> getPropertyValues(
             final List<ILayoutConfig> configs, final String id) {
         Set<Object> result = new LinkedHashSet<Object>();
-        LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutDataService layoutServices = LayoutDataService.getInstance();
         LayoutOptionData<?> optionData = layoutServices.getOptionData(id);
 
         for (final ILayoutConfig config : configs) {

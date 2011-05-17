@@ -33,7 +33,7 @@ import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 
 /**
  * This class provides static methods to start an analysis of a given diagram.
@@ -161,7 +161,7 @@ public final class DiagramAnalyzer {
                         @Override
                         protected void preUIexec() {
                             currentGraph =
-                                    EclipseLayoutServices
+                                    EclipseLayoutDataService
                                             .getInstance()
                                             .getManager(editorPart, editPart)
                                             .buildLayoutGraph(editorPart,
@@ -196,7 +196,7 @@ public final class DiagramAnalyzer {
                 // first phase: build the graph
                 public void run() {
                     currentGraph =
-                            EclipseLayoutServices
+                            EclipseLayoutDataService
                                     .getInstance()
                                     .getManager(editorPart, editPart)
                                     .buildLayoutGraph(editorPart, editPart,

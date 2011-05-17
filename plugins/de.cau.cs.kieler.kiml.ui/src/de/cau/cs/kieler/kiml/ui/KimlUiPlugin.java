@@ -18,7 +18,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -156,7 +156,7 @@ public class KimlUiPlugin extends AbstractUIPlugin {
         super.start(context);
         plugin = this;
         images = new Images();
-        EclipseLayoutServices.createLayoutServices();
+        EclipseLayoutDataService.createLayoutServices();
     }
 
     /**
@@ -164,7 +164,7 @@ public class KimlUiPlugin extends AbstractUIPlugin {
      */
     @Override
     public void stop(final BundleContext context) throws Exception {
-        EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
+        EclipseLayoutDataService layoutServices = EclipseLayoutDataService.getInstance();
         if (layoutServices != null) {
             layoutServices.storePreferences();
         }

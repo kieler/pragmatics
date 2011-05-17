@@ -35,7 +35,7 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Target;
-import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
 
@@ -394,7 +394,7 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
      * @return the layout hint or {@code null}
      */
     private String getLayoutHint(final PictogramElement pictogramElement) {
-        LayoutOptionData<?> layoutHintData = LayoutServices.getInstance().getOptionData(
+        LayoutOptionData<?> layoutHintData = LayoutDataService.getInstance().getOptionData(
                 LayoutOptions.ALGORITHM_ID);
         String result = (String) getOption(layoutHintData, PREFIX, pictogramElement);
         if (result == null && pictogramElement instanceof Shape) {
@@ -462,7 +462,7 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
      */
     private static void addOptions(final Map<IProperty<?>, Object> options,
             final List<Property> props) {
-        LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutDataService layoutServices = LayoutDataService.getInstance();
         for (Property option : props) {
             LayoutOptionData<?> optionData = layoutServices.getOptionData(option.getKey());
             if (optionData != null) {

@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 
 /**
@@ -31,7 +31,7 @@ import de.cau.cs.kieler.kiml.LayoutTypeData;
 public class LayouterHintProvider implements ITreeContentProvider {
 
     /** the layout services used for this provider. */
-    private LayoutServices layoutServices;
+    private LayoutDataService layoutServices;
     /** the filter map that stores visibility information. */
     private Map<Object, Boolean> filterMap = new HashMap<Object, Boolean>();
     /** the current filter value. */
@@ -49,8 +49,8 @@ public class LayouterHintProvider implements ITreeContentProvider {
      * {@inheritDoc}
      */
     public Object[] getElements(final Object inputElement) {
-        if (inputElement instanceof LayoutServices) {
-            layoutServices = (LayoutServices) inputElement;
+        if (inputElement instanceof LayoutDataService) {
+            layoutServices = (LayoutDataService) inputElement;
         }
         return layoutServices.getTypeData().toArray();
     }
@@ -146,7 +146,7 @@ public class LayouterHintProvider implements ITreeContentProvider {
                             bestFilterMatch = "";
                         }
                     } else {
-                        String category = LayoutServices.getInstance().getCategoryName(
+                        String category = LayoutDataService.getInstance().getCategoryName(
                                 layouterData.getCategory());
                         result = category != null && category.toLowerCase().contains(filterValue);
                     }

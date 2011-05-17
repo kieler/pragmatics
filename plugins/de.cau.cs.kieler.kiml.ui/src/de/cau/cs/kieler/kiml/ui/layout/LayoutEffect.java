@@ -191,7 +191,7 @@ public class LayoutEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        manager = EclipseLayoutServices.getInstance().getManager(diagramEditor, editPart);
+        manager = EclipseLayoutDataService.getInstance().getManager(diagramEditor, editPart);
         if (manager != null) {
             List<EditPart> zoomToList = null;
             /*

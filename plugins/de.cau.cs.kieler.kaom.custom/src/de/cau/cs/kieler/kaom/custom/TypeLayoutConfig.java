@@ -23,7 +23,7 @@ import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.SemanticLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
@@ -40,7 +40,7 @@ public class TypeLayoutConfig extends SemanticLayoutConfig {
     @Override
     protected List<LayoutOptionData<?>> getOptionData(final EObject semanticElem) {
         if (semanticElem instanceof Entity) {
-            LayoutOptionData<?> optionData = LayoutServices.getInstance()
+            LayoutOptionData<?> optionData = LayoutDataService.getInstance()
             .getOptionData(LayoutOptions.DIAGRAM_TYPE_ID);
             List<LayoutOptionData<?>> list = new ArrayList<LayoutOptionData<?>>(1);
             list.add(optionData);

@@ -36,7 +36,7 @@ import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
@@ -157,7 +157,7 @@ public class SelectionInfoAction extends Action {
      * @return an info string
      */
     private String createInfo() {
-        LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutDataService layoutServices = LayoutDataService.getInstance();
         DiagramLayoutManager manager = layoutView.getCurrentManager();
         StringBuilder builder = new StringBuilder();
         EditPart editPart = layoutView.getCurrentEditPart();

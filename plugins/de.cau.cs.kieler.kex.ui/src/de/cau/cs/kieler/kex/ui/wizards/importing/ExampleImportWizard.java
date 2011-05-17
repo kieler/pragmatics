@@ -44,7 +44,7 @@ import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.ui.KEXUIPlugin;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 
 /**
  * This wizard contains all elements for an kex import wizard.
@@ -152,7 +152,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
                         try {
                             page.openEditor(new FileEditorInput(files[0]), defaultEditor.getId());
                             if (destinationPage.autoLayout()) {
-                                EclipseLayoutServices.getInstance()
+                                EclipseLayoutDataService.getInstance()
                                         .layout(PlatformUI.getWorkbench()
                                                 .getActiveWorkbenchWindow().getPartService()
                                                 .getActivePart(), null, true, true);

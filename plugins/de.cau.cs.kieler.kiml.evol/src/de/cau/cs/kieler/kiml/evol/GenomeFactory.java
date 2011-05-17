@@ -34,7 +34,7 @@ import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
-import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.evol.genetic.Distribution;
 import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
 import de.cau.cs.kieler.kiml.evol.genetic.FloatTypeInfo;
@@ -49,7 +49,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.UniversalNumberGene;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 
 /**
@@ -140,7 +140,7 @@ final class GenomeFactory {
             // Get the layout option data, so we know what kind of gene to
             // produce.
             LayoutOptionData<?> layoutOptionData =
-                    LayoutServices.getInstance().getOptionData((String) theId);
+                    LayoutDataService.getInstance().getOptionData((String) theId);
             if (layoutOptionData == null) {
                 throw new IllegalArgumentException("No layout option data for " + theId);
             }
@@ -523,7 +523,7 @@ final class GenomeFactory {
             accepted = acceptedProperties;
         }
 
-        LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutDataService layoutServices = LayoutDataService.getInstance();
 
         Set<IPropertyDescriptor> result = new HashSet<IPropertyDescriptor>();
 
@@ -660,7 +660,7 @@ final class GenomeFactory {
             final List<ILayoutConfig> configs) {
         Map<String, IPropertyDescriptor> allPropertyDescriptors =
                 new HashMap<String, IPropertyDescriptor>();
-        EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
+        EclipseLayoutDataService layoutServices = EclipseLayoutDataService.getInstance();
 
         for (final ILayoutConfig config : configs) {
             if (config instanceof EclipseLayoutConfig) {
@@ -879,7 +879,7 @@ final class GenomeFactory {
         IGeneFactory geneFactory =
                 (theGeneFactory == null) ? this.layoutOptionGeneFactory : theGeneFactory;
 
-        LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutDataService layoutServices = LayoutDataService.getInstance();
 
         for (final String optionId : knownOptionIds) {
             if (!presentIds.contains(optionId)) {
@@ -914,7 +914,7 @@ final class GenomeFactory {
             throw new IllegalArgumentException();
         }
 
-        LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutDataService layoutServices = LayoutDataService.getInstance();
 
         Set<String> knownOptionIds = new HashSet<String>();
         for (final String id : algorithmIds) {
