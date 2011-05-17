@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KIELER Layout Service Layer
+Bundle-SymbolicName: de.cau.cs.kieler.kiml.service
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Require-Bundle: org.eclipse.core.runtime,
+ de.cau.cs.kieler.core,
+ de.cau.cs.kieler.kiml
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
+Export-Package: de.cau.cs.kieler.kiml.service
