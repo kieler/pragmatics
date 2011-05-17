@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.kaom.karma.ptolemy.conditions;
+package de.cau.cs.kieler.karma.conditions;
 
 import java.util.List;
 
