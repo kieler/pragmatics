@@ -56,6 +56,11 @@ public class LayouterHintCellEditor extends DialogCellEditor {
                     doSetValue(newValue);
                     fireApplyEditorValue();
                 }
+                // set focus on the layout view in order to be able to respond to key bindings
+                LayoutViewPart layoutView = LayoutViewPart.findView();
+                if (layoutView != null) {
+                    layoutView.setFocus();
+                }
             }
         });
         return label;
