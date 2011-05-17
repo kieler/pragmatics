@@ -14,7 +14,7 @@
 
 package de.cau.cs.kieler.kaom.karma.ptolemy.renderingprovider;
 
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -32,13 +32,11 @@ import org.eclipse.draw2d.RotatableDecoration;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.transaction.Transaction;
 import org.eclipse.emf.workspace.AbstractEMFOperation;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
-import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
-import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.gmf.runtime.notation.RoutingStyle;
 import org.eclipse.gmf.runtime.notation.Smoothness;
@@ -47,23 +45,11 @@ import org.w3c.dom.Document;
 
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.vergil.icon.EditorIcon;
-import de.cau.cs.kieler.core.annotations.Annotatable;
-import de.cau.cs.kieler.core.annotations.Annotation;
-import de.cau.cs.kieler.core.annotations.AnnotationsFactory;
-import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.core.model.gmf.figures.SplineConnection;
-import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.custom.EntityLayout;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEntityCompartment2EditPart;
-import de.cau.cs.kieler.kaom.impl.EntityImpl;
-import de.cau.cs.kieler.kaom.karma.ptolemy.figurecreation.FigureParser;
 import de.cau.cs.kieler.kaom.karma.ptolemy.figurecreation.FigureProvider;
 import de.cau.cs.kieler.kaom.karma.ptolemy.figurecreation.PtolemyFetcher;
 import de.cau.cs.kieler.karma.IRenderingProvider;
-import de.cau.cs.kieler.karma.SwitchableFigure;
-import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartUtil;
 
 /**
  * Karma rendering provider for rendering ptolemy diagrams in kaom.
@@ -81,11 +67,11 @@ public class KaomRenderingProvider implements IRenderingProvider {
     /**
      * Radius of the rounded edges.
      */
-    private static final int ROUNDED_BENDPOINTS_RADIUS = 0;
+    private static final int ROUNDED_BENDPOINTS_RADIUS = 5;
 
-    
     /**
-     * a class that holds logic to build the actual figures. Main purpose is to keep this class smaller.
+     * a class that holds logic to build the actual figures. Main purpose is to keep this class
+     * smaller.
      */
     private FigureProvider figureProvider = new FigureProvider();
 
@@ -112,16 +98,19 @@ public class KaomRenderingProvider implements IRenderingProvider {
             return figureProvider.createAccumulator();
         } else if (input.equals("connection")) {
             if (oldFigure instanceof SplineConnection) {
-                //This is a connection between common actors. Switch the Splinedrawing off.
-                //TODO The emfOp is for Switching on the gmf inherent rounded bendpoint method.
-                // currently the radius is 0 and thus  rounded bendpoints are deactivated due to gmf being bugged.
+                // This is a connection between common actors. Switch the Splinedrawing off,
+                // set line width and remove decoration
                 SplineConnection connection = ((SplineConnection) oldFigure);
                 connection.setTargetDecoration(null);
                 connection.setLineWidthFloat(LINE_WIDTH);
                 connection.setSplineMode(SplineConnection.SPLINE_OFF);
                 final ConnectionEditPart cPart = (ConnectionEditPart) part;
+                
+                // Encapsulate setting the BendpointRadius and Smoothness in an emf operation.
+                // Eclipse needs it that way.
                 AbstractEMFOperation emfOp = new AbstractEMFOperation(cPart.getEditingDomain(),
-                        "line routing setting") {
+                        "line routing setting", Collections.singletonMap(
+                                Transaction.OPTION_UNPROTECTED, true)) {
                     @Override
                     protected IStatus doExecute(final IProgressMonitor monitor,
                             final IAdaptable info) throws ExecutionException {
@@ -134,9 +123,10 @@ public class KaomRenderingProvider implements IRenderingProvider {
                 };
 
                 try {
+                    //execute above operation
                     OperationHistoryFactory.getOperationHistory().execute(emfOp, null, null);
                 } catch (ExecutionException e) {
-                    // e.printStackTrace();
+                    e.printStackTrace();
                 }
 
                 return oldFigure;
@@ -144,7 +134,8 @@ public class KaomRenderingProvider implements IRenderingProvider {
                 return null;
             }
         } else if (input.equals("stateConnection")) {
-            //This is a connection between states so turn spline drawing on.
+            // This is a connection between states so turn spline drawing on,
+            // set line width and use an arrow as decoration.
             if (oldFigure instanceof SplineConnection) {
                 SplineConnection connection = ((SplineConnection) oldFigure);
                 connection.setTargetDecoration(createArrowDecoration());
@@ -173,21 +164,25 @@ public class KaomRenderingProvider implements IRenderingProvider {
         return defaultFigure;
     }
 
+    
+    private static final int DEFAULT_SIZE_X = 63;
+    private static final int DEFAULT_SIZE_Y = 43;
     /**
      * {@inheritDoc}
      */
     public LayoutManager getLayoutManagerByString(final String input,
             final LayoutManager oldLayoutManager, final EObject object) {
+        //enforce some minimum sizes to optimize the support of focus and contact
         if (input.equals("compound")) {
             if (oldLayoutManager instanceof EntityLayout) {
                 EntityLayout el = (EntityLayout) oldLayoutManager;
-                el.setFixedMinSize(63, 43);
+                el.setFixedMinSize(DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
             }
             return oldLayoutManager;
         } else if (input.equals("compoundCollapsed")) {
             if (oldLayoutManager instanceof EntityLayout) {
                 EntityLayout el = (EntityLayout) oldLayoutManager;
-                el.setFixedMinSize(63, 43);
+                el.setFixedMinSize(DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
             }
             return oldLayoutManager;
         }
