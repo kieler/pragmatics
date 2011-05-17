@@ -54,8 +54,8 @@ public class LayerConstraintProcessor extends AbstractAlgorithm implements ILayo
         Layer lastLayer = layers.get(layers.size() - 1);
         
         // Create the new first and last layers, in case they will be needed
-        Layer newFirstLayer = new Layer(layeredGraph);
-        Layer newLastLayer = new Layer(layeredGraph);
+        Layer veryFirstLayer = new Layer(layeredGraph);
+        Layer veryLastLayer = new Layer(layeredGraph);
         
         // Iterate through the current list of layers
         for (Layer layer : layers) {
@@ -72,7 +72,7 @@ public class LayerConstraintProcessor extends AbstractAlgorithm implements ILayo
                     break;
                 
                 case FIRST_SEPARATE:
-                    node.setLayer(newFirstLayer);
+                    node.setLayer(veryFirstLayer);
                     break;
                 
                 case LAST:
@@ -80,19 +80,28 @@ public class LayerConstraintProcessor extends AbstractAlgorithm implements ILayo
                     break;
                 
                 case LAST_SEPARATE:
-                    node.setLayer(newLastLayer);
+                    node.setLayer(veryLastLayer);
                     break;
                 }
             }
         }
         
+        // Remove empty first and last layers
+        if (firstLayer.getNodes().isEmpty()) {
+            layers.remove(0);
+        }
+        
+        if (lastLayer.getNodes().isEmpty()) {
+            layers.remove(layers.size() - 1);
+        }
+        
         // Add non-empty new first and last layers
-        if (!newFirstLayer.getNodes().isEmpty()) {
-            layers.add(0, newFirstLayer);
+        if (!veryFirstLayer.getNodes().isEmpty()) {
+            layers.add(0, veryFirstLayer);
         }
 
-        if (!newLastLayer.getNodes().isEmpty()) {
-            layers.add(newLastLayer);
+        if (!veryLastLayer.getNodes().isEmpty()) {
+            layers.add(veryLastLayer);
         }
         
         getMonitor().done();
