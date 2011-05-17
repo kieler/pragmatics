@@ -31,7 +31,7 @@
                      value="ptolemy">
                </customCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.kaom.karma.ptolemy.conditions.IsCollapsedCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.IsCollapsedCondition"
                      key="null"
                      value="null">
                </customCondition>
@@ -48,7 +48,7 @@
                      value="ptolemy">
                </customCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.kaom.karma.ptolemy.conditions.IsCollapsedCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.IsCollapsedCondition"
                      key="null"
                      value="null">
                </customCondition>
