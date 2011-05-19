@@ -105,7 +105,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
                 connection.setLineWidthFloat(LINE_WIDTH);
                 connection.setSplineMode(SplineConnection.SPLINE_OFF);
                 final ConnectionEditPart cPart = (ConnectionEditPart) part;
-                
+
                 // Encapsulate setting the BendpointRadius and Smoothness in an emf operation.
                 // Eclipse needs it that way.
                 AbstractEMFOperation emfOp = new AbstractEMFOperation(cPart.getEditingDomain(),
@@ -123,7 +123,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
                 };
 
                 try {
-                    //execute above operation
+                    // execute above operation
                     OperationHistoryFactory.getOperationHistory().execute(emfOp, null, null);
                 } catch (ExecutionException e) {
                     e.printStackTrace();
@@ -164,15 +164,18 @@ public class KaomRenderingProvider implements IRenderingProvider {
         return defaultFigure;
     }
 
-    
+    // minimum size for compound entites. Important if they are collapsed
     private static final int DEFAULT_SIZE_X = 63;
     private static final int DEFAULT_SIZE_Y = 43;
+
     /**
      * {@inheritDoc}
      */
     public LayoutManager getLayoutManagerByString(final String input,
             final LayoutManager oldLayoutManager, final EObject object) {
-        //enforce some minimum sizes to optimize the support of focus and contact
+        // enforce some minimum sizes to optimize the support of focus and contact
+        // non compound entities can just use default of the layoutmanager so do nothing in that
+        // case
         if (input.equals("compound")) {
             if (oldLayoutManager instanceof EntityLayout) {
                 EntityLayout el = (EntityLayout) oldLayoutManager;
@@ -194,9 +197,11 @@ public class KaomRenderingProvider implements IRenderingProvider {
      */
     public BorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parent,
             final Object locator, final EObject object) {
+        // normal entities are not borderitems so they don't need a locator
         return null;
     }
 
+    // some constants that describe the arrow decoration
     private static final int ARROW_SIZE = 10;
     private static final double ARROW_X_SCALE = 1.0;
     private static final double ARROW_Y_SCALE = 0.5;
@@ -229,11 +234,14 @@ public class KaomRenderingProvider implements IRenderingProvider {
         if (nObj == null) {
             return getDefaultFigure();
         } else {
+            // get all icons for this element
             List<EditorIcon> icons = PtolemyFetcher.fetchIcons(nObj);
+            // if there is none use svg description
             if (icons.isEmpty()) {
                 Document doc = PtolemyFetcher.fetchSvgDoc(nObj);
                 IFigure figure = figureProvider.createFigureFromSvg(doc);
                 return figure;
+                // else use the first icon (usually there should be only one anyway)
             } else {
                 EditorIcon icon = icons.get(0);
                 IFigure figure = figureProvider.createFigureFromIcon(icon);

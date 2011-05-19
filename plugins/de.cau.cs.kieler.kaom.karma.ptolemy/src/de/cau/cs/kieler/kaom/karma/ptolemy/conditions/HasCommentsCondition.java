@@ -23,16 +23,20 @@ import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.karma.ICustomCondition;
 
 /**
- * Condition to check  whether a modelelement has a comment annotation thats supposed to be displayed.
+ * Condition to check whether a modelelement has a comment annotation thats supposed to be
+ * displayed.
  * 
  * @author ckru
- *
+ * 
  */
 public class HasCommentsCondition extends ICustomCondition<EObject> {
 
-    public boolean evaluate(EObject object) {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean evaluate(final EObject object) {
         if (object instanceof Annotatable) {
-            List<Annotation> annotationList = ((Annotatable)object).getAnnotations();
+            List<Annotation> annotationList = ((Annotatable) object).getAnnotations();
             for (Annotation annotation : annotationList) {
                 if (annotation.getAnnotation("attachedTo") != null) {
                     return true;

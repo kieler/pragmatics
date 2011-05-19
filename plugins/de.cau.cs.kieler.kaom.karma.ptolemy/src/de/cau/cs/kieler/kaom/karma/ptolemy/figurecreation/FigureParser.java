@@ -58,9 +58,9 @@ public final class FigureParser {
      * This is a utility class and thus the constructor is hidden.
      */
     private FigureParser() {
-        
+
     }
-    
+
     /**
      * Create an draw2d figure out of an svg document.
      * 
@@ -70,11 +70,12 @@ public final class FigureParser {
      */
     public static IFigure createFigure(final Document doc) {
         Element svgElement = (Element) doc.getElementsByTagName("svg").item(0);
-        //Make an invisible container to hold the visible figures because we don't know the structure of the svg.
+        // Make an invisible container to hold the visible figures because we don't know the
+        // structure of the svg.
         IFigure rootFigure = new Panel();
         rootFigure.getBounds().setSize(
-                new Dimension(Integer.parseInt(svgElement.getAttribute("width")), 
-                        Integer.parseInt(svgElement.getAttribute("height"))));
+                new Dimension(Integer.parseInt(svgElement.getAttribute("width")), Integer
+                        .parseInt(svgElement.getAttribute("height"))));
         rootFigure = buildFigure(svgElement, rootFigure);
         return rootFigure;
     }
@@ -95,7 +96,7 @@ public final class FigureParser {
             if (child instanceof Element) {
                 Element childElement = (Element) child;
                 String tag = childElement.getTagName();
-                //make a RectangleFigure from a rectangle element
+                // make a RectangleFigure from a rectangle element
                 if (tag.equals("rect")) {
                     RectangleFigure figure = new RectangleFigure();
                     Float x = Float.parseFloat(childElement.getAttribute("x"));
@@ -106,11 +107,11 @@ public final class FigureParser {
                     figure.setBounds(new Rectangle(x.intValue(), y.intValue(), width, height));
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
-                //make a CircleFigure from a circle element.
-                //structure is different between draw2d and svg so positions are a bit hacked
+                    // make a CircleFigure from a circle element.
+                    // structure is different between draw2d and svg so positions are a bit hacked
                 } else if (tag.equals("circle")) {
                     Float x = Float.parseFloat(childElement.getAttribute("cx"));
-                    Float y = Float.parseFloat(childElement.getAttribute("cy"));
+                    //Float y = Float.parseFloat(childElement.getAttribute("cy"));
                     Float r = Float.parseFloat(childElement.getAttribute("r"));
                     String style = (String) childElement.getAttribute("style");
                     CircleFigure figure = new CircleFigure(r.intValue());
@@ -119,8 +120,8 @@ public final class FigureParser {
                     figure.getBounds().setSize((r.intValue() * 2), (r.intValue() * 2));
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
-                //make a CircleFigure from a ellipse element.
-                //structure is different between draw2d and svg so positions are a bit hacked
+                    // make a CircleFigure from a ellipse element.
+                    // structure is different between draw2d and svg so positions are a bit hacked
                 } else if (tag.equals("ellipse")) {
                     OvalFigure figure = new OvalFigure();
                     Float x = Float.parseFloat(childElement.getAttribute("cx"));
@@ -128,11 +129,11 @@ public final class FigureParser {
                     Float rx = Float.parseFloat(childElement.getAttribute("rx"));
                     Float ry = Float.parseFloat(childElement.getAttribute("ry"));
                     String style = (String) childElement.getAttribute("style");
-                    figure.setBounds(new Rectangle(x.intValue() + 1 - rx.intValue(), y.intValue() + 1 - ry.intValue(), rx.intValue(), ry
-                            .intValue()));
+                    figure.setBounds(new Rectangle(x.intValue() + 1 - rx.intValue(), y.intValue()
+                            + 1 - ry.intValue(), rx.intValue(), ry.intValue()));
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
-                //make a PolyLineShape from a line element
+                    // make a PolyLineShape from a line element
                 } else if (tag.equals("line")) {
                     float x1 = Float.parseFloat(childElement.getAttribute("x1"));
                     float y1 = Float.parseFloat(childElement.getAttribute("y1"));
@@ -145,7 +146,7 @@ public final class FigureParser {
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
                     figure.getBounds().setSize(figure.getParent().getBounds().getSize().getCopy());
-                //make a PolylineShape from a polyline element.
+                    // make a PolylineShape from a polyline element.
                 } else if (tag.equals("polyline")) {
                     String allpoints = childElement.getAttribute("points");
                     String style = (String) childElement.getAttribute("style");
@@ -162,7 +163,7 @@ public final class FigureParser {
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
                     figure.getBounds().setSize(figure.getParent().getBounds().getSize().getCopy());
-                //make a PolygonShape from a polygon element
+                    // make a PolygonShape from a polygon element
                 } else if (tag.equals("polygon")) {
                     String allpoints = childElement.getAttribute("points");
                     String style = (String) childElement.getAttribute("style");
@@ -179,8 +180,8 @@ public final class FigureParser {
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
                     figure.getBounds().setSize(figure.getParent().getBounds().getSize().getCopy());
-                //make a Label from a text element
-                //TODO weird behavior of y value
+                    // make a Label from a text element
+                    // TODO weird behavior of y value
                 } else if (tag.equals("text")) {
                     Float x = Float.parseFloat(childElement.getAttribute("x"));
                     Float y = Float.parseFloat(childElement.getAttribute("y"));
@@ -191,11 +192,12 @@ public final class FigureParser {
                     Label figure = new Label();
                     figure.setText(text);
                     applyTextStyle(figure, style);
-                    figure.getBounds().setLocation(x.intValue(), y.intValue() - (figure.getTextBounds().getSize().height - 2));
+                    figure.getBounds().setLocation(x.intValue(),
+                            y.intValue() - (figure.getTextBounds().getSize().height - 2));
                     figure.getBounds().setSize(figure.getTextBounds().getSize());
                     figure.setLayoutManager(new BorderLayout());
                     parentFigure.add(buildFigure(childElement, figure));
-                //make an ImageFigureEx out of an image element
+                    // make an ImageFigureEx out of an image element
                 } else if (tag.equals("image")) {
                     Float x = Float.parseFloat(childElement.getAttribute("x"));
                     Float y = Float.parseFloat(childElement.getAttribute("y"));
@@ -250,7 +252,7 @@ public final class FigureParser {
                 int index = string.indexOf(":");
                 String name = string.substring(0, index);
                 String value = string.substring(index + 1);
-                //fill might be background, stroke foreground. Works fine so far.
+                // fill might be background, stroke foreground. Works fine so far.
                 if (name.equals("fill")) {
                     figure.setBackgroundColor(lookupColor(value));
                 } else if (name.equals("stroke")) {
@@ -266,7 +268,7 @@ public final class FigureParser {
             }
         }
     }
-    
+
     /**
      * Applys the style attribute of the svg element to the figure.
      * 
@@ -284,22 +286,24 @@ public final class FigureParser {
                 int index = string.indexOf(":");
                 String name = string.substring(0, index);
                 String value = string.substring(index + 1);
-                //foreground color determines the text color
+                // foreground color determines the text color
                 if (name.equals("fill")) {
                     figure.setForegroundColor(lookupColor(value));
-                //some hacked size stuff without having a fitting font.
+                    // some hacked size stuff without having a fitting font.
                 } else if (name.equals("font-size")) {
                     int size = Integer.parseInt(value);
                     if (figure instanceof Label) {
-                        FontData[] fonts = PlatformUI.getWorkbench().getDisplay().getFontList("arial", true);
+                        FontData[] fonts = PlatformUI.getWorkbench().getDisplay()
+                                .getFontList("arial", true);
                         FontData fd = fonts[0];
                         fd.setHeight(size - 2);
                         Font font = new Font(PlatformUI.getWorkbench().getDisplay(), fd);
                         ((Label) figure).setFont(font);
                     }
                 }
-                //TODO set a font.Problem: Svg has an attribute that loosely describes the font family. 
-                //This has to be mapped to existing fonts on a specific system.
+                // TODO set a font.Problem: Svg has an attribute that loosely describes the font
+                // family.
+                // This has to be mapped to existing fonts on a specific system.
             }
         }
     }

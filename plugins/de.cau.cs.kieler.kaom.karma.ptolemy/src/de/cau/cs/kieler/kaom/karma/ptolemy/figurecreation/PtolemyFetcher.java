@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.w3c.dom.Document;
@@ -45,7 +44,7 @@ import ptolemy.vergil.icon.EditorIcon;
  * Class to fetch some stuff such as svg descriptions and ptolemy class instance from ptolemy.
  * 
  * @author ckru
- *
+ * 
  */
 public final class PtolemyFetcher {
 
@@ -53,9 +52,9 @@ public final class PtolemyFetcher {
      * This is a utility Class and thus the constructor is hidden.
      */
     private PtolemyFetcher() {
-        
+
     }
-    
+
     /**
      * Get the EditorIcons from a ptolemy NamedObj.
      * 
@@ -64,6 +63,8 @@ public final class PtolemyFetcher {
      * @return the list of EditorIcons of the given object
      */
     public static List<EditorIcon> fetchIcons(final NamedObj nObj) {
+        // strange ptolemy stuff. Apparently only way to get the icons of Entities
+        // using this display method without having an actual Vergil editor.
         TestIconLoader til = new TestIconLoader();
         try {
             til.loadIconForClass(nObj.getClassName(), nObj);
@@ -79,8 +80,6 @@ public final class PtolemyFetcher {
      * 
      * @param nObj
      *            the NamedObj
-     * @param size
-     *            container used by lightweightgraphics mechanism.
      * @return an svg Document representing the NamedObj
      */
     public static Document fetchSvgDoc(final NamedObj nObj) {
@@ -89,7 +88,8 @@ public final class PtolemyFetcher {
         try {
             XMLParser xmlpars = new XMLParser();
             Document doc;
-            //Try to parse the xml. If it fails there are probably some blanks missing. (Typos in ptolemy)
+            // Try to parse the xml. If it fails there are probably some
+            // blanks missing. (Typos in ptolemy)
             // Repair that and try again. If it still fails thats bad.
             try {
                 doc = xmlpars.parser(svg);
@@ -120,7 +120,8 @@ public final class PtolemyFetcher {
             NodeList nodeList = doc.getElementsByTagName("rect");
             int xoffset = 0;
             int yoffset = 0;
-            // We have to set the size of the whole thing to the <svg> tag (thats missing in ptolemy)
+            // We have to set the size of the whole thing to the <svg> tag (thats missing in
+            // ptolemy)
             // Thats easy if the top element is a rectangle.
             // Also we have to calculate an offset by which to shift each element
             // (in ptolemy 0,0 is in the middle in gmf its topleft).
@@ -132,8 +133,9 @@ public final class PtolemyFetcher {
                         String.valueOf(Integer.parseInt(rectElement.getAttribute("width")) + 1));
                 xoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("x")));
                 yoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("y")));
-            // The topmost element is not a rectangle. Try to find the topmost svg element. 
-            // If it has points (its a polygon or something) use those to calculate the needed size and offset.   
+                // The topmost element is not a rectangle. Try to find the topmost svg element.
+                // If it has points (its a polygon or something) use those
+                // to calculate the needed size and offset.
             } else {
                 // TODO hacked else case, think of something better
                 int childPointer = 0;
@@ -145,8 +147,8 @@ public final class PtolemyFetcher {
                 if (firstElement.hasAttribute("points")) {
                     String points = firstElement.getAttribute("points");
                     String[] splittedPoints = points.split(" +");
-                    String firstPoint = splittedPoints[0];
-                    String[] firstPointCoords = firstPoint.split(",");
+                    // String firstPoint = splittedPoints[0];
+                    // String[] firstPointCoords = firstPoint.split(",");
                     List<Integer> pointsX = new LinkedList<Integer>();
                     List<Integer> pointsY = new LinkedList<Integer>();
                     for (String singlePoint : splittedPoints) {
@@ -165,7 +167,7 @@ public final class PtolemyFetcher {
                 }
 
             }
-            //shift all rectangles by the offset calculated beforehand
+            // shift all rectangles by the offset calculated beforehand
             for (int i = 0; i < doc.getElementsByTagName("rect").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("rect").item(i);
                 if (e.hasAttribute("x") && e.hasAttribute("y") && e.hasAttribute("style")) {
@@ -179,7 +181,7 @@ public final class PtolemyFetcher {
                             e.getAttribute("style").concat(";stroke:black;stroke-width:1"));
                 }
             }
-          //shift all circles by the offset calculated beforehand
+            // shift all circles by the offset calculated beforehand
             for (int i = 0; i < doc.getElementsByTagName("circle").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("circle").item(i);
                 if (e.hasAttribute("cx") && e.hasAttribute("cy")) {
@@ -193,7 +195,7 @@ public final class PtolemyFetcher {
                 e.setAttribute("style",
                         e.getAttribute("style").concat(";stroke:black;stroke-width:1"));
             }
-          //shift all polygons by the offset calculated beforehand
+            // shift all polygons by the offset calculated beforehand
             for (int i = 0; i < doc.getElementsByTagName("polygon").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("polygon").item(i);
                 if (e.hasAttribute("points")) {
@@ -214,7 +216,7 @@ public final class PtolemyFetcher {
                             e.getAttribute("style").concat(";stroke:black;stroke-width:1"));
                 }
             }
-            //shift all polylines by the offset calculated beforehand
+            // shift all polylines by the offset calculated beforehand
             for (int i = 0; i < doc.getElementsByTagName("polyline").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("polyline").item(i);
                 if (e.hasAttribute("points")) {
@@ -233,7 +235,7 @@ public final class PtolemyFetcher {
                     e.setAttribute("points", newpoints);
                 }
             }
-            //shift all lines by the offset calculated beforehand
+            // shift all lines by the offset calculated beforehand
             for (int i = 0; i < doc.getElementsByTagName("line").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("line").item(i);
                 if (e.hasAttribute("x1") && e.hasAttribute("y1") && e.hasAttribute("x2")
@@ -254,7 +256,7 @@ public final class PtolemyFetcher {
                 e.setAttribute("style",
                         e.getAttribute("style").concat(";stroke:black;stroke-width:1"));
             }
-            //shift all images by the offset calculated beforehand
+            // shift all images by the offset calculated beforehand
             for (int i = 0; i < doc.getElementsByTagName("image").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("image").item(i);
                 if (e.hasAttribute("x") && e.hasAttribute("y")) {
@@ -266,7 +268,7 @@ public final class PtolemyFetcher {
                     e.setAttribute("y", String.valueOf(y));
                 }
             }
-            //shift all ellipses by the offset calculated beforehand
+            // shift all ellipses by the offset calculated beforehand
             for (int i = 0; i < doc.getElementsByTagName("ellipse").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("ellipse").item(i);
                 if (e.hasAttribute("cx") && e.hasAttribute("cy")) {
@@ -278,7 +280,7 @@ public final class PtolemyFetcher {
                     e.setAttribute("cy", String.valueOf(y));
                 }
             }
-            //shift all text elements by the offset calculated beforehand
+            // shift all text elements by the offset calculated beforehand
             for (int i = 0; i < doc.getElementsByTagName("text").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("text").item(i);
                 if (e.hasAttribute("x") && e.hasAttribute("y")) {
@@ -316,10 +318,13 @@ public final class PtolemyFetcher {
         }
         return output;
     }
-    
+
     /**
      * Get an instance of a Ptolemy class according to an EObjects annotation.
-     * @param object the object representing an ptolemy object. Should have an "ptolemyClass" annotation.
+     * 
+     * @param object
+     *            the object representing an ptolemy object. Should have an "ptolemyClass"
+     *            annotation.
      * @return a ptolemy instance of the object.
      */
     public static NamedObj getPtolemyInstance(final EObject object) {
@@ -329,10 +334,10 @@ public final class PtolemyFetcher {
             if (annotation != null && annotation instanceof StringAnnotation) {
                 String ptolemyClassString = ((StringAnnotation) annotation).getValue();
                 try {
-                    /* First, assume that the actor is defined in a Java class.
-                     * If that fails, we fall back to letting Ptolemy load the
-                     * actor, which handles the case of the actor being defined
-                     * in its own Ptolemy model file.
+                    /*
+                     * First, assume that the actor is defined in a Java class. If that fails, we
+                     * fall back to letting Ptolemy load the actor, which handles the case of the
+                     * actor being defined in its own Ptolemy model file.
                      */
                     Object obj;
                     Class<?> ptolemy = Class.forName(ptolemyClassString);
@@ -346,22 +351,23 @@ public final class PtolemyFetcher {
                 } catch (ClassNotFoundException ce) {
                     // Do nothing. We'll handle that after the try-catch block.
                 } catch (NoClassDefFoundError er) {
-                    //er.printStackTrace();
+                    // er.printStackTrace();
                     return null;
                 } catch (Throwable t) {
                     t.printStackTrace();
                 }
-                
+
                 try {
                     // Use Ptolemy to load the actor
                     PtolemyHelper ptolemyHelper = new PtolemyHelper();
                     NamedObj nObj = ptolemyHelper.instantiatePtolemyEntity(ptolemyClassString);
-                    
+
                     if (nObj != null) {
                         return nObj;
                     }
                 } catch (Exception e) {
-                    Status myStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, "ptolemy instance failed to load", e);
+                    Status myStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+                            "ptolemy instance failed to load", e);
                     StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
                 }
             }

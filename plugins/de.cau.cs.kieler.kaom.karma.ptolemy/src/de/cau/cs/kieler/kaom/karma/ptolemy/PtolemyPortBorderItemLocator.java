@@ -32,9 +32,17 @@ import de.cau.cs.kieler.kaom.Port;
  * 
  */
 public class PtolemyPortBorderItemLocator extends BorderItemLocator {
-
+    
+    /**
+     * Number of all the ports on the same side as this one to help 
+     * determine the distribution of ports.
+     */
     private int numberOfPorts;
 
+    /**
+     * The index of the port in the ports of this side. This helps to determine
+     * the order of ports and its distribution on the side.
+     */
     private int index;
 
     /**
@@ -61,6 +69,7 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
      */
     @Override
     public void relocate(final IFigure borderItem) {
+        //get a valid location and set it. No user constraint support here.
         Rectangle validLocation = getValidLocation(null, borderItem);
         borderItem.setBounds(validLocation);
     }
@@ -70,11 +79,14 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
      */
     @Override
     public Rectangle getValidLocation(final Rectangle proposedLocation, final IFigure borderItem) {
+        // if there's no proposed location make a new location object else use that.
         Rectangle location = proposedLocation == null ? new Rectangle() : new Rectangle(
                 proposedLocation);
+        //if no constraint is given use preferred size
         if (location.getSize().isEmpty()) {
             location.setSize(borderItem.getPreferredSize());
         }
+        //no user constraint so locate a fitting location
         if (location.x == 0 && location.y == 0) {
             locate(location, borderItem);
         } else {
@@ -119,6 +131,7 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
         }
     }
 
+    //some offsets to distribute the ports on one side the way ptolemy does
     private static final int OFFSET_UP = 4;
     private static final int OFFSET_DOWN = 5;
 
@@ -131,7 +144,7 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
      */
     private void distributePortsVertical(final Rectangle location) {
         if (numberOfPorts == 1) {
-            // do nothing, if there is only one port it is already in the middle where he belongs
+            // do nothing, if there is only one port it is already in the middle where it belongs
         } else if ((numberOfPorts % 2) == 1) {
             if (this.index == (numberOfPorts + 1) / 2) {
                 // do nothing, the port in the middle of an odd number of ports is already where it
@@ -161,7 +174,7 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
      */
     private void distributePortsHorizontal(final Rectangle location) {
         if (numberOfPorts == 1) {
-            // do nothing, if there is only one port it is already in the middle where he belongs
+            // do nothing, if there is only one port it is already in the middle where it belongs
         } else if ((numberOfPorts % 2) == 1) {
             if (this.index == (numberOfPorts + 1) / 2) {
                 // do nothing, the port in the middle of an odd number of ports is already where it

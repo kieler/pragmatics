@@ -14,12 +14,6 @@
 
 package de.cau.cs.kieler.kaom.karma.ptolemy.renderingprovider;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.OperationHistoryFactory;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
@@ -28,16 +22,10 @@ import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.workspace.AbstractEMFOperation;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.IBorderItemLocator;
 
-import de.cau.cs.kieler.core.annotations.Annotatable;
-import de.cau.cs.kieler.core.annotations.Annotation;
-import de.cau.cs.kieler.core.annotations.AnnotationsFactory;
-import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.core.model.figures.DoubleRoundedRectangle;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 
 /**
@@ -185,8 +173,6 @@ public class PtolemyStateMachineProvider implements IRenderingProvider {
 
     /**
      * A rounded rectangle with a border.
-     * 
-     * @author ckru
      * 
      */
     private static class RoundedRectangleWithBorder extends RoundedRectangle {

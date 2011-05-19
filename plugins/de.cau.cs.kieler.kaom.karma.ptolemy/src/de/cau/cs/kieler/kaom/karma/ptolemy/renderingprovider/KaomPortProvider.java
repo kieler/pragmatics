@@ -149,6 +149,10 @@ public class KaomPortProvider implements IRenderingProvider {
         return defaultFigure;
     }
 
+    private static final double PORT_SIZE_LONG_SIDE = 7;
+    private static final double PORT_SIZE_SHORT_SIDE = 3.5;
+    private static final int PORT_SIZE_BOUNDS = 8;
+
     /**
      * Holds a figure of a triangle pointing east.
      * 
@@ -158,16 +162,16 @@ public class KaomPortProvider implements IRenderingProvider {
      */
     private IFigure getPortSvgString(final Color color) {
         PointList pointList = new PointList();
-        pointList.addPoint(0, 7);
-        pointList.addPoint(0, 0);
-        pointList.addPoint(new Point(7, 3.5));
-        pointList.addPoint(0, 7);
+        pointList.addPoint(new Point(0, PORT_SIZE_LONG_SIDE));
+        pointList.addPoint(new Point(0, 0));
+        pointList.addPoint(new Point(PORT_SIZE_LONG_SIDE, PORT_SIZE_SHORT_SIDE));
+        pointList.addPoint(new Point(0, PORT_SIZE_LONG_SIDE));
         PolygonShape figure = new PolygonShape();
         figure.setPoints(pointList);
         figure.setBackgroundColor(color);
         figure.setForegroundColor(ColorConstants.black);
         figure.setLineWidth(1);
-        figure.getBounds().setSize(8, 8);
+        figure.getBounds().setSize(PORT_SIZE_BOUNDS, PORT_SIZE_BOUNDS);
         return figure;
     }
 
@@ -180,16 +184,16 @@ public class KaomPortProvider implements IRenderingProvider {
      */
     private IFigure getDownwardsPortSvgString(final Color color) {
         PointList pointList = new PointList();
-        pointList.addPoint(0, 0);
-        pointList.addPoint(7, 0);
-        pointList.addPoint(new Point(3.5, 7));
-        pointList.addPoint(0, 0);
+        pointList.addPoint(new Point(0, 0));
+        pointList.addPoint(new Point(PORT_SIZE_LONG_SIDE, 0));
+        pointList.addPoint(new Point(PORT_SIZE_SHORT_SIDE, PORT_SIZE_LONG_SIDE));
+        pointList.addPoint(new Point(0, 0));
         PolygonShape figure = new PolygonShape();
         figure.setPoints(pointList);
         figure.setBackgroundColor(color);
         figure.setForegroundColor(ColorConstants.black);
         figure.setLineWidth(1);
-        figure.getBounds().setSize(8, 8);
+        figure.getBounds().setSize(PORT_SIZE_BOUNDS, PORT_SIZE_BOUNDS);
         return figure;
     }
 
@@ -202,16 +206,16 @@ public class KaomPortProvider implements IRenderingProvider {
      */
     private IFigure getUpwardsPortSvgString(final Color color) {
         PointList pointList = new PointList();
-        pointList.addPoint(0, 7);
-        pointList.addPoint(7, 7);
-        pointList.addPoint(new Point(3.5, 0));
-        pointList.addPoint(0, 7);
+        pointList.addPoint(new Point(0, PORT_SIZE_LONG_SIDE));
+        pointList.addPoint(new Point(PORT_SIZE_LONG_SIDE, PORT_SIZE_LONG_SIDE));
+        pointList.addPoint(new Point(PORT_SIZE_SHORT_SIDE, 0));
+        pointList.addPoint(new Point(0, PORT_SIZE_LONG_SIDE));
         PolygonShape figure = new PolygonShape();
         figure.setPoints(pointList);
         figure.setBackgroundColor(color);
         figure.setForegroundColor(ColorConstants.black);
         figure.setLineWidth(1);
-        figure.getBounds().setSize(8, 8);
+        figure.getBounds().setSize(PORT_SIZE_BOUNDS, PORT_SIZE_BOUNDS);
         return figure;
     }
 
@@ -227,25 +231,18 @@ public class KaomPortProvider implements IRenderingProvider {
     /**
      * {@inheritDoc}
      */
-    public LayoutManager getDefaultLayoutManager() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public BorderItemLocator getBorderItemLocatorByString(final String input,
             final IFigure parentFigure, final Object locator, final EObject object) {
         EObject container = object.eContainer();
         if (container instanceof Entity) {
-            //Get the parent to check if its a compositeactor. If it is ports are done by the layout.
+            // Get the parent to check if its a compositeactor. If it is ports are done by the
+            // layout.
             Entity parent = (Entity) container;
             EList<Entity> childEntitys = parent.getChildEntities();
             HasCommentsCondition commentsCondition = new HasCommentsCondition();
             if (childEntitys.isEmpty() && !commentsCondition.evaluate(parent)) {
                 EList<Port> ports = parent.getChildPorts();
-                //The locator needs all the ports of one side to distribute them evenly.
+                // The locator needs all the ports of one side to distribute them evenly.
                 if (input.equals("NORTH")) {
                     List<Port> portsOfSide = new LinkedList<Port>();
                     for (Port port : ports) {
@@ -346,5 +343,5 @@ public class KaomPortProvider implements IRenderingProvider {
     public Dimension getSizeByString(final String input, final EObject object, final EditPart part) {
         return null;
     }
-    
+
 }

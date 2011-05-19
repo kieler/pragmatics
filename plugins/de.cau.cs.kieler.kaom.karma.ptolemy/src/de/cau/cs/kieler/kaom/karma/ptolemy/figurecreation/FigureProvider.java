@@ -61,55 +61,57 @@ import diva.canvas.toolbox.ImageFigure;
  * Class for generating draw2d Figures out of svg documents and EditorIcons.
  * 
  * @author ckru
- *
+ * 
  */
 public class FigureProvider {
-    
+
     /**
      * Creates a draw2d ImageFigure out of an ptolemy EditorIcon.
-     * @param icon the EditorIcon to display in draw2d
+     * 
+     * @param icon
+     *            the EditorIcon to display in draw2d
      * @return draw2d Figure representing the EditorIcon
      */
     public IFigure createFigureFromIcon(final EditorIcon icon) {
         Figure shape = icon.createBackgroundFigure();
         Image img;
         img = getImageFromFigure(shape);
-        BufferedImage resizedImage = new BufferedImage(img.getWidth(null),
-                img.getHeight(null), BufferedImage.TYPE_INT_RGB);
+        BufferedImage resizedImage = new BufferedImage(img.getWidth(null), img.getHeight(null),
+                BufferedImage.TYPE_INT_RGB);
         Graphics2D g = resizedImage.createGraphics();
         g.drawImage(img, 0, 0, null);
         g.dispose();
         g.setComposite(AlphaComposite.Src);
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                 RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g.setRenderingHint(RenderingHints.KEY_RENDERING,
-                RenderingHints.VALUE_RENDER_QUALITY);
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-        org.eclipse.swt.graphics.Image image = new org.eclipse.swt.graphics.Image(Display.getCurrent(),
-                CoreUiUtil.convertAWTImageToSWT(resizedImage));
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        org.eclipse.swt.graphics.Image image = new org.eclipse.swt.graphics.Image(
+                Display.getCurrent(), CoreUiUtil.convertAWTImageToSWT(resizedImage));
         ImageFigureEx fig = new ImageFigureEx(image);
-        Dimension size = new Dimension(img.getWidth(null),img.getHeight(null));
+        Dimension size = new Dimension(img.getWidth(null), img.getHeight(null));
         fig.setMinimumSize(size.getCopy());
         fig.setPreferredSize(size.getCopy());
         fig.getBounds().setSize(size.getCopy());
         fig.setSize(size.getCopy());
         return fig;
     }
-    
+
     /**
-     * Create a draw2d figure out of an svg Document.
-     * FigureParser.createFigure does the actual work.
-     * @param doc the Document holding the svg description
+     * Create a draw2d figure out of an svg Document. FigureParser.createFigure does the actual
+     * work.
+     * 
+     * @param doc
+     *            the Document holding the svg description
      * @return the figure representing the svg
      */
     public IFigure createFigureFromSvg(final Document doc) {
         return FigureParser.createFigure(doc);
     }
-    
 
     /**
      * builds a default figure for this diagram.
+     * 
      * @return the default figure
      */
     public IFigure getDefaultFigure() {
@@ -119,7 +121,7 @@ public class FigureProvider {
         defaultFigure.setBackgroundColor(ColorConstants.white);
         return defaultFigure;
     }
-    
+
     /**
      * method for generating a scalable image figure from a file.
      * 
@@ -132,15 +134,16 @@ public class FigureProvider {
         ScalableImageFigure fig = new ScalableImageFigure(img, false, true, true);
         return fig;
     }
-    
-    
+
     /**
      * Gets an awt image out of a diva figure.
-     * @param figure diva figure holding an image 
+     * 
+     * @param figure
+     *            diva figure holding an image
      * @return the awt image of the diva figure
      */
     private Image getImageFromFigure(final Figure figure) {
-        //if its an ImageFigure use that image.
+        // if its an ImageFigure use that image.
         if (figure instanceof ImageFigure) {
             ImageFigure imageFigure = (ImageFigure) figure;
             Image image = imageFigure.getImage();
@@ -151,7 +154,8 @@ public class FigureProvider {
             } else {
                 throw new NullPointerException("Failed to get an image from " + imageFigure);
             }
-        // if its something else try to get some swt graphics stuff and make an image out of that.
+            // if its something else try to get some swt graphics stuff and make an image out of
+            // that.
         } else {
             Rectangle2D bounds = figure.getBounds();
             Rectangle2D size = new Rectangle2D.Double(0, 0, figure.getBounds().getWidth(), figure
@@ -165,7 +169,7 @@ public class FigureProvider {
 
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
-            //White background since draw2 can't handle transparency well
+            // White background since draw2 can't handle transparency well
             graphics.setBackground(new Color(255, 255, 255, 255));
             graphics.clearRect(0, 0, (int) figure.getBounds().getWidth(), (int) figure.getBounds()
                     .getHeight());
@@ -173,7 +177,7 @@ public class FigureProvider {
             return image;
         }
     }
-    
+
     /**
      * Method holding a figure description used by directors.
      * 
@@ -181,7 +185,8 @@ public class FigureProvider {
      */
     public IFigure createDirector() {
         RectangleFigure director = new RectangleFigure();
-        //Directors just are that big. Wouldn't gain anything by hiding the magic numbers in constants. 
+        // Directors just are that big. Wouldn't gain anything by hiding the magic numbers in
+        // constants.
         director.getBounds().setSize(100, 30);
         director.setBackgroundColor(ColorConstants.green);
         director.setForegroundColor(ColorConstants.black);
@@ -190,6 +195,7 @@ public class FigureProvider {
 
     /**
      * A custom svg of an Accumulator since the ptolemy one is bugged.
+     * 
      * @return a ScalableImageFigure representing an Accumulator
      */
     public IFigure createAccumulator() {
@@ -202,7 +208,7 @@ public class FigureProvider {
                 + "</svg>";
         return createSvg(accsvg);
     }
-    
+
     /**
      * Method for creating a custom monitorvalue figure.
      * 
@@ -217,7 +223,7 @@ public class FigureProvider {
         monitor.setBackgroundColor(ColorConstants.white);
         return monitor;
     }
-    
+
     /**
      * a monitor figure using the kvid mechanism of displaying its value.
      * 
@@ -233,8 +239,8 @@ public class FigureProvider {
         private static final int LABELSIZE_WIDTH = 140;
         private static final int LABELSIZE_HEIGHT = 10;
         private static final int LABELLOCATION_X = 70;
-        private static final int LABELLOCATION_Y = 10;     
-        
+        private static final int LABELLOCATION_Y = 10;
+
         /**
          * constructs this figure and adds a label that displays the current value.
          * 
@@ -279,15 +285,19 @@ public class FigureProvider {
 
     }
 
-    //Position of the label inside the outer rectangle to make it centered somehow.
+    // Position of the label inside the outer rectangle to make it centered somehow.
     private static final int LABELLOCATION_X = 5;
     private static final int LABELLOCATION_Y = 8;
 
     /**
      * A figure that displays a value.
-     * @param object the model element
-     * @param valueAttribute name of the annotation holding the value
-     * @param part the editpart of the model element
+     * 
+     * @param object
+     *            the model element
+     * @param valueAttribute
+     *            name of the annotation holding the value
+     * @param part
+     *            the editpart of the model element
      * @return a figure that display the given value
      */
     public IFigure createValueFigure(final EObject object, final String valueAttribute,
@@ -299,31 +309,30 @@ public class FigureProvider {
                 Annotation valueAnn = ((Annotatable) object).getAnnotation(valueAttribute);
                 String value = ((StringAnnotation) valueAnn).getValue();
                 valueLabel.setText(value);
-                //Make a font. Whithout giving the label a font we can't calculate it size. 
+                // Make a font. Whithout giving the label a font we can't calculate it size.
                 FontData fd = new FontData();
                 fd.setStyle(SWT.NORMAL);
                 fd.setHeight(10);
                 Font font = new Font(PlatformUI.getWorkbench().getDisplay(), fd);
                 valueLabel.setFont(font);
-                //calculate and set the size the figure must have to display the text value.
+                // calculate and set the size the figure must have to display the text value.
                 valueLabel.getBounds().setLocation(LABELLOCATION_X, LABELLOCATION_Y);
                 valueLabel.getBounds().setSize(valueLabel.getTextBounds().getSize());
                 valueLabel.setLayoutManager(new BorderLayout());
                 constFigure.setLayoutManager(new BorderLayout());
                 constFigure.add(valueLabel);
             }
-            //make the size of the outer rectangle a bit bigger than the label to have a nice border
+            // make the size of the outer rectangle a bit bigger than the label to have a nice
+            // border
             Dimension dim = valueLabel.getBounds().getSize().expand(10, 10);
             constFigure.getBounds().setSize(dim.getCopy());
             constFigure.setMaximumSize(dim.getCopy());
             constFigure.setMinimumSize(dim.getCopy());
             constFigure.setPreferredSize(dim.getCopy());
 
-
         }
         return constFigure;
 
     }
-    
-    
+
 }
