@@ -331,7 +331,7 @@ public class EvolView extends ViewPart {
                 return;
             }
 
-            assert ((row >= 0) && (row < itemCount)) : "position out of range";
+            assert (row >= 0) && (row < itemCount) : "position out of range";
             Display.getCurrent().syncExec(new Runnable() {
                 public void run() {
                     int[] indices = new int[] { row };
@@ -341,7 +341,9 @@ public class EvolView extends ViewPart {
         }
 
         /**
-         * @return
+         * Get the (first) selected element.
+         *
+         * @return the selected element
          */
         private Object getSelectedElement() {
             IStructuredSelection selection = (IStructuredSelection) this.getSelection();

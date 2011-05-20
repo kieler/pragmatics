@@ -120,8 +120,8 @@ public final class EvolModel {
 
             Population pop = this.getPopulation();
             double rating = 0.0;
-            // TODO: add preference to switch off compensation
-            // TODO: Do evolution of rating predictors at lock step with
+            // Nice-to-have: add preference to switch off compensation
+            // Nice-to-have: Do evolution of rating predictors at lock step with
             // evolution of layout options. Use separate auto-rating and
             // user-rating fields for that purpose.
             double compensation = -theDelta / ((pop.size() - 1));

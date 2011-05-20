@@ -291,7 +291,7 @@ public final class EvolUtil {
                     // Get measurements, then get rating proposal from each
                     // weight genome.
 
-                    // TODO Discuss: For more than one editor: rate average
+                    // Discuss: For more than one editor: rate average
                     // measurements, or use average ratings instead?
 
                     if (measurements == null) {
@@ -303,7 +303,8 @@ public final class EvolUtil {
                         }
 
                         ind.setFeatures(measurements);
-                        // TODO: don't set features here. This works only for
+                        // Nice-to-have: don't set features here. This works
+                        // only for
                         // one editor. For more editors, average measurements
                         // must be calculated.
                     }
@@ -600,7 +601,9 @@ public final class EvolUtil {
          * Creates a new {@link IndividualAutoRaterRunnable} instance.
          *
          * @param theIndividual
+         *            the individual that shall be rated
          * @param theWeightsGenomes
+         *            the weights genomes
          */
         IndividualAutoRaterRunnable(final Genome theIndividual, final Population theWeightsGenomes) {
             this.individual = theIndividual;
@@ -1167,7 +1170,6 @@ public final class EvolUtil {
                 }
 
             } catch (final IOException exception) {
-                // TODO Auto-generated catch block
                 exception.printStackTrace();
             } finally {
                 if (writer != null) {

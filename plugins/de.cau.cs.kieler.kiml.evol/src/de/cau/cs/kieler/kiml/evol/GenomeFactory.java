@@ -741,14 +741,14 @@ final class GenomeFactory {
         if ((configs == null) || (layoutHintIds == null) || layoutHintIds.isEmpty()) {
             return null;
         }
-
+        
         /*
-         * TODO: Discuss: If more than one ILayoutConfig is contained in the given list,
-         * they may stem from different editors set to different layout algorithms.
+         * Discuss: If more than one ILayoutConfig is contained in the given list,
+         * they may be for different layout algorithms.
          * Should the genes from different layout algorithms
          *   - be pooled without hierarchy?
          *   - be mapped to their layout algorithm id?
-         *   - or be grouped together as "chromosomes" in the individual?
+         *   - or be grouped together as hierarchical "chromosomes" in the individual?
          * What about duplicate properties?
          * */
 
