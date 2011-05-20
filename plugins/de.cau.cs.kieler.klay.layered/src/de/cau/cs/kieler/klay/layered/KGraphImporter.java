@@ -409,8 +409,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         // create source port
         if (sourcePort == null) {
             if (sourceNode.getProperty(LayoutOptions.HYPERNODE)) {
-                // Hypernodes have a western input port
-                sourcePort = sourceNode.getPorts(PortSide.WEST).iterator().next();
+                // Hypernodes have an eastern output port
+                sourcePort = sourceNode.getPorts(PortSide.EAST).iterator().next();
             } else {
                 sourcePort = new LPort();
                 sourcePort.setNode(sourceNode);
