@@ -29,7 +29,8 @@ import java.util.List;
  * </ul>
  *
  * @author bdu
- *
+ * TODO extends de.cau.cs.kieler.core.alg.AbstractAlgorithm
+ * TODO remove Runnable interface
  */
 public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
 
@@ -38,6 +39,7 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
      *
      * @param listener
      *            the listener to add; must not be {@code null}
+     * @deprecated
      */
     public void addListener(final IEvolutionListener listener) {
         if (listener == null) {
@@ -54,6 +56,7 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
      *
      * @param listener
      *            the listener to remove
+     * @deprecated
      */
     public void removeListener(final IEvolutionListener listener) {
         this.listeners.remove(listener);
@@ -63,6 +66,7 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
      * Returns the generation.
      *
      * @return the generation
+     * TODO rename to getGenerationNumber, make final
      */
     public int getGeneration() {
         return this.generation;
@@ -73,6 +77,7 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
      * algorithm will run until some stop criterion is satisfied. Since this
      * method implicitly initializes the algorithm, {@link #initialize()} must
      * not be called before.
+     * @deprecated
      */
     public void run() {
         if (!this.isInitialized) {
@@ -96,11 +101,13 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
      */
     public final void step() {
         if (!this.isInitialized) {
+            // FIXME change to IllegalStateException
             throw new UnsupportedOperationException(
                     "The algorithm must be initialized before single steps can be performed.");
         }
 
         if (isDone()) {
+            // s.a.
             throw new UnsupportedOperationException(
                     "No further steps may be performed after the stop criterion has been satisfied.");
         }
@@ -130,8 +137,10 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
      * Initializes the population. Extending classes that wish to call
      * {@link #step()} must ensure that this method is called exactly once
      * before.
+     * TODO rename to reset
      **/
     protected void initialize() {
+        // TODO super.reset()
         if (this.isInitialized) {
             throw new UnsupportedOperationException(
                     "Algorithm already initialized: initialize() must be called only once.");
@@ -170,6 +179,7 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
 
     /**
      * Informs the listeners about an upcoming step.
+     * @deprecated
      */
     private void beforeStep() {
         for (final IEvolutionListener listener : this.listeners) {
@@ -179,6 +189,7 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
 
     /**
      * Informs the listeners about a completed step.
+     * @deprecated
      */
     private void afterStep() {
         for (final IEvolutionListener listener : this.listeners) {
@@ -193,9 +204,11 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
     /**
      * Indicates whether the algorithm has been initialized. Some methods
      * require it to be initialized.
+     * @deprecated
      */
     private boolean isInitialized = false;
 
-    /** The list of listeners to the evolutionary algorithm. */
+    /** The list of listeners to the evolutionary algorithm.
+     * @deprecated */
     private final List<IEvolutionListener> listeners = new LinkedList<IEvolutionListener>();
 }
