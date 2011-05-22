@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="viewerProviders" name="ViewerProviders" schema="schema/viewerProviders.exsd"/>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.klighd.views.DiagramViewPart"
+            icon="icons/klighd.gif"
+            id="de.cau.cs.kieler.klighd.lightDiagramView"
+            name="Light Diagram"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>
