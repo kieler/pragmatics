@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KIELER Light Diagrams GMF
+Bundle-SymbolicName: de.cau.cs.kieler.klighd.gmf;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Require-Bundle: org.eclipse.gmf.runtime.diagram.ui.resources.editor;bundle-version="1.4.1",
+ de.cau.cs.kieler.kiml.gmf;bundle-version="0.2.0",
+ de.cau.cs.kieler.klighd;bundle-version="0.1.0"
+Bundle-ActivationPolicy: lazy
