@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2010, Piccolo2D project, http://piccolo2d.org
+ * Copyright (c) 2008-2011, Piccolo2D project, http://piccolo2d.org
  * Copyright (c) 1998-2008, University of Maryland
  * All rights reserved.
  *
@@ -251,15 +251,6 @@ public class SWTGraphics2D extends Graphics2D {
         final Color awtColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
         return awtColor;
     }
-    
-    /**
-     * Returns the SWT foreground color.
-     * 
-     * @return the SWT foreground color
-     */
-    public org.eclipse.swt.graphics.Color getSWTColor() {
-        return gc.getForeground();
-    }
 
     /** {@inheritDoc} */
     public void setColor(final Color c) {
@@ -304,15 +295,6 @@ public class SWTGraphics2D extends Graphics2D {
         final org.eclipse.swt.graphics.Color color = gc.getBackground();
         final Color awtColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
         return awtColor;
-    }
-    
-    /**
-     * Returns the SWT background color.
-     * 
-     * @return the SWT background color
-     */
-    public org.eclipse.swt.graphics.Color getSWTBackground() {
-        return gc.getBackground();
     }
 
     // //////////////
@@ -1124,6 +1106,7 @@ public class SWTGraphics2D extends Graphics2D {
      * @param p path to draw
      */
     public void drawPath(final Path p) {
+        gc.setLineWidth((int) (lineWidth + 0.5));
         gc.setTransform(swtTransform);
         gc.drawPath(p);
         gc.setTransform(null);
@@ -1186,15 +1169,6 @@ public class SWTGraphics2D extends Graphics2D {
      */
     public void setLineWidth(final double lineWidth) {
         this.lineWidth = lineWidth;
-    }
-    
-    /**
-     * Returns the line width to use when drawing shapes.
-     * 
-     * @return width of line when drawing shapes
-     */
-    public double getLineWidth() {
-        return lineWidth;
     }
 
     /**
@@ -1574,14 +1548,17 @@ public class SWTGraphics2D extends Graphics2D {
                 final org.eclipse.swt.graphics.Font font = (org.eclipse.swt.graphics.Font) i.next();
                 font.dispose();
             }
+            FONT_CACHE.clear();
             for (final Iterator i = COLOR_CACHE.values().iterator(); i.hasNext();) {
                 final org.eclipse.swt.graphics.Color color = (org.eclipse.swt.graphics.Color) i.next();
                 color.dispose();
             }
+            COLOR_CACHE.clear();
             for (final Iterator i = SHAPE_CACHE.values().iterator(); i.hasNext();) {
                 final Path path = (Path) i.next();
                 path.dispose();
             }
+            SHAPE_CACHE.clear();
         }
     }
 

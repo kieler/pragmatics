@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2010, Piccolo2D project, http://piccolo2d.org
+ * Copyright (c) 2008-2011, Piccolo2D project, http://piccolo2d.org
  * Copyright (c) 1998-2008, University of Maryland
  * All rights reserved.
  *
@@ -169,12 +169,12 @@ public class PActivityScheduler implements Serializable {
     public void processActivities(final long currentTime) {
         final int size = activities.size();
         if (size > 0) {
-            processingActivities.clear();
             processingActivities.addAll(activities);
             for (int i = size - 1; i >= 0; i--) {
                 final PActivity each = (PActivity) processingActivities.get(i);
                 each.processStep(currentTime);
             }
+            processingActivities.clear();
         }
     }
 
