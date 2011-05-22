@@ -130,8 +130,6 @@ public final class AnalysisServices implements IBundleChangedListener {
      *            the attribute that contains an invalid entry
      * @param exception
      *            an optional exception that was caused by the invalid entry
-     * 
-     * @author msp
      */
     private static void reportError(final String extensionPoint,
             final IConfigurationElement element, final String attribute,
