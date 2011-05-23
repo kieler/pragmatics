@@ -45,7 +45,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         this.isParthenogenesisAllowed =
                 store.getBoolean(EvolPlugin.PREF_IS_PARTHENOGENESIS_ALLOWED);
 
-        initialize();
+        reset();
         System.out.println("Optimal surr:" + surv());
     }
 
@@ -102,7 +102,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
                 newGenome.setUserRating(null);
                 System.out.println(" -- cross over of " + parent1);
                 System.out.println("              and " + parent2);
-                offspring.add(new Genome(newGenome, getGeneration()));
+                offspring.add(new Genome(newGenome, getGenerationNumber()));
             }
 
             // add offspring to old survivors
@@ -120,9 +120,9 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     }
 
     @Override
-    protected void initialize() {
+    public void reset() {
         System.out.println("*** initialize");
-        super.initialize();
+        super.reset();
         // obtain more initial diversity by performing some mutations
         final int some = 20;
         for (int i = 0; i < some; i++) {

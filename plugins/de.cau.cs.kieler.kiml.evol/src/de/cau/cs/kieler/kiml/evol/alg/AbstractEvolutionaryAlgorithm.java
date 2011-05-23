@@ -13,115 +13,47 @@
  */
 package de.cau.cs.kieler.kiml.evol.alg;
 
-import java.util.LinkedList;
-import java.util.List;
+import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 
 /**
  * Abstract implementation of an evolutionary algorithm. Implementations of
  * evolutionary algorithms shall inherit from this class. After construction,
- * either
- * <ul>
- * <li>{@link #run()} can be used to start the algorithm, which will initialize
- * and then continue running until {@link #isDone()} yields {@code true}, or
- *
- * <li>{@link #step()} can be used for stepwise execution. In this case,
- * {@link #initialize()} must be called explicitly once before.
- * </ul>
- *
+ * {@link #step()} can be used for stepwise execution. In this case,
+ * {@link #reset()} must be called explicitly once before.
+ * 
  * @author bdu
- * TODO extends de.cau.cs.kieler.core.alg.AbstractAlgorithm
- * TODO remove Runnable interface
  */
-public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
+public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
 
     /**
-     * Adds an evolution listener. Duplicate listeners are ignored.
+     * Returns the generation number.
      *
-     * @param listener
-     *            the listener to add; must not be {@code null}
-     * @deprecated
+     * @return the generation number
      */
-    public void addListener(final IEvolutionListener listener) {
-        if (listener == null) {
-            throw new IllegalArgumentException("Argument must not be null: listener");
-        }
-        if (!this.listeners.contains(listener)) {
-            this.listeners.add(listener);
-        }
-    }
-
-    /**
-     * Removes the specified evolution listener, if present. Requests to remove
-     * non-existent listeners are ignored.
-     *
-     * @param listener
-     *            the listener to remove
-     * @deprecated
-     */
-    public void removeListener(final IEvolutionListener listener) {
-        this.listeners.remove(listener);
-    }
-
-    /**
-     * Returns the generation.
-     *
-     * @return the generation
-     * TODO rename to getGenerationNumber, make final
-     */
-    public int getGeneration() {
-        return this.generation;
-    }
-
-    /**
-     * Main loop for initializing and running the complete algorithm. The
-     * algorithm will run until some stop criterion is satisfied. Since this
-     * method implicitly initializes the algorithm, {@link #initialize()} must
-     * not be called before.
-     * @deprecated
-     */
-    public void run() {
-        if (!this.isInitialized) {
-            initialize();
-            determineFitness();
-            while (!isDone()) {
-                step();
-                // pause here for stepwise execution using an IEvolutionListener
-            }
-            this.isInitialized = false;
-        } else {
-            throw new UnsupportedOperationException(
-                    "Cannot run an algorithm that has already been initialized.");
-        }
+    public final int getGenerationNumber() {
+        return this.generationNumber;
     }
 
     /**
      * Performs a single step of the algorithm by proceeding to the next
      * generation. The algorithm must be initialized before by calling
-     * {@link #initialize()}.
+     * {@link #reset()}.
      */
     public final void step() {
-        if (!this.isInitialized) {
-            // FIXME change to IllegalStateException
-            throw new UnsupportedOperationException(
-                    "The algorithm must be initialized before single steps can be performed.");
-        }
 
         if (isDone()) {
-            // s.a.
-            throw new UnsupportedOperationException(
+            throw new IllegalStateException(
                     "No further steps may be performed after the stop criterion has been satisfied.");
         }
 
-        beforeStep();
-        if (this.generation > 0) {
+        if (this.generationNumber > 0) {
             survive();
         }
-        this.generation++;
+        this.generationNumber++;
         select();
         crossOver();
         mutate();
         determineFitness();
-        afterStep();
     }
 
     /**
@@ -137,16 +69,11 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
      * Initializes the population. Extending classes that wish to call
      * {@link #step()} must ensure that this method is called exactly once
      * before.
-     * TODO rename to reset
      **/
-    protected void initialize() {
-        // TODO super.reset()
-        if (this.isInitialized) {
-            throw new UnsupportedOperationException(
-                    "Algorithm already initialized: initialize() must be called only once.");
-        }
-        this.generation = 0;
-        this.isInitialized = true;
+    @Override
+    public void reset() {
+        super.reset();
+        this.generationNumber = 0;
     }
 
     /** Determines fitness values for all individuals. **/
@@ -177,38 +104,8 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
      **/
     protected abstract void survive();
 
-    /**
-     * Informs the listeners about an upcoming step.
-     * @deprecated
-     */
-    private void beforeStep() {
-        for (final IEvolutionListener listener : this.listeners) {
-            listener.beforeStep();
-        }
-    }
-
-    /**
-     * Informs the listeners about a completed step.
-     * @deprecated
-     */
-    private void afterStep() {
-        for (final IEvolutionListener listener : this.listeners) {
-            listener.afterStep();
-        }
-    }
-
     // private fields
     /** The number of the current generation. */
-    private int generation = 0;
+    private int generationNumber = 0;
 
-    /**
-     * Indicates whether the algorithm has been initialized. Some methods
-     * require it to be initialized.
-     * @deprecated
-     */
-    private boolean isInitialized = false;
-
-    /** The list of listeners to the evolutionary algorithm.
-     * @deprecated */
-    private final List<IEvolutionListener> listeners = new LinkedList<IEvolutionListener>();
 }
