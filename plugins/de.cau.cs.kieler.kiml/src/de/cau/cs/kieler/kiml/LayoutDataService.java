@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2008 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -31,19 +31,26 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * globally to retrieve data for automatic layout through KIML. The class cannot
  * be instantiated directly, but only through a subclass that calls
  * {@link createLayoutServices()}. The subclass is then responsible to add
- * appropriate data to the nested registry instance.
- * 
+ * appropriate data to the nested registry instance. Multiple instances of
+ * subclasses can register themselves by calling {@link createLayoutServices(subInstance)},
+ * where subInstance is the instance of the subclass, but only one instance per subclass
+ * is allowed. Registering another instance will overwrite the prior instance. The 
+ * different instances are identified by class name and the currently used instance can
+ * be determined by calling {@link getMode()}. You can switch between the different 
+ * instances by calling {@link setMode(final Class<? extends LayoutDataService> clas)} or
+ * {@link setMode(final Object object)}, where {@code object} has to be an instance of a
+ * subclass of {@code LayoutDataService}.
+ *
  * @kieler.rating 2011-03-14 yellow
  *     reviewed by cmot, cds
  * @author msp
+ * @author swe
  */
 public class LayoutDataService {
 
     /** identifier of the 'general' diagram type, which applies to all diagrams. */
-    public static final String DIAGRAM_TYPE_GENERAL = "de.cau.cs.kieler.layout.diagrams.general";
-
-    /** the singleton instance of the layout service. */
-    private static LayoutDataService instance = null;
+    public static final String DIAGRAM_TYPE_GENERAL
+      = "de.cau.cs.kieler.layout.diagrams.general";
 
     /** the instance of the registry class. */
     private Registry registry = null;
@@ -67,6 +74,13 @@ public class LayoutDataService {
     private Map<String, SemanticLayoutConfig> semanticConfigMap
             = new HashMap<String, SemanticLayoutConfig>();
 
+    /** Map of registered data services indexed by class name. */
+    private static Map<Class<? extends LayoutDataService>, LayoutDataService> instances
+      		= new HashMap<Class<? extends LayoutDataService>, LayoutDataService>();
+
+    /** the singleton instance of the currently used layout data service. */
+    private static LayoutDataService current = null;
+
     /**
      * The default constructor is hidden to prevent others from instantiating
      * this singleton class.
@@ -75,41 +89,137 @@ public class LayoutDataService {
     }
 
     /**
-     * Creates an instance of the layout services and assigns the singleton
+     * Creates an instance of the layout services and assigns an
      * instance of the registry.
      */
     public static void createLayoutServices() {
-        instance = new LayoutDataService();
-        instance.registry = instance.new Registry();
+        createLayoutServices(new LayoutDataService());
+    }
+
+    /**
+     * Registers a layout data service instance created by a specific 
+     * subclass and assigns it an instance of the registry.
+     *
+     * @param subInstance an instance created by a subclass
+     */
+    protected static void createLayoutServices(final LayoutDataService subInstance) {
+    	if (subInstance != null) {
+	        if (current == null) {
+	            current = subInstance;
+	        }
+	        subInstance.registry = subInstance.new Registry();
+	        instances.put(subInstance.getClass(), subInstance);
+    	}
+    }
+
+    /**
+     * Removes a layout data service identified by its instance. If the 
+     * currently used instance is removed, the layout data service is in 
+     * an inoperable state and you have to define the new operational mode 
+     * by calling {@link setMode(final Class<? extends LayoutDataService> clas)} 
+     * or {@link setMode(final Object object)}.
+     *  
+     * @param subInstance The instance to be removed.
+     */
+    public static void removeLayoutServices(final LayoutDataService subInstance) {
+        if (subInstance != null && instances.containsKey(subInstance.getClass())) {
+            LayoutDataService removed = instances.remove(subInstance.getClass());
+            if (current.equals(removed)) {
+                current = null;//FIXME think about this
+            }
+        }
+    }
+
+    /**
+     * Removes a layout data service instance identified by its class name.
+     * 
+     * @param clas Class identifier of the instance to be removed.
+     */
+    public static void removeLayoutServices(final Class<? extends LayoutDataService> clas) {
+    	removeLayoutServices(instances.get(clas));
     }
     
     /**
-     * Sets a layout services instance created by a specific subclass and assigns
-     * the singleton instance of the registry.
-     * 
-     * @param subclassInstance an instance created by a subclass
+     * Returns the mode in which the layout data service is operating
+     * identified by the class name of the layout data service.
+     * @return Class name of the current layout data service.
      */
-    protected static void createLayoutServices(final LayoutDataService subclassInstance) {
-        instance = subclassInstance;
-        instance.registry = instance.new Registry();
+    public static Class<? extends LayoutDataService> getMode() {
+        return (current != null ? current.getClass() : null);
     }
 
     /**
-     * Returns the singleton instance of the layout services class.
+     * Sets the mode in which the layout data service is operating
+     * identified by the class name of the layout data service to be used.
+     * If no service with this class name has been registered, the mode
+     * is not changed.
      * 
-     * @return the singleton instance, or {@code null} if no instance has been created yet
+     * @param clas The class name of the service to be used.
+     * @return The class name of the prior used service.
+     */
+    public static Class<? extends LayoutDataService> setMode(final Class<? extends LayoutDataService> clas) {
+        Class<? extends LayoutDataService> old = null;
+        if (clas != null && instances.containsKey(clas)) {
+            current = instances.get(clas);
+        }
+        return old;
+    }
+
+    /**
+     * Sets the mode in which the layout data service is operating
+     * identified by the class name of the {@code object} which has to be
+     * an instance of a sublass of {@code LayoutDataService}. 
+     * If no service with this class name has been registered, the mode
+     * is not changed.
+     *
+     * @param object An instance identifying the new mode by its class name.
+     * @return The class name of the prior used service.
+     */
+    public static Class<? extends LayoutDataService> setMode(final Object object) {
+        if (object != null && object instanceof LayoutDataService) {
+            return setMode(object.getClass());
+        }
+        return null;
+    }
+
+    /**
+     * Returns the instance of the currently used layout data service.
+     *
+     * @return the instance, or {@code null} if either no instance has 
+     *   been registered yet or the currently used service has been removed.
      */
     public static LayoutDataService getInstance() {
-        return instance;
+        return current;
     }
 
     /**
-     * Returns the singleton instance of the registry class.
+     * Returns the instance of a specific layout data service identified by its 
+     * class name.
      * 
-     * @return the singleton registry
+     * @param clas Class name of the required layout data service.
+     * @return the instance, or {@code null} if either no instance has been 
+     *   registered yet or it has been removed
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends LayoutDataService> T getInstanceOf(Class<? extends LayoutDataService> clas) {
+        if (clas != null) {
+            return (T)instances.get(clas);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the instance of the registry class associated with
+     * the current layout data service.
+     *
+     * @return the registry instance, or {@code null} if either no 
+     *   layout data service has been registered yet or it has been removed
      */
     public static final Registry getRegistry() {
-        return instance.registry;
+    	if (current != null) {
+    		return current.registry;
+    	}
+    	return null;
     }
 
     /** Class used to register the layout services. */
@@ -125,7 +235,7 @@ public class LayoutDataService {
         /**
          * Registers the given layout provider. If there is already a registered
          * provider data instance with the same identifier, it is overwritten.
-         * 
+         *
          * @param providerData data instance of the layout provider to register
          */
         public void addLayoutProvider(final LayoutAlgorithmData providerData) {
@@ -138,7 +248,7 @@ public class LayoutDataService {
         /**
          * Registers the given layout option. If there is already a registered
          * option data instance with the same identifier, it is overwritten.
-         * 
+         *
          * @param optionData data instance of the layout option to register
          */
         public void addLayoutOption(final LayoutOptionData<?> optionData) {
@@ -152,7 +262,7 @@ public class LayoutDataService {
          * Registers the given layout type. If there is already a registered layout
          * type instance with the same identifier, it is overwritten, but its
          * contained layouters are copied.
-         * 
+         *
          * @param typeData data instance of the layout type to register
          */
         public void addLayoutType(final LayoutTypeData typeData) {
@@ -166,7 +276,7 @@ public class LayoutDataService {
 
         /**
          * Registers the given category.
-         * 
+         *
          * @param id identifier of the category
          * @param name user friendly name of the category
          */
@@ -176,17 +286,17 @@ public class LayoutDataService {
 
         /**
          * Registers the given diagram type.
-         * 
+         *
          * @param id identifier of the diagram type
          * @param name user friendly name of the diagram type
          */
         public void addDiagramType(final String id, final String name) {
             diagramTypeMap.put(id, name);
         }
-        
+
         /**
          * Adds the given option as default for an object identifier.
-         * 
+         *
          * @param id identifier of the object to register
          * @param optionId identifier of a layout option
          * @param value value for the layout option
@@ -200,10 +310,10 @@ public class LayoutDataService {
             }
             optionsMap.put(optionId, value);
         }
-        
+
         /**
          * Remove the value of the given option.
-         * 
+         *
          * @param id identifier of the object for which an option shall be removed
          * @param optionId identifier of a layout option
          */
@@ -213,10 +323,10 @@ public class LayoutDataService {
                 optionsMap.remove(optionId);
             }
         }
-        
+
         /**
          * Registers the given semantic layout configuration.
-         * 
+         *
          * @param clazzName domain model class name for which to register the configuration
          * @param config a semantic layout configuration
          */
@@ -228,7 +338,7 @@ public class LayoutDataService {
 
     /**
      * Returns the layout algorithm data associated with the given identifier.
-     * 
+     *
      * @param id layout algorithm identifier
      * @return the corresponding layout algorithm data, or {@code null} if there
      *         is no algorithm with the given identifier
@@ -240,7 +350,7 @@ public class LayoutDataService {
     /**
      * Returns a data collection for all registered layout algorithms. The collection
      * is unmodifiable.
-     * 
+     *
      * @return collection of registered layout algorithms
      */
     public final Collection<LayoutAlgorithmData> getAlgorithmData() {
@@ -249,7 +359,7 @@ public class LayoutDataService {
 
     /**
      * Returns the layout option data associated with the given identifier.
-     * 
+     *
      * @param id layout option identifier
      * @return the corresponding layout option data, or {@code null} if there is
      *         no option with the given identifier
@@ -261,7 +371,7 @@ public class LayoutDataService {
     /**
      * Returns a data collection for all registered layout options. The collection is
      * unmodifiable.
-     * 
+     *
      * @return collection of registered layout options
      */
     public final Collection<LayoutOptionData<?>> getOptionData() {
@@ -272,7 +382,7 @@ public class LayoutDataService {
      * Returns a list of layout options that are suitable for the given layout
      * algorithm and layout option target. The layout algorithm must know the
      * layout options and at the target must be active for each option.
-     * 
+     *
      * @param algorithmData layout algorithm data
      * @param targetType type of layout option target
      * @return list of suitable layout options
@@ -293,7 +403,7 @@ public class LayoutDataService {
 
     /**
      * Returns the data instance of the layout type with given identifier.
-     * 
+     *
      * @param id identifier of the type
      * @return layout type data instance with given identifier, or {@code null} if the layout
      *         type is not registered
@@ -301,11 +411,11 @@ public class LayoutDataService {
     public final LayoutTypeData getTypeData(final String id) {
         return layoutTypeMap.get(id);
     }
-    
+
     /**
      * Returns a list of layout type identifiers and names. The first string in each
      * entry is the identifier, and the second string is the name.
-     * 
+     *
      * @return a list of all layout types
      */
     public final Collection<LayoutTypeData> getTypeData() {
@@ -314,7 +424,7 @@ public class LayoutDataService {
 
     /**
      * Returns the name of the given category.
-     * 
+     *
      * @param id identifier of the category
      * @return user friendly name of the category, or {@code null} if there
      *         is no category with the given identifier
@@ -325,7 +435,7 @@ public class LayoutDataService {
 
     /**
      * Returns the name of the given diagram type.
-     * 
+     *
      * @param id identifier of the diagram type
      * @return user friendly name of the diagram type, or {@code null} if there
      *         is no diagram type with the given identifier
@@ -338,16 +448,16 @@ public class LayoutDataService {
      * Returns a collection of registered diagram types. The first element of each
      * returned entry is a diagram type identifier, the second element is the
      * corresponding name.
-     * 
+     *
      * @return the registered diagram types
      */
     public final List<Pair<String, String>> getDiagramTypes() {
         return Pair.fromMap(diagramTypeMap);
     }
-    
+
     /**
      * Returns a map that contains all layout option values for an object identifier.
-     * 
+     *
      * @param objectId an object identifier, such as an edit part class name, a domain model
      *     class name, or a diagram type id
      * @return a map of layout option identifiers to their values
@@ -362,7 +472,7 @@ public class LayoutDataService {
 
     /**
      * Retrieves a layout option value for an object identifier.
-     * 
+     *
      * @param objectId an object identifier, such as an edit part class name, a domain model
      *     class name, or a diagram type id
      * @param optionId a layout option identifier
@@ -376,11 +486,11 @@ public class LayoutDataService {
         }
         return null;
     }
-    
+
     /**
      * Returns a map that contains all layout option values for a domain model class. This
      * involves options that are set for any superclass of the given one.
-     * 
+     *
      * @param clazz a domain model class
      * @return a map of layout option identifiers to their values
      */
@@ -401,11 +511,11 @@ public class LayoutDataService {
         }
         return Collections.emptyMap();
     }
-    
+
     /**
      * Retrieves a layout option value for a domain model class. This involves options
      * that are set for any superclass of the given one.
-     * 
+     *
      * @param clazz a domain model class
      * @param optionId a layout option identifier
      * @return the option value for the class or a superclass, or {@code null} if the option
@@ -429,11 +539,11 @@ public class LayoutDataService {
         }
         return null;
     }
-    
+
     /**
      * Return the semantic layout configurations that are associated with the given domain model
      * class. This involves configurations that are set for any superclass of the given one.
-     * 
+     *
      * @param clazz a domain model class
      * @return the semantic layout configurations for the class or a superclass
      */
