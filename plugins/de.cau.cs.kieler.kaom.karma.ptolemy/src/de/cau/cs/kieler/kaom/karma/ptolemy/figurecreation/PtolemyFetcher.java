@@ -149,19 +149,19 @@ public final class PtolemyFetcher {
                     String[] splittedPoints = points.split(" +");
                     // String firstPoint = splittedPoints[0];
                     // String[] firstPointCoords = firstPoint.split(",");
-                    List<Integer> pointsX = new LinkedList<Integer>();
-                    List<Integer> pointsY = new LinkedList<Integer>();
+                    List<Float> pointsX = new LinkedList<Float>();
+                    List<Float> pointsY = new LinkedList<Float>();
                     for (String singlePoint : splittedPoints) {
                         String[] pointCoord = singlePoint.split(",");
-                        pointsX.add(Integer.parseInt(pointCoord[0]));
-                        pointsY.add(Integer.parseInt(pointCoord[1]));
+                        pointsX.add(Float.parseFloat(pointCoord[0]));
+                        pointsY.add(Float.parseFloat(pointCoord[1]));
                     }
-                    int minX = Collections.min(pointsX);
-                    int minY = Collections.min(pointsY);
-                    xoffset = Math.abs(minX);
-                    yoffset = Math.abs(minY);
-                    int maxX = Collections.max(pointsX);
-                    int maxY = Collections.max(pointsY);
+                    float minX = Collections.min(pointsX);
+                    float minY = Collections.min(pointsY);
+                    xoffset = (int)Math.abs(minX);
+                    yoffset = (int)Math.abs(minY);
+                    float maxX = Collections.max(pointsX);
+                    float maxY = Collections.max(pointsY);
                     svgElement.setAttribute("width", String.valueOf(maxX + xoffset + 1));
                     svgElement.setAttribute("height", String.valueOf(maxY + yoffset + 1));
                 }

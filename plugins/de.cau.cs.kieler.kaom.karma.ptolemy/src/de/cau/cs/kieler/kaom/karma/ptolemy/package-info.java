@@ -14,6 +14,6 @@
  */
 
 /**
- * Custom KARMA code for kaom ptolemy
+ * Custom KARMA code for kaom ptolemy.
  */
 package de.cau.cs.kieler.kaom.karma.ptolemy;

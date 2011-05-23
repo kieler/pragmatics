@@ -41,12 +41,14 @@ import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.gmf.runtime.notation.RoutingStyle;
 import org.eclipse.gmf.runtime.notation.Smoothness;
 import org.eclipse.gmf.runtime.notation.View;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.w3c.dom.Document;
 
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.vergil.icon.EditorIcon;
 import de.cau.cs.kieler.core.model.gmf.figures.SplineConnection;
 import de.cau.cs.kieler.kaom.custom.EntityLayout;
+import de.cau.cs.kieler.kaom.karma.ptolemy.Activator;
 import de.cau.cs.kieler.kaom.karma.ptolemy.figurecreation.FigureProvider;
 import de.cau.cs.kieler.kaom.karma.ptolemy.figurecreation.PtolemyFetcher;
 import de.cau.cs.kieler.karma.IRenderingProvider;
@@ -239,8 +241,16 @@ public class KaomRenderingProvider implements IRenderingProvider {
             // if there is none use svg description
             if (icons.isEmpty()) {
                 Document doc = PtolemyFetcher.fetchSvgDoc(nObj);
-                IFigure figure = figureProvider.createFigureFromSvg(doc);
-                return figure;
+                if (doc != null) {
+                    IFigure figure = figureProvider.createFigureFromSvg(doc);
+                    return figure;
+                } else {
+                    Status myStatus = new Status(IStatus.WARNING, Activator.PLUGIN_ID,
+                            "couldn't get svg document from ptolemy");
+                    StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
+                    return getDefaultFigure();
+                }
+                
                 // else use the first icon (usually there should be only one anyway)
             } else {
                 EditorIcon icon = icons.get(0);

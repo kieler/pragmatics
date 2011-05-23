@@ -74,8 +74,7 @@ public final class FigureParser {
         // structure of the svg.
         IFigure rootFigure = new Panel();
         rootFigure.getBounds().setSize(
-                new Dimension(Integer.parseInt(svgElement.getAttribute("width")), Integer
-                        .parseInt(svgElement.getAttribute("height"))));
+                new Dimension((int)Math.abs(Float.parseFloat(svgElement.getAttribute("width"))), (int)Math.abs(Float.parseFloat(svgElement.getAttribute("height")))));
         rootFigure = buildFigure(svgElement, rootFigure);
         return rootFigure;
     }
@@ -210,7 +209,6 @@ public final class FigureParser {
                         try {
                             url = new URL(link);
                         } catch (MalformedURLException e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
                     }
