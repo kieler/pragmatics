@@ -41,7 +41,7 @@ public final class LightDiagramServices {
 
     /** the singleton instance. */
     private static LightDiagramServices instance;
-
+    /** a mapping between viewer provider id's and the instances. */
     private Map<String, IViewerProvider> idViewerProviderMapping =
             new LinkedHashMap<String, IViewerProvider>();
 
