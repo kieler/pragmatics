@@ -131,8 +131,8 @@ public final class PtolemyFetcher {
                         String.valueOf(Integer.parseInt(rectElement.getAttribute("height")) + 1));
                 svgElement.setAttribute("width",
                         String.valueOf(Integer.parseInt(rectElement.getAttribute("width")) + 1));
-                xoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("x")));
-                yoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("y")));
+                xoffset = (int)Math.abs(Float.parseFloat(rectElement.getAttribute("x")));
+                yoffset = (int)Math.abs(Float.parseFloat(rectElement.getAttribute("y")));
                 // The topmost element is not a rectangle. Try to find the topmost svg element.
                 // If it has points (its a polygon or something) use those
                 // to calculate the needed size and offset.
@@ -171,8 +171,8 @@ public final class PtolemyFetcher {
             for (int i = 0; i < doc.getElementsByTagName("rect").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("rect").item(i);
                 if (e.hasAttribute("x") && e.hasAttribute("y") && e.hasAttribute("style")) {
-                    float x = Float.parseFloat(e.getAttribute("x"));
-                    float y = Float.parseFloat(e.getAttribute("y"));
+                    Double x = Double.parseDouble(e.getAttribute("x"));
+                    Double y = Double.parseDouble(e.getAttribute("y"));
                     x += xoffset;
                     y += yoffset;
                     e.setAttribute("x", String.valueOf(x));

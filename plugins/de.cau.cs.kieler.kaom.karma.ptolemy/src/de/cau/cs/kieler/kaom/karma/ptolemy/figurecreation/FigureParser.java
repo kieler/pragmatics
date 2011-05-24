@@ -31,6 +31,7 @@ import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
+import org.eclipse.draw2d.geometry.PrecisionPoint;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gmf.runtime.draw2d.ui.internal.figures.ImageFigureEx;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
@@ -98,24 +99,24 @@ public final class FigureParser {
                 // make a RectangleFigure from a rectangle element
                 if (tag.equals("rect")) {
                     RectangleFigure figure = new RectangleFigure();
-                    Float x = Float.parseFloat(childElement.getAttribute("x"));
-                    Float y = Float.parseFloat(childElement.getAttribute("y"));
-                    int width = Integer.parseInt(childElement.getAttribute("width"));
-                    int height = Integer.parseInt(childElement.getAttribute("height"));
+                    Double x = Double.parseDouble(childElement.getAttribute("x"));
+                    Double y = Double.parseDouble(childElement.getAttribute("y"));
+                    Double width = Double.parseDouble(childElement.getAttribute("width"));
+                    Double height = Double.parseDouble(childElement.getAttribute("height"));
                     String style = (String) childElement.getAttribute("style");
-                    figure.setBounds(new Rectangle(x.intValue(), y.intValue(), width, height));
+                    figure.setBounds(new Rectangle(new PrecisionPoint(x, y),
+                            new Dimension((int)Math.abs(width), (int)Math.abs(height))));
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
                     // make a CircleFigure from a circle element.
                     // structure is different between draw2d and svg so positions are a bit hacked
                 } else if (tag.equals("circle")) {
-                    Float x = Float.parseFloat(childElement.getAttribute("cx"));
+                    Double x = Double.parseDouble(childElement.getAttribute("cx"));
                     //Float y = Float.parseFloat(childElement.getAttribute("cy"));
-                    Float r = Float.parseFloat(childElement.getAttribute("r"));
+                    Double r = Double.parseDouble(childElement.getAttribute("r"));
                     String style = (String) childElement.getAttribute("style");
                     CircleFigure figure = new CircleFigure(r.intValue());
-                    figure.getBounds().setLocation((x.intValue() + 1 - r.intValue()),
-                            (x.intValue() + 1 - r.intValue()));
+                    figure.getBounds().setLocation(new PrecisionPoint((x + 1 - r),(x + 1 - r)));
                     figure.getBounds().setSize((r.intValue() * 2), (r.intValue() * 2));
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
@@ -123,25 +124,24 @@ public final class FigureParser {
                     // structure is different between draw2d and svg so positions are a bit hacked
                 } else if (tag.equals("ellipse")) {
                     OvalFigure figure = new OvalFigure();
-                    Float x = Float.parseFloat(childElement.getAttribute("cx"));
-                    Float y = Float.parseFloat(childElement.getAttribute("cy"));
-                    Float rx = Float.parseFloat(childElement.getAttribute("rx"));
-                    Float ry = Float.parseFloat(childElement.getAttribute("ry"));
+                    Double x = Double.parseDouble(childElement.getAttribute("cx"));
+                    Double y = Double.parseDouble(childElement.getAttribute("cy"));
+                    Double rx = Double.parseDouble(childElement.getAttribute("rx"));
+                    Double ry = Double.parseDouble(childElement.getAttribute("ry"));
                     String style = (String) childElement.getAttribute("style");
-                    figure.setBounds(new Rectangle(x.intValue() + 1 - rx.intValue(), y.intValue()
-                            + 1 - ry.intValue(), rx.intValue(), ry.intValue()));
+                    figure.setBounds(new Rectangle(new PrecisionPoint(x + 1 - rx, y + 1 - ry), new PrecisionPoint(rx, ry)));
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
                     // make a PolyLineShape from a line element
                 } else if (tag.equals("line")) {
-                    float x1 = Float.parseFloat(childElement.getAttribute("x1"));
-                    float y1 = Float.parseFloat(childElement.getAttribute("y1"));
-                    float x2 = Float.parseFloat(childElement.getAttribute("x2"));
-                    float y2 = Float.parseFloat(childElement.getAttribute("y2"));
+                    Double x1 = Double.parseDouble(childElement.getAttribute("x1"));
+                    Double y1 = Double.parseDouble(childElement.getAttribute("y1"));
+                    Double x2 = Double.parseDouble(childElement.getAttribute("x2"));
+                    Double y2 = Double.parseDouble(childElement.getAttribute("y2"));
                     String style = (String) childElement.getAttribute("style");
                     PolylineShape figure = new PolylineShape();
-                    figure.setStart(new Point(x1, y1));
-                    figure.setEnd(new Point(x2, y2));
+                    figure.setStart(new PrecisionPoint(x1, y1));
+                    figure.setEnd(new PrecisionPoint(x2, y2));
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
                     figure.getBounds().setSize(figure.getParent().getBounds().getSize().getCopy());
@@ -153,9 +153,9 @@ public final class FigureParser {
                     PointList pointList = new PointList();
                     for (String coords : pointsarray) {
                         String[] coordsarray = coords.split(",");
-                        float x = Float.parseFloat(coordsarray[0]);
-                        float y = Float.parseFloat(coordsarray[1]);
-                        pointList.addPoint(new Point(x, y));
+                        Double x = Double.parseDouble(coordsarray[0]);
+                        Double y = Double.parseDouble(coordsarray[1]);
+                        pointList.addPoint(new PrecisionPoint(x, y));
                     }
                     PolylineShape figure = new PolylineShape();
                     figure.setPoints(pointList);
@@ -170,9 +170,9 @@ public final class FigureParser {
                     PointList pointList = new PointList();
                     for (String coords : pointsarray) {
                         String[] coordsarray = coords.split(",");
-                        float x = Float.parseFloat(coordsarray[0]);
-                        float y = Float.parseFloat(coordsarray[1]);
-                        pointList.addPoint(new Point(x, y));
+                        Double x = Double.parseDouble(coordsarray[0]);
+                        Double y = Double.parseDouble(coordsarray[1]);
+                        pointList.addPoint(new PrecisionPoint(x, y));
                     }
                     PolygonShape figure = new PolygonShape();
                     figure.setPoints(pointList);
@@ -182,8 +182,8 @@ public final class FigureParser {
                     // make a Label from a text element
                     // TODO weird behavior of y value
                 } else if (tag.equals("text")) {
-                    Float x = Float.parseFloat(childElement.getAttribute("x"));
-                    Float y = Float.parseFloat(childElement.getAttribute("y"));
+                    Double x = Double.parseDouble(childElement.getAttribute("x"));
+                    Double y = Double.parseDouble(childElement.getAttribute("y"));
                     String style = (String) childElement.getAttribute("style");
                     String text = childElement.getTextContent();
                     text = text.replaceAll("\n", "");
@@ -191,17 +191,16 @@ public final class FigureParser {
                     Label figure = new Label();
                     figure.setText(text);
                     applyTextStyle(figure, style);
-                    figure.getBounds().setLocation(x.intValue(),
-                            y.intValue() - (figure.getTextBounds().getSize().height - 2));
+                    figure.getBounds().setLocation(new PrecisionPoint(x, y - (figure.getTextBounds().getSize().height - 2)));
                     figure.getBounds().setSize(figure.getTextBounds().getSize());
                     figure.setLayoutManager(new BorderLayout());
                     parentFigure.add(buildFigure(childElement, figure));
                     // make an ImageFigureEx out of an image element
                 } else if (tag.equals("image")) {
-                    Float x = Float.parseFloat(childElement.getAttribute("x"));
-                    Float y = Float.parseFloat(childElement.getAttribute("y"));
-                    Float width = Float.parseFloat(childElement.getAttribute("width"));
-                    Float height = Float.parseFloat(childElement.getAttribute("height"));
+                    Double x = Double.parseDouble(childElement.getAttribute("x"));
+                    Double y = Double.parseDouble(childElement.getAttribute("y"));
+                    Double width = Double.parseDouble(childElement.getAttribute("width"));
+                    Double height = Double.parseDouble(childElement.getAttribute("height"));
                     String link = (String) childElement.getAttribute("xlink:href");
                     String style = (String) childElement.getAttribute("style");
                     URL url = ClassLoader.getSystemResource(link);
@@ -221,8 +220,7 @@ public final class FigureParser {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    figure.setBounds(new Rectangle(x.intValue(), y.intValue(), width.intValue(),
-                            height.intValue()));
+                    figure.setBounds(new Rectangle(new PrecisionPoint(x, y),new PrecisionPoint(width ,height)));
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
 
