@@ -100,9 +100,8 @@ public final class PtolemyFetcher {
             doc = repairSvg(doc);
             return doc;
         } catch (Exception e) {
-
+            return null;
         }
-        return null;
 
     }
 
@@ -131,8 +130,8 @@ public final class PtolemyFetcher {
                         String.valueOf(Integer.parseInt(rectElement.getAttribute("height")) + 1));
                 svgElement.setAttribute("width",
                         String.valueOf(Integer.parseInt(rectElement.getAttribute("width")) + 1));
-                xoffset = (int)Math.abs(Float.parseFloat(rectElement.getAttribute("x")));
-                yoffset = (int)Math.abs(Float.parseFloat(rectElement.getAttribute("y")));
+                xoffset = (int) Math.abs(Float.parseFloat(rectElement.getAttribute("x")));
+                yoffset = (int) Math.abs(Float.parseFloat(rectElement.getAttribute("y")));
                 // The topmost element is not a rectangle. Try to find the topmost svg element.
                 // If it has points (its a polygon or something) use those
                 // to calculate the needed size and offset.
@@ -158,8 +157,8 @@ public final class PtolemyFetcher {
                     }
                     float minX = Collections.min(pointsX);
                     float minY = Collections.min(pointsY);
-                    xoffset = (int)Math.abs(minX);
-                    yoffset = (int)Math.abs(minY);
+                    xoffset = (int) Math.abs(minX);
+                    yoffset = (int) Math.abs(minY);
                     float maxX = Collections.max(pointsX);
                     float maxY = Collections.max(pointsY);
                     svgElement.setAttribute("width", String.valueOf(maxX + xoffset + 1));
