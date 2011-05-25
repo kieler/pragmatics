@@ -19,7 +19,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +29,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
-import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 
 /**
  * Abstract base implementation for combinations. It implements many methods of ICombination and
@@ -69,22 +67,12 @@ public abstract class AbstractCombination implements ICombination {
      */
     private List<IEffect> mergedEffects = new ArrayList<IEffect>();
 
-    /**
-     * @deprecated use undo instead
-     */
-    private boolean doNothing = false;
-
-    /**
-     * @deprecated use undo instead
-     */
-    private boolean noUndo = false;
-
     private ITriggerState triggeringState;
 
     private boolean enableRecording;
     private boolean undo;
 
-    private final int MAX_RECORD_LENGTH = 100000;
+    private static final int MAX_RECORD_LENGTH = 100000;
     
     /**
      * {@inheritDoc}
@@ -141,7 +129,7 @@ public abstract class AbstractCombination implements ICombination {
         // remember old effects for undoing
         if (enableRecording) {
             for (IEffect effect : effects) {
-                undoEffects.add(0,new UndoEffect(effect));
+                undoEffects.add(0, new UndoEffect(effect));
             }
             if (undoEffects.size() > MAX_RECORD_LENGTH) {
                 String message = "The View Management Combination "
@@ -185,32 +173,6 @@ public abstract class AbstractCombination implements ICombination {
     }
 
     /**
-     * manage dontUndo and doNothing flags
-     * 
-     * @deprecated use undo flag instead
-     */
-    private void handleUndoing() {
-        // remember effects of last round to undo the next time this method is called
-        if (doNothing) {
-            // if we do nothing, then we also don't undo anything this round
-            // but keep the old list of effects to be undone later
-            noUndo = true;
-            doNothing = false;
-        } else {
-            // reset list
-            undoEffects.clear();
-        }
-        if (noUndo) {
-            // nothing, toggling is done in mergeScheduledEffects
-        } else {
-            // undo all effects of last round
-            for (IEffect effect : effects) {
-                undoEffects.add(new UndoEffect(effect));
-            }
-        }
-    }
-
-    /**
      * {@inheritDoc}
      */
     public List<IEffect> getEffects() {
@@ -231,13 +193,13 @@ public abstract class AbstractCombination implements ICombination {
         allEffects.addAll(effects);
 
         // iterate from end to start
-        for (int i = allEffects.size()-1; i >= 0; i--) {
+        for (int i = allEffects.size() - 1; i >= 0; i--) {
             IEffect effect = allEffects.get(i);
             boolean removed = toRemove.contains(effect);
             // only merge if the effect is not already marked to be removed
             if (!removed && effect.isMergeable()) {
                 // iterate other effects (only the ones before the current)
-                for (int ii = i-1; ii >= 0; ii--) {
+                for (int ii = i - 1; ii >= 0; ii--) {
                     IEffect other = allEffects.get(ii);
                     IEffect current = effect.merge(other);
                     if (current != null) {
@@ -276,22 +238,6 @@ public abstract class AbstractCombination implements ICombination {
     protected void schedule(final IEffectCompound compoundEffect) {
         effects.addAll(compoundEffect.getPrimitiveEffects());
     }
-
-    // /**
-    // * Called by execute() to make sure previous effects are not undone when an execution wants to
-    // * perform no changes.
-    // */
-    // protected void doNothing() {
-    // doNothing = true;
-    // }
-    //
-    // /**
-    // * Called by execute() to make sure previous effects are not undone when an execution wants to
-    // * keep those effects visible indefinitely.
-    // */
-    // protected void dontUndo() {
-    // noUndo = true;
-    // }
 
     /**
      * Activate recording of old effects. This way old effects can be easily undone lateron.

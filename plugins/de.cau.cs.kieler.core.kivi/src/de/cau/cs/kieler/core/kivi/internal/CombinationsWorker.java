@@ -53,7 +53,7 @@ public class CombinationsWorker extends Thread {
                     // triggerState. Any Triggers that wait on that state will be
                     // awakened. This way triggers can wait for the execution of effects
                     // before they continue triggering.
-                    if(!(triggerState instanceof EffectTriggerState)){
+                    if (!(triggerState instanceof EffectTriggerState)) {
                         // dont unlock if the trigger is reaction to an effect -> endless loop
                         KiVi.getInstance().executeEffect(new UnlockEffect(triggerState));
                     }

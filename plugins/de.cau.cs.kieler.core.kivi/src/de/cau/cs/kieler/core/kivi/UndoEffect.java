@@ -18,7 +18,6 @@ package de.cau.cs.kieler.core.kivi;
  * Takes another effect and performs undo when executed.
  * 
  * @author mmu
- * 
  */
 public class UndoEffect extends AbstractEffect {
 
@@ -70,9 +69,12 @@ public class UndoEffect extends AbstractEffect {
         return effect;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String toString(){
-        return "Undo"+effect; 
+    public String toString() {
+        return "Undo" + effect; 
     }
 
 }

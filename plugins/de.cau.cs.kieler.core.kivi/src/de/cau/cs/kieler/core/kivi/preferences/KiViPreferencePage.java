@@ -53,7 +53,6 @@ import de.cau.cs.kieler.core.kivi.KiVi;
  * Preference page for the view management.
  * 
  * @author mmu
- * 
  */
 public class KiViPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 

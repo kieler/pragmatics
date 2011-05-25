@@ -30,7 +30,6 @@ import de.cau.cs.kieler.core.util.Maybe;
  * Listens to various buttons for the view management.
  * 
  * @author mmu
- * 
  */
 public class ButtonTrigger extends AbstractTrigger {
 
@@ -152,11 +151,12 @@ public class ButtonTrigger extends AbstractTrigger {
          * Get the map of button IDs to the state of the button. Returns false if the button Id is
          * not registered.
          * 
+         * @param thebuttonId the button identifier
          * @return the map of button IDs to the state of the button.
          */
-        public boolean isPushedIn(String buttonId) {
-            if (buttonStatusMap.containsKey(buttonId)) {
-                return buttonStatusMap.get(buttonId);
+        public boolean isPushedIn(final String thebuttonId) {
+            if (buttonStatusMap.containsKey(thebuttonId)) {
+                return buttonStatusMap.get(thebuttonId);
             }
             return false;
         }
@@ -165,15 +165,15 @@ public class ButtonTrigger extends AbstractTrigger {
          * {@inheritDoc}
          */
         @Override
-        public void merge(ITriggerState previous) {
+        public void merge(final ITriggerState previous) {
             /* a button even creates only information about this specific button, therefore
              * this information has to be merged with the previous state to get the settings
              * for the other buttons. Therefore only entries that are not set in this state are
              * older and may be safely overriden.
              */
             if (previous instanceof ButtonState) {
-                for(String id : ((ButtonState) previous).buttonStatusMap.keySet()){
-                    if(! this.buttonStatusMap.containsKey(id)){
+                for (String id : ((ButtonState) previous).buttonStatusMap.keySet()) {
+                    if (!this.buttonStatusMap.containsKey(id)) {
                         this.buttonStatusMap.put(id, ((ButtonState) previous).buttonStatusMap.get(id));
                     }
                 }

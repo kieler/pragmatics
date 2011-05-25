@@ -25,7 +25,6 @@ import de.cau.cs.kieler.core.kivi.internal.IEffectsListener;
  * A trigger that listens to effects being executed.
  * 
  * @author mmu
- * 
  */
 public class EffectTrigger extends AbstractTrigger implements IEffectsListener {
 

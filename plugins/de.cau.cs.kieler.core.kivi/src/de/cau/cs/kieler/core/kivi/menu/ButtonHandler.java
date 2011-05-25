@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2011 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.core.kivi.menu;
 
 import java.util.Collections;
@@ -10,8 +23,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.google.common.collect.Maps;
-
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
 
 /**
@@ -22,9 +33,9 @@ import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
      */
     public class ButtonHandler extends AbstractHandler {
 
-        boolean pushed = false;
-        String id = "";
-        IEditorPart editorPart;
+        private boolean pushed = false;
+        private String id = "";
+        private IEditorPart editorPart;
         
         /**
          * {@inheritDoc}
@@ -51,8 +62,8 @@ import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
          * Unload this ButtonHandler. I.e. trigger a last not-pushed state if the button was
          * pushed before.
          */
-        public void unload(){
-            if(pushed){
+        public void unload() {
+            if (pushed) {
                 pushed = false;
                 ButtonTrigger.getInstance().trigger(
                         new ButtonState(null, id, Collections.EMPTY_MAP, pushed));
@@ -66,11 +77,16 @@ import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
          * @author haf
          * @param enabled true iff the handler is enabled.
          */
-        public void setEnabled(boolean enabled){
+        public void setEnabled(final boolean enabled) {
             this.setBaseEnabled(enabled);
         }
         
-        public boolean getPushed(){
+        /**
+         * Returns the pushed status.
+         * 
+         * @return the pushed status
+         */
+        public boolean getPushed() {
             return pushed;
         }
         

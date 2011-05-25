@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.core.kivi;
 
-import java.util.List;
-
 /**
  * An interface for listeners of {@link ITriggerState} changes. Subclasses should specify
  * for which kinds of trigger states they want to receive notifications in {@link #getTriggerStates()}

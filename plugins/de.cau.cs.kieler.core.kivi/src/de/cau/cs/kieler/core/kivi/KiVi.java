@@ -108,17 +108,21 @@ public class KiVi {
     private boolean debug = false;
 
     /**
-     * @return the debug
+     * Whether the View Management is currently in debug mode.
+     * 
+     * @return the debug mode status
      */
     public boolean isDebug() {
         return debug;
     }
 
     /**
+     * Set the View Management debug mode status.
+     * 
      * @param debug
-     *            the debug to set
+     *            the debug mode status
      */
-    public void setDebug(boolean debug) {
+    public void setDebug(final boolean debug) {
         this.debug = debug;
     }
 
@@ -164,9 +168,9 @@ public class KiVi {
      *            true if activating
      */
     public void setActive(final boolean a) {
-        if (active && !a) {
-            // deactivate all triggers
-            synchronized (triggerStates2Combinations) {
+        synchronized (triggerStates2Combinations) {
+            if (active && !a) {
+                // deactivate all triggers
                 for (ITrigger t : triggers.values()) {
                     t.setActive(false);
                 }
@@ -174,10 +178,8 @@ public class KiVi {
                 for (ICombination c : triggerStates2Combinations.values()) {
                     c.undo();
                 }
-            }
-        } else if (!active && a) {
-            // activate only triggers that are used by an active combination
-            synchronized (triggerStates2Combinations) {
+            } else if (!active && a) {
+                // activate only triggers that are used by an active combination
                 // active combos are in the triggerStates2Combinations map
                 for (Class<? extends ITriggerState> stateClass : triggerStates2Combinations
                         .keySet()) {
@@ -187,8 +189,8 @@ public class KiVi {
                     trigger.setActive(true);
                 }
             }
-        }
-        active = a;
+            active = a;
+        } 
     }
 
     /**
@@ -222,11 +224,7 @@ public class KiVi {
                 // iterate ALL combinations KiVi is aware of
                 for (ICombination combination : combinations) {
                     if (d.getClazz().isInstance(combination)) {
-                        if (d.isActive()) {
-                            combination.setActive(true);
-                        } else {
-                            combination.setActive(false);
-                        }
+                        combination.setActive(d.isActive());
                     }
                 }
             }
@@ -250,7 +248,7 @@ public class KiVi {
      * Get the current size of the effects queue.
      * @return size of the effects queue
      */
-    public int getEffectsQueueSize(){
+    public int getEffectsQueueSize() {
         return effectsWorker.getQueueSize();
     }
     
@@ -433,7 +431,6 @@ public class KiVi {
         try {
             ITriggerState triggerState = null;
             ITrigger trigger = null;
-            boolean createdTrigger = false;
             synchronized (triggerStates2Combinations) {
                 synchronized (triggerStates) {
                     // haf: add an instance of the trigger state to our current trigger state cache
@@ -454,7 +451,6 @@ public class KiVi {
                 if (trigger == null) {
                     trigger = triggerState.getTriggerClass().newInstance();
                     triggers.put(triggerState.getTriggerClass(), trigger);
-                    createdTrigger = true;
                 }
             }
             // moved outside the synchronized to avoid deadlock by foreign trigger code

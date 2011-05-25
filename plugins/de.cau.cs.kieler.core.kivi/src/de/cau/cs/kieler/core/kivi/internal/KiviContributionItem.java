@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2011 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.core.kivi.internal;
 
 import java.util.ArrayList;
@@ -89,7 +102,8 @@ public class KiviContributionItem extends CompoundContributionItem implements
     // dunno how to get the formatter to make a linebreak here
     // CHECKSTYLEOFF MaximumLineLength
     private static Map<String, IContributionItem> idButtonMap = new HashMap<String, IContributionItem>();
-    private static Map<IContributionItem, ButtonHandler> buttonsHandlerMap = new HashMap<IContributionItem, ButtonHandler>();
+    private static Map<IContributionItem, ButtonHandler> buttonsHandlerMap
+            = new HashMap<IContributionItem, ButtonHandler>();
     private static Map<IContributionItem, ButtonHandler> oldButtonsHandlerMap;
     private static List<IContributionItem> buttons = new ArrayList<IContributionItem>();
 
@@ -232,9 +246,10 @@ public class KiviContributionItem extends CompoundContributionItem implements
     
     /**
      * Unload old buttons, i.e. send a not-pushed trigger if it was pushed before.
-     * @param buttonID
+     * 
+     * @param buttonID the button identifier
      */
-    private static void unload(String buttonID){
+    private static void unload(final String buttonID) {
         IContributionItem item = idButtonMap.get(buttonID);
         if (item != null) {
             ButtonHandler handler = oldButtonsHandlerMap.get(item);

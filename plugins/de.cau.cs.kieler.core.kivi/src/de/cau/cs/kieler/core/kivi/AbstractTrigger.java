@@ -17,7 +17,6 @@ package de.cau.cs.kieler.core.kivi;
  * Abstract base implementation for triggers.
  * 
  * @author mmu
- *
  */
 public abstract class AbstractTrigger implements ITrigger {
     
@@ -40,7 +39,7 @@ public abstract class AbstractTrigger implements ITrigger {
      * @param triggerState the new state that KIVi should distribute
      * @throws InterruptedException if the blocking is interrupted
      */
-    public void synchronizedTrigger(final ITriggerState triggerState) throws InterruptedException{
+    public void synchronizedTrigger(final ITriggerState triggerState) throws InterruptedException {
         synchronized (triggerState) {
             trigger(triggerState);
             triggerState.wait();

@@ -157,21 +157,21 @@ public class KiviMenuContributionService {
      * 
      */
     public static class ButtonConfiguration {
-        String id;
-        String label;
-        String tooltip;
+        private String id;
+        private String label;
+        private String tooltip;
 
-        ImageDescriptor icon;
-        int style;
+        private ImageDescriptor icon;
+        private int style;
 
-        Expression visibilityExpression;
-        String[] activeEditors;
+        private Expression visibilityExpression;
+        private String[] activeEditors;
 
-        ICombination responsiveCombination;
+        private ICombination responsiveCombination;
 
-        ButtonConfiguration(ICombination responsiveCombination, String id, String label,
-                String tooltip, ImageDescriptor icon, int style, Expression visibilityExpression,
-                String[] activeEditors) {
+        ButtonConfiguration(final ICombination responsiveCombination, final String id,
+                final String label, final String tooltip, final ImageDescriptor icon, final int style,
+                final Expression visibilityExpression, final String[] activeEditors) {
             this.responsiveCombination = responsiveCombination;
             this.id = id;
             this.label = label;
@@ -238,8 +238,12 @@ public class KiviMenuContributionService {
             return responsiveCombination;
         }
         
-        public String toString(){
-            return "B:"+this.id;
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return "B:" + this.id;
         }
 
     }

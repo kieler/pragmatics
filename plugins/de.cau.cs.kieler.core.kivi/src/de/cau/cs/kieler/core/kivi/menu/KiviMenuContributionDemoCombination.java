@@ -21,18 +21,18 @@ import de.cau.cs.kieler.core.kivi.KiViPlugin;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
 
 /**
- * A simple demo Combination for using Buttons in KIELER View Management (KiVi)
+ * A simple demo Combination for using Buttons in KIELER View Management (KiVi).
  * 
  * @author haf
  */
 public class KiviMenuContributionDemoCombination extends AbstractCombination {
 
     // we identify buttons only by an ID
-    String[] buttonIds = { "de.cau.cs.kieler.core.kivi.demo.button1",
+    private final String[] buttonIds = { "de.cau.cs.kieler.core.kivi.demo.button1",
             "de.cau.cs.kieler.core.kivi.demo.button2" };
 
     /**
-     * Define buttons in the constructor of the combination
+     * Define buttons in the constructor of the combination.
      */
     public KiviMenuContributionDemoCombination() {
         // define a very simple button for testing with only a few required data
@@ -51,7 +51,12 @@ public class KiviMenuContributionDemoCombination extends AbstractCombination {
                 tooltip, icon, SWT.PUSH, null, visibleIn);
     }
 
-    public void execute(ButtonState button) {
+    /**
+     * Execute this combination.
+     * 
+     * @param button the button state
+     */
+    public void execute(final ButtonState button) {
         // look which button was pressed last
         if (button.getButtonId().equals(buttonIds[0])) {
             // for some demo effect, change the enablement (-> grays some button out)

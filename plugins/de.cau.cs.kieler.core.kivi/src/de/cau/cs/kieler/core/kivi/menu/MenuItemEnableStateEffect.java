@@ -31,10 +31,16 @@ import de.cau.cs.kieler.core.kivi.internal.KiviContributionItem;
  */
 public class MenuItemEnableStateEffect extends AbstractEffect {
 
-    String id;
-    boolean enable;
+    private String id;
+    private boolean enable;
     
-    public MenuItemEnableStateEffect(String menuItemID, boolean enabledState) {
+    /**
+     * Create an effect for menu item state.
+     * 
+     * @param menuItemID the menu item identifier
+     * @param enabledState the enablement state
+     */
+    public MenuItemEnableStateEffect(final String menuItemID, final boolean enabledState) {
         id = menuItemID;
         enable = enabledState;
     }

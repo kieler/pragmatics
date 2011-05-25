@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.core.kivi;
 
-import de.cau.cs.kieler.core.kivi.AbstractEffect;
-
 /**
  * A simple effect that unlocks a given Object. Can be used to synchronize effects with other
  * objects.
