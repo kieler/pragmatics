@@ -238,7 +238,6 @@ litigation.
       <import feature="org.eclipse.gmf" version="1.4.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.gmf.runtime.notation" version="1.4.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.xtext.runtime" version="1.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xtext.ui" version="1.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
