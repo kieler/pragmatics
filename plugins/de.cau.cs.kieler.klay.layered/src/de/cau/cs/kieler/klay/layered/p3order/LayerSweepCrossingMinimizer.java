@@ -930,7 +930,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 }
             }
 
-            // Part 2 of the crossing counting algorithm
+            // First sweep of part 2 of the crossing counting algorithm
             NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
             if (layerLayoutUnitsSet && (nodeType == NodeType.NORMAL
                     || nodeType == NodeType.NORTH_SOUTH_PORT)) {
