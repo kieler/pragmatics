@@ -40,6 +40,7 @@ import org.eclipse.gmf.runtime.notation.RelativeBendpoints;
 
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.karma.AdvancedRenderingBorderedBorderItemEditPart;
 import de.cau.cs.kieler.karma.AdvancedRenderingLabelEditPart;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.karma.SwitchableFigure;
@@ -93,15 +94,22 @@ public class AdvancedRenderingEditPartUtil {
             final AbstractGraphicalEditPart editPart) {
         Object notifier = notification.getNotifier();      
         boolean coll = this.checkCollapsed(editPart);
+        if (editPart instanceof AdvancedRenderingBorderedBorderItemEditPart) {
+            coll = this.checkCollapsed(editPart.getParent());
+        }
         //eliminate some notifications we are not interested in 
         if ((!(notification.isTouch()) && !(notifier instanceof Bounds) 
                 && !(notifier instanceof RelativeBendpoints)
                 && !(notifier instanceof IdentityAnchor)) || (coll != this.isCollapsed)) {
-            this.isCollapsed = coll;
+            
             IFigure figure = primaryShape;
             if (figure != null) {
                 boolean changed = false;
-                changed = this.updateFigure(figure, modelElement, editPart, false);
+                if (coll != this.isCollapsed) {
+                    changed = this.updateFigure(figure, modelElement, editPart, true);
+                } else {
+                    changed = this.updateFigure(figure, modelElement, editPart, false);
+                }
                 //do some layout if the figure actually was changed
                 if (changed) {
                     LayoutManager layoutManager = figure.getLayoutManager();
@@ -110,6 +118,7 @@ public class AdvancedRenderingEditPartUtil {
                     }
                 }
             }
+            this.isCollapsed = coll;
         }
     }
 
