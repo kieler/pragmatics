@@ -366,8 +366,8 @@ public class ExampleExportPage extends WizardResourceImportPage {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 categoryTree.removeAll();
-                fillTree(categoryTree);
                 creatableCategories.clear();
+                fillTree(categoryTree);
                 revertTreeButton.setEnabled(false);
                 super.widgetSelected(e);
             }
@@ -398,11 +398,33 @@ public class ExampleExportPage extends WizardResourceImportPage {
             public void handleEvent(final Event event) {
                 if (event.detail == SWT.CHECK) {
                     TreeItem item = ((TreeItem) event.item);
-                    Category choosenCategory = (Category) item.getData();
-                    checkedCategory = checkedCategory == choosenCategory ? null : choosenCategory;
+                    if (item.getChecked()) {
+                        // TODO check all categories
+                        for (TreeItem catElem : categoryTree.getItems()) {
+                            if (catElem.getItemCount() > 0) {
+                                checkDuplicateRec(catElem, item);
+                            }
+                            if (catElem.getChecked() && !catElem.equals(item)) {
+                                catElem.setChecked(false);
+                            }
+                        }
+                        checkedCategory = (Category) item.getData();
+                    }
+                }
+            }
+
+            private void checkDuplicateRec(final TreeItem catElem, TreeItem selected) {
+                for (TreeItem item : catElem.getItems()) {
+                    if (item.getItemCount() > 0) {
+                        checkDuplicateRec(item, selected);
+                    }
+                    if (item.getChecked() && !item.equals(selected)) {
+                        item.setChecked(false);
+                    }
                 }
             }
         });
+
         categoryTree.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
@@ -420,8 +442,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
      *            the tree to fill
      */
     public void fillTree(final Tree tree) {
-        // disable drawing to avoid flicker
-        tree.setRedraw(false);
+        tree.setRedraw(true);
         List<Category> categories = ExampleManager.get().getCategories();
         List<Category> notPlacedCategories = new ArrayList<Category>();
         for (Category category : categories) {
