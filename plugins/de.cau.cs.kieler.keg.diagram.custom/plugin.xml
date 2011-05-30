@@ -2,6 +2,20 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
+         point="de.cau.cs.kieler.kiml.ui.layoutManagers">
+      <manager
+            class="de.cau.cs.kieler.keg.diagram.custom.GraphsDiagramLayoutManager"
+            priority="1">
+      </manager>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.layoutInfo">
+      <semanticOption
+            class="de.cau.cs.kieler.keg.Node"
+            config="de.cau.cs.kieler.keg.diagram.custom.HypernodeLayoutConfig">
+      </semanticOption>
+   </extension>
+   <extension
          point="org.eclipse.ui.navigator.navigatorContent">
       <commonWizard
             menuGroupId="de.cau.cs.kieler"
@@ -33,13 +47,6 @@
             </or>
          </enablement>
       </commonWizard>
-   </extension>
-   <extension
-         point="de.cau.cs.kieler.kiml.ui.layoutManagers">
-      <manager
-            class="de.cau.cs.kieler.keg.diagram.custom.GraphsDiagramLayoutManager"
-            priority="1">
-      </manager>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">

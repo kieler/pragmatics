@@ -13,20 +13,25 @@
  */
 package de.cau.cs.kieler.kiml.grana.analyses;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A graph analysis that computes the number of edge crossings. It assumes that
@@ -51,68 +56,58 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
      *            end point of the second line segment
      * @return true if the lines have an intersection
      */
-    private static boolean hasIntersection(final KPoint p1, final KPoint p2,
-            final KPoint q1, final KPoint q2) {
-        float s = (q2.getY() - q1.getY()) * (p2.getX() - p1.getX())
-                - (q2.getX() - q1.getX()) * (p2.getY() - p1.getY());
+    private static boolean hasIntersection(final KVector p1, final KVector p2,
+            final KVector q1, final KVector q2) {
+        double s = (q2.y - q1.y) * (p2.x - p1.x) - (q2.x - q1.x) * (p2.y - p1.y);
         // are the line segments parallel?
         if (s == 0) {
             return false;
         }
-        float a1 = (q2.getX() - q1.getX()) * (p1.getY() - q1.getY())
-                - (q2.getY() - q1.getY()) * (p1.getX() - q1.getX());
-        float a2 = (p2.getX() - p1.getX()) * (p1.getY() - q1.getY())
-                - (p2.getY() - p1.getY()) * (p1.getX() - q1.getX());
-        float t1 = a1 / s;
-        float t2 = a2 / s;
+        double a1 = (q2.x - q1.x) * (p1.y - q1.y) - (q2.y - q1.y) * (p1.x - q1.x);
+        double a2 = (p2.x - p1.x) * (p1.y - q1.y) - (p2.y - p1.y) * (p1.x - q1.x);
+        double t1 = a1 / s;
+        double t2 = a2 / s;
         // the line segments intersect when t1 and t2 lie in the interval (0,1)
-        return 0.0f < t1 && t1 < 1 && 0 < t2 && t2 < 1;
+        return 0 < t1 && t1 < 1 && 0 < t2 && t2 < 1;
     }
 
     /**
-     * Computes the number of crossings between two edges.
+     * Computes the number of crossings between two vector chains.
      * 
-     * @param edge1 the first edge
-     * @param edge2 the second edge
+     * @param chain1 the first vector chain
+     * @param chain2 the second vector chain
      * @return the number of crossings
      */
-    private static int computeNumberOfCrossings(final KEdge edge1, final KEdge edge2) {
+    private static int computeNumberOfCrossings(final KVectorChain chain1, final KVectorChain chain2) {
         int numberOfCrossings = 0;
-        KEdgeLayout edge1Layout = edge1.getData(KEdgeLayout.class);
-        KPoint p1 = edge1Layout.getSourcePoint();
-        for (KPoint p2 : edge1Layout.getBendPoints()) {
-            numberOfCrossings += computeNumberOfCrossings(p1, p2, edge2);
+        Iterator<KVector> points1 = chain1.iterator();
+        KVector p1 = points1.next();
+        while (points1.hasNext()) {
+            KVector p2 = points1.next();
+            numberOfCrossings += computeNumberOfCrossings(p1, p2, chain2);
             p1 = p2;
         }
-        
-        // target point has to be handled separately
-        KPoint p2 = edge1Layout.getTargetPoint();
-        numberOfCrossings += computeNumberOfCrossings(p1, p2, edge2);
         return numberOfCrossings;
     }
     
     /**
-     * Computes the number of crossings of a line and an edge.
+     * Computes the number of crossings of a line and a vector chain.
      * 
      * @param p1 start point of the line
      * @param p2 end point of the line
-     * @param edge2 an edge
+     * @param chain2 a vector chain
      * @return the number of crossings
      */
-    private static int computeNumberOfCrossings(final KPoint p1, final KPoint p2, final KEdge edge2) {
+    private static int computeNumberOfCrossings(final KVector p1, final KVector p2,
+            final KVectorChain chain2) {
         int numberOfCrossings = 0;
-        KEdgeLayout edge2Layout = edge2.getData(KEdgeLayout.class);
-        
-        KPoint q1 = edge2Layout.getSourcePoint();
-        for (KPoint q2 : edge2Layout.getBendPoints()) {
+        Iterator<KVector> points2 = chain2.iterator();
+        KVector q1 = points2.next();
+        while (points2.hasNext()) {
+            KVector q2 = points2.next();
             numberOfCrossings += hasIntersection(p1, p2, q1, q2) ? 1 : 0;
             q1 = q2;
         }
-        
-        // target point has to be handled separately
-        KPoint q2 = edge2Layout.getTargetPoint();
-        numberOfCrossings += hasIntersection(p1, p2, q1, q2) ? 1 : 0;
-        
         return numberOfCrossings;
     }
 
@@ -121,41 +116,59 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode,
             final Map<String, Object> results,
-            final IKielerProgressMonitor progressMonitor){
-        
+            final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Edge Crossings analysis", 1);
         
+        // collect all edges and translate their coordinates to absolute
         LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
-        List<KEdge> edges = new LinkedList<KEdge>();
+        List<KEdge> edges = new ArrayList<KEdge>();
+        List<KVectorChain> chains = new ArrayList<KVectorChain>();
         nodeQueue.offer(parentNode);
         while (!nodeQueue.isEmpty()) {
             // poll the first element
             KNode node = nodeQueue.poll();
             // collect the outgoing edges
-            edges.addAll(node.getOutgoingEdges());
+            for (KEdge edge : node.getOutgoingEdges()) {
+                KVectorChain chain = KimlUtil.toVectorChain(edge.getData(KEdgeLayout.class));
+                
+                // translate the bend point coordinates to absolute
+                KNode parent = node;
+                if (!KimlUtil.isDescendant(edge.getTarget(), parent)) {
+                    parent = node.getParent();
+                }
+                KVector referencePoint = new KVector();
+                KimlUtil.toAbsolute(referencePoint, parent);
+                chain.translate(referencePoint);
+                
+                // transform spline control points to approximated bend points
+                if (edge.getData(KEdgeLayout.class).getProperty(LayoutOptions.EDGE_ROUTING)
+                        == EdgeRouting.SPLINES) {
+                    chain = KielerMath.appoximateSpline(chain);
+                }
+                
+                edges.add(edge);
+                chains.add(chain);
+            }
             // enqueue the child nodes
             nodeQueue.addAll(node.getChildren());
         }
         
         // count the number of crossings between all edges of the compound graph
-        ListIterator<KEdge> iter1 = edges.listIterator();
-        
-        int min = Integer.MAX_VALUE;
-        int max = 0;
-        int sum = 0;
-        int current;
-        float avg = 0.0f;
-        
-        while (iter1.hasNext()) {
-            KEdge edge1 = iter1.next();
+        int edgeCount = edges.size();
+        int[] crossings = new int[edgeCount];
+        for (int i = 0; i < edgeCount; i++) {
+            KEdge edge1 = edges.get(i);
+            KVectorChain chain1 = chains.get(i);
+            KNode source1 = edge1.getSource();
+            KNode target1 = edge1.getTarget();
             KPort sourcePort1 = edge1.getSourcePort();
             KPort targetPort1 = edge1.getTargetPort();
-            KShapeLayout sourceLayout = edge1.getSource().getData(KShapeLayout.class);
-            KShapeLayout targetLayout = edge1.getTarget().getData(KShapeLayout.class);
-            current = 0;
-            ListIterator<KEdge> iter2 = edges.listIterator(iter1.nextIndex());
-            while (iter2.hasNext()) {
-                KEdge edge2 = iter2.next();
+            KShapeLayout sourceLayout1 = source1.getData(KShapeLayout.class);
+            KShapeLayout targetLayout1 = target1.getData(KShapeLayout.class);
+            for (int j = i + 1; j < edgeCount; j++) {
+                KEdge edge2 = edges.get(j);
+                KNode source2 = edge2.getSource();
+                KNode target2 = edge2.getTarget();
                 KPort sourcePort2 = edge2.getSourcePort();
                 KPort targetPort2 = edge2.getTargetPort();
                 
@@ -164,26 +177,36 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
                         && (sourcePort1 == sourcePort2 || sourcePort1 == targetPort2);
                 samePort |= targetPort1 != null
                         && (targetPort1 == targetPort2 || targetPort1 == sourcePort2);
-                samePort |= edge1.getSource() == edge2.getSource()
-                        && sourceLayout.getProperty(LayoutOptions.HYPERNODE);
-                samePort |= edge1.getTarget() == edge2.getTarget()
-                        && targetLayout.getProperty(LayoutOptions.HYPERNODE);
+                samePort |= sourceLayout1.getProperty(LayoutOptions.HYPERNODE)
+                        && (source1 == source2 || source1 == target2);
+                samePort |= targetLayout1.getProperty(LayoutOptions.HYPERNODE)
+                        && (target1 == target2 || target1 == source2);
                 if (!samePort) {
-                    current += computeNumberOfCrossings(edge1, edge2);
+                    KVectorChain chain2 = chains.get(j);
+                    int c = computeNumberOfCrossings(chain1, chain2);
+                    crossings[i] += c;
+                    crossings[j] += c;
                 }
             }
-            min = Math.min(min, current);
-            max = Math.max(max, current);
-            sum += current;
+        }
+
+        // determine minimum, maximum, sum, and average value
+        int min = Integer.MAX_VALUE;
+        int max = 0;
+        int sum = 0;
+        float avg = 0.0f;
+        for (int i = 0; i < edgeCount; i++) {
+            sum += crossings[i];
+            min = Math.min(min, crossings[i]);
+            max = Math.max(max, crossings[i]);
         }
         
-        if (edges.size() > 0) {
-            // Sum only counts each crossing once. But since each crossing is a crossing
-            // of two edges, for the average we have to double sum
-            avg = (float) (sum * 2) / (float) edges.size();
+        if (edgeCount > 0) {
+            avg = (float) sum / edgeCount;
         } else {
             min = 0;
         }
+        sum /= 2;
 
         progressMonitor.done();
         return new Object[] {min, avg, max, sum};
