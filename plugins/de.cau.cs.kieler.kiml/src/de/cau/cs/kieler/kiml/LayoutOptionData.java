@@ -179,7 +179,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
         if (obj instanceof LayoutOptionData<?>) {
             return this.id.equals(((LayoutOptionData<?>) obj).id);
         } else if (obj instanceof IProperty<?>) {
-            return this.id.equals(((IProperty<?>) obj).getIdentifier());
+            return this.id.equals(((IProperty<?>) obj).getId());
         } else {
             return false;
         }
@@ -196,7 +196,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      * {@inheritDoc}
      */
     public int compareTo(final IProperty<?> other) {
-        Object otherId = other.getIdentifier();
+        Object otherId = other.getId();
         if (otherId instanceof String) {
             return id.compareTo((String) otherId);
         } else {
@@ -477,9 +477,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     }
 
     /**
-     * Returns the identifier.
-     * 
-     *  @return the identifier
+     * {@inheritDoc}
      */
     public String getId() {
         return id;
@@ -591,13 +589,6 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      */
     public void setDefault(final T thedefaultValue) {
         this.defaultValue = thedefaultValue;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Object getIdentifier() {
-        return id;
     }
 
     /**

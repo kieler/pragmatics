@@ -107,27 +107,25 @@ public class RandomGraphBiconnectedPage extends WizardPage {
      */
     public void savePreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getIdentifier().toString(),
+        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getId(),
                 numberOfNodes);
-        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_EDGES.getIdentifier().toString(),
+        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_EDGES.getId(),
                 numberOfEdges);
     }
 
     private void loadPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
         numberOfNodes =
-                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getIdentifier()
-                        .toString());
+                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getId());
         numberOfEdges =
-                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_EDGES.getIdentifier()
-                        .toString());
+                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_EDGES.getId());
     }
 
     private void setDefaultPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_NODES.getIdentifier().toString(),
+        preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_NODES.getId(),
                 RandomGraphGenerator.NUMBER_OF_NODES.getDefault());
-        preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_EDGES.getIdentifier().toString(),
+        preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_EDGES.getId(),
                 RandomGraphGenerator.NUMBER_OF_EDGES.getDefault());
     }
 

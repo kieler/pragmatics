@@ -50,10 +50,10 @@ public interface IProperty<T> {
     Comparable<T> getUpperBound();
     
     /**
-     * Returns an object that can be used as identifier for this property.
+     * Returns an identifier string for this property.
      * 
      * @return an identifier
      */
-    Object getIdentifier();
+    String getId();
 
 }

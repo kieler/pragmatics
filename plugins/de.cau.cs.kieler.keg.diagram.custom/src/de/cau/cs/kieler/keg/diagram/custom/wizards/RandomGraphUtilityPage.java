@@ -189,54 +189,50 @@ public class RandomGraphUtilityPage extends WizardPage {
      */
     public void savePreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setValue(RandomGraphGenerator.HIERARCHY_CHANCE.getIdentifier().toString(),
+        preferenceStore.setValue(RandomGraphGenerator.HIERARCHY_CHANCE.getId(),
                 hierarchyChance);
-        preferenceStore.setValue(RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getIdentifier()
-                .toString(), maxHierarchyLevel);
-        preferenceStore.setValue(RandomGraphGenerator.HIERARCHY_NODES_FACTOR.getIdentifier()
-                .toString(), hierarchyNodesFactor);
-        preferenceStore.setValue(RandomGraphGenerator.HYPERNODE_CHANCE.getIdentifier().toString(),
+        preferenceStore.setValue(RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getId(),
+                maxHierarchyLevel);
+        preferenceStore.setValue(RandomGraphGenerator.HIERARCHY_NODES_FACTOR.getId(),
+                hierarchyNodesFactor);
+        preferenceStore.setValue(RandomGraphGenerator.HYPERNODE_CHANCE.getId(),
                 hypernodeChance);
-        preferenceStore.setValue(RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getIdentifier()
-                .toString(), edgeDirectedChance);
-        preferenceStore.setValue(RandomGraphGenerator.PORTS.getIdentifier().toString(), ports);
+        preferenceStore.setValue(RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getId(),
+                edgeDirectedChance);
+        preferenceStore.setValue(RandomGraphGenerator.PORTS.getId(), ports);
     }
 
     private void loadPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
         hierarchyChance =
-                preferenceStore.getFloat(RandomGraphGenerator.HIERARCHY_CHANCE.getIdentifier()
-                        .toString());
+                preferenceStore.getFloat(RandomGraphGenerator.HIERARCHY_CHANCE.getId());
         maxHierarchyLevel =
-                preferenceStore.getInt(RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getIdentifier()
-                        .toString());
+                preferenceStore.getInt(RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getId());
         hierarchyNodesFactor =
                 preferenceStore.getFloat(RandomGraphGenerator.HIERARCHY_NODES_FACTOR
-                        .getIdentifier().toString());
+                        .getId());
         hypernodeChance =
-                preferenceStore.getFloat(RandomGraphGenerator.HYPERNODE_CHANCE.getIdentifier()
-                        .toString());
+                preferenceStore.getFloat(RandomGraphGenerator.HYPERNODE_CHANCE.getId());
         edgeDirectedChance =
-                preferenceStore.getFloat(RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getIdentifier()
-                        .toString());
-        ports = preferenceStore.getBoolean(RandomGraphGenerator.PORTS.getIdentifier().toString());
+                preferenceStore.getFloat(RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getId());
+        ports = preferenceStore.getBoolean(RandomGraphGenerator.PORTS.getId());
     }
 
     private void setDefaultPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
         preferenceStore.setDefault(
-                RandomGraphGenerator.HIERARCHY_CHANCE.getIdentifier().toString(),
+                RandomGraphGenerator.HIERARCHY_CHANCE.getId(),
                 RandomGraphGenerator.HIERARCHY_CHANCE.getDefault());
-        preferenceStore.setDefault(RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getIdentifier()
-                .toString(), RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getDefault());
-        preferenceStore.setDefault(RandomGraphGenerator.HIERARCHY_NODES_FACTOR.getIdentifier()
-                .toString(), RandomGraphGenerator.HIERARCHY_NODES_FACTOR.getDefault());
+        preferenceStore.setDefault(RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getId(),
+                RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getDefault());
+        preferenceStore.setDefault(RandomGraphGenerator.HIERARCHY_NODES_FACTOR.getId(),
+                RandomGraphGenerator.HIERARCHY_NODES_FACTOR.getDefault());
         preferenceStore.setDefault(
-                RandomGraphGenerator.HYPERNODE_CHANCE.getIdentifier().toString(),
+                RandomGraphGenerator.HYPERNODE_CHANCE.getId(),
                 RandomGraphGenerator.HYPERNODE_CHANCE.getDefault());
-        preferenceStore.setDefault(RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getIdentifier()
-                .toString(), RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getDefault());
-        preferenceStore.setDefault(RandomGraphGenerator.PORTS.getIdentifier().toString(),
+        preferenceStore.setDefault(RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getId(),
+                RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getDefault());
+        preferenceStore.setDefault(RandomGraphGenerator.PORTS.getId(),
                 RandomGraphGenerator.PORTS.getDefault());
     }
 

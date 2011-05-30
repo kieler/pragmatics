@@ -91,20 +91,19 @@ public class RandomGraphTriconnectedPage extends WizardPage {
      */
     public void savePreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getIdentifier().toString(),
+        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getId(),
                 numberOfNodes);
     }
 
     private void loadPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
         numberOfNodes =
-                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getIdentifier()
-                        .toString());
+                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getId());
     }
 
     private void setDefaultPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_NODES.getIdentifier().toString(),
+        preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_NODES.getId(),
                 RandomGraphGenerator.NUMBER_OF_NODES.getDefault());
     }
 

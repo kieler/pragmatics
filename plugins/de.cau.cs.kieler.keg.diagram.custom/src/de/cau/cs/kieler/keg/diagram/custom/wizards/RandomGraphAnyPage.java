@@ -284,72 +284,65 @@ public class RandomGraphAnyPage extends WizardPage {
      */
     public void savePreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getIdentifier().toString(),
+        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getId(),
                 numberOfNodes);
         preferenceStore.setValue(
-                RandomGraphGenerator.EDGE_DETERMINATION.getIdentifier().toString(),
+                RandomGraphGenerator.EDGE_DETERMINATION.getId(),
                 edgeDetermination);
-        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_EDGES.getIdentifier().toString(),
+        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_EDGES.getId(),
                 numberOfEdges);
         preferenceStore.setValue(PREFERENCE_DENSITY, density);
         preferenceStore.setValue(
-                RandomGraphGenerator.MIN_OUTGOING_EDGES.getIdentifier().toString(),
+                RandomGraphGenerator.MIN_OUTGOING_EDGES.getId(),
                 minOutgoingEdges);
         preferenceStore.setValue(
-                RandomGraphGenerator.MAX_OUTGOING_EDGES.getIdentifier().toString(),
+                RandomGraphGenerator.MAX_OUTGOING_EDGES.getId(),
                 maxOutgoingEdges);
-        preferenceStore.setValue(RandomGraphGenerator.SELF_LOOPS.getIdentifier().toString(),
+        preferenceStore.setValue(RandomGraphGenerator.SELF_LOOPS.getId(),
                 selfLoops);
-        preferenceStore.setValue(RandomGraphGenerator.MULTI_EDGES.getIdentifier().toString(),
+        preferenceStore.setValue(RandomGraphGenerator.MULTI_EDGES.getId(),
                 multiEdges);
-        preferenceStore.setValue(RandomGraphGenerator.CYCLES.getIdentifier().toString(), cycles);
+        preferenceStore.setValue(RandomGraphGenerator.CYCLES.getId(), cycles);
     }
 
     private void loadPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
         numberOfNodes =
-                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getIdentifier()
-                        .toString());
+                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getId());
         edgeDetermination =
-                preferenceStore.getInt(RandomGraphGenerator.EDGE_DETERMINATION.getIdentifier()
-                        .toString());
+                preferenceStore.getInt(RandomGraphGenerator.EDGE_DETERMINATION.getId());
         numberOfEdges =
-                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_EDGES.getIdentifier()
-                        .toString());
+                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_EDGES.getId());
         density = preferenceStore.getFloat(PREFERENCE_DENSITY);
         minOutgoingEdges =
-                preferenceStore.getInt(RandomGraphGenerator.MIN_OUTGOING_EDGES.getIdentifier()
-                        .toString());
+                preferenceStore.getInt(RandomGraphGenerator.MIN_OUTGOING_EDGES.getId());
         maxOutgoingEdges =
-                preferenceStore.getInt(RandomGraphGenerator.MAX_OUTGOING_EDGES.getIdentifier()
-                        .toString());
+                preferenceStore.getInt(RandomGraphGenerator.MAX_OUTGOING_EDGES.getId());
         selfLoops =
-                preferenceStore.getBoolean(RandomGraphGenerator.SELF_LOOPS.getIdentifier()
-                        .toString());
+                preferenceStore.getBoolean(RandomGraphGenerator.SELF_LOOPS.getId());
         multiEdges =
-                preferenceStore.getBoolean(RandomGraphGenerator.MULTI_EDGES.getIdentifier()
-                        .toString());
-        cycles = preferenceStore.getBoolean(RandomGraphGenerator.CYCLES.getIdentifier().toString());
+                preferenceStore.getBoolean(RandomGraphGenerator.MULTI_EDGES.getId());
+        cycles = preferenceStore.getBoolean(RandomGraphGenerator.CYCLES.getId());
     }
 
     private void setDefaultPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_NODES.getIdentifier().toString(),
+        preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_NODES.getId(),
                 RandomGraphGenerator.NUMBER_OF_NODES.getDefault());
-        preferenceStore.setDefault(RandomGraphGenerator.EDGE_DETERMINATION.getIdentifier()
-                .toString(), EDGE_DETERMINATION_EDGES);
-        preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_EDGES.getIdentifier().toString(),
+        preferenceStore.setDefault(RandomGraphGenerator.EDGE_DETERMINATION.getId(),
+                EDGE_DETERMINATION_EDGES);
+        preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_EDGES.getId(),
                 RandomGraphGenerator.NUMBER_OF_EDGES.getDefault());
         preferenceStore.setDefault(PREFERENCE_DENSITY, 0.0f);
-        preferenceStore.setDefault(RandomGraphGenerator.MIN_OUTGOING_EDGES.getIdentifier()
-                .toString(), RandomGraphGenerator.MIN_OUTGOING_EDGES.getDefault());
-        preferenceStore.setDefault(RandomGraphGenerator.MAX_OUTGOING_EDGES.getIdentifier()
-                .toString(), RandomGraphGenerator.MAX_OUTGOING_EDGES.getDefault());
-        preferenceStore.setDefault(RandomGraphGenerator.SELF_LOOPS.getIdentifier().toString(),
+        preferenceStore.setDefault(RandomGraphGenerator.MIN_OUTGOING_EDGES.getId(),
+                RandomGraphGenerator.MIN_OUTGOING_EDGES.getDefault());
+        preferenceStore.setDefault(RandomGraphGenerator.MAX_OUTGOING_EDGES.getId(),
+                RandomGraphGenerator.MAX_OUTGOING_EDGES.getDefault());
+        preferenceStore.setDefault(RandomGraphGenerator.SELF_LOOPS.getId(),
                 RandomGraphGenerator.SELF_LOOPS.getDefault());
-        preferenceStore.setDefault(RandomGraphGenerator.MULTI_EDGES.getIdentifier().toString(),
+        preferenceStore.setDefault(RandomGraphGenerator.MULTI_EDGES.getId(),
                 RandomGraphGenerator.MULTI_EDGES.getDefault());
-        preferenceStore.setDefault(RandomGraphGenerator.CYCLES.getIdentifier().toString(),
+        preferenceStore.setDefault(RandomGraphGenerator.CYCLES.getId(),
                 RandomGraphGenerator.CYCLES.getDefault());
     }
 

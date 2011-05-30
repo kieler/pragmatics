@@ -105,7 +105,7 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
      * @param thedefaultValue the new default value
      */
     public Property(final IProperty<T> other, final T thedefaultValue) {
-        this(other.getIdentifier().toString(), thedefaultValue, other.getLowerBound(),
+        this(other.getId(), thedefaultValue, other.getLowerBound(),
                 other.getUpperBound());
     }
     
@@ -119,7 +119,7 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
      */
     public Property(final IProperty<T> other, final T thedefaultValue,
             final Comparable<T> thelowerBound) {
-        this(other.getIdentifier().toString(), thedefaultValue, thelowerBound, other.getUpperBound());
+        this(other.getId(), thedefaultValue, thelowerBound, other.getUpperBound());
     }
     
     /**
@@ -133,17 +133,15 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
      */
     public Property(final IProperty<T> other, final T thedefaultValue,
             final Comparable<T> thelowerBound, final Comparable<T> theupperBound) {
-        this(other.getIdentifier().toString(), thedefaultValue, thelowerBound, theupperBound);
+        this(other.getId(), thedefaultValue, thelowerBound, theupperBound);
     }
     
     /**
      * {@inheritDoc}
      */
     public boolean equals(final Object obj) {
-        if (obj instanceof Property<?>) {
-            return this.id.equals(((Property<?>) obj).id);
-        } else if (obj instanceof IProperty<?>) {
-            return this.id.equals(((IProperty<?>) obj).getIdentifier());
+        if (obj instanceof IProperty<?>) {
+            return this.id.equals(((IProperty<?>) obj).getId());
         } else {
             return false;
         }
@@ -189,7 +187,7 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
     /**
      * {@inheritDoc}
      */
-    public Object getIdentifier() {
+    public String getId() {
         return id;
     }
 
@@ -197,12 +195,7 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
      * {@inheritDoc}
      */
     public int compareTo(final IProperty<?> other) {
-        Object otherId = other.getIdentifier();
-        if (otherId instanceof String) {
-            return id.compareTo((String) otherId);
-        } else {
-            throw new UnsupportedOperationException("Not comparable with given property.");
-        }
+        return id.compareTo((String) other.getId());
     }
 
 }

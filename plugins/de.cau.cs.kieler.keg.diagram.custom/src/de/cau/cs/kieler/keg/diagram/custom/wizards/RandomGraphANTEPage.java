@@ -130,31 +130,29 @@ public class RandomGraphANTEPage extends WizardPage {
      */
     public void savePreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getIdentifier().toString(),
+        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getId(),
                 numberOfNodes);
-        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_EDGES.getIdentifier().toString(),
+        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_EDGES.getId(),
                 numberOfEdges);
-        preferenceStore.setValue(RandomGraphGenerator.PLANAR.getIdentifier().toString(), planar);
+        preferenceStore.setValue(RandomGraphGenerator.PLANAR.getId(), planar);
     }
 
     private void loadPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
         numberOfNodes =
-                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getIdentifier()
-                        .toString());
+                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getId());
         numberOfEdges =
-                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_EDGES.getIdentifier()
-                        .toString());
-        planar = preferenceStore.getBoolean(RandomGraphGenerator.PLANAR.getIdentifier().toString());
+                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_EDGES.getId());
+        planar = preferenceStore.getBoolean(RandomGraphGenerator.PLANAR.getId());
     }
 
     private void setDefaultPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_NODES.getIdentifier().toString(),
+        preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_NODES.getId(),
                 RandomGraphGenerator.NUMBER_OF_NODES.getDefault());
-        preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_EDGES.getIdentifier().toString(),
+        preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_EDGES.getId(),
                 RandomGraphGenerator.NUMBER_OF_EDGES.getDefault());
-        preferenceStore.setDefault(RandomGraphGenerator.PLANAR.getIdentifier().toString(),
+        preferenceStore.setDefault(RandomGraphGenerator.PLANAR.getId(),
                 RandomGraphGenerator.PLANAR.getDefault());
     }
 

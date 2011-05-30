@@ -119,7 +119,7 @@ public class RandomGraphTypePage extends WizardPage {
      */
     public void savePreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setValue(RandomGraphGenerator.GRAPH_TYPE.getIdentifier().toString(),
+        preferenceStore.setValue(RandomGraphGenerator.GRAPH_TYPE.getId(),
                 graphType.toString());
     }
 
@@ -127,12 +127,12 @@ public class RandomGraphTypePage extends WizardPage {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
         graphType =
                 RandomGraphGenerator.GraphType.valueOf(preferenceStore
-                        .getString(RandomGraphGenerator.GRAPH_TYPE.getIdentifier().toString()));
+                        .getString(RandomGraphGenerator.GRAPH_TYPE.getId()));
     }
 
     private void setDefaultPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setDefault(RandomGraphGenerator.GRAPH_TYPE.getIdentifier().toString(),
+        preferenceStore.setDefault(RandomGraphGenerator.GRAPH_TYPE.getId(),
                 RandomGraphGenerator.GraphType.ANY.toString());
     }
 

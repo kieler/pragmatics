@@ -350,7 +350,7 @@ public class ExportDialog extends Dialog {
         setControlVisibility(choices, false);
         // load from preference store
         String lastConstantString =
-                preferenceStore.getString(option.getIdentifier().toString());
+                preferenceStore.getString(option.getId());
         boolean found = false;
         // choices radio buttons
         for (Object constant : constants) {
@@ -382,9 +382,9 @@ public class ExportDialog extends Dialog {
         Button checkbox = new Button(parent, SWT.CHECK | SWT.LEFT);
         checkbox.setText(option.getDescription());
         // load from preference store
-        if (preferenceStore.contains(option.getIdentifier().toString())) {
+        if (preferenceStore.contains(option.getId())) {
             checkbox.setSelection(preferenceStore.getBoolean(option
-                    .getIdentifier().toString()));
+                    .getId()));
         } else {
             checkbox.setSelection(option.getDefault());
         }
@@ -413,9 +413,8 @@ public class ExportDialog extends Dialog {
         gridData.widthHint = OPTION_NUMBER_TEXT_WIDTH;
         input.setLayoutData(gridData);
         // load from preference store
-        if (preferenceStore.contains(option.getIdentifier().toString())) {
-            input.setText(preferenceStore.getString(option.getIdentifier()
-                    .toString()));
+        if (preferenceStore.contains(option.getId())) {
+            input.setText(preferenceStore.getString(option.getId()));
         } else {
             input.setText(option.getDefault().toString());
         }
@@ -442,9 +441,8 @@ public class ExportDialog extends Dialog {
         gridData.widthHint = OPTION_STRING_TEXT_WIDTH;
         input.setLayoutData(gridData);
         // load from preference store
-        if (preferenceStore.contains(option.getIdentifier().toString())) {
-            input.setText(preferenceStore.getString(option.getIdentifier()
-                    .toString()));
+        if (preferenceStore.contains(option.getId())) {
+            input.setText(preferenceStore.getString(option.getId()));
         } else {
             input.setText(option.getDefault().toString());
         }
@@ -788,11 +786,9 @@ public class ExportDialog extends Dialog {
                 if (constant.toString().equals(choice)) {
                     if (!constant.equals(option.getDefault())) {
                         options.setProperty(option, constant);
-                        preferenceStore.setValue(option.getIdentifier()
-                                .toString(), constant.toString());
+                        preferenceStore.setValue(option.getId(), constant.toString());
                     } else {
-                        preferenceStore.setToDefault(option.getIdentifier()
-                                .toString());
+                        preferenceStore.setToDefault(option.getId());
                     }
                     break;
                 }
@@ -805,10 +801,10 @@ public class ExportDialog extends Dialog {
         Boolean value = checkbox.getSelection();
         if (value != option.getDefault()) {
             options.setProperty(option, value);
-            preferenceStore.setValue(option.getIdentifier().toString(),
+            preferenceStore.setValue(option.getId(),
                     value.toString());
         } else {
-            preferenceStore.setToDefault(option.getIdentifier().toString());
+            preferenceStore.setToDefault(option.getId());
         }
     }
 
@@ -818,10 +814,10 @@ public class ExportDialog extends Dialog {
             Integer value = Integer.parseInt(input.getText());
             if (value != option.getDefault()) {
                 options.setProperty(option, value);
-                preferenceStore.setValue(option.getIdentifier().toString(),
+                preferenceStore.setValue(option.getId(),
                         value.toString());
             } else {
-                preferenceStore.setToDefault(option.getIdentifier().toString());
+                preferenceStore.setToDefault(option.getId());
             }
         } catch (NumberFormatException e) {
             // if the text does not contain an integer don't set the option so
@@ -835,10 +831,10 @@ public class ExportDialog extends Dialog {
             Float value = Float.parseFloat(input.getText());
             if (value != option.getDefault()) {
                 options.setProperty(option, value);
-                preferenceStore.setValue(option.getIdentifier().toString(),
+                preferenceStore.setValue(option.getId(),
                         value.toString());
             } else {
-                preferenceStore.setToDefault(option.getIdentifier().toString());
+                preferenceStore.setToDefault(option.getId());
             }
         } catch (NumberFormatException e) {
             // if the text does not contain a float don't set the option so
@@ -852,10 +848,10 @@ public class ExportDialog extends Dialog {
             Double value = Double.parseDouble(input.getText());
             if (value != option.getDefault()) {
                 options.setProperty(option, value);
-                preferenceStore.setValue(option.getIdentifier().toString(),
+                preferenceStore.setValue(option.getId(),
                         value.toString());
             } else {
-                preferenceStore.setToDefault(option.getIdentifier().toString());
+                preferenceStore.setToDefault(option.getId());
             }
         } catch (NumberFormatException e) {
             // if the text does not contain a double don't set the option so
@@ -868,9 +864,9 @@ public class ExportDialog extends Dialog {
         String value = input.getText();
         if (value != option.getDefault()) {
             options.setProperty(option, value);
-            preferenceStore.setValue(option.getIdentifier().toString(), value);
+            preferenceStore.setValue(option.getId(), value);
         } else {
-            preferenceStore.setToDefault(option.getIdentifier().toString());
+            preferenceStore.setToDefault(option.getId());
         }
     }
 }

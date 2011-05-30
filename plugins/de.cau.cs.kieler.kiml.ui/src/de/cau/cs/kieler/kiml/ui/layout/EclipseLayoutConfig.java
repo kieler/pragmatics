@@ -69,7 +69,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
     public static Object getOption(final EditPart editPart, final EObject modelElement,
             final IProperty<?> property) {
         LayoutDataService layoutServices = LayoutDataService.getInstance();
-        String id = (String) property.getIdentifier();
+        String id = property.getId();
         if (editPart != null) {
             // get option for the edit part class
             String clazzName = editPart.getClass().getName();

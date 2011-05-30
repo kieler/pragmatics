@@ -123,32 +123,31 @@ public class RandomGraphTreePage extends WizardPage {
      */
     public void savePreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getIdentifier().toString(),
+        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getId(),
                 numberOfNodes);
-        preferenceStore.setValue(RandomGraphGenerator.MAX_DEGREE.getIdentifier().toString(),
+        preferenceStore.setValue(RandomGraphGenerator.MAX_DEGREE.getId(),
                 maxDegree);
-        preferenceStore.setValue(RandomGraphGenerator.MAX_WIDTH.getIdentifier().toString(),
+        preferenceStore.setValue(RandomGraphGenerator.MAX_WIDTH.getId(),
                 maxWidth);
     }
 
     private void loadPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
         numberOfNodes =
-                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getIdentifier()
-                        .toString());
-        preferenceStore.setValue(RandomGraphGenerator.MAX_DEGREE.getIdentifier().toString(),
+                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getId());
+        preferenceStore.setValue(RandomGraphGenerator.MAX_DEGREE.getId(),
                 maxDegree);
-        preferenceStore.setValue(RandomGraphGenerator.MAX_WIDTH.getIdentifier().toString(),
+        preferenceStore.setValue(RandomGraphGenerator.MAX_WIDTH.getId(),
                 maxWidth);
     }
 
     private void setDefaultPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_NODES.getIdentifier().toString(),
+        preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_NODES.getId(),
                 RandomGraphGenerator.NUMBER_OF_NODES.getDefault());
-        preferenceStore.setDefault(RandomGraphGenerator.MAX_DEGREE.getIdentifier().toString(),
+        preferenceStore.setDefault(RandomGraphGenerator.MAX_DEGREE.getId(),
                 RandomGraphGenerator.MAX_DEGREE.getDefault());
-        preferenceStore.setDefault(RandomGraphGenerator.MAX_WIDTH.getIdentifier().toString(),
+        preferenceStore.setDefault(RandomGraphGenerator.MAX_WIDTH.getId(),
                 RandomGraphGenerator.MAX_WIDTH.getDefault());
     }
 

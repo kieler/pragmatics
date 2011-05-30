@@ -139,7 +139,7 @@ public abstract class EMapPropertyHolderImpl extends EObjectImpl implements EMap
                 persisEntry = persisEntries.get(i);
             }
             IProperty<?> key = entry.getKey();
-            persisEntry.setKey(key == null ? null : key.getIdentifier().toString());
+            persisEntry.setKey(key == null ? null : key.getId());
             Object value = entry.getValue();
             persisEntry.setValue(value == null ? null : value.toString());
             i++;

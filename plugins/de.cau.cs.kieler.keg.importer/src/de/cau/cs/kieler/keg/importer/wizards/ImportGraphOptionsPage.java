@@ -238,7 +238,7 @@ public class ImportGraphOptionsPage extends WizardPage {
         controls.add(choices);
         setControlVisibility(choices, false);
         // load from preference store
-        String lastConstantString = preferenceStore.getString(option.getIdentifier().toString());
+        String lastConstantString = preferenceStore.getString(option.getId());
         boolean found = false;
         // choices radio buttons
         for (Object constant : constants) {
@@ -269,8 +269,8 @@ public class ImportGraphOptionsPage extends WizardPage {
         Button checkbox = new Button(parent, SWT.CHECK | SWT.LEFT);
         checkbox.setText(option.getDescription());
         // load from preference store
-        if (preferenceStore.contains(option.getIdentifier().toString())) {
-            checkbox.setSelection(preferenceStore.getBoolean(option.getIdentifier().toString()));
+        if (preferenceStore.contains(option.getId())) {
+            checkbox.setSelection(preferenceStore.getBoolean(option.getId()));
         } else {
             checkbox.setSelection(option.getDefault());
         }
@@ -299,8 +299,8 @@ public class ImportGraphOptionsPage extends WizardPage {
         gridData.widthHint = OPTION_NUMBER_TEXT_WIDTH;
         input.setLayoutData(gridData);
         // load from preference store
-        if (preferenceStore.contains(option.getIdentifier().toString())) {
-            input.setText(preferenceStore.getString(option.getIdentifier().toString()));
+        if (preferenceStore.contains(option.getId())) {
+            input.setText(preferenceStore.getString(option.getId()));
         } else {
             input.setText(option.getDefault().toString());
         }
@@ -326,8 +326,8 @@ public class ImportGraphOptionsPage extends WizardPage {
         gridData.widthHint = OPTION_STRING_TEXT_WIDTH;
         input.setLayoutData(gridData);
         // load from preference store
-        if (preferenceStore.contains(option.getIdentifier().toString())) {
-            input.setText(preferenceStore.getString(option.getIdentifier().toString()));
+        if (preferenceStore.contains(option.getId())) {
+            input.setText(preferenceStore.getString(option.getId()));
         } else {
             input.setText(option.getDefault().toString());
         }
@@ -483,10 +483,10 @@ public class ImportGraphOptionsPage extends WizardPage {
                 if (constant.toString().equals(choice)) {
                     if (!constant.equals(option.getDefault())) {
                         options.setProperty(option, constant);
-                        preferenceStore.setValue(option.getIdentifier().toString(),
+                        preferenceStore.setValue(option.getId(),
                                 constant.toString());
                     } else {
-                        preferenceStore.setToDefault(option.getIdentifier().toString());
+                        preferenceStore.setToDefault(option.getId());
                     }
                     break;
                 }
@@ -499,9 +499,9 @@ public class ImportGraphOptionsPage extends WizardPage {
         Boolean value = checkbox.getSelection();
         if (value != option.getDefault()) {
             options.setProperty(option, value);
-            preferenceStore.setValue(option.getIdentifier().toString(), value.toString());
+            preferenceStore.setValue(option.getId(), value.toString());
         } else {
-            preferenceStore.setToDefault(option.getIdentifier().toString());
+            preferenceStore.setToDefault(option.getId());
         }
     }
 
@@ -511,9 +511,9 @@ public class ImportGraphOptionsPage extends WizardPage {
             Integer value = Integer.parseInt(input.getText());
             if (value != option.getDefault()) {
                 options.setProperty(option, value);
-                preferenceStore.setValue(option.getIdentifier().toString(), value.toString());
+                preferenceStore.setValue(option.getId(), value.toString());
             } else {
-                preferenceStore.setToDefault(option.getIdentifier().toString());
+                preferenceStore.setToDefault(option.getId());
             }
         } catch (NumberFormatException e) {
             // if the text does not contain an integer don't set the option so
@@ -527,9 +527,9 @@ public class ImportGraphOptionsPage extends WizardPage {
             Float value = Float.parseFloat(input.getText());
             if (value != option.getDefault()) {
                 options.setProperty(option, value);
-                preferenceStore.setValue(option.getIdentifier().toString(), value.toString());
+                preferenceStore.setValue(option.getId(), value.toString());
             } else {
-                preferenceStore.setToDefault(option.getIdentifier().toString());
+                preferenceStore.setToDefault(option.getId());
             }
         } catch (NumberFormatException e) {
             // if the text does not contain a float don't set the option so
@@ -543,9 +543,9 @@ public class ImportGraphOptionsPage extends WizardPage {
             Double value = Double.parseDouble(input.getText());
             if (value != option.getDefault()) {
                 options.setProperty(option, value);
-                preferenceStore.setValue(option.getIdentifier().toString(), value.toString());
+                preferenceStore.setValue(option.getId(), value.toString());
             } else {
-                preferenceStore.setToDefault(option.getIdentifier().toString());
+                preferenceStore.setToDefault(option.getId());
             }
         } catch (NumberFormatException e) {
             // if the text does not contain a double don't set the option so
@@ -558,9 +558,9 @@ public class ImportGraphOptionsPage extends WizardPage {
         String value = input.getText();
         if (value != option.getDefault()) {
             options.setProperty(option, value);
-            preferenceStore.setValue(option.getIdentifier().toString(), value);
+            preferenceStore.setValue(option.getId(), value);
         } else {
-            preferenceStore.setToDefault(option.getIdentifier().toString());
+            preferenceStore.setToDefault(option.getId());
         }
     }
 
