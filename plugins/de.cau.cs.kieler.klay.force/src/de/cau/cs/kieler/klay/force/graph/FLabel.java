@@ -33,6 +33,7 @@ public class FLabel extends FParticle {
     /**
      * Create a new label. The label is also put into the edge's list of labels.
      * 
+     * @param text the text of the new label
      * @param fedge edge corresponding to this label
      */
     public FLabel(final FEdge fedge, final String text) {

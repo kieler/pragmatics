@@ -25,10 +25,9 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  */
 public class EadesModel extends AbstractForceModel {
 
-    private static final double REPULSION_FACTOR = 100.0;
-    
     private int maxIterations = Properties.DEF_ITERATIONS;
     private double springLength = Properties.DEF_SPACING;
+    private double repulsionFactor = Properties.DEF_REPULSION;
     
     /**
      * {@inheritDoc}
@@ -38,13 +37,14 @@ public class EadesModel extends AbstractForceModel {
         super.initialize(graph);
         maxIterations = graph.getProperty(Properties.ITERATIONS);
         springLength = graph.getProperty(Properties.SPACING);
+        repulsionFactor = graph.getProperty(Properties.REPULSION);
     }
     
     /**
      * {@inheritDoc}
      */
     @Override
-    protected boolean moreIterations(int count) {
+    protected boolean moreIterations(final int count) {
         return count < maxIterations;
     }
 
@@ -52,7 +52,7 @@ public class EadesModel extends AbstractForceModel {
      * {@inheritDoc}
      */
     @Override
-    protected KVector calcDisplacement(FParticle forcer, FParticle forcee) {
+    protected KVector calcDisplacement(final FParticle forcer, final FParticle forcee) {
         avoidSamePosition(getRandom(), forcer, forcee);
 
         // compute distance (z in the original algorithm)
@@ -63,9 +63,9 @@ public class EadesModel extends AbstractForceModel {
         double force;
         int connection = getGraph().getConnection(forcer, forcee);
         if (connection > 0) {
-            force = attractive(d, springLength) * connection;
+            force = -attractive(d, springLength) * connection;
         } else {
-            force = repulsive(d) * forcer.getProperty(Properties.PRIORITY);
+            force = repulsive(d, repulsionFactor) * forcer.getProperty(Properties.PRIORITY);
         }
 
         // scale distance vector to the amount of repulsive forces
@@ -78,10 +78,11 @@ public class EadesModel extends AbstractForceModel {
      * Compute repulsion force between the forcee and the forcer.
      *
      * @param d the distance between the two particles
+     * @param r the factor for repulsive force
      * @return a force exerted on the forcee 
      */
-    private static double repulsive(final double d) {
-        return REPULSION_FACTOR / (d * d);
+    private static double repulsive(final double d, final double r) {
+        return r / (d * d);
     }
     
     /**
@@ -92,7 +93,7 @@ public class EadesModel extends AbstractForceModel {
      * @return a force exerted on the forcee
      */
     public static double attractive(final double d, final double s) {
-        return Math.log10(d / s);
+        return Math.log(d / s);
     }
 
 }

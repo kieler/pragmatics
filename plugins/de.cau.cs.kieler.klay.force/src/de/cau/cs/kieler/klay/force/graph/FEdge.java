@@ -28,18 +28,14 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
  */
 public class FEdge extends MapPropertyHolder {
 
-    /** the bend points of the edge */
+    /** the bend points of the edge. */
     private List<FBendpoint> bendpoints = new LinkedList<FBendpoint>();
     /** the labels of the edge. */
     private List<FLabel> labels = new LinkedList<FLabel>();
     /** the source node of the edge. */
     private FNode source;
-    /** the target node of the edge */
+    /** the target node of the edge. */
     private FNode target;
-    /** Docking point at source vertex. */
-    private KVector sourcePoint = new KVector();
-    /** Docking point at target vertex. */
-    private KVector targetPoint = new KVector();
 
     /**
      * {@inheritDoc}
@@ -95,7 +91,9 @@ public class FEdge extends MapPropertyHolder {
      * @return the source docking point
      */
     public KVector getSourcePoint() {
-        return sourcePoint;
+        KVector v = target.getPosition().differenceCreate(source.getPosition());
+        clipVector(v, source.getSize().x, source.getSize().y);
+        return v.add(source.getPosition());
     }
 
     /**
@@ -104,7 +102,29 @@ public class FEdge extends MapPropertyHolder {
      * @return the target docking point
      */
     public KVector getTargetPoint() {
-        return targetPoint;
+        KVector v = source.getPosition().differenceCreate(target.getPosition());
+        clipVector(v, target.getSize().x, target.getSize().y);
+        return v.add(target.getPosition());
+    }
+    
+    /**
+     * Clip the given vector to a rectangular box of given size.
+     * 
+     * @param v vector relative to the center of the box
+     * @param width width of the rectangular box
+     * @param height height of the rectangular box
+     */
+    private static void clipVector(final KVector v, final double width, final double height) {
+        double wh = width / 2, hh = height / 2;
+        double absx = Math.abs(v.x), absy = Math.abs(v.y);
+        double xscale = 1, yscale = 1;
+        if (absx > wh) {
+            xscale = wh / absx;
+        }
+        if (absy > hh) {
+            yscale = hh / absy;
+        }
+        v.scale(Math.min(xscale, yscale));
     }
 
     /**
@@ -134,11 +154,11 @@ public class FEdge extends MapPropertyHolder {
      */
     public KVectorChain toVectorChain() {
         KVectorChain vectorChain = new KVectorChain();
-        vectorChain.add(sourcePoint);
+        vectorChain.add(getSourcePoint());
         for (FBendpoint bendPoint : bendpoints) {
             vectorChain.add(bendPoint.getPosition());
         }
-        vectorChain.add(targetPoint);
+        vectorChain.add(getTargetPoint());
         return vectorChain;
     }
     

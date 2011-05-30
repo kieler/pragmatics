@@ -42,17 +42,6 @@ public class FNode extends FParticle {
     /** Depth of this vertex in the compound hierarchy. */
     private int depth = 0;
     
-    // XXX what is this?
-    private KVector portDisplacement = new KVector();
-    
-    public KVector getPortDisplacement() {
-        return portDisplacement;
-    }
-
-    public void setPortDisplacement(KVector portDisplacement) {
-        this.portDisplacement = portDisplacement;
-    }
-    
     /**
      * Create a new node.
      */

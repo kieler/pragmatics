@@ -40,7 +40,7 @@ public final class Properties {
     public static final String FORCE_MODEL_ID = "de.cau.cs.kieler.klay.force.model";
     /** force model property. */
     public static final Property<ForceModelStrategy> FORCE_MODEL = new Property<ForceModelStrategy>(
-            FORCE_MODEL_ID, ForceModelStrategy.EADES);
+            FORCE_MODEL_ID, ForceModelStrategy.FRUCHTERMAN_REINGOLD);
     
     /** default value for object spacing. */
     public static final float DEF_SPACING = 80.0f;
@@ -77,6 +77,14 @@ public final class Properties {
     public static final String EDGE_REP_ID = "de.cau.cs.kieler.klay.force.repulsivePower";
     /** edge repulsive power property. */
     public static final Property<Integer> EDGE_REP = new Property<Integer>(EDGE_REP_ID, 0, 0);
+    
+    /** default value for repulsion factor. */
+    public static final float DEF_REPULSION = 5.0f;
+    /** repulsion factor property identifier. */
+    public static final String REPULSION_ID = "de.cau.cs.kieler.klay.force.repulsion";
+    /** repulsion factor property. */
+    public static final Property<Float> REPULSION = new Property<Float>(REPULSION_ID,
+            DEF_REPULSION, 0.0f);
     
     ///////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

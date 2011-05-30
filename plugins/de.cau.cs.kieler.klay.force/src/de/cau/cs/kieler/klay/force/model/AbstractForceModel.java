@@ -158,6 +158,7 @@ public abstract class AbstractForceModel {
     /**
      * Avoid having nodes on the same position by moving them a little.
      * 
+     * @param random the random number generator
      * @param u first node
      * @param v second node
      */

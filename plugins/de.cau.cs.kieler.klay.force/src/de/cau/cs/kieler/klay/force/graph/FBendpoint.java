@@ -22,7 +22,7 @@ package de.cau.cs.kieler.klay.force.graph;
  */
 public class FBendpoint extends FParticle {
     
-    /** The edge this bend point belongs to */
+    /** The edge this bend point belongs to. */
     private FEdge edge;
     
     /**
@@ -31,7 +31,7 @@ public class FBendpoint extends FParticle {
      * 
      * @param edge the edge this bend point belongs to
      */
-    public FBendpoint(FEdge edge) {
+    public FBendpoint(final FEdge edge) {
         this.edge = edge;
         edge.getBendpoints().add(this);
     }

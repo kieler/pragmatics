@@ -23,13 +23,13 @@
          </knownOption>
          <knownOption
                default="1"
-               option="de.cau.cs.kieler.priority">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.force.model">
+               option="de.cau.cs.kieler.randomSeed">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.interactive">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.force.model">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.force.temperature">
@@ -37,11 +37,20 @@
          <knownOption
                option="de.cau.cs.kieler.klay.force.iterations">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.force.repulsion">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.force.repulsivePower">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.force.frc">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.force.model.ForceModelStrategy"
-            default="EADES"
+            default="FRUCHTERMAN_REINGOLD"
             id="de.cau.cs.kieler.klay.force.model"
             name="Force Model"
             type="enum">
@@ -74,6 +83,14 @@
             default="0.8"
             id="de.cau.cs.kieler.klay.force.frc"
             name="FR Distance Factor"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="5.0"
+            id="de.cau.cs.kieler.klay.force.repulsion"
+            name="Eades Repulsion"
             type="float">
       </layoutOption>
    </extension>

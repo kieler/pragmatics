@@ -89,8 +89,8 @@ public class FGraph extends MapPropertyHolder {
      * Determines the amount of connection between the two given particles, considering
      * the priority value of the respective edges.
      * 
-     * @param node1 first node
-     * @param node2 second node
+     * @param particle1 first particle
+     * @param particle2 second particle
      * @return the amount of connection
      */
     public int getConnection(final FParticle particle1, final FParticle particle2) {

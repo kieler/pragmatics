@@ -20,13 +20,11 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.force.graph.FEdge;
 import de.cau.cs.kieler.klay.force.graph.FGraph;
 import de.cau.cs.kieler.klay.force.graph.FLabel;
@@ -91,7 +89,8 @@ public class KGraphImporter implements IGraphImporter {
         
         // copy the properties of the KGraph to the force graph
         fgraph.copyProperties(sourceShapeLayout);
-        fgraph.checkProperties(Properties.SPACING, Properties.TEMPERATURE, Properties.ITERATIONS);
+        fgraph.checkProperties(Properties.SPACING, Properties.TEMPERATURE, Properties.ITERATIONS,
+                Properties.REPULSION);
                 
         // keep a list of created nodes in the force graph
         Map<KNode, FNode> elemMap = new HashMap<KNode, FNode>();
@@ -113,15 +112,17 @@ public class KGraphImporter implements IGraphImporter {
      *                transformed {@code FGraph} elements.
      */
     private void transformNodes(final KNode parentNode, final FGraph fgraph,
-            final Map<KNode, FNode> elemMap) {        
+            final Map<KNode, FNode> elemMap) {
+        int index = 0;
         for (KNode knode : parentNode.getChildren()) {
             // add a new node to the force graph, copying its size
             KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
             
             FNode newNode = new FNode(knode.getLabel().getText());
+            newNode.id = index++;
             newNode.setProperty(Properties.ORIGIN, knode);
-            newNode.getPosition().x = nodeLayout.getXpos();
-            newNode.getPosition().y = nodeLayout.getYpos();
+            newNode.getPosition().x = nodeLayout.getXpos() + nodeLayout.getWidth() / 2;
+            newNode.getPosition().y = nodeLayout.getYpos() + nodeLayout.getHeight() / 2;
             newNode.getSize().x = nodeLayout.getWidth();
             newNode.getSize().y = nodeLayout.getHeight();
             fgraph.getNodes().add(newNode);
@@ -153,8 +154,8 @@ public class KGraphImporter implements IGraphImporter {
             final Map<KNode, FNode> elemMap) {
         for (KNode knode : parentNode.getChildren()) {
             for (KEdge kedge : knode.getOutgoingEdges()) {
-                // exclude edges that pass hierarchy bounds
-                if (kedge.getTarget().getParent() == parentNode) {
+                // exclude edges that pass hierarchy bounds as well as self-loops
+                if (kedge.getTarget().getParent() == parentNode && knode != kedge.getTarget()) {
                     KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
                     
                     // create a force edge
@@ -217,14 +218,14 @@ public class KGraphImporter implements IGraphImporter {
         
         // process the nodes
         for (FNode fnode : fgraph.getNodes()) {
-            Object origin = fnode.getProperty(Properties.ORIGIN);
+            Object object = fnode.getProperty(Properties.ORIGIN);
             
-            if (origin instanceof KNode) {
+            if (object instanceof KNode) {
                 // set the node position
-                KShapeLayout nodeLayout = ((KNode) origin).getData(KShapeLayout.class);
+                KShapeLayout nodeLayout = ((KNode) object).getData(KShapeLayout.class);
                 KVector nodePos = fnode.getPosition().add(offset);
-                nodeLayout.setXpos((float) nodePos.x);
-                nodeLayout.setYpos((float) nodePos.y);                
+                nodeLayout.setXpos((float) nodePos.x - nodeLayout.getWidth());
+                nodeLayout.setYpos((float) nodePos.y - nodeLayout.getHeight());
             }
         }
         
@@ -232,12 +233,13 @@ public class KGraphImporter implements IGraphImporter {
         for (FEdge fedge : fgraph.getEdges()) {
             KEdge kedge = (KEdge) fedge.getProperty(Properties.ORIGIN);
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-            
-            // get a vector chain for the bend points of the edge
-            KVectorChain bendPoints = fedge.toVectorChain();
-            // translate the bend points by the offset and apply them
-            bendPoints.translate(offset);
-            KimlUtil.applyVectorChain(edgeLayout, bendPoints);
+            edgeLayout.getBendPoints().clear();
+            KVector sourcePoint = fedge.getSourcePoint();
+            edgeLayout.getSourcePoint().setX((float) sourcePoint.x);
+            edgeLayout.getSourcePoint().setY((float) sourcePoint.y);
+            KVector targetPoint = fedge.getTargetPoint();
+            edgeLayout.getTargetPoint().setX((float) targetPoint.x);
+            edgeLayout.getTargetPoint().setY((float) targetPoint.y);
         }
         
         // process the labels
