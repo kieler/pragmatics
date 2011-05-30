@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kiml.layoutProviders">
+      <layoutAlgorithm
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.klay.force.ForceLayoutProvider"
+            id="de.cau.cs.kieler.klay.force"
+            name="KLay Force"
+            type="de.cau.cs.kieler.type.force">
+         <knownOption
+               default="1"
+               option="de.cau.cs.kieler.priority">
+         </knownOption>
+         <knownOption
+               default="80.0"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               default="5.0"
+               option="de.cau.cs.kieler.labelSpacing">
+         </knownOption>
+         <knownOption
+               default="1"
+               option="de.cau.cs.kieler.priority">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.force.model">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.interactive">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.force.temperature">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.force.iterations">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.force.model.ForceModelStrategy"
+            default="EADES"
+            id="de.cau.cs.kieler.klay.force.model"
+            name="Force Model"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="100"
+            id="de.cau.cs.kieler.klay.force.iterations"
+            name="Iterations"
+            type="int">
+      </layoutOption>
+      <layoutOption
+            appliesTo="edges"
+            default="0"
+            id="de.cau.cs.kieler.klay.force.repulsivePower"
+            name="Repulsive Power"
+            type="int">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0.001"
+            id="de.cau.cs.kieler.klay.force.temperature"
+            name="FR Temperature"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0.8"
+            id="de.cau.cs.kieler.klay.force.frc"
+            name="FR Distance Factor"
+            type="float">
+      </layoutOption>
+   </extension>
+
+</plugin>
