@@ -35,11 +35,12 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A graph analysis that computes the number of edge crossings. It assumes that
- * the edge bend points describe polylines (splines are not supported). Returns
- * a four-component result {@code (int min, float avg, int max, int sum)}.
+ * the edge bend points describe polylines. Returns a four-component result
+ * {@code (int min, float avg, int max, int sum)}.
  * 
  * @author mri
  * @author cds
+ * @author msp
  */
 public class EdgeCrossingsAnalysis implements IAnalysis {
 

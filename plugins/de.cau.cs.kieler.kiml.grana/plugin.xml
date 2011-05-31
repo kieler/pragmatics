@@ -285,7 +285,7 @@
       <provider
             category="de.cau.cs.kieler.kiml.grana.drawing"
             class="de.cau.cs.kieler.kiml.grana.analyses.EdgeCrossingsAnalysis"
-            description="The number of edge crossings including hierarchies."
+            description="The number of edge crossings, including hierarchies."
             id="de.cau.cs.kieler.kiml.grana.edgeCrossings"
             name="Number of Edge Crossings">
          <component
@@ -368,6 +368,13 @@
                abbreviation="Ver"
                name="Vertical">
          </component>
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.HyperedgeCrossingsAnalysis"
+            description="The number of hyperedge crossings."
+            id="de.cau.cs.kieler.kiml.grana.hyperedgeCrossings"
+            name="Hyperedge Crossings">
       </provider>
    </extension>
    <extension
