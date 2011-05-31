@@ -23,8 +23,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.osgi.framework.Bundle;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-
 /**
  * A utility class to handle the communication with the OGDF server.
  * 
@@ -363,17 +361,42 @@ public final class OgdfServerAPI {
     }
 
     /**
+     * Interface for aborter classes, which can be used to abort the process.
+     */
+    public static interface Aborter {
+        /**
+         * Check whether the running process should abort.
+         * 
+         * @return true if the process should abort
+         */
+        boolean shouldAbort();
+    }
+    
+    /**
      * Waits until there is some input from the given input stream, with a customizable timeout.
      * 
      * @param inputStream
      *            input stream from which input is expected
-     * @param monitor
-     *            monitor to which progress is reported
      * @return returns whether input arrived
      */
-    public static boolean waitForInput(final InputStream inputStream,
-            final IKielerProgressMonitor monitor) {
-        monitor.begin("Wait for the ogdf server", 1);
+    public static boolean waitForInput(final InputStream inputStream) {
+        return waitForInput(inputStream, new Aborter() {
+            public boolean shouldAbort() {
+                return false;
+            }
+        });
+    }
+    
+    /**
+     * Waits until there is some input from the given input stream, with a customizable timeout.
+     * 
+     * @param inputStream
+     *            input stream from which input is expected
+     * @param aborter
+     *            aborter used to abort the process
+     * @return returns whether input arrived
+     */
+    public static boolean waitForInput(final InputStream inputStream, final Aborter aborter) {
         IPreferenceStore preferenceStore = OgdfPlugin.getDefault().getPreferenceStore();
         int timeout = preferenceStore.getInt(PREF_TIMEOUT);
         if (timeout < PROCESS_MIN_TIMEOUT) {
@@ -386,7 +409,7 @@ public final class OgdfServerAPI {
                 long sleepTime = MIN_INPUT_WAIT;
                 while (inputStream.available() == 0
                         && System.currentTimeMillis() - startTime < timeout
-                        && !monitor.isCanceled()) {
+                        && !aborter.shouldAbort()) {
                     Thread.sleep(sleepTime);
                     // increase sleep time after each step
                     if (sleepTime < MAX_INPUT_WAIT) {
@@ -404,8 +427,6 @@ public final class OgdfServerAPI {
         } catch (IOException exception) {
             endProcess();
             throw new RuntimeException("Unable to read ogdf server output.", exception);
-        } finally {
-            monitor.done();
         }
     }
 }

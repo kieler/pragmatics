@@ -36,6 +36,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 import net.ogdf.bin.OgdfServerAPI;
+import net.ogdf.bin.OgdfServerAPI.Aborter;
 import net.ogdf.ogml.DocumentRoot;
 import net.ogdf.ogml.EdgeType;
 import net.ogdf.ogml.GraphType;
@@ -200,10 +201,17 @@ public abstract class OgdfLayouter {
             // flush the stream
             outputStream.flush();
             // wait for the process to finish the layout and send the layout information
+            final IKielerProgressMonitor subMon = progressMonitor.subTask(PROCESS_WORK);
+            subMon.begin("Wait OGDF Reply", 1);
             if (!OgdfServerAPI.waitForInput(process.getInputStream(),
-                    progressMonitor.subTask(PROCESS_WORK))) {
+                    new Aborter() {
+                        public boolean shouldAbort() {
+                            return subMon.isCanceled();
+                        }
+                    })) {
                 throw new RuntimeException("The layout process timed out.");
             }
+            subMon.done();
             // read the layout information
             Map<String, KVectorChain> layoutInformation =
                     readLayoutInformation(new BufferedInputStream(process.getInputStream()),
