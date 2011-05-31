@@ -881,16 +881,26 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     ///////////////////////////////////////////////////////////////////////////////
     // Post Processing for Correction
     
+    /**
+     * Post-process the balanced placement by moving linear segments where obvious
+     * improvements can be made.
+     * 
+     * @param layeredGraph the layered graph
+     */
     private void postProcess(final LayeredGraph layeredGraph) {
         float normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         float smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         
+        // process each linear segment independently
         for (LinearSegment segment : linearSegments) {
             double minRoomAbove = Integer.MAX_VALUE, minRoomBelow = Integer.MAX_VALUE;
+            
             for (LNode node : segment.getNodes()) {
                 double roomAbove, roomBelow;
                 int index = node.getIndex();
                 boolean isNodeNormal = node.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL;
+                
+                // determine the amount by which the linear segment can be moved up without overlap
                 if (index > 0) {
                     LNode neighbor = node.getLayer().getNodes().get(index - 1);
                     boolean isNeighborNormal = neighbor.getProperty(Properties.NODE_TYPE)
@@ -904,6 +914,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 }
                 minRoomAbove = Math.min(roomAbove, minRoomAbove);
                 
+                // determine the amount by which the linear segment can be moved down without overlap
                 if (index < node.getLayer().getNodes().size() - 1) {
                     LNode neighbor = node.getLayer().getNodes().get(index + 1);
                     boolean isNeighborNormal = neighbor.getProperty(Properties.NODE_TYPE)
@@ -920,6 +931,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             
             double minDisplacement = Integer.MAX_VALUE;
             boolean foundPlace = false;
+
+            // determine the minimal displacement that would make one incoming edge straight
             LNode firstNode = segment.getNodes().get(0);
             for (LPort target : firstNode.getPorts()) {
                 double pos = firstNode.getPosition().y + target.getPosition().y;
@@ -933,6 +946,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                     }
                 }
             }
+            
+            // determine the minimal displacement that would make one outgoing edge straight
             LNode lastNode = segment.getNodes().get(segment.getNodes().size() - 1);
             for (LPort source : lastNode.getPorts()) {
                 double pos = lastNode.getPosition().y + source.getPosition().y;
@@ -947,7 +962,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 }
             }
             
-            if (foundPlace && minDisplacement > 0) {
+            // if such a displacement could be found, apply it to the whole linear segment
+            if (foundPlace && minDisplacement != 0) {
                 for (LNode node : segment.getNodes()) {
                     node.getPosition().y += minDisplacement;
                 }
