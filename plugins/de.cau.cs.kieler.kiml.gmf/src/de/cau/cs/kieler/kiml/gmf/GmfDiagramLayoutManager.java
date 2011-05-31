@@ -394,7 +394,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         // transform all connections in the selected area
         processConnections(layoutConfig);
 
-        // TODO instead of cleaning up the path afterwards, build only the right elements in the first place
+        // clean up the path of ancestors of the selected elements
         cleanupAncestryPath(topNode);
         return topNode;
     }
@@ -473,7 +473,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
             // process a label of the current node
             } else if (obj instanceof IGraphicalEditPart) {
-                createNodeLabel((IGraphicalEditPart) obj, parentEditPart, parentLayoutNode);
+                createNodeLabel((IGraphicalEditPart) obj, parentEditPart, parentLayoutNode,
+                        layoutConfig);
             }
         }
 
@@ -614,6 +615,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 if (text != null) {
                     KLabel portLabel = port.getLabel();
                     portLabel.setText(text);
+                    graphElem2EditPartMap.put(portLabel, (IGraphicalEditPart) portChildObj);
                     // set the port label's layout
                     KShapeLayout labelLayout = portLabel.getData(KShapeLayout.class);
                     Rectangle labelBounds = KimlUiUtil.getAbsoluteBounds(labelFigure);
@@ -626,6 +628,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     } catch (SWTException exception) {
                         // ignore exception and leave the label size to (0, 0)
                     }
+                    layoutConfig.setFocus(portChildObj);
+                    labelLayout.copyProperties(layoutConfig);
+                    // port labels are excluded from layout by default
+                    labelLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 }
             }
         }
@@ -637,9 +643,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * @param labelEditPart the label edit part
      * @param nodeEditPart the parent node edit part
      * @param knode the layout node for which the label is set
+     * @param layoutConfig a layout configuration
      */
     private void createNodeLabel(final IGraphicalEditPart labelEditPart,
-            final IGraphicalEditPart nodeEditPart, final KNode knode) {
+            final IGraphicalEditPart nodeEditPart, final KNode knode, final ILayoutConfig layoutConfig) {
         IFigure labelFigure = labelEditPart.getFigure();
         String text = null;
         Font font = null;
@@ -655,6 +662,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         KLabel label = knode.getLabel();
         if (text != null && (label.getText() == null || label.getText().length() == 0)) {
             label.setText(text);
+            graphElem2EditPartMap.put(label, labelEditPart);
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
             Rectangle labelBounds = KimlUiUtil.getAbsoluteBounds(labelFigure);
             Rectangle nodeBounds = KimlUiUtil.getAbsoluteBounds(nodeEditPart.getFigure());
@@ -671,6 +679,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             } catch (SWTException exception) {
                 // ignore exception and leave the label size to (0, 0)
             }
+            layoutConfig.setFocus(labelEditPart);
+            labelLayout.copyProperties(layoutConfig);
+            // exclude the label from layout by default
+            labelLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
         }
     }
 
@@ -802,7 +814,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             }
 
             // process edge labels
-            processEdgeLabels(connection, edge, edgeLabelPlacement, offsetx, offsety);
+            processEdgeLabels(connection, edge, edgeLabelPlacement, offsetx, offsety, layoutConfig);
         }
     }
 
@@ -844,9 +856,11 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      *            shall be derived from the edit part
      * @param offsetx the offset for horizontal coordinates
      * @param offsety the offset for vertical coordinates
+     * @param layoutConfig layout configuration handler
      */
     protected void processEdgeLabels(final ConnectionEditPart connection, final KEdge edge,
-        final EdgeLabelPlacement placement, final float offsetx, final float offsety) {
+        final EdgeLabelPlacement placement, final float offsetx, final float offsety,
+        final ILayoutConfig layoutConfig) {
         /*
          * ars: source and target is exchanged when defining it in the gmfgen file. So if Emma sets
          * a label to be placed as target on a connection, then the label will show up next to the
@@ -917,6 +931,11 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     label.setText(labelText);
                     edge.getLabels().add(label);
                     graphElem2EditPartMap.put(label, labelEditPart);
+                    
+                    layoutConfig.setFocus(labelEditPart);
+                    labelLayout.copyProperties(layoutConfig);
+                    // exclude the label from layout by default
+                    labelLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 } else {
                     emptyLabels.add(labelEditPart);
                 }
@@ -958,11 +977,16 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     private void removeFromLayout(final KNode node) {
         for (KNode child : node.getChildren()) {
             graphElem2EditPartMap.remove(child);
+            child.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
+            graphElem2EditPartMap.remove(child.getLabel());
             for (KPort port : child.getPorts()) {
                 graphElem2EditPartMap.remove(port);
+                port.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
+                graphElem2EditPartMap.remove(port.getLabel());
             }
             for (KEdge edge : child.getOutgoingEdges()) {
                 graphElem2EditPartMap.remove(edge);
+                edge.getData(KEdgeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
                 for (KLabel edgeLabel : edge.getLabels()) {
                     graphElem2EditPartMap.remove(edgeLabel);
                 }

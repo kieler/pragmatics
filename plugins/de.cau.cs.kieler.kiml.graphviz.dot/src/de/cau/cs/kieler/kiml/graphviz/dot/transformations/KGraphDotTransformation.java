@@ -856,6 +856,7 @@ public class KGraphDotTransformation {
                 float xoffset = (combinedWidth - labelLayout.getWidth()) / 2;
                 labelLayout.setXpos(xpos + xoffset);
                 labelLayout.setYpos(ypos);
+                labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
                 ypos += labelLayout.getHeight();
             }
         }

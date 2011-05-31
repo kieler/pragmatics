@@ -165,7 +165,8 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
             super.setFocus(null);
         }
         super.setFocus(element);
-        if (element instanceof IGraphicalEditPart) {
+        // labels usually have no own domain model element, so they must not take the domain options
+        if (element instanceof IGraphicalEditPart && !(element instanceof LabelEditPart)) {
             EObject object = ((IGraphicalEditPart) element).getNotationView().getElement();
             if (object != null) {
                 super.setFocus(object);

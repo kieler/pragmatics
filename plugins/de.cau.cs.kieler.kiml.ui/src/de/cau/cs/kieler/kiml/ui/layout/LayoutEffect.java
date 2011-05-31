@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.kiml.ui.layout;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
@@ -27,7 +26,6 @@ import de.cau.cs.kieler.core.kivi.UndoEffect;
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 import de.cau.cs.kieler.kiml.VolatileLayoutConfig;
 
 /**
@@ -172,17 +170,19 @@ public class LayoutEffect extends AbstractEffect {
      * run and is thrown away afterwards.
      * 
      * @param object
-     *            the domain model element for which the option shall be set
+     *            the domain model element or edit part for which the option shall be set
      * @param option
      *            the layout option to set (see {@link de.cau.cs.kieler.kiml.options.LayoutOptions
      *            LayoutOptions})
      * @param value
      *            the value for the layout option
      */
-    public void setOption(final EObject object, final IProperty<?> option, final Object value) {
+    public void setOption(final Object object, final IProperty<?> option, final Object value) {
         if (layoutConfig == null) {
             layoutConfig = new VolatileLayoutConfig();
         }
+        // first clear the current focus, then add the new one
+        layoutConfig.setFocus(null);
         layoutConfig.setFocus(object);
         layoutConfig.setProperty(option, value);
     }
@@ -193,18 +193,9 @@ public class LayoutEffect extends AbstractEffect {
     public void execute() {
         manager = EclipseLayoutDataService.getInstance().getManager(diagramEditor, editPart);
         if (manager != null) {
-            List<EditPart> zoomToList = null;
-            /*
-             * haf: trying to add a semantical zoom that zooms to a given list of elements. does
-             * not yet work
-             */
-            if (editPart != null) {
-                zoomToList = Collections.singletonList(editPart);
-            }
-            // System.out.println("Layout: "+((View) editPart.getModel()).getElement());
             manager.setLayoutConfig(layoutConfig);
             manager.layout(diagramEditor, editPart, doAnimate, useProgMonitor,
-                    layoutAncestors, false, doZoom/* , zoomToList */);
+                    layoutAncestors, false, doZoom);
         }
     }
 

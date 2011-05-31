@@ -601,6 +601,7 @@ public abstract class OgdfLayouter {
                     KVector labelPos = ogdfLabelLayout.getFirst();
                     toKShape(labelLayout, (float) labelPos.x + offsetX, (float) labelPos.y
                             + offsetY, labelLayout.getWidth(), labelLayout.getHeight());
+                    labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
                 }
             }
         }

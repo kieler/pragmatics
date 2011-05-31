@@ -46,7 +46,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Null Layout", 1);
+        progressMonitor.begin("Fixed Layout", 1);
         float maxx = 0, maxy = 0;
         
         for (KNode node : layoutNode.getChildren()) {
@@ -73,6 +73,15 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
             maxx = Math.max(maxx, nodeLayout.getXpos() + nodeLayout.getWidth());
             maxy = Math.max(maxy, nodeLayout.getYpos() + nodeLayout.getHeight());
             
+            // set the fixed position of the node label, or leave it as it is
+            KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);
+            pos = labelLayout.getProperty(LayoutOptions.POSITION);
+            if (pos != null) {
+                labelLayout.setXpos((float) pos.x);
+                labelLayout.setYpos((float) pos.y);
+                labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
+            }
+            
             // set the fixed position of the ports, or leave them as they are
             for (KPort port : node.getPorts()) {
                 KShapeLayout portLayout = port.getData(KShapeLayout.class);
@@ -82,6 +91,15 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                 } else {
                     portLayout.setXpos((float) pos.x);
                     portLayout.setYpos((float) pos.y);
+                }
+                
+                // set the fixed position of the port label, or leave it as it is
+                labelLayout = port.getLabel().getData(KShapeLayout.class);
+                pos = labelLayout.getProperty(LayoutOptions.POSITION);
+                if (pos != null) {
+                    labelLayout.setXpos((float) pos.x);
+                    labelLayout.setYpos((float) pos.y);
+                    labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
                 }
             }
             
@@ -126,11 +144,11 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         for (KLabel label : edge.getLabels()) {
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
             KVector pos = labelLayout.getProperty(LayoutOptions.POSITION);
-            if (pos == null) {
-                labelLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
-            } else {
+            // edge labels are excluded from layout by default
+            if (pos != null) {
                 labelLayout.setXpos((float) pos.x);
                 labelLayout.setYpos((float) pos.y);
+                labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
             }
         }
     }

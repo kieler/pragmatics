@@ -89,7 +89,8 @@ public class RecursiveLayouterEngine {
      */
     private void layoutRecursively(final KNode layoutNode,
             final IKielerProgressMonitor progressMonitor) {
-        if (!layoutNode.getChildren().isEmpty()) {
+        if (!layoutNode.getChildren().isEmpty()
+                && !layoutNode.getData(KShapeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
             AbstractLayoutProvider layoutProvider = getLayoutProvider(layoutNode);
             // if the layout provider supports hierarchy, it is expected to layout the children
             int nodeCount;

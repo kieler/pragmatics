@@ -84,7 +84,6 @@ public class LayoutCombination extends AbstractCombination {
      *            the trigger state for the current selection
      */
     public void execute(final ButtonState button, final SelectionState selection) {
-        //dontUndo();
         if (this.getTriggerState() instanceof ButtonState
                 && COMMAND_ID.equals(button.getButtonId())) {
             IPreferenceStore preferenceStore = getPreferenceStore();

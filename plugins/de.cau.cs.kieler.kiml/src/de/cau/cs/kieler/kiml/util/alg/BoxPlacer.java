@@ -18,8 +18,10 @@ import java.util.List;
 import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -89,6 +91,10 @@ public class BoxPlacer extends AbstractAlgorithm {
             KShapeLayout boxLayout = box.getData(KShapeLayout.class);
             if (!boxLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
                 KimlUtil.resizeNode(box);
+            }
+            // invalidate edges, since they are not considered here
+            for (KEdge edge : box.getOutgoingEdges()) {
+                edge.getData(KEdgeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
             }
             maxRowWidth = Math.max(maxRowWidth, boxLayout.getWidth());
             totalArea += boxLayout.getWidth() * boxLayout.getHeight();

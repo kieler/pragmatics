@@ -271,6 +271,11 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                     } catch (SWTException exception) {
                         // ignore exception and leave the label size to (0, 0)
                     }
+                    layoutConfig.setFocus(obj);
+                    labelLayout.copyProperties(layoutConfig);
+                    // port labels are excluded from layout by default
+                    labelLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
+                    getGraphElem2EditPartMap().put(layoutPort.getLabel(), (IGraphicalEditPart) obj);
                 }
             }
         }
@@ -331,7 +336,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                         
                         // set edge labels
                         processEdgeLabels(connection, layoutEdge, EdgeLabelPlacement.UNDEFINED,
-                                offsetx, offsety);
+                                offsetx, offsety, layoutConfig);
             
                         // set user defined layout options for the edge
                         layoutConfig.setFocus(connection);

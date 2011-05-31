@@ -19,8 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.ecore.EObject;
-
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.util.Pair;
@@ -33,18 +31,20 @@ import de.cau.cs.kieler.core.util.Pair;
  */
 public class VolatileLayoutConfig implements ILayoutConfig {
 
-    /** the element that is currently in focus. */
-    private EObject currentFocus;
+    /** the elements that are currently in focus. */
+    private List<Object> currentFocus = new LinkedList<Object>();
     /** map of focus objects and property identifiers to their values. */
-    private Map<Pair<EObject, IProperty<?>>, Object> propertyMap
-            = new LinkedHashMap<Pair<EObject, IProperty<?>>, Object>();
+    private Map<Pair<Object, IProperty<?>>, Object> propertyMap
+            = new LinkedHashMap<Pair<Object, IProperty<?>>, Object>();
     
     /**
      * {@inheritDoc}
      */
     public void setFocus(final Object element) {
-        if (element instanceof EObject) {
-            this.currentFocus = (EObject) element;
+        if (element == null) {
+            currentFocus.clear();
+        } else {
+            currentFocus.add(element);
         }
     }
     
@@ -52,11 +52,13 @@ public class VolatileLayoutConfig implements ILayoutConfig {
      * {@inheritDoc}
      */
     public void setProperty(final IProperty<?> property, final Object value) {
-        Pair<EObject, IProperty<?>> key = new Pair<EObject, IProperty<?>>(currentFocus, property); 
-        if (value == null) {
-            propertyMap.remove(key);
-        } else {
-            propertyMap.put(key, value);
+        for (Object object : currentFocus) {
+            Pair<Object, IProperty<?>> key = new Pair<Object, IProperty<?>>(object, property); 
+            if (value == null) {
+                propertyMap.remove(key);
+            } else {
+                propertyMap.put(key, value);
+            }
         }
     }
     
@@ -64,10 +66,15 @@ public class VolatileLayoutConfig implements ILayoutConfig {
      * {@inheritDoc}
      */
     public <T> T getProperty(final IProperty<T> property) {
-        Pair<EObject, IProperty<?>> key = new Pair<EObject, IProperty<?>>(currentFocus, property);
-        @SuppressWarnings("unchecked")
-        T value = (T) propertyMap.get(key);
-        return value;
+        for (Object object : currentFocus) {
+            Pair<Object, IProperty<?>> key = new Pair<Object, IProperty<?>>(object, property);
+            @SuppressWarnings("unchecked")
+            T value = (T) propertyMap.get(key);
+            if (value != null) {
+                return value;
+            }
+        }
+        return null;
     }
     
     /**
@@ -89,8 +96,8 @@ public class VolatileLayoutConfig implements ILayoutConfig {
      */
     public Map<IProperty<?>, Object> getAllProperties() {
         Map<IProperty<?>, Object> options = new HashMap<IProperty<?>, Object>();
-        for (Map.Entry<Pair<EObject, IProperty<?>>, Object> entry : propertyMap.entrySet()) {
-            if (entry.getKey().getFirst() == currentFocus) {
+        for (Map.Entry<Pair<Object, IProperty<?>>, Object> entry : propertyMap.entrySet()) {
+            if (currentFocus.contains(entry.getKey().getFirst())) {
                 options.put(entry.getKey().getSecond(), entry.getValue());
             }
         }
@@ -101,8 +108,13 @@ public class VolatileLayoutConfig implements ILayoutConfig {
      * {@inheritDoc}
      */
     public boolean isDefault(final LayoutOptionData<?> optionData) {
-        Pair<EObject, IProperty<?>> key = new Pair<EObject, IProperty<?>>(currentFocus, optionData);
-        return !propertyMap.containsKey(key);
+        for (Object object : currentFocus) {
+            Pair<Object, IProperty<?>> key = new Pair<Object, IProperty<?>>(object, optionData);
+            if (propertyMap.containsKey(key)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -110,8 +122,8 @@ public class VolatileLayoutConfig implements ILayoutConfig {
      */
     public List<LayoutOptionData<?>> getOptionData() {
         List<LayoutOptionData<?>> dataList = new LinkedList<LayoutOptionData<?>>();
-        for (Map.Entry<Pair<EObject, IProperty<?>>, Object> entry : propertyMap.entrySet()) {
-            if (entry.getKey().getFirst() == currentFocus
+        for (Map.Entry<Pair<Object, IProperty<?>>, Object> entry : propertyMap.entrySet()) {
+            if (currentFocus.contains(entry.getKey().getFirst())
                     && entry.getKey().getSecond() instanceof LayoutOptionData) {
                 dataList.add((LayoutOptionData<?>) entry.getKey().getSecond());
             }

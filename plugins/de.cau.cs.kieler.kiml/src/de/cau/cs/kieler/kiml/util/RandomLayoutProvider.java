@@ -17,7 +17,6 @@ import java.util.Random;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -260,11 +259,6 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
             bendPoint.setX(randx);
             bendPoint.setY(randy);
             edgeLayout.getBendPoints().add(bendPoint);
-        }
-        
-        // invalidate edge labels
-        for (KLabel label : edge.getLabels()) {
-            label.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
         }
     }
 

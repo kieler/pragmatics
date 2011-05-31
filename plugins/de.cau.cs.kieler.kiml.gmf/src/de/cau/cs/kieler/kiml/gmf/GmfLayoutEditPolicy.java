@@ -117,7 +117,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                         addEdgeLayout(command, (KEdge) layoutPair.getFirst(),
                                 (ConnectionEditPart) layoutPair.getSecond());
                     } else if (layoutPair.getFirst() instanceof KLabel) {
-                        addEdgeLabelLayout(command, (KLabel) layoutPair.getFirst(),
+                        addLabelLayout(command, (KLabel) layoutPair.getFirst(),
                                 (LabelEditPart) layoutPair.getSecond(), xbound, ybound);
                     }
                 }
@@ -331,23 +331,30 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * @param labelEditPart
      *            edit part to which layout is applied
      */
-    private void addEdgeLabelLayout(final GmfLayoutCommand command, final KLabel klabel,
+    private void addLabelLayout(final GmfLayoutCommand command, final KLabel klabel,
             final LabelEditPart labelEditPart, final float xbound, final float ybound) {
-        // calculate direct new location of the label
+        KGraphElement parent = klabel.getParent();
         KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
+        // node and port labels are processed separately
+        if (parent instanceof KNode || parent instanceof KPort) {
+            Point location = new Point(labelLayout.getXpos(), labelLayout.getYpos());
+            command.addShapeLayout((View) labelEditPart.getModel(), location, null);
+            return;
+        }
+        
+        // calculate direct new location of the label
         Rectangle targetBounds = new Rectangle(labelEditPart.getFigure().getBounds());
         targetBounds.x = (int) labelLayout.getXpos();
         targetBounds.y = (int) labelLayout.getYpos();
-        KGraphElement kedge = klabel.getParent();
         if (targetBounds.x < 0 || targetBounds.y < 0 || targetBounds.x > xbound
-                || targetBounds.y > ybound || !(kedge instanceof KEdge)) {
+                || targetBounds.y > ybound || !(parent instanceof KEdge)) {
             // empty labels are just positioned near their reference point
             command.addShapeLayout((View) labelEditPart.getModel(), new Point(), null);
             return;
         }
         
         ConnectionEditPart connectionEditPart = (ConnectionEditPart) labelEditPart.getParent();
-        PointList bendPoints = getBendPoints((KEdge) kedge, connectionEditPart.getFigure());
+        PointList bendPoints = getBendPoints((KEdge) parent, connectionEditPart.getFigure());
         EObject modelElement = connectionEditPart.getNotationView().getElement();
         EdgeLabelPlacement labelPlacement = labelLayout
                 .getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
