@@ -232,7 +232,7 @@ public class KaomPortProvider implements IRenderingProvider {
      * {@inheritDoc}
      */
     public BorderItemLocator getBorderItemLocatorByString(final String input,
-            final IFigure parentFigure, final Object locator, final EObject object) {
+            final IFigure parentFigure, final Object locator, final EObject object, final CollapseStatus collapseStatus) {
         EObject container = object.eContainer();
         if (container instanceof Entity) {
             // Get the parent to check if its a compositeactor. If it is ports are done by the

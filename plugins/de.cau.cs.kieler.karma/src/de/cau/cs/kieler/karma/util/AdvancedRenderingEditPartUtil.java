@@ -43,6 +43,7 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.karma.AdvancedRenderingBorderedBorderItemEditPart;
 import de.cau.cs.kieler.karma.AdvancedRenderingLabelEditPart;
 import de.cau.cs.kieler.karma.IRenderingProvider;
+import de.cau.cs.kieler.karma.IRenderingProvider.CollapseStatus;
 import de.cau.cs.kieler.karma.SwitchableFigure;
 
 /**
@@ -68,6 +69,9 @@ public class AdvancedRenderingEditPartUtil {
      * Variable to detect if the collapsed state has changed.
      */
     private boolean isCollapsed = false;
+    
+    private CollapseStatus collapseStatus = CollapseStatus.UNCHANGED;
+   
     
     /**
      * 
@@ -96,6 +100,13 @@ public class AdvancedRenderingEditPartUtil {
         boolean coll = this.checkCollapsed(editPart);
         if (editPart instanceof AdvancedRenderingBorderedBorderItemEditPart) {
             coll = this.checkCollapsed(editPart.getParent());
+        }
+        if (coll == this.isCollapsed) {
+          collapseStatus = CollapseStatus.UNCHANGED; 
+        } else if (this.isCollapsed && !coll) {
+            collapseStatus = CollapseStatus.EXPANDING;
+        } else {
+            collapseStatus = CollapseStatus.COLLAPSING;
         }
         //eliminate some notifications we are not interested in 
         if ((!(notification.isTouch()) && !(notifier instanceof Bounds) 
@@ -283,7 +294,7 @@ public class AdvancedRenderingEditPartUtil {
                                 .getParent().getLayoutManager().getConstraint(contentPane);
                         IBorderItemLocator newLocator = renderingProvider
                                 .getBorderItemLocatorByString(borderItemParam, mainFigure,
-                                        oldLocator, modelElement);
+                                        oldLocator, modelElement, this.collapseStatus);
                         parent.setLayoutConstraint(editPart, contentPane, newLocator);
                     } else {
                         lastCondition = null;
@@ -299,7 +310,7 @@ public class AdvancedRenderingEditPartUtil {
                                     .getConstraint(borderedNodeFigure);
                             IBorderItemLocator newLocator = renderingProvider
                                     .getBorderItemLocatorByString(borderItemParam, mainFigure,
-                                            oldLocator, modelElement);
+                                            oldLocator, modelElement, this.collapseStatus);
                             if (oldLocator != newLocator) {
                                 parent.setLayoutConstraint(editPart, borderedNodeFigure, newLocator);
                             }

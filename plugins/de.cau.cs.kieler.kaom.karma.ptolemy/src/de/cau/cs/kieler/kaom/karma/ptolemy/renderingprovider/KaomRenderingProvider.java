@@ -198,7 +198,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
      * {@inheritDoc}
      */
     public BorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parent,
-            final Object locator, final EObject object) {
+            final Object locator, final EObject object, final CollapseStatus collapseStatus) {
         // normal entities are not borderitems so they don't need a locator
         return null;
     }

@@ -74,7 +74,7 @@ public class PtolemyStateMachineProvider implements IRenderingProvider {
      * {@inheritDoc}
      */
     public IBorderItemLocator getBorderItemLocatorByString(final String input,
-            final IFigure parentFigure, final Object locator, final EObject object) {
+            final IFigure parentFigure, final Object locator, final EObject object, final CollapseStatus collapseStatus) {
         // TODO Auto-generated method stub
         return null;
     }

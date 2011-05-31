@@ -91,6 +91,10 @@ public interface IRenderingProvider {
      * @return the new BorderItemLocator
      */
     IBorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parentFigure,
-            final Object locator, final EObject object);
+            final Object locator, final EObject object, CollapseStatus collapseStatus);
 
+    public enum CollapseStatus {
+        COLLAPSING, EXPANDING, UNCHANGED
+    }
+    
 }
