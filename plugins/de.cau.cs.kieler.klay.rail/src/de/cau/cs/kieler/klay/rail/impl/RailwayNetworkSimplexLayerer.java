@@ -29,9 +29,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.p2layers.BigNodeHandler;
-import de.cau.cs.kieler.klay.layered.p2layers.IBigNodeHandler;
-import de.cau.cs.kieler.klay.layered.p2layers.LayeringEnhancer;
+import de.cau.cs.kieler.klay.layered.intermediate.BigNodesProcessor;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.rail.graph.RailLayer;
 
@@ -383,20 +381,6 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
             getMonitor().done();
             return;
         }
-        
-        // enhance layering, if requested
-        LayeringEnhancer enhancer = null;
-        if (layeredGraph.getProperty(Properties.ENHANCE_LAYERING)) {
-            enhancer = new LayeringEnhancer();
-            enhancer.preProcess(theNodes);
-        }
-
-        // support wide nodes, if requested
-        IBigNodeHandler bigNodeHandler = null;
-        if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
-            bigNodeHandler = new BigNodeHandler();
-            bigNodeHandler.splitWideNodes(theNodes, theLayeredGraph);
-        }
 
         // layer graph, each connected component separately
         for (List<LNode> connComp : connectedComponents(theNodes)) {
@@ -419,16 +403,6 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
             for (LNode node : nodes) {
                 putNode(node);
             }
-        }
-
-        // segmentate layering, if requested
-        if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)
-                && layeredGraph.getProperty(Properties.SEGMENTATE_LAYERING)) {
-            bigNodeHandler.segmentateLayering();
-        }
-        
-        if (enhancer != null) {
-            enhancer.postProcess();
         }
         
         // empty the list of unlayered nodes

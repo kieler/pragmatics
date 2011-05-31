@@ -35,6 +35,9 @@ public enum IntermediateLayoutProcessor {
     
     // Before Phase 2
     
+    /** Splits big nodes into multiple layers to distribute them better and reduce whitespace. */
+    BIG_NODES_PROCESSOR,
+    
     // Before Phase 3
     
     /** Handles northern and southern external ports. */
@@ -100,6 +103,9 @@ public enum IntermediateLayoutProcessor {
      */
     public ILayoutProcessor create() {
         switch (this) {
+        case BIG_NODES_PROCESSOR:
+            return new BigNodesProcessor();
+            
         case EXTERNAL_PORT_CONSTRAINT_PROCESSOR:
             return new ExternalPortConstraintProcessor();
         

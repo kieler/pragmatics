@@ -149,19 +149,6 @@ public final class Properties {
     /** whether edges shall be straightened as much as possible. */
     public static final IProperty<Boolean> STRAIGHT_EDGES = new Property<Boolean>(
             STRAIGHT_EDGES_ID, false);
-    
-    /** option identifier for layering segmentation. */
-    public static final String SEGMENTATE_LAYERING_ID =
-        "de.cau.cs.kieler.klay.layered.segmentateLayering";
-    /** indicates, whether the layering shall be arranged in segments. */
-    public static final IProperty<Boolean> SEGMENTATE_LAYERING = new Property<Boolean>(
-            SEGMENTATE_LAYERING_ID, false);
-    
-    /** option identifier for layering enhancement. */
-    public static final String ENHANCE_LAYERING_ID = "de.cau.cs.kieler.klay.layered.enhanceLayering";
-    /** whether the layering shall be enhanced. */
-    public static final IProperty<Boolean> ENHANCE_LAYERING = new Property<Boolean>(
-            ENHANCE_LAYERING_ID, false);
 
     /** option identifier for distribute nodes. */
     public static final String DISTRIBUTE_NODES_ID = "de.cau.cs.kieler.klay.layered.distributeNodes";
@@ -180,13 +167,6 @@ public final class Properties {
     /** property to choose a node layering strategy. */
     public static final IProperty<LayeringStrategy> NODE_LAYERING = new Property<LayeringStrategy>(
             NODE_LAYERING_ID, LayeringStrategy.NETWORK_SIMPLEX);
-    
-    /** option identifier for crossing minimization. */
-    public static final String CROSS_MIN_ID = "de.cau.cs.kieler.klay.layered.crossingMinimization";
-    /** property to choose a crossing minimization strategy. */
-    public static final IProperty<CrossingMinimizationStrategy> CROSS_MIN =
-            new Property<CrossingMinimizationStrategy>(
-                    CROSS_MIN_ID, CrossingMinimizationStrategy.LAYER_SWEEP);
     
     /** option identifier for thoroughness. */
     public static final String THOROUGHNESS_ID = "de.cau.cs.kieler.klay.layered.thoroughness";

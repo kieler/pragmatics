@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered.p2layers;
 
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.Iterator;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
@@ -27,7 +26,6 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
-import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -45,7 +43,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhase {
     
     /** intermediate processing strategy. */
-    private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
+    private static final IntermediateProcessingStrategy BASELINE_PROCESSING_STRATEGY =
         new IntermediateProcessingStrategy(
                 // Before Phase 1
                 EnumSet.of(IntermediateLayoutProcessor.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER),
@@ -64,6 +62,11 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
                 
                 // After Phase 5
                 null);
+    
+    /** additional processor dependencies for handling big nodes. */
+    private static final IntermediateProcessingStrategy BIG_NODES_PROCESSING_ADDITIONS =
+        new IntermediateProcessingStrategy(IntermediateProcessingStrategy.BEFORE_PHASE_2,
+                IntermediateLayoutProcessor.BIG_NODES_PROCESSOR);
 
     /** the layered graph to which layers are added. */
     private LayeredGraph layeredGraph;
@@ -74,7 +77,16 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
      * {@inheritDoc}
      */
     public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
-        return INTERMEDIATE_PROCESSING_STRATEGY;
+        // Basic strategy
+        IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy(
+                BASELINE_PROCESSING_STRATEGY);
+        
+        // Additional dependencies
+        if (graph.getProperty(Properties.DISTRIBUTE_NODES)) {
+            strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS);
+        }
+        
+        return strategy;
     }
     
     /**
@@ -85,20 +97,6 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
         
         layeredGraph = thelayeredGraph;
         Collection<LNode> nodes = layeredGraph.getLayerlessNodes();
-        
-        // enhance layering, if requested
-        LayeringEnhancer enhancer = null;
-        if (layeredGraph.getProperty(Properties.ENHANCE_LAYERING)) {
-            enhancer = new LayeringEnhancer();
-            enhancer.preProcess(nodes);
-        }
-        
-        // support wide nodes, if requested
-        IBigNodeHandler bigNodeHandler = null;
-        if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
-            bigNodeHandler = new BigNodeHandler();
-            bigNodeHandler.splitWideNodes(nodes, thelayeredGraph);
-        }
         
         nodeHeights = new int[nodes.size()];
         int index = 0;
@@ -111,29 +109,6 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
         // process all nodes
         for (LNode node : nodes) {
             visit(node);
-        }
-        
-        // nodes with layering constraints need to be moved
-        Layer firstLayer = layeredGraph.getLayers().get(0);
-        for (LNode node : nodes) {
-            if (node.getProperty(Properties.LAYER_CONSTRAINT) == LayerConstraint.FIRST
-                    && node.getLayer().getIndex() > 0) {
-                
-                Iterator<LEdge> inputEdgeIterator = node.getIncomingEdges().iterator();
-                if (!inputEdgeIterator.hasNext()) {
-                    node.setLayer(firstLayer);
-                }
-            }
-        }
-        
-        // segmentate layering, if requested
-        if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)
-                && layeredGraph.getProperty(Properties.SEGMENTATE_LAYERING)) {
-            bigNodeHandler.segmentateLayering();
-        }
-        
-        if (enhancer != null) {
-            enhancer.postProcess();
         }
         
         // empty the list of unlayered nodes

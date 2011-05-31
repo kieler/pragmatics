@@ -32,6 +32,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.BigNodesProcessor;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -55,7 +56,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutPhase {
     
     /** intermediate processing strategy. */
-    private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
+    private static final IntermediateProcessingStrategy BASELINE_PROCESSING_STRATEGY =
         new IntermediateProcessingStrategy(
                 // Before Phase 1
                 EnumSet.of(IntermediateLayoutProcessor.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER),
@@ -74,6 +75,11 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
                 
                 // After Phase 5
                 null);
+    
+    /** additional processor dependencies for handling big nodes. */
+    private static final IntermediateProcessingStrategy BIG_NODES_PROCESSING_ADDITIONS =
+        new IntermediateProcessingStrategy(IntermediateProcessingStrategy.BEFORE_PHASE_2,
+                IntermediateLayoutProcessor.BIG_NODES_PROCESSOR);
     
     // ================================== Attributes ==============================================
 
@@ -203,22 +209,22 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
      */
     private Map<LEdge, Pair<LPort, LPort>> removedSelfLoops;
 
-    // ================================== Constructor =============================================
-
-    /**
-     * Default Constructor for {@link NetworkSimplexLayerer}. It creates a new instance of this
-     * class.
-     */
-    public NetworkSimplexLayerer() {
-    }
-
     // =============================== Initialization Methods =====================================
     
     /**
      * {@inheritDoc}
      */
     public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
-        return INTERMEDIATE_PROCESSING_STRATEGY;
+        // Basic strategy
+        IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy(
+                BASELINE_PROCESSING_STRATEGY);
+        
+        // Additional dependencies
+        if (graph.getProperty(Properties.DISTRIBUTE_NODES)) {
+            strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS);
+        }
+        
+        return strategy;
     }
 
     /**
@@ -451,20 +457,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
             getMonitor().done();
             return;
         }
-        
-        // enhance layering, if requested
-        LayeringEnhancer enhancer = null;
-        if (layeredGraph.getProperty(Properties.ENHANCE_LAYERING)) {
-            enhancer = new LayeringEnhancer();
-            enhancer.preProcess(theNodes);
-        }
-
-        // support wide nodes, if requested
-        IBigNodeHandler bigNodeHandler = null;
-        if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
-            bigNodeHandler = new BigNodeHandler();
-            bigNodeHandler.splitWideNodes(theNodes, theLayeredGraph);
-        }
 
         // layer graph, each connected component separately
         for (List<LNode> connComp : connectedComponents(theNodes)) {
@@ -487,16 +479,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
             for (LNode node : nodes) {
                 putNode(node);
             }
-        }
-
-        // segmentate layering, if requested
-        if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)
-                && layeredGraph.getProperty(Properties.SEGMENTATE_LAYERING)) {
-            bigNodeHandler.segmentateLayering();
-        }
-        
-        if (enhancer != null) {
-            enhancer.postProcess();
         }
         
         // restore the self loops

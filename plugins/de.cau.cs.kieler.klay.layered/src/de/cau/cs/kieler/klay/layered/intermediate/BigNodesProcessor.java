@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.p2layers;
+package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -30,20 +31,20 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * The main class of the big node handler component. It offers a method ({@code splitWideNodes()} to
+ * The main class of the big node handler component. It offers a method to
  * split wide nodes of the given graph into smaller, equal-sized ones to allow the former wide node
  * to be assigned to multiple consecutive layers. After layerer execution, the thereby determined
- * layer assignment may be esthetically optimized be invoking {@code segmentateLayering()}, which
+ * layer assignment may be esthetically optimized by invoking {@code segmentateLayering()}, which
  * segmentates the layering, i.e. two nodes will be be placed into layers, so that they are not
  * disjunct regarding the layers they are assigned to, and the narrower of the two nodes is not
  * assigned to all layers, the wider nodes is also placed in unless there exists a node, that covers
  * all layers, the two nodes are assigned to. For more information, see Philipp Doehring:
  * <em>Algorithmen zur Layerzuweisung</em>, Bachelor Thesis, 2010.
  * 
- * 
+ * FIXME this doesn't work yet, since a postprocessor is needed that reverts the changes made here
  * @author pdo
  */
-public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler {
+public class BigNodesProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     // ================================== Attributes ==============================================
 
@@ -85,15 +86,6 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
      */
     private LinkedHashMap<LNode, Integer> nodeIDs;
 
-    // ================================== Constructor =============================================
-
-    /**
-     * Default constructor for {@link BigNodeHandler}. It creates a new instance of this class.
-     * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.IBigNodeHandler IBigNodeSplitter
-     */
-    public BigNodeHandler() {
-    }
 
     // ============================== Big-Node-Handling Algorithm ================================
 
@@ -105,29 +97,21 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
      * in {@code width} will not be updated, i.e. it keeps its value of 1 plus the number of
      * inserted dummy nodes to split the specific wide node.
      * 
-     * @param theNodes
-     *            a {@code Collection} containing all nodes of the graph
      * @param theLayeredGraph
-     *            the (empty) layered graph to put all nodes into
+     *            the layered graph to put all nodes into
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.BigNodeHandler#width width
+     * @see de.cau.cs.kieler.klay.layered.intermediate.BigNodesProcessor#width width
      */
-    public void splitWideNodes(final Collection<LNode> theNodes, final LayeredGraph theLayeredGraph) {
-
-        if (theNodes == null) {
-            throw new NullPointerException("Input set of nodes is null.");
-        }
-        if (theLayeredGraph == null) {
-            throw new NullPointerException("Input graph is null.");
-        }
+    public void process(final LayeredGraph theLayeredGraph) {
+        assert theLayeredGraph != null;
 
         // initialize attributes
-        nodes = theNodes;
+        nodes = theLayeredGraph.getLayerlessNodes();
         layeredGraph = theLayeredGraph;
 
         // re-index nodes
         int counter = 0;
-        for (LNode node : theNodes) {
+        for (LNode node : nodes) {
             node.id = counter++;
         }
         // the list of dummy nodes to be inserted into the graph
@@ -169,7 +153,7 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
                 // save outgoing ports of wide node to reassign them later
                 ports = new LinkedList<LPort>();
                 for (LPort port : node.getPorts()) {
-                    // TODO: This originally iterated over output ports; check if this replacement works.
+                    // TODO This originally iterated over output ports; check if this replacement works.
                     if (!port.getOutgoingEdges().isEmpty()) {
                         ports.add(port);
                     }
@@ -224,28 +208,18 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
      * and a {@link RuntimeException} will be thrown, if not or the set of nodes has been chanced
      * since that invocation.
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.BigNodeHandler#splitWideNodes(Collection,
-     *      LayeredGraph) splitWideNodes()
+     * TODO if this is to be supported again, it must be moved into an own processor
+     * @see splitWideNodes(LayeredGraph)
      */
     public void segmentateLayering() {
-
-        if (nodeIDs == null) {
-            throw new RuntimeException("Illegal invokation of correctLayering(). "
-                    + "splitWideNodes() has not been invoked yet.");
-        }
+        assert nodeIDs != null;
+        
         // restore previous node indices
         Integer id = null;
-        if (nodes.size() != nodeIDs.size()) {
-            throw new RuntimeException("correctLayering(): The set of nodes has changed illegally "
-                    + "since the invokation of splitWideNodes().");
-        }
+        assert nodes.size() == nodeIDs.size();
         for (LNode node : nodes) {
             id = nodeIDs.get(node);
-            if (id == null) {
-                throw new RuntimeException(
-                        "correctLayering(): The set of nodes has changed illegally "
-                                + "since the invokation of splitWideNodes().");
-            }
+            assert id != null;
             node.id = id;
         }
         // get current layer assignment
@@ -330,7 +304,6 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
      *            The index of the layer to put the given input node into
      */
     private void minimalLayer(final LNode node, final int start) {
-
         // traverse edges from source to target
         layer[node.id] = Math.max(layer[node.id], start);
         for (LPort port : node.getPorts()) {
@@ -350,11 +323,10 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
      * node, a (new) instance of this attribute will be created. Otherwise, the old instance will be
      * reused. After this step is done, all layers will be deleted from {@code layeredGraph}.
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.BigNodeHandler#layer layer
-     * @see de.cau.cs.kieler.klay.layered.p2layers.BigNodeHandler#longestPath longestPath
+     * @see de.cau.cs.kieler.klay.layered.intermediate.BigNodesProcessor#layer layer
+     * @see de.cau.cs.kieler.klay.layered.intermediate.BigNodesProcessor#longestPath longestPath
      */
     private void convertLayering() {
-
         // initialize layer attribute
         if (layer == null || layer.length < nodes.size()) {
             layer = new int[nodes.size()];
@@ -384,11 +356,10 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
      * @param node
      *            the node to put into the layered graph
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.BigNodeHandler#layer layer
-     * @see de.cau.cs.kieler.klay.layered.p2layers.BigNodeHandler#layeredGraph layeredGraph
+     * @see de.cau.cs.kieler.klay.layered.intermediate.BigNodesProcessor#layer layer
+     * @see de.cau.cs.kieler.klay.layered.intermediate.BigNodesProcessor#layeredGraph layeredGraph
      */
     private void putNodes() {
-
         List<Layer> layers = layeredGraph.getLayers();
         // add additional layers to match required amount
         while (longestPath-- >= 0) {
