@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.core.math;
 
+import java.util.Random;
 import java.util.StringTokenizer;
 
 import de.cau.cs.kieler.core.util.IDataObject;
@@ -24,7 +25,7 @@ import de.cau.cs.kieler.core.util.IDataObject;
  * @author uru
  * @author owo
  */
-public class KVector implements IDataObject {
+public class KVector implements IDataObject, Cloneable {
 
     // CHECKSTYLEOFF VisibilityModifier
     /** x coordinate. */
@@ -251,8 +252,10 @@ public class KVector implements IDataObject {
      */
     public KVector normalize() {
         double length = this.getLength();
-        this.x = this.x / length;
-        this.y = this.y / length;
+        if (length > 0) {
+            this.x /= length;
+            this.y /= length;
+        }
         return this;
     }
 
@@ -304,11 +307,13 @@ public class KVector implements IDataObject {
 
     /**
      * Add some "noise" to this vector.
+     * 
+     * @param random the random number generator
+     * @param amount the amount of noise to add
      */
-    public final void wiggle() {
-        final double theWiggle = 0.5;
-        this.x += (Math.random() - theWiggle);
-        this.y += (Math.random() - theWiggle);
+    public final void wiggle(final Random random, final double amount) {
+        this.x += random.nextDouble() * amount - (amount / 2);
+        this.y += random.nextDouble() * amount - (amount / 2);
     }
 
     /**
@@ -343,7 +348,7 @@ public class KVector implements IDataObject {
     }
 
     /**
-     * Create a sum from this vector and another vector.
+     * Create a difference from this vector and another vector.
      * 
      * @param v
      *            subtrahend
