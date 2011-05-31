@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
@@ -237,10 +236,10 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         createUnbalancedPlacement(layeredGraph);
         
         // balance the placement
-        IKielerProgressMonitor monitor = getMonitor().subTask(1);
-        monitor.begin("Balance Placement", 1);
         balancePlacement(layeredGraph);
-        monitor.done();
+        
+        // post-process the placement for small corrections
+        postProcess(layeredGraph);
 
         // set the proper height for the whole graph
         KVector graphSize = layeredGraph.getSize();
@@ -310,8 +309,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         LinearSegment[] segments = segmentList.toArray(new LinearSegment[segmentList.size()]);
         
         @SuppressWarnings("unchecked")
-        List<LinearSegment>[] outgoing =
-            outgoingList.toArray(new List[outgoingList.size()]);
+        List<LinearSegment>[] outgoing = outgoingList.toArray(new List[outgoingList.size()]);
         
         int[] incomingCount = new int[incomingCountList.size()];
         for (int i = 0; i < incomingCount.length; i++) {
@@ -640,6 +638,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     
     ///////////////////////////////////////////////////////////////////////////////
     // Balanced Placement
+    
+    private static final int EXTRA_ITER_FACTOR = 2;
 
     /**
      * Balance the initial placement by force-based movement of regions.
@@ -660,6 +660,10 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 node.setProperty(Properties.REGION, region);
             }
         }
+        
+        // determine a suitable number of initial and final iterations
+        int extraIterations = EXTRA_ITER_FACTOR * Math.max(1,
+                (int) Math.sqrt(layeredGraph.getLayers().size()));
 
         // Iterate the balancing
         boolean ready = false;
@@ -686,15 +690,15 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 }
             }
 
-            // First 2 iterations are not unioning regions
-            if (iterations > 2) {
+            // Initial iterations are not unioning regions
+            if (iterations > extraIterations) {
                 // Test for touching neighbors
                 ready = noNewTouchingRegions(layeredGraph, spacing, smallSpacing);
             }
             
-            // If ready, 2 more iterations are performed
+            // If ready, some final iterations are performed
             if (ready && finalIterations < 0) {
-                finalIterations = 2;
+                finalIterations = extraIterations;
             }
         }
     }
@@ -756,11 +760,12 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         for (LNode node : region.getNodes()) {
             boolean isNodeNormal = node.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL;
             
+            int index = node.getIndex();
             if (region.force < 0.0f) {
                 // Force is directed upward
-                if (node.getIndex() > 0) {
+                if (index > 0) {
                     // Node is not topmost node
-                    LNode neighbor = node.getLayer().getNodes().get(node.getIndex() - 1);
+                    LNode neighbor = node.getLayer().getNodes().get(index - 1);
                     boolean isNeighborNormal =
                         neighbor.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL;
                     float space = isNodeNormal && isNeighborNormal ? normalSpacing : smallSpacing;
@@ -784,9 +789,9 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                         region.force += overlay;
                     }
                 }
-            } else if (region.force > 0.0f && node.getIndex() < node.getLayer().getNodes().size() - 1) {
+            } else if (region.force > 0.0f && index < node.getLayer().getNodes().size() - 1) {
                 // Force is directed downward and the node is not lowermost
-                LNode neighbor = node.getLayer().getNodes().get(node.getIndex() + 1);
+                LNode neighbor = node.getLayer().getNodes().get(index + 1);
                 boolean isNeighborNormal =
                     neighbor.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL;
                 float space = isNodeNormal && isNeighborNormal ? normalSpacing : smallSpacing;
@@ -871,6 +876,83 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         }
         
         return ready;
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Post Processing for Correction
+    
+    private void postProcess(final LayeredGraph layeredGraph) {
+        float normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        float smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
+        
+        for (LinearSegment segment : linearSegments) {
+            double minRoomAbove = Integer.MAX_VALUE, minRoomBelow = Integer.MAX_VALUE;
+            for (LNode node : segment.getNodes()) {
+                double roomAbove, roomBelow;
+                int index = node.getIndex();
+                boolean isNodeNormal = node.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL;
+                if (index > 0) {
+                    LNode neighbor = node.getLayer().getNodes().get(index - 1);
+                    boolean isNeighborNormal = neighbor.getProperty(Properties.NODE_TYPE)
+                            == NodeType.NORMAL;
+                    float spacing = isNodeNormal && isNeighborNormal ? normalSpacing : smallSpacing;
+                    roomAbove = node.getPosition().y - node.getMargin().top
+                            - (neighbor.getPosition().y + neighbor.getSize().y
+                            + neighbor.getMargin().bottom + spacing);
+                } else {
+                    roomAbove = node.getPosition().y - node.getMargin().top;
+                }
+                minRoomAbove = Math.min(roomAbove, minRoomAbove);
+                
+                if (index < node.getLayer().getNodes().size() - 1) {
+                    LNode neighbor = node.getLayer().getNodes().get(index + 1);
+                    boolean isNeighborNormal = neighbor.getProperty(Properties.NODE_TYPE)
+                            == NodeType.NORMAL;
+                    float spacing = isNodeNormal && isNeighborNormal ? normalSpacing : smallSpacing;
+                    roomBelow = neighbor.getPosition().y - neighbor.getMargin().top
+                            - (node.getPosition().y + node.getSize().y
+                            + node.getMargin().bottom + spacing);
+                } else {
+                    roomBelow = 2 * node.getPosition().y;
+                }
+                minRoomBelow = Math.min(roomBelow, minRoomBelow);
+            }
+            
+            double minDisplacement = Integer.MAX_VALUE;
+            boolean foundPlace = false;
+            LNode firstNode = segment.getNodes().get(0);
+            for (LPort target : firstNode.getPorts()) {
+                double pos = firstNode.getPosition().y + target.getPosition().y;
+                for (LEdge edge : target.getIncomingEdges()) {
+                    LPort source = edge.getSource();
+                    double d = source.getNode().getPosition().y + source.getPosition().y - pos;
+                    if (Math.abs(d) < Math.abs(minDisplacement) && Math.abs(d)
+                            < (d < 0 ? minRoomAbove : minRoomBelow)) {
+                        minDisplacement = d;
+                        foundPlace = true;
+                    }
+                }
+            }
+            LNode lastNode = segment.getNodes().get(segment.getNodes().size() - 1);
+            for (LPort source : lastNode.getPorts()) {
+                double pos = lastNode.getPosition().y + source.getPosition().y;
+                for (LEdge edge : source.getOutgoingEdges()) {
+                    LPort target = edge.getTarget();
+                    double d = target.getNode().getPosition().y + target.getPosition().y - pos;
+                    if (Math.abs(d) < Math.abs(minDisplacement) && Math.abs(d)
+                            < (d < 0 ? minRoomAbove : minRoomBelow)) {
+                        minDisplacement = d;
+                        foundPlace = true;
+                    }
+                }
+            }
+            
+            if (foundPlace && minDisplacement > 0) {
+                for (LNode node : segment.getNodes()) {
+                    node.getPosition().y += minDisplacement;
+                }
+            }
+        }
     }
     
     
