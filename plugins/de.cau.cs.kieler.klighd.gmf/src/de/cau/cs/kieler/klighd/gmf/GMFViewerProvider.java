@@ -34,7 +34,7 @@ public class GMFViewerProvider implements IViewerProvider {
     /**
      * {@inheritDoc}
      */
-    public Viewer getViewer(final Composite parent) {
+    public Viewer createViewer(final Composite parent) {
         DefaultEditDomain editDomain = new DefaultEditDomain(null);
         DiagramGraphicalViewer graphicalViewer = new DiagramGraphicalViewer();
         graphicalViewer.createControl(parent);

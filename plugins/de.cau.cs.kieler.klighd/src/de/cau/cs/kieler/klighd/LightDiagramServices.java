@@ -32,8 +32,13 @@ public final class LightDiagramServices {
 
     /** identifier of the extension point for viewer providers. */
     public static final String EXTP_ID_VIEWER_PROVIDERS = "de.cau.cs.kieler.klighd.viewerProviders";
+    /** identifier of the extension point for model transformations. */
+    public static final String EXTP_ID_MODEL_TRANSFORMATIONS =
+            "de.cau.cs.kieler.klighd.modelTransformations";
     /** name of the 'viewer' element. */
     public static final String ELEMENT_VIEWER = "viewer";
+    /** name of the 'transformation' element. */
+    public static final String ELEMENT_TRANSFORMATION = "transformation";
     /** name of the 'id' attribute in the extension points. */
     public static final String ATTRIBUTE_ID = "id";
     /** name of the 'class' attribute in the extension points. */
@@ -44,6 +49,9 @@ public final class LightDiagramServices {
     /** a mapping between viewer provider id's and the instances. */
     private Map<String, IViewerProvider> idViewerProviderMapping =
             new LinkedHashMap<String, IViewerProvider>();
+    /** a mapping between transformation id's and the instances. */
+    private Map<String, IModelTransformation<Object, ?>> idModelTransformationMapping =
+            new LinkedHashMap<String, IModelTransformation<Object, ?>>();
 
     /**
      * A private constructor to prevent instantiation.
@@ -57,8 +65,9 @@ public final class LightDiagramServices {
      */
     static {
         instance = new LightDiagramServices();
-        // load the data from the extension point
+        // load the data from the extension points
         instance.loadViewerProviderExtension();
+        instance.loadModelTransformationsExtension();
     }
 
     /**
@@ -100,8 +109,8 @@ public final class LightDiagramServices {
                 Platform.getExtensionRegistry().getConfigurationElementsFor(
                         EXTP_ID_VIEWER_PROVIDERS);
         for (IConfigurationElement element : extensions) {
-            if (ELEMENT_VIEWER.equals(element.getName())) {
-                try {
+            try {
+                if (ELEMENT_VIEWER.equals(element.getName())) {
                     // initialize viewer provider from the extension point
                     IViewerProvider viewerProvider =
                             (IViewerProvider) element.createExecutableExtension(ATTRIBUTE_CLASS);
@@ -113,9 +122,39 @@ public final class LightDiagramServices {
                             idViewerProviderMapping.put(id, viewerProvider);
                         }
                     }
-                } catch (CoreException exception) {
-                    StatusManager.getManager().handle(exception, KLighDPlugin.PLUGIN_ID);
                 }
+            } catch (CoreException exception) {
+                StatusManager.getManager().handle(exception, KLighDPlugin.PLUGIN_ID);
+            }
+        }
+    }
+
+    /**
+     * Loads and registers all model transformations from the extension point.
+     */
+    private void loadModelTransformationsExtension() {
+        IConfigurationElement[] extensions =
+                Platform.getExtensionRegistry().getConfigurationElementsFor(
+                        EXTP_ID_MODEL_TRANSFORMATIONS);
+        for (IConfigurationElement element : extensions) {
+            try {
+                if (ELEMENT_TRANSFORMATION.equals(element.getName())) {
+                    // initialize model transformation from the extension point
+                    @SuppressWarnings("unchecked")
+                    IModelTransformation<Object, ?> modelTransformation =
+                            (IModelTransformation<Object, ?>) element
+                                    .createExecutableExtension(ATTRIBUTE_CLASS);
+                    if (modelTransformation != null) {
+                        String id = element.getAttribute(ATTRIBUTE_ID);
+                        if (id == null || id.length() == 0) {
+                            reportError(EXTP_ID_MODEL_TRANSFORMATIONS, element, ATTRIBUTE_ID, null);
+                        } else {
+                            idModelTransformationMapping.put(id, modelTransformation);
+                        }
+                    }
+                }
+            } catch (CoreException exception) {
+                StatusManager.getManager().handle(exception, KLighDPlugin.PLUGIN_ID);
             }
         }
     }
@@ -131,6 +170,49 @@ public final class LightDiagramServices {
         for (IViewerProvider viewerProvider : idViewerProviderMapping.values()) {
             if (viewerProvider.isModelSupported(model)) {
                 return viewerProvider;
+            }
+        }
+        return null;
+    }
+
+    private static final int MAX_DEPTH = 5;
+    private int currentDepth;
+
+    /**
+     * Tries to find a viewer for the given model.<br>
+     * If no viewer provider is registered which directly supports the model, the registered
+     * transformations are used to transform the model until a supporting viewer provider is
+     * available. The finally transformed model and the viewer provider which supports that model
+     * are retured in a {@code ViewContext} if available.
+     * 
+     * @param model
+     *            the model
+     * @return the view context or null if the model and all possible transformations are
+     *         unsupported by all viewer providers
+     */
+    public ViewContext getValidViewContext(final Object model) {
+        currentDepth = 0;
+        return getValidViewContextRec(model);
+    }
+
+    private ViewContext getValidViewContextRec(final Object model) {
+        // enforce maximum recursion depth to prevent infinite recursion
+        if (currentDepth++ > MAX_DEPTH) {
+            return null;
+        }
+        IViewerProvider viewerProvider = getViewerProviderForModel(model);
+        // if the model is supported by a viewer provider create a new view context and return it
+        if (viewerProvider != null) {
+            return new ViewContext(viewerProvider, model);
+        }
+        // transform the model and proceed recursively
+        for (IModelTransformation<Object, ?> transformation : idModelTransformationMapping.values()) {
+            if (transformation.isModelSupported(model)) {
+                Object newModel = transformation.transform(model);
+                ViewContext viewContext = getValidViewContext(newModel);
+                if (viewContext != null) {
+                    return viewContext;
+                }
             }
         }
         return null;

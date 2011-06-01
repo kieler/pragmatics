@@ -2,10 +2,11 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="viewerProviders" name="ViewerProviders" schema="schema/viewerProviders.exsd"/>
+   <extension-point id="modelTransformations" name="ModelTransformations" schema="schema/modelTransformations.exsd"/>
    <extension
          point="org.eclipse.ui.views">
       <view
-            allowMultiple="false"
+            allowMultiple="true"
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.klighd.views.DiagramViewPart"
             icon="icons/klighd.gif"

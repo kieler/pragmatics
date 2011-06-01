@@ -11,33 +11,45 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighd.graphiti.piccolo;
+package de.cau.cs.kieler.klighd.piccolo;
 
-import org.eclipse.graphiti.mm.pictograms.Diagram;
+import java.util.List;
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 
 import de.cau.cs.kieler.klighd.IViewerProvider;
+import edu.umd.cs.piccolo.PNode;
 
 /**
- * A viewer provider for Graphiti diagrams.
+ * A viewer provider for Piccolo nodes or lists of Piccolo nodes.
  * 
  * @author mri
  */
-public class GraphitiViewerProvider implements IViewerProvider {
+public class PiccoloViewerProvider implements IViewerProvider {
 
     /**
      * {@inheritDoc}
      */
-    public Viewer getViewer(final Composite parent) {
-        return new PictogramViewer(parent);
+    public Viewer createViewer(final Composite parent) {
+        return new PiccoloViewer(parent);
     }
 
     /**
      * {@inheritDoc}
      */
     public boolean isModelSupported(final Object model) {
-        return model instanceof Diagram;
+        if (model instanceof PNode) {
+            return true;
+        }
+        if (model instanceof List) {
+            List<?> list = (List<?>) model;
+            if (list.size() > 0) {
+                Object first = list.get(0);
+                return first instanceof PNode;
+            }
+        }
+        return false;
     }
 
 }

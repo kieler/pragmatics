@@ -24,15 +24,14 @@ import org.eclipse.swt.widgets.Composite;
 public interface IViewerProvider {
 
     /**
-     * Returns a viewer for the model types supported by this provider attached as to the given
+     * Returns a viewer for the model types supported by this provider attached to the given
      * composite.
      * 
      * @param parent
      *            the parent composite
-     * 
      * @return a viewer for the supported model types
      */
-    Viewer getViewer(final Composite parent);
+    Viewer createViewer(final Composite parent);
 
     /**
      * Returns whether the given model is supported by this provider.

@@ -38,6 +38,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import de.cau.cs.kieler.klighd.IViewerProvider;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
+import de.cau.cs.kieler.klighd.ViewContext;
 
 /**
  * A view which is able to display models in light-weight diagrams.
@@ -82,11 +83,10 @@ public class DiagramViewPart extends ViewPart {
      *            the model
      */
     public void showModel(final Object model) {
-        IViewerProvider viewerProvider =
-                LightDiagramServices.getInstance().getViewerProviderForModel(model);
-        if (viewerProvider != null) {
-            showViewer(viewerProvider);
-            currentViewer.setInput(model);
+        ViewContext viewContext = LightDiagramServices.getInstance().getValidViewContext(model);
+        if (viewContext != null) {
+            showViewer(viewContext.getViewerProvider());
+            currentViewer.setInput(viewContext.getModel());
         } else {
             showMessage("No viewer registered for the model.");
         }
@@ -101,6 +101,8 @@ public class DiagramViewPart extends ViewPart {
     private void showMessage(final String message) {
         if (currentControl != null) {
             currentControl.dispose();
+            currentViewer = null;
+            currentControl = null;
         }
         // add a canvas for displaying the message
         Canvas canvas = new Canvas(parentComposite, SWT.NONE);
@@ -122,9 +124,11 @@ public class DiagramViewPart extends ViewPart {
     private void showViewer(final IViewerProvider viewerProvider) {
         if (currentControl != null) {
             currentControl.dispose();
+            currentViewer = null;
+            currentControl = null;
         }
         // add the viewer from the viewer provider
-        currentViewer = viewerProvider.getViewer(parentComposite);
+        currentViewer = viewerProvider.createViewer(parentComposite);
         currentControl = currentViewer.getControl();
         parentComposite.layout(true);
     }
@@ -148,6 +152,8 @@ public class DiagramViewPart extends ViewPart {
                             Object model = loadModel(file);
                             if (model != null) {
                                 showModel(model);
+                            } else {
+                                showMessage("The file does not contain an EMF resource.");
                             }
                             break;
                         }

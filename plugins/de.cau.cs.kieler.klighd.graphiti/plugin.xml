@@ -2,11 +2,11 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="de.cau.cs.kieler.klighd.viewerProviders">
-      <viewer
-            class="de.cau.cs.kieler.klighd.graphiti.piccolo.GraphitiViewerProvider"
-            id="de.cau.cs.kieler.klighd.graphiti.viewerProvider">
-      </viewer>
+         point="de.cau.cs.kieler.klighd.modelTransformations">
+      <transformation
+            class="de.cau.cs.kieler.klighd.graphiti.piccolo.Pictogram2PNodeTransformation"
+            id="de.cau.cs.kieler.klighd.graphiti.pictogram2PNodeTransformation">
+      </transformation>
    </extension>
 
 </plugin>

@@ -73,7 +73,6 @@ public class GMFDiagramViewer extends Viewer {
      */
     @Override
     public void refresh() {
-        // TODO would be wise to do something here
     }
 
     /**
