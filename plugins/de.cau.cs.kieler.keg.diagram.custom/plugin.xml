@@ -16,6 +16,20 @@
       </semanticOption>
    </extension>
    <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="de.cau.cs.kieler"
+            defaultHandler="de.cau.cs.kieler.keg.diagram.custom.commands.InitKegDiagramHandler"
+            id="de.cau.cs.kieler.keg.ui.reinitDiagram"
+            name="%reinitDiagramCommand.name">
+            <commandParameter
+                  id="de.cau.cs.kieler.keg.ui.reinitDiagram.source"
+                  name="Source"
+                  optional="true">
+            </commandParameter>
+      </command>
+   </extension>
+   <extension
          point="org.eclipse.ui.navigator.navigatorContent">
       <commonWizard
             menuGroupId="de.cau.cs.kieler"
@@ -60,6 +74,38 @@
             name="Random KEG Graph"
             project="false">
       </wizard>
+   </extension>
+   <extension
+      point="org.eclipse.ui.menus">
+      
+      <menuContribution
+         locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         
+         <command
+            commandId="de.cau.cs.kieler.keg.ui.reinitDiagram"
+            label="%reinitDiagramCommand.name"
+            style="push"
+            tooltip="Initialize the diagram for the selected KAOM model file, overwriting any old &apos;kaod&apos; file.">
+            
+            <visibleWhen
+               checkEnabled="false">
+               
+               <iterate>
+                  <adapt
+                     type="org.eclipse.core.resources.IResource">
+                     
+                     <or>
+                        <test
+                           forcePluginActivation="false"
+                           property="org.eclipse.core.resources.extension"
+                           value="keg">
+                        </test>
+                     </or>
+                  </adapt>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
 
 </plugin>
