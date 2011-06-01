@@ -14,10 +14,12 @@
 package de.cau.cs.kieler.kiml.grana.analyses;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
@@ -43,6 +45,10 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
     /** a straight line segment. */
     private class Segment {
         private KVector p1, p2;
+        @Override
+        public String toString() {
+            return p1.toString() + " -- " + p2.toString();
+        }
     }
     
     /** a hyperedge. */
@@ -63,6 +69,20 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
                 - (s2.p2.x - s2.p1.x) * (s1.p2.y - s1.p1.y);
         // are the line segments parallel?
         if (s == 0) {
+            if (s1.p1.x == s1.p2.x && s2.p1.x == s2.p2.x && s1.p1.x == s2.p1.x) {
+                double min1 = Math.min(s1.p1.y, s1.p2.y);
+                double max1 = Math.max(s1.p1.y, s1.p2.y);
+                double min2 = Math.min(s2.p1.y, s2.p2.y);
+                double max2 = Math.max(s2.p1.y, s2.p2.y);
+                return min1 <= max2 && max1 > min2;
+            }
+            if (s1.p1.y == s1.p2.y && s2.p1.y == s2.p2.y && s1.p1.y == s2.p1.y) {
+                double min1 = Math.min(s1.p1.x, s1.p2.x);
+                double max1 = Math.max(s1.p1.x, s1.p2.x);
+                double min2 = Math.min(s2.p1.x, s2.p2.x);
+                double max2 = Math.max(s2.p1.x, s2.p2.x);
+                return min1 <= max2 && max1 > min2;
+            }
             return false;
         }
         double a1 = (s2.p2.x - s2.p1.x) * (s1.p1.y - s2.p1.y)
@@ -72,7 +92,7 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
         double t1 = a1 / s;
         double t2 = a2 / s;
         // the line segments intersect when t1 and t2 lie in the interval (0,1)
-        return 0 < t1 && t1 < 1 && 0 < t2 && t2 < 1;
+        return 0 <= t1 && t1 < 1 && 0 <= t2 && t2 < 1;
     }
 
     /**
@@ -85,7 +105,7 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
         
         // collect all hyperedges and translate their coordinates to absolute
         Map<KGraphElement, Hyperedge> hyperedgeMap = new HashMap<KGraphElement, Hyperedge>();
-        List<Hyperedge> looseEdges = new LinkedList<Hyperedge>();
+        Set<Hyperedge> hedgeSet = new HashSet<Hyperedge>();
         LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
         nodeQueue.offer(parentNode);
         while (!nodeQueue.isEmpty()) {
@@ -143,7 +163,7 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
                 if (sourceRef == null && targetRef == null) {
                     Hyperedge hyperedge = new Hyperedge();
                     hyperedge.segments = segments;
-                    looseEdges.add(hyperedge);
+                    hedgeSet.add(hyperedge);
                 } else if (sourceRef == null) {
                     targetHyper = hyperedgeMap.get(targetRef);
                     if (targetHyper == null) {
@@ -182,8 +202,9 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
                         sourceHyper.ports.add(targetRef);
                         mergeSegments(sourceHyper.segments, segments);
                         hyperedgeMap.put(targetRef, sourceHyper);
+                    } else if (sourceHyper == targetHyper) {
+                        mergeSegments(sourceHyper.segments, segments);
                     } else {
-                        // TODO what if both are equal
                         sourceHyper.ports.addAll(targetHyper.ports);
                         mergeSegments(sourceHyper.segments, targetHyper.segments);
                         mergeSegments(sourceHyper.segments, segments);
@@ -198,8 +219,8 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
         }
         
         // count the number of crossings between all edge segments of the compound graph
-        // TODO ClassCastException!
-        Hyperedge[] hyperedges = (Hyperedge[]) hyperedgeMap.values().toArray();
+        hedgeSet.addAll(hyperedgeMap.values());
+        Hyperedge[] hyperedges = hedgeSet.toArray(new Hyperedge[hedgeSet.size()]);
         int crossings = 0;
         for (int i = 0; i < hyperedges.length; i++) {
             for (int j = i + 1; j < hyperedges.length; j++) {
@@ -244,65 +265,29 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
     }
     
     /**
-     * Determine whether the first segment completely covers the second one.
+     * Determine whether the first segment completely covers the second one. Currently
+     * only horizontal and vertical segments are supported.
      * 
      * @param s1 first segment
      * @param s2 second segment
      * @return true if s1 covers s2
      */
     private boolean covers(final Segment s1, final Segment s2) {
-        if (s1.p2.x - s1.p1.x == 0) {
-            // the first segment is vertical, so the second one must also be vertical
-            if (s2.p2.x - s2.p1.x != 0 || s1.p1.x != s2.p2.x) {
-                return false;
-            }
+        if (s1.p1.x == s1.p2.x && s2.p1.x == s2.p2.x && s1.p1.x == s2.p1.x) {
             double min1 = Math.min(s1.p1.y, s1.p2.y);
             double max1 = Math.max(s1.p1.y, s1.p2.y);
             double min2 = Math.min(s2.p1.y, s2.p2.y);
             double max2 = Math.max(s2.p1.y, s2.p2.y);
             return min1 <= min2 && max1 >= max2;
         }
-        
-        // determine slope of the two segments
-        double a1 = (s1.p2.y - s1.p1.y) / (s1.p2.x - s1.p1.x);
-        double a2 = (s2.p2.y - s2.p1.y) / (s2.p2.x - s2.p1.x);
-        
-        // slopes must be equal
-        if (a1 != a2) {
-            return false;
+        if (s1.p1.y == s1.p2.y && s2.p1.y == s2.p2.y && s1.p1.y == s2.p1.y) {
+            double min1 = Math.min(s1.p1.x, s1.p2.x);
+            double max1 = Math.max(s1.p1.x, s1.p2.x);
+            double min2 = Math.min(s2.p1.x, s2.p2.x);
+            double max2 = Math.max(s2.p1.x, s2.p2.x);
+            return min1 <= min2 && max1 >= max2;
         }
-        
-        // difference vector between starting points must have same slope
-        if (s2.p1.x - s1.p1.x == 0) {
-            if (s2.p1.y - s1.p1.y != 0) {
-                return false;
-            }
-        } else {
-            double adiff = (s2.p1.y - s1.p1.y) / (s2.p1.x - s1.p1.x);
-            if (adiff != a1) {
-                return false;
-            }
-        }
-        
-        // x coordinates must be covered
-        double min1 = Math.min(s1.p1.x, s1.p2.x);
-        double max1 = Math.max(s1.p1.x, s1.p2.x);
-        double min2 = Math.min(s2.p1.x, s2.p2.x);
-        double max2 = Math.max(s2.p1.x, s2.p2.x);
-        if (min1 > min2 || max1 < max2) {
-            return false;
-        }
-        
-        // y coordinates must be covered
-        min1 = Math.min(s1.p1.y, s1.p2.y);
-        max1 = Math.max(s1.p1.y, s1.p2.y);
-        min2 = Math.min(s2.p1.y, s2.p2.y);
-        max2 = Math.max(s2.p1.y, s2.p2.y);
-        if (min1 > min2 || max1 < max2) {
-            return false;
-        }
-        
-        return true;
+        return false;
     }
     
 }
