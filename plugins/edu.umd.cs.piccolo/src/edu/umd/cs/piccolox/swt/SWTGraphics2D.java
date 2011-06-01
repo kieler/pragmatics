@@ -620,8 +620,8 @@ public class SWTGraphics2D extends Graphics2D {
         for (int i = 0; i < nPoints; i++) {
             TEMP_POINT.setLocation(xPoints[i], yPoints[i]);
             transform.transform(TEMP_POINT, TEMP_POINT);
-            ptArray[2 * i] = xPoints[i];
-            ptArray[2 * i + 1] = yPoints[i];
+            ptArray[2 * i] = TEMP_POINT.x;
+            ptArray[2 * i + 1] = TEMP_POINT.y;
         }
 
         gc.drawPolygon(ptArray);
