@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -311,7 +312,9 @@ public class ImportExamplePage extends WizardPage {
             final int imageWidth, final int imageHeight, final int scaleType) {
         if (imagePath != null && imagePath.length() > 0) {
             Bundle bundle = Platform.getBundle(nameSpaceId);
-            URL resource = bundle.getEntry(imagePath);
+            URL resource = bundle
+                    .getEntry(imagePath.startsWith(String.valueOf(Path.SEPARATOR)) ? imagePath
+                            : Path.SEPARATOR + imagePath);
             if (resource != null) {
                 ImageDescriptor descriptor = ImageDescriptor.createFromURL(resource);
                 Image image = null;
