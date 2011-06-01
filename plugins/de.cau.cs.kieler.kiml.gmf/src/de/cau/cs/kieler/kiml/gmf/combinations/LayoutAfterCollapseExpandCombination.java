@@ -17,9 +17,12 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.NotificationFilter;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
+import de.cau.cs.kieler.core.kivi.CombinationParameter;
 import de.cau.cs.kieler.core.model.gmf.triggers.ModelChangeTrigger.DiagramChangeState;
+import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
 
 /**
@@ -34,6 +37,28 @@ public class LayoutAfterCollapseExpandCombination extends AbstractCombination {
     private NotificationFilter diagramFilter = NotificationFilter
             .createFeatureFilter(NotationPackage.eINSTANCE.getDrawerStyle_Collapsed());
 
+    
+    /** parameter id for animation. */
+    private static final String ANIMATE = "de.cau.cs.kieler.kiml.animate";
+    /** parameter id for zoom to fit. */
+    private static final String ZOOM_TO_FIT = "de.cau.cs.kieler.kiml.zoomToFit";
+    /** parameter id for progress bar. */
+    private static final String PROGRESS_BAR = "de.cau.cs.kieler.kiml.progressBar";
+    
+    /** parameter array for this combination. */
+    private static final CombinationParameter[] PARAMETERS = new CombinationParameter[] {
+            new CombinationParameter(ANIMATE, getPreferenceStore(), "Animate",
+                    "Animates the automatic layout of a graph.", true,
+                    CombinationParameter.BOOLEAN_TYPE),
+            new CombinationParameter(ZOOM_TO_FIT, getPreferenceStore(), "Zoom to Fit",
+                    "Perform zoom to fit with automatic layout.", false,
+                    CombinationParameter.BOOLEAN_TYPE),
+            new CombinationParameter(PROGRESS_BAR, getPreferenceStore(), "Progress Bar",
+                    "Display a progress bar while performing automatic layout.", false,
+                    CombinationParameter.BOOLEAN_TYPE) };
+
+    
+    
     /**
      * Apply automatic layout every time the model changed state is updated.
      * 
@@ -43,14 +68,27 @@ public class LayoutAfterCollapseExpandCombination extends AbstractCombination {
      *            diagram changed
      */
     public void execute(final DiagramChangeState diagramState) {
+        IPreferenceStore preferenceStore = getPreferenceStore();
+        boolean animate = preferenceStore.getBoolean(ANIMATE);
+        boolean zoom = preferenceStore.getBoolean(ZOOM_TO_FIT);
+        boolean progressBar = preferenceStore.getBoolean(PROGRESS_BAR);
         //dontUndo();
         // diagram changed
         for (Notification notification : diagramState.getChange().getNotifications()) {
             if (diagramFilter.matches(notification)
                     && notification.getNotifier() instanceof EObject) {
                 schedule(new LayoutEffect(diagramState.getWorkbenchPart(),
-                        (EObject) notification.getNotifier(), true, false, true));
+                        (EObject) notification.getNotifier(), zoom, progressBar, true, animate));
             }
         }
+    }
+    
+    /**
+     * Return the preference store for the KIML UI plugin.
+     * 
+     * @return the preference store
+     */
+    private static IPreferenceStore getPreferenceStore() {
+        return KimlUiPlugin.getDefault().getPreferenceStore();
     }
 }

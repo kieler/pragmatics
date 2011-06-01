@@ -17,12 +17,14 @@ import java.util.ArrayList;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
+import de.cau.cs.kieler.core.kivi.CombinationParameter;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.model.triggers.DiagramTrigger.DiagramState;
@@ -44,6 +46,26 @@ public class RandomLayoutCombination extends AbstractCombination {
             "de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditorID",
             "de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID");
 
+    /** parameter id for animation. */
+    private static final String ANIMATE = "de.cau.cs.kieler.kiml.animate";
+    /** parameter id for zoom to fit. */
+    private static final String ZOOM_TO_FIT = "de.cau.cs.kieler.kiml.zoomToFit";
+    /** parameter id for progress bar. */
+    private static final String PROGRESS_BAR = "de.cau.cs.kieler.kiml.progressBar";
+    
+    /** parameter array for this combination. */
+    private static final CombinationParameter[] PARAMETERS = new CombinationParameter[] {
+            new CombinationParameter(ANIMATE, getPreferenceStore(), "Animate",
+                    "Animates the automatic layout of a graph.", true,
+                    CombinationParameter.BOOLEAN_TYPE),
+            new CombinationParameter(ZOOM_TO_FIT, getPreferenceStore(), "Zoom to Fit",
+                    "Perform zoom to fit with automatic layout.", false,
+                    CombinationParameter.BOOLEAN_TYPE),
+            new CombinationParameter(PROGRESS_BAR, getPreferenceStore(), "Progress Bar",
+                    "Display a progress bar while performing automatic layout.", false,
+                    CombinationParameter.BOOLEAN_TYPE) };
+
+    
     /**
      * Setup Buttons in the Constructor.
      */
@@ -66,11 +88,15 @@ public class RandomLayoutCombination extends AbstractCombination {
      *            react on the current diagram
      */
     public void execute(final ButtonState button, final DiagramState diagram) {
+        IPreferenceStore preferenceStore = getPreferenceStore();
+        boolean animate = preferenceStore.getBoolean(ANIMATE);
+        boolean zoom = preferenceStore.getBoolean(ZOOM_TO_FIT);
+        boolean progressBar = preferenceStore.getBoolean(PROGRESS_BAR);
         //dontUndo();
         if (this.getTriggerState() instanceof ButtonState
                 && button.getButtonId().equals(RANDOM_BUTTON)) {
-            LayoutEffect layout = new LayoutEffect(diagram.getDiagramPart(), null, false, true,
-                    true, true);
+            LayoutEffect layout = new LayoutEffect(diagram.getDiagramPart(), null, zoom, progressBar,
+                    true, animate);
             TreeIterator<?> iterator = diagram.getSemanticModel().eAllContents();
             while (iterator.hasNext()) {
                 Object object = iterator.next();
@@ -82,4 +108,14 @@ public class RandomLayoutCombination extends AbstractCombination {
             this.schedule(layout);
         } 
     }
+    
+    /**
+     * Return the preference store for the KIML UI plugin.
+     * 
+     * @return the preference store
+     */
+    private static IPreferenceStore getPreferenceStore() {
+        return KimlUiPlugin.getDefault().getPreferenceStore();
+    }
+    
 }
