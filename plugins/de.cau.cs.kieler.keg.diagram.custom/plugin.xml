@@ -85,22 +85,22 @@
             commandId="de.cau.cs.kieler.keg.ui.reinitDiagram"
             label="%reinitDiagramCommand.name"
             style="push"
-            tooltip="Initialize the diagram for the selected KAOM model file, overwriting any old &apos;kaod&apos; file.">
+            tooltip="%reinitDiagramCommand.tooltip">
             
             <visibleWhen
                checkEnabled="false">
                
-               <iterate>
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
                   <adapt
                      type="org.eclipse.core.resources.IResource">
                      
-                     <or>
-                        <test
+                     <test
                            forcePluginActivation="false"
                            property="org.eclipse.core.resources.extension"
                            value="keg">
-                        </test>
-                     </or>
+                     </test>
                   </adapt>
                </iterate>
             </visibleWhen>
