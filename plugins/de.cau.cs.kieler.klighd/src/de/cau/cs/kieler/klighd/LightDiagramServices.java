@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klighd;
 
+import java.io.File;
+import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -21,7 +23,11 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.osgi.framework.Bundle;
+
+import de.cau.cs.kieler.klighd.transformations.XtendBasedTransformation;
 
 /**
  * Singleton for accessing the light diagram services.
@@ -37,12 +43,18 @@ public final class LightDiagramServices {
             "de.cau.cs.kieler.klighd.modelTransformations";
     /** name of the 'viewer' element. */
     public static final String ELEMENT_VIEWER = "viewer";
+
     /** name of the 'transformation' element. */
     public static final String ELEMENT_TRANSFORMATION = "transformation";
-    /** name of the 'id' attribute in the extension points. */
+    /** name of the 'xtendBasedTransformation' element. */
+    public static final String ELEMENT_XTEND_BASED_TRANSFORMATION = "xtendBasedTransformation";
+
+    /** name of the 'id' attribute in the extension points. */    
     public static final String ATTRIBUTE_ID = "id";
     /** name of the 'class' attribute in the extension points. */
     public static final String ATTRIBUTE_CLASS = "class";
+    /** name of the 'extFile' attribute in the extension points. */
+    public static final String ATTRIBUTE_EXTENSION_FILE = "extFile";
 
     /** the singleton instance. */
     private static LightDiagramServices instance;
@@ -152,6 +164,30 @@ public final class LightDiagramServices {
                             idModelTransformationMapping.put(id, modelTransformation);
                         }
                     }
+                } else if (ELEMENT_XTEND_BASED_TRANSFORMATION.equals(element.getName())) {
+                    //
+                    // handle xtendBasedTransformation extensions
+                    //                    
+                    String id = element.getAttribute(ATTRIBUTE_ID);
+                    String extFile = element.getAttribute(ATTRIBUTE_EXTENSION_FILE);
+                    Bundle contributingBundle = Platform.getBundle(element.getContributor().getName());
+                    
+                    URL extFileURL;
+                    if (contributingBundle != null) {
+                        extFileURL = contributingBundle.getEntry("/" + extFile);
+                        
+                        if (extFileURL == null) {
+                            extFileURL = contributingBundle.getEntry("/transformations/" + extFile);                            
+                        }
+                        //FIXME to be continued
+                        
+                        System.out.println(extFileURL);
+                    }
+                    
+                    IModelTransformation<Object, ?> modelTransformation =
+                        new XtendBasedTransformation(extFile);
+                    idModelTransformationMapping.put(id, modelTransformation);
+                       
                 }
             } catch (CoreException exception) {
                 StatusManager.getManager().handle(exception, KLighDPlugin.PLUGIN_ID);
