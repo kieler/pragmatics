@@ -47,6 +47,9 @@ import de.cau.cs.kieler.klighd.ViewContext;
  */
 public class DiagramViewPart extends ViewPart {
 
+    /** the default name for this view. */
+    public static final String DEFAULT_NAME = "Light Diagram";
+
     /** the currently active viewer. */
     private Viewer currentViewer = null;
     /** the current control. */
@@ -82,14 +85,24 @@ public class DiagramViewPart extends ViewPart {
      * @param model
      *            the model
      */
-    public void showModel(final Object model) {
+    public void setInputModel(final Object model) {
         ViewContext viewContext = LightDiagramServices.getInstance().getValidViewContext(model);
         if (viewContext != null) {
-            showViewer(viewContext.getViewerProvider());
+            setViewer(viewContext.getViewerProvider());
             currentViewer.setInput(viewContext.getModel());
         } else {
             showMessage("No viewer registered for the model.");
         }
+    }
+
+    /**
+     * Sets a new name for the view.
+     * 
+     * @param name
+     *            the name
+     */
+    public void setName(final String name) {
+        setPartName(name);
     }
 
     /**
@@ -116,12 +129,12 @@ public class DiagramViewPart extends ViewPart {
     }
 
     /**
-     * Show the viewer provided by the viewer provider in the view.
+     * Sets the viewer provided by the viewer provider as active viewer for this view.
      * 
      * @param viewerProvider
      *            the viewer provider
      */
-    private void showViewer(final IViewerProvider viewerProvider) {
+    private void setViewer(final IViewerProvider viewerProvider) {
         if (currentControl != null) {
             currentControl.dispose();
             currentViewer = null;
@@ -151,7 +164,7 @@ public class DiagramViewPart extends ViewPart {
                             IFile file = (IFile) resource;
                             Object model = loadModel(file);
                             if (model != null) {
-                                showModel(model);
+                                setInputModel(model);
                             } else {
                                 showMessage("The file does not contain an EMF resource.");
                             }

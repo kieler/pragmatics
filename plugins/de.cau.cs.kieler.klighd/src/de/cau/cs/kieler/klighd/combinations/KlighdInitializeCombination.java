@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.klighd.kvi;
+package de.cau.cs.kieler.klighd.combinations;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.IEditorPart;
