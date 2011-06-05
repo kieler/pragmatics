@@ -13,6 +13,11 @@
  */
 package de.cau.cs.kieler.klighd.graphiti.piccolo;
 
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 
 import edu.umd.cs.piccolo.PNode;
@@ -28,6 +33,8 @@ public class ShapeNode extends PNode {
 
     /** the Pictogram shape represented by this node. */
     private Shape shape;
+    /** a mapping between Pictogram anchors and Piccolo anchor nodes. */
+    private Map<Anchor, AnchorNode> anchorMap = new LinkedHashMap<Anchor, AnchorNode>();
 
     /**
      * Constructs a ShapeNode.
@@ -44,7 +51,39 @@ public class ShapeNode extends PNode {
      * 
      * @return the Pictogram shape
      */
-    public Shape getShape() {
+    public Shape getPictogramShape() {
         return shape;
     }
+
+    /**
+     * Adds the given anchor node to the shape node.
+     * 
+     * @param anchorNode
+     *            the anchor node
+     */
+    public void addAnchor(final AnchorNode anchorNode) {
+        addChild(anchorNode);
+        anchorMap.put(anchorNode.getPictogramAnchor(), anchorNode);
+    }
+
+    /**
+     * Returns a collection containing the anchor nodes attached to this shape node.
+     * 
+     * @return the anchor nodes attached to this shape node
+     */
+    public Collection<AnchorNode> getAnchorNodes() {
+        return anchorMap.values();
+    }
+
+    /**
+     * Returns the Piccolo anchor node for the given Pictogram anchor.
+     * 
+     * @param anchor
+     *            the Pictogram anchor
+     * @return the Piccolo anchor node
+     */
+    public AnchorNode getAnchorNode(final Anchor anchor) {
+        return anchorMap.get(anchor);
+    }
+
 }
