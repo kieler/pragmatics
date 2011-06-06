@@ -136,6 +136,25 @@
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.basic"
+            class="de.cau.cs.kieler.kiml.grana.analyses.CompoundNodeChildCountAnalysis"
+            description="The minimum, average, and maximum number of children of compound nodes."
+            id="de.cau.cs.kieler.kiml.grana.compoundNodeChildCount"
+            name="Compound Node Child Count">
+         <component
+               abbreviation="Min"
+               name="Minimum">
+         </component>
+         <component
+               abbreviation="Avg"
+               name="Average">
+         </component>
+         <component
+               abbreviation="Max"
+               name="Maximum">
+         </component>
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.basic"
             class="de.cau.cs.kieler.kiml.grana.analyses.ConnectedComponentsAnalysis"
             description="The number of connected components, including hierarchies."
             id="de.cau.cs.kieler.kiml.grana.connectedComponents"
