@@ -18,6 +18,7 @@ package de.cau.cs.kieler.klay.layered.properties;
  * 
  * @author msp
  * @author cds
+ * @author ima
  */
 public enum NodeType {
     /** a node representing an external port. */
@@ -27,5 +28,7 @@ public enum NodeType {
     /** a dummy node created to split a long edge. */
     LONG_EDGE,
     /** a dummy node created to cope with ports at the northern or southern side. */
-    NORTH_SOUTH_PORT;
+    NORTH_SOUTH_PORT,
+    /** a dummy node created as upper or lower border node to represent a compound node. */
+    COMPOUND_BORDER;
 }
