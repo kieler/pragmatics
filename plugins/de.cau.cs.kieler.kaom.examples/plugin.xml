@@ -10,7 +10,7 @@
     <category id="de.cau.cs.kieler.kaom"
     		  title="KIELER Actor Oriented Modeling">
     </category>
-	<example author="KIELER Workgroup" category="de.cau.cs.kieler.kaom" contact="kieler@informatik.uni-kiel.de" description="This is a simple example of KAOM." generation_date="Tue Sep 28 13:42:39 CEST 2010" id="de.cau.cs.kieler.kaom.ramp_add" overview_pic="examples/ramp_add/rampAdd.png" root_directory="examples/" title="Ramp Add">
+	<example author="KIELER Workgroup" category="de.cau.cs.kieler.kaom" contact="kieler@informatik.uni-kiel.de" description="This is a simple example of KAOM." generation_date="Tue Sep 28 13:42:39 CEST 2010" id="de.cau.cs.kieler.kaom.ramp_add" overview_pic="images/rampAdd.png" root_directory="examples/" title="Ramp Add">
 	   <resource direct_open="false" local_path="examples/ramp_add" resource_type="folder">
 	   </resource>
 	   <resource direct_open="false" local_path="examples/ramp_add/rampAdd.csv" resource_type="file">
@@ -22,7 +22,7 @@
 	   <resource direct_open="false" local_path="examples/ramp_add/rampAdd.moml" resource_type="file">
 	   </resource>
 	</example>
-    <example author="KIELER Workgroup" category="de.cau.cs.kieler.kaom" contact="kieler@informatik.uni-kiel.de" description="This example shows a KAOM diagram with a composite actor and its content." generation_date="Tue Nov 16 17:08:31 CET 2010" id="de.cau.cs.kieler.kaom.hierarchy" overview_pic="examples/kaom_hierarchy/hierarchy.png" root_directory="examples" title="Hierarchy">
+    <example author="KIELER Workgroup" category="de.cau.cs.kieler.kaom" contact="kieler@informatik.uni-kiel.de" description="This example shows a KAOM diagram with a composite actor and its content." generation_date="Tue Nov 16 17:08:31 CET 2010" id="de.cau.cs.kieler.kaom.hierarchy" overview_pic="images/hierarchy.png" root_directory="examples" title="Hierarchy">
     <resource direct_open="false" local_path="examples/kaom_hierarchy/" resource_type="folder"/>
     <resource direct_open="true" local_path="examples/kaom_hierarchy/hierarchy.kaod" resource_type="file"/>
     <resource direct_open="false" local_path="examples/kaom_hierarchy/hierarchy.kaom" resource_type="file"/>
