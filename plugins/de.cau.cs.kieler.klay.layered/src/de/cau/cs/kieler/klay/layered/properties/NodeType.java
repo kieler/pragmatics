@@ -29,6 +29,8 @@ public enum NodeType {
     LONG_EDGE,
     /** a dummy node created to cope with ports at the northern or southern side. */
     NORTH_SOUTH_PORT,
-    /** a dummy node created as upper or lower border node to represent a compound node. */
-    COMPOUND_BORDER;
+    /** a dummy node created as upper border node to represent a subgraph node. */
+    UPPER_COMPOUND_BORDER,
+    /** a dummy node created as lower border node to represent a subgraph node. */
+    LOWER_COMPOUND_BORDER;
 }
