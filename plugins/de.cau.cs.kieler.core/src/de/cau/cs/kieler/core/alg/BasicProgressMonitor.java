@@ -36,7 +36,7 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
      * the number of work units that will be consumed after completion of the
      * currently active child task.
      */
-    private int currentChildWork = -1;
+    private float currentChildWork = -1;
     /** the start time of the associated task, in nanoseconds. */
     private long startTime;
     /** the total time of the associated task, in seconds. */
@@ -46,7 +46,7 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
     /** the amount of work that is completed. */
     private float completedWork = 0.0f;
     /** the number of work units that can be completed in total. */
-    private int totalWork;
+    private float totalWork;
     /** the maximal number of hierarchy levels for which progress is reported. */
     private int maxLevels;
 
@@ -72,7 +72,7 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
     /**
      * {@inheritDoc}
      */
-    public final void begin(final String name, final int thetotalWork) {
+    public final void begin(final String name, final float thetotalWork) {
         if (!closed) {
             this.taskName = name;
             this.totalWork = thetotalWork;
@@ -91,7 +91,7 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
      * @param maxHierarchyLevels the maximal number of reported hierarchy levels, or -1
      *     for infinite levels
      */
-    protected void doBegin(final String name, final int newTotalWork,
+    protected void doBegin(final String name, final float newTotalWork,
             final boolean topInstance, final int maxHierarchyLevels) {
     }
 
@@ -163,7 +163,7 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
     /**
      * {@inheritDoc}
      */
-    public final IKielerProgressMonitor subTask(final int work) {
+    public final IKielerProgressMonitor subTask(final float work) {
         if (!closed) {
             BasicProgressMonitor subMonitor = doSubTask(work, maxLevels);
             children.add(subMonitor);
@@ -185,7 +185,7 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
      *         progress monitor, or -1 for infinite levels
      * @return a new progress monitor instance
      */
-    protected BasicProgressMonitor doSubTask(final int work, final int maxHierarchyLevels) {
+    protected BasicProgressMonitor doSubTask(final float work, final int maxHierarchyLevels) {
         if (maxHierarchyLevels > 0) {
             return new BasicProgressMonitor(maxHierarchyLevels - 1);
         } else {
@@ -196,7 +196,7 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
     /**
      * {@inheritDoc}
      */
-    public final void worked(final int work) {
+    public final void worked(final float work) {
         if (work > 0 && !closed) {
             internalWorked(work);
         }

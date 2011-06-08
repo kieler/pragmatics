@@ -23,19 +23,27 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * <p>Graph importers are encouraged to set the {@link Properties#GRAPH_PROPERTIES}
  * property on imported graphs.</p>
  *
+ * @param <T> the type of graph that this importer can transform into a layered graph.
  * @author msp
  */
-public interface IGraphImporter {
+public interface IGraphImporter<T> {
     
     /**
-     * Returns the layered graph that is managed by this graph importer.
+     * Set the input for the graph importer.
      * 
-     * @return the created layered graph
+     * @param input an input object for the importer
      */
-    LayeredGraph getGraph();
+    void setInput(T input);
     
     /**
-     * Apply the computed layout of a layered graph to the original graph.
+     * Create a layered graph from the importer's input.
+     * 
+     * @return a layered graph, or {@code null} if the input was not recognized
+     */
+    LayeredGraph importGraph();
+    
+    /**
+     * Apply the computed layout of the given layered graph to the original input graph.
      * 
      * <dl>
      *   <dt>Precondition:</dt><dd>the graph has all its dummy nodes and edges removed;
@@ -43,7 +51,9 @@ public interface IGraphImporter {
      *     orientation</dd>
      *   <dt>Postcondition:</dt><dd>none</dd>
      * </dl>
+     * 
+     * @param graph a graph for which layout is applied
      */
-    void applyLayout();
+    void applyLayout(LayeredGraph graph);
 
 }

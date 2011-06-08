@@ -88,6 +88,8 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     /** phase 5: Edge routing module. */
     private ILayoutPhase edgeRouter;
     
+    /** connected components processor. */
+    private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
     /** intermediate layout processor strategy. */
     private IntermediateProcessingStrategy intermediateProcessingStrategy =
         new IntermediateProcessingStrategy();
@@ -106,20 +108,29 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.begin("Layered layout", 1);
 
         // transform the input graph
-        IGraphImporter graphImporter = new KGraphImporter(layoutNode);
-        LayeredGraph layeredGraph = graphImporter.getGraph();
+        IGraphImporter<KNode> graphImporter = new KGraphImporter();
+        graphImporter.setInput(layoutNode);
+        LayeredGraph layeredGraph = graphImporter.importGraph();
 
         // set special properties for the layered graph
         setOptions(layeredGraph, layoutNode);
 
         // update the modules depending on user options
         updateModules(layeredGraph, layoutNode.getData(KShapeLayout.class));
+        
+        // split the input graph into components
+        List<LayeredGraph> components = componentsProcessor.split(layeredGraph);
 
         // perform the actual layout
-        layout(graphImporter, progressMonitor.subTask(1));
+        for (LayeredGraph comp : components) {
+            layout(comp, progressMonitor.subTask(1.0f / components.size()));
+        }
+        
+        // pack the components back into one graph
+        layeredGraph = componentsProcessor.pack(components);
         
         // apply the layout results to the original graph
-        graphImporter.applyLayout();
+        graphImporter.applyLayout(layeredGraph);
 
         progressMonitor.done();
     }
@@ -269,24 +280,23 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     
     ///////////////////////////////////////////////////////////////////////////////
     // Layout
-
+    
     /**
      * Perform the five phases of the layered layouter.
      * 
-     * @param importer
-     *            the graph importer
+     * @param graph
+     *            the graph that is to be laid out
      * @param themonitor
      *            a progress monitor, or {@code null}
      */
-    public void layout(final IGraphImporter importer, final IKielerProgressMonitor themonitor) {
+    public void layout(final LayeredGraph graph, final IKielerProgressMonitor themonitor) {
         IKielerProgressMonitor monitor = themonitor;
         if (monitor == null) {
             monitor = new BasicProgressMonitor();
         }
-        monitor.begin("Layered layout phases", algorithm.size());
-        LayeredGraph layeredGraph = importer.getGraph();
+        monitor.begin("Component Layout", algorithm.size());
         
-        if (layeredGraph.getProperty(LayoutOptions.DEBUG_MODE)) {
+        if (graph.getProperty(LayoutOptions.DEBUG_MODE)) {
             // Debug Mode!
             // Prints the algorithm configuration and outputs the whole graph to a file
             // before each slot execution
@@ -300,28 +310,34 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             // invoke each layout processor
             int slotIndex = 0;
             for (ILayoutProcessor processor : algorithm) {
+                if (monitor.isCanceled()) {
+                    return;
+                }
                 // Graph debug output
                 try {
-                    layeredGraph.writeDotGraph(createWriter(layeredGraph, slotIndex++));
+                    graph.writeDotGraph(createWriter(graph, slotIndex++));
                 } catch (IOException e) {
                     // Do nothing.
                 }
                 
                 processor.reset(monitor.subTask(1));
-                processor.process(layeredGraph);
+                processor.process(graph);
             }
 
             // Graph debug output
             try {
-                layeredGraph.writeDotGraph(createWriter(layeredGraph, slotIndex++));
+                graph.writeDotGraph(createWriter(graph, slotIndex++));
             } catch (IOException e) {
                 // Do nothing.
             }
         } else {
             // invoke each layout processor
             for (ILayoutProcessor processor : algorithm) {
+                if (monitor.isCanceled()) {
+                    return;
+                }
                 processor.reset(monitor.subTask(1));
-                processor.process(layeredGraph);
+                processor.process(graph);
             }
         }
 

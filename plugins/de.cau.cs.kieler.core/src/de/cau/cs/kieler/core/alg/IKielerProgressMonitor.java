@@ -25,7 +25,7 @@ import java.util.List;
 public interface IKielerProgressMonitor {
 
     /** constant indicating an unknown amount of work. */
-    int UNKNOWN_WORK = -1;
+    float UNKNOWN_WORK = -1;
 
     /**
      * Notifies that the task will begin after this method has been called. This
@@ -35,7 +35,7 @@ public interface IKielerProgressMonitor {
      * @param totalWork total amount of work units, or <code>UNKNOWN_WORK</code>
      *            if this is not specified
      */
-    void begin(String name, int totalWork);
+    void begin(String name, float totalWork);
 
     /**
      * Notifies that the current task is done and closes the monitor. This
@@ -50,7 +50,7 @@ public interface IKielerProgressMonitor {
      * 
      * @param work number of work units
      */
-    void worked(int work);
+    void worked(float work);
 
     /**
      * Returns whether cancellation of the task has been requested.
@@ -70,7 +70,7 @@ public interface IKielerProgressMonitor {
      * @return a progress monitor for the new sub-task, or null if the monitor
      *         is closed
      */
-    IKielerProgressMonitor subTask(int work);
+    IKielerProgressMonitor subTask(float work);
 
     /**
      * Returns a list of all monitors associated with direct sub-tasks.

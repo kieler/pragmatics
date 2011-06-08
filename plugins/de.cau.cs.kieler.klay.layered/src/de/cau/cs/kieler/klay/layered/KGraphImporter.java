@@ -58,15 +58,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
-    /**
-     * Constructs a new instance that transforms the given node into a layered graph.
-     * 
-     * @param node
-     *            the node to import.
-     */
-    public KGraphImporter(final KNode node) {
-        super(node);
-    }
 
     // /////////////////////////////////////////////////////////////////////////////
     // Transformation KGraph -> LGraph
@@ -666,8 +657,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 } else if (origin instanceof KPort) {
                     // It's an external port. Set its position
                     KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
-                    KVector portPosition = getExternalPortPosition(lnode, portLayout.getWidth(),
-                            portLayout.getHeight());
+                    KVector portPosition = getExternalPortPosition(layeredGraph, lnode,
+                            portLayout.getWidth(), portLayout.getHeight());
 
                     portLayout.setXpos((float) portPosition.x);
                     portLayout.setYpos((float) portPosition.y);

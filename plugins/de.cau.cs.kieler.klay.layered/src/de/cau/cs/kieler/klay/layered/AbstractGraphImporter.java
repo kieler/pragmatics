@@ -43,38 +43,25 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @param <T> the type of graph that this importer can transform into a layered graph.
  * @author cds
  */
-public abstract class AbstractGraphImporter<T> implements IGraphImporter {
+public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
     
     /**
      * The object from which the layered graph was created.
      */
     private T origin = null;
     
-    /**
-     * The converted layered graph.
-     */
-    private LayeredGraph graph = null;
-    
     
     /**
-     * Creates a new importer, transforming the given object into a layered graph.
-     * 
-     * @param origin the object to be transformed.
+     * {@inheritDoc}
      */
-    public AbstractGraphImporter(final T origin) {
-        this.origin = origin;
-        
-        graph = new LayeredGraph();
-        graph.setProperty(Properties.ORIGIN, origin);
-        
-        transform(origin, graph);
+    public final void setInput(final T input) {
+        this.origin = input;
     }
-    
     
     /**
      * Returns the object from which the layered graph was created.
      * 
-     * @return the origin.
+     * @return the input object
      */
     public final T getOrigin() {
         return origin;
@@ -83,7 +70,12 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
     /**
      * {@inheritDoc}
      */
-    public final LayeredGraph getGraph() {
+    public final LayeredGraph importGraph() {
+        LayeredGraph graph = new LayeredGraph();
+        graph.setProperty(Properties.ORIGIN, origin);
+        
+        transform(origin, graph);
+        
         return graph;
     }
     
@@ -106,11 +98,9 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
     /**
      * {@inheritDoc}
      */
-    public final void applyLayout() {
-        // Set positions for external ports
-        
+    public final void applyLayout(final LayeredGraph graph) {
         // Apply the layout
-        applyLayout(getGraph(), getOrigin());
+        applyLayout(graph, getOrigin());
     }
     
     /**
@@ -243,13 +233,14 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter {
      * given dummy node that represents the port. The position is relative to the graph node's
      * top left corner.
      * 
+     * @param graph the graph for which ports shall be placed
      * @param portDummy the dummy node representing the external port.
      * @param portWidth the external port's width.
      * @param portHeight the external port's height.
      * @return the external port's position.
      */
-    protected KVector getExternalPortPosition(final LNode portDummy, final double portWidth,
-            final double portHeight) {
+    protected KVector getExternalPortPosition(final LayeredGraph graph, final LNode portDummy,
+            final double portWidth, final double portHeight) {
         
         KVector dummyPosition = portDummy.getPosition();
         KVector portPosition = new KVector(dummyPosition.x, dummyPosition.y);
