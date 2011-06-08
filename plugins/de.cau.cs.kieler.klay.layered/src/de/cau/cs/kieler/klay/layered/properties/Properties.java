@@ -34,6 +34,7 @@ import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
  * 
  * @author msp
  * @author cds
+ * @author ima
  */
 public final class Properties {
     
@@ -115,6 +116,11 @@ public final class Properties {
      */
     public static final IProperty<Double> EXT_PORT_RATIO_OR_POSITION = new Property<Double>(
             "externalPortRatioOrPosition", 0.0);
+    
+    /**
+     * Node containing the node in question, represented by the upper border dummy node.
+     */
+    public static final IProperty<LNode> PARENT = new Property<LNode>("parent", null);
 
     
     ///////////////////////////////////////////////////////////////////////////////
