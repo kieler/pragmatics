@@ -99,17 +99,43 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
 
         // Transform flat graph directly, import recursively for compound graph
-        if (!isCompound) {
+        if (isCompound) {
+            List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
+            recursiveTransform(source, layeredNodes, layeredGraph, elemMap, graphProperties);
+            recursiveSetCompoundDummyEdges(source, elemMap);
+        } else {
             // transform everything
             transformNodesAndPorts(source, layeredGraph, elemMap, graphProperties);
             transformEdges(source, elemMap, graphProperties);
-        } else {
-            List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
-            recursiveTransform(source, layeredNodes, layeredGraph, elemMap, graphProperties);
         }
 
         // set the graph properties property
         layeredGraph.setProperty(Properties.GRAPH_PROPERTIES, graphProperties);
+    }
+
+    /**
+     * Creates dummy edges between compound node dummy nodes and their children.
+     * 
+     * @param source
+     *            the source node.
+     * @param layeredNodes
+     *            the list of LNodes with the created dummy nodes and the imported nodes.
+     */
+    private void recursiveSetCompoundDummyEdges(final KNode layoutNode,
+            final Map<KGraphElement, LGraphElement> elemMap) {
+        if (!layoutNode.getChildren().isEmpty()) {
+            if (elemMap.get(layoutNode) != null) {
+                LNode correspondingNode = (LNode) elemMap.get(layoutNode);
+                for (KNode knode : layoutNode.getChildren()) {
+                    if (elemMap.get(knode) != null) {
+                        LEdge newEdge = new LEdge();
+
+                        // TODO complete method body
+
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -133,21 +159,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         if (layoutNode.getChildren().isEmpty()) {
             transformNode(layoutNode, layeredNodes, elemMap, graphProperties);
-
-            KShapeLayout layoutNodeLayout = layoutNode.getData(KShapeLayout.class);
-            KVector layoutNodeSize = new KVector(layoutNodeLayout.getWidth(),
-                    layoutNodeLayout.getHeight());
-
-            // Find out if there are external ports
-            List<KPort> ports = layoutNode.getPorts();
-            if (!ports.isEmpty()) {
-                graphProperties.add(GraphProperties.EXTERNAL_PORTS);
-            }
-
-            // Transform the external ports
-            for (KPort kport : ports) {
-                transformExternalPort(kport, layeredNodes, layoutNode, layoutNodeSize, elemMap);
-            }
 
             // Transform the outgoing edges
             for (KEdge outgoingEdge : layoutNode.getOutgoingEdges()) {
@@ -184,20 +195,50 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             final Map<KGraphElement, LGraphElement> elemMap,
             final EnumSet<GraphProperties> graphProperties) {
 
+        KShapeLayout layoutNodeLayout = layoutNode.getData(KShapeLayout.class);
+
         // Create dummy nodes for upper and lower border of a node
         LNode upperDummy = new LNode();
         upperDummy.setProperty(Properties.NODE_TYPE, NodeType.UPPER_COMPOUND_BORDER);
+        upperDummy.setProperty(Properties.ORIGIN, layoutNode);
+        upperDummy.setProperty(Properties.PARENT, elemMap.get(layoutNode.getParent()));
+        upperDummy.getPosition().x = layoutNodeLayout.getXpos();
+        upperDummy.getPosition().y = layoutNodeLayout.getYpos()
+                + (layoutNodeLayout.getHeight() / 2);
         layeredNodes.add(upperDummy);
+        elemMap.put(layoutNode, upperDummy);
 
         LNode lowerDummy = new LNode();
         lowerDummy.setProperty(Properties.NODE_TYPE, NodeType.LOWER_COMPOUND_BORDER);
+        lowerDummy.setProperty(Properties.ORIGIN, layoutNode);
+        lowerDummy.setProperty(Properties.PARENT, elemMap.get(layoutNode.getParent()));
+        lowerDummy.getPosition().x = layoutNodeLayout.getXpos() + layoutNodeLayout.getWidth();
+        lowerDummy.getPosition().y = upperDummy.getPosition().y;
         layeredNodes.add(lowerDummy);
 
+        // Relate the created dummy nodes
+        upperDummy.setProperty(Properties.LOWER_DUMMY_PARTNER, lowerDummy);
+
         // Create ports for dummy edges
+        LPort upperDummyInput = new LPort();
+        upperDummyInput.setSide(PortSide.WEST);
+        upperDummyInput.setNode(upperDummy);
 
-        // Create dummy edges between the upper dummy and each of the children of the layout node
+        LPort upperDummyOutput = new LPort();
+        upperDummyOutput.setSide(PortSide.EAST);
+        upperDummyOutput.setNode(upperDummy);
 
-        // Create dummy edges between the lower dummy and each of the children of the layout node
+        LPort lowerDummyInput = new LPort();
+        lowerDummyInput.setSide(PortSide.WEST);
+        lowerDummyInput.setNode(lowerDummy);
+
+        LPort lowerDummyOutput = new LPort();
+        lowerDummyOutput.setSide(PortSide.EAST);
+        lowerDummyOutput.setNode(lowerDummy);
+
+        // import incoming edges for the layoutNode to the upperDummy
+
+        // import outgoing edges for the layoutNode to the lowerDummy
 
         // TODO complete method body
 
@@ -646,11 +687,9 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                                 KShapeLayout portLayout = ((KPort) origin)
                                         .getData(KShapeLayout.class);
                                 portLayout
-                                        .setXpos((float) 
-                                                (lport.getPosition().x - lport.getSize().x / 2.0));
+                                        .setXpos((float) (lport.getPosition().x - lport.getSize().x / 2.0));
                                 portLayout
-                                        .setYpos((float) 
-                                                (lport.getPosition().y - lport.getSize().y / 2.0));
+                                        .setYpos((float) (lport.getPosition().y - lport.getSize().y / 2.0));
                             }
                         }
                     }
