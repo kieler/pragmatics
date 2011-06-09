@@ -27,7 +27,6 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.klay.layered.IGraphImporter;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -77,15 +76,15 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
 
         // transform the input graph
-        IGraphImporter graphImporter = new KRailGraphImporter(layoutNode);
-        LayeredGraph layeredGraph = graphImporter.getGraph();
+        KRailGraphImporter graphImporter = new KRailGraphImporter();
+        LayeredGraph layeredGraph = graphImporter.importGraph(layoutNode);
 
         setOptions(layeredGraph, layoutNode, parentLayout);
 
         // perform the actual layout
-        layout(graphImporter, progressMonitor.subTask(1));
+        layout(layeredGraph, progressMonitor.subTask(1));
         // apply the layout results to the original graph
-        graphImporter.applyLayout();
+        graphImporter.applyLayout(layeredGraph);
 
         progressMonitor.done();
     }
@@ -120,18 +119,17 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     /**
      * Perform the five phases of the layered layouter.
      * 
-     * @param importer
-     *            the graph importer
+     * @param layeredGraph
+     *            the graph to lay out.
      * @param themonitor
      *            a progress monitor, or {@code null}
      */
-    public void layout(final IGraphImporter importer, final IKielerProgressMonitor themonitor) {
+    public void layout(final LayeredGraph layeredGraph, final IKielerProgressMonitor themonitor) {
         IKielerProgressMonitor monitor = themonitor;
         if (monitor == null) {
             monitor = new BasicProgressMonitor();
         }
         monitor.begin("Layered layout phases", 1 + 1 + 1 + 1 + 1);
-        LayeredGraph layeredGraph = importer.getGraph();
         List<LNode> nodes = layeredGraph.getLayerlessNodes();
 
         System.out.println("Validating ...");

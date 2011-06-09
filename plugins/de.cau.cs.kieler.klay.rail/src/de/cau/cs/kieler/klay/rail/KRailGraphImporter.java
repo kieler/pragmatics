@@ -48,56 +48,39 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * 
  * @author msp, jjc
  */
-public class KRailGraphImporter implements IGraphImporter {
-
-    /** the created layered graph. */
-    private LayeredGraph layeredGraph;
-    /** the imported nodes. */
-    private List<LNode> importedNodes;
+public class KRailGraphImporter implements IGraphImporter<KNode> {
 
     /**
-     * Imports a KGraph to a layered graph.
-     * 
-     * @param knode
-     *            the top level node of the KGraph
+     * {@inheritDoc}
      */
-    public KRailGraphImporter(final KNode knode) {
-        layeredGraph = new LayeredGraph();
-        importedNodes = transformGraph(knode);
-        layeredGraph.setProperty(Properties.ORIGIN, knode);
-        KShapeLayout lay = knode.getData(KShapeLayout.class);
+    public LayeredGraph importGraph(final KNode graph) {
+        LayeredGraph layeredGraph = new LayeredGraph();
+        
+        transformGraph(graph, layeredGraph);
+        layeredGraph.setProperty(Properties.ORIGIN, graph);
+        
+        KShapeLayout lay = graph.getData(KShapeLayout.class);
         layeredGraph.setProperty(Properties.BEND_ANGLE, lay.getProperty(Properties.BEND_ANGLE));
         layeredGraph.setProperty(Properties.LAYER_DISTANCE,
                 lay.getProperty(Properties.LAYER_DISTANCE));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<LNode> getImportedNodes() {
-        return importedNodes;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public LayeredGraph getGraph() {
+        
         return layeredGraph;
     }
 
     /**
      * Transform the given KGraph to a layered graph.
      * 
-     * @param layoutNode
-     *            parent node of the KGraph
-     * @return a list of nodes for a layered graph
+     * @param graph
+     *            the graph to transform.
+     * @param layeredGraph
+     *            the layered graph to transform into.
      */
-    private List<LNode> transformGraph(final KNode layoutNode) {
+    private void transformGraph(final KNode graph, final LayeredGraph layeredGraph) {
         List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
 
         // transform nodes and ports
         Map<KGraphElement, LGraphElement> elemMap = new HashMap<KGraphElement, LGraphElement>();
-        for (KNode child : layoutNode.getChildren()) {
+        for (KNode child : graph.getChildren()) {
             KShapeLayout nodeLayout = child.getData(KShapeLayout.class);
             PortConstraints portConstraints = nodeLayout
                     .getProperty(LayoutOptions.PORT_CONSTRAINTS);
@@ -134,7 +117,7 @@ public class KRailGraphImporter implements IGraphImporter {
         }
 
         // transform edges
-        for (KNode child : layoutNode.getChildren()) {
+        for (KNode child : graph.getChildren()) {
             for (KEdge kedge : child.getOutgoingEdges()) {
                 KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
                 // exclude edges that pass hierarchy bounds and self-loops
@@ -188,14 +171,12 @@ public class KRailGraphImporter implements IGraphImporter {
                 }
             }
         }
-
-        return layeredNodes;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void applyLayout() {
+    public void applyLayout(final LayeredGraph layeredGraph) {
         KNode parentNode = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
