@@ -17,6 +17,7 @@ import java.util.EnumSet;
 import java.util.Random;
 import java.util.Set;
 
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -122,15 +123,9 @@ public final class Properties {
             "externalPortRatioOrPosition", 0.0);
 
     /**
-     * Node containing the node in question, represented by the upper border dummy node.
+     * KNode that contained the origin of this node in the KGraph. 
      */
-    public static final IProperty<LNode> PARENT = new Property<LNode>("parent", null);
-
-    /**
-     * Lower compound dummy node belonging to an upper compound dummy node.
-     */
-    public static final IProperty<LNode> LOWER_DUMMY_PARTNER = new Property<LNode>(
-            "lowerDummyPartner", null);
+    public static final IProperty<KNode> PARENT = new Property<KNode>("parent", null);
 
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS
