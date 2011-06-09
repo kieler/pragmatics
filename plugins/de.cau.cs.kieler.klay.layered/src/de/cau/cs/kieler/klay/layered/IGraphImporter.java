@@ -46,8 +46,8 @@ public interface IGraphImporter<T> {
      *   <dt>Postcondition:</dt><dd>none</dd>
      * </dl>
      * 
-     * @param graph a graph for which layout is applied
+     * @param layeredGraph a graph for which layout is applied
      */
-    void applyLayout(LayeredGraph graph);
+    void applyLayout(LayeredGraph layeredGraph);
 
 }
