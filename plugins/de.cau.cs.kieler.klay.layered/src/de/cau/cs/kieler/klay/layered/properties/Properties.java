@@ -26,7 +26,6 @@ import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
-import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer.Region;
 import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
 
@@ -148,6 +147,11 @@ public final class Properties {
     /** priority of elements. */
     public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY,
             0);
+    
+    /** default value for aspect ratio. */
+    public static final float DEF_ASPECT_RATIO = 1.6f;
+    public static final Property<Float> ASPECT_RATIO = new Property<Float>(LayoutOptions.ASPECT_RATIO,
+            DEF_ASPECT_RATIO, 0.0f);
 
     /** option identifier for minimal angle. */
     public static final String MIN_EDGE_ANGLE_ID = "de.cau.cs.kieler.klay.layered.minimalAngle";
@@ -190,6 +194,11 @@ public final class Properties {
     /** property to set constraints on the node layering. */
     public static final IProperty<LayerConstraint> LAYER_CONSTRAINT = new Property<LayerConstraint>(
             LAYER_CONSTRAINT_ID, LayerConstraint.NONE);
+    
+    /** option identifier for separation of connected components. */
+    public static final String SEPARATE_CC_ID = "de.cau.cs.kieler.klay.layered.separateConnComp";
+    /** property for choosing whether connected components are processed separately. */
+    public static final IProperty<Boolean> SEPARATE_CC = new Property<Boolean>(SEPARATE_CC_ID, false);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

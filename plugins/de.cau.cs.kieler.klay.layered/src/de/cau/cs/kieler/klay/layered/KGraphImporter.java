@@ -41,7 +41,6 @@ import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
@@ -72,7 +71,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // copy the properties of the KGraph to the layered graph
         layeredGraph.copyProperties(sourceShapeLayout);
-        layeredGraph.checkProperties(Properties.OBJ_SPACING, Properties.THOROUGHNESS);
+        layeredGraph.checkProperties(Properties.OBJ_SPACING, Properties.THOROUGHNESS,
+                Properties.ASPECT_RATIO);
 
         float borderSpacing = layeredGraph.getProperty(LayoutOptions.BORDER_SPACING);
         if (borderSpacing < 0) {
@@ -692,47 +692,45 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         List<LEdge> edgeList = new LinkedList<LEdge>();
 
         // process the nodes
-        for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode lnode : layer.getNodes()) {
-                Object origin = lnode.getProperty(Properties.ORIGIN);
+        for (LNode lnode : layeredGraph.getLayerlessNodes()) {
+            Object origin = lnode.getProperty(Properties.ORIGIN);
 
-                if (origin instanceof KNode) {
-                    // set the node position
-                    KShapeLayout nodeLayout = ((KNode) origin).getData(KShapeLayout.class);
+            if (origin instanceof KNode) {
+                // set the node position
+                KShapeLayout nodeLayout = ((KNode) origin).getData(KShapeLayout.class);
 
-                    nodeLayout.setXpos((float) (lnode.getPosition().x + offset.x));
-                    nodeLayout.setYpos((float) (lnode.getPosition().y + offset.y));
+                nodeLayout.setXpos((float) (lnode.getPosition().x + offset.x));
+                nodeLayout.setYpos((float) (lnode.getPosition().y + offset.y));
 
-                    // set port positions
-                    if (!nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
-                        for (LPort lport : lnode.getPorts()) {
-                            origin = lport.getProperty(Properties.ORIGIN);
-                            if (origin instanceof KPort) {
-                                KShapeLayout portLayout = ((KPort) origin)
-                                        .getData(KShapeLayout.class);
-                                portLayout
-                                        .setXpos((float) 
-                                                (lport.getPosition().x - lport.getSize().x / 2.0));
-                                portLayout
-                                        .setYpos((float) 
-                                                (lport.getPosition().y - lport.getSize().y / 2.0));
-                            }
+                // set port positions
+                if (!nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
+                    for (LPort lport : lnode.getPorts()) {
+                        origin = lport.getProperty(Properties.ORIGIN);
+                        if (origin instanceof KPort) {
+                            KShapeLayout portLayout = ((KPort) origin)
+                                    .getData(KShapeLayout.class);
+                            portLayout
+                                    .setXpos((float) 
+                                            (lport.getPosition().x - lport.getSize().x / 2.0));
+                            portLayout
+                                    .setYpos((float) 
+                                            (lport.getPosition().y - lport.getSize().y / 2.0));
                         }
                     }
-                } else if (origin instanceof KPort) {
-                    // It's an external port. Set its position
-                    KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
-                    KVector portPosition = getExternalPortPosition(layeredGraph, lnode,
-                            portLayout.getWidth(), portLayout.getHeight());
-
-                    portLayout.setXpos((float) portPosition.x);
-                    portLayout.setYpos((float) portPosition.y);
                 }
+            } else if (origin instanceof KPort) {
+                // It's an external port. Set its position
+                KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
+                KVector portPosition = getExternalPortPosition(layeredGraph, lnode,
+                        portLayout.getWidth(), portLayout.getHeight());
 
-                // collect edges
-                for (LPort port : lnode.getPorts()) {
-                    edgeList.addAll(port.getOutgoingEdges());
-                }
+                portLayout.setXpos((float) portPosition.x);
+                portLayout.setYpos((float) portPosition.y);
+            }
+
+            // collect edges
+            for (LPort port : lnode.getPorts()) {
+                edgeList.addAll(port.getOutgoingEdges());
             }
         }
 

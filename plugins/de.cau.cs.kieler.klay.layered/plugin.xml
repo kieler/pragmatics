@@ -11,6 +11,10 @@
             name="KLay Layered"
             preview="images/layered.png"
             type="de.cau.cs.kieler.type.layered">
+         <supportedDiagram
+               priority="15"
+               type="de.cau.cs.kieler.layout.diagrams.dataFlow">
+         </supportedDiagram>
          <knownOption
                default="20"
                option="de.cau.cs.kieler.spacing">
@@ -58,6 +62,13 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layoutHierarchy">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.separateConnComp">
+         </knownOption>
+         <knownOption
+               default="1.6"
+               option="de.cau.cs.kieler.aspectRatio">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -132,6 +143,22 @@
             name="Edge Spacing Factor"
             type="float">
       </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            description="Whether each connected component should be processed separately"
+            id="de.cau.cs.kieler.klay.layered.separateConnComp"
+            name="Separate Connected Components"
+            type="boolean">
+      </layoutOption>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.layoutInfo">
+      <option
+            class="de.cau.cs.kieler.layout.diagrams.dataFlow"
+            option="de.cau.cs.kieler.klay.layered.edgeRouting"
+            value="ORTHOGONAL">
+      </option>
    </extension>
 
 </plugin>
