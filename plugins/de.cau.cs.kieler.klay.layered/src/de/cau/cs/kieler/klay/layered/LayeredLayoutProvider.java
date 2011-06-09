@@ -109,8 +109,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
         // transform the input graph
         IGraphImporter<KNode> graphImporter = new KGraphImporter();
-        graphImporter.setInput(layoutNode);
-        LayeredGraph layeredGraph = graphImporter.importGraph();
+        LayeredGraph layeredGraph = graphImporter.importGraph(layoutNode);
 
         // set special properties for the layered graph
         setOptions(layeredGraph, layoutNode);

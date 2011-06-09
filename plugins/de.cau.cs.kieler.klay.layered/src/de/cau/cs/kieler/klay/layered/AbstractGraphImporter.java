@@ -29,11 +29,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Abstract implementation of {@link IGraphImporter}, containing commonly used functionality.
- * Graph importers should usually subclass this class instead of implementing the interface
- * directly.
- * 
- * <p>Subclasses must implement {@link #transform(Object, LayeredGraph)} to transform a
- * graph into a layered graph.</p>
+ * Graph importers may subclass this class instead of implementing the interface directly.
  * 
  * <p>When a graph importer supports external ports, it must create dummies for those ports by calling
  * {@link #createExternalPortDummy(Object, PortConstraints, PortSide, int, int, KInsets, KVector)}.
@@ -44,73 +40,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author cds
  */
 public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
-    
-    /**
-     * The object from which the layered graph was created.
-     */
-    private T origin = null;
-    
-    
-    /**
-     * {@inheritDoc}
-     */
-    public final void setInput(final T input) {
-        this.origin = input;
-    }
-    
-    /**
-     * Returns the object from which the layered graph was created.
-     * 
-     * @return the input object
-     */
-    public final T getOrigin() {
-        return origin;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public final LayeredGraph importGraph() {
-        LayeredGraph graph = new LayeredGraph();
-        graph.setProperty(Properties.ORIGIN, origin);
-        
-        transform(origin, graph);
-        
-        return graph;
-    }
-    
-    
-    ///////////////////////////////////////////////////////////////////////////////
-    // Graph Transformation
-    
-    /**
-     * Transforms the given origin object into a layered graph.
-     * 
-     * @param source the object to transform.
-     * @param layeredGraph the layered graph to fill.
-     */
-    protected abstract void transform(final T source, final LayeredGraph layeredGraph);
-    
-    
-    ///////////////////////////////////////////////////////////////////////////////
-    // Layout Application
-    
-    /**
-     * {@inheritDoc}
-     */
-    public final void applyLayout(final LayeredGraph graph) {
-        // Apply the layout
-        applyLayout(graph, getOrigin());
-    }
-    
-    /**
-     * Applies the layout data to the original graph.
-     * 
-     * @param layeredGraph the laid out layered graph.
-     * @param target the original graph to apply the layout to.
-     */
-    protected abstract void applyLayout(final LayeredGraph layeredGraph, final T target);
-    
     
     ///////////////////////////////////////////////////////////////////////////////
     // External Ports

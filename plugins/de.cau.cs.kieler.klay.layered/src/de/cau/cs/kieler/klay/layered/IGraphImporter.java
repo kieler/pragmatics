@@ -29,18 +29,12 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 public interface IGraphImporter<T> {
     
     /**
-     * Set the input for the graph importer.
+     * Create a layered graph from the given graph.
      * 
-     * @param input an input object for the importer
-     */
-    void setInput(T input);
-    
-    /**
-     * Create a layered graph from the importer's input.
-     * 
+     * @param graph the graph to turn into a layered graph.
      * @return a layered graph, or {@code null} if the input was not recognized
      */
-    LayeredGraph importGraph();
+    LayeredGraph importGraph(T graph);
     
     /**
      * Apply the computed layout of the given layered graph to the original input graph.
