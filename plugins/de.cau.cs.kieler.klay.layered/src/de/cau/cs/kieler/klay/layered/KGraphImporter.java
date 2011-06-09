@@ -45,7 +45,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
+//import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -67,7 +67,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
     public LayeredGraph importGraph(final KNode graph) {
         LayeredGraph layeredGraph = new LayeredGraph();
         layeredGraph.setProperty(Properties.ORIGIN, graph);
-        
+
         KShapeLayout sourceShapeLayout = graph.getData(KShapeLayout.class);
 
         // copy the properties of the KGraph to the layered graph
@@ -103,8 +103,9 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         // Transform flat graph directly, import recursively for compound graph
         if (isCompound) {
             List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
-            recursiveTransform(graph, layeredNodes, layeredGraph, elemMap, graphProperties);
-            recursiveSetCompoundDummyEdges(graph, elemMap);
+            recursiveTransformNodesAndPorts(graph, layeredNodes, layeredGraph, elemMap,
+                    graphProperties);
+            recursiveTransformEdges(graph, elemMap, layeredNodes);
         } else {
             // transform everything
             transformNodesAndPorts(graph, layeredGraph, elemMap, graphProperties);
@@ -113,139 +114,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // set the graph properties property
         layeredGraph.setProperty(Properties.GRAPH_PROPERTIES, graphProperties);
-        
+
         return layeredGraph;
-    }
-
-    /**
-     * Creates dummy edges between compound node dummy nodes and their children.
-     * 
-     * @param source
-     *            the source node.
-     * @param layeredNodes
-     *            the list of LNodes with the created dummy nodes and the imported nodes.
-     */
-    private void recursiveSetCompoundDummyEdges(final KNode layoutNode,
-            final Map<KGraphElement, LGraphElement> elemMap) {
-        if (!layoutNode.getChildren().isEmpty()) {
-            if (elemMap.get(layoutNode) != null) {
-                LNode correspondingNode = (LNode) elemMap.get(layoutNode);
-                for (KNode knode : layoutNode.getChildren()) {
-                    if (elemMap.get(knode) != null) {
-                        LEdge newEdge = new LEdge();
-
-                        // TODO complete method body
-
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Transforms the graph recursively.
-     * 
-     * @param layoutNode
-     *            current node.
-     * @param layeredNodes
-     *            the list of nodes to add dummy nodes to.
-     * @param layeredGraph
-     *            the layered graph.
-     * @param elemMap
-     *            the element map that maps the original {@code KGraph} elements to the transformed
-     *            {@code LGraph} elements.
-     * @param graphProperties
-     *            graph properties updated during the transformation
-     */
-    private void recursiveTransform(final KNode layoutNode, final List<LNode> layeredNodes,
-            final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap,
-            final EnumSet<GraphProperties> graphProperties) {
-
-        if (layoutNode.getChildren().isEmpty()) {
-            transformNode(layoutNode, layeredNodes, elemMap, graphProperties);
-
-            // Transform the outgoing edges
-            for (KEdge outgoingEdge : layoutNode.getOutgoingEdges()) {
-                transformEdge(outgoingEdge, layoutNode, elemMap, graphProperties);
-            }
-        } else {
-            createCompoundDummyNodesAndEdges(layoutNode, layeredNodes, layeredGraph, elemMap,
-                    graphProperties);
-            for (KNode child : layoutNode.getChildren()) {
-                recursiveTransform(child, layeredNodes, layeredGraph, elemMap, graphProperties);
-            }
-        }
-
-    }
-
-    /**
-     * Creates dummy nodes for the upper and lower borders of a subgraph node and adds dummy edges
-     * between these dummy nodes and every direct child of the subgraph node.
-     * 
-     * @param layoutNode
-     *            node to be replaced by border dummies.
-     * @param layeredNodes
-     * @param layeredGraph
-     *            the layered graph.
-     * @param elemMap
-     *            the element map that maps the original {@code KGraph} elements to the transformed
-     *            {@code LGraph} elements.
-     * @param graphProperties
-     *            graph properties updated during the transformation
-     * 
-     */
-    private void createCompoundDummyNodesAndEdges(final KNode layoutNode,
-            final List<LNode> layeredNodes, final LayeredGraph layeredGraph,
-            final Map<KGraphElement, LGraphElement> elemMap,
-            final EnumSet<GraphProperties> graphProperties) {
-
-        KShapeLayout layoutNodeLayout = layoutNode.getData(KShapeLayout.class);
-
-        // Create dummy nodes for upper and lower border of a node
-        LNode upperDummy = new LNode();
-        upperDummy.setProperty(Properties.NODE_TYPE, NodeType.UPPER_COMPOUND_BORDER);
-        upperDummy.setProperty(Properties.ORIGIN, layoutNode);
-        upperDummy.setProperty(Properties.PARENT, elemMap.get(layoutNode.getParent()));
-        upperDummy.getPosition().x = layoutNodeLayout.getXpos();
-        upperDummy.getPosition().y = layoutNodeLayout.getYpos()
-                + (layoutNodeLayout.getHeight() / 2);
-        layeredNodes.add(upperDummy);
-        elemMap.put(layoutNode, upperDummy);
-
-        LNode lowerDummy = new LNode();
-        lowerDummy.setProperty(Properties.NODE_TYPE, NodeType.LOWER_COMPOUND_BORDER);
-        lowerDummy.setProperty(Properties.ORIGIN, layoutNode);
-        lowerDummy.setProperty(Properties.PARENT, elemMap.get(layoutNode.getParent()));
-        lowerDummy.getPosition().x = layoutNodeLayout.getXpos() + layoutNodeLayout.getWidth();
-        lowerDummy.getPosition().y = upperDummy.getPosition().y;
-        layeredNodes.add(lowerDummy);
-
-        // Relate the created dummy nodes
-        upperDummy.setProperty(Properties.LOWER_DUMMY_PARTNER, lowerDummy);
-
-        // Create ports for dummy edges
-        LPort upperDummyInput = new LPort();
-        upperDummyInput.setSide(PortSide.WEST);
-        upperDummyInput.setNode(upperDummy);
-
-        LPort upperDummyOutput = new LPort();
-        upperDummyOutput.setSide(PortSide.EAST);
-        upperDummyOutput.setNode(upperDummy);
-
-        LPort lowerDummyInput = new LPort();
-        lowerDummyInput.setSide(PortSide.WEST);
-        lowerDummyInput.setNode(lowerDummy);
-
-        LPort lowerDummyOutput = new LPort();
-        lowerDummyOutput.setSide(PortSide.EAST);
-        lowerDummyOutput.setNode(lowerDummy);
-
-        // import incoming edges for the layoutNode to the upperDummy
-
-        // import outgoing edges for the layoutNode to the lowerDummy
-
-        // TODO complete method body
-
     }
 
     /**
@@ -466,15 +336,12 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      * @param graphProperties
      *            graph properties updated during the transformation.
      */
-    private void transformEdges(final KNode graph,
-            final Map<KGraphElement, LGraphElement> elemMap,
+    private void transformEdges(final KNode graph, final Map<KGraphElement, LGraphElement> elemMap,
             final EnumSet<GraphProperties> graphProperties) {
 
         // Transform external port edges
-        transformExternalPortEdges(graph, graph.getIncomingEdges(), elemMap,
-                graphProperties);
-        transformExternalPortEdges(graph, graph.getOutgoingEdges(), elemMap,
-                graphProperties);
+        transformExternalPortEdges(graph, graph.getIncomingEdges(), elemMap, graphProperties);
+        transformExternalPortEdges(graph, graph.getOutgoingEdges(), elemMap, graphProperties);
 
         // Transform edges originating in the layout node's children
         for (KNode child : graph.getChildren()) {
@@ -517,8 +384,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         for (KEdge kedge : edges) {
             // Only transform edges going into the layout node's direct children
             // (self-loops of the layout node will be processed on level higher)
-            if (kedge.getSource().getParent() == graph
-                    || kedge.getTarget().getParent() == graph) {
+            if (kedge.getSource().getParent() == graph || kedge.getTarget().getParent() == graph) {
 
                 transformEdge(kedge, graph, elemMap, graphProperties);
             }
@@ -651,7 +517,159 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             return PortSide.SOUTH;
         }
     }
-    
+
+    /**
+     * Transforms the graph's nodes and ports recursively.
+     * 
+     * @param currentNode
+     *            current node.
+     * @param layeredNodes
+     *            the list of nodes to add dummy nodes to.
+     * @param layeredGraph
+     *            the layered graph.
+     * @param elemMap
+     *            the element map that maps the original {@code KGraph} elements to the transformed
+     *            {@code LGraph} elements.
+     * @param graphProperties
+     *            graph properties updated during the transformation
+     */
+    private void recursiveTransformNodesAndPorts(final KNode currentNode,
+            final List<LNode> layeredNodes, final LayeredGraph layeredGraph,
+            final Map<KGraphElement, LGraphElement> elemMap,
+            final EnumSet<GraphProperties> graphProperties) {
+
+        if (currentNode.getChildren().isEmpty()) {
+            transformNode(currentNode, layeredNodes, elemMap, graphProperties);
+        } else {
+            createCompoundDummyNodesAndPorts(currentNode, layeredNodes, layeredGraph, elemMap,
+                    graphProperties);
+            for (KNode child : currentNode.getChildren()) {
+                recursiveTransformNodesAndPorts(child, layeredNodes, layeredGraph, elemMap,
+                        graphProperties);
+            }
+        }
+
+    }
+
+    /**
+     * Creates dummy nodes and their ports for the upper and lower borders of a subgraph node.
+     * 
+     * @param node
+     *            node to be replaced by border dummies.
+     * @param layeredNodes
+     * @param layeredGraph
+     *            the layered graph.
+     * @param elemMap
+     *            the element map that maps the original {@code KGraph} elements to the transformed
+     *            {@code LGraph} elements.
+     * @param graphProperties
+     *            graph properties updated during the transformation
+     * 
+     */
+    private void createCompoundDummyNodesAndPorts(final KNode node, final List<LNode> layeredNodes,
+            final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap,
+            final EnumSet<GraphProperties> graphProperties) {
+
+        // KShapeLayout layoutNodeLayout = node.getData(KShapeLayout.class);
+
+        // Create dummy nodes on left side of the Node (upper dummy nodes)
+
+        // // Old code for approach with two dummy nodes per compound node
+        // LNode upperDummy = new LNode();
+        // upperDummy.setProperty(Properties.NODE_TYPE, NodeType.UPPER_COMPOUND_BORDER);
+        // upperDummy.setProperty(Properties.ORIGIN, node);
+        // upperDummy.setProperty(Properties.PARENT, node.getParent());
+        // upperDummy.getPosition().x = layoutNodeLayout.getXpos();
+        // upperDummy.getPosition().y = layoutNodeLayout.getYpos()
+        // + (layoutNodeLayout.getHeight() / 2);
+        // layeredNodes.add(upperDummy);
+        // elemMap.put(node, upperDummy);
+
+        // Create dummy nodes on right side of the Node (lower dummy nodes)
+
+        // // Old code for approach with two dummy nodes per compound node
+        // LNode lowerDummy = new LNode();
+        // lowerDummy.setProperty(Properties.NODE_TYPE, NodeType.LOWER_COMPOUND_BORDER);
+        // lowerDummy.setProperty(Properties.ORIGIN, node);
+        // lowerDummy.setProperty(Properties.PARENT, node.getParent());
+        // lowerDummy.getPosition().x = layoutNodeLayout.getXpos() + layoutNodeLayout.getWidth();
+        // lowerDummy.getPosition().y = upperDummy.getPosition().y;
+        // layeredNodes.add(lowerDummy);
+
+        // // Relate the created dummy nodes
+        // // Old code for approach with two dummy nodes per compound node
+        // upperDummy.setProperty(Properties.LOWER_DUMMY_PARTNER, lowerDummy);
+
+        // // Create ports for dummy edges
+        // // Old code for approach with two dummy nodes per compound node
+        // LPort upperDummyInput = new LPort();
+        // upperDummyInput.setSide(PortSide.WEST);
+        // upperDummyInput.setNode(upperDummy);
+        //
+        // LPort upperDummyOutput = new LPort();
+        // upperDummyOutput.setSide(PortSide.EAST);
+        // upperDummyOutput.setNode(upperDummy);
+        //
+        // LPort lowerDummyInput = new LPort();
+        // lowerDummyInput.setSide(PortSide.WEST);
+        // lowerDummyInput.setNode(lowerDummy);
+        //
+        // LPort lowerDummyOutput = new LPort();
+        // lowerDummyOutput.setSide(PortSide.EAST);
+        // lowerDummyOutput.setNode(lowerDummy);
+
+        // import incoming edges for the layoutNode to the upperDummys
+
+        // import outgoing edges for the layoutNode to the lowerDummys
+
+        // TODO complete method body
+
+    }
+
+    /**
+     * Transforms the edges of the KGraph, associates them with the new Ports - possibly ports of
+     * dummy nodes replacing the KNodes. Adds dummy edges between border dummy nodes and their
+     * children.
+     * 
+     * @param currentNode
+     * @param elemMap
+     * @param layeredNodes
+     */
+    private void recursiveTransformEdges(final KNode currentNode,
+            final Map<KGraphElement, LGraphElement> elemMap, final List<LNode> layeredNodes) {
+        // TODO Fill in method body. Call setCompoundDummyEdges for each compound border dummy node.
+        // call is to be changed to a conditional one
+        setCompoundDummyEdges(currentNode, elemMap, layeredNodes);
+
+    }
+
+    /**
+     * Creates dummy edges between a compound node border dummy node and its children.
+     * 
+     * @param layeredNodes
+     * 
+     * @param source
+     *            the source node.
+     * @param layeredNodes
+     *            the list of LNodes with the created dummy nodes and the imported nodes.
+     */
+    private void setCompoundDummyEdges(final KNode layoutNode,
+            final Map<KGraphElement, LGraphElement> elemMap, final List<LNode> layeredNodes) {
+        // old code for recursive approach
+        // if (!layoutNode.getChildren().isEmpty()) {
+        // if (elemMap.get(layoutNode) != null) {
+        // LNode correspondingNode = (LNode) elemMap.get(layoutNode);
+        // for (KNode knode : layoutNode.getChildren()) {
+        // if (elemMap.get(knode) != null) {
+        // LEdge newEdge = new LEdge();
+
+        // TODO complete method body
+
+        // }
+        // }
+        // }
+        // }
+    }
 
     // /////////////////////////////////////////////////////////////////////////////
     // Apply Layout Results
@@ -661,7 +679,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      */
     public void applyLayout(final LayeredGraph layeredGraph) {
         KNode target = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
-        
+
         // determine the border spacing, which influences the offset
         KShapeLayout parentLayout = target.getData(KShapeLayout.class);
         float borderSpacing = layeredGraph.getProperty(LayoutOptions.BORDER_SPACING);
@@ -692,10 +710,12 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                             if (origin instanceof KPort) {
                                 KShapeLayout portLayout = ((KPort) origin)
                                         .getData(KShapeLayout.class);
-                                portLayout.setXpos(
-                                        (float) (lport.getPosition().x - lport.getSize().x / 2.0));
-                                portLayout.setYpos(
-                                        (float) (lport.getPosition().y - lport.getSize().y / 2.0));
+                                portLayout
+                                        .setXpos((float) 
+                                                (lport.getPosition().x - lport.getSize().x / 2.0));
+                                portLayout
+                                        .setYpos((float) 
+                                                (lport.getPosition().y - lport.getSize().y / 2.0));
                             }
                         }
                     }
