@@ -72,6 +72,9 @@
 
    <element name="xtendBasedTransformation">
       <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="EPackage"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -86,6 +89,35 @@
                </documentation>
                <appinfo>
                   <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="extension" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="contributingBundle" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="EPackage">
+      <complexType>
+         <attribute name="EPackageClass" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.emf.ecore.EPackage:"/>
                </appinfo>
             </annotation>
          </attribute>

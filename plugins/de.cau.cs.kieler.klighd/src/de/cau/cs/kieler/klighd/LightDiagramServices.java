@@ -15,17 +15,25 @@ package de.cau.cs.kieler.klighd;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
+
+import com.ibm.icu.util.RangeValueIterator.Element;
 
 import de.cau.cs.kieler.klighd.transformations.XtendBasedTransformation;
 
@@ -55,6 +63,14 @@ public final class LightDiagramServices {
     public static final String ATTRIBUTE_CLASS = "class";
     /** name of the 'extFile' attribute in the extension points. */
     public static final String ATTRIBUTE_EXTENSION_FILE = "extFile";
+    /** name of the 'extension' attribute in the extension points. */
+    public static final String ATTRIBUTE_EXTENSION = "extension";
+    /** name of the 'EPackage' attribute in the extension points. */
+    public static final String ATTRIBUTE_EPACKAGE = "EPackage";
+    /** name of the 'EPackageClass' attribute in the extension points. */
+    public static final String ATTRIBUTE_EPACKAGE_CLASS = "EPackageClass";
+    /** name of the 'contributingBundle' attribute in the extension points. */
+    public static final String ATTRIBUTE_CO_CONTRIBUTING_BUNDLE = "contributingBundle";
 
     /** the singleton instance. */
     private static LightDiagramServices instance;
@@ -141,6 +157,10 @@ public final class LightDiagramServices {
         }
     }
 
+    
+    private HashMap<String, EPackage> ePackages = new HashMap<String, EPackage>();
+    
+    
     /**
      * Loads and registers all model transformations from the extension point.
      */
@@ -170,22 +190,102 @@ public final class LightDiagramServices {
                     //                    
                     String id = element.getAttribute(ATTRIBUTE_ID);
                     String extFile = element.getAttribute(ATTRIBUTE_EXTENSION_FILE);
+                    String extension = element.getAttribute(ATTRIBUTE_EXTENSION);
                     Bundle contributingBundle = Platform.getBundle(element.getContributor().getName());
+
+
+                    try {
+                        Platform.getBundle("de.menges.alister_2_0.topology.generator").start();
+                    } catch (BundleException e1) {
+                        e1.printStackTrace();
+                    }
                     
-                    URL extFileURL;
+                    extFile = extFile.replaceAll("::", "/")+".ext";
+                    
+                    URL extFileURL = null;
                     if (contributingBundle != null) {
-                        extFileURL = contributingBundle.getEntry("/" + extFile);
+                        extFileURL = Thread.currentThread().getContextClassLoader()
+                                .getResource(extFile);
+
+                        if (extFileURL == null) {
+                            extFileURL = Thread
+                                    .currentThread()
+                                    .getContextClassLoader()
+                                    .getResource("transformations/" + extFile);
+                        }
+
+                        if (extFileURL == null) {
+                            extFileURL = contributingBundle.getEntry(extFile);
+                        }
                         
                         if (extFileURL == null) {
-                            extFileURL = contributingBundle.getEntry("/transformations/" + extFile);                            
+                            extFileURL = contributingBundle.getEntry("src/" + extFile);
                         }
-                        //FIXME to be continued
                         
+                        if (extFileURL == null) {
+                            extFileURL = contributingBundle.getEntry("transformations/" + extFile);
+                        }
+                        
+                        if (extFileURL == null
+                                && element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE) != null
+                                && !element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE).equals(
+                                        "")) {
+                            extFileURL = Platform.getBundle(
+                                    element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE))
+                                    .getEntry(extFile);
+                            
+                            if (extFileURL == null) {
+                                extFileURL = Platform.getBundle(
+                                        element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE))
+                                        .getEntry("src/" + extFile);
+                            }
+
+                            if (extFileURL == null) {
+                                extFileURL = Platform.getBundle(
+                                        element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE))
+                                        .getEntry("transformations/" + extFile);
+                            }
+
+                        }
+
                         System.out.println(extFileURL);
                     }
                     
-                    IModelTransformation<Object, ?> modelTransformation =
-                        new XtendBasedTransformation(extFile);
+                    if (extFileURL == null) {
+                        continue;
+                    }
+                    
+                    List<EPackage> metamodels = new ArrayList<EPackage>();
+                    
+                    for (IConfigurationElement epackageDecl : element
+                            .getChildren(ATTRIBUTE_EPACKAGE)) {              
+                        
+                        String ePackageId = epackageDecl.getAttribute(ATTRIBUTE_EPACKAGE_CLASS);
+                        EPackage ePackageInstance = ePackages.get(ePackageId);
+                        
+                        if (ePackageInstance == null) {
+                            try {
+                                
+                                Class<?> ePackage = contributingBundle.loadClass(ePackageId); 
+                                ePackageInstance = (EPackage) ePackage.getField("eINSTANCE").get(
+                                        null);
+                                this.ePackages.put(ePackageId, ePackageInstance);
+                            } catch (Exception e) {
+                                String msg = "EPackage "+ePackageId+" could not be loaded";
+                                StatusManager.getManager().addLoggedStatus(
+                                        new Status(IStatus.ERROR, KLighDPlugin.PLUGIN_ID, msg, e));
+                                continue;
+                            }
+                        }
+                        
+                        if (ePackageInstance != null) {
+                            metamodels.add(ePackageInstance);
+                        }
+                        
+                    }
+                    
+                    IModelTransformation<Object, ?> modelTransformation = new XtendBasedTransformation(
+                            extFileURL, extension, metamodels);
                     idModelTransformationMapping.put(id, modelTransformation);
                        
                 }
