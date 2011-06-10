@@ -170,9 +170,8 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
      */
     protected KVector getExternalPortPosition(final LayeredGraph graph, final LNode portDummy,
             final double portWidth, final double portHeight) {
-        
-        KVector dummyPosition = portDummy.getPosition();
-        KVector portPosition = new KVector(dummyPosition.x, dummyPosition.y);
+        KVector portPosition = new KVector(portDummy.getPosition());
+        float portOffset = portDummy.getProperty(LayoutOptions.OFFSET);
         
         // Get some properties of the graph
         KVector size = graph.getSize();
@@ -184,21 +183,21 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         switch (portDummy.getProperty(Properties.EXT_PORT_SIDE)) {
         case NORTH:
             portPosition.x += insets.left + borderSpacing + offset.x - (portWidth / 2.0);
-            portPosition.y = -portHeight;
+            portPosition.y = -portHeight - portOffset;
             break;
         
         case EAST:
-            portPosition.x = size.x + insets.left + insets.right + 2 * borderSpacing;
+            portPosition.x = size.x + insets.left + insets.right + 2 * borderSpacing + portOffset;
             portPosition.y += insets.top + borderSpacing + offset.y - (portHeight / 2.0);
             break;
         
         case SOUTH:
             portPosition.x += insets.left + borderSpacing + offset.x - (portWidth / 2.0);
-            portPosition.y = size.y + insets.top + insets.bottom + 2 * borderSpacing;
+            portPosition.y = size.y + insets.top + insets.bottom + 2 * borderSpacing + portOffset;
             break;
         
         case WEST:
-            portPosition.x = -portWidth;
+            portPosition.x = -portWidth - portOffset;
             portPosition.y += insets.top + borderSpacing + offset.y - (portHeight / 2.0);
             break;
         }

@@ -48,7 +48,7 @@ public class PortPositionProcessor extends AbstractAlgorithm implements ILayoutP
         // Iterate through all nodes
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-                if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
+                if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isRatioFixed()) {
                     // The ports are not fixed to their positions, so arrange them
                     
                     // Count the ports on different sides
@@ -82,24 +82,25 @@ public class PortPositionProcessor extends AbstractAlgorithm implements ILayoutP
                     
                     // Arrange the ports
                     for (LPort port : node.getPorts()) {
+                        float portOffset = port.getProperty(LayoutOptions.OFFSET);
                         switch (port.getSide()) {
                         case NORTH:
                             port.getPosition().x = northX;
-                            port.getPosition().y = -port.getSize().y / 2.0;
+                            port.getPosition().y = -port.getSize().y / 2 - portOffset;
                             northX += northDelta;
                             break;
                         case EAST:
-                            port.getPosition().x = nodeSize.x + port.getSize().x / 2.0;
+                            port.getPosition().x = nodeSize.x + port.getSize().x / 2 + portOffset;
                             port.getPosition().y = eastY;
                             eastY += eastDelta;
                             break;
                         case SOUTH:
                             port.getPosition().x = southX;
-                            port.getPosition().y = nodeSize.y + port.getSize().y / 2.0;
+                            port.getPosition().y = nodeSize.y + port.getSize().y / 2 + portOffset;
                             southX -= southDelta;
                             break;
                         case WEST:
-                            port.getPosition().x = -port.getSize().x / 2.0;
+                            port.getPosition().x = -port.getSize().x / 2 - portOffset;
                             port.getPosition().y = westY;
                             westY -= westDelta;
                             break;

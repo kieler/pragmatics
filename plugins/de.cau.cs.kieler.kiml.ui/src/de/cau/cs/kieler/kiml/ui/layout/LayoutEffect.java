@@ -242,6 +242,7 @@ public class LayoutEffect extends AbstractEffect {
                 this.doZoom |= other.doZoom;
                 this.doAnimate |= other.doAnimate;
                 this.useProgMonitor |= other.useProgMonitor;
+                this.layoutConfig.copyProperties(other.layoutConfig);
                 return this;
             }
         } else if (otherEffect instanceof UndoEffect) {

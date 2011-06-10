@@ -73,6 +73,7 @@ public class ComponentsProcessor extends AbstractAlgorithm {
                 if (component != null) {
                     LayeredGraph newGraph = new LayeredGraph();
                     newGraph.copyProperties(graph);
+                    newGraph.getInsets().copy(graph.getInsets());
                     newGraph.getLayerlessNodes().addAll(component);
                     components.add(newGraph);
                 }
@@ -137,6 +138,7 @@ public class ComponentsProcessor extends AbstractAlgorithm {
         
         LayeredGraph result = new LayeredGraph();
         result.copyProperties(components.get(0));
+        result.getInsets().copy(components.get(0).getInsets());
         
         // determine the maximal row width by the maximal box width and the total area
         double maxRowWidth = 0.0f;

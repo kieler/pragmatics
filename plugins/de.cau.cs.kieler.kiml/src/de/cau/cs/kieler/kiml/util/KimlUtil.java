@@ -475,37 +475,78 @@ public final class KimlUtil {
                 MIN_NODE_SIZE, minNorth, minSouth);
         float newHeight = KielerMath.maxf(nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT),
                 MIN_NODE_SIZE, minEast, minWest);
+        
+        resizeNode(node, newWidth, newHeight, true);
+    }
+    
+    /**
+     * Resize a node to the given width and height, adjusting port and label positions if needed.
+     * 
+     * @param node a node
+     * @param newWidth the new width to set
+     * @param newHeight the new height to set
+     * @param movePorts whether port positions shall be adjusted
+     */
+    public static void resizeNode(final KNode node, final float newWidth, final float newHeight,
+            final boolean movePorts) {
+        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         float oldWidth = nodeLayout.getWidth();
         float oldHeight = nodeLayout.getHeight();
+        
         nodeLayout.setWidth(newWidth);
         nodeLayout.setHeight(newHeight);
+        float widthRatio = newWidth / oldWidth, heightRatio = newHeight / oldHeight,
+                widthDiff = newWidth - oldWidth, heightDiff = newHeight - oldHeight;
 
         // update port positions
-        for (KPort port : node.getPorts()) {
-            KShapeLayout portLayout = port.getData(KShapeLayout.class);
-            switch (portLayout.getProperty(LayoutOptions.PORT_SIDE)) {
-            case EAST:
-                portLayout.setXpos(portLayout.getXpos() + newWidth - oldWidth);
-                break;
-            case SOUTH:
-                portLayout.setYpos(portLayout.getYpos() + newHeight - oldHeight);
-                break;
+        if (movePorts) {
+            boolean fixedPorts = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS)
+                    == PortConstraints.FIXED_POS;
+            for (KPort port : node.getPorts()) {
+                KShapeLayout portLayout = port.getData(KShapeLayout.class);
+                switch (portLayout.getProperty(LayoutOptions.PORT_SIDE)) {
+                case NORTH:
+                    if (!fixedPorts) {
+                        portLayout.setXpos(portLayout.getXpos() * widthRatio);
+                    }
+                    break;
+                case EAST:
+                    portLayout.setXpos(portLayout.getXpos() + widthDiff);
+                    if (!fixedPorts) {
+                        portLayout.setYpos(portLayout.getYpos() * heightRatio);
+                    }
+                    break;
+                case SOUTH:
+                    if (!fixedPorts) {
+                        portLayout.setXpos(portLayout.getXpos() * widthRatio);
+                    }
+                    portLayout.setYpos(portLayout.getYpos() + heightDiff);
+                    break;
+                case WEST:
+                    if (!fixedPorts) {
+                        portLayout.setYpos(portLayout.getYpos() * heightRatio);
+                    }
+                    break;
+                }
             }
         }
+        
         // update label position
         KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);
         if (labelLayout.getXpos() > oldWidth) {
-            labelLayout.setXpos(labelLayout.getXpos() + newWidth - oldWidth);
+            labelLayout.setXpos(labelLayout.getXpos() + widthDiff);
         } else {
-            float oldRelPos = (labelLayout.getXpos() + labelLayout.getWidth() / 2) / oldWidth;
-            labelLayout.setXpos(oldRelPos * newWidth - labelLayout.getWidth() / 2);
+            float oldPos = labelLayout.getXpos() + labelLayout.getWidth() / 2;
+            labelLayout.setXpos(oldPos * widthRatio - labelLayout.getWidth() / 2);
         }
         if (labelLayout.getYpos() > oldHeight) {
-            labelLayout.setYpos(labelLayout.getYpos() + newHeight - oldHeight);
+            labelLayout.setYpos(labelLayout.getYpos() + heightDiff);
         } else {
-            float oldRelPos = (labelLayout.getYpos() + labelLayout.getHeight() / 2) / oldHeight;
-            labelLayout.setYpos(oldRelPos * newHeight - labelLayout.getHeight() / 2);
+            float oldPos = labelLayout.getYpos() + labelLayout.getHeight() / 2;
+            labelLayout.setYpos(oldPos * heightRatio - labelLayout.getHeight() / 2);
         }
+        // enable layout application for the node label
+        labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
     }
 
     /**

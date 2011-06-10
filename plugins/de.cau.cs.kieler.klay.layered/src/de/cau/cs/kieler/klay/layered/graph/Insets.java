@@ -121,6 +121,19 @@ public class Insets {
                 + ",bottom=" + bottom
                 + ",right=" + right + "]";
         }
+        
+        /**
+         * Copy insets values from another double valued insets.
+         * 
+         * @param other another insets
+         */
+        public void copy(final Double other) {
+            this.left = other.left;
+            this.right = other.right;
+            this.top = other.top;
+            this.bottom = other.bottom;
+        }
+        
     }
     
 }

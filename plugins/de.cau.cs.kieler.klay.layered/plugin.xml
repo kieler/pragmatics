@@ -70,6 +70,9 @@
                default="1.6"
                option="de.cau.cs.kieler.aspectRatio">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.fixedSize">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"

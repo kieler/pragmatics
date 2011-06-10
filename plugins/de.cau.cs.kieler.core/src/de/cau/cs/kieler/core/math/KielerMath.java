@@ -642,6 +642,52 @@ public final class KielerMath {
     }
     
     /**
+     * Determines the maximum for an arbitrary number of long integers.
+     * 
+     * @param values integer values
+     * @return the maximum of the given values, or {@code MIN_VALUE} if no values are given
+     */
+    public static long maxl(final long ... values) {
+        long max = Integer.MIN_VALUE;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] > max) {
+                max = values[i];
+            }
+        }
+        return max;
+    }
+    
+    /**
+     * Determines the minimum for an arbitrary number of long integers.
+     * 
+     * @param values integer values
+     * @return the minimum of the given values, or {@code MAX_VALUE} if no values are given
+     */
+    public static long minl(final long ... values) {
+        long min = Integer.MAX_VALUE;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] < min) {
+                min = values[i];
+            }
+        }
+        return min;
+    }
+    
+    /**
+     * Determines the average for an arbitrary number of long integers.
+     * 
+     * @param values integer values
+     * @return the average of the given values
+     */
+    public static long averagei(final long ... values) {
+        long avg = 0;
+        for (int i = 0; i < values.length; i++) {
+            avg += values[i];
+        }
+        return avg / values.length;
+    }
+    
+    /**
      * Determines the maximum for an arbitrary number of floats.
      * 
      * @param values float values

@@ -141,15 +141,23 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         KVector layoutNodeSize = new KVector(layoutNodeLayout.getWidth(),
                 layoutNodeLayout.getHeight());
 
-        // Find out if there are external ports
+        // Find out whether there are external ports that need to be considered
         List<KPort> ports = graph.getPorts();
-        if (!ports.isEmpty()) {
-            graphProperties.add(GraphProperties.EXTERNAL_PORTS);
+        portLoop: for (KPort kport : ports) {
+            for (KEdge kedge : kport.getEdges()) {
+                if (graph.equals(kedge.getSource().getParent())
+                        || graph.equals(kedge.getTarget().getParent())) {
+                    graphProperties.add(GraphProperties.EXTERNAL_PORTS);
+                    break portLoop;
+                }
+            }
         }
 
         // Transform the external ports
-        for (KPort kport : ports) {
-            transformExternalPort(kport, layeredNodes, graph, layoutNodeSize, elemMap);
+        if (graphProperties.contains(GraphProperties.EXTERNAL_PORTS)) {
+            for (KPort kport : ports) {
+                transformExternalPort(kport, layeredNodes, graph, layoutNodeSize, elemMap);
+            }
         }
 
         // Now transform the node's children
@@ -222,6 +230,9 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // add a new node to the layered graph, copying its size
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+        if (!nodeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
+            KimlUtil.resizeNode(node);
+        }
 
         LNode newNode = new LNode(node.getLabel().getText());
         newNode.setProperty(Properties.ORIGIN, node);
@@ -239,8 +250,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             portConstraints = PortConstraints.FREE;
         }
 
-        // get a sorted list of the node's ports; if there are any with non-free
-        // port
+        // get a sorted list of the node's ports; if there are any with non-free port
         // constraints, set the appropriate graph property
         KPort[] sortedPorts = KimlUtil.getSortedPorts(node);
         if (sortedPorts.length > 0 && portConstraints != PortConstraints.FREE) {
@@ -778,12 +788,20 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // set up the parent node
         KInsets insets = parentLayout.getInsets();
-        parentLayout.setWidth((float) layeredGraph.getSize().x + 2 * borderSpacing
-                + insets.getLeft() + insets.getRight());
-        parentLayout.setHeight((float) layeredGraph.getSize().y + 2 * borderSpacing
-                + insets.getTop() + insets.getBottom());
+        float width = (float) layeredGraph.getSize().x + 2 * borderSpacing
+                + insets.getLeft() + insets.getRight();
+        float height = (float) layeredGraph.getSize().y + 2 * borderSpacing
+                + insets.getTop() + insets.getBottom();
+        if (layeredGraph.getProperty(Properties.GRAPH_PROPERTIES)
+                .contains(GraphProperties.EXTERNAL_PORTS)) {
+            // ports have been positioned using dummy nodes
+            parentLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+            KimlUtil.resizeNode(target, width, height, false);
+        } else {
+            // ports have not been positioned yet - leave this for next layouter
+            KimlUtil.resizeNode(target, width, height, true);
+        }
         parentLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
-        parentLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
     }
 
 }
