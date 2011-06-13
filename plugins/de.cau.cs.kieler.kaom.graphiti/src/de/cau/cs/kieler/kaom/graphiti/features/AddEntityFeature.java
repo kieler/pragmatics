@@ -20,6 +20,7 @@ import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
+import org.eclipse.graphiti.mm.pictograms.ChopboxAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
@@ -68,7 +69,7 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
         ContainerShape entityShape = peCreateService.createContainerShape(
                 context.getTargetContainer(), true);
-        peCreateService.createChopboxAnchor(entityShape);
+        ChopboxAnchor anchor = peCreateService.createChopboxAnchor(entityShape);
         Entity entity = (Entity) context.getNewObject();
         link(entityShape, entity);
 
@@ -86,6 +87,7 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
         Rectangle rectangleShape = gaService.createRectangle(portContainer);
         rectangleShape.setStyle(styleProvider
                 .getStyle(StyleProvider.ENTITY_STYLE));
+        anchor.setReferencedGraphicsAlgorithm(rectangleShape);
 
         // the entity label
         Shape labelShape = peCreateService.createShape(entityShape, false);
