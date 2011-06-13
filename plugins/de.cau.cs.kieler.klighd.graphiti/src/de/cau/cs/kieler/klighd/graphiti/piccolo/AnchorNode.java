@@ -43,6 +43,8 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
     private Anchor anchor;
     /** the Piccolo node this anchor references. */
     private PNode reference;
+    /** the Piccolo child node which represents this anchor. */
+    private PNode repNode;
 
     /**
      * Constructs an AnchorNode.
@@ -55,7 +57,24 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
     public AnchorNode(final Anchor anchor, final PNode reference) {
         this.anchor = anchor;
         this.reference = reference;
-        reference.addPropertyChangeListener(PNode.PROPERTY_FULL_BOUNDS, this);
+        // register listener on all parent nodes
+        PNode node = reference;
+        while (node != null) {
+            node.addPropertyChangeListener(PNode.PROPERTY_FULL_BOUNDS, this);
+            node = node.getParent();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addChild(final int index, final PNode child) {
+        if (child != null && index == 0) {
+            repNode = child;
+            repNode.addPropertyChangeListener(PNode.PROPERTY_FULL_BOUNDS, this);
+        }
+        super.addChild(index, child);
     }
 
     /**
@@ -69,42 +88,75 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
     }
 
     /**
-     * Returns the absolute coordinates of the anchor point for this anchor.
+     * Returns the absolute coordinates of the anchor point for this anchor. Also updates the
+     * position of this anchor accordingly.
      * 
      * @param referencePoint
-     *            the reference point for computing the anchor point
-     * @return the anchor point
+     *            the reference point for computing the anchor point or null if no such point is
+     *            available
+     * @return the anchor point or null if no anchor point could be determined
      */
     public Point2D getAnchorPoint(final Point2D referencePoint) {
-        return new PictogramsSwitch<Point2D>() {
+        if (repNode != null) {
+            updateAnchorPosition(referencePoint);
+            // chopbox anchor point from representing child node
+            PBounds bounds = repNode.getGlobalFullBounds();
+            return getIntersectionWithBounds(bounds.getX() + bounds.getWidth() / 2, bounds.getY()
+                    + bounds.getHeight() / 2, referencePoint.getX(), referencePoint.getY(), bounds);
+        } else {
+            return getAnchorPosition(referencePoint);
+        }
+    }
+
+    /**
+     * Tries to update the position of the anchor.
+     * 
+     * @param referencePoint
+     *            the reference point for computing the anchor position or null if no such point is
+     *            available
+     */
+    public void updateAnchorPosition(final Point2D referencePoint) {
+        getAnchorPosition(referencePoint);
+    }
+
+    private Point2D getAnchorPosition(final Point2D referencePoint) {
+        // get the anchor position depending on the type of this anchor
+        Point2D point = new PictogramsSwitch<Point2D>() {
             public Point2D caseBoxRelativeAnchor(final BoxRelativeAnchor object) {
-                return getBoxRelativeAnchorPoint(object, referencePoint);
+                return getBoxRelativeAnchorPoint(object);
             }
 
             public Point2D caseChopboxAnchor(final ChopboxAnchor object) {
-                return getChopboxAnchorPoint(object, referencePoint);
+                return getChopboxAnchorPoint(referencePoint);
             }
 
             public Point2D caseFixPointAnchor(final FixPointAnchor object) {
-                return getFixPointAnchorPoint(object, referencePoint);
+                return getFixPointAnchorPoint(object);
             }
         } .doSwitch(anchor);
+        // set the position of this anchor to the anchor point
+        if (point != null) {
+            setGlobalTranslation((Point2D) point.clone());
+        }
+        return point;
     }
 
-    private Point2D getBoxRelativeAnchorPoint(final BoxRelativeAnchor bra,
-            final Point2D referencePoint) {
+    private Point2D getBoxRelativeAnchorPoint(final BoxRelativeAnchor bra) {
         PBounds bounds = reference.getGlobalFullBounds();
         return new Point2D.Double(bounds.getX() + bounds.getWidth() * bra.getRelativeWidth(),
                 bounds.getY() + bounds.getHeight() * bra.getRelativeHeight());
     }
 
-    private Point2D getChopboxAnchorPoint(final ChopboxAnchor cba, final Point2D referencePoint) {
+    private Point2D getChopboxAnchorPoint(final Point2D referencePoint) {
+        if (referencePoint == null) {
+            return null;
+        }
         PBounds bounds = reference.getGlobalFullBounds();
         return getIntersectionWithBounds(bounds.getX() + bounds.getWidth() / 2, bounds.getY()
                 + bounds.getHeight() / 2, referencePoint.getX(), referencePoint.getY(), bounds);
     }
 
-    private Point2D getFixPointAnchorPoint(final FixPointAnchor fpa, final Point2D referencePoint) {
+    private Point2D getFixPointAnchorPoint(final FixPointAnchor fpa) {
         Point location = fpa.getLocation();
         PBounds bounds = reference.getGlobalFullBounds();
         return new Point2D.Double(bounds.getX() + location.getX(), bounds.getY() + location.getY());
@@ -124,7 +176,7 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
                                     bounds.getX(), bounds.getMaxY());
                 }
                 return s;
-            } else if (yOut >= bounds.getY()) {
+            } else if (yOut >= bounds.getMaxY()) {
                 // intersection with bottom or left line
                 Point2D s =
                         computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getMaxY(),
@@ -142,7 +194,7 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
                                 bounds.getX(), bounds.getMaxY());
                 return s;
             }
-        } else if (xOut >= bounds.getX()) {
+        } else if (xOut >= bounds.getMaxX()) {
             if (yOut <= bounds.getY()) {
                 // intersection with top or right line
                 Point2D s =
@@ -154,7 +206,7 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
                                     bounds.getY(), bounds.getMaxX(), bounds.getMaxY());
                 }
                 return s;
-            } else if (yOut >= bounds.getY()) {
+            } else if (yOut >= bounds.getMaxY()) {
                 // intersection with bottom or right line
                 Point2D s =
                         computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getMaxY(),
@@ -179,15 +231,17 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
                         computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
                                 bounds.getMaxX(), bounds.getY());
                 return s;
-            } else if (yOut >= bounds.getY()) {
+            } else if (yOut >= bounds.getMaxY()) {
                 // intersection with bottom line
                 Point2D s =
                         computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getMaxY(),
                                 bounds.getMaxX(), bounds.getMaxY());
                 return s;
+            } else {
+                // TODO find a better point here
+                return new Point2D.Double(xIn, yIn);
             }
         }
-        return null;
     }
 
     private Point2D computeIntersection(final double xP1, final double yP1, final double xP2,
@@ -204,7 +258,7 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
         // the line segments intersect when t1 and t2 lie in the interval (0,1)
         if (0.0f <= t1 && t1 <= 1 && 0 <= t2 && t2 <= 1) {
             double xD = xP2 - xP1;
-            double yD = yP2 - yP2;
+            double yD = yP2 - yP1;
             return new Point2D.Double(xP1 + t1 * xD, yP1 + t1 * yD);
         }
         return null;

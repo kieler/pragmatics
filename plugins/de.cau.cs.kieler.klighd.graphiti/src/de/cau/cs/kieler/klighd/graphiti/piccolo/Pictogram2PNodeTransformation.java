@@ -90,17 +90,17 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
      * 
      * @param diagram
      *            the Pictogram diagram
-     * @return the list of Piccolo nodes
+     * @return the list of Piccolo nodes which represents the layers of the actual diagram
      */
     public List<PNode> transform(final Diagram diagram) {
         anchorMap.clear();
         gaMap.clear();
         List<PNode> layerRoots = new LinkedList<PNode>();
         // use two layers, one for nodes and one for edges
-        PNode nodes = new PNode();
         PNode edges = new PNode();
-        layerRoots.add(edges);
+        PNode nodes = new PNode();
         layerRoots.add(nodes);
+        layerRoots.add(edges);
         // determine default colors from the diagram graphics algorithm
         GraphicsAlgorithm ga = diagram.getGraphicsAlgorithm();
         Color fc, bc;
@@ -138,6 +138,7 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
             final Color bc) {
         ShapeNode shapeNode = new ShapeNode(shape);
         parent.addChild(shapeNode);
+        shapeNode.setPickable(shape.isActive());
         // determine colors and transform the graphics algorithm
         GraphicsAlgorithm ga = shape.getGraphicsAlgorithm();
         Color gaFc, gaBc;
@@ -148,6 +149,8 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
             if (gaNode != null) {
                 gaNode.translate(-ga.getX(), -ga.getY());
                 shapeNode.translate(ga.getX(), ga.getY());
+                shapeNode.setWidth(ga.getWidth());
+                shapeNode.setHeight(ga.getHeight());
             }
         } else {
             gaFc = fc;
@@ -203,19 +206,18 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
         // create the anchor
         AnchorNode anchorNode = new AnchorNode(anchor, reference);
         parent.addAnchor(anchorNode);
+        anchorNode.setPickable(false);
         // transform the graphics algorithm
         GraphicsAlgorithm ga = anchor.getGraphicsAlgorithm();
         if (ga != null) {
             Color gaFc = getForegroundColor(ga, fc);
             Color gaBc = getBackgroundColor(ga, bc);
-            PNode gaNode = transformGraphicsAlgorithm(anchorNode, ga, gaFc, gaBc);
-            if (gaNode != null) {
-                gaNode.translate(-ga.getX(), -ga.getY());
-                anchorNode.translate(ga.getX(), ga.getY());
-            }
+            transformGraphicsAlgorithm(anchorNode, ga, gaFc, gaBc);
         }
         anchorMap.put(anchor, anchorNode);
         anchorNode.setVisible(anchor.isVisible());
+        // try to find the initial anchor position
+        anchorNode.updateAnchorPosition(null);
     }
 
     /**
@@ -243,6 +245,7 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
         } .doSwitch(connection);
         // ignore the connection if no PNode representation could be found
         if (node != null) {
+            node.setPickable(false);
             parent.addChild(node);
         }
     }
@@ -256,6 +259,7 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
             ConnectionNode connection = new ConnectionNode(ffc, source, target);
             PSWTAdvancedPath path =
                     transformPolyline((Polyline) ffc.getGraphicsAlgorithm(), fc, bc);
+            path.setPickable(false);
             connection.setPolyline(path);
             return connection;
         }
@@ -264,6 +268,7 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
 
     private PNode transformManhattanConnection(final ManhattanConnection mhc, final Color fc,
             final Color bc) {
+        // TODO implement this
         return null;
     }
 
@@ -315,8 +320,9 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
                 return transformImage(object);
             }
         } .doSwitch(ga);
-        // ignore the node if no Piccolo node representation could be found
+        // ignore the graphics algorithm if no Piccolo node representation could be found
         if (node != null) {
+            node.setPickable(false);
             node.translate(ga.getX(), ga.getY());
             parent.addChild(node);
             gaMap.put(ga, node);
@@ -449,7 +455,6 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
         } else {
             text.setBackgroundColor(null);
         }
-        // text.setTranslation(t.getX(), t.getY());
         return text;
     }
 

@@ -16,6 +16,8 @@ package de.cau.cs.kieler.klighd.graphiti.piccolo;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
@@ -42,6 +44,9 @@ public class ConnectionNode extends PNode implements PropertyChangeListener {
 
     private float[] xps;
     private float[] yps;
+
+    /** the Piccolo decoration nodes attached to this connection. */
+    private List<DecorationNode> decorations = new LinkedList<DecorationNode>();
 
     /**
      * Constructs a ConnectionNode.
@@ -90,6 +95,26 @@ public class ConnectionNode extends PNode implements PropertyChangeListener {
     }
 
     /**
+     * Adds a decoration to the connection.
+     * 
+     * @param decoration
+     *            the Piccolo decoration node
+     */
+    public void addDecoration(final DecorationNode decoration) {
+        decorations.add(decoration);
+    }
+
+    /**
+     * Removes a decoration from the connection.
+     * 
+     * @param decoration
+     *            the Piccolo decoration node
+     */
+    public void removeDecoration(final DecorationNode decoration) {
+        decorations.remove(decoration);
+    }
+
+    /**
      * Sets the polyline used as the main node for this connection.
      * 
      * @param p
@@ -131,21 +156,28 @@ public class ConnectionNode extends PNode implements PropertyChangeListener {
      * {@inheritDoc}
      */
     public void propertyChange(final PropertyChangeEvent evt) {
-        if (evt.getNewValue() instanceof Point2D && polyline != null) {
+        // FIXME under rare circumstances this can throw NP exceptions
+        if (polyline != null) {
+            // update the anchor points
             if (evt.getSource() == sourceAnchor) {
                 Point2D anchorPoint =
-                        targetAnchor.getAnchorPoint(new Point2D.Double(xps[1], yps[1]));
-                xps[0] = (float) anchorPoint.getX();
-                yps[0] = (float) anchorPoint.getY();
+                        sourceAnchor.getAnchorPoint(new Point2D.Double(xps[1], yps[1]));
+                if (anchorPoint != null) {
+                    xps[0] = (float) anchorPoint.getX();
+                    yps[0] = (float) anchorPoint.getY();
+                }
             } else if (evt.getSource() == targetAnchor) {
                 Point2D anchorPoint =
                         targetAnchor.getAnchorPoint(new Point2D.Double(xps[xps.length - 2],
                                 yps[yps.length - 2]));
-                xps[xps.length - 1] = (float) anchorPoint.getX();
-                yps[yps.length - 1] = (float) anchorPoint.getY();
+                if (anchorPoint != null) {
+                    xps[xps.length - 1] = (float) anchorPoint.getX();
+                    yps[yps.length - 1] = (float) anchorPoint.getY();
+                }
             } else {
                 return;
             }
+            // update the polyline to reflect the changes to the anchor points
             updatePolyline();
         }
     }
