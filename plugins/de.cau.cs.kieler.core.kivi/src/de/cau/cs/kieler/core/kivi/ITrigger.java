@@ -47,13 +47,15 @@ public interface ITrigger {
     boolean isActive();
 
     /**
-     * Called when the trigger is activated, registers itself where necessary.
+     * Called when the trigger is activated, e.g., if KIVi is (re-)activated or
+     * the first {@link ICombination} being fired by such a trigger is loaded.
+     * Registers itself where necessary.
      */
     void register();
 
     /**
-     * Called when the trigger is deactivated, unregisters itself where
-     * necessary.
+     * Called when the trigger is deactivated, e.g., if the whole KIVi is deactivated.
+     * Unregisters itself where necessary.
      */
     void unregister();
 }
