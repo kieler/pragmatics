@@ -49,8 +49,6 @@ public class LPort extends LSizedGraphElement {
     private List<LEdge> incomingEdges = new LinkedList<LEdge>();
     /** the edges going out of the port. */
     private List<LEdge> outgoingEdges = new LinkedList<LEdge>();
-    /** name of the port. */
-    private String name;
     
     /**
      * A condition that checks the type of ports. If a port has incoming edges, it is considered
@@ -103,31 +101,17 @@ public class LPort extends LSizedGraphElement {
             return object.side == condSide;
         }
     }
-    
-    /**
-     * Creates a port.
-     * 
-     * @param thename name of the port, or {@code null}
-     */
-    public LPort(final String thename) {
-        this.name = thename;
-    }
-    
-    /**
-     * Creates a port.
-     */
-    public LPort() {
-        this(null);
-    }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
-        if (name == null) {
+        String text = getName();
+        if (text == null) {
             return "p_" + id;
         } else {
-            return "p_" + name;
+            return "p_" + text;
         }
     }
 
@@ -191,6 +175,18 @@ public class LPort extends LSizedGraphElement {
      */
     public LLabel getLabel() {
         return label;
+    }
+    
+    /**
+     * Returns the name of the port.
+     * 
+     * @return the name, or {@code null}
+     */
+    public String getName() {
+        if (label != null) {
+            return label.getText();
+        }
+        return null;
     }
     
     /**

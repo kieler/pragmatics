@@ -297,7 +297,7 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
      * @return the newly created dummy node.
      */
     private LNode createDummy(final LNode originalDummy) {
-        LNode newDummy = new LNode(originalDummy.getName());
+        LNode newDummy = new LNode();
         newDummy.copyProperties(originalDummy);
         newDummy.setProperty(Properties.ORIGIN, originalDummy);
         newDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);

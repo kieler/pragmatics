@@ -244,7 +244,11 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         // set the proper height for the whole graph
         KVector graphSize = layeredGraph.getSize();
         for (Layer layer : layeredGraph.getLayers()) {
-            graphSize.y = Math.max(graphSize.y, layer.getSize().y);
+            KVector layerSize = layer.getSize();
+            LNode lastNode = layer.getNodes().get(layer.getNodes().size() - 1);
+            layerSize.y = lastNode.getPosition().y + lastNode.getSize().y
+                    + lastNode.getMargin().bottom;
+            graphSize.y = Math.max(graphSize.y, layerSize.y);
         }
 
         // release the created resources

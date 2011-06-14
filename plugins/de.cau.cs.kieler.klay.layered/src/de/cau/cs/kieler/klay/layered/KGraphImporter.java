@@ -234,7 +234,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             KimlUtil.resizeNode(node);
         }
 
-        LNode newNode = new LNode(node.getLabel().getText());
+        LNode newNode = new LNode();
         newNode.setProperty(Properties.ORIGIN, node);
         newNode.getPosition().x = nodeLayout.getXpos();
         newNode.getPosition().y = nodeLayout.getYpos();
@@ -273,7 +273,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             }
 
             // create layered port, copying its position
-            LPort newPort = new LPort(kport.getLabel().getText());
+            LPort newPort = new LPort();
             newPort.setProperty(Properties.ORIGIN, kport);
             newPort.getSize().x = portLayout.getWidth();
             newPort.getSize().y = portLayout.getHeight();
@@ -288,13 +288,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             if (klabel != null) {
                 KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
 
-                LLabel llabel = new LLabel(klabel.getText());
-                llabel.setProperty(Properties.ORIGIN, klabel);
-                llabel.getSize().x = labelLayout.getWidth();
-                llabel.getSize().y = labelLayout.getHeight();
-                llabel.getPosition().x = labelLayout.getXpos() - portLayout.getWidth() / 2;
-                llabel.getPosition().y = labelLayout.getYpos() - portLayout.getHeight() / 2;
-                newPort.setLabel(llabel);
+                LLabel newLabel = new LLabel(klabel.getText());
+                newLabel.setProperty(Properties.ORIGIN, klabel);
+                newLabel.getSize().x = labelLayout.getWidth();
+                newLabel.getSize().y = labelLayout.getHeight();
+                newLabel.getPosition().x = labelLayout.getXpos() - portLayout.getWidth() / 2;
+                newLabel.getPosition().y = labelLayout.getYpos() - portLayout.getHeight() / 2;
+                newPort.setLabel(newLabel);
             }
 
             // calculate port side
@@ -311,19 +311,19 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         if (klabel != null) {
             KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
 
-            LLabel llabel = new LLabel(klabel.getText());
-            llabel.setProperty(Properties.ORIGIN, node);
-            llabel.getSize().x = labelLayout.getWidth();
-            llabel.getSize().y = labelLayout.getHeight();
-            llabel.getPosition().x = labelLayout.getXpos();
-            llabel.getPosition().y = labelLayout.getYpos();
+            LLabel newLabel = new LLabel(klabel.getText());
+            newLabel.setProperty(Properties.ORIGIN, node);
+            newLabel.getSize().x = labelLayout.getWidth();
+            newLabel.getSize().y = labelLayout.getHeight();
+            newLabel.getPosition().x = labelLayout.getXpos();
+            newLabel.getPosition().y = labelLayout.getYpos();
+            newNode.setLabel(newLabel);
         }
 
         // set properties of the new node
         newNode.copyProperties(nodeLayout);
 
-        // if we have a hypernode without ports, create a default input and
-        // output port
+        // if we have a hypernode without ports, create a default input and output port
         if (newNode.getProperty(LayoutOptions.HYPERNODE) && newNode.getPorts().isEmpty()) {
             LPort inputPort = new LPort();
             inputPort.setSide(PortSide.WEST);

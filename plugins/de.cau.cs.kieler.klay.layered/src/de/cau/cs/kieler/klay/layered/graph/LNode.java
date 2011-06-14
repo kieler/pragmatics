@@ -42,29 +42,12 @@ public class LNode extends LSizedGraphElement {
     private LLabel label = null;
     /** this node's insets. */
     private Insets.Double margin = new Insets.Double();
-    /** name of the node. */
-    private String name;
-
-    /**
-     * Creates a layer node.
-     * 
-     * @param thename name of the node, or {@code null}
-     */
-    public LNode(final String thename) {
-        this.name = thename;
-    }
-    
-    /**
-     * Creates a layer node.
-     */
-    public LNode() {
-        this(null);
-    }
 
     /**
      * {@inheritDoc}
      */
     public String toString() {
+        String name = getName();
         if (name == null) {
             return "n_" + id;
         } else {
@@ -78,7 +61,10 @@ public class LNode extends LSizedGraphElement {
      * @return the name, or {@code null}
      */
     public String getName() {
-        return name;
+        if (label != null) {
+            return label.getText();
+        }
+        return null;
     }
 
     /**
