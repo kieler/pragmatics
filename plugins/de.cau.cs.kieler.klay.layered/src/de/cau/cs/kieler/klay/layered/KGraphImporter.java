@@ -109,7 +109,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
             recursiveTransformCompoundGraph(graph, layeredNodes, layeredGraph, elemMap,
                     graphProperties);
-            recursiveTransformEdges(graph, elemMap, layeredNodes);
         } else {
             // transform everything
             transformNodesAndPorts(graph, layeredGraph, elemMap, graphProperties);
@@ -554,7 +553,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         if (currentNode.getChildren().isEmpty()) {
             transformNode(currentNode, layeredNodes, elemMap, graphProperties);
-            // TODO: Check, if there is no conflict resulting from the use of the use of
+            // TODO: Check, if there is no conflict resulting from the use of
             // transformNode (which is not designed for recursive import). Take care of the incoming
             // and outgoing edges of leave nodes additionally.
         } else {
@@ -564,6 +563,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             }
             transformCompoundNodeWithEdges(currentNode, layeredNodes, layeredGraph, elemMap,
                     graphProperties);
+            setCompoundDummyEdges(currentNode, elemMap, layeredNodes);
         }
     }
 
@@ -603,7 +603,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      * there are no incoming edges.
      * 
      * @param node
-     *            The node to be replaced by border nodes.
+     *            The node to be replaced by upper dummy nodes.
      * @param layeredNodes
      *            The List the dummy nodes are to be added to.
      * @param layeredGraph
@@ -684,9 +684,14 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      * UPPER_COMPOUND_BORDER in case 1., create ore use LOWER_COMPOUND_BORDER in case 2.)
      * 
      * @param node
+     *          the node to be replaced by border dummy nodes.
      * @param layeredNodes
+     *          The List the dummy nodes are to be added to.
      * @param layeredGraph
+     *          The layered graph.
      * @param elemMap
+     *          the element map that maps the original {@code KGraph} elements to the transformed
+     *            {@code LGraph} elements.
      */
     private void transformOutgoingEdges(final KNode node, final List<LNode> layeredNodes,
             final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap) {
@@ -778,23 +783,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             LNode dummyNode = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_BORDER);
             layeredNodes.add(dummyNode);
         }
-    }
-
-    /**
-     * Transforms the edges of the KGraph, associates them with the new Ports - possibly ports of
-     * dummy nodes replacing the KNodes. Adds dummy edges between border dummy nodes and their
-     * children.
-     * 
-     * @param currentNode
-     * @param elemMap
-     * @param layeredNodes
-     */
-    private void recursiveTransformEdges(final KNode currentNode,
-            final Map<KGraphElement, LGraphElement> elemMap, final List<LNode> layeredNodes) {
-        // TODO Fill in method body. Call setCompoundDummyEdges for each compound border dummy node.
-        // call is to be changed to a conditional one
-        setCompoundDummyEdges(currentNode, elemMap, layeredNodes);
-
     }
 
     /**
