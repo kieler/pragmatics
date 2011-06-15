@@ -32,5 +32,15 @@ public enum NodeType {
     /** a dummy node created as upper border node to represent a subgraph node. */
     UPPER_COMPOUND_BORDER,
     /** a dummy node created as lower border node to represent a subgraph node. */
-    LOWER_COMPOUND_BORDER;
+    LOWER_COMPOUND_BORDER,
+    /**
+     * a dummy node created to represent a port connected with an incoming edge. Serving as one of
+     * the upper border nodes.
+     */
+    UPPER_COMPOUND_PORT,
+    /**
+     * a dummy node created to represent a port connected with an outgoing edge. Serving as one of
+     * the lower border nodes.
+     */
+    LOWER_COMPOUND_PORT;
 }
