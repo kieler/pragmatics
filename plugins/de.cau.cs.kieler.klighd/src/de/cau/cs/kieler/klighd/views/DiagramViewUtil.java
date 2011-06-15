@@ -86,7 +86,8 @@ public final class DiagramViewUtil {
                 if (model != null) {
                     diagramView.setInputModel(model);
                 }
-                page.activate(diagramView);
+                // chsch:
+                page.bringToTop(diagramView); //activate(diagramView);
                 return true;
             }
         }
@@ -111,7 +112,9 @@ public final class DiagramViewUtil {
         IViewReference viewRef = page.findViewReference(PRIMARY_VIEW_ID, id);
         if (viewRef == null) {
             try {
-                IViewPart view = page.showView(PRIMARY_VIEW_ID, id, IWorkbenchPage.VIEW_ACTIVATE);
+                // chsch:
+                IViewPart view = page.showView(PRIMARY_VIEW_ID, id, IWorkbenchPage.VIEW_VISIBLE);
+                  // IWorkbenchPage.VIEW_ACTIVATE);
                 if (view instanceof DiagramViewPart) {
                     DiagramViewPart diagramView = (DiagramViewPart) view;
                     if (name != null) {
@@ -133,6 +136,30 @@ public final class DiagramViewUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * Closes the diagram view associated with the given id.
+     * 
+     * @param id
+     *            the identifier of the view to be closed.
+     * @return <code>true</code> if a view could be closed successfully, and <code>false</code>
+     *         otherwise.
+     *         
+     * @author chsch        
+     */
+    public static boolean closeView(final String id) {
+        if (id == null || id.equals("")) {
+            return false;
+        }
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();        
+        IViewReference viewRef = page.findViewReference(PRIMARY_VIEW_ID, id);
+        
+        if (viewRef != null) {
+            page.hideView(viewRef);
+            return true;
+        }
+        return false;        
     }
 
 }
