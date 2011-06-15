@@ -84,7 +84,7 @@ public class KRailGraphImporter implements IGraphImporter<KNode> {
             KShapeLayout nodeLayout = child.getData(KShapeLayout.class);
             PortConstraints portConstraints = nodeLayout
                     .getProperty(LayoutOptions.PORT_CONSTRAINTS);
-            LNode newNode = new LNode(child.getLabel().getText());
+            LNode newNode = new LNode();
             newNode.setProperty(Properties.ORIGIN, child);
             newNode.getSize().x = nodeLayout.getWidth();
             newNode.getSize().y = nodeLayout.getHeight();
@@ -99,7 +99,7 @@ public class KRailGraphImporter implements IGraphImporter<KNode> {
             for (KPort kport : sortedPorts) {
                 KShapeLayout portLayout = kport.getData(KShapeLayout.class);
                 
-                LPort newPort = new LPort(kport.getLabel().getText());
+                LPort newPort = new LPort();
                 newPort.setProperty(Properties.ORIGIN, kport);
                 newPort.setProperty(Properties.PORT_TYPE,
                         portLayout.getProperty(Properties.PORT_TYPE));
