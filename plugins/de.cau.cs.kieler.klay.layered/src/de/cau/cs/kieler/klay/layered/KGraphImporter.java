@@ -652,7 +652,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 // Connect the edge to the upper border dummy node, to western port in general, to
                 // eastern one, if edge originates in descendant of node.
                 LPort dummyPort = null;
-                if (isDescendant(node, kEdge.getSource())) {
+                if (isDescendantNotSelf(node, kEdge.getSource())) {
                     Iterator<LPort> eastPortIterator = representative.getPorts(PortSide.EAST)
                             .iterator();
                     dummyPort = eastPortIterator.next();
@@ -694,7 +694,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         if (!outEdgesList.isEmpty()) {
             for (KEdge kEdge : outEdgesList) {
                 // variable denoting wether the edge points towards a descendant of node or not
-                boolean isInnerEdge = isDescendant(node, kEdge.getSource());
+                boolean isInnerEdge = isDescendantNotSelf(node, kEdge.getSource());
                 // Create a corresponding LEdge for each KEdge in the List that has no
                 // representative yet.
                 LEdge lEdge = null;
@@ -876,9 +876,32 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      * @return returns a boolean value indicating, if candidate is descendant of node (false if
      *         nodes are equal).
      */
-    private boolean isDescendant(final KNode node, final KNode candidate) {
-        // TODO: complete method body
-        return false;
+    private boolean isDescendantNotSelf(final KNode node, final KNode candidate) {
+        List<KNode> descendantsList = new LinkedList<KNode>();
+        listDescendants(node, descendantsList);
+        if (node.equals(candidate)) {
+            return false;
+        } else {
+            return descendantsList.contains(candidate);
+        }
+    }
+
+    /**
+     * Recursively adds descendants of given node to a given list. Adds the startNode as well.
+     * 
+     * @param currentNode
+     *            actual root node of the inclusion tree, whose nodes are to be added to the list.
+     * @param descendantsList
+     */
+    private void listDescendants(final KNode currentNode, final List<KNode> descendantsList) {
+        if (currentNode.getChildren().isEmpty()) {
+            descendantsList.add(currentNode);
+        } else {
+            for (KNode child : currentNode.getChildren()) {
+                listDescendants(child, descendantsList);
+            }
+            descendantsList.add(currentNode);
+        }
     }
 
     // /////////////////////////////////////////////////////////////////////////////
