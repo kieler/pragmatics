@@ -118,7 +118,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                                 (ConnectionEditPart) layoutPair.getSecond());
                     } else if (layoutPair.getFirst() instanceof KLabel) {
                         addLabelLayout(command, (KLabel) layoutPair.getFirst(),
-                                (LabelEditPart) layoutPair.getSecond(), xbound, ybound);
+                                layoutPair.getSecond(), xbound, ybound);
                     }
                 }
 
@@ -332,7 +332,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      *            edit part to which layout is applied
      */
     private void addLabelLayout(final GmfLayoutCommand command, final KLabel klabel,
-            final LabelEditPart labelEditPart, final float xbound, final float ybound) {
+            final GraphicalEditPart labelEditPart, final float xbound, final float ybound) {
         KGraphElement parent = klabel.getParent();
         KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
         // node and port labels are processed separately
@@ -366,8 +366,11 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         }
 
         // get the referencePoint for the label
-        int fromEnd;
-        switch (labelEditPart.getKeyPoint()) {
+        int fromEnd, keyPoint = ConnectionLocator.MIDDLE;
+        if (labelEditPart instanceof LabelEditPart) {
+            keyPoint = ((LabelEditPart) labelEditPart).getKeyPoint();
+        }
+        switch (keyPoint) {
         case ConnectionLocator.SOURCE:
             fromEnd = SOURCE_LOCATION;
             break;
