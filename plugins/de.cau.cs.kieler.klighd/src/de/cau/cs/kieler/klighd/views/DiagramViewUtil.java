@@ -13,12 +13,17 @@
  */
 package de.cau.cs.kieler.klighd.views;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.statushandlers.StatusManager;
+
+import de.cau.cs.kieler.klighd.KLighDPlugin;
 
 /**
  * A utility class for creating and updating diagram views.
@@ -118,6 +123,12 @@ public final class DiagramViewUtil {
                     return diagramView;
                 }
             } catch (PartInitException e) {
+                StatusManager.getManager().handle(
+                        new Status(IStatus.ERROR, KLighDPlugin.PLUGIN_ID, e.getMessage(), e));
+            } catch (IllegalArgumentException e) {
+                StatusManager.getManager().handle(
+                        new Status(IStatus.ERROR, KLighDPlugin.PLUGIN_ID,
+                                "Invalid KLighD view id: must not be empty or contain any colons."));
                 return null;
             }
         }
