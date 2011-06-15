@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.core.kivi.combinations">
+      <combination
+            active="true"
+            class="de.cau.cs.kieler.klighd.xtext.UpdateXtextModelKLighDCombination"
+            description="Combination that updates the KlighD view if a model change in an Xtext editor happens"
+            name="de.cau.cs.kieler.klighd.xtext.UpdateXtextModelKLighDCombination">
+      </combination>
+   </extension>
+
+</plugin>
