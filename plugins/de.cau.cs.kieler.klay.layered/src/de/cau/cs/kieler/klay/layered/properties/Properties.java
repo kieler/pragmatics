@@ -198,7 +198,7 @@ public final class Properties {
     /** option identifier for separation of connected components. */
     public static final String SEPARATE_CC_ID = "de.cau.cs.kieler.klay.layered.separateConnComp";
     /** property for choosing whether connected components are processed separately. */
-    public static final IProperty<Boolean> SEPARATE_CC = new Property<Boolean>(SEPARATE_CC_ID, false);
+    public static final IProperty<Boolean> SEPARATE_CC = new Property<Boolean>(SEPARATE_CC_ID, true);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

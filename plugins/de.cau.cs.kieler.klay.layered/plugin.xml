@@ -148,7 +148,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            default="false"
+            default="true"
             description="Whether each connected component should be processed separately"
             id="de.cau.cs.kieler.klay.layered.separateConnComp"
             name="Separate Connected Components"

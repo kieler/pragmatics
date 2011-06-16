@@ -126,13 +126,28 @@ public class ComponentsProcessor extends AbstractAlgorithm {
         } else if (components.size() <= 0) {
             return new LayeredGraph();
         }
+        
+        // assign priorities
+        for (LayeredGraph graph : components) {
+            int priority = 0;
+            for (Layer layer : graph.getLayers()) {
+                for (LNode node : layer.getNodes()) {
+                    priority += node.getProperty(Properties.PRIORITY);
+                }
+            }
+            graph.id = priority;
+        }
 
-        // sort the components by their size
+        // sort the components by their priority and size
         Collections.sort(components, new Comparator<LayeredGraph>() {
             public int compare(final LayeredGraph graph1, final LayeredGraph graph2) {
-                double size1 = graph1.getSize().x * graph1.getSize().y;
-                double size2 = graph2.getSize().x * graph2.getSize().y;
-                return Double.compare(size1, size2);
+                int prio = graph2.id - graph1.id;
+                if (prio == 0) {
+                    double size1 = graph1.getSize().x * graph1.getSize().y;
+                    double size2 = graph2.getSize().x * graph2.getSize().y;
+                    return Double.compare(size1, size2);
+                }
+                return prio;
             }
         });
         
