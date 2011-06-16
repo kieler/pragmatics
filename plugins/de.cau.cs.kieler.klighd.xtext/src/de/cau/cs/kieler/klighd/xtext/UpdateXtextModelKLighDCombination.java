@@ -14,9 +14,8 @@
 package de.cau.cs.kieler.klighd.xtext;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.core.kivi.ITriggerState;
-import de.cau.cs.kieler.core.model.xtext.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState;
-import de.cau.cs.kieler.core.model.xtext.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState.EventType;
+import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState;  // SUPPRESS CHECKSTYLE LineLength
+import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState.EventType;  // SUPPRESS CHECKSTYLE LineLength
 import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect.KLighDCloseDiagramEffect;
 
@@ -30,12 +29,13 @@ import org.eclipse.xtext.util.concurrent.IUnitOfWork;
  * @author chsch
  */
 public class UpdateXtextModelKLighDCombination extends AbstractCombination {
-    
-    
+
     /**
      * The execute method revealed and invoked by KIVi.
      * 
-     * @param state The {@link ITriggerState} for denoting the related EMF resource 
+     * @param state
+     *            The {@link de.cau.cs.kieler.core.kivi.ITriggerState} for denoting the related EMF
+     *            resource.
      */
     public void execute(final XtextModelChangeState state) {
         XtextResource resource = state.getResource();
@@ -45,7 +45,7 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
             state.getEditor().getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
 
                 @Override
-                public void process(XtextResource resource) throws Exception {
+                public void process(final XtextResource resource) throws Exception {
                     UpdateXtextModelKLighDCombination.this.schedule(state.getEventType(), resource);
                 }
 
@@ -53,7 +53,7 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
         }
     }
     
-    private void schedule(EventType eventType, XtextResource resource) {
+    private void schedule(final EventType eventType, final XtextResource resource) {
         String id = resource.getURI().toPlatformString(false);
         if (eventType.equals(EventType.CLOSED)) {
             this.schedule(new KLighDCloseDiagramEffect(id));
