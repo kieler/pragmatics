@@ -75,7 +75,7 @@ public class RandomGraphTriconnectedPage extends WizardPage {
         Util.addHelp(nodesSpinner, Messages.RandomGraphTriconnectedPage_number_of_nodes_help);
         nodesSpinner.setValues(numberOfNodes, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 50;
+        gridData.widthHint = 80;
         nodesSpinner.setLayoutData(gridData);
         nodesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {

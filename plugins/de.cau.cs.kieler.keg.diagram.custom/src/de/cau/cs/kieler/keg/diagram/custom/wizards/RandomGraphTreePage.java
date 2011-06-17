@@ -79,7 +79,7 @@ public class RandomGraphTreePage extends WizardPage {
         Util.addHelp(nodesSpinner, Messages.RandomGraphTreePage_number_of_nodes_help);
         nodesSpinner.setValues(numberOfNodes, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 50;
+        gridData.widthHint = 80;
         nodesSpinner.setLayoutData(gridData);
         nodesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
@@ -93,7 +93,7 @@ public class RandomGraphTreePage extends WizardPage {
         Util.addHelp(degreeSpinner, Messages.RandomGraphTreePage_max_degree_help);
         degreeSpinner.setValues(maxDegree, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 50;
+        gridData.widthHint = 80;
         degreeSpinner.setLayoutData(gridData);
         degreeSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
@@ -107,7 +107,7 @@ public class RandomGraphTreePage extends WizardPage {
         Util.addHelp(widthSpinner, Messages.RandomGraphTreePage_max_width_help);
         widthSpinner.setValues(maxWidth, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 50;
+        gridData.widthHint = 80;
         widthSpinner.setLayoutData(gridData);
         widthSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {

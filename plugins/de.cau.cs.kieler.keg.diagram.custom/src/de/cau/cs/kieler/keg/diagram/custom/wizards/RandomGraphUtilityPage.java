@@ -88,7 +88,7 @@ public class RandomGraphUtilityPage extends WizardPage {
         Util.addHelp(hierarchySpinner, Messages.RandomGraphUtilityPage_hierarchy_help);
         hierarchySpinner.setValues((int) (hierarchyChance * 100), 0, 100, 2, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 30;
+        gridData.widthHint = 80;
         hierarchySpinner.setLayoutData(gridData);
         // add MAX_HIERARCHY_LEVEL option
         label = new Label(composite, SWT.NULL);
@@ -97,7 +97,7 @@ public class RandomGraphUtilityPage extends WizardPage {
         Util.addHelp(hierarchyLevelSpinner, Messages.RandomGraphUtilityPage_max_hierarchy_help);
         hierarchyLevelSpinner.setValues(maxHierarchyLevel, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 50;
+        gridData.widthHint = 80;
         hierarchyLevelSpinner.setLayoutData(gridData);
         hierarchyLevelSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
@@ -113,7 +113,7 @@ public class RandomGraphUtilityPage extends WizardPage {
         hierarchyFactorSpinner.setValues((int) (hierarchyNodesFactor * 100), 0, Integer.MAX_VALUE,
                 2, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 30;
+        gridData.widthHint = 80;
         hierarchyFactorSpinner.setLayoutData(gridData);
         hierarchyFactorSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
@@ -141,7 +141,7 @@ public class RandomGraphUtilityPage extends WizardPage {
         Util.addHelp(hypernodeSpinner, Messages.RandomGraphUtilityPage_hypernode_help);
         hypernodeSpinner.setValues((int) (hypernodeChance * 100), 0, 100, 2, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 30;
+        gridData.widthHint = 80;
         hypernodeSpinner.setLayoutData(gridData);
         hypernodeSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
@@ -155,7 +155,7 @@ public class RandomGraphUtilityPage extends WizardPage {
         Util.addHelp(edgeDirectedSpinner, Messages.RandomGraphUtilityPage_directed_help);
         edgeDirectedSpinner.setValues((int) (edgeDirectedChance * 100), 0, 100, 2, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 30;
+        gridData.widthHint = 80;
         edgeDirectedSpinner.setLayoutData(gridData);
         edgeDirectedSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {

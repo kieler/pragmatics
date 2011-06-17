@@ -82,7 +82,7 @@ public class RandomGraphANTEPage extends WizardPage {
         Util.addHelp(nodesSpinner, Messages.RandomGraphANTEPage_number_of_nodes_help);
         nodesSpinner.setValues(numberOfNodes, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 50;
+        gridData.widthHint = 80;
         nodesSpinner.setLayoutData(gridData);
         nodesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
@@ -96,7 +96,7 @@ public class RandomGraphANTEPage extends WizardPage {
         Util.addHelp(edgesSpinner, Messages.RandomGraphANTEPage_number_of_edges_help);
         edgesSpinner.setValues(numberOfEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 50;
+        gridData.widthHint = 80;
         edgesSpinner.setLayoutData(gridData);
         edgesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {

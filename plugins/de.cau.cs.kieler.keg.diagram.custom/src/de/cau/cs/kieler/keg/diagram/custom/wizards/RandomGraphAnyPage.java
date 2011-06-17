@@ -109,7 +109,7 @@ public class RandomGraphAnyPage extends WizardPage {
         Util.addHelp(nodesSpinner, Messages.RandomGraphAnyPage_number_of_nodes_help);
         nodesSpinner.setValues(numberOfNodes, 1, Integer.MAX_VALUE, 0, 1, 10);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 50;
+        gridData.widthHint = 80;
         nodesSpinner.setLayoutData(gridData);
         nodesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
@@ -128,7 +128,7 @@ public class RandomGraphAnyPage extends WizardPage {
         edgesSpinner.setValues(numberOfEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
         edgesSpinner.setEnabled(false);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 50;
+        gridData.widthHint = 80;
         edgesSpinner.setLayoutData(gridData);
         edgesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
@@ -142,13 +142,12 @@ public class RandomGraphAnyPage extends WizardPage {
         gridData.horizontalSpan = 2;
         densitySwitch.setLayoutData(gridData);
         final Spinner densitySpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        Util.addHelp(
-                densitySpinner,
+        Util.addHelp(densitySpinner,
                 Messages.RandomGraphAnyPage_density_help);
-        densitySpinner.setValues((int) (density * 100), 0, Integer.MAX_VALUE, 2, 1, 10);
+        densitySpinner.setValues((int) (density * 100), 0, 100, 2, 1, 10);
         densitySpinner.setEnabled(false);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 30;
+        gridData.widthHint = 80;
         densitySpinner.setLayoutData(gridData);
         densitySpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
@@ -167,7 +166,7 @@ public class RandomGraphAnyPage extends WizardPage {
         minOutSpinner.setValues(minOutgoingEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
         minOutSpinner.setEnabled(false);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 50;
+        gridData.widthHint = 80;
         minOutSpinner.setLayoutData(gridData);
         minOutSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
@@ -185,7 +184,7 @@ public class RandomGraphAnyPage extends WizardPage {
         maxOutSpinner.setValues(maxOutgoingEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
         maxOutSpinner.setEnabled(false);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 50;
+        gridData.widthHint = 80;
         maxOutSpinner.setLayoutData(gridData);
         maxOutSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
