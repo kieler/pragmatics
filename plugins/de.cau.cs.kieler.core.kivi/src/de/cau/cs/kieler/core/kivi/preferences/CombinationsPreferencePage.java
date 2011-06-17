@@ -58,7 +58,23 @@ public class CombinationsPreferencePage extends PreferencePage implements IWorkb
      */
     public void init(final IWorkbench workbench) {
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void dispose() {
+        super.dispose();
+        for (FieldEditor editor : parameterEditors) {
+            editor.setPage(null);
+            editor.setPropertyChangeListener(null);
+            editor.setPreferenceStore(null);
+        }
+    }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean performOk() {
         if (super.performOk()) {
@@ -70,6 +86,9 @@ public class CombinationsPreferencePage extends PreferencePage implements IWorkb
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void performDefaults() {
         super.performDefaults();
@@ -78,6 +97,9 @@ public class CombinationsPreferencePage extends PreferencePage implements IWorkb
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Control createContents(final Composite parent) {
         // Turn off magic numbers checking for GUI code
@@ -176,6 +198,7 @@ public class CombinationsPreferencePage extends PreferencePage implements IWorkb
                     + " (unknown type!)", parent);
         }
 
+        editor.setPage(this);
         editor.setPreferenceStore(parameter.getPreferenceStore());
         editor.load();
         

@@ -37,13 +37,18 @@ import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
  * In the {@link ICombination} the developer has to implement
  * {@link ICombination#getTriggerStates()} and {@link ICombination#trigger(ITriggerState)}. In this
  * abstract implementation both methods are implemented such that developer instead implements
- * {@link #execute()} where the abstract implementation uses reflection to find out (1) which are
+ * {@code execute()} where the abstract implementation uses reflection to find out (1) which are
  * the trigger classes that the combination listens to (by the execute parameters) and (2) what are
  * other current {@link ITriggerState}s. Such way the execute method has direct access to all states
  * that it requires.
+ * <p>
+ * Additionally, a static method {@code getParameters()} can be added to specify combination
+ * parameters that should be visible in the preference page. The return value must be an array
+ * of {@link CombinationParameter}s. <em>Warning:</em> Do not publish the same parameter in the
+ * preferences of two different combinations, since that can lead to undesired behavior. However,
+ * the value of one parameter may be accessed from multiple combinations.
  * 
  * @author mmu, haf
- * 
  */
 public abstract class AbstractCombination implements ICombination {
 

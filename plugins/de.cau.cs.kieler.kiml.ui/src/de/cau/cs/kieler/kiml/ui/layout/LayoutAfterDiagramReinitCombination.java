@@ -55,4 +55,5 @@ public class LayoutAfterDiagramReinitCombination extends AbstractCombination {
                     progressBar, false, animate)); 
         }
     }
+    
 }

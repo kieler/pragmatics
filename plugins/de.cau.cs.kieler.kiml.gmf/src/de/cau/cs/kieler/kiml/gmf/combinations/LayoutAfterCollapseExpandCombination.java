@@ -20,7 +20,6 @@ import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.core.kivi.CombinationParameter;
 import de.cau.cs.kieler.core.model.gmf.triggers.ModelChangeTrigger.DiagramChangeState;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
@@ -45,25 +44,9 @@ public class LayoutAfterCollapseExpandCombination extends AbstractCombination {
     /** parameter id for progress bar. */
     private static final String PROGRESS_BAR = "de.cau.cs.kieler.kiml.progressBar";
     
-    /** parameter array for this combination. */
-    private static final CombinationParameter[] PARAMETERS = new CombinationParameter[] {
-            new CombinationParameter(ANIMATE, getPreferenceStore(), "Animate",
-                    "Animates the automatic layout of a graph.", true,
-                    CombinationParameter.BOOLEAN_TYPE),
-            new CombinationParameter(ZOOM_TO_FIT, getPreferenceStore(), "Zoom to Fit",
-                    "Perform zoom to fit with automatic layout.", false,
-                    CombinationParameter.BOOLEAN_TYPE),
-            new CombinationParameter(PROGRESS_BAR, getPreferenceStore(), "Progress Bar",
-                    "Display a progress bar while performing automatic layout.", false,
-                    CombinationParameter.BOOLEAN_TYPE) };
-
-    
-    
     /**
      * Apply automatic layout every time the model changed state is updated.
      * 
-     * @param modelState
-     *            model changed
      * @param diagramState
      *            diagram changed
      */
@@ -91,4 +74,5 @@ public class LayoutAfterCollapseExpandCombination extends AbstractCombination {
     private static IPreferenceStore getPreferenceStore() {
         return KimlUiPlugin.getDefault().getPreferenceStore();
     }
+    
 }

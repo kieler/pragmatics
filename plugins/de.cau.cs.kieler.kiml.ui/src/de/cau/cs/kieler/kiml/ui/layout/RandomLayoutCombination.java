@@ -24,7 +24,6 @@ import org.eclipse.swt.SWT;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.core.kivi.CombinationParameter;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.model.triggers.DiagramTrigger.DiagramState;
@@ -36,7 +35,6 @@ import de.cau.cs.kieler.kiml.util.RandomLayoutProvider;
  * Add a button that triggers a Random layout onto the whole diagram once.
  * 
  * @author haf
- * 
  */
 public class RandomLayoutCombination extends AbstractCombination {
 
@@ -53,19 +51,7 @@ public class RandomLayoutCombination extends AbstractCombination {
     /** parameter id for progress bar. */
     private static final String PROGRESS_BAR = "de.cau.cs.kieler.kiml.progressBar";
     
-    /** parameter array for this combination. */
-    private static final CombinationParameter[] PARAMETERS = new CombinationParameter[] {
-            new CombinationParameter(ANIMATE, getPreferenceStore(), "Animate",
-                    "Animates the automatic layout of a graph.", true,
-                    CombinationParameter.BOOLEAN_TYPE),
-            new CombinationParameter(ZOOM_TO_FIT, getPreferenceStore(), "Zoom to Fit",
-                    "Perform zoom to fit with automatic layout.", false,
-                    CombinationParameter.BOOLEAN_TYPE),
-            new CombinationParameter(PROGRESS_BAR, getPreferenceStore(), "Progress Bar",
-                    "Display a progress bar while performing automatic layout.", false,
-                    CombinationParameter.BOOLEAN_TYPE) };
-
-    
+   
     /**
      * Setup Buttons in the Constructor.
      */
