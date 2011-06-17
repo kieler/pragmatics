@@ -69,7 +69,7 @@
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.keg.diagram.custom.wizards.RandomGraphWizard"
             hasPages="true"
-            icon="icons/obj16/random.gif"
+            icon="icons/obj16/KEGDiagramFile.gif"
             id="de.cau.cs.kieler.keg.diagram.custom.randomKEGGraph"
             name="Random KEG Graph"
             project="false">
