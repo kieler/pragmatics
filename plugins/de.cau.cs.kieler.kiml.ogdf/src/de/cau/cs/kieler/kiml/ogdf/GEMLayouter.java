@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.ogdf;
 
-import net.ogdf.bin.OgdfServerAPI;
+import net.ogdf.bin.OgdfServer;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -121,50 +121,50 @@ public class GEMLayouter extends OgdfLayouter {
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // pageRatio
         float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
-        addOption(OgdfServerAPI.OPTION_PAGE_RATIO, pageRatio);
+        addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
         // desiredLength
         float minSpacing = parentLayout.getProperty(SPACING);
-        addOption(OgdfServerAPI.OPTION_DESIRED_LENGTH, minSpacing);
+        addOption(OgdfServer.OPTION_DESIRED_LENGTH, minSpacing);
         // numberOfRounds
         int numberOfRounds = parentLayout.getProperty(NUMBER_OF_ROUNDS);
-        addOption(OgdfServerAPI.OPTION_NUMBER_OF_ROUNDS, numberOfRounds);
+        addOption(OgdfServer.OPTION_NUMBER_OF_ROUNDS, numberOfRounds);
         // minimalTemperature
         float minimalTemperature = parentLayout.getProperty(MINIMAL_TEMPERATURE);
-        addOption(OgdfServerAPI.OPTION_MINIMAL_TEMPERATURE, minimalTemperature);
+        addOption(OgdfServer.OPTION_MINIMAL_TEMPERATURE, minimalTemperature);
         // initialTemperature
         float initialTemperature = parentLayout.getProperty(INITIAL_TEMPERATURE);
-        addOption(OgdfServerAPI.OPTION_INITIAL_TEMPERATURE, initialTemperature);
+        addOption(OgdfServer.OPTION_INITIAL_TEMPERATURE, initialTemperature);
         // gravitationalConstant
         float gravitationalConstant = parentLayout.getProperty(GRAVITATIONAL_CONSTANT);
-        addOption(OgdfServerAPI.OPTION_GRAVITATIONAL_CONSTANT, gravitationalConstant);
+        addOption(OgdfServer.OPTION_GRAVITATIONAL_CONSTANT, gravitationalConstant);
         // maximalDisturbance
         float maximalDisturbance = parentLayout.getProperty(MAXIMAL_DISTURBANCE);
-        addOption(OgdfServerAPI.OPTION_MAXIMAL_DISTURBANCE, maximalDisturbance);
+        addOption(OgdfServer.OPTION_MAXIMAL_DISTURBANCE, maximalDisturbance);
         // rotationAngle
         float rotationAngle = parentLayout.getProperty(ROTATION_ANGLE);
-        addOption(OgdfServerAPI.OPTION_ROTATION_ANGLE, rotationAngle);
+        addOption(OgdfServer.OPTION_ROTATION_ANGLE, rotationAngle);
         // oscillationAngle
         float oscillationAngle = parentLayout.getProperty(OSCILLATION_ANGLE);
-        addOption(OgdfServerAPI.OPTION_OSCILLATION_ANGLE, oscillationAngle);
+        addOption(OgdfServer.OPTION_OSCILLATION_ANGLE, oscillationAngle);
         // rotationSensitivity
         float rotationSensitivity = parentLayout.getProperty(ROTATION_SENSITIVITY);
-        addOption(OgdfServerAPI.OPTION_ROTATION_SENSITIVITY, rotationSensitivity);
+        addOption(OgdfServer.OPTION_ROTATION_SENSITIVITY, rotationSensitivity);
         // oscillationSensitivity
         float oscillationSensitivity = parentLayout.getProperty(OSCILLATION_SENSITIVITY);
-        addOption(OgdfServerAPI.OPTION_OSCILLATION_SENSITIVITY, oscillationSensitivity);
+        addOption(OgdfServer.OPTION_OSCILLATION_SENSITIVITY, oscillationSensitivity);
         // attractionFormula
         AttractionFormula attractionFormula = parentLayout.getProperty(ATTRACTION_FORMULA);
         switch (attractionFormula) {
         case FRUCHTERMAN_REINGOLD:
-            addOption(OgdfServerAPI.OPTION_ATTRACTION_FORMULA, 1);
+            addOption(OgdfServer.OPTION_ATTRACTION_FORMULA, 1);
             break;
         case GEM:
-            addOption(OgdfServerAPI.OPTION_ATTRACTION_FORMULA, 2);
+            addOption(OgdfServer.OPTION_ATTRACTION_FORMULA, 2);
             break;
         }
         // minDistCC
         float minDistCC = parentLayout.getProperty(MIN_DIST_CC);
-        addOption(OgdfServerAPI.OPTION_MIN_DIST_CC, minDistCC);
+        addOption(OgdfServer.OPTION_MIN_DIST_CC, minDistCC);
     }
     
 }

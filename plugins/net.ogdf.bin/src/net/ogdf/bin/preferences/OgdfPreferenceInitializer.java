@@ -14,7 +14,7 @@
 package net.ogdf.bin.preferences;
 
 import net.ogdf.bin.OgdfPlugin;
-import net.ogdf.bin.OgdfServerAPI;
+import net.ogdf.bin.OgdfServer;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -32,6 +32,6 @@ public class OgdfPreferenceInitializer extends AbstractPreferenceInitializer {
     @Override
     public void initializeDefaultPreferences() {
         IPreferenceStore store = OgdfPlugin.getDefault().getPreferenceStore();
-        store.setDefault(OgdfServerAPI.PREF_TIMEOUT, OgdfServerAPI.PROCESS_DEF_TIMEOUT);
+        store.setDefault(OgdfServer.PREF_TIMEOUT, OgdfServer.PROCESS_DEF_TIMEOUT);
     }
 }

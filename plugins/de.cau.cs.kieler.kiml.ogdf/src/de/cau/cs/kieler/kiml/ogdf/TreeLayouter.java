@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.ogdf;
 
-import net.ogdf.bin.OgdfServerAPI;
+import net.ogdf.bin.OgdfServer;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
@@ -76,35 +76,35 @@ public class TreeLayouter extends OgdfLayouter {
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // direction
         Direction direction = parentLayout.getProperty(DIRECTION);
-        int orientation = OgdfServerAPI.ORIENTATION_BOTTOM_TO_TOP;
+        int orientation = OgdfServer.ORIENTATION_BOTTOM_TO_TOP;
         switch (direction) {
         case LEFT:
-            orientation = OgdfServerAPI.ORIENTATION_RIGHT_TO_LEFT;
+            orientation = OgdfServer.ORIENTATION_RIGHT_TO_LEFT;
             break;
         case RIGHT:
-            orientation = OgdfServerAPI.ORIENTATION_LEFT_TO_RIGHT;
+            orientation = OgdfServer.ORIENTATION_LEFT_TO_RIGHT;
             break;
         case UP:
-            orientation = OgdfServerAPI.ORIENTATION_TOP_TO_BOTTOM;
+            orientation = OgdfServer.ORIENTATION_TOP_TO_BOTTOM;
             break;
         }
-        addOption(OgdfServerAPI.OPTION_ORIENTATION, orientation);
+        addOption(OgdfServer.OPTION_ORIENTATION, orientation);
         // edgeRouting
         EdgeRouting edgeRouting = parentLayout.getProperty(EDGE_ROUTING);
         boolean orthogonal = edgeRouting == EdgeRouting.ORTHOGONAL;
-        addOption(OgdfServerAPI.OPTION_ORTHOGONAL, orthogonal);
+        addOption(OgdfServer.OPTION_ORTHOGONAL, orthogonal);
         // siblingDistance
         float siblingDistance = parentLayout.getProperty(SIBLING_DISTANCE);
-        addOption(OgdfServerAPI.OPTION_SIBLING_DISTANCE, siblingDistance);
+        addOption(OgdfServer.OPTION_SIBLING_DISTANCE, siblingDistance);
         // subtreeDistance
         float subtreeDistance = parentLayout.getProperty(SUBTREE_DISTANCE);
-        addOption(OgdfServerAPI.OPTION_SUBTREE_DISTANCE, subtreeDistance);
+        addOption(OgdfServer.OPTION_SUBTREE_DISTANCE, subtreeDistance);
         // levelDistance
         float levelDistance = parentLayout.getProperty(LEVEL_DISTANCE);
-        addOption(OgdfServerAPI.OPTION_LEVEL_DISTANCE, levelDistance);
+        addOption(OgdfServer.OPTION_LEVEL_DISTANCE, levelDistance);
         // treeDistance
         float treeDistance = parentLayout.getProperty(TREE_DISTANCE);
-        addOption(OgdfServerAPI.OPTION_TREE_DISTANCE, treeDistance);
+        addOption(OgdfServer.OPTION_TREE_DISTANCE, treeDistance);
         // remove self-loops from the graph
         loopRouter.preProcess(layoutNode);
     }

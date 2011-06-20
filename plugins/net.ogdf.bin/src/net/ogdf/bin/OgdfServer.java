@@ -28,7 +28,7 @@ import org.osgi.framework.Bundle;
  * 
  * @author mri
  */
-public final class OgdfServerAPI {
+public class OgdfServer {
 
     /** the information indicating an UML graph. */
     public static final String INFO_UML_GRAPH = "umlGraph";
@@ -194,52 +194,7 @@ public final class OgdfServerAPI {
     /** the 'GEM' attraction formula. */
     public static final int ATTRACTION_FORMULA_GEM = 2;
 
-    /** the path for the executable bin directory. */
-    public static final String EXECUTABLE_PATH_BIN = "/ogdf-server/bin";
-    /** the relative path for the linux32 executable. */
-    public static final String EXECUTABLE_PATH_LINUX32 = EXECUTABLE_PATH_BIN
-            + "/linux32/ogdf-server";
-    /** the relative path for the linux64 executable. */
-    public static final String EXECUTABLE_PATH_LINUX64 = EXECUTABLE_PATH_BIN
-            + "/linux64/ogdf-server";
-    /** the relative path for the win32 executable. */
-    public static final String EXECUTABLE_PATH_WIN32 = EXECUTABLE_PATH_BIN
-            + "/win32/ogdf-server.exe";
-    /** the relative path for the win64 executable. */
-    public static final String EXECUTABLE_PATH_WIN64 = EXECUTABLE_PATH_BIN
-            + "/win64/ogdf-server.exe";
-    /** the relative path for the osx32 executable. */
-    public static final String EXECUTABLE_PATH_OSX32 = EXECUTABLE_PATH_BIN + "/osx32/ogdf-server";
-    /** the relative path for the osx64 executable. */
-    public static final String EXECUTABLE_PATH_OSX64 = EXECUTABLE_PATH_BIN + "/osx64/ogdf-server";
-    /** the relative path for the solaris executable. */
-    public static final String EXECUTABLE_PATH_SOLARIS = EXECUTABLE_PATH_BIN
-            + "/solaris/ogdf-server";
-
-    /** preference constant for timeout. */
-    public static final String PREF_TIMEOUT = "ogdf.timeout";
-    /** default timeout for waiting for the server to give some output. */
-    public static final int PROCESS_DEF_TIMEOUT = 5000;
-    /** minimal timeout for waiting for the server to give some output. */
-    public static final int PROCESS_MIN_TIMEOUT = 200;
-
-    /** starting wait time for polling input from the server process. */
-    private static final int MIN_INPUT_WAIT = 4;
-    /** maximal wait time for polling input from the server process. */
-    private static final int MAX_INPUT_WAIT = 300;
-
-    /** the ogdf server executable. */
-    private static String executable = null;
-    /** the ogdf server process. */
-    private static Process process = null;
-
-    /**
-     * A private constructor to make the class not instantiable.
-     */
-    private OgdfServerAPI() {
-        // do nothing
-    }
-
+    
     /**
      * A helper enumeration for identifying the operating system.
      */
@@ -247,6 +202,11 @@ public final class OgdfServerAPI {
         LINUX32, LINUX64, WIN32, WIN64, OSX32, OSX64, SOLARIS, UNKNOWN
     }
 
+    /**
+     * Detect the operating system from system properties.
+     * 
+     * @return the operating system
+     */
     private static OS detectOS() {
         String os = System.getProperty("os.name").toLowerCase();
         String arch = System.getProperty("os.arch").toLowerCase();
@@ -274,13 +234,35 @@ public final class OgdfServerAPI {
         return OS.UNKNOWN;
     }
 
+    /** the path for the executable bin directory. */
+    public static final String EXECUTABLE_PATH_BIN = "/ogdf-server/bin";
+    /** the relative path for the linux32 executable. */
+    public static final String EXECUTABLE_PATH_LINUX32 = EXECUTABLE_PATH_BIN
+            + "/linux32/ogdf-server";
+    /** the relative path for the linux64 executable. */
+    public static final String EXECUTABLE_PATH_LINUX64 = EXECUTABLE_PATH_BIN
+            + "/linux64/ogdf-server";
+    /** the relative path for the win32 executable. */
+    public static final String EXECUTABLE_PATH_WIN32 = EXECUTABLE_PATH_BIN
+            + "/win32/ogdf-server.exe";
+    /** the relative path for the win64 executable. */
+    public static final String EXECUTABLE_PATH_WIN64 = EXECUTABLE_PATH_BIN
+            + "/win64/ogdf-server.exe";
+    /** the relative path for the osx32 executable. */
+    public static final String EXECUTABLE_PATH_OSX32 = EXECUTABLE_PATH_BIN + "/osx32/ogdf-server";
+    /** the relative path for the osx64 executable. */
+    public static final String EXECUTABLE_PATH_OSX64 = EXECUTABLE_PATH_BIN + "/osx64/ogdf-server";
+    /** the relative path for the solaris executable. */
+    public static final String EXECUTABLE_PATH_SOLARIS = EXECUTABLE_PATH_BIN
+            + "/solaris/ogdf-server";
+
     /**
      * Finds the ogdf server executable.
      * 
      * @throws IOException
      *             when the executable could not be located
      */
-    private static void findExecutable() throws IOException {
+    private static String findExecutable() throws IOException {
         Bundle bundle = OgdfPlugin.getDefault().getBundle();
         IPath path = null;
         OS os = detectOS();
@@ -310,7 +292,10 @@ public final class OgdfServerAPI {
             throw new RuntimeException("Unsupported operating system.");
         }
         URL url = FileLocator.find(bundle, path, null);
-        executable = FileLocator.resolve(url).getFile();
+        if (url == null) {
+            throw new RuntimeException("OGDF binary could not be located.");
+        }
+        String execFile = FileLocator.resolve(url).getFile();
         // set the file permissions if necessary
         switch (os) {
         case LINUX32:
@@ -318,11 +303,17 @@ public final class OgdfServerAPI {
         case OSX32:
         case OSX64:
         case SOLARIS:
-            File executableFile = new File(executable);
+            File executableFile = new File(execFile);
             executableFile.setExecutable(true);
             break;
         }
+        return execFile;
     }
+
+    /** the ogdf server executable. */
+    private String executable = null;
+    /** the ogdf server process. */
+    private Process process = null;
 
     /**
      * Starts a new ogdf server process or returns an existing one.
@@ -331,11 +322,11 @@ public final class OgdfServerAPI {
      *            the graph input format for the ogdf server
      * @return an instance of the ogdf server process
      */
-    public static synchronized Process startProcess(final String inputFormat) {
+    public synchronized Process startProcess(final String inputFormat) {
         if (process == null) {
             try {
                 if (executable == null) {
-                    findExecutable();
+                    executable = findExecutable();
                 }
                 process = Runtime.getRuntime().exec(new String[] { executable, inputFormat });
             } catch (IOException exception) {
@@ -349,15 +340,17 @@ public final class OgdfServerAPI {
      * Closes the currently cached process instance so a new one is created for the next start
      * process call.
      */
-    public static void endProcess() {
-        try {
-            process.getOutputStream().close();
-            process.getInputStream().close();
-        } catch (IOException exception) {
-            // ignore exception
+    public synchronized void endProcess() {
+        if (process != null) {
+            try {
+                process.getOutputStream().close();
+                process.getInputStream().close();
+            } catch (IOException exception) {
+                // ignore exception
+            }
+            process.destroy();
+            process = null;
         }
-        process.destroy();
-        process = null;
     }
 
     /**
@@ -373,22 +366,29 @@ public final class OgdfServerAPI {
     }
     
     /**
-     * Waits until there is some input from the given input stream, with a customizable timeout.
+     * Waits until there is some input from the given input stream.
      * 
      * @param inputStream
      *            input stream from which input is expected
      * @return returns whether input arrived
      */
-    public static boolean waitForInput(final InputStream inputStream) {
+    public boolean waitForInput(final InputStream inputStream) {
         return waitForInput(inputStream, new Aborter() {
             public boolean shouldAbort() {
                 return false;
             }
         });
     }
+
+    /** preference constant for timeout. */
+    public static final String PREF_TIMEOUT = "ogdf.timeout";
+    /** default timeout for waiting for the server to give some output. */
+    public static final int PROCESS_DEF_TIMEOUT = 5000;
+    /** minimal timeout for waiting for the server to give some output. */
+    public static final int PROCESS_MIN_TIMEOUT = 200;
     
     /**
-     * Waits until there is some input from the given input stream, with a customizable timeout.
+     * Waits until there is some input from the given input stream, with a custom aborter.
      * 
      * @param inputStream
      *            input stream from which input is expected
@@ -396,12 +396,33 @@ public final class OgdfServerAPI {
      *            aborter used to abort the process
      * @return returns whether input arrived
      */
-    public static boolean waitForInput(final InputStream inputStream, final Aborter aborter) {
+    public boolean waitForInput(final InputStream inputStream, final Aborter aborter) {
         IPreferenceStore preferenceStore = OgdfPlugin.getDefault().getPreferenceStore();
         int timeout = preferenceStore.getInt(PREF_TIMEOUT);
         if (timeout < PROCESS_MIN_TIMEOUT) {
             timeout = PROCESS_DEF_TIMEOUT;
         }
+        return waitForInput(inputStream, aborter, timeout);
+    }
+
+    /** starting wait time for polling input from the server process. */
+    private static final int MIN_INPUT_WAIT = 4;
+    /** maximal wait time for polling input from the server process. */
+    private static final int MAX_INPUT_WAIT = 300;
+    
+    /**
+     * Waits until there is some input from the given input stream, with a custom aborter and timeout.
+     * 
+     * @param inputStream
+     *            input stream from which input is expected
+     * @param aborter
+     *            aborter used to abort the process
+     * @param timeout
+     *            the number of milliseconds to wait for an answer from the OGDF server process
+     * @return returns whether input arrived
+     */
+    public boolean waitForInput(final InputStream inputStream, final Aborter aborter,
+            final int timeout) {
         try {
             // wait until there is input from the server
             long startTime = System.currentTimeMillis();
@@ -429,4 +450,5 @@ public final class OgdfServerAPI {
             throw new RuntimeException("Unable to read ogdf server output.", exception);
         }
     }
+    
 }

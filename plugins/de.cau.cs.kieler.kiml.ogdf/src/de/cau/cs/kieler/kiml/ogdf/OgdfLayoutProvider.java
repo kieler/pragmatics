@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.ogdf;
 
+import net.ogdf.bin.OgdfServer;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
@@ -27,6 +28,9 @@ import de.cau.cs.kieler.kiml.ogdf.options.LayoutAlgorithm;
  */
 public class OgdfLayoutProvider extends AbstractLayoutProvider {
 
+    // XXX this static instance should be eliminated to allow concurrent layout
+    private static OgdfServer ogdfServer = new OgdfServer();
+    
     /** the selected layouter. */
     private OgdfLayouter layoutAlgorithm;
 
@@ -97,6 +101,7 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
                     + " Please check the parameter in the extension point");
         }
         // layout the graph with the selected algorithm
-        layoutAlgorithm.doLayout(layoutNode, progressMonitor);
+        layoutAlgorithm.doLayout(layoutNode, progressMonitor, ogdfServer);
     }
+    
 }

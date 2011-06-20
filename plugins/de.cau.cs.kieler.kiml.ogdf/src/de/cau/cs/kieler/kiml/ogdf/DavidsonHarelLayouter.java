@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.ogdf;
 
-import net.ogdf.bin.OgdfServerAPI;
+import net.ogdf.bin.OgdfServer;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
@@ -59,39 +59,39 @@ public class DavidsonHarelLayouter extends OgdfLayouter {
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // desiredEdgeLength
         float desiredEdgeLength = parentLayout.getProperty(SPACING);
-        addOption(OgdfServerAPI.OPTION_EDGE_LENGTH, desiredEdgeLength);
+        addOption(OgdfServer.OPTION_EDGE_LENGTH, desiredEdgeLength);
         // costs
         Costs costs = parentLayout.getProperty(COSTS);
         int theCosts;
         switch (costs) {
         case REPULSE:
-            theCosts = OgdfServerAPI.COSTS_REPULSE;
+            theCosts = OgdfServer.COSTS_REPULSE;
             break;
         case PLANAR:
-            theCosts = OgdfServerAPI.COSTS_PLANAR;
+            theCosts = OgdfServer.COSTS_PLANAR;
             break;
         case STANDARD:
         default:
-            theCosts = OgdfServerAPI.COSTS_STANDARD;
+            theCosts = OgdfServer.COSTS_STANDARD;
             break;
         }
-        addOption(OgdfServerAPI.OPTION_COSTS, theCosts);
+        addOption(OgdfServer.OPTION_COSTS, theCosts);
         // speed
         Speed speed = parentLayout.getProperty(SPEED);
         int theSpeed;
         switch (speed) {
         case FAST:
-            theSpeed = OgdfServerAPI.SPEED_FAST;
+            theSpeed = OgdfServer.SPEED_FAST;
             break;
         case HQ:
-            theSpeed = OgdfServerAPI.SPEED_HQ;
+            theSpeed = OgdfServer.SPEED_HQ;
             break;
         case MEDIUM:
         default:
-            theSpeed = OgdfServerAPI.SPEED_MEDIUM;
+            theSpeed = OgdfServer.SPEED_MEDIUM;
             break;
         }
-        addOption(OgdfServerAPI.OPTION_SPEED, theSpeed);
+        addOption(OgdfServer.OPTION_SPEED, theSpeed);
     }
 
 }

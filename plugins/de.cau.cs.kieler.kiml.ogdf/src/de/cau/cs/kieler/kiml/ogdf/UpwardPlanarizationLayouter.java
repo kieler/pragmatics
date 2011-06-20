@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
-import net.ogdf.bin.OgdfServerAPI;
+import net.ogdf.bin.OgdfServer;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -108,10 +108,10 @@ public class UpwardPlanarizationLayouter extends OgdfLayouter {
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // minSpacing
         float minSpacing = parentLayout.getProperty(SPACING);
-        addOption(OgdfServerAPI.OPTION_NODE_DISTANCE, minSpacing);
+        addOption(OgdfServer.OPTION_NODE_DISTANCE, minSpacing);
         // layerDistance
         float layerDistance = parentLayout.getProperty(LAYER_DISTANCE);
-        addOption(OgdfServerAPI.OPTION_LAYER_DISTANCE, layerDistance);
+        addOption(OgdfServer.OPTION_LAYER_DISTANCE, layerDistance);
         // remove self-loops from the graph
         loopRouter.preProcess(layoutNode);
     }

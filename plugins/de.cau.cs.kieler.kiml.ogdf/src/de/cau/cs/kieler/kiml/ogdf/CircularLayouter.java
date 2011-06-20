@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.ogdf;
 
-import net.ogdf.bin.OgdfServerAPI;
+import net.ogdf.bin.OgdfServer;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
@@ -69,22 +69,22 @@ public class CircularLayouter extends OgdfLayouter {
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // pageRatio
         float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
-        addOption(OgdfServerAPI.OPTION_PAGE_RATIO, pageRatio);
+        addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
         // minDistCircle
         float minDistCircle = parentLayout.getProperty(LayoutOptions.SPACING);
         if (minDistCircle < 0) {
             minDistCircle = DEF_MIN_DIST_CIRCLE;
         }
-        addOption(OgdfServerAPI.OPTION_MIN_DIST_CIRCLE, minDistCircle);
+        addOption(OgdfServer.OPTION_MIN_DIST_CIRCLE, minDistCircle);
         // minDistLevel
         float minDistLevel = parentLayout.getProperty(MIN_DIST_LEVEL);
-        addOption(OgdfServerAPI.OPTION_MIN_DIST_LEVEL, minDistLevel);
+        addOption(OgdfServer.OPTION_MIN_DIST_LEVEL, minDistLevel);
         // minDistSibling
         float minDistSibling = parentLayout.getProperty(MIN_DIST_SIBLING);
-        addOption(OgdfServerAPI.OPTION_MIN_DIST_SIBLING, minDistSibling);
+        addOption(OgdfServer.OPTION_MIN_DIST_SIBLING, minDistSibling);
         // minDistCC
         float minDistCC = parentLayout.getProperty(MIN_DIST_CC);
-        addOption(OgdfServerAPI.OPTION_MIN_DIST_CC, minDistCC);
+        addOption(OgdfServer.OPTION_MIN_DIST_CC, minDistCC);
         // remove self-loops from the graph
         loopRouter.preProcess(layoutNode);
     }

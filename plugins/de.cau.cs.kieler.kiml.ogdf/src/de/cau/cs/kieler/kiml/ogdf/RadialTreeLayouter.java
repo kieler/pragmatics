@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.ogdf;
 
-import net.ogdf.bin.OgdfServerAPI;
+import net.ogdf.bin.OgdfServer;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
@@ -54,10 +54,10 @@ public class RadialTreeLayouter extends OgdfLayouter {
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // levelDistance
         float levelDistance = parentLayout.getProperty(LEVEL_DISTANCE);
-        addOption(OgdfServerAPI.OPTION_LEVEL_DISTANCE, levelDistance);
+        addOption(OgdfServer.OPTION_LEVEL_DISTANCE, levelDistance);
         // ccDistance
         float ccDistance = parentLayout.getProperty(CC_DISTANCE);
-        addOption(OgdfServerAPI.OPTION_CC_DISTANCE, ccDistance);
+        addOption(OgdfServer.OPTION_CC_DISTANCE, ccDistance);
         // remove self-loops from the graph
         loopRouter.preProcess(layoutNode);
     }

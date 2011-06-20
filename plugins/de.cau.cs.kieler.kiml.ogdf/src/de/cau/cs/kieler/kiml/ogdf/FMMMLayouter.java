@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.ogdf;
 
-import net.ogdf.bin.OgdfServerAPI;
+import net.ogdf.bin.OgdfServer;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
@@ -62,20 +62,20 @@ public class FMMMLayouter extends OgdfLayouter {
         int qvs;
         switch (qualityVsSpeed) {
         case GORGEOUSANDEFFICIENT:
-            qvs = OgdfServerAPI.GORGEOUS_AND_EFFICIENT;
+            qvs = OgdfServer.GORGEOUS_AND_EFFICIENT;
             break;
         case NICEANDINCREDIBLESPEED:
-            qvs = OgdfServerAPI.NICE_AND_INCREDIBLE_SPEED;
+            qvs = OgdfServer.NICE_AND_INCREDIBLE_SPEED;
             break;
         case BEAUTIFULANDFAST:
         default:
-            qvs = OgdfServerAPI.BEAUTIFUL_AND_FAST;
+            qvs = OgdfServer.BEAUTIFUL_AND_FAST;
             break;
         }
-        addOption(OgdfServerAPI.OPTION_QUALITY_VS_SPEED, qvs);
+        addOption(OgdfServer.OPTION_QUALITY_VS_SPEED, qvs);
         // newInitialPlacement
         boolean newInitialPlacement = parentLayout.getProperty(NEW_INITIAL_PLACEMENT);
-        addOption(OgdfServerAPI.OPTION_NEW_INITIAL_PLACEMENT, newInitialPlacement);
+        addOption(OgdfServer.OPTION_NEW_INITIAL_PLACEMENT, newInitialPlacement);
         // remove self-loops from the graph
         loopRouter.preProcess(layoutNode);
     }

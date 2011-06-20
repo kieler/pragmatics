@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.ogdf;
 
-import net.ogdf.bin.OgdfServerAPI;
+import net.ogdf.bin.OgdfServer;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
@@ -68,19 +68,19 @@ public class SpringEmbedderFRLayouter extends OgdfLayouter {
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // pageRatio
         float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
-        addOption(OgdfServerAPI.OPTION_PAGE_RATIO, pageRatio);
+        addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
         // iterations
         int iterations = parentLayout.getProperty(ITERATIONS);
-        addOption(OgdfServerAPI.OPTION_ITERATIONS, iterations);
+        addOption(OgdfServer.OPTION_ITERATIONS, iterations);
         // fineness
         float fineness = parentLayout.getProperty(FINENESS);
-        addOption(OgdfServerAPI.OPTION_FINENESS, fineness);
+        addOption(OgdfServer.OPTION_FINENESS, fineness);
         // noise
         boolean noise = parentLayout.getProperty(NOISE);
-        addOption(OgdfServerAPI.OPTION_NOISE, noise);
+        addOption(OgdfServer.OPTION_NOISE, noise);
         // minDistCC
         float minDistCC = parentLayout.getProperty(MIN_DIST_CC);
-        addOption(OgdfServerAPI.OPTION_MIN_DIST_CC, minDistCC);
+        addOption(OgdfServer.OPTION_MIN_DIST_CC, minDistCC);
     }
 
 }

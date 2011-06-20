@@ -14,7 +14,7 @@
 package net.ogdf.bin.preferences;
 
 import net.ogdf.bin.OgdfPlugin;
-import net.ogdf.bin.OgdfServerAPI;
+import net.ogdf.bin.OgdfServer;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -58,9 +58,9 @@ public class OgdfPreferencePage extends FieldEditorPreferencePage implements
         processGroup.setText("OGDF Process");
         // add timeout editor
         IntegerFieldEditor timeoutEditor =
-                new IntegerFieldEditor(OgdfServerAPI.PREF_TIMEOUT, "Timeout for OGDF output (ms):",
+                new IntegerFieldEditor(OgdfServer.PREF_TIMEOUT, "Timeout for OGDF output (ms):",
                         processGroup);
-        timeoutEditor.setValidRange(OgdfServerAPI.PROCESS_MIN_TIMEOUT, Integer.MAX_VALUE);
+        timeoutEditor.setValidRange(OgdfServer.PROCESS_MIN_TIMEOUT, Integer.MAX_VALUE);
         addField(timeoutEditor);
         // set layout
         processGroup.setLayout(new GridLayout(NUM_COLUMNS, false));

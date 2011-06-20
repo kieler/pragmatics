@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.ogdf;
 
-import net.ogdf.bin.OgdfServerAPI;
+import net.ogdf.bin.OgdfServer;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
@@ -80,40 +80,40 @@ public class PlanarizationLayouter extends OgdfLayouter {
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // pageRatio
         float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
-        addOption(OgdfServerAPI.OPTION_PAGE_RATIO, pageRatio);
+        addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
         // minSpacing
         float minSpacing = parentLayout.getProperty(SPACING);
-        addOption(OgdfServerAPI.OPTION_SEPARATION, minSpacing);
+        addOption(OgdfServer.OPTION_SEPARATION, minSpacing);
         // layoutDirection
         Direction direction = parentLayout.getProperty(DIRECTION);
         int layoutDirection;
         switch (direction) {
         case UP:
-            layoutDirection = OgdfServerAPI.DIRECTION_SOUTH;
+            layoutDirection = OgdfServer.DIRECTION_SOUTH;
             break;
         case LEFT:
-            layoutDirection = OgdfServerAPI.DIRECTION_WEST;
+            layoutDirection = OgdfServer.DIRECTION_WEST;
             break;
         case RIGHT:
-            layoutDirection = OgdfServerAPI.DIRECTION_EAST;
+            layoutDirection = OgdfServer.DIRECTION_EAST;
             break;
         default:
-            layoutDirection = OgdfServerAPI.DIRECTION_NORTH;
+            layoutDirection = OgdfServer.DIRECTION_NORTH;
             break;
         }
-        addOption(OgdfServerAPI.OPTION_LAYOUT_DIRECTION, layoutDirection);
+        addOption(OgdfServer.OPTION_LAYOUT_DIRECTION, layoutDirection);
         // preprocessCliques
         boolean preprocessCliques = parentLayout.getProperty(PREPROCESS_CLIQUES);
-        addOption(OgdfServerAPI.OPTION_PREPROCESS_CLIQUES, preprocessCliques);
+        addOption(OgdfServer.OPTION_PREPROCESS_CLIQUES, preprocessCliques);
         // minCliqueSize
         int minCliqueSize = parentLayout.getProperty(MIN_CLIQUE_SIZE);
-        addOption(OgdfServerAPI.OPTION_MIN_CLIQUE_SIZE, minCliqueSize);
+        addOption(OgdfServer.OPTION_MIN_CLIQUE_SIZE, minCliqueSize);
         // costAssoc
         int costAssoc = parentLayout.getProperty(COST_ASSOC);
-        addOption(OgdfServerAPI.OPTION_COST_ASSOC, costAssoc);
+        addOption(OgdfServer.OPTION_COST_ASSOC, costAssoc);
         // costGen
         int costGen = parentLayout.getProperty(COST_GEN);
-        addOption(OgdfServerAPI.OPTION_COST_GEN, costGen);
+        addOption(OgdfServer.OPTION_COST_GEN, costGen);
         // perform pre-processing
         loopRouter.preProcess(layoutNode);
     }

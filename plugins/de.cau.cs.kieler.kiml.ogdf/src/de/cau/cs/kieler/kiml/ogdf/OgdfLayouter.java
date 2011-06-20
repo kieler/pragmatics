@@ -35,8 +35,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
-import net.ogdf.bin.OgdfServerAPI;
-import net.ogdf.bin.OgdfServerAPI.Aborter;
+import net.ogdf.bin.OgdfServer;
+import net.ogdf.bin.OgdfServer.Aborter;
 import net.ogdf.ogml.DocumentRoot;
 import net.ogdf.ogml.EdgeType;
 import net.ogdf.ogml.GraphType;
@@ -109,7 +109,7 @@ public abstract class OgdfLayouter {
     private static final String CHUNK_KEYWORD = "[CHUNK]\n";
 
     /** the resource set used for serialization of the graph. */
-    private ResourceSet resourceSet = null;
+    private ResourceSet resourceSet;
 
     /** the name of the layouter. */
     private String name;
@@ -163,8 +163,11 @@ public abstract class OgdfLayouter {
      *            the node representing the graph
      * @param progressMonitor
      *            the progress monitor
+     * @param ogdfServer
+     *            the OGDF server process interface
      */
-    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor) {
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor,
+            final OgdfServer ogdfServer) {
         progressMonitor.begin("OGDF Layout", LAYOUT_WORK);
         // if the graph is empty there is no need to layout
         if (layoutNode.getChildren().isEmpty()) {
@@ -174,36 +177,39 @@ public abstract class OgdfLayouter {
         optionBuffer.clear();
         infoBuffer.clear();
         addOption(OGDF_OPTION_LAYOUTER, name);
+        
+        // create the resource set used for serialization of the graph
+        if (resourceSet == null) {
+            resourceSet = new ResourceSetImpl();
+            resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
+                    .put("ogml", new OgmlResourceFactoryImpl());
+        }
+        // start the ogdf server process, or retrieve the previously used process
+        Process process = ogdfServer.startProcess(INPUT_FORMAT);
+        
+        // set the random number generator seed
+        setRandomSeed(layoutNode);
+        // prepare the algorithm for use and pre-process the graph
+        prepareLayouter(layoutNode);
+        // prepare the label layout
+        prepareLabelLayout(layoutNode);
+        // transform the graph
+        DocumentRoot root =
+                transformGraph(layoutNode, progressMonitor.subTask(SMALL_TASK_WORK));
+        
+        // receive the output stream and make it buffered
+        OutputStream outputStream = new BufferedOutputStream(process.getOutputStream());
+        // write the graph to the process
+        writeOgmlGraph(root, outputStream, progressMonitor.subTask(SMALL_TASK_WORK), ogdfServer);
+        // write the buffers to the process
+        writeBuffers(outputStream, progressMonitor.subTask(SMALL_TASK_WORK));
         try {
-            // create the resource set used for serialization of the graph
-            if (resourceSet == null) {
-                resourceSet = new ResourceSetImpl();
-                resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
-                        .put("ogml", new OgmlResourceFactoryImpl());
-            }
-            // start the ogdf server process, or retrieve the previously used process
-            Process process = OgdfServerAPI.startProcess(INPUT_FORMAT);
-            // set the random number generator seed
-            setRandomSeed(layoutNode);
-            // prepare the algorithm for use and pre-process the graph
-            prepareLayouter(layoutNode);
-            // prepare the label layout
-            prepareLabelLayout(layoutNode);
-            // transform the graph
-            DocumentRoot root =
-                    transformGraph(layoutNode, progressMonitor.subTask(SMALL_TASK_WORK));
-            // receive the output stream and make it buffered
-            OutputStream outputStream = new BufferedOutputStream(process.getOutputStream());
-            // write the graph to the process
-            writeOgmlGraph(root, outputStream, progressMonitor.subTask(SMALL_TASK_WORK));
-            // write the buffers to the process
-            writeBuffers(outputStream, progressMonitor.subTask(SMALL_TASK_WORK));
             // flush the stream
             outputStream.flush();
             // wait for the process to finish the layout and send the layout information
             final IKielerProgressMonitor subMon = progressMonitor.subTask(PROCESS_WORK);
             subMon.begin("Wait OGDF Reply", 1);
-            if (!OgdfServerAPI.waitForInput(process.getInputStream(),
+            if (!ogdfServer.waitForInput(process.getInputStream(),
                     new Aborter() {
                         public boolean shouldAbort() {
                             return subMon.isCanceled();
@@ -212,14 +218,16 @@ public abstract class OgdfLayouter {
                 throw new RuntimeException("The layout process timed out.");
             }
             subMon.done();
+            
             // read the layout information
             Map<String, KVectorChain> layoutInformation =
                     readLayoutInformation(new BufferedInputStream(process.getInputStream()),
-                            progressMonitor.subTask(SMALL_TASK_WORK));
+                            progressMonitor.subTask(SMALL_TASK_WORK), ogdfServer);
             // apply the layout back to the KGraph
             applyLayout(layoutNode, layoutInformation);
             // perform post-processing
             postProcess(layoutNode);
+            
         } catch (IOException e) {
             throw new RuntimeException("Could not flush stdout.", e);
         } finally {
@@ -237,11 +245,11 @@ public abstract class OgdfLayouter {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         Integer seed = nodeLayout.getProperty(LayoutOptions.RANDOM_SEED);
         if (seed == null) {
-            addOption(OgdfServerAPI.OPTION_RANDOM_SEED, 1);
+            addOption(OgdfServer.OPTION_RANDOM_SEED, 1);
         } else if (seed == 0) {
-            addOption(OgdfServerAPI.OPTION_RANDOM_SEED, (int) System.currentTimeMillis());
+            addOption(OgdfServer.OPTION_RANDOM_SEED, (int) System.currentTimeMillis());
         } else {
-            addOption(OgdfServerAPI.OPTION_RANDOM_SEED, seed);
+            addOption(OgdfServer.OPTION_RANDOM_SEED, seed);
         }
     }
 
@@ -299,13 +307,13 @@ public abstract class OgdfLayouter {
         if (edgeDistance < 0) {
             edgeDistance = DEF_LABEL_EDGE_DIST;
         }
-        addOption(OgdfServerAPI.OPTION_LABEL_EDGE_DISTANCE, edgeDistance);
+        addOption(OgdfServer.OPTION_LABEL_EDGE_DISTANCE, edgeDistance);
         // marginDistance
         float marginDistance = parentLayout.getProperty(LABEL_MARGIN_DIST);
         if (marginDistance < 0) {
             marginDistance = DEF_LABEL_MARGIN_DIST;
         }
-        addOption(OgdfServerAPI.OPTION_LABEL_MARGIN_DISTANCE, marginDistance);
+        addOption(OgdfServer.OPTION_LABEL_MARGIN_DISTANCE, marginDistance);
     }
 
     /**
@@ -392,26 +400,26 @@ public abstract class OgdfLayouter {
                         KShapeLayout labelLayout = label.getData(KShapeLayout.class);
                         EdgeLabelPlacement placement =
                                 labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
-                        int labelType = OgdfServerAPI.LABEL_TYPE_NAME;
+                        int labelType = OgdfServer.LABEL_TYPE_NAME;
                         switch (placement) {
                         case HEAD:
                             if (makeMult2) {
-                                labelType = OgdfServerAPI.LABEL_TYPE_MULT2;
+                                labelType = OgdfServer.LABEL_TYPE_MULT2;
                             } else {
-                                labelType = OgdfServerAPI.LABEL_TYPE_END2;
+                                labelType = OgdfServer.LABEL_TYPE_END2;
                             }
                             makeMult2 = !makeMult2;
                             break;
                         case TAIL:
                             if (makeMult1) {
-                                labelType = OgdfServerAPI.LABEL_TYPE_MULT1;
+                                labelType = OgdfServer.LABEL_TYPE_MULT1;
                             } else {
-                                labelType = OgdfServerAPI.LABEL_TYPE_END1;
+                                labelType = OgdfServer.LABEL_TYPE_END1;
                             }
                             makeMult1 = !makeMult1;
                             break;
                         }
-                        addInformation(id + OgdfServerAPI.EDGE_LABEL_SUFFIX + labelType, "("
+                        addInformation(id + OgdfServer.EDGE_LABEL_SUFFIX + labelType, "("
                                 + labelLayout.getWidth() + "," + labelLayout.getHeight() + ")");
                     }
                     // detect an uml-graph
@@ -420,18 +428,18 @@ public abstract class OgdfLayouter {
                     switch (edgeType) {
                     case ASSOCIATION:
                         umlGraph = true;
-                        addInformation(id + OgdfServerAPI.EDGE_TYPE_SUFFIX,
-                                OgdfServerAPI.EDGE_TYPE_ASSOCIATION);
+                        addInformation(id + OgdfServer.EDGE_TYPE_SUFFIX,
+                                OgdfServer.EDGE_TYPE_ASSOCIATION);
                         break;
                     case DEPENDENCY:
                         umlGraph = true;
-                        addInformation(id + OgdfServerAPI.EDGE_TYPE_SUFFIX,
-                                OgdfServerAPI.EDGE_TYPE_DEPENDENCY);
+                        addInformation(id + OgdfServer.EDGE_TYPE_SUFFIX,
+                                OgdfServer.EDGE_TYPE_DEPENDENCY);
                         break;
                     case GENERALIZATION:
                         umlGraph = true;
-                        addInformation(id + OgdfServerAPI.EDGE_TYPE_SUFFIX,
-                                OgdfServerAPI.EDGE_TYPE_GENERALIZATION);
+                        addInformation(id + OgdfServer.EDGE_TYPE_SUFFIX,
+                                OgdfServer.EDGE_TYPE_GENERALIZATION);
                         break;
                     }
                     // add the edge
@@ -439,7 +447,7 @@ public abstract class OgdfLayouter {
                 }
             }
         }
-        addInformation(OgdfServerAPI.INFO_UML_GRAPH, umlGraph);
+        addInformation(OgdfServer.INFO_UML_GRAPH, umlGraph);
         progressMonitor.done();
         return root;
     }
@@ -583,27 +591,27 @@ public abstract class OgdfLayouter {
                 KShapeLayout labelLayout = label.getData(KShapeLayout.class);
                 EdgeLabelPlacement placement =
                         labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
-                int labelType = OgdfServerAPI.LABEL_TYPE_NAME;
+                int labelType = OgdfServer.LABEL_TYPE_NAME;
                 switch (placement) {
                 case HEAD:
                     if (makeMult2) {
-                        labelType = OgdfServerAPI.LABEL_TYPE_MULT2;
+                        labelType = OgdfServer.LABEL_TYPE_MULT2;
                     } else {
-                        labelType = OgdfServerAPI.LABEL_TYPE_END2;
+                        labelType = OgdfServer.LABEL_TYPE_END2;
                     }
                     makeMult2 = !makeMult2;
                     break;
                 case TAIL:
                     if (makeMult1) {
-                        labelType = OgdfServerAPI.LABEL_TYPE_MULT1;
+                        labelType = OgdfServer.LABEL_TYPE_MULT1;
                     } else {
-                        labelType = OgdfServerAPI.LABEL_TYPE_END1;
+                        labelType = OgdfServer.LABEL_TYPE_END1;
                     }
                     makeMult1 = !makeMult1;
                     break;
                 }
                 KVectorChain ogdfLabelLayout =
-                        layoutInformation.get(entry.getKey() + OgdfServerAPI.EDGE_LABEL_SUFFIX
+                        layoutInformation.get(entry.getKey() + OgdfServer.EDGE_LABEL_SUFFIX
                                 + labelType);
                 if (ogdfLabelLayout != null && ogdfLabelLayout.size() > 0) {
                     KVector labelPos = ogdfLabelLayout.getFirst();
@@ -631,9 +639,11 @@ public abstract class OgdfLayouter {
      *            the output stream
      * @param progressMonitor
      *            the progress monitor
+     * @param ogdfServer
+     *            the OGDF server process interface
      */
     private void writeOgmlGraph(final DocumentRoot root, final OutputStream outputStream,
-            final IKielerProgressMonitor progressMonitor) {
+            final IKielerProgressMonitor progressMonitor, final OgdfServer ogdfServer) {
         progressMonitor.begin("Serialize OGML graph", 1);
         try {
             Resource resource = resourceSet.createResource(URI.createURI("http:///My.ogml"));
@@ -642,7 +652,7 @@ public abstract class OgdfLayouter {
             resource.save(outputStream, null);
             outputStream.flush();
         } catch (IOException exception) {
-            OgdfServerAPI.endProcess();
+            ogdfServer.endProcess();
             throw new RuntimeException("Failed to serialize the OGML graph.", exception);
         }
         progressMonitor.done();
@@ -689,9 +699,11 @@ public abstract class OgdfLayouter {
      *            the input stream
      * @param progressMonitor
      *            the progress monitor
+     * @param ogdfServer
+     *            the OGDF server process interface
      */
     private Map<String, KVectorChain> readLayoutInformation(final InputStream inputStream,
-            final IKielerProgressMonitor progressMonitor) {
+            final IKielerProgressMonitor progressMonitor, final OgdfServer ogdfServer) {
         progressMonitor.begin("Read layout information", 1);
         Map<String, KVectorChain> layoutInformation = new HashMap<String, KVectorChain>();
         String error = "";
@@ -704,7 +716,7 @@ public abstract class OgdfLayouter {
             while (parseMore) {
                 String line = reader.readLine();
                 if (line == null) {
-                    OgdfServerAPI.endProcess();
+                    ogdfServer.endProcess();
                     throw new RuntimeException("Failed to read answer from ogdf server process.");
                 }
                 switch (state) {
@@ -745,7 +757,7 @@ public abstract class OgdfLayouter {
                 }
             }
         } catch (IOException exception) {
-            OgdfServerAPI.endProcess();
+            ogdfServer.endProcess();
             throw new RuntimeException("Failed to read layout information from ogdf server process.",
                     exception);
         } finally {

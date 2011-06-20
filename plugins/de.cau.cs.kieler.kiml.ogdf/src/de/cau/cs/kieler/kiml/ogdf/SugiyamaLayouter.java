@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.ogdf;
 
-import net.ogdf.bin.OgdfServerAPI;
+import net.ogdf.bin.OgdfServer;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
@@ -83,28 +83,28 @@ public class SugiyamaLayouter extends OgdfLayouter {
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // pageRatio
         float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
-        addOption(OgdfServerAPI.OPTION_PAGE_RATIO, pageRatio);
+        addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
         // minSpacing
         float minSpacing = parentLayout.getProperty(SPACING);
-        addOption(OgdfServerAPI.OPTION_NODE_DISTANCE, minSpacing);
+        addOption(OgdfServer.OPTION_NODE_DISTANCE, minSpacing);
         // fails
         int fails = parentLayout.getProperty(FAILS);
-        addOption(OgdfServerAPI.OPTION_FAILS, fails);
+        addOption(OgdfServer.OPTION_FAILS, fails);
         // runs
         int runs = parentLayout.getProperty(RUNS);
-        addOption(OgdfServerAPI.OPTION_RUNS, runs);
+        addOption(OgdfServer.OPTION_RUNS, runs);
         // transpose
         boolean transpose = parentLayout.getProperty(TRANSPOSE);
-        addOption(OgdfServerAPI.OPTION_TRANSPOSE, transpose);
+        addOption(OgdfServer.OPTION_TRANSPOSE, transpose);
         // arrangeCCs
         boolean arrangeCCs = parentLayout.getProperty(ARRANGE_CCS);
-        addOption(OgdfServerAPI.OPTION_ARRANGE_CC, arrangeCCs);
+        addOption(OgdfServer.OPTION_ARRANGE_CC, arrangeCCs);
         // minDistCC
         float minDistCC = parentLayout.getProperty(MIN_DIST_CC);
-        addOption(OgdfServerAPI.OPTION_MIN_DIST_CC, minDistCC);
+        addOption(OgdfServer.OPTION_MIN_DIST_CC, minDistCC);
         // layerDistance
         float layerDistance = parentLayout.getProperty(LAYER_DISTANCE);
-        addOption(OgdfServerAPI.OPTION_LAYER_DISTANCE, layerDistance);
+        addOption(OgdfServer.OPTION_LAYER_DISTANCE, layerDistance);
         // remove self-loops from the graph
         loopRouter.preProcess(layoutNode);
     }
