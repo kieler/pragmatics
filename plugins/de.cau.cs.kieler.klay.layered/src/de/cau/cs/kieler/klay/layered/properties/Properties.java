@@ -131,6 +131,13 @@ public final class Properties {
     public static final IProperty<Boolean> COMPOUND_DUMMY_EDGE = new Property<Boolean>(
             "compoundDummyEdge", false);
 
+    /**
+     * Flag indicating whether an LPort is set to a leave node in the inclusion tree to enable
+     * connections with dummy edges for layering.
+     */
+    public static final IProperty<Boolean> LEAVE_DUMMY_PORT = new Property<Boolean>(
+            "leaveDummyPort", false);
+
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS
 
