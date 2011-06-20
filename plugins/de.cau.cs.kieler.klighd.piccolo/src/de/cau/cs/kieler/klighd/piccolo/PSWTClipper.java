@@ -26,16 +26,37 @@ public class PSWTClipper extends PNode {
     private static final long serialVersionUID = -2651702857927623226L;
 
     /** the encapsulated node. */
-    private PNode node;
+    private PNode node = null;
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addChild(final int index, final PNode child) {
+        if (node != null) {
+            node = child;
+        }
+        super.addChild(index, child);
+    }
 
     /**
-     * Constructs a PSWTClipper.
-     * 
-     * @param node
-     *            the encapsulated node
+     * {@inheritDoc}
      */
-    public PSWTClipper(final PNode node) {
-        this.node = node;
+    @Override
+    public PNode removeChild(final int index) {
+        if (node == getChild(index)) {
+            node = null;
+        }
+        return super.removeChild(index);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeAllChildren() {
+        node = null;
+        super.removeAllChildren();
     }
 
     /**
@@ -46,13 +67,11 @@ public class PSWTClipper extends PNode {
         if (getVisible() && fullIntersects(paintContext.getLocalClip())) {
             paintContext.pushTransform(getTransformReference(false));
             paintContext.pushTransparency(getTransparency());
-
-            paintContext.pushClip(node.getBoundsReference());
-
-            node.fullPaint(paintContext);
-
-            paintContext.popClip(node.getBoundsReference());
-
+            if (node != null) {
+                paintContext.pushClip(node.getBoundsReference());
+                node.fullPaint(paintContext);
+                paintContext.popClip(node.getBoundsReference());
+            }
             paintContext.popTransparency(getTransparency());
             paintContext.popTransform(getTransformReference(false));
         }
