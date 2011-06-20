@@ -302,7 +302,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
         } else if (LayoutOptions.PORT_CONSTRAINTS_ID.equals(optionData.getId())) {
             return getPortConstraintsValue();
         } else if (LayoutOptions.ASPECT_RATIO_ID.equals(optionData.getId())) {
-            return aspectRatio > 0 ? aspectRatio : null;
+            return aspectRatio != null && aspectRatio > 0 ? aspectRatio : null;
         }
         return null;
     }
