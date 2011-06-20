@@ -344,6 +344,30 @@ public class CompoundGraphImporter {
      */
     private void setCompoundDummyEdges(final KNode layoutNode,
             final Map<KGraphElement, LGraphElement> elemMap, final List<LNode> layeredNodes) {
+        for (LNode lNode : layeredNodes) {
+            NodeType nodeType = lNode.getProperty(Properties.NODE_TYPE);
+            switch (nodeType) {
+            // If the node is a compound dummy node at the upper line of the compound node, add edge
+            // to every child node
+            case UPPER_COMPOUND_BORDER:
+            case UPPER_COMPOUND_PORT:
+                for (LNode childCandidate : layeredNodes) {
+                    if (childCandidate.getProperty(Properties.PARENT).equals(
+                            lNode.getProperty(Properties.ORIGIN))) {
+                        LEdge dummyEdge = new LEdge();
+                        dummyEdge.setSource(childCandidate.getPorts(PortSide.WEST).iterator().next());
+                        
+                    }
+                }
+                // If the node is a compound dummy node at the lower line of the compound node, add
+                // edge from every child node to this node
+            case LOWER_COMPOUND_BORDER:
+            case LOWER_COMPOUND_PORT:
+                // If the node is no compound dummy node, nothing is to be done.
+            default:
+                break;
+            }
+        }
         // TODO complete method body
     }
 
