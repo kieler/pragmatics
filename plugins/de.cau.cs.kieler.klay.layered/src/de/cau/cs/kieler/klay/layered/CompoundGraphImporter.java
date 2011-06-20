@@ -78,7 +78,7 @@ public class CompoundGraphImporter {
             final EnumSet<GraphProperties> graphProperties) {
 
         if (currentNode.getChildren().isEmpty()) {
-            transformNode(currentNode, layeredNodes, elemMap, graphProperties);
+            transformLeaveNode(currentNode, layeredNodes, elemMap, graphProperties);
             // TODO: Write transformNode-Method for compound Importer (see method stub below) or use
             // it from KGraphImporter. Check in latter case, if there is no conflict resulting from
             // the use of transformNode (which is not designed for recursive import). Take care of
@@ -107,10 +107,13 @@ public class CompoundGraphImporter {
      * @param graphProperties
      *            graph properties updated during the transformation.
      */
-    private void transformNode(final KNode currentNode, final List<LNode> layeredNodes,
+    private void transformLeaveNode(final KNode currentNode, final List<LNode> layeredNodes,
             final Map<KGraphElement, LGraphElement> elemMap,
             final EnumSet<GraphProperties> graphProperties) {
         // TODO Auto-generated method stub
+        // Think of the fact, that any leave node has to be given an eastern and a western port, to
+        // be used for the layering dummy edges, will be removed after layering, set Property
+        // LEAVE_DUMMY_PORT true.
 
     }
 
@@ -208,9 +211,10 @@ public class CompoundGraphImporter {
                             .iterator();
                     dummyPort = westPortIterator.next();
                 }
-                lEdge.setSource(dummyPort);
+                lEdge.setTarget(dummyPort);
                 if (targetPort != null) {
                     elemMap.put(targetPort, dummyPort);
+                    dummyPort.setProperty(Properties.ORIGIN, targetPort);
                 }
             }
 
@@ -322,6 +326,7 @@ public class CompoundGraphImporter {
                 lEdge.setSource(dummyPort);
                 if (sourcePort != null) {
                     elemMap.put(sourcePort, dummyPort);
+                    dummyPort.setProperty(Properties.ORIGIN, sourcePort);
                 }
             }
 
@@ -355,12 +360,13 @@ public class CompoundGraphImporter {
                     if (childCandidate.getProperty(Properties.PARENT).equals(
                             lNode.getProperty(Properties.ORIGIN))) {
                         LEdge dummyEdge = new LEdge();
+                        dummyEdge.setProperty(Properties.COMPOUND_DUMMY_EDGE, true);
+
                         LPort sourcePort = lNode.getPorts(PortSide.EAST).iterator().next();
                         dummyEdge.setSource(sourcePort);
                         sourcePort.getOutgoingEdges().add(dummyEdge);
-                        // TODO: Hier vielleicht lieber Port setzen? (könnte leave node sein) - oder
-                        // leave nodes bekommen immer East/West
-                        LPort targetPort = childCandidate.getPorts(PortSide.WEST).iterator().next();
+
+                        LPort targetPort = findDummyEdgePort(childCandidate, PortSide.WEST);
                         dummyEdge.setTarget(targetPort);
                         targetPort.getIncomingEdges().add(dummyEdge);
                     }
@@ -373,10 +379,12 @@ public class CompoundGraphImporter {
                     if (childCandidate.getProperty(Properties.PARENT).equals(
                             lNode.getProperty(Properties.ORIGIN))) {
                         LEdge dummyEdge = new LEdge();
-                        // TODO: Ev. port lieber setzen? (könnte leave node sein) vgl. oben
-                        LPort sourcePort = childCandidate.getPorts(PortSide.EAST).iterator().next();
+                        dummyEdge.setProperty(Properties.COMPOUND_DUMMY_EDGE, true);
+
+                        LPort sourcePort = findDummyEdgePort(childCandidate, PortSide.EAST);
                         dummyEdge.setSource(sourcePort);
                         sourcePort.getOutgoingEdges().add(dummyEdge);
+
                         LPort targetPort = lNode.getPorts(PortSide.WEST).iterator().next();
                         dummyEdge.setTarget(targetPort);
                         targetPort.getIncomingEdges().add(dummyEdge);
@@ -387,7 +395,6 @@ public class CompoundGraphImporter {
                 break;
             }
         }
-        // TODO complete method body
     }
 
     /**
@@ -423,8 +430,8 @@ public class CompoundGraphImporter {
         dummyNode.setProperty(Properties.PARENT, node.getParent());
         dummyNode.getPosition().x = nodeLayout.getXpos();
         dummyNode.setProperty(Properties.NODE_TYPE, nodetype);
-        createBorderDummyPort(dummyNode, PortSide.EAST);
-        createBorderDummyPort(dummyNode, PortSide.WEST);
+        createDummyPort(dummyNode, PortSide.EAST);
+        createDummyPort(dummyNode, PortSide.WEST);
         return dummyNode;
     }
 
@@ -436,11 +443,12 @@ public class CompoundGraphImporter {
      * @param side
      *            the side of the node, on which the port is to be located.
      */
-    private void createBorderDummyPort(final LNode node, final PortSide side) {
+    private LPort createDummyPort(final LNode node, final PortSide side) {
         LPort dummyPort = new LPort();
         dummyPort.setSide(side);
         dummyPort.setNode(node);
         node.getPorts().add(dummyPort);
+        return dummyPort;
     }
 
     /**
@@ -480,6 +488,36 @@ public class CompoundGraphImporter {
             }
             descendantsList.add(currentNode);
         }
+    }
+
+    /**
+     * Finds among the ports of one side of the node the one prepared to connect dummy edges for
+     * layering constraints.
+     * 
+     * @param node
+     *            The node who's ports are to be probed.
+     * @param side
+     *            The side for which the ports are to be probed.
+     */
+    private LPort findDummyEdgePort(final LNode node, final PortSide side) {
+        LPort port = null;
+        Iterator<LPort> portIterator = node.getPorts(side).iterator();
+        // Find the correct port to connect the edge to: do not use ports that are
+        // transformed ports from the original graph or created to connect edges from the original
+        // graph.
+        while (portIterator.hasNext()) {
+            LPort portCandidate = portIterator.next();
+            NodeType nodeType = portCandidate.getNode().getProperty(Properties.NODE_TYPE);
+            if ((nodeType == (NodeType.UPPER_COMPOUND_BORDER) || portCandidate
+                    .getProperty(Properties.LEAVE_DUMMY_PORT))) {
+                port = portCandidate;
+            }
+        }
+        // Do not return null, if there is no applicable port, create one.
+        if (port == null) {
+            port = createDummyPort(node, side);
+        }
+        return port;
     }
 
 }
