@@ -188,13 +188,11 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
             final Color bc) {
         // find the node representing the graphics algorithm referenced by the anchor
         GraphicsAlgorithm referenceGa = anchor.getReferencedGraphicsAlgorithm();
-        PNode reference;
+        PNode reference = null;
         if (referenceGa != null) {
             reference = gaMap.get(referenceGa);
-            if (reference == null) {
-                reference = parent;
-            }
-        } else {
+        }
+        if (reference == null) {
             referenceGa = parent.getPictogramShape().getGraphicsAlgorithm();
             if (referenceGa != null) {
                 reference = gaMap.get(referenceGa);

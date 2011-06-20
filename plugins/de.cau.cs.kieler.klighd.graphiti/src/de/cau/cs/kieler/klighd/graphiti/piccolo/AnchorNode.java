@@ -60,7 +60,7 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
         // register listener on all parent nodes
         PNode node = reference;
         while (node != null) {
-            node.addPropertyChangeListener(PNode.PROPERTY_FULL_BOUNDS, this);
+            node.addPropertyChangeListener(PNode.PROPERTY_BOUNDS, this);
             node = node.getParent();
         }
     }
@@ -72,7 +72,7 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
     public void addChild(final int index, final PNode child) {
         if (child != null && index == 0) {
             repNode = child;
-            repNode.addPropertyChangeListener(PNode.PROPERTY_FULL_BOUNDS, this);
+            repNode.addPropertyChangeListener(PNode.PROPERTY_BOUNDS, this);
         }
         super.addChild(index, child);
     }
@@ -100,7 +100,7 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
         if (repNode != null) {
             updateAnchorPosition(referencePoint);
             // chopbox anchor point from representing child node
-            PBounds bounds = repNode.getGlobalFullBounds();
+            PBounds bounds = repNode.getGlobalBounds();
             return getIntersectionWithBounds(bounds.getX() + bounds.getWidth() / 2, bounds.getY()
                     + bounds.getHeight() / 2, referencePoint.getX(), referencePoint.getY(), bounds);
         } else {
@@ -136,13 +136,17 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
         } .doSwitch(anchor);
         // set the position of this anchor to the anchor point
         if (point != null) {
-            setGlobalTranslation((Point2D) point.clone());
+            Point2D position = (Point2D) point.clone();
+//            PBounds bounds = getBounds();
+//            position.setLocation(position.getX() - bounds.getWidth() / 2.0, position.getY()
+//                    - bounds.getHeight() / 2.0);
+            setGlobalTranslation(position);
         }
         return point;
     }
 
     private Point2D getBoxRelativeAnchorPoint(final BoxRelativeAnchor bra) {
-        PBounds bounds = reference.getGlobalFullBounds();
+        PBounds bounds = reference.getGlobalBounds();
         return new Point2D.Double(bounds.getX() + bounds.getWidth() * bra.getRelativeWidth(),
                 bounds.getY() + bounds.getHeight() * bra.getRelativeHeight());
     }
@@ -151,14 +155,14 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
         if (referencePoint == null) {
             return null;
         }
-        PBounds bounds = reference.getGlobalFullBounds();
+        PBounds bounds = reference.getGlobalBounds();
         return getIntersectionWithBounds(bounds.getX() + bounds.getWidth() / 2, bounds.getY()
                 + bounds.getHeight() / 2, referencePoint.getX(), referencePoint.getY(), bounds);
     }
 
     private Point2D getFixPointAnchorPoint(final FixPointAnchor fpa) {
         Point location = fpa.getLocation();
-        PBounds bounds = reference.getGlobalFullBounds();
+        PBounds bounds = reference.getGlobalBounds();
         return new Point2D.Double(bounds.getX() + location.getX(), bounds.getY() + location.getY());
     }
 
