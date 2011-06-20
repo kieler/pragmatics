@@ -37,6 +37,7 @@ import org.eclipse.graphiti.mm.algorithms.styles.StylesFactory;
 import org.eclipse.graphiti.mm.algorithms.util.AlgorithmsSwitch;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FreeFormConnection;
@@ -46,6 +47,7 @@ import org.eclipse.graphiti.mm.pictograms.util.PictogramsSwitch;
 
 import de.cau.cs.kieler.klighd.IModelTransformation;
 import de.cau.cs.kieler.klighd.piccolo.PSWTAdvancedPath;
+import de.cau.cs.kieler.klighd.piccolo.PSWTAlignedText;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolox.swt.PSWTText;
 
@@ -234,12 +236,12 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
      */
     private void transformConnection(final PNode parent, final Connection connection,
             final Color fc, final Color bc) {
-        PNode node = new PictogramsSwitch<PNode>() {
-            public PNode caseFreeFormConnection(final FreeFormConnection object) {
+        ConnectionNode node = new PictogramsSwitch<ConnectionNode>() {
+            public ConnectionNode caseFreeFormConnection(final FreeFormConnection object) {
                 return transformFreeFormConnection(object, fc, bc);
             }
 
-            public PNode caseManhattanConnection(final ManhattanConnection object) {
+            public ConnectionNode caseManhattanConnection(final ManhattanConnection object) {
                 return transformManhattanConnection(object, fc, bc);
             }
         } .doSwitch(connection);
@@ -247,11 +249,24 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
         if (node != null) {
             node.setPickable(false);
             parent.addChild(node);
+            // transform decorators
+            for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
+                GraphicsAlgorithm ga = decorator.getGraphicsAlgorithm();
+                // create the decoration
+                DecorationNode decoration =
+                        new DecorationNode(decorator, !(ga instanceof AbstractText));
+                node.addDecoration(decoration);
+                // transform graphics algorithm for this decorator
+                Color gaFc = getForegroundColor(ga, fc);
+                Color gaBc = getBackgroundColor(ga, bc);
+                transformGraphicsAlgorithm(decoration, ga, gaFc, gaBc);
+            }
+            node.updateDecorations();
         }
     }
 
-    private PNode transformFreeFormConnection(final FreeFormConnection ffc, final Color fc,
-            final Color bc) {
+    private ConnectionNode transformFreeFormConnection(final FreeFormConnection ffc,
+            final Color fc, final Color bc) {
         AnchorNode source = anchorMap.get(ffc.getStart());
         AnchorNode target = anchorMap.get(ffc.getEnd());
         if (source != null && target != null && ffc.getGraphicsAlgorithm() != null
@@ -266,8 +281,8 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
         return null;
     }
 
-    private PNode transformManhattanConnection(final ManhattanConnection mhc, final Color fc,
-            final Color bc) {
+    private ConnectionNode transformManhattanConnection(final ManhattanConnection mhc,
+            final Color fc, final Color bc) {
         // TODO implement this
         return null;
     }
@@ -439,12 +454,24 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
     }
 
     private PSWTText transformText(final AbstractText t, final Color fc, final Color bc) {
-        PSWTText text = new PSWTText();
+        PSWTAlignedText text = new PSWTAlignedText();
         text.setFont(transformFont(t.getFont()));
         text.setText(t.getValue() != null ? t.getValue() : "");
         text.setTransparent(true);
         text.setWidth(t.getWidth());
         text.setHeight(t.getHeight());
+        switch (t.getHorizontalAlignment()) {
+        case ALIGNMENT_LEFT:
+            text.setAlignment(PSWTAlignedText.Alignment.LEFT);
+            break;
+        case ALIGNMENT_MIDDLE:
+        case ALIGNMENT_CENTER:
+            text.setAlignment(PSWTAlignedText.Alignment.CENTER);
+            break;
+        case ALIGNMENT_RIGHT:
+            text.setAlignment(PSWTAlignedText.Alignment.RIGHT);
+            break;
+        }
         if (t.getLineVisible()) {
             text.setPenColor(transformColor(fc));
         } else {
@@ -475,7 +502,8 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
         if (font.isItalic()) {
             style |= java.awt.Font.ITALIC;
         }
-        return new java.awt.Font(font.getName(), style, font.getSize());
+        // TODO the font is not completely accurate yet
+        return new java.awt.Font(font.getName(), style, font.getSize() - 1);
     }
 
     private Color getForegroundColor(final GraphicsAlgorithm ga, final Color def) {

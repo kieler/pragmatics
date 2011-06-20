@@ -30,15 +30,23 @@ public class DecorationNode extends PNode {
 
     /** the Pictogram decorator. */
     private ConnectionDecorator decorator;
+    /** whether to rotate the decoration. */
+    private boolean rotate;
+    /** the last rotation applied to this node. */
+    private float lastRotation = 0.0f;
 
     /**
      * Constructs a DecorationNode.
      * 
      * @param decorator
      *            the Pictogram decorator
+     * @param rotate
+     *            whether to rotate the decoration to the angle defined by the last polyline segment
+     *            of the associated connection
      */
-    public DecorationNode(final ConnectionDecorator decorator) {
+    public DecorationNode(final ConnectionDecorator decorator, final boolean rotate) {
         this.decorator = decorator;
+        this.rotate = rotate;
     }
 
     /**
@@ -53,7 +61,11 @@ public class DecorationNode extends PNode {
         Point2D.Float point = new Point2D.Float();
         int i = getSegmentStartIndexAndPoint(point, xps, yps, (float) decorator.getLocation());
         setGlobalTranslation(point);
-        rotateInPlace(angle(xps[i], yps[i], xps[i + 1], yps[i + 1]));
+        if (rotate) {
+            float angle = angle(xps[i], yps[i], xps[i + 1], yps[i + 1]);
+            rotate(angle - lastRotation);
+            lastRotation = angle;
+        }
     }
 
     private int getSegmentStartIndexAndPoint(final Point2D.Float point, final float[] xps,
@@ -77,8 +89,8 @@ public class DecorationNode extends PNode {
                 k = i;
                 // compute the actual point on the polyline
                 float rD = searchDistance - currentDistance;
-                point.x = rD * (xps[i + 1] - xps[i]) / d;
-                point.y = rD * (yps[i + 1] - yps[i]) / d;
+                point.x = xps[i] + rD * (xps[i + 1] - xps[i]) / d;
+                point.y = yps[i] + rD * (yps[i + 1] - yps[i]) / d;
                 break;
             } else {
                 currentDistance += d;
@@ -90,7 +102,7 @@ public class DecorationNode extends PNode {
             if (location < 0.5) {
                 k = 0;
                 point.x = xps[0];
-                point.y = yps[0];   
+                point.y = yps[0];
             } else {
                 k = xps.length - 2;
                 point.x = xps[k];
@@ -106,9 +118,19 @@ public class DecorationNode extends PNode {
         float yD = y1 - y0;
         return (float) Math.sqrt(xD * xD + yD * yD);
     }
-    
+
     private float angle(final float x0, final float y0, final float x1, final float y1) {
-        return 0;
+        float xD = x1 - x0;
+        float yD = y1 - y0;
+        // float d = (float) Math.sqrt(xD * xD + yD * yD);
+        // xD /= d;
+        // float angle = (float) Math.acos(xD);
+        // if (yD >= 0) {
+        // return angle;
+        // } else {
+        // return -angle;
+        // }
+        return (float) Math.atan2(yD, xD);
     }
 
 }

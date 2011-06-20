@@ -101,6 +101,7 @@ public class ConnectionNode extends PNode implements PropertyChangeListener {
      *            the Piccolo decoration node
      */
     public void addDecoration(final DecorationNode decoration) {
+        addChild(decoration);
         decorations.add(decoration);
     }
 
@@ -112,6 +113,7 @@ public class ConnectionNode extends PNode implements PropertyChangeListener {
      */
     public void removeDecoration(final DecorationNode decoration) {
         decorations.remove(decoration);
+        removeChild(decoration);
     }
 
     /**
@@ -182,9 +184,22 @@ public class ConnectionNode extends PNode implements PropertyChangeListener {
         }
     }
 
-    private void updatePolyline() {
+    /**
+     * Updates the polyline for this connection.
+     */
+    public void updatePolyline() {
         if (polyline != null) {
             polyline.setPathToPolyline(xps, yps);
+        }
+        updateDecorations();
+    }
+
+    /**
+     * Updates the decorations attached to this connection.
+     */
+    public void updateDecorations() {
+        for (DecorationNode decoration : decorations) {
+            decoration.updateDecoration(xps, yps);
         }
     }
 }
