@@ -13,20 +13,30 @@
  */
 package de.cau.cs.kieler.klighd.piccolo;
 
-import java.util.List;
-
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PPaintContext;
 
 /**
- * A Piccolo node that clips it children at it's boundry. Does not have a visual representation other
- * than it's children.
+ * A Piccolo node that clips a given node at it's boundary.
  * 
  * @author mri
  */
 public class PSWTClipper extends PNode {
 
     private static final long serialVersionUID = -2651702857927623226L;
+
+    /** the encapsulated node. */
+    private PNode node;
+
+    /**
+     * Constructs a PSWTClipper.
+     * 
+     * @param node
+     *            the encapsulated node
+     */
+    public PSWTClipper(final PNode node) {
+        this.node = node;
+    }
 
     /**
      * {@inheritDoc}
@@ -36,16 +46,12 @@ public class PSWTClipper extends PNode {
         if (getVisible() && fullIntersects(paintContext.getLocalClip())) {
             paintContext.pushTransform(getTransformReference(false));
             paintContext.pushTransparency(getTransparency());
-            
-            paintContext.pushClip(getBoundsReference());
-            
-            @SuppressWarnings("unchecked")
-            List<PNode> children = getChildrenReference();
-            for (PNode child : children) {
-                child.fullPaint(paintContext);
-            }
-            
-            paintContext.popClip(getBoundsReference());
+
+            paintContext.pushClip(node.getBoundsReference());
+
+            node.fullPaint(paintContext);
+
+            paintContext.popClip(node.getBoundsReference());
 
             paintContext.popTransparency(getTransparency());
             paintContext.popTransform(getTransformReference(false));
