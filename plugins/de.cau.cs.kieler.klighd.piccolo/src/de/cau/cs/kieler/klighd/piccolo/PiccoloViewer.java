@@ -60,6 +60,8 @@ public class PiccoloViewer extends Viewer {
     public PiccoloViewer(final Composite parent, final int style) {
         canvas = new PSWTCanvas(parent, style);
         canvas.setDoubleBuffered(false);
+        // canvas.removeInputEventListener(canvas.getPanEventHandler());
+        // canvas.addInputEventListener(new PDragEventHandler());
     }
 
     /**
