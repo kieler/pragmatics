@@ -355,14 +355,33 @@ public class CompoundGraphImporter {
                     if (childCandidate.getProperty(Properties.PARENT).equals(
                             lNode.getProperty(Properties.ORIGIN))) {
                         LEdge dummyEdge = new LEdge();
-                        dummyEdge.setSource(childCandidate.getPorts(PortSide.WEST).iterator().next());
-                        
+                        LPort sourcePort = lNode.getPorts(PortSide.EAST).iterator().next();
+                        dummyEdge.setSource(sourcePort);
+                        sourcePort.getOutgoingEdges().add(dummyEdge);
+                        // TODO: Hier vielleicht lieber Port setzen? (könnte leave node sein) - oder
+                        // leave nodes bekommen immer East/West
+                        LPort targetPort = childCandidate.getPorts(PortSide.WEST).iterator().next();
+                        dummyEdge.setTarget(targetPort);
+                        targetPort.getIncomingEdges().add(dummyEdge);
                     }
                 }
                 // If the node is a compound dummy node at the lower line of the compound node, add
                 // edge from every child node to this node
             case LOWER_COMPOUND_BORDER:
             case LOWER_COMPOUND_PORT:
+                for (LNode childCandidate : layeredNodes) {
+                    if (childCandidate.getProperty(Properties.PARENT).equals(
+                            lNode.getProperty(Properties.ORIGIN))) {
+                        LEdge dummyEdge = new LEdge();
+                        // TODO: Ev. port lieber setzen? (könnte leave node sein) vgl. oben
+                        LPort sourcePort = childCandidate.getPorts(PortSide.EAST).iterator().next();
+                        dummyEdge.setSource(sourcePort);
+                        sourcePort.getOutgoingEdges().add(dummyEdge);
+                        LPort targetPort = lNode.getPorts(PortSide.WEST).iterator().next();
+                        dummyEdge.setTarget(targetPort);
+                        targetPort.getIncomingEdges().add(dummyEdge);
+                    }
+                }
                 // If the node is no compound dummy node, nothing is to be done.
             default:
                 break;
