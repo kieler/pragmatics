@@ -19,7 +19,7 @@ import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PPaintContext;
 
 /**
- * A Piccolo node that clips it children at it boundry. Does not have a visual representation other
+ * A Piccolo node that clips it children at it's boundry. Does not have a visual representation other
  * than it's children.
  * 
  * @author mri
