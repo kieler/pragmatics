@@ -89,8 +89,7 @@ public final class Properties {
      * {@link de.cau.cs.kieler.klay.layered.intermediate.InLayerConstraintProcessor}.
      */
     public static final IProperty<InLayerConstraint> IN_LAYER_CONSTRAINT = 
-        new Property<InLayerConstraint>(
-            "inLayerConstraint", InLayerConstraint.NONE);
+        new Property<InLayerConstraint>("inLayerConstraint", InLayerConstraint.NONE);
 
     /**
      * Indicates that a node {@code x} may only appear inside a layer before the node {@code y} the
@@ -102,8 +101,7 @@ public final class Properties {
 
     /** Flags indicating the properties of a graph. */
     public static final IProperty<Set<GraphProperties>> GRAPH_PROPERTIES = 
-        new Property<Set<GraphProperties>>(
-            "graphProperties", EnumSet.allOf(GraphProperties.class));
+        new Property<Set<GraphProperties>>("graphProperties", EnumSet.allOf(GraphProperties.class));
 
     /**
      * The side of an external port a dummy node was created for.
@@ -122,9 +120,16 @@ public final class Properties {
             "externalPortRatioOrPosition", 0.0);
 
     /**
-     * KNode that contained the origin of this node in the KGraph. 
+     * KNode that contained the origin of this node in the KGraph.
      */
     public static final IProperty<KNode> PARENT = new Property<KNode>("parent", null);
+
+    /**
+     * Flag to be set for edges that are created as a dummy to serve as layering constraint in
+     * compound graphs.
+     */
+    public static final IProperty<Boolean> COMPOUND_DUMMY_EDGE = new Property<Boolean>(
+            "compoundDummyEdge", false);
 
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS
@@ -147,11 +152,11 @@ public final class Properties {
     /** priority of elements. */
     public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY,
             0);
-    
+
     /** default value for aspect ratio. */
     public static final float DEF_ASPECT_RATIO = 1.6f;
-    public static final Property<Float> ASPECT_RATIO = new Property<Float>(LayoutOptions.ASPECT_RATIO,
-            DEF_ASPECT_RATIO, 0.0f);
+    public static final Property<Float> ASPECT_RATIO = new Property<Float>(
+            LayoutOptions.ASPECT_RATIO, DEF_ASPECT_RATIO, 0.0f);
 
     /** option identifier for minimal angle. */
     public static final String MIN_EDGE_ANGLE_ID = "de.cau.cs.kieler.klay.layered.minimalAngle";
@@ -194,7 +199,7 @@ public final class Properties {
     /** property to set constraints on the node layering. */
     public static final IProperty<LayerConstraint> LAYER_CONSTRAINT = new Property<LayerConstraint>(
             LAYER_CONSTRAINT_ID, LayerConstraint.NONE);
-    
+
     /** option identifier for separation of connected components. */
     public static final String SEPARATE_CC_ID = "de.cau.cs.kieler.klay.layered.separateConnComp";
     /** property for choosing whether connected components are processed separately. */
