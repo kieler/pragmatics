@@ -104,7 +104,7 @@ public abstract class OgdfLayouter {
     private static final String OGDF_OPTION_LAYOUTER = "layouter";
 
     /** the input format for the ogdf server. */
-    private static final String INPUT_FORMAT = "OGML";
+    public static final String INPUT_FORMAT = "OGML";
     /** the separator used to separate chunks of data sent to the ogdf-server process. */
     private static final String CHUNK_KEYWORD = "[CHUNK]\n";
 
@@ -215,7 +215,8 @@ public abstract class OgdfLayouter {
                             return subMon.isCanceled();
                         }
                     })) {
-                throw new RuntimeException("The layout process timed out.");
+                throw new RuntimeException("A timeout occured while waiting for the OGDF process."
+                        + " Try increasing the timeout value in the preferences.");
             }
             subMon.done();
             

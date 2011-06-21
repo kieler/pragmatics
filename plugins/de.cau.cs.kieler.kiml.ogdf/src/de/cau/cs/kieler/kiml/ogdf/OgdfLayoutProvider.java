@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.ogdf;
 
 import net.ogdf.bin.OgdfServer;
+import net.ogdf.bin.OgdfServerPool;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
@@ -28,9 +29,6 @@ import de.cau.cs.kieler.kiml.ogdf.options.LayoutAlgorithm;
  */
 public class OgdfLayoutProvider extends AbstractLayoutProvider {
 
-    // XXX this static instance should be eliminated to allow concurrent layout
-    private static OgdfServer ogdfServer = new OgdfServer();
-    
     /** the selected layouter. */
     private OgdfLayouter layoutAlgorithm;
 
@@ -100,8 +98,13 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
             throw new IllegalStateException("The OGDF layout algorithm is not configured correctly."
                     + " Please check the parameter in the extension point");
         }
+        
+        // create an OGDF server process instance or use an existing one
+        OgdfServer ogdfServer = OgdfServerPool.INSTANCE.fetch();
         // layout the graph with the selected algorithm
         layoutAlgorithm.doLayout(layoutNode, progressMonitor, ogdfServer);
+        // if everything worked well, release the used process instance
+        OgdfServerPool.INSTANCE.release(ogdfServer);
     }
     
 }

@@ -309,6 +309,12 @@ public class OgdfServer {
         }
         return execFile;
     }
+    
+    /**
+     * Constructor only has package visibility. Use {@link OgdfServerPool} to create instances.
+     */
+    OgdfServer() {
+    }
 
     /** the ogdf server executable. */
     private String executable = null;
@@ -383,7 +389,7 @@ public class OgdfServer {
     /** preference constant for timeout. */
     public static final String PREF_TIMEOUT = "ogdf.timeout";
     /** default timeout for waiting for the server to give some output. */
-    public static final int PROCESS_DEF_TIMEOUT = 5000;
+    public static final int PROCESS_DEF_TIMEOUT = 10000;
     /** minimal timeout for waiting for the server to give some output. */
     public static final int PROCESS_MIN_TIMEOUT = 200;
     
