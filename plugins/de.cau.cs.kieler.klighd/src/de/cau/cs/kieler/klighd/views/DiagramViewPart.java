@@ -84,14 +84,18 @@ public class DiagramViewPart extends ViewPart {
      * 
      * @param model
      *            the model
+     * @return <code>true</code> if the view could be initialized properly, <code>false</code> if no
+     *         viewer is available.
      */
-    public void setInputModel(final Object model) {
+    public Boolean setInputModel(final Object model) {
         ViewContext viewContext = LightDiagramServices.getInstance().getValidViewContext(model);
         if (viewContext != null) {
             setViewer(viewContext.getViewerProvider());
             currentViewer.setInput(viewContext.getModel());
+            return true;
         } else {
             showMessage("No viewer registered for the model.");
+            return false;
         }
     }
 

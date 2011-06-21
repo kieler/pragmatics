@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klighd.effects;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.views.DiagramViewUtil;
 
 /**
@@ -108,13 +109,15 @@ public class KlighdDiagramEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        MonitoredOperation.runInUI(new Runnable() {
-            public void run() {
-                if (!DiagramViewUtil.updateView(id, name, model)) {
-                    DiagramViewUtil.createView(id, name, model);
+        if (LightDiagramServices.getInstance().maybeSupports(model)) {
+            MonitoredOperation.runInUI(new Runnable() {
+                public void run() {
+                    if (!DiagramViewUtil.updateView(id, name, model)) {
+                        DiagramViewUtil.createView(id, name, model);
+                    }
                 }
-            }
-        }, true);
+            }, true);
+        }
     }
     
     

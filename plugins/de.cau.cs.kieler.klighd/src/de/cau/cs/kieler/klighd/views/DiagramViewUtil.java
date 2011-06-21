@@ -121,7 +121,14 @@ public final class DiagramViewUtil {
                         diagramView.setName(name);
                     }
                     if (model != null) {
-                        diagramView.setInputModel(model);
+                        Boolean properlyInitialized = diagramView.setInputModel(model);
+                        
+                        // if the newly created view could not be initialized with a diagram,
+                        // hide it and return nothing.                        
+                        if (!properlyInitialized) {
+                            page.hideView(diagramView);
+                            return null;
+                        }
                     }
                     return diagramView;
                 }
@@ -152,7 +159,7 @@ public final class DiagramViewUtil {
         if (id == null || id.equals("")) {
             return false;
         }
-        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();        
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         IViewReference viewRef = page.findViewReference(PRIMARY_VIEW_ID, id);
         
         if (viewRef != null) {

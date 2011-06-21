@@ -13,27 +13,24 @@
  */
 package de.cau.cs.kieler.klighd;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
-
-import com.ibm.icu.util.RangeValueIterator.Element;
 
 import de.cau.cs.kieler.klighd.transformations.XtendBasedTransformation;
 
@@ -80,7 +77,13 @@ public final class LightDiagramServices {
     /** a mapping between transformation id's and the instances. */
     private Map<String, IModelTransformation<Object, ?>> idModelTransformationMapping =
             new LinkedHashMap<String, IModelTransformation<Object, ?>>();
-
+    /**
+     * a collection of classes of models that are definitely not supported by the available
+     * viewers/transformations, maintained in order to improve the performance.
+     */
+    private Set<Class<?>> knownNotSupportedModels = new HashSet<Class<?>>();
+    
+    
     /**
      * A private constructor to prevent instantiation.
      */
@@ -200,7 +203,7 @@ public final class LightDiagramServices {
                         e1.printStackTrace();
                     }
                     
-                    extFile = extFile.replaceAll("::", "/")+".ext";
+                    extFile = extFile.replaceAll("::", "/") + ".ext";
                     
                     URL extFileURL = null;
                     if (contributingBundle != null) {
@@ -271,7 +274,7 @@ public final class LightDiagramServices {
                                         null);
                                 this.ePackages.put(ePackageId, ePackageInstance);
                             } catch (Exception e) {
-                                String msg = "EPackage "+ePackageId+" could not be loaded";
+                                String msg = "EPackage " + ePackageId + " could not be loaded";
                                 StatusManager.getManager().addLoggedStatus(
                                         new Status(IStatus.ERROR, KLighDPlugin.PLUGIN_ID, msg, e));
                                 continue;
@@ -328,7 +331,13 @@ public final class LightDiagramServices {
      */
     public ViewContext getValidViewContext(final Object model) {
         currentDepth = 0;
-        return getValidViewContextRec(model);
+        ViewContext context = getValidViewContextRec(model);
+        if (context == null) {
+            synchronized (this.knownNotSupportedModels) {
+                this.knownNotSupportedModels.add(model.getClass());
+            }
+        }
+        return context;
     }
 
     private ViewContext getValidViewContextRec(final Object model) {
@@ -345,13 +354,27 @@ public final class LightDiagramServices {
         for (IModelTransformation<Object, ?> transformation : idModelTransformationMapping.values()) {
             if (transformation.isModelSupported(model)) {
                 Object newModel = transformation.transform(model);
-                ViewContext viewContext = getValidViewContext(newModel);
+                ViewContext viewContext = getValidViewContextRec(newModel);
                 if (viewContext != null) {
                     return viewContext;
                 }
             }
         }
         return null;
+    }
+
+    /**
+     * Provides a cheap test whether a model may be visualized with the available
+     * viewers/transformations.
+     * 
+     * @param model The model to be tested.
+     * @return <code>false</code> if the model type is determined to be not supported by the
+     *         available viewers/transformations, true otherwise.
+     */
+    public Boolean maybeSupports(final Object model) {
+        synchronized (this.knownNotSupportedModels) {
+            return !this.knownNotSupportedModels.contains(model.getClass());
+        }
     }
 
 }

@@ -13,15 +13,15 @@
  */
 package de.cau.cs.kieler.klighd.xtext;
 
-import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState;  // SUPPRESS CHECKSTYLE LineLength
-import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState.EventType;  // SUPPRESS CHECKSTYLE LineLength
-import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
-import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect.KLighDCloseDiagramEffect;
-
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
+import de.cau.cs.kieler.core.kivi.AbstractCombination;
+import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState; // SUPPRESS CHECKSTYLE LineLength
+import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState.EventType; // SUPPRESS CHECKSTYLE LineLength
+import de.cau.cs.kieler.klighd.LightDiagramServices;
+import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
+import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect.KLighDCloseDiagramEffect;
 
 /**
  * A combination for initializing/refreshing of KLighD views of Xtext-based models.
@@ -52,12 +52,18 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
             });
         }
     }
-    
-    private void schedule(final EventType eventType, final XtextResource resource) {
+
+    private void schedule(final EventType eventType, final XtextResource resource) {       
+        if (resource.getContents().isEmpty()) {
+            return;
+        }
+        if (!LightDiagramServices.getInstance().maybeSupports(resource.getContents().get(0))) {
+            return;
+        }
         String id = resource.getURI().toPlatformString(false);
         if (eventType.equals(EventType.CLOSED)) {
             this.schedule(new KLighDCloseDiagramEffect(id));
-        } else { 
+        } else {
             this.schedule(new KlighdDiagramEffect(id, resource.getContents().get(0)));
         }
     }
