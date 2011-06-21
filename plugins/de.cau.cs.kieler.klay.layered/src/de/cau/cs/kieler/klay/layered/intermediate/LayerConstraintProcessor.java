@@ -91,7 +91,7 @@ public class LayerConstraintProcessor extends AbstractAlgorithm implements ILayo
             layers.remove(0);
         }
         
-        if (lastLayer.getNodes().isEmpty()) {
+        if (firstLayer != lastLayer && lastLayer.getNodes().isEmpty()) {
             layers.remove(layers.size() - 1);
         }
         
