@@ -22,6 +22,7 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -165,8 +166,7 @@ public abstract class DiagramLayoutManager {
 
                 // second phase: execute layout algorithms
                 @Override
-                protected IStatus
-                        execute(final IProgressMonitor monitor) {
+                protected IStatus execute(final IProgressMonitor monitor) {
                     return layout(new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS));
                 }
 
@@ -194,19 +194,35 @@ public abstract class DiagramLayoutManager {
                     buildLayoutGraph(workbenchPart, editPart, layoutAncestors);
                 }
             }, true);
+            
             // second phase: execute layout algorithms
             final IStatus status = layout(new BasicProgressMonitor(0));
-            MonitoredOperation.runInUI(new Runnable() {
-                // third phase: apply layout with animation
-                public void run() {
-                    int nodeCount = status == null ? 0 : status.getCode();
-                    if (zoom) {
-                        applyAndZoom(animate, cacheLayout, nodeCount);
-                    } else {
-                        applyAnimatedLayout(animate, cacheLayout, nodeCount);
+            
+            if (status.getSeverity() == IStatus.OK) {
+                MonitoredOperation.runInUI(new Runnable() {
+                    // third phase: apply layout with animation
+                    public void run() {
+                        int nodeCount = status == null ? 0 : status.getCode();
+                        if (zoom) {
+                            applyAndZoom(animate, cacheLayout, nodeCount);
+                        } else {
+                            applyAnimatedLayout(animate, cacheLayout, nodeCount);
+                        }
                     }
+                }, false);
+            } else {
+                int handlingStyle = StatusManager.NONE;
+                switch (status.getSeverity()) {
+                case IStatus.ERROR:
+                    handlingStyle = StatusManager.SHOW | StatusManager.LOG;
+                    break;
+                case IStatus.WARNING:
+                case IStatus.INFO:
+                    handlingStyle = StatusManager.LOG;
+                    break;
                 }
-            }, false);
+                StatusManager.getManager().handle(status, handlingStyle);
+            }
         }
     }
 

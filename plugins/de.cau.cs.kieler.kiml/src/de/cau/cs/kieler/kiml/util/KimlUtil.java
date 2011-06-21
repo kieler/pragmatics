@@ -415,7 +415,7 @@ public final class KimlUtil {
     /** minimal size of a node. */
     private static final float MIN_NODE_SIZE = 16.0f;
     /** minimal distance of two ports on each side of a node. */
-    private static final float MIN_PORT_DISTANCE = 4.0f;
+    private static final float MIN_PORT_DISTANCE = 8.0f;
 
     /**
      * Sets the size of a given node, depending on the minimal size, the number of ports
