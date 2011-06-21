@@ -329,6 +329,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // if we have a hypernode without ports, create a default input and output port
         if (newNode.getProperty(LayoutOptions.HYPERNODE) && newNode.getPorts().isEmpty()) {
+            newNode.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
+            
             LPort inputPort = new LPort();
             inputPort.setSide(PortSide.WEST);
             inputPort.setNode(newNode);
