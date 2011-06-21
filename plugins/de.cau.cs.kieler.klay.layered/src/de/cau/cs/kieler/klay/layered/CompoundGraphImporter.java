@@ -81,24 +81,28 @@ public class CompoundGraphImporter {
      * @param graphProperties
      *            graph properties updated during the transformation
      */
-    void recursiveTransformCompoundGraph(final KNode currentNode, final List<LNode> layeredNodes,
-            final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap,
+    void recursiveTransformCompoundGraph(final KNode graph, final KNode currentNode,
+            final List<LNode> layeredNodes, final LayeredGraph layeredGraph,
+            final Map<KGraphElement, LGraphElement> elemMap,
             final EnumSet<GraphProperties> graphProperties) {
-
         if (currentNode.getChildren().isEmpty()) {
             transformLeaveNode(currentNode, layeredNodes, elemMap, graphProperties);
             transformLeaveEdges(currentNode, elemMap);
         } else {
             for (KNode child : currentNode.getChildren()) {
-                recursiveTransformCompoundGraph(child, layeredNodes, layeredGraph, elemMap,
+                recursiveTransformCompoundGraph(graph, child, layeredNodes, layeredGraph, elemMap,
                         graphProperties);
             }
-            transformCompoundNodeWithEdges(currentNode, layeredNodes, layeredGraph, elemMap,
-                    graphProperties);
-            setCompoundDummyEdges(currentNode, elemMap, layeredNodes);
+            if (currentNode != graph) {
+                transformCompoundNodeWithEdges(currentNode, layeredNodes, layeredGraph, elemMap,
+                        graphProperties);
+                setCompoundDummyEdges(currentNode, elemMap, layeredNodes);
+            } else {
+                System.out.println("The layoutNode hast been reached in recursion.");
+            }
         }
     }
-    
+
     /**
      * Transform leave node. Almost the same as transformNode of the KGraphImporter with the
      * difference that ports for the connection of dummy edges for the layering are provided.
@@ -124,6 +128,7 @@ public class CompoundGraphImporter {
 
         LNode newNode = new LNode();
         newNode.setProperty(Properties.ORIGIN, node);
+        newNode.setProperty(Properties.PARENT, node.getParent());
         newNode.getPosition().x = nodeLayout.getXpos();
         newNode.getPosition().y = nodeLayout.getYpos();
         newNode.getSize().x = nodeLayout.getWidth();
@@ -240,7 +245,12 @@ public class CompoundGraphImporter {
     private void transformLeaveEdges(final KNode knode,
             final Map<KGraphElement, LGraphElement> elemMap) {
         for (KEdge edge : knode.getIncomingEdges()) {
-            LEdge newEdge = createLEdgeFromKEdge(edge, elemMap);
+            LEdge newEdge = null;
+            if (elemMap.containsKey(edge)) {
+                newEdge = (LEdge) elemMap.get(edge);
+            } else {
+                newEdge = createLEdgeFromKEdge(edge, elemMap);
+            }
             LNode representative = (LNode) elemMap.get(knode);
             if (edge.getTargetPort() == null) {
                 LPort newPort = createDummyPort(representative, PortSide.WEST);
@@ -251,7 +261,12 @@ public class CompoundGraphImporter {
             }
         }
         for (KEdge edge : knode.getOutgoingEdges()) {
-            LEdge newEdge = createLEdgeFromKEdge(edge, elemMap);
+            LEdge newEdge = null;
+            if (elemMap.containsKey(edge)) {
+                newEdge = (LEdge) elemMap.get(edge);
+            } else {
+                newEdge = createLEdgeFromKEdge(edge, elemMap);
+            }
             LNode representative = (LNode) elemMap.get(knode);
             if (edge.getSourcePort() == null) {
                 LPort newPort = createDummyPort(representative, PortSide.EAST);
@@ -262,7 +277,6 @@ public class CompoundGraphImporter {
             }
         }
     }
-
 
     /**
      * Transforms all edges of a compound node and replaces the node and its ports by upper and
@@ -497,7 +511,8 @@ public class CompoundGraphImporter {
         for (LNode lNode : layeredNodes) {
             NodeType nodeType = lNode.getProperty(Properties.NODE_TYPE);
             switch (nodeType) {
-            // If the node is a compound dummy node at the upper line of the compound node, add edge
+            // If the node is a compound dummy node at the upper line of the compound node, add
+            // edge
             // to every child node
             case UPPER_COMPOUND_BORDER:
             case UPPER_COMPOUND_PORT:
@@ -515,8 +530,10 @@ public class CompoundGraphImporter {
                         dummyEdge.setTarget(targetPort);
                         targetPort.getIncomingEdges().add(dummyEdge);
                     }
+                    break;
                 }
-                // If the node is a compound dummy node at the lower line of the compound node, add
+                // If the node is a compound dummy node at the lower line of the compound node,
+                // add
                 // edge from every child node to this node
             case LOWER_COMPOUND_BORDER:
             case LOWER_COMPOUND_PORT:
@@ -534,10 +551,12 @@ public class CompoundGraphImporter {
                         dummyEdge.setTarget(targetPort);
                         targetPort.getIncomingEdges().add(dummyEdge);
                     }
+                    break;
                 }
                 // If the node is no compound dummy node, nothing is to be done.
             default:
                 break;
+
             }
         }
     }
@@ -611,6 +630,7 @@ public class CompoundGraphImporter {
      *            the side of the node, on which the port is to be located.
      */
     private LPort createDummyPort(final LNode node, final PortSide side) {
+
         LPort dummyPort = new LPort();
         dummyPort.setSide(side);
         dummyPort.setNode(node);
