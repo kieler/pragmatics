@@ -108,8 +108,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         if (isCompound) {
             CompoundGraphImporter compoundImporter = new CompoundGraphImporter();
             List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
-            compoundImporter.recursiveTransformCompoundGraph(graph, layeredNodes, layeredGraph, elemMap,
-                    graphProperties);
+            compoundImporter.recursiveTransformCompoundGraph(graph, graph, layeredNodes,
+                    layeredGraph, elemMap, graphProperties);
         } else {
             // transform everything
             transformNodesAndPorts(graph, layeredGraph, elemMap, graphProperties);
@@ -534,7 +534,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         }
     }
 
-   
     // /////////////////////////////////////////////////////////////////////////////
     // Apply Layout Results
 
