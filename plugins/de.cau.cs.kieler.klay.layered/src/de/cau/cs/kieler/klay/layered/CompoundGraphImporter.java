@@ -25,6 +25,7 @@ import org.eclipse.emf.common.util.EList;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 //import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
@@ -33,16 +34,22 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 //import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 //import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 //import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+//import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 //import de.cau.cs.kieler.kiml.options.EdgeRouting;
 //import de.cau.cs.kieler.kiml.options.LayoutOptions;
 //import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 //import de.cau.cs.kieler.kiml.util.KimlUtil;
 //import de.cau.cs.kieler.klay.layered.graph.Insets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 //import de.cau.cs.kieler.klay.layered.graph.LLabel;
+import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
@@ -56,6 +63,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * Manages the transformation of Compound KGraphs to LayeredGraphs.
  * 
  * @author ima
+ * @author cds
  */
 public class CompoundGraphImporter {
     /**
@@ -79,10 +87,7 @@ public class CompoundGraphImporter {
 
         if (currentNode.getChildren().isEmpty()) {
             transformLeaveNode(currentNode, layeredNodes, elemMap, graphProperties);
-            // TODO: Write transformNode-Method for compound Importer (see method stub below) or use
-            // it from KGraphImporter. Check in latter case, if there is no conflict resulting from
-            // the use of transformNode (which is not designed for recursive import). Take care of
-            // the incoming and outgoing edges of leave nodes additionally.
+            transformLeaveEdges(currentNode, elemMap);
         } else {
             for (KNode child : currentNode.getChildren()) {
                 recursiveTransformCompoundGraph(child, layeredNodes, layeredGraph, elemMap,
@@ -93,11 +98,12 @@ public class CompoundGraphImporter {
             setCompoundDummyEdges(currentNode, elemMap, layeredNodes);
         }
     }
-
+    
     /**
-     * Transform leave node.
+     * Transform leave node. Almost the same as transformNode of the KGraphImporter with the
+     * difference that ports for the connection of dummy edges for the layering are provided.
      * 
-     * @param currentNode
+     * @param node
      *            Node to be transformed.
      * @param layeredNodes
      *            List to add representative to.
@@ -107,15 +113,156 @@ public class CompoundGraphImporter {
      * @param graphProperties
      *            graph properties updated during the transformation.
      */
-    private void transformLeaveNode(final KNode currentNode, final List<LNode> layeredNodes,
+    private void transformLeaveNode(final KNode node, final List<LNode> layeredNodes,
             final Map<KGraphElement, LGraphElement> elemMap,
             final EnumSet<GraphProperties> graphProperties) {
-        // TODO Auto-generated method stub
-        // Think of the fact, that any leave node has to be given an eastern and a western port, to
-        // be used for the layering dummy edges, will be removed after layering, set Property
-        // LEAVE_DUMMY_PORT true.
+        // add a new node to the layered graph, copying its size
+        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+        if (!nodeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
+            KimlUtil.resizeNode(node);
+        }
 
+        LNode newNode = new LNode();
+        newNode.setProperty(Properties.ORIGIN, node);
+        newNode.getPosition().x = nodeLayout.getXpos();
+        newNode.getPosition().y = nodeLayout.getYpos();
+        newNode.getSize().x = nodeLayout.getWidth();
+        newNode.getSize().y = nodeLayout.getHeight();
+        layeredNodes.add(newNode);
+
+        elemMap.put(node, newNode);
+
+        // port constraints cannot be undefined
+        PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+        if (portConstraints == PortConstraints.UNDEFINED) {
+            portConstraints = PortConstraints.FREE;
+        }
+
+        // get a sorted list of the node's ports; if there are any with non-free port
+        // constraints, set the appropriate graph property
+        KPort[] sortedPorts = KimlUtil.getSortedPorts(node);
+        if (sortedPorts.length > 0 && portConstraints != PortConstraints.FREE) {
+            graphProperties.add(GraphProperties.NON_FREE_PORTS);
+        }
+
+        // transform the ports
+        for (KPort kport : sortedPorts) {
+            KShapeLayout portLayout = kport.getData(KShapeLayout.class);
+
+            // determine the port type
+            int inEdges = 0, outEdges = 0;
+            for (KEdge edge : kport.getEdges()) {
+                if (edge.getSourcePort() == kport) {
+                    outEdges++;
+                }
+                if (edge.getTargetPort() == kport) {
+                    inEdges++;
+                }
+            }
+
+            // create layered port, copying its position
+            LPort newPort = new LPort();
+            newPort.setProperty(Properties.ORIGIN, kport);
+            newPort.getSize().x = portLayout.getWidth();
+            newPort.getSize().y = portLayout.getHeight();
+            newPort.getPosition().x = portLayout.getXpos() + portLayout.getWidth() / 2;
+            newPort.getPosition().y = portLayout.getYpos() + portLayout.getHeight() / 2;
+            newPort.setNode(newNode);
+
+            elemMap.put(kport, newPort);
+
+            // create layered label, if any
+            KLabel klabel = kport.getLabel();
+            if (klabel != null) {
+                KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
+
+                LLabel newLabel = new LLabel(klabel.getText());
+                newLabel.setProperty(Properties.ORIGIN, klabel);
+                newLabel.getSize().x = labelLayout.getWidth();
+                newLabel.getSize().y = labelLayout.getHeight();
+                newLabel.getPosition().x = labelLayout.getXpos() - portLayout.getWidth() / 2;
+                newLabel.getPosition().y = labelLayout.getYpos() - portLayout.getHeight() / 2;
+                newPort.setLabel(newLabel);
+            }
+
+            // calculate port side
+            PortSide newPortSide = KimlUtil.calcPortSide(kport);
+            newPort.setSide(newPortSide);
+
+            if (newPortSide == PortSide.NORTH || newPortSide == PortSide.SOUTH) {
+                graphProperties.add(GraphProperties.NORTH_SOUTH_PORTS);
+            }
+        }
+
+        // add the node's label, if any
+        KLabel klabel = node.getLabel();
+        if (klabel != null) {
+            KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
+
+            LLabel newLabel = new LLabel(klabel.getText());
+            newLabel.setProperty(Properties.ORIGIN, node);
+            newLabel.getSize().x = labelLayout.getWidth();
+            newLabel.getSize().y = labelLayout.getHeight();
+            newLabel.getPosition().x = labelLayout.getXpos();
+            newLabel.getPosition().y = labelLayout.getYpos();
+            newNode.setLabel(newLabel);
+        }
+
+        // set properties of the new node
+        newNode.copyProperties(nodeLayout);
+
+        // // if we have a hypernode without ports, create a default input and output port
+        // if (newNode.getProperty(LayoutOptions.HYPERNODE) && newNode.getPorts().isEmpty()) {
+        // LPort inputPort = new LPort();
+        // inputPort.setSide(PortSide.WEST);
+        // inputPort.setNode(newNode);
+        //
+        // LPort outputPort = new LPort();
+        // outputPort.setSide(PortSide.EAST);
+        // outputPort.setNode(newNode);
+        // }
+        // Add ports to connect dummy edges for the layering phase.
+        LPort dummyPortWest = createDummyPort(newNode, PortSide.WEST);
+        dummyPortWest.setProperty(Properties.LEAVE_DUMMY_PORT, true);
+        LPort dummyPortEast = createDummyPort(newNode, PortSide.EAST);
+        dummyPortEast.setProperty(Properties.LEAVE_DUMMY_PORT, true);
     }
+
+    /**
+     * Transforms the Edges of a leave node.
+     * 
+     * @param knode
+     *            Node whose edges are to be transformed.
+     * @param elemMap
+     *            Map to store pairs of the original elements of the KGraph and their
+     *            representatives in the LGraph.
+     */
+    private void transformLeaveEdges(final KNode knode,
+            final Map<KGraphElement, LGraphElement> elemMap) {
+        for (KEdge edge : knode.getIncomingEdges()) {
+            LEdge newEdge = createLEdgeFromKEdge(edge, elemMap);
+            LNode representative = (LNode) elemMap.get(knode);
+            if (edge.getTargetPort() == null) {
+                LPort newPort = createDummyPort(representative, PortSide.WEST);
+                newEdge.setTarget(newPort);
+            } else {
+                LPort port = (LPort) elemMap.get(edge.getTargetPort());
+                newEdge.setTarget(port);
+            }
+        }
+        for (KEdge edge : knode.getOutgoingEdges()) {
+            LEdge newEdge = createLEdgeFromKEdge(edge, elemMap);
+            LNode representative = (LNode) elemMap.get(knode);
+            if (edge.getSourcePort() == null) {
+                LPort newPort = createDummyPort(representative, PortSide.EAST);
+                newEdge.setTarget(newPort);
+            } else {
+                LPort port = (LPort) elemMap.get(edge.getSourcePort());
+                newEdge.setSource(port);
+            }
+        }
+    }
+
 
     /**
      * Transforms all edges of a compound node and replaces the node and its ports by upper and
@@ -172,7 +319,6 @@ public class CompoundGraphImporter {
                 LEdge lEdge = null;
                 if (!elemMap.containsKey(kEdge)) {
                     lEdge = createLEdgeFromKEdge(kEdge, elemMap);
-                    elemMap.put(kEdge, lEdge);
                 } else {
                     lEdge = (LEdge) elemMap.get(kEdge);
                 }
@@ -249,14 +395,13 @@ public class CompoundGraphImporter {
         EList<KEdge> outEdgesList = node.getOutgoingEdges();
         if (!outEdgesList.isEmpty()) {
             for (KEdge kEdge : outEdgesList) {
-                // variable denoting wether the edge points towards a descendant of node or not
+                // variable denoting whether the edge points towards a descendant of node or not
                 boolean isInnerEdge = isDescendantNotSelf(node, kEdge.getSource());
                 // Create a corresponding LEdge for each KEdge in the List that has no
                 // representative yet.
                 LEdge lEdge = null;
                 if (!elemMap.containsKey(kEdge)) {
                     lEdge = createLEdgeFromKEdge(kEdge, elemMap);
-                    elemMap.put(kEdge, lEdge);
                 } else {
                     lEdge = (LEdge) elemMap.get(kEdge);
                 }
@@ -398,19 +543,41 @@ public class CompoundGraphImporter {
     }
 
     /**
-     * Returns an LEdge as a representative for the given KEdge.
+     * Returns an LEdge as a representative for the given KEdge. Nodes and Ports for source and
+     * target are not set. They are to be handled by calling methods.
      * 
-     * @param kEdge
+     * @param kedge
      *            KEdge for which the LEdge is to be created.
      * @param elemMap
      *            the element map that maps the original {@code KGraph} elements to the transformed
      *            {@code LGraph} elements.
      * @return returns created LEdge that represents the given KEdge.
      */
-    private LEdge createLEdgeFromKEdge(final KEdge kEdge,
+    private LEdge createLEdgeFromKEdge(final KEdge kedge,
             final Map<KGraphElement, LGraphElement> elemMap) {
-        // TODO Auto-generated method stub
-        return null;
+        KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+
+        // create the representative edge
+        LEdge newEdge = new LEdge();
+        newEdge.setProperty(Properties.ORIGIN, kedge);
+
+        // transform the edge's labels
+        for (KLabel klabel : kedge.getLabels()) {
+            KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
+            LLabel newLabel = new LLabel(klabel.getText());
+            newLabel.getPosition().x = labelLayout.getXpos();
+            newLabel.getPosition().y = labelLayout.getYpos();
+            newLabel.getSize().x = labelLayout.getWidth();
+            newLabel.getSize().y = labelLayout.getHeight();
+            newLabel.setProperty(Properties.ORIGIN, klabel);
+            newEdge.getLabels().add(newLabel);
+        }
+
+        // copy the edge properties
+        newEdge.copyProperties(edgeLayout);
+        elemMap.put(kedge, newEdge);
+
+        return newEdge;
     }
 
     /**
