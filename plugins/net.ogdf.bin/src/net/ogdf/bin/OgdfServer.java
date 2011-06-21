@@ -13,8 +13,10 @@
 package net.ogdf.bin;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -256,13 +258,17 @@ public class OgdfServer {
     public static final String EXECUTABLE_PATH_SOLARIS = EXECUTABLE_PATH_BIN
             + "/solaris/ogdf-server";
 
+    /** the size for file transfer buffers. */
+    public static final int BUFFER_SIZE = 512;
+    
     /**
-     * Finds the ogdf server executable.
+     * Resolve the OGDF server executable.
      * 
+     * @param an executable file
      * @throws IOException
      *             when the executable could not be located
      */
-    private static String findExecutable() throws IOException {
+    private static File resolveExecutable() throws IOException {
         Bundle bundle = OgdfPlugin.getDefault().getBundle();
         IPath path = null;
         OS os = detectOS();
@@ -289,13 +295,30 @@ public class OgdfServer {
             path = new Path(EXECUTABLE_PATH_SOLARIS);
             break;
         default:
-            throw new RuntimeException("Unsupported operating system.");
+            throw new OgdfServerException("Unsupported operating system.");
         }
         URL url = FileLocator.find(bundle, path, null);
         if (url == null) {
-            throw new RuntimeException("OGDF binary could not be located.");
+            throw new OgdfServerException("OGDF binary could not be located.");
         }
-        String execFile = FileLocator.resolve(url).getFile();
+        File execFile = new File(FileLocator.resolve(url).getFile());
+        
+        // if the plug-in is in a jar archive, create a temporary file to execute
+        if (!execFile.exists()) {
+            execFile = File.createTempFile("ogdf-server", ".exe");
+            OutputStream dest = new FileOutputStream(execFile);
+            InputStream source = url.openStream();
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int count;
+            do {
+                count = source.read(buffer);
+                if (count > 0) {
+                    dest.write(buffer, 0, count);
+                }
+            } while (count > 0);
+            dest.close();
+        }
+        
         // set the file permissions if necessary
         switch (os) {
         case LINUX32:
@@ -303,8 +326,13 @@ public class OgdfServer {
         case OSX32:
         case OSX64:
         case SOLARIS:
-            File executableFile = new File(execFile);
-            executableFile.setExecutable(true);
+            if (!execFile.canExecute()) {
+                boolean success = execFile.setExecutable(true);
+                if (!success) {
+                    throw new OgdfServerException("Failed to set executable permission for "
+                            + execFile.getPath());
+                }
+            }
             break;
         }
         return execFile;
@@ -332,11 +360,11 @@ public class OgdfServer {
         if (process == null) {
             try {
                 if (executable == null) {
-                    executable = findExecutable();
+                    executable = resolveExecutable().getPath();
                 }
                 process = Runtime.getRuntime().exec(new String[] { executable, inputFormat });
             } catch (IOException exception) {
-                throw new RuntimeException("Failed to start ogdf server process.", exception);
+                throw new OgdfServerException("Failed to start ogdf server process.", exception);
             }
         }
         return process;
@@ -453,7 +481,7 @@ public class OgdfServer {
             return true;
         } catch (IOException exception) {
             endProcess();
-            throw new RuntimeException("Unable to read ogdf server output.", exception);
+            throw new OgdfServerException("Unable to read ogdf server output.", exception);
         }
     }
     

@@ -10,3 +10,5 @@ Bundle-Activator: net.ogdf.bin.OgdfPlugin
 Export-Package: net.ogdf.bin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-ClassPath: .
+Eclipse-BundleShape: dir
