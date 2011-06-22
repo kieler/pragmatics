@@ -235,6 +235,19 @@ public class OgdfServer {
         }
         return OS.UNKNOWN;
     }
+    
+    /**
+     * Constructor only has package visibility. Use {@link OgdfServerPool} to create instances.
+     */
+    OgdfServer() {
+    }
+
+    /** the ogdf server executable. */
+    private String executable;
+    /** the ogdf server process. */
+    private Process process;
+    /** a temporary file that should be removed after closing the process. */
+    private File tempFile;
 
     /** the path for the executable bin directory. */
     public static final String EXECUTABLE_PATH_BIN = "/ogdf-server/bin";
@@ -268,7 +281,7 @@ public class OgdfServer {
      * @throws IOException
      *             when the executable could not be located
      */
-    private static File resolveExecutable() throws IOException {
+    private File resolveExecutable() throws IOException {
         Bundle bundle = OgdfPlugin.getDefault().getBundle();
         IPath path = null;
         OS os = detectOS();
@@ -317,6 +330,7 @@ public class OgdfServer {
                 }
             } while (count > 0);
             dest.close();
+            tempFile = execFile;
         }
         
         // set the file permissions if necessary
@@ -337,17 +351,6 @@ public class OgdfServer {
         }
         return execFile;
     }
-    
-    /**
-     * Constructor only has package visibility. Use {@link OgdfServerPool} to create instances.
-     */
-    OgdfServer() {
-    }
-
-    /** the ogdf server executable. */
-    private String executable = null;
-    /** the ogdf server process. */
-    private Process process = null;
 
     /**
      * Starts a new ogdf server process or returns an existing one.
@@ -384,6 +387,10 @@ public class OgdfServer {
             }
             process.destroy();
             process = null;
+        }
+        if (tempFile != null) {
+            tempFile.delete();
+            tempFile = null;
         }
     }
 
