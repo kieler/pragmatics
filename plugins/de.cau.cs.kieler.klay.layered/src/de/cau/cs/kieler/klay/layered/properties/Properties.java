@@ -145,7 +145,10 @@ public final class Properties {
     public static final float DEF_SPACING = 20.0f;
     /** minimal spacing between objects. */
     public static final Property<Float> OBJ_SPACING = new Property<Float>(LayoutOptions.SPACING,
-            DEF_SPACING);
+            DEF_SPACING, 0.0f);
+    /** spacing to the border of the drawing. */
+    public static final Property<Float> BORDER_SPACING = new Property<Float>(
+            LayoutOptions.BORDER_SPACING, DEF_SPACING, 0.0f);
 
     /** option identifier for edge spacing factor. */
     public static final String EDGE_SPACING_FACTOR_ID = 
@@ -162,6 +165,7 @@ public final class Properties {
 
     /** default value for aspect ratio. */
     public static final float DEF_ASPECT_RATIO = 1.6f;
+    /** the aspect ratio for packing connected components. */
     public static final Property<Float> ASPECT_RATIO = new Property<Float>(
             LayoutOptions.ASPECT_RATIO, DEF_ASPECT_RATIO, 0.0f);
 

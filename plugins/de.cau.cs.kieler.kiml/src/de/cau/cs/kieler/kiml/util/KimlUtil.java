@@ -193,21 +193,40 @@ public final class KimlUtil {
      * its corresponding node.
      * 
      * @param port port to analyze
+     * @param direction the overall layout direction
      * @return port placement
      */
-    public static PortSide calcPortSide(final KPort port) {
+    public static PortSide calcPortSide(final KPort port, final Direction direction) {
         KShapeLayout portLayout = port.getData(KShapeLayout.class);
         PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
         if (portSide != PortSide.UNDEFINED) {
             return portSide;
         }
         
-        // determine port placement from port position
+        // check direction-dependent criterion
         KShapeLayout nodeLayout = port.getNode().getData(KShapeLayout.class);
-        float widthPercent = (portLayout.getXpos() + portLayout.getWidth() / 2)
-                / nodeLayout.getWidth();
-        float heightPercent = (portLayout.getYpos() + portLayout.getHeight() / 2)
-                / nodeLayout.getHeight();
+        float xpos = portLayout.getXpos(), ypos = portLayout.getYpos();
+        switch (direction) {
+        case LEFT:
+        case RIGHT:
+            if (xpos < 0) {
+                return PortSide.WEST;
+            } else if (xpos > nodeLayout.getWidth()) {
+                return PortSide.EAST;
+            }
+            break;
+        case UP:
+        case DOWN:
+            if (ypos < 0) {
+                return PortSide.NORTH;
+            } else if (ypos > nodeLayout.getHeight()) {
+                return PortSide.SOUTH;
+            }
+        }
+        
+        // check general criterion
+        float widthPercent = (xpos + portLayout.getWidth() / 2) / nodeLayout.getWidth();
+        float heightPercent = (ypos + portLayout.getHeight() / 2) / nodeLayout.getHeight();
         if (widthPercent + heightPercent <= 1
                 && widthPercent - heightPercent <= 0) {
             // port is on the left
@@ -318,14 +337,14 @@ public final class KimlUtil {
      * sides and port ranks.
      * 
      * @param node node for which port data shall be created
-     * @param layoutDirection layout direction
+     * @param direction layout direction
      */
-    public static void fillPortInfo(final KNode node, final Direction layoutDirection) {
+    public static void fillPortInfo(final KNode node, final Direction direction) {
         KGraphData layoutData = node.getData(KShapeLayout.class);
         PortConstraints portConstraints = layoutData.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         if (portConstraints == PortConstraints.FREE) {
             // set port sides according to layout direction
-            switch (layoutDirection) {
+            switch (direction) {
             case DOWN:
                 for (KPort port : node.getPorts()) {
                     port.getData(KShapeLayout.class).setProperty(
@@ -365,7 +384,7 @@ public final class KimlUtil {
                     ranksUndefined = true;
                 }
                 if (portLayout.getProperty(LayoutOptions.PORT_SIDE) == PortSide.UNDEFINED) {
-                    portLayout.setProperty(LayoutOptions.PORT_SIDE, calcPortSide(port));
+                    portLayout.setProperty(LayoutOptions.PORT_SIDE, calcPortSide(port, direction));
                 }
             }
             if (ranksUndefined) {

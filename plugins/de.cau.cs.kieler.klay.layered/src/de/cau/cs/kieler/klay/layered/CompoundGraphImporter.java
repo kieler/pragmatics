@@ -40,6 +40,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 //import de.cau.cs.kieler.kiml.options.EdgeRouting;
 //import de.cau.cs.kieler.kiml.options.LayoutOptions;
 //import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -86,7 +87,8 @@ public class CompoundGraphImporter {
             final Map<KGraphElement, LGraphElement> elemMap,
             final EnumSet<GraphProperties> graphProperties) {
         if (currentNode.getChildren().isEmpty()) {
-            transformLeaveNode(currentNode, layeredNodes, elemMap, graphProperties);
+            transformLeaveNode(currentNode, layeredNodes, elemMap, graphProperties,
+                    layeredGraph.getProperty(LayoutOptions.DIRECTION));
             transformLeaveEdges(currentNode, elemMap);
         } else {
             for (KNode child : currentNode.getChildren()) {
@@ -116,10 +118,13 @@ public class CompoundGraphImporter {
      *            {@code LGraph} elements.
      * @param graphProperties
      *            graph properties updated during the transformation.
+     * @param direction
+     *            overall layout direction
      */
     private void transformLeaveNode(final KNode node, final List<LNode> layeredNodes,
             final Map<KGraphElement, LGraphElement> elemMap,
-            final EnumSet<GraphProperties> graphProperties) {
+            final EnumSet<GraphProperties> graphProperties,
+            final Direction direction) {
         // add a new node to the layered graph, copying its size
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         if (!nodeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
@@ -191,7 +196,7 @@ public class CompoundGraphImporter {
             }
 
             // calculate port side
-            PortSide newPortSide = KimlUtil.calcPortSide(kport);
+            PortSide newPortSide = KimlUtil.calcPortSide(kport, direction);
             newPort.setSide(newPortSide);
 
             if (newPortSide == PortSide.NORTH || newPortSide == PortSide.SOUTH) {

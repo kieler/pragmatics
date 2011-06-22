@@ -176,7 +176,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         // Get some properties of the graph
         KVector size = graph.getSize();
         Insets.Double insets = graph.getInsets();
-        float borderSpacing = graph.getProperty(LayoutOptions.BORDER_SPACING);
+        float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
         KVector offset = graph.getOffset();
         
         // The exact coordinates depend on the port's side...

@@ -210,7 +210,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
         PortConstraints constraints = layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         KVector graphSize = layeredGraph.getSize();
         Insets.Double graphInsets = layeredGraph.getInsets();
-        float borderSpacing = layeredGraph.getProperty(LayoutOptions.BORDER_SPACING);
+        float borderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
         double nodeWidth = graphSize.x + graphInsets.left + graphInsets.right + 2 * borderSpacing;
         
         for (LNode dummy : northSouthDummies) {
@@ -458,7 +458,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
         
         // Get some geometric values from the graph
         Insets.Double insets = graph.getInsets();
-        float borderSpacing = graph.getProperty(LayoutOptions.BORDER_SPACING);
+        float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
         KVector offset = graph.getOffset();
         double graphHeight = graph.getSize().y + insets.top + insets.bottom + (2 * borderSpacing);
         
@@ -522,7 +522,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
             final boolean horizontal, final boolean vertical) {
         
         Insets.Double insets = graph.getInsets();
-        float borderSpacing = graph.getProperty(LayoutOptions.BORDER_SPACING);
+        float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
         KVector offset = graph.getOffset();
         
         KVector pos = node.getPosition();

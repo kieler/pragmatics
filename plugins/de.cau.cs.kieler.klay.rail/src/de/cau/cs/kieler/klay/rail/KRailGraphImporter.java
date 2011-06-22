@@ -108,7 +108,8 @@ public class KRailGraphImporter implements IGraphImporter<KNode> {
                 newPort.setNode(newNode);
                 elemMap.put(kport, newPort);
                 if (portConstraints != PortConstraints.UNDEFINED) {
-                    newPort.setSide(KimlUtil.calcPortSide(kport));
+                    newPort.setSide(KimlUtil.calcPortSide(kport,
+                            layeredGraph.getProperty(LayoutOptions.DIRECTION)));
                 }
             }
             if (portConstraints != PortConstraints.UNDEFINED) {

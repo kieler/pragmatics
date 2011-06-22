@@ -33,6 +33,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -73,16 +74,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         KShapeLayout sourceShapeLayout = graph.getData(KShapeLayout.class);
 
-        // copy the properties of the KGraph to the layered graph
+        // copy the properties of the KGraph to the layered graph and check values
         layeredGraph.copyProperties(sourceShapeLayout);
-        layeredGraph.checkProperties(Properties.OBJ_SPACING, Properties.THOROUGHNESS,
-                Properties.ASPECT_RATIO);
-
-        float borderSpacing = layeredGraph.getProperty(LayoutOptions.BORDER_SPACING);
-        if (borderSpacing < 0) {
-            borderSpacing = Properties.DEF_SPACING;
+        layeredGraph.checkProperties(Properties.OBJ_SPACING, Properties.BORDER_SPACING,
+                Properties.THOROUGHNESS, Properties.ASPECT_RATIO);
+        if (layeredGraph.getProperty(LayoutOptions.DIRECTION) == Direction.UNDEFINED) {
+            layeredGraph.setProperty(LayoutOptions.DIRECTION, Direction.RIGHT);
         }
-        layeredGraph.setProperty(LayoutOptions.BORDER_SPACING, borderSpacing);
 
         // copy the insets to the layered graph
         KInsets kinsets = sourceShapeLayout.getInsets();
@@ -158,15 +156,16 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         }
 
         // Transform the external ports
+        Direction direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
         if (graphProperties.contains(GraphProperties.EXTERNAL_PORTS)) {
             for (KPort kport : ports) {
-                transformExternalPort(kport, layeredNodes, graph, layoutNodeSize, elemMap);
+                transformExternalPort(kport, layeredNodes, graph, layoutNodeSize, elemMap, direction);
             }
         }
 
         // Now transform the node's children
         for (KNode child : graph.getChildren()) {
-            transformNode(child, layeredNodes, elemMap, graphProperties);
+            transformNode(child, layeredNodes, elemMap, graphProperties, direction);
         }
 
     }
@@ -185,10 +184,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      * @param elemMap
      *            the element map that maps the original {@code KGraph} elements to the transformed
      *            {@code LGraph} elements.
+     * @param direction
+     *            the overall layout direction
      */
     private void transformExternalPort(final KPort kport, final List<LNode> layeredNodes,
             final KNode graph, final KVector layoutNodeSize,
-            final Map<KGraphElement, LGraphElement> elemMap) {
+            final Map<KGraphElement, LGraphElement> elemMap,
+            final Direction direction) {
 
         KShapeLayout kportLayout = kport.getData(KShapeLayout.class);
 
@@ -210,7 +212,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         // Create dummy
         LNode dummy = createExternalPortDummy(kport,
                 kportLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS),
-                KimlUtil.calcPortSide(kport), inEdges - outEdges, layoutNodeSize, kportPosition);
+                KimlUtil.calcPortSide(kport, direction), inEdges - outEdges,
+                layoutNodeSize, kportPosition);
         layeredNodes.add(dummy);
         elemMap.put(kport, dummy);
     }
@@ -227,10 +230,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      *            {@code LGraph} elements.
      * @param graphProperties
      *            graph properties updated during the transformation.
+     * @param direction
+     *            the overall layout direction
      */
     private void transformNode(final KNode node, final List<LNode> layeredNodes,
             final Map<KGraphElement, LGraphElement> elemMap,
-            final EnumSet<GraphProperties> graphProperties) {
+            final EnumSet<GraphProperties> graphProperties,
+            final Direction direction) {
 
         // add a new node to the layered graph, copying its size
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
@@ -302,7 +308,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             }
 
             // calculate port side
-            PortSide newPortSide = KimlUtil.calcPortSide(kport);
+            PortSide newPortSide = KimlUtil.calcPortSide(kport, direction);
             newPort.setSide(newPortSide);
 
             if (newPortSide == PortSide.NORTH || newPortSide == PortSide.SOUTH) {
@@ -545,7 +551,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // determine the border spacing, which influences the offset
         KShapeLayout parentLayout = target.getData(KShapeLayout.class);
-        float borderSpacing = layeredGraph.getProperty(LayoutOptions.BORDER_SPACING);
+        float borderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
 
         // calculate the offset
         KVector offset = new KVector(borderSpacing + layeredGraph.getOffset().x, borderSpacing
