@@ -33,8 +33,9 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 //import de.cau.cs.kieler.core.math.KVectorChain;
 //import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 //import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
-//import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
+import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+//import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 //import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 //import de.cau.cs.kieler.kiml.options.EdgeRouting;
@@ -100,7 +101,7 @@ public class CompoundGraphImporter {
                         graphProperties);
                 setCompoundDummyEdges(currentNode, elemMap, layeredNodes);
             } else {
-                System.out.println("The layoutNode hast been reached in recursion.");
+                System.out.println("The layoutNode has been reached in recursion.");
             }
         }
     }
@@ -250,6 +251,7 @@ public class CompoundGraphImporter {
     private void transformLeaveEdges(final KNode knode,
             final Map<KGraphElement, LGraphElement> elemMap) {
         for (KEdge edge : knode.getIncomingEdges()) {
+            KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
             LEdge newEdge = null;
             if (elemMap.containsKey(edge)) {
                 newEdge = (LEdge) elemMap.get(edge);
@@ -259,6 +261,9 @@ public class CompoundGraphImporter {
             LNode representative = (LNode) elemMap.get(knode);
             if (edge.getTargetPort() == null) {
                 LPort newPort = createDummyPort(representative, PortSide.WEST);
+                KPoint targetPoint = edgeLayout.getTargetPoint();
+                newPort.getPosition().x = targetPoint.getX() - representative.getPosition().x;
+                newPort.getPosition().y = targetPoint.getY() - representative.getPosition().y;
                 newEdge.setTarget(newPort);
             } else {
                 LPort port = (LPort) elemMap.get(edge.getTargetPort());
@@ -266,6 +271,7 @@ public class CompoundGraphImporter {
             }
         }
         for (KEdge edge : knode.getOutgoingEdges()) {
+            KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
             LEdge newEdge = null;
             if (elemMap.containsKey(edge)) {
                 newEdge = (LEdge) elemMap.get(edge);
@@ -275,7 +281,10 @@ public class CompoundGraphImporter {
             LNode representative = (LNode) elemMap.get(knode);
             if (edge.getSourcePort() == null) {
                 LPort newPort = createDummyPort(representative, PortSide.EAST);
-                newEdge.setTarget(newPort);
+                KPoint sourcePoint = edgeLayout.getSourcePoint();
+                newPort.getPosition().x = sourcePoint.getX() - representative.getPosition().x;
+                newPort.getPosition().y = sourcePoint.getY() - representative.getPosition().y;
+                newEdge.setSource(newPort);
             } else {
                 LPort port = (LPort) elemMap.get(edge.getSourcePort());
                 newEdge.setSource(port);
@@ -639,7 +648,6 @@ public class CompoundGraphImporter {
         LPort dummyPort = new LPort();
         dummyPort.setSide(side);
         dummyPort.setNode(node);
-        node.getPorts().add(dummyPort);
         return dummyPort;
     }
 
