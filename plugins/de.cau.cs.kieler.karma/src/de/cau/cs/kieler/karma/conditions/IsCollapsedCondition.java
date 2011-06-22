@@ -28,14 +28,16 @@ import de.cau.cs.kieler.core.ui.util.EditorUtils;
 import de.cau.cs.kieler.karma.ICustomCondition;
 
 /**
- * Condition for evaluating whether a modelelement is in a collapsed state in the opened diagram. 
+ * Condition for evaluating whether a model element is in a collapsed state in the opened diagram. 
  * 
  * @author ckru
- *
  */
 public class IsCollapsedCondition extends ICustomCondition<EObject> {
     
-    public boolean evaluate(EObject object) {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean evaluate(final EObject object) {
         IEditorPart editorPart = EditorUtils.getLastActiveEditor();
         if ((editorPart != null) && (editorPart instanceof DiagramDocumentEditor)) {
             DiagramDocumentEditor dde = (DiagramDocumentEditor) editorPart;
@@ -56,12 +58,15 @@ public class IsCollapsedCondition extends ICustomCondition<EObject> {
     private boolean checkCollapsed(final EditPart part) {
         if (part instanceof TopGraphicEditPart) {
             TopGraphicEditPart ep = (TopGraphicEditPart) part;
+            @SuppressWarnings("unchecked")
             List<EditPart> resizeableCompartments = ep.getResizableCompartments();
             for (EditPart compartment : resizeableCompartments) {
                 if (compartment instanceof IResizableCompartmentEditPart) {
-                    IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
-                    if(resizeComp.getFigure() instanceof ResizableCompartmentFigure) {
-                        ResizableCompartmentFigure f = (ResizableCompartmentFigure) resizeComp.getFigure();
+                    IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart)
+                            compartment;
+                    if (resizeComp.getFigure() instanceof ResizableCompartmentFigure) {
+                        ResizableCompartmentFigure f = (ResizableCompartmentFigure)
+                                resizeComp.getFigure();
                         boolean expanded = f.isExpanded();
                         if (expanded) {
                             return false;

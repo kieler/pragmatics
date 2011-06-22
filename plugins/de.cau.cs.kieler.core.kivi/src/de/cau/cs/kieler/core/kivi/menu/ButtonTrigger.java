@@ -23,8 +23,6 @@ import de.cau.cs.kieler.core.kivi.AbstractTriggerState;
 import de.cau.cs.kieler.core.kivi.ITrigger;
 import de.cau.cs.kieler.core.kivi.ITriggerState;
 import de.cau.cs.kieler.core.ui.util.EditorUtils;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
-import de.cau.cs.kieler.core.util.Maybe;
 
 /**
  * Listens to various buttons for the view management.
@@ -99,17 +97,10 @@ public class ButtonTrigger extends AbstractTrigger {
          * @return the active editor
          */
         public IEditorPart getEditor() {
-            if (editor != null) {
-                return editor;
-            } else {
-                final Maybe<IEditorPart> maybe = new Maybe<IEditorPart>();
-                MonitoredOperation.runInUI(new Runnable() {
-                    public void run() {
-                        maybe.set(EditorUtils.getLastActiveEditor());
-                    }
-                }, true);
-                return maybe.get();
+            if (editor == null) {
+                editor = EditorUtils.getLastActiveEditor();
             }
+            return editor;
         }
 
         /**
