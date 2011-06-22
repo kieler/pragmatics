@@ -568,6 +568,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         portLayout.setHeight(portBounds.height);
         
         // calculate port offset from the node border
+        // FIXME this should not be done here!!!
         float offset = 0;
         KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
         float widthPercent = (xpos + portBounds.width / 2) / nodeLayout.getWidth();

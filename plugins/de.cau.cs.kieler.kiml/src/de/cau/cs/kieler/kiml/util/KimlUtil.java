@@ -198,10 +198,11 @@ public final class KimlUtil {
      */
     public static PortSide calcPortSide(final KPort port, final Direction direction) {
         KShapeLayout portLayout = port.getData(KShapeLayout.class);
-        PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
-        if (portSide != PortSide.UNDEFINED) {
-            return portSide;
-        }
+        // FIXME ???
+//        PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
+//        if (portSide != PortSide.UNDEFINED) {
+//            return portSide;
+//        }
         
         // check direction-dependent criterion
         KShapeLayout nodeLayout = port.getNode().getData(KShapeLayout.class);
@@ -446,8 +447,8 @@ public final class KimlUtil {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
 
         PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
-        float minNorth = 2 * MIN_PORT_DISTANCE, minEast = 2 * MIN_PORT_DISTANCE,
-                minSouth = 2 * MIN_PORT_DISTANCE, minWest = 2 * MIN_PORT_DISTANCE;
+        float minNorth = MIN_PORT_DISTANCE, minEast = MIN_PORT_DISTANCE,
+                minSouth = MIN_PORT_DISTANCE, minWest = MIN_PORT_DISTANCE;
         if (portConstraints == PortConstraints.FIXED_POS) {
             for (KPort port : node.getPorts()) {
                 KShapeLayout portLayout = port.getData(KShapeLayout.class);
@@ -489,6 +490,10 @@ public final class KimlUtil {
                 }
             }
         }
+        minNorth += MIN_PORT_DISTANCE;
+        minEast += MIN_PORT_DISTANCE;
+        minSouth += MIN_PORT_DISTANCE;
+        minWest += MIN_PORT_DISTANCE;
 
         float newWidth = KielerMath.maxf(nodeLayout.getProperty(LayoutOptions.MIN_WIDTH),
                 MIN_NODE_SIZE, minNorth, minSouth);
