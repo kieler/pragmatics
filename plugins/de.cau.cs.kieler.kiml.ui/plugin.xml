@@ -233,13 +233,6 @@ point="org.eclipse.ui.menus">
     </layoutAlgorithm>
  </extension>
  <extension
-       point="de.cau.cs.kieler.kiml.layoutInfo">
-    <semanticOption
-          class="de.cau.cs.kieler.core.annotations.Annotatable"
-          config="de.cau.cs.kieler.kiml.ui.AnnotationsLayoutConfig">
-    </semanticOption>
- </extension>
- <extension
        point="de.cau.cs.kieler.core.kivi.combinations">
     <combination
           active="true"
