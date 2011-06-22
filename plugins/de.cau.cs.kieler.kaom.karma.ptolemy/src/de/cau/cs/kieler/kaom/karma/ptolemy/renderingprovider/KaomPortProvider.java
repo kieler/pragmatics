@@ -80,7 +80,9 @@ public class KaomPortProvider implements IRenderingProvider {
                     String ptolemyClassString = ((StringAnnotation) annotation).getValue();
                     try {
                         ptolemy.kernel.Entity entity = getPtolemyEntity(ptolemyClassString);
-
+                        if (entity == null) {
+                            return getDefaultFigure();
+                        }
                         if (object instanceof Port) {
                             // we fetch a ptolemy instance of this port by its name to get some
                             // informations of its former nature.
@@ -328,8 +330,12 @@ public class KaomPortProvider implements IRenderingProvider {
         }
         // Use Ptolemy to load the actor
         PtolemyHelper ptolemyHelper = new PtolemyHelper();
-        NamedObj nObj = ptolemyHelper.instantiatePtolemyEntity(className);
-
+        NamedObj nObj = null;
+        try {
+        nObj = ptolemyHelper.instantiatePtolemyEntity(className);
+        } catch (Exception e) {;
+            return null;
+        }
         if (nObj instanceof ptolemy.kernel.Entity) {
             return (ptolemy.kernel.Entity) nObj;
         } else {

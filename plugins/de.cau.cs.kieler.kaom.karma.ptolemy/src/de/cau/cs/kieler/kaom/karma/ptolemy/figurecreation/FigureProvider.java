@@ -47,6 +47,7 @@ import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.NamedObject;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
+import de.cau.cs.kieler.core.model.gmf.figures.RoundedRectangleFigure;
 import de.cau.cs.kieler.core.ui.util.CoreUiUtil;
 import de.cau.cs.kieler.kvid.KvidUtil;
 import de.cau.cs.kieler.kvid.data.DataObject;
@@ -333,6 +334,26 @@ public class FigureProvider {
         }
         return constFigure;
 
+    }
+    
+    public IFigure getErrorFigure() {
+        RectangleFigure errorFigure = new RectangleFigure();
+        errorFigure.setSize(50, 50);
+        errorFigure.setLineWidth(1);
+        errorFigure.setForegroundColor(ColorConstants.black);
+        errorFigure.setBackgroundColor(ColorConstants.red);
+        Label errorLabel = new Label("?");
+        FontData fd = new FontData();
+        fd.setStyle(SWT.NORMAL);
+        fd.setHeight(13);
+        Font font = new Font(PlatformUI.getWorkbench().getDisplay(), fd);
+        errorLabel.setFont(font);
+        errorLabel.getBounds().setLocation(20,15);
+        errorLabel.getBounds().setSize(errorLabel.getTextBounds().getSize());
+        errorLabel.setLayoutManager(new BorderLayout());
+        errorFigure.setLayoutManager(new BorderLayout());
+        errorFigure.add(errorLabel);
+        return errorFigure;
     }
 
 }

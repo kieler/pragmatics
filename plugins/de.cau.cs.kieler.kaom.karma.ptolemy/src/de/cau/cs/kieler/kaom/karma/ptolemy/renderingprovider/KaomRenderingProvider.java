@@ -36,6 +36,9 @@ import org.eclipse.emf.transaction.Transaction;
 import org.eclipse.emf.workspace.AbstractEMFOperation;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.IResizableCompartmentEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.TopGraphicEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editpolicies.ResizableCompartmentEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.gmf.runtime.notation.RoutingStyle;
@@ -46,6 +49,7 @@ import org.w3c.dom.Document;
 
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.vergil.icon.EditorIcon;
+import de.cau.cs.kieler.core.model.gmf.figures.RoundedRectangleFigure;
 import de.cau.cs.kieler.core.model.gmf.figures.SplineConnection;
 import de.cau.cs.kieler.kaom.custom.EntityLayout;
 import de.cau.cs.kieler.kaom.karma.ptolemy.Activator;
@@ -82,6 +86,20 @@ public class KaomRenderingProvider implements IRenderingProvider {
      */
     public IFigure getFigureByString(final String input, final IFigure oldFigure,
             final EObject object, final EditPart part) {
+        /*
+        if (part instanceof TopGraphicEditPart) {
+            TopGraphicEditPart ep = (TopGraphicEditPart) part;
+            List<EditPart> resizeableCompartments = ep.getResizableCompartments();
+            for (EditPart compartment : resizeableCompartments) {
+                if (compartment instanceof IResizableCompartmentEditPart) {
+                    IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+                    ResizableCompartmentEditPolicy rcep = (ResizableCompartmentEditPolicy) resizeComp
+                            .getEditPolicy("PrimaryDrag Policy");
+                    rcep.deactivate();
+                }
+            }
+        }
+        */
         if (input.equals("_IconDescription")) {
             return createPtolemyFigure(PtolemyFetcher.getPtolemyInstance(object));
         } else if (input.equals("MonitorValue")) {
@@ -149,21 +167,8 @@ public class KaomRenderingProvider implements IRenderingProvider {
                 return null;
             }
         } else {
-            return getDefaultFigure();
+            return figureProvider.getDefaultFigure();
         }
-    }
-
-    /**
-     * builds a default figure for this diagram.
-     * 
-     * @return the default figure
-     */
-    public static IFigure getDefaultFigure() {
-        RectangleFigure defaultFigure = new RectangleFigure();
-        defaultFigure.setLineWidth(1);
-        defaultFigure.setForegroundColor(ColorConstants.black);
-        defaultFigure.setBackgroundColor(ColorConstants.white);
-        return defaultFigure;
     }
 
     // minimum size for compound entites. Important if they are collapsed
@@ -234,7 +239,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
      */
     private IFigure createPtolemyFigure(final NamedObj nObj) {
         if (nObj == null) {
-            return getDefaultFigure();
+            return figureProvider.getErrorFigure();
         } else {
             // get all icons for this element
             List<EditorIcon> icons = PtolemyFetcher.fetchIcons(nObj);
@@ -248,9 +253,9 @@ public class KaomRenderingProvider implements IRenderingProvider {
                     Status myStatus = new Status(IStatus.WARNING, Activator.PLUGIN_ID,
                             "couldn't get svg document from ptolemy");
                     StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
-                    return getDefaultFigure();
+                    return figureProvider.getErrorFigure();
                 }
-                
+
                 // else use the first icon (usually there should be only one anyway)
             } else {
                 EditorIcon icon = icons.get(0);

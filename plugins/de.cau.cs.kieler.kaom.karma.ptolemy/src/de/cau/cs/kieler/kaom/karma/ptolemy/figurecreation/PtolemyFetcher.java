@@ -365,9 +365,10 @@ public final class PtolemyFetcher {
                         return nObj;
                     }
                 } catch (Exception e) {
-                    Status myStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-                            "ptolemy instance failed to load", e);
-                    StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
+                    return null;
+                    //Status myStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+                    //        "ptolemy instance failed to load", e);
+                    //StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
                 }
             }
         }
