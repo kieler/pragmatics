@@ -53,7 +53,7 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
         }
     }
 
-    private void schedule(final EventType eventType, final XtextResource resource) {       
+    private void schedule(final EventType eventType, final XtextResource resource) {
         if (resource.getContents().isEmpty()) {
             return;
         }
@@ -64,7 +64,8 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
         if (eventType.equals(EventType.CLOSED)) {
             this.schedule(new KLighDCloseDiagramEffect(id));
         } else {
-            this.schedule(new KlighdDiagramEffect(id, resource.getContents().get(0)));
+            this.schedule(new KlighdDiagramEffect(id, resource.getURI().lastSegment(), resource
+                    .getContents().get(0)));
         }
     }
 
