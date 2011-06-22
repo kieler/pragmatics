@@ -44,7 +44,7 @@ public final class OgdfServerPool {
             if (servers.isEmpty()) {
                 return new OgdfServer();
             }
-            return servers.getFirst();
+            return servers.removeFirst();
         }
     }
     
