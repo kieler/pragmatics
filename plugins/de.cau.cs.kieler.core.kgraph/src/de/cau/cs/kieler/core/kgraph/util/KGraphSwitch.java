@@ -311,21 +311,6 @@ public class KGraphSwitch<T> {
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '<em>Pair</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>Pair</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public <F, S> T casePair(Pair<F, S> object) {
-        return null;
-    }
-
-    /**
      * Returns the result of interpreting the object as an instance of '<em>Persistent Entry</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;

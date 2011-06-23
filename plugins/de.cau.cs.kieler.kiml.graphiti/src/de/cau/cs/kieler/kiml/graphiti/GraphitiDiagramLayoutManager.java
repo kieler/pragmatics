@@ -159,10 +159,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             KNode topNode = KimlUtil.createInitializedNode();
             KShapeLayout shapeLayout = topNode.getData(KShapeLayout.class);
             GraphicsAlgorithm ga = element.getGraphicsAlgorithm();
-            shapeLayout.setXpos(ga.getX());
-            shapeLayout.setYpos(ga.getY());
-            shapeLayout.setHeight(ga.getHeight());
-            shapeLayout.setWidth(ga.getWidth());
+            shapeLayout.setPos(ga.getX(), ga.getY());
+            shapeLayout.setSize(ga.getWidth(), ga.getHeight());
             pictElem2graphElemMap.put(element, topNode);
 
             buildLayoutGraphRecursively((Diagram) element, topNode, layoutConfig);
@@ -283,10 +281,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      */
     private void graphicsAlg2ShapeLayout(final GraphicsAlgorithm ga, final KShapeLayout shapeLayout,
             final float xoffset, final float yoffset) {
-        shapeLayout.setXpos(ga.getX() + xoffset);
-        shapeLayout.setYpos(ga.getY() + yoffset);
-        shapeLayout.setWidth(ga.getWidth());
-        shapeLayout.setHeight(ga.getHeight());
+        shapeLayout.setPos(ga.getX() + xoffset, ga.getY() + yoffset);
+        shapeLayout.setSize(ga.getWidth(), ga.getHeight());
     }
 
     /**
@@ -337,11 +333,9 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         }
         portLayout.setProperty(LayoutOptions.OFFSET, offset);
 
-        portLayout.setXpos(xPos);
-        portLayout.setYpos(yPos);
+        portLayout.setPos(xPos, yPos);
 
-        portLayout.setWidth(portGa.getWidth());
-        portLayout.setHeight(portGa.getHeight());
+        portLayout.setSize(portGa.getWidth(), portGa.getHeight());
 
         // set user defined layout options
         layoutConfig.setFocus(diagramEditor.getEditPartForPictogramElement(bra));
@@ -507,14 +501,12 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             x += nodeLayout.getXpos();
             y += nodeLayout.getYpos();
-            point.setX(x);
-            point.setY(y);
+            point.setPos(x, y);
         } else if (anchor instanceof ChopboxAnchor) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             float x = nodeLayout.getWidth() / 2 + nodeLayout.getXpos();
             float y = nodeLayout.getHeight() / 2 + nodeLayout.getYpos();
-            point.setX(x);
-            point.setY(y);
+            point.setPos(x, y);
         }
         // TODO handle FixPointAnchors
     }

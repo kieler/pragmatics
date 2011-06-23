@@ -303,8 +303,7 @@ public class SelfLoopRouter {
         float y = ypos;
         for (KLabel label : labels) {
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-            labelLayout.setXpos(xpos);
-            labelLayout.setYpos(y);
+            labelLayout.setPos(xpos, y);
             y += labelLayout.getHeight();
         }
     }

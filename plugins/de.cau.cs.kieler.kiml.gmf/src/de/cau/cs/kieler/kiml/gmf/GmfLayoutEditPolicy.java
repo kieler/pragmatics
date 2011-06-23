@@ -220,7 +220,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         KNode sourceNode = edge.getSource(), targetNode = edge.getTarget();
         KPoint sourcePoint = edgeLayout.getSourcePoint();
-        KVector sourceRel = new KVector(sourcePoint.getX(), sourcePoint.getY());
+        KVector sourceRel = sourcePoint.createVector();
         KShapeLayout sourceLayout = sourceNode.getData(KShapeLayout.class);
         
         if (KimlUtil.isDescendant(targetNode, sourceNode)) {
@@ -263,7 +263,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         KNode sourceNode = edge.getSource(), targetNode = edge.getTarget();
         KPoint targetPoint = edgeLayout.getTargetPoint();
-        KVector targetRel = new KVector(targetPoint.getX(), targetPoint.getY());
+        KVector targetRel = targetPoint.createVector();
         KShapeLayout targetLayout = targetNode.getData(KShapeLayout.class);
 
         if (KimlUtil.isDescendant(sourceNode, targetNode)) {

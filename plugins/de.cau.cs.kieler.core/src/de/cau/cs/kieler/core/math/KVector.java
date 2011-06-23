@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.core.math;
 
+import java.io.Serializable;
 import java.util.Random;
 import java.util.StringTokenizer;
 
@@ -27,6 +28,9 @@ import de.cau.cs.kieler.core.util.IDataObject;
  */
 public class KVector implements IDataObject, Cloneable {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = -4780985519832787684L;
+    
     // CHECKSTYLEOFF VisibilityModifier
     /** x coordinate. */
     public double x;

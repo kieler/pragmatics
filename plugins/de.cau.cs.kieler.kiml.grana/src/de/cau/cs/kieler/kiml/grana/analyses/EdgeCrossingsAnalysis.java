@@ -130,7 +130,7 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
             KNode node = nodeQueue.poll();
             // collect the outgoing edges
             for (KEdge edge : node.getOutgoingEdges()) {
-                KVectorChain chain = KimlUtil.toVectorChain(edge.getData(KEdgeLayout.class));
+                KVectorChain chain = edge.getData(KEdgeLayout.class).createVectorChain();
                 
                 // translate the bend point coordinates to absolute
                 KNode parent = node;

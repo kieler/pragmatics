@@ -119,13 +119,6 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    private EClass pairEClass = null;
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     private EClass persistentEntryEClass = null;
 
     /**
@@ -180,9 +173,6 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
         KGraphPackageImpl theKGraphPackage = (KGraphPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof KGraphPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new KGraphPackageImpl());
 
         isInited = true;
-
-        // Initialize simple dependencies
-        EcorePackage.eINSTANCE.eClass();
 
         // Create package meta-data objects
         theKGraphPackage.createPackageContents();
@@ -483,33 +473,6 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EClass getPair() {
-        return pairEClass;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EReference getPair_First() {
-        return (EReference)pairEClass.getEStructuralFeatures().get(0);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EReference getPair_Second() {
-        return (EReference)pairEClass.getEStructuralFeatures().get(1);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EClass getPersistentEntry() {
         return persistentEntryEClass;
     }
@@ -599,10 +562,6 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
 
         iPropertyHolderEClass = createEClass(IPROPERTY_HOLDER);
 
-        pairEClass = createEClass(PAIR);
-        createEReference(pairEClass, PAIR__FIRST);
-        createEReference(pairEClass, PAIR__SECOND);
-
         persistentEntryEClass = createEClass(PERSISTENT_ENTRY);
         createEAttribute(persistentEntryEClass, PERSISTENT_ENTRY__KEY);
         createEAttribute(persistentEntryEClass, PERSISTENT_ENTRY__VALUE);
@@ -635,8 +594,6 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
         setNsURI(eNS_URI);
 
         // Create type parameters
-        ETypeParameter pairEClass_F = addETypeParameter(pairEClass, "F");
-        ETypeParameter pairEClass_S = addETypeParameter(pairEClass, "S");
         addETypeParameter(iPropertyEDataType, "T");
 
         // Set bounds for type parameters
@@ -728,22 +685,14 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
         addEParameter(op, this.getIPropertyHolder(), "holder", 1, 1, IS_UNIQUE, IS_ORDERED);
 
         op = addEOperation(iPropertyHolderEClass, null, "getAllProperties", 1, 1, IS_UNIQUE, IS_ORDERED);
-        g1 = createEGenericType(ecorePackage.getEEList());
-        g2 = createEGenericType(this.getPair());
+        g1 = createEGenericType(ecorePackage.getEMap());
+        g2 = createEGenericType(this.getIProperty());
         g1.getETypeArguments().add(g2);
-        EGenericType g3 = createEGenericType(this.getIProperty());
+        EGenericType g3 = createEGenericType();
         g2.getETypeArguments().add(g3);
-        EGenericType g4 = createEGenericType();
-        g3.getETypeArguments().add(g4);
-        g3 = createEGenericType(ecorePackage.getEJavaObject());
-        g2.getETypeArguments().add(g3);
+        g2 = createEGenericType(ecorePackage.getEJavaObject());
+        g1.getETypeArguments().add(g2);
         initEOperation(op, g1);
-
-        initEClass(pairEClass, Pair.class, "Pair", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
-        g1 = createEGenericType(pairEClass_F);
-        initEReference(getPair_First(), g1, null, "first", null, 0, 1, Pair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        g1 = createEGenericType(pairEClass_S);
-        initEReference(getPair_Second(), g1, null, "second", null, 0, 1, Pair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(persistentEntryEClass, PersistentEntry.class, "PersistentEntry", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getPersistentEntry_Key(), ecorePackage.getEString(), "key", null, 1, 1, PersistentEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

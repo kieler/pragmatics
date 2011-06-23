@@ -16,6 +16,7 @@
 package de.cau.cs.kieler.kiml.klayoutdata.impl;
 
 import de.cau.cs.kieler.core.kgraph.impl.KGraphDataImpl;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -282,6 +283,58 @@ public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
         }
         else if (eNotificationRequired())
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KSHAPE_LAYOUT__INSETS, newInsets, newInsets));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * {@inheritDoc}
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public void setPos(float newXpos, float newYpos) {
+        float oldXpos = xpos, oldYpos = ypos;
+        xpos = newXpos;
+        ypos = newYpos;
+        if (eNotificationRequired()) {
+            eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KSHAPE_LAYOUT__YPOS, oldYpos, ypos));
+            eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KSHAPE_LAYOUT__XPOS, oldXpos, xpos));
+        }
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * {@inheritDoc}
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public void applyVector(KVector pos) {
+        setPos((float) pos.x, (float) pos.y);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * {@inheritDoc}
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public KVector createVector() {
+        return new KVector(xpos, ypos);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * {@inheritDoc}
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public void setSize(float newWidth, float newHeight) {
+        float oldWidth = width, oldHeight = height;
+        width = newWidth;
+        height = newHeight;
+        if (eNotificationRequired()) {
+            eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KSHAPE_LAYOUT__WIDTH, oldWidth, width));
+            eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KSHAPE_LAYOUT__HEIGHT, oldHeight, height));
+        }
     }
 
     /**

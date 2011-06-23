@@ -15,6 +15,7 @@
  */
 package de.cau.cs.kieler.kiml.klayoutdata.impl;
 
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 
@@ -141,6 +142,42 @@ public class KPointImpl extends EObjectImpl implements KPoint {
         y = newY;
         if (eNotificationRequired())
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KPOINT__Y, oldY, y));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * {@inheritDoc}
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public void setPos(float newX, float newY) {
+        float oldX = x, oldY = y;
+        x = newX;
+        y = newY;
+        if (eNotificationRequired()) {
+            eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KPOINT__X, oldX, x));
+            eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KPOINT__Y, oldY, y));
+        }
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * {@inheritDoc}
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public void applyVector(KVector pos) {
+        setPos((float) pos.x, (float) pos.y);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * {@inheritDoc}
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public KVector createVector() {
+        return new KVector(x, y);
     }
 
     /**

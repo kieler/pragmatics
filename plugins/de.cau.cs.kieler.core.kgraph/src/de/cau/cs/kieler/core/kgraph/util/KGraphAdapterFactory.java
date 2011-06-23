@@ -131,10 +131,6 @@ public class KGraphAdapterFactory extends AdapterFactoryImpl {
                 return createIPropertyHolderAdapter();
             }
             @Override
-            public <F, S> Adapter casePair(Pair<F, S> object) {
-                return createPairAdapter();
-            }
-            @Override
             public Adapter casePersistentEntry(PersistentEntry object) {
                 return createPersistentEntryAdapter();
             }
@@ -281,20 +277,6 @@ public class KGraphAdapterFactory extends AdapterFactoryImpl {
      * @generated
      */
     public Adapter createIPropertyHolderAdapter() {
-        return null;
-    }
-
-    /**
-     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.core.util.Pair <em>Pair</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see de.cau.cs.kieler.core.util.Pair
-     * @generated
-     */
-    public Adapter createPairAdapter() {
         return null;
     }
 

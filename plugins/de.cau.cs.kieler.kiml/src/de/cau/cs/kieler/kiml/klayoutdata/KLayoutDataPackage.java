@@ -360,6 +360,63 @@ public interface KLayoutDataPackage extends EPackage {
 
 
     /**
+     * The meta object id for the '{@link de.cau.cs.kieler.core.math.KVector <em>KVector</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.core.math.KVector
+     * @see de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl#getKVector()
+     * @generated
+     */
+    int KVECTOR = 5;
+
+    /**
+     * The feature id for the '<em><b>X</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KVECTOR__X = 0;
+
+    /**
+     * The feature id for the '<em><b>Y</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KVECTOR__Y = 1;
+
+    /**
+     * The number of structural features of the '<em>KVector</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KVECTOR_FEATURE_COUNT = 2;
+
+    /**
+     * The meta object id for the '{@link de.cau.cs.kieler.core.math.KVectorChain <em>KVector Chain</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.core.math.KVectorChain
+     * @see de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl#getKVectorChain()
+     * @generated
+     */
+    int KVECTOR_CHAIN = 6;
+
+    /**
+     * The number of structural features of the '<em>KVector Chain</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KVECTOR_CHAIN_FEATURE_COUNT = 0;
+
+
+    /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout <em>KShape Layout</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -575,6 +632,50 @@ public interface KLayoutDataPackage extends EPackage {
     EAttribute getKIdentifier_Id();
 
     /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.core.math.KVector <em>KVector</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>KVector</em>'.
+     * @see de.cau.cs.kieler.core.math.KVector
+     * @model instanceClass="de.cau.cs.kieler.core.math.KVector"
+     * @generated
+     */
+    EClass getKVector();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.math.KVector#getX <em>X</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>X</em>'.
+     * @see de.cau.cs.kieler.core.math.KVector#getX()
+     * @see #getKVector()
+     * @generated
+     */
+    EAttribute getKVector_X();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.math.KVector#getY <em>Y</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Y</em>'.
+     * @see de.cau.cs.kieler.core.math.KVector#getY()
+     * @see #getKVector()
+     * @generated
+     */
+    EAttribute getKVector_Y();
+
+    /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.core.math.KVectorChain <em>KVector Chain</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>KVector Chain</em>'.
+     * @see de.cau.cs.kieler.core.math.KVectorChain
+     * @model instanceClass="de.cau.cs.kieler.core.math.KVectorChain"
+     * @generated
+     */
+    EClass getKVectorChain();
+
+    /**
      * Returns the factory that creates the instances of the model.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -765,6 +866,42 @@ public interface KLayoutDataPackage extends EPackage {
          * @generated
          */
         EAttribute KIDENTIFIER__ID = eINSTANCE.getKIdentifier_Id();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.core.math.KVector <em>KVector</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.core.math.KVector
+         * @see de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl#getKVector()
+         * @generated
+         */
+        EClass KVECTOR = eINSTANCE.getKVector();
+
+        /**
+         * The meta object literal for the '<em><b>X</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KVECTOR__X = eINSTANCE.getKVector_X();
+
+        /**
+         * The meta object literal for the '<em><b>Y</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KVECTOR__Y = eINSTANCE.getKVector_Y();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.core.math.KVectorChain <em>KVector Chain</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.core.math.KVectorChain
+         * @see de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl#getKVectorChain()
+         * @generated
+         */
+        EClass KVECTOR_CHAIN = eINSTANCE.getKVectorChain();
 
     }
 

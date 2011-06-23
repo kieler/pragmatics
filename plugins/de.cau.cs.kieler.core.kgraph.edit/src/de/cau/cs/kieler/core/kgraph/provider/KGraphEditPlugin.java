@@ -53,7 +53,6 @@ public final class KGraphEditPlugin extends EMFPlugin {
     public KGraphEditPlugin() {
         super
           (new ResourceLocator [] {
-             EcoreEditPlugin.INSTANCE,
            });
     }
 

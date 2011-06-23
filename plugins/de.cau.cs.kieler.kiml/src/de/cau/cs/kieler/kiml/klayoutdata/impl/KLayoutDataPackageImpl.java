@@ -17,6 +17,8 @@ package de.cau.cs.kieler.kiml.klayoutdata.impl;
 
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -27,6 +29,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -75,6 +78,20 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
      * @generated
      */
     private EClass kIdentifierEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass kVectorEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass kVectorChainEClass = null;
 
     /**
      * Creates an instance of the model <b>Package</b>, registered with
@@ -325,6 +342,42 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
      * <!-- end-user-doc -->
      * @generated
      */
+    public EClass getKVector() {
+        return kVectorEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getKVector_X() {
+        return (EAttribute)kVectorEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getKVector_Y() {
+        return (EAttribute)kVectorEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EClass getKVectorChain() {
+        return kVectorChainEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public KLayoutDataFactory getKLayoutDataFactory() {
         return (KLayoutDataFactory)getEFactoryInstance();
     }
@@ -372,6 +425,12 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
 
         kIdentifierEClass = createEClass(KIDENTIFIER);
         createEAttribute(kIdentifierEClass, KIDENTIFIER__ID);
+
+        kVectorEClass = createEClass(KVECTOR);
+        createEAttribute(kVectorEClass, KVECTOR__X);
+        createEAttribute(kVectorEClass, KVECTOR__Y);
+
+        kVectorChainEClass = createEClass(KVECTOR_CHAIN);
     }
 
     /**
@@ -417,14 +476,41 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
         initEAttribute(getKShapeLayout_Height(), ecorePackage.getEFloat(), "height", "0.0f", 0, 1, KShapeLayout.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getKShapeLayout_Insets(), this.getKInsets(), null, "insets", null, 0, 1, KShapeLayout.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+        EOperation op = addEOperation(kShapeLayoutEClass, null, "setPos", 0, 1, IS_UNIQUE, IS_ORDERED);
+        addEParameter(op, ecorePackage.getEFloat(), "x", 0, 1, IS_UNIQUE, IS_ORDERED);
+        addEParameter(op, ecorePackage.getEFloat(), "y", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+        op = addEOperation(kShapeLayoutEClass, null, "applyVector", 0, 1, IS_UNIQUE, IS_ORDERED);
+        addEParameter(op, this.getKVector(), "pos", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+        addEOperation(kShapeLayoutEClass, this.getKVector(), "createVector", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+        op = addEOperation(kShapeLayoutEClass, null, "setSize", 0, 1, IS_UNIQUE, IS_ORDERED);
+        addEParameter(op, ecorePackage.getEFloat(), "width", 0, 1, IS_UNIQUE, IS_ORDERED);
+        addEParameter(op, ecorePackage.getEFloat(), "height", 0, 1, IS_UNIQUE, IS_ORDERED);
+
         initEClass(kEdgeLayoutEClass, KEdgeLayout.class, "KEdgeLayout", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getKEdgeLayout_BendPoints(), this.getKPoint(), null, "bendPoints", null, 0, -1, KEdgeLayout.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getKEdgeLayout_SourcePoint(), this.getKPoint(), null, "sourcePoint", null, 1, 1, KEdgeLayout.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getKEdgeLayout_TargetPoint(), this.getKPoint(), null, "targetPoint", null, 1, 1, KEdgeLayout.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+        op = addEOperation(kEdgeLayoutEClass, null, "applyVectorChain", 0, 1, IS_UNIQUE, IS_ORDERED);
+        addEParameter(op, this.getKVectorChain(), "points", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+        addEOperation(kEdgeLayoutEClass, this.getKVectorChain(), "createVectorChain", 0, 1, IS_UNIQUE, IS_ORDERED);
+
         initEClass(kPointEClass, KPoint.class, "KPoint", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getKPoint_X(), ecorePackage.getEFloat(), "x", "0.0f", 0, 1, KPoint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getKPoint_Y(), ecorePackage.getEFloat(), "y", "0.0f", 0, 1, KPoint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        op = addEOperation(kPointEClass, null, "setPos", 0, 1, IS_UNIQUE, IS_ORDERED);
+        addEParameter(op, ecorePackage.getEFloat(), "x", 0, 1, IS_UNIQUE, IS_ORDERED);
+        addEParameter(op, ecorePackage.getEFloat(), "y", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+        op = addEOperation(kPointEClass, null, "applyVector", 0, 1, IS_UNIQUE, IS_ORDERED);
+        addEParameter(op, this.getKVector(), "pos", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+        addEOperation(kPointEClass, this.getKVector(), "createVector", 0, 1, IS_UNIQUE, IS_ORDERED);
 
         initEClass(kInsetsEClass, KInsets.class, "KInsets", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getKInsets_Top(), ecorePackage.getEFloat(), "top", null, 0, 1, KInsets.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -434,6 +520,12 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
 
         initEClass(kIdentifierEClass, KIdentifier.class, "KIdentifier", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getKIdentifier_Id(), ecorePackage.getEString(), "id", null, 1, 1, KIdentifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(kVectorEClass, KVector.class, "KVector", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getKVector_X(), ecorePackage.getEDouble(), "x", null, 0, 1, KVector.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getKVector_Y(), ecorePackage.getEDouble(), "y", null, 0, 1, KVector.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(kVectorChainEClass, KVectorChain.class, "KVectorChain", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
 
         // Create resource
         createResource(eNS_URI);

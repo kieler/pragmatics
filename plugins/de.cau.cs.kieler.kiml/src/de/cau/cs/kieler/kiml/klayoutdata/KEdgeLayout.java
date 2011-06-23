@@ -16,6 +16,7 @@
 package de.cau.cs.kieler.kiml.klayoutdata;
 
 import de.cau.cs.kieler.core.kgraph.KGraphData;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import org.eclipse.emf.common.util.EList;
 
 /**
@@ -119,5 +120,34 @@ public interface KEdgeLayout extends KGraphData {
      * @generated
      */
     void setTargetPoint(KPoint value);
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Set the source point, bend points, and target point of this edge layout
+     * from the given vector chain. The vector chain should contain at least
+     * two points; the first point is taken as source point, while the last one is
+     * taken as target point.
+     * @param points the new points for this edge layout
+     * <!-- end-model-doc -->
+     * @model pointsType="de.cau.cs.kieler.kiml.klayoutdata.KVectorChain"
+     * @generated
+     */
+    void applyVectorChain(KVectorChain points);
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Create a vector chain from the points of this edge layout. The resulting
+     * vector chain contains at least two points; the first point is the source point,
+     * while the last one is the target point.
+     * @return the points of this edge layout
+     * <!-- end-model-doc -->
+     * @model type="de.cau.cs.kieler.kiml.klayoutdata.KVectorChain"
+     * @generated
+     */
+    KVectorChain createVectorChain();
 
 } // KEdgeLayout

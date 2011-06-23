@@ -234,12 +234,8 @@ public class KGraphImporter implements IGraphImporter {
             KEdge kedge = (KEdge) fedge.getProperty(Properties.ORIGIN);
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
             edgeLayout.getBendPoints().clear();
-            KVector sourcePoint = fedge.getSourcePoint();
-            edgeLayout.getSourcePoint().setX((float) sourcePoint.x);
-            edgeLayout.getSourcePoint().setY((float) sourcePoint.y);
-            KVector targetPoint = fedge.getTargetPoint();
-            edgeLayout.getTargetPoint().setX((float) targetPoint.x);
-            edgeLayout.getTargetPoint().setY((float) targetPoint.y);
+            edgeLayout.getSourcePoint().applyVector(fedge.getSourcePoint());
+            edgeLayout.getTargetPoint().applyVector(fedge.getTargetPoint());
         }
         
         // process the labels
@@ -247,8 +243,7 @@ public class KGraphImporter implements IGraphImporter {
             KLabel klabel = (KLabel) flabel.getProperty(Properties.ORIGIN);
             KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
             KVector labelPos = flabel.getPosition().add(offset);
-            klabelLayout.setXpos((float) (labelPos.x));
-            klabelLayout.setYpos((float) (labelPos.y));
+            klabelLayout.applyVector(labelPos);
         }
         
         // set up the parent node

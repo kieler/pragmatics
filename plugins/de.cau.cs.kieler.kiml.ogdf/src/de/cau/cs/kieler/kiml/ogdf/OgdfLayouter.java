@@ -494,8 +494,7 @@ public abstract class OgdfLayouter {
      */
     private KPoint toKPoint(final float x, final float y, final float offsetX, final float offsetY) {
         KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-        kpoint.setX(x + offsetX);
-        kpoint.setY(y + offsetY);
+        kpoint.setPos(x + offsetX, y + offsetY);
         return kpoint;
     }
 

@@ -493,44 +493,7 @@ public interface KGraphPackage extends EPackage {
      * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getIProperty()
      * @generated
      */
-    int IPROPERTY = 11;
-
-    /**
-     * The meta object id for the '{@link de.cau.cs.kieler.core.util.Pair <em>Pair</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.core.util.Pair
-     * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getPair()
-     * @generated
-     */
-    int PAIR = 9;
-
-    /**
-     * The feature id for the '<em><b>First</b></em>' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int PAIR__FIRST = 0;
-
-    /**
-     * The feature id for the '<em><b>Second</b></em>' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int PAIR__SECOND = 1;
-
-    /**
-     * The number of structural features of the '<em>Pair</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int PAIR_FEATURE_COUNT = 2;
+    int IPROPERTY = 10;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.kgraph.impl.PersistentEntryImpl <em>Persistent Entry</em>}' class.
@@ -540,7 +503,7 @@ public interface KGraphPackage extends EPackage {
      * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getPersistentEntry()
      * @generated
      */
-    int PERSISTENT_ENTRY = 10;
+    int PERSISTENT_ENTRY = 9;
 
     /**
      * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -905,39 +868,6 @@ public interface KGraphPackage extends EPackage {
     EClass getIPropertyHolder();
 
     /**
-     * Returns the meta object for class '{@link de.cau.cs.kieler.core.util.Pair <em>Pair</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for class '<em>Pair</em>'.
-     * @see de.cau.cs.kieler.core.util.Pair
-     * @model instanceClass="de.cau.cs.kieler.core.util.Pair" typeParameters="F S"
-     * @generated
-     */
-    EClass getPair();
-
-    /**
-     * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.core.util.Pair#getFirst <em>First</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the containment reference '<em>First</em>'.
-     * @see de.cau.cs.kieler.core.util.Pair#getFirst()
-     * @see #getPair()
-     * @generated
-     */
-    EReference getPair_First();
-
-    /**
-     * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.core.util.Pair#getSecond <em>Second</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the containment reference '<em>Second</em>'.
-     * @see de.cau.cs.kieler.core.util.Pair#getSecond()
-     * @see #getPair()
-     * @generated
-     */
-    EReference getPair_Second();
-
-    /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.kgraph.PersistentEntry <em>Persistent Entry</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1258,32 +1188,6 @@ public interface KGraphPackage extends EPackage {
          * @generated
          */
         EClass IPROPERTY_HOLDER = eINSTANCE.getIPropertyHolder();
-
-        /**
-         * The meta object literal for the '{@link de.cau.cs.kieler.core.util.Pair <em>Pair</em>}' class.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see de.cau.cs.kieler.core.util.Pair
-         * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getPair()
-         * @generated
-         */
-        EClass PAIR = eINSTANCE.getPair();
-
-        /**
-         * The meta object literal for the '<em><b>First</b></em>' containment reference feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference PAIR__FIRST = eINSTANCE.getPair_First();
-
-        /**
-         * The meta object literal for the '<em><b>Second</b></em>' containment reference feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference PAIR__SECOND = eINSTANCE.getPair_Second();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.kgraph.impl.PersistentEntryImpl <em>Persistent Entry</em>}' class.

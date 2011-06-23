@@ -733,9 +733,7 @@ public class KGraphDotTransformation {
                         sourcePoint = layoutDataFactory.createKPoint();
                         List<KVector> points = splines.get(0);
                         if (!points.isEmpty()) {
-                            KVector firstPoint = points.remove(0);
-                            sourcePoint.setX((float) firstPoint.x);
-                            sourcePoint.setY((float) firstPoint.y);
+                            sourcePoint.applyVector(points.remove(0));
                         } else {
                             KShapeLayout sourceLayout = kedge.getSource().getData(KShapeLayout.class);
                             sourcePoint.setX(sourceLayout.getXpos() + sourceLayout.getWidth() / 2);
@@ -747,9 +745,7 @@ public class KGraphDotTransformation {
                         targetPoint = layoutDataFactory.createKPoint();
                         List<KVector> points = splines.get(splines.size() - 1);
                         if (!points.isEmpty()) {
-                            KVector lastPoint = points.remove(points.size() - 1);
-                            targetPoint.setX((float) lastPoint.x);
-                            targetPoint.setY((float) lastPoint.y);
+                            targetPoint.applyVector(points.remove(points.size() - 1));
                         } else {
                             KShapeLayout targetLayout = kedge.getTarget().getData(KShapeLayout.class);
                             targetPoint.setX(targetLayout.getXpos() + targetLayout.getWidth() / 2);
@@ -760,8 +756,7 @@ public class KGraphDotTransformation {
                     for (List<KVector> points : splines) {
                         for (KVector point : points) {
                             KPoint controlPoint = layoutDataFactory.createKPoint();
-                            controlPoint.setX((float) point.x);
-                            controlPoint.setY((float) point.y);
+                            controlPoint.applyVector(point);
                             edgePoints.add(controlPoint);
                         }
                     }
@@ -900,16 +895,14 @@ public class KGraphDotTransformation {
                         sourcePoint = KLayoutDataFactory.eINSTANCE.createKPoint();
                         int commaIndex = token.indexOf(',');
                         KVector point = parsePoint(token.substring(commaIndex + 1));
-                        sourcePoint.setX((float) point.x + offsetx);
-                        sourcePoint.setY((float) point.y + offsety);
+                        sourcePoint.applyVector(point.translate(offsetx, offsety));
                     }
                 } else if (token.startsWith("e")) {
                     if (targetPoint == null) {
                         targetPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
                         int commaIndex = token.indexOf(',');
                         KVector point = parsePoint(token.substring(commaIndex + 1));
-                        targetPoint.setX((float) point.x + offsetx);
-                        targetPoint.setY((float) point.y + offsety);
+                        targetPoint.applyVector(point.translate(offsetx, offsety));
                     }
                 } else {
                     KVector point = parsePoint(token);

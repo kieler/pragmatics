@@ -58,8 +58,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
             if (pos == null) {
                 nodeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
             } else {
-                nodeLayout.setXpos((float) pos.x);
-                nodeLayout.setYpos((float) pos.y);
+                nodeLayout.applyVector(pos);
                 // set the fixed size of the node
                 if (!nodeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
                     float width = nodeLayout.getProperty(LayoutOptions.MIN_WIDTH);
@@ -77,8 +76,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
             KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);
             pos = labelLayout.getProperty(LayoutOptions.POSITION);
             if (pos != null) {
-                labelLayout.setXpos((float) pos.x);
-                labelLayout.setYpos((float) pos.y);
+                labelLayout.applyVector(pos);
                 labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
             }
             maxx = KielerMath.maxf(maxx, nodeLayout.getXpos() + nodeLayout.getWidth(),
@@ -152,7 +150,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         if (bendPoints == null || bendPoints.size() < 2) {
             edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
         } else {
-            KimlUtil.applyVectorChain(edgeLayout, bendPoints);
+            edgeLayout.applyVectorChain(bendPoints);
         }
         
         // determine maximal coordinates
@@ -167,8 +165,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
             KVector pos = labelLayout.getProperty(LayoutOptions.POSITION);
             // edge labels are excluded from layout by default
             if (pos != null) {
-                labelLayout.setXpos((float) pos.x);
-                labelLayout.setYpos((float) pos.y);
+                labelLayout.applyVector(pos);
                 labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
             }
             maxv.x = Math.max(maxv.x, labelLayout.getXpos() + labelLayout.getWidth());

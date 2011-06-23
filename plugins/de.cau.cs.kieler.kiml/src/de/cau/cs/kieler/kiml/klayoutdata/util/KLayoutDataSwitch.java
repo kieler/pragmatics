@@ -17,6 +17,8 @@ package de.cau.cs.kieler.kiml.klayoutdata.util;
 
 import de.cau.cs.kieler.core.kgraph.EMapPropertyHolder;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 
 import de.cau.cs.kieler.kiml.klayoutdata.*;
@@ -217,6 +219,36 @@ public class KLayoutDataSwitch<T> {
      * @generated
      */
     public T caseKIdentifier(KIdentifier object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>KVector</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>KVector</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseKVector(KVector object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>KVector Chain</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>KVector Chain</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseKVectorChain(KVectorChain object) {
         return null;
     }
 

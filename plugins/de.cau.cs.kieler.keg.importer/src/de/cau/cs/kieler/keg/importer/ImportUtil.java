@@ -300,10 +300,8 @@ public final class ImportUtil {
 
     private static void transferNodeLayout(final KShapeLayout sourceLayout,
             final KShapeLayout targetLayout) {
-        targetLayout.setXpos(sourceLayout.getXpos());
-        targetLayout.setYpos(sourceLayout.getYpos());
-        targetLayout.setWidth(sourceLayout.getWidth());
-        targetLayout.setHeight(sourceLayout.getHeight());
+        targetLayout.setPos(sourceLayout.getXpos(), sourceLayout.getYpos());
+        targetLayout.setSize(sourceLayout.getWidth(), sourceLayout.getHeight());
     }
 
     private static void transferEdgeLayout(final KEdgeLayout sourceLayout,

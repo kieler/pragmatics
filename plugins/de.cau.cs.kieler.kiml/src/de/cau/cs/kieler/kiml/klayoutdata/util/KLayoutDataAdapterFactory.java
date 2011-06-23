@@ -17,6 +17,8 @@ package de.cau.cs.kieler.kiml.klayoutdata.util;
 
 import de.cau.cs.kieler.core.kgraph.EMapPropertyHolder;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 
 import de.cau.cs.kieler.kiml.klayoutdata.*;
@@ -105,6 +107,14 @@ public class KLayoutDataAdapterFactory extends AdapterFactoryImpl {
             @Override
             public Adapter caseKIdentifier(KIdentifier object) {
                 return createKIdentifierAdapter();
+            }
+            @Override
+            public Adapter caseKVector(KVector object) {
+                return createKVectorAdapter();
+            }
+            @Override
+            public Adapter caseKVectorChain(KVectorChain object) {
+                return createKVectorChainAdapter();
             }
             @Override
             public Adapter caseIPropertyHolder(IPropertyHolder object) {
@@ -205,6 +215,34 @@ public class KLayoutDataAdapterFactory extends AdapterFactoryImpl {
      * @generated
      */
     public Adapter createKIdentifierAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.core.math.KVector <em>KVector</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see de.cau.cs.kieler.core.math.KVector
+     * @generated
+     */
+    public Adapter createKVectorAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.core.math.KVectorChain <em>KVector Chain</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see de.cau.cs.kieler.core.math.KVectorChain
+     * @generated
+     */
+    public Adapter createKVectorChainAdapter() {
         return null;
     }
 

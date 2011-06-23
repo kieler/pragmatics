@@ -80,9 +80,11 @@ public interface EMapPropertyHolder extends EObject, IPropertyHolder {
 
     /**
      * <!-- begin-user-doc -->
-     * Serialize all entries of the properties map and write them into the list of persistent
-     * entries. The previous content is cleared.
      * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Serialize all entries of the properties map using {@link Object#toString()}
+     * and write them into the list of persistent entries. The previous content is cleared.
+     * <!-- end-model-doc -->
      * @model
      * @generated
      */

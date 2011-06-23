@@ -331,7 +331,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         }
 
         KShapeLayout shapeLayout = klabel.getData(KShapeLayout.class);
-        KVector position = new KVector(shapeLayout.getXpos(), shapeLayout.getYpos());
+        KVector position = shapeLayout.createVector();
         KNode parent = kedge.getSource();
         if (!KimlUtil.isDescendant(kedge.getTarget(), parent)) {
             parent = parent.getParent();

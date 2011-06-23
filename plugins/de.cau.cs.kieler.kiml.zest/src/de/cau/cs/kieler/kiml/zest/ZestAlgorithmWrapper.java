@@ -179,8 +179,7 @@ public class ZestAlgorithmWrapper {
             if (y + height > maxY) {
                 maxY = y + height;
             }
-            shapeLayout.setXpos(x);
-            shapeLayout.setYpos(y);
+            shapeLayout.setPos(x, y);
         }
 
         // transfer relationships layouts
@@ -198,8 +197,7 @@ public class ZestAlgorithmWrapper {
                 if (y > maxY) {
                     maxY = y;
                 }
-                point.setX(x);
-                point.setY(y);
+                point.setPos(x, y);
                 edgeLayout.getBendPoints().add(point);
             }
         }

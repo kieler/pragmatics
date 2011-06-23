@@ -79,6 +79,7 @@ public interface KGraphElement extends EObject {
      * <!-- end-user-doc -->
      * <!-- begin-model-doc -->
      * Returns the first data instance that matches the given class.
+     * @param type the class of graph data to retrieve
      * @return graph data for the given type, or {@code null} if there is none
      * <!-- end-model-doc -->
      * @model

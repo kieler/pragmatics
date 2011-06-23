@@ -16,6 +16,7 @@
 package de.cau.cs.kieler.kiml.klayoutdata;
 
 import de.cau.cs.kieler.core.kgraph.KGraphData;
+import de.cau.cs.kieler.core.math.KVector;
 
 
 /**
@@ -172,5 +173,55 @@ public interface KShapeLayout extends KGraphData {
      * @generated
      */
     void setInsets(KInsets value);
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Set the position of this shape layout.
+     * @param x the new x coordinate value
+     * @param y the new y coordinate value
+     * <!-- end-model-doc -->
+     * @model
+     * @generated
+     */
+    void setPos(float x, float y);
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Set the position of this shape layout by applying the given vector.
+     * @param pos the vector for the new position
+     * <!-- end-model-doc -->
+     * @model posType="de.cau.cs.kieler.kiml.klayoutdata.KVector"
+     * @generated
+     */
+    void applyVector(KVector pos);
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Create a vector from the position of this shape layout.
+     * @return the position vector
+     * <!-- end-model-doc -->
+     * @model type="de.cau.cs.kieler.kiml.klayoutdata.KVector"
+     * @generated
+     */
+    KVector createVector();
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Set the size of this shape layout.
+     * @param width the new width
+     * @param height the new height
+     * <!-- end-model-doc -->
+     * @model
+     * @generated
+     */
+    void setSize(float width, float height);
 
 } // KShapeLayout

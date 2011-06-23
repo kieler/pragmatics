@@ -124,8 +124,7 @@ public class BoxPlacer extends AbstractAlgorithm {
                 highestBox = 0.0f;
                 broadestRow = Math.max(broadestRow, 2 * borderSpacing + width);
             }
-            boxLayout.setXpos(xpos);
-            boxLayout.setYpos(ypos);
+            boxLayout.setPos(xpos, ypos);
             broadestRow = Math.max(broadestRow, xpos + width + borderSpacing);
             highestBox = Math.max(highestBox, height);
             xpos += width + minSpacing;

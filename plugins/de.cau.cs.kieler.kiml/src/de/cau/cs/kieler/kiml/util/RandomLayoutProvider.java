@@ -118,9 +118,8 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         for (KNode node : parent.getChildren()) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             float x = offset + random.nextFloat() * (drawWidth - nodeLayout.getWidth());
-            nodeLayout.setXpos(x);
             float y = offset + random.nextFloat() * (drawHeight - nodeLayout.getHeight());
-            nodeLayout.setYpos(y);
+            nodeLayout.setPos(x, y);
         }
         
         // randomize edge positions
@@ -205,8 +204,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
             sourcePX = sourceX + sourceWidth;
         }
         KPoint sourcePoint = edgeLayout.getSourcePoint();
-        sourcePoint.setX(sourcePX);
-        sourcePoint.setY(sourcePY);
+        sourcePoint.setPos(sourcePX, sourcePY);
         
         float targetPX = sourceX;
         if (sourceX > targetY + targetWidth) {
@@ -225,8 +223,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
             targetPY = targetY + targetHeight;
         }
         KPoint targetPoint = edgeLayout.getTargetPoint();
-        targetPoint.setX(targetPX);
-        targetPoint.setY(targetPY);
+        targetPoint.setPos(targetPX, targetPY);
         
         edgeLayout.getBendPoints().clear();
         int bendsNum = random.nextInt(MAX_BENDS);

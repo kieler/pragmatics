@@ -15,6 +15,7 @@
  */
 package de.cau.cs.kieler.kiml.klayoutdata;
 
+import de.cau.cs.kieler.core.math.KVector;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -87,5 +88,42 @@ public interface KPoint extends EObject {
      * @generated
      */
     void setY(float value);
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Set a new position for this point.
+     * @param x the new x coordinate value
+     * @param y the new y coordinate value
+     * <!-- end-model-doc -->
+     * @model
+     * @generated
+     */
+    void setPos(float x, float y);
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Set the position of this point using a vector.
+     * @param pos the vector for the new position
+     * <!-- end-model-doc -->
+     * @model posType="de.cau.cs.kieler.kiml.klayoutdata.KVector"
+     * @generated
+     */
+    void applyVector(KVector pos);
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Create a vector from this point.
+     * @return a vector with the position of this point
+     * <!-- end-model-doc -->
+     * @model type="de.cau.cs.kieler.kiml.klayoutdata.KVector"
+     * @generated
+     */
+    KVector createVector();
 
 } // KPoint

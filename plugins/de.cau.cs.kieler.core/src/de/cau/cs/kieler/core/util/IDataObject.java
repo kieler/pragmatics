@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.core.util;
 
+import java.io.Serializable;
+
 /**
  * An interface for data types, which should be serializable using {@link #toString()} and
  * parsable using {@link #parse(String)}. The default constructor must always be
@@ -22,7 +24,7 @@ package de.cau.cs.kieler.core.util;
  *     reviewed by cmot, soh
  * @author msp
  */
-public interface IDataObject {
+public interface IDataObject extends Serializable {
     
     /**
      * Parse the given string and set the content of this data object.

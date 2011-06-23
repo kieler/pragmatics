@@ -7,6 +7,31 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="This layout data contains information for graph elements for which rectangular&#xA;shape is assumed for layout, such as nodes, ports, and labels. Each graph element&#xA;has either a shape layout or an edge layout attached. The shape layout of nodes&#xA;has insets.&#xA;&lt;p>&#xA;Layout coordinates for nodes, ports, and node labels are relative to the parent&#xA;node. The insets of the parent node are not included in the relative coordinates&#xA;of child nodes, but they are included in the relative coordinates of ports and&#xA;node labels. For edge labels the rules defined in {@link KEdgeLayout} apply.&#xA;Port labels are relative to their ports.&#xA;&lt;/p>"/>
     </eAnnotations>
+    <eOperations name="setPos">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Set the position of this shape layout.&#xA;@param x the new x coordinate value&#xA;@param y the new y coordinate value"/>
+      </eAnnotations>
+      <eParameters name="x" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+      <eParameters name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    </eOperations>
+    <eOperations name="applyVector">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Set the position of this shape layout by applying the given vector.&#xA;@param pos the vector for the new position"/>
+      </eAnnotations>
+      <eParameters name="pos" eType="#//KVector"/>
+    </eOperations>
+    <eOperations name="createVector" eType="#//KVector">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Create a vector from the position of this shape layout.&#xA;@return the position vector"/>
+      </eAnnotations>
+    </eOperations>
+    <eOperations name="setSize">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Set the size of this shape layout.&#xA;@param width the new width&#xA;@param height the new height"/>
+      </eAnnotations>
+      <eParameters name="width" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+      <eParameters name="height" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="xpos" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"
         defaultValueLiteral="0.0f"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ypos" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"
@@ -22,6 +47,17 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="This layout data contains special information for edges, such as bend points.&#xA;Each graph element has either a shape layout or an edge layout attached.&#xA;&lt;p>&#xA;All layout coordinates for edges are defined to be relative to the parent of&#xA;the source node, except when the target node is directly or indirectly contained&#xA;in the source node, in which case all coordinates are relative to the source node&#xA;itself. The insets of the reference node are not included in relative coordinates.&#xA;&lt;/p>"/>
     </eAnnotations>
+    <eOperations name="applyVectorChain">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Set the source point, bend points, and target point of this edge layout&#xA;from the given vector chain. The vector chain should contain at least&#xA;two points; the first point is taken as source point, while the last one is&#xA;taken as target point.&#xA;@param points the new points for this edge layout"/>
+      </eAnnotations>
+      <eParameters name="points" eType="#//KVectorChain"/>
+    </eOperations>
+    <eOperations name="createVectorChain" eType="#//KVectorChain">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Create a vector chain from the points of this edge layout. The resulting&#xA;vector chain contains at least two points; the first point is the source point,&#xA;while the last one is the target point.&#xA;@return the points of this edge layout"/>
+      </eAnnotations>
+    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="bendPoints" upperBound="-1"
         eType="#//KPoint" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -42,6 +78,24 @@
     </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KPoint">
+    <eOperations name="setPos">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Set a new position for this point.&#xA;@param x the new x coordinate value&#xA;@param y the new y coordinate value"/>
+      </eAnnotations>
+      <eParameters name="x" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+      <eParameters name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    </eOperations>
+    <eOperations name="applyVector">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Set the position of this point using a vector.&#xA;@param pos the vector for the new position"/>
+      </eAnnotations>
+      <eParameters name="pos" eType="#//KVector"/>
+    </eOperations>
+    <eOperations name="createVector" eType="#//KVector">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Create a vector from this point.&#xA;@return a vector with the position of this point"/>
+      </eAnnotations>
+    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="x" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"
         defaultValueLiteral="0.0f"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"
@@ -74,4 +128,11 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KVector" instanceClassName="de.cau.cs.kieler.core.math.KVector"
+      abstract="true" interface="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="x" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KVectorChain" instanceClassName="de.cau.cs.kieler.core.math.KVectorChain"
+      abstract="true" interface="true"/>
 </ecore:EPackage>

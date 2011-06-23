@@ -163,8 +163,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
             if (node.data instanceof KNode) {
                 KNode knode = (KNode) node.data;
                 KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-                nodeLayout.setXpos(node.x);
-                nodeLayout.setYpos(node.y);
+                nodeLayout.setPos(node.x, node.y);
             }
         }
         
@@ -178,19 +177,16 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
                 PointList pointList = edge.getPoints();
                 KPoint sourcekPoint = edgeLayout.getSourcePoint();
                 Point sourcePoint = pointList.getFirstPoint();
-                sourcekPoint.setX(sourcePoint.x);
-                sourcekPoint.setY(sourcePoint.y);
+                sourcekPoint.setPos(sourcePoint.x, sourcePoint.y);
                 for (int j = 1; j < pointList.size() - 1; j++) {
                     Point point = pointList.getPoint(j);
                     KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                    kpoint.setX(point.x);
-                    kpoint.setY(point.y);
+                    kpoint.setPos(point.x, point.y);
                     edgeLayout.getBendPoints().add(kpoint);
                 }
                 KPoint targetkPoint = edgeLayout.getTargetPoint();
                 Point targetPoint = pointList.getLastPoint();
-                targetkPoint.setX(targetPoint.x);
-                targetkPoint.setY(targetPoint.y);
+                targetkPoint.setPos(targetPoint.x, targetPoint.y);
                 
                 // disable layout for the edge labels
                 for (KLabel label : kedge.getLabels()) {

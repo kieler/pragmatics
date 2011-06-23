@@ -170,8 +170,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
         Rectangle containerBounds = KimlUiUtil.getAbsoluteBounds(nodeFigure.getParent());
         nodeLayout.setXpos(nodeBounds.x - containerBounds.x);
         nodeLayout.setYpos(nodeBounds.y - containerBounds.y);
-        nodeLayout.setHeight(nodeBounds.height);
-        nodeLayout.setWidth(nodeBounds.width);
+        nodeLayout.setSize(nodeBounds.width, nodeBounds.height);
         Dimension minSize = nodeFigure.getMinimumSize();
         nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, (float) minSize.width);
         nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, (float) minSize.height);
@@ -248,8 +247,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
         Rectangle portBounds = KimlUiUtil.getAbsoluteBounds(portEP.getFigure());
         portLayout.setXpos(portBounds.x - nodeBounds.x);
         portLayout.setYpos(portBounds.y - nodeBounds.y);
-        portLayout.setWidth(portBounds.width);
-        portLayout.setHeight(portBounds.height);
+        portLayout.setSize(portBounds.width, portBounds.height);
         
         // set the port label
         String label = ((Port) port).getPortLabel();

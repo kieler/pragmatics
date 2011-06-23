@@ -621,7 +621,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
             // translate the bend points by the offset and apply the bend points
             bendPoints.translate(offset);
-            KimlUtil.applyVectorChain(edgeLayout, bendPoints);
+            edgeLayout.applyVectorChain(bendPoints);
 
             // apply layout to labels
             for (LLabel label : ledge.getLabels()) {

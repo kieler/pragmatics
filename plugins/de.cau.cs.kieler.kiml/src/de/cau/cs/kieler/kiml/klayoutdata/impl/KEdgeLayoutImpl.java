@@ -16,6 +16,7 @@
 package de.cau.cs.kieler.kiml.klayoutdata.impl;
 
 import java.util.Collection;
+import java.util.ListIterator;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -27,7 +28,10 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import de.cau.cs.kieler.core.kgraph.impl.KGraphDataImpl;
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 
@@ -181,6 +185,58 @@ public class KEdgeLayoutImpl extends KGraphDataImpl implements KEdgeLayout {
         }
         else if (eNotificationRequired())
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KEDGE_LAYOUT__TARGET_POINT, newTargetPoint, newTargetPoint));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * {@inheritDoc}
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public void applyVectorChain(KVectorChain points) {
+        if (sourcePoint == null) {
+            setSourcePoint(KLayoutDataFactory.eINSTANCE.createKPoint());
+        }
+        KVector firstPoint = points.getFirst();
+        sourcePoint.setX((float) firstPoint.x);
+        sourcePoint.setY((float) firstPoint.y);
+        
+        getBendPoints().clear();
+        ListIterator<KVector> pointIter = points.listIterator(1);
+        while (pointIter.nextIndex() < points.size() - 1) {
+            KPoint bendPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+            KVector nextPoint = pointIter.next();
+            bendPoint.setX((float) nextPoint.x);
+            bendPoint.setY((float) nextPoint.y);
+            bendPoints.add(bendPoint);
+        }
+        
+        if (targetPoint == null) {
+            setTargetPoint(KLayoutDataFactory.eINSTANCE.createKPoint());
+        }
+        KVector lastPoint = points.getLast();
+        targetPoint.setX((float) lastPoint.x);
+        targetPoint.setY((float) lastPoint.y);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * {@inheritDoc}
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public KVectorChain createVectorChain() {
+        KVectorChain vectorChain = new KVectorChain();
+        if (sourcePoint != null) {
+            vectorChain.add(sourcePoint.getX(), sourcePoint.getY());
+        }
+        for (KPoint bendPoint : getBendPoints()) {
+            vectorChain.add(bendPoint.getX(), bendPoint.getY());
+        }
+        if (targetPoint != null) {
+            vectorChain.add(targetPoint.getX(), targetPoint.getY());
+        }
+        return vectorChain;
     }
 
     /**

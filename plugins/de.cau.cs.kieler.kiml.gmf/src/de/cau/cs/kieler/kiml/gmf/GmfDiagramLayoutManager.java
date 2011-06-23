@@ -363,11 +363,9 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             topNode.getLabel().setText(((DiagramEditPart) rootPart).getDiagramView().getName());
             // start with a specific node as root for layout
         } else {
-            shapeLayout.setXpos(rootBounds.x);
-            shapeLayout.setYpos(rootBounds.y);
+            shapeLayout.setPos(rootBounds.x, rootBounds.y);
         }
-        shapeLayout.setHeight(rootBounds.height);
-        shapeLayout.setWidth(rootBounds.width);
+        shapeLayout.setSize(rootBounds.width, rootBounds.height);
         graphElem2EditPartMap.put(topNode, rootPart);
 
         // create a layout configuration
@@ -504,8 +502,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         KShapeLayout nodeLayout = childLayoutNode.getData(KShapeLayout.class);
         nodeLayout.setXpos(childBounds.x - containerBounds.x);
         nodeLayout.setYpos(childBounds.y - containerBounds.y);
-        nodeLayout.setHeight(childBounds.height);
-        nodeLayout.setWidth(childBounds.width);
+        nodeLayout.setSize(childBounds.width, childBounds.height);
         try {
             Dimension minSize = nodeFigure.getMinimumSize();
             nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, (float) minSize.width);
@@ -561,11 +558,9 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         Rectangle portBounds = KimlUiUtil.getAbsoluteBounds(portEditPart.getFigure());
         Rectangle nodeBounds = KimlUiUtil.getAbsoluteBounds(nodeEditPart.getFigure());
         float xpos = portBounds.x - nodeBounds.x;
-        portLayout.setXpos(xpos);
         float ypos = portBounds.y - nodeBounds.y;
-        portLayout.setYpos(ypos);
-        portLayout.setWidth(portBounds.width);
-        portLayout.setHeight(portBounds.height);
+        portLayout.setPos(xpos, ypos);
+        portLayout.setSize(portBounds.width, portBounds.height);
         
         // calculate port offset from the node border
         // FIXME this should not be done here!!!
@@ -671,8 +666,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             labelLayout.setYpos(labelBounds.y - nodeBounds.y);
             try {
                 Dimension size = labelFigure.getPreferredSize();
-                labelLayout.setWidth(size.width);
-                labelLayout.setHeight(size.height);
+                labelLayout.setSize(size.width, size.height);
                 labelLayout.setProperty(LayoutOptions.FONT_NAME,
                         font.getFontData()[0].getName());
                 labelLayout.setProperty(LayoutOptions.FONT_SIZE,
