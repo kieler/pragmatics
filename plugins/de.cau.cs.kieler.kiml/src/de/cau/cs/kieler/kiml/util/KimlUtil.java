@@ -557,17 +557,20 @@ public final class KimlUtil {
         
         // update label position
         KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);
-        if (labelLayout.getXpos() > oldWidth) {
-            labelLayout.setXpos(labelLayout.getXpos() + widthDiff);
-        } else {
-            float oldPos = labelLayout.getXpos() + labelLayout.getWidth() / 2;
-            labelLayout.setXpos(oldPos * widthRatio - labelLayout.getWidth() / 2);
-        }
-        if (labelLayout.getYpos() > oldHeight) {
-            labelLayout.setYpos(labelLayout.getYpos() + heightDiff);
-        } else {
-            float oldPos = labelLayout.getYpos() + labelLayout.getHeight() / 2;
-            labelLayout.setYpos(oldPos * heightRatio - labelLayout.getHeight() / 2);
+        float midx = labelLayout.getXpos() + labelLayout.getWidth() / 2;
+        float midy = labelLayout.getYpos() + labelLayout.getHeight() / 2;
+        float widthPercent = midx / oldWidth;
+        float heightPercent = midy / oldHeight;
+        if (widthPercent + heightPercent >= 1) {
+            if (widthPercent - heightPercent > 0 && midy >= 0) {
+                // label is on the right
+                labelLayout.setXpos(labelLayout.getXpos() + widthDiff);
+                labelLayout.setYpos(labelLayout.getYpos() + heightDiff * heightPercent);
+            } else if (widthPercent - heightPercent < 0 && midx >= 0) {
+                // label is on the bottom
+                labelLayout.setXpos(labelLayout.getXpos() + widthDiff * widthPercent);
+                labelLayout.setYpos(labelLayout.getYpos() + heightDiff);
+            }
         }
         // enable layout application for the node label
         labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
