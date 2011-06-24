@@ -24,6 +24,7 @@ import org.eclipse.emf.ecore.EFactory;
  * <!-- end-user-doc -->
  * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackage
  * @generated
+ * @deprecated use {@link org.eclipse.gmf.runtime.notation.StringValueStyle} instead
  */
 public interface LayoutOptionsFactory extends EFactory {
     /**

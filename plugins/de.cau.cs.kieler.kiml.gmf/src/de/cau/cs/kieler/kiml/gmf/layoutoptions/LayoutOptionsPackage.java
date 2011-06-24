@@ -36,6 +36,7 @@ import org.eclipse.gmf.runtime.notation.NotationPackage;
  * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsFactory
  * @model kind="package"
  * @generated
+ * @deprecated use {@link org.eclipse.gmf.runtime.notation.StringValueStyle} instead
  */
 public interface LayoutOptionsPackage extends EPackage {
     /**

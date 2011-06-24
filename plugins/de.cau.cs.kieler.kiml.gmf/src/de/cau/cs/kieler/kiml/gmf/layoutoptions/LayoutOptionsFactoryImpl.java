@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.plugin.EcorePlugin;
  * An implementation of the model <b>Factory</b>.
  * <!-- end-user-doc -->
  * @generated
+ * @deprecated use {@link org.eclipse.gmf.runtime.notation.StringValueStyle} instead
  */
 public class LayoutOptionsFactoryImpl extends EFactoryImpl implements LayoutOptionsFactory {
     /**

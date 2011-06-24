@@ -34,6 +34,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * </p>
  *
  * @generated
+ * @deprecated use {@link org.eclipse.gmf.runtime.notation.StringValueStyle} instead
  */
 public class KOptionImpl extends EObjectImpl implements KOption {
     /**

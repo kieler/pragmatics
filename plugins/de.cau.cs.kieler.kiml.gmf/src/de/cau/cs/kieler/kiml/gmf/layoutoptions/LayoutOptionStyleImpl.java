@@ -41,6 +41,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * </p>
  *
  * @generated
+ * @deprecated use {@link org.eclipse.gmf.runtime.notation.StringValueStyle} instead
  */
 public class LayoutOptionStyleImpl extends EObjectImpl implements LayoutOptionStyle {
     /**

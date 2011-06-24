@@ -32,6 +32,7 @@ import org.eclipse.emf.ecore.EObject;
  * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackage#getKOption()
  * @model
  * @generated
+ * @deprecated use {@link org.eclipse.gmf.runtime.notation.StringValueStyle} instead
  */
 public interface KOption extends EObject {
     /**

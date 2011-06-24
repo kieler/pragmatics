@@ -14,8 +14,6 @@
 package de.cau.cs.kieler.kiml.graphiti;
 
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
@@ -104,7 +102,7 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
         if (part instanceof IPictogramElementEditPart) {
             IPictogramElementEditPart pePart = (IPictogramElementEditPart) part;
             Diagram diagram = pePart.getConfigurationProvider().getDiagram();
-            clearPropertiesRecursively(diagram);
+            clearChildOptions(diagram);
         }
     }
 
@@ -114,19 +112,20 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
      * @param pictogramElement
      *            a pictogram element
      */
-    private static void clearPropertiesRecursively(final PictogramElement pictogramElement) {
+    private static void clearChildOptions(final PictogramElement pictogramElement) {
         Iterator<Property> iter = pictogramElement.getProperties().iterator();
 
         while (iter.hasNext()) {
             Property p = iter.next();
-            if (p.getKey().startsWith(PREFIX) || p.getKey().startsWith(DIAG_PREFIX)) {
+            String key = p.getKey() == null ? "" : p.getKey();
+            if (key.startsWith(PREFIX) || key.startsWith(DIAG_PREFIX)) {
                 iter.remove();
             }
         }
 
         for (EObject pe : pictogramElement.eContents()) {
             if (pe instanceof PictogramElement) {
-                clearPropertiesRecursively((PictogramElement) pe);
+                clearChildOptions((PictogramElement) pe);
             }
         }
     }
@@ -136,13 +135,12 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
      */
     @Override
     public boolean isDefault(final LayoutOptionData<?> optionData) {
-        EditPart ed = getEditPart();
-        IPictogramElementEditPart focusEditPart = (IPictogramElementEditPart) ed;
-        // check option value from notation model
-        for (Property property : focusEditPart.getPictogramElement().getProperties()) {
-            String key = property.getKey();
-            if (key.startsWith(PREFIX)) {
-                if (key.substring(PREFIX.length()).equals(optionData.getId())) {
+        EditPart editPart = getEditPart();
+        if (editPart instanceof IPictogramElementEditPart) {
+            PictogramElement pe = ((IPictogramElementEditPart) editPart).getPictogramElement();
+            String optionKey = PREFIX + optionData.getId();
+            for (Property property : pe.getProperties()) {
+                if (optionKey.equals(property.getKey())) {
                     String value = property.getValue();
                     if (optionData.parseValue(value) != null) {
                         return false;
@@ -160,29 +158,13 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
     public void setProperty(final IProperty<?> property, final Object value) {
         if (property instanceof LayoutOptionData<?>) {
             LayoutOptionData<?> optionData = (LayoutOptionData<?>) property;
-            setOption(optionData, value, PREFIX, getEditPart());
+            EditPart editPart = getEditPart();
+            if (editPart instanceof IPictogramElementEditPart) {
+                setOption(optionData, value, PREFIX,
+                        ((IPictogramElementEditPart) editPart).getPictogramElement());
+            }
         } else {
             super.setProperty(property, value);
-        }
-    }
-
-    /**
-     * Set the option for the given edit part.
-     * 
-     * @param optionData
-     *            layout option data
-     * @param value
-     *            the value
-     * @param prefix
-     *            the prefix for storage
-     * @param editPart
-     *            the edit part
-     */
-    private void setOption(final LayoutOptionData<?> optionData, final Object value,
-            final String prefix, final EditPart editPart) {
-        if (editPart instanceof IPictogramElementEditPart) {
-            setOption(optionData, value, prefix,
-                    ((IPictogramElementEditPart) editPart).getPictogramElement());
         }
     }
 
@@ -195,7 +177,7 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
      * @param value
      *            the value
      * @param prefix
-     *            the prefix for storage
+     *            the prefix for the property key
      * @param pictogramElement
      *            the pictogram element
      */
@@ -204,10 +186,9 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
         if (value == null) {
             removeOption(optionData, prefix, pictogramElement);
         } else {
+            String optionKey = prefix + optionData.getId();
             for (Property p : pictogramElement.getProperties()) {
-                String key = p.getKey();
-                if (key.startsWith(prefix)
-                        && key.substring(prefix.length()).equals(optionData.getId())) {
+                if (optionKey.equals(p.getKey())) {
                     p.setValue(value.toString());
                     return;
                 }
@@ -226,30 +207,29 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
      * @param optionData
      *            layout option data
      * @param prefix
-     *            the prefix for storage
+     *            the prefix for the property key
      * @param pictogramElement
      *            the pictogram element
      */
     private void removeOption(final LayoutOptionData<?> optionData, final String prefix,
             final PictogramElement pictogramElement) {
         Iterator<Property> iter = pictogramElement.getProperties().iterator();
+        String optionKey = prefix + optionData.getId();
         while (iter.hasNext()) {
             Property p = iter.next();
-
-            String key = p.getKey();
-            if (key.startsWith(prefix) && key.substring(prefix.length()).equals(optionData.getId())) {
+            if (optionKey.equals(p.getKey())) {
                 iter.remove();
             }
         }
     }
 
     /**
-     * Recursively remove the given option from the given pictogram element and all its children.
+     * Recursively remove an option from the given pictogram element and all its children.
      * 
      * @param optionData
      *            layout option data
      * @param prefix
-     *            the prefix for storage
+     *            the prefix for the property key
      * @param pictogramElement
      *            the pictogram element
      */
@@ -275,9 +255,14 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
      */
     @Override
     protected <T> T doGetProperty(final LayoutOptionData<T> optionData) {
-        T result = getOption(optionData, PREFIX, getEditPart());
-        if (result != null) {
-            return result;
+        T result = null;
+        EditPart editPart = getEditPart();
+        if (editPart instanceof IPictogramElementEditPart) {
+            result = getOption(optionData, PREFIX,
+                    ((IPictogramElementEditPart) editPart).getPictogramElement());
+            if (result != null) {
+                return result;
+            }
         }
 
         // check default option of diagram edit part
@@ -291,28 +276,6 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
     }
 
     /**
-     * Get a property from the given edit part.
-     * 
-     * @param <T>
-     *            the type of the value of the option
-     * @param optionData
-     *            the layout option
-     * @param prefix
-     *            the prefix
-     * @param editPart
-     *            an edit part
-     * @return the value of the option, or {@code null}
-     */
-    private <T> T getOption(final LayoutOptionData<T> optionData, final String prefix,
-            final EditPart editPart) {
-        if (editPart instanceof IPictogramElementEditPart) {
-            return getOption(optionData, prefix,
-                    ((IPictogramElementEditPart) editPart).getPictogramElement());
-        }
-        return null;
-    }
-
-    /**
      * Get a property from the given pictogram element.
      * 
      * @param <T>
@@ -320,16 +283,16 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
      * @param optionData
      *            the layout option
      * @param prefix
-     *            the prefix
+     *            the prefix for the property key
      * @param pictogramElement
      *            a pictogram element
      * @return the value of the option, or {@code null}
      */
     private <T> T getOption(final LayoutOptionData<T> optionData, final String prefix,
             final PictogramElement pictogramElement) {
+        String optionKey = prefix + optionData.getId();
         for (Property p : pictogramElement.getProperties()) {
-            String key = p.getKey();
-            if (key.startsWith(prefix) && key.substring(prefix.length()).equals(optionData.getId())) {
+            if (optionKey.equals(p.getKey())) {
                 T result = optionData.parseValue(p.getValue());
                 if (result != null) {
                     return result;
@@ -408,73 +371,6 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
     }
 
     /**
-     * Get the layout properties from the given PictogramElement.
-     * 
-     * @param pe
-     *            the pictogram element
-     * @param prefix
-     *            the prefix to search for
-     * @return the list of properties
-     */
-    public static List<Property> getProperties(final PictogramElement pe, final String prefix) {
-        List<Property> result = new LinkedList<Property>();
-        for (Property p : pe.getProperties()) {
-            if (p.getKey().startsWith(prefix)) {
-                String key = p.getKey().substring(prefix.length());
-                String value = p.getValue();
-
-                Property p2 = MmFactory.eINSTANCE.createProperty();
-                p2.setKey(key);
-                p2.setValue(value);
-                result.add(p2);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Add all notation model values to the given map of layout options.
-     * 
-     * @param options
-     *            a map of layout option values
-     */
-    @Override
-    protected void addProperties(final Map<IProperty<?>, Object> options) {
-        super.addProperties(options);
-
-        EditPart part = getEditPart();
-        if (part instanceof IPictogramElementEditPart) {
-            // add user defined global layout options
-            IPictogramElementEditPart pePart = (IPictogramElementEditPart) part;
-            addOptions(options,
-                    getProperties(pePart.getConfigurationProvider().getDiagram(), DIAG_PREFIX));
-            addOptions(options, getProperties(pePart.getPictogramElement(), PREFIX));
-        }
-    }
-
-    /**
-     * Add the options from the list of properties to the options map.
-     * 
-     * @param options
-     *            map to add the options to
-     * @param props
-     *            the list of properties
-     */
-    private static void addOptions(final Map<IProperty<?>, Object> options,
-            final List<Property> props) {
-        LayoutDataService layoutServices = LayoutDataService.getInstance();
-        for (Property option : props) {
-            LayoutOptionData<?> optionData = layoutServices.getOptionData(option.getKey());
-            if (optionData != null) {
-                Object value = optionData.parseValue(option.getValue());
-                if (value != null) {
-                    options.put(optionData, value);
-                }
-            }
-        }
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -483,7 +379,9 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
         if (part instanceof IPictogramElementEditPart) {
             IPictogramElementEditPart pePart = (IPictogramElementEditPart) part;
             Diagram diagram = pePart.getConfigurationProvider().getDiagram();
-            removeOptionRecursively(optionData, PREFIX, diagram);
+            if (value != null) {
+                removeOptionRecursively(optionData, PREFIX, diagram);
+            }
             setOption(optionData, value, DIAG_PREFIX, diagram);
         }
     }
@@ -505,6 +403,54 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
             return getOption(optionData, DIAG_PREFIX, diagram);
         }
         return null;
+    }
+
+    /**
+     * Add all notation model values to the given map of layout options.
+     * 
+     * @param options
+     *            a map of layout option values
+     */
+    @Override
+    protected void addProperties(final Map<IProperty<?>, Object> options) {
+        super.addProperties(options);
+
+        EditPart part = getEditPart();
+        if (part instanceof IPictogramElementEditPart) {
+            IPictogramElementEditPart pePart = (IPictogramElementEditPart) part;
+            // add user defined global layout options
+            addOptions(options, DIAG_PREFIX, pePart.getConfigurationProvider().getDiagram());
+            // add user defined local layout options
+            addOptions(options, PREFIX, pePart.getPictogramElement());
+        }
+    }
+
+    /**
+     * Add the options from the list of properties to the options map.
+     * 
+     * @param options
+     *            map to add the options to
+     * @param prefix
+     *            the prefix for the property key
+     * @param pe
+     *            a pictogram element
+     */
+    private static void addOptions(final Map<IProperty<?>, Object> options, final String prefix,
+            final PictogramElement pe) {
+        LayoutDataService layoutServices = LayoutDataService.getInstance();
+        for (Property prop : pe.getProperties()) {
+            String key = prop.getKey();
+            if (key != null && key.startsWith(prefix)) {
+                LayoutOptionData<?> optionData = layoutServices.getOptionData(
+                        key.substring(prefix.length()));
+                if (optionData != null) {
+                    Object value = optionData.parseValue(prop.getValue());
+                    if (value != null) {
+                        options.put(optionData, value);
+                    }
+                }
+            }
+        }
     }
 
 }

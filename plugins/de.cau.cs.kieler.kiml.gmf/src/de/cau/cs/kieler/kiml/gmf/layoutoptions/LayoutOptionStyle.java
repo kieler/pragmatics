@@ -34,6 +34,7 @@ import org.eclipse.gmf.runtime.notation.Style;
  * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackage#getLayoutOptionStyle()
  * @model
  * @generated
+ * @deprecated use {@link org.eclipse.gmf.runtime.notation.StringValueStyle} instead
  */
 public interface LayoutOptionStyle extends Style {
     /**

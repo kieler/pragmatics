@@ -31,6 +31,7 @@ import org.eclipse.gmf.runtime.notation.NotationPackage;
  * An implementation of the model <b>Package</b>.
  * <!-- end-user-doc -->
  * @generated
+ * @deprecated use {@link org.eclipse.gmf.runtime.notation.StringValueStyle} instead
  */
 public class LayoutOptionsPackageImpl extends EPackageImpl implements LayoutOptionsPackage {
     /**

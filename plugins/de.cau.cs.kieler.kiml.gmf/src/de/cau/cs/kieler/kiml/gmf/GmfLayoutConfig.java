@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.gmf;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Map;
 
@@ -28,6 +29,8 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.notation.Diagram;
+import org.eclipse.gmf.runtime.notation.NotationFactory;
+import org.eclipse.gmf.runtime.notation.StringValueStyle;
 import org.eclipse.gmf.runtime.notation.Style;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.SWTException;
@@ -55,12 +58,19 @@ import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
  */
 public class GmfLayoutConfig extends EclipseLayoutConfig {
     
+    /** Prefix for all layout options. */
+    public static final String PREFIX = "layout:";
+
+    /** Prefix for diagram defaults stored in the top-level edit part. */
+    public static final String DIAG_PREFIX = "defaultLayout:";
+    
     /**
      * Returns the {@link KOption} with given key that is stored for the edit part.
      * 
      * @param editPart the edit part for which the option shall be fetched
      * @param optionId the identifier of the option
      * @return the corresponding option, or {@code null} if there is no such option
+     * @deprecated use {@link org.eclipse.gmf.runtime.notation.StringValueStyle} instead
      */
     public static KOption getKOption(final IGraphicalEditPart editPart, final String optionId) {
         LayoutOptionStyle style = (LayoutOptionStyle) editPart.getNotationView()
@@ -80,6 +90,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
      * 
      * @param style a layout option style
      * @param optionData a layout option data
+     * @deprecated use {@link org.eclipse.gmf.runtime.notation.StringValueStyle} instead
      */
     public static void removeKOption(final LayoutOptionStyle style,
             final LayoutOptionData<?> optionData) {
@@ -96,6 +107,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
      * Removes the {@link LayoutOptionStyle} from the notation view, if it exists.
      * 
      * @param view the notation view from which to remove the layout option style
+     * @deprecated use {@link org.eclipse.gmf.runtime.notation.StringValueStyle} instead
      */
     public static void removeOptionStyle(final View view) {
         EClass optionClass = LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle();
@@ -128,9 +140,11 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
         return false;
     }
     
-    /** the layout option style stored in the notation view. */
+    /** the layout option style stored in the notation view.
+     * @deprecated use {@link org.eclipse.gmf.runtime.notation.StringValueStyle} instead */
     private LayoutOptionStyle optionStyle;
-    /** map of layout option data to KOptions from the layout option style. */
+    /** map of layout option data to KOptions from the layout option style.
+     * @deprecated use {@link org.eclipse.gmf.runtime.notation.StringValueStyle} instead */
     private Map<LayoutOptionData<?>, KOption> koptionMap;
     
     /**
@@ -175,6 +189,45 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
     }
     
     /**
+     * Clear all stored layout options for the selected element.
+     */
+    @Override
+    public void clearProperties() {
+        IGraphicalEditPart diagramEditPart = GmfFrameworkBridge.getDiagramEditPart(getEditPart());
+        if (diagramEditPart != null) {
+            Diagram diagram = (Diagram) diagramEditPart.getNotationView();
+            for (Object edge : diagram.getPersistedEdges()) {
+                clearChildOptions((View) edge);
+            }
+            clearChildOptions(diagram);
+        }
+    }
+    
+    /**
+     * Removes all layout options from the given view and its children.
+     * 
+     * @param view a view from the notation model
+     */
+    private static void clearChildOptions(final View view) {
+        Iterator<?> iter = view.getStyles().iterator();
+        while (iter.hasNext()) {
+            Object obj = iter.next();
+            if (obj instanceof StringValueStyle) {
+                StringValueStyle style = (StringValueStyle) obj;
+                String key = style.getName() == null ? "" : style.getName();
+                if (key.startsWith(PREFIX) || key.startsWith(DIAG_PREFIX)) {
+                    iter.remove();
+                }
+            }
+        }
+        
+        removeOptionStyle(view);
+        for (Object child : view.getPersistedChildren()) {
+            clearChildOptions((View) child);
+        }
+    }
+    
+    /**
      * Initialize the configuration for a graphical edit part.
      * 
      * @param editPart an edit part
@@ -205,7 +258,18 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
             // get default options from the notation view
             optionStyle = (LayoutOptionStyle) focusEditPart.getNotationView()
                     .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
-            String contentLayoutHint = getNotationOptions(diagramEditPart);
+            String contentLayoutHint = getNotationOptions(focusEditPart, diagramEditPart);
+            @SuppressWarnings("unchecked")
+            LayoutOptionData<String> algorithmOptionData = (LayoutOptionData<String>)
+                    LayoutDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM_ID);
+            if (contentLayoutHint == null) {
+                contentLayoutHint = getOption(algorithmOptionData, PREFIX,
+                        focusEditPart.getNotationView());
+            }
+            if (contentLayoutHint == null) {
+                contentLayoutHint = getOption(algorithmOptionData, DIAG_PREFIX,
+                        diagramEditPart.getNotationView());
+            }
             
             if (containerEditPart != null) {
                 // look for a layout hint for the container element
@@ -219,6 +283,14 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
                 }
                 String containerLayoutHint = containerLayoutHintOption == null ? null
                         : containerLayoutHintOption.getValue();
+                if (containerLayoutHint == null) {
+                    containerLayoutHint = getOption(algorithmOptionData, PREFIX,
+                            containerEditPart.getNotationView());
+                }
+                if (containerLayoutHint == null) {
+                    containerLayoutHint = getOption(algorithmOptionData, DIAG_PREFIX,
+                            diagramEditPart.getNotationView());
+                }
                 initialize(partTarget, containerEditPart, containerLayoutHint);
             }
             
@@ -329,8 +401,10 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
      * 
      * @param diagramEditPart the diagram edit part
      * @return the layout hint for the selected edit part's content
+     * @deprecated use {@link org.eclipse.gmf.runtime.notation.StringValueStyle} instead
      */
-    private String getNotationOptions(final DiagramEditPart diagramEditPart) {
+    private String getNotationOptions(final IGraphicalEditPart focusEditPart,
+            final DiagramEditPart diagramEditPart) {
         koptionMap = new HashMap<LayoutOptionData<?>, KOption>();
         String partLayoutHint = null;
         if (optionStyle != null) {
@@ -345,6 +419,8 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
                 }
             }
         }
+        
+        
         if (partLayoutHint == null && diagramEditPart != null) {
             KOption koption = getKOption(diagramEditPart,
                     LayoutOptions.ALGORITHM_ID);
@@ -365,8 +441,18 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
      */
     @Override
     protected <T> T doGetProperty(final LayoutOptionData<T> optionData) {
-        T result;
+        T result = null;
         // check option value from notation model
+        EditPart editPart = getEditPart();
+        if (editPart instanceof IGraphicalEditPart) {
+            result = getOption(optionData, PREFIX,
+                    ((IGraphicalEditPart) editPart).getNotationView());
+            if (result != null) {
+                return result;
+            }
+        }
+        
+        // TODO eliminate code based on LayoutOptionStyle
         if (koptionMap != null) {
             KOption koption = koptionMap.get(optionData);
             if (koption != null) {
@@ -386,6 +472,32 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
         // fall back to the user-stored or preconfigured configuration
         return super.doGetProperty(optionData);
     }
+
+    /**
+     * Get a property from the given notation view.
+     * 
+     * @param <T> the type of the value of the option
+     * @param optionData the layout option
+     * @param prefix the prefix for the style name
+     * @param view the notation view
+     * @return the value of the option, or {@code null}
+     */
+    private <T> T getOption(final LayoutOptionData<T> optionData, final String prefix,
+            final View view) {
+        String optionKey = prefix + optionData.getId();
+        for (Object obj : view.getStyles()) {
+            if (obj instanceof StringValueStyle) {
+                StringValueStyle style = (StringValueStyle) obj;
+                if (optionKey.equals(style.getName())) {
+                    T result = optionData.parseValue(style.getStringValue());
+                    if (result != null) {
+                        return result;
+                    }
+                }
+            }
+        }
+        return null;
+    }
     
     /**
      * Stores the given value in the notation view of the selected element. This requires
@@ -396,37 +508,115 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
      * @param value an option value
      */
     @Override
-    @SuppressWarnings("unchecked")
     public void setProperty(final IProperty<?> property, final Object value) {
         if (property instanceof LayoutOptionData<?>) {
             LayoutOptionData<?> optionData = (LayoutOptionData<?>) property;
-            if (value == null) {
-                if (optionStyle != null) {
-                    removeKOption(optionStyle, optionData);
-                    koptionMap.remove(optionData);
-                }
-            } else {
-                KOption koption = koptionMap.get(optionData);
-                if (koption == null) {
-                    if (optionStyle == null) {
-                        if (getEditPart() instanceof IGraphicalEditPart) {
-                            IGraphicalEditPart focusEditPart = (IGraphicalEditPart) getEditPart();
-                            optionStyle = LayoutOptionsFactory.eINSTANCE.createLayoutOptionStyle();
-                            focusEditPart.getNotationView().getStyles().add(optionStyle);
-                        } else {
-                            super.setProperty(property, value);
-                            return;
-                        }
-                    }
-                    koption = LayoutOptionsFactory.eINSTANCE.createKOption();
-                    koption.setKey(optionData.getId());
-                    optionStyle.getOptions().add(koption);
-                    koptionMap.put(optionData, koption);
-                }
-                koption.setValue(value.toString());
+            EditPart editPart = getEditPart();
+            if (editPart instanceof IGraphicalEditPart) {
+                checkDeprecatedStyle(((IGraphicalEditPart) editPart).getNotationView());
+                setOption(optionData, value, PREFIX,
+                        ((IGraphicalEditPart) editPart).getNotationView());
             }
         } else {
             super.setProperty(property, value);
+        }
+    }
+
+    /**
+     * Set the option for the given notation view. Adds a new style to the view unless the given
+     * key already exists.
+     * 
+     * @param optionData layout option data
+     * @param value the value
+     * @param prefix the prefix for the property key
+     * @param view the notation view
+     */
+    @SuppressWarnings("unchecked")
+    private void setOption(final LayoutOptionData<?> optionData, final Object value,
+            final String prefix, final View view) {
+        if (value == null) {
+            removeOption(optionData, prefix, view);
+        } else {
+            String optionKey = prefix + optionData.getId();
+            for (Object obj : view.getStyles()) {
+                if (obj instanceof StringValueStyle) {
+                    StringValueStyle style = (StringValueStyle) obj;
+                    if (optionKey.equals(style.getName())) {
+                        style.setStringValue(value.toString());
+                        return;
+                    }
+                }
+            }
+    
+            StringValueStyle style = NotationFactory.eINSTANCE.createStringValueStyle();
+            style.setName(prefix + optionData.getId());
+            style.setStringValue(value.toString());
+            view.getStyles().add(style);
+        }
+    }
+
+    /**
+     * Remove an option from the given notation view.
+     * 
+     * @param optionData layout option data
+     * @param prefix the prefix for the property key
+     * @param view the notation view
+     */
+    private void removeOption(final LayoutOptionData<?> optionData, final String prefix,
+            final View view) {
+        String optionKey = prefix + optionData.getId();
+        Iterator<?> iter = view.getStyles().iterator();
+        while (iter.hasNext()) {
+            Object obj = iter.next();
+            if (obj instanceof StringValueStyle
+                    && optionKey.equals(((StringValueStyle) obj).getName())) {
+                iter.remove();
+            }
+        }
+    }
+
+    /**
+     * Recursively remove an option from the given view and all its children.
+     * 
+     * @param optionData layout option data
+     * @param prefix the prefix for the property key
+     * @param view the notation view
+     */
+    private void removeOptionRecursively(final LayoutOptionData<?> optionData, final String prefix,
+            final View view) {
+        removeOption(optionData, prefix, view);
+        for (Object child : view.getPersistedChildren()) {
+            View node = (View) child;
+            checkDeprecatedStyle(node);
+            removeOption(optionData, prefix, node);
+            for (Object edgeObj : node.getTargetEdges()) {
+                View edge = (View) edgeObj;
+                checkDeprecatedStyle(edge);
+                removeOption(optionData, prefix, edge);
+                removeOptionRecursively(optionData, prefix, edge);
+            }
+            removeOptionRecursively(optionData, prefix, node);
+        }
+    }
+    
+    /** @deprecated TODO throw away after use */
+    private void checkDeprecatedStyle(final View view) {
+        LayoutOptionStyle style = (LayoutOptionStyle) view
+                .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
+        if (style != null) {
+            LayoutDataService dataService = LayoutDataService.getInstance();
+            for (KOption koption : optionStyle.getOptions()) {
+                LayoutOptionData<?> optionData = dataService.getOptionData(koption.getKey());
+                if (optionData != null) {
+                    String prefix = koption.isDefault() ? DIAG_PREFIX : PREFIX;
+                    if (getOption(optionData, prefix, view) == null) {
+                        setOption(optionData, koption.getValue(), prefix, view);
+                    }
+                }
+            }
+            removeOptionStyle(view);
+            optionStyle = null;
+            koptionMap = null;
         }
     }
     
@@ -441,7 +631,24 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
      */
     @Override
     public boolean isDefault(final LayoutOptionData<?> optionData) {
-        // check option value from notation model
+        EditPart editPart = getEditPart();
+        if (editPart instanceof IGraphicalEditPart) {
+            View view = ((IGraphicalEditPart) editPart).getNotationView();
+            String optionKey = PREFIX + optionData.getId();
+            for (Object obj : view.getStyles()) {
+                if (obj instanceof StringValueStyle) {
+                    StringValueStyle style = (StringValueStyle) obj;
+                    if (optionKey.equals(style.getName())) {
+                        String value = style.getStringValue();
+                        if (optionData.parseValue(value) != null) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        // TODO eliminate code based on LayoutOptionStyle
         if (koptionMap != null) {
             KOption koption = koptionMap.get(optionData);
             if (koption != null) {
@@ -451,24 +658,6 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
             }
         }
         return super.isDefault(optionData);
-    }
-    
-    /**
-     * Clear all stored layout options for the selected element.
-     */
-    @Override
-    public void clearProperties() {
-        if (getEditPart() instanceof IGraphicalEditPart) {
-            IGraphicalEditPart focusEditPart = (IGraphicalEditPart) getEditPart();
-            View view = focusEditPart.getNotationView();
-            if (view instanceof Diagram) {
-                Diagram diagram = (Diagram) view;
-                for (Object edge : diagram.getPersistedEdges()) {
-                    removeChildOptions((View) edge);
-                }
-            }
-            removeChildOptions(view);
-        }
     }
 
     /**
@@ -481,6 +670,13 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
     public <T> T getDiagramDefault(final LayoutOptionData<T> optionData) {
         IGraphicalEditPart diagramEditPart = GmfFrameworkBridge.getDiagramEditPart(getEditPart());
         if (diagramEditPart != null) {
+            View diagram = diagramEditPart.getNotationView();
+            T value = getOption(optionData, DIAG_PREFIX, diagram);
+
+            // TODO eliminate code based on LayoutOptionStyle
+            if (value != null) {
+                return value;
+            }
             LayoutOptionStyle style = (LayoutOptionStyle) diagramEditPart.getNotationView()
                     .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
             if (style != null) {
@@ -502,83 +698,15 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
      * @param value the new default value
      */
     @Override
-    @SuppressWarnings("unchecked")
     public void setDiagramDefault(final LayoutOptionData<?> optionData, final Object value) {
-        if (getEditPart() instanceof IGraphicalEditPart) {
-            IGraphicalEditPart focusEditPart = (IGraphicalEditPart) getEditPart();
-            View notationView = focusEditPart.getNotationView();
-            
-            // get the layout option style
-            LayoutOptionStyle style = (LayoutOptionStyle) notationView
-                    .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
-            if (style == null) {
-                style = LayoutOptionsFactory.eINSTANCE.createLayoutOptionStyle();
-                notationView.getStyles().add(style);
+        IGraphicalEditPart diagramEditPart = GmfFrameworkBridge.getDiagramEditPart(getEditPart());
+        if (diagramEditPart != null) {
+            View diagram = diagramEditPart.getNotationView();
+            checkDeprecatedStyle(diagram);
+            if (value != null) {
+                removeOptionRecursively(optionData, PREFIX, diagram);
             }
-            
-            if (value == null) {
-                GmfLayoutConfig.removeKOption(style, optionData);
-            } else {
-                // get the layout option
-                KOption koption = null;
-                for (KOption opt : style.getOptions()) {
-                    if (opt.getKey().equals(optionData.getId())) {
-                        koption = opt;
-                        break;
-                    }
-                }
-                if (koption == null) {
-                    koption = LayoutOptionsFactory.eINSTANCE.createKOption();
-                    koption.setKey(optionData.getId());
-                    style.getOptions().add(koption);
-                }
-                
-                // set the new option value
-                koption.setValue(value.toString());
-                koption.setDefault(true);
-                
-                // remove the option from all children
-                removeChildOptions(notationView, optionData);
-            }
-        }
-    }
-    
-    /**
-     * Removes all layout options from the given view and its children.
-     * 
-     * @param view a view from the notation model
-     */
-    private void removeChildOptions(final View view) {
-        removeOptionStyle(view);
-        for (Object child : view.getPersistedChildren()) {
-            removeChildOptions((View) child);
-        }
-    }
-    
-    /**
-     * Removes all options with given id from the children of the notation view recursively.
-     * 
-     * @param notationView a notation view
-     * @param optionData layout option data
-     */
-    private void removeChildOptions(final View notationView, final LayoutOptionData<?> optionData) {
-        for (Object child : notationView.getPersistedChildren()) {
-            View node = (View) child;
-            LayoutOptionStyle style = (LayoutOptionStyle) node.getStyle(
-                    LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
-            if (style != null) {
-                GmfLayoutConfig.removeKOption(style, optionData);
-            }
-            for (Object edgeObj : node.getTargetEdges()) {
-                View edge = (View) edgeObj;
-                style = (LayoutOptionStyle) edge.getStyle(
-                        LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
-                if (style != null) {
-                    GmfLayoutConfig.removeKOption(style, optionData);
-                }
-                removeChildOptions(edge, optionData);
-            }
-            removeChildOptions(node, optionData);
+            setOption(optionData, value, DIAG_PREFIX, diagram);
         }
     }
     
@@ -591,6 +719,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
         super.addProperties(options);
         
         if (super.getEditPart() instanceof IGraphicalEditPart) {
+            // TODO eliminate code based on LayoutOptionStyle
             // add user defined global layout options
             IGraphicalEditPart editPart = (IGraphicalEditPart) super.getEditPart();
             DiagramEditPart diagramEditPart = GmfFrameworkBridge.getDiagramEditPart(editPart);
@@ -604,6 +733,41 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
             LayoutOptionStyle style = (LayoutOptionStyle) editPart.getNotationView().getStyle(
                     LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
             addOptions(options, style, false);
+            
+            // add user defined global layout options
+            if (diagramEditPart != null) {
+                addOptions(options, DIAG_PREFIX, diagramEditPart.getNotationView());
+            }
+            // add user defined local layout options
+            addOptions(options, PREFIX, editPart.getNotationView());
+        }
+    }
+
+    /**
+     * Add the options from the list of properties to the options map.
+     * 
+     * @param options map to add the options to
+     * @param prefix the prefix for the property key
+     * @param view a notation view
+     */
+    private static void addOptions(final Map<IProperty<?>, Object> options, final String prefix,
+            final View view) {
+        LayoutDataService layoutServices = LayoutDataService.getInstance();
+        for (Object obj : view.getStyles()) {
+            if (obj instanceof StringValueStyle) {
+                StringValueStyle style = (StringValueStyle) obj;
+                String key = style.getName();
+                if (key != null && key.startsWith(prefix)) {
+                    LayoutOptionData<?> optionData = layoutServices.getOptionData(
+                            key.substring(prefix.length()));
+                    if (optionData != null) {
+                        Object value = optionData.parseValue(style.getStringValue());
+                        if (value != null) {
+                            options.put(optionData, value);
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -614,6 +778,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
      * @param options a map of layout options
      * @param optionStyle a layout options style
      * @param onlyDefault if true, only default options are taken
+     * @deprecated use {@link org.eclipse.gmf.runtime.notation.StringValueStyle} instead
      */
     private static void addOptions(final Map<IProperty<?>, Object> options,
             final LayoutOptionStyle optionStyle, final boolean onlyDefault) {
