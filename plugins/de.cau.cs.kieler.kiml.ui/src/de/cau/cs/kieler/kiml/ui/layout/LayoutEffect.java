@@ -65,7 +65,8 @@ public class LayoutEffect extends AbstractEffect {
      *            the workbench part containing the diagram to layout
      * @param object
      *            the top-level domain model object to layout, or {@code null}
-     * @throws UnsupportedPartException if layout is not supported for the given workbench part
+     * @throws de.cau.cs.kieler.core.ui.UnsupportedPartException
+     *            if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object) {
         this.diagramEditor = workbenchPart;
@@ -83,7 +84,8 @@ public class LayoutEffect extends AbstractEffect {
      *            the top-level domain model object to layout, or {@code null}
      * @param zoomToFit
      *            whether zoom to fit shall be performed
-     * @throws UnsupportedPartException if layout is not supported for the given workbench part
+     * @throws de.cau.cs.kieler.core.ui.UnsupportedPartException
+     *            if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
             final boolean zoomToFit) {
@@ -103,7 +105,8 @@ public class LayoutEffect extends AbstractEffect {
      *            whether zoom to fit shall be performed
      * @param progressBar
      *            whether a progress bar shall be displayed
-     * @throws UnsupportedPartException if layout is not supported for the given workbench part
+     * @throws de.cau.cs.kieler.core.ui.UnsupportedPartException
+     *            if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
             final boolean zoomToFit, final boolean progressBar) {
@@ -126,7 +129,8 @@ public class LayoutEffect extends AbstractEffect {
      *            whether a progress bar shall be displayed
      * @param ancestors
      *            whether to include the ancestors in the layout process
-     * @throws UnsupportedPartException if layout is not supported for the given workbench part
+     * @throws de.cau.cs.kieler.core.ui.UnsupportedPartException
+     *            if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
             final boolean zoomToFit, final boolean progressBar,
@@ -153,7 +157,8 @@ public class LayoutEffect extends AbstractEffect {
      *            whether to include the ancestors in the layout process
      * @param animation
      *            whether the layout shall be animated
-     * @throws UnsupportedPartException if layout is not supported for the given workbench part
+     * @throws de.cau.cs.kieler.core.ui.UnsupportedPartException
+     *            if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
             final boolean zoomToFit, final boolean progressBar, final boolean ancestors,
