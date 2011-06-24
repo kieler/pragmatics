@@ -48,6 +48,7 @@ import org.eclipse.graphiti.mm.pictograms.util.PictogramsSwitch;
 import de.cau.cs.kieler.klighd.IModelTransformation;
 import de.cau.cs.kieler.klighd.piccolo.PSWTAdvancedPath;
 import de.cau.cs.kieler.klighd.piccolo.PSWTAlignedText;
+import de.cau.cs.kieler.klighd.piccolo.PSWTClipper;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolox.swt.PSWTText;
 
@@ -147,7 +148,7 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
         if (ga != null) {
             gaFc = getForegroundColor(ga, fc);
             gaBc = getBackgroundColor(ga, bc);
-            PNode gaNode = transformGraphicsAlgorithm(shapeNode, ga, gaFc, gaBc);
+            PNode gaNode = transformClippedGraphicsAlgorithm(shapeNode, ga, gaFc, gaBc);
             if (gaNode != null) {
                 gaNode.translate(-ga.getX(), -ga.getY());
                 shapeNode.translate(ga.getX(), ga.getY());
@@ -346,6 +347,14 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
                 transformGraphicsAlgorithm(node, childGa, childFc, childBc);
             }
         }
+        return node;
+    }
+
+    private PNode transformClippedGraphicsAlgorithm(final PNode parent, final GraphicsAlgorithm ga,
+            final Color fc, final Color bc) {
+        PNode clipper = new PSWTClipper();
+        PNode node = transformGraphicsAlgorithm(clipper, ga, fc, bc);
+        parent.addChild(clipper);
         return node;
     }
 
