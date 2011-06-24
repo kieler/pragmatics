@@ -33,7 +33,7 @@ public class PSWTClipper extends PNode {
      */
     @Override
     public void addChild(final int index, final PNode child) {
-        if (node != null) {
+        if (node == null) {
             node = child;
         }
         super.addChild(index, child);
