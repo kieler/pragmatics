@@ -1313,24 +1313,24 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
     // $ANTLR end ruleEString
 
 
-    // $ANTLR start entryRuleTypeId
-    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:484:1: entryRuleTypeId : ruleTypeId EOF ;
-    public final void entryRuleTypeId() throws RecognitionException {
+    // $ANTLR start entryRuleExtendedID
+    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:484:1: entryRuleExtendedID : ruleExtendedID EOF ;
+    public final void entryRuleExtendedID() throws RecognitionException {
         try {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:485:1: ( ruleTypeId EOF )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:486:1: ruleTypeId EOF
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:485:1: ( ruleExtendedID EOF )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:486:1: ruleExtendedID EOF
             {
             if ( backtracking==0 ) {
-               before(grammarAccess.getTypeIdRule()); 
+               before(grammarAccess.getExtendedIDRule()); 
             }
-            pushFollow(FollowSets000.FOLLOW_ruleTypeId_in_entryRuleTypeId969);
-            ruleTypeId();
+            pushFollow(FollowSets000.FOLLOW_ruleExtendedID_in_entryRuleExtendedID969);
+            ruleExtendedID();
             _fsp--;
             if (failed) return ;
             if ( backtracking==0 ) {
-               after(grammarAccess.getTypeIdRule()); 
+               after(grammarAccess.getExtendedIDRule()); 
             }
-            match(input,EOF,FollowSets000.FOLLOW_EOF_in_entryRuleTypeId976); if (failed) return ;
+            match(input,EOF,FollowSets000.FOLLOW_EOF_in_entryRuleExtendedID976); if (failed) return ;
 
             }
 
@@ -1343,37 +1343,37 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end entryRuleTypeId
+    // $ANTLR end entryRuleExtendedID
 
 
-    // $ANTLR start ruleTypeId
-    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:493:1: ruleTypeId : ( ( rule__TypeId__Group__0 ) ) ;
-    public final void ruleTypeId() throws RecognitionException {
+    // $ANTLR start ruleExtendedID
+    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:493:1: ruleExtendedID : ( ( rule__ExtendedID__Group__0 ) ) ;
+    public final void ruleExtendedID() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:497:2: ( ( ( rule__TypeId__Group__0 ) ) )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:498:1: ( ( rule__TypeId__Group__0 ) )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:497:2: ( ( ( rule__ExtendedID__Group__0 ) ) )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:498:1: ( ( rule__ExtendedID__Group__0 ) )
             {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:498:1: ( ( rule__TypeId__Group__0 ) )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:499:1: ( rule__TypeId__Group__0 )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:498:1: ( ( rule__ExtendedID__Group__0 ) )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:499:1: ( rule__ExtendedID__Group__0 )
             {
             if ( backtracking==0 ) {
-               before(grammarAccess.getTypeIdAccess().getGroup()); 
+               before(grammarAccess.getExtendedIDAccess().getGroup()); 
             }
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:500:1: ( rule__TypeId__Group__0 )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:500:2: rule__TypeId__Group__0
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:500:1: ( rule__ExtendedID__Group__0 )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:500:2: rule__ExtendedID__Group__0
             {
-            pushFollow(FollowSets000.FOLLOW_rule__TypeId__Group__0_in_ruleTypeId1002);
-            rule__TypeId__Group__0();
+            pushFollow(FollowSets000.FOLLOW_rule__ExtendedID__Group__0_in_ruleExtendedID1002);
+            rule__ExtendedID__Group__0();
             _fsp--;
             if (failed) return ;
 
             }
 
             if ( backtracking==0 ) {
-               after(grammarAccess.getTypeIdAccess().getGroup()); 
+               after(grammarAccess.getExtendedIDAccess().getGroup()); 
             }
 
             }
@@ -1393,7 +1393,7 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end ruleTypeId
+    // $ANTLR end ruleExtendedID
 
 
     // $ANTLR start rule__TopLevelEntity__Alternatives_2_4
@@ -2019,79 +2019,7 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
         try {
             // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:633:1: ( ( ruleCommentAnnotation ) | ( ruleTagAnnotation ) | ( ruleKeyStringValueAnnotation ) | ( ruleTypedKeyStringValueAnnotation ) | ( ruleKeyBooleanValueAnnotation ) | ( ruleKeyIntValueAnnotation ) | ( ruleKeyFloatValueAnnotation ) )
             int alt5=7;
-            int LA5_0 = input.LA(1);
-
-            if ( (LA5_0==RULE_COMMENT_ANNOTATION) ) {
-                alt5=1;
-            }
-            else if ( (LA5_0==22) ) {
-                int LA5_2 = input.LA(2);
-
-                if ( (LA5_2==RULE_ID) ) {
-                    switch ( input.LA(3) ) {
-                    case EOF:
-                    case RULE_COMMENT_ANNOTATION:
-                    case 15:
-                    case 18:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                        {
-                        alt5=2;
-                        }
-                        break;
-                    case RULE_FLOAT:
-                        {
-                        alt5=7;
-                        }
-                        break;
-                    case 25:
-                        {
-                        alt5=4;
-                        }
-                        break;
-                    case RULE_INT:
-                        {
-                        alt5=6;
-                        }
-                        break;
-                    case RULE_STRING:
-                    case RULE_ID:
-                        {
-                        alt5=3;
-                        }
-                        break;
-                    case RULE_BOOLEAN:
-                        {
-                        alt5=5;
-                        }
-                        break;
-                    default:
-                        if (backtracking>0) {failed=true; return ;}
-                        NoViableAltException nvae =
-                            new NoViableAltException("629:1: rule__Annotation__Alternatives : ( ( ruleCommentAnnotation ) | ( ruleTagAnnotation ) | ( ruleKeyStringValueAnnotation ) | ( ruleTypedKeyStringValueAnnotation ) | ( ruleKeyBooleanValueAnnotation ) | ( ruleKeyIntValueAnnotation ) | ( ruleKeyFloatValueAnnotation ) );", 5, 3, input);
-
-                        throw nvae;
-                    }
-
-                }
-                else {
-                    if (backtracking>0) {failed=true; return ;}
-                    NoViableAltException nvae =
-                        new NoViableAltException("629:1: rule__Annotation__Alternatives : ( ( ruleCommentAnnotation ) | ( ruleTagAnnotation ) | ( ruleKeyStringValueAnnotation ) | ( ruleTypedKeyStringValueAnnotation ) | ( ruleKeyBooleanValueAnnotation ) | ( ruleKeyIntValueAnnotation ) | ( ruleKeyFloatValueAnnotation ) );", 5, 2, input);
-
-                    throw nvae;
-                }
-            }
-            else {
-                if (backtracking>0) {failed=true; return ;}
-                NoViableAltException nvae =
-                    new NoViableAltException("629:1: rule__Annotation__Alternatives : ( ( ruleCommentAnnotation ) | ( ruleTagAnnotation ) | ( ruleKeyStringValueAnnotation ) | ( ruleTypedKeyStringValueAnnotation ) | ( ruleKeyBooleanValueAnnotation ) | ( ruleKeyIntValueAnnotation ) | ( ruleKeyFloatValueAnnotation ) );", 5, 0, input);
-
-                throw nvae;
-            }
+            alt5 = dfa5.predict(input);
             switch (alt5) {
                 case 1 :
                     // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:634:1: ( ruleCommentAnnotation )
@@ -9612,22 +9540,22 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
     // $ANTLR end rule__ImportAnnotation__Group__1__Impl
 
 
-    // $ANTLR start rule__TypeId__Group__0
-    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3395:1: rule__TypeId__Group__0 : rule__TypeId__Group__0__Impl rule__TypeId__Group__1 ;
-    public final void rule__TypeId__Group__0() throws RecognitionException {
+    // $ANTLR start rule__ExtendedID__Group__0
+    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3395:1: rule__ExtendedID__Group__0 : rule__ExtendedID__Group__0__Impl rule__ExtendedID__Group__1 ;
+    public final void rule__ExtendedID__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3399:1: ( rule__TypeId__Group__0__Impl rule__TypeId__Group__1 )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3400:2: rule__TypeId__Group__0__Impl rule__TypeId__Group__1
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3399:1: ( rule__ExtendedID__Group__0__Impl rule__ExtendedID__Group__1 )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3400:2: rule__ExtendedID__Group__0__Impl rule__ExtendedID__Group__1
             {
-            pushFollow(FollowSets000.FOLLOW_rule__TypeId__Group__0__Impl_in_rule__TypeId__Group__06805);
-            rule__TypeId__Group__0__Impl();
+            pushFollow(FollowSets000.FOLLOW_rule__ExtendedID__Group__0__Impl_in_rule__ExtendedID__Group__06805);
+            rule__ExtendedID__Group__0__Impl();
             _fsp--;
             if (failed) return ;
-            pushFollow(FollowSets000.FOLLOW_rule__TypeId__Group__1_in_rule__TypeId__Group__06808);
-            rule__TypeId__Group__1();
+            pushFollow(FollowSets000.FOLLOW_rule__ExtendedID__Group__1_in_rule__ExtendedID__Group__06808);
+            rule__ExtendedID__Group__1();
             _fsp--;
             if (failed) return ;
 
@@ -9645,12 +9573,12 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end rule__TypeId__Group__0
+    // $ANTLR end rule__ExtendedID__Group__0
 
 
-    // $ANTLR start rule__TypeId__Group__0__Impl
-    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3407:1: rule__TypeId__Group__0__Impl : ( RULE_ID ) ;
-    public final void rule__TypeId__Group__0__Impl() throws RecognitionException {
+    // $ANTLR start rule__ExtendedID__Group__0__Impl
+    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3407:1: rule__ExtendedID__Group__0__Impl : ( RULE_ID ) ;
+    public final void rule__ExtendedID__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
@@ -9662,11 +9590,11 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3413:1: RULE_ID
             {
             if ( backtracking==0 ) {
-               before(grammarAccess.getTypeIdAccess().getIDTerminalRuleCall_0()); 
+               before(grammarAccess.getExtendedIDAccess().getIDTerminalRuleCall_0()); 
             }
-            match(input,RULE_ID,FollowSets000.FOLLOW_RULE_ID_in_rule__TypeId__Group__0__Impl6835); if (failed) return ;
+            match(input,RULE_ID,FollowSets000.FOLLOW_RULE_ID_in_rule__ExtendedID__Group__0__Impl6835); if (failed) return ;
             if ( backtracking==0 ) {
-               after(grammarAccess.getTypeIdAccess().getIDTerminalRuleCall_0()); 
+               after(grammarAccess.getExtendedIDAccess().getIDTerminalRuleCall_0()); 
             }
 
             }
@@ -9686,21 +9614,21 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end rule__TypeId__Group__0__Impl
+    // $ANTLR end rule__ExtendedID__Group__0__Impl
 
 
-    // $ANTLR start rule__TypeId__Group__1
-    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3424:1: rule__TypeId__Group__1 : rule__TypeId__Group__1__Impl ;
-    public final void rule__TypeId__Group__1() throws RecognitionException {
+    // $ANTLR start rule__ExtendedID__Group__1
+    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3424:1: rule__ExtendedID__Group__1 : rule__ExtendedID__Group__1__Impl ;
+    public final void rule__ExtendedID__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3428:1: ( rule__TypeId__Group__1__Impl )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3429:2: rule__TypeId__Group__1__Impl
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3428:1: ( rule__ExtendedID__Group__1__Impl )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3429:2: rule__ExtendedID__Group__1__Impl
             {
-            pushFollow(FollowSets000.FOLLOW_rule__TypeId__Group__1__Impl_in_rule__TypeId__Group__16864);
-            rule__TypeId__Group__1__Impl();
+            pushFollow(FollowSets000.FOLLOW_rule__ExtendedID__Group__1__Impl_in_rule__ExtendedID__Group__16864);
+            rule__ExtendedID__Group__1__Impl();
             _fsp--;
             if (failed) return ;
 
@@ -9718,26 +9646,26 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end rule__TypeId__Group__1
+    // $ANTLR end rule__ExtendedID__Group__1
 
 
-    // $ANTLR start rule__TypeId__Group__1__Impl
-    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3435:1: rule__TypeId__Group__1__Impl : ( ( rule__TypeId__Group_1__0 )* ) ;
-    public final void rule__TypeId__Group__1__Impl() throws RecognitionException {
+    // $ANTLR start rule__ExtendedID__Group__1__Impl
+    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3435:1: rule__ExtendedID__Group__1__Impl : ( ( rule__ExtendedID__Group_1__0 )* ) ;
+    public final void rule__ExtendedID__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3439:1: ( ( ( rule__TypeId__Group_1__0 )* ) )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3440:1: ( ( rule__TypeId__Group_1__0 )* )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3439:1: ( ( ( rule__ExtendedID__Group_1__0 )* ) )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3440:1: ( ( rule__ExtendedID__Group_1__0 )* )
             {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3440:1: ( ( rule__TypeId__Group_1__0 )* )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3441:1: ( rule__TypeId__Group_1__0 )*
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3440:1: ( ( rule__ExtendedID__Group_1__0 )* )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3441:1: ( rule__ExtendedID__Group_1__0 )*
             {
             if ( backtracking==0 ) {
-               before(grammarAccess.getTypeIdAccess().getGroup_1()); 
+               before(grammarAccess.getExtendedIDAccess().getGroup_1()); 
             }
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3442:1: ( rule__TypeId__Group_1__0 )*
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3442:1: ( rule__ExtendedID__Group_1__0 )*
             loop33:
             do {
                 int alt33=2;
@@ -9750,10 +9678,10 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
 
                 switch (alt33) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3442:2: rule__TypeId__Group_1__0
+            	    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3442:2: rule__ExtendedID__Group_1__0
             	    {
-            	    pushFollow(FollowSets000.FOLLOW_rule__TypeId__Group_1__0_in_rule__TypeId__Group__1__Impl6891);
-            	    rule__TypeId__Group_1__0();
+            	    pushFollow(FollowSets000.FOLLOW_rule__ExtendedID__Group_1__0_in_rule__ExtendedID__Group__1__Impl6891);
+            	    rule__ExtendedID__Group_1__0();
             	    _fsp--;
             	    if (failed) return ;
 
@@ -9766,7 +9694,7 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
             } while (true);
 
             if ( backtracking==0 ) {
-               after(grammarAccess.getTypeIdAccess().getGroup_1()); 
+               after(grammarAccess.getExtendedIDAccess().getGroup_1()); 
             }
 
             }
@@ -9786,25 +9714,25 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end rule__TypeId__Group__1__Impl
+    // $ANTLR end rule__ExtendedID__Group__1__Impl
 
 
-    // $ANTLR start rule__TypeId__Group_1__0
-    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3456:1: rule__TypeId__Group_1__0 : rule__TypeId__Group_1__0__Impl rule__TypeId__Group_1__1 ;
-    public final void rule__TypeId__Group_1__0() throws RecognitionException {
+    // $ANTLR start rule__ExtendedID__Group_1__0
+    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3456:1: rule__ExtendedID__Group_1__0 : rule__ExtendedID__Group_1__0__Impl rule__ExtendedID__Group_1__1 ;
+    public final void rule__ExtendedID__Group_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3460:1: ( rule__TypeId__Group_1__0__Impl rule__TypeId__Group_1__1 )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3461:2: rule__TypeId__Group_1__0__Impl rule__TypeId__Group_1__1
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3460:1: ( rule__ExtendedID__Group_1__0__Impl rule__ExtendedID__Group_1__1 )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3461:2: rule__ExtendedID__Group_1__0__Impl rule__ExtendedID__Group_1__1
             {
-            pushFollow(FollowSets000.FOLLOW_rule__TypeId__Group_1__0__Impl_in_rule__TypeId__Group_1__06926);
-            rule__TypeId__Group_1__0__Impl();
+            pushFollow(FollowSets000.FOLLOW_rule__ExtendedID__Group_1__0__Impl_in_rule__ExtendedID__Group_1__06926);
+            rule__ExtendedID__Group_1__0__Impl();
             _fsp--;
             if (failed) return ;
-            pushFollow(FollowSets000.FOLLOW_rule__TypeId__Group_1__1_in_rule__TypeId__Group_1__06929);
-            rule__TypeId__Group_1__1();
+            pushFollow(FollowSets000.FOLLOW_rule__ExtendedID__Group_1__1_in_rule__ExtendedID__Group_1__06929);
+            rule__ExtendedID__Group_1__1();
             _fsp--;
             if (failed) return ;
 
@@ -9822,12 +9750,12 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end rule__TypeId__Group_1__0
+    // $ANTLR end rule__ExtendedID__Group_1__0
 
 
-    // $ANTLR start rule__TypeId__Group_1__0__Impl
-    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3468:1: rule__TypeId__Group_1__0__Impl : ( '.' ) ;
-    public final void rule__TypeId__Group_1__0__Impl() throws RecognitionException {
+    // $ANTLR start rule__ExtendedID__Group_1__0__Impl
+    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3468:1: rule__ExtendedID__Group_1__0__Impl : ( '.' ) ;
+    public final void rule__ExtendedID__Group_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
@@ -9839,11 +9767,11 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3474:1: '.'
             {
             if ( backtracking==0 ) {
-               before(grammarAccess.getTypeIdAccess().getFullStopKeyword_1_0()); 
+               before(grammarAccess.getExtendedIDAccess().getFullStopKeyword_1_0()); 
             }
-            match(input,28,FollowSets000.FOLLOW_28_in_rule__TypeId__Group_1__0__Impl6957); if (failed) return ;
+            match(input,28,FollowSets000.FOLLOW_28_in_rule__ExtendedID__Group_1__0__Impl6957); if (failed) return ;
             if ( backtracking==0 ) {
-               after(grammarAccess.getTypeIdAccess().getFullStopKeyword_1_0()); 
+               after(grammarAccess.getExtendedIDAccess().getFullStopKeyword_1_0()); 
             }
 
             }
@@ -9863,21 +9791,21 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end rule__TypeId__Group_1__0__Impl
+    // $ANTLR end rule__ExtendedID__Group_1__0__Impl
 
 
-    // $ANTLR start rule__TypeId__Group_1__1
-    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3487:1: rule__TypeId__Group_1__1 : rule__TypeId__Group_1__1__Impl ;
-    public final void rule__TypeId__Group_1__1() throws RecognitionException {
+    // $ANTLR start rule__ExtendedID__Group_1__1
+    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3487:1: rule__ExtendedID__Group_1__1 : rule__ExtendedID__Group_1__1__Impl ;
+    public final void rule__ExtendedID__Group_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3491:1: ( rule__TypeId__Group_1__1__Impl )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3492:2: rule__TypeId__Group_1__1__Impl
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3491:1: ( rule__ExtendedID__Group_1__1__Impl )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3492:2: rule__ExtendedID__Group_1__1__Impl
             {
-            pushFollow(FollowSets000.FOLLOW_rule__TypeId__Group_1__1__Impl_in_rule__TypeId__Group_1__16988);
-            rule__TypeId__Group_1__1__Impl();
+            pushFollow(FollowSets000.FOLLOW_rule__ExtendedID__Group_1__1__Impl_in_rule__ExtendedID__Group_1__16988);
+            rule__ExtendedID__Group_1__1__Impl();
             _fsp--;
             if (failed) return ;
 
@@ -9895,12 +9823,12 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end rule__TypeId__Group_1__1
+    // $ANTLR end rule__ExtendedID__Group_1__1
 
 
-    // $ANTLR start rule__TypeId__Group_1__1__Impl
-    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3498:1: rule__TypeId__Group_1__1__Impl : ( RULE_ID ) ;
-    public final void rule__TypeId__Group_1__1__Impl() throws RecognitionException {
+    // $ANTLR start rule__ExtendedID__Group_1__1__Impl
+    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3498:1: rule__ExtendedID__Group_1__1__Impl : ( RULE_ID ) ;
+    public final void rule__ExtendedID__Group_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
@@ -9912,11 +9840,11 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3504:1: RULE_ID
             {
             if ( backtracking==0 ) {
-               before(grammarAccess.getTypeIdAccess().getIDTerminalRuleCall_1_1()); 
+               before(grammarAccess.getExtendedIDAccess().getIDTerminalRuleCall_1_1()); 
             }
-            match(input,RULE_ID,FollowSets000.FOLLOW_RULE_ID_in_rule__TypeId__Group_1__1__Impl7015); if (failed) return ;
+            match(input,RULE_ID,FollowSets000.FOLLOW_RULE_ID_in_rule__ExtendedID__Group_1__1__Impl7015); if (failed) return ;
             if ( backtracking==0 ) {
-               after(grammarAccess.getTypeIdAccess().getIDTerminalRuleCall_1_1()); 
+               after(grammarAccess.getExtendedIDAccess().getIDTerminalRuleCall_1_1()); 
             }
 
             }
@@ -9936,7 +9864,7 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end rule__TypeId__Group_1__1__Impl
+    // $ANTLR end rule__ExtendedID__Group_1__1__Impl
 
 
     // $ANTLR start rule__TopLevelEntity__AnnotationsAssignment_1
@@ -11072,24 +11000,27 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start rule__TagAnnotation__NameAssignment_1
-    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3918:1: rule__TagAnnotation__NameAssignment_1 : ( RULE_ID ) ;
+    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3918:1: rule__TagAnnotation__NameAssignment_1 : ( ruleExtendedID ) ;
     public final void rule__TagAnnotation__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3922:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3923:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3922:1: ( ( ruleExtendedID ) )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3923:1: ( ruleExtendedID )
             {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3923:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3924:1: RULE_ID
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3923:1: ( ruleExtendedID )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3924:1: ruleExtendedID
             {
             if ( backtracking==0 ) {
-               before(grammarAccess.getTagAnnotationAccess().getNameIDTerminalRuleCall_1_0()); 
+               before(grammarAccess.getTagAnnotationAccess().getNameExtendedIDParserRuleCall_1_0()); 
             }
-            match(input,RULE_ID,FollowSets000.FOLLOW_RULE_ID_in_rule__TagAnnotation__NameAssignment_17875); if (failed) return ;
+            pushFollow(FollowSets000.FOLLOW_ruleExtendedID_in_rule__TagAnnotation__NameAssignment_17875);
+            ruleExtendedID();
+            _fsp--;
+            if (failed) return ;
             if ( backtracking==0 ) {
-               after(grammarAccess.getTagAnnotationAccess().getNameIDTerminalRuleCall_1_0()); 
+               after(grammarAccess.getTagAnnotationAccess().getNameExtendedIDParserRuleCall_1_0()); 
             }
 
             }
@@ -11157,24 +11088,27 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start rule__KeyStringValueAnnotation__NameAssignment_1
-    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3948:1: rule__KeyStringValueAnnotation__NameAssignment_1 : ( RULE_ID ) ;
+    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3948:1: rule__KeyStringValueAnnotation__NameAssignment_1 : ( ruleExtendedID ) ;
     public final void rule__KeyStringValueAnnotation__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3952:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3953:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3952:1: ( ( ruleExtendedID ) )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3953:1: ( ruleExtendedID )
             {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3953:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3954:1: RULE_ID
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3953:1: ( ruleExtendedID )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3954:1: ruleExtendedID
             {
             if ( backtracking==0 ) {
-               before(grammarAccess.getKeyStringValueAnnotationAccess().getNameIDTerminalRuleCall_1_0()); 
+               before(grammarAccess.getKeyStringValueAnnotationAccess().getNameExtendedIDParserRuleCall_1_0()); 
             }
-            match(input,RULE_ID,FollowSets000.FOLLOW_RULE_ID_in_rule__KeyStringValueAnnotation__NameAssignment_17937); if (failed) return ;
+            pushFollow(FollowSets000.FOLLOW_ruleExtendedID_in_rule__KeyStringValueAnnotation__NameAssignment_17937);
+            ruleExtendedID();
+            _fsp--;
+            if (failed) return ;
             if ( backtracking==0 ) {
-               after(grammarAccess.getKeyStringValueAnnotationAccess().getNameIDTerminalRuleCall_1_0()); 
+               after(grammarAccess.getKeyStringValueAnnotationAccess().getNameExtendedIDParserRuleCall_1_0()); 
             }
 
             }
@@ -11286,24 +11220,27 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start rule__TypedKeyStringValueAnnotation__NameAssignment_1
-    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3993:1: rule__TypedKeyStringValueAnnotation__NameAssignment_1 : ( RULE_ID ) ;
+    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3993:1: rule__TypedKeyStringValueAnnotation__NameAssignment_1 : ( ruleExtendedID ) ;
     public final void rule__TypedKeyStringValueAnnotation__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3997:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3998:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3997:1: ( ( ruleExtendedID ) )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3998:1: ( ruleExtendedID )
             {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3998:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3999:1: RULE_ID
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3998:1: ( ruleExtendedID )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:3999:1: ruleExtendedID
             {
             if ( backtracking==0 ) {
-               before(grammarAccess.getTypedKeyStringValueAnnotationAccess().getNameIDTerminalRuleCall_1_0()); 
+               before(grammarAccess.getTypedKeyStringValueAnnotationAccess().getNameExtendedIDParserRuleCall_1_0()); 
             }
-            match(input,RULE_ID,FollowSets000.FOLLOW_RULE_ID_in_rule__TypedKeyStringValueAnnotation__NameAssignment_18030); if (failed) return ;
+            pushFollow(FollowSets000.FOLLOW_ruleExtendedID_in_rule__TypedKeyStringValueAnnotation__NameAssignment_18030);
+            ruleExtendedID();
+            _fsp--;
+            if (failed) return ;
             if ( backtracking==0 ) {
-               after(grammarAccess.getTypedKeyStringValueAnnotationAccess().getNameIDTerminalRuleCall_1_0()); 
+               after(grammarAccess.getTypedKeyStringValueAnnotationAccess().getNameExtendedIDParserRuleCall_1_0()); 
             }
 
             }
@@ -11327,27 +11264,27 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start rule__TypedKeyStringValueAnnotation__TypeAssignment_3
-    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4008:1: rule__TypedKeyStringValueAnnotation__TypeAssignment_3 : ( ruleTypeId ) ;
+    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4008:1: rule__TypedKeyStringValueAnnotation__TypeAssignment_3 : ( ruleExtendedID ) ;
     public final void rule__TypedKeyStringValueAnnotation__TypeAssignment_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4012:1: ( ( ruleTypeId ) )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4013:1: ( ruleTypeId )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4012:1: ( ( ruleExtendedID ) )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4013:1: ( ruleExtendedID )
             {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4013:1: ( ruleTypeId )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4014:1: ruleTypeId
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4013:1: ( ruleExtendedID )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4014:1: ruleExtendedID
             {
             if ( backtracking==0 ) {
-               before(grammarAccess.getTypedKeyStringValueAnnotationAccess().getTypeTypeIdParserRuleCall_3_0()); 
+               before(grammarAccess.getTypedKeyStringValueAnnotationAccess().getTypeExtendedIDParserRuleCall_3_0()); 
             }
-            pushFollow(FollowSets000.FOLLOW_ruleTypeId_in_rule__TypedKeyStringValueAnnotation__TypeAssignment_38061);
-            ruleTypeId();
+            pushFollow(FollowSets000.FOLLOW_ruleExtendedID_in_rule__TypedKeyStringValueAnnotation__TypeAssignment_38061);
+            ruleExtendedID();
             _fsp--;
             if (failed) return ;
             if ( backtracking==0 ) {
-               after(grammarAccess.getTypedKeyStringValueAnnotationAccess().getTypeTypeIdParserRuleCall_3_0()); 
+               after(grammarAccess.getTypedKeyStringValueAnnotationAccess().getTypeExtendedIDParserRuleCall_3_0()); 
             }
 
             }
@@ -11459,24 +11396,27 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start rule__KeyBooleanValueAnnotation__NameAssignment_1
-    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4053:1: rule__KeyBooleanValueAnnotation__NameAssignment_1 : ( RULE_ID ) ;
+    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4053:1: rule__KeyBooleanValueAnnotation__NameAssignment_1 : ( ruleExtendedID ) ;
     public final void rule__KeyBooleanValueAnnotation__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4057:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4058:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4057:1: ( ( ruleExtendedID ) )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4058:1: ( ruleExtendedID )
             {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4058:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4059:1: RULE_ID
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4058:1: ( ruleExtendedID )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4059:1: ruleExtendedID
             {
             if ( backtracking==0 ) {
-               before(grammarAccess.getKeyBooleanValueAnnotationAccess().getNameIDTerminalRuleCall_1_0()); 
+               before(grammarAccess.getKeyBooleanValueAnnotationAccess().getNameExtendedIDParserRuleCall_1_0()); 
             }
-            match(input,RULE_ID,FollowSets000.FOLLOW_RULE_ID_in_rule__KeyBooleanValueAnnotation__NameAssignment_18154); if (failed) return ;
+            pushFollow(FollowSets000.FOLLOW_ruleExtendedID_in_rule__KeyBooleanValueAnnotation__NameAssignment_18154);
+            ruleExtendedID();
+            _fsp--;
+            if (failed) return ;
             if ( backtracking==0 ) {
-               after(grammarAccess.getKeyBooleanValueAnnotationAccess().getNameIDTerminalRuleCall_1_0()); 
+               after(grammarAccess.getKeyBooleanValueAnnotationAccess().getNameExtendedIDParserRuleCall_1_0()); 
             }
 
             }
@@ -11585,24 +11525,27 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start rule__KeyIntValueAnnotation__NameAssignment_1
-    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4098:1: rule__KeyIntValueAnnotation__NameAssignment_1 : ( RULE_ID ) ;
+    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4098:1: rule__KeyIntValueAnnotation__NameAssignment_1 : ( ruleExtendedID ) ;
     public final void rule__KeyIntValueAnnotation__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4102:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4103:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4102:1: ( ( ruleExtendedID ) )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4103:1: ( ruleExtendedID )
             {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4103:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4104:1: RULE_ID
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4103:1: ( ruleExtendedID )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4104:1: ruleExtendedID
             {
             if ( backtracking==0 ) {
-               before(grammarAccess.getKeyIntValueAnnotationAccess().getNameIDTerminalRuleCall_1_0()); 
+               before(grammarAccess.getKeyIntValueAnnotationAccess().getNameExtendedIDParserRuleCall_1_0()); 
             }
-            match(input,RULE_ID,FollowSets000.FOLLOW_RULE_ID_in_rule__KeyIntValueAnnotation__NameAssignment_18247); if (failed) return ;
+            pushFollow(FollowSets000.FOLLOW_ruleExtendedID_in_rule__KeyIntValueAnnotation__NameAssignment_18247);
+            ruleExtendedID();
+            _fsp--;
+            if (failed) return ;
             if ( backtracking==0 ) {
-               after(grammarAccess.getKeyIntValueAnnotationAccess().getNameIDTerminalRuleCall_1_0()); 
+               after(grammarAccess.getKeyIntValueAnnotationAccess().getNameExtendedIDParserRuleCall_1_0()); 
             }
 
             }
@@ -11711,24 +11654,27 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start rule__KeyFloatValueAnnotation__NameAssignment_1
-    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4143:1: rule__KeyFloatValueAnnotation__NameAssignment_1 : ( RULE_ID ) ;
+    // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4143:1: rule__KeyFloatValueAnnotation__NameAssignment_1 : ( ruleExtendedID ) ;
     public final void rule__KeyFloatValueAnnotation__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4147:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4148:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4147:1: ( ( ruleExtendedID ) )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4148:1: ( ruleExtendedID )
             {
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4148:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4149:1: RULE_ID
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4148:1: ( ruleExtendedID )
+            // ../de.cau.cs.kieler.kaom.text.ui/src-gen/de/cau/cs/kieler/kaom/text/ui/contentassist/antlr/internal/InternalKaom.g:4149:1: ruleExtendedID
             {
             if ( backtracking==0 ) {
-               before(grammarAccess.getKeyFloatValueAnnotationAccess().getNameIDTerminalRuleCall_1_0()); 
+               before(grammarAccess.getKeyFloatValueAnnotationAccess().getNameExtendedIDParserRuleCall_1_0()); 
             }
-            match(input,RULE_ID,FollowSets000.FOLLOW_RULE_ID_in_rule__KeyFloatValueAnnotation__NameAssignment_18340); if (failed) return ;
+            pushFollow(FollowSets000.FOLLOW_ruleExtendedID_in_rule__KeyFloatValueAnnotation__NameAssignment_18340);
+            ruleExtendedID();
+            _fsp--;
+            if (failed) return ;
             if ( backtracking==0 ) {
-               after(grammarAccess.getKeyFloatValueAnnotationAccess().getNameIDTerminalRuleCall_1_0()); 
+               after(grammarAccess.getKeyFloatValueAnnotationAccess().getNameExtendedIDParserRuleCall_1_0()); 
             }
 
             }
@@ -12136,6 +12082,69 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
     }
 
 
+    protected DFA5 dfa5 = new DFA5(this);
+    static final String DFA5_eotS =
+        "\14\uffff";
+    static final String DFA5_eofS =
+        "\3\uffff\1\7\7\uffff\1\7";
+    static final String DFA5_minS =
+        "\1\6\1\uffff\1\5\1\4\1\5\6\uffff\1\4";
+    static final String DFA5_maxS =
+        "\1\26\1\uffff\1\5\1\34\1\5\6\uffff\1\34";
+    static final String DFA5_acceptS =
+        "\1\uffff\1\1\3\uffff\1\3\1\5\1\2\1\7\1\4\1\6\1\uffff";
+    static final String DFA5_specialS =
+        "\14\uffff}>";
+    static final String[] DFA5_transitionS = {
+            "\1\1\17\uffff\1\2",
+            "",
+            "\1\3",
+            "\2\5\1\7\1\6\1\12\1\10\5\uffff\1\7\2\uffff\1\7\1\uffff\5\7\1"+
+            "\11\2\uffff\1\4",
+            "\1\13",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "\2\5\1\7\1\6\1\12\1\10\5\uffff\1\7\2\uffff\1\7\1\uffff\5\7\1"+
+            "\11\2\uffff\1\4"
+    };
+
+    static final short[] DFA5_eot = DFA.unpackEncodedString(DFA5_eotS);
+    static final short[] DFA5_eof = DFA.unpackEncodedString(DFA5_eofS);
+    static final char[] DFA5_min = DFA.unpackEncodedStringToUnsignedChars(DFA5_minS);
+    static final char[] DFA5_max = DFA.unpackEncodedStringToUnsignedChars(DFA5_maxS);
+    static final short[] DFA5_accept = DFA.unpackEncodedString(DFA5_acceptS);
+    static final short[] DFA5_special = DFA.unpackEncodedString(DFA5_specialS);
+    static final short[][] DFA5_transition;
+
+    static {
+        int numStates = DFA5_transitionS.length;
+        DFA5_transition = new short[numStates][];
+        for (int i=0; i<numStates; i++) {
+            DFA5_transition[i] = DFA.unpackEncodedString(DFA5_transitionS[i]);
+        }
+    }
+
+    class DFA5 extends DFA {
+
+        public DFA5(BaseRecognizer recognizer) {
+            this.recognizer = recognizer;
+            this.decisionNumber = 5;
+            this.eot = DFA5_eot;
+            this.eof = DFA5_eof;
+            this.min = DFA5_min;
+            this.max = DFA5_max;
+            this.accept = DFA5_accept;
+            this.special = DFA5_special;
+            this.transition = DFA5_transition;
+        }
+        public String getDescription() {
+            return "629:1: rule__Annotation__Alternatives : ( ( ruleCommentAnnotation ) | ( ruleTagAnnotation ) | ( ruleKeyStringValueAnnotation ) | ( ruleTypedKeyStringValueAnnotation ) | ( ruleKeyBooleanValueAnnotation ) | ( ruleKeyIntValueAnnotation ) | ( ruleKeyFloatValueAnnotation ) );";
+        }
+    }
  
 
     
@@ -12185,9 +12194,9 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
         public static final BitSet FOLLOW_ruleEString_in_entryRuleEString909 = new BitSet(new long[]{0x0000000000000000L});
         public static final BitSet FOLLOW_EOF_in_entryRuleEString916 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_rule__EString__Alternatives_in_ruleEString942 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_ruleTypeId_in_entryRuleTypeId969 = new BitSet(new long[]{0x0000000000000000L});
-        public static final BitSet FOLLOW_EOF_in_entryRuleTypeId976 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__TypeId__Group__0_in_ruleTypeId1002 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_ruleExtendedID_in_entryRuleExtendedID969 = new BitSet(new long[]{0x0000000000000000L});
+        public static final BitSet FOLLOW_EOF_in_entryRuleExtendedID976 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__ExtendedID__Group__0_in_ruleExtendedID1002 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_rule__TopLevelEntity__Group_2_4_0__0_in_rule__TopLevelEntity__Alternatives_2_41038 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_14_in_rule__TopLevelEntity__Alternatives_2_41057 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_rule__TopLevelEntity__ChildEntitiesAssignment_2_4_0_1_0_in_rule__TopLevelEntity__Alternatives_2_4_0_11091 = new BitSet(new long[]{0x0000000000000002L});
@@ -12439,16 +12448,16 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
         public static final BitSet FOLLOW_27_in_rule__ImportAnnotation__Group__0__Impl6713 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_rule__ImportAnnotation__Group__1__Impl_in_rule__ImportAnnotation__Group__16744 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_rule__ImportAnnotation__ImportURIAssignment_1_in_rule__ImportAnnotation__Group__1__Impl6771 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__TypeId__Group__0__Impl_in_rule__TypeId__Group__06805 = new BitSet(new long[]{0x0000000010000002L});
-        public static final BitSet FOLLOW_rule__TypeId__Group__1_in_rule__TypeId__Group__06808 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_RULE_ID_in_rule__TypeId__Group__0__Impl6835 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__TypeId__Group__1__Impl_in_rule__TypeId__Group__16864 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__TypeId__Group_1__0_in_rule__TypeId__Group__1__Impl6891 = new BitSet(new long[]{0x0000000010000002L});
-        public static final BitSet FOLLOW_rule__TypeId__Group_1__0__Impl_in_rule__TypeId__Group_1__06926 = new BitSet(new long[]{0x0000000000000020L});
-        public static final BitSet FOLLOW_rule__TypeId__Group_1__1_in_rule__TypeId__Group_1__06929 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_28_in_rule__TypeId__Group_1__0__Impl6957 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__TypeId__Group_1__1__Impl_in_rule__TypeId__Group_1__16988 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_RULE_ID_in_rule__TypeId__Group_1__1__Impl7015 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__ExtendedID__Group__0__Impl_in_rule__ExtendedID__Group__06805 = new BitSet(new long[]{0x0000000010000002L});
+        public static final BitSet FOLLOW_rule__ExtendedID__Group__1_in_rule__ExtendedID__Group__06808 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_RULE_ID_in_rule__ExtendedID__Group__0__Impl6835 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__ExtendedID__Group__1__Impl_in_rule__ExtendedID__Group__16864 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__ExtendedID__Group_1__0_in_rule__ExtendedID__Group__1__Impl6891 = new BitSet(new long[]{0x0000000010000002L});
+        public static final BitSet FOLLOW_rule__ExtendedID__Group_1__0__Impl_in_rule__ExtendedID__Group_1__06926 = new BitSet(new long[]{0x0000000000000020L});
+        public static final BitSet FOLLOW_rule__ExtendedID__Group_1__1_in_rule__ExtendedID__Group_1__06929 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_28_in_rule__ExtendedID__Group_1__0__Impl6957 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__ExtendedID__Group_1__1__Impl_in_rule__ExtendedID__Group_1__16988 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_RULE_ID_in_rule__ExtendedID__Group_1__1__Impl7015 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_ruleImportAnnotation_in_rule__TopLevelEntity__AnnotationsAssignment_17053 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_ruleAnnotation_in_rule__TopLevelEntity__AnnotationsAssignment_2_07084 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_RULE_ID_in_rule__TopLevelEntity__IdAssignment_2_27115 = new BitSet(new long[]{0x0000000000000002L});
@@ -12475,22 +12484,22 @@ public class InternalKaomParser extends AbstractInternalContentAssistParser {
         public static final BitSet FOLLOW_RULE_ID_in_rule__Relation__IdAssignment_37782 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_RULE_STRING_in_rule__Relation__NameAssignment_47813 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_RULE_COMMENT_ANNOTATION_in_rule__CommentAnnotation__ValueAssignment7844 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_RULE_ID_in_rule__TagAnnotation__NameAssignment_17875 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_ruleExtendedID_in_rule__TagAnnotation__NameAssignment_17875 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_ruleAnnotation_in_rule__TagAnnotation__AnnotationsAssignment_2_17906 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_RULE_ID_in_rule__KeyStringValueAnnotation__NameAssignment_17937 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_ruleExtendedID_in_rule__KeyStringValueAnnotation__NameAssignment_17937 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_ruleEString_in_rule__KeyStringValueAnnotation__ValueAssignment_27968 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_ruleAnnotation_in_rule__KeyStringValueAnnotation__AnnotationsAssignment_3_17999 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_RULE_ID_in_rule__TypedKeyStringValueAnnotation__NameAssignment_18030 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_ruleTypeId_in_rule__TypedKeyStringValueAnnotation__TypeAssignment_38061 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_ruleExtendedID_in_rule__TypedKeyStringValueAnnotation__NameAssignment_18030 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_ruleExtendedID_in_rule__TypedKeyStringValueAnnotation__TypeAssignment_38061 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_ruleEString_in_rule__TypedKeyStringValueAnnotation__ValueAssignment_58092 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_ruleAnnotation_in_rule__TypedKeyStringValueAnnotation__AnnotationsAssignment_6_18123 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_RULE_ID_in_rule__KeyBooleanValueAnnotation__NameAssignment_18154 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_ruleExtendedID_in_rule__KeyBooleanValueAnnotation__NameAssignment_18154 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_RULE_BOOLEAN_in_rule__KeyBooleanValueAnnotation__ValueAssignment_28185 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_ruleAnnotation_in_rule__KeyBooleanValueAnnotation__AnnotationsAssignment_3_18216 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_RULE_ID_in_rule__KeyIntValueAnnotation__NameAssignment_18247 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_ruleExtendedID_in_rule__KeyIntValueAnnotation__NameAssignment_18247 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_RULE_INT_in_rule__KeyIntValueAnnotation__ValueAssignment_28278 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_ruleAnnotation_in_rule__KeyIntValueAnnotation__AnnotationsAssignment_3_18309 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_RULE_ID_in_rule__KeyFloatValueAnnotation__NameAssignment_18340 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_ruleExtendedID_in_rule__KeyFloatValueAnnotation__NameAssignment_18340 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_RULE_FLOAT_in_rule__KeyFloatValueAnnotation__ValueAssignment_28371 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_ruleAnnotation_in_rule__KeyFloatValueAnnotation__AnnotationsAssignment_3_18402 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_RULE_STRING_in_rule__ImportAnnotation__ImportURIAssignment_18433 = new BitSet(new long[]{0x0000000000000002L});

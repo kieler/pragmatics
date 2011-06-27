@@ -65,8 +65,8 @@ public class KaomParser extends AbstractContentAssistParser {
 					put(grammarAccess.getKeyFloatValueAnnotationAccess().getGroup(), "rule__KeyFloatValueAnnotation__Group__0");
 					put(grammarAccess.getKeyFloatValueAnnotationAccess().getGroup_3(), "rule__KeyFloatValueAnnotation__Group_3__0");
 					put(grammarAccess.getImportAnnotationAccess().getGroup(), "rule__ImportAnnotation__Group__0");
-					put(grammarAccess.getTypeIdAccess().getGroup(), "rule__TypeId__Group__0");
-					put(grammarAccess.getTypeIdAccess().getGroup_1(), "rule__TypeId__Group_1__0");
+					put(grammarAccess.getExtendedIDAccess().getGroup(), "rule__ExtendedID__Group__0");
+					put(grammarAccess.getExtendedIDAccess().getGroup_1(), "rule__ExtendedID__Group_1__0");
 					put(grammarAccess.getTopLevelEntityAccess().getAnnotationsAssignment_1(), "rule__TopLevelEntity__AnnotationsAssignment_1");
 					put(grammarAccess.getTopLevelEntityAccess().getAnnotationsAssignment_2_0(), "rule__TopLevelEntity__AnnotationsAssignment_2_0");
 					put(grammarAccess.getTopLevelEntityAccess().getIdAssignment_2_2(), "rule__TopLevelEntity__IdAssignment_2_2");
