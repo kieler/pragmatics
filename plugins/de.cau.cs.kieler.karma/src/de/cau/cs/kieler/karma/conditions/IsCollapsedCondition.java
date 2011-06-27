@@ -24,6 +24,8 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
 import org.eclipse.ui.IEditorPart;
 
+import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
+import de.cau.cs.kieler.core.model.gmf.GmfFrameworkBridge;
 import de.cau.cs.kieler.core.ui.util.EditorUtils;
 import de.cau.cs.kieler.karma.ICustomCondition;
 
@@ -32,22 +34,28 @@ import de.cau.cs.kieler.karma.ICustomCondition;
  * 
  * @author ckru
  */
-public class IsCollapsedCondition extends ICustomCondition<EObject> {
+public class IsCollapsedCondition extends IEditPartSensitiveCondition<EObject> {
     
     /**
      * {@inheritDoc}
      */
     public boolean evaluate(final EObject object) {
-        IEditorPart editorPart = EditorUtils.getLastActiveEditor();
-        if ((editorPart != null) && (editorPart instanceof DiagramDocumentEditor)) {
-            DiagramDocumentEditor dde = (DiagramDocumentEditor) editorPart;
-            EditPart objectEditPart = dde.getDiagramEditPart().findEditPart(
-                    dde.getDiagramEditPart(), object);
-            boolean collapsed = this.checkCollapsed(objectEditPart);
-            return collapsed;
+        EditPart objectEditPart = this.getEditPart();
+        if (objectEditPart == null) {
+            GmfFrameworkBridge gmfBridge = new GmfFrameworkBridge();
+            objectEditPart = gmfBridge.getEditPart(object);
+            if (objectEditPart == null) {
+                IEditorPart editorPart = EditorUtils.getLastActiveEditor();
+                if ((editorPart != null) && (editorPart instanceof DiagramDocumentEditor)) {
+                    DiagramDocumentEditor dde = (DiagramDocumentEditor) editorPart;
+                    objectEditPart = dde.getDiagramEditPart().findEditPart(
+                            dde.getDiagramEditPart(), object);
+                }
+            }
         }
         
-        return false;
+        boolean collapsed = this.checkCollapsed(objectEditPart);
+        return collapsed;
     }
 
     /**

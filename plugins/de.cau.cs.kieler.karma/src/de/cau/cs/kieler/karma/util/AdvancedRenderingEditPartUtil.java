@@ -38,6 +38,7 @@ import org.eclipse.gmf.runtime.notation.Bounds;
 import org.eclipse.gmf.runtime.notation.IdentityAnchor;
 import org.eclipse.gmf.runtime.notation.RelativeBendpoints;
 
+import de.cau.cs.kieler.core.util.CompoundCondition;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.karma.AdvancedRenderingBorderedBorderItemEditPart;
@@ -45,6 +46,7 @@ import de.cau.cs.kieler.karma.AdvancedRenderingLabelEditPart;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.karma.IRenderingProvider.CollapseStatus;
 import de.cau.cs.kieler.karma.SwitchableFigure;
+import de.cau.cs.kieler.karma.conditions.IEditPartSensitiveCondition;
 
 /**
  * Class containing generic method to update the figure and handle the notification. Used to
@@ -163,6 +165,7 @@ public class AdvancedRenderingEditPartUtil {
                 @SuppressWarnings("unchecked")
                 ICondition<EObject> condition = (ICondition<EObject>) conditionElement
                         .get("condition");
+                addEditPartToCondition(condition, editPart);
                 if (condition.evaluate(modelElement)) {
                     //if its the same condition as the last time we can stop here. 
                     //forceUpdate variable bypasses this check.
@@ -210,6 +213,17 @@ public class AdvancedRenderingEditPartUtil {
         return false;
     }
 
+    private void addEditPartToCondition(ICondition condition, EditPart editPart) {
+        if (condition instanceof IEditPartSensitiveCondition<?>) {
+            ((IEditPartSensitiveCondition<EObject>) condition).setEditPart(editPart);
+        } else if (condition instanceof CompoundCondition) {
+            List<ICondition<?>> childConditions = ((CompoundCondition) condition).getChildConditions();
+            for (ICondition cond : childConditions) {
+                addEditPartToCondition(cond, editPart);
+            }
+        }
+    }
+    
     /**
      * method that gets a figure from the renderingProvider and sets it to the SwitchableFigure for
      * display.

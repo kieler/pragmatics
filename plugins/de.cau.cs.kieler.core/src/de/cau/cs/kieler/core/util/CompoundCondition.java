@@ -29,6 +29,14 @@ public class CompoundCondition<T> implements ICondition<T> {
     private List<ICondition<T>> conditions;
 
     /**
+     * getter method for conditions.
+     * @return the list of child conditions
+     */
+    public List<ICondition<T>> getChildConditions() {
+        return conditions;
+    }
+    
+    /**
      * Creates a compound condition from a collection of conditions.
      * 
      * @param theconditions
