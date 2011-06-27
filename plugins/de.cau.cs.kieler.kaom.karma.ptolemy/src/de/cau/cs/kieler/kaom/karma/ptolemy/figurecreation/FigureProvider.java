@@ -47,7 +47,6 @@ import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.NamedObject;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
-import de.cau.cs.kieler.core.model.gmf.figures.RoundedRectangleFigure;
 import de.cau.cs.kieler.core.ui.util.CoreUiUtil;
 import de.cau.cs.kieler.kvid.KvidUtil;
 import de.cau.cs.kieler.kvid.data.DataObject;
@@ -336,6 +335,10 @@ public class FigureProvider {
 
     }
     
+    /**
+     * A figure to display if things go haywire.
+     * @return a red box with a questionmark in it
+     */
     public IFigure getErrorFigure() {
         RectangleFigure errorFigure = new RectangleFigure();
         errorFigure.setSize(50, 50);

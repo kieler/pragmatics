@@ -163,6 +163,12 @@ public final class PtolemyFetcher {
                     float maxY = Collections.max(pointsY);
                     svgElement.setAttribute("width", String.valueOf(maxX + xoffset + 1));
                     svgElement.setAttribute("height", String.valueOf(maxY + yoffset + 1));
+                } else if (firstElement.hasAttribute("r")) {
+                    int r = (int) Math.abs(Float.parseFloat(firstElement.getAttribute("r")));
+                    xoffset = r;
+                    yoffset = r;
+                    svgElement.setAttribute("height", String.valueOf(r * 2));
+                    svgElement.setAttribute("width", String.valueOf(r * 2));
                 }
 
             }
