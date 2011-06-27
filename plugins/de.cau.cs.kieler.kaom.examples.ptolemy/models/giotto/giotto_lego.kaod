@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:kaom="http://kieler.cs.cau.de/KAOM" xmlns:layoutoptions="http://kieler.cs.cau.de/LayoutOptions" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmi:id="_XU44IE4SEeClgphIV2irfQ" type="Kaom" measurementUnit="Pixel">
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:kaom="http://kieler.cs.cau.de/KAOM" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmi:id="_XU44IE4SEeClgphIV2irfQ" type="Kaom" measurementUnit="Pixel">
   <children xmi:type="notation:Node" xmi:id="_XWGZEE4SEeClgphIV2irfQ" type="2001">
     <children xmi:type="notation:DecorationNode" xmi:id="_XWGZFE4SEeClgphIV2irfQ" type="5004">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_XWGZFU4SEeClgphIV2irfQ" y="5"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_XWGZFU4SEeClgphIV2irfQ" x="484" y="796"/>
     </children>
     <children xmi:type="notation:BasicCompartment" xmi:id="_XWGZFk4SEeClgphIV2irfQ" type="7001">
       <children xmi:type="notation:Node" xmi:id="_XWRYME4SEeClgphIV2irfQ" type="3002">
         <children xmi:type="notation:DecorationNode" xmi:id="_XWRYNE4SEeClgphIV2irfQ" type="5003">
-          <layoutConstraint xmi:type="notation:Location" xmi:id="_XWRYNU4SEeClgphIV2irfQ" y="5"/>
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_XWRYNU4SEeClgphIV2irfQ" x="154" y="392"/>
         </children>
         <children xmi:type="notation:BasicCompartment" xmi:id="_XWRYNk4SEeClgphIV2irfQ" type="7002">
           <children xmi:type="notation:Node" xmi:id="_XWc-YE4SEeClgphIV2irfQ" type="3002">
@@ -22,12 +22,12 @@
               <styles xmi:type="notation:DescriptionStyle" xmi:id="_XX03YU4SEeClgphIV2irfQ"/>
               <styles xmi:type="notation:FontStyle" xmi:id="_XX03Yk4SEeClgphIV2irfQ" fontName="Sans"/>
               <element xmi:type="kaom:Port" href="giotto_lego.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childPorts.0"/>
-              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XX03Y04SEeClgphIV2irfQ" x="20" y="8"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XX03Y04SEeClgphIV2irfQ" x="50" y="23"/>
             </children>
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_XWdlcE4SEeClgphIV2irfQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_XWdlcU4SEeClgphIV2irfQ" fontName="Sans"/>
             <element xmi:type="kaom:Entity" href="giotto_lego.kaom#//@childEntities.0/@childEntities.0/@childEntities.0"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWdlck4SEeClgphIV2irfQ" x="244" y="74"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWdlck4SEeClgphIV2irfQ" x="190" y="38"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_XWdldk4SEeClgphIV2irfQ" type="3002">
             <children xmi:type="notation:DecorationNode" xmi:id="_XWeMgE4SEeClgphIV2irfQ" type="5003">
@@ -41,12 +41,12 @@
               <styles xmi:type="notation:DescriptionStyle" xmi:id="_XYVNsU4SEeClgphIV2irfQ"/>
               <styles xmi:type="notation:FontStyle" xmi:id="_XYVNsk4SEeClgphIV2irfQ" fontName="Sans"/>
               <element xmi:type="kaom:Port" href="giotto_lego.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childPorts.0"/>
-              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XYVNs04SEeClgphIV2irfQ" x="-2" y="8"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XYVNs04SEeClgphIV2irfQ" x="-2" y="23"/>
             </children>
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_XWdld04SEeClgphIV2irfQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_XWdleE4SEeClgphIV2irfQ" fontName="Sans"/>
             <element xmi:type="kaom:Entity" href="giotto_lego.kaom#//@childEntities.0/@childEntities.0/@childEntities.1"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWdleU4SEeClgphIV2irfQ" x="193" y="15"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWdleU4SEeClgphIV2irfQ" x="189" y="279"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_XWeMg04SEeClgphIV2irfQ" type="3002">
             <children xmi:type="notation:DecorationNode" xmi:id="_XWeMh04SEeClgphIV2irfQ" type="5003">
@@ -74,7 +74,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_XWeMhE4SEeClgphIV2irfQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_XWeMhU4SEeClgphIV2irfQ" fontName="Sans"/>
             <element xmi:type="kaom:Entity" href="giotto_lego.kaom#//@childEntities.0/@childEntities.0/@childEntities.2"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWeMhk4SEeClgphIV2irfQ" x="55" y="15"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWeMhk4SEeClgphIV2irfQ" x="59" y="284"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_XWezkE4SEeClgphIV2irfQ" type="3002">
             <children xmi:type="notation:DecorationNode" xmi:id="_XWezlE4SEeClgphIV2irfQ" type="5003">
@@ -111,7 +111,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_XWezkU4SEeClgphIV2irfQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_XWezkk4SEeClgphIV2irfQ" fontName="Sans"/>
             <element xmi:type="kaom:Entity" href="giotto_lego.kaom#//@childEntities.0/@childEntities.0/@childEntities.3"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWezk04SEeClgphIV2irfQ" x="218" y="134"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWezk04SEeClgphIV2irfQ" x="59" y="166"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_XWezl04SEeClgphIV2irfQ" type="3002">
             <children xmi:type="notation:DecorationNode" xmi:id="_XWfaoE4SEeClgphIV2irfQ" type="5003">
@@ -121,7 +121,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_XWezmE4SEeClgphIV2irfQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_XWezmU4SEeClgphIV2irfQ" fontName="Sans"/>
             <element xmi:type="kaom:Entity" href="giotto_lego.kaom#//@childEntities.0/@childEntities.0/@childEntities.4"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWezmk4SEeClgphIV2irfQ" x="193" y="214"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWezmk4SEeClgphIV2irfQ" x="20" y="38"/>
           </children>
         </children>
         <children xmi:type="notation:Node" xmi:id="_XWYF4E4SEeClgphIV2irfQ" type="3001">
@@ -131,7 +131,7 @@
           <styles xmi:type="notation:DescriptionStyle" xmi:id="_XWYF4U4SEeClgphIV2irfQ"/>
           <styles xmi:type="notation:FontStyle" xmi:id="_XWYF4k4SEeClgphIV2irfQ" fontName="Sans"/>
           <element xmi:type="kaom:Port" href="giotto_lego.kaom#//@childEntities.0/@childEntities.0/@childPorts.0"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWYF404SEeClgphIV2irfQ" x="385" y="90"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWYF404SEeClgphIV2irfQ" x="364" y="69"/>
         </children>
         <children xmi:type="notation:Node" xmi:id="_XWYF5k4SEeClgphIV2irfQ" type="3001">
           <children xmi:type="notation:DecorationNode" xmi:id="_XWYs8E4SEeClgphIV2irfQ" type="5001">
@@ -140,16 +140,16 @@
           <styles xmi:type="notation:DescriptionStyle" xmi:id="_XWYF504SEeClgphIV2irfQ"/>
           <styles xmi:type="notation:FontStyle" xmi:id="_XWYF6E4SEeClgphIV2irfQ" fontName="Sans"/>
           <element xmi:type="kaom:Port" href="giotto_lego.kaom#//@childEntities.0/@childEntities.0/@childPorts.1"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWYF6U4SEeClgphIV2irfQ" x="385" y="160"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWYF6U4SEeClgphIV2irfQ" x="364" y="192"/>
         </children>
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_XWRYMU4SEeClgphIV2irfQ"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_XWRYMk4SEeClgphIV2irfQ" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="giotto_lego.kaom#//@childEntities.0/@childEntities.0"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWRYM04SEeClgphIV2irfQ" x="40" y="15" width="386" height="298"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWRYM04SEeClgphIV2irfQ" x="202" y="322" width="364" height="388"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_XWR_QE4SEeClgphIV2irfQ" type="3002">
         <children xmi:type="notation:DecorationNode" xmi:id="_XWR_RE4SEeClgphIV2irfQ" type="5003">
-          <layoutConstraint xmi:type="notation:Location" xmi:id="_XWR_RU4SEeClgphIV2irfQ" y="5"/>
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_XWR_RU4SEeClgphIV2irfQ" x="83" y="259"/>
         </children>
         <children xmi:type="notation:BasicCompartment" xmi:id="_XWR_Rk4SEeClgphIV2irfQ" type="7002">
           <children xmi:type="notation:Node" xmi:id="_XZE0kE4SEeClgphIV2irfQ" type="3002">
@@ -164,12 +164,12 @@
               <styles xmi:type="notation:DescriptionStyle" xmi:id="_XZPMoU4SEeClgphIV2irfQ"/>
               <styles xmi:type="notation:FontStyle" xmi:id="_XZPMok4SEeClgphIV2irfQ" fontName="Sans"/>
               <element xmi:type="kaom:Port" href="giotto_lego.kaom#//@childEntities.0/@childEntities.1/@childEntities.0/@childPorts.0"/>
-              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZPMo04SEeClgphIV2irfQ" x="20" y="8"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZPMo04SEeClgphIV2irfQ" x="50" y="23"/>
             </children>
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_XZE0kU4SEeClgphIV2irfQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_XZE0kk4SEeClgphIV2irfQ" fontName="Sans"/>
             <element xmi:type="kaom:Entity" href="giotto_lego.kaom#//@childEntities.0/@childEntities.1/@childEntities.0"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZE0k04SEeClgphIV2irfQ" x="50" y="15"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZE0k04SEeClgphIV2irfQ" x="28" y="146"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_XZE0l04SEeClgphIV2irfQ" type="3002">
             <children xmi:type="notation:DecorationNode" xmi:id="_XZFboE4SEeClgphIV2irfQ" type="5003">
@@ -179,7 +179,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_XZE0mE4SEeClgphIV2irfQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_XZE0mU4SEeClgphIV2irfQ" fontName="Sans"/>
             <element xmi:type="kaom:Entity" href="giotto_lego.kaom#//@childEntities.0/@childEntities.1/@childEntities.1"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZE0mk4SEeClgphIV2irfQ" x="15" y="74"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZE0mk4SEeClgphIV2irfQ" x="20" y="38"/>
           </children>
         </children>
         <children xmi:type="notation:Node" xmi:id="_XZC_YE4SEeClgphIV2irfQ" type="3001">
@@ -189,12 +189,12 @@
           <styles xmi:type="notation:DescriptionStyle" xmi:id="_XZC_YU4SEeClgphIV2irfQ"/>
           <styles xmi:type="notation:FontStyle" xmi:id="_XZC_Yk4SEeClgphIV2irfQ" fontName="Sans"/>
           <element xmi:type="kaom:Port" href="giotto_lego.kaom#//@childEntities.0/@childEntities.1/@childPorts.0"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZC_Y04SEeClgphIV2irfQ" x="191" y="31"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZC_Y04SEeClgphIV2irfQ" x="202" y="177"/>
         </children>
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_XWR_QU4SEeClgphIV2irfQ"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_XWR_Qk4SEeClgphIV2irfQ" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="giotto_lego.kaom#//@childEntities.0/@childEntities.1"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWR_Q04SEeClgphIV2irfQ" x="234" y="350" width="192" height="158"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWR_Q04SEeClgphIV2irfQ" x="364" y="30" width="202" height="255"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_XWR_R04SEeClgphIV2irfQ" type="3002">
         <children xmi:type="notation:DecorationNode" xmi:id="_XWSmUE4SEeClgphIV2irfQ" type="5003">
@@ -227,7 +227,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_XZr4kU4SEeClgphIV2irfQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_XZr4kk4SEeClgphIV2irfQ" fontName="Sans"/>
             <element xmi:type="kaom:Entity" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childEntities.0"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZr4k04SEeClgphIV2irfQ" x="19" y="242"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZr4k04SEeClgphIV2irfQ" x="19" y="240"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_XZr4l04SEeClgphIV2irfQ" type="3002">
             <children xmi:type="notation:DecorationNode" xmi:id="_XZsfoE4SEeClgphIV2irfQ" type="5003">
@@ -255,7 +255,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_XZr4mE4SEeClgphIV2irfQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_XZr4mU4SEeClgphIV2irfQ" fontName="Sans"/>
             <element xmi:type="kaom:Entity" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childEntities.1"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZr4mk4SEeClgphIV2irfQ" x="19" y="22"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZr4mk4SEeClgphIV2irfQ" x="19" y="20"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_XZsfo04SEeClgphIV2irfQ" type="3002">
             <children xmi:type="notation:DecorationNode" xmi:id="_XZsfp04SEeClgphIV2irfQ" type="5003">
@@ -283,7 +283,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_XZsfpE4SEeClgphIV2irfQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_XZsfpU4SEeClgphIV2irfQ" fontName="Sans"/>
             <element xmi:type="kaom:Entity" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childEntities.2"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZsfpk4SEeClgphIV2irfQ" x="19" y="122"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZsfpk4SEeClgphIV2irfQ" x="19" y="120"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_XZtGsU4SEeClgphIV2irfQ" type="3002">
             <children xmi:type="notation:DecorationNode" xmi:id="_XZtGtU4SEeClgphIV2irfQ" type="5003">
@@ -311,7 +311,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_XZtGsk4SEeClgphIV2irfQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_XZtGs04SEeClgphIV2irfQ" fontName="Sans"/>
             <element xmi:type="kaom:Entity" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childEntities.3"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZtGtE4SEeClgphIV2irfQ" x="19" y="342"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZtGtE4SEeClgphIV2irfQ" x="19" y="340"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_XZtGuE4SEeClgphIV2irfQ" type="3003">
             <children xmi:type="notation:DecorationNode" xmi:id="_XZttw04SEeClgphIV2irfQ" type="5002">
@@ -320,7 +320,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_XZttwE4SEeClgphIV2irfQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_XZttwU4SEeClgphIV2irfQ" fontName="Sans"/>
             <element xmi:type="kaom:Relation" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childRelations.0"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZttwk4SEeClgphIV2irfQ" x="127" y="124"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZttwk4SEeClgphIV2irfQ" x="111" y="122"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_XZttxU4SEeClgphIV2irfQ" type="3003">
             <children xmi:type="notation:DecorationNode" xmi:id="_XZttyU4SEeClgphIV2irfQ" type="5002">
@@ -329,7 +329,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_XZttxk4SEeClgphIV2irfQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_XZttx04SEeClgphIV2irfQ" fontName="Sans"/>
             <element xmi:type="kaom:Relation" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childRelations.1"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZttyE4SEeClgphIV2irfQ" x="127" y="50"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZttyE4SEeClgphIV2irfQ" x="111" y="48"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_XZuU0E4SEeClgphIV2irfQ" type="3003">
             <children xmi:type="notation:DecorationNode" xmi:id="_XZuU1E4SEeClgphIV2irfQ" type="5002">
@@ -338,7 +338,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_XZuU0U4SEeClgphIV2irfQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_XZuU0k4SEeClgphIV2irfQ" fontName="Sans"/>
             <element xmi:type="kaom:Relation" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childRelations.2"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZuU004SEeClgphIV2irfQ" x="127" y="270"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZuU004SEeClgphIV2irfQ" x="111" y="268"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_XZuU1k4SEeClgphIV2irfQ" type="3003">
             <children xmi:type="notation:DecorationNode" xmi:id="_XZu74E4SEeClgphIV2irfQ" type="5002">
@@ -347,7 +347,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_XZuU104SEeClgphIV2irfQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_XZuU2E4SEeClgphIV2irfQ" fontName="Sans"/>
             <element xmi:type="kaom:Relation" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childRelations.3"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZuU2U4SEeClgphIV2irfQ" x="127" y="364"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZuU2U4SEeClgphIV2irfQ" x="111" y="362"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_XZu74k4SEeClgphIV2irfQ" type="3003">
             <children xmi:type="notation:DecorationNode" xmi:id="_XZu75k4SEeClgphIV2irfQ" type="5002">
@@ -356,7 +356,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_XZu7404SEeClgphIV2irfQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_XZu75E4SEeClgphIV2irfQ" fontName="Sans"/>
             <element xmi:type="kaom:Relation" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childRelations.4"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZu75U4SEeClgphIV2irfQ" x="127" y="178"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZu75U4SEeClgphIV2irfQ" x="111" y="176"/>
           </children>
         </children>
         <children xmi:type="notation:Node" xmi:id="_XZfrUE4SEeClgphIV2irfQ" type="3001">
@@ -366,7 +366,7 @@
           <styles xmi:type="notation:DescriptionStyle" xmi:id="_XZfrUU4SEeClgphIV2irfQ"/>
           <styles xmi:type="notation:FontStyle" xmi:id="_XZfrUk4SEeClgphIV2irfQ" fontName="Sans"/>
           <element xmi:type="kaom:Port" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childPorts.0"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZfrU04SEeClgphIV2irfQ" x="-9" y="306"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZfrU04SEeClgphIV2irfQ" x="-10" y="304"/>
         </children>
         <children xmi:type="notation:Node" xmi:id="_XZgSYk4SEeClgphIV2irfQ" type="3001">
           <children xmi:type="notation:DecorationNode" xmi:id="_XZgSZk4SEeClgphIV2irfQ" type="5001">
@@ -375,7 +375,7 @@
           <styles xmi:type="notation:DescriptionStyle" xmi:id="_XZgSY04SEeClgphIV2irfQ"/>
           <styles xmi:type="notation:FontStyle" xmi:id="_XZgSZE4SEeClgphIV2irfQ" fontName="Sans"/>
           <element xmi:type="kaom:Port" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childPorts.1"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZgSZU4SEeClgphIV2irfQ" x="-9" y="98"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZgSZU4SEeClgphIV2irfQ" x="-10" y="201"/>
         </children>
         <children xmi:type="notation:Node" xmi:id="_XZgSaE4SEeClgphIV2irfQ" type="3001">
           <children xmi:type="notation:DecorationNode" xmi:id="_XZg5ck4SEeClgphIV2irfQ" type="5001">
@@ -384,16 +384,14 @@
           <styles xmi:type="notation:DescriptionStyle" xmi:id="_XZgSaU4SEeClgphIV2irfQ"/>
           <styles xmi:type="notation:FontStyle" xmi:id="_XZg5cE4SEeClgphIV2irfQ" fontName="Sans"/>
           <element xmi:type="kaom:Port" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childPorts.2"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZg5cU4SEeClgphIV2irfQ" x="-9" y="202"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XZg5cU4SEeClgphIV2irfQ" x="-10" y="98"/>
         </children>
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_XWR_SE4SEeClgphIV2irfQ"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_XWR_SU4SEeClgphIV2irfQ" fontName="Sans"/>
-        <styles xmi:type="layoutoptions:LayoutOptionStyle" xmi:id="_ZVZ-YE4SEeClgphIV2irfQ">
-          <options xmi:type="layoutoptions:KOption" xmi:id="_ZVcaoE4SEeClgphIV2irfQ" key="de.cau.cs.kieler.algorithm" value="de.cau.cs.kieler.graphviz.dot"/>
-          <options xmi:type="layoutoptions:KOption" xmi:id="_bP4HAE4SEeClgphIV2irfQ" key="de.cau.cs.kieler.borderSpacing" value="20.0"/>
-        </styles>
+        <styles xmi:type="notation:StringValueStyle" xmi:id="_BJb6UKCrEeCVIZagmwR10g" name="layout:de.cau.cs.kieler.algorithm" stringValue="de.cau.cs.kieler.graphviz.dot"/>
+        <styles xmi:type="notation:StringValueStyle" xmi:id="_BJb6UaCrEeCVIZagmwR10g" name="layout:de.cau.cs.kieler.borderSpacing" stringValue="20.0"/>
         <element xmi:type="kaom:Entity" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWR_Sk4SEeClgphIV2irfQ" x="628" y="15" width="178" height="415"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWR_Sk4SEeClgphIV2irfQ" x="751" y="320" width="162" height="413"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_XWSmU04SEeClgphIV2irfQ" type="3002">
         <children xmi:type="notation:DecorationNode" xmi:id="_XWSmV04SEeClgphIV2irfQ" type="5003">
@@ -403,7 +401,7 @@
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_XWSmVE4SEeClgphIV2irfQ"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_XWSmVU4SEeClgphIV2irfQ" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="giotto_lego.kaom#//@childEntities.0/@childEntities.3"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWSmVk4SEeClgphIV2irfQ" x="634" y="457"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWSmVk4SEeClgphIV2irfQ" x="20" y="38"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_XWTNYE4SEeClgphIV2irfQ" type="3003">
         <children xmi:type="notation:DecorationNode" xmi:id="_XWTNZE4SEeClgphIV2irfQ" type="5002">
@@ -412,7 +410,7 @@
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_XWTNYU4SEeClgphIV2irfQ"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_XWTNYk4SEeClgphIV2irfQ" fontName="Sans"/>
         <element xmi:type="kaom:Relation" href="giotto_lego.kaom#//@childEntities.0/@childRelations.0"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWTNY04SEeClgphIV2irfQ" x="517" y="243"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWTNY04SEeClgphIV2irfQ" x="648" y="298"/>
       </children>
     </children>
     <children xmi:type="notation:Node" xmi:id="_XWI1UE4SEeClgphIV2irfQ" type="3001">
@@ -422,7 +420,7 @@
       <styles xmi:type="notation:DescriptionStyle" xmi:id="_XWI1UU4SEeClgphIV2irfQ"/>
       <styles xmi:type="notation:FontStyle" xmi:id="_XWI1Uk4SEeClgphIV2irfQ" fontName="Sans"/>
       <element xmi:type="kaom:Port" href="giotto_lego.kaom#//@childEntities.0/@childPorts.0"/>
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWI1U04SEeClgphIV2irfQ" x="-9" y="551"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWI1U04SEeClgphIV2irfQ" x="-10" y="743"/>
     </children>
     <children xmi:type="notation:Node" xmi:id="_XWJcYk4SEeClgphIV2irfQ" type="3001">
       <children xmi:type="notation:DecorationNode" xmi:id="_XWJcZk4SEeClgphIV2irfQ" type="5001">
@@ -431,12 +429,12 @@
       <styles xmi:type="notation:DescriptionStyle" xmi:id="_XWJcY04SEeClgphIV2irfQ"/>
       <styles xmi:type="notation:FontStyle" xmi:id="_XWJcZE4SEeClgphIV2irfQ" fontName="Sans"/>
       <element xmi:type="kaom:Port" href="giotto_lego.kaom#//@childEntities.0/@childPorts.1"/>
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWJcZU4SEeClgphIV2irfQ" x="871" y="532"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWJcZU4SEeClgphIV2irfQ" x="993" y="308"/>
     </children>
     <styles xmi:type="notation:DescriptionStyle" xmi:id="_XWGZEU4SEeClgphIV2irfQ"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_XWGZEk4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Entity" href="giotto_lego.kaom#//@childEntities.0"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWGZE04SEeClgphIV2irfQ" x="60" y="15" width="872" height="586"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XWGZE04SEeClgphIV2irfQ" x="62" y="38" width="993" height="792"/>
   </children>
   <styles xmi:type="notation:DiagramStyle" xmi:id="_XU44IU4SEeClgphIV2irfQ"/>
   <element xmi:type="kaom:Entity" href="giotto_lego.kaom#/"/>
@@ -444,21 +442,21 @@
     <children xmi:type="notation:DecorationNode" xmi:id="_XcKk0E4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_XcKk0U4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcJ9wU4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcJ9wU4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_XcJ9wk4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childLinks.0"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcJ9w04SEeClgphIV2irfQ" points="[0, 0, -628, 220]$[567, 0, -61, 220]$[567, -220, -61, 0]$[628, -220, 0, 0]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcJ9w04SEeClgphIV2irfQ" points="[0, 0, -594, 108]$[527, 0, -67, 108]$[527, -108, -67, 0]$[594, -108, 0, 0]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKv004SEeClgphIV2irfQ" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKv1E4SEeClgphIV2irfQ" id="(0.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKv1E4SEeClgphIV2irfQ" id="(0.5,0.5000030517578125)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_XcMaAE4SEeClgphIV2irfQ" type="4001" source="_XWTNYE4SEeClgphIV2irfQ" target="_XWJcYk4SEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_XcMaBE4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_XcMaBU4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcMaAU4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcMaAU4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_XcMaAk4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childLinks.1"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcMaA04SEeClgphIV2irfQ" points="[0, 0, -334, -279]$[16, 0, -318, -279]$[16, 279, -318, 0]$[334, 279, 0, 0]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcMaA04SEeClgphIV2irfQ" points="[0, 0, -325, 0]$[325, 0, 0, 0]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlI6ok4SEeClgphIV2irfQ" id="(1.0,0.5)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlI6o04SEeClgphIV2irfQ" id="(0.0,0.5)"/>
   </edges>
@@ -466,198 +464,198 @@
     <children xmi:type="notation:DecorationNode" xmi:id="_XcOPNE4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_XcOPNU4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcOPMU4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcOPMU4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_XcOPMk4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childLinks.2"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcOPM04SEeClgphIV2irfQ" points="[0, 0, -82, -138]$[67, 0, -15, -138]$[67, 138, -15, 0]$[82, 138, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKIwk4SEeClgphIV2irfQ" id="(1.0,0.5)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcOPM04SEeClgphIV2irfQ" points="[0, 0, -77, 94]$[57, 0, -20, 94]$[57, -94, -20, 0]$[77, -94, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKIwk4SEeClgphIV2irfQ" id="(0.5,0.5)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKIw04SEeClgphIV2irfQ" id="(0.0,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_XcQEYE4SEeClgphIV2irfQ" type="4001" source="_XWYF5k4SEeClgphIV2irfQ" target="_XZgSYk4SEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_XcQEZE4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_XcQEZU4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcQEYU4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcQEYU4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_XcQEYk4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childLinks.3"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcQEY04SEeClgphIV2irfQ" points="[0, 0, -194, 62]$[118, 0, -76, 62]$[118, -62, -76, 0]$[194, -62, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKIxE4SEeClgphIV2irfQ" id="(0.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKIxU4SEeClgphIV2irfQ" id="(0.0,0.5)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcQEY04SEeClgphIV2irfQ" points="[0, 0, -175, -8]$[57, 0, -118, -8]$[57, 8, -118, 0]$[175, 8, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKIxE4SEeClgphIV2irfQ" id="(0.5,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKIxU4SEeClgphIV2irfQ" id="(0.5,0.5000030517578125)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_XcR5kE4SEeClgphIV2irfQ" type="4001" source="_XZC_YE4SEeClgphIV2irfQ" target="_XWTNYE4SEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_XcR5lE4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_XcR5lU4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcR5kU4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcR5kU4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_XcR5kk4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childLinks.4"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcR5k04SEeClgphIV2irfQ" points="[0, 0, -82, 138]$[67, 0, -15, 138]$[67, -138, -15, 0]$[82, -138, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlJhsU4SEeClgphIV2irfQ" id="(1.0,0.5)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcR5k04SEeClgphIV2irfQ" points="[0, 0, -77, -91]$[57, 0, -20, -91]$[57, 91, -20, 0]$[77, 91, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlJhsU4SEeClgphIV2irfQ" id="(0.5,0.5)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlJhsk4SEeClgphIV2irfQ" id="(0.0,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_XcTuwE4SEeClgphIV2irfQ" type="4001" source="_XWTNYE4SEeClgphIV2irfQ" target="_XZgSaE4SEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_XcTuxE4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_XcTuxU4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcTuwU4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcTuwU4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_XcTuwk4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childLinks.5"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcTuw04SEeClgphIV2irfQ" points="[0, 0, -92, 26]$[16, 0, -76, 26]$[16, -26, -76, 0]$[92, -26, 0, 0]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcTuw04SEeClgphIV2irfQ" points="[0, 0, -88, -121]$[21, 0, -67, -121]$[21, 121, -67, 0]$[88, 121, 0, 0]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlLW5E4SEeClgphIV2irfQ" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlLW5U4SEeClgphIV2irfQ" id="(0.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlLW5U4SEeClgphIV2irfQ" id="(0.5,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_XcVj8E4SEeClgphIV2irfQ" type="4001" source="_XX03YE4SEeClgphIV2irfQ" target="_XWYF4E4SEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_XcVj9E4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_XcVj9U4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcVj8U4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcVj8U4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_XcVj8k4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childEntities.0/@childLinks.0"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcVj804SEeClgphIV2irfQ" points="[0, 0, -105, 0]$[105, 0, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlJhtU4SEeClgphIV2irfQ" id="(1.0,0.5)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcVj804SEeClgphIV2irfQ" points="[0, 0, -111, 0]$[111, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlJhtU4SEeClgphIV2irfQ" id="(0.5,0.5)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlJhtk4SEeClgphIV2irfQ" id="(0.0,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_XcXZIE4SEeClgphIV2irfQ" type="4001" source="_XYlFUE4SEeClgphIV2irfQ" target="_XYVNsE4SEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_XcXZJE4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_XcXZJU4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcXZIU4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcXZIU4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_XcXZIk4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childEntities.0/@childLinks.1"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcXZI04SEeClgphIV2irfQ" points="[0, 0, -65, 10]$[37, 0, -28, 10]$[37, -10, -28, 0]$[65, -10, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlI6pk4SEeClgphIV2irfQ" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlJhsE4SEeClgphIV2irfQ" id="(0.0,0.5)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcXZI04SEeClgphIV2irfQ" points="[0, 0, -65, 0]$[65, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlI6pk4SEeClgphIV2irfQ" id="(0.5,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlJhsE4SEeClgphIV2irfQ" id="(0.5,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_XcZOUE4SEeClgphIV2irfQ" type="4001" source="_XYwrgE4SEeClgphIV2irfQ" target="_XWYF5k4SEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_XcZOVE4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_XcZ1YE4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcZOUU4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcZOUU4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_XcZOUk4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childEntities.0/@childLinks.2"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcZOU04SEeClgphIV2irfQ" points="[0, 0, -86, 0]$[86, 0, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlLW4k4SEeClgphIV2irfQ" id="(1.0,0.5)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcZOU04SEeClgphIV2irfQ" points="[0, 0, -98, 0]$[98, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlLW4k4SEeClgphIV2irfQ" id="(0.5,0.5)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlLW404SEeClgphIV2irfQ" id="(0.0,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_XcbDgE4SEeClgphIV2irfQ" type="4001" source="_XZPMoE4SEeClgphIV2irfQ" target="_XZC_YE4SEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_XcbDhE4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_XcbqkE4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcbDgU4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcbDgU4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_XcbDgk4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childEntities.1/@childLinks.0"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcbDg04SEeClgphIV2irfQ" points="[0, 0, -105, 0]$[105, 0, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKv0U4SEeClgphIV2irfQ" id="(1.0,0.5)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcbDg04SEeClgphIV2irfQ" points="[0, 0, -111, 0]$[111, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKv0U4SEeClgphIV2irfQ" id="(0.5,0.5)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKv0k4SEeClgphIV2irfQ" id="(0.0,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_Xcc4sE4SEeClgphIV2irfQ" type="4001" source="_XaVY0E4SEeClgphIV2irfQ" target="_XZuU1k4SEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_Xcc4tE4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_XcdfwE4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_Xcc4sU4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_Xcc4sU4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_Xcc4sk4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childLinks.0"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Xcc4s04SEeClgphIV2irfQ" points="[0, 0, -64, -96]$[10, 10, -54, -86]$[22, 21, -42, -75]$[33, 35, -31, -61]$[44, 49, -20, -47]$[51, 61, -13, -35]$[57, 74, -7, -22]$[61, 86, -3, -10]$[64, 96, 0, 0]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Xcc4s04SEeClgphIV2irfQ" points="[0, 0, -55, -96]$[15, 25, -40, -71]$[45, 79, -10, -17]$[55, 96, 0, 0]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlI6oE4SEeClgphIV2irfQ" id="(0.0,0.9466654459635416)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlI6oU4SEeClgphIV2irfQ" id="(0.40400009155273436,0.0040008544921875)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlI6oU4SEeClgphIV2irfQ" id="(0.20400009155273438,0.0040008544921875)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_Xcet4E4SEeClgphIV2irfQ" type="4001" source="_XaVY1k4SEeClgphIV2irfQ" target="_XZtGuE4SEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_XcfU8E4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_XcfU8U4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_Xcet4U4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_Xcet4U4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_Xcet4k4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childLinks.1"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Xcet404SEeClgphIV2irfQ" points="[0, 0, -67, 108]$[11, -13, -56, 95]$[23, -29, -44, 79]$[36, -46, -31, 62]$[48, -64, -19, 44]$[54, -76, -13, 32]$[60, -89, -7, 19]$[64, -100, -3, 8]$[67, -108, 0, 0]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Xcet404SEeClgphIV2irfQ" points="[0, 0, -55, 108]$[13, -27, -42, 81]$[46, -89, -9, 19]$[55, -108, 0, 0]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlJhs04SEeClgphIV2irfQ" id="(0.0,0.0)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlJhtE4SEeClgphIV2irfQ" id="(0.3040000915527344,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlJhtE4SEeClgphIV2irfQ" id="(0.20400009155273438,1.0)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_XcgjEE4SEeClgphIV2irfQ" type="4001" source="_XaVY1k4SEeClgphIV2irfQ" target="_XZu74k4SEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_XchKIE4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_XchKIU4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcgjEU4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcgjEU4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_XcgjEk4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childLinks.2"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcgjE04SEeClgphIV2irfQ" points="[0, 0, -48, 74]$[7, -1, -41, 73]$[14, -2, -34, 72]$[21, -5, -27, 69]$[28, -8, -20, 66]$[35, -20, -13, 54]$[41, -38, -7, 36]$[45, -58, -3, 16]$[48, -74, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKIwE4SEeClgphIV2irfQ" id="(0.17333348592122397,1.0)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKIwU4SEeClgphIV2irfQ" id="(0.40400009155273436,1.0)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcgjE04SEeClgphIV2irfQ" points="[0, 0, -48, 54]$[15, -16, -33, 38]$[38, -43, -10, 11]$[48, -54, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKIwE4SEeClgphIV2irfQ" id="(0.0,0.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKIwU4SEeClgphIV2irfQ" id="(0.004000091552734375,1.0)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_XciYQE4SEeClgphIV2irfQ" type="4001" source="_Xag_AE4SEeClgphIV2irfQ" target="_XZtGuE4SEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_Xci_UE4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_Xci_UU4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_XciYQU4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_XciYQU4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_XciYQk4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childLinks.3"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XciYQ04SEeClgphIV2irfQ" points="[0, 0, -55, -76]$[9, 5, -46, -71]$[18, 12, -37, -64]$[27, 20, -28, -56]$[35, 29, -20, -47]$[42, 41, -13, -35]$[48, 54, -7, -22]$[52, 66, -3, -10]$[55, 76, 0, 0]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XciYQ04SEeClgphIV2irfQ" points="[0, 0, -52, -76]$[15, 21, -37, -55]$[42, 61, -10, -15]$[52, 76, 0, 0]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlLW5k4SEeClgphIV2irfQ" id="(0.0,0.9466667175292969)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlLW504SEeClgphIV2irfQ" id="(0.40400009155273436,0.004000091552734375)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlLW504SEeClgphIV2irfQ" id="(0.10400009155273438,0.004000091552734375)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_XckNcE4SEeClgphIV2irfQ" type="4001" source="_Xag_Bk4SEeClgphIV2irfQ" target="_XZttxU4SEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_Xck0gE4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_Xck0gU4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_XckNcU4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_XckNcU4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_XckNck4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childLinks.4"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XckNc04SEeClgphIV2irfQ" points="[0, 0, -45, -18]$[6, 0, -39, -18]$[14, 1, -31, -17]$[21, 3, -24, -15]$[28, 5, -17, -13]$[33, 7, -12, -11]$[37, 11, -8, -7]$[41, 14, -4, -4]$[45, 18, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlL98E4SEeClgphIV2irfQ" id="(0.17333348592122397,0.11333338419596355)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlL98U4SEeClgphIV2irfQ" id="(0.10400009155273438,0.004000091552734375)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XckNc04SEeClgphIV2irfQ" points="[0, 0, -28, -8]$[10, 3, -18, -5]$[21, 7, -7, -1]$[28, 8, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlL98E4SEeClgphIV2irfQ" id="(0.17333348592122397,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlL98U4SEeClgphIV2irfQ" id="(0.004000091552734375,0.3040000915527344)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_XcmCoE4SEeClgphIV2irfQ" type="4001" source="_XarXEE4SEeClgphIV2irfQ" target="_XZttxU4SEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_XcmpsE4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_XcmpsU4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcmCoU4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcmCoU4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_XcmCok4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childLinks.5"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcmCo04SEeClgphIV2irfQ" points="[0, 0, -54, 62]$[9, -6, -45, 56]$[18, -13, -36, 49]$[27, -20, -27, 42]$[35, -28, -19, 34]$[41, -37, -13, 25]$[47, -46, -7, 16]$[51, -55, -3, 7]$[54, -62, 0, 0]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcmCo04SEeClgphIV2irfQ" points="[0, 0, -50, 62]$[14, -18, -36, 44]$[40, -49, -10, 13]$[50, -62, 0, 0]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlI6pE4SEeClgphIV2irfQ" id="(0.0,0.0)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlI6pU4SEeClgphIV2irfQ" id="(0.3040000915527344,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlI6pU4SEeClgphIV2irfQ" id="(0.10400009155273438,1.0)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_Xcn30E4SEeClgphIV2irfQ" type="4001" source="_XarXEE4SEeClgphIV2irfQ" target="_XZu74k4SEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_Xcoe4E4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_Xcoe4U4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_Xcn30U4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_Xcn30U4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_Xcn30k4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childLinks.6"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Xcn3004SEeClgphIV2irfQ" points="[0, 0, -46, -35]$[7, 3, -39, -32]$[14, 6, -32, -29]$[21, 9, -25, -26]$[28, 14, -18, -21]$[34, 18, -12, -17]$[39, 24, -7, -11]$[43, 30, -3, -5]$[46, 35, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlITkE4SEeClgphIV2irfQ" id="(0.17333348592122397,0.2800000508626302)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlITkU4SEeClgphIV2irfQ" id="(0.20400009155273438,0.00399932861328125)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Xcn3004SEeClgphIV2irfQ" points="[0, 0, -42, -31]$[14, 10, -28, -21]$[33, 24, -9, -7]$[42, 31, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlITkE4SEeClgphIV2irfQ" id="(0.0,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlITkU4SEeClgphIV2irfQ" id="(0.004000091552734375,0.10399932861328125)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_XcptAE4SEeClgphIV2irfQ" type="4001" source="_Xar-Ik4SEeClgphIV2irfQ" target="_XZuU0E4SEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_XcqUEE4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_XcqUEU4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcptAU4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcptAU4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_XcptAk4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childLinks.7"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcptA04SEeClgphIV2irfQ" points="[0, 0, -71, -122]$[7, 15, -64, -107]$[17, 34, -54, -88]$[29, 54, -42, -68]$[41, 73, -30, -49]$[44, 77, -27, -45]$[47, 81, -24, -41]$[50, 84, -21, -38]$[53, 89, -18, -33]$[58, 98, -13, -24]$[63, 107, -8, -15]$[68, 115, -3, -7]$[71, 122, 0, 0]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcptA04SEeClgphIV2irfQ" points="[0, 0, -57, -122]$[14, 30, -43, -92]$[47, 102, -10, -20]$[57, 122, 0, 0]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlLW4E4SEeClgphIV2irfQ" id="(0.0,1.0)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlLW4U4SEeClgphIV2irfQ" id="(0.20400009155273438,0.0040008544921875)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlLW4U4SEeClgphIV2irfQ" id="(0.3040000915527344,0.0040008544921875)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_XcriME4SEeClgphIV2irfQ" type="4001" source="_Xa2WME4SEeClgphIV2irfQ" target="_XZuU0E4SEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_XcsJQE4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_XcsJQU4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcriMU4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_XcriMU4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_XcriMk4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childLinks.8"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcriM04SEeClgphIV2irfQ" points="[0, 0, -49, 69]$[7, -3, -42, 66]$[14, -6, -35, 63]$[21, -11, -28, 58]$[28, -15, -21, 54]$[37, -29, -12, 40]$[43, -44, -6, 25]$[47, -58, -2, 11]$[49, -69, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKIxk4SEeClgphIV2irfQ" id="(0.17333348592122397,0.0)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKv0E4SEeClgphIV2irfQ" id="(0.5040000915527344,1.0)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XcriM04SEeClgphIV2irfQ" points="[0, 0, -50, 62]$[14, -18, -36, 44]$[40, -49, -10, 13]$[50, -62, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKIxk4SEeClgphIV2irfQ" id="(0.0,0.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKv0E4SEeClgphIV2irfQ" id="(0.10400009155273438,1.0)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_XctXYE4SEeClgphIV2irfQ" type="4001" source="_Xa29QU4SEeClgphIV2irfQ" target="_XZuU1k4SEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_Xct-cE4SEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_Xct-cU4SEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_XctXYU4SEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_XctXYU4SEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_XctXYk4SEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="giotto_lego.kaom#//@childEntities.0/@childEntities.2/@childLinks.9"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XctXY04SEeClgphIV2irfQ" points="[0, 0, -47, -3]$[4, 1, -43, -2]$[9, 3, -38, 0]$[14, 4, -33, 1]$[19, 6, -28, 3]$[26, 6, -21, 3]$[34, 5, -13, 2]$[41, 4, -6, 1]$[47, 3, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKv1U4SEeClgphIV2irfQ" id="(0.0,1.0)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKv1k4SEeClgphIV2irfQ" id="(0.004000091552734375,0.7040008544921875)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XctXY04SEeClgphIV2irfQ" points="[0, 0, -28, -6]$[10, 2, -18, -4]$[21, 4, -7, -2]$[28, 6, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKv1U4SEeClgphIV2irfQ" id="(0.17333348592122397,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_XlKv1k4SEeClgphIV2irfQ" id="(0.004000091552734375,0.4040008544921875)"/>
   </edges>
 </notation:Diagram>

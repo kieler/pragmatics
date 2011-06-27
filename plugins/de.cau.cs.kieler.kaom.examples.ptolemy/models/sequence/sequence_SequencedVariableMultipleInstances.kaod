@@ -2,7 +2,7 @@
 <notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:kaom="http://kieler.cs.cau.de/KAOM" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmi:id="_tTEjsE4zEeCwZ9APX9gKFQ" type="Kaom" measurementUnit="Pixel">
   <children xmi:type="notation:Node" xmi:id="_tTzjgE4zEeCwZ9APX9gKFQ" type="2001">
     <children xmi:type="notation:DecorationNode" xmi:id="_tTzjhE4zEeCwZ9APX9gKFQ" type="5004">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_tTzjhU4zEeCwZ9APX9gKFQ" y="5"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_tTzjhU4zEeCwZ9APX9gKFQ" x="135" y="440"/>
     </children>
     <children xmi:type="notation:BasicCompartment" xmi:id="_tTzjhk4zEeCwZ9APX9gKFQ" type="7001">
       <children xmi:type="notation:Node" xmi:id="_tT2m0E4zEeCwZ9APX9gKFQ" type="3002">
@@ -31,7 +31,7 @@
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_tT2m0U4zEeCwZ9APX9gKFQ"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_tT2m0k4zEeCwZ9APX9gKFQ" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="sequence_SequencedVariableMultipleInstances.kaom#//@childEntities.0/@childEntities.0"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_tT2m004zEeCwZ9APX9gKFQ" x="217" y="15"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_tT2m004zEeCwZ9APX9gKFQ" x="211" y="152"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_tT3N4U4zEeCwZ9APX9gKFQ" type="3002">
         <children xmi:type="notation:DecorationNode" xmi:id="_tT3N5U4zEeCwZ9APX9gKFQ" type="5003">
@@ -59,7 +59,7 @@
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_tT3N4k4zEeCwZ9APX9gKFQ"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_tT3N404zEeCwZ9APX9gKFQ" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="sequence_SequencedVariableMultipleInstances.kaom#//@childEntities.0/@childEntities.1"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_tT3N5E4zEeCwZ9APX9gKFQ" x="57" y="22"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_tT3N5E4zEeCwZ9APX9gKFQ" x="61" y="159"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_tT308E4zEeCwZ9APX9gKFQ" type="3002">
         <children xmi:type="notation:DecorationNode" xmi:id="_tT309E4zEeCwZ9APX9gKFQ" type="5003">
@@ -78,7 +78,7 @@
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_tT308U4zEeCwZ9APX9gKFQ"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_tT308k4zEeCwZ9APX9gKFQ" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="sequence_SequencedVariableMultipleInstances.kaom#//@childEntities.0/@childEntities.2"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_tT30804zEeCwZ9APX9gKFQ" x="217" y="97"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_tT30804zEeCwZ9APX9gKFQ" x="365" y="44"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_tT4cAE4zEeCwZ9APX9gKFQ" type="3002">
         <children xmi:type="notation:DecorationNode" xmi:id="_tT4cBE4zEeCwZ9APX9gKFQ" type="5003">
@@ -106,7 +106,7 @@
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_tT4cAU4zEeCwZ9APX9gKFQ"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_tT4cAk4zEeCwZ9APX9gKFQ" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="sequence_SequencedVariableMultipleInstances.kaom#//@childEntities.0/@childEntities.3"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_tT4cA04zEeCwZ9APX9gKFQ" x="55" y="91"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_tT4cA04zEeCwZ9APX9gKFQ" x="213" y="38"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_tT4cB04zEeCwZ9APX9gKFQ" type="3002">
         <children xmi:type="notation:DecorationNode" xmi:id="_tT5DEU4zEeCwZ9APX9gKFQ" type="5003">
@@ -116,7 +116,7 @@
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_tT4cCE4zEeCwZ9APX9gKFQ"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_tT4cCU4zEeCwZ9APX9gKFQ" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="sequence_SequencedVariableMultipleInstances.kaom#//@childEntities.0/@childEntities.4"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_tT5DEE4zEeCwZ9APX9gKFQ" x="330" y="168"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_tT5DEE4zEeCwZ9APX9gKFQ" x="20" y="38"/>
       </children>
       <children xmi:type="notation:Shape" xmi:id="_tY7UEE4zEeCwZ9APX9gKFQ" type="Note" fontName="Sans" description="The SequencedVariable actor updates its output&#xA;when it fires according to its sequence number.&#xA;So the actor Display sees the output from the last&#xA;iteration since its sequence number is before&#xA;the SeqeuncedVariable actor's sequence number.&#xA;All SequencedVariables beginning with the same name in the&#xA;form NAME_(instanceNumber) (e.g. var_3) share the same&#xA;data in a parameter stored in the model." fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
         <children xmi:type="notation:BasicDecorationNode" xmi:id="_tY77IE4zEeCwZ9APX9gKFQ" type="DiagramName">
@@ -128,13 +128,13 @@
         <styles xmi:type="notation:TextStyle" xmi:id="_tY7UEU4zEeCwZ9APX9gKFQ"/>
         <styles xmi:type="notation:LineTypeStyle" xmi:id="_tY7UEk4zEeCwZ9APX9gKFQ"/>
         <element xsi:nil="true"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_tY7UE04zEeCwZ9APX9gKFQ" x="185" y="237"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_tY7UE04zEeCwZ9APX9gKFQ" x="20" y="264"/>
       </children>
     </children>
     <styles xmi:type="notation:DescriptionStyle" xmi:id="_tTzjgU4zEeCwZ9APX9gKFQ"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_tTzjgk4zEeCwZ9APX9gKFQ" fontName="Sans"/>
     <element xmi:type="kaom:Entity" href="sequence_SequencedVariableMultipleInstances.kaom#//@childEntities.0"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_tTzjg04zEeCwZ9APX9gKFQ" x="15" y="15" width="612" height="404"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_tTzjg04zEeCwZ9APX9gKFQ" x="20" y="38" width="472" height="436"/>
   </children>
   <styles xmi:type="notation:DiagramStyle" xmi:id="_tTEjsU4zEeCwZ9APX9gKFQ"/>
   <element xmi:type="kaom:Entity" href="sequence_SequencedVariableMultipleInstances.kaom#/"/>
@@ -142,22 +142,22 @@
     <children xmi:type="notation:DecorationNode" xmi:id="_tVLcg04zEeCwZ9APX9gKFQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_tVLchE4zEeCwZ9APX9gKFQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_tVLcgE4zEeCwZ9APX9gKFQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_tVLcgE4zEeCwZ9APX9gKFQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_tVLcgU4zEeCwZ9APX9gKFQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="sequence_SequencedVariableMultipleInstances.kaom#//@childEntities.0/@childLinks.0"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_tVLcgk4zEeCwZ9APX9gKFQ" points="[0, 0, -78, 0]$[78, 0, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_tkCX4k4zEeCwZ9APX9gKFQ" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_tkC-8E4zEeCwZ9APX9gKFQ" id="(0.0,0.5)"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_tkCX4k4zEeCwZ9APX9gKFQ" id="(0.5,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_tkC-8E4zEeCwZ9APX9gKFQ" id="(0.5,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_tVNRsE4zEeCwZ9APX9gKFQ" type="4001" source="_tU4hkk4zEeCwZ9APX9gKFQ" target="_tUnb0E4zEeCwZ9APX9gKFQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_tVN4wE4zEeCwZ9APX9gKFQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_tVN4wU4zEeCwZ9APX9gKFQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_tVNRsU4zEeCwZ9APX9gKFQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_tVNRsU4zEeCwZ9APX9gKFQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_tVNRsk4zEeCwZ9APX9gKFQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="sequence_SequencedVariableMultipleInstances.kaom#//@childEntities.0/@childLinks.1"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_tVNRs04zEeCwZ9APX9gKFQ" points="[0, 0, -78, 0]$[78, 0, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_tkCX4E4zEeCwZ9APX9gKFQ" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_tkCX4U4zEeCwZ9APX9gKFQ" id="(0.0,0.5)"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_tkCX4E4zEeCwZ9APX9gKFQ" id="(0.5,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_tkCX4U4zEeCwZ9APX9gKFQ" id="(0.5,0.5)"/>
   </edges>
 </notation:Diagram>

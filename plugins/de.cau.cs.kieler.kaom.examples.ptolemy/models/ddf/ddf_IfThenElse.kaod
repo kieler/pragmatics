@@ -2,7 +2,7 @@
 <notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:kaom="http://kieler.cs.cau.de/KAOM" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmi:id="_AiiD8EAXEeCIfOdOxMaTvA" type="Kaom" measurementUnit="Pixel">
   <children xmi:type="notation:Node" xmi:id="_AjK9IEAXEeCIfOdOxMaTvA" type="2001">
     <children xmi:type="notation:DecorationNode" xmi:id="_AjK9JEAXEeCIfOdOxMaTvA" type="5004">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_AjK9JUAXEeCIfOdOxMaTvA" y="5"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_AjK9JUAXEeCIfOdOxMaTvA" x="633" y="528"/>
     </children>
     <children xmi:type="notation:BasicCompartment" xmi:id="_AjK9JkAXEeCIfOdOxMaTvA" type="7001">
       <children xmi:type="notation:Node" xmi:id="_AjLkMEAXEeCIfOdOxMaTvA" type="3002">
@@ -49,7 +49,7 @@
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_AjLkMUAXEeCIfOdOxMaTvA"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_AjLkMkAXEeCIfOdOxMaTvA" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.0"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AjLkM0AXEeCIfOdOxMaTvA" x="86" y="66"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AjLkM0AXEeCIfOdOxMaTvA" x="90" y="255"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_AjMLQ0AXEeCIfOdOxMaTvA" type="3002">
         <children xmi:type="notation:DecorationNode" xmi:id="_AjMLR0AXEeCIfOdOxMaTvA" type="5003">
@@ -86,11 +86,11 @@
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_AjMLREAXEeCIfOdOxMaTvA"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_AjMLRUAXEeCIfOdOxMaTvA" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.1"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AjMLRkAXEeCIfOdOxMaTvA" x="255" y="58"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AjMLRkAXEeCIfOdOxMaTvA" x="269" y="249"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_AjMLSkAXEeCIfOdOxMaTvA" type="3002">
         <children xmi:type="notation:DecorationNode" xmi:id="_AjMLTkAXEeCIfOdOxMaTvA" type="5003">
-          <layoutConstraint xmi:type="notation:Location" xmi:id="_AjMLT0AXEeCIfOdOxMaTvA" y="5"/>
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_AjMLT0AXEeCIfOdOxMaTvA" x="312" y="344"/>
         </children>
         <children xmi:type="notation:BasicCompartment" xmi:id="_AjMLUEAXEeCIfOdOxMaTvA" type="7002">
           <children xmi:type="notation:Node" xmi:id="_AlTrIEAXEeCIfOdOxMaTvA" type="3002">
@@ -137,7 +137,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_AlTrIUAXEeCIfOdOxMaTvA"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_AlTrIkAXEeCIfOdOxMaTvA" fontName="Sans"/>
             <element xmi:type="kaom:Entity" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2/@childEntities.0"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AlTrI0AXEeCIfOdOxMaTvA" x="151" y="39"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AlTrI0AXEeCIfOdOxMaTvA" x="160" y="179"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_AlTrJ0AXEeCIfOdOxMaTvA" type="3002">
             <children xmi:type="notation:DecorationNode" xmi:id="_AlTrK0AXEeCIfOdOxMaTvA" type="5003">
@@ -165,7 +165,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_AlTrKEAXEeCIfOdOxMaTvA"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_AlTrKUAXEeCIfOdOxMaTvA" fontName="Sans"/>
             <element xmi:type="kaom:Entity" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2/@childEntities.1"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AlTrKkAXEeCIfOdOxMaTvA" x="312" y="15"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AlTrKkAXEeCIfOdOxMaTvA" x="331" y="160"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_AlTrLkAXEeCIfOdOxMaTvA" type="3002">
             <children xmi:type="notation:DecorationNode" xmi:id="_AlTrMkAXEeCIfOdOxMaTvA" type="5003">
@@ -193,7 +193,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_AlTrL0AXEeCIfOdOxMaTvA"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_AlTrMEAXEeCIfOdOxMaTvA" fontName="Sans"/>
             <element xmi:type="kaom:Entity" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2/@childEntities.2"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AlTrMUAXEeCIfOdOxMaTvA" x="312" y="82"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AlTrMUAXEeCIfOdOxMaTvA" x="331" y="227"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_AlTrNUAXEeCIfOdOxMaTvA" type="3002">
             <children xmi:type="notation:DecorationNode" xmi:id="_AlTrOUAXEeCIfOdOxMaTvA" type="5003">
@@ -239,7 +239,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_AlTrNkAXEeCIfOdOxMaTvA"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_AlTrN0AXEeCIfOdOxMaTvA" fontName="Sans"/>
             <element xmi:type="kaom:Entity" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2/@childEntities.3"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AlTrOEAXEeCIfOdOxMaTvA" x="573" y="15"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AlTrOEAXEeCIfOdOxMaTvA" x="530" y="184"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_AlTrPEAXEeCIfOdOxMaTvA" type="3002">
             <children xmi:type="notation:DecorationNode" xmi:id="_AlUSMEAXEeCIfOdOxMaTvA" type="5003">
@@ -249,7 +249,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_AlTrPUAXEeCIfOdOxMaTvA"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_AlTrPkAXEeCIfOdOxMaTvA" fontName="Sans"/>
             <element xmi:type="kaom:Entity" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2/@childEntities.4"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AlTrP0AXEeCIfOdOxMaTvA" x="529" y="116"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AlTrP0AXEeCIfOdOxMaTvA" x="20" y="38"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_AlUSM0AXEeCIfOdOxMaTvA" type="3003">
             <children xmi:type="notation:DecorationNode" xmi:id="_AlUSN0AXEeCIfOdOxMaTvA" type="5002">
@@ -258,7 +258,7 @@
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_AlUSNEAXEeCIfOdOxMaTvA"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_AlUSNUAXEeCIfOdOxMaTvA" fontName="Sans"/>
             <element xmi:type="kaom:Relation" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2/@childRelations.0"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AlUSNkAXEeCIfOdOxMaTvA" x="59" y="125"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AlUSNkAXEeCIfOdOxMaTvA" x="59" y="273"/>
           </children>
           <children xmi:type="notation:Shape" xmi:id="_A9jzEEAXEeCIfOdOxMaTvA" type="Note" fontName="Sans" description="The requiredFiringsPerIteration &#xA;parameter for this DDFBooleanSelect &#xA;is set to 2, which defines one &#xA;iteration of this inside DDF domain." fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
             <children xmi:type="notation:BasicDecorationNode" xmi:id="_A9jzFEAXEeCIfOdOxMaTvA" type="DiagramName">
@@ -270,7 +270,7 @@
             <styles xmi:type="notation:TextStyle" xmi:id="_A9jzEUAXEeCIfOdOxMaTvA"/>
             <styles xmi:type="notation:LineTypeStyle" xmi:id="_A9jzEkAXEeCIfOdOxMaTvA"/>
             <element xsi:nil="true"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_A9jzE0AXEeCIfOdOxMaTvA" x="457" y="186"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_A9jzE0AXEeCIfOdOxMaTvA" x="182" y="30"/>
           </children>
         </children>
         <children xmi:type="notation:Node" xmi:id="_AlLIQEAXEeCIfOdOxMaTvA" type="3001">
@@ -280,7 +280,7 @@
           <styles xmi:type="notation:DescriptionStyle" xmi:id="_AlLIQUAXEeCIfOdOxMaTvA"/>
           <styles xmi:type="notation:FontStyle" xmi:id="_AlLIQkAXEeCIfOdOxMaTvA" fontName="Sans"/>
           <element xmi:type="kaom:Port" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2/@childPorts.0"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AlLIQ0AXEeCIfOdOxMaTvA" x="-9" y="59"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AlLIQ0AXEeCIfOdOxMaTvA" x="-10" y="199"/>
         </children>
         <children xmi:type="notation:Node" xmi:id="_AlLIRkAXEeCIfOdOxMaTvA" type="3001">
           <children xmi:type="notation:DecorationNode" xmi:id="_AlLISkAXEeCIfOdOxMaTvA" type="5001">
@@ -289,7 +289,7 @@
           <styles xmi:type="notation:DescriptionStyle" xmi:id="_AlLIR0AXEeCIfOdOxMaTvA"/>
           <styles xmi:type="notation:FontStyle" xmi:id="_AlLISEAXEeCIfOdOxMaTvA" fontName="Sans"/>
           <element xmi:type="kaom:Port" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2/@childPorts.1"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AlLISUAXEeCIfOdOxMaTvA" x="-9" y="135"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AlLISUAXEeCIfOdOxMaTvA" x="-10" y="283"/>
         </children>
         <children xmi:type="notation:Node" xmi:id="_AlLITEAXEeCIfOdOxMaTvA" type="3001">
           <children xmi:type="notation:DecorationNode" xmi:id="_AlLIUEAXEeCIfOdOxMaTvA" type="5001">
@@ -298,12 +298,12 @@
           <styles xmi:type="notation:DescriptionStyle" xmi:id="_AlLITUAXEeCIfOdOxMaTvA"/>
           <styles xmi:type="notation:FontStyle" xmi:id="_AlLITkAXEeCIfOdOxMaTvA" fontName="Sans"/>
           <element xmi:type="kaom:Port" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2/@childPorts.2"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AlLIT0AXEeCIfOdOxMaTvA" x="778" y="44"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AlLIT0AXEeCIfOdOxMaTvA" x="684" y="213"/>
         </children>
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_AjMLS0AXEeCIfOdOxMaTvA"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_AjMLTEAXEeCIfOdOxMaTvA" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AjMLTUAXEeCIfOdOxMaTvA" x="426" y="15" width="779" height="293"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AjMLTUAXEeCIfOdOxMaTvA" x="448" y="127" width="684" height="340"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_AjMLUUAXEeCIfOdOxMaTvA" type="3002">
         <children xmi:type="notation:DecorationNode" xmi:id="_AjMLVUAXEeCIfOdOxMaTvA" type="5003">
@@ -322,7 +322,7 @@
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_AjMLUkAXEeCIfOdOxMaTvA"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_AjMLU0AXEeCIfOdOxMaTvA" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.3"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AjMLVEAXEeCIfOdOxMaTvA" x="1277" y="43"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AjMLVEAXEeCIfOdOxMaTvA" x="1198" y="324"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_AjMLWEAXEeCIfOdOxMaTvA" type="3002">
         <children xmi:type="notation:DecorationNode" xmi:id="_AjMLXEAXEeCIfOdOxMaTvA" type="5003">
@@ -359,7 +359,7 @@
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_AjMLWUAXEeCIfOdOxMaTvA"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_AjMLWkAXEeCIfOdOxMaTvA" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.4"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AjMLW0AXEeCIfOdOxMaTvA" x="246" y="140"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AjMLW0AXEeCIfOdOxMaTvA" x="259" y="329"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_AjMLX0AXEeCIfOdOxMaTvA" type="3002">
         <children xmi:type="notation:DecorationNode" xmi:id="_AjMLY0AXEeCIfOdOxMaTvA" type="5003">
@@ -387,7 +387,7 @@
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_AjMLYEAXEeCIfOdOxMaTvA"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_AjMLYUAXEeCIfOdOxMaTvA" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.5"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AjMLYkAXEeCIfOdOxMaTvA" x="123" y="151"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AjMLYkAXEeCIfOdOxMaTvA" x="127" y="340"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_AjMyUUAXEeCIfOdOxMaTvA" type="3002">
         <children xmi:type="notation:DecorationNode" xmi:id="_AjMyVUAXEeCIfOdOxMaTvA" type="5003">
@@ -397,7 +397,7 @@
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_AjMyUkAXEeCIfOdOxMaTvA"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_AjMyU0AXEeCIfOdOxMaTvA" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.6"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AjMyVEAXEeCIfOdOxMaTvA" x="1391" y="123"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AjMyVEAXEeCIfOdOxMaTvA" x="20" y="38"/>
       </children>
       <children xmi:type="notation:Shape" xmi:id="_AuifoEAXEeCIfOdOxMaTvA" type="Note" fontName="Sans" description="This model demos DDF domain inside SDF domain. The&#xA;requiredFiringsPerIteration parameter of DDFBooleanSelect&#xA;actor in DDF domain defines one iteration of +1/-1 Gain actor." fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
         <children xmi:type="notation:BasicDecorationNode" xmi:id="_AujGsEAXEeCIfOdOxMaTvA" type="DiagramName">
@@ -409,7 +409,7 @@
         <styles xmi:type="notation:TextStyle" xmi:id="_AuifoUAXEeCIfOdOxMaTvA"/>
         <styles xmi:type="notation:LineTypeStyle" xmi:id="_AuifokAXEeCIfOdOxMaTvA"/>
         <element xsi:nil="true"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Auifo0AXEeCIfOdOxMaTvA" x="1245" y="193"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Auifo0AXEeCIfOdOxMaTvA" x="462" y="30"/>
       </children>
       <children xmi:type="notation:Shape" xmi:id="_A4By0EAXEeCIfOdOxMaTvA" type="Note" fontName="Sans" description="Author: Gang Zhou &#xA;(based on Ptolemy Classic demo)" fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
         <children xmi:type="notation:BasicDecorationNode" xmi:id="_A4CZ4EAXEeCIfOdOxMaTvA" type="DiagramName">
@@ -421,13 +421,13 @@
         <styles xmi:type="notation:TextStyle" xmi:id="_A4By0UAXEeCIfOdOxMaTvA"/>
         <styles xmi:type="notation:LineTypeStyle" xmi:id="_A4By0kAXEeCIfOdOxMaTvA"/>
         <element xsi:nil="true"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_A4By00AXEeCIfOdOxMaTvA" x="1332" y="270"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_A4By00AXEeCIfOdOxMaTvA" x="182" y="30"/>
       </children>
     </children>
     <styles xmi:type="notation:DescriptionStyle" xmi:id="_AjK9IUAXEeCIfOdOxMaTvA"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_AjK9IkAXEeCIfOdOxMaTvA" fontName="Sans"/>
     <element xmi:type="kaom:Entity" href="ddf_IfThenElse.kaom#//@childEntities.0"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AjK9I0AXEeCIfOdOxMaTvA" x="15" y="15" width="1675" height="361"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_AjK9I0AXEeCIfOdOxMaTvA" x="20" y="38" width="1325" height="524"/>
   </children>
   <styles xmi:type="notation:DiagramStyle" xmi:id="_AiiD8UAXEeCIfOdOxMaTvA"/>
   <element xmi:type="kaom:Entity" href="ddf_IfThenElse.kaom#/"/>
@@ -435,76 +435,76 @@
     <children xmi:type="notation:DecorationNode" xmi:id="_ApdLVEAXEeCIfOdOxMaTvA" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_ApdLVUAXEeCIfOdOxMaTvA"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_ApdLUUAXEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_ApdLUUAXEeCIfOdOxMaTvA" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_ApdLUkAXEeCIfOdOxMaTvA" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="ddf_IfThenElse.kaom#//@childEntities.0/@childLinks.0"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ApdLU0AXEeCIfOdOxMaTvA" points="[0, 0, -77, -56]$[37, 0, -40, -56]$[37, 56, -40, 0]$[77, 56, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZN0AXEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZOEAXEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ApdLU0AXEeCIfOdOxMaTvA" points="[0, 0, -96, -56]$[48, 0, -48, -56]$[48, 56, -48, 0]$[96, 56, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZN0AXEeCIfOdOxMaTvA" id="(0.5,0.49999847412109377)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZOEAXEeCIfOdOxMaTvA" id="(0.5,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_ApeZcEAXEeCIfOdOxMaTvA" type="4001" source="_Ak7QoEAXEeCIfOdOxMaTvA" target="_AlLIQEAXEeCIfOdOxMaTvA">
     <children xmi:type="notation:DecorationNode" xmi:id="_ApeZdEAXEeCIfOdOxMaTvA" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_ApeZdUAXEeCIfOdOxMaTvA"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_ApeZcUAXEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_ApeZcUAXEeCIfOdOxMaTvA" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_ApeZckAXEeCIfOdOxMaTvA" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="ddf_IfThenElse.kaom#//@childEntities.0/@childLinks.1"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ApeZc0AXEeCIfOdOxMaTvA" points="[0, 0, -91, 0]$[91, 0, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZIUAXEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZIkAXEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ApeZc0AXEeCIfOdOxMaTvA" points="[0, 0, -108, -61]$[48, 0, -60, -61]$[48, 61, -60, 0]$[108, 61, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZIUAXEeCIfOdOxMaTvA" id="(0.5,0.49999847412109377)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZIkAXEeCIfOdOxMaTvA" id="(0.5,0.5000015258789062)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_ApfAgEAXEeCIfOdOxMaTvA" type="4001" source="_AlLITEAXEeCIfOdOxMaTvA" target="_AnxwUEAXEeCIfOdOxMaTvA">
     <children xmi:type="notation:DecorationNode" xmi:id="_ApfAhEAXEeCIfOdOxMaTvA" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_ApfAhUAXEeCIfOdOxMaTvA"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_ApfAgUAXEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_ApfAgUAXEeCIfOdOxMaTvA" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_ApfAgkAXEeCIfOdOxMaTvA" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="ddf_IfThenElse.kaom#//@childEntities.0/@childLinks.2"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ApfAg0AXEeCIfOdOxMaTvA" points="[0, 0, -57, 0]$[57, 0, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZJUAXEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZJkAXEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ApfAg0AXEeCIfOdOxMaTvA" points="[0, 0, -60, 0]$[60, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZJUAXEeCIfOdOxMaTvA" id="(0.5,0.5000015258789062)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZJkAXEeCIfOdOxMaTvA" id="(0.5,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_ApfnkEAXEeCIfOdOxMaTvA" type="4001" source="_An2o0kAXEeCIfOdOxMaTvA" target="_AlLIRkAXEeCIfOdOxMaTvA">
     <children xmi:type="notation:DecorationNode" xmi:id="_ApfnlEAXEeCIfOdOxMaTvA" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_ApfnlUAXEeCIfOdOxMaTvA"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_ApfnkUAXEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_ApfnkUAXEeCIfOdOxMaTvA" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_ApfnkkAXEeCIfOdOxMaTvA" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="ddf_IfThenElse.kaom#//@childEntities.0/@childLinks.3"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Apfnk0AXEeCIfOdOxMaTvA" points="[0, 0, -93, 0]$[93, 0, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZJ0AXEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZKEAXEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Apfnk0AXEeCIfOdOxMaTvA" points="[0, 0, -111, -71]$[51, 0, -60, -71]$[51, 71, -60, 0]$[111, 71, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZJ0AXEeCIfOdOxMaTvA" id="(0.5,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZKEAXEeCIfOdOxMaTvA" id="(0.5,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_ApgOoEAXEeCIfOdOxMaTvA" type="4001" source="_AoBA4EAXEeCIfOdOxMaTvA" target="_An2BxkAXEeCIfOdOxMaTvA">
     <children xmi:type="notation:DecorationNode" xmi:id="_ApgOpEAXEeCIfOdOxMaTvA" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_ApgOpUAXEeCIfOdOxMaTvA"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_ApgOoUAXEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_ApgOoUAXEeCIfOdOxMaTvA" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_ApgOokAXEeCIfOdOxMaTvA" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="ddf_IfThenElse.kaom#//@childEntities.0/@childLinks.4"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ApgOo0AXEeCIfOdOxMaTvA" points="[0, 0, -77, 0]$[77, 0, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZNUAXEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZNkAXEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ApgOo0AXEeCIfOdOxMaTvA" points="[0, 0, -96, 0]$[96, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZNUAXEeCIfOdOxMaTvA" id="(0.5,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZNkAXEeCIfOdOxMaTvA" id="(0.5,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_AphcwEAXEeCIfOdOxMaTvA" type="4001" source="_AlLIQEAXEeCIfOdOxMaTvA" target="_AmL04EAXEeCIfOdOxMaTvA">
     <children xmi:type="notation:DecorationNode" xmi:id="_AphcxEAXEeCIfOdOxMaTvA" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_AphcxUAXEeCIfOdOxMaTvA"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_AphcwUAXEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_AphcwUAXEeCIfOdOxMaTvA" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_AphcwkAXEeCIfOdOxMaTvA" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2/@childLinks.0"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Aphcw0AXEeCIfOdOxMaTvA" points="[0, 0, -154, 0]$[154, 0, 0, 0]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Aphcw0AXEeCIfOdOxMaTvA" points="[0, 0, -169, 0]$[169, 0, 0, 0]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZL0AXEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZMEAXEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZMEAXEeCIfOdOxMaTvA" id="(0.5,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_ApiD0EAXEeCIfOdOxMaTvA" type="4001" source="_AlLIRkAXEeCIfOdOxMaTvA" target="_AlUSM0AXEeCIfOdOxMaTvA">
     <children xmi:type="notation:DecorationNode" xmi:id="_ApiD1EAXEeCIfOdOxMaTvA" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_ApiD1UAXEeCIfOdOxMaTvA"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_ApiD0UAXEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_ApiD0UAXEeCIfOdOxMaTvA" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_ApiD0kAXEeCIfOdOxMaTvA" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2/@childLinks.1"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ApiD00AXEeCIfOdOxMaTvA" points="[0, 0, -68, 0]$[68, 0, 0, 0]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ApiD00AXEeCIfOdOxMaTvA" points="[0, 0, -69, 0]$[69, 0, 0, 0]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZM0AXEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZNEAXEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
   </edges>
@@ -512,77 +512,77 @@
     <children xmi:type="notation:DecorationNode" xmi:id="_Apiq5EAXEeCIfOdOxMaTvA" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_Apiq5UAXEeCIfOdOxMaTvA"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_Apiq4UAXEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_Apiq4UAXEeCIfOdOxMaTvA" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_Apiq4kAXEeCIfOdOxMaTvA" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2/@childLinks.2"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Apiq40AXEeCIfOdOxMaTvA" points="[0, 0, -102, 34]$[35, 0, -67, 34]$[35, -19, -67, 15]$[102, -19, 0, 15]$[102, -34, 0, 0]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Apiq40AXEeCIfOdOxMaTvA" points="[0, 0, -111, 47]$[40, 0, -71, 47]$[40, -4, -71, 43]$[111, -4, 0, 43]$[111, -47, 0, 0]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZKUAXEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZKkAXEeCIfOdOxMaTvA" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZKkAXEeCIfOdOxMaTvA" id="(0.5,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_ApjR8EAXEeCIfOdOxMaTvA" type="4001" source="_AmMb-EAXEeCIfOdOxMaTvA" target="_AmZQQEAXEeCIfOdOxMaTvA">
     <children xmi:type="notation:DecorationNode" xmi:id="_ApjR9EAXEeCIfOdOxMaTvA" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_ApjR9UAXEeCIfOdOxMaTvA"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_ApjR8UAXEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_ApjR8UAXEeCIfOdOxMaTvA" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_ApjR8kAXEeCIfOdOxMaTvA" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2/@childLinks.3"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ApjR80AXEeCIfOdOxMaTvA" points="[0, 0, -106, 24]$[65, 0, -41, 24]$[65, -24, -41, 0]$[106, -24, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZMUAXEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZMkAXEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ApjR80AXEeCIfOdOxMaTvA" points="[0, 0, -126, 19]$[76, 0, -50, 19]$[76, -19, -50, 0]$[126, -19, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZMUAXEeCIfOdOxMaTvA" id="(0.5,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZMkAXEeCIfOdOxMaTvA" id="(0.5,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_Apj5AEAXEeCIfOdOxMaTvA" type="4001" source="_AmMb_kAXEeCIfOdOxMaTvA" target="_Amf98EAXEeCIfOdOxMaTvA">
     <children xmi:type="notation:DecorationNode" xmi:id="_ApkgEEAXEeCIfOdOxMaTvA" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_ApkgEUAXEeCIfOdOxMaTvA"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_Apj5AUAXEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_Apj5AUAXEeCIfOdOxMaTvA" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_Apj5AkAXEeCIfOdOxMaTvA" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2/@childLinks.4"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Apj5A0AXEeCIfOdOxMaTvA" points="[0, 0, -106, -24]$[65, 0, -41, -24]$[65, 24, -41, 0]$[106, 24, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZI0AXEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZJEAXEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Apj5A0AXEeCIfOdOxMaTvA" points="[0, 0, -126, -29]$[76, 0, -50, -29]$[76, 29, -50, 0]$[126, 29, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZI0AXEeCIfOdOxMaTvA" id="(0.5,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZJEAXEeCIfOdOxMaTvA" id="(0.5,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_AplHIEAXEeCIfOdOxMaTvA" type="4001" source="_AmZQRkAXEeCIfOdOxMaTvA" target="_AnYuwEAXEeCIfOdOxMaTvA">
     <children xmi:type="notation:DecorationNode" xmi:id="_AplHJEAXEeCIfOdOxMaTvA" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_AplHJUAXEeCIfOdOxMaTvA"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_AplHIUAXEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_AplHIUAXEeCIfOdOxMaTvA" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_AplHIkAXEeCIfOdOxMaTvA" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2/@childLinks.5"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_AplHI0AXEeCIfOdOxMaTvA" points="[0, 0, -177, 0]$[177, 0, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZOUAXEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZOkAXEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_AplHI0AXEeCIfOdOxMaTvA" points="[0, 0, -125, -24]$[48, 0, -77, -24]$[48, 24, -77, 0]$[125, 24, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZOUAXEeCIfOdOxMaTvA" id="(0.5,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZOkAXEeCIfOdOxMaTvA" id="(0.5,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_ApluMEAXEeCIfOdOxMaTvA" type="4001" source="_Amf99kAXEeCIfOdOxMaTvA" target="_AnYuxkAXEeCIfOdOxMaTvA">
     <children xmi:type="notation:DecorationNode" xmi:id="_ApluNEAXEeCIfOdOxMaTvA" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_ApluNUAXEeCIfOdOxMaTvA"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_ApluMUAXEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_ApluMUAXEeCIfOdOxMaTvA" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_ApluMkAXEeCIfOdOxMaTvA" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2/@childLinks.6"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ApluM0AXEeCIfOdOxMaTvA" points="[0, 0, -177, 48]$[37, 0, -140, 48]$[37, -48, -140, 0]$[177, -48, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZLUAXEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZLkAXEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ApluM0AXEeCIfOdOxMaTvA" points="[0, 0, -125, 24]$[48, 0, -77, 24]$[48, -24, -77, 0]$[125, -24, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZLUAXEeCIfOdOxMaTvA" id="(0.5,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZLkAXEeCIfOdOxMaTvA" id="(0.5,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_ApmVQEAXEeCIfOdOxMaTvA" type="4001" source="_AlUSM0AXEeCIfOdOxMaTvA" target="_AnYuzEAXEeCIfOdOxMaTvA">
     <children xmi:type="notation:DecorationNode" xmi:id="_ApmVREAXEeCIfOdOxMaTvA" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_ApmVRUAXEeCIfOdOxMaTvA"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_ApmVQUAXEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_ApmVQUAXEeCIfOdOxMaTvA" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_ApmVQkAXEeCIfOdOxMaTvA" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2/@childLinks.7"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ApmVQ0AXEeCIfOdOxMaTvA" points="[0, 0, -525, 57]$[35, 0, -490, 57]$[35, 20, -490, 77]$[373, 20, -152, 77]$[373, -42, -152, 15]$[525, -42, 0, 15]$[525, -57, 0, 0]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ApmVQ0AXEeCIfOdOxMaTvA" points="[0, 0, -482, 41]$[40, 0, -442, 41]$[40, 6, -442, 47]$[482, 6, 0, 47]$[482, -41, 0, 0]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZO0AXEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZPEAXEeCIfOdOxMaTvA" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZPEAXEeCIfOdOxMaTvA" id="(0.5,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_Apm8UEAXEeCIfOdOxMaTvA" type="4001" source="_AnZV0kAXEeCIfOdOxMaTvA" target="_AlLITEAXEeCIfOdOxMaTvA">
     <children xmi:type="notation:DecorationNode" xmi:id="_Apm8VEAXEeCIfOdOxMaTvA" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_ApnjYEAXEeCIfOdOxMaTvA"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_Apm8UUAXEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_Apm8UUAXEeCIfOdOxMaTvA" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_Apm8UkAXEeCIfOdOxMaTvA" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="ddf_IfThenElse.kaom#//@childEntities.0/@childEntities.2/@childLinks.8"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Apm8U0AXEeCIfOdOxMaTvA" points="[0, 0, -144, 0]$[144, 0, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZK0AXEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Apm8U0AXEeCIfOdOxMaTvA" points="[0, 0, -98, 0]$[98, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZK0AXEeCIfOdOxMaTvA" id="(0.5,0.5)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_BEvZLEAXEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
   </edges>
 </notation:Diagram>

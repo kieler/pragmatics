@@ -2,7 +2,7 @@
 <notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:kaom="http://kieler.cs.cau.de/KAOM" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmi:id="_bRo6ME4VEeClgphIV2irfQ" type="Kaom" measurementUnit="Pixel">
   <children xmi:type="notation:Node" xmi:id="_bSWr4E4VEeClgphIV2irfQ" type="2001">
     <children xmi:type="notation:DecorationNode" xmi:id="_bSXS8E4VEeClgphIV2irfQ" type="5004">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_bSXS8U4VEeClgphIV2irfQ" y="5"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_bSXS8U4VEeClgphIV2irfQ" x="234" y="500"/>
     </children>
     <children xmi:type="notation:BasicCompartment" xmi:id="_bSXS8k4VEeClgphIV2irfQ" type="7001">
       <children xmi:type="notation:Node" xmi:id="_bSX6AE4VEeClgphIV2irfQ" type="3002">
@@ -31,7 +31,7 @@
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_bSX6AU4VEeClgphIV2irfQ"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_bSX6Ak4VEeClgphIV2irfQ" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="petrinet_PetriNetSimple.kaom#//@childEntities.0/@childEntities.0"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_bSX6A04VEeClgphIV2irfQ" x="47" y="15"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_bSX6A04VEeClgphIV2irfQ" x="51" y="166"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_bSYhE04VEeClgphIV2irfQ" type="3002">
         <children xmi:type="notation:DecorationNode" xmi:id="_bSYhF04VEeClgphIV2irfQ" type="5003">
@@ -59,7 +59,7 @@
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_bSYhFE4VEeClgphIV2irfQ"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_bSYhFU4VEeClgphIV2irfQ" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="petrinet_PetriNetSimple.kaom#//@childEntities.0/@childEntities.1"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_bSYhFk4VEeClgphIV2irfQ" x="192" y="15"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_bSYhFk4VEeClgphIV2irfQ" x="188" y="166"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_bSYhGk4VEeClgphIV2irfQ" type="3002">
         <children xmi:type="notation:DecorationNode" xmi:id="_bSYhHk4VEeClgphIV2irfQ" type="5003">
@@ -87,7 +87,7 @@
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_bSYhG04VEeClgphIV2irfQ"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_bSYhHE4VEeClgphIV2irfQ" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="petrinet_PetriNetSimple.kaom#//@childEntities.0/@childEntities.2"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_bSYhHU4VEeClgphIV2irfQ" x="358" y="15"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_bSYhHU4VEeClgphIV2irfQ" x="342" y="166"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_bSYhIU4VEeClgphIV2irfQ" type="3002">
         <children xmi:type="notation:DecorationNode" xmi:id="_bSYhJU4VEeClgphIV2irfQ" type="5003">
@@ -97,7 +97,7 @@
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_bSYhIk4VEeClgphIV2irfQ"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_bSYhI04VEeClgphIV2irfQ" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="petrinet_PetriNetSimple.kaom#//@childEntities.0/@childEntities.3"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_bSYhJE4VEeClgphIV2irfQ" x="549" y="82"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_bSYhJE4VEeClgphIV2irfQ" x="197" y="38"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_bSYhKE4VEeClgphIV2irfQ" type="3002">
         <children xmi:type="notation:DecorationNode" xmi:id="_bSZIIE4VEeClgphIV2irfQ" type="5003">
@@ -107,7 +107,7 @@
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_bSYhKU4VEeClgphIV2irfQ"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_bSYhKk4VEeClgphIV2irfQ" fontName="Sans"/>
         <element xmi:type="kaom:Entity" href="petrinet_PetriNetSimple.kaom#//@childEntities.0/@childEntities.4"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_bSYhK04VEeClgphIV2irfQ" x="509" y="142"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_bSYhK04VEeClgphIV2irfQ" x="20" y="38"/>
       </children>
       <children xmi:type="notation:Shape" xmi:id="_bW0VIE4VEeClgphIV2irfQ" type="Note" fontName="Sans" description="Author: Zach Ezzell (University of Florida), Contributor: Christopher Brooks" fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
         <children xmi:type="notation:BasicDecorationNode" xmi:id="_bW08ME4VEeClgphIV2irfQ" type="DiagramName">
@@ -119,7 +119,7 @@
         <styles xmi:type="notation:TextStyle" xmi:id="_bW0VIU4VEeClgphIV2irfQ"/>
         <styles xmi:type="notation:LineTypeStyle" xmi:id="_bW0VIk4VEeClgphIV2irfQ"/>
         <element xsi:nil="true"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_bW0VI04VEeClgphIV2irfQ" x="326" y="211"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_bW0VI04VEeClgphIV2irfQ" x="20" y="400"/>
       </children>
       <children xmi:type="notation:Shape" xmi:id="_bjFPgE4VEeClgphIV2irfQ" type="Note" fontName="Sans" description="As the model is running, the PetriNet Director&#xA;sends messages to the PetriNetDisplay.&#xA;&#xA;The messages contain the token count for each&#xA;Place at each iteration." fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
         <children xmi:type="notation:BasicDecorationNode" xmi:id="_bjF2kE4VEeClgphIV2irfQ" type="DiagramName">
@@ -131,13 +131,13 @@
         <styles xmi:type="notation:TextStyle" xmi:id="_bjFPgU4VEeClgphIV2irfQ"/>
         <styles xmi:type="notation:LineTypeStyle" xmi:id="_bjFPgk4VEeClgphIV2irfQ"/>
         <element xsi:nil="true"/>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_bjFPg04VEeClgphIV2irfQ" x="406" y="288"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_bjFPg04VEeClgphIV2irfQ" x="20" y="263"/>
       </children>
     </children>
     <styles xmi:type="notation:DescriptionStyle" xmi:id="_bSWr4U4VEeClgphIV2irfQ"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_bSWr4k4VEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Entity" href="petrinet_PetriNetSimple.kaom#//@childEntities.0"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_bSWr404VEeClgphIV2irfQ" x="15" y="15" width="830" height="410"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_bSWr404VEeClgphIV2irfQ" x="20" y="38" width="549" height="496"/>
   </children>
   <styles xmi:type="notation:DiagramStyle" xmi:id="_bRo6MU4VEeClgphIV2irfQ"/>
   <element xmi:type="kaom:Entity" href="petrinet_PetriNetSimple.kaom#/"/>
@@ -145,22 +145,22 @@
     <children xmi:type="notation:DecorationNode" xmi:id="_bUWP9E4VEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_bUWP9U4VEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_bUWP8U4VEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_bUWP8U4VEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_bUWP8k4VEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="petrinet_PetriNetSimple.kaom#//@childEntities.0/@childLinks.0"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_bUWP804VEeClgphIV2irfQ" points="[0, 0, -65, 0]$[65, 0, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_bomotE4VEeClgphIV2irfQ" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_bomotU4VEeClgphIV2irfQ" id="(0.0,0.5)"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_bomotE4VEeClgphIV2irfQ" id="(0.5,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_bomotU4VEeClgphIV2irfQ" id="(0.5,0.5)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_bUXeEE4VEeClgphIV2irfQ" type="4001" source="_bSeApk4VEeClgphIV2irfQ" target="_bSt4QE4VEeClgphIV2irfQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_bUXeFE4VEeClgphIV2irfQ" type="6001">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_bUXeFU4VEeClgphIV2irfQ"/>
     </children>
-    <styles xmi:type="notation:RoutingStyle" xmi:id="_bUXeEU4VEeClgphIV2irfQ"/>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_bUXeEU4VEeClgphIV2irfQ" roundedBendpointsRadius="5"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_bUXeEk4VEeClgphIV2irfQ" fontName="Sans"/>
     <element xmi:type="kaom:Link" href="petrinet_PetriNetSimple.kaom#//@childEntities.0/@childLinks.1"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_bUXeE04VEeClgphIV2irfQ" points="[0, 0, -86, 0]$[86, 0, 0, 0]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_bomosk4VEeClgphIV2irfQ" id="(1.0,0.5)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_bomos04VEeClgphIV2irfQ" id="(0.0,0.5)"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_bUXeE04VEeClgphIV2irfQ" points="[0, 0, -82, 0]$[82, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_bomosk4VEeClgphIV2irfQ" id="(0.5,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_bomos04VEeClgphIV2irfQ" id="(0.5,0.5)"/>
   </edges>
 </notation:Diagram>
