@@ -124,8 +124,7 @@ public class CompoundGraphImporter {
      */
     private void transformLeaveNode(final KNode node, final List<LNode> layeredNodes,
             final Map<KGraphElement, LGraphElement> elemMap,
-            final EnumSet<GraphProperties> graphProperties,
-            final Direction direction) {
+            final EnumSet<GraphProperties> graphProperties, final Direction direction) {
         // add a new node to the layered graph, copying its size
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         if (!nodeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
@@ -531,18 +530,17 @@ public class CompoundGraphImporter {
             case UPPER_COMPOUND_BORDER:
             case UPPER_COMPOUND_PORT:
                 for (LNode childCandidate : layeredNodes) {
-                    if (childCandidate.getProperty(Properties.PARENT).equals(
-                            lNode.getProperty(Properties.ORIGIN))) {
+                    if ((childCandidate.getProperty(Properties.PARENT) != null)
+                            && (childCandidate.getProperty(Properties.PARENT).equals(lNode
+                                    .getProperty(Properties.ORIGIN)))) {
                         LEdge dummyEdge = new LEdge();
                         dummyEdge.setProperty(Properties.COMPOUND_DUMMY_EDGE, true);
 
                         LPort sourcePort = lNode.getPorts(PortSide.EAST).iterator().next();
                         dummyEdge.setSource(sourcePort);
-                        sourcePort.getOutgoingEdges().add(dummyEdge);
 
                         LPort targetPort = findDummyEdgePort(childCandidate, PortSide.WEST);
                         dummyEdge.setTarget(targetPort);
-                        targetPort.getIncomingEdges().add(dummyEdge);
                     }
                     break;
                 }
@@ -552,18 +550,17 @@ public class CompoundGraphImporter {
             case LOWER_COMPOUND_BORDER:
             case LOWER_COMPOUND_PORT:
                 for (LNode childCandidate : layeredNodes) {
-                    if (childCandidate.getProperty(Properties.PARENT).equals(
-                            lNode.getProperty(Properties.ORIGIN))) {
+                    if ((childCandidate.getProperty(Properties.PARENT) != null)
+                            && (childCandidate.getProperty(Properties.PARENT).equals(lNode
+                                    .getProperty(Properties.ORIGIN)))) {
                         LEdge dummyEdge = new LEdge();
                         dummyEdge.setProperty(Properties.COMPOUND_DUMMY_EDGE, true);
 
                         LPort sourcePort = findDummyEdgePort(childCandidate, PortSide.EAST);
                         dummyEdge.setSource(sourcePort);
-                        sourcePort.getOutgoingEdges().add(dummyEdge);
 
                         LPort targetPort = lNode.getPorts(PortSide.WEST).iterator().next();
                         dummyEdge.setTarget(targetPort);
-                        targetPort.getIncomingEdges().add(dummyEdge);
                     }
                     break;
                 }
