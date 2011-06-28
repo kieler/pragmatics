@@ -197,6 +197,22 @@ public class LayeredGraph extends LGraphElement {
                 case NORTH_SOUTH_PORT:
                     options.append("color=\"#0034de\",");
                     break;
+                
+                case LOWER_COMPOUND_BORDER:
+                    options.append("color=\"#18e748\",");
+                    break;
+                
+                case LOWER_COMPOUND_PORT:
+                    options.append("color=\"#2f6d3e\",");
+                    break;
+                    
+                case UPPER_COMPOUND_BORDER:
+                    options.append("color=\"#fb0838\",");
+                    break;
+                    
+                case UPPER_COMPOUND_PORT:
+                    options.append("color=\"#b01d38\",");
+                    break;
                 }
             }
             
