@@ -76,6 +76,28 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
         }
         super.addChild(index, child);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PNode removeChild(final int index) {
+        if (getChild(index) == repNode) {
+            repNode.removePropertyChangeListener(PNode.PROPERTY_BOUNDS, this);
+            repNode = null;
+        }
+        return super.removeChild(index);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeAllChildren() {
+        repNode.removePropertyChangeListener(PNode.PROPERTY_BOUNDS, this);
+        repNode = null;
+        super.removeAllChildren();
+    }
 
     /**
      * Returns the Pictogram anchor represented by this node.
@@ -101,11 +123,32 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
             updateAnchorPosition(referencePoint);
             // chopbox anchor point from representing child node
             PBounds bounds = repNode.getGlobalBounds();
-            return getIntersectionWithBounds(bounds.getX() + bounds.getWidth() / 2, bounds.getY()
-                    + bounds.getHeight() / 2, referencePoint.getX(), referencePoint.getY(), bounds);
+            Point2D intersection =
+                    getIntersectionWithBounds(bounds.getX() + bounds.getWidth() / 2, bounds.getY()
+                            + bounds.getHeight() / 2, referencePoint.getX(), referencePoint.getY(),
+                            bounds);
+            return intersection;
         } else {
             return getAnchorPosition(referencePoint);
         }
+    }
+
+    /**
+     * Returns the node that represents this anchor if it exists.
+     * 
+     * @return the node representing this anchor or null if no such node exists
+     */
+    public PNode getRepresentationNode() {
+        return repNode;
+    }
+
+    /**
+     * Returns the node that is referenced by this anchor.
+     * 
+     * @return the node referenced by this anchor
+     */
+    public PNode getReferenceNode() {
+        return reference;
     }
 
     /**
@@ -137,9 +180,6 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
         // set the position of this anchor to the anchor point
         if (point != null) {
             Point2D position = (Point2D) point.clone();
-//            PBounds bounds = getBounds();
-//            position.setLocation(position.getX() - bounds.getWidth() / 2.0, position.getY()
-//                    - bounds.getHeight() / 2.0);
             setGlobalTranslation(position);
         }
         return point;

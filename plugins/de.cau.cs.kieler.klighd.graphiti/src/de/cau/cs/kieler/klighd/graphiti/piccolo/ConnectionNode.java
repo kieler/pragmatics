@@ -142,10 +142,33 @@ public class ConnectionNode extends PNode implements PropertyChangeListener {
             yps = new float[2];
         }
         // set anchor points
-        Point2D source = getSourceAnchor().getAnchorPoint(new Point2D.Double(xps[1], yps[1]));
-        Point2D target =
-                getTargetAnchor().getAnchorPoint(
-                        new Point2D.Double(xps[xps.length - 2], yps[yps.length - 2]));
+        Point2D source;
+        Point2D target;
+        if (xps.length > 2) {
+            // if bend points are present use them to determine anchor positions
+            source = getSourceAnchor().getAnchorPoint(new Point2D.Double(xps[1], yps[1]));
+            target =
+                    getTargetAnchor().getAnchorPoint(
+                            new Point2D.Double(xps[xps.length - 2], yps[yps.length - 2]));
+        } else {
+            // if no bend points are present use the center points of the connected nodes
+            Point2D reference;
+            // find reference point for source anchor
+            if (targetAnchor.getRepresentationNode() != null) {
+                reference = targetAnchor.getRepresentationNode().getGlobalBounds().getCenter2D();
+            } else {
+                reference = targetAnchor.getReferenceNode().getGlobalBounds().getCenter2D();
+            }
+            source = getSourceAnchor().getAnchorPoint(reference);
+            // find reference point for target anchor
+            if (sourceAnchor.getRepresentationNode() != null) {
+                reference = sourceAnchor.getRepresentationNode().getGlobalBounds().getCenter2D();
+            } else {
+                reference = sourceAnchor.getReferenceNode().getGlobalBounds().getCenter2D();
+            }
+            target = getTargetAnchor().getAnchorPoint(reference);
+        }
+        // complete the lists for the polyline with the anchor points
         xps[0] = (float) source.getX();
         yps[0] = (float) source.getY();
         xps[xps.length - 1] = (float) target.getX();
