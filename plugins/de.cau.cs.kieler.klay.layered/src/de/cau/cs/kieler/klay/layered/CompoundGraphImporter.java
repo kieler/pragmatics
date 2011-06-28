@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.layered;
 import java.util.EnumSet;
 
 //import java.util.HashMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,6 +69,33 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author cds
  */
 public class CompoundGraphImporter {
+
+    /**
+     * Transforms a compound graph.
+     * 
+     * @param graph
+     *            the KGraph to be transformed.
+     * @param layeredNodes
+     *            the list of nodes to add dummy nodes to.
+     * @param layeredGraph
+     *            the layered graph.
+     * @param elemMap
+     *            the element map that maps the original {@code KGraph} elements to the transformed
+     *            {@code LGraph} elements.
+     * @param graphProperties
+     *            graph properties updated during the transformation
+     */
+
+    public void transformCompoundGraph(final KNode graph, final List<LNode> layeredNodes,
+            final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap,
+            final EnumSet<GraphProperties> graphProperties) {
+        // Prepare a map to insert Parent Nodes and Child nodes for the documentation of dummy
+        // edges.
+        Map<LNode, List<LNode>> parentChildMap = new HashMap<LNode, List<LNode>>();
+        recursiveTransformCompoundGraph(graph, graph, layeredNodes, layeredGraph, elemMap,
+                graphProperties, parentChildMap);
+    }
+
     /**
      * Transforms a compound graph recursively.
      * 
@@ -82,11 +110,14 @@ public class CompoundGraphImporter {
      *            {@code LGraph} elements.
      * @param graphProperties
      *            graph properties updated during the transformation
+     * @param parentChildMap
+     *            Map to document set dummy edges
      */
     void recursiveTransformCompoundGraph(final KNode graph, final KNode currentNode,
             final List<LNode> layeredNodes, final LayeredGraph layeredGraph,
             final Map<KGraphElement, LGraphElement> elemMap,
-            final EnumSet<GraphProperties> graphProperties) {
+            final EnumSet<GraphProperties> graphProperties,
+            final Map<LNode, List<LNode>> parentChildMap) {
         if (currentNode.getChildren().isEmpty()) {
             transformLeaveNode(currentNode, layeredNodes, elemMap, graphProperties,
                     layeredGraph.getProperty(LayoutOptions.DIRECTION));
@@ -94,12 +125,12 @@ public class CompoundGraphImporter {
         } else {
             for (KNode child : currentNode.getChildren()) {
                 recursiveTransformCompoundGraph(graph, child, layeredNodes, layeredGraph, elemMap,
-                        graphProperties);
+                        graphProperties, parentChildMap);
             }
             if (currentNode != graph) {
                 transformCompoundNodeWithEdges(currentNode, layeredNodes, layeredGraph, elemMap,
                         graphProperties);
-                setCompoundDummyEdges(currentNode, elemMap, layeredNodes);
+                setCompoundDummyEdges(currentNode, elemMap, layeredNodes, parentChildMap);
             } else {
                 System.out.println("The layoutNode has been reached in recursion.");
             }
@@ -520,7 +551,8 @@ public class CompoundGraphImporter {
      *            the list of LNodes with the created dummy nodes and the imported nodes.
      */
     private void setCompoundDummyEdges(final KNode layoutNode,
-            final Map<KGraphElement, LGraphElement> elemMap, final List<LNode> layeredNodes) {
+            final Map<KGraphElement, LGraphElement> elemMap, final List<LNode> layeredNodes,
+            final Map<LNode, List<LNode>> parentChildMap) {
         for (LNode lNode : layeredNodes) {
             NodeType nodeType = lNode.getProperty(Properties.NODE_TYPE);
             switch (nodeType) {
@@ -531,46 +563,132 @@ public class CompoundGraphImporter {
             case UPPER_COMPOUND_PORT:
                 for (LNode childCandidate : layeredNodes) {
                     if ((childCandidate.getProperty(Properties.PARENT) != null)
-                            && (childCandidate.getProperty(Properties.PARENT).equals(lNode
+                            && (childCandidate.getProperty(Properties.PARENT) == (lNode
                                     .getProperty(Properties.ORIGIN)))) {
-                        LEdge dummyEdge = new LEdge();
-                        dummyEdge.setProperty(Properties.COMPOUND_DUMMY_EDGE, true);
+                        if (!(parentChildMap.containsKey(lNode))
+                                || !(parentChildMap.get(lNode).contains(childCandidate))) {
+                            LEdge dummyEdge = new LEdge();
+                            dummyEdge.setProperty(Properties.COMPOUND_DUMMY_EDGE, true);
 
-                        LPort sourcePort = lNode.getPorts(PortSide.EAST).iterator().next();
-                        dummyEdge.setSource(sourcePort);
+                            LPort sourcePort = lNode.getPorts(PortSide.EAST).iterator().next();
+                            dummyEdge.setSource(sourcePort);
 
-                        LPort targetPort = findDummyEdgePort(childCandidate, PortSide.WEST);
-                        dummyEdge.setTarget(targetPort);
+                            LPort targetPort = findDummyEdgePort(childCandidate, PortSide.WEST);
+                            dummyEdge.setTarget(targetPort);
+                            if (parentChildMap.containsKey(lNode)) {
+                                parentChildMap.get(lNode).add(childCandidate);
+                            } else {
+                                List<LNode> list = new LinkedList<LNode>();
+                                list.add(childCandidate);
+                                parentChildMap.put(lNode, list);
+                            }
+                        }
                     }
-                    break;
                 }
-                // If the node is a compound dummy node at the lower line of the compound node,
-                // add
-                // edge from every child node to this node
+                break;
+            // If the node is a compound dummy node at the lower line of the compound node,
+            // add
+            // edge from every child node to this node
             case LOWER_COMPOUND_BORDER:
             case LOWER_COMPOUND_PORT:
                 for (LNode childCandidate : layeredNodes) {
                     if ((childCandidate.getProperty(Properties.PARENT) != null)
-                            && (childCandidate.getProperty(Properties.PARENT).equals(lNode
+                            && (childCandidate.getProperty(Properties.PARENT) == (lNode
                                     .getProperty(Properties.ORIGIN)))) {
-                        LEdge dummyEdge = new LEdge();
-                        dummyEdge.setProperty(Properties.COMPOUND_DUMMY_EDGE, true);
+                        if (!(parentChildMap.containsKey(lNode))
+                                || !(parentChildMap.get(lNode).contains(childCandidate))) {
+                            LEdge dummyEdge = new LEdge();
+                            dummyEdge.setProperty(Properties.COMPOUND_DUMMY_EDGE, true);
 
-                        LPort sourcePort = findDummyEdgePort(childCandidate, PortSide.EAST);
-                        dummyEdge.setSource(sourcePort);
+                            LPort sourcePort = findDummyEdgePort(childCandidate, PortSide.EAST);
+                            dummyEdge.setSource(sourcePort);
 
-                        LPort targetPort = lNode.getPorts(PortSide.WEST).iterator().next();
-                        dummyEdge.setTarget(targetPort);
+                            LPort targetPort = lNode.getPorts(PortSide.WEST).iterator().next();
+                            dummyEdge.setTarget(targetPort);
+
+                            if (parentChildMap.containsKey(lNode)) {
+                                parentChildMap.get(lNode).add(childCandidate);
+                            } else {
+                                List<LNode> list = new LinkedList<LNode>();
+                                list.add(childCandidate);
+                                parentChildMap.put(lNode, list);
+                            }
+                        }
                     }
-                    break;
                 }
-                // If the node is no compound dummy node, nothing is to be done.
+                break;
+            // If the node is no compound dummy node, nothing is to be done.
             default:
                 break;
 
             }
         }
     }
+
+    // // version of the function that uses more dummy edges the higher the nodes are in depth
+    //
+    // /**
+    // * Creates dummy edges between a compound node border dummy node and its children.
+    // *
+    // * @param layeredNodes
+    // *
+    // * @param source
+    // * the source node.
+    // * @param layeredNodes
+    // * the list of LNodes with the created dummy nodes and the imported nodes.
+    // */
+    // private void setCompoundDummyEdges(final KNode layoutNode,
+    // final Map<KGraphElement, LGraphElement> elemMap, final List<LNode> layeredNodes) {
+    // for (LNode lNode : layeredNodes) {
+    // NodeType nodeType = lNode.getProperty(Properties.NODE_TYPE);
+    // switch (nodeType) {
+    // // If the node is a compound dummy node at the upper line of the compound node, add
+    // // edge
+    // // to every child node
+    // case UPPER_COMPOUND_BORDER:
+    // case UPPER_COMPOUND_PORT:
+    // for (LNode childCandidate : layeredNodes) {
+    // if ((childCandidate.getProperty(Properties.PARENT) != null)
+    // && (childCandidate.getProperty(Properties.PARENT).equals(lNode
+    // .getProperty(Properties.ORIGIN)))) {
+    // LEdge dummyEdge = new LEdge();
+    // dummyEdge.setProperty(Properties.COMPOUND_DUMMY_EDGE, true);
+    //
+    // LPort sourcePort = lNode.getPorts(PortSide.EAST).iterator().next();
+    // dummyEdge.setSource(sourcePort);
+    //
+    // LPort targetPort = findDummyEdgePort(childCandidate, PortSide.WEST);
+    // dummyEdge.setTarget(targetPort);
+    // }
+    // }
+    // break;
+    // // If the node is a compound dummy node at the lower line of the compound node,
+    // // add
+    // // edge from every child node to this node
+    // case LOWER_COMPOUND_BORDER:
+    // case LOWER_COMPOUND_PORT:
+    // for (LNode childCandidate : layeredNodes) {
+    // if ((childCandidate.getProperty(Properties.PARENT) != null)
+    // && (childCandidate.getProperty(Properties.PARENT).equals(lNode
+    // .getProperty(Properties.ORIGIN)))) {
+    // LEdge dummyEdge = new LEdge();
+    // dummyEdge.setProperty(Properties.COMPOUND_DUMMY_EDGE, true);
+    //
+    // LPort sourcePort = findDummyEdgePort(childCandidate, PortSide.EAST);
+    // dummyEdge.setSource(sourcePort);
+    //
+    // LPort targetPort = lNode.getPorts(PortSide.WEST).iterator().next();
+    // dummyEdge.setTarget(targetPort);
+    // }
+    // }
+    // break;
+    // // If the node is no compound dummy node, nothing is to be done.
+    // default:
+    // break;
+    //
+    // }
+    // }
+    // }
 
     /**
      * Returns an LEdge as a representative for the given KEdge. Nodes and Ports for source and
@@ -716,5 +834,4 @@ public class CompoundGraphImporter {
         }
         return port;
     }
-
 }
