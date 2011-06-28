@@ -293,7 +293,7 @@ public class KaomPortProvider implements IRenderingProvider {
                                 .getAnnotation("_cardinal");
                         Annotation output = port.getAnnotation("input");
                         if ((cardinal != null && cardinal.getValue() != null && cardinal.getValue()
-                                .equals("WEST")) || output != null) {
+                                .equals("WEST")) || (output != null && cardinal == null)) {
                             portsOfSide.add(port);
                         }
                     }
