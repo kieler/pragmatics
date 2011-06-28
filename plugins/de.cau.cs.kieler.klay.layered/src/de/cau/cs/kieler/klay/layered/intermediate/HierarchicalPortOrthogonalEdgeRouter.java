@@ -49,21 +49,21 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
  * </dl>
  * 
- * @see ExternalPortConstraintProcessor
- * @see ExternalPortDummySizeProcessor
+ * @see HierarchicalPortConstraintProcessor
+ * @see HierarchicalPortDummySizeProcessor
  * @see OrthogonalRoutingGenerator
  * @author cds
  */
-public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutProcessor {
+public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutProcessor {
     
     /**
      * {@inheritDoc}
      */
     public void process(final LayeredGraph layeredGraph) {
-        getMonitor().begin("Orthogonally routing external port edges", 1);
+        getMonitor().begin("Orthogonally routing hierarchical port edges", 1);
         
         /* Step 1
-         * Restore any north / south port dummies removed by the ExternalPortConstraintProcessor
+         * Restore any north / south port dummies removed by the HierarchicalPortConstraintProcessor
          * and connect them to the dummies created in their stead.
          */
         Set<LNode> northSouthDummies = restoreNorthSouthDummies(layeredGraph);
@@ -88,7 +88,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
         removeTemporaryNorthSouthDummies(layeredGraph);
         
         /* Step 5
-         * Finally, the coordinates of east / west external port dummies have to be corrected
+         * Finally, the coordinates of east / west hierarchical port dummies have to be corrected
          * and set. The x coordinate must be set, and if north / south port routing resulted
          * in a change of offset or graph size, the y coordinates have to be adjusted if port
          * constraints are at FIXED_RATIO.
@@ -103,7 +103,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
     // Restoring North / South External Port Dummies
     
     /**
-     * Iterates through all layers, restoring external port dummy nodes along the way. The
+     * Iterates through all layers, restoring hierarchical port dummy nodes along the way. The
      * restored nodes are connected to the temporary dummy nodes created for them. The
      * restored nodes are added to the last layer. (which layer they are added to doesn't
      * make any difference)
@@ -115,12 +115,12 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
         Set<LNode> restoredDummies = new HashSet<LNode>();
         Layer lastLayer = null;
         
-        // Iterate through all nodes, looking for external port dummies whose origin is
-        // another external port dummy
+        // Iterate through all nodes, looking for hierarchical port dummies whose origin is
+        // another hierarchical port dummy
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
-                    // Not an external port dummy - we're not interested. Move along,
+                    // Not a hierarchical port dummy - we're not interested. Move along,
                     // please, there's nothing to see here.
                     continue;
                 }
@@ -128,7 +128,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
                 if (node.getProperty(Properties.ORIGIN) instanceof LNode) {
                     LNode origin = (LNode) node.getProperty(Properties.ORIGIN);
                     
-                    // The origin should be an external port dummy. Better check that
+                    // The origin should be a hierarchical port dummy. Better check that
                     if (origin.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
                         continue;
                     }
@@ -162,7 +162,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
         if (restoredDummies.contains(dummy)) {
             return;
         } else {
-            // Depending on the external port's side, we set the dummy's port's port side
+            // Depending on the hierarchical port's side, we set the dummy's port's port side
             // to be able to route properly (northern dummies must have a southern port)
             PortSide portSide = dummy.getProperty(Properties.EXT_PORT_SIDE);
             LPort dummyPort = dummy.getPorts().get(0);
@@ -184,7 +184,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
      * @param dummy the external port dummy to connect the node to.
      */
     private void connectNodeToDummy(final LNode node, final LNode dummy) {
-        // First, add a port to the node. The port side depends on the node's external port side
+        // First, add a port to the node. The port side depends on the node's hierarchical port side
         LPort outPort = new LPort();
         outPort.setNode(node);
         
@@ -202,7 +202,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
     
     
     ///////////////////////////////////////////////////////////////////////////////
-    // Setting North / South External Port Dummy Coordinates
+    // Setting North / South Hierarchical Port Dummy Coordinates
     
     private void setNorthSouthDummyCoordinates(final LayeredGraph layeredGraph,
             final Set<LNode> northSouthDummies) {
@@ -268,7 +268,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
     // Edge Routing
     
     /**
-     * Routes nothern and southern external port edges and ajusts the graph's height and
+     * Routes nothern and southern hierarchical port edges and ajusts the graph's height and
      * offsets accordingly.
      * 
      * @param layeredGraph the layered graph.
@@ -286,21 +286,21 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
         double edgeSpacing = nodeSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         boolean debug = layeredGraph.getProperty(LayoutOptions.DEBUG_MODE);
         
-        // Assemble the northern and southern external port dummies and the nodes they are
+        // Assemble the northern and southern hierarchical port dummies and the nodes they are
         // connected to
-        for (LNode extPortDummy : northSouthDummies) {
-            PortSide portSide = extPortDummy.getProperty(Properties.EXT_PORT_SIDE);
+        for (LNode hierarchicalPortDummy : northSouthDummies) {
+            PortSide portSide = hierarchicalPortDummy.getProperty(Properties.EXT_PORT_SIDE);
             
             if (portSide == PortSide.NORTH) {
-                northernTargetLayer.add(extPortDummy);
+                northernTargetLayer.add(hierarchicalPortDummy);
                 
-                for (LEdge edge : extPortDummy.getIncomingEdges()) {
+                for (LEdge edge : hierarchicalPortDummy.getIncomingEdges()) {
                     northernSourceLayer.add(edge.getSource().getNode());
                 }
             } else if (portSide == PortSide.SOUTH) {
-                southernTargetLayer.add(extPortDummy);
+                southernTargetLayer.add(hierarchicalPortDummy);
                 
-                for (LEdge edge : extPortDummy.getIncomingEdges()) {
+                for (LEdge edge : hierarchicalPortDummy.getIncomingEdges()) {
                     southernSourceLayer.add(edge.getSource().getNode());
                 }
             }
@@ -352,11 +352,11 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
     
     
     ///////////////////////////////////////////////////////////////////////////////
-    // Temporary North / South External Port Dummy Removal
+    // Temporary North / South Hierarchical Port Dummy Removal
     
     /**
-     * Removes the temporary external port dummies, reconnecting their incoming edges to
-     * the original dummies and setting the appropriate bend points.
+     * Removes the temporary hierarchical port dummies, reconnecting their incoming
+     * edges to the original dummies and setting the appropriate bend points.
      * 
      * @param layeredGraph the layered graph.
      */
@@ -367,7 +367,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
-                    // We're only looking for external port dummies
+                    // We're only looking for hierarchical port dummies
                     continue;
                 }
                 
@@ -392,7 +392,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
                 
                 bendPoints.addAll(nodeToOriginEdge.getBendPoints());
                 
-                // Retrieve the original external port dummy
+                // Retrieve the original hierarchical port dummy
                 LNode origin = (LNode) node.getProperty(Properties.ORIGIN);
                 LPort originPort = origin.getPorts().get(0);
                 
@@ -404,7 +404,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
                     edge.getBendPoints().addAll(bendPoints);
                 }
                 
-                // Remove connection between node and original external port dummy
+                // Remove connection between node and original hierarchical port dummy
                 nodeToOriginEdge.setSource(null);
                 nodeToOriginEdge.setTarget(null);
                 
@@ -421,12 +421,12 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
     
     
     ///////////////////////////////////////////////////////////////////////////////
-    // Setting East / West External Port Dummy Coordinates
+    // Setting East / West Hierarchical Port Dummy Coordinates
     
     /**
-     * Fixes all external port dummy coordinates. For east / west external port dummies, this
+     * Fixes all hierarchical port dummy coordinates. For east / west external port dummies, this
      * means setting the x coordinate appropriately, and, in case of {@code FIXED_RATIO},
-     * checking that the ratio is respected. For north / south external port dummies, this
+     * checking that the ratio is respected. For north / south hierarchical port dummies, this
      * means setting the y coordinate appropriately.
      * 
      * @param layeredGraph the layered graph.
@@ -464,7 +464,7 @@ public class ExternalPortOrthogonalEdgeRouter extends AbstractAlgorithm implemen
         
         for (LNode node : layer.getNodes()) {
             if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
-                // We're only looking for external port dummies
+                // We're only looking for hierarchical port dummies
                 continue;
             }
             

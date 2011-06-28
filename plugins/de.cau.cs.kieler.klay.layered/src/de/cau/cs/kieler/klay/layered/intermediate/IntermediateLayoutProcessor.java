@@ -40,16 +40,16 @@ public enum IntermediateLayoutProcessor {
     
     // Before Phase 3
     
-    /** Handles northern and southern external ports. */
-    EXTERNAL_PORT_CONSTRAINT_PROCESSOR,
+    /** Handles northern and southern hierarchical ports. */
+    HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR,
     /** Makes sure that layer constraints are taken care of. */
     LAYER_CONSTRAINT_PROCESSOR,
     /** Takes a layered graph and turns it into a properly layered graph. */
     LONG_EDGE_SPLITTER,
     /** Makes sure nodes have at least fixed port sides. */
     PORT_SIDE_PROCESSOR,
-    /** Takes a layered graph and inserts dummy nodes for edges connected to ports on odd sides. */
-    ODD_PORT_SIDE_PROCESSOR,
+    /** Takes a layered graph and inserts dummy nodes for edges connected to inverted ports. */
+    INVERTED_PORT_PROCESSOR,
     /** Takes care of self loops. */
     SELF_LOOP_PROCESSOR,
     /** Orders the port lists of nodes with fixed port order. */
@@ -70,13 +70,13 @@ public enum IntermediateLayoutProcessor {
     
     // Before Phase 5
     
-    /** Adjusts the width of external port dummy nodes. */
-    EXTERNAL_PORT_DUMMY_SIZE_PROCESSOR,
+    /** Adjusts the width of hierarchical port dummy nodes. */
+    HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR,
     
     // After Phase 5
     
-    /** Routes edges incident to external ports orthogonally. */
-    EXTERNAL_PORT_ORTHOGONAL_EDGE_ROUTER,
+    /** Routes edges incident to hierarchical ports orthogonally. */
+    HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER,
     /** Takes a properly layered graph and removes the dummy nodes due to proper layering. */
     LONG_EDGE_JOINER,
     /** Removes dummy nodes inserted by the north south side preprocessor and routes edges. */
@@ -106,14 +106,14 @@ public enum IntermediateLayoutProcessor {
         case BIG_NODES_PROCESSOR:
             return new BigNodesProcessor();
             
-        case EXTERNAL_PORT_CONSTRAINT_PROCESSOR:
-            return new ExternalPortConstraintProcessor();
+        case HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR:
+            return new HierarchicalPortConstraintProcessor();
         
-        case EXTERNAL_PORT_DUMMY_SIZE_PROCESSOR:
-            return new ExternalPortDummySizeProcessor();
+        case HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR:
+            return new HierarchicalPortDummySizeProcessor();
             
-        case EXTERNAL_PORT_ORTHOGONAL_EDGE_ROUTER:
-            return new ExternalPortOrthogonalEdgeRouter();
+        case HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER:
+            return new HierarchicalPortOrthogonalEdgeRouter();
             
         case HYPEREDGE_DUMMY_MERGER:
             return new HyperedgeDummyMerger();
@@ -142,8 +142,8 @@ public enum IntermediateLayoutProcessor {
         case NORTH_SOUTH_PORT_PREPROCESSOR:
             return new NorthSouthPortPreprocessor();
         
-        case ODD_PORT_SIDE_PROCESSOR:
-            return new OddPortSideProcessor();
+        case INVERTED_PORT_PROCESSOR:
+            return new InvertedPortProcessor();
         
         case PORT_ORDER_PROCESSOR:
             return new PortOrderProcessor();

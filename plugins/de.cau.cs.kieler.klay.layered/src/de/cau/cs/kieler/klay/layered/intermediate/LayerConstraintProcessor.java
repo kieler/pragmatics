@@ -33,7 +33,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *   <dt>Postcondition:</dt><dd>nodes with layer constraints have been placed in the
  *     appropriate layers.</dd>
  *   <dt>Slots:</dt><dd>Before phase 3.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link ExternalPortConstraintProcessor}</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link HierarchicalPortConstraintProcessor}</dd>
  * </dl>
  * 
  * @see EdgeAndLayerConstraintEdgeReverser

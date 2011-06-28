@@ -36,7 +36,7 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * Processes constraints imposed on external node dummies.
+ * Processes constraints imposed on hierarchical node dummies.
  * 
  * <p>Eastern and western ports cannot be ordered arbitrarily by the crossing minimizer if
  * the port order is fixed. Thus, this processor inserts appropriate in-layer successor
@@ -44,31 +44,31 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * <p>Northern and southern external ports can sadly not be processed in the usual way with
  * port constraints at least at {@code FIXED_ORDER}. Instead, we need to replace them by new
- * external port dummies. For each node connected to a northern or southern external port
+ * external port dummies. For each node connected to a northern or southern hierarchical port
  * dummy, we need to place a new dummy in the next layer, rerouting the edges appropriately.
  * The original dummies are removed, to be reinserted later by
- * {@link ExternalPortOrthogonalEdgeRouter}. For simplification, this is also done in all
+ * {@link HierarchicalPortOrthogonalEdgeRouter}. For simplification, this is also done in all
  * other port constraint cases. This saves us the trouble of having to differentiate between
  * the different port constraints later on.</p>
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>A layered graph; long edge dummies have not yet been inserted;
  *     layer constraints have not yet been applied.</dd>
- *   <dt>Postcondition:</dt><dd>External port dummies for northern and southern ports are
+ *   <dt>Postcondition:</dt><dd>Hierarchical port dummies for northern and southern ports are
  *     replaced by multiple dummies if the port constraints are at least {@code FIXED_ORDER}.</dd>
  *   <dt>Slots:</dt><dd>Before phase 3.</dd>
  *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
  * </dl>
  * 
- * @see ExternalPortDummySizeProcessor
- * @see ExternalPortOrthogonalEdgeRouter
+ * @see HierarchicalPortDummySizeProcessor
+ * @see HierarchicalPortOrthogonalEdgeRouter
  * @author cds
  */
-public class ExternalPortConstraintProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm implements ILayoutProcessor {
     
     /**
      * Comparator to compare nodes by their position values in ascending order. Nodes
-     * that are not external port dummies are sorted to the bottom of a list.
+     * that are not hierarchical port dummies are sorted to the bottom of a list.
      * 
      * @author cds
      */
@@ -101,7 +101,7 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
      * {@inheritDoc}
      */
     public void process(final LayeredGraph layeredGraph) {
-        getMonitor().begin("External port constraint processing", 1);
+        getMonitor().begin("Hierarchical port constraint processing", 1);
         
         processEasternAndWesternPortDummies(layeredGraph);
         processNorthernAndSouthernPortDummies(layeredGraph);
@@ -111,10 +111,10 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
 
 
     ///////////////////////////////////////////////////////////////////////////////
-    // East / West External Port Dummies
+    // East / West Hierarchical Port Dummies
     
     /**
-     * Process eastern and southern external port dummies.
+     * Process eastern and southern hierarchical port dummies.
      * 
      * @param layeredGraph the layered graph
      */
@@ -132,7 +132,7 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
     }
     
     /**
-     * Process the eastern and western external port dummies present in the given layer.
+     * Process the eastern and western hierarchical port dummies present in the given layer.
      * 
      * @param layer the layer.
      */
@@ -140,33 +140,33 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
         // Put the nodes into an array
         LNode[] nodes = layer.getNodes().toArray(new LNode[0]);
         
-        // Sort the array; external port dummies are at the top, sorted by position or ratio
-        // in ascending order
+        // Sort the array; hierarchical port dummies are at the top, sorted by
+        // position or ratio in ascending order
         Arrays.sort(nodes, new NodeComparator());
         
         // Insert in-layer successor constraints where appropriate
-        LNode lastExternalDummy = null;
+        LNode lastHierarchicalDummy = null;
         
         for (LNode node : nodes) {
             if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
-                // No external port dummy nodes any more
+                // No hierarchical port dummy nodes any more
                 break;
             }
             
-            if (lastExternalDummy != null) {
-                lastExternalDummy.setProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINT, node);
+            if (lastHierarchicalDummy != null) {
+                lastHierarchicalDummy.setProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINT, node);
             }
             
-            lastExternalDummy = node;
+            lastHierarchicalDummy = node;
         }
     }
 
 
     ///////////////////////////////////////////////////////////////////////////////
-    // North / South External Port Dummies
+    // North / South Hierarchical Port Dummies
     
     /**
-     * Process northern and southern external port dummies.
+     * Process northern and southern hierarchical port dummies.
      * 
      * @param layeredGraph the layered graph.
      */
@@ -177,8 +177,8 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
             return;
         }
         
-        // If the port order is not fixed, we don't need to insert an external port dummy
-        // after every node that's connected to an external port. Instead, we just replace
+        // If the port order is not fixed, we don't need to insert a hierarchical port dummy
+        // after every node that's connected to a hierarchical port. Instead, we just replace
         // the original dummy
         boolean onlyReplaceOriginalDummy = !portConstraints.isOrderFixed();
         
@@ -201,7 +201,7 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
             }
             
             // Iterate through the layer's nodes, looking for normal nodes connected to
-            // northern / southern external port dummies
+            // northern / southern hierarchical port dummies
             for (LNode currentNode : currentLayer.getNodes()) {
                 // Iterate through the node's outgoing edges
                 for (LEdge edge : currentNode.getOutgoingEdges()) {
@@ -245,11 +245,11 @@ public class ExternalPortConstraintProcessor extends AbstractAlgorithm implement
             }
         }
         
-        // Iterate through the external port dummies
+        // Iterate through the hierarchical port dummies
         for (LNode originalDummy : externalNodeDummies) {
             if (onlyReplaceOriginalDummy) {
                 // Create a new dummy node and replace the original dummy with it. This simplifies
-                // handling them when routing external port edges.
+                // handling them when routing hierarchical port edges.
                 LNode newDummy = createDummy(originalDummy);
                 newDummy.setLayer(originalDummy.getLayer());
                 

@@ -32,7 +32,7 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * Inserts dummy nodes to cope with odd port sides.
+ * Inserts dummy nodes to cope with inverted ports.
  * 
  * <p>The problem is with edges coming from the left of a node being connected to a
  * port that's on its right side, or the other way around. Let a node of that kind
@@ -62,13 +62,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @see PortSideProcessor
  * @author cds
  */
-public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class InvertedPortProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
     public void process(final LayeredGraph layeredGraph) {
-        getMonitor().begin("Odd port side preprocessing", 1);
+        getMonitor().begin("Inverted port preprocessing", 1);
         
         // Retrieve the layers in the graph
         List<Layer> layers = layeredGraph.getLayers();

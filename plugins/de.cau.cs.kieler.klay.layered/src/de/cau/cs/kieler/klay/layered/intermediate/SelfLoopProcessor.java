@@ -56,7 +56,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *   <dt>Postcondition:</dt><dd>long edge dummies were inserted for special kinds of self
  *     loops.</dd>
  *   <dt>Slots:</dt><dd>Before phase 3.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link OddPortSideProcessor}</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link InvertedPortProcessor}</dd>
  * </dl>
  *
  * @author cds

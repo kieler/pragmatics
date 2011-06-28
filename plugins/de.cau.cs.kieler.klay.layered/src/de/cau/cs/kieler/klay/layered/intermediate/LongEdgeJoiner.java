@@ -35,7 +35,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *   <dt>Postcondition:</dt><dd>there are no dummy nodes of type
  *     {@link de.cau.cs.kieler.klay.layered.properties.NodeType#LONG_EDGE}.</dd>
  *   <dt>Slots:</dt><dd>After phase 5.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link ExternalPortOrthogonalEdgeRouter}</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link HierarchicalPortOrthogonalEdgeRouter}</dd>
  * </dl>
  *
  * @author cds

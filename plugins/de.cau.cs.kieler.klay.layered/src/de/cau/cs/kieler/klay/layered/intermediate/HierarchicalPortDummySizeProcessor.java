@@ -26,7 +26,7 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * Sets the width of external port dummies.
+ * Sets the width of hierarchical port dummies.
  * 
  * <p>To see why this is necessary, please refer to the processor's Wiki documentation.</p>
  * 
@@ -38,17 +38,17 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
  * </dl>
  * 
- * @see ExternalPortConstraintProcessor
- * @see ExternalPortOrthogonalEdgeRouter
+ * @see HierarchicalPortConstraintProcessor
+ * @see HierarchicalPortOrthogonalEdgeRouter
  * @author cds
  */
-public class ExternalPortDummySizeProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class HierarchicalPortDummySizeProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
     public void process(final LayeredGraph layeredGraph) {
-        getMonitor().begin("External port dummy size processing", 1);
+        getMonitor().begin("Hierarchical port dummy size processing", 1);
         
         List<LNode> northernDummies = new LinkedList<LNode>();
         List<LNode> southernDummies = new LinkedList<LNode>();
@@ -63,7 +63,7 @@ public class ExternalPortDummySizeProcessor extends AbstractAlgorithm implements
             northernDummies.clear();
             southernDummies.clear();
             
-            // Collect northern and southern external port dummies
+            // Collect northern and southern hierarchical port dummies
             for (LNode node : layer.getNodes()) {
                 if (node.getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
                     PortSide side = node.getProperty(Properties.EXT_PORT_SIDE);
