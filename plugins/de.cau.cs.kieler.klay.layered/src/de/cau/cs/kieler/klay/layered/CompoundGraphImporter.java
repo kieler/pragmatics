@@ -86,8 +86,9 @@ public class CompoundGraphImporter {
      *            graph properties updated during the transformation
      */
 
-    public void transformCompoundGraph(final KNode graph, final List<LNode> layeredNodes,
-            final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap,
+    public void transformCompoundGraph(final KNode graph, 
+            final List<LNode> layeredNodes, final LayeredGraph layeredGraph,
+            final Map<KGraphElement, LGraphElement> elemMap,
             final EnumSet<GraphProperties> graphProperties) {
         // Prepare a map to insert Parent Nodes and Child nodes for the documentation of dummy
         // edges.
