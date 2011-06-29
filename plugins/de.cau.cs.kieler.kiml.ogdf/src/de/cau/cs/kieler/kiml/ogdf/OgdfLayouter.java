@@ -114,9 +114,9 @@ public abstract class OgdfLayouter {
     /** the name of the layouter. */
     private String name;
     /** the current id for the generation of node ids. */
-    private int nodeIdCounter;
+    private int nodeIdCounter = 0;
     /** the current id for the generation of edge ids. */
-    private int edgeIdCounter;
+    private int edgeIdCounter = 0;
     /** map of KNodes to ids. */
     private Map<KNode, String> node2IdMap = new LinkedHashMap<KNode, String>();
     /** map of edge ids to KEdges. */
@@ -135,6 +135,21 @@ public abstract class OgdfLayouter {
      */
     public OgdfLayouter(final String theName) {
         name = theName;
+    }
+
+    /**
+     * Resets all temporary counters, buffers and maps.
+     */
+    private void reset() {
+        // reset id generators
+        nodeIdCounter = 0;
+        edgeIdCounter = 0;
+        // reset mappings
+        node2IdMap.clear();
+        id2EdgeMap.clear();
+        // reset buffers
+        optionBuffer.clear();
+        infoBuffer.clear();
     }
 
     /** the debug canvas, which can be used to debug the OGDF wrapper. */
@@ -174,10 +189,8 @@ public abstract class OgdfLayouter {
             progressMonitor.done();
             return;
         }
-        optionBuffer.clear();
-        infoBuffer.clear();
         addOption(OGDF_OPTION_LAYOUTER, name);
-        
+
         // create the resource set used for serialization of the graph
         if (resourceSet == null) {
             resourceSet = new ResourceSetImpl();
@@ -186,7 +199,7 @@ public abstract class OgdfLayouter {
         }
         // start the ogdf server process, or retrieve the previously used process
         Process process = ogdfServer.startProcess(INPUT_FORMAT);
-        
+
         // set the random number generator seed
         setRandomSeed(layoutNode);
         // prepare the algorithm for use and pre-process the graph
@@ -194,9 +207,8 @@ public abstract class OgdfLayouter {
         // prepare the label layout
         prepareLabelLayout(layoutNode);
         // transform the graph
-        DocumentRoot root =
-                transformGraph(layoutNode, progressMonitor.subTask(SMALL_TASK_WORK));
-        
+        DocumentRoot root = transformGraph(layoutNode, progressMonitor.subTask(SMALL_TASK_WORK));
+
         // receive the output stream and make it buffered
         OutputStream outputStream = new BufferedOutputStream(process.getOutputStream());
         // write the graph to the process
@@ -209,31 +221,30 @@ public abstract class OgdfLayouter {
             // wait for the process to finish the layout and send the layout information
             final IKielerProgressMonitor subMon = progressMonitor.subTask(PROCESS_WORK);
             subMon.begin("Wait OGDF Reply", 1);
-            if (!ogdfServer.waitForInput(process.getInputStream(),
-                    new Aborter() {
-                        public boolean shouldAbort() {
-                            return subMon.isCanceled();
-                        }
-                    })) {
+            if (!ogdfServer.waitForInput(process.getInputStream(), new Aborter() {
+                public boolean shouldAbort() {
+                    return subMon.isCanceled();
+                }
+            })) {
                 throw new RuntimeException("A timeout occured while waiting for the OGDF process."
                         + " Try increasing the timeout value in the preferences.");
             }
             subMon.done();
-            
+
             // read the layout information
             Map<String, KVectorChain> layoutInformation =
                     readLayoutInformation(new BufferedInputStream(process.getInputStream()),
                             progressMonitor.subTask(SMALL_TASK_WORK), ogdfServer);
-            System.out.println(layoutInformation);
             // apply the layout back to the KGraph
             applyLayout(layoutNode, layoutInformation);
             // perform post-processing
             postProcess(layoutNode);
-            
+
         } catch (IOException e) {
             throw new RuntimeException("Could not flush stdout.", e);
         } finally {
             progressMonitor.done();
+            reset();
         }
     }
 
@@ -331,12 +342,6 @@ public abstract class OgdfLayouter {
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Transform KGraph to OGML", 1);
         boolean umlGraph = false;
-        // reset id generators
-        nodeIdCounter = 0;
-        edgeIdCounter = 0;
-        // reset mappings
-        node2IdMap.clear();
-        id2EdgeMap.clear();
         // create the graph
         OgmlFactory factory = OgmlFactoryImpl.eINSTANCE;
         DocumentRoot root = factory.createDocumentRoot();
@@ -760,8 +765,8 @@ public abstract class OgdfLayouter {
             }
         } catch (IOException exception) {
             ogdfServer.endProcess();
-            throw new RuntimeException("Failed to read layout information from ogdf server process.",
-                    exception);
+            throw new RuntimeException(
+                    "Failed to read layout information from ogdf server process.", exception);
         } finally {
             progressMonitor.done();
         }
