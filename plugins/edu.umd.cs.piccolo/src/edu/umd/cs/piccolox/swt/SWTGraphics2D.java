@@ -70,15 +70,13 @@ import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.Transform;
 
 /**
- * An extension to Graphics2D to support an SWT Piccolo Canvas with little
- * modification to the current Piccolo architecture
+ * An extension to Graphics2D to support an SWT Piccolo Canvas with little modification to the
+ * current Piccolo architecture
  * 
- * There is an outstanding SWT bug request #33319 for more efficient
- * polyline/polygon rendering methods. It also appears that most of the code
- * below could be made obselete by bug fix #6490
+ * There is an outstanding SWT bug request #33319 for more efficient polyline/polygon rendering
+ * methods. It also appears that most of the code below could be made obselete by bug fix #6490
  * 
- * A lot of this may also be duplicated in GEF - the eclipse Graphical Editor
- * Framework
+ * A lot of this may also be duplicated in GEF - the eclipse Graphical Editor Framework
  * 
  * @author Lance Good
  */
@@ -88,8 +86,8 @@ public class SWTGraphics2D extends Graphics2D {
     private static final boolean DEFAULT_STRING_TRANSPARENCY = true;
 
     /**
-     * The number of Graphics Contexts active as determined by called to
-     * incrementGCCount and decrementGCCount.
+     * The number of Graphics Contexts active as determined by called to incrementGCCount and
+     * decrementGCCount.
      */
     protected static int CACHE_COUNT = 0;
     /** Map from font names to Fonts. */
@@ -104,7 +102,8 @@ public class SWTGraphics2D extends Graphics2D {
     private static Point TEMP_POINT = new Point();
     private static Rectangle2D TEMP_RECT = new Rectangle2D.Double();
     private static Rectangle2D TEMP_LINE_RECT = new Rectangle2D.Double();
-    private static org.eclipse.swt.graphics.Rectangle SWT_RECT = new org.eclipse.swt.graphics.Rectangle(0, 0, 0, 0);
+    private static org.eclipse.swt.graphics.Rectangle SWT_RECT =
+            new org.eclipse.swt.graphics.Rectangle(0, 0, 0, 0);
 
     /** The Underlying GraphicsContext provided by swt. */
     protected GC gc;
@@ -121,10 +120,10 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * Constructor for SWTGraphics2D.
      * 
-     * @param gc The Eclipse Graphics Context onto which all Graphics2D
-     *            operations are delegating
-     * @param device Device onto which ultimately all gc operations are drawn
-     *            onto
+     * @param gc
+     *            The Eclipse Graphics Context onto which all Graphics2D operations are delegating
+     * @param device
+     *            Device onto which ultimately all gc operations are drawn onto
      */
     public SWTGraphics2D(final GC gc, final Device device) {
         this.gc = gc;
@@ -144,8 +143,7 @@ public class SWTGraphics2D extends Graphics2D {
         final Rectangle aRect = new Rectangle(rect.x, rect.y, rect.width, rect.height);
         try {
             SWTShapeManager.transform(aRect, transform.createInverse());
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException(e);
         }
         return aRect;
@@ -175,7 +173,8 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * This method isn't really supported by SWT - so will use the shape bounds.
      * 
-     * @param s shape of the clipping region to apply to graphics operations
+     * @param s
+     *            shape of the clipping region to apply to graphics operations
      */
     public void clip(final Shape s) {
         final Rectangle2D clipBds = s.getBounds2D();
@@ -191,14 +190,13 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * This method isn't really supported by SWT - so will use the shape bounds.
      * 
-     * @param clip the desired clipping region's shape, will be simplified to
-     *            its bounds
+     * @param clip
+     *            the desired clipping region's shape, will be simplified to its bounds
      */
     public void setClip(final Shape clip) {
         if (clip == null) {
             gc.setClipping((org.eclipse.swt.graphics.Rectangle) null);
-        }
-        else {
+        } else {
             final Rectangle2D clipBds = clip.getBounds2D();
             SWTShapeManager.transform(clipBds, transform);
             SWTShapeManager.awtToSWT(clipBds, SWT_RECT);
@@ -213,8 +211,7 @@ public class SWTGraphics2D extends Graphics2D {
         final Rectangle2D aRect = new Rectangle2D.Double(rect.x, rect.y, rect.width, rect.height);
         try {
             SWTShapeManager.transform(aRect, transform.createInverse());
-        }
-        catch (final NoninvertibleTransformException e) {
+        } catch (final NoninvertibleTransformException e) {
             throw new RuntimeException(e);
         }
         return aRect;
@@ -254,9 +251,12 @@ public class SWTGraphics2D extends Graphics2D {
 
     /** {@inheritDoc} */
     public void setColor(final Color c) {
-        org.eclipse.swt.graphics.Color cachedColor = (org.eclipse.swt.graphics.Color) COLOR_CACHE.get(c);
+        org.eclipse.swt.graphics.Color cachedColor =
+                (org.eclipse.swt.graphics.Color) COLOR_CACHE.get(c);
         if (cachedColor == null) {
-            cachedColor = new org.eclipse.swt.graphics.Color(device, c.getRed(), c.getGreen(), c.getBlue());
+            cachedColor =
+                    new org.eclipse.swt.graphics.Color(device, c.getRed(), c.getGreen(),
+                            c.getBlue());
             COLOR_CACHE.put(c, cachedColor);
         }
         gc.setForeground(cachedColor);
@@ -265,7 +265,8 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * Sets the foreground color to the provided swt color.
      * 
-     * @param foregroundColor new foreground color
+     * @param foregroundColor
+     *            new foreground color
      */
     public void setColor(final org.eclipse.swt.graphics.Color foregroundColor) {
         gc.setForeground(foregroundColor);
@@ -273,9 +274,12 @@ public class SWTGraphics2D extends Graphics2D {
 
     /** {@inheritDoc} */
     public void setBackground(final Color c) {
-        org.eclipse.swt.graphics.Color cachedColor = (org.eclipse.swt.graphics.Color) COLOR_CACHE.get(c);
+        org.eclipse.swt.graphics.Color cachedColor =
+                (org.eclipse.swt.graphics.Color) COLOR_CACHE.get(c);
         if (cachedColor == null) {
-            cachedColor = new org.eclipse.swt.graphics.Color(device, c.getRed(), c.getGreen(), c.getBlue());
+            cachedColor =
+                    new org.eclipse.swt.graphics.Color(device, c.getRed(), c.getGreen(),
+                            c.getBlue());
             COLOR_CACHE.put(c, cachedColor);
         }
         gc.setBackground(cachedColor);
@@ -284,7 +288,8 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * Sets the background color to the provided swt color.
      * 
-     * @param backgroundColor new background color
+     * @param backgroundColor
+     *            new background color
      */
     public void setBackground(final org.eclipse.swt.graphics.Color backgroundColor) {
         gc.setBackground(backgroundColor);
@@ -337,25 +342,26 @@ public class SWTGraphics2D extends Graphics2D {
                 return new Font(fd[0].getName(), style, fd[0].getHeight());
             }
             return null;
-        }
-        else {
+        } else {
             return null;
         }
     }
 
     /** {@inheritDoc} */
     public void setFont(final Font font) {
-        // TODO:  prevent NPE
-        final String fontString = "name=" + font.getFamily() + ";bold=" + font.isBold() + ";italic=" + font.isItalic()
-                + ";size=" + font.getSize();
+        // TODO: prevent NPE
+        final String fontString =
+                "name=" + font.getFamily() + ";bold=" + font.isBold() + ";italic="
+                        + font.isItalic() + ";size=" + font.getSize();
 
         curFont = getFont(fontString);
     }
 
     /**
      * Set the font for this SWTGraphics2D to <code>font</code>.
-     *
-     * @param font font for this SWTGraphics2D
+     * 
+     * @param font
+     *            font for this SWTGraphics2D
      */
     public void setFont(final org.eclipse.swt.graphics.Font font) {
         curFont = font;
@@ -364,11 +370,13 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * Returns the SWT font matching the given font string.
      * 
-     * @param fontString description of the font desired
+     * @param fontString
+     *            description of the font desired
      * @return matching font, or null if not found
      */
     public org.eclipse.swt.graphics.Font getFont(final String fontString) {
-        org.eclipse.swt.graphics.Font cachedFont = (org.eclipse.swt.graphics.Font) FONT_CACHE.get(fontString);
+        org.eclipse.swt.graphics.Font cachedFont =
+                (org.eclipse.swt.graphics.Font) FONT_CACHE.get(fontString);
         if (cachedFont == null) {
             int style = 0;
             if (fontString.indexOf("bold=true") != -1) {
@@ -379,17 +387,18 @@ public class SWTGraphics2D extends Graphics2D {
             }
 
             final String name = fontString.substring(0, fontString.indexOf(";"));
-            final String size = fontString.substring(fontString.lastIndexOf(";") + 1, fontString.length());
+            final String size =
+                    fontString.substring(fontString.lastIndexOf(";") + 1, fontString.length());
             int sizeInt = DEFAULT_FONT_SIZE;
             try {
                 sizeInt = Integer.parseInt(size.substring(size.indexOf("=") + 1, size.length()));
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
 
-            cachedFont = new org.eclipse.swt.graphics.Font(device,
-                    name.substring(name.indexOf("=") + 1, name.length()), sizeInt, style);
+            cachedFont =
+                    new org.eclipse.swt.graphics.Font(device, name.substring(name.indexOf("=") + 1,
+                            name.length()), sizeInt, style);
             FONT_CACHE.put(fontString, cachedFont);
         }
         return cachedFont;
@@ -409,8 +418,10 @@ public class SWTGraphics2D extends Graphics2D {
             SWTShapeManager.transform(TEMP_RECT, transform);
             height = (int) (TEMP_RECT.getHeight() + 0.5);
 
-            final String fontString = "name=" + fontData.getName() + ";bold=" + ((fontData.getStyle() & SWT.BOLD) != 0)
-                    + ";italic=" + ((fontData.getStyle() & SWT.ITALIC) != 0) + ";size=" + height;
+            final String fontString =
+                    "name=" + fontData.getName() + ";bold="
+                            + ((fontData.getStyle() & SWT.BOLD) != 0) + ";italic="
+                            + ((fontData.getStyle() & SWT.ITALIC) != 0) + ";size=" + height;
             return getFont(fontString);
         }
         return null;
@@ -482,15 +493,16 @@ public class SWTGraphics2D extends Graphics2D {
     private void updateSWTTransform() {
         final double[] m = new double[6];
         transform.getMatrix(m);
-        swtTransform.setElements((float) m[0], (float) m[1], (float) m[2], (float) m[3], (float) m[4], (float) m[5]);
+        swtTransform.setElements((float) m[0], (float) m[1], (float) m[2], (float) m[3],
+                (float) m[4], (float) m[5]);
     }
 
     /**
      * Converts a java 2d path iterator to a SWT path.
      * 
-     * @param iter specifies the iterator to be converted.
-     * @return the corresponding path object. Must be disposed() when no longer
-     *         used.
+     * @param iter
+     *            specifies the iterator to be converted.
+     * @return the corresponding path object. Must be disposed() when no longer used.
      */
     private Path pathIterator2Path(final PathIterator iter) {
         final float[] coords = new float[6];
@@ -501,27 +513,27 @@ public class SWTGraphics2D extends Graphics2D {
             final int type = iter.currentSegment(coords);
 
             switch (type) {
-                case PathIterator.SEG_MOVETO:
-                    path.moveTo(coords[0], coords[1]);
-                    break;
+            case PathIterator.SEG_MOVETO:
+                path.moveTo(coords[0], coords[1]);
+                break;
 
-                case PathIterator.SEG_LINETO:
-                    path.lineTo(coords[0], coords[1]);
-                    break;
+            case PathIterator.SEG_LINETO:
+                path.lineTo(coords[0], coords[1]);
+                break;
 
-                case PathIterator.SEG_CLOSE:
-                    path.close();
-                    break;
+            case PathIterator.SEG_CLOSE:
+                path.close();
+                break;
 
-                case PathIterator.SEG_QUADTO:
-                    path.quadTo(coords[0], coords[1], coords[2], coords[3]);
-                    break;
+            case PathIterator.SEG_QUADTO:
+                path.quadTo(coords[0], coords[1], coords[2], coords[3]);
+                break;
 
-                case PathIterator.SEG_CUBICTO:
-                    path.cubicTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
-                    break;
-                default:
-                    // log this?
+            case PathIterator.SEG_CUBICTO:
+                path.cubicTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
+                break;
+            default:
+                // log this?
             }
 
             iter.next();
@@ -539,20 +551,18 @@ public class SWTGraphics2D extends Graphics2D {
         if (s instanceof Rectangle2D) {
             final Rectangle2D r2 = (Rectangle2D) s;
             drawRect(r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight());
-        }
-        else if (s instanceof Ellipse2D) {
+        } else if (s instanceof Ellipse2D) {
             final Ellipse2D e2 = (Ellipse2D) s;
             drawOval(e2.getX(), e2.getY(), e2.getWidth(), e2.getHeight());
-        }
-        else if (s instanceof RoundRectangle2D) {
+        } else if (s instanceof RoundRectangle2D) {
             final RoundRectangle2D r2 = (RoundRectangle2D) s;
-            drawRoundRect(r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight(), r2.getArcWidth(), r2.getArcHeight());
-        }
-        else if (s instanceof Arc2D) {
+            drawRoundRect(r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight(), r2.getArcWidth(),
+                    r2.getArcHeight());
+        } else if (s instanceof Arc2D) {
             final Arc2D a2 = (Arc2D) s;
-            drawArc(a2.getX(), a2.getY(), a2.getWidth(), a2.getHeight(), a2.getAngleStart(), a2.getAngleExtent());
-        }
-        else {
+            drawArc(a2.getX(), a2.getY(), a2.getWidth(), a2.getHeight(), a2.getAngleStart(),
+                    a2.getAngleExtent());
+        } else {
             Path p = (Path) SHAPE_CACHE.get(s);
             if (p == null) {
                 p = pathIterator2Path(s.getPathIterator(null));
@@ -567,20 +577,18 @@ public class SWTGraphics2D extends Graphics2D {
         if (s instanceof Rectangle2D) {
             final Rectangle2D r2 = (Rectangle2D) s;
             fillRect(r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight());
-        }
-        else if (s instanceof Ellipse2D) {
+        } else if (s instanceof Ellipse2D) {
             final Ellipse2D e2 = (Ellipse2D) s;
             fillOval(e2.getX(), e2.getY(), e2.getWidth(), e2.getHeight());
-        }
-        else if (s instanceof RoundRectangle2D) {
+        } else if (s instanceof RoundRectangle2D) {
             final RoundRectangle2D r2 = (RoundRectangle2D) s;
-            fillRoundRect(r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight(), r2.getArcWidth(), r2.getArcHeight());
-        }
-        else if (s instanceof Arc2D) {
+            fillRoundRect(r2.getX(), r2.getY(), r2.getWidth(), r2.getHeight(), r2.getArcWidth(),
+                    r2.getArcHeight());
+        } else if (s instanceof Arc2D) {
             final Arc2D a2 = (Arc2D) s;
-            fillArc(a2.getX(), a2.getY(), a2.getWidth(), a2.getHeight(), a2.getAngleStart(), a2.getAngleExtent());
-        }
-        else {
+            fillArc(a2.getX(), a2.getY(), a2.getWidth(), a2.getHeight(), a2.getAngleStart(),
+                    a2.getAngleExtent());
+        } else {
             Path p = (Path) SHAPE_CACHE.get(s);
             if (p == null) {
                 p = pathIterator2Path(s.getPathIterator(null));
@@ -606,8 +614,9 @@ public class SWTGraphics2D extends Graphics2D {
 
     /**
      * Draw a polyline from the specified double array of points.
-     *
-     * @param pts double array of points
+     * 
+     * @param pts
+     *            double array of points
      */
     public void drawPolyline(final double[] pts) {
         final int[] intPts = SWTShapeManager.transform(pts, transform);
@@ -629,8 +638,9 @@ public class SWTGraphics2D extends Graphics2D {
 
     /**
      * Fill a polyline from the specified double array of points.
-     *
-     * @param pts double array of points
+     * 
+     * @param pts
+     *            double array of points
      */
     public void fillPolygon(final double[] pts) {
         final int[] intPts = SWTShapeManager.transform(pts, transform);
@@ -656,13 +666,17 @@ public class SWTGraphics2D extends Graphics2D {
     }
 
     /**
-     * Draws a line, using the current color, between the points (x1, y1) and
-     * (x2, y2) in this graphics context's coordinate system.
+     * Draws a line, using the current color, between the points (x1, y1) and (x2, y2) in this
+     * graphics context's coordinate system.
      * 
-     * @param x1 the first point's x coordinate.
-     * @param y1 the first point's y coordinate.
-     * @param x2 the second point's x coordinate.
-     * @param y2 the second point's y coordinate.
+     * @param x1
+     *            the first point's x coordinate.
+     * @param y1
+     *            the first point's y coordinate.
+     * @param x2
+     *            the second point's x coordinate.
+     * @param y2
+     *            the second point's y coordinate.
      */
     public void drawLine(final double x1, final double y1, final double x2, final double y2) {
         TEMP_POINT.setLocation(x1, y1);
@@ -675,8 +689,8 @@ public class SWTGraphics2D extends Graphics2D {
         final double transformedY2 = (int) TEMP_POINT.getY();
 
         gc.setLineWidth(getTransformedLineWidth());
-        gc.drawLine((int) (transformedX1 + 0.5), (int) (transformedY1 + 0.5), (int) (transformedX2 + 0.5),
-                (int) (transformedY2 + 0.5));
+        gc.drawLine((int) (transformedX1 + 0.5), (int) (transformedY1 + 0.5),
+                (int) (transformedX2 + 0.5), (int) (transformedY2 + 0.5));
     }
 
     // **************************************************************************
@@ -688,9 +702,12 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * Copies the image to the specified position.
      * 
-     * @param img swt image to be copied
-     * @param x x component of position
-     * @param y y component of position
+     * @param img
+     *            swt image to be copied
+     * @param x
+     *            x component of position
+     * @param y
+     *            y component of position
      */
     public void copyArea(final org.eclipse.swt.graphics.Image img, final double x, final double y) {
         TEMP_POINT.setLocation(x, y);
@@ -700,33 +717,33 @@ public class SWTGraphics2D extends Graphics2D {
     }
 
     /** {@inheritDoc} */
-    public void copyArea(final int x, final int y, final int width, final int height, final int dx, final int dy) {
+    public void copyArea(final int x, final int y, final int width, final int height, final int dx,
+            final int dy) {
         TEMP_RECT.setRect(x, y, width, height);
         SWTShapeManager.transform(TEMP_RECT, transform);
 
         TEMP_POINT.setLocation(dx, dy);
         transform.transform(TEMP_POINT, TEMP_POINT);
-        gc.copyArea((int) TEMP_RECT.getX(), (int) TEMP_RECT.getY(), (int) TEMP_RECT.getWidth(), (int) TEMP_RECT
-                .getHeight(), (int) TEMP_POINT.getX(), (int) TEMP_POINT.getY());
+        gc.copyArea((int) TEMP_RECT.getX(), (int) TEMP_RECT.getY(), (int) TEMP_RECT.getWidth(),
+                (int) TEMP_RECT.getHeight(), (int) TEMP_POINT.getX(), (int) TEMP_POINT.getY());
     }
 
     /**
-     * Renders the text of the specified String, using the current text
-     * attribute state in the Graphics2D context. The baseline of the first
-     * character is at position (x, y) in the User Space. The rendering
-     * attributes applied include the Clip, Transform, Paint, Font and Composite
-     * attributes. For characters in script systems such as Hebrew and Arabic,
-     * the glyphs can be rendered from right to left, in which case the
-     * coordinate supplied is the location of the leftmost character on the
-     * baseline.
+     * Renders the text of the specified String, using the current text attribute state in the
+     * Graphics2D context. The baseline of the first character is at position (x, y) in the User
+     * Space. The rendering attributes applied include the Clip, Transform, Paint, Font and
+     * Composite attributes. For characters in script systems such as Hebrew and Arabic, the glyphs
+     * can be rendered from right to left, in which case the coordinate supplied is the location of
+     * the leftmost character on the baseline.
      * 
-     * @param str the string to be rendered
-     * @param x the x coordinate of the location where the String should be
-     *            rendered
-     * @param y the y coordinate of the location where the String should be
-     *            rendered
-     * @param isTransparent whether a background should be painted behind the
-     *            text
+     * @param str
+     *            the string to be rendered
+     * @param x
+     *            the x coordinate of the location where the String should be rendered
+     * @param y
+     *            the y coordinate of the location where the String should be rendered
+     * @param isTransparent
+     *            whether a background should be painted behind the text
      */
     public void drawString(final String str, final int x, final int y, final boolean isTransparent) {
         gc.setTransform(swtTransform);
@@ -740,44 +757,43 @@ public class SWTGraphics2D extends Graphics2D {
     }
 
     /**
-     * Renders the text of the specified String, using the current text
-     * attribute state in the Graphics2D context. The baseline of the first
-     * character is at position (x, y) in the User Space. The rendering
-     * attributes applied include the Clip, Transform, Paint, Font and Composite
-     * attributes. For characters in script systems such as Hebrew and Arabic,
-     * the glyphs can be rendered from right to left, in which case the
-     * coordinate supplied is the location of the leftmost character on the
-     * baseline.
+     * Renders the text of the specified String, using the current text attribute state in the
+     * Graphics2D context. The baseline of the first character is at position (x, y) in the User
+     * Space. The rendering attributes applied include the Clip, Transform, Paint, Font and
+     * Composite attributes. For characters in script systems such as Hebrew and Arabic, the glyphs
+     * can be rendered from right to left, in which case the coordinate supplied is the location of
+     * the leftmost character on the baseline.
      * 
-     * @param str the string to be rendered
-     * @param x the x coordinate of the location where the String should be
-     *            rendered
-     * @param y the y coordinate of the location where the String should be
-     *            rendered
+     * @param str
+     *            the string to be rendered
+     * @param x
+     *            the x coordinate of the location where the String should be rendered
+     * @param y
+     *            the y coordinate of the location where the String should be rendered
      */
     public void drawString(final String str, final double x, final double y) {
         drawString(str, (int) (x + 0.5), (int) (y + 0.5));
     }
 
     /**
-     * Renders the text of the specified String, using the current text
-     * attribute state in the Graphics2D context. The baseline of the first
-     * character is at position (x, y) in the User Space. The rendering
-     * attributes applied include the Clip, Transform, Paint, Font and Composite
-     * attributes. For characters in script systems such as Hebrew and Arabic,
-     * the glyphs can be rendered from right to left, in which case the
-     * coordinate supplied is the location of the leftmost character on the
-     * baseline.
+     * Renders the text of the specified String, using the current text attribute state in the
+     * Graphics2D context. The baseline of the first character is at position (x, y) in the User
+     * Space. The rendering attributes applied include the Clip, Transform, Paint, Font and
+     * Composite attributes. For characters in script systems such as Hebrew and Arabic, the glyphs
+     * can be rendered from right to left, in which case the coordinate supplied is the location of
+     * the leftmost character on the baseline.
      * 
-     * @param str the string to be rendered
-     * @param x the x coordinate of the location where the String should be
-     *            rendered
-     * @param y the y coordinate of the location where the String should be
-     *            rendered
-     * @param isTransparent whether a background should be painted behind the
-     *            text
+     * @param str
+     *            the string to be rendered
+     * @param x
+     *            the x coordinate of the location where the String should be rendered
+     * @param y
+     *            the y coordinate of the location where the String should be rendered
+     * @param isTransparent
+     *            whether a background should be painted behind the text
      */
-    public void drawString(final String str, final double x, final double y, final boolean isTransparent) {
+    public void drawString(final String str, final double x, final double y,
+            final boolean isTransparent) {
         drawString(str, (int) (x + 0.5), (int) (y + 0.5), isTransparent);
     }
 
@@ -787,62 +803,61 @@ public class SWTGraphics2D extends Graphics2D {
     }
 
     /**
-     * Renders the text of the specified String, using the current text
-     * attribute state in the Graphics2D context. The baseline of the first
-     * character is at position (x, y) in the User Space. The rendering
-     * attributes applied include the Clip, Transform, Paint, Font and Composite
-     * attributes. For characters in script systems such as Hebrew and Arabic,
-     * the glyphs can be rendered from right to left, in which case the
-     * coordinate supplied is the location of the leftmost character on the
-     * baseline.
+     * Renders the text of the specified String, using the current text attribute state in the
+     * Graphics2D context. The baseline of the first character is at position (x, y) in the User
+     * Space. The rendering attributes applied include the Clip, Transform, Paint, Font and
+     * Composite attributes. For characters in script systems such as Hebrew and Arabic, the glyphs
+     * can be rendered from right to left, in which case the coordinate supplied is the location of
+     * the leftmost character on the baseline.
      * 
-     * @param str the string to be rendered
-     * @param x the x coordinate of the location where the String should be
-     *            rendered
-     * @param y the y coordinate of the location where the String should be
-     *            rendered
+     * @param str
+     *            the string to be rendered
+     * @param x
+     *            the x coordinate of the location where the String should be rendered
+     * @param y
+     *            the y coordinate of the location where the String should be rendered
      */
     public void drawText(final String str, final double x, final double y) {
         drawString(str, (int) (x + 0.5), (int) (y + 0.5));
     }
 
     /**
-     * Renders the text of the specified String, using the current text
-     * attribute state in the Graphics2D context. The baseline of the first
-     * character is at position (x, y) in the User Space. The rendering
-     * attributes applied include the Clip, Transform, Paint, Font and Composite
-     * attributes. For characters in script systems such as Hebrew and Arabic,
-     * the glyphs can be rendered from right to left, in which case the
-     * coordinate supplied is the location of the leftmost character on the
-     * baseline.
+     * Renders the text of the specified String, using the current text attribute state in the
+     * Graphics2D context. The baseline of the first character is at position (x, y) in the User
+     * Space. The rendering attributes applied include the Clip, Transform, Paint, Font and
+     * Composite attributes. For characters in script systems such as Hebrew and Arabic, the glyphs
+     * can be rendered from right to left, in which case the coordinate supplied is the location of
+     * the leftmost character on the baseline.
      * 
-     * @param str the string to be rendered
-     * @param x the x coordinate of the location where the String should be
-     *            rendered
-     * @param y the y coordinate of the location where the String should be
-     *            rendered
-     * @param flags flags to apply to the string as defined by SWT
+     * @param str
+     *            the string to be rendered
+     * @param x
+     *            the x coordinate of the location where the String should be rendered
+     * @param y
+     *            the y coordinate of the location where the String should be rendered
+     * @param flags
+     *            flags to apply to the string as defined by SWT
      */
     public void drawText(final String str, final double x, final double y, final int flags) {
         drawText(str, (int) (x + 0.5), (int) (y + 0.5), flags);
     }
 
     /**
-     * Renders the text of the specified String, using the current text
-     * attribute state in the Graphics2D context. The baseline of the first
-     * character is at position (x, y) in the User Space. The rendering
-     * attributes applied include the Clip, Transform, Paint, Font and Composite
-     * attributes. For characters in script systems such as Hebrew and Arabic,
-     * the glyphs can be rendered from right to left, in which case the
-     * coordinate supplied is the location of the leftmost character on the
-     * baseline.
+     * Renders the text of the specified String, using the current text attribute state in the
+     * Graphics2D context. The baseline of the first character is at position (x, y) in the User
+     * Space. The rendering attributes applied include the Clip, Transform, Paint, Font and
+     * Composite attributes. For characters in script systems such as Hebrew and Arabic, the glyphs
+     * can be rendered from right to left, in which case the coordinate supplied is the location of
+     * the leftmost character on the baseline.
      * 
-     * @param str the string to be rendered
-     * @param x the x coordinate of the location where the String should be
-     *            rendered
-     * @param y the y coordinate of the location where the String should be
-     *            rendered
-     * @param flags flags to apply to the string as defined by SWT
+     * @param str
+     *            the string to be rendered
+     * @param x
+     *            the x coordinate of the location where the String should be rendered
+     * @param y
+     *            the y coordinate of the location where the String should be rendered
+     * @param flags
+     *            flags to apply to the string as defined by SWT
      */
     public void drawText(final String str, final int x, final int y, final int flags) {
         gc.setTransform(swtTransform);
@@ -856,15 +871,18 @@ public class SWTGraphics2D extends Graphics2D {
     }
 
     /**
-     * Draws the outline of the specified rectangle. The left and right edges of
-     * the rectangle are at x and x + width. The top and bottom edges are at y
-     * and y + height. The rectangle is drawn using the graphics context's
-     * current color.
+     * Draws the outline of the specified rectangle. The left and right edges of the rectangle are
+     * at x and x + width. The top and bottom edges are at y and y + height. The rectangle is drawn
+     * using the graphics context's current color.
      * 
-     * @param x the x coordinate of the rectangle to be drawn.
-     * @param y the y coordinate of the rectangle to be drawn.
-     * @param width the width of the rectangle to be drawn.
-     * @param height the height of the rectangle to be drawn.
+     * @param x
+     *            the x coordinate of the rectangle to be drawn.
+     * @param y
+     *            the y coordinate of the rectangle to be drawn.
+     * @param width
+     *            the width of the rectangle to be drawn.
+     * @param height
+     *            the height of the rectangle to be drawn.
      */
     public void drawRect(final double x, final double y, final double width, final double height) {
         TEMP_RECT.setRect(x, y, width, height);
@@ -881,16 +899,19 @@ public class SWTGraphics2D extends Graphics2D {
     }
 
     /**
-     * Fills the specified rectangle. The left and right edges of the rectangle
-     * are at x and x + width - 1. The top and bottom edges are at y and y +
-     * height - 1. The resulting rectangle covers an area width pixels wide by
-     * height pixels tall. The rectangle is filled using the graphics context's
-     * current color.
+     * Fills the specified rectangle. The left and right edges of the rectangle are at x and x +
+     * width - 1. The top and bottom edges are at y and y + height - 1. The resulting rectangle
+     * covers an area width pixels wide by height pixels tall. The rectangle is filled using the
+     * graphics context's current color.
      * 
-     * @param x the x coordinate of the rectangle to be filled.
-     * @param y the y coordinate of the rectangle to be filled.
-     * @param width the width of the rectangle to be filled.
-     * @param height the height of the rectangle to be filled.
+     * @param x
+     *            the x coordinate of the rectangle to be filled.
+     * @param y
+     *            the y coordinate of the rectangle to be filled.
+     * @param width
+     *            the width of the rectangle to be filled.
+     * @param height
+     *            the height of the rectangle to be filled.
      */
     public void fillRect(final double x, final double y, final double width, final double height) {
         TEMP_RECT.setRect(x, y, width, height);
@@ -901,26 +922,32 @@ public class SWTGraphics2D extends Graphics2D {
     }
 
     /** {@inheritDoc} */
-    public void drawRoundRect(final int x, final int y, final int width, final int height, final int arcWidth,
-            final int arcHeight) {
-        drawRoundRect((double) x, (double) y, (double) width, (double) height, (double) arcWidth, (double) arcHeight);
+    public void drawRoundRect(final int x, final int y, final int width, final int height,
+            final int arcWidth, final int arcHeight) {
+        drawRoundRect((double) x, (double) y, (double) width, (double) height, (double) arcWidth,
+                (double) arcHeight);
     }
 
     /**
-     * Draws an outlined round-cornered rectangle using this graphics context's
-     * current color. The left and right edges of the rectangle are at x and x +
-     * width, respectively. The top and bottom edges of the rectangle are at y
-     * and y + height.
+     * Draws an outlined round-cornered rectangle using this graphics context's current color. The
+     * left and right edges of the rectangle are at x and x + width, respectively. The top and
+     * bottom edges of the rectangle are at y and y + height.
      * 
-     * @param x the x coordinate of the rectangle to be drawn.
-     * @param y the y coordinate of the rectangle to be drawn.
-     * @param width the width of the rectangle to be drawn.
-     * @param height the height of the rectangle to be drawn.
-     * @param arcWidth the horizontal diameter of the arc at the four corners.
-     * @param arcHeight the vertical diameter of the arc at the four corners.
+     * @param x
+     *            the x coordinate of the rectangle to be drawn.
+     * @param y
+     *            the y coordinate of the rectangle to be drawn.
+     * @param width
+     *            the width of the rectangle to be drawn.
+     * @param height
+     *            the height of the rectangle to be drawn.
+     * @param arcWidth
+     *            the horizontal diameter of the arc at the four corners.
+     * @param arcHeight
+     *            the vertical diameter of the arc at the four corners.
      */
-    public void drawRoundRect(final double x, final double y, final double width, final double height,
-            final double arcWidth, final double arcHeight) {
+    public void drawRoundRect(final double x, final double y, final double width,
+            final double height, final double arcWidth, final double arcHeight) {
         TEMP_RECT.setRect(x, y, width, height);
         SWTShapeManager.transform(TEMP_RECT, transform);
         final double tx = TEMP_RECT.getX();
@@ -934,31 +961,37 @@ public class SWTGraphics2D extends Graphics2D {
         final double tarcHeight = TEMP_RECT.getHeight();
 
         gc.setLineWidth(getTransformedLineWidth());
-        gc.drawRoundRectangle((int) (tx + 0.5), (int) (ty + 0.5), (int) (twidth + 0.5), (int) (theight + 0.5),
-                (int) (tarcWidth + 0.5), (int) (tarcHeight + 0.5));
+        gc.drawRoundRectangle((int) (tx + 0.5), (int) (ty + 0.5), (int) (twidth + 0.5),
+                (int) (theight + 0.5), (int) (tarcWidth + 0.5), (int) (tarcHeight + 0.5));
     }
 
     /** {@inheritDoc} */
-    public void fillRoundRect(final int x, final int y, final int width, final int height, final int arcWidth,
-            final int arcHeight) {
-        fillRoundRect((double) x, (double) y, (double) width, (double) height, (double) arcWidth, (double) arcHeight);
+    public void fillRoundRect(final int x, final int y, final int width, final int height,
+            final int arcWidth, final int arcHeight) {
+        fillRoundRect((double) x, (double) y, (double) width, (double) height, (double) arcWidth,
+                (double) arcHeight);
     }
 
     /**
-     * Fills the specified rounded corner rectangle with the current color. The
-     * left and right edges of the rectangle are at x and x + width - 1,
-     * respectively. The top and bottom edges of the rectangle are at y and y +
-     * height - 1.
+     * Fills the specified rounded corner rectangle with the current color. The left and right edges
+     * of the rectangle are at x and x + width - 1, respectively. The top and bottom edges of the
+     * rectangle are at y and y + height - 1.
      * 
-     *@param x the x coordinate of the rectangle to be filled.
-     *@param y the y coordinate of the rectangle to be filled.
-     *@param width the width of the rectangle to be filled.
-     *@param height the height of the rectangle to be filled.
-     *@param arcWidth the horizontal diameter of the arc at the four corners.
-     *@param arcHeight the vertical diameter of the arc at the four corners.
+     * @param x
+     *            the x coordinate of the rectangle to be filled.
+     * @param y
+     *            the y coordinate of the rectangle to be filled.
+     * @param width
+     *            the width of the rectangle to be filled.
+     * @param height
+     *            the height of the rectangle to be filled.
+     * @param arcWidth
+     *            the horizontal diameter of the arc at the four corners.
+     * @param arcHeight
+     *            the vertical diameter of the arc at the four corners.
      */
-    public void fillRoundRect(final double x, final double y, final double width, final double height,
-            final double arcWidth, final double arcHeight) {
+    public void fillRoundRect(final double x, final double y, final double width,
+            final double height, final double arcWidth, final double arcHeight) {
         TEMP_RECT.setRect(x, y, width, height);
         SWTShapeManager.transform(TEMP_RECT, transform);
         final double tx = TEMP_RECT.getX();
@@ -972,8 +1005,8 @@ public class SWTGraphics2D extends Graphics2D {
         final double tarcHeight = TEMP_RECT.getHeight();
 
         gc.setLineWidth(getTransformedLineWidth());
-        gc.fillRoundRectangle((int) (tx + 0.5), (int) (ty + 0.5), (int) (twidth + 0.5), (int) (theight + 0.5),
-                (int) (tarcWidth + 0.5), (int) (tarcHeight + 0.5));
+        gc.fillRoundRectangle((int) (tx + 0.5), (int) (ty + 0.5), (int) (twidth + 0.5),
+                (int) (theight + 0.5), (int) (tarcWidth + 0.5), (int) (tarcHeight + 0.5));
     }
 
     /** {@inheritDoc} */
@@ -982,25 +1015,26 @@ public class SWTGraphics2D extends Graphics2D {
     }
 
     /**
-     * Draws the outline of an oval. The result is a circle or ellipse that fits
-     * within the rectangle specified by the x, y, width, and height arguments.
-     * The oval covers an area that is width + 1 pixels wide and height + 1
-     * pixels tall.
+     * Draws the outline of an oval. The result is a circle or ellipse that fits within the
+     * rectangle specified by the x, y, width, and height arguments. The oval covers an area that is
+     * width + 1 pixels wide and height + 1 pixels tall.
      * 
-     * @param x the x coordinate of the upper left corner of the oval to be
-     *            drawn.
-     * @param y the y coordinate of the upper left corner of the oval to be
-     *            drawn.
-     * @param width the width of the oval to be drawn.
-     * @param height the height of the oval to be drawn.
+     * @param x
+     *            the x coordinate of the upper left corner of the oval to be drawn.
+     * @param y
+     *            the y coordinate of the upper left corner of the oval to be drawn.
+     * @param width
+     *            the width of the oval to be drawn.
+     * @param height
+     *            the height of the oval to be drawn.
      */
     public void drawOval(final double x, final double y, final double width, final double height) {
         TEMP_RECT.setRect(x, y, width, height);
         SWTShapeManager.transform(TEMP_RECT, transform);
 
         gc.setLineWidth(getTransformedLineWidth());
-        gc.drawOval((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5), (int) (TEMP_RECT.getWidth() + 0.5),
-                (int) (TEMP_RECT.getHeight() + 0.5));
+        gc.drawOval((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5),
+                (int) (TEMP_RECT.getWidth() + 0.5), (int) (TEMP_RECT.getHeight() + 0.5));
     }
 
     /** {@inheritDoc} */
@@ -1011,57 +1045,61 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * Fills an oval bounded by the specified rectangle with the current color.
      * 
-     * @param x the x coordinate of the upper left corner of the oval to be
-     *            filled.
-     * @param y the y coordinate of the upper left corner of the oval to be
-     *            filled.
-     * @param width the width of the oval to be filled.
-     * @param height the height of the oval to be filled.
+     * @param x
+     *            the x coordinate of the upper left corner of the oval to be filled.
+     * @param y
+     *            the y coordinate of the upper left corner of the oval to be filled.
+     * @param width
+     *            the width of the oval to be filled.
+     * @param height
+     *            the height of the oval to be filled.
      */
     public void fillOval(final double x, final double y, final double width, final double height) {
         TEMP_RECT.setRect(x, y, width, height);
         SWTShapeManager.transform(TEMP_RECT, transform);
 
-        gc.fillOval((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5), (int) (TEMP_RECT.getWidth() + 0.5),
-                (int) (TEMP_RECT.getHeight() + 0.5));
+        gc.fillOval((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5),
+                (int) (TEMP_RECT.getWidth() + 0.5), (int) (TEMP_RECT.getHeight() + 0.5));
     }
 
     /** {@inheritDoc} */
-    public void drawArc(final int x, final int y, final int width, final int height, final int startAngle,
-            final int extent) {
-        drawArc((double) x, (double) y, (double) width, (double) height, (double) startAngle, (double) extent);
+    public void drawArc(final int x, final int y, final int width, final int height,
+            final int startAngle, final int extent) {
+        drawArc((double) x, (double) y, (double) width, (double) height, (double) startAngle,
+                (double) extent);
     }
 
     /**
-     * Draws the outline of a circular or elliptical arc covering the specified
-     * rectangle.
+     * Draws the outline of a circular or elliptical arc covering the specified rectangle.
      * 
-     * The resulting arc begins at startAngle and extends for arcAngle degrees,
-     * using the current color. Angles are interpreted such that 0 degrees is at
-     * the 3 o'clock position. A positive value indicates a counter-clockwise
-     * rotation while a negative value indicates a clockwise rotation.
+     * The resulting arc begins at startAngle and extends for arcAngle degrees, using the current
+     * color. Angles are interpreted such that 0 degrees is at the 3 o'clock position. A positive
+     * value indicates a counter-clockwise rotation while a negative value indicates a clockwise
+     * rotation.
      * 
-     * The center of the arc is the center of the rectangle whose origin is (x,
-     * y) and whose size is specified by the width and height arguments.
+     * The center of the arc is the center of the rectangle whose origin is (x, y) and whose size is
+     * specified by the width and height arguments.
      * 
-     * The resulting arc covers an area width + 1 pixels wide by height + 1
-     * pixels tall.
+     * The resulting arc covers an area width + 1 pixels wide by height + 1 pixels tall.
      * 
-     * The angles are specified relative to the non-square extents of the
-     * bounding rectangle such that 45 degrees always falls on the line from the
-     * center of the ellipse to the upper right corner of the bounding
-     * rectangle. As a result, if the bounding rectangle is noticeably longer in
-     * one axis than the other, the angles to the start and end of the arc
-     * segment will be skewed farther along the longer axis of the bounds.
+     * The angles are specified relative to the non-square extents of the bounding rectangle such
+     * that 45 degrees always falls on the line from the center of the ellipse to the upper right
+     * corner of the bounding rectangle. As a result, if the bounding rectangle is noticeably longer
+     * in one axis than the other, the angles to the start and end of the arc segment will be skewed
+     * farther along the longer axis of the bounds.
      * 
-     * @param x the x coordinate of the upper-left corner of the arc to be
-     *            drawn.
-     * @param y the y coordinate of the upper-left corner of the arc to be
-     *            drawn.
-     * @param width the width of the arc to be drawn.
-     * @param height the height of the arc to be drawn.
-     * @param startAngle the beginning angle.
-     * @param extent the angular extent of the arc, relative to the start angle.
+     * @param x
+     *            the x coordinate of the upper-left corner of the arc to be drawn.
+     * @param y
+     *            the y coordinate of the upper-left corner of the arc to be drawn.
+     * @param width
+     *            the width of the arc to be drawn.
+     * @param height
+     *            the height of the arc to be drawn.
+     * @param startAngle
+     *            the beginning angle.
+     * @param extent
+     *            the angular extent of the arc, relative to the start angle.
      */
     public void drawArc(final double x, final double y, final double width, final double height,
             final double startAngle, final double extent) {
@@ -1069,41 +1107,49 @@ public class SWTGraphics2D extends Graphics2D {
         SWTShapeManager.transform(TEMP_RECT, transform);
 
         gc.setLineWidth(getTransformedLineWidth());
-        gc.drawArc((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5), (int) (TEMP_RECT.getWidth() + 0.5),
-                (int) (TEMP_RECT.getHeight() + 0.5), (int) (startAngle + 0.5), (int) (startAngle + extent + 0.5));
+        gc.drawArc((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5),
+                (int) (TEMP_RECT.getWidth() + 0.5), (int) (TEMP_RECT.getHeight() + 0.5),
+                (int) (startAngle + 0.5), (int) (startAngle + extent + 0.5));
     }
 
     /** {@inheritDoc} */
-    public void fillArc(final int x, final int y, final int width, final int height, final int startAngle,
-            final int extent) {
-        drawArc((double) x, (double) y, (double) width, (double) height, (double) startAngle, (double) extent);
+    public void fillArc(final int x, final int y, final int width, final int height,
+            final int startAngle, final int extent) {
+        drawArc((double) x, (double) y, (double) width, (double) height, (double) startAngle,
+                (double) extent);
     }
 
     /**
      * Draws a filledArc with the options provided.
      * 
-     * @param x the x coordinate of the upper-left corner of the arc to be
-     *            filled.
-     * @param y the y coordinate of the upper-left corner of the arc to be
-     *            filled.
-     * @param width the width of the arc to be filled.
-     * @param height the height of the arc to be filled.
-     * @param startAngle the beginning angle.
-     * @param extent the angular extent of the arc, relative to the start angle.
+     * @param x
+     *            the x coordinate of the upper-left corner of the arc to be filled.
+     * @param y
+     *            the y coordinate of the upper-left corner of the arc to be filled.
+     * @param width
+     *            the width of the arc to be filled.
+     * @param height
+     *            the height of the arc to be filled.
+     * @param startAngle
+     *            the beginning angle.
+     * @param extent
+     *            the angular extent of the arc, relative to the start angle.
      */
     public void fillArc(final double x, final double y, final double width, final double height,
             final double startAngle, final double extent) {
         TEMP_RECT.setRect(x, y, width, height);
         SWTShapeManager.transform(TEMP_RECT, transform);
 
-        gc.drawArc((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5), (int) (TEMP_RECT.getWidth() + 0.5),
-                (int) (TEMP_RECT.getHeight() + 0.5), (int) (startAngle + 0.5), (int) (startAngle + extent + 0.5));
+        gc.drawArc((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5),
+                (int) (TEMP_RECT.getWidth() + 0.5), (int) (TEMP_RECT.getHeight() + 0.5),
+                (int) (startAngle + 0.5), (int) (startAngle + extent + 0.5));
     }
 
     /**
      * Draws the provided path.
      * 
-     * @param p path to draw
+     * @param p
+     *            path to draw
      */
     public void drawPath(final Path p) {
         gc.setLineWidth((int) (lineWidth + 0.5));
@@ -1115,7 +1161,8 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * Draws a filled version of the provided path.
      * 
-     * @param p path to draw filled
+     * @param p
+     *            path to draw filled
      */
     public void fillPath(final Path p) {
         gc.setTransform(swtTransform);
@@ -1126,9 +1173,12 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * Draws the provided image at the position specified.
      * 
-     * @param image image to draw
-     * @param x x component of the position
-     * @param y y component of the position
+     * @param image
+     *            image to draw
+     * @param x
+     *            x component of the position
+     * @param y
+     *            y component of the position
      */
     public void drawImage(final org.eclipse.swt.graphics.Image image, final double x, final double y) {
         final org.eclipse.swt.graphics.Rectangle bounds = image.getBounds();
@@ -1136,44 +1186,56 @@ public class SWTGraphics2D extends Graphics2D {
         SWTShapeManager.transform(TEMP_RECT, transform);
         SWTShapeManager.awtToSWT(TEMP_RECT, SWT_RECT);
 
-        gc.drawImage(image, 0, 0, bounds.width, bounds.height, SWT_RECT.x, SWT_RECT.y, SWT_RECT.width, SWT_RECT.height);
+        gc.drawImage(image, 0, 0, bounds.width, bounds.height, SWT_RECT.x, SWT_RECT.y,
+                SWT_RECT.width, SWT_RECT.height);
     }
 
     /**
-     * Draws the source region from the image onto the destination region of the
-     * graphics context. Stretching if necessary.
+     * Draws the source region from the image onto the destination region of the graphics context.
+     * Stretching if necessary.
      * 
-     * @param image image from which to copy
-     * @param srcX the left of the source region
-     * @param srcY the top of the source region
-     * @param srcW the width of the source region
-     * @param srcH the height of the source region
-     * @param destX the left of the destination region
-     * @param destY the top of the destination region
-     * @param destW the width of the destination region
-     * @param destH the height of the destination region
+     * @param image
+     *            image from which to copy
+     * @param srcX
+     *            the left of the source region
+     * @param srcY
+     *            the top of the source region
+     * @param srcW
+     *            the width of the source region
+     * @param srcH
+     *            the height of the source region
+     * @param destX
+     *            the left of the destination region
+     * @param destY
+     *            the top of the destination region
+     * @param destW
+     *            the width of the destination region
+     * @param destH
+     *            the height of the destination region
      */
-    public void drawImage(final org.eclipse.swt.graphics.Image image, final int srcX, final int srcY, final int srcW,
-            final int srcH, final double destX, final double destY, final double destW, final double destH) {
+    public void drawImage(final org.eclipse.swt.graphics.Image image, final int srcX,
+            final int srcY, final int srcW, final int srcH, final double destX, final double destY,
+            final double destW, final double destH) {
         TEMP_RECT.setRect(destX, destY, destW, destH);
         SWTShapeManager.transform(TEMP_RECT, transform);
         SWTShapeManager.awtToSWT(TEMP_RECT, SWT_RECT);
 
-        gc.drawImage(image, srcX, srcY, srcW, srcH, SWT_RECT.x, SWT_RECT.y, SWT_RECT.width, SWT_RECT.height);
+        gc.drawImage(image, srcX, srcY, srcW, srcH, SWT_RECT.x, SWT_RECT.y, SWT_RECT.width,
+                SWT_RECT.height);
     }
 
     /**
      * Sets the line width to use when drawing shapes.
      * 
-     * @param lineWidth width of line when drawing shapes
+     * @param lineWidth
+     *            width of line when drawing shapes
      */
     public void setLineWidth(final double lineWidth) {
         this.lineWidth = lineWidth;
     }
 
     /**
-     * Computes the width of the line after it passes through the current
-     * transform.
+     * Computes the width of the line after it passes through the current transform.
      * 
      * @return resulting width of line after being transform
      */
@@ -1187,15 +1249,19 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * Fills a gradient rectangle of in the direction specified.
      * 
-     * @param x left of resulting rectangle
-     * @param y top of resulting rectangle
-     * @param width width of resulting rectangle
-     * @param height height of resulting rectangle
-     * @param vertical whether the gradient should be drawn vertically or
-     *            horizontally
+     * @param x
+     *            left of resulting rectangle
+     * @param y
+     *            top of resulting rectangle
+     * @param width
+     *            width of resulting rectangle
+     * @param height
+     *            height of resulting rectangle
+     * @param vertical
+     *            whether the gradient should be drawn vertically or horizontally
      */
-    public void fillGradientRectangle(final double x, final double y, final double width, final double height,
-            final boolean vertical) {
+    public void fillGradientRectangle(final double x, final double y, final double width,
+            final double height, final boolean vertical) {
         TEMP_RECT.setRect(x, y, width, height);
         SWTShapeManager.transform(TEMP_RECT, transform);
         SWTShapeManager.awtToSWT(TEMP_RECT, SWT_RECT);
@@ -1205,7 +1271,8 @@ public class SWTGraphics2D extends Graphics2D {
 
     /**
      * @deprecated since underlying method has been deprecated
-     * @param xOr whether to be in xOr mode
+     * @param xOr
+     *            whether to be in xOr mode
      */
     public void setXORMode(final boolean xOr) {
         gc.setXORMode(xOr);
@@ -1214,7 +1281,8 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * Returns the advance width of the character provided in the current font.
      * 
-     * @param ch character to calculate the advance width of.
+     * @param ch
+     *            character to calculate the advance width of.
      * 
      * @return advance width of the character in the current font
      */
@@ -1229,7 +1297,8 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * Returns the width of the character provided in the current font.
      * 
-     * @param ch character to calculate the width of.
+     * @param ch
+     *            character to calculate the width of.
      * 
      * @return width of the character in the current font
      */
@@ -1244,7 +1313,8 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * Returns the extent of the provided string in the current font.
      * 
-     * @param str string to calculate the extent of.
+     * @param str
+     *            string to calculate the extent of.
      * 
      * @return extent of the string in the current font
      */
@@ -1259,7 +1329,8 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * Returns the extent of the provided text in the current font.
      * 
-     * @param str string to calculate the extent of.
+     * @param str
+     *            string to calculate the extent of.
      * 
      * @return extent of the string in the current font
      */
@@ -1272,12 +1343,12 @@ public class SWTGraphics2D extends Graphics2D {
     }
 
     /**
-     * Returns the extent of the provided text in the current font assuming the
-     * flags given.
+     * Returns the extent of the provided text in the current font assuming the flags given.
      * 
-     * @param str string to calculate the extent of
-     * @param flags flags to apply to the rendered font before calculation of
-     *            extent takes place
+     * @param str
+     *            string to calculate the extent of
+     * @param flags
+     *            flags to apply to the rendered font before calculation of extent takes place
      * @return extent of the string in the current font assuming flags provided
      */
     public org.eclipse.swt.graphics.Point textExtent(final String str, final int flags) {
@@ -1305,12 +1376,15 @@ public class SWTGraphics2D extends Graphics2D {
     }
 
     /**
-     * Returns whether the given rect and shape touch. If onStroke = true then
-     * it'll include the width of the stroke when calculating.
+     * Returns whether the given rect and shape touch. If onStroke = true then it'll include the
+     * width of the stroke when calculating.
      * 
-     * @param rect rect to test
-     * @param s shape to test
-     * @param onStroke whether to consider the width of the stroke
+     * @param rect
+     *            rect to test
+     * @param s
+     *            shape to test
+     * @param onStroke
+     *            whether to consider the width of the stroke
      * @return true if they touch
      */
     public boolean hit(final Rectangle rect, final Shape s, final boolean onStroke) {
@@ -1432,17 +1506,16 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * {@inheritDoc}
      * 
-     * @see java.awt.Graphics2D#drawImage(BufferedImage, BufferedImageOp, int,
-     *      int)
+     * @see java.awt.Graphics2D#drawImage(BufferedImage, BufferedImageOp, int, int)
      */
-    public void drawImage(final BufferedImage img, final BufferedImageOp op, final int x, final int y) {
+    public void drawImage(final BufferedImage img, final BufferedImageOp op, final int x,
+            final int y) {
     }
 
     /**
      * {@inheritDoc}
      * 
-     * @see java.awt.Graphics2D#drawRenderedImage(RenderedImage,
-     *      AffineTransform)
+     * @see java.awt.Graphics2D#drawRenderedImage(RenderedImage, AffineTransform)
      */
     public void drawRenderedImage(final RenderedImage img, final AffineTransform xform) {
     }
@@ -1450,8 +1523,7 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * {@inheritDoc}
      * 
-     * @see java.awt.Graphics2D#drawRenderableImage(RenderableImage,
-     *      AffineTransform)
+     * @see java.awt.Graphics2D#drawRenderableImage(RenderableImage, AffineTransform)
      */
     public void drawRenderableImage(final RenderableImage img, final AffineTransform xform) {
     }
@@ -1468,11 +1540,10 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * {@inheritDoc}
      * 
-     * @see java.awt.Graphics#drawImage(Image, int, int, int, int,
-     *      ImageObserver)
+     * @see java.awt.Graphics#drawImage(Image, int, int, int, int, ImageObserver)
      */
-    public boolean drawImage(final Image img, final int x, final int y, final int width, final int height,
-            final ImageObserver observer) {
+    public boolean drawImage(final Image img, final int x, final int y, final int width,
+            final int height, final ImageObserver observer) {
         return false;
     }
 
@@ -1489,34 +1560,34 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * {@inheritDoc}
      * 
-     * @see java.awt.Graphics#drawImage(Image, int, int, int, int, Color,
+     * @see java.awt.Graphics#drawImage(Image, int, int, int, int, Color, ImageObserver)
+     */
+    public boolean drawImage(final Image img, final int x, final int y, final int width,
+            final int height, final Color bgcolor, final ImageObserver observer) {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see java.awt.Graphics#drawImage(Image, int, int, int, int, int, int, int, int,
      *      ImageObserver)
      */
-    public boolean drawImage(final Image img, final int x, final int y, final int width, final int height,
-            final Color bgcolor, final ImageObserver observer) {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * @see java.awt.Graphics#drawImage(Image, int, int, int, int, int, int,
-     *      int, int, ImageObserver)
-     */
-    public boolean drawImage(final Image img, final int dx1, final int dy1, final int dx2, final int dy2,
-            final int sx1, final int sy1, final int sx2, final int sy2, final ImageObserver observer) {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * @see java.awt.Graphics#drawImage(Image, int, int, int, int, int, int,
-     *      int, int, Color, ImageObserver)
-     */
-    public boolean drawImage(final Image img, final int dx1, final int dy1, final int dx2, final int dy2,
-            final int sx1, final int sy1, final int sx2, final int sy2, final Color bgcolor,
+    public boolean drawImage(final Image img, final int dx1, final int dy1, final int dx2,
+            final int dy2, final int sx1, final int sy1, final int sx2, final int sy2,
             final ImageObserver observer) {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see java.awt.Graphics#drawImage(Image, int, int, int, int, int, int, int, int, Color,
+     *      ImageObserver)
+     */
+    public boolean drawImage(final Image img, final int dx1, final int dy1, final int dx2,
+            final int dy2, final int sx1, final int sy1, final int sx2, final int sy2,
+            final Color bgcolor, final ImageObserver observer) {
         return false;
     }
 
@@ -1550,7 +1621,8 @@ public class SWTGraphics2D extends Graphics2D {
             }
             FONT_CACHE.clear();
             for (final Iterator i = COLOR_CACHE.values().iterator(); i.hasNext();) {
-                final org.eclipse.swt.graphics.Color color = (org.eclipse.swt.graphics.Color) i.next();
+                final org.eclipse.swt.graphics.Color color =
+                        (org.eclipse.swt.graphics.Color) i.next();
                 color.dispose();
             }
             COLOR_CACHE.clear();
@@ -1560,6 +1632,17 @@ public class SWTGraphics2D extends Graphics2D {
             }
             SHAPE_CACHE.clear();
         }
+    }
+
+    /**
+     * Returns the underlying graphics context provided by SWT.<br>
+     * Any modifications to the graphics context can heavily influence the functionality of Piccolo!
+     * As a rule of thumb always restore the state of the context after it's use finished.
+     * 
+     * @return the graphics context
+     */
+    public GC getGraphicsContext() {
+        return gc;
     }
 
 }
