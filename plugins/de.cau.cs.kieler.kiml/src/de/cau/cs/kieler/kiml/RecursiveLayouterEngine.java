@@ -32,7 +32,7 @@ import de.cau.cs.kieler.kiml.util.IDebugCanvas;
  * @author ars
  * @author msp
  */
-public class RecursiveLayouterEngine {
+public class RecursiveLayouterEngine implements ILayouterEngine {
 
     /** the default layout configuration. */
     private DefaultLayoutConfig layoutConfig = new DefaultLayoutConfig();
