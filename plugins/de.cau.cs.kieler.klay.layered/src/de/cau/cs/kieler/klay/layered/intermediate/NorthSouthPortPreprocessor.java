@@ -89,12 +89,12 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *     ports on north and south sides, with layout groups and node successor constraints
  *     set.</dd>
  *   <dt>Slots:</dt><dd>Before phase 3.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link PortOrderProcessor},
+ *   <dt>Same-slot dependencies:</dt><dd>{@link PortListSorter},
  *     {@link SelfLoopProcessor}</dd>
  * </dl>
  * 
  * @see NorthSouthPortPostprocessor
- * @see PortOrderProcessor
+ * @see PortListSorter
  * @see SelfLoopProcessor
  * @author cds
  */

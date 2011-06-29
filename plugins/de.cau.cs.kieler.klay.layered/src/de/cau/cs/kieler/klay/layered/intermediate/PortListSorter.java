@@ -41,7 +41,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * 
  * @author cds
  */
-public class PortOrderProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class PortListSorter extends AbstractAlgorithm implements ILayoutProcessor {
     
     /**
      * A comparer for ports. Ports are sorted by side (north, east, south, west) in

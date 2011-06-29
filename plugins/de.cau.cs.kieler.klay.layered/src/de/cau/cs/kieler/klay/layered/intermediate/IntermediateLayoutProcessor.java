@@ -53,7 +53,7 @@ public enum IntermediateLayoutProcessor {
     /** Takes care of self loops. */
     SELF_LOOP_PROCESSOR,
     /** Orders the port lists of nodes with fixed port order. */
-    PORT_ORDER_PROCESSOR,
+    PORT_LIST_SORTER,
     /** Inserts dummy nodes to take care of northern and southern ports. */
     NORTH_SOUTH_PORT_PREPROCESSOR,
     
@@ -145,8 +145,8 @@ public enum IntermediateLayoutProcessor {
         case INVERTED_PORT_PROCESSOR:
             return new InvertedPortProcessor();
         
-        case PORT_ORDER_PROCESSOR:
-            return new PortOrderProcessor();
+        case PORT_LIST_SORTER:
+            return new PortListSorter();
         
         case PORT_POSITION_PROCESSOR:
             return new PortPositionProcessor();
