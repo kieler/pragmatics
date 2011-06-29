@@ -237,7 +237,14 @@ public class LayeredGraph extends LGraphElement {
             for (LPort port : node.getPorts()) {
                 for (LEdge edge : port.getOutgoingEdges()) {
                     writer.write("    " + node.hashCode() + " -> "
-                            + edge.getTarget().getNode().hashCode() + ";\n");
+                            + edge.getTarget().getNode().hashCode());
+                    
+                    // Check if this is a dummy edge
+                    if (edge.getProperty(Properties.COMPOUND_DUMMY_EDGE)) {
+                        writer.write(" [style=\"dashed\"]");
+                    }
+                    
+                    writer.write(";\n");
                 }
             }
         }
