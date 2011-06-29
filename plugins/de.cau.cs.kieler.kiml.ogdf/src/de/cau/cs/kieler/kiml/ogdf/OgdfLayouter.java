@@ -224,6 +224,7 @@ public abstract class OgdfLayouter {
             Map<String, KVectorChain> layoutInformation =
                     readLayoutInformation(new BufferedInputStream(process.getInputStream()),
                             progressMonitor.subTask(SMALL_TASK_WORK), ogdfServer);
+            System.out.println(layoutInformation);
             // apply the layout back to the KGraph
             applyLayout(layoutNode, layoutInformation);
             // perform post-processing
@@ -334,6 +335,7 @@ public abstract class OgdfLayouter {
         nodeIdCounter = 0;
         edgeIdCounter = 0;
         // reset mappings
+        node2IdMap.clear();
         id2EdgeMap.clear();
         // create the graph
         OgmlFactory factory = OgmlFactoryImpl.eINSTANCE;
