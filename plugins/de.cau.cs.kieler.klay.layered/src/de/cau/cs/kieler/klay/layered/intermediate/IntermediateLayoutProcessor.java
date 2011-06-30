@@ -40,10 +40,10 @@ public enum IntermediateLayoutProcessor {
     
     // Before Phase 3
     
-    /** Handles northern and southern hierarchical ports. */
-    HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR,
     /** Makes sure that layer constraints are taken care of. */
     LAYER_CONSTRAINT_PROCESSOR,
+    /** Handles northern and southern hierarchical ports. */
+    HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR,
     /** Takes a layered graph and turns it into a properly layered graph. */
     LONG_EDGE_SPLITTER,
     /** Makes sure nodes have at least fixed port sides. */

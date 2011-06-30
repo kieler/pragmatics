@@ -1,5 +1,5 @@
 /*
- * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+looks  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
@@ -57,7 +57,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *   <dt>Postcondition:</dt><dd>Hierarchical port dummies for northern and southern ports are
  *     replaced by multiple dummies if the port constraints are at least {@code FIXED_ORDER}.</dd>
  *   <dt>Slots:</dt><dd>Before phase 3.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link LayerConstraintProcessor}</dd>
  * </dl>
  * 
  * @see HierarchicalPortDummySizeProcessor
