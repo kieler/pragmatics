@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.klay.layered.properties.EdgeType;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -240,7 +241,7 @@ public class LayeredGraph extends LGraphElement {
                             + edge.getTarget().getNode().hashCode());
                     
                     // Check if this is a dummy edge
-                    if (edge.getProperty(Properties.COMPOUND_DUMMY_EDGE)) {
+                    if (edge.getProperty(Properties.EDGE_TYPE) == EdgeType.COMPOUND_DUMMY) {
                         writer.write(" [style=\"dashed\"]");
                     }
                     
