@@ -57,6 +57,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 //import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
+import de.cau.cs.kieler.klay.layered.properties.EdgeType;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 //import de.cau.cs.kieler.klay.layered.properties.NodeType;
@@ -500,7 +501,7 @@ public class CompoundGraphImporter {
                         if (!(parentChildMap.containsKey(lNode))
                                 || !(parentChildMap.get(lNode).contains(childCandidate))) {
                             LEdge dummyEdge = new LEdge();
-                            dummyEdge.setProperty(Properties.COMPOUND_DUMMY_EDGE, true);
+                            dummyEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_DUMMY);
 
                             LPort sourcePort = lNode.getPorts(PortSide.EAST).iterator().next();
                             dummyEdge.setSource(sourcePort);
@@ -530,7 +531,7 @@ public class CompoundGraphImporter {
                         if (!(parentChildMap.containsKey(lNode))
                                 || !(parentChildMap.get(lNode).contains(childCandidate))) {
                             LEdge dummyEdge = new LEdge();
-                            dummyEdge.setProperty(Properties.COMPOUND_DUMMY_EDGE, true);
+                            dummyEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_DUMMY);
 
                             LPort sourcePort = findDummyEdgePort(childCandidate, PortSide.EAST);
                             dummyEdge.setSource(sourcePort);
