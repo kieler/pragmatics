@@ -22,7 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.common.util.EList;
+//import org.eclipse.emf.common.util.EList;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -86,9 +86,8 @@ public class CompoundGraphImporter {
      *            graph properties updated during the transformation
      */
 
-    public void transformCompoundGraph(final KNode graph, 
-            final List<LNode> layeredNodes, final LayeredGraph layeredGraph,
-            final Map<KGraphElement, LGraphElement> elemMap,
+    public void transformCompoundGraph(final KNode graph, final List<LNode> layeredNodes,
+            final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap,
             final EnumSet<GraphProperties> graphProperties) {
         // Prepare a map to insert Parent Nodes and Child nodes for the documentation of dummy
         // edges.
@@ -253,16 +252,6 @@ public class CompoundGraphImporter {
         // set properties of the new node
         newNode.copyProperties(nodeLayout);
 
-        // // if we have a hypernode without ports, create a default input and output port
-        // if (newNode.getProperty(LayoutOptions.HYPERNODE) && newNode.getPorts().isEmpty()) {
-        // LPort inputPort = new LPort();
-        // inputPort.setSide(PortSide.WEST);
-        // inputPort.setNode(newNode);
-        //
-        // LPort outputPort = new LPort();
-        // outputPort.setSide(PortSide.EAST);
-        // outputPort.setNode(newNode);
-        // }
         // Add ports to connect dummy edges for the layering phase.
         LPort dummyPortWest = createDummyPort(newNode, PortSide.WEST);
         dummyPortWest.setProperty(Properties.LEAVE_DUMMY_PORT, true);
@@ -346,17 +335,24 @@ public class CompoundGraphImporter {
     private void transformCompoundNodeWithEdges(final KNode node, final List<LNode> layeredNodes,
             final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap,
             final EnumSet<GraphProperties> graphProperties) {
+        // While transforming the edges and creating dummy nodes, keep a list of the dummies.
+        List<LNode> dummyNodes = new LinkedList<LNode>();
         // Iterate incoming and outgoing edges, transform them and create dummy nodes and ports
         // representing the node.
-        transformIncomingEdges(node, layeredNodes, layeredGraph, elemMap);
-        transformOutgoingEdges(node, layeredNodes, layeredGraph, elemMap);
+        transformCompoundEdgeList(node, layeredNodes, layeredGraph, elemMap, dummyNodes,
+                node.getIncomingEdges(), true);
+        transformCompoundEdgeList(node, layeredNodes, layeredGraph, elemMap, dummyNodes,
+                node.getOutgoingEdges(), false);
     }
 
     /**
-     * Iterate the incoming edges of a node. Create an LEdge for each KEdge that has no
-     * representative yet. Create dummy nodes with ports - one UPPER_COMPOUND_PORT for each edge
-     * with a target port, one UPPER_COMPOUND_BORDER for all incoming edges without ports or in case
-     * there are no incoming edges.
+     * Iterate the given list of edges of a node. Create an LEdge for each KEdge that has no
+     * representative yet. Create dummy nodes with ports for each edge with a target port, a single
+     * compound border for all incoming edges without ports or in case there are no incoming edges.
+     * Edges from inside the node will be connected to lower dummy nodes, all others to upper dummy
+     * nodes. Either to be invoked with a List of incoming or one of outgoing edges as a parameter,
+     * indicate whether it is the one or the other by setting the incoming flag in the parameter
+     * list.
      * 
      * @param node
      *            The node to be replaced by upper dummy nodes.
@@ -365,14 +361,23 @@ public class CompoundGraphImporter {
      * @param layeredGraph
      *            The layered graph.
      * @param elemMap
-     *            the element map that maps the original {@code KGraph} elements to the transformed
+     *            The element map that maps the original {@code KGraph} elements to the transformed
      *            {@code LGraph} elements.
+     * @param dummyNodes
+     *            List to document already created dummy nodes.
+     * @param edgesList
+     *            List of the edges to transform.
+     * @param incoming
+     *            True, if the List is a List of incoming edges, false if it is a List of outgoing
+     *            edges.
      */
-    private void transformIncomingEdges(final KNode node, final List<LNode> layeredNodes,
-            final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap) {
-        EList<KEdge> inEdgesList = node.getIncomingEdges();
-        if (!inEdgesList.isEmpty()) {
-            for (KEdge kEdge : inEdgesList) {
+    private void transformCompoundEdgeList(final KNode node, final List<LNode> layeredNodes,
+            final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap,
+            final List<LNode> dummyNodes, final List<KEdge> edgesList, final boolean incoming) {
+
+        if (!edgesList.isEmpty()) {
+            for (KEdge kEdge : edgesList) {
+
                 // Create a corresponding LEdge for each KEdge in the List that has no
                 // representative yet.
                 LEdge lEdge = null;
@@ -381,165 +386,293 @@ public class CompoundGraphImporter {
                 } else {
                     lEdge = (LEdge) elemMap.get(kEdge);
                 }
+
                 // LNode to represent the node for this edge in the LGraph
                 LNode representative = null;
-                // Check, whether there is a target port for this edge - decide on dummy node type
-                // to use
-                KPort targetPort = kEdge.getTargetPort();
-                // If edge has no target port, check, if there is already an
-                // UPPER_COMPOUND_BORDER
-                if (targetPort == null) {
-                    // If there is none, create one
-                    if (!((elemMap.containsKey(node)) && (elemMap.get(node) instanceof LNode))) {
-                        representative = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_BORDER);
-                        layeredNodes.add(representative);
-                        elemMap.put(node, representative);
-                        // If the upper border dummy node has already been created, reuse it.
-                    } else {
-                        representative = (LNode) elemMap.get(node);
-                    }
-                    // If edge has a target port, create UPPER_COMPOUND_PORT dummy node
+
+                // Check, whether the edge is from inside the node or not
+                boolean fromInside = false;
+                if (incoming) {
+                    fromInside = isDescendantNotSelf(node, kEdge.getSource());
                 } else {
-                    representative = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_PORT);
+                    // The handling of outgoing edges is inverse to the handling of incoming edges.
+                    // So the reverse boolean value is needed.
+                    fromInside = !(isDescendantNotSelf(node, kEdge.getTarget()));
+                }
+
+                // Get the adequate port of current edge, null, if there is none
+                KPort port = null;
+                if (incoming) {
+                    port = kEdge.getTargetPort();
+                } else {
+                    port = kEdge.getSourcePort();
+                }
+
+                // If edge has no target port, create a border dummy node resp. reuse the one
+                // created
+                // before
+                if (port == null) {
+                    if (fromInside) {
+                        representative = createBorderDummyNode(node,
+                                NodeType.LOWER_COMPOUND_BORDER, dummyNodes);
+                    } else {
+                        representative = createBorderDummyNode(node,
+                                NodeType.UPPER_COMPOUND_BORDER, dummyNodes);
+                    }
+
+                    // If edge has a target port, create adequate compound port dummy node
+                } else {
+                    if (fromInside) {
+                        representative = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_PORT,
+                                dummyNodes);
+                    } else {
+                        representative = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_PORT,
+                                dummyNodes);
+                    }
+                }
+                if (!layeredNodes.contains(representative)) {
                     layeredNodes.add(representative);
                 }
 
-                // Connect the edge to the upper border dummy node, to western port in general, to
-                // eastern one, if edge originates in descendant of node.
+                // Connect the edge to the dummy node, to western port for incoming edges, to
+                // eastern for outgoing ones
                 LPort dummyPort = null;
-                if (isDescendantNotSelf(node, kEdge.getSource())) {
-                    Iterator<LPort> eastPortIterator = representative.getPorts(PortSide.EAST)
-                            .iterator();
-                    dummyPort = eastPortIterator.next();
+                PortSide portSide = null;
+                if (incoming) {
+                    portSide = PortSide.WEST;
                 } else {
-                    Iterator<LPort> westPortIterator = representative.getPorts(PortSide.WEST)
-                            .iterator();
-                    dummyPort = westPortIterator.next();
+                    portSide = PortSide.EAST;
                 }
-                lEdge.setTarget(dummyPort);
-                if (targetPort != null) {
-                    elemMap.put(targetPort, dummyPort);
-                    dummyPort.setProperty(Properties.ORIGIN, targetPort);
+                Iterator<LPort> portIterator = representative.getPorts(portSide).iterator();
+                dummyPort = portIterator.next();
+
+                if (incoming) {
+                    lEdge.setTarget(dummyPort);
+                } else {
+                    lEdge.setSource(dummyPort);
+                }
+
+                if (port != null) {
+                    elemMap.put(port, dummyPort);
+                    dummyPort.setProperty(Properties.ORIGIN, port);
                 }
             }
-
-            // If there is no incoming edge, a single upper border dummy node is created.
-        } else {
-            LNode dummyNode = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_BORDER);
-            layeredNodes.add(dummyNode);
-            elemMap.put(node, dummyNode);
         }
-    }
 
-    /**
-     * Iterate the outgoing edges of a node. Create an LEdge for each KEdge that has no
-     * representative yet. Create dummy nodes with ports. Handle two cases differently: 1. Edge has
-     * a target node that is a descendant of node 2. Edge has a target node that is no descendant of
-     * node In both cases, decide whether edge has a source port (create one compound port node per
-     * edge - in case 1. UPPER_COMPOUND_PORT, in case 2. LOWER_COMPOUND_PORT) or not (create or use
-     * UPPER_COMPOUND_BORDER in case 1., create ore use LOWER_COMPOUND_BORDER in case 2.)
-     * 
-     * @param node
-     *            the node to be replaced by border dummy nodes.
-     * @param layeredNodes
-     *            The List the dummy nodes are to be added to.
-     * @param layeredGraph
-     *            The layered graph.
-     * @param elemMap
-     *            the element map that maps the original {@code KGraph} elements to the transformed
-     *            {@code LGraph} elements.
-     */
-    private void transformOutgoingEdges(final KNode node, final List<LNode> layeredNodes,
-            final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap) {
-        EList<KEdge> outEdgesList = node.getOutgoingEdges();
-        if (!outEdgesList.isEmpty()) {
-            for (KEdge kEdge : outEdgesList) {
-                // variable denoting whether the edge points towards a descendant of node or not
-                boolean isInnerEdge = isDescendantNotSelf(node, kEdge.getSource());
-                // Create a corresponding LEdge for each KEdge in the List that has no
-                // representative yet.
-                LEdge lEdge = null;
-                if (!elemMap.containsKey(kEdge)) {
-                    lEdge = createLEdgeFromKEdge(kEdge, elemMap);
-                } else {
-                    lEdge = (LEdge) elemMap.get(kEdge);
-                }
-                // LNode representative is to represent the node for this edge in the LGraph. If
-                // edge points to a descendant of node, it is set to the UPPER_COMPOUND_BORDER, else
-                // to LOWER_COMPOUND_BORDER, null, if the corresponding border node has not been
-                // created yet.
-                LNode representative = null;
-                for (LNode lNode : layeredNodes) {
-                    KNode origin = (KNode) lNode.getProperty(Properties.ORIGIN);
-                    if (isInnerEdge) {
-                        if ((origin.equals(node))
-                                && (lNode.getProperty(Properties.NODE_TYPE)
-                                        .equals(NodeType.UPPER_COMPOUND_BORDER))) {
-                            representative = lNode;
-                        }
-                    } else {
-                        if (origin.equals(node)
-                                && lNode.getProperty(Properties.NODE_TYPE).equals(
-                                        NodeType.LOWER_COMPOUND_BORDER)) {
-                            representative = lNode;
-                        }
-                    }
-                }
-                // Check, whether there is a source port for this edge - decide on dummy node type
-                // to use
-                KPort sourcePort = kEdge.getSourcePort();
-                // Check, if edge has source port
-                if (sourcePort == null) {
-                    // If edge has no source port, check, whether the corresponding COMPOUND_BORDER
-                    // exists.
-                    if (representative == null) {
-                        // If there is none, create one. If there is one, it will be reused as
-                        // representative is already set to it.
-                        if (isInnerEdge) {
-                            representative = createBorderDummyNode(node,
-                                    NodeType.UPPER_COMPOUND_BORDER);
-                        } else {
-                            representative = createBorderDummyNode(node,
-                                    NodeType.LOWER_COMPOUND_BORDER);
-                        }
-                        layeredNodes.add(representative);
-                        elemMap.put(node, representative);
-                    }
-                    // If edge has a source port, create LOWER_COMPOUND_PORT dummy node
-                } else {
-                    if (isInnerEdge) {
-                        representative = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_PORT);
-                    } else {
-                        representative = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_PORT);
-                    }
-                    layeredNodes.add(representative);
-                }
+        // If not done before (if the edge list is empty or containing only edges to/from
+        // descendants, a single border dummy node is created.
 
-                // Connect the edge to the representative node, to eastern port in case of an edge
-                // to a descendant, to western port otherwise.
-                LPort dummyPort = null;
-                if (isInnerEdge) {
-                    Iterator<LPort> eastPortIterator = representative.getPorts(PortSide.EAST)
-                            .iterator();
-                    dummyPort = eastPortIterator.next();
-                } else {
-                    Iterator<LPort> westPortIterator = representative.getPorts(PortSide.WEST)
-                            .iterator();
-                    dummyPort = westPortIterator.next();
-                }
-                lEdge.setSource(dummyPort);
-                if (sourcePort != null) {
-                    elemMap.put(sourcePort, dummyPort);
-                    dummyPort.setProperty(Properties.ORIGIN, sourcePort);
-                }
-            }
-
-            // If there is no outgoing edge, a single lower border dummy node is created.
+        NodeType nodeType = null;
+        if (incoming) {
+            nodeType = NodeType.UPPER_COMPOUND_BORDER;
         } else {
-            LNode dummyNode = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_BORDER);
+            nodeType = NodeType.LOWER_COMPOUND_BORDER;
+        }
+        LNode dummyNode = createBorderDummyNode(node, nodeType, dummyNodes);
+        if (!(layeredNodes.contains(dummyNode))) {
             layeredNodes.add(dummyNode);
         }
     }
+
+    // // old version connecting all incoming edges to upper dummy nodes (no matter if they come
+    // // from within the node or not
+    // /**
+    // * Iterate the incoming edges of a node. Create an LEdge for each KEdge that has no
+    // * representative yet. Create dummy nodes with ports - one UPPER_COMPOUND_PORT for each edge
+    // * with a target port, one UPPER_COMPOUND_BORDER for all incoming edges without ports or in
+    // case
+    // * there are no incoming edges.
+    // *
+    // * @param node
+    // * The node to be replaced by upper dummy nodes.
+    // * @param layeredNodes
+    // * The List the dummy nodes are to be added to.
+    // * @param layeredGraph
+    // * The layered graph.
+    // * @param elemMap
+    // * the element map that maps the original {@code KGraph} elements to the transformed
+    // * {@code LGraph} elements.
+    // */
+    // private void transformIncomingEdges(final KNode node, final List<LNode> layeredNodes,
+    // final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap) {
+    // EList<KEdge> inEdgesList = node.getIncomingEdges();
+    // if (!inEdgesList.isEmpty()) {
+    // for (KEdge kEdge : inEdgesList) {
+    // // Create a corresponding LEdge for each KEdge in the List that has no
+    // // representative yet.
+    // LEdge lEdge = null;
+    // if (!elemMap.containsKey(kEdge)) {
+    // lEdge = createLEdgeFromKEdge(kEdge, elemMap);
+    // } else {
+    // lEdge = (LEdge) elemMap.get(kEdge);
+    // }
+    // // LNode to represent the node for this edge in the LGraph
+    // LNode representative = null;
+    // // Check, whether there is a target port for this edge - decide on dummy node type
+    // // to use
+    // KPort targetPort = kEdge.getTargetPort();
+    // // If edge has no target port, check, if there is already an
+    // // UPPER_COMPOUND_BORDER
+    // if (targetPort == null) {
+    // // If there is none, create one
+    // if (!((elemMap.containsKey(node)) && (elemMap.get(node) instanceof LNode))) {
+    // representative = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_BORDER);
+    // layeredNodes.add(representative);
+    // elemMap.put(node, representative);
+    // // If the upper border dummy node has already been created, reuse it.
+    // } else {
+    // representative = (LNode) elemMap.get(node);
+    // }
+    // // If edge has a target port, create UPPER_COMPOUND_PORT dummy node
+    // } else {
+    // representative = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_PORT);
+    // layeredNodes.add(representative);
+    // }
+    //
+    // // Connect the edge to the upper border dummy node, to western port in general, to
+    // // eastern one, if edge originates in descendant of node.
+    // LPort dummyPort = null;
+    // if (isDescendantNotSelf(node, kEdge.getSource())) {
+    // Iterator<LPort> eastPortIterator = representative.getPorts(PortSide.EAST)
+    // .iterator();
+    // dummyPort = eastPortIterator.next();
+    // } else {
+    // Iterator<LPort> westPortIterator = representative.getPorts(PortSide.WEST)
+    // .iterator();
+    // dummyPort = westPortIterator.next();
+    // }
+    // lEdge.setTarget(dummyPort);
+    // if (targetPort != null) {
+    // elemMap.put(targetPort, dummyPort);
+    // dummyPort.setProperty(Properties.ORIGIN, targetPort);
+    // }
+    // }
+    //
+    // // If there is no incoming edge, a single upper border dummy node is created.
+    // } else {
+    // LNode dummyNode = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_BORDER);
+    // layeredNodes.add(dummyNode);
+    // elemMap.put(node, dummyNode);
+    // }
+    // }
+
+    // // old version connecting all outgoing edges to a lower dummy port, no matter whether they
+    // are edges leading to a descendant or not.
+    // /**
+    // * Iterate the outgoing edges of a node. Create an LEdge for each KEdge that has no
+    // * representative yet. Create dummy nodes with ports. Handle two cases differently: 1. Edge
+    // has
+    // * a target node that is a descendant of node 2. Edge has a target node that is no descendant
+    // of
+    // * node In both cases, decide whether edge has a source port (create one compound port node
+    // per
+    // * edge - in case 1. UPPER_COMPOUND_PORT, in case 2. LOWER_COMPOUND_PORT) or not (create or
+    // use
+    // * UPPER_COMPOUND_BORDER in case 1., create ore use LOWER_COMPOUND_BORDER in case 2.)
+    // *
+    // * @param node
+    // * the node to be replaced by border dummy nodes.
+    // * @param layeredNodes
+    // * The List the dummy nodes are to be added to.
+    // * @param layeredGraph
+    // * The layered graph.
+    // * @param elemMap
+    // * the element map that maps the original {@code KGraph} elements to the transformed
+    // * {@code LGraph} elements.
+    // * @param dummyNodes
+    // */
+    // private void transformOutgoingEdges(final KNode node, final List<LNode> layeredNodes,
+    // final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap,
+    // List<LNode> dummyNodes) {
+    // EList<KEdge> outEdgesList = node.getOutgoingEdges();
+    // if (!outEdgesList.isEmpty()) {
+    // for (KEdge kEdge : outEdgesList) {
+    // // variable denoting whether the edge points towards a descendant of node or not
+    // boolean isInnerEdge = isDescendantNotSelf(node, kEdge.getSource());
+    // // Create a corresponding LEdge for each KEdge in the List that has no
+    // // representative yet.
+    // LEdge lEdge = null;
+    // if (!elemMap.containsKey(kEdge)) {
+    // lEdge = createLEdgeFromKEdge(kEdge, elemMap);
+    // } else {
+    // lEdge = (LEdge) elemMap.get(kEdge);
+    // }
+    // // LNode representative is to represent the node for this edge in the LGraph. If
+    // // edge points to a descendant of node, it is set to the UPPER_COMPOUND_BORDER, else
+    // // to LOWER_COMPOUND_BORDER, null, if the corresponding border node has not been
+    // // created yet.
+    // LNode representative = null;
+    // for (LNode lNode : layeredNodes) {
+    // KNode origin = (KNode) lNode.getProperty(Properties.ORIGIN);
+    // if (isInnerEdge) {
+    // if ((origin.equals(node))
+    // && (lNode.getProperty(Properties.NODE_TYPE)
+    // .equals(NodeType.UPPER_COMPOUND_BORDER))) {
+    // representative = lNode;
+    // }
+    // } else {
+    // if (origin.equals(node)
+    // && lNode.getProperty(Properties.NODE_TYPE).equals(
+    // NodeType.LOWER_COMPOUND_BORDER)) {
+    // representative = lNode;
+    // }
+    // }
+    // }
+    // // Check, whether there is a source port for this edge - decide on dummy node type
+    // // to use
+    // KPort sourcePort = kEdge.getSourcePort();
+    // // Check, if edge has source port
+    // if (sourcePort == null) {
+    // // If edge has no source port, check, whether the corresponding COMPOUND_BORDER
+    // // exists.
+    // if (representative == null) {
+    // // If there is none, create one. If there is one, it will be reused as
+    // // representative is already set to it.
+    // if (isInnerEdge) {
+    // representative = createBorderDummyNode(node,
+    // NodeType.UPPER_COMPOUND_BORDER);
+    // } else {
+    // representative = createBorderDummyNode(node,
+    // NodeType.LOWER_COMPOUND_BORDER);
+    // }
+    // layeredNodes.add(representative);
+    // elemMap.put(node, representative);
+    // }
+    // // If edge has a source port, create LOWER_COMPOUND_PORT dummy node
+    // } else {
+    // if (isInnerEdge) {
+    // representative = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_PORT);
+    // } else {
+    // representative = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_PORT);
+    // }
+    // layeredNodes.add(representative);
+    // }
+    //
+    // // Connect the edge to the representative node, to eastern port in case of an edge
+    // // to a descendant, to western port otherwise.
+    // LPort dummyPort = null;
+    // if (isInnerEdge) {
+    // Iterator<LPort> eastPortIterator = representative.getPorts(PortSide.EAST)
+    // .iterator();
+    // dummyPort = eastPortIterator.next();
+    // } else {
+    // Iterator<LPort> westPortIterator = representative.getPorts(PortSide.WEST)
+    // .iterator();
+    // dummyPort = westPortIterator.next();
+    // }
+    // lEdge.setSource(dummyPort);
+    // if (sourcePort != null) {
+    // elemMap.put(sourcePort, dummyPort);
+    // dummyPort.setProperty(Properties.ORIGIN, sourcePort);
+    // }
+    // }
+    //
+    // // If there is no outgoing edge, a single lower border dummy node is created.
+    // } else {
+    // LNode dummyNode = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_BORDER);
+    // layeredNodes.add(dummyNode);
+    // }
+    // }
 
     /**
      * Creates dummy edges between a compound node border dummy node and its children.
@@ -731,7 +864,9 @@ public class CompoundGraphImporter {
 
     /**
      * Creates a border dummy node in context of the representation of a compound node. Adds a
-     * western and an eastern port.
+     * western and an eastern port. In case a lower or upper compound dummy node is asked for,
+     * checks whether there is one already in the given list. If yes, that one will be returned, if
+     * not, a new dummy node is created.
      * 
      * @param node
      *            The node to be represented.
@@ -739,15 +874,28 @@ public class CompoundGraphImporter {
      *            Denotes, if an upper border node is to be created, if not, a lower border node
      *            will be created.
      */
-    private LNode createBorderDummyNode(final KNode node, final NodeType nodetype) {
-        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        LNode dummyNode = new LNode();
-        dummyNode.setProperty(Properties.ORIGIN, node);
-        dummyNode.setProperty(Properties.PARENT, node.getParent());
-        dummyNode.getPosition().x = nodeLayout.getXpos();
-        dummyNode.setProperty(Properties.NODE_TYPE, nodetype);
-        createDummyPort(dummyNode, PortSide.EAST);
-        createDummyPort(dummyNode, PortSide.WEST);
+    private LNode createBorderDummyNode(final KNode node, final NodeType nodeType,
+            final List<LNode> dummyList) {
+        LNode dummyNode = null;
+        if ((nodeType == NodeType.LOWER_COMPOUND_BORDER)
+                || (nodeType == NodeType.UPPER_COMPOUND_BORDER)) {
+            for (LNode dummy : dummyList) {
+                if (dummy.getProperty(Properties.NODE_TYPE) == nodeType) {
+                    dummyNode = dummy;
+                }
+            }
+        }
+        if (dummyNode == null) {
+            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+            dummyNode = new LNode();
+            dummyNode.setProperty(Properties.ORIGIN, node);
+            dummyNode.setProperty(Properties.PARENT, node.getParent());
+            dummyNode.getPosition().x = nodeLayout.getXpos();
+            dummyNode.setProperty(Properties.NODE_TYPE, nodeType);
+            createDummyPort(dummyNode, PortSide.EAST);
+            createDummyPort(dummyNode, PortSide.WEST);
+            dummyList.add(dummyNode);
+        }
         return dummyNode;
     }
 
