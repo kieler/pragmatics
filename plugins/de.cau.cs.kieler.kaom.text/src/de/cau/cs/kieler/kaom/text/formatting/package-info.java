@@ -11,16 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kaom.text.formatting;
-
-import de.cau.cs.kieler.core.annotations.formatting.AnnotationsValueConverter;
-
 /**
- * Customized {@link IValueConverter}.
- * Realizes the mapping of special terminal symbols to model content.
- * 
- * @author chsch
+ * Package containing serializing instructions (formatting, value conversion) for KAOM specifications.
  */
-public class KaomValueConverter extends AnnotationsValueConverter {
-
-}
+package de.cau.cs.kieler.kaom.text.formatting;
