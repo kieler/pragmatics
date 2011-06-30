@@ -44,6 +44,10 @@ public final class Properties {
     /** node type. */
     public static final IProperty<NodeType> NODE_TYPE = new Property<NodeType>("nodeType",
             NodeType.NORMAL);
+    
+   /** edge type.*/
+    public static final IProperty<EdgeType> EDGE_TYPE = 
+                                            new Property<EdgeType>("edgeType", EdgeType.NORMAL);
 
     /** offset for nodes in linear segments. */
     public static final IProperty<Integer> LINSEG_OFFSET = new Property<Integer>("linsegOffset", 0);
@@ -123,13 +127,6 @@ public final class Properties {
      * KNode that contained the origin of this node in the KGraph.
      */
     public static final IProperty<KNode> PARENT = new Property<KNode>("parent", null);
-
-    /**
-     * Flag to be set for edges that are created as a dummy to serve as layering constraint in
-     * compound graphs.
-     */
-    public static final IProperty<Boolean> COMPOUND_DUMMY_EDGE = new Property<Boolean>(
-            "compoundDummyEdge", false);
 
     /**
      * Flag indicating whether an LPort is set to a leave node in the inclusion tree to enable
