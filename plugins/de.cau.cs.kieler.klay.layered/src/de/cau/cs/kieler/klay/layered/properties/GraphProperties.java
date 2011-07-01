@@ -27,6 +27,8 @@ package de.cau.cs.kieler.klay.layered.properties;
 public enum GraphProperties {
     /** The graph contains dummy nodes representing external ports. */
     EXTERNAL_PORTS,
+    /** The graph contains hyperedges. */
+    HYPEREDGES,
     /** The graph contains ports that are not free for positioning. */
     NON_FREE_PORTS,
     /** The graph contains ports on the northern or southern side. */

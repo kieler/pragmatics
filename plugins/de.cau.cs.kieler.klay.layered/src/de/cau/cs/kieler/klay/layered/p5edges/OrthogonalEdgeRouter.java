@@ -75,9 +75,11 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 null,
                 
                 // Before Phase 4
-                EnumSet.of(
-                        IntermediateLayoutProcessor.HYPEREDGE_DUMMY_MERGER,
-                        IntermediateLayoutProcessor.NODE_MARGIN_CALCULATOR),
+                EnumSet.of(IntermediateLayoutProcessor.NODE_MARGIN_CALCULATOR),
+                
+                /* For hyperedges:
+                 *  - HYPEREDGE_DUMMY_MERGER
+                 */
                 
                 // Before Phase 5
                 /* For self-loops:
@@ -93,6 +95,11 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                  *  - EXTERNAL_PORT_ORTHOGONAL_EDGE_ROUTER
                  */
                 null);
+    
+    /** additional processor dependencies for graphs with hyperedges. */
+    private static final IntermediateProcessingStrategy HYPEREDGE_PROCESSING_ADDITIONS =
+        new IntermediateProcessingStrategy(IntermediateProcessingStrategy.BEFORE_PHASE_4,
+                IntermediateLayoutProcessor.HYPEREDGE_DUMMY_MERGER);
     
     /** additional processor dependencies for graphs with non-free ports. */
     private static final IntermediateProcessingStrategy NON_FREE_PORT_PROCESSING_ADDITIONS =
@@ -158,6 +165,10 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 BASELINE_PROCESSING_STRATEGY);
         
         // Additional dependencies
+        if (graphProperties.contains(GraphProperties.HYPEREDGES)) {
+            strategy.addAll(HYPEREDGE_PROCESSING_ADDITIONS);
+        }
+        
         if (graphProperties.contains(GraphProperties.NON_FREE_PORTS)) {
             strategy.addAll(NON_FREE_PORT_PROCESSING_ADDITIONS);
 

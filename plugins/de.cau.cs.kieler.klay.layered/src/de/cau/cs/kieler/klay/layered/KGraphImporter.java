@@ -143,15 +143,25 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         KVector layoutNodeSize = new KVector(layoutNodeLayout.getWidth(),
                 layoutNodeLayout.getHeight());
 
-        // Find out whether there are external ports that need to be considered
+        // Find out whether there are external ports or ports with multiple incident
+        // edges that need to be considered
         List<KPort> ports = graph.getPorts();
-        portLoop: for (KPort kport : ports) {
+        for (KPort kport : ports) {
+            int hierarchicalEdges = 0;
+
             for (KEdge kedge : kport.getEdges()) {
                 if (graph.equals(kedge.getSource().getParent())
                         || graph.equals(kedge.getTarget().getParent())) {
-                    graphProperties.add(GraphProperties.EXTERNAL_PORTS);
-                    break portLoop;
+                    hierarchicalEdges++;
                 }
+            }
+            
+            if (hierarchicalEdges > 0) {
+                graphProperties.add(GraphProperties.EXTERNAL_PORTS);
+            }
+            
+            if (hierarchicalEdges > 1) {
+                graphProperties.add(GraphProperties.HYPEREDGES);
             }
         }
 
@@ -280,6 +290,11 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 if (edge.getTargetPort() == kport) {
                     inEdges++;
                 }
+            }
+            
+            // find out if there are hyperedges
+            if (inEdges + outEdges > 1) {
+                graphProperties.add(GraphProperties.HYPEREDGES);
             }
 
             // create layered port, copying its position
