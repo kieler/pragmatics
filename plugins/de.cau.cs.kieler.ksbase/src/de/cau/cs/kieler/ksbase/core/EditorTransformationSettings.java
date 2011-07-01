@@ -416,7 +416,10 @@ public class EditorTransformationSettings implements Serializable {
                     fileURL, true);
             if (parseTransformations == null) {
                 KSBasEPlugin.getDefault().logError(
-                        "Could not parse extensions for editor " + editorId);
+                                "Could not parse extensions for editor "
+                                        + editorId
+                                        + ". Developer hint: make sure that the .ext file's containing"
+                                        + "folder is part of the binary build (build.properties)");
                 return;
             }
             // If we have any invalid transformations, i.e.
