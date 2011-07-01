@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Kieler Structure Based Editing Features
+Bundle-Name: KIELER Structure Based Editing Infrastructure
 Bundle-SymbolicName: de.cau.cs.kieler.ksbase;singleton:=true
 Bundle-Version: 0.4.0.qualifier
 Bundle-Activator: de.cau.cs.kieler.ksbase.KSBasEPlugin
