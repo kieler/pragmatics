@@ -72,7 +72,7 @@ public class CoverageAnalysis implements IAnalysis {
         float compoundArea = computeCompoundArea(parentNode);
         
         // Compute the node coverage
-        float nodeCoverage = (avgNodeSize * nodes + compoundArea) / area;
+        float nodeCoverage = Math.min((avgNodeSize * nodes + compoundArea) / area, 1);
         
         progressMonitor.done();
         

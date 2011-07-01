@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -49,12 +50,16 @@ public class AnalysisHandler extends AbstractHandler {
         GranaUIUtil.setCurrentShell(shell);
         // get the last selected analyses
         List<AbstractInfoAnalysis> analyses = GranaUtil.getLastAnalysesSelection();
-        // perform the analyses on the active diagram
-        Map<String, Object> results =
-                DiagramAnalyzer.analyse(editorPart, null, analyses, true);
-        // visualize the results
-        VisualizationServices.getInstance().visualize(analyses, results, false);
-
+        
+        if (analyses.isEmpty()) {
+            MessageDialog.openInformation(HandlerUtil.getActiveShell(event), "No Analyses",
+                    "No analyses are selected. Please configure analyses in the button menu.");
+        } else {
+            // perform the analyses on the active diagram
+            Map<String, Object> results = DiagramAnalyzer.analyse(editorPart, null, analyses, true);
+            // visualize the results
+            VisualizationServices.getInstance().visualize(analyses, results, false);
+        }
         return null;
     }
 }
