@@ -94,7 +94,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                 
                 // Before Phase 3
                 /* For flattened hierarchical graphs:
-                 *  - TODO Insert dependency to Insa's processor.
+                 *  - COMPOUND_DUMMY_EDGE_REMOVER
                  */
                 EnumSet.of(IntermediateLayoutProcessor.PORT_LIST_SORTER,
                            IntermediateLayoutProcessor.PORT_SIDE_PROCESSOR),
@@ -111,7 +111,8 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     
     /** additional processor dependencies for flattened hierarchical graphs. */
     private static final IntermediateProcessingStrategy FLATTENED_HIERARCHY_PROCESSING_ADDITIONS =
-        new IntermediateProcessingStrategy(); // TODO: Insert Insa's processor.
+        new IntermediateProcessingStrategy(IntermediateProcessingStrategy.BEFORE_PHASE_3,
+                IntermediateLayoutProcessor.COMPOUND_DUMMY_EDGE_REMOVER);
 
     
     ///////////////////////////////////////////////////////////////////////////////
