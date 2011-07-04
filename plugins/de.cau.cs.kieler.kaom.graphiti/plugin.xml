@@ -109,7 +109,9 @@
                tooltip="Reinitialize the Graphiti diagram for the selected KAOM model, overwriting any old &apos;kaog&apos; file.pos; file.">
            <visibleWhen
                   checkEnabled="false">
-               <iterate>
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
                   <adapt
                         type="org.eclipse.core.resources.IResource">
                      <or>

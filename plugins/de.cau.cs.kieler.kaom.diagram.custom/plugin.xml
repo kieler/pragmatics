@@ -36,7 +36,9 @@
                tooltip="Initialize the diagram for the selected KAOM model file, overwriting any old &apos;kaod&apos; file.pos;kaod&apos; file.">
             <visibleWhen
                   checkEnabled="false">
-               <iterate>
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
                   <adapt
                         type="org.eclipse.core.resources.IResource">
                      <or>

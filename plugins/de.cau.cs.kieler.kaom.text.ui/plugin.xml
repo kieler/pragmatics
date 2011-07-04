@@ -119,7 +119,9 @@
                tooltip="Convert the model to textual KAOM format">
             <visibleWhen
                   checkEnabled="false">
-               <iterate>
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
                   <adapt
                         type="org.eclipse.core.resources.IResource">
                      <test
@@ -142,7 +144,9 @@
                tooltip="Convert the model to XMI-based KAOM format">
             <visibleWhen
                   checkEnabled="false">
-               <iterate>
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
                   <adapt
                         type="org.eclipse.core.resources.IResource">
                      <test
