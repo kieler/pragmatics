@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 //import org.eclipse.emf.common.util.EList;
 
@@ -90,6 +91,8 @@ public class CompoundGraphImporter {
     public void transformCompoundGraph(final KNode graph, final List<LNode> layeredNodes,
             final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap,
             final EnumSet<GraphProperties> graphProperties) {
+//        // Comment next line in to make the dummy edges be removed after Layering
+//        graphProperties.add(GraphProperties.FLAT_HIERARCHICAL);
         // Prepare a map to insert Parent Nodes and Child nodes for the documentation of dummy
         // edges.
         Map<LNode, List<LNode>> parentChildMap = new HashMap<LNode, List<LNode>>();
