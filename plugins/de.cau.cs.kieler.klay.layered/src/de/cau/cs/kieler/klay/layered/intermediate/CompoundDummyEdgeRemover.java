@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-
-import java.util.ListIterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
@@ -51,19 +51,25 @@ public class CompoundDummyEdgeRemover extends AbstractAlgorithm implements ILayo
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Removing compound dummy edges", 1);
 
-        ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
-        while (layerIter.hasNext()) {
-            Layer layer = layerIter.next();
+        List<Layer> layerList = layeredGraph.getLayers();
+
+        LinkedList<LEdge> dummyEdgeList = new LinkedList<LEdge>();
+
+        // Find dummy edges.
+        for (Layer layer : layerList) {
             for (LNode lNode : layer.getNodes()) {
                 for (LEdge lEdge : lNode.getOutgoingEdges()) {
                     if (lEdge.getProperty(Properties.EDGE_TYPE) == EdgeType.COMPOUND_DUMMY) {
-                        lEdge.getSource().getOutgoingEdges().remove(lEdge);
-                        lEdge.getTarget().getIncomingEdges().remove(lEdge);
+                        dummyEdgeList.add(lEdge);
                     }
                 }
             }
         }
-
+        // Remove dummy edges.
+        for (LEdge lEdge : dummyEdgeList) {
+            lEdge.getSource().getOutgoingEdges().remove(lEdge);
+            lEdge.getTarget().getIncomingEdges().remove(lEdge);
+        }
         getMonitor().done();
     }
 
