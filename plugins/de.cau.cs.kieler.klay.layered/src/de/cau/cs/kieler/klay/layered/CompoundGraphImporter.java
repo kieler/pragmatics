@@ -377,6 +377,7 @@ public class CompoundGraphImporter {
             final List<LNode> dummyNodes, final List<KEdge> edgesList, final boolean incoming) {
 
         for (KEdge kEdge : edgesList) {
+            KEdgeLayout edgeLayout = kEdge.getData(KEdgeLayout.class);
 
             // Create a corresponding LEdge for each KEdge in the List that has no
             // representative yet.
@@ -447,8 +448,14 @@ public class CompoundGraphImporter {
             dummyPort = portIterator.next();
 
             if (incoming) {
+                KPoint targetPoint = edgeLayout.getTargetPoint();
+                dummyPort.getPosition().x = targetPoint.getX() - representative.getPosition().x;
+                //dummyPort.getPosition().y = targetPoint.getY() - representative.getPosition().y;
                 lEdge.setTarget(dummyPort);
             } else {
+                KPoint sourcePoint = edgeLayout.getSourcePoint();
+                dummyPort.getPosition().x = sourcePoint.getX() - representative.getPosition().x;
+                //dummyPort.getPosition().y = sourcePoint.getY() - representative.getPosition().y;
                 lEdge.setSource(dummyPort);
             }
 
