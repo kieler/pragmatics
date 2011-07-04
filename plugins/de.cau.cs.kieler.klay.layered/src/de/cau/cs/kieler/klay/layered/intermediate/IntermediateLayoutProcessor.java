@@ -45,6 +45,8 @@ public enum IntermediateLayoutProcessor {
     LAYER_CONSTRAINT_PROCESSOR,
     /** Handles northern and southern hierarchical ports. */
     HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR,
+    /** Removes layering constraint dummy edges from compound graphs. */
+    COMPOUND_DUMMY_EDGE_REMOVER,
     /** Takes a layered graph and turns it into a properly layered graph. */
     LONG_EDGE_SPLITTER,
     /** Makes sure nodes have at least fixed port sides. */
@@ -57,8 +59,7 @@ public enum IntermediateLayoutProcessor {
     PORT_LIST_SORTER,
     /** Inserts dummy nodes to take care of northern and southern ports. */
     NORTH_SOUTH_PORT_PREPROCESSOR,
-    /** Removes layering constraint dummy edges from compound graphs. */
-    COMPOUND_DUMMY_EDGE_REMOVER,
+   
     
     // Before Phase 4
     
