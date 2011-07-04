@@ -7,6 +7,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
+import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartUtil;
@@ -71,7 +72,12 @@ public class AdvancedRenderingLabelEditPart extends LabelEditPart implements IAd
         if (updateTriggerFigure) {
             updateTriggerFigure = false;
             util.updateFigure(primaryShape, this.getModelElement(), this, true);
+            IFigure label = this.getFigure();
+            if (label instanceof WrappingLabel) {
+               ((WrappingLabel)label).setTextWrap(true);
+            }
         }
+        
     }
     
 }
