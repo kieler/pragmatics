@@ -20,13 +20,14 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
  * evolutionary algorithms shall inherit from this class. After construction,
  * {@link #step()} can be used for stepwise execution. In this case,
  * {@link #reset()} must be called explicitly once before.
- * 
+ *
  * @author bdu
  */
 public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
 
     /**
-     * Returns the generation number.
+     * Returns the generation number. The generation number is initially
+     * <code>0</code>. It is increased by <code>1</code> in each step.
      *
      * @return the generation number
      */
@@ -38,6 +39,9 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      * Performs a single step of the algorithm by proceeding to the next
      * generation. The algorithm must be initialized before by calling
      * {@link #reset()}.
+     *
+     * @throws IllegalStateException
+     *             if called after the stop criterion has been satisfied.
      */
     public final void step() {
 
@@ -81,26 +85,39 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
 
     /**
      * Selects parent individuals for recombination, depending on some strategy
-     * for parent selection.
+     * for parent selection. This can be the entire current population or a
+     * subset thereof.
      **/
     protected abstract void select();
 
     /**
      * Generates offspring by recombining selected parent individuals, depending
-     * on some recombination strategy.
+     * on some recombination strategy. The basic idea of recombination is to
+     * build new combinations of features that exist in the population, thus
+     * hopefully combining advantageous features from several individuals in a
+     * single one. The genetic material of two or more parent individuals is put
+     * together to produce one or more offspring. How this is done may vary
+     * widely among different implementations.
+     *
      **/
     protected abstract void crossOver();
 
     /**
-     * Mutates offspring, depending on some mutation strategy.
+     * Mutates offspring, depending on some mutation strategy. The mutation
+     * operation serves to introduce new genetic material into the population by
+     * altering the existing material in a random fashion.
+     *
      **/
     protected abstract void mutate();
 
     /**
-     * Selects individuals that shall be preserved and proceeds to the next
-     * generation. According to the implemented survivors' selection strategy,
-     * only newly generated individuals or also parent individuals may be
-     * considered.
+     * Selects individuals that shall be preserved, and proceeds to the next
+     * generation. Only the individuals selected for survival will be members of
+     * the next generation. According to the implemented survivors' selection
+     * strategy, only newly generated individuals or also parent individuals may
+     * be considered for survival. The fitness of an individual should have a
+     * major influence on its chance for survival.
+     *
      **/
     protected abstract void survive();
 
