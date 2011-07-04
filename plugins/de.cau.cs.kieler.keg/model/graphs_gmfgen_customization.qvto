@@ -19,7 +19,7 @@ main() {
 	model.plugin.requiredPlugins += "de.cau.cs.kieler.karma";
 	model.plugin.version := "0.2.0.qualifier";
 	model.plugin.provider := "Christian-Albrechts-Universität zu Kiel";
-	model.plugin.name := "KEG";
+	model.plugin.name := "KIELER Graph Diagrams";
 	
 	// use our own category for the "new" wizard
 	model.diagram.creationWizardCategoryID := "de.cau.cs.kieler";
