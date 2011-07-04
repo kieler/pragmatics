@@ -129,9 +129,8 @@ public class CompoundGraphImporter {
                         graphProperties, parentChildMap);
             }
             if (currentNode != graph) {
-                transformCompoundNodeWithEdges(currentNode, layeredNodes, layeredGraph, elemMap,
-                        graphProperties);
-                setCompoundDummyEdges(currentNode, elemMap, layeredNodes, parentChildMap);
+                transformCompoundNodeWithEdges(currentNode, layeredNodes, layeredGraph, elemMap);
+                setCompoundDummyEdges(layeredNodes, parentChildMap);
             } else {
                 System.out.println("The layoutNode has been reached in recursion.");
             }
@@ -329,21 +328,18 @@ public class CompoundGraphImporter {
      * @param elemMap
      *            the element map that maps the original {@code KGraph} elements to the transformed
      *            {@code LGraph} elements.
-     * @param graphProperties
-     *            graph properties updated during the transformation.
      * 
      */
     private void transformCompoundNodeWithEdges(final KNode node, final List<LNode> layeredNodes,
-            final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap,
-            final EnumSet<GraphProperties> graphProperties) {
+            final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap) {
         // While transforming the edges and creating dummy nodes, keep a list of the dummies.
         List<LNode> dummyNodes = new LinkedList<LNode>();
         // Iterate incoming and outgoing edges, transform them and create dummy nodes and ports
         // representing the node.
-        transformCompoundEdgeList(node, layeredNodes, layeredGraph, elemMap, dummyNodes,
-                node.getIncomingEdges(), true);
-        transformCompoundEdgeList(node, layeredNodes, layeredGraph, elemMap, dummyNodes,
-                node.getOutgoingEdges(), false);
+        transformCompoundEdgeList(node, layeredNodes, elemMap, dummyNodes, node.getIncomingEdges(),
+                true);
+        transformCompoundEdgeList(node, layeredNodes, elemMap, dummyNodes, node.getOutgoingEdges(),
+                false);
     }
 
     /**
@@ -359,8 +355,6 @@ public class CompoundGraphImporter {
      *            The node to be replaced by upper dummy nodes.
      * @param layeredNodes
      *            The List the dummy nodes are to be added to.
-     * @param layeredGraph
-     *            The layered graph.
      * @param elemMap
      *            The element map that maps the original {@code KGraph} elements to the transformed
      *            {@code LGraph} elements.
@@ -373,8 +367,8 @@ public class CompoundGraphImporter {
      *            edges.
      */
     private void transformCompoundEdgeList(final KNode node, final List<LNode> layeredNodes,
-            final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap,
-            final List<LNode> dummyNodes, final List<KEdge> edgesList, final boolean incoming) {
+            final Map<KGraphElement, LGraphElement> elemMap, final List<LNode> dummyNodes,
+            final List<KEdge> edgesList, final boolean incoming) {
 
         for (KEdge kEdge : edgesList) {
             KEdgeLayout edgeLayout = kEdge.getData(KEdgeLayout.class);
@@ -482,16 +476,13 @@ public class CompoundGraphImporter {
 
     /**
      * Creates dummy edges between a compound node border dummy node and its children.
-     * 
      * @param layeredNodes
-     * 
-     * @param source
-     *            the source node.
      * @param layeredNodes
      *            the list of LNodes with the created dummy nodes and the imported nodes.
+     * @param source
+     *            the source node.
      */
-    private void setCompoundDummyEdges(final KNode layoutNode,
-            final Map<KGraphElement, LGraphElement> elemMap, final List<LNode> layeredNodes,
+    private void setCompoundDummyEdges(final List<LNode> layeredNodes,
             final Map<LNode, List<LNode>> parentChildMap) {
         for (LNode lNode : layeredNodes) {
             NodeType nodeType = lNode.getProperty(Properties.NODE_TYPE);
