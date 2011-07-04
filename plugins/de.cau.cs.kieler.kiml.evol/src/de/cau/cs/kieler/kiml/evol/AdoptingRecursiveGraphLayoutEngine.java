@@ -44,12 +44,12 @@ import de.cau.cs.kieler.kiml.ui.layout.LayoutMapping;
  * @see RecursiveGraphLayoutEngine
  *
  */
-class AdoptingRecursiveLayouterEngine extends RecursiveGraphLayoutEngine {
+class AdoptingRecursiveGraphLayoutEngine extends RecursiveGraphLayoutEngine {
     /**
-     * Creates a new {@link AdoptingRecursiveLayouterEngine} instance.
+     * Creates a new {@link AdoptingRecursiveGraphLayoutEngine} instance.
      *
      */
-    public AdoptingRecursiveLayouterEngine() {
+    public AdoptingRecursiveGraphLayoutEngine() {
         super(null);
     }
 

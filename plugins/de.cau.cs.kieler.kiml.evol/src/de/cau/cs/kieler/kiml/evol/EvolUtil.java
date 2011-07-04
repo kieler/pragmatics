@@ -102,7 +102,7 @@ public final class EvolUtil {
         private static <T> DiagramLayoutManager<T> adoptAndApplyLayout(
                 final Genome individual, final IEditorPart editor) {
 
-            AdoptingRecursiveLayouterEngine engine = new AdoptingRecursiveLayouterEngine();
+            AdoptingRecursiveGraphLayoutEngine engine = new AdoptingRecursiveGraphLayoutEngine();
 
             IKielerProgressMonitor monitor = new BasicProgressMonitor();
 
@@ -401,7 +401,7 @@ public final class EvolUtil {
                 throw new IllegalArgumentException();
             }
 
-            AdoptingRecursiveLayouterEngine engine = new AdoptingRecursiveLayouterEngine();
+            AdoptingRecursiveGraphLayoutEngine engine = new AdoptingRecursiveGraphLayoutEngine();
 
             IKielerProgressMonitor monitor = new BasicProgressMonitor();
 
