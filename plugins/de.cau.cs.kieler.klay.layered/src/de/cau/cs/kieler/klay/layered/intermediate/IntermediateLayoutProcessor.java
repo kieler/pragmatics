@@ -20,6 +20,7 @@ import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
  * This enumeration also serves as a factory for intermediate layout processors.
  * 
  * @author cds
+ * @author ima
  */
 public enum IntermediateLayoutProcessor {
     
@@ -56,6 +57,8 @@ public enum IntermediateLayoutProcessor {
     PORT_LIST_SORTER,
     /** Inserts dummy nodes to take care of northern and southern ports. */
     NORTH_SOUTH_PORT_PREPROCESSOR,
+    /** Removes layering constraint dummy edges from compound graphs. */
+    COMPOUND_DUMMY_EDGE_REMOVER,
     
     // Before Phase 4
     
@@ -105,6 +108,9 @@ public enum IntermediateLayoutProcessor {
         switch (this) {
         case BIG_NODES_PROCESSOR:
             return new BigNodesProcessor();
+            
+        case COMPOUND_DUMMY_EDGE_REMOVER:
+            return new CompoundDummyEdgeRemover();
             
         case HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR:
             return new HierarchicalPortConstraintProcessor();
