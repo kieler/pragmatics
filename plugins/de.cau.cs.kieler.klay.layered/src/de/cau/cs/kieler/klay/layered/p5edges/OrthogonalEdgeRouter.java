@@ -54,47 +54,42 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
     
-    /** intermediate processing strategy for basic graphs. */
-    private static final IntermediateProcessingStrategy BASELINE_PROCESSING_STRATEGY =
-        new IntermediateProcessingStrategy(
-                // Before Phase 1
-                null,
-                
-                // Before Phase 2
-                null,
-                
-                // Before Phase 3
-                /* For non-free ports:
-                 *  - NORTH_SOUTH_PORT_PREPROCESSOR
-                 *  - ODD_PORT_SIDE_PROCESSOR
-                 * 
-                 * For self-loops:
-                 *  - EXTERNAL_PORT_CONSTRAINT_PROCESSOR
-                 *  - SELF_LOOP_PROCESSOR
-                 */
-                null,
-                
-                // Before Phase 4
-                EnumSet.of(IntermediateLayoutProcessor.NODE_MARGIN_CALCULATOR),
-                
-                /* For hyperedges:
-                 *  - HYPEREDGE_DUMMY_MERGER
-                 */
-                
-                // Before Phase 5
-                /* For self-loops:
-                 *  - EXTERNAL_PORT_DUMMY_SIZE_PROCESSOR
-                 */
-                null,
-                
-                // After Phase 5
-                /* For non-free ports:
-                 *  - NORTH_SOUTH_PORT_POSTPROCESSOR
-                 * 
-                 * For external ports:
-                 *  - EXTERNAL_PORT_ORTHOGONAL_EDGE_ROUTER
-                 */
-                null);
+    /* The basic processing strategy for this phase is empty. Depending on
+     * the graph features, dependencies on intermediate processors are added
+     * dynamically as follows:
+     * 
+     * Before phase 1:
+     *   - None.
+     * 
+     * Before phase 2:
+     *   - None.
+     * 
+     * Before phase 3:
+     *   - For non-free ports:
+     *     - NORTH_SOUTH_PORT_PREPROCESSOR
+     *     - ODD_PORT_SIDE_PROCESSOR
+     *   
+     *   - For self-loops:
+     *     - SELF_LOOP_PROCESSOR
+     *   
+     *   - For hierarchical ports:
+     *     - HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR
+     * 
+     * Before phase 4:
+     *   - For hyperedges:
+     *     - HYPEREDGE_DUMMY_MERGER
+     * 
+     * Before phase 5:
+     *   - For hierarchical ports:
+     *     - HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR
+     * 
+     * After phase 5:
+     *   - For non-free ports:
+     *     - NORTH_SOUTH_PORT_POSTPROCESSOR
+     *   
+     *   - For hierarchical ports:
+     *     - HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER
+     */
     
     /** additional processor dependencies for graphs with hyperedges. */
     private static final IntermediateProcessingStrategy HYPEREDGE_PROCESSING_ADDITIONS =
@@ -127,8 +122,8 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 // After Phase 5
                 EnumSet.of(IntermediateLayoutProcessor.NORTH_SOUTH_PORT_POSTPROCESSOR));
     
-    /** additional processor dependencies for graphs with external ports. */
-    private static final IntermediateProcessingStrategy EXTERNAL_PORT_PROCESSING_ADDITIONS =
+    /** additional processor dependencies for graphs with hierarchical ports. */
+    private static final IntermediateProcessingStrategy HIERARCHICAL_PORT_PROCESSING_ADDITIONS =
         new IntermediateProcessingStrategy(
                 // Before Phase 1
                 null,
@@ -161,8 +156,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         Set<GraphProperties> graphProperties = graph.getProperty(Properties.GRAPH_PROPERTIES);
         
         // Basic strategy
-        IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy(
-                BASELINE_PROCESSING_STRATEGY);
+        IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy();
         
         // Additional dependencies
         if (graphProperties.contains(GraphProperties.HYPEREDGES)) {
@@ -178,7 +172,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         }
 
         if (graphProperties.contains(GraphProperties.EXTERNAL_PORTS)) {
-            strategy.addAll(EXTERNAL_PORT_PROCESSING_ADDITIONS);
+            strategy.addAll(HIERARCHICAL_PORT_PROCESSING_ADDITIONS);
         }
 
         if (graphProperties.contains(GraphProperties.SELF_LOOPS)) {

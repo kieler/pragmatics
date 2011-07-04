@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,6 +45,7 @@ import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.PolylineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.SimpleSplineEdgeRouter;
+import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -54,7 +56,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * phase, so called intermediate layout processors can be inserted that do some kind of
  * pre or post processing. Implementations of the different main phases specify the
  * intermediate layout processors they require, which are automatically collected and
- * inserted between the main phases.</p>
+ * inserted between the main phases. The layout provider itself also specifies some
+ * dependencies.</p>
  * 
  * <pre>
  *           Intermediate Layout Processors
@@ -76,6 +79,43 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author cds
  */
 public class LayeredLayoutProvider extends AbstractLayoutProvider {
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Processing Strategy Constants
+    
+    /** intermediate processing strategy for basic graphs. */
+    private static final IntermediateProcessingStrategy BASELINE_PROCESSING_STRATEGY =
+        new IntermediateProcessingStrategy(
+                // Before Phase 1
+                null,
+                
+                // Before Phase 2
+                null,
+                
+                // Before Phase 3
+                /* For flattened hierarchical graphs:
+                 *  - TODO Insert dependency to Insa's processor.
+                 */
+                EnumSet.of(IntermediateLayoutProcessor.PORT_LIST_SORTER,
+                           IntermediateLayoutProcessor.PORT_SIDE_PROCESSOR),
+                
+                // Before Phase 4
+                EnumSet.of(IntermediateLayoutProcessor.NODE_MARGIN_CALCULATOR,
+                           IntermediateLayoutProcessor.PORT_POSITION_PROCESSOR),
+                
+                // Before Phase 5
+                null,
+                
+                // After Phase 5
+                null);
+    
+    /** additional processor dependencies for flattened hierarchical graphs. */
+    private static final IntermediateProcessingStrategy FLATTENED_HIERARCHY_PROCESSING_ADDITIONS =
+        new IntermediateProcessingStrategy(); // TODO: Insert Insa's processor.
+
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Variables
 
     /** phase 1: cycle breaking module. */
     private ILayoutPhase cycleBreaker = new GreedyCycleBreaker();
@@ -221,7 +261,8 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             .addAll(layerer.getIntermediateProcessingStrategy(graph))
             .addAll(crossingMinimizer.getIntermediateProcessingStrategy(graph))
             .addAll(nodePlacer.getIntermediateProcessingStrategy(graph))
-            .addAll(edgeRouter.getIntermediateProcessingStrategy(graph));
+            .addAll(edgeRouter.getIntermediateProcessingStrategy(graph))
+            .addAll(this.getIntermediateProcessingStrategy(graph));
         
         // construct the list of processors that make up the algorithm
         algorithm.clear();
@@ -274,6 +315,29 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         }
         
         return result;
+    }
+    
+    /**
+     * Returns an intermediate processing strategy with processors not tied to
+     * specific phases.
+     * 
+     * @param graph the layered graph to be processed. The strategy may vary
+     *              depending on certain properties of the graph.
+     * @return intermediate processing strategy. May be {@code null}.
+     */
+    private IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
+        Set<GraphProperties> graphProperties = graph.getProperty(Properties.GRAPH_PROPERTIES);
+        
+        // Basic strategy
+        IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy(
+                BASELINE_PROCESSING_STRATEGY);
+        
+        // Additional dependencies
+        if (graphProperties.contains(GraphProperties.FLAT_HIERARCHICAL)) {
+            strategy.addAll(FLATTENED_HIERARCHY_PROCESSING_ADDITIONS);
+        }
+        
+        return strategy;
     }
 
     

@@ -182,10 +182,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 // Before Phase 2
                 null,
                 // Before Phase 3
-                EnumSet.of(
-                        IntermediateLayoutProcessor.PORT_LIST_SORTER,
-                        IntermediateLayoutProcessor.PORT_SIDE_PROCESSOR,
-                        IntermediateLayoutProcessor.LONG_EDGE_SPLITTER),
+                EnumSet.of(IntermediateLayoutProcessor.LONG_EDGE_SPLITTER),
                 // Before Phase 4
                 EnumSet.of(IntermediateLayoutProcessor.IN_LAYER_CONSTRAINT_PROCESSOR),
                 // Before Phase 5

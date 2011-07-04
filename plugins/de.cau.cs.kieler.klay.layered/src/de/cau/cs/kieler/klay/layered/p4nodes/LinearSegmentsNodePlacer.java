@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +35,6 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -194,14 +192,6 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         }
     }
     
-    /** intermediate processing strategy. */
-    private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
-        new IntermediateProcessingStrategy(
-                IntermediateProcessingStrategy.BEFORE_PHASE_4,
-                EnumSet.of(
-                        IntermediateLayoutProcessor.NODE_MARGIN_CALCULATOR,
-                        IntermediateLayoutProcessor.PORT_POSITION_PROCESSOR));
-    
     /** array of sorted linear segments. */
     private LinearSegment[] linearSegments;
     /** list of regions. */
@@ -211,7 +201,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      * {@inheritDoc}
      */
     public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
-        return INTERMEDIATE_PROCESSING_STRATEGY;
+        return null;
     }
     
     /**

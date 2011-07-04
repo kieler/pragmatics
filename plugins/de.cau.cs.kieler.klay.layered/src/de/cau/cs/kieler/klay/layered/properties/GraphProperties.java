@@ -27,6 +27,8 @@ package de.cau.cs.kieler.klay.layered.properties;
 public enum GraphProperties {
     /** The graph contains dummy nodes representing external ports. */
     EXTERNAL_PORTS,
+    /** The graph is a flattened hierarchical graph. */ 
+    FLAT_HIERARCHICAL,
     /** The graph contains hyperedges. */
     HYPEREDGES,
     /** The graph contains ports that are not free for positioning. */
