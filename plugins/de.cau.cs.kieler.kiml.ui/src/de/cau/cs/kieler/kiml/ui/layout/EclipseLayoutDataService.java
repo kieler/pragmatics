@@ -34,9 +34,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
@@ -44,7 +44,6 @@ import de.cau.cs.kieler.kiml.SemanticLayoutConfig;
 import de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService;
 import de.cau.cs.kieler.kiml.ui.EclipseLayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.Messages;
 
 /**
  * A special layout data service for use in an Eclipse instance.
@@ -79,7 +78,7 @@ public class EclipseLayoutDataService extends ExtensionLayoutDataService {
     public static final String PREF_OBLIQUE_ROUTE = "kiml.oblique.route";
     
     /** list of registered diagram layout managers. */
-    private final List<DiagramLayoutManager> managers = new LinkedList<DiagramLayoutManager>();
+    private final List<DiagramLayoutManager<?>> managers = new LinkedList<DiagramLayoutManager<?>>();
     /** set of registered diagram elements. */
     private Set<String> registeredElements = new HashSet<String>();
     /** list of default options read from the extension point. */
@@ -117,151 +116,22 @@ public class EclipseLayoutDataService extends ExtensionLayoutDataService {
     }
     
     /**
-     * Returns the most suitable layout manager for the given editor and edit part.
+     * Returns the most suitable layout manager for the given workbench and diagram part.
      * 
-     * @param workbenchPart the workbench part for which the layout manager should be
-     *     fetched, or {@code null}
-     * @param editPart the edit part for which the layout manager should be
+     * @param workbenchPart the workbench part for which the layout manager should be fetched
+     * @param diagramPart the diagram part for which the layout manager should be
      *     fetched, or {@code null}
      * @return the most suitable diagram layout manager
      */
-    public DiagramLayoutManager getManager(final IWorkbenchPart workbenchPart,
-            final EditPart editPart) {
-        for (DiagramLayoutManager manager : managers) {
+    public DiagramLayoutManager<?> getManager(final IWorkbenchPart workbenchPart,
+            final Object diagramPart) {
+        for (DiagramLayoutManager<?> manager : managers) {
             if (manager.supports(workbenchPart)
-                    || workbenchPart == null && manager.supports(editPart)) {
+                    && (diagramPart == null || manager.supports(diagramPart))) {
                 return manager;
             }
         }
         return null;
-    }
-
-    /**
-     * Retrieve an editing framework bridge for the given edit part using the most suitable
-     * layout manager.
-     * 
-     * @param editPart the edit part for which the bridge should be fetched
-     * @return an editing framework bridge for the edit part, or {@code null}
-     */
-    public IGraphicalFrameworkBridge getFrameworkBridge(final EditPart editPart) {
-        DiagramLayoutManager manager = getManager(null, editPart);
-        if (manager != null) {
-            return manager.getBridge();
-        }
-        return null;
-    }
-    
-    /**
-     * Retrieve a layout configuration for the given editor using the most suitable
-     * layout manager.
-     * 
-     * @param workbenchPart the workbench part for which the configuration should be fetched
-     * @return a layout configuration for the editor, or {@code null}
-     */
-    public ILayoutConfig getLayoutConfig(final IWorkbenchPart workbenchPart) {
-        DiagramLayoutManager manager = getManager(workbenchPart, null);
-        if (manager != null) {
-            EditPart diagramEditPart = manager.getBridge().getEditPart(workbenchPart);
-            return manager.getLayoutConfig(diagramEditPart);
-        }
-        return null;
-    }
-
-    /**
-     * Retrieve a layout configuration for the given edit part using the most suitable
-     * layout manager.
-     * 
-     * @param editPart the edit part for which the configuration should be fetched
-     * @return a layout configuration for the edit part, or {@code null}
-     */
-    public ILayoutConfig getLayoutConfig(final EditPart editPart) {
-        DiagramLayoutManager manager = getManager(null, editPart);
-        if (manager != null) {
-            return manager.getLayoutConfig(editPart);
-        }
-        return null;
-    }
-    
-    /**
-     * Performs layout on the given editor by choosing an appropriate layout
-     * manager instance. Animation and a progress bar can be optionally turned
-     * on.
-     * 
-     * @param workbenchPart
-     *            the workbench part for which layout is performed, or {@code null} if
-     *            the diagram is not part of an editor
-     * @param editPart
-     *            the parent edit part for which layout is performed, or {@code
-     *            null} if the whole diagram shall be layouted
-     * @param animate
-     *            if true, Draw2D animation is activated
-     * @param progressBar
-     *            if true, a progress bar is displayed
-     * @return the diagram layout manager that was used for layout
-     */
-    public DiagramLayoutManager layout(final IWorkbenchPart workbenchPart,
-            final EditPart editPart, final boolean animate,
-            final boolean progressBar) {
-        return layout(workbenchPart, editPart, animate, progressBar, false);
-    }
-
-    /**
-     * Performs layout on the given editor by choosing an appropriate layout
-     * manager instance and caches the layout result. Animation and a progress
-     * bar can be optionally turned on.
-     * 
-     * @param workbenchPart
-     *            the workbench part for which layout is performed, or {@code null} if
-     *            the diagram is not part of an editor
-     * @param editPart
-     *            the parent edit part for which layout is performed, or {@code
-     *            null} if the whole diagram shall be layouted
-     * @param animate
-     *            if true, Draw2D animation is activated
-     * @param progressBar
-     *            if true, a progress bar is displayed
-     * @return the cached layout result
-     */
-    public ICachedLayout cacheLayout(
-            final IWorkbenchPart workbenchPart, final EditPart editPart,
-            final boolean animate, final boolean progressBar) {
-        DiagramLayoutManager manager = layout(workbenchPart, editPart, animate, progressBar, true);
-        return manager.getCachedLayout();
-    }
-
-    /**
-     * Performs layout on the given editor by choosing an appropriate layout
-     * manager instance. Animation, a progress bar, and layout of ancestors can
-     * be optionally turned on.
-     * 
-     * @param workbenchPart
-     *            the workbench part for which layout is performed, or {@code null} if
-     *            the diagram is not part of an editor
-     * @param editPart
-     *            the parent edit part for which layout is performed, or {@code
-     *            null} if the whole diagram shall be layouted
-     * @param animate
-     *            if true, Draw2D animation is activated
-     * @param progressBar
-     *            if true, a progress bar is displayed
-     * @param layoutAncestors
-     *            if true, layout is not only performed for the selected edit
-     *            part, but also for its ancestors
-     * @return the diagram layout manager that was used for layout
-     */
-    public DiagramLayoutManager layout(final IWorkbenchPart workbenchPart,
-            final EditPart editPart, final boolean animate,
-            final boolean progressBar, final boolean layoutAncestors) {
-        DiagramLayoutManager manager = getManager(workbenchPart, editPart);
-        if (manager != null) {
-            manager.setLayoutConfig(null);
-            manager.layout(workbenchPart, editPart, animate, progressBar,
-                    layoutAncestors, false);
-            return manager;
-        } else {
-            throw new UnsupportedOperationException(Messages.getString("kiml.ui.15")
-                    + workbenchPart.getTitle() + ".");
-        }
     }
 
     /**
@@ -346,7 +216,7 @@ public class EclipseLayoutDataService extends ExtensionLayoutDataService {
     public void storeOption(final EditPart editPart, final LayoutOptionData<?> optionData,
             final String valueString, final boolean storeDomainModel) {
         Object value = optionData.parseValue(valueString);
-        IGraphicalFrameworkBridge bridge = getFrameworkBridge(editPart);
+        IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(editPart);
         if (value != null && bridge != null) {
             String clazzName;
             if (storeDomainModel) {
@@ -523,7 +393,7 @@ public class EclipseLayoutDataService extends ExtensionLayoutDataService {
         for (IConfigurationElement element : extensions) {
             if (ELEMENT_MANAGER.equals(element.getName())) {
                 try {
-                    DiagramLayoutManager manager = (DiagramLayoutManager)
+                    DiagramLayoutManager<?> manager = (DiagramLayoutManager<?>)
                             element.createExecutableExtension(ATTRIBUTE_CLASS);
                     int priority = 0;
                     String prioEntry = element.getAttribute(ATTRIBUTE_PRIORITY);
@@ -550,10 +420,10 @@ public class EclipseLayoutDataService extends ExtensionLayoutDataService {
      * @param manager a diagram layout manager
      * @param priority priority at which the manager is inserted
      */
-    private void insertManager(final DiagramLayoutManager manager, final int priority) {
-        ListIterator<DiagramLayoutManager> iter = managers.listIterator();
+    private void insertManager(final DiagramLayoutManager<?> manager, final int priority) {
+        ListIterator<DiagramLayoutManager<?>> iter = managers.listIterator();
         while (iter.hasNext()) {
-            DiagramLayoutManager next = iter.next();
+            DiagramLayoutManager<?> next = iter.next();
             if (next.getPriority() <= priority) {
                 iter.previous();
                 break;

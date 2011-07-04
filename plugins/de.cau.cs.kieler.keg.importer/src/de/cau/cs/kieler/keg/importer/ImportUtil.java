@@ -52,6 +52,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
+import de.cau.cs.kieler.kiml.ui.layout.LayoutMapping;
 
 /**
  * A utility class for KEG import.
@@ -194,7 +195,7 @@ public final class ImportUtil {
      * @param openDiagram
      *            whether to keep the diagram opened in an editor
      */
-    public static void applyContainedLayout(final IPath diagramPath, final boolean openDiagram) {
+    public static <T> void applyContainedLayout(final IPath diagramPath, final boolean openDiagram) {
         final IFile diagramFile = ResourcesPlugin.getWorkspace().getRoot().getFile(diagramPath);
         final Maybe<Exception> lastException = new Maybe<Exception>();
         MonitoredOperation.runInUI(new Runnable() {
@@ -214,7 +215,8 @@ public final class ImportUtil {
                     return;
                 }
                 // get the layout manager for the editor
-                DiagramLayoutManager layoutManager =
+                @SuppressWarnings("unchecked")
+                DiagramLayoutManager<T> layoutManager = (DiagramLayoutManager<T>)
                         EclipseLayoutDataService.getInstance().getManager(editorPart, null);
                 if (layoutManager == null) {
                     lastException.set(new RuntimeException(
@@ -222,11 +224,11 @@ public final class ImportUtil {
                     return;
                 }
                 // build the graph
-                KNode graph = layoutManager.buildLayoutGraph(editorPart, null, false);
+                LayoutMapping<T> mapping = layoutManager.buildLayoutGraph(editorPart, null);
                 // transfer the layout
-                int numberOfNodes = transferLayoutData(layoutManager, graph);
+                transferLayoutData(mapping);
                 // apply the layout
-                layoutManager.applyAnimatedLayout(false, false, numberOfNodes);
+                layoutManager.applyLayout(mapping, false, 0);
                 // close diagram or leave it open if requested
                 if (openDiagram) {
                     page.saveEditor(editorPart, false);
@@ -242,21 +244,17 @@ public final class ImportUtil {
         }
     }
 
-    private static int transferLayoutData(final DiagramLayoutManager layoutManager,
-            final KNode graph) {
-        int numberOfNodes = 0;
+    private static void transferLayoutData(final LayoutMapping<?> mapping) {
         Queue<KNode> nodes = new LinkedList<KNode>();
-        nodes.addAll(graph.getChildren());
+        nodes.addAll(mapping.getLayoutGraph().getChildren());
         while (!nodes.isEmpty()) {
-            numberOfNodes++;
             KNode node = nodes.poll();
-            Node modelNode = getModelNode(layoutManager, node);
+            Node modelNode = getModelNode(mapping, node);
             if (modelNode != null) {
                 transferLayoutData(modelNode, node);
             }
             nodes.addAll(node.getChildren());
         }
-        return numberOfNodes;
     }
 
     private static void transferLayoutData(final Node source, final KNode target) {
@@ -286,14 +284,16 @@ public final class ImportUtil {
         }
     }
 
-    private static Node getModelNode(final DiagramLayoutManager layoutManager, final KNode node) {
-        EditPart editPart = layoutManager.getEditPart(node);
-        org.eclipse.gmf.runtime.notation.Node gmfNode =
-                (org.eclipse.gmf.runtime.notation.Node) editPart.getModel();
-        EObject modelObject = gmfNode.getElement();
-        if (modelObject instanceof Node) {
-            Node modelNode = (Node) modelObject;
-            return modelNode;
+    private static Node getModelNode(final LayoutMapping<?> mapping, final KNode node) {
+        Object editPart = mapping.getGraphMap().get(node);
+        if (editPart instanceof EditPart) {
+            org.eclipse.gmf.runtime.notation.Node gmfNode =
+                    (org.eclipse.gmf.runtime.notation.Node) ((EditPart) editPart).getModel();
+            EObject modelObject = gmfNode.getElement();
+            if (modelObject instanceof Node) {
+                Node modelNode = (Node) modelObject;
+                return modelNode;
+            }
         }
         return null;
     }

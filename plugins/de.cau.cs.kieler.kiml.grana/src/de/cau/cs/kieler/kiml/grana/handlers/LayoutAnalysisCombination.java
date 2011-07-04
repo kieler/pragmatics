@@ -20,8 +20,8 @@ import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
+import de.cau.cs.kieler.kiml.ui.layout.LayoutMapping;
 
 /**
  * A view management combination that performs graph analysis after layout.
@@ -37,11 +37,10 @@ public class LayoutAnalysisCombination extends AbstractCombination {
      *            the trigger state of the last layout effect
      */
     public void execute(final EffectTriggerState<LayoutEffect> layoutState) {
-        DiagramLayoutManager manager = layoutState.getEffect().getManager();
-        if (manager != null) {
-            final List<AbstractInfoAnalysis> analyses =
-                    GranaUtil.getLastAnalysesSelection();
-            KNode parentNode = manager.getLayoutGraph();
+        LayoutMapping<?> mapping = layoutState.getEffect().getMapping();
+        if (mapping != null) {
+            final List<AbstractInfoAnalysis> analyses = GranaUtil.getLastAnalysesSelection();
+            KNode parentNode = mapping.getLayoutGraph();
             schedule(new AnalysisEffect(parentNode, analyses, false));
         }
     }

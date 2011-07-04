@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.kiml;
 
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -46,7 +49,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     public static final String DEFAULT_OPTION_NAME = "<Unnamed Option>";
 
     /** data type enumeration. */
-    public enum Type {
+    public static enum Type {
         /** undefined type. */
         UNDEFINED,
         /** boolean type. */
@@ -89,27 +92,17 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
 
     /** literal value constant for diagram target. */
     public static final String PARENTS_LITERAL = "parents";
-    /** bit mask for diagram target. */
-    private static final int PARENTS_MASK = 0x01;
     /** literal value constant for nodes target. */
     public static final String NODES_LITERAL = "nodes";
-    /** bit mask for nodes target. */
-    private static final int NODES_MASK = 0x02;
     /** literal value constant for edges target. */
     public static final String EDGES_LITERAL = "edges";
-    /** bit mask for edges target. */
-    private static final int EDGES_MASK = 0x04;
     /** literal value constant for ports target. */
     public static final String PORTS_LITERAL = "ports";
-    /** bit mask for ports target. */
-    private static final int PORTS_MASK = 0x08;
     /** literal value constant for labels target. */
     public static final String LABELS_LITERAL = "labels";
-    /** bit mask for labels target. */
-    private static final int LABELS_MASK = 0x10;
 
     /** option target enumeration. */
-    public enum Target {
+    public static enum Target {
         /** parents target (hierarchical nodes). */
         PARENTS,
         /** nodes target. */
@@ -132,8 +125,8 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     private String name = "";
     /** a description to be displayed in the UI. */
     private String description = "";
-    /** configured targets (accessed through bit masks). */
-    private int targets;
+    /** configured targets. */
+    private Set<Target> targets = Collections.emptySet();
     /** the class that represents this option type. */
     private Class<?> clazz;
     /** cached value of the available choices. */
@@ -377,21 +370,21 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      * @param targetsString comma separated list of targets
      */
     public void setTargets(final String targetsString) {
-        targets = 0;
+        targets = EnumSet.noneOf(Target.class);
         if (targetsString != null) {
             StringTokenizer tokenizer = new StringTokenizer(targetsString, ", \t");
             while (tokenizer.hasMoreTokens()) {
                 String token = tokenizer.nextToken();
                 if (token.equalsIgnoreCase(PARENTS_LITERAL)) {
-                    targets |= PARENTS_MASK;
+                    targets.add(Target.PARENTS);
                 } else if (token.equalsIgnoreCase(NODES_LITERAL)) {
-                    targets |= NODES_MASK;
+                    targets.add(Target.NODES);
                 } else if (token.equalsIgnoreCase(EDGES_LITERAL)) {
-                    targets |= EDGES_MASK;
+                    targets.add(Target.EDGES);
                 } else if (token.equalsIgnoreCase(PORTS_LITERAL)) {
-                    targets |= PORTS_MASK;
+                    targets.add(Target.PORTS);
                 } else if (token.equalsIgnoreCase(LABELS_LITERAL)) {
-                    targets |= LABELS_MASK;
+                    targets.add(Target.LABELS);
                 }
             }
         }
@@ -404,20 +397,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      * @return true if the target is active
      */
     public boolean hasTarget(final Target target) {
-        switch (target) {
-        case PARENTS:
-            return (targets & PARENTS_MASK) != 0;
-        case NODES:
-            return (targets & NODES_MASK) != 0;
-        case EDGES:
-            return (targets & EDGES_MASK) != 0;
-        case PORTS:
-            return (targets & PORTS_MASK) != 0;
-        case LABELS:
-            return (targets & LABELS_MASK) != 0;
-        default:
-            return false;
-        }
+        return targets.contains(target);
     }
 
     /**
@@ -428,39 +408,31 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      *         no active targets
      */
     public String getTargetsDescription() {
-        int bitCount = Integer.bitCount(targets);
-        if (bitCount == 0) {
-            return null;
-        }
         StringBuilder descriptionBuf = new StringBuilder();
-        int highest = Integer.SIZE - Integer.numberOfLeadingZeros(targets);
-        int bitsRead = 0;
-        for (int i = 0; i < highest; i++) {
-            int mask = 1 << i;
-            if ((targets & mask) != 0) {
-                switch (mask) {
-                case PARENTS_MASK:
-                    descriptionBuf.append("Parents");
-                    break;
-                case NODES_MASK:
-                    descriptionBuf.append("Nodes");
-                    break;
-                case EDGES_MASK:
-                    descriptionBuf.append("Edges");
-                    break;
-                case PORTS_MASK:
-                    descriptionBuf.append("Ports");
-                    break;
-                case LABELS_MASK:
-                    descriptionBuf.append("Labels");
-                    break;
-                }
-                bitsRead++;
-                if (bitCount - bitsRead >= 2) {
-                    descriptionBuf.append(", ");
-                } else if (bitCount - bitsRead == 1) {
-                    descriptionBuf.append(" and ");
-                }
+        int count = targets.size(), index = 0;
+        for (Target target : targets) {
+            switch (target) {
+            case PARENTS:
+                descriptionBuf.append("Parents");
+                break;
+            case NODES:
+                descriptionBuf.append("Nodes");
+                break;
+            case EDGES:
+                descriptionBuf.append("Edges");
+                break;
+            case PORTS:
+                descriptionBuf.append("Ports");
+                break;
+            case LABELS:
+                descriptionBuf.append("Labels");
+                break;
+            }
+            index++;
+            if (count - index >= 2) {
+                descriptionBuf.append(", ");
+            } else if (count - index == 1) {
+                descriptionBuf.append(" and ");
             }
         }
         return descriptionBuf.toString();

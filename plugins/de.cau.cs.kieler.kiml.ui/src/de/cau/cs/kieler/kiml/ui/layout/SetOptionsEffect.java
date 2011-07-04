@@ -24,7 +24,9 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
-import de.cau.cs.kieler.kiml.ILayoutConfig;
+import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
+import de.cau.cs.kieler.kiml.IMutableLayoutConfig;
+import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
@@ -75,23 +77,35 @@ public class SetOptionsEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        EditPart editPart = GraphicalFrameworkService.getInstance().getBridge(workbenchPart)
-                .getEditPart(modelElement);
-        final EclipseLayoutDataService layoutServices = EclipseLayoutDataService.getInstance();
-        DiagramLayoutManager manager = layoutServices.getManager(null, editPart);
-        if (manager != null) {
-            final ILayoutConfig layoutConfig = manager.getLayoutConfig(editPart);
-            if (layoutConfig != null) {
-                EditingDomain editingDomain = manager.getBridge().getEditingDomain(editPart);
-                KimlUiUtil.runModelChange(new Runnable() {
-                    public void run() {
-                        for (Map.Entry<String, Object> entry : optionMap.entrySet()) {
-                            LayoutOptionData<?> optionData = layoutServices
-                                    .getOptionData(entry.getKey());
-                            layoutConfig.setProperty(optionData, entry.getValue());
+        IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance()
+                .getBridge(workbenchPart);
+        if (bridge != null) {
+            EditPart editPart = bridge.getEditPart(modelElement);
+            final EclipseLayoutDataService layoutDataService = EclipseLayoutDataService.getInstance();
+            DiagramLayoutManager<?> manager = layoutDataService.getManager(workbenchPart, editPart);
+            if (manager != null) {
+                final IMutableLayoutConfig layoutConfig = manager.getLayoutConfig();
+                if (layoutConfig != null) {
+                    // build a layout context for setting the option
+                    final LayoutContext context = new LayoutContext();
+                    context.setProperty(LayoutContext.DOMAIN_MODEL, modelElement);
+                    context.setProperty(LayoutContext.DIAGRAM_PART, editPart);
+                    layoutConfig.enrich(context);
+                    
+                    // get an editing domain and execute the command
+                    EditingDomain editingDomain = bridge.getEditingDomain(editPart);
+                    KimlUiUtil.runModelChange(new Runnable() {
+                        public void run() {
+                            for (Map.Entry<String, Object> entry : optionMap.entrySet()) {
+                                LayoutOptionData<?> optionData = layoutDataService
+                                        .getOptionData(entry.getKey());
+                                if (optionData != null) {
+                                    layoutConfig.setValue(optionData, context, entry.getValue());
+                                }
+                            }
                         }
-                    }
-                } , (TransactionalEditingDomain) editingDomain, Messages.getString("kiml.ui.40"));
+                    } , (TransactionalEditingDomain) editingDomain, Messages.getString("kiml.ui.40"));
+                }
             }
         }
     }

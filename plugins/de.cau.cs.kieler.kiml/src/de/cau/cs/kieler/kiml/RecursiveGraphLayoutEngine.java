@@ -32,10 +32,8 @@ import de.cau.cs.kieler.kiml.util.IDebugCanvas;
  * @author ars
  * @author msp
  */
-public class RecursiveLayouterEngine implements ILayouterEngine {
+public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
 
-    /** the default layout configuration. */
-    private DefaultLayoutConfig layoutConfig = new DefaultLayoutConfig();
     /** the last used layout provider. */
     private AbstractLayoutProvider lastLayoutProvider;
     /** the debug canvas to use. */
@@ -46,7 +44,7 @@ public class RecursiveLayouterEngine implements ILayouterEngine {
      * 
      * @param thedebugCanvas the debug canvas to use
      */
-    public RecursiveLayouterEngine(final IDebugCanvas thedebugCanvas) {
+    public RecursiveGraphLayoutEngine(final IDebugCanvas thedebugCanvas) {
         this.debugCanvas = thedebugCanvas;
     }
     
@@ -124,7 +122,8 @@ public class RecursiveLayouterEngine implements ILayouterEngine {
         KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
         String layoutHint = nodeLayout.getProperty(LayoutOptions.ALGORITHM);
         String diagramType = nodeLayout.getProperty(LayoutOptions.DIAGRAM_TYPE);
-        LayoutAlgorithmData algorithmData = layoutConfig.getLayouterData(layoutHint, diagramType);
+        LayoutAlgorithmData algorithmData = DefaultLayoutConfig.getLayouterData(
+                layoutHint, diagramType);
         if (algorithmData != null) {
             return algorithmData.getProvider();
         } else {

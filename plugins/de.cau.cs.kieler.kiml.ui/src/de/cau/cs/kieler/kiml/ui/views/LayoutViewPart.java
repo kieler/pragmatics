@@ -19,7 +19,6 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gef.EditPart;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -57,17 +56,23 @@ import org.eclipse.ui.views.properties.IPropertySourceProvider;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
+import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
+import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.ILayoutConfig;
+import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
+import de.cau.cs.kieler.kiml.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
+import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
+import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
+import de.cau.cs.kieler.kiml.ui.layout.LayoutOptionManager;
 
 /**
  * A view that displays layout options for selected objects.
@@ -86,23 +91,14 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     /** preference identifier for the title font. */
     private static final String TITLE_FONT = "de.cau.cs.kieler.kiml.ui.views.LayoutViewPart.TITLE_FONT";
     
-    /** default layout algorithm array, which is empty. */
-    private static final LayoutAlgorithmData[] DEFAULT_LAYOUTER_DATA = new LayoutAlgorithmData[0];
-    
     /** the form toolkit used to create the form container. */
     private FormToolkit toolkit;
     /** the form container for the property sheet page. */
     private Form form;
     /** the page that is displayed in this view part. */
     private PropertySheetPage page;
-    /** the currently tracked diagram editor. */
-    private IWorkbenchPart currentWorkbenchPart;
-    /** the currently used diagram layout manager. */
-    private DiagramLayoutManager currentManager;
-    /** the currently examined edit part. */
-    private EditPart currentEditPart;
-    /** the layout provider data for the currently displayed options. */
-    private LayoutAlgorithmData[] currentLayouterData = DEFAULT_LAYOUTER_DATA;
+    /** the current layout context for the selected element. */
+    private LayoutContext currentContext;
     
     /**
      * Finds the active layout view, if it exists.
@@ -146,26 +142,28 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     private class PropertySourceProvider implements IPropertySourceProvider {
         /** {@inheritDoc} */
         public IPropertySource getPropertySource(final Object object) {
-            if (object instanceof EditPart) {
-                ILayoutConfig layoutConfig = currentManager.getLayoutConfig((EditPart) object);
-                EditingDomain editingDomain = currentManager.getBridge().getEditingDomain(object);
-                if (layoutConfig != null && editingDomain instanceof TransactionalEditingDomain) {
-                    currentEditPart = currentManager.getBridge().getEditPart(object);
-                    LayoutAlgorithmData contentLayouter = layoutConfig.getContentLayouterData();
-                    LayoutAlgorithmData containerLayouter = layoutConfig.getContainerLayouterData();
-                    if (contentLayouter == null && containerLayouter == null) {
-                        currentLayouterData = DEFAULT_LAYOUTER_DATA;
-                    } else if (contentLayouter == null || contentLayouter.equals(containerLayouter)) {
-                        currentLayouterData = new LayoutAlgorithmData[] { containerLayouter };
-                    } else if (containerLayouter == null) {
-                        currentLayouterData = new LayoutAlgorithmData[] { contentLayouter };
-                    } else {
-                        currentLayouterData = new LayoutAlgorithmData[] {
-                                contentLayouter, containerLayouter };
+            try {
+                IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance()
+                        .getBridge(object);
+                IWorkbenchPart part = currentContext.getProperty(EclipseLayoutConfig.WORKBENCH_PART);
+                DiagramLayoutManager<?> manager = EclipseLayoutDataService.getInstance().getManager(
+                        part, object);
+                if (manager != null) {
+                    EObject domainElement = bridge.getElement(object);
+                    LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
+                    IMutableLayoutConfig layoutConfig = optionManager.createConfig(domainElement,
+                            manager.getLayoutConfig());
+                    EditingDomain editingDomain = bridge.getEditingDomain(object);
+                    if (editingDomain instanceof TransactionalEditingDomain) {
+                        currentContext.setProperty(LayoutContext.DOMAIN_MODEL, domainElement);
+                        currentContext.setProperty(LayoutContext.DIAGRAM_PART,
+                                bridge.getEditPart(object));
+                        return new LayoutPropertySource(layoutConfig, currentContext,
+                                (TransactionalEditingDomain) editingDomain);
                     }
-                    return new LayoutPropertySource(layoutConfig,
-                            (TransactionalEditingDomain) editingDomain);
                 }
+            } catch (UnsupportedPartException exception) {
+                // ignore exception
             }
             return null;
         }
@@ -308,9 +306,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         }
         // dispose the view part
         getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
-        currentManager = null;
-        currentWorkbenchPart = null;
-        currentEditPart = null;
+        currentContext = null;
         toolkit.dispose();
         super.dispose();
     }
@@ -330,22 +326,13 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
      * {@inheritDoc}
      */
     public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
-        DiagramLayoutManager manager = EclipseLayoutDataService.getInstance().getManager(part, null);
+        DiagramLayoutManager<?> manager = EclipseLayoutDataService.getInstance().getManager(part, null);
         if (manager != null) {
-            this.currentWorkbenchPart = part;
-            this.currentManager = manager;
+            currentContext = new LayoutContext();
+            currentContext.setProperty(EclipseLayoutConfig.WORKBENCH_PART, part);
             page.selectionChanged(part, selection);
             setPartText();
         }
-    }
-    
-    /**
-     * Returns the currently used diagram layout manager.
-     * 
-     * @return the current layout manager
-     */
-    public DiagramLayoutManager getCurrentManager() {
-        return currentManager;
     }
     
     /**
@@ -412,7 +399,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                     contributionItem.setId(DiagramDefaultAction.ACTION_ID);
                     contributionItem.fill(menu, -1);
                 }
-                if (currentManager == null) {
+                if (currentContext == null) {
                     if (editPartDefaultItem != null) {
                         editPartDefaultItem.setEnabled(false);
                     }
@@ -449,9 +436,9 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                 }
                 // add the "set as default for diagram type" action
                 LayoutDataService layoutServices = LayoutDataService.getInstance();
-                IGraphicalFrameworkBridge editingProvider = currentManager.getBridge();
                 String diagramType = (String) EclipseLayoutConfig.getOption(
-                        currentEditPart, editingProvider.getElement(currentEditPart),
+                        currentContext.getProperty(LayoutContext.DIAGRAM_PART),
+                        currentContext.getProperty(LayoutContext.DOMAIN_MODEL),
                         LayoutOptions.DIAGRAM_TYPE);
                 if (diagramType == null) {
                     if (diagramTypeDefaultItem != null) {
@@ -488,17 +475,18 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
      *     cannot be handled in this context
      */
     private String getReadableName(final boolean forDomainModel, final boolean plural) {
-        if (currentManager == null) {
+        if (currentContext == null) {
             return "";
         }
         
-        EObject model = currentManager.getBridge().getElement(currentEditPart);
+        EObject model = currentContext.getProperty(LayoutContext.DOMAIN_MODEL);
+        Object diagramPart = currentContext.getProperty(LayoutContext.DIAGRAM_PART);
         String clazzName = model == null ? null : model.eClass().getInstanceTypeName();
         if (clazzName == null) {
-            if (plural || currentEditPart == null) {
+            if (plural || diagramPart == null) {
                 return null;
             }
-            clazzName = currentEditPart.getClass().getName();
+            clazzName = diagramPart.getClass().getName();
             if (clazzName.endsWith("EditPart")) {
                 clazzName = clazzName.substring(0, clazzName.length() - "EditPart".length());
             }
@@ -536,8 +524,11 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
      * 
      * @return the selected edit part, or {@code null} if there is none
      */
-    public EditPart getCurrentEditPart() {
-        return currentEditPart;
+    public Object getCurrentEditPart() {
+        if (currentContext != null) {
+            return currentContext.getProperty(LayoutContext.DIAGRAM_PART);
+        }
+        return null;
     }
 
     /**
@@ -546,7 +537,10 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
      * @return the current workbench part, or {@code null} if there is none
      */
     public IWorkbenchPart getCurrentEditor() {
-        return currentWorkbenchPart;
+        if (currentContext != null) {
+            return currentContext.getProperty(EclipseLayoutConfig.WORKBENCH_PART);
+        }
+        return null;
     }
 
     /**
@@ -555,20 +549,35 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
      * @return the current layout algorithm data
      */
     public LayoutAlgorithmData[] getCurrentLayouterData() {
-        return currentLayouterData;
+        if (currentContext == null) {
+            return new LayoutAlgorithmData[0];
+        }
+        LayoutAlgorithmData contentLayouter = currentContext.getProperty(
+                DefaultLayoutConfig.CONTENT_ALGO);
+        LayoutAlgorithmData containerLayouter = currentContext.getProperty(
+                DefaultLayoutConfig.CONTAINER_ALGO);
+        if (contentLayouter == null && containerLayouter == null) {
+            return new LayoutAlgorithmData[] { };
+        } else if (contentLayouter == null || contentLayouter.equals(containerLayouter)) {
+            return new LayoutAlgorithmData[] { containerLayouter };
+        } else if (containerLayouter == null) {
+            return new LayoutAlgorithmData[] { contentLayouter };
+        } else {
+            return new LayoutAlgorithmData[] { contentLayouter, containerLayouter };
+        }
     }
 
     /**
      * Sets a text line for the view part.
      */
     private void setPartText() {
-        if (currentManager != null) {
+        if (currentContext != null) {
             StringBuilder textBuffer = new StringBuilder();
             String name = getReadableName(true, false);
             if (name != null) {
                 textBuffer.append(name);
             }
-            EObject model = currentManager.getBridge().getElement(currentEditPart);
+            EObject model = currentContext.getProperty(LayoutContext.DOMAIN_MODEL);
             if (model != null) {
                 String modelName = getProperty(model, "Name");
                 if (modelName == null) {

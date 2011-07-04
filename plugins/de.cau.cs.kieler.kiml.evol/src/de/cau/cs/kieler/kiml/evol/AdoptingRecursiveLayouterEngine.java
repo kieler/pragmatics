@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
-import java.util.Map.Entry;
-
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 
@@ -24,13 +22,11 @@ import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
-import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutDataService;
-import de.cau.cs.kieler.kiml.RecursiveLayouterEngine;
-import de.cau.cs.kieler.kiml.VolatileLayoutConfig;
+import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
@@ -39,15 +35,16 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
+import de.cau.cs.kieler.kiml.ui.layout.LayoutMapping;
 
 /**
  * A recursive layout engine that can adopt an individual.
  *
  * @author bdu
- * @see RecursiveLayouterEngine
+ * @see RecursiveGraphLayoutEngine
  *
  */
-class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
+class AdoptingRecursiveLayouterEngine extends RecursiveGraphLayoutEngine {
     /**
      * Creates a new {@link AdoptingRecursiveLayouterEngine} instance.
      *
@@ -57,12 +54,12 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
     }
 
     /** Cached layout manager. */
-    private DiagramLayoutManager manager;
+    private DiagramLayoutManager<?> manager;
 
     /**
      * @return the layout manager most recently used by this engine.
      */
-    public DiagramLayoutManager getManager() {
+    public DiagramLayoutManager<?> getManager() {
         return this.manager;
     }
 
@@ -83,7 +80,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
      *            the layout graph or on the original layout graph.
      * @return the resulting layout graph
      */
-    KNode calculateLayout(
+    LayoutMapping<?> calculateLayout(
             final Genome individual, final DiagramEditor editor,
             final IKielerProgressMonitor progressMonitor, final boolean shouldCopyGraph) {
 
@@ -92,7 +89,8 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
                 EclipseLayoutDataService.getInstance().getManager(editor, null);
         }
 
-        KNode layoutGraph = this.manager.buildLayoutGraph(editor, null, false);
+        LayoutMapping<?> mapping = this.manager.buildLayoutGraph(editor, null);
+        KNode layoutGraph = mapping.getLayoutGraph();
         // TODO: discuss: can we have manager.getEditor() ?
 
         // Transfer layout options from the individual to the KGraph.
@@ -115,7 +113,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
             EvolPlugin.showError("Layout algorithm failed", exception);
             return null;
         }
-        return adopted;
+        return mapping;
     }
 
     /**
@@ -160,19 +158,13 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
 
         // Memorize important options.
         // The ALGORITHM option is needed to find out if the new one is compatible.
-        IProperty<?>[] importantOptions = new IProperty<?>[] { LayoutOptions.ALGORITHM };
-        ILayoutConfig oldValues = new VolatileLayoutConfig();
-        for (IProperty<?> property : importantOptions) {
-            oldValues.setProperty(property, shapeLayout.getProperty(property));
-        }
+        String algorithm = shapeLayout.getProperty(LayoutOptions.ALGORITHM);
 
         // Remove all options to make sure the omitted properties are removed.
-        shapeLayout.getAllProperties().clear();
+        shapeLayout.getProperties().clear();
 
         // Restore important options.
-        for (Entry<?, ?> entry : oldValues.getAllProperties().entrySet()) {
-            shapeLayout.setProperty((IProperty<?>) entry.getKey(), entry.getValue());
-        }
+        shapeLayout.setProperty(LayoutOptions.ALGORITHM, algorithm);
 
         LayoutDataService layoutServices = LayoutDataService.getInstance();
 
@@ -266,7 +258,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
         }
 
         LayoutAlgorithmData algorithmData =
-                new DefaultLayoutConfig().getLayouterData(newLayoutHintId, null);
+                DefaultLayoutConfig.getLayouterData(newLayoutHintId, null);
 
         String newType = algorithmData.getType();
 

@@ -13,81 +13,48 @@
  */
 package de.cau.cs.kieler.kiml;
 
-import java.util.List;
-
-import de.cau.cs.kieler.core.properties.IPropertyHolder;
+import de.cau.cs.kieler.core.kgraph.KGraphData;
 
 /**
- * Layout option configuration interface for default values and configuration of specific
- * diagram elements.
- * {@link IPropertyHolder#getProperty(de.cau.cs.kieler.core.properties.IProperty) getProperty()}
- * is used to get the stored or default value for a layout option, while
- * {@link IPropertyHolder#setProperty(IProperty, Object) setProperty()}
- * is used to change the stored option value.
+ * Layout option configuration interface.
  *
  * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
-public interface ILayoutConfig extends IPropertyHolder {
+public interface ILayoutConfig {
     
     /**
-     * Set the focus of this layout configuration on the given element. If {@code null} is
-     * passed, the current focus is cleared.
+     * Return the priority of this layout configuration, which is relevant when multiple configurations
+     * are applied.
      * 
-     * @param element a diagram element for which layout options shall be analyzed,
-     *     or {@code null}
+     * @return the priority
      */
-    void setFocus(Object element);
+    int getPriority();
     
     /**
-     * Returns true if the given option has its default value.
+     * Enrich the given context with additional information that can be derived from what is already
+     * contained.
      * 
-     * @param optionData a layout option data
-     * @return whether the option has a default value
+     * @param context a context for layout configuration
      */
-    boolean isDefault(LayoutOptionData<?> optionData);
+    void enrich(LayoutContext context);
     
     /**
-     * Returns a list of available layout option descriptors.
+     * Get the current value for a layout option in the given context.
      * 
-     * @return list of available layout options
+     * @param optionData a layout option descriptor
+     * @param context a context for layout configuration
+     * @return the layout option value, or {@code null} if the option has no value in this context
      */
-    List<LayoutOptionData<?>> getOptionData();
+    Object getValue(LayoutOptionData<?> optionData, LayoutContext context);
     
     /**
-     * Returns the layout algorithm descriptor for the content of the associated element.
+     * Transfer all non-default values that are managed by this layout configuration to the given
+     * graph data holder.
      * 
-     * @return the layout algorithm data for the element's content
+     * @param graphData a graph data instance that can hold layout options
+     * @param context a context for layout configuration
      */
-    LayoutAlgorithmData getContentLayouterData();
-
-    /**
-     * Returns the layout algorithm descriptor for the container of the associated element.
-     * 
-     * @return the layout algorithm data for the element's container
-     */
-    LayoutAlgorithmData getContainerLayouterData();
-    
-    /**
-     * Remove all stored layout options.
-     */
-    void clearProperties();
-
-    /**
-     * Sets the given option as default value for all elements of the associated diagram.
-     * 
-     * @param optionData layout option data
-     * @param value new default value
-     */
-    void setDiagramDefault(LayoutOptionData<?> optionData, Object value);
-    
-    /**
-     * Returns the most appropriate layout algorithm for the given layout hint and diagram type.
-     * 
-     * @param layoutHint identifier of either a layout provider or a layout type
-     * @param diagramType identifier of a diagram type
-     * @return the most appropriate layout algorithm, or {@code null}
-     */
-    LayoutAlgorithmData getLayouterData(final String layoutHint, final String diagramType);
+    void transferValues(KGraphData graphData, LayoutContext context);
 
 }

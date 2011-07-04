@@ -45,7 +45,7 @@ import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.SourceType;
 import de.cau.cs.kieler.kex.ui.KEXUIPlugin;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
+import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutEngine;
 
 /**
  * This class contains the contents to run a quick start example.
@@ -171,9 +171,9 @@ public class QuickStartAction implements IIntroAction {
                     try {
                         page.openEditor(new FileEditorInput(files[0]), defaultEditor.getId());
                         if (autoLayout) {
-                            EclipseLayoutDataService.getInstance().layout(
-                                    PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                                            .getPartService().getActivePart(), null, true, true);
+                            DiagramLayoutEngine.INSTANCE.layout(PlatformUI.getWorkbench()
+                                    .getActiveWorkbenchWindow().getPartService().getActivePart(),
+                                    null, false, true, false, true);
                         }
                     } catch (PartInitException e) {
                         IStatus status = new Status(IStatus.WARNING, KEXUIPlugin.PLUGIN_ID,

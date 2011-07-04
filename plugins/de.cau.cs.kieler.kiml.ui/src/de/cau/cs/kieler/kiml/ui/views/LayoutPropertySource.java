@@ -19,7 +19,9 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-import de.cau.cs.kieler.kiml.ILayoutConfig;
+import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
+import de.cau.cs.kieler.kiml.IMutableLayoutConfig;
+import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
@@ -38,7 +40,9 @@ import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 public class LayoutPropertySource implements IPropertySource {
     
     /** the layout configuration for this property source. */
-    private ILayoutConfig layoutConfig;
+    private IMutableLayoutConfig layoutConfig;
+    /** the layout context describing which element has been selected. */
+    private LayoutContext layoutContext;
     /** the editing domain that is used for model changes. */
     private TransactionalEditingDomain editingDomain;
     /** array of property descriptors for the option data. */
@@ -47,12 +51,15 @@ public class LayoutPropertySource implements IPropertySource {
     /**
      * Creates a layout property source for the given layout configuration.
      * 
-     * @param config a layout configuration
+     * @param config a mutable layout configuration
+     * @param context a layout context describing which element has been selected
      * @param theeditingDomain the editing domain
      */
-    public LayoutPropertySource(final ILayoutConfig config,
+    public LayoutPropertySource(final IMutableLayoutConfig config,
+            final LayoutContext context,
             final TransactionalEditingDomain theeditingDomain) {
         this.layoutConfig = config;
+        this.layoutContext = context;
         this.editingDomain = theeditingDomain;
     }
 
@@ -61,7 +68,10 @@ public class LayoutPropertySource implements IPropertySource {
      */
     public IPropertyDescriptor[] getPropertyDescriptors() {
         if (propertyDescriptors == null) {
-            List<LayoutOptionData<?>> optionData = layoutConfig.getOptionData();
+            layoutContext.setProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS, true);
+            layoutConfig.enrich(layoutContext);
+            List<LayoutOptionData<?>> optionData = layoutContext.getProperty(
+                    DefaultLayoutConfig.OPTIONS);
             propertyDescriptors = new IPropertyDescriptor[optionData.size()];
             for (int i = 0; i < propertyDescriptors.length; i++) {
                 propertyDescriptors[i] = new LayoutPropertyDescriptor(optionData.get(i));
@@ -78,9 +88,9 @@ public class LayoutPropertySource implements IPropertySource {
         LayoutOptionData<?> optionData = layoutServices.getOptionData((String) id);
         Object value;
         if (LayoutOptions.ALGORITHM_ID.equals(id)) {
-            value = layoutConfig.getContentLayouterData().getId();
+            value = layoutContext.getProperty(DefaultLayoutConfig.CONTENT_ALGO).getId();
         } else {
-            value = layoutConfig.getProperty(optionData);
+            value = layoutConfig.getValue(optionData, layoutContext);
         }
         return translateValue(value, optionData);
     }
@@ -143,7 +153,7 @@ public class LayoutPropertySource implements IPropertySource {
                 default:
                     value = optionData.parseValue((String) value);
                 }
-                layoutConfig.setProperty(optionData, value);
+                layoutConfig.setValue(optionData, layoutContext, value);
                 if (LayoutOptions.ALGORITHM_ID.equals(optionData.getId())) {
                     LayoutViewPart layoutView = LayoutViewPart.findView();
                     if (layoutView != null) {
@@ -167,7 +177,7 @@ public class LayoutPropertySource implements IPropertySource {
      */
     public boolean isPropertySet(final Object id) {
         LayoutOptionData<?> optionData = LayoutDataService.getInstance().getOptionData((String) id);
-        return !layoutConfig.isDefault(optionData);
+        return layoutConfig.isSet(optionData, layoutContext);
     }
 
     /**
@@ -178,7 +188,7 @@ public class LayoutPropertySource implements IPropertySource {
                 .getOptionData((String) id);
         Runnable modelChange = new Runnable() {
             public void run() {
-                layoutConfig.setProperty(optionData, null);
+                layoutConfig.setValue(optionData, layoutContext, null);
             }
         };
         KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.12"));

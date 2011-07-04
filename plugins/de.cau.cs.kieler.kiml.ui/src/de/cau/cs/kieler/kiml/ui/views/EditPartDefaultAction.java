@@ -67,10 +67,10 @@ public class EditPartDefaultAction extends Action {
      */
     @Override
     public void run() {
-        EditPart editPart = layoutView.getCurrentEditPart();
-        if (editPart != null) {
+        Object diagramPart = layoutView.getCurrentEditPart();
+        if (diagramPart instanceof EditPart) {
             for (IPropertySheetEntry entry : layoutView.getSelection()) {
-                setDefault(editPart, entry);
+                setDefault((EditPart) diagramPart, entry);
             }
         }
     }

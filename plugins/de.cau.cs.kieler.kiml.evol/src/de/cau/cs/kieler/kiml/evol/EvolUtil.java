@@ -31,6 +31,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
@@ -48,10 +49,16 @@ import org.eclipse.ui.PlatformUI;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
+import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
+import de.cau.cs.kieler.kiml.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
+import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
@@ -60,15 +67,18 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.util.DiagramAnalyzer;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
+import de.cau.cs.kieler.kiml.ui.layout.LayoutMapping;
+import de.cau.cs.kieler.kiml.ui.layout.LayoutOptionManager;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
  * Utility methods for Evolutionary Meta Layout.
  *
  * @author bdu
- *
  */
 public final class EvolUtil {
     /**
@@ -89,7 +99,7 @@ public final class EvolUtil {
          *            the editor in which the layout shall be applied
          * @return the layout manager used to apply the layout
          */
-        private static DiagramLayoutManager adoptAndApplyLayout(
+        private static <T> DiagramLayoutManager<T> adoptAndApplyLayout(
                 final Genome individual, final IEditorPart editor) {
 
             AdoptingRecursiveLayouterEngine engine = new AdoptingRecursiveLayouterEngine();
@@ -97,16 +107,16 @@ public final class EvolUtil {
             IKielerProgressMonitor monitor = new BasicProgressMonitor();
 
             // TODO: layout might fail
-            KNode layoutResult =
+            LayoutMapping<T> layoutResult = (LayoutMapping<T>)
                     engine.calculateLayout(individual, (DiagramEditor) editor, monitor, false /* shouldCopyGraph */);
             // we could do something with the layout result ...
 
-            DiagramLayoutManager manager = engine.getManager();
+            DiagramLayoutManager<T> manager = (DiagramLayoutManager<T>) engine.getManager();
 
             assert manager != null : "Could not get a layout manager for " + editor.getTitle();
 
             int nodeCount = 0;
-            manager.applyAndZoom(false /* animate */, false /* cacheLayout */, nodeCount);
+            manager.applyLayout(layoutResult, false, 0);
 
             return manager;
         }
@@ -396,10 +406,10 @@ public final class EvolUtil {
             IKielerProgressMonitor monitor = new BasicProgressMonitor();
 
             // calculate layout (might throw an exception)
-            KNode layoutResult =
+            LayoutMapping<?> layoutResult =
                     engine.calculateLayout(ind, (DiagramEditor) editor, monitor, true /* shouldCopyGraph */);
 
-            Map<String, Object> measurements = measure(layoutResult, weightsMap);
+            Map<String, Object> measurements = measure(layoutResult.getLayoutGraph(), weightsMap);
             // Attention: The measurements may contain additional intermediate
             // results we did not ask for. See #1152.
 
@@ -790,7 +800,7 @@ public final class EvolUtil {
         }
 
         // Get the layout configurations of the editors.
-        List<ILayoutConfig> configs = getLayoutConfigs(editors);
+        List<LayoutContext> configs = getLayoutConfigs(editors);
         if (configs.isEmpty()) {
             return new Population();
         }
@@ -904,11 +914,19 @@ public final class EvolUtil {
      */
     public static LayoutAlgorithmData getLayoutAlgorithmData(
             final IEditorPart editor, final EditPart editPart) {
-        final DiagramLayoutManager manager =
+        DiagramLayoutManager<?> manager =
                 EclipseLayoutDataService.getInstance().getManager(editor, editPart);
-        if (manager != null) {
-            ILayoutConfig config = manager.getLayoutConfig(editPart);
-            return config.getContentLayouterData();
+        IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(editor);
+        if (manager != null && bridge != null) {
+            LayoutContext context = new LayoutContext();
+            context.setProperty(LayoutContext.DIAGRAM_PART, editPart);
+            context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, editor);
+            context.setProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS, true);
+            LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
+            IMutableLayoutConfig layoutConfig = optionManager.createConfig(bridge.getElement(editPart),
+                    manager.getLayoutConfig());
+            layoutConfig.enrich(context);
+            return context.getProperty(DefaultLayoutConfig.CONTENT_ALGO);
         }
         return null;
     }
@@ -992,7 +1010,7 @@ public final class EvolUtil {
      *            list of layout configurations
      * @return the new population
      */
-    private static Population createPopulation(final List<ILayoutConfig> configs) {
+    private static Population createPopulation(final List<LayoutContext> configs) {
         int size = EvolPlugin.getDefault().getPreferenceStore()
                         .getInt(EvolPlugin.PREF_POPULATION_SIZE);
 
@@ -1009,7 +1027,7 @@ public final class EvolUtil {
      *            desired population size
      * @return the new population
      */
-    private static Population createPopulation(final List<ILayoutConfig> configs, final int size) {
+    private static Population createPopulation(final List<LayoutContext> configs, final int size) {
         if ((configs == null) || (size < 0)) {
             throw new IllegalArgumentException();
         }
@@ -1040,16 +1058,16 @@ public final class EvolUtil {
      *            set of diagram editors
      * @return a list of layout configurations
      */
-    private static List<ILayoutConfig> getLayoutConfigs(final Set<IEditorPart> editors) {
-        List<ILayoutConfig> configs = new LinkedList<ILayoutConfig>();
+    private static List<LayoutContext> getLayoutConfigs(final Set<IEditorPart> editors) {
+        List<LayoutContext> configs = new LinkedList<LayoutContext>();
         EclipseLayoutDataService layoutServices = EclipseLayoutDataService.getInstance();
 
         // Handle current editor.
         IEditorPart currentEditor = getCurrentEditor();
         if (currentEditor != null) {
-            ILayoutConfig currentConfig = layoutServices.getLayoutConfig(currentEditor);
-            if (currentConfig != null) {
-                configs.add(currentConfig);
+            LayoutContext context = getContext(currentEditor);
+            if (context != null) {
+                configs.add(context);
             }
         }
 
@@ -1060,13 +1078,39 @@ public final class EvolUtil {
                 continue;
             }
 
-            ILayoutConfig config = layoutServices.getLayoutConfig(editor);
-            if (config != null) {
-                configs.add(config);
+            LayoutContext context = getContext(editor);
+            if (context != null) {
+                configs.add(context);
             }
         }
 
         return configs;
+    }
+    
+    public static final Property<IMutableLayoutConfig> LAYOUT_CONFIG
+            = new Property<IMutableLayoutConfig>("context.layoutConfig");
+    
+    private static LayoutContext getContext(final IWorkbenchPart editor) {
+        DiagramLayoutManager<?> manager = EclipseLayoutDataService.getInstance().getManager(editor, null);
+        IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(editor);
+        if (manager != null && bridge != null) {
+            EditPart diagramPart = bridge.getEditPart(editor);
+            EObject diagramElement = bridge.getElement(diagramPart);
+            LayoutContext context = new LayoutContext();
+            context.setProperty(LayoutContext.DOMAIN_MODEL, diagramElement);
+            context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
+            context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, editor);
+            
+            LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
+            IMutableLayoutConfig layoutConfig = optionManager.createConfig(diagramElement,
+                    manager.getLayoutConfig());
+            context.setProperty(LAYOUT_CONFIG, layoutConfig);
+            
+            context.setProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS, true);
+            layoutConfig.enrich(context);
+            return context;
+        }
+        return null;
     }
 
     /**
@@ -1081,13 +1125,14 @@ public final class EvolUtil {
      * @return the set of values having the specified ID
      */
     private static Set<Object> getPropertyValues(
-            final List<ILayoutConfig> configs, final String id) {
+            final List<LayoutContext> configs, final String id) {
         Set<Object> result = new LinkedHashSet<Object>();
         LayoutDataService layoutServices = LayoutDataService.getInstance();
         LayoutOptionData<?> optionData = layoutServices.getOptionData(id);
 
-        for (final ILayoutConfig config : configs) {
-            Object value = config.getProperty(optionData);
+        for (final LayoutContext context : configs) {
+            ILayoutConfig config = context.getProperty(LAYOUT_CONFIG);
+            Object value = config.getValue(optionData, context);
 
             if (LayoutOptions.ALGORITHM_ID.equals(id)) {
                 if (value == null) {

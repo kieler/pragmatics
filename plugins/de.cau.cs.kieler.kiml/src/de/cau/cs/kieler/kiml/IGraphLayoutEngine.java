@@ -18,25 +18,19 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 
 /**
- * Interface for layouter engines. Introduces a common api to access any layouter engine
- * for the main layout manager {@link #DiagramLayoutManager}
+ * Interface for graph layout engines.
  * 
- * @kieler.rating 2011-05-03 red
- *
  * @author swe
  */
-public interface ILayouterEngine {
+public interface IGraphLayoutEngine {
 
     /**
      * Performs layout on the given layout graph.
      * 
      * @param layoutGraph instance of a layout graph
      * @param progressMonitor monitor to which progress of the layout algorithms is reported
-     * @param layoutAncestors if true, layout is not only performed for the selected
-     *         node, but also for its ancestors
-     * @throws Exception 
      */
-    void layout(final KNode layoutGraph, final IKielerProgressMonitor progressMonitor) throws Exception;
+    void layout(KNode layoutGraph, IKielerProgressMonitor progressMonitor);
 
     /**
      * Returns the last layout provider that was used by the layouter engine.

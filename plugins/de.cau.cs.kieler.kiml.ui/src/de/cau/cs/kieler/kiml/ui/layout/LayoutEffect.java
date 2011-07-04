@@ -26,6 +26,7 @@ import de.cau.cs.kieler.core.kivi.UndoEffect;
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.VolatileLayoutConfig;
 
 /**
@@ -42,18 +43,18 @@ public class LayoutEffect extends AbstractEffect {
     private IWorkbenchPart diagramEditor;
     /** The bridge to a concrete graphical framework corresponding to this editor. */
     private IGraphicalFrameworkBridge bridge;
-    /** the selected edit part. */
-    private EditPart editPart;
+    /** the selected diagram part. */
+    private Object diagramPart;
     /** whether to zoom before or after layout. */
     private boolean doZoom = true;
     /** whether to animate the layout. */
     private boolean doAnimate = true;
-    /** whether to use a progress monitor. */
-    private boolean useProgMonitor = false;
+    /** whether to show a progress bar. */
+    private boolean progressBar = false;
     /** whether to include the ancestors in the layout process. */
     private boolean layoutAncestors = false;
-    /** the diagram layout manager that has been used for layout. */
-    private DiagramLayoutManager manager;
+    /** the layout mapping that has been used for layout. */
+    private LayoutMapping<?> layoutMapping;
     /** additional layout options configuration. */
     private VolatileLayoutConfig layoutConfig;
 
@@ -71,7 +72,7 @@ public class LayoutEffect extends AbstractEffect {
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object) {
         this.diagramEditor = workbenchPart;
         this.bridge = GraphicalFrameworkService.getInstance().getBridge(workbenchPart);
-        this.editPart = bridge.getEditPart(object);
+        this.diagramPart = bridge.getEditPart(object);
     }
 
     /**
@@ -112,7 +113,7 @@ public class LayoutEffect extends AbstractEffect {
             final boolean zoomToFit, final boolean progressBar) {
         this(workbenchPart, object);
         this.doZoom = zoomToFit;
-        this.useProgMonitor = progressBar;
+        this.progressBar = progressBar;
     }
 
     /**
@@ -137,7 +138,7 @@ public class LayoutEffect extends AbstractEffect {
             final boolean ancestors) {
         this(workbenchPart, object);
         this.doZoom = zoomToFit;
-        this.useProgMonitor = progressBar;
+        this.progressBar = progressBar;
         this.layoutAncestors = ancestors;
     }
 
@@ -165,7 +166,7 @@ public class LayoutEffect extends AbstractEffect {
             final boolean animation) {
         this(workbenchPart, object);
         this.doZoom = zoomToFit;
-        this.useProgMonitor = progressBar;
+        this.progressBar = progressBar;
         this.layoutAncestors = ancestors;
         this.doAnimate = animation;
     }
@@ -186,22 +187,20 @@ public class LayoutEffect extends AbstractEffect {
         if (layoutConfig == null) {
             layoutConfig = new VolatileLayoutConfig();
         }
-        // first clear the current focus, then add the new one
-        layoutConfig.setFocus(null);
-        layoutConfig.setFocus(object);
-        layoutConfig.setProperty(option, value);
+        if (object instanceof EObject) {
+            layoutConfig.setValue(option, object, LayoutContext.DOMAIN_MODEL, value);
+        } else {
+            layoutConfig.setValue(option, object, LayoutContext.DIAGRAM_PART, value);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public void execute() {
-        manager = EclipseLayoutDataService.getInstance().getManager(diagramEditor, editPart);
-        if (manager != null) {
-            manager.setLayoutConfig(layoutConfig);
-            manager.layout(diagramEditor, editPart, doAnimate, useProgMonitor,
-                    layoutAncestors, false, doZoom);
-        }
+        DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
+        layoutMapping = layoutEngine.layout(diagramEditor, diagramPart, doAnimate, progressBar,
+                layoutAncestors, doZoom, layoutConfig);
     }
 
     /**
@@ -218,13 +217,13 @@ public class LayoutEffect extends AbstractEffect {
     }
     
     /**
-     * Returns the diagram layout manager that was used for this layout effect, or {@code null} if
+     * Returns the layout mapping that was used for this layout effect, or {@code null} if
      * the effect has not been executed yet.
      * 
      * @return the diagram layout manager
      */
-    public DiagramLayoutManager getManager() {
-        return manager;
+    public LayoutMapping<?> getMapping() {
+        return layoutMapping;
     }
 
     /**
@@ -243,12 +242,15 @@ public class LayoutEffect extends AbstractEffect {
         if (otherEffect instanceof LayoutEffect) {
             LayoutEffect other = (LayoutEffect) otherEffect;
             if (diagramEditor == other.diagramEditor) {
-                this.editPart = commonAncestor(this.editPart, other.editPart);
+                if (this.diagramPart instanceof EditPart && other.diagramPart instanceof EditPart) {
+                    this.diagramPart = commonAncestor((EditPart) this.diagramPart,
+                            (EditPart) other.diagramPart);
+                }
                 this.doZoom |= other.doZoom;
                 this.doAnimate |= other.doAnimate;
-                this.useProgMonitor |= other.useProgMonitor;
+                this.progressBar |= other.progressBar;
                 if (this.layoutConfig != null && other.layoutConfig != null) {
-                    this.layoutConfig.copyProperties(other.layoutConfig);
+                    this.layoutConfig.copyValues(other.layoutConfig);
                 } else if (other.layoutConfig != null) {
                     this.layoutConfig = other.layoutConfig;
                 }

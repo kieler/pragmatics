@@ -20,9 +20,13 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchPart;
 
-import de.cau.cs.kieler.kiml.ILayoutConfig;
+import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
+import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
+import de.cau.cs.kieler.kiml.IMutableLayoutConfig;
+import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -53,29 +57,54 @@ public class RemoveOptionsAction extends Action {
     @Override
     public void run() {
         IWorkbenchPart workbenchPart = layoutView.getCurrentEditor();
-        DiagramLayoutManager manager = layoutView.getCurrentManager();
-        if (manager != null) {
-            EditPart diagram = manager.getBridge().getEditPart(workbenchPart);
+        IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(
+                workbenchPart);
+        if (bridge != null) {
+            EditPart diagram = bridge.getEditPart(workbenchPart);
             if (diagram != null) {
-                // show a dialog to confirm the removal of all layout options
-                String diagramName = workbenchPart.getTitle();
-                boolean userResponse = MessageDialog.openQuestion(layoutView.getSite().getShell(),
-                        Messages.getString("kiml.ui.31"), Messages.getString("kiml.ui.32")
-                        + " " + diagramName + "?");
-                if (userResponse) {
-                    final ILayoutConfig config = manager.getLayoutConfig(diagram);
-                    Runnable runnable = new Runnable() {
-                        public void run() {
-                            config.clearProperties();
-                            LayoutViewPart.findView().refresh();
-                        }
-                    };
-                    EditingDomain editingDomain = manager.getBridge().getEditingDomain(diagram);
-                    KimlUiUtil.runModelChange(runnable,
-                            (TransactionalEditingDomain) editingDomain,
-                            Messages.getString("kiml.ui.30"));
+                DiagramLayoutManager<?> manager = EclipseLayoutDataService.getInstance()
+                        .getManager(workbenchPart, diagram);
+                if (manager != null) {
+                    final IMutableLayoutConfig layoutConfig = manager.getLayoutConfig();
+                    if (layoutConfig != null) {
+                        // build a layout context for setting the option
+                        final LayoutContext context = new LayoutContext();
+                        context.setProperty(LayoutContext.DIAGRAM_PART, diagram);
+                        context.setProperty(IMutableLayoutConfig.OPT_RECURSIVE, true);
+                        layoutConfig.enrich(context);
+                        
+                        removeOptions(workbenchPart.getTitle(), layoutConfig, context,
+                                bridge.getEditingDomain(diagram));
+                    }
                 }
             }
+        }
+    }
+    
+    /**
+     * Remove all layout options from the given context.
+     * 
+     * @param diagramName name of the open diagram
+     * @param layoutConfig a layout configuration for options removal
+     * @param context a layout context
+     * @param editingDomain an editing domain to apply the changes
+     */
+    private void removeOptions(final String diagramName, final IMutableLayoutConfig layoutConfig,
+            final LayoutContext context, final EditingDomain editingDomain) {
+        // show a dialog to confirm the removal of all layout options
+        boolean userResponse = MessageDialog.openQuestion(layoutView.getSite().getShell(),
+                Messages.getString("kiml.ui.31"), Messages.getString("kiml.ui.32")
+                + " " + diagramName + "?");
+        if (userResponse) {
+            Runnable runnable = new Runnable() {
+                public void run() {
+                    layoutConfig.clearValues(context);
+                    LayoutViewPart.findView().refresh();
+                }
+            };
+            KimlUiUtil.runModelChange(runnable,
+                    (TransactionalEditingDomain) editingDomain,
+                    Messages.getString("kiml.ui.30"));
         }
     }
     

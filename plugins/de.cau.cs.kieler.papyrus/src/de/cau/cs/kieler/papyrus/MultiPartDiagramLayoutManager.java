@@ -14,12 +14,12 @@
 package de.cau.cs.kieler.papyrus;
 
 import org.eclipse.papyrus.core.editor.IMultiDiagramEditor;
-import org.eclipse.gef.EditPart;
+import org.eclipse.papyrus.diagram.common.editparts.IPapyrusEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.ui.IWorkbenchPart;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.LayoutMapping;
 
 /**
  * Layout manager wrapper for the Papyrus multi diagram editor.
@@ -32,33 +32,22 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
      * {@inheritDoc}
      */
     @Override
-    public boolean supports(final IWorkbenchPart workbenchPart) {
-        return workbenchPart instanceof IMultiDiagramEditor;
+    public boolean supports(final Object object) {
+        return object instanceof IMultiDiagramEditor || object instanceof IPapyrusEditPart;
     }
     
     /**
      * {@inheritDoc}
      */
     @Override
-    public KNode buildLayoutGraph(final IWorkbenchPart workbenchPart,
-            final EditPart editPart, final boolean layoutAncestors) {
+    public LayoutMapping<IGraphicalEditPart> buildLayoutGraph(final IWorkbenchPart workbenchPart,
+            final Object diagramPart) {
         if (workbenchPart instanceof IMultiDiagramEditor) {
             return super.buildLayoutGraph(((IMultiDiagramEditor) workbenchPart).getActiveEditor(),
-                    editPart, layoutAncestors);
+                    diagramPart);
         } else {
-            return super.buildLayoutGraph(workbenchPart, editPart, layoutAncestors);
+            return super.buildLayoutGraph(workbenchPart, diagramPart);
         }
-    }
-
-    /** the framework bridge for this layout manager. */
-    private PapyrusFrameworkBridge papyrusBridge = new PapyrusFrameworkBridge();
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IGraphicalFrameworkBridge getBridge() {
-        return papyrusBridge;
     }
 
 }

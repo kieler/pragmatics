@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
-import org.eclipse.gef.EditPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
@@ -60,9 +59,9 @@ public class DiagramTypeDefaultAction extends Action {
      */
     @Override
     public void run() {
-        EditPart editPart = layoutView.getCurrentEditPart();
-        if (editPart != null) {
-            String diagramType = (String) EclipseLayoutConfig.getOption(editPart,
+        Object diagramPart = layoutView.getCurrentEditPart();
+        if (diagramPart != null) {
+            String diagramType = (String) EclipseLayoutConfig.getOption(diagramPart,
                     LayoutOptions.DIAGRAM_TYPE);
             if (diagramType != null) {
                 for (IPropertySheetEntry entry : layoutView.getSelection()) {

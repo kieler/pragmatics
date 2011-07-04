@@ -26,12 +26,13 @@ import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gef.EditPart;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
+import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
+import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutDataService;
@@ -48,8 +49,6 @@ import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.UniversalNumberGene;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 
 /**
@@ -565,15 +564,15 @@ final class GenomeFactory {
      * @return a map storing the property values
      */
     private static Map<String, Object> collectPropertyValues(
-            final List<ILayoutConfig> configs) {
+            final List<LayoutContext> configs) {
         final int expectedNumberOfPropsPerConfig = 10;
         HashMap<String, Object> propertyId2ValueMap =
                 new HashMap<String, Object>(configs.size() * expectedNumberOfPropsPerConfig);
 
         // Iterate the layout inspectors.
-        for (final ILayoutConfig config : configs) {
+        for (final LayoutContext context : configs) {
             // Iterate the available layout options.
-            List<LayoutOptionData<?>> optionDescriptors = config.getOptionData();
+            List<LayoutOptionData<?>> optionDescriptors = context.getProperty(DefaultLayoutConfig.OPTIONS);
             for (final LayoutOptionData<?> data : optionDescriptors) {
 
                 String id = data.getId();
@@ -583,7 +582,8 @@ final class GenomeFactory {
                     continue;
 
                 } else if (!propertyId2ValueMap.containsKey(id)) {
-                    Object value = config.getProperty(data);
+                    ILayoutConfig config = context.getProperty(EvolUtil.LAYOUT_CONFIG);
+                    Object value = config.getValue(data, context);
                     propertyId2ValueMap.put(id, value);
                 } else {
                     // already added this option
@@ -657,23 +657,21 @@ final class GenomeFactory {
      *         property descriptors.
      */
     private static Map<String, IPropertyDescriptor> getPropertyDescriptors(
-            final List<ILayoutConfig> configs) {
+            final List<LayoutContext> configs) {
         Map<String, IPropertyDescriptor> allPropertyDescriptors =
                 new HashMap<String, IPropertyDescriptor>();
-        EclipseLayoutDataService layoutServices = EclipseLayoutDataService.getInstance();
 
-        for (final ILayoutConfig config : configs) {
-            if (config instanceof EclipseLayoutConfig) {
-                EditPart editPart = ((EclipseLayoutConfig) config).getEditPart();
-                EditingDomain editingDomain = layoutServices.getFrameworkBridge(editPart)
-                        .getEditingDomain(editPart);
-                LayoutPropertySource source = new LayoutPropertySource(config,
-                        (TransactionalEditingDomain) editingDomain);
-                IPropertyDescriptor[] propertyDescriptors = source.getPropertyDescriptors();
+        for (final LayoutContext context : configs) {
+            Object editPart = context.getProperty(LayoutContext.DIAGRAM_PART);
+            EditingDomain editingDomain = GraphicalFrameworkService.getInstance().getBridge(editPart)
+                    .getEditingDomain(editPart);
+            LayoutPropertySource source = new LayoutPropertySource(
+                    context.getProperty(EvolUtil.LAYOUT_CONFIG), context,
+                    (TransactionalEditingDomain) editingDomain);
+            IPropertyDescriptor[] propertyDescriptors = source.getPropertyDescriptors();
 
-                for (final IPropertyDescriptor pd : propertyDescriptors) {
-                    allPropertyDescriptors.put((String) pd.getId(), pd);
-                }
+            for (final IPropertyDescriptor pd : propertyDescriptors) {
+                allPropertyDescriptors.put((String) pd.getId(), pd);
             }
         }
         return allPropertyDescriptors;
@@ -736,7 +734,7 @@ final class GenomeFactory {
      *            set of layout hint IDs
      * @return a genome, or {@code null}.
      */
-    public Genome createGenome(final List<ILayoutConfig> configs, final Set<Object> layoutHintIds) {
+    public Genome createGenome(final List<LayoutContext> configs, final Set<Object> layoutHintIds) {
         // TODO: split this method
         if ((configs == null) || (layoutHintIds == null) || layoutHintIds.isEmpty()) {
             return null;

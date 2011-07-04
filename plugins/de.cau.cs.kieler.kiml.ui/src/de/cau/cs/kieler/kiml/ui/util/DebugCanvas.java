@@ -31,9 +31,11 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
+import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.LayoutMapping;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 
 /**
@@ -62,12 +64,16 @@ public class DebugCanvas implements IDebugCanvas {
      * Sets the canvas up for the given layout manager. This Method must be called
      * before any drawing can be done.
      * 
-     * @param layoutManager the current diagram layout manager
+     * @param layoutMapping a layout mapping
      */
-    public void setManager(final DiagramLayoutManager layoutManager) {
+    public void setMapping(final LayoutMapping<?> layoutMapping) {
         clear();
-        EditPart editPart = layoutManager.getEditPart(layoutManager.getLayoutGraph());
-        layer = layoutManager.getBridge().getDrawingLayer(editPart);
+        Object diagPart = layoutMapping.getParentElement();
+        if (diagPart instanceof EditPart) {
+            IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance()
+                    .getBridge(diagPart);
+            layer = bridge.getDrawingLayer((EditPart) diagPart);
+        }
     }
 
     /**

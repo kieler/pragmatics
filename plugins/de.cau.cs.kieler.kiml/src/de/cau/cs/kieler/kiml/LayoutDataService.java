@@ -568,9 +568,9 @@ public class LayoutDataService {
      *            a domain model class
      * @return the semantic layout configurations for the class or a superclass
      */
-    public final List<SemanticLayoutConfig> getSemanticConfigs(final EClass clazz) {
+    public final List<ILayoutConfig> getSemanticConfigs(final EClass clazz) {
         if (clazz != null) {
-            List<SemanticLayoutConfig> configs = new LinkedList<SemanticLayoutConfig>();
+            List<ILayoutConfig> configs = new LinkedList<ILayoutConfig>();
             LinkedList<EClass> classes = new LinkedList<EClass>();
             classes.add(clazz);
             do {

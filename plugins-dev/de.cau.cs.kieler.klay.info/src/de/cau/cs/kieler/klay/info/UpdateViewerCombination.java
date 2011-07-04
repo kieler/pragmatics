@@ -14,8 +14,9 @@
 package de.cau.cs.kieler.klay.info;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
+import de.cau.cs.kieler.kiml.ui.layout.LayoutMapping;
 
 /**
  * Combination for updating the KIML Viewer when layout actions are performed.
@@ -30,8 +31,11 @@ public class UpdateViewerCombination extends AbstractCombination {
      * @param layoutEffect the layout effect that was just performed
      */
     public void execute(final LayoutEffect layoutEffect) {
-        DiagramLayoutManager manager = layoutEffect.getManager();
-        schedule(new UpdateViewerEffect(manager.getLayoutGraph(), manager.getProgressMonitor()));
+        LayoutMapping<?> mapping = layoutEffect.getMapping();
+        if (mapping != null) {
+            schedule(new UpdateViewerEffect(mapping.getLayoutGraph(),
+                    mapping.getProperty(DiagramLayoutEngine.PROGRESS_MONITOR)));
+        }
     }
     
 }

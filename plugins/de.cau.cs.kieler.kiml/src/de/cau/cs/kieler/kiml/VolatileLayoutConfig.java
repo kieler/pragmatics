@@ -14,14 +14,12 @@
 package de.cau.cs.kieler.kiml;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.IPropertyHolder;
-import de.cau.cs.kieler.core.util.Pair;
 
 /**
  * A layout configuration that can be used to generate on-the-fly layout options.
@@ -30,153 +28,95 @@ import de.cau.cs.kieler.core.util.Pair;
  * @author msp
  */
 public class VolatileLayoutConfig implements ILayoutConfig {
+    
+    /** the priority for volatile layout configurations. */
+    public static final int PRIORITY = 100;
 
-    /** the elements that are currently in focus. */
-    private List<Object> currentFocus = new LinkedList<Object>();
     /** map of focus objects and property identifiers to their values. */
-    private Map<Pair<Object, IProperty<?>>, Object> propertyMap
-            = new LinkedHashMap<Pair<Object, IProperty<?>>, Object>();
-    
+    private Map<Object, Map<IProperty<?>, Object>> optionMap
+            = new HashMap<Object, Map<IProperty<?>, Object>>();
+    private Set<IProperty<?>> contextKeys = new HashSet<IProperty<?>>();
+
     /**
      * {@inheritDoc}
      */
-    public void setFocus(final Object element) {
-        if (element == null) {
-            currentFocus.clear();
+    public int getPriority() {
+        return PRIORITY;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void enrich(final LayoutContext context) {
+        // no properties to enrich for this layout configuration
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
+        for (IProperty<?> contextKey : contextKeys) {
+            Object object = context.getProperty(contextKey);
+            Map<IProperty<?>, Object> contextOptions = optionMap.get(object);
+            if (contextOptions != null) {
+                Object value = contextOptions.get(optionData);
+                if (value != null) {
+                    return value;
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Set a new value for a layout option in the context of the given object.
+     * 
+     * @param option a layout option property
+     * @param contextObj the object to which the option value is attached,
+     *          e.g. a domain model element
+     * @param contextKey the layout context key related to the context object,
+     *          e.g. {@link LayoutContext#DOMAIN_MODEL}
+     * @param value the new layout option value
+     */
+    public void setValue(final IProperty<?> option, final Object contextObj,
+            final IProperty<?> contextKey, final Object value) {
+        contextKeys.add(contextKey);
+        
+        Map<IProperty<?>, Object> contextOptions = optionMap.get(contextObj);
+        if (contextOptions == null) {
+            contextOptions = new HashMap<IProperty<?>, Object>();
+            optionMap.put(contextObj, contextOptions);
+        }
+        if (value == null) {
+            contextOptions.remove(option);
         } else {
-            currentFocus.add(element);
+            contextOptions.put(option, value);
         }
     }
     
     /**
-     * {@inheritDoc}
-     */
-    public void setProperty(final IProperty<?> property, final Object value) {
-        for (Object object : currentFocus) {
-            Pair<Object, IProperty<?>> key = new Pair<Object, IProperty<?>>(object, property); 
-            if (value == null) {
-                propertyMap.remove(key);
-            } else {
-                propertyMap.put(key, value);
-            }
-        }
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public <T> T getProperty(final IProperty<T> property) {
-        for (Object object : currentFocus) {
-            Pair<Object, IProperty<?>> key = new Pair<Object, IProperty<?>>(object, property);
-            @SuppressWarnings("unchecked")
-            T value = (T) propertyMap.get(key);
-            if (value != null) {
-                return value;
-            }
-        }
-        return null;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public void copyProperties(final IPropertyHolder holder) {
-        if (holder instanceof VolatileLayoutConfig) {
-            VolatileLayoutConfig other = (VolatileLayoutConfig) holder;
-            this.propertyMap.putAll(other.propertyMap);
-        } else {
-            for (Map.Entry<IProperty<?>, Object> entry : holder.getAllProperties().entrySet()) {
-                setProperty(entry.getKey(), entry.getValue());
-            }
-        }
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public Map<IProperty<?>, Object> getAllProperties() {
-        Map<IProperty<?>, Object> options = new HashMap<IProperty<?>, Object>();
-        for (Map.Entry<Pair<Object, IProperty<?>>, Object> entry : propertyMap.entrySet()) {
-            if (currentFocus.contains(entry.getKey().getFirst())) {
-                options.put(entry.getKey().getSecond(), entry.getValue());
-            }
-        }
-        return options;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isDefault(final LayoutOptionData<?> optionData) {
-        for (Object object : currentFocus) {
-            Pair<Object, IProperty<?>> key = new Pair<Object, IProperty<?>>(object, optionData);
-            if (propertyMap.containsKey(key)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<LayoutOptionData<?>> getOptionData() {
-        List<LayoutOptionData<?>> dataList = new LinkedList<LayoutOptionData<?>>();
-        for (Map.Entry<Pair<Object, IProperty<?>>, Object> entry : propertyMap.entrySet()) {
-            if (currentFocus.contains(entry.getKey().getFirst())
-                    && entry.getKey().getSecond() instanceof LayoutOptionData) {
-                dataList.add((LayoutOptionData<?>) entry.getKey().getSecond());
-            }
-        }
-        return dataList;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void clearProperties() {
-        propertyMap.clear();
-    }
-
-    /**
-     * Returns {@code null}, since this layout configuration is not connected to a layout algorithm.
+     * Copy all values from the given layout configuration into this one.
      * 
-     * @return {@code null}
+     * @param other another volatile layout configuration
      */
-    public LayoutAlgorithmData getContentLayouterData() {
-        return null;
+    public void copyValues(final VolatileLayoutConfig other) {
+        this.contextKeys.addAll(other.contextKeys);
+        this.optionMap.putAll(other.optionMap);
     }
 
     /**
-     * Returns {@code null}, since this layout configuration is not connected to a layout algorithm.
-     * 
-     * @return {@code null}
+     * {@inheritDoc}
      */
-    public LayoutAlgorithmData getContainerLayouterData() {
-        return null;
-    }
-
-    /**
-     * Throws an {@link UnsupportedOperationException}, since this configuration cannot be
-     * used to change diagram options.
-     * 
-     * @param optionData a layout option
-     * @param value an option value
-     */
-    public void setDiagramDefault(final LayoutOptionData<?> optionData, final Object value) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Throws an {@link UnsupportedOperationException}, since this configuration cannot be
-     * used to handle layout providers.
-     * 
-     * @param layoutHint a layout hint
-     * @param diagramType a diagram type
-     * @return nothing
-     */
-    public LayoutAlgorithmData getLayouterData(final String layoutHint, final String diagramType) {
-        throw new UnsupportedOperationException();
+    public void transferValues(final KGraphData graphData, final LayoutContext context) {
+        for (IProperty<?> contextKey : contextKeys) {
+            Object object = context.getProperty(contextKey);
+            Map<IProperty<?>, Object> contextOptions = optionMap.get(object);
+            if (contextOptions != null) {
+                for (Map.Entry<IProperty<?>, Object> option : contextOptions.entrySet()) {
+                    graphData.setProperty(option.getKey(), option.getValue());
+                }
+            }
+        }
     }
 
 }

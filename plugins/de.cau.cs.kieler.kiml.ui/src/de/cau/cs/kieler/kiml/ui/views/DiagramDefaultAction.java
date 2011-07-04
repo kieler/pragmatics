@@ -21,12 +21,16 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
-import de.cau.cs.kieler.kiml.ILayoutConfig;
+import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
+import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
+import de.cau.cs.kieler.kiml.IMutableLayoutConfig;
+import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -64,14 +68,27 @@ public class DiagramDefaultAction extends Action {
     @Override
     public void run() {
         IWorkbenchPart workbenchPart = layoutView.getCurrentEditor();
-        DiagramLayoutManager manager = layoutView.getCurrentManager();
-        if (manager != null) {
-            EditPart diagram = manager.getBridge().getEditPart(workbenchPart);
+        IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(
+                workbenchPart);
+        if (bridge != null) {
+            EditPart diagram = bridge.getEditPart(workbenchPart);
             if (diagram != null) {
-                EditingDomain editingDomain = manager.getBridge().getEditingDomain(diagram);
-                ILayoutConfig config = manager.getLayoutConfig(diagram);
-                for (IPropertySheetEntry entry : layoutView.getSelection()) {
-                    applyOption(editingDomain, config, entry);
+                DiagramLayoutManager<?> manager = EclipseLayoutDataService.getInstance()
+                        .getManager(workbenchPart, diagram);
+                if (manager != null) {
+                    final IMutableLayoutConfig layoutConfig = manager.getLayoutConfig();
+                    if (layoutConfig != null) {
+                        // build a layout context for setting the option
+                        final LayoutContext context = new LayoutContext();
+                        context.setProperty(LayoutContext.DIAGRAM_PART, diagram);
+                        context.setProperty(IMutableLayoutConfig.OPT_RECURSIVE, true);
+                        layoutConfig.enrich(context);
+                        
+                        EditingDomain editingDomain = bridge.getEditingDomain(diagram);
+                        for (IPropertySheetEntry entry : layoutView.getSelection()) {
+                            applyOption(editingDomain, layoutConfig, context, entry);
+                        }
+                    }
                 }
             }
         }
@@ -83,10 +100,12 @@ public class DiagramDefaultAction extends Action {
      * 
      * @param editingDomain the editing domain
      * @param config a layout configuration
+     * @param context a layout context
      * @param entry a property sheet entry
      */
     private void applyOption(final EditingDomain editingDomain,
-            final ILayoutConfig config, final IPropertySheetEntry entry) {
+            final IMutableLayoutConfig config, final LayoutContext context,
+            final IPropertySheetEntry entry) {
         final LayoutOptionData<?> optionData = KimlUiUtil.getOptionData(
                 layoutView.getCurrentLayouterData(), entry.getDisplayName());
         if (optionData == null) {
@@ -102,7 +121,7 @@ public class DiagramDefaultAction extends Action {
         if (value != null) {
             Runnable modelChange = new Runnable() {
                 public void run() {
-                    config.setDiagramDefault(optionData, value);
+                    config.setValue(optionData, context, value);
                 }
             };
             KimlUiUtil.runModelChange(modelChange, (TransactionalEditingDomain) editingDomain,

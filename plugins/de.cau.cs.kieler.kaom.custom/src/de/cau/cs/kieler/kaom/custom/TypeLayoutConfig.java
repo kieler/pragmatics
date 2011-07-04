@@ -13,17 +13,13 @@
  */
 package de.cau.cs.kieler.kaom.custom;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.emf.ecore.EObject;
 
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
+import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.SemanticLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
@@ -38,22 +34,18 @@ public class TypeLayoutConfig extends SemanticLayoutConfig {
      * {@inheritDoc}
      */
     @Override
-    protected List<LayoutOptionData<?>> getOptionData(final EObject semanticElem) {
+    protected IProperty<?>[] getAffectedOptions(final EObject semanticElem) {
         if (semanticElem instanceof Entity) {
-            LayoutOptionData<?> optionData = LayoutDataService.getInstance()
-            .getOptionData(LayoutOptions.DIAGRAM_TYPE_ID);
-            List<LayoutOptionData<?>> list = new ArrayList<LayoutOptionData<?>>(1);
-            list.add(optionData);
-            return list;
+            return new IProperty<?>[] { LayoutOptions.DIAGRAM_TYPE };
         }
-        return Collections.emptyList();
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Object getSemanticProperty(final EObject semanticElem,
+    protected Object getSemanticValue(final EObject semanticElem,
             final LayoutOptionData<?> layoutOption) {
         if (semanticElem instanceof Entity && layoutOption.getId()
                 .equals(LayoutOptions.DIAGRAM_TYPE_ID)) {
@@ -74,7 +66,7 @@ public class TypeLayoutConfig extends SemanticLayoutConfig {
      * {@inheritDoc}
      */
     @Override
-    protected void setSemanticProperty(final EObject semanticElem,
+    protected void setSemanticValue(final EObject semanticElem,
             final LayoutOptionData<?> layoutOption, final Object value) {
         // not supported by this layout configuration
     }

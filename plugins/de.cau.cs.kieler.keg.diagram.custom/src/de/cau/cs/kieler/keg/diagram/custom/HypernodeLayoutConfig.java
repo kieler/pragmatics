@@ -13,14 +13,10 @@
  */
 package de.cau.cs.kieler.keg.diagram.custom;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.emf.ecore.EObject;
 
+import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.keg.Node;
-import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.SemanticLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -36,20 +32,18 @@ public class HypernodeLayoutConfig extends SemanticLayoutConfig {
      * {@inheritDoc}
      */
     @Override
-    protected List<LayoutOptionData<?>> getOptionData(final EObject semanticElem) {
+    protected IProperty<?>[] getAffectedOptions(final EObject semanticElem) {
         if (semanticElem instanceof Node) {
-            List<LayoutOptionData<?>> data = new ArrayList<LayoutOptionData<?>>(1);
-            data.add(LayoutDataService.getInstance().getOptionData(LayoutOptions.HYPERNODE_ID));
-            return data;
+            return new IProperty<?>[] { LayoutOptions.HYPERNODE };
         }
-        return Collections.emptyList();
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Object getSemanticProperty(final EObject semanticElem,
+    protected Object getSemanticValue(final EObject semanticElem,
             final LayoutOptionData<?> layoutOption) {
         if (semanticElem instanceof Node && layoutOption.equals(LayoutOptions.HYPERNODE)) {
             return ((Node) semanticElem).isHypernode();
@@ -61,7 +55,7 @@ public class HypernodeLayoutConfig extends SemanticLayoutConfig {
      * {@inheritDoc}
      */
     @Override
-    protected void setSemanticProperty(final EObject semanticElem,
+    protected void setSemanticValue(final EObject semanticElem,
             final LayoutOptionData<?> layoutOption, final Object value) {
         // not supported by this layout configuration
     }

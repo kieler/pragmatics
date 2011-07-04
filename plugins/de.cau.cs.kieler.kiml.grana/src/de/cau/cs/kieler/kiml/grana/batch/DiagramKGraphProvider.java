@@ -31,8 +31,10 @@ import org.eclipse.ui.ide.IDE;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
+import de.cau.cs.kieler.kiml.ui.layout.LayoutMapping;
 
 /**
  * The KGraph provider that retrieves a KGraph by opening a diagram file in an
@@ -97,7 +99,7 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
                     return;
                 }
                 // get the layout manager for the editor
-                DiagramLayoutManager layoutManager =
+                DiagramLayoutManager<?> layoutManager =
                         EclipseLayoutDataService.getInstance().getManager(
                                 editorPart, null);
                 if (layoutManager == null) {
@@ -108,10 +110,12 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
                     return;
                 }
                 // build the graph
-                graph = layoutManager.buildLayoutGraph(editorPart, null, false);
+                LayoutMapping<?> mapping = layoutManager.buildLayoutGraph(editorPart, null);
+                graph = mapping.getLayoutGraph();
                 // layout if the option is set
                 if (layoutBeforeAnalysis) {
-                    IStatus status = layoutManager.layout(monitor);
+                    DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
+                    IStatus status = layoutEngine.layout(mapping, monitor.subTask(1), null);
                     if (!status.isOK()) {
                         if (!initialEditors.contains(editorPart)) {
                             page.closeEditor(editorPart, false);

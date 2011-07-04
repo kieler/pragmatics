@@ -18,7 +18,6 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gef.EditPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -34,12 +33,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
+import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
+import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -158,13 +158,14 @@ public class SelectionInfoAction extends Action {
      */
     private String createInfo() {
         LayoutDataService layoutServices = LayoutDataService.getInstance();
-        DiagramLayoutManager manager = layoutView.getCurrentManager();
         StringBuilder builder = new StringBuilder();
-        EditPart editPart = layoutView.getCurrentEditPart();
-        if (editPart != null) {
+        Object diagramPart = layoutView.getCurrentEditPart();
+        IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(
+                diagramPart);
+        if (bridge != null) {
             builder.append("<b>Edit part class</b><ul><li>"
-                    + editPart.getClass().getName() + "</li></ul>");
-            EObject model = manager.getBridge().getElement(editPart);
+                    + diagramPart.getClass().getName() + "</li></ul>");
+            EObject model = bridge.getElement(diagramPart);
             if (model != null) {
                 builder.append("<b>Domain model class</b><ul><li>"
                         + model.eClass().getInstanceTypeName() + "</li></ul>");

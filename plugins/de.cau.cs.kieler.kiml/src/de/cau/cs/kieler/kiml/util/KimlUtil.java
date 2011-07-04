@@ -784,5 +784,26 @@ public final class KimlUtil {
             addDummyEdgesForInterlevelConnections(child);
         }
     }
+    
+    /**
+     * Excludes the content of the given node from automatic layout.
+     * 
+     * @param node a layout node
+     */
+    public static void excludeContent(final KNode node) {
+        for (KNode child : node.getChildren()) {
+            child.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
+            for (KPort port : child.getPorts()) {
+                port.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
+            }
+            for (KEdge edge : child.getOutgoingEdges()) {
+                edge.getData(KEdgeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
+                for (KLabel label : edge.getLabels()) {
+                    label.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
+                }
+            }
+            excludeContent(child);
+        }
+    }
 
 }

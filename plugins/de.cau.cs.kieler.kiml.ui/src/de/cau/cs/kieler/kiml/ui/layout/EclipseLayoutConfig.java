@@ -13,21 +13,25 @@
  */
 package de.cau.cs.kieler.kiml.ui.layout;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gef.EditPart;
+import org.eclipse.ui.IWorkbenchPart;
 
+import de.cau.cs.kieler.core.kgraph.KGraphData;
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
+import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
-import de.cau.cs.kieler.kiml.SemanticLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 
@@ -37,22 +41,37 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
  * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
-public class EclipseLayoutConfig extends DefaultLayoutConfig {
+public class EclipseLayoutConfig implements ILayoutConfig {
+    
+    /** the priority for the Eclipse layout configuration. */
+    public static final int PRIORITY = 10;
+    
+    /** the currently tracked diagram editor. */
+    public static final IProperty<IWorkbenchPart> WORKBENCH_PART = new Property<IWorkbenchPart>(
+            "context.workbenchPart");
+    
+    /** the aspect ratio of the currently processed diagram viewer. */
+    public static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
+            "context.aspectRatio");
+    
+    /** whether the node in the current context contains any ports. */
+    public static final IProperty<Boolean> HAS_PORTS = new Property<Boolean>(
+            "context.hasPorts", false);
 
     /**
      * Retrieves a layout option from the given edit part by using the framework bridge
      * associated with the edit part type.
      * 
-     * @param editPart an edit part
+     * @param diagramPart a diagram part such as an edit part
      * @param optionData layout option data
      * @return the current value for the given option, or {@code null}
      */
-    public static Object getOption(final EditPart editPart, final IProperty<?> optionData) {
-        IGraphicalFrameworkBridge bridge = EclipseLayoutDataService.getInstance()
-                .getFrameworkBridge(editPart);
+    public static Object getOption(final Object diagramPart, final IProperty<?> optionData) {
+        IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.
+                getInstance().getBridge(diagramPart);
         if (bridge != null) {
-            return getOption(bridge.getEditPart(editPart),
-                    bridge.getElement(editPart), optionData);
+            return getOption(bridge.getEditPart(diagramPart),
+                    bridge.getElement(diagramPart), optionData);
         }
         return null;
     }
@@ -61,18 +80,18 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      * Retrieves a layout option for the given edit part and model element by querying the option
      * for the edit part's class name and its domain model name. 
      * 
-     * @param editPart an edit part
+     * @param diagramPart a diagram part such as an edit part
      * @param modelElement the corresponding model element
      * @param property layout option data
      * @return the current value for the given option, or {@code null}
      */
-    public static Object getOption(final EditPart editPart, final EObject modelElement,
+    public static Object getOption(final Object diagramPart, final EObject modelElement,
             final IProperty<?> property) {
         LayoutDataService layoutServices = LayoutDataService.getInstance();
         String id = property.getId();
-        if (editPart != null) {
+        if (diagramPart != null) {
             // get option for the edit part class
-            String clazzName = editPart.getClass().getName();
+            String clazzName = diagramPart.getClass().getName();
             Object value = layoutServices.getOption(clazzName, id);
             if (value != null) {
                 return value;
@@ -85,236 +104,130 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
             if (value != null) {
                 return value;
             }
-            LayoutOptionData<?> optionData = layoutServices.getOptionData(id);
-            if (optionData != null) {
-                // get option from the semantic layout configuration
-                for (SemanticLayoutConfig config : layoutServices.getSemanticConfigs(eclazz)) {
-                    config.setFocus(modelElement);
-                    value = config.getProperty(optionData);
-                    if (value != null) {
-                        return value;
-                    }
-                }
-            }
         }
         return null;
     }
 
-    /** the edit part for the selected element. */
-    private EditPart focusEditPart;
-    /** the selected model element. */
-    private EObject modelElement;
-    /** diagram type for the content of the selected element. */ 
-    private String contentDiagramType;
-    /** diagram type for the container of the selected element. */
-    private String containerDiagramType;
-    /** external layout configuration embedded in this one. */
-    private ILayoutConfig externalConfig;
-    /** indicates whether the selected node contains any children. */
-    private Boolean hasChildren;
-    /** indicates whether the selected node contains any ports. */
-    private Boolean hasPorts;
-    /** suggested value for aspect ratio. */
-    private Float aspectRatio;
-    
     /**
-     * Create a stand-alone Eclipse layout configuration.
+     * {@inheritDoc}
      */
-    public EclipseLayoutConfig() {
+    public int getPriority() {
+        return PRIORITY;
     }
-    
+
     /**
-     * Create an Eclipse layout configuration embedding an external configuration.
-     * 
-     * @param externalConfig an external layout configuration
+     * {@inheritDoc}
      */
-    public EclipseLayoutConfig(final ILayoutConfig externalConfig) {
-        this.externalConfig = externalConfig;
-    }
-    
-    /**
-     * Set the edit part or domain model element as focus for this layout configuration.
-     * This can be done without initializing the layout configuration in order to use
-     * {@link #getAllProperties()} efficiently, since the same configuration instance can
-     * be reused multiple times. Passing {@code null} clears the current focus and resets
-     * information about children and ports.
-     * 
-     * @param element an {@link EditPart} or {@link EObject}
-     */
-    @Override
-    public void setFocus(final Object element) {
-        if (element == null) {
-            this.focusEditPart = null;
-            this.modelElement = null;
-            this.hasChildren = null;
-            this.hasPorts = null;
-        } else if (element instanceof EditPart) {
-            this.focusEditPart = (EditPart) element;
-        } else if (element instanceof EObject) {
-            this.modelElement = (EObject) element;
-        }
-        // pass the new focus element on to the external configuration
-        if (externalConfig != null) {
-            externalConfig.setFocus(element);
-        }
-    }
-    
-    /**
-     * Set whether the node in focus has any children.
-     * 
-     * @param children whether the selected node has children
-     */
-    public void setChildren(final boolean children) {
-        this.hasChildren = children;
-    }
-    
-    /**
-     * Set whether the node in focus has any ports.
-     * 
-     * @param ports whether the selected node has ports
-     */
-    public void setPorts(final boolean ports) {
-        this.hasPorts = ports;
-    }
-    
-    private static final float ASPECT_RATIO_ROUND = 100;
-    
-    /**
-     * Set the suggested aspect ratio.
-     * 
-     * @param ratio the suggested value for aspect ratio
-     */
-    public void setAspectRatio(final float ratio) {
-        if (ratio > 0) {
-            this.aspectRatio = Math.round(ASPECT_RATIO_ROUND * ratio) / ASPECT_RATIO_ROUND;
-        } else {
-            this.aspectRatio = ratio;
-        }
-    }
-    
-    /**
-     * Initialize the configuration with a layout hint and an edit part for the
-     * content (if target type is {@link LayoutOptionData.Target#PARENTS}) or
-     * the container of the selected element.
-     * 
-     * @param targetType type of the selected element (parent, node, edge, port, etc.)
-     * @param editPart the edit part
-     * @param theLayoutHint a layout hint, or {@code null}
-     */
-    public final void initialize(final LayoutOptionData.Target targetType,
-            final EditPart editPart, final String theLayoutHint) {
-        String diagramType = (String) getOption(editPart, LayoutOptions.DIAGRAM_TYPE);
-        if (diagramType == null) {
-            diagramType = LayoutDataService.DIAGRAM_TYPE_GENERAL;
-        }
-        if (targetType == LayoutOptionData.Target.PARENTS) {
-            contentDiagramType = diagramType;
-        } else {
-            containerDiagramType = diagramType;
-        }
-        String layoutHint = theLayoutHint;
-        if (layoutHint == null) {
-            layoutHint = (String) getOption(editPart, LayoutOptions.ALGORITHM);
-        }
-        initialize(targetType, layoutHint, diagramType);
-    }
-    
-    /**
-     * Retrieve the pre-configured or user defined default value for a layout option.
-     * This implementation requires
-     * {@link #initialize(de.cau.cs.kieler.kiml.LayoutOptionData.Target, EditPart, String) initialize}
-     * and {@link #setFocus(Object) setFocus} to be called first in order to give correct results.
-     * 
-     * @param <T> type of option
-     * @param property a layout option
-     * @return the default value for the layout option
-     */
-    @Override
-    public final <T> T getProperty(final IProperty<T> property) {
-        T result;
-        if (externalConfig != null) {
-            result = externalConfig.getProperty(property);
-            if (result != null) {
-                return result;
-            }
+    public void enrich(final LayoutContext context) {
+        // adapt ports information in the context
+        KGraphElement graphElem = context.getProperty(LayoutContext.GRAPH_ELEM);
+        if (graphElem instanceof KNode) {
+            context.setProperty(HAS_PORTS, !((KNode) graphElem).getPorts().isEmpty());
         }
         
-        if (property instanceof LayoutOptionData<?>) {
-            result = doGetProperty((LayoutOptionData<T>) property);
-            if (result != null) {
-                return result;
+        // get main edit part and domain model element
+        Object diagPart = context.getProperty(LayoutContext.DIAGRAM_PART);
+        EObject domainElem = context.getProperty(LayoutContext.DOMAIN_MODEL);
+        if (domainElem == null && diagPart != null) {
+            IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance()
+                    .getBridge(diagPart);
+            domainElem = bridge.getElement(diagPart);
+            context.setProperty(LayoutContext.DOMAIN_MODEL, domainElem);
+        }
+
+        // set diagram type for the content of the main edit part
+        String diagramType = (String) getOption(diagPart, domainElem, LayoutOptions.DIAGRAM_TYPE);
+        if (diagramType != null) {
+            context.setProperty(DefaultLayoutConfig.CONTENT_DIAGT, diagramType);
+        }
+        
+        if (context.getProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS)) {            
+            // set layout algorithm or type identifier for the content
+            String layoutHint = context.getProperty(DefaultLayoutConfig.CONTENT_HINT);
+            if (layoutHint == null) {
+                layoutHint = (String) getOption(diagPart, domainElem, LayoutOptions.ALGORITHM);
+                context.setProperty(DefaultLayoutConfig.CONTENT_HINT, layoutHint);
+            }
+            
+            // get container edit part and domain model element
+            Object containerDiagPart = context.getProperty(LayoutContext.CONTAINER_DIAGRAM_PART);
+            EObject containerDomainElem = context.getProperty(LayoutContext.CONTAINER_DOMAIN_MODEL);
+            if (containerDomainElem == null && containerDiagPart != null) {
+                IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance()
+                        .getBridge(containerDiagPart);
+                containerDomainElem = bridge.getElement(containerDiagPart);
+                context.setProperty(LayoutContext.CONTAINER_DOMAIN_MODEL, containerDomainElem);
+            }
+            
+            // set diagram type for the container of the main edit part
+            String containerDiagramType = (String) getOption(containerDiagPart, containerDomainElem,
+                    LayoutOptions.DIAGRAM_TYPE);
+            if (containerDiagramType != null) {
+                context.setProperty(DefaultLayoutConfig.CONTAINER_DIAGT, containerDiagramType);
+            }
+            
+            // set layout algorithm or type identifier for the container
+            String containerLayoutHint = context.getProperty(DefaultLayoutConfig.CONTAINER_HINT);
+            if (containerLayoutHint == null) {
+                containerLayoutHint = (String) getOption(containerDiagPart, containerDomainElem,
+                        LayoutOptions.ALGORITHM);
+                context.setProperty(DefaultLayoutConfig.CONTAINER_HINT, containerLayoutHint);
             }
         }
-        // fall back to the default value for the property
-        return super.getProperty(property);
     }
-    
+
     /**
-     * Retrieve the pre-configured or user defined default value for a layout option.
-     * 
-     * @param <T> type of option
-     * @param optionData a layout option
-     * @return the default value for the layout option
+     * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
-    protected <T> T doGetProperty(final LayoutOptionData<T> optionData) {
+    public Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
         EclipseLayoutDataService layoutServices = EclipseLayoutDataService.getInstance();
         Object result = null;
         
         // check default value set for the actual edit part or its model element
-        result = getOption(focusEditPart, modelElement, optionData);
+        result = getOption(context.getProperty(LayoutContext.DIAGRAM_PART),
+                context.getProperty(LayoutContext.DOMAIN_MODEL), optionData);
         if (result != null) {
-            return (T) result;
+            return result;
         }
         
         if (optionData.hasTarget(LayoutOptionData.Target.PARENTS)) {
             // check default value for the diagram type of the selection's content
-            result = layoutServices.getOption(contentDiagramType, optionData.getId());
+            result = layoutServices.getOption(context.getProperty(DefaultLayoutConfig.CONTENT_DIAGT),
+                    optionData.getId());
             if (result != null) {
-                return (T) result;
+                return result;
             }
         } else {
             // check default value for the diagram type of the selection's container
-            result = layoutServices.getOption(containerDiagramType, optionData.getId());
+            result = layoutServices.getOption(context.getProperty(DefaultLayoutConfig.CONTAINER_DIAGT),
+                    optionData.getId());
             if (result != null) {
-                return (T) result;
+                return result;
             }
         }
         
         // fall back to dynamic default value of specific options
-        result = getDynamicValue(optionData);
-        if (result != null) {
-            return (T) result;
+        if (LayoutOptions.FIXED_SIZE_ID.equals(optionData.getId())) {
+            return getFixedSizeValue(context);
+        } else if (LayoutOptions.PORT_CONSTRAINTS_ID.equals(optionData.getId())) {
+            return getPortConstraintsValue(context);
+        } else if (LayoutOptions.ASPECT_RATIO_ID.equals(optionData.getId())) {
+            return getAspectRatioValue(context);
         }
         
-        return null;
-    }
-    
-    /**
-     * Determine a dynamic option value for specific options.
-     * 
-     * @param optionData a layout option
-     * @return the dynamic value, or {@code null}
-     */
-    private Object getDynamicValue(final LayoutOptionData<?> optionData) {
-        if (LayoutOptions.FIXED_SIZE_ID.equals(optionData.getId())) {
-            return getFixedSizeValue();
-        } else if (LayoutOptions.PORT_CONSTRAINTS_ID.equals(optionData.getId())) {
-            return getPortConstraintsValue();
-        } else if (LayoutOptions.ASPECT_RATIO_ID.equals(optionData.getId())) {
-            return aspectRatio != null && aspectRatio > 0 ? aspectRatio : null;
-        }
         return null;
     }
     
     /**
      * Return the dynamic value for the fixed size option.
      * 
+     * @param context a context for layout configuration
      * @return {@code true} if the selected node has no children, and {@code false} otherwise
      */
-    protected Boolean getFixedSizeValue() {
-        if (hasChildren != null) {
-            return Boolean.valueOf(!hasChildren);
+    private Boolean getFixedSizeValue(final LayoutContext context) {
+        Set<LayoutOptionData.Target> targets = context.getProperty(LayoutContext.OPT_TARGETS);
+        if (targets != null) {
+            return !targets.contains(LayoutOptionData.Target.PARENTS);
         }
         return null;
     }
@@ -322,12 +235,15 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
     /**
      * Return the dynamic value for the port constraints option.
      * 
+     * @param context a context for layout configuration
      * @return {@code FIXED_POS} if the selected node has ports and no children,
      *          and {@code FREE} otherwise
      */
-    protected PortConstraints getPortConstraintsValue() {
-        if (hasChildren != null && hasPorts != null) {
-            if (!hasChildren && hasPorts) {
+    private PortConstraints getPortConstraintsValue(final LayoutContext context) {
+        Set<LayoutOptionData.Target> targets = context.getProperty(LayoutContext.OPT_TARGETS);
+        Boolean hasPorts = context.getProperty(HAS_PORTS);
+        if (targets != null && hasPorts != null) {
+            if (!targets.contains(LayoutOptionData.Target.PARENTS) && hasPorts) {
                 return PortConstraints.FIXED_POS;
             } else {
                 return PortConstraints.FREE;
@@ -337,105 +253,75 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
     }
     
     /**
-     * Returns a map of all options that have pre-configured or user defined default values.
+     * Return the dynamic value for the aspect ratio option.
      * 
-     * @return a map of layout option values
+     * @param context a context for layout configuration
+     * @return the aspect ratio, if it has been configured in the context
      */
-    @Override
-    public final Map<IProperty<?>, Object> getAllProperties() {
-        Map<IProperty<?>, Object> options = new LinkedHashMap<IProperty<?>, Object>();
-        addProperties(options);
-        if (externalConfig != null) {
-            options.putAll(externalConfig.getAllProperties());
+    private Float getAspectRatioValue(final LayoutContext context) {
+        Float aspectRatio = context.getProperty(ASPECT_RATIO);
+        if (aspectRatio != null && aspectRatio > 0) {
+             return aspectRatio;
         }
-        return options;
+        return null;
     }
-    
+
     /**
-     * Add all options that have pre-configured or user defined default values to the given map.
-     * 
-     * @param options a map of layout option values
+     * {@inheritDoc}
      */
-    protected void addProperties(final Map<IProperty<?>, Object> options) {
+    public void transferValues(final KGraphData graphData, final LayoutContext context) {
         LayoutDataService layoutServices = LayoutDataService.getInstance();
         Object value;
         
         // get dynamic values for specific options
-        value = getFixedSizeValue();
+        value = getFixedSizeValue(context);
         if (value != null) {
-            options.put(LayoutOptions.FIXED_SIZE, value);
+            graphData.setProperty(LayoutOptions.FIXED_SIZE, value);
         }
-        value = getPortConstraintsValue();
+        value = getPortConstraintsValue(context);
         if (value != null) {
-            options.put(LayoutOptions.PORT_CONSTRAINTS, value);
+            graphData.setProperty(LayoutOptions.PORT_CONSTRAINTS, value);
         }
-        if (aspectRatio != null && aspectRatio > 0) {
-            options.put(LayoutOptions.ASPECT_RATIO, aspectRatio);
+        value = getAspectRatioValue(context);
+        if (value != null) {
+            graphData.setProperty(LayoutOptions.ASPECT_RATIO, value);
         }
 
+        Object diagPart = context.getProperty(LayoutContext.DIAGRAM_PART);
+        EObject modelElement = context.getProperty(LayoutContext.DOMAIN_MODEL);
+
         // get default layout options for the diagram type
-        String diagramType = (String) getOption(focusEditPart, modelElement,
-                LayoutOptions.DIAGRAM_TYPE);
+        String diagramType = context.getProperty(DefaultLayoutConfig.CONTENT_DIAGT);
         if (diagramType != null) {
             for (Entry<String, Object> entry : layoutServices.getOptions(diagramType).entrySet()) {
                 if (entry.getValue() != null) {
                     LayoutOptionData<?> optionData = layoutServices.getOptionData(entry.getKey());
-                    options.put(optionData, entry.getValue());
+                    graphData.setProperty(optionData, entry.getValue());
                 }
             }
         }
         
+        // get default layout options for the domain model element
         if (modelElement != null) {
-            // get layout options from the semantic layout configurations
-            for (SemanticLayoutConfig config : layoutServices.getSemanticConfigs(
-                    modelElement.eClass())) {
-                config.setFocus(modelElement);
-                for (LayoutOptionData<?> optionData : config.getOptionData()) {
-                    value = config.getProperty(optionData);
-                    if (value != null) {
-                        options.put(optionData, value);
-                    }
-                }
-            }
-            
-            // get default layout options for the domain model element
             for (Entry<String, Object> entry : layoutServices.getOptions(
                     modelElement.eClass()).entrySet()) {
                 if (entry.getValue() != null) {
                     LayoutOptionData<?> optionData = layoutServices.getOptionData(entry.getKey());
-                    options.put(optionData, entry.getValue());
+                    graphData.setProperty(optionData, entry.getValue());
                 }
             }
         }
         
         // get default layout options for the edit part
-        if (focusEditPart != null) {
-            String clazzName = focusEditPart.getClass().getName();
+        if (diagPart != null) {
+            String clazzName = diagPart.getClass().getName();
             for (Entry<String, Object> entry : layoutServices.getOptions(clazzName).entrySet()) {
                 if (entry.getValue() != null) {
                     LayoutOptionData<?> optionData = layoutServices.getOptionData(entry.getKey());
-                    options.put(optionData, entry.getValue());
+                    graphData.setProperty(optionData, entry.getValue());
                 }
             }
         }
-    }
-
-    /**
-     * Returns the edit part for the selected element.
-     * 
-     * @return the edit part, or {@code null} if none is selected
-     */
-    public final EditPart getEditPart() {
-        return focusEditPart;
-    }
-    
-    /**
-     * Returns the external layout configuration embedded in this configuration, if present.
-     * 
-     * @return an external layout configuration, or {@code null}
-     */
-    public final ILayoutConfig getExternalConfig() {
-        return externalConfig;
     }
     
 }
