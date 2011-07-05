@@ -106,6 +106,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
             List<Example> checkedExamples = mainPage.getCheckedExamples();
 
             if (checkedExamples.isEmpty()) {
+                // FIXME throw a more specific exception
                 throw new RuntimeException(ErrorMessage.NO_EXAMPLE_SELECTED);
             }
 
@@ -119,6 +120,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
 
             IPath destinationLocation = destinationPage.getResourcePath();
             if (destinationLocation == null || destinationLocation.isEmpty()) {
+                // FIXME throw a more specific exception
                 throw new RuntimeException("No import location has been set.");
             }
             ExampleManager.get().generateProject(destinationLocation);

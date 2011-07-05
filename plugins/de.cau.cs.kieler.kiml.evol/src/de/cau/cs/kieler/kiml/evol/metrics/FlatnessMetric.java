@@ -51,6 +51,7 @@ public class FlatnessMetric implements IAnalysis {
 
             if (!(dimsResult instanceof Pair<?, ?>)) {
                 // This should happen only when the dims analysis failed.
+                // FIXME throw a more specific exception
                 throw new RuntimeException("Flatness metric analysis failed.");
             }
 
@@ -62,6 +63,7 @@ public class FlatnessMetric implements IAnalysis {
             boolean isYdimZero = ydim == 0.0f;
 
             if (isXdimZero && isYdimZero) {
+                // FIXME throw a more specific exception
                 throw new RuntimeException("Flatness metric analysis failed.");
             }
 

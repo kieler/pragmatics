@@ -122,10 +122,12 @@ public final class IOHandler {
     public static File filterPluginProject(final File location) {
         File childDir = searchUP(location, IOHandler.PROJECT_FILE);
         if (childDir == null) {
+            // FIXME throw a more specific exception
             throw new RuntimeException("Could not find any java project.");
         }
         File project = childDir.getParentFile();
         if (project == null) {
+            // FIXME throw a more specific exception
             throw new RuntimeException("Could not find any java project.");
         }
         return project;
@@ -152,6 +154,7 @@ public final class IOHandler {
                 return project;
             }
         } else {
+            // FIXME throw a more specific exception
             throw new RuntimeException("The choosen destination contains no manifest.mf.");
         }
     }
@@ -223,6 +226,7 @@ public final class IOHandler {
             return null;
         }
         if (fileCount > 1) {
+            // FIXME throw a more specific exception
             throw new RuntimeException(new StringBuffer()
                     .append("There are more than one file with name \"" + searchName + "\" in")
                     .append(source.getPath()).toString());
@@ -237,6 +241,7 @@ public final class IOHandler {
             return null;
         }
         if (fileCount > 1) {
+            // FIXME throw a more specific exception
             throw new RuntimeException(new StringBuffer()
                     .append("There are more than one file with name \"" + source + "\" in")
                     .append(source.getPath()).toString());
@@ -260,6 +265,7 @@ public final class IOHandler {
             final boolean checkDuplicate) throws IOException {
         File target = new File(destPath);
         if (checkDuplicate && target.exists()) {
+            // FIXME throw a more specific exception
             throw new RuntimeException(target.getName());
         }
         InputStream is = sourceUrl.openStream();

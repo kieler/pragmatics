@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.kex.KEXPlugin;
 import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.model.Example;
@@ -91,9 +92,8 @@ public final class ExampleImport {
                         example.getNamespaceId(), exampleBeginIndex, checkDuplicate,
                         finishedResources);
             }
-        } catch (RuntimeException e) {
+        } finally {
             deleteResources(finishedResources);
-            throw e;
         }
         return directOpens;
     }
@@ -130,6 +130,7 @@ public final class ExampleImport {
                     File destFile = new File(newDestFolder + "/" + destPath);
                     finishedResources.add(destFile.getPath());
                     if (checkDuplicate && destFile.exists()) {
+                        // FIXME throw a more specific exception
                         throw new RuntimeException(destFile.getName());
                     }
                     IOHandler.createFolder(newDestFolder + "/" + destPath);
@@ -138,6 +139,7 @@ public final class ExampleImport {
                 case FILE:
                     URL entry = bundle.getEntry(localPath);
                     if (entry == null) {
+                        // FIXME throw a more specific exception
                         throw new RuntimeException(ErrorMessage.NO_Import
                                 + "Could not generate resource url from path: " + localPath);
                     }
@@ -150,11 +152,11 @@ public final class ExampleImport {
                     break;
                 }
             } catch (FileNotFoundException e) {
-                throw new RuntimeException(ErrorMessage.NO_Import, e);
+                throw new WrappedException(e, ErrorMessage.NO_Import);
             } catch (IOException e1) {
-                throw new RuntimeException(ErrorMessage.NO_Import, e1);
+                throw new WrappedException(e1, ErrorMessage.NO_Import);
             } catch (CoreException e2) {
-                throw new RuntimeException(ErrorMessage.NO_Import + e2.getMessage());
+                throw new WrappedException(e2, ErrorMessage.NO_Import);
             }
         }
     }
@@ -162,6 +164,7 @@ public final class ExampleImport {
     private static void checkDuplicate(final String destPath) {
         IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(destPath);
         if (project != null && project.exists()) {
+            // FIXME throw a more specific exception
             throw new RuntimeException("Duplicate Project, you maybe inserted it before.");
         }
     }
@@ -197,6 +200,7 @@ public final class ExampleImport {
     public static void validate(final IPath selectedResource, final List<Example> selectedExamples,
             final boolean checkDuplicate) {
         if (selectedExamples == null || selectedExamples.size() == 0) {
+            // FIXME throw a more specific exception
             throw new RuntimeException(ErrorMessage.NO_EXAMPLE_SELECTED);
         }
         // could happen that user wants to import a project and a example in a
@@ -214,6 +218,7 @@ public final class ExampleImport {
         // projects do not need a destinatin resource
         if (!allProjects) {
             if (selectedResource == null || selectedResource.segmentCount() == 0) {
+                // FIXME throw a more specific exception
                 throw new RuntimeException(ErrorMessage.NO_DEST_SET);
             }
         }

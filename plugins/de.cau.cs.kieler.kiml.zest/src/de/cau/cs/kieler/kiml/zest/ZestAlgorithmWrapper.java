@@ -24,6 +24,7 @@ import org.eclipse.zest.layouts.LayoutEntity;
 import org.eclipse.zest.layouts.LayoutRelationship;
 import org.eclipse.zest.layouts.constraints.BasicEntityConstraint;
 
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -96,7 +97,7 @@ public class ZestAlgorithmWrapper {
             layoutAlgorithm.applyLayout(entities, relationships, SIZE_ADDITION, SIZE_ADDITION, width,
                     height, false, false);
         } catch (InvalidLayoutConfiguration exception) {
-            throw new RuntimeException(exception.getMessage());
+            throw new WrappedException(exception);
         }
         progressMonitor.worked(LARGE_TASK);
 

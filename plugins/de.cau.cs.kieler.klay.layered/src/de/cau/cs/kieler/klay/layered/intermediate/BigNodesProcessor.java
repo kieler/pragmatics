@@ -205,8 +205,7 @@ public class BigNodesProcessor extends AbstractAlgorithm implements ILayoutProce
      * nodes is not assigned to all layers, the wider nodes is also placed in unless there exists a
      * node, that covers all layers, the two nodes are assigned to. Note that before invoking this
      * method, the {@code splitWideNodes()} -procedure has to be called first. This will be checked
-     * and a {@link RuntimeException} will be thrown, if not or the set of nodes has been chanced
-     * since that invocation.
+     * if not or the set of nodes has been changed since that invocation.
      * 
      * TODO if this is to be supported again, it must be moved into an own processor
      * @see splitWideNodes(LayeredGraph)

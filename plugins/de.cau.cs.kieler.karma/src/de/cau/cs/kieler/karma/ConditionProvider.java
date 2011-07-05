@@ -24,6 +24,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
@@ -137,7 +138,7 @@ public final class ConditionProvider {
                             renderingProvider = (IRenderingProvider) settings
                                     .createExecutableExtension("RenderingProvider");
                         } catch (CoreException e1) {
-                            throw new RuntimeException("renderingProvider failed to load.");
+                            throw new WrappedException(e1);
                         }
                         conditionElement.put("renderingProvider", renderingProvider);
 
@@ -211,9 +212,11 @@ public final class ConditionProvider {
                     FeatureValueCondition cond = new FeatureValueCondition(feature, value);
                     return cond;
                 } else {
+                    // FIXME throw a more specific exception
                     throw new RuntimeException("Could not parse value to type of feature.");
                 }
             } else {
+                // FIXME throw a more specific exception
                 throw new RuntimeException("Could not find specified feature.");
             }
             //If its a ListSizeCondition try to get the EStructuredFeature from registered packages.
@@ -232,6 +235,7 @@ public final class ConditionProvider {
                 ListSizeCondition cond = new ListSizeCondition(feature, size, operator);
                 return cond;
             } else {
+                // FIXME throw a more specific exception
                 throw new RuntimeException("Could not find specified feature.");
             }
             // If its a CompoundCondition do some recursion to get the inner ones.
@@ -243,6 +247,7 @@ public final class ConditionProvider {
                 if (compCond != null) {
                     compoundList.add(compCond);
                 } else {
+                    // FIXME throw a more specific exception
                     throw new RuntimeException("Could build compound.");
                 }
             }
@@ -256,12 +261,13 @@ public final class ConditionProvider {
                 String value = condition.getAttribute("value");
                 if (customConditionObject instanceof ICustomCondition<?>) {
                     @SuppressWarnings("unchecked")
-                    ICustomCondition<EObject> customCondition = (ICustomCondition<EObject>) customConditionObject;
+                    ICustomCondition<EObject> customCondition
+                            = (ICustomCondition<EObject>) customConditionObject;
                     customCondition.initialize(key, value);
                     return customCondition;
                 }
             } catch (CoreException e) {
-                throw new RuntimeException("customCondition failed to load.");
+                throw new WrappedException(e);
             }
         }
         return null;
@@ -309,7 +315,7 @@ public final class ConditionProvider {
             try {
                 pack = EcoreUtil2.getEPackageByClassName(packClassName);
             } catch (ConfigurationException ce) {
-                throw new RuntimeException("Package filed to load.");
+                throw new WrappedException(ce);
             }
             if (pack != null) {
                 EClassifier classifier = pack.getEClassifier(type);
@@ -388,10 +394,11 @@ public final class ConditionProvider {
                     int x = Integer.parseInt(xandy[0]);
                     int y = Integer.parseInt(xandy[1]);
                     return new Pair<Integer, Integer>(x, y);
-                } catch (Exception e) {
-                    throw new RuntimeException("couldnt parse figure sizes");
+                } catch (NumberFormatException e) {
+                    throw new WrappedException(e);
                 }
             } else {
+                // FIXME throw a more specific exception
                 throw new RuntimeException("wrong format of figure size");
             }
         } else {

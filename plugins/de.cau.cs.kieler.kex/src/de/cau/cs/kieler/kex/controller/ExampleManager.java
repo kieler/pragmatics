@@ -103,6 +103,7 @@ public final class ExampleManager {
                 if (example != null) {
                     return example;
                 } else {
+                    // FIXME throw a more specific exception
                     throw new RuntimeException(ErrorMessage.NO_EXAMPLE_FOUND + exampleId);
                 }
             } else {
@@ -176,6 +177,7 @@ public final class ExampleManager {
             // {
             // // TODO build online interface
         } else {
+            // FIXME throw a more specific exception
             throw new RuntimeException(ErrorMessage.NO_SOURCETYPE);
         }
     }

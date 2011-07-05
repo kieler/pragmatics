@@ -54,6 +54,7 @@ import net.ogdf.ogml.StylesType;
 import net.ogdf.ogml.impl.OgmlFactoryImpl;
 import net.ogdf.ogml.util.OgmlResourceFactoryImpl;
 
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KLabel;
@@ -226,6 +227,7 @@ public abstract class OgdfLayouter {
                     return subMon.isCanceled();
                 }
             })) {
+                // FIXME throw a more specific exception
                 throw new RuntimeException("A timeout occured while waiting for the OGDF process."
                         + " Try increasing the timeout value in the preferences.");
             }
@@ -241,7 +243,7 @@ public abstract class OgdfLayouter {
             postProcess(layoutNode);
 
         } catch (IOException e) {
-            throw new RuntimeException("Could not flush stdout.", e);
+            throw new WrappedException(e, "Could not flush stdout.");
         } finally {
             progressMonitor.done();
             reset();
@@ -539,6 +541,7 @@ public abstract class OgdfLayouter {
         KShapeLayout parentNodeLayout = parentNode.getData(KShapeLayout.class);
         KVectorChain boundingBox = layoutInformation.get("graph");
         if (boundingBox == null || boundingBox.size() != 2) {
+            // FIXME throw a more specific exception
             throw new RuntimeException("Malformed layout data received from ogdf server.");
         }
         KVector bbLocation = boundingBox.getFirst();
@@ -660,7 +663,7 @@ public abstract class OgdfLayouter {
             outputStream.flush();
         } catch (IOException exception) {
             ogdfServer.endProcess();
-            throw new RuntimeException("Failed to serialize the OGML graph.", exception);
+            throw new WrappedException(exception, "Failed to serialize the OGML graph.");
         }
         progressMonitor.done();
     }
@@ -724,6 +727,7 @@ public abstract class OgdfLayouter {
                 String line = reader.readLine();
                 if (line == null) {
                     ogdfServer.endProcess();
+                    // FIXME throw a more specific exception
                     throw new RuntimeException("Failed to read answer from ogdf server process.");
                 }
                 switch (state) {

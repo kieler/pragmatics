@@ -16,6 +16,7 @@ package de.cau.cs.kieler.keg.importer.importer;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.eclipse.emf.common.util.WrappedException;
 import org.graphdrawing.graphml.util.GraphMLResourceFactoryImpl;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -75,9 +76,9 @@ public class GraphMLImporter extends AbstractImporter {
                         null, inputStream, new GraphMLResourceFactoryImpl(), monitor,
                         "org.graphdrawing.graphml.GraphMLPackage"); //$NON-NLS-1$
         } catch (IOException e) {
-            throw new RuntimeException(Messages.GraphMLImporter_io_error, e);
+            throw new WrappedException(Messages.GraphMLImporter_io_error, e);
         } catch (TransformException e) {
-            throw new RuntimeException(Messages.GraphMLImporter_transformation_error, e);
+            throw new WrappedException(Messages.GraphMLImporter_transformation_error, e);
         }
         return node;
     }

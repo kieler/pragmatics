@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.emf.common.util.WrappedException;
 
 import net.ogdf.ogml.util.OgmlResourceFactoryImpl;
 
@@ -98,9 +99,9 @@ public class OGMLImporter extends AbstractImporter {
                             "de.cau.cs.kieler.core.kgraph.KGraphPackage", //$NON-NLS-1$
                             "de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage"); //$NON-NLS-1$
         } catch (IOException e) {
-            throw new RuntimeException(Messages.OGMLImporter_io_error, e);
+            throw new WrappedException(Messages.OGMLImporter_io_error, e);
         } catch (TransformException e) {
-            throw new RuntimeException(Messages.OGMLImporter_transformation_error, e);
+            throw new WrappedException(Messages.OGMLImporter_transformation_error, e);
         }
         return node;
     }

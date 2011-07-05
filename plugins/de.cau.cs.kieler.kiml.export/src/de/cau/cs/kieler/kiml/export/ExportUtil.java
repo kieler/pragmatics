@@ -173,6 +173,7 @@ public final class ExportUtil {
         if (resultModel instanceof EObject) {
             model = (EObject) resultModel;
         } else {
+            // FIXME throw a more specific exception
             throw new RuntimeException(Messages.ExportUtil_no_eobject_error);
         }
         ResourceSet resourceSet = new ResourceSetImpl();

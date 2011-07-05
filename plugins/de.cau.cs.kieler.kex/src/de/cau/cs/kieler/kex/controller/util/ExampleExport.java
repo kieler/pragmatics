@@ -64,6 +64,7 @@ public final class ExampleExport {
 
         File destFile = new File((String) properties.get(ExampleElement.DEST_LOCATION));
         if (!destFile.exists()) {
+            // FIXME throw a more specific exception
             throw new RuntimeException(ErrorMessage.DESTFILE_NOT_EXIST + destFile.getPath());
         }
 

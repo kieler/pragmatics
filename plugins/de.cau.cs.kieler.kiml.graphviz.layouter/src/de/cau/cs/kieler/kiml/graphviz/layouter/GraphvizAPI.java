@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation.Command;
 import de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePage;
@@ -116,9 +117,8 @@ public final class GraphvizAPI {
                                         ARG_COMMAND + command });
                 processMap.put(command, graphvizProcess);
             } catch (IOException exception) {
-                throw new RuntimeException("Failed to start Graphviz process."
-                        + " Please check your Graphviz installation.",
-                        exception);
+                throw new WrappedException(exception, "Failed to start Graphviz process."
+                        + " Please check your Graphviz installation.");
             }
         }
         return graphvizProcess;
@@ -210,6 +210,7 @@ public final class GraphvizAPI {
                 }
                 endProcess();
                 if (error.length() > 0) {
+                    // FIXME throw a more specific exception
                     throw new RuntimeException("Graphviz error: " + error.toString());
                 } else {
                     throw new RuntimeException(
@@ -229,7 +230,7 @@ public final class GraphvizAPI {
             }
         } catch (IOException exception) {
             endProcess();
-            throw new RuntimeException("Unable to read Graphviz output.", exception);
+            throw new WrappedException(exception, "Unable to read Graphviz output.");
         } finally {
             monitor.done();
         }

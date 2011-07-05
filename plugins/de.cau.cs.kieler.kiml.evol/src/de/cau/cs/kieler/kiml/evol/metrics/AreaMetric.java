@@ -47,6 +47,7 @@ public class AreaMetric implements IAnalysis {
 
             if (!(dimsResult instanceof Pair<?, ?>)) {
                 // This should only happen when the dimensions analysis fails.
+                // FIXME throw a more specific exception
                 throw new RuntimeException("Area metric analysis failed.");
             }
 

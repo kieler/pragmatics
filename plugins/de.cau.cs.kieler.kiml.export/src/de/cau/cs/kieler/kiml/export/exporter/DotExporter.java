@@ -25,6 +25,7 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 
 import com.google.inject.Injector;
 
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
@@ -97,7 +98,7 @@ public class DotExporter extends AbstractExporter {
             // write to the stream
             resource.save(stream, resourceOptions);
         } catch (IOException e) {
-            throw new RuntimeException(ERROR_MESSAGE_EXPORT_FAILED, e);
+            throw new WrappedException(e, ERROR_MESSAGE_EXPORT_FAILED);
         } finally {
             monitor.done();
         }

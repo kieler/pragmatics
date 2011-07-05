@@ -42,6 +42,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExportResource;
 import de.cau.cs.kieler.kex.controller.util.IOHandler;
@@ -134,6 +135,7 @@ public class PluginExampleCreator {
                 if (namedItem != null) {
                     for (Category creatableCategory : creatableCategories) {
                         if (creatableCategory.getId().equals(namedItem.getNodeValue())) {
+                            // FIXME throw a more specific exception
                             throw new RuntimeException(ErrorMessage.DUPLICATE_ELEMENT
                                     + "The category \"" + creatableCategory.getId()
                                     + "\" exists already, please choose an other id or"
@@ -144,6 +146,7 @@ public class PluginExampleCreator {
             } else if (PluginConstants.Example.EXAMPLE.equals(nodeName)) {
                 Node namedItem = item.getAttributes().getNamedItem(PluginConstants.Example.ID);
                 if (namedItem != null && exampleId.equals(namedItem.getNodeValue())) {
+                    // FIXME throw a more specific exception
                     throw new RuntimeException(ErrorMessage.DUPLICATE_ELEMENT + "The example \""
                             + exampleId + "\" exists already in choosen plugin project.");
                 }
@@ -177,19 +180,20 @@ public class PluginExampleCreator {
             }
         } catch (ParserConfigurationException e) {
             String msg = ErrorMessage.NOT_PARSE_PLUGIN + "\n" + e.getLocalizedMessage();
-            throw new RuntimeException(msg, e);
+            throw new WrappedException(e, msg);
         } catch (SAXException e) {
             String msg = ErrorMessage.NOT_PARSE_PLUGIN + "\n" + e.getLocalizedMessage();
-            throw new RuntimeException(msg, e);
+            throw new WrappedException(e, msg);
         } catch (IOException e) {
             String msg = ErrorMessage.NOT_PARSE_PLUGIN + "\n" + e.getLocalizedMessage();
-            throw new RuntimeException(msg, e);
+            throw new WrappedException(e, msg);
         }
 
         NodeList plugins = this.parsedXML.getElementsByTagName(PluginConstants.PLUGIN);
         if (plugins.getLength() == 1) {
             return plugins.item(0);
         }
+        // FIXME throw a more specific exception
         throw new RuntimeException("Could not filter plugin node. " + pluginXML.getPath());
     }
 
@@ -229,8 +233,7 @@ public class PluginExampleCreator {
         try {
             docBuilder = factory.newDocumentBuilder();
         } catch (ParserConfigurationException p) {
-            throw new RuntimeException(ErrorMessage.DOC_BUILDER_NEW_ERROR + ", "
-                    + p.getLocalizedMessage());
+            throw new WrappedException(p, ErrorMessage.DOC_BUILDER_NEW_ERROR);
         }
 
         DOMImplementation impl = docBuilder.getDOMImplementation();
@@ -278,7 +281,7 @@ public class PluginExampleCreator {
 
             IOHandler.writeResource(new File(sourcePath), destination.toFile());
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new WrappedException(e);
         }
     }
 
@@ -333,6 +336,7 @@ public class PluginExampleCreator {
     }
 
     private void throwWritePluginError(final Throwable e) {
+        // FIXME throw a more specific exception
         throw new RuntimeException(new StringBuffer().append(ErrorMessage.NOT_WRITE_PLUGIN)
                 .append(e.getLocalizedMessage()).toString());
     }
@@ -420,7 +424,7 @@ public class PluginExampleCreator {
             StringBuilder errorMessage = new StringBuilder();
             errorMessage.append(ErrorMessage.PLUGIN_WRITE_ERROR).append("\ndestination: ")
                     .append(destPath).append(", image: ").append(sourcePath);
-            throw new RuntimeException(errorMessage.toString());
+            throw new WrappedException(e, errorMessage.toString());
         }
         return destLocation;
 

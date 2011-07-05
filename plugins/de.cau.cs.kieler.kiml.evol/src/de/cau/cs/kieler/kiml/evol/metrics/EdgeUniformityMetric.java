@@ -50,6 +50,7 @@ public class EdgeUniformityMetric implements IAnalysis {
             Object edgeLengthResult = results.get(GRANA_EDGE_LENGTH);
 
             if (!(edgeLengthResult instanceof Object[])) {
+                // FIXME throw a more specific exception
                 throw new RuntimeException("Edge length uniformity analysis failed.");
             }
 

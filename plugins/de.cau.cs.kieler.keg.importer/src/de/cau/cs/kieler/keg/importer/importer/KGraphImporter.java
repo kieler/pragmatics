@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.emf.common.util.WrappedException;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.model.m2m.TransformException;
@@ -106,9 +107,9 @@ public class KGraphImporter extends AbstractImporter {
                             XTEND_TRANSFORMATION, parameters, inputStream, null, monitor,
                             "de.cau.cs.kieler.core.kgraph.KGraphPackage"); //$NON-NLS-1$
         } catch (IOException e) {
-            throw new RuntimeException(Messages.KGraphImporter_io_error, e);
+            throw new WrappedException(Messages.KGraphImporter_io_error, e);
         } catch (TransformException e) {
-            throw new RuntimeException(Messages.KGraphImporter_transformation_error, e);
+            throw new WrappedException(Messages.KGraphImporter_transformation_error, e);
         }
         return node;
     }

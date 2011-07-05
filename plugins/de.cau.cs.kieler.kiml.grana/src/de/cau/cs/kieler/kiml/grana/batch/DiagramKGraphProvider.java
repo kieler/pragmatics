@@ -87,6 +87,7 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
                         IDE.getDefaultEditor(diagramFile);
                 if (editorDescriptor == null
                         || editorDescriptor.isOpenExternal()) {
+                    // FIXME throw a more specific exception
                     throw new RuntimeException(MESSAGE_NO_EDITOR);
                 }
                 IEditorPart editorPart;
@@ -106,6 +107,7 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
                     if (!initialEditors.contains(editorPart)) {
                         page.closeEditor(editorPart, false);
                     }
+                    // FIXME throw a more specific exception
                     lastException = new RuntimeException(MESSAGE_NO_MANAGER);
                     return;
                 }

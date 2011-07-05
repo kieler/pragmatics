@@ -180,6 +180,7 @@ public final class ImportUtil {
             node = (Node) resultModel;
         } else {
             monitor.done();
+            // FIXME throw a more specific exception
             throw new RuntimeException(Messages.ImportUtil_no_node_error);
         }
         monitor.done();
@@ -205,6 +206,7 @@ public final class ImportUtil {
                 // open the diagram file in an editor
                 IEditorDescriptor editorDescriptor = IDE.getDefaultEditor(diagramFile);
                 if (editorDescriptor == null || editorDescriptor.isOpenExternal()) {
+                    // FIXME throw a more specific exception
                     throw new RuntimeException(Messages.ImportUtil_open_diagram_failed_error);
                 }
                 IEditorPart editorPart;
@@ -219,6 +221,7 @@ public final class ImportUtil {
                 DiagramLayoutManager<T> layoutManager = (DiagramLayoutManager<T>)
                         EclipseLayoutDataService.getInstance().getManager(editorPart, null);
                 if (layoutManager == null) {
+                    // FIXME throw a more specific exception
                     lastException.set(new RuntimeException(
                             Messages.ImportUtil_unsupported_editor_error));
                     return;

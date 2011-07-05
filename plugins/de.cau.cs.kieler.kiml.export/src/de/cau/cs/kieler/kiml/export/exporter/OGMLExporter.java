@@ -20,6 +20,7 @@ import java.util.List;
 
 import net.ogdf.ogml.util.OgmlResourceFactoryImpl;
 
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.model.m2m.TransformException;
@@ -105,9 +106,9 @@ public class OGMLExporter extends AbstractExporter {
                     "de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage"); //$NON-NLS-1$
 
         } catch (IOException e) {
-            throw new RuntimeException(ERROR_MESSAGE_EXPORT_FAILED, e);
+            throw new WrappedException(e, ERROR_MESSAGE_EXPORT_FAILED);
         } catch (TransformException e) {
-            throw new RuntimeException(ERROR_MESSAGE_EXPORT_FAILED, e);
+            throw new WrappedException(e, ERROR_MESSAGE_EXPORT_FAILED);
         } finally {
             monitor.done();
         }

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -96,7 +97,7 @@ public class GMLExporter extends AbstractExporter {
                     monitor.subTask(1));
 
         } catch (IOException e) {
-            throw new RuntimeException(ERROR_MESSAGE_EXPORT_FAILED, e);
+            throw new WrappedException(e, ERROR_MESSAGE_EXPORT_FAILED);
         }
 
         monitor.done();

@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
@@ -89,9 +90,9 @@ public class DotImporter extends AbstractImporter {
                     null, resource, monitor.subTask(1),
                     "de.cau.cs.kieler.kiml.graphviz.dot.dot.DotPackage"); //$NON-NLS-1$
         } catch (IOException e) {
-            throw new RuntimeException(Messages.DotImporter_io_error, e);
+            throw new WrappedException(Messages.DotImporter_io_error, e);
         } catch (TransformException e) {
-            throw new RuntimeException(Messages.DotImporter_transformation_error, e);
+            throw new WrappedException(Messages.DotImporter_transformation_error, e);
         }
         return node;
     }

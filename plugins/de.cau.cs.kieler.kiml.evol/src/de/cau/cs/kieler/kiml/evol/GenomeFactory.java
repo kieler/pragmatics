@@ -28,6 +28,7 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
@@ -842,7 +843,7 @@ final class GenomeFactory {
             Genome extraGenes = createGenes(knownOptionIds, presentIds, uniformProb, null);
             result.addAll(extraGenes);
         } catch (final Exception exception) {
-            throw new RuntimeException("Genome could not be created.", exception);
+            throw new WrappedException(exception, "Genome could not be created.");
         }
 
         EvolPlugin.logStatus("Created genome: " + result.size() + " genes.");

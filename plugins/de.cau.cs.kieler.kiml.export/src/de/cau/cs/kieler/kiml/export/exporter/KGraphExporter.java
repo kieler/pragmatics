@@ -24,6 +24,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
@@ -84,7 +85,7 @@ public class KGraphExporter extends AbstractExporter {
             // write to the stream
             resource.save(stream, resourceOptions);
         } catch (IOException e) {
-            throw new RuntimeException(ERROR_MESSAGE_EXPORT_FAILED, e);
+            throw new WrappedException(e, ERROR_MESSAGE_EXPORT_FAILED);
         } finally {
             monitor.done();
         }

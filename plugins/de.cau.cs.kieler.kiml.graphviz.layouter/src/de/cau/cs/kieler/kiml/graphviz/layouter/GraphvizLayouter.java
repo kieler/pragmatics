@@ -35,6 +35,7 @@ import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformatio
 import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation.Command;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.ForkedOutputStream;
@@ -169,7 +170,7 @@ public class GraphvizLayouter {
             outputStream.flush();
         } catch (IOException exception) {
             GraphvizAPI.endProcess();
-            throw new RuntimeException("Failed to serialize the Dot graph.", exception);
+            throw new WrappedException(exception, "Failed to serialize the Dot graph.");
         } finally {
             if (debugStream != null) {
                 try {
@@ -225,7 +226,7 @@ public class GraphvizLayouter {
             EcoreUtil.resolveAll(resource);
         } catch (IOException exception) {
             GraphvizAPI.endProcess();
-            throw new RuntimeException("Failed to read Graphviz output.", exception);
+            throw new WrappedException(exception, "Failed to read Graphviz output.");
         } finally {
             if (debugStream != null) {
                 try {
@@ -243,11 +244,13 @@ public class GraphvizLayouter {
                 errorString.append("\n" + diagnostic.getLine() + ": " + diagnostic.getMessage());
             }
             GraphvizAPI.endProcess();
+            // FIXME throw a more specific exception
             throw new RuntimeException(errorString.toString());
         }
         GraphvizModel graphvizModel = (GraphvizModel) resource.getParseResult().getRootASTElement();
         if (graphvizModel.getGraphs().isEmpty()) {
             GraphvizAPI.endProcess();
+            // FIXME throw a more specific exception
             throw new RuntimeException("No output from the Graphviz process.");
         }
 
