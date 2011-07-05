@@ -15,53 +15,34 @@ package de.cau.cs.kieler.klay.layered;
 
 import java.util.EnumSet;
 
-//import java.util.HashMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-//import java.util.Set;
-
-//import org.eclipse.emf.common.util.EList;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
-//import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-//import de.cau.cs.kieler.core.math.KVector;
-//import de.cau.cs.kieler.core.math.KVectorChain;
-//import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-//import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-//import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
-//import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-//import de.cau.cs.kieler.kiml.options.EdgeRouting;
-//import de.cau.cs.kieler.kiml.options.LayoutOptions;
-//import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
-//import de.cau.cs.kieler.kiml.util.KimlUtil;
-//import de.cau.cs.kieler.klay.layered.graph.Insets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
-//import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-//import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
 import de.cau.cs.kieler.klay.layered.properties.EdgeType;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
-//import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -670,6 +651,23 @@ public class CompoundGraphImporter {
             return descendantsList.contains(candidate);
         }
     }
+    
+    /**
+     * Checks, if a KNode is descendant of another in the inclusion tree. attention: returns true,
+     * if nodes are equal.
+     * 
+     * @param node
+     *            node that is the possible ancestor.
+     * @param candidate
+     *            node that is the possible descendant.
+     * @return returns a boolean value indicating, if candidate is descendant of node (false if
+     *         nodes are equal).
+     */
+    public static boolean isDescendant(final KNode node, final KNode candidate) {
+        List<KNode> descendantsList = new LinkedList<KNode>();
+        listDescendants(node, descendantsList);
+        return descendantsList.contains(candidate); 
+    }
 
     /**
      * Recursively adds descendants of given node to a given list. Adds the startNode as well.
@@ -678,7 +676,7 @@ public class CompoundGraphImporter {
      *            actual root node of the inclusion tree, whose nodes are to be added to the list.
      * @param descendantsList
      */
-    private void listDescendants(final KNode currentNode, final List<KNode> descendantsList) {
+    private static void listDescendants(final KNode currentNode, final List<KNode> descendantsList) {
         if (currentNode.getChildren().isEmpty()) {
             descendantsList.add(currentNode);
         } else {
@@ -710,6 +708,7 @@ public class CompoundGraphImporter {
             if ((nodeType == (NodeType.UPPER_COMPOUND_BORDER) || portCandidate
                     .getProperty(Properties.LEAVE_DUMMY_PORT))) {
                 port = portCandidate;
+                break;
             }
         }
         // Do not return null, if there is no applicable port, create one.
