@@ -47,6 +47,8 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
 
     /** the parent composite. */
     private Composite parent;
+    /** the id of the view this viewer belongs to. */
+    private String viewId;
     /** the current viewer. */
     private IViewer<Object> currentViewer;
     /** the current view context. */
@@ -57,9 +59,12 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
      * 
      * @param parent
      *            the parent composite
+     * @param viewId
+     *            the id of the view this viewer belongs to
      */
-    public ContextViewer(final Composite parent) {
+    public ContextViewer(final Composite parent, final String viewId) {
         this.parent = parent;
+        this.viewId = viewId;
     }
 
     /**
@@ -153,7 +158,7 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
             }
             // trigger the selection trigger
             SelectionState state =
-                    new SelectionState("", currentViewContext, currentViewer, selections,
+                    new SelectionState(viewId, currentViewContext, currentViewer, selections,
                             selectionEvent.isSelection());
             trigger.trigger(state);
         }

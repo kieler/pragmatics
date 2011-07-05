@@ -53,7 +53,7 @@ public class DiagramViewPart extends ViewPart {
     @Override
     public void createPartControl(final Composite parent) {
         // create a context viewer
-        viewer = new ContextViewer(parent);
+        viewer = new ContextViewer(parent, getViewSite().getSecondaryId());
         // install a drop handler for the view
         installDropHandler(parent);
         viewer.setModel("No model selected.");
