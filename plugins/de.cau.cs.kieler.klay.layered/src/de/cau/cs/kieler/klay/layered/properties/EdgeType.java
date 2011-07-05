@@ -22,5 +22,10 @@ public enum EdgeType {
     /** a normal edge is created from an edge of the original graph. */
     NORMAL,
     /** a dummy edge created for the layering phase of compound graphs. */
-    COMPOUND_DUMMY
+    COMPOUND_DUMMY,
+    /**
+     * a dummy edge created to connect COMPOUND_SIDE dummy nodes for the drawing of compound node
+     * side borders.
+     */
+    COMPOUND_SIDE;
 }
