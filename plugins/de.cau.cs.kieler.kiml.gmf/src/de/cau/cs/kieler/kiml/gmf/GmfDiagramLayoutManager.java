@@ -53,7 +53,6 @@ import com.google.common.collect.BiMap;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.kgraph.KGraphFactory;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
@@ -69,7 +68,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.ui.layout.ApplyLayoutRequest;
 import de.cau.cs.kieler.kiml.ui.layout.GefDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.LayoutMapping;
@@ -165,7 +163,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         mapping.setLayoutGraph(topNode);
         
         // traverse the children of the layout root part
-        buildLayoutGraphRecursively(mapping, layoutRootPart, topNode, layoutRootPart, false);
+        buildLayoutGraphRecursively(mapping, layoutRootPart, topNode, layoutRootPart);
         // transform all connections in the selected area
         processConnections(mapping);
 
@@ -239,12 +237,10 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      * @param parentEditPart the parent edit part of the current elements
      * @param parentLayoutNode the corresponding KNode
      * @param currentEditPart the currently analyzed edit part
-     * @param layoutConfig layout configuration handler
      */
     private void buildLayoutGraphRecursively(final LayoutMapping<IGraphicalEditPart> mapping,
             final IGraphicalEditPart parentEditPart, final KNode parentLayoutNode,
-            final IGraphicalEditPart currentEditPart,
-            final boolean isCollapsed) {
+            final IGraphicalEditPart currentEditPart) {
         Maybe<KInsets> kinsets = new Maybe<KInsets>();
 
         // iterate through the children of the element
@@ -260,39 +256,34 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
 
             // process a port (border item)
             if (obj instanceof AbstractBorderItemEditPart) {
-                if (!isCollapsed) {
-                    createPort(mapping, (AbstractBorderItemEditPart) obj, parentEditPart,
-                            parentLayoutNode);
-                }
+                createPort(mapping, (AbstractBorderItemEditPart) obj, parentEditPart,
+                        parentLayoutNode);
 
             // process a compartment, which may contain other elements
             } else if (obj instanceof ShapeCompartmentEditPart
                 && ((CompartmentEditPart) obj).getChildren().size() > 0) {
                 CompartmentEditPart compartment = (CompartmentEditPart) obj;
                 if (!GmfLayoutConfig.isNoLayout(compartment)) {
+                    boolean compExp = true;
                     IFigure compartmentFigure = compartment.getFigure();
-                    boolean compColl = isCollapsed;
                     if (compartmentFigure instanceof ResizableCompartmentFigure) {
                         ResizableCompartmentFigure resizCompFigure
                                 = (ResizableCompartmentFigure) compartmentFigure;
                         // check whether the compartment is collapsed
-                        if (!resizCompFigure.isExpanded()) {
-                            compColl = true;
-                        }
+                        compExp = resizCompFigure.isExpanded();
                     }
 
-                    buildLayoutGraphRecursively(mapping, parentEditPart, parentLayoutNode,
-                            compartment, compColl);
+                    if (compExp) {
+                        buildLayoutGraphRecursively(mapping, parentEditPart, parentLayoutNode,
+                                compartment);
+                    }
                 }
 
             // process a node, which may be a parent of ports, compartments, or other nodes
             } else if (obj instanceof ShapeNodeEditPart) {
                 ShapeNodeEditPart childNodeEditPart = (ShapeNodeEditPart) obj;
                 if (!GmfLayoutConfig.isNoLayout(childNodeEditPart)) {
-                    if (!isCollapsed) {
-                        createNode(mapping, childNodeEditPart, parentEditPart, parentLayoutNode,
-                                kinsets);
-                    }
+                    createNode(mapping, childNodeEditPart, parentEditPart, parentLayoutNode, kinsets);
                 }
 
             // process a label of the current node
@@ -349,7 +340,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         parentKNode.getChildren().add(childLayoutNode);
         mapping.getGraphMap().put(childLayoutNode, nodeEditPart);
         // process the child as new current edit part
-        buildLayoutGraphRecursively(mapping, nodeEditPart, childLayoutNode, nodeEditPart, false);
+        buildLayoutGraphRecursively(mapping, nodeEditPart, childLayoutNode, nodeEditPart);
 
         // store all the connections to process them later
         addConnections(mapping, nodeEditPart);
@@ -378,35 +369,6 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         float ypos = portBounds.y - nodeBounds.y;
         portLayout.setPos(xpos, ypos);
         portLayout.setSize(portBounds.width, portBounds.height);
-        
-        // calculate port offset from the node border
-        // FIXME this should not be done here!!!
-        float offset = 0;
-        KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-        float widthPercent = (xpos + portBounds.width / 2) / nodeLayout.getWidth();
-        float heightPercent = (ypos + portBounds.height / 2) / nodeLayout.getHeight();
-        if (widthPercent + heightPercent <= 1
-                && widthPercent - heightPercent <= 0) {
-            // port is on the left
-            offset = -(xpos + portBounds.width);
-            portLayout.setProperty(LayoutOptions.PORT_SIDE, PortSide.WEST);
-        } else if (widthPercent + heightPercent >= 1
-                && widthPercent - heightPercent >= 0) {
-            // port is on the right
-            offset = xpos - nodeLayout.getWidth();
-            portLayout.setProperty(LayoutOptions.PORT_SIDE, PortSide.EAST);
-        } else if (heightPercent < 1.0f / 2) {
-            // port is on the top
-            offset = -(ypos + portBounds.height);
-            portLayout.setProperty(LayoutOptions.PORT_SIDE, PortSide.NORTH);
-        } else {
-            // port is on the bottom
-            offset = ypos - nodeLayout.getHeight();
-            portLayout.setProperty(LayoutOptions.PORT_SIDE, PortSide.SOUTH);
-        }
-        if (offset != 0) {
-            portLayout.setProperty(LayoutOptions.OFFSET, offset);
-        }
         
         mapping.getGraphMap().put(port, portEditPart);
 

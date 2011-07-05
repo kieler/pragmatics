@@ -134,7 +134,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
                 
                 // set whether the selected element is a node that contains ports
                 if (hasPorts.get() != null) {
-                    context.setProperty(EclipseLayoutConfig.HAS_PORTS, hasPorts.get());
+                    context.setProperty(DefaultLayoutConfig.HAS_PORTS, hasPorts.get());
                 }
                 
                 // get aspect ratio for the current diagram

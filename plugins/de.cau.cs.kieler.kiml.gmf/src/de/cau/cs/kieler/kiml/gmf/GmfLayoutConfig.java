@@ -124,6 +124,10 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
         Object editPart = context.getProperty(LayoutContext.DIAGRAM_PART);
         if (editPart instanceof IGraphicalEditPart && !isNoLayout((EditPart) editPart)) {
             IGraphicalEditPart focusEditPart = (IGraphicalEditPart) editPart;
+            if (focusEditPart instanceof CompartmentEditPart) {
+                focusEditPart = (IGraphicalEditPart) focusEditPart.getParent();
+                context.setProperty(LayoutContext.DIAGRAM_PART, focusEditPart);
+            }
             
             View notationView = focusEditPart.getNotationView();
             context.setProperty(NOTATION_VIEW, notationView);
@@ -134,22 +138,34 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                     context.setProperty(LayoutContext.DOMAIN_MODEL, object);
                 }
             }
-        
-            if (focusEditPart instanceof CompartmentEditPart) {
-                focusEditPart = (IGraphicalEditPart) focusEditPart.getParent();
-                context.setProperty(LayoutContext.DIAGRAM_PART, focusEditPart);
+            
+            // determine the target type and container / containment edit parts
+            Maybe<IGraphicalEditPart> containerEditPart = Maybe.create();
+            Maybe<Boolean> hasPorts = Maybe.create();
+            Set<LayoutOptionData.Target> partTargets = findTarget(focusEditPart,
+                    containerEditPart, hasPorts);
+            if (partTargets != null) {
+                context.setProperty(LayoutContext.OPT_TARGETS, partTargets);
+            }
+            
+            // set whether the selected element is a node that contains ports
+            if (hasPorts.get() != null) {
+                context.setProperty(DefaultLayoutConfig.HAS_PORTS, hasPorts.get());
+            }
+            
+            // get aspect ratio for the current diagram
+            try {
+                Point size = focusEditPart.getViewer().getControl().getSize();
+                if (size.x > 0 && size.y > 0) {
+                    context.setProperty(EclipseLayoutConfig.ASPECT_RATIO,
+                            Math.round(ASPECT_RATIO_ROUND * (float) size.x / size.y)
+                            / ASPECT_RATIO_ROUND);
+                }
+            } catch (SWTException exception) {
+                // ignore exception
             }
             
             if (context.getProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS)) {
-                // determine the target type and container / containment edit parts
-                Maybe<IGraphicalEditPart> containerEditPart = Maybe.create();
-                Maybe<Boolean> hasPorts = Maybe.create();
-                Set<LayoutOptionData.Target> partTargets = findTarget(focusEditPart,
-                        containerEditPart, hasPorts);
-                if (partTargets != null) {
-                    context.setProperty(LayoutContext.OPT_TARGETS, partTargets);
-                }
-                
                 DiagramEditPart diagramEditPart = GmfFrameworkBridge.getDiagramEditPart(focusEditPart);
                 @SuppressWarnings("unchecked")
                 LayoutOptionData<String> algorithmOptionData = (LayoutOptionData<String>)
@@ -181,23 +197,6 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                     if (object != null) {
                         context.setProperty(LayoutContext.CONTAINER_DOMAIN_MODEL, object);
                     }
-                }
-                
-                // set whether the selected element is a node that contains ports
-                if (hasPorts.get() != null) {
-                    context.setProperty(EclipseLayoutConfig.HAS_PORTS, hasPorts.get());
-                }
-                
-                // get aspect ratio for the current diagram
-                try {
-                    Point size = focusEditPart.getViewer().getControl().getSize();
-                    if (size.x > 0 && size.y > 0) {
-                        context.setProperty(EclipseLayoutConfig.ASPECT_RATIO,
-                                Math.round(ASPECT_RATIO_ROUND * (float) size.x / size.y)
-                                / ASPECT_RATIO_ROUND);
-                    }
-                } catch (SWTException exception) {
-                    // ignore exception
                 }
             }
         }

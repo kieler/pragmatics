@@ -55,6 +55,7 @@ public class LayoutOptionManager {
     public void configure(final LayoutMapping<?> layoutMapping) {
         // create basic layout configuration
         CompoundLayoutConfig clc = new CompoundLayoutConfig();
+        clc.add(new DefaultLayoutConfig());
         clc.add(new EclipseLayoutConfig());
         clc.addAll(layoutMapping.getLayoutConfigs());
         

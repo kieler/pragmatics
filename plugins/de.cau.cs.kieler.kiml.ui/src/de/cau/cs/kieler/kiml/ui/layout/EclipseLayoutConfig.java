@@ -21,8 +21,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kgraph.KGraphData;
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -53,10 +51,6 @@ public class EclipseLayoutConfig implements ILayoutConfig {
     /** the aspect ratio of the currently processed diagram viewer. */
     public static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
             "context.aspectRatio");
-    
-    /** whether the node in the current context contains any ports. */
-    public static final IProperty<Boolean> HAS_PORTS = new Property<Boolean>(
-            "context.hasPorts", false);
 
     /**
      * Retrieves a layout option from the given edit part by using the framework bridge
@@ -119,12 +113,6 @@ public class EclipseLayoutConfig implements ILayoutConfig {
      * {@inheritDoc}
      */
     public void enrich(final LayoutContext context) {
-        // adapt ports information in the context
-        KGraphElement graphElem = context.getProperty(LayoutContext.GRAPH_ELEM);
-        if (graphElem instanceof KNode) {
-            context.setProperty(HAS_PORTS, !((KNode) graphElem).getPorts().isEmpty());
-        }
-        
         // get main edit part and domain model element
         Object diagPart = context.getProperty(LayoutContext.DIAGRAM_PART);
         EObject domainElem = context.getProperty(LayoutContext.DOMAIN_MODEL);
@@ -241,7 +229,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
      */
     private PortConstraints getPortConstraintsValue(final LayoutContext context) {
         Set<LayoutOptionData.Target> targets = context.getProperty(LayoutContext.OPT_TARGETS);
-        Boolean hasPorts = context.getProperty(HAS_PORTS);
+        Boolean hasPorts = context.getProperty(DefaultLayoutConfig.HAS_PORTS);
         if (targets != null && hasPorts != null) {
             if (!targets.contains(LayoutOptionData.Target.PARENTS) && hasPorts) {
                 return PortConstraints.FIXED_POS;

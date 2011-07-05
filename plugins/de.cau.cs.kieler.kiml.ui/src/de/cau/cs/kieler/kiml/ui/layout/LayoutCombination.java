@@ -31,11 +31,12 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 public class LayoutCombination extends AbstractCombination {
 
     /** parameter id for animation. */
-    private static final String ANIMATE = "de.cau.cs.kieler.kiml.animate";
+    public static final String ANIMATE = "de.cau.cs.kieler.kiml.animate";
     /** parameter id for zoom to fit. */
-    private static final String ZOOM_TO_FIT = "de.cau.cs.kieler.kiml.zoomToFit";
+    public static final String ZOOM_TO_FIT = "de.cau.cs.kieler.kiml.zoomToFit";
     /** parameter id for progress bar. */
-    private static final String PROGRESS_BAR = "de.cau.cs.kieler.kiml.progressBar";
+    public static final String PROGRESS_BAR = "de.cau.cs.kieler.kiml.progressBar";
+    
     /** parameter array for this combination. */
     private static final CombinationParameter[] PARAMETERS = new CombinationParameter[] {
             new CombinationParameter(ANIMATE, getPreferenceStore(), "Animate",

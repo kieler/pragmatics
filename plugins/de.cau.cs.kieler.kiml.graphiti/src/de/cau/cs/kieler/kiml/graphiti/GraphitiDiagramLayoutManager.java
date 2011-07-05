@@ -290,31 +290,10 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         double parentWidth = referencedGa.getWidth();
         double parentHeight = referencedGa.getHeight();
         GraphicsAlgorithm portGa = bra.getGraphicsAlgorithm(); 
+
         float xPos = (float) (relWidth * parentWidth) + portGa.getX();
         float yPos = (float) (relHeight * parentHeight) + portGa.getY();
-        
-        // node insets need to be considered
-        KInsets insets = parentNode.getData(KShapeLayout.class).getInsets();
-        xPos += insets.getLeft();
-        yPos += insets.getTop();
-        float offset = 0;
-        if (relWidth + relHeight <= 1 && relWidth - relHeight <= 0) {
-            // port is on the left
-            offset = -insets.getLeft();
-        } else if (relWidth + relHeight >= 1 && relWidth - relHeight >= 0) {
-            // port is on the right
-            offset = -insets.getRight();
-        } else if (relHeight < 1.0f / 2) {
-            // port is on the top
-            offset = -insets.getTop();
-        } else {
-            // port is on the bottom
-            offset = -insets.getBottom();
-        }
-        portLayout.setProperty(LayoutOptions.OFFSET, offset);
-
         portLayout.setPos(xPos, yPos);
-
         portLayout.setSize(portGa.getWidth(), portGa.getHeight());
         
         return port;
