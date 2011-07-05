@@ -42,5 +42,9 @@ public enum NodeType {
      * a dummy node created to represent a port connected with an outgoing edge. Serving as one of
      * the lower border nodes.
      */
-    LOWER_COMPOUND_PORT;
+    LOWER_COMPOUND_PORT,
+    /**
+     * a dummy node created to be part of a linear segment used to draw the sides of a compound node.
+     */
+    COMPOUND_SIDE;
 }
