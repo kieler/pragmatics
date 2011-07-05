@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klighd;
 
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -31,7 +30,7 @@ public interface IViewerProvider {
      *            the parent composite
      * @return a viewer for the supported model types
      */
-    Viewer createViewer(final Composite parent);
+    IViewer<?> createViewer(final Composite parent);
 
     /**
      * Returns whether the given model is supported by this provider.
@@ -40,6 +39,6 @@ public interface IViewerProvider {
      *            the model
      * @return true if the given model is supported by this provider; false else
      */
-    boolean isModelSupported(final Object model);
+    boolean supports(final Object model);
 
 }

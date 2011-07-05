@@ -19,9 +19,9 @@ import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramGraphicalViewer;
 import org.eclipse.gmf.runtime.diagram.ui.services.editpart.EditPartService;
 import org.eclipse.gmf.runtime.notation.Diagram;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 
+import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.IViewerProvider;
 
 /**
@@ -34,7 +34,7 @@ public class GMFViewerProvider implements IViewerProvider {
     /**
      * {@inheritDoc}
      */
-    public Viewer createViewer(final Composite parent) {
+    public IViewer<?> createViewer(final Composite parent) {
         DefaultEditDomain editDomain = new DefaultEditDomain(null);
         DiagramGraphicalViewer graphicalViewer = new DiagramGraphicalViewer();
         graphicalViewer.createControl(parent);
@@ -54,7 +54,7 @@ public class GMFViewerProvider implements IViewerProvider {
     /**
      * {@inheritDoc}
      */
-    public boolean isModelSupported(final Object model) {
+    public boolean supports(final Object model) {
         return model instanceof Diagram;
     }
 

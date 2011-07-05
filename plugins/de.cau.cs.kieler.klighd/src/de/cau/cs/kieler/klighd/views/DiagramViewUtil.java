@@ -24,6 +24,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.klighd.KLighDPlugin;
+import de.cau.cs.kieler.klighd.LightDiagramServices;
+import de.cau.cs.kieler.klighd.ViewContext;
 
 /**
  * A utility class for creating and updating diagram views.
@@ -41,7 +43,7 @@ public final class DiagramViewUtil {
     private DiagramViewUtil() {
         // do nothing
     }
-    
+
     /**
      * Returns the diagram view with the given identifier if available. Does not create any views.
      * 
@@ -84,10 +86,12 @@ public final class DiagramViewUtil {
                     diagramView.setName(name);
                 }
                 if (model != null) {
-                    diagramView.setInputModel(model);
+                    ViewContext viewContext =
+                            LightDiagramServices.getInstance().getValidViewContext(model);
+                    diagramView.getViewer().setModel(viewContext);
                 }
                 // chsch:
-                page.bringToTop(diagramView); //activate(diagramView);
+                page.bringToTop(diagramView); // activate(diagramView);
                 return true;
             }
         }
@@ -114,20 +118,23 @@ public final class DiagramViewUtil {
             try {
                 // chsch:
                 IViewPart view = page.showView(PRIMARY_VIEW_ID, id, IWorkbenchPage.VIEW_VISIBLE);
-                  // IWorkbenchPage.VIEW_ACTIVATE);
+                // IWorkbenchPage.VIEW_ACTIVATE);
                 if (view instanceof DiagramViewPart) {
                     DiagramViewPart diagramView = (DiagramViewPart) view;
                     if (name != null) {
                         diagramView.setName(name);
                     }
                     if (model != null) {
-                        Boolean properlyInitialized = diagramView.setInputModel(model);
-                        
-                        // if the newly created view could not be initialized with a diagram,
-                        // hide it and return nothing.                        
-                        if (!properlyInitialized) {
+                        ViewContext viewContext =
+                                LightDiagramServices.getInstance().getValidViewContext(model);
+                        if (viewContext != null) {
+                            diagramView.getViewer().setModel(viewContext);
+                        } else {
+                            // if the newly created view could not be initialized with a diagram,
+                            // hide it and return nothing.
                             page.hideView(diagramView);
                             return null;
+
                         }
                     }
                     return diagramView;
@@ -136,8 +143,9 @@ public final class DiagramViewUtil {
                 StatusManager.getManager().handle(
                         new Status(IStatus.ERROR, KLighDPlugin.PLUGIN_ID, e.getMessage(), e));
             } catch (IllegalArgumentException e) {
-                StatusManager.getManager().handle(
-                        new Status(IStatus.ERROR, KLighDPlugin.PLUGIN_ID,
+                StatusManager
+                        .getManager()
+                        .handle(new Status(IStatus.ERROR, KLighDPlugin.PLUGIN_ID,
                                 "Invalid KLighD view id: must not be empty or contain any colons."));
                 return null;
             }
@@ -152,8 +160,8 @@ public final class DiagramViewUtil {
      *            the identifier of the view to be closed.
      * @return <code>true</code> if a view could be closed successfully, and <code>false</code>
      *         otherwise.
-     *         
-     * @author chsch        
+     * 
+     * @author chsch
      */
     public static boolean closeView(final String id) {
         if (id == null || id.equals("")) {
@@ -161,12 +169,12 @@ public final class DiagramViewUtil {
         }
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         IViewReference viewRef = page.findViewReference(PRIMARY_VIEW_ID, id);
-        
+
         if (viewRef != null) {
             page.hideView(viewRef);
             return true;
         }
-        return false;        
+        return false;
     }
 
 }

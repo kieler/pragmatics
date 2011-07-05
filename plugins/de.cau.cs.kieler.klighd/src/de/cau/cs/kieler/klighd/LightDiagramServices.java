@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -54,7 +55,7 @@ public final class LightDiagramServices {
     /** name of the 'xtendBasedTransformation' element. */
     public static final String ELEMENT_XTEND_BASED_TRANSFORMATION = "xtendBasedTransformation";
 
-    /** name of the 'id' attribute in the extension points. */    
+    /** name of the 'id' attribute in the extension points. */
     public static final String ATTRIBUTE_ID = "id";
     /** name of the 'class' attribute in the extension points. */
     public static final String ATTRIBUTE_CLASS = "class";
@@ -82,8 +83,7 @@ public final class LightDiagramServices {
      * viewers/transformations, maintained in order to improve the performance.
      */
     private Set<Class<?>> knownNotSupportedModels = new HashSet<Class<?>>();
-    
-    
+
     /**
      * A private constructor to prevent instantiation.
      */
@@ -160,10 +160,8 @@ public final class LightDiagramServices {
         }
     }
 
-    
     private HashMap<String, EPackage> ePackages = new HashMap<String, EPackage>();
-    
-    
+
     /**
      * Loads and registers all model transformations from the extension point.
      */
@@ -190,88 +188,90 @@ public final class LightDiagramServices {
                 } else if (ELEMENT_XTEND_BASED_TRANSFORMATION.equals(element.getName())) {
                     //
                     // handle xtendBasedTransformation extensions
-                    //                    
+                    //
                     String id = element.getAttribute(ATTRIBUTE_ID);
                     String extFile = element.getAttribute(ATTRIBUTE_EXTENSION_FILE);
                     String extension = element.getAttribute(ATTRIBUTE_EXTENSION);
-                    Bundle contributingBundle = Platform.getBundle(element.getContributor().getName());
-
+                    Bundle contributingBundle =
+                            Platform.getBundle(element.getContributor().getName());
 
                     try {
                         Platform.getBundle("de.menges.alister_2_0.topology.generator").start();
                     } catch (BundleException e1) {
                         e1.printStackTrace();
                     }
-                    
+
                     extFile = extFile.replaceAll("::", "/") + ".ext";
-                    
+
                     URL extFileURL = null;
                     if (contributingBundle != null) {
-                        extFileURL = Thread.currentThread().getContextClassLoader()
-                                .getResource(extFile);
+                        extFileURL =
+                                Thread.currentThread().getContextClassLoader().getResource(extFile);
 
                         if (extFileURL == null) {
-                            extFileURL = Thread
-                                    .currentThread()
-                                    .getContextClassLoader()
-                                    .getResource("transformations/" + extFile);
+                            extFileURL =
+                                    Thread.currentThread().getContextClassLoader()
+                                            .getResource("transformations/" + extFile);
                         }
 
                         if (extFileURL == null) {
                             extFileURL = contributingBundle.getEntry(extFile);
                         }
-                        
+
                         if (extFileURL == null) {
                             extFileURL = contributingBundle.getEntry("src/" + extFile);
                         }
-                        
+
                         if (extFileURL == null) {
                             extFileURL = contributingBundle.getEntry("transformations/" + extFile);
                         }
-                        
+
                         if (extFileURL == null
                                 && element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE) != null
                                 && !element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE).equals(
                                         "")) {
-                            extFileURL = Platform.getBundle(
-                                    element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE))
-                                    .getEntry(extFile);
-                            
+                            extFileURL =
+                                    Platform.getBundle(
+                                            element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE))
+                                            .getEntry(extFile);
+
                             if (extFileURL == null) {
-                                extFileURL = Platform.getBundle(
-                                        element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE))
-                                        .getEntry("src/" + extFile);
+                                extFileURL =
+                                        Platform.getBundle(
+                                                element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE))
+                                                .getEntry("src/" + extFile);
                             }
 
                             if (extFileURL == null) {
-                                extFileURL = Platform.getBundle(
-                                        element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE))
-                                        .getEntry("transformations/" + extFile);
+                                extFileURL =
+                                        Platform.getBundle(
+                                                element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE))
+                                                .getEntry("transformations/" + extFile);
                             }
 
                         }
 
                         System.out.println(extFileURL);
                     }
-                    
+
                     if (extFileURL == null) {
                         continue;
                     }
-                    
+
                     List<EPackage> metamodels = new ArrayList<EPackage>();
-                    
+
                     for (IConfigurationElement epackageDecl : element
-                            .getChildren(ATTRIBUTE_EPACKAGE)) {              
-                        
+                            .getChildren(ATTRIBUTE_EPACKAGE)) {
+
                         String ePackageId = epackageDecl.getAttribute(ATTRIBUTE_EPACKAGE_CLASS);
                         EPackage ePackageInstance = ePackages.get(ePackageId);
-                        
+
                         if (ePackageInstance == null) {
                             try {
-                                
-                                Class<?> ePackage = contributingBundle.loadClass(ePackageId); 
-                                ePackageInstance = (EPackage) ePackage.getField("eINSTANCE").get(
-                                        null);
+
+                                Class<?> ePackage = contributingBundle.loadClass(ePackageId);
+                                ePackageInstance =
+                                        (EPackage) ePackage.getField("eINSTANCE").get(null);
                                 this.ePackages.put(ePackageId, ePackageInstance);
                             } catch (Exception e) {
                                 String msg = "EPackage " + ePackageId + " could not be loaded";
@@ -280,17 +280,17 @@ public final class LightDiagramServices {
                                 continue;
                             }
                         }
-                        
+
                         if (ePackageInstance != null) {
                             metamodels.add(ePackageInstance);
                         }
-                        
+
                     }
-                    
-                    IModelTransformation<Object, ?> modelTransformation = new XtendBasedTransformation(
-                            extFileURL, extension, metamodels);
+
+                    IModelTransformation<Object, ?> modelTransformation =
+                            new XtendBasedTransformation(extFileURL, extension, metamodels);
                     idModelTransformationMapping.put(id, modelTransformation);
-                       
+
                 }
             } catch (CoreException exception) {
                 StatusManager.getManager().handle(exception, KLighDPlugin.PLUGIN_ID);
@@ -307,7 +307,7 @@ public final class LightDiagramServices {
      */
     public IViewerProvider getViewerProviderForModel(final Object model) {
         for (IViewerProvider viewerProvider : idViewerProviderMapping.values()) {
-            if (viewerProvider.isModelSupported(model)) {
+            if (viewerProvider.supports(model)) {
                 return viewerProvider;
             }
         }
@@ -331,7 +331,8 @@ public final class LightDiagramServices {
      */
     public ViewContext getValidViewContext(final Object model) {
         currentDepth = 0;
-        ViewContext context = getValidViewContextRec(model);
+        ViewContext context =
+                getValidViewContextRec(model, new Stack<IModelTransformation<?, ?>>());
         if (context == null) {
             synchronized (this.knownNotSupportedModels) {
                 this.knownNotSupportedModels.add(model.getClass());
@@ -340,7 +341,8 @@ public final class LightDiagramServices {
         return context;
     }
 
-    private ViewContext getValidViewContextRec(final Object model) {
+    private ViewContext getValidViewContextRec(final Object model,
+            final Stack<IModelTransformation<?, ?>> transformations) {
         // enforce maximum recursion depth to prevent infinite recursion
         if (currentDepth++ > MAX_DEPTH) {
             return null;
@@ -348,13 +350,13 @@ public final class LightDiagramServices {
         IViewerProvider viewerProvider = getViewerProviderForModel(model);
         // if the model is supported by a viewer provider create a new view context and return it
         if (viewerProvider != null) {
-            return new ViewContext(viewerProvider, model);
+            return new ViewContext(viewerProvider, model, transformations);
         }
         // transform the model and proceed recursively
         for (IModelTransformation<Object, ?> transformation : idModelTransformationMapping.values()) {
-            if (transformation.isModelSupported(model)) {
+            if (transformation.supports(model)) {
                 Object newModel = transformation.transform(model);
-                ViewContext viewContext = getValidViewContextRec(newModel);
+                ViewContext viewContext = getValidViewContextRec(newModel, transformations);
                 if (viewContext != null) {
                     return viewContext;
                 }
@@ -367,11 +369,12 @@ public final class LightDiagramServices {
      * Provides a cheap test whether a model may be visualized with the available
      * viewers/transformations.
      * 
-     * @param model The model to be tested.
+     * @param model
+     *            The model to be tested.
      * @return <code>false</code> if the model type is determined to be not supported by the
      *         available viewers/transformations, true otherwise.
      */
-    public Boolean maybeSupports(final Object model) {
+    public boolean maybeSupports(final Object model) {
         synchronized (this.knownNotSupportedModels) {
             return !this.knownNotSupportedModels.contains(model.getClass());
         }

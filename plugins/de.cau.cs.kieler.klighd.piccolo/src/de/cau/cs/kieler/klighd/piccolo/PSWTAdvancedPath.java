@@ -22,6 +22,9 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.GC;
+
 import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolo.util.PAffineTransformException;
 import edu.umd.cs.piccolo.util.PBounds;
@@ -31,11 +34,27 @@ import edu.umd.cs.piccolox.swt.SWTGraphics2D;
 
 /**
  * The {@code PSWTAdvancedPath} is an extension of the Piccolo {@code PSWTPath}. Provides the
- * possibility to adjust the line width and can represent polygons.
+ * possibility to adjust the line width and the line style and can represent polygons.
  * 
  * @author mri
  */
 public class PSWTAdvancedPath extends PSWTPath {
+
+    /**
+     * The possible line styles for an advanced path.
+     */
+    public enum LineStyle {
+        /** solid. */
+        SOLID,
+        /** dashes. */
+        DASH,
+        /** dots. */
+        DOT,
+        /** dashes and dots. */
+        DASHDOT,
+        /** dash followed by two dots. */
+        DASHDOTDOT
+    }
 
     private static final long serialVersionUID = 8034306769936734586L;
 
@@ -49,6 +68,8 @@ public class PSWTAdvancedPath extends PSWTPath {
     private double lineWidth = 1.0;
     /** indicates whether or not this path describes a polygon. */
     private boolean isPolygon = false;
+    /** the line style for this path. */
+    private int lineStyle = SWT.LINE_SOLID;
 
     private boolean updatingBoundsFromPath;
     private Shape origShape;
@@ -126,6 +147,7 @@ public class PSWTAdvancedPath extends PSWTPath {
         result.setPaint(Color.white);
         return result;
     }
+    // TODO Auto-generated constructor stub
 
     /**
      * Creates a path for the poly-line for the given points.
@@ -265,6 +287,9 @@ public class PSWTAdvancedPath extends PSWTPath {
     protected void paint(final PPaintContext paintContext) {
         SWTGraphics2D g2 = (SWTGraphics2D) paintContext.getGraphics();
         g2.setLineWidth(lineWidth);
+        GC graphicsContext = g2.getGraphicsContext();
+        int oldLineStyle = graphicsContext.getLineStyle();
+        graphicsContext.setLineStyle(lineStyle);
         if (isPolygon) {
             final Paint p = getPaint();
 
@@ -288,6 +313,8 @@ public class PSWTAdvancedPath extends PSWTPath {
         } else {
             super.paint(paintContext);
         }
+        graphicsContext.setLineStyle(oldLineStyle);
+        g2.setLineWidth(1.0);
     }
 
     /**
@@ -429,6 +456,53 @@ public class PSWTAdvancedPath extends PSWTPath {
      */
     public double getLineWidth() {
         return lineWidth;
+    }
+
+    /**
+     * Sets the line style for this path.
+     * 
+     * @param newLineStyle
+     *            the line style
+     */
+    public void setLineStyle(final LineStyle newLineStyle) {
+        switch (newLineStyle) {
+        case SOLID:
+            lineStyle = SWT.LINE_SOLID;
+            break;
+        case DASH:
+            lineStyle = SWT.LINE_DASH;
+            break;
+        case DOT:
+            lineStyle = SWT.LINE_DOT;
+            break;
+        case DASHDOT:
+            lineStyle = SWT.LINE_DASHDOT;
+            break;
+        case DASHDOTDOT:
+            lineStyle = SWT.LINE_DASHDOTDOT;
+            break;
+        }
+    }
+
+    /**
+     * Returns the line style of the path.
+     * 
+     * @return the line style
+     */
+    public LineStyle getLineStyle() {
+        switch (lineStyle) {
+        case SWT.LINE_DASH:
+            return LineStyle.DASH;
+        case SWT.LINE_DOT:
+            return LineStyle.DOT;
+        case SWT.LINE_DASHDOT:
+            return LineStyle.DASHDOT;
+        case SWT.LINE_DASHDOTDOT:
+            return LineStyle.DASHDOTDOT;
+        case SWT.LINE_SOLID:
+        default:
+            return LineStyle.SOLID;
+        }
     }
 
     /**

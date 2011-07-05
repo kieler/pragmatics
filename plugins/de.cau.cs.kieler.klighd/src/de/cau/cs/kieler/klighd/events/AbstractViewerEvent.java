@@ -11,32 +11,36 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighd.piccolo;
-
-import org.eclipse.swt.widgets.Composite;
+package de.cau.cs.kieler.klighd.events;
 
 import de.cau.cs.kieler.klighd.IViewer;
-import de.cau.cs.kieler.klighd.IViewerProvider;
+import de.cau.cs.kieler.klighd.IViewerEvent;
 
 /**
- * A viewer provider for Piccolo nodes or lists of Piccolo nodes.
+ * The abstract base class for viewer events.
  * 
  * @author mri
  */
-public class PiccoloViewerProvider implements IViewerProvider {
+public abstract class AbstractViewerEvent implements IViewerEvent {
+
+    /** the source viewer. */
+    private IViewer<?> viewer;
 
     /**
-     * {@inheritDoc}
+     * Constructs an abstract viewer event.
+     * 
+     * @param viewer
+     *            the source viewer
      */
-    public IViewer<?> createViewer(final Composite parent) {
-        return new PiccoloViewer(parent);
+    public AbstractViewerEvent(final IViewer<?> viewer) {
+        this.viewer = viewer;
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean supports(final Object model) {
-        return model instanceof PiccoloDiagramContext;
+    public IViewer<?> getSource() {
+        return viewer;
     }
 
 }

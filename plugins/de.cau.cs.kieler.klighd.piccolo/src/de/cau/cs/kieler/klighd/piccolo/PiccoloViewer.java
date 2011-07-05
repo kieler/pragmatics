@@ -13,34 +13,38 @@
  */
 package de.cau.cs.kieler.klighd.piccolo;
 
+import java.awt.event.InputEvent;
+import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import de.cau.cs.kieler.klighd.AbstractViewer;
+import de.cau.cs.kieler.klighd.events.SelectionEvent;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.PRoot;
+import edu.umd.cs.piccolo.event.PInputEventFilter;
 import edu.umd.cs.piccolox.swt.PSWTCanvas;
 
 /**
- * A viewer for Piccolo nodes or lists of Piccolo nodes, which will be used as root nodes for a
- * fitting number of layers in the Piccolo canvas. The first node in the list will be contained in
- * the bottom most layer and the last node in the top most layer.
+ * A viewer for Piccolo diagram contexts.
  * 
  * @author mri
  */
-public class PiccoloViewer extends Viewer {
+public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> implements
+        INodeSelectionListener {
 
     /** the canvas used for drawing. */
     private PSWTCanvas canvas;
+    /** the current selection event handler. */
+    private PSWTSimpleSelectionEventHandler selectionHandler = null;
 
     /**
-     * Creates a PiccoloViewer with default style.
+     * Creates a Piccolo viewer with default style.
      * 
      * @param parent
      *            the parent composite
@@ -50,7 +54,7 @@ public class PiccoloViewer extends Viewer {
     }
 
     /**
-     * Creates a PiccoloViewer with given style.
+     * Creates a Piccolo viewer with given style.
      * 
      * @param parent
      *            the parent composite
@@ -61,13 +65,14 @@ public class PiccoloViewer extends Viewer {
         canvas = new PSWTCanvas(parent, style);
         canvas.setDoubleBuffered(false);
         // canvas.removeInputEventListener(canvas.getPanEventHandler());
-        // canvas.addInputEventListener(new PDragEventHandler());
+        // prevent conflicts with selection handler
+        canvas.getPanEventHandler().setEventFilter(
+                new PInputEventFilter(InputEvent.BUTTON1_MASK, InputEvent.CTRL_MASK));
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public Control getControl() {
         return canvas;
     }
@@ -75,37 +80,27 @@ public class PiccoloViewer extends Viewer {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public Object getInput() {
-        if (canvas.getLayer().getChildrenCount() > 0) {
-            return canvas.getLayer().getChild(0);
+    public void setModel(final PiccoloDiagramContext model) {
+        // remove the old selection handler
+        if (selectionHandler != null) {
+            canvas.removeInputEventListener(selectionHandler);
+            selectionHandler = null;
         }
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setInput(final Object input) {
-        // a single node is added as root node to the first layer
-        if (input instanceof PNode) {
-            resizeAndResetLayers(1);
-            canvas.getLayer().addChild((PNode) input);
+        // fill the layers
+        int index = 0;
+        PCamera camera = canvas.getCamera();
+        resizeAndResetLayers(model.getLayerRoots().size() + 1);
+        for (PNode rootNode : model.getLayerRoots()) {
+            camera.getLayer(index++).addChild(rootNode);
         }
-        // for a list of nodes, every node is added as root node for a single layer
-        if (input instanceof List) {
-            PCamera camera = canvas.getCamera();
-            List<?> list = (List<?>) input;
-            resizeAndResetLayers(list.size());
-            int index = 0;
-            for (Object obj : list) {
-                // only consider nodes in the list, ignore everything else
-                if (obj instanceof PNode) {
-                    camera.getLayer(index++).addChild((PNode) obj);
-                }
-            }
-        }
+        // add a node for the marquee
+        PNode marqueeParent = new PNode();
+        camera.getLayer(index).addChild(marqueeParent);
+        // add a selection handler
+        selectionHandler = new PSWTSimpleSelectionEventHandler(camera, marqueeParent);
+        canvas.addInputEventListener(selectionHandler);
+        // forward the selection events
+        selectionHandler.addSelectionListener(this);
     }
 
     private void resizeAndResetLayers(final int count) {
@@ -134,24 +129,17 @@ public class PiccoloViewer extends Viewer {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void refresh() {
-
+    public void nodesSelected(final PSWTSimpleSelectionEventHandler handler,
+            final Collection<PNode> nodes) {
+        notifyListeners(new SelectionEvent(this, nodes, true));
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public ISelection getSelection() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setSelection(final ISelection selection, final boolean reveal) {
+    public void nodesUnselected(final PSWTSimpleSelectionEventHandler handler,
+            final Collection<PNode> nodes) {
+        notifyListeners(new SelectionEvent(this, nodes, false));
     }
 
 }

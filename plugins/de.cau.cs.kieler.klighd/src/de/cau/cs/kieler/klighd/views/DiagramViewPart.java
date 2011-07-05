@@ -21,22 +21,16 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 
-import de.cau.cs.kieler.klighd.IViewerProvider;
+import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.ViewContext;
 
@@ -50,22 +44,19 @@ public class DiagramViewPart extends ViewPart {
     /** the default name for this view. */
     public static final String DEFAULT_NAME = "Light Diagram";
 
-    /** the currently active viewer. */
-    private Viewer currentViewer = null;
-    /** the current control. */
-    private Control currentControl = null;
-    /** the view composite. */
-    private Composite parentComposite = null;
+    /** the viewer for this view part. */
+    private IViewer<Object> viewer;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void createPartControl(final Composite parent) {
-        parentComposite = parent;
+        // create a context viewer
+        viewer = new ContextViewer(parent);
         // install a drop handler for the view
-        installDropHandler();
-        showMessage("No model selected.");
+        installDropHandler(parent);
+        viewer.setModel("No model selected.");
     }
 
     /**
@@ -73,30 +64,16 @@ public class DiagramViewPart extends ViewPart {
      */
     @Override
     public void setFocus() {
-        if (currentViewer != null) {
-            currentViewer.getControl().setFocus();
-        }
+        viewer.getControl().setFocus();
     }
 
     /**
-     * Tries to find a viewer to show the given model. If a fitting viewer is found it is shown in
-     * the view.
+     * Returns the viewer represented by this view part.
      * 
-     * @param model
-     *            the model
-     * @return <code>true</code> if the view could be initialized properly, <code>false</code> if no
-     *         viewer is available.
+     * @return the viewer
      */
-    public Boolean setInputModel(final Object model) {
-        ViewContext viewContext = LightDiagramServices.getInstance().getValidViewContext(model);
-        if (viewContext != null) {
-            setViewer(viewContext.getViewerProvider());
-            currentViewer.setInput(viewContext.getModel());
-            return true;
-        } else {
-            showMessage("No viewer registered for the model.");
-            return false;
-        }
+    public IViewer<Object> getViewer() {
+        return viewer;
     }
 
     /**
@@ -110,51 +87,10 @@ public class DiagramViewPart extends ViewPart {
     }
 
     /**
-     * Shows a message in the view.
-     * 
-     * @param message
-     *            the message
-     */
-    private void showMessage(final String message) {
-        if (currentControl != null) {
-            currentControl.dispose();
-            currentViewer = null;
-            currentControl = null;
-        }
-        // add a canvas for displaying the message
-        Canvas canvas = new Canvas(parentComposite, SWT.NONE);
-        currentControl = canvas;
-        canvas.addPaintListener(new PaintListener() {
-            public void paintControl(final PaintEvent e) {
-                e.gc.drawString(message, 0, 0, true);
-            }
-        });
-        parentComposite.layout(true);
-    }
-
-    /**
-     * Sets the viewer provided by the viewer provider as active viewer for this view.
-     * 
-     * @param viewerProvider
-     *            the viewer provider
-     */
-    private void setViewer(final IViewerProvider viewerProvider) {
-        if (currentControl != null) {
-            currentControl.dispose();
-            currentViewer = null;
-            currentControl = null;
-        }
-        // add the viewer from the viewer provider
-        currentViewer = viewerProvider.createViewer(parentComposite);
-        currentControl = currentViewer.getControl();
-        parentComposite.layout(true);
-    }
-
-    /**
      * Installs a handler for dropping resources on the view.
      */
-    private void installDropHandler() {
-        DropTarget target = new DropTarget(parentComposite, DND.DROP_MOVE | DND.DROP_DEFAULT);
+    private void installDropHandler(final Composite parent) {
+        DropTarget target = new DropTarget(parent, DND.DROP_MOVE | DND.DROP_DEFAULT);
         final ResourceTransfer resourceTransfer = ResourceTransfer.getInstance();
         target.setTransfer(new Transfer[] { resourceTransfer });
         target.addDropListener(new DropTargetListener() {
@@ -168,9 +104,16 @@ public class DiagramViewPart extends ViewPart {
                             IFile file = (IFile) resource;
                             Object model = loadModel(file);
                             if (model != null) {
-                                setInputModel(model);
+                                ViewContext viewContext =
+                                        LightDiagramServices.getInstance().getValidViewContext(
+                                                model);
+                                if (viewContext != null) {
+                                    viewer.setModel(viewContext);
+                                } else {
+                                    viewer.setModel("Could not find a viewer for the resource.");
+                                }
                             } else {
-                                showMessage("The file does not contain an EMF resource.");
+                                viewer.setModel("The file does not contain an EMF resource.");
                             }
                             break;
                         }

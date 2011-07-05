@@ -36,12 +36,22 @@ public interface IModelTransformation<S, T> {
     T transform(final S model);
 
     /**
+     * Returns the object in the source model which is represented by the given object in the target
+     * model.
+     * 
+     * @param object
+     *            the object in the target model
+     * @return the object in the source model
+     */
+    Object getSourceObject(final Object object);
+
+    /**
      * Returns whether the given model is a valid source for the transformation.
      * 
      * @param model
      *            the model
      * @return true if this transformation supports the given model as a source; false else
      */
-    boolean isModelSupported(final Object model);
+    boolean supports(final Object model);
 
 }

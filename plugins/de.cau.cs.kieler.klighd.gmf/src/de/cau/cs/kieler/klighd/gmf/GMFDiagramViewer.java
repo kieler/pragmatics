@@ -18,21 +18,19 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramGraphicalViewer;
 import org.eclipse.gmf.runtime.diagram.ui.services.editpart.EditPartService;
 import org.eclipse.gmf.runtime.notation.Diagram;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 
+import de.cau.cs.kieler.klighd.AbstractViewer;
+
 /**
- * A wrapper for a {@code DiagramGraphicalViewer} to fit the {@code Viewer} interface.
+ * A wrapper for a {@code DiagramGraphicalViewer} to fit the {@code IViewer} interface.
  * 
  * @author mri
  */
-public class GMFDiagramViewer extends Viewer {
+public class GMFDiagramViewer extends AbstractViewer<Diagram> {
 
     /** the graphical viewer. */
     private DiagramGraphicalViewer graphicalViewer;
-    /** the current input diagram. */
-    private Diagram input = null;
 
     /**
      * Constructs a GMFDiagramViewer wrapping a {@code DiagramGraphicalViewer}.
@@ -47,7 +45,6 @@ public class GMFDiagramViewer extends Viewer {
     /**
      * {@inheritDoc}
      */
-    @Override
     public Control getControl() {
         return graphicalViewer.getControl();
     }
@@ -55,50 +52,14 @@ public class GMFDiagramViewer extends Viewer {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public Object getInput() {
-        return input;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ISelection getSelection() {
-        return graphicalViewer.getSelection();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void refresh() {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setInput(final Object input) {
-        if (input instanceof Diagram) {
-            this.input = (Diagram) input;
-            // configure the viewer
-            RootEditPart rootEditPart =
-                    EditPartService.getInstance().createRootEditPart(this.input);
-            graphicalViewer.setRootEditPart(rootEditPart);
-            // set the content
-            graphicalViewer.setContents(this.input);
-            // disable the edit mode
-            ((DiagramEditPart) graphicalViewer.getContents()).disableEditMode();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setSelection(final ISelection selection, final boolean reveal) {
-        graphicalViewer.setSelection(selection);
+    public void setModel(final Diagram model) {
+        // configure the viewer
+        RootEditPart rootEditPart = EditPartService.getInstance().createRootEditPart(model);
+        graphicalViewer.setRootEditPart(rootEditPart);
+        // set the content
+        graphicalViewer.setContents(model);
+        // disable the edit mode
+        ((DiagramEditPart) graphicalViewer.getContents()).disableEditMode();
     }
 
 }

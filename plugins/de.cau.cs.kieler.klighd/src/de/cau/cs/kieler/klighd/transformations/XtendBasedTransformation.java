@@ -37,7 +37,7 @@ import de.cau.cs.kieler.klighd.IModelTransformation;
 import de.cau.cs.kieler.klighd.KLighDPlugin;
 
 /**
- * An implementation of {@link IModelTransformation} enabling Xtend-based model transformations. 
+ * An implementation of {@link IModelTransformation} enabling Xtend-based model transformations.
  * 
  * @author chsch
  */
@@ -53,9 +53,12 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
     /**
      * The constructor.
      * 
-     * @param extFileURL the extend file
-     * @param theExtension the root extend function
-     * @param theMetamodels the involved meta models
+     * @param extFileURL
+     *            the extend file
+     * @param theExtension
+     *            the root extend function
+     * @param theMetamodels
+     *            the involved meta models
      */
     public XtendBasedTransformation(final URL extFileURL, final String theExtension,
             final List<EPackage> theMetamodels) {
@@ -76,15 +79,17 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
     /**
      * Checks whether the the supplied Xtend-based transformation supports the current model object.
      * 
-     * @param model the model to be tested
+     * @param model
+     *            the model to be tested
      * @return <code>true</code> if the given model is supported by this model transformation
      */
-    public boolean isModelSupported(final Object model) {
+    public boolean supports(final Object model) {
         try {
 
             /* load the Xtend file */
-            XtendFile ext = (XtendFile) new XtendResourceParser().parse(new InputStreamReader(
-                    extfile.openStream()), extfile.getFile());
+            XtendFile ext =
+                    (XtendFile) new XtendResourceParser().parse(
+                            new InputStreamReader(extfile.openStream()), extfile.getFile());
 
             /* search the fitting extension */
             for (Extension e : ext.getExtensions()) {
@@ -96,8 +101,8 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
 
                     // construe its name
                     int pos = firstParamType.lastIndexOf("::");
-                    String className = (pos == -1 ? firstParamType : firstParamType
-                            .substring(pos + 2));
+                    String className =
+                            (pos == -1 ? firstParamType : firstParamType.substring(pos + 2));
                     String packageName = (pos == -1 ? "" : firstParamType.substring(0, pos));
                     EClassifier clazz = null;
                     EPackage ePackage = null;
@@ -144,14 +149,15 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
 
     /** the length of the string ".ext". */
     private static final int ENDING_OFFSET = 4;
-    
+
     /**
      * Fires an instance of {@link XtendFacade} to execute the transformation.
      * 
-     * @param model the model to be transformed.
+     * @param model
+     *            the model to be transformed.
      * @return the transformation result.
      */
-    public EObject transform(final Object model) {        
+    public EObject transform(final Object model) {
         String url = this.extfile.getFile();
         if (url.endsWith(".ext")) {
             url = url.substring(0, url.length() - ENDING_OFFSET);
@@ -176,6 +182,14 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
         }
 
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object getSourceObject(final Object object) {
+        // TODO implement this correctly for all cases somehow
+        return object;
     }
 
 }

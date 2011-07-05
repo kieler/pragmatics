@@ -38,11 +38,18 @@ public class GMFDomainModelTransformation implements IModelTransformation<EObjec
     public Diagram transform(final EObject model) {
         return createDiagram(model);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Object getSourceObject(final Object object) {
+        return null;
+    }
 
     /**
      * {@inheritDoc}
      */
-    public boolean isModelSupported(final Object model) {
+    public boolean supports(final Object model) {
         if (model instanceof EObject) {
             Diagram diagram = createDiagram((EObject) model);
             return diagram != null;
@@ -62,4 +69,5 @@ public class GMFDomainModelTransformation implements IModelTransformation<EObjec
         }
         return diagram;
     }
+    
 }

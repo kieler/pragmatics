@@ -15,8 +15,6 @@ package de.cau.cs.kieler.klighd.graphiti.piccolo;
 
 import java.awt.geom.Point2D;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.graphiti.mm.algorithms.AbstractText;
@@ -49,15 +47,17 @@ import de.cau.cs.kieler.klighd.IModelTransformation;
 import de.cau.cs.kieler.klighd.piccolo.PSWTAdvancedPath;
 import de.cau.cs.kieler.klighd.piccolo.PSWTAlignedText;
 import de.cau.cs.kieler.klighd.piccolo.PSWTClipper;
+import de.cau.cs.kieler.klighd.piccolo.PiccoloDiagramContext;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolox.swt.PSWTText;
 
 /**
- * A transformation from a Graphiti Pictogram model to a list of Piccolo nodes.
+ * A transformation from a Graphiti Pictogram model to a Piccolo diagram context.
  * 
  * @author mri
  */
-public class Pictogram2PNodeTransformation implements IModelTransformation<Diagram, List<PNode>> {
+public class Pictogram2PNodeTransformation implements
+        IModelTransformation<Diagram, PiccoloDiagramContext> {
 
     /** the Pictogram color for white. */
     private static final Color WHITE = StylesFactory.eINSTANCE.createColor();
@@ -82,28 +82,22 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
     // CHECKSTYLEON MagicNumber
 
     /**
-     * Constructs a Pictogram2PNodeTransformation.
-     */
-    public Pictogram2PNodeTransformation() {
-
-    }
-
-    /**
      * Performs the actual transformation from the Pictogram model to the Piccolo node.
      * 
      * @param diagram
      *            the Pictogram diagram
      * @return the list of Piccolo nodes which represents the layers of the actual diagram
      */
-    public List<PNode> transform(final Diagram diagram) {
+    public PiccoloDiagramContext transform(final Diagram diagram) {
         anchorMap.clear();
         gaMap.clear();
-        List<PNode> layerRoots = new LinkedList<PNode>();
+        // create the diagram context with a model resolver
+        PiccoloDiagramContext diagramContext = new PiccoloDiagramContext();
         // use two layers, one for nodes and one for edges
-        PNode edges = new PNode();
         PNode nodes = new PNode();
-        layerRoots.add(nodes);
-        layerRoots.add(edges);
+        PNode edges = new PNode();
+        diagramContext.addLayerRoot(nodes);
+        diagramContext.addLayerRoot(edges);
         // determine default colors from the diagram graphics algorithm
         GraphicsAlgorithm ga = diagram.getGraphicsAlgorithm();
         Color fc, bc;
@@ -122,7 +116,7 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
         for (Connection connection : diagram.getConnections()) {
             transformConnection(edges, connection, BLACK, WHITE);
         }
-        return layerRoots;
+        return diagramContext;
     }
 
     /**
@@ -207,7 +201,7 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
         // create the anchor
         AnchorNode anchorNode = new AnchorNode(anchor, reference);
         parent.addAnchor(anchorNode);
-        anchorNode.setPickable(false);
+        anchorNode.setPickable(anchor.isActive());
         // transform the graphics algorithm
         GraphicsAlgorithm ga = anchor.getGraphicsAlgorithm();
         if (ga != null) {
@@ -246,7 +240,7 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
         } .doSwitch(connection);
         // ignore the connection if no PNode representation could be found
         if (node != null) {
-            node.setPickable(false);
+            node.setPickable(connection.isActive());
             parent.addChild(node);
             // transform decorators
             for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
@@ -254,6 +248,7 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
                 // create the decoration
                 DecorationNode decoration =
                         new DecorationNode(decorator, !(ga instanceof AbstractText));
+                decoration.setPickable(false);
                 node.addDecoration(decoration);
                 // transform graphics algorithm for this decorator
                 Color gaFc = getForegroundColor(ga, fc);
@@ -353,6 +348,7 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
     private PNode transformClippedGraphicsAlgorithm(final PNode parent, final GraphicsAlgorithm ga,
             final Color fc, final Color bc) {
         PNode clipper = new PSWTClipper();
+        clipper.setPickable(false);
         PNode node = transformGraphicsAlgorithm(clipper, ga, fc, bc);
         parent.addChild(clipper);
         return node;
@@ -554,11 +550,25 @@ public class Pictogram2PNodeTransformation implements IModelTransformation<Diagr
         }
         return def;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Object getSourceObject(final Object object) {
+        if (object instanceof ShapeNode) {
+            return ((ShapeNode) object).getPictogramShape();
+        } else if (object instanceof ConnectionNode) {
+            return ((ConnectionNode) object).getPictogramConnection();
+        } else if (object instanceof AnchorNode) {
+            return ((AnchorNode) object).getPictogramAnchor();
+        }
+        return null;
+    }
 
     /**
      * {@inheritDoc}
      */
-    public boolean isModelSupported(final Object model) {
+    public boolean supports(final Object model) {
         return model instanceof Diagram;
     }
 
