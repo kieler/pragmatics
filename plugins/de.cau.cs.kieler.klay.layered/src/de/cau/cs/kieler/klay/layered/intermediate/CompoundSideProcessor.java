@@ -111,6 +111,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
 
         // create upper side node
         LNode upperSideDummy = new LNode();
+        upperSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
         // avoid index-out-of-bounds-exception
         if (layerNodes.size() == upperIndex) {
             upperSideDummy.setLayer(layer);
@@ -120,6 +121,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
 
         // create lower side node
         LNode lowerSideDummy = new LNode();
+        lowerSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
         lowerSideDummy.setLayer(lowerIndex, layer);
 
         // create ports for connection-edges
@@ -151,12 +153,9 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
             // create connection-edges to successor, if not last index.
             LEdge highEdge = new LEdge();
             LEdge lowEdge = new LEdge();
-
-            highEdge.setProperty(Properties.EDGE_TYPE, EdgeType.NORMAL);
-            lowEdge.setProperty(Properties.EDGE_TYPE, EdgeType.NORMAL);
-            
-//            highEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_SIDE);
-//            lowEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_SIDE);
+           
+            highEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_SIDE);
+            lowEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_SIDE);
 
             highEdge.setSource(highPortEast);
             lowEdge.setSource(lowPortEast);
