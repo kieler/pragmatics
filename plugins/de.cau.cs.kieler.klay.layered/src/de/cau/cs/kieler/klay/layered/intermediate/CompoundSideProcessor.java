@@ -76,7 +76,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
             Layer spanEnd = findSpanEnd(lnode, layers);
             int startIndex = lnode.getLayer().getIndex();
             int endIndex = spanEnd.getIndex();
-            insertSideDummies(startIndex, endIndex, layers, null, null, null);
+            insertSideDummies(startIndex, endIndex, layers, lnode, null, null);
         }
         getMonitor().done();
     }
@@ -125,15 +125,19 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
         // create ports for connection-edges
         LPort highPortWest = new LPort();
         highPortWest.setSide(PortSide.WEST);
+        highPortWest.setNode(upperSideDummy);
 
         LPort highPortEast = new LPort();
         highPortEast.setSide(PortSide.EAST);
+        highPortEast.setNode(upperSideDummy);
 
         LPort lowPortWest = new LPort();
         lowPortWest.setSide(PortSide.WEST);
+        lowPortWest.setNode(lowerSideDummy);
 
         LPort lowPortEast = new LPort();
         lowPortEast.setSide(PortSide.EAST);
+        lowPortEast.setNode(lowerSideDummy);
 
         // connect to connection-edges from predecessor, if existent.
         if (highConnector != null) {
@@ -148,14 +152,17 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
             LEdge highEdge = new LEdge();
             LEdge lowEdge = new LEdge();
 
-            highEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_SIDE);
-            lowEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_SIDE);
+            highEdge.setProperty(Properties.EDGE_TYPE, EdgeType.NORMAL);
+            lowEdge.setProperty(Properties.EDGE_TYPE, EdgeType.NORMAL);
+            
+//            highEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_SIDE);
+//            lowEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_SIDE);
 
             highEdge.setSource(highPortEast);
             lowEdge.setSource(lowPortEast);
 
             // handle next layer
-            insertSideDummies(startIndex - 1, endIndex, layers, upperBorder, highEdge, lowEdge);
+            insertSideDummies(startIndex + 1, endIndex, layers, upperBorder, highEdge, lowEdge);
         }
     }
 
