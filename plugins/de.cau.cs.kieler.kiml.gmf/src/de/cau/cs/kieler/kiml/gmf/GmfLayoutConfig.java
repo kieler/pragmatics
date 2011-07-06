@@ -390,6 +390,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
             final Object value) {
         View view = context.getProperty(NOTATION_VIEW);
         if (view != null) {
+            checkDeprecatedStyle(view);
             if (context.getProperty(IMutableLayoutConfig.OPT_RECURSIVE)) {
                 if (value != null) {
                     removeValue(optionData, PREFIX, view, true);
@@ -413,7 +414,6 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
     @SuppressWarnings("unchecked")
     private void setValue(final LayoutOptionData<?> optionData, final Object value,
             final String prefix, final View view) {
-        checkDeprecatedStyle(view);
         if (value == null) {
             removeValue(optionData, prefix, view, false);
         } else {
@@ -495,6 +495,8 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                 if (key.startsWith(PREFIX) || key.startsWith(DEF_PREFIX)) {
                     iter.remove();
                 }
+            } else if (obj instanceof LayoutOptionStyle) {
+                iter.remove();
             }
         }
         
