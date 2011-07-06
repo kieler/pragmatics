@@ -201,7 +201,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             final KNode graph, final KVector layoutNodeSize,
             final Map<KGraphElement, LGraphElement> elemMap,
             final Direction direction) {
-
+        
+        KShapeLayout graphLayout = graph.getData(KShapeLayout.class);
         KShapeLayout kportLayout = kport.getData(KShapeLayout.class);
 
         // Calculate the position of the port's center
@@ -221,7 +222,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // Create dummy
         LNode dummy = createExternalPortDummy(kport,
-                kportLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS),
+                graphLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS),
                 KimlUtil.calcPortSide(kport, direction), inEdges - outEdges,
                 layoutNodeSize, kportPosition);
         layeredNodes.add(dummy);

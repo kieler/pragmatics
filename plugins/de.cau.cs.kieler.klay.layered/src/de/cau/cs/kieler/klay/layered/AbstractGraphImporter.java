@@ -79,7 +79,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
             final PortSide portSide, final int netFlow, final KVector portNodeSize,
             final KVector portPosition) {
         
-        PortSide finalPortSide = portSide;
+        PortSide finalExternalPortSide = portSide;
         
         // Create the dummy with one port
         LNode dummy = new LNode();
@@ -92,16 +92,16 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         dummyPort.setNode(dummy);
         
         // If the port constraints are free, we need to determine where to put the dummy (and its port)
-        if (portConstraints == PortConstraints.FREE || portConstraints == PortConstraints.UNDEFINED) {
+        if (!portConstraints.isSideFixed()) {
             if (netFlow > 0) {
-                finalPortSide = PortSide.EAST;
+                finalExternalPortSide = PortSide.EAST;
             } else {
-                finalPortSide = PortSide.WEST;
+                finalExternalPortSide = PortSide.WEST;
             }
         }
         
         // With the port side at hand, set the necessary properties
-        switch (finalPortSide) {
+        switch (finalExternalPortSide) {
         case WEST:
             dummy.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.FIRST_SEPARATE);
             dummy.setProperty(Properties.EDGE_CONSTRAINT, EdgeConstraint.OUTGOING_ONLY);
@@ -128,7 +128,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         if (portConstraints.isOrderFixed()) {
             double positionOrRatio = 0;
             
-            switch (finalPortSide) {
+            switch (finalExternalPortSide) {
             case WEST:
             case EAST:
                 positionOrRatio = portPosition.y;
@@ -152,7 +152,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         }
         
         // Set the port side of the dummy
-        dummy.setProperty(Properties.EXT_PORT_SIDE, finalPortSide);
+        dummy.setProperty(Properties.EXT_PORT_SIDE, finalExternalPortSide);
         
         return dummy;
     }
