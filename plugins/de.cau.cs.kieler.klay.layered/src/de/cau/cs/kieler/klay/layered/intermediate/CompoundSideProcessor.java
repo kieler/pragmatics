@@ -153,7 +153,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
             // create connection-edges to successor, if not last index.
             LEdge highEdge = new LEdge();
             LEdge lowEdge = new LEdge();
-           
+
             highEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_SIDE);
             lowEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_SIDE);
 
@@ -210,17 +210,19 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
     private int findUltimateIndex(final Layer layer, final LNode upperBorder, final boolean high) {
         int ret = 0;
         for (LNode lnode : layer.getNodes()) {
-            KNode origin = (KNode) lnode.getProperty(Properties.ORIGIN);
-            KNode upperBorderOrigin = (KNode) upperBorder.getProperty(Properties.ORIGIN);
-            if (CompoundGraphImporter.isDescendant(upperBorderOrigin, origin)) {
-                int test = lnode.getIndex();
-                if (high) {
-                    if (test > ret) {
-                        ret = test;
-                    }
-                } else {
-                    if (test < ret) {
-                        ret = test;
+            if (lnode.getProperty(Properties.ORIGIN) instanceof KNode) {
+                KNode origin = (KNode) lnode.getProperty(Properties.ORIGIN);
+                KNode upperBorderOrigin = (KNode) upperBorder.getProperty(Properties.ORIGIN);
+                if (CompoundGraphImporter.isDescendant(upperBorderOrigin, origin)) {
+                    int test = lnode.getIndex();
+                    if (high) {
+                        if (test > ret) {
+                            ret = test;
+                        }
+                    } else {
+                        if (test < ret) {
+                            ret = test;
+                        }
                     }
                 }
             }
