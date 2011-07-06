@@ -200,8 +200,9 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         KInsets insets = parentLayout.getInsets();
         Dimension layoutSize = graph.getLayoutSize();
-        parentLayout.setWidth(insets.getLeft() + layoutSize.width + insets.getRight());
-        parentLayout.setHeight(insets.getTop() + layoutSize.height + insets.getBottom());
+        float width = insets.getLeft() + layoutSize.width + insets.getRight();
+        float height = insets.getTop() + layoutSize.height + insets.getBottom();
+        KimlUtil.resizeNode(parentNode, width, height, false);
     }
 
 }

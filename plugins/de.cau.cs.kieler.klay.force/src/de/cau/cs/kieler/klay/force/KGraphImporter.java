@@ -25,6 +25,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.force.graph.FEdge;
 import de.cau.cs.kieler.klay.force.graph.FGraph;
 import de.cau.cs.kieler.klay.force.graph.FLabel;
@@ -36,58 +37,20 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  *
  * @author msp
  */
-public class KGraphImporter implements IGraphImporter {
-    
-    /** the original layout graph from which the force graph is created. */
-    private KNode origin;
-    /** the converted force graph. */
-    private FGraph fgraph;
-    
-    /**
-     * Constructs a new instance that transforms the given node into a force graph.
-     * 
-     * @param node the node to import.
-     */
-    public KGraphImporter(final KNode node) {
-        this.origin = node;
-        fgraph = new FGraph();
-        fgraph.setProperty(Properties.ORIGIN, node);
-        transform(node, fgraph);
-    }
-    
-    /**
-     * Returns the layout graph from which the force graph was created.
-     * 
-     * @return the origin.
-     */
-    public final KNode getOrigin() {
-        return origin;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public final FGraph getGraph() {
-        return fgraph;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public final void applyLayout() {
-        applyLayout(fgraph, origin);
-    }
+public class KGraphImporter implements IGraphImporter<KNode> {
     
     ///////////////////////////////////////////////////////////////////////////////
     // Transformation KGraph -> FGraph
-    
+
     /**
      * {@inheritDoc}
      */
-    protected void transform(final KNode source, final FGraph fgraph) {
-        KShapeLayout sourceShapeLayout = source.getData(KShapeLayout.class);
+    public FGraph importGraph(final KNode kgraph) {
+        FGraph fgraph = new FGraph();
+        fgraph.setProperty(Properties.ORIGIN, kgraph);
         
         // copy the properties of the KGraph to the force graph
+        KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
         fgraph.copyProperties(sourceShapeLayout);
         fgraph.checkProperties(Properties.SPACING, Properties.TEMPERATURE, Properties.ITERATIONS,
                 Properties.REPULSION);
@@ -96,11 +59,13 @@ public class KGraphImporter implements IGraphImporter {
         Map<KNode, FNode> elemMap = new HashMap<KNode, FNode>();
         
         // transform everything
-        transformNodes(source, fgraph, elemMap);
-        transformEdges(source, fgraph, elemMap);
+        transformNodes(kgraph, fgraph, elemMap);
+        transformEdges(kgraph, fgraph, elemMap);
         
         // calculate the adjacency matrix for the graph
         fgraph.calcAdjacency();
+        
+        return fgraph;
     }
     
     /**
@@ -191,12 +156,16 @@ public class KGraphImporter implements IGraphImporter {
     ///////////////////////////////////////////////////////////////////////////////
     // Apply Layout Results
     
+
+
     /**
-     * Apply the layout to the given graph.
+     * {@inheritDoc}
      */
-    private void applyLayout(final FGraph fgraph, final KNode target) {
+    public void applyLayout(final FGraph fgraph) {
+        KNode kgraph = (KNode) fgraph.getProperty(Properties.ORIGIN);
+        
         // determine the border spacing, which influences the offset
-        KShapeLayout parentLayout = target.getData(KShapeLayout.class);
+        KShapeLayout parentLayout = kgraph.getData(KShapeLayout.class);
         float borderSpacing = fgraph.getProperty(LayoutOptions.BORDER_SPACING);
         if (borderSpacing < 0) {
             borderSpacing = Properties.DEF_SPACING;
@@ -248,11 +217,11 @@ public class KGraphImporter implements IGraphImporter {
         
         // set up the parent node
         KInsets insets = parentLayout.getInsets();
-        parentLayout.setWidth((float) (maxXPos - minXPos) + 2 * borderSpacing
-                + insets.getLeft() + insets.getRight());
-        parentLayout.setHeight((float) (maxYPos - minYPos) + 2 * borderSpacing
-                + insets.getTop() + insets.getBottom());
-        parentLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
+        float width = (float) (maxXPos - minXPos) + 2 * borderSpacing
+                + insets.getLeft() + insets.getRight();
+        float height = (float) (maxYPos - minYPos) + 2 * borderSpacing
+                + insets.getTop() + insets.getBottom();
+        KimlUtil.resizeNode(kgraph, width, height, false);
     }
     
 }

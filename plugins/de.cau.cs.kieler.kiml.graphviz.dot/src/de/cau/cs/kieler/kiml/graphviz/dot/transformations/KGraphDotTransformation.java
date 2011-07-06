@@ -101,10 +101,6 @@ public class KGraphDotTransformation {
     /** extra-large default value for minimal spacing. */
     public static final float DEF_SPACING_XLARGE = 60.0f;
     
-//    /** Style of arrowhead on the head node of an edge. */
-//    private static final String ATTR_ARROWHEAD = "arrowhead";
-//    /** Style of arrowhead on the tail node of an edge. */
-//    private static final String ATTR_ARROWTAIL = "arrowtail";
     /** Bounding box. */
     private static final String ATTR_BOUNDINGBOX = "bb";
     /** Comment. */
@@ -113,11 +109,6 @@ public class KGraphDotTransformation {
     private static final String ATTR_EDGEDIR = "dir";
     /** Preferred edge length, in inches (fdp, neato only). */
     private static final String ATTR_EDGELEN = "len";
-//    /**
-//     * This specifies the expected number of pixels per inch on a display
-//     * device.
-//     */
-//    private static final String ATTR_DPI = "dpi";
     /**
      * If true, the node size is specified by the values of the width and height
      * attributes only and is not expanded to contain the text label.
@@ -145,27 +136,12 @@ public class KGraphDotTransformation {
      * headlabel(taillabel) is from the head(tail) node.
      */
     private static final String ATTR_LABELDISTANCE = "labeldistance";
-//    /** Font used for headlabel and taillabel. */
-//    private static final String ATTR_LABELFONTNAME = "labelfontname";
-//    /** Font size, in points, used for headlabel and taillabel. */
-//    private static final String ATTR_LABELFONTSIZE = "labelfontsize";
-//    /** Justification for cluster labels. */
-//    private static final String ATTR_LABELJUST = "labeljust";
-//    /** Top/bottom placement of graph and cluster labels. */
-//    private static final String ATTR_LABELLOC = "labelloc";
     /** Label position, in points. */
     private static final String ATTR_LABELPOS = "lp";
     /** Determines if and how node overlaps should be removed (not dot). */
     private static final String ATTR_OVERLAP = "overlap";
-    /**
-     * The pad attribute specifies how much, in inches, to extend the drawing
-     * area around the minimal area needed to draw the graph.
-     */
-//    private static final String ATTR_PAD = "pad";
-//    /** Position of node, or spline control points. */
+    /** Position of node, or spline control points. */
     private static final String ATTR_POS = "pos";
-//    /** For graphs, this sets x and y margins of canvas, in inches. */
-//    private static final String ATTR_MARGIN = "margin";
     /** Specifies the minimum separation between all nodes (circo only). */
     private static final String ATTR_MINDIST = "mindist";
     /** Sets direction of graph layout (dot only). */
@@ -175,8 +151,6 @@ public class KGraphDotTransformation {
      * specifies radial separation of concentric circles. (twopi, dot only)
      */
     private static final String ATTR_RANKSEP = "ranksep";
-//    /** If 90, set drawing orientation to landscape. */
-//    private static final String ATTR_ROTATE = "rotate";
     /** Set the shape of a node. */
     private static final String ATTR_SHAPE = "shape";
     /**
@@ -193,8 +167,6 @@ public class KGraphDotTransformation {
     private static final String ATTR_TAILLABEL = "taillabel";
     /** Tail label position, in points. */
     private static final String ATTR_TAILLP = "tail_lp";
-//    /** Weight of edge. */
-//    private static final String ATTR_WEIGHT = "weight";
     /** Width of node, in inches. */
     private static final String ATTR_WIDTH = "width";
 
@@ -815,10 +787,12 @@ public class KGraphDotTransformation {
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         if (boundingBox != null) {
             KInsets insets = parentLayout.getInsets();
-            parentLayout.setWidth((float) boundingBox.x + insets.getLeft()
-                    + insets.getRight() + 2 * offset);
-            parentLayout.setHeight((float) boundingBox.y + insets.getTop()
-                    + insets.getBottom() + 2 * offset);
+            float width = (float) boundingBox.x + insets.getLeft()
+                    + insets.getRight() + 2 * offset;
+            float height = (float) boundingBox.y + insets.getTop()
+                    + insets.getBottom() + 2 * offset;
+            KimlUtil.resizeNode(parentNode, width, height, false);
+            parentLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
         }
         monitor.done();
     }

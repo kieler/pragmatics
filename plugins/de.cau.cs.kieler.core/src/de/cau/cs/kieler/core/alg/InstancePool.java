@@ -63,7 +63,7 @@ public class InstancePool<T> {
         if (instances.isEmpty()) {
             return factory.create();
         }
-        return instances.getFirst();
+        return instances.removeFirst();
     }
     
     /**

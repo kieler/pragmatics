@@ -282,8 +282,7 @@ public class LayeredGraph {
             width += lengthwiseDim;
             height += crosswiseDim;
         }
-        parentLayout.setWidth(width);
-        parentLayout.setHeight(height);
+        KimlUtil.resizeNode(parentNode, width, height, false);
 
         // update layout options of the parent layout node
         parentLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);

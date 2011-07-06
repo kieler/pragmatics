@@ -18,20 +18,24 @@ import de.cau.cs.kieler.klay.force.graph.FGraph;
 /**
  * Interface for importer classes for the force graph structure.
  *
+ * @param <T> the type of graph that this importer can transform into a force graph.
  * @author msp
  */
-public interface IGraphImporter {
+public interface IGraphImporter<T> {
     
     /**
-     * Returns the force graph that is managed by this graph importer.
+     * Create a force graph from the given graph.
      * 
-     * @return the created force graph
+     * @param graph the graph to turn into a force graph
+     * @return a force graph, or {@code null} if the input was not recognized
      */
-    FGraph getGraph();
+    FGraph importGraph(T graph);
     
     /**
      * Apply the computed layout of a force graph to the original graph.
+     * 
+     * @param forceGraph the graph for which layout is applied
      */
-    void applyLayout();
+    void applyLayout(FGraph forceGraph);
 
 }

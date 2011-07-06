@@ -72,6 +72,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * The base wrapper class for all OGDF layouters.
@@ -634,10 +635,9 @@ public abstract class OgdfLayouter {
         // get the insets
         KInsets insets = parentNodeLayout.getInsets();
         // set the width/height of the graph
-        parentNodeLayout.setWidth(boundingBoxWidth + 2 * borderSpacing + insets.getLeft()
-                + insets.getRight());
-        parentNodeLayout.setHeight(boundingBoxHeight + 2 * borderSpacing + insets.getTop()
-                + insets.getBottom());
+        float width = boundingBoxWidth + 2 * borderSpacing + insets.getLeft() + insets.getRight();
+        float height = boundingBoxHeight + 2 * borderSpacing + insets.getTop() + insets.getBottom();
+        KimlUtil.resizeNode(parentNode, width, height, false);
     }
 
     /**

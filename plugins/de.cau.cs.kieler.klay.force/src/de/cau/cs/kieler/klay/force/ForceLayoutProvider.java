@@ -40,15 +40,15 @@ public class ForceLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
+    public void doLayout(final KNode kgraph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("KLay Force", 1);
         
         // transform the input graph
-        IGraphImporter graphImporter = new KGraphImporter(parentNode);
-        FGraph fgraph = graphImporter.getGraph();
+        IGraphImporter<KNode> graphImporter = new KGraphImporter();
+        FGraph fgraph = graphImporter.importGraph(kgraph);
 
         // set special properties for the layered graph
-        setOptions(fgraph, parentNode);
+        setOptions(fgraph, kgraph);
 
         // update the force model depending on user selection
         updateModel(fgraph.getProperty(Properties.FORCE_MODEL));
@@ -57,7 +57,7 @@ public class ForceLayoutProvider extends AbstractLayoutProvider {
         forceModel.layout(fgraph);
         
         // apply the layout results to the original graph
-        graphImporter.applyLayout();
+        graphImporter.applyLayout(fgraph);
         
         progressMonitor.done();
     }

@@ -145,18 +145,18 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor) {
+    public void doLayout(final KNode kgraph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Layered layout", 1);
 
         // transform the input graph
         IGraphImporter<KNode> graphImporter = new KGraphImporter();
-        LayeredGraph layeredGraph = graphImporter.importGraph(layoutNode);
+        LayeredGraph layeredGraph = graphImporter.importGraph(kgraph);
 
         // set special properties for the layered graph
-        setOptions(layeredGraph, layoutNode);
+        setOptions(layeredGraph, kgraph);
 
         // update the modules depending on user options
-        updateModules(layeredGraph, layoutNode.getData(KShapeLayout.class));
+        updateModules(layeredGraph, kgraph.getData(KShapeLayout.class));
         
         // split the input graph into components
         List<LayeredGraph> components = componentsProcessor.split(layeredGraph);

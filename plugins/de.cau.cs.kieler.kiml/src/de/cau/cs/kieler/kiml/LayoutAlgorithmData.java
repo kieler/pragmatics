@@ -253,7 +253,7 @@ public class LayoutAlgorithmData implements ILayoutData {
     /**
      * Sets the layout provider that can execute the associated algorithm.
      *
-     * @param theprovider the layout provider to set
+     * @param providerFactory a factory for layout providers
      */
     public void createPool(final IFactory<AbstractLayoutProvider> providerFactory) {
         this.providerPool = new InstancePool<AbstractLayoutProvider>(providerFactory);

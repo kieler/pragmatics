@@ -138,8 +138,9 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         
         KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
         KInsets insets = parentLayout.getInsets();
-        parentLayout.setWidth(totalWidth + insets.getLeft() + insets.getRight());
-        parentLayout.setHeight(totalHeight + insets.getTop() + insets.getBottom());
+        totalWidth += insets.getLeft() + insets.getRight();
+        totalHeight += insets.getTop() + insets.getBottom();
+        KimlUtil.resizeNode(parent, totalWidth, totalHeight, false);
     }
     
     private static final int MAX_BENDS = 5;

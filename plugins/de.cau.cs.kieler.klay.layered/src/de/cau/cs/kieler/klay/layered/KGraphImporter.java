@@ -68,11 +68,11 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
     /**
      * {@inheritDoc}
      */
-    public LayeredGraph importGraph(final KNode graph) {
+    public LayeredGraph importGraph(final KNode kgraph) {
         LayeredGraph layeredGraph = new LayeredGraph();
-        layeredGraph.setProperty(Properties.ORIGIN, graph);
+        layeredGraph.setProperty(Properties.ORIGIN, kgraph);
 
-        KShapeLayout sourceShapeLayout = graph.getData(KShapeLayout.class);
+        KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
 
         // copy the properties of the KGraph to the layered graph and check values
         layeredGraph.copyProperties(sourceShapeLayout);
@@ -106,12 +106,12 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         if (isCompound) {
             CompoundGraphImporter compoundImporter = new CompoundGraphImporter();
             List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
-            compoundImporter.transformCompoundGraph(graph, layeredNodes,
+            compoundImporter.transformCompoundGraph(kgraph, layeredNodes,
                     layeredGraph, elemMap, graphProperties);
         } else {
             // transform everything
-            transformNodesAndPorts(graph, layeredGraph, elemMap, graphProperties);
-            transformEdges(graph, elemMap, graphProperties);
+            transformNodesAndPorts(kgraph, layeredGraph, elemMap, graphProperties);
+            transformEdges(kgraph, elemMap, graphProperties);
         }
 
         // set the graph properties property
@@ -672,7 +672,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             // ports have not been positioned yet - leave this for next layouter
             KimlUtil.resizeNode(target, width, height, true);
         }
-        parentLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
     }
 
 }

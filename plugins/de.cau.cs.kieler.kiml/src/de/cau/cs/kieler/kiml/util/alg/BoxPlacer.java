@@ -65,8 +65,9 @@ public class BoxPlacer extends AbstractAlgorithm {
                 expandNodes, aspectRatio);
 
         // adjust parent size
-        parentLayout.setWidth(insets.getLeft() + (float) parentSize.x + insets.getRight());
-        parentLayout.setHeight(insets.getTop() + (float) parentSize.y + insets.getBottom());
+        float width = insets.getLeft() + (float) parentSize.x + insets.getRight();
+        float height = insets.getTop() + (float) parentSize.y + insets.getBottom();
+        KimlUtil.resizeNode(parentNode, width, height, false);
     }
 
     /**

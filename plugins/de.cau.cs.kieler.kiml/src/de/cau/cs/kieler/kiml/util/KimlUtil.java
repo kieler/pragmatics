@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
@@ -28,7 +27,6 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
@@ -495,10 +493,8 @@ public final class KimlUtil {
         minSouth += MIN_PORT_DISTANCE;
         minWest += MIN_PORT_DISTANCE;
 
-        float newWidth = KielerMath.maxf(nodeLayout.getProperty(LayoutOptions.MIN_WIDTH),
-                MIN_NODE_SIZE, minNorth, minSouth);
-        float newHeight = KielerMath.maxf(nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT),
-                MIN_NODE_SIZE, minEast, minWest);
+        float newWidth = KielerMath.maxf(MIN_NODE_SIZE, minNorth, minSouth);
+        float newHeight = KielerMath.maxf(MIN_NODE_SIZE, minEast, minWest);
         
         resizeNode(node, newWidth, newHeight, true);
     }
@@ -514,12 +510,16 @@ public final class KimlUtil {
     public static void resizeNode(final KNode node, final float newWidth, final float newHeight,
             final boolean movePorts) {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        float oldWidth = nodeLayout.getWidth();
-        float oldHeight = nodeLayout.getHeight();
+        KVector oldSize = new KVector(nodeLayout.getWidth(), nodeLayout.getHeight());
+        KVector newSize = new KVector(
+                Math.max(newWidth, nodeLayout.getProperty(LayoutOptions.MIN_WIDTH)),
+                Math.max(newHeight, nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT)));
         
-        nodeLayout.setSize(newWidth, newHeight);
-        float widthRatio = newWidth / oldWidth, heightRatio = newHeight / oldHeight,
-                widthDiff = newWidth - oldWidth, heightDiff = newHeight - oldHeight;
+        nodeLayout.setSize((float) newSize.x, (float) newSize.y);
+        float widthRatio = (float) (newSize.x / oldSize.x);
+        float heightRatio = (float) (newSize.y / oldSize.y);
+        float widthDiff = (float) (newSize.x - oldSize.x);
+        float heightDiff = (float) (newSize.y - oldSize.y);
 
         // update port positions
         if (movePorts) {
@@ -558,21 +558,26 @@ public final class KimlUtil {
         KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);
         float midx = labelLayout.getXpos() + labelLayout.getWidth() / 2;
         float midy = labelLayout.getYpos() + labelLayout.getHeight() / 2;
-        float widthPercent = midx / oldWidth;
-        float heightPercent = midy / oldHeight;
+        float widthPercent = midx / (float) oldSize.x;
+        float heightPercent = midy / (float) oldSize.y;
         if (widthPercent + heightPercent >= 1) {
             if (widthPercent - heightPercent > 0 && midy >= 0) {
                 // label is on the right
                 labelLayout.setXpos(labelLayout.getXpos() + widthDiff);
                 labelLayout.setYpos(labelLayout.getYpos() + heightDiff * heightPercent);
+                // enable layout application for the node label
+                labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
             } else if (widthPercent - heightPercent < 0 && midx >= 0) {
                 // label is on the bottom
                 labelLayout.setXpos(labelLayout.getXpos() + widthDiff * widthPercent);
                 labelLayout.setYpos(labelLayout.getYpos() + heightDiff);
+                // enable layout application for the node label
+                labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
             }
         }
-        // enable layout application for the node label
-        labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
+        
+        // set fixed size option for the node: now the size is assumed to stay as determined here
+        nodeLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
     }
 
     /**
