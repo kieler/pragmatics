@@ -13,9 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.graphviz.layouter;
 
-import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.alg.InstancePool;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation.Command;
@@ -39,7 +37,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     /** command passed to the layouter. */
     private Command command = Command.INVALID;
     /** the Graphviz process pool. */
-    private InstancePool<GraphvizTool> graphvizPool;
+    private GraphvizTool graphvizTool = new GraphvizTool();
 
     /**
      * {@inheritDoc}
@@ -47,14 +45,6 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void initialize(final String parameter) {
         command = Command.valueOf(parameter);
-        graphvizPool = new InstancePool<GraphvizTool>(new IFactory<GraphvizTool>() {
-            public GraphvizTool create() {
-                return new GraphvizTool();
-            }
-            public void destroy(final GraphvizTool tool) {
-                tool.endProcess();
-            }
-        });
     }
     
     /**
@@ -62,9 +52,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public void dispose() {
-        if (graphvizPool != null) {
-            graphvizPool.clear();
-        }
+        graphvizTool.endProcess();
     }
 
     /**
@@ -73,10 +61,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void doLayout(final KNode layoutNode,
             final IKielerProgressMonitor progressMonitor) {
-        assert graphvizPool != null;
-        GraphvizTool tool = graphvizPool.fetch();
-        graphvizLayouter.layout(layoutNode, progressMonitor, command, tool);
-        graphvizPool.release(tool);
+        graphvizLayouter.layout(layoutNode, progressMonitor, command, graphvizTool);
     }
 
     /**
@@ -87,7 +72,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         // add dummy inter-level edges for a better hierarchy support
         // TODO implement proper support for nested graphs
         if (layoutNode.getParent() == null) {
-            KimlUtil.addDummyEdgesForInterlevelConnections(layoutNode);
+//            KimlUtil.addDummyEdgesForInterlevelConnections(layoutNode);
         }
         return false;
     }

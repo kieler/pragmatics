@@ -193,15 +193,17 @@ public class LayoutDataService {
     /**
      * Returns the instance of a specific layout data service identified by its class name.
      * 
-     * @param clas
+     * @param <T> the type of layout data service to fetch
+     * @param clazz
      *            Class name of the required layout data service.
      * @return the instance, or {@code null} if either no instance has been registered yet or it has
      *         been removed
      */
     @SuppressWarnings("unchecked")
-    public static <T extends LayoutDataService> T getInstanceOf(Class<? extends LayoutDataService> clas) {
-        if (clas != null) {
-            return (T) instances.get(clas);
+    public static <T extends LayoutDataService> T getInstanceOf(
+            final Class<? extends LayoutDataService> clazz) {
+        if (clazz != null) {
+            return (T) instances.get(clazz);
         }
         return null;
     }
@@ -365,15 +367,6 @@ public class LayoutDataService {
      */
     public final Collection<LayoutAlgorithmData> getAlgorithmData() {
         return Collections.unmodifiableCollection(layoutAlgorithmMap.values());
-    }
-    
-    /**
-     * Clear all layout algorithm instances, disposing all resources that may be held.
-     */
-    public final void clearAlgorithmInstances() {
-        for (LayoutAlgorithmData algoData : layoutAlgorithmMap.values()) {
-            algoData.getProviderPool().clear();
-        }
     }
 
     /**

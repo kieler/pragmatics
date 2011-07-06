@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 
 /**
@@ -167,7 +168,9 @@ public class KimlUiPlugin extends AbstractUIPlugin {
         EclipseLayoutDataService layoutDataService = EclipseLayoutDataService.getInstance();
         if (layoutDataService != null) {
             layoutDataService.storePreferences();
-            layoutDataService.clearAlgorithmInstances();
+            for (LayoutAlgorithmData algoData : layoutDataService.getAlgorithmData()) {
+                algoData.getProviderPool().clear();
+            }
         }
         plugin = null;
         if (images != null) {
