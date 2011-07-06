@@ -191,6 +191,11 @@ public class LayeredGraph extends LGraphElement {
                 
                 // Add colouring
                 switch (node.getProperty(Properties.NODE_TYPE)) {
+                
+                case COMPOUND_SIDE:
+                    options.append("color=\"#808080\",");
+                    break;
+                
                 case LONG_EDGE:
                     options.append("color=\"#eaed00\",");
                     break;
@@ -240,9 +245,14 @@ public class LayeredGraph extends LGraphElement {
                     writer.write("    " + node.hashCode() + " -> "
                             + edge.getTarget().getNode().hashCode());
                     
-                    // Check if this is a dummy edge
+                    // Check if this is a compound dummy edge (connecting acestors and descendants)
                     if (edge.getProperty(Properties.EDGE_TYPE) == EdgeType.COMPOUND_DUMMY) {
                         writer.write(" [style=\"dashed\"]");
+                    }
+                    
+                    // Check if this is a compound side dummy edge (connecting side dummy nodes)
+                    if (edge.getProperty(Properties.EDGE_TYPE) == EdgeType.COMPOUND_SIDE) {
+                        writer.write(" [style=\"dotted\"]");
                     }
                     
                     writer.write(";\n");
