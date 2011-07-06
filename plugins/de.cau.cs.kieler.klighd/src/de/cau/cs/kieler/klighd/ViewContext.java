@@ -13,7 +13,9 @@
  */
 package de.cau.cs.kieler.klighd;
 
-import java.util.Stack;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A view context contains a viewer provider and a model that is accepted by the viewer provider.
@@ -26,8 +28,10 @@ public class ViewContext {
     private IViewerProvider viewerProvider;
     /** the model. */
     private Object model;
-    /** the stack of model transformations invoked to obtain the model. */
-    private Stack<IModelTransformation<?, ?>> transformations;
+    /** the list of model transformations invoked to obtain the model. */
+    private List<IModelTransformation<?, ?>> transformations;
+    /** the reveresed list of model transformations invoked to obtain the model. */
+    private List<IModelTransformation<?, ?>> transformationsRev;
 
     /**
      * Constructs a view context.
@@ -40,10 +44,12 @@ public class ViewContext {
      *            the transformations invoked to obtain the model
      */
     public ViewContext(final IViewerProvider viewerProvider, final Object model,
-            final Stack<IModelTransformation<?, ?>> transformations) {
+            final List<IModelTransformation<?, ?>> transformations) {
         this.viewerProvider = viewerProvider;
         this.model = model;
         this.transformations = transformations;
+        this.transformationsRev = new LinkedList<IModelTransformation<?, ?>>(transformations);
+        Collections.reverse(transformationsRev);
     }
 
     /**
@@ -69,18 +75,37 @@ public class ViewContext {
      * model by using the transformations invoked to obtain that model.
      * 
      * @param object
-     *            an object in the context's model
+     *            the object in the context's model
      * @return the object in the source model or null if the link could not be made
      */
     public Object getSourceObject(final Object object) {
         Object source = object;
-        for (IModelTransformation<?, ?> transformation : transformations) {
+        for (IModelTransformation<?, ?> transformation : transformationsRev) {
             if (source == null) {
                 return null;
             }
             source = transformation.getSourceObject(source);
         }
         return source;
+    }
+
+    /**
+     * Returns the object in the context's model that derives from the given object in the source
+     * model by using the transformations invoked to obtain the context's model.
+     * 
+     * @param object
+     *            the object in the source model
+     * @return the object in the context's model or null if the link could not be made
+     */
+    public Object getTargetObject(final Object object) {
+        Object target = object;
+        for (IModelTransformation<?, ?> transformation : transformations) {
+            if (target == null) {
+                return null;
+            }
+            target = transformation.getTargetObject(target);
+        }
+        return target;
     }
 
 }

@@ -45,6 +45,13 @@ public class GMFDomainModelTransformation implements IModelTransformation<EObjec
     public Object getSourceObject(final Object object) {
         return null;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Object getTargetObject(final Object object) {
+        return null;
+    }
 
     /**
      * {@inheritDoc}

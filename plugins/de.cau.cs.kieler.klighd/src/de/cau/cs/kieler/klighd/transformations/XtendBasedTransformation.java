@@ -188,8 +188,16 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
      * {@inheritDoc}
      */
     public Object getSourceObject(final Object object) {
-        // TODO implement this correctly for all cases somehow
-        return object;
+        // TODO implement this
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object getTargetObject(final Object object) {
+        // TODO implement this
+        return null;
     }
 
 }

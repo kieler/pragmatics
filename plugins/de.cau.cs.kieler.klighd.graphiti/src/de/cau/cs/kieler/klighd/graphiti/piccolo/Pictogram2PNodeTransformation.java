@@ -40,6 +40,7 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FreeFormConnection;
 import org.eclipse.graphiti.mm.pictograms.ManhattanConnection;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.mm.pictograms.util.PictogramsSwitch;
 
@@ -68,6 +69,8 @@ public class Pictogram2PNodeTransformation implements
     private Map<Anchor, AnchorNode> anchorMap = new HashMap<Anchor, AnchorNode>();
     /** a mapping between Pictogram graphics algorithms and Piccolo nodes. */
     private Map<GraphicsAlgorithm, PNode> gaMap = new HashMap<GraphicsAlgorithm, PNode>();
+    /** a mapping between Pictogram elements and Piccolo nodes. */
+    private Map<PictogramElement, PNode> elementMap = new HashMap<PictogramElement, PNode>();
 
     // CHECKSTYLEOFF MagicNumber
     static {
@@ -134,6 +137,7 @@ public class Pictogram2PNodeTransformation implements
     private void transformShape(final PNode parent, final Shape shape, final Color fc,
             final Color bc) {
         ShapeNode shapeNode = new ShapeNode(shape);
+        elementMap.put(shape, shapeNode);
         parent.addChild(shapeNode);
         shapeNode.setPickable(shape.isActive());
         // determine colors and transform the graphics algorithm
@@ -200,6 +204,7 @@ public class Pictogram2PNodeTransformation implements
         }
         // create the anchor
         AnchorNode anchorNode = new AnchorNode(anchor, reference);
+        elementMap.put(anchor, anchorNode);
         parent.addAnchor(anchorNode);
         anchorNode.setPickable(anchor.isActive());
         // transform the graphics algorithm
@@ -266,6 +271,7 @@ public class Pictogram2PNodeTransformation implements
         if (source != null && target != null && ffc.getGraphicsAlgorithm() != null
                 && ffc.getGraphicsAlgorithm() instanceof Polyline) {
             ConnectionNode connection = new ConnectionNode(ffc, source, target);
+            elementMap.put(ffc, connection);
             PSWTAdvancedPath path =
                     transformPolyline((Polyline) ffc.getGraphicsAlgorithm(), fc, bc);
             path.setPickable(false);
@@ -563,6 +569,13 @@ public class Pictogram2PNodeTransformation implements
             return ((AnchorNode) object).getPictogramAnchor();
         }
         return null;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Object getTargetObject(final Object object) {
+        return elementMap.get(object);
     }
 
     /**

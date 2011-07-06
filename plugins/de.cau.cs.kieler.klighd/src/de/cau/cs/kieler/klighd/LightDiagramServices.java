@@ -18,10 +18,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -332,7 +332,7 @@ public final class LightDiagramServices {
     public ViewContext getValidViewContext(final Object model) {
         currentDepth = 0;
         ViewContext context =
-                getValidViewContextRec(model, new Stack<IModelTransformation<?, ?>>());
+                getValidViewContextRec(model, new LinkedList<IModelTransformation<?, ?>>());
         if (context == null) {
             synchronized (this.knownNotSupportedModels) {
                 this.knownNotSupportedModels.add(model.getClass());
@@ -342,7 +342,7 @@ public final class LightDiagramServices {
     }
 
     private ViewContext getValidViewContextRec(final Object model,
-            final Stack<IModelTransformation<?, ?>> transformations) {
+            final List<IModelTransformation<?, ?>> transformations) {
         // enforce maximum recursion depth to prevent infinite recursion
         if (currentDepth++ > MAX_DEPTH) {
             return null;
@@ -356,10 +356,12 @@ public final class LightDiagramServices {
         for (IModelTransformation<Object, ?> transformation : idModelTransformationMapping.values()) {
             if (transformation.supports(model)) {
                 Object newModel = transformation.transform(model);
+                transformations.add(transformation);
                 ViewContext viewContext = getValidViewContextRec(newModel, transformations);
                 if (viewContext != null) {
                     return viewContext;
                 }
+                transformations.remove(transformations.size() - 1);
             }
         }
         return null;
