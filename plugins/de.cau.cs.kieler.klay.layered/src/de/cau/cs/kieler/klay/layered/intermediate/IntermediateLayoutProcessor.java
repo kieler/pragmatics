@@ -71,6 +71,8 @@ public enum IntermediateLayoutProcessor {
     PORT_POSITION_PROCESSOR,
     /** Calculates the margins of nodes according to the sizes of ports and labels. */
     NODE_MARGIN_CALCULATOR,
+    /** Inserts dummy nodes and edges to achieve free drawing space for compound node borders. */
+    COMPOUND_SIDE_PROCESSOR,
     
     // Before Phase 5
     
@@ -112,6 +114,9 @@ public enum IntermediateLayoutProcessor {
             
         case COMPOUND_DUMMY_EDGE_REMOVER:
             return new CompoundDummyEdgeRemover();
+            
+        case COMPOUND_SIDE_PROCESSOR:
+            return new CompoundSideProcessor();
             
         case HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR:
             return new HierarchicalPortConstraintProcessor();
