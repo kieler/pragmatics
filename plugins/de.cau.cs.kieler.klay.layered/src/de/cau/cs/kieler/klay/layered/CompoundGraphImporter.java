@@ -72,8 +72,8 @@ public class CompoundGraphImporter {
     public void transformCompoundGraph(final KNode graph, final List<LNode> layeredNodes,
             final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap,
             final EnumSet<GraphProperties> graphProperties) {
-//        // Comment next line in to make the dummy edges be removed after Layering
-//        graphProperties.add(GraphProperties.FLAT_HIERARCHICAL);
+        // Comment next line in to make the dummy edges be removed after Layering
+        graphProperties.add(GraphProperties.FLAT_HIERARCHICAL);
         // Prepare a map to insert Parent Nodes and Child nodes for the documentation of dummy
         // edges.
         Map<LNode, List<LNode>> parentChildMap = new HashMap<LNode, List<LNode>>();
