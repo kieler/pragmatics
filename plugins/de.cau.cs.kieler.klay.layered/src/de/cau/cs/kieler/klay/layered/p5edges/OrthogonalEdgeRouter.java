@@ -67,7 +67,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      * Before phase 3:
      *   - For non-free ports:
      *     - NORTH_SOUTH_PORT_PREPROCESSOR
-     *     - ODD_PORT_SIDE_PROCESSOR
+     *     - INVERTED_PORT_PROCESSOR
      *   
      *   - For self-loops:
      *     - SELF_LOOP_PROCESSOR
@@ -96,8 +96,8 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         new IntermediateProcessingStrategy(IntermediateProcessingStrategy.BEFORE_PHASE_4,
                 IntermediateLayoutProcessor.HYPEREDGE_DUMMY_MERGER);
     
-    /** additional processor dependencies for graphs with non-free ports. */
-    private static final IntermediateProcessingStrategy NON_FREE_PORT_PROCESSING_ADDITIONS =
+    /** additional processor dependencies for graphs with possible inverted ports. */
+    private static final IntermediateProcessingStrategy INVERTED_PORT_PROCESSING_ADDITIONS =
         new IntermediateProcessingStrategy(IntermediateProcessingStrategy.BEFORE_PHASE_3,
                 IntermediateLayoutProcessor.INVERTED_PORT_PROCESSOR);
     
@@ -161,10 +161,11 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         // Additional dependencies
         if (graphProperties.contains(GraphProperties.HYPEREDGES)) {
             strategy.addAll(HYPEREDGE_PROCESSING_ADDITIONS);
+            strategy.addAll(INVERTED_PORT_PROCESSING_ADDITIONS);
         }
         
         if (graphProperties.contains(GraphProperties.NON_FREE_PORTS)) {
-            strategy.addAll(NON_FREE_PORT_PROCESSING_ADDITIONS);
+            strategy.addAll(INVERTED_PORT_PROCESSING_ADDITIONS);
 
             if (graphProperties.contains(GraphProperties.NORTH_SOUTH_PORTS)) {
                 strategy.addAll(NORTH_SOUTH_PORT_PROCESSING_ADDITIONS);
