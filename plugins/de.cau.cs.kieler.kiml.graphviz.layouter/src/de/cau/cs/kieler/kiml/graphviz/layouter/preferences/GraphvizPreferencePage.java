@@ -26,8 +26,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayouterPlugin;
-import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizAPI;
+import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool;
 
 /**
  * The Graphviz preference page.
@@ -69,14 +71,14 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
         GridData labelLayoutData = new GridData(SWT.LEFT, SWT.FILL, false, false, NUM_COLUMNS, 1);
         labelLayoutData.widthHint = LABEL_WIDTH;
         label.setLayoutData(labelLayoutData);
-        FileFieldEditor executableEditor = new FileFieldEditor(GraphvizAPI.PREF_GRAPHVIZ_EXECUTABLE,
+        FileFieldEditor executableEditor = new FileFieldEditor(GraphvizTool.PREF_GRAPHVIZ_EXECUTABLE,
                 "Set path to the 'dot' executable:", processGroup);
         executableEditor.setValidateStrategy(FileFieldEditor.VALIDATE_ON_KEY_STROKE);
         addField(executableEditor);
 
-        IntegerFieldEditor timeoutEditor = new IntegerFieldEditor(GraphvizAPI.PREF_TIMEOUT,
+        IntegerFieldEditor timeoutEditor = new IntegerFieldEditor(GraphvizTool.PREF_TIMEOUT,
                 "Timeout for Graphviz output (ms):", processGroup);
-        timeoutEditor.setValidRange(GraphvizAPI.PROCESS_MIN_TIMEOUT, Integer.MAX_VALUE);
+        timeoutEditor.setValidRange(GraphvizTool.PROCESS_MIN_TIMEOUT, Integer.MAX_VALUE);
         addField(timeoutEditor);
 
         processGroup.setLayout(new GridLayout(NUM_COLUMNS, false));
@@ -95,7 +97,12 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
      */
     @Override
     public boolean performOk() {
-        GraphvizAPI.endProcess();
+        // dispose all cached Graphviz instances to ensure creation of new processes
+        for (LayoutAlgorithmData data : LayoutDataService.getInstance().getAlgorithmData()) {
+            if ("de.cau.cs.kieler.kiml.categories.graphviz".equals(data.getCategory())) {
+                data.getProviderPool().clear();
+            }
+        }
         return super.performOk();
     }
 

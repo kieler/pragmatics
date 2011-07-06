@@ -366,6 +366,15 @@ public class LayoutDataService {
     public final Collection<LayoutAlgorithmData> getAlgorithmData() {
         return Collections.unmodifiableCollection(layoutAlgorithmMap.values());
     }
+    
+    /**
+     * Clear all layout algorithm instances, disposing all resources that may be held.
+     */
+    public final void clearAlgorithmInstances() {
+        for (LayoutAlgorithmData algoData : layoutAlgorithmMap.values()) {
+            algoData.getProviderPool().clear();
+        }
+    }
 
     /**
      * Returns the layout option data associated with the given identifier.

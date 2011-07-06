@@ -52,7 +52,6 @@ public class GraphvizLayouterPlugin extends AbstractUIPlugin {
     @Override
     public void stop(final BundleContext context) throws Exception {
         plugin = null;
-        GraphvizAPI.endProcess();
         super.stop(context);
     }
 

@@ -16,8 +16,6 @@ package de.cau.cs.kieler.kiml.graphviz.layouter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -31,13 +29,12 @@ import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformatio
 import de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePage;
 
 /**
- * Defines static methods to access Graphviz via a separate process.
+ * Handler for accessing Graphviz via a separate process.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
- * @author tkl
  * @author msp
  */
-public final class GraphvizAPI {
+public class GraphvizTool {
 
     /** preference constant for Graphviz executable. */
     public static final String PREF_GRAPHVIZ_EXECUTABLE = "graphviz.executable";
@@ -61,32 +58,24 @@ public final class GraphvizAPI {
     private static final int MIN_INPUT_WAIT = 4;
     /** maximal wait time for polling input from the Graphviz process. */
     private static final int MAX_INPUT_WAIT = 500;
-    /**
-     * maximal number of characters that is read from the Graphviz error output.
-     */
+    /** maximal number of characters that is read from the Graphviz error output. */
     private static final int MAX_ERROR_OUTPUT = 512;
 
-    /**
-     * Hidden constructor to avoid instantiation.
-     */
-    private GraphvizAPI() {
-    }
-
     /** the process instance that is used for multiple layout runs. */
-    private static Map<Command, Process> processMap =
-            new HashMap<Command, Process>();
+    private Process process;
+    /** the command that was used to create the process. */
+    private Command command = Command.INVALID;
 
     /**
      * Starts a new Graphviz process with the given command. If a process
      * instance was already created, that instance is returned.
      * 
-     * @param command
+     * @param thecommand
      *            the graphviz command to use
      * @return an instance of the graphviz process
      */
-    public static synchronized Process startProcess(final Command command) {
-        Process graphvizProcess = processMap.get(command);
-        if (graphvizProcess == null) {
+    public Process startProcess(final Command thecommand) {
+        if (process == null || this.command != thecommand) {
             IPreferenceStore preferenceStore =
                     GraphvizLayouterPlugin.getDefault().getPreferenceStore();
             String dotExecutable =
@@ -102,26 +91,22 @@ public final class GraphvizAPI {
                 }
                 if (!foundExec) {
                     handleExecPath();
-                    // fetch the executable string again after the user has
-                    // entered a new path
-                    dotExecutable =
-                            preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
+                    // fetch the executable string again after the user has entered a new path
+                    dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
                 }
             }
 
             try {
-                graphvizProcess =
-                        Runtime.getRuntime()
-                                .exec(new String[] { dotExecutable,
+                this.command = thecommand;
+                process = Runtime.getRuntime().exec(new String[] { dotExecutable,
                                         ARG_NOWARNINGS, ARG_INVERTYAXIS,
                                         ARG_COMMAND + command });
-                processMap.put(command, graphvizProcess);
             } catch (IOException exception) {
                 throw new WrappedException(exception, "Failed to start Graphviz process."
                         + " Please check your Graphviz installation.");
             }
         }
-        return graphvizProcess;
+        return process;
     }
 
     /**
@@ -144,20 +129,20 @@ public final class GraphvizAPI {
     }
 
     /**
-     * Closes the currently cached process instances so a new one is created for
+     * Closes the currently cached process instance so a new one is created for
      * the next layout run.
      */
-    public static void endProcess() {
-        for (Process graphvizProcess : processMap.values()) {
+    public void endProcess() {
+        if (process != null) {
             try {
-                graphvizProcess.getOutputStream().close();
-                graphvizProcess.getInputStream().close();
+                process.getOutputStream().close();
+                process.getInputStream().close();
             } catch (IOException exception) {
                 // ignore exception
             }
-            graphvizProcess.destroy();
+            process.destroy();
+            process = null;
         }
-        processMap.clear();
     }
 
     /**
@@ -173,7 +158,7 @@ public final class GraphvizAPI {
      * @param debugMode
      *            whether debug mode is active
      */
-    public static void waitForInput(final InputStream inputStream,
+    public void waitForInput(final InputStream inputStream,
             final InputStream errorStream,
             final IKielerProgressMonitor monitor, final boolean debugMode) {
         monitor.begin("Wait for Graphviz", 1);

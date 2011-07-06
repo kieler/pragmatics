@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
+import de.cau.cs.kieler.core.WrappedException;
+import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
@@ -161,14 +163,28 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     }
     
     /**
-     * Create a layout provider instance from a configuration element.
+     * Create a layout provider factory from a configuration element.
      * 
      * @param element a configuration element from an extension
-     * @return a layout provider instance
+     * @return a factory for layout provider instances
      */
-    protected AbstractLayoutProvider createLayoutProvider(final IConfigurationElement element)
-            throws CoreException {
-        return (AbstractLayoutProvider) element.createExecutableExtension(ATTRIBUTE_CLASS);
+    protected IFactory<AbstractLayoutProvider> getLayoutProviderFactory(
+            final IConfigurationElement element) {
+        return new IFactory<AbstractLayoutProvider>() {
+            public AbstractLayoutProvider create() {
+                try {
+                    AbstractLayoutProvider provider = (AbstractLayoutProvider)
+                            element.createExecutableExtension(ATTRIBUTE_CLASS);
+                    provider.initialize(element.getAttribute(ATTRIBUTE_PARAMETER));
+                    return provider;
+                } catch (CoreException e) {
+                    throw new WrappedException(e);
+                }
+            }
+            public void destroy(AbstractLayoutProvider provider) {
+                provider.dispose();
+            }
+        };
     }
     
     /**
@@ -202,74 +218,64 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     private void loadLayoutAlgorithm(final IConfigurationElement element,
             final List<String[]> knownOptions) {
         try {
-            AbstractLayoutProvider layoutProvider = createLayoutProvider(element);
-            if (layoutProvider != null) {
-                LayoutAlgorithmData algoData = createLayoutAlgorithmData(element);
-                algoData.setProvider(layoutProvider);
-                String layouterId = element.getAttribute(ATTRIBUTE_ID);
-                if (layouterId == null || layouterId.length() == 0) {
-                    reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
-                    return;
-                }
-                algoData.setId(layouterId);
-                algoData.setName(element.getAttribute(ATTRIBUTE_NAME));
-                algoData.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
-                algoData.setCategory(element.getAttribute(ATTRIBUTE_CATEGORY));
-                
-                // process the layout type
-                String layoutType = element.getAttribute(ATTRIBUTE_TYPE);
-                if (layoutType == null) {
-                    layoutType = "";
-                }
-                LayoutTypeData typeData = getTypeData(layoutType);
-                if (typeData == null) {
-                    typeData = new LayoutTypeData();
-                    typeData.setId(layoutType);
-                    getRegistry().addLayoutType(typeData);
-                }
-                algoData.setType(layoutType);
-                typeData.getLayouters().add(algoData);
-                
-                // process child elements (known options and supported diagrams)
-                for (IConfigurationElement child : element.getChildren()) {
-                    if (ELEMENT_KNOWN_OPTION.equals(child.getName())) {
-                        String option = child.getAttribute(ATTRIBUTE_OPTION);
-                        if (option != null && option.length() > 0) {
-                            String defaultValue = child.getAttribute(ATTRIBUTE_DEFAULT);
-                            knownOptions.add(new String[] { layouterId, option, defaultValue });
-                        } else {
+            IFactory<AbstractLayoutProvider> layoutProviderFactory = getLayoutProviderFactory(element);
+            LayoutAlgorithmData algoData = createLayoutAlgorithmData(element);
+            algoData.createPool(layoutProviderFactory);
+            String layouterId = element.getAttribute(ATTRIBUTE_ID);
+            if (layouterId == null || layouterId.length() == 0) {
+                reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
+                return;
+            }
+            algoData.setId(layouterId);
+            algoData.setName(element.getAttribute(ATTRIBUTE_NAME));
+            algoData.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
+            algoData.setCategory(element.getAttribute(ATTRIBUTE_CATEGORY));
+            
+            // process the layout type
+            String layoutType = element.getAttribute(ATTRIBUTE_TYPE);
+            if (layoutType == null) {
+                layoutType = "";
+            }
+            LayoutTypeData typeData = getTypeData(layoutType);
+            if (typeData == null) {
+                typeData = new LayoutTypeData();
+                typeData.setId(layoutType);
+                getRegistry().addLayoutType(typeData);
+            }
+            algoData.setType(layoutType);
+            typeData.getLayouters().add(algoData);
+            
+            // process child elements (known options and supported diagrams)
+            for (IConfigurationElement child : element.getChildren()) {
+                if (ELEMENT_KNOWN_OPTION.equals(child.getName())) {
+                    String option = child.getAttribute(ATTRIBUTE_OPTION);
+                    if (option != null && option.length() > 0) {
+                        String defaultValue = child.getAttribute(ATTRIBUTE_DEFAULT);
+                        knownOptions.add(new String[] { layouterId, option, defaultValue });
+                    } else {
+                        reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
+                                ATTRIBUTE_OPTION, null);
+                    }
+                } else if (ELEMENT_SUPPORTED_DIAGRAM.equals(child.getName())) {
+                    String type = child.getAttribute(ATTRIBUTE_TYPE);
+                    if (type == null || type.length() == 0) {
+                        reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
+                                ATTRIBUTE_TYPE, null);
+                    } else {
+                        String priority = child.getAttribute(ATTRIBUTE_PRIORITY);
+                        try {
+                            algoData.setDiagramSupport(type,
+                                    Integer.parseInt(priority));
+                        } catch (NumberFormatException exception) {
                             reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
-                                    ATTRIBUTE_OPTION, null);
-                        }
-                    } else if (ELEMENT_SUPPORTED_DIAGRAM.equals(child.getName())) {
-                        String type = child.getAttribute(ATTRIBUTE_TYPE);
-                        if (type == null || type.length() == 0) {
-                            reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
-                                    ATTRIBUTE_TYPE, null);
-                        } else {
-                            String priority = child.getAttribute(ATTRIBUTE_PRIORITY);
-                            try {
-                                algoData.setDiagramSupport(type,
-                                        Integer.parseInt(priority));
-                            } catch (NumberFormatException exception) {
-                                reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
-                                        ATTRIBUTE_PRIORITY, exception);
-                            }
+                                    ATTRIBUTE_PRIORITY, exception);
                         }
                     }
                 }
-                
-                // initialize the layout provider (which can fail)
-                try {
-                    layoutProvider.initialize(element.getAttribute(ATTRIBUTE_PARAMETER));
-                    getRegistry().addLayoutProvider(algoData);
-                } catch (Throwable exception) {
-                    reportError(EXTP_ID_LAYOUT_PROVIDERS, element,
-                            ATTRIBUTE_PARAMETER, exception);
-                }
             }
-        } catch (CoreException exception) {
-            reportError(exception);
+            
+            getRegistry().addLayoutProvider(algoData);
+            
         } catch (Throwable throwable) {
             reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_CLASS, throwable);
         }

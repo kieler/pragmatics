@@ -63,18 +63,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
         // perform recursive layout of the whole substructure of the given node
         layoutRecursively(layoutGraph, progressMonitor);
         
-        // layout the path of ancestors
-        KNode parent = layoutGraph.getParent();
-        while (parent != null) {
-            if (progressMonitor.isCanceled()) {
-                break;
-            }
-            lastLayoutProvider = getLayoutProvider(parent);
-            lastLayoutProvider.doLayout(parent, progressMonitor.subTask(parent.getChildren().size()));
-            checkLayout(parent);
-            parent = parent.getParent();
-        }
-        
         progressMonitor.done();
     }
 
@@ -89,7 +77,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             final IKielerProgressMonitor progressMonitor) {
         if (!layoutNode.getChildren().isEmpty()
                 && !layoutNode.getData(KShapeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
-            AbstractLayoutProvider layoutProvider = getLayoutProvider(layoutNode);
+            LayoutAlgorithmData algorithmData = getAlgorithm(layoutNode);
+            AbstractLayoutProvider layoutProvider = algorithmData.getProviderPool().fetch();
             // if the layout provider supports hierarchy, it is expected to layout the children
             int nodeCount;
             if (layoutProvider.supportsHierarchy(layoutNode)) {
@@ -108,7 +97,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             lastLayoutProvider = layoutProvider;
             layoutProvider.setDebugCanvas(debugCanvas);
             layoutProvider.doLayout(layoutNode, progressMonitor.subTask(nodeCount));
-            checkLayout(layoutNode);
+            algorithmData.getProviderPool().release(layoutProvider);
         }
     }
 
@@ -118,36 +107,16 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * @param layoutNode node for which a layout provider is requested
      * @return a layout provider instance that fits the layout hints for the given node
      */
-    private AbstractLayoutProvider getLayoutProvider(final KNode layoutNode) {
+    private LayoutAlgorithmData getAlgorithm(final KNode layoutNode) {
         KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
         String layoutHint = nodeLayout.getProperty(LayoutOptions.ALGORITHM);
         String diagramType = nodeLayout.getProperty(LayoutOptions.DIAGRAM_TYPE);
         LayoutAlgorithmData algorithmData = DefaultLayoutConfig.getLayouterData(
                 layoutHint, diagramType);
-        if (algorithmData != null) {
-            return algorithmData.getProvider();
-        } else {
+        if (algorithmData == null) {
             throw new IllegalStateException("No registered layout algorithm is available.");
         }
-    }
-    
-    /**
-     * Check and correct the layout result for the given node.
-     * 
-     * @param layoutNode a node for which layout has been performed
-     */
-    private void checkLayout(final KNode layoutNode) {
-        // check the new size of the parent node
-        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
-        float minWidth = parentLayout.getProperty(LayoutOptions.MIN_WIDTH);
-        if (parentLayout.getWidth() < minWidth) {
-            parentLayout.setWidth(minWidth);
-        }
-        float minHeight = parentLayout.getProperty(LayoutOptions.MIN_HEIGHT);
-        if (parentLayout.getHeight() < minHeight) {
-            parentLayout.setHeight(minHeight);
-        }
-        parentLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
+        return algorithmData;
     }
 
     /**

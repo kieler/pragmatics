@@ -164,9 +164,10 @@ public class KimlUiPlugin extends AbstractUIPlugin {
      */
     @Override
     public void stop(final BundleContext context) throws Exception {
-        EclipseLayoutDataService layoutServices = EclipseLayoutDataService.getInstance();
-        if (layoutServices != null) {
-            layoutServices.storePreferences();
+        EclipseLayoutDataService layoutDataService = EclipseLayoutDataService.getInstance();
+        if (layoutDataService != null) {
+            layoutDataService.storePreferences();
+            layoutDataService.clearAlgorithmInstances();
         }
         plugin = null;
         if (images != null) {

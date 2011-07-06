@@ -78,9 +78,11 @@ public class GraphvizLayouter {
      *            a monitor to which progress is reported
      * @param command
      *            Graphviz command to use, determines the layout algorithm
+     * @param graphvizTool
+     *            a Graphviz tool instance for interaction with the process
      */
     public void layout(final KNode parentNode, final IKielerProgressMonitor progressMonitor,
-            final Command command) {
+            final Command command, final GraphvizTool graphvizTool) {
         progressMonitor.begin("Graphviz layout (" + command + ")", SMALL_TASK + LARGE_TASK + LARGE_TASK
                 + LARGE_TASK + SMALL_TASK);
         boolean debugMode = parentNode.getData(KShapeLayout.class).getProperty(LayoutOptions.DEBUG_MODE);
@@ -101,24 +103,24 @@ public class GraphvizLayouter {
         }
 
         // start the graphviz process, or retrieve the previously used process
-        Process graphvizProcess = GraphvizAPI.startProcess(command);
+        Process graphvizProcess = graphvizTool.startProcess(command);
 
         // translate the KGraph to Graphviz and write to the process
         KGraphDotTransformation transformation = new KGraphDotTransformation(parentNode);
         GraphvizModel graphvizInput = transformation.transform(command,
                 progressMonitor.subTask(SMALL_TASK));
         writeDotGraph(graphvizInput, new BufferedOutputStream(graphvizProcess.getOutputStream()),
-                progressMonitor.subTask(LARGE_TASK), debugMode);
+                progressMonitor.subTask(LARGE_TASK), debugMode, graphvizTool);
 
         // wait for Graphviz to give some output
-        GraphvizAPI.waitForInput(graphvizProcess.getInputStream(), graphvizProcess.getErrorStream(),
+        graphvizTool.waitForInput(graphvizProcess.getInputStream(), graphvizProcess.getErrorStream(),
                 progressMonitor.subTask(LARGE_TASK), debugMode);
 
         if (!progressMonitor.isCanceled()) {
             // read Graphviz output and apply layout information to the KGraph
             GraphvizModel graphvizOutput = readDotGraph(
                     new BufferedInputStream(graphvizProcess.getInputStream()),
-                    progressMonitor.subTask(LARGE_TASK), debugMode);
+                    progressMonitor.subTask(LARGE_TASK), debugMode, graphvizTool);
             transformation.applyLayout(graphvizOutput, progressMonitor.subTask(SMALL_TASK));
         }
 
@@ -138,7 +140,8 @@ public class GraphvizLayouter {
      *            whether debug mode is active
      */
     private void writeDotGraph(final GraphvizModel graphvizModel, final OutputStream processStream,
-            final IKielerProgressMonitor monitor, final boolean debugMode) {
+            final IKielerProgressMonitor monitor, final boolean debugMode,
+            final GraphvizTool graphvizTool) {
         monitor.begin("Serialize model", 1);
         OutputStream outputStream = processStream;
         // enable debug output if needed
@@ -169,7 +172,7 @@ public class GraphvizLayouter {
             outputStream.write('\n');
             outputStream.flush();
         } catch (IOException exception) {
-            GraphvizAPI.endProcess();
+            graphvizTool.endProcess();
             throw new WrappedException(exception, "Failed to serialize the Dot graph.");
         } finally {
             if (debugStream != null) {
@@ -195,7 +198,8 @@ public class GraphvizLayouter {
      * @return an instance of the parsed graphviz model
      */
     private GraphvizModel readDotGraph(final InputStream processStream,
-            final IKielerProgressMonitor monitor, final boolean debugMode) {
+            final IKielerProgressMonitor monitor, final boolean debugMode,
+            final GraphvizTool graphvizTool) {
         monitor.begin("Parse output", 1);
         InputStream inputStream = new NonBlockingInputStream(processStream);
         // enable debug output if needed
@@ -225,7 +229,7 @@ public class GraphvizLayouter {
             resource.load(inputStream, null);
             EcoreUtil.resolveAll(resource);
         } catch (IOException exception) {
-            GraphvizAPI.endProcess();
+            graphvizTool.endProcess();
             throw new WrappedException(exception, "Failed to read Graphviz output.");
         } finally {
             if (debugStream != null) {
@@ -243,13 +247,13 @@ public class GraphvizLayouter {
             for (Diagnostic diagnostic : resource.getErrors()) {
                 errorString.append("\n" + diagnostic.getLine() + ": " + diagnostic.getMessage());
             }
-            GraphvizAPI.endProcess();
+            graphvizTool.endProcess();
             // FIXME throw a more specific exception
             throw new RuntimeException(errorString.toString());
         }
         GraphvizModel graphvizModel = (GraphvizModel) resource.getParseResult().getRootASTElement();
         if (graphvizModel.getGraphs().isEmpty()) {
-            GraphvizAPI.endProcess();
+            graphvizTool.endProcess();
             // FIXME throw a more specific exception
             throw new RuntimeException("No output from the Graphviz process.");
         }

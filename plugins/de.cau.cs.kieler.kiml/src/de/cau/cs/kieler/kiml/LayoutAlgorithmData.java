@@ -20,6 +20,9 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+import de.cau.cs.kieler.core.alg.IFactory;
+import de.cau.cs.kieler.core.alg.InstancePool;
+
 /**
  * Data type used to store information for a layout algorithm.
  * 
@@ -51,7 +54,7 @@ public class LayoutAlgorithmData implements ILayoutData {
     /** user friendly name of the layout algorithm. */
     private String name = "";
     /** runtime instance of the layout algorithm. */
-    private AbstractLayoutProvider provider;
+    private InstancePool<AbstractLayoutProvider> providerPool;
     /** layout type identifier. */
     private String type = "";
     /** category identifier. */
@@ -252,17 +255,17 @@ public class LayoutAlgorithmData implements ILayoutData {
      *
      * @param theprovider the layout provider to set
      */
-    public void setProvider(final AbstractLayoutProvider theprovider) {
-        this.provider = theprovider;
+    public void createPool(final IFactory<AbstractLayoutProvider> providerFactory) {
+        this.providerPool = new InstancePool<AbstractLayoutProvider>(providerFactory);
     }
 
     /**
-     * Returns the layout provider that can execute the associated algorithm.
+     * Returns an instance pool for layout providers.
      *
-     * @return the layout provider
+     * @return a layout provider instance pool
      */
-    public AbstractLayoutProvider getProvider() {
-        return provider;
+    public InstancePool<AbstractLayoutProvider> getProviderPool() {
+        return providerPool;
     }
 
     /**

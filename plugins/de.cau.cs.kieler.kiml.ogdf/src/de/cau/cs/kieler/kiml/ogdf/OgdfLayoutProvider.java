@@ -92,7 +92,7 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void doLayout(final KNode layoutNode,
+    public void doLayout(final KNode layoutNode,
             final IKielerProgressMonitor progressMonitor) {
         if (layoutAlgorithm == null) {
             throw new IllegalStateException("The OGDF layout algorithm is not configured correctly."

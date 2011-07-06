@@ -39,6 +39,14 @@ public abstract class AbstractLayoutProvider {
      * @param parameter a string used to parameterize the layout provider instance
      */
     public void initialize(final String parameter) {
+        // do nothing - override in subclasses
+    }
+    
+    /**
+     * Dispose the layout provider by releasing any resources that are held.
+     */
+    public void dispose() {
+        // do nothing - override in subclasses
     }
 
     /**
