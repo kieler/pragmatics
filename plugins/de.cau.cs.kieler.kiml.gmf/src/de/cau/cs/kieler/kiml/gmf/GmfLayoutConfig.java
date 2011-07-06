@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.gmf;
 
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Set;
 
@@ -90,6 +91,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
     /** @deprecated TODO throw away after use */
     private void checkDeprecatedStyle(final View view) {
         ListIterator<Style> styleIter = view.getStyles().listIterator();
+        LinkedList<Object[]> options = new LinkedList<Object[]>();
         while (styleIter.hasNext()) {
             Style style = styleIter.next();
             if (style instanceof LayoutOptionStyle) {
@@ -99,12 +101,15 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                     if (optionData != null) {
                         String prefix = koption.isDefault() ? DEF_PREFIX : PREFIX;
                         if (getValue(optionData, prefix, view) == null) {
-                            setValue(optionData, koption.getValue(), prefix, view);
+                            options.add(new Object[] { optionData, koption.getValue(), prefix });
                         }
                     }
                 }
                 styleIter.remove();
             }
+        }
+        for (Object[] option : options) {
+            setValue((LayoutOptionData<?>) option[0], option[1], (String) option[2], view);
         }
     }
 
