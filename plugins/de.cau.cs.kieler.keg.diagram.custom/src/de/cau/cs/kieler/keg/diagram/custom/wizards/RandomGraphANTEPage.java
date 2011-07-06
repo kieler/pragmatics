@@ -86,7 +86,11 @@ public class RandomGraphANTEPage extends WizardPage {
         nodesSpinner.setLayoutData(gridData);
         nodesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                numberOfNodes = Integer.parseInt(nodesSpinner.getText());
+                try {
+                    numberOfNodes = Integer.parseInt(nodesSpinner.getText());
+                } catch (NumberFormatException exception) {
+                    numberOfNodes = 0;
+                }
             }
         });
         // add NUMBER_OF_EDGES option
@@ -100,7 +104,11 @@ public class RandomGraphANTEPage extends WizardPage {
         edgesSpinner.setLayoutData(gridData);
         edgesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                numberOfEdges = Integer.parseInt(edgesSpinner.getText());
+                try {
+                    numberOfEdges = Integer.parseInt(edgesSpinner.getText());
+                } catch (NumberFormatException exception) {
+                    numberOfEdges = 0;
+                }
             }
         });
         // add PLANAR option

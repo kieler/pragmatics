@@ -83,7 +83,11 @@ public class RandomGraphTreePage extends WizardPage {
         nodesSpinner.setLayoutData(gridData);
         nodesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                numberOfNodes = Integer.parseInt(nodesSpinner.getText());
+                try {
+                    numberOfNodes = Integer.parseInt(nodesSpinner.getText());
+                } catch (NumberFormatException exception) {
+                    numberOfNodes = 0;
+                }
             }
         });
         // add MAX_DEGREE option
@@ -97,7 +101,11 @@ public class RandomGraphTreePage extends WizardPage {
         degreeSpinner.setLayoutData(gridData);
         degreeSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                maxDegree = Integer.parseInt(degreeSpinner.getText());
+                try {
+                    maxDegree = Integer.parseInt(degreeSpinner.getText());
+                } catch (NumberFormatException exception) {
+                    maxDegree = 0;
+                }
             }
         });
         // add MAX_WIDTH option
@@ -111,7 +119,11 @@ public class RandomGraphTreePage extends WizardPage {
         widthSpinner.setLayoutData(gridData);
         widthSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                maxWidth = Integer.parseInt(widthSpinner.getText());
+                try {
+                    maxWidth = Integer.parseInt(widthSpinner.getText());
+                } catch (NumberFormatException exception) {
+                    maxWidth = 0;
+                }
             }
         });
     }

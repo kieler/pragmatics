@@ -113,7 +113,11 @@ public class RandomGraphAnyPage extends WizardPage {
         nodesSpinner.setLayoutData(gridData);
         nodesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                numberOfNodes = Integer.parseInt(nodesSpinner.getText());
+                try {
+                    numberOfNodes = Integer.parseInt(nodesSpinner.getText());
+                } catch (NumberFormatException exception) {
+                    numberOfNodes = 0;
+                }
             }
         });
         // add NUMBER_OF_EDGES option
@@ -132,7 +136,11 @@ public class RandomGraphAnyPage extends WizardPage {
         edgesSpinner.setLayoutData(gridData);
         edgesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                numberOfEdges = Integer.parseInt(edgesSpinner.getText());
+                try {
+                    numberOfEdges = Integer.parseInt(edgesSpinner.getText());
+                } catch (NumberFormatException exception) {
+                    numberOfEdges = 0;
+                }
             }
         });
         // add another way to specify the NUMBER_OF_EDGES option
@@ -151,7 +159,11 @@ public class RandomGraphAnyPage extends WizardPage {
         densitySpinner.setLayoutData(gridData);
         densitySpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                density = Float.parseFloat(densitySpinner.getText());
+                try {
+                    density = Float.parseFloat(densitySpinner.getText());
+                } catch (NumberFormatException exception) {
+                    density = 0;
+                }
             }
         });
         // add MIN_OUTGOING_EDGES option
@@ -170,7 +182,11 @@ public class RandomGraphAnyPage extends WizardPage {
         minOutSpinner.setLayoutData(gridData);
         minOutSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                minOutgoingEdges = Integer.parseInt(minOutSpinner.getText());
+                try {
+                    minOutgoingEdges = Integer.parseInt(minOutSpinner.getText());
+                } catch (NumberFormatException exception) {
+                    minOutgoingEdges = 0;
+                }
             }
         });
         // add MAX_OUTGOING_EDGES option
@@ -188,7 +204,11 @@ public class RandomGraphAnyPage extends WizardPage {
         maxOutSpinner.setLayoutData(gridData);
         maxOutSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                maxOutgoingEdges = Integer.parseInt(maxOutSpinner.getText());
+                try {
+                    maxOutgoingEdges = Integer.parseInt(maxOutSpinner.getText());
+                } catch (NumberFormatException exception) {
+                    maxOutgoingEdges = 0;
+                }
             }
         });
         // add the switch functionality

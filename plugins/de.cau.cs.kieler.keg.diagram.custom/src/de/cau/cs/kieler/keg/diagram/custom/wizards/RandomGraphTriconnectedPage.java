@@ -79,7 +79,11 @@ public class RandomGraphTriconnectedPage extends WizardPage {
         nodesSpinner.setLayoutData(gridData);
         nodesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                numberOfNodes = Integer.parseInt(nodesSpinner.getText());
+                try {
+                    numberOfNodes = Integer.parseInt(nodesSpinner.getText());
+                } catch (NumberFormatException exception) {
+                    numberOfNodes = 0;
+                }
             }
         });
     }

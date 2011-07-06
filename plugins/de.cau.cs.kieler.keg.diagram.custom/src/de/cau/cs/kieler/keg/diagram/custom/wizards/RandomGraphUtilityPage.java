@@ -117,14 +117,22 @@ public class RandomGraphUtilityPage extends WizardPage {
         hierarchyFactorSpinner.setLayoutData(gridData);
         hierarchyFactorSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                hierarchyNodesFactor = Float.parseFloat(hierarchyFactorSpinner.getText());
+                try {
+                    hierarchyNodesFactor = Float.parseFloat(hierarchyFactorSpinner.getText());
+                } catch (NumberFormatException exception) {
+                    hierarchyNodesFactor = 0;
+                }
             }
         });
         hierarchyFactorSpinner.setEnabled(hierarchyChance > 0.0f);
         // set the modify listener for the HIERARCHY_CHANCE option
         hierarchySpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                hierarchyChance = Float.parseFloat(hierarchySpinner.getText());
+                try {
+                    hierarchyChance = Float.parseFloat(hierarchySpinner.getText());
+                } catch (NumberFormatException exception) {
+                    hierarchyChance = 0;
+                }
                 if (hierarchyChance > 0.0f) {
                     hierarchyLevelSpinner.setEnabled(true);
                     hierarchyFactorSpinner.setEnabled(true);
@@ -145,7 +153,11 @@ public class RandomGraphUtilityPage extends WizardPage {
         hypernodeSpinner.setLayoutData(gridData);
         hypernodeSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                hypernodeChance = Float.parseFloat(hypernodeSpinner.getText());
+                try {
+                    hypernodeChance = Float.parseFloat(hypernodeSpinner.getText());
+                } catch (NumberFormatException exception) {
+                    hypernodeChance = 0;
+                }
             }
         });
         // add EDGE_DIRECTED_CHANCE option
@@ -159,7 +171,11 @@ public class RandomGraphUtilityPage extends WizardPage {
         edgeDirectedSpinner.setLayoutData(gridData);
         edgeDirectedSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                edgeDirectedChance = Float.parseFloat(edgeDirectedSpinner.getText());
+                try {
+                    edgeDirectedChance = Float.parseFloat(edgeDirectedSpinner.getText());
+                } catch (NumberFormatException exception) {
+                    edgeDirectedChance = 0;
+                }
             }
         });
         // add PORTS option
