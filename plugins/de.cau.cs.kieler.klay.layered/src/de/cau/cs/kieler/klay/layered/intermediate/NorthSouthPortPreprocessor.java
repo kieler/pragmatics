@@ -318,6 +318,8 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         dummy.setProperty(Properties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         
+        int crossingHint = 0;
+        
         // Input port
         if (inPort != null) {
             LPort dummyInputPort = new LPort();
@@ -330,6 +332,8 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
             for (LEdge edge : edgeArray) {
                 edge.setTarget(dummyInputPort);
             }
+            
+            crossingHint++;
         }
         
         // Output port
@@ -344,7 +348,12 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
             for (LEdge edge : edgeArray) {
                 edge.setSource(dummyOutputPort);
             }
+            
+            crossingHint++;
         }
+        
+        // Set the crossing hint used for cross counting later
+        dummy.setProperty(Properties.CROSSING_HINT, crossingHint);
         
         dummyNodes.add(dummy);
     }
@@ -380,6 +389,9 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         selfLoop.setTarget(null);
         
         dummyNodes.add(dummy);
+        
+        // Set the crossing hint used for cross counting later
+        dummy.setProperty(Properties.CROSSING_HINT, 2);
     }
     
     /**
@@ -422,6 +434,10 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         
         northDummyNodes.add(0, northDummy);
         southDummyNodes.add(southDummy);
+        
+        // Set the crossing hints used for cross counting later
+        northDummy.setProperty(Properties.CROSSING_HINT, 1);
+        southDummy.setProperty(Properties.CROSSING_HINT, 1);
     }
     
 }

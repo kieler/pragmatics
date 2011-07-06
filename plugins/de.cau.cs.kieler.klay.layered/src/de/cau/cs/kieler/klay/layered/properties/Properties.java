@@ -102,6 +102,12 @@ public final class Properties {
      */
     public static final IProperty<LNode> IN_LAYER_SUCCESSOR_CONSTRAINT = new Property<LNode>(
             "inLayerSuccessorConstraint", null);
+    
+    /**
+     * Crossing hint used for in-layer cross counting with northern and southern port dummies.
+     */
+    public static final IProperty<Integer> CROSSING_HINT = new Property<Integer>(
+            "crossingHint", 0);
 
     /** Flags indicating the properties of a graph. */
     public static final IProperty<Set<GraphProperties>> GRAPH_PROPERTIES = 
