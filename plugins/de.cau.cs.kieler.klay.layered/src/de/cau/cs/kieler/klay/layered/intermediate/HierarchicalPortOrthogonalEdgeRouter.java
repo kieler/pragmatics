@@ -25,6 +25,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.Insets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -225,12 +226,12 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             
             case FIXED_RATIO:
                 applyNorthSouthDummyRatio(dummy, nodeWidth);
-                borderToContentAreaCoordinates(dummy, layeredGraph, true, false);
+                Util.borderToContentAreaCoordinates(dummy, layeredGraph, true, false);
                 break;
             
             case FIXED_POS:
                 applyNorthSouthDummyPosition(dummy);
-                borderToContentAreaCoordinates(dummy, layeredGraph, true, false);
+                Util.borderToContentAreaCoordinates(dummy, layeredGraph, true, false);
                 break;
             }
         }
@@ -490,7 +491,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                 if (constraints == PortConstraints.FIXED_RATIO) {
                     double ratio = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
                     nodePosition.y = graphHeight * ratio;
-                    borderToContentAreaCoordinates(node, graph, false, true);
+                    Util.borderToContentAreaCoordinates(node, graph, false, true);
                 }
                 break;
             
@@ -502,38 +503,6 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                 nodePosition.y = graph.getSize().y + borderSpacing + insets.bottom - offset.y;
                 break;
             }
-        }
-    }
-    
-    
-    ///////////////////////////////////////////////////////////////////////////////
-    // Coordinate Conversions
-    
-    /**
-     * Converts the position of the given node from coordinates relative to the hierarchical node
-     * border to coordinates relative to that node's content area. The content area is the
-     * hierarchical node minus insets minus border spacing minus offset.
-     * 
-     * @param node the node whose coordinates to convert.
-     * @param graph the layered graph.
-     * @param horizontal if {@code true}, the x coordinate will be translated.
-     * @param vertical if {@code true}, the y coordinate will be translated.
-     */
-    private void borderToContentAreaCoordinates(final LNode node, final LayeredGraph graph,
-            final boolean horizontal, final boolean vertical) {
-        
-        Insets.Double insets = graph.getInsets();
-        float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
-        KVector offset = graph.getOffset();
-        
-        KVector pos = node.getPosition();
-        
-        if (horizontal) {
-            pos.x = pos.x - insets.left - borderSpacing - offset.x;
-        }
-        
-        if (vertical) {
-            pos.y = pos.y - insets.top - borderSpacing - offset.y;
         }
     }
     

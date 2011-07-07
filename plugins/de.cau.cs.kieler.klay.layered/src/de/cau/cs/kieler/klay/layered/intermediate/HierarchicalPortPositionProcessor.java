@@ -18,6 +18,7 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
@@ -40,18 +41,11 @@ public class HierarchicalPortPositionProcessor extends AbstractAlgorithm impleme
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Hierarchical port position processing", 1);
         
-        // Port constraints must be set to at least FIXED_RATIO on the graph for
-        // y coordinates to require fixing
-        PortConstraints portConstraints = layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS);
-        if (portConstraints.isRatioFixed()) {
-            double graphHeight = layeredGraph.getSize().y;
-            
-            List<Layer> layers = layeredGraph.getLayers();
-            
-            if (!layers.isEmpty()) {
-                fixCoordinates(layers.get(0), portConstraints, graphHeight);
-                fixCoordinates(layers.get(layers.size() - 1), portConstraints, graphHeight);
-            }
+        List<Layer> layers = layeredGraph.getLayers();
+        
+        if (!layers.isEmpty()) {
+            fixCoordinates(layers.get(0), layeredGraph);
+            fixCoordinates(layers.get(layers.size() - 1), layeredGraph);
         }
         
         getMonitor().done();
@@ -61,11 +55,18 @@ public class HierarchicalPortPositionProcessor extends AbstractAlgorithm impleme
      * Fixes the y coordinates of external port dummies in the given layer.
      * 
      * @param layer the layer.
+     * @param layeredGraph the layered graph.
      * @param portConstraints the port constraints that apply to external ports.
      * @param graphHeight height of the graph.
      */
-    private void fixCoordinates(final Layer layer, final PortConstraints portConstraints,
-            final double graphHeight) {
+    private void fixCoordinates(final Layer layer, final LayeredGraph layeredGraph) {
+        PortConstraints portConstraints = layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+        if (!portConstraints.isRatioFixed()) {
+            // If coordinates are free to be set, we're done
+            return;
+        }
+        
+        double graphHeight = layeredGraph.getSize().y;
         
         // Iterate over external port dummies
         for (LNode node : layer.getNodes()) {
@@ -75,13 +76,14 @@ public class HierarchicalPortPositionProcessor extends AbstractAlgorithm impleme
             
             double finalYCoordinate = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
             
-            // If the port constraints are set to FIXED_RATIO, the final coordinate is only
-            // a ratio and must be multiplied with the graph height
+            // Depending on the port constraints applying to external ports, the coordinate
+            // needs some fixing up
             if (portConstraints == PortConstraints.FIXED_RATIO) {
                 finalYCoordinate *= graphHeight;
             }
             
             node.getPosition().y = finalYCoordinate;
+            Util.borderToContentAreaCoordinates(node, layeredGraph, false, true);
         }
     }
     
