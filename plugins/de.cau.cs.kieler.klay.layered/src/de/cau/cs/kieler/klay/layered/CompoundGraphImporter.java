@@ -26,20 +26,26 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.klay.layered.graph.Insets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
 import de.cau.cs.kieler.klay.layered.properties.EdgeType;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
@@ -51,8 +57,70 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author ima
  * @author cds
  */
-public class CompoundGraphImporter {
+public class CompoundGraphImporter extends AbstractGraphImporter<KNode> {
 
+    /**
+     * {@inheritDoc}
+     */
+    public LayeredGraph importGraph(final KNode kgraph) {
+        LayeredGraph layeredGraph = new LayeredGraph();
+        layeredGraph.setProperty(Properties.ORIGIN, kgraph);
+
+        KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
+
+        // copy the properties of the KGraph to the layered graph and check values
+        layeredGraph.copyProperties(sourceShapeLayout);
+        layeredGraph.checkProperties(Properties.OBJ_SPACING, Properties.BORDER_SPACING,
+                Properties.THOROUGHNESS, Properties.ASPECT_RATIO);
+        if (layeredGraph.getProperty(LayoutOptions.DIRECTION) == Direction.UNDEFINED) {
+            layeredGraph.setProperty(LayoutOptions.DIRECTION, Direction.RIGHT);
+        }
+
+        // copy the insets to the layered graph
+        KInsets kinsets = sourceShapeLayout.getInsets();
+        Insets.Double linsets = layeredGraph.getInsets();
+
+        linsets.left = kinsets.getLeft();
+        linsets.right = kinsets.getRight();
+        linsets.top = kinsets.getTop();
+        linsets.bottom = kinsets.getBottom();
+
+        // keep a list of created nodes in the layered graph, as well as a map
+        // between KGraph
+        // nodes / ports and LGraph nodes / ports
+        Map<KGraphElement, LGraphElement> elemMap = new HashMap<KGraphElement, LGraphElement>();
+
+        // the graph properties discovered during the transformations
+        EnumSet<GraphProperties> graphProperties = EnumSet.noneOf(GraphProperties.class);
+
+//        // Check if hierarchy handling for a compound graph is requested
+//        boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
+//
+//        // Transform flat graph directly, import recursively for compound graph
+//        if (isCompound) {
+//            CompoundGraphImporter compoundImporter = new CompoundGraphImporter();
+            List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
+//            transformCompoundGraph(kgraph, layeredNodes,
+//                    layeredGraph, elemMap, graphProperties);
+         // Comment next line in to make the dummy edges be removed after Layering
+            graphProperties.add(GraphProperties.FLAT_HIERARCHICAL);
+            // Prepare a map to insert Parent Nodes and Child nodes for the documentation of dummy
+            // edges.
+            Map<LNode, List<LNode>> parentChildMap = new HashMap<LNode, List<LNode>>();
+            recursiveTransformCompoundGraph(kgraph, kgraph, layeredNodes, layeredGraph, elemMap,
+                    graphProperties, parentChildMap);
+//        } else {
+//            // transform everything
+//            transformNodesAndPorts(kgraph, layeredGraph, elemMap, graphProperties);
+//            transformEdges(kgraph, elemMap, graphProperties);
+//        }
+
+        // set the graph properties property
+        layeredGraph.setProperty(Properties.GRAPH_PROPERTIES, graphProperties);
+
+        return layeredGraph;
+    }
+    
     /**
      * Transforms a compound graph.
      * 
@@ -717,4 +785,124 @@ public class CompoundGraphImporter {
         }
         return port;
     }
+
+    // /////////////////////////////////////////////////////////////////////////////
+    // Apply Layout Results
+
+    /**
+     * {@inheritDoc}
+     */
+    public void applyLayout(final LayeredGraph layeredGraph) {
+        KNode target = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
+
+        // determine the border spacing, which influences the offset
+        KShapeLayout parentLayout = target.getData(KShapeLayout.class);
+        float borderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
+
+        // calculate the offset
+        KVector offset = new KVector(borderSpacing + layeredGraph.getOffset().x, borderSpacing
+                + layeredGraph.getOffset().y);
+
+        // along the way, we collect the list of edges to be processed later
+        List<LEdge> edgeList = new LinkedList<LEdge>();
+
+        // process the nodes
+        for (LNode lnode : layeredGraph.getLayerlessNodes()) {
+            Object origin = lnode.getProperty(Properties.ORIGIN);
+
+            if (origin instanceof KNode) {
+                // set the node position
+                KShapeLayout nodeLayout = ((KNode) origin).getData(KShapeLayout.class);
+
+                nodeLayout.setXpos((float) (lnode.getPosition().x + offset.x));
+                nodeLayout.setYpos((float) (lnode.getPosition().y + offset.y));
+
+                // set port positions
+                if (!nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
+                    for (LPort lport : lnode.getPorts()) {
+                        origin = lport.getProperty(Properties.ORIGIN);
+                        if (origin instanceof KPort) {
+                            KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
+                            portLayout
+                                    .setXpos((float) (lport.getPosition().x - lport.getSize().x / 2.0));
+                            portLayout
+                                    .setYpos((float) (lport.getPosition().y - lport.getSize().y / 2.0));
+                        }
+                    }
+                }
+            } else if (origin instanceof KPort) {
+                // It's an external port. Set its position
+                KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
+                KVector portPosition = getExternalPortPosition(layeredGraph, lnode,
+                        portLayout.getWidth(), portLayout.getHeight());
+
+                portLayout.setXpos((float) portPosition.x);
+                portLayout.setYpos((float) portPosition.y);
+            }
+
+            // collect edges
+            for (LPort port : lnode.getPorts()) {
+                edgeList.addAll(port.getOutgoingEdges());
+            }
+        }
+
+        // check if the edge routing uses splines
+        EdgeRoutingStrategy routing = parentLayout.getProperty(Properties.EDGE_ROUTING);
+        boolean splinesActive = routing == EdgeRoutingStrategy.SIMPLE_SPLINES
+                || routing == EdgeRoutingStrategy.COMPLEX_SPLINES;
+
+        // iterate through all edges
+        for (LEdge ledge : edgeList) {
+            KEdge kedge = (KEdge) ledge.getProperty(Properties.ORIGIN);
+            KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+            KVectorChain bendPoints = ledge.getBendPoints();
+
+            // add the source port and target port positions to the vector chain
+            LPort sourcePort = ledge.getSource();
+            bendPoints.addFirst(KVector.add(sourcePort.getPosition(), sourcePort.getNode()
+                    .getPosition()));
+            LPort targetPort = ledge.getTarget();
+            bendPoints.addLast(KVector.add(targetPort.getPosition(), targetPort.getNode()
+                    .getPosition()));
+
+            // translate the bend points by the offset and apply the bend points
+            bendPoints.translate(offset);
+            edgeLayout.applyVectorChain(bendPoints);
+
+            // apply layout to labels
+            for (LLabel label : ledge.getLabels()) {
+                KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
+                KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
+
+                KVector labelPos = new KVector(ledge.getSource().getPosition().x, ledge.getSource()
+                        .getPosition().y);
+                labelPos.add(ledge.getSource().getNode().getPosition());
+                labelPos.add(label.getPosition());
+                klabelLayout.setXpos((float) (labelPos.x + offset.x));
+                klabelLayout.setYpos((float) (labelPos.y + offset.y));
+            }
+
+            // set spline option
+            if (splinesActive) {
+                edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
+            }
+        }
+
+        // set up the parent node
+        KInsets insets = parentLayout.getInsets();
+        float width = (float) layeredGraph.getSize().x + 2 * borderSpacing + insets.getLeft()
+                + insets.getRight();
+        float height = (float) layeredGraph.getSize().y + 2 * borderSpacing + insets.getTop()
+                + insets.getBottom();
+        if (layeredGraph.getProperty(Properties.GRAPH_PROPERTIES).contains(
+                GraphProperties.EXTERNAL_PORTS)) {
+            // ports have been positioned using dummy nodes
+            parentLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+            KimlUtil.resizeNode(target, width, height, false);
+        } else {
+            // ports have not been positioned yet - leave this for next layouter
+            KimlUtil.resizeNode(target, width, height, true);
+        }
+    }
+
 }
