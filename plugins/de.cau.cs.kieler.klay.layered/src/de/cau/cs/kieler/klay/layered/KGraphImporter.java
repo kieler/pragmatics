@@ -62,7 +62,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
-    // /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
     // Transformation KGraph -> LGraph
 
     /**
@@ -556,7 +556,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         }
     }
 
-    // /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
     // Apply Layout Results
 
     /**
@@ -664,8 +664,10 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 + insets.getRight();
         float height = (float) layeredGraph.getSize().y + 2 * borderSpacing + insets.getTop()
                 + insets.getBottom();
+        
         if (layeredGraph.getProperty(Properties.GRAPH_PROPERTIES).contains(
                 GraphProperties.EXTERNAL_PORTS)) {
+            
             // ports have been positioned using dummy nodes
             parentLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
             KimlUtil.resizeNode(target, width, height, false);

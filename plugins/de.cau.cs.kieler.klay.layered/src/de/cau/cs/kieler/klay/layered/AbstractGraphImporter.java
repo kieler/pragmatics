@@ -132,7 +132,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
             case WEST:
             case EAST:
                 positionOrRatio = portPosition.y;
-                if (portConstraints.isRatioFixed()) {
+                if (portConstraints.isRatioFixed() && !portConstraints.isPosFixed()) {
                     positionOrRatio /= portNodeSize.y;
                 }
                 
@@ -141,7 +141,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
             case NORTH:
             case SOUTH:
                 positionOrRatio = portPosition.x;
-                if (portConstraints.isRatioFixed()) {
+                if (portConstraints.isRatioFixed() && !portConstraints.isPosFixed()) {
                     positionOrRatio /= portNodeSize.x;
                 }
                 
@@ -170,6 +170,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
      */
     protected KVector getExternalPortPosition(final LayeredGraph graph, final LNode portDummy,
             final double portWidth, final double portHeight) {
+        
         KVector portPosition = new KVector(portDummy.getPosition());
         float portOffset = portDummy.getProperty(LayoutOptions.OFFSET);
         

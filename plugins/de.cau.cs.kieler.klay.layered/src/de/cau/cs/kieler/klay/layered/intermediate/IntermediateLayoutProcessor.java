@@ -78,6 +78,8 @@ public enum IntermediateLayoutProcessor {
     
     /** Adjusts the width of hierarchical port dummy nodes. */
     HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR,
+    /** Fix coordinates of hierarchical port dummy nodes. */
+    HIERARCHICAL_PORT_POSITION_PROCESSOR,
     
     // After Phase 5
     
@@ -126,6 +128,9 @@ public enum IntermediateLayoutProcessor {
             
         case HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER:
             return new HierarchicalPortOrthogonalEdgeRouter();
+        
+        case HIERARCHICAL_PORT_POSITION_PROCESSOR:
+            return new HierarchicalPortPositionProcessor();
             
         case HYPEREDGE_DUMMY_MERGER:
             return new HyperedgeDummyMerger();

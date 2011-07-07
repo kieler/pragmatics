@@ -62,6 +62,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @see HierarchicalPortDummySizeProcessor
  * @see HierarchicalPortOrthogonalEdgeRouter
+ * @see HierarchicalPortPositionProcessor
  * @author cds
  */
 public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm implements ILayoutProcessor {

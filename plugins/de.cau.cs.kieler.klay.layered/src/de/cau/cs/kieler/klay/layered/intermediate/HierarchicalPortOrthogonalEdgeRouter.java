@@ -51,6 +51,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @see HierarchicalPortConstraintProcessor
  * @see HierarchicalPortDummySizeProcessor
+ * @see HierarchicalPortPositionProcessor
  * @see OrthogonalRoutingGenerator
  * @author cds
  */

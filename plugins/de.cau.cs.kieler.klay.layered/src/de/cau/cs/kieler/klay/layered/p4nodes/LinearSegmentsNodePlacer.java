@@ -35,6 +35,8 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
+import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -192,6 +194,11 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             }
         }
     }
+    
+    /** additional processor dependencies for graphs with hierarchical ports. */
+    private static final IntermediateProcessingStrategy HIERARCHY_PROCESSING_ADDITIONS =
+        new IntermediateProcessingStrategy(IntermediateProcessingStrategy.BEFORE_PHASE_5,
+                IntermediateLayoutProcessor.HIERARCHICAL_PORT_POSITION_PROCESSOR);
 
     /** array of sorted linear segments. */
     private LinearSegment[] linearSegments;
@@ -202,7 +209,11 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      * {@inheritDoc}
      */
     public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
-        return null;
+        if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)) {
+            return HIERARCHY_PROCESSING_ADDITIONS;
+        } else {
+            return null;
+        }
     }
 
     /**
