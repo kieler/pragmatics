@@ -60,19 +60,19 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Set Compound Side nodes", 1);
         List<Layer> layers = layeredGraph.getLayers();
-        List<LNode> upperBorders = new LinkedList<LNode>();
+        List<LNode> openingBorders = new LinkedList<LNode>();
 
         // Iterate layers to find the UPPER_COMPOUND_BORDER-Nodes indicating the beginning of a
         // compound node
         for (Layer layer : layers) {
             for (LNode lnode : layer.getNodes()) {
                 if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.UPPER_COMPOUND_BORDER) {
-                    upperBorders.add(lnode);
+                    openingBorders.add(lnode);
                 }
             }
         }
         // Insert dummy node lines at the side of every subgraph node
-        for (LNode lnode : upperBorders) {
+        for (LNode lnode : openingBorders) {
             Layer spanEnd = findSpanEnd(lnode, layers);
             int startIndex = lnode.getLayer().getIndex();
             int endIndex = spanEnd.getIndex();
@@ -92,47 +92,39 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
      *            layerIndex to end with. are to be inserted.
      * @param layers
      *            the complete list of Layers.
-     * @param upperBorder
+     * @param openingBorder
      *            the upper border dummy node determining the subgraph.
-     * @param highConnector
+     * @param lowerConnector
      *            the edge to connect the side dummy node on top of the layer to.
-     * @param lowConnector
+     * @param upperConnector
      *            the edge to connect the side dummy node at the bottom of the layer to.
      */
     private void insertSideDummies(final int startIndex, final int endIndex,
-            final List<Layer> layers, final LNode upperBorder, final LEdge highConnector,
-            final LEdge lowConnector) {
+            final List<Layer> layers, final LNode openingBorder, final LEdge lowerConnector,
+            final LEdge upperConnector) {
 
         Layer layer = layers.get(startIndex);
         List<LNode> layerNodes = layer.getNodes();
 
-        int upperIndex = findUltimateIndex(layer, upperBorder, true);
-        int lowerIndex = findUltimateIndex(layer, upperBorder, false);
+        int lowerIndex = findUltimateIndex(layer, openingBorder, true);
+        int upperIndex = findUltimateIndex(layer, openingBorder, false);
 
-        // create upper side node
-        LNode upperSideDummy = new LNode();
-        upperSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
-        // avoid index-out-of-bounds-exception
-        if (layerNodes.size() == upperIndex) {
-            upperSideDummy.setLayer(layer);
-        } else {
-            upperSideDummy.setLayer(upperIndex + 1, layer);
-        }
-
-        // create lower side node
+        // create lower side node (higher layer index)
         LNode lowerSideDummy = new LNode();
         lowerSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
-        lowerSideDummy.setLayer(lowerIndex, layer);
+        // avoid index-out-of-bounds-exception
+        if (layerNodes.size() == lowerIndex) {
+            lowerSideDummy.setLayer(layer);
+        } else {
+            lowerSideDummy.setLayer(lowerIndex + 1, layer);
+        }
+
+        // create upper side node (lower layer index)
+        LNode upperSideDummy = new LNode();
+        upperSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
+        upperSideDummy.setLayer(upperIndex, layer);
 
         // create ports for connection-edges
-        LPort highPortWest = new LPort();
-        highPortWest.setSide(PortSide.WEST);
-        highPortWest.setNode(upperSideDummy);
-
-        LPort highPortEast = new LPort();
-        highPortEast.setSide(PortSide.EAST);
-        highPortEast.setNode(upperSideDummy);
-
         LPort lowPortWest = new LPort();
         lowPortWest.setSide(PortSide.WEST);
         lowPortWest.setNode(lowerSideDummy);
@@ -141,27 +133,35 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
         lowPortEast.setSide(PortSide.EAST);
         lowPortEast.setNode(lowerSideDummy);
 
+        LPort highPortWest = new LPort();
+        highPortWest.setSide(PortSide.WEST);
+        highPortWest.setNode(upperSideDummy);
+
+        LPort highPortEast = new LPort();
+        highPortEast.setSide(PortSide.EAST);
+        highPortEast.setNode(upperSideDummy);
+
         // connect to connection-edges from predecessor, if existent.
-        if (highConnector != null) {
-            highConnector.setTarget(highPortWest);
+        if (lowerConnector != null) {
+            lowerConnector.setTarget(lowPortWest);
         }
-        if (lowConnector != null) {
-            lowConnector.setTarget(lowPortWest);
+        if (upperConnector != null) {
+            upperConnector.setTarget(highPortWest);
         }
 
         if (startIndex < endIndex) {
             // create connection-edges to successor, if not last index.
-            LEdge highEdge = new LEdge();
-            LEdge lowEdge = new LEdge();
+            LEdge lowerEdge = new LEdge();
+            LEdge upperEdge = new LEdge();
 
-            highEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_SIDE);
-            lowEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_SIDE);
+            lowerEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_SIDE);
+            upperEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_SIDE);
 
-            highEdge.setSource(highPortEast);
-            lowEdge.setSource(lowPortEast);
+            lowerEdge.setSource(lowPortEast);
+            upperEdge.setSource(highPortEast);
 
             // handle next layer
-            insertSideDummies(startIndex + 1, endIndex, layers, upperBorder, highEdge, lowEdge);
+            insertSideDummies(startIndex + 1, endIndex, layers, openingBorder, lowerEdge, upperEdge);
         }
     }
 
@@ -201,21 +201,29 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
      *            the layering, whose order is to be searched.
      * @param upperBorder
      *            the compound node whose descendants are to be respected.
-     * @param high
+     * @param lowerSide
      *            flag indicating, whether the highest (true) or lowest (false) ordered node is to
      *            be found.
      * @return returns the Node highest in the ordering of the layer among those representing the
      *         compoundNode or any of its descendants.
      */
-    private int findUltimateIndex(final Layer layer, final LNode upperBorder, final boolean high) {
+    private int findUltimateIndex(final Layer layer, final LNode upperBorder,
+            final boolean lowerSide) {
+        List<LNode> nodes = layer.getNodes();
         int ret = 0;
-        for (LNode lnode : layer.getNodes()) {
+        // to find the minimum, initialize with highest index
+        if (!lowerSide) {
+            ret = nodes.size() - 1;
+        }
+        // find the minimum resp. maximum index of the layer that is inhabited by a node
+        // representing an original node, dummy nodes are not considered
+        for (LNode lnode : nodes) {
             if (lnode.getProperty(Properties.ORIGIN) instanceof KNode) {
                 KNode origin = (KNode) lnode.getProperty(Properties.ORIGIN);
                 KNode upperBorderOrigin = (KNode) upperBorder.getProperty(Properties.ORIGIN);
                 if (CompoundGraphImporter.isDescendant(upperBorderOrigin, origin)) {
                     int test = lnode.getIndex();
-                    if (high) {
+                    if (lowerSide) {
                         if (test > ret) {
                             ret = test;
                         }
