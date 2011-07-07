@@ -93,34 +93,21 @@ public class CompoundGraphImporter extends AbstractGraphImporter<KNode> {
         // the graph properties discovered during the transformations
         EnumSet<GraphProperties> graphProperties = EnumSet.noneOf(GraphProperties.class);
 
-//        // Check if hierarchy handling for a compound graph is requested
-//        boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
-//
-//        // Transform flat graph directly, import recursively for compound graph
-//        if (isCompound) {
-//            CompoundGraphImporter compoundImporter = new CompoundGraphImporter();
-            List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
-//            transformCompoundGraph(kgraph, layeredNodes,
-//                    layeredGraph, elemMap, graphProperties);
-         // Comment next line in to make the dummy edges be removed after Layering
-            graphProperties.add(GraphProperties.FLAT_HIERARCHICAL);
-            // Prepare a map to insert Parent Nodes and Child nodes for the documentation of dummy
-            // edges.
-            Map<LNode, List<LNode>> parentChildMap = new HashMap<LNode, List<LNode>>();
-            recursiveTransformCompoundGraph(kgraph, kgraph, layeredNodes, layeredGraph, elemMap,
-                    graphProperties, parentChildMap);
-//        } else {
-//            // transform everything
-//            transformNodesAndPorts(kgraph, layeredGraph, elemMap, graphProperties);
-//            transformEdges(kgraph, elemMap, graphProperties);
-//        }
+        List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
+
+        graphProperties.add(GraphProperties.FLAT_HIERARCHICAL);
+        // Prepare a map to insert Parent Nodes and Child nodes for the documentation of dummy
+        // edges.
+        Map<LNode, List<LNode>> parentChildMap = new HashMap<LNode, List<LNode>>();
+        recursiveTransformCompoundGraph(kgraph, kgraph, layeredNodes, layeredGraph, elemMap,
+                graphProperties, parentChildMap);
 
         // set the graph properties property
         layeredGraph.setProperty(Properties.GRAPH_PROPERTIES, graphProperties);
 
         return layeredGraph;
     }
-    
+
     /**
      * Transforms a compound graph.
      * 
@@ -496,12 +483,12 @@ public class CompoundGraphImporter extends AbstractGraphImporter<KNode> {
             if (incoming) {
                 KPoint targetPoint = edgeLayout.getTargetPoint();
                 dummyPort.getPosition().x = targetPoint.getX() - representative.getPosition().x;
-                //dummyPort.getPosition().y = targetPoint.getY() - representative.getPosition().y;
+                // dummyPort.getPosition().y = targetPoint.getY() - representative.getPosition().y;
                 lEdge.setTarget(dummyPort);
             } else {
                 KPoint sourcePoint = edgeLayout.getSourcePoint();
                 dummyPort.getPosition().x = sourcePoint.getX() - representative.getPosition().x;
-                //dummyPort.getPosition().y = sourcePoint.getY() - representative.getPosition().y;
+                // dummyPort.getPosition().y = sourcePoint.getY() - representative.getPosition().y;
                 lEdge.setSource(dummyPort);
             }
 
@@ -528,6 +515,7 @@ public class CompoundGraphImporter extends AbstractGraphImporter<KNode> {
 
     /**
      * Creates dummy edges between a compound node border dummy node and its children.
+     * 
      * @param layeredNodes
      * @param layeredNodes
      *            the list of LNodes with the created dummy nodes and the imported nodes.
@@ -719,7 +707,7 @@ public class CompoundGraphImporter extends AbstractGraphImporter<KNode> {
             return descendantsList.contains(candidate);
         }
     }
-    
+
     /**
      * Checks, if a KNode is descendant of another in the inclusion tree. attention: returns true,
      * if nodes are equal.
@@ -734,7 +722,7 @@ public class CompoundGraphImporter extends AbstractGraphImporter<KNode> {
     public static boolean isDescendant(final KNode node, final KNode candidate) {
         List<KNode> descendantsList = new LinkedList<KNode>();
         listDescendants(node, descendantsList);
-        return descendantsList.contains(candidate); 
+        return descendantsList.contains(candidate);
     }
 
     /**
