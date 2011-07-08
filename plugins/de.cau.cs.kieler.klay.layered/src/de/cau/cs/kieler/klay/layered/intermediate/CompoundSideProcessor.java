@@ -19,7 +19,7 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.klay.layered.CompoundGraphImporter;
+import de.cau.cs.kieler.klay.layered.CompoundKGraphImporter;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -221,7 +221,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
             if (lnode.getProperty(Properties.ORIGIN) instanceof KNode) {
                 KNode origin = (KNode) lnode.getProperty(Properties.ORIGIN);
                 KNode upperBorderOrigin = (KNode) upperBorder.getProperty(Properties.ORIGIN);
-                if (CompoundGraphImporter.isDescendant(upperBorderOrigin, origin)) {
+                if (CompoundKGraphImporter.isDescendant(upperBorderOrigin, origin)) {
                     int test = lnode.getIndex();
                     if (lowerSide) {
                         if (test > ret) {
