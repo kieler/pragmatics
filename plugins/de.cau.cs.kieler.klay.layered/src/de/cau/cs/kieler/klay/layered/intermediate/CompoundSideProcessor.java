@@ -167,6 +167,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
 
     /**
      * Finds the layer, in which the closing Compound Dummy Nodes for upperBorder are placed.
+     * Make sure the LNode you pass as a parameter is of the type UPPER_COMPOUND_BORDER.
      * 
      * @param upperBorder
      *            upper compound border dummy node for which the partner lower compound border dummy
@@ -176,7 +177,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
      * @return returns layer, in which the closing compound dummy nodes for the given border node
      *         are placed.
      */
-    private Layer findSpanEnd(final LNode upperBorder, final List<Layer> layers) {
+    public static Layer findSpanEnd(final LNode upperBorder, final List<Layer> layers) {
         LNode spanEndNode = null;
         // Find the corresponding lower compound border for upperBorder
         for (Layer layer : layers) {
