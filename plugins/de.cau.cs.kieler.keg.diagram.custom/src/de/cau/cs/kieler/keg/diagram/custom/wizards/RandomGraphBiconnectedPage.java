@@ -81,11 +81,7 @@ public class RandomGraphBiconnectedPage extends WizardPage {
         nodesSpinner.setLayoutData(gridData);
         nodesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                try {
-                    numberOfNodes = Integer.parseInt(nodesSpinner.getText());
-                } catch (NumberFormatException exception) {
-                    numberOfNodes = 0;
-                }
+                numberOfNodes = nodesSpinner.getSelection();
             }
         });
         // add NUMBER_OF_EDGES option
@@ -99,11 +95,7 @@ public class RandomGraphBiconnectedPage extends WizardPage {
         edgesSpinner.setLayoutData(gridData);
         edgesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                try {
-                    numberOfEdges = Integer.parseInt(edgesSpinner.getText());
-                } catch (NumberFormatException exception) {
-                    numberOfEdges = 0;
-                }
+                numberOfEdges = edgesSpinner.getSelection();
             }
         });
     }
@@ -115,18 +107,14 @@ public class RandomGraphBiconnectedPage extends WizardPage {
      */
     public void savePreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getId(),
-                numberOfNodes);
-        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_EDGES.getId(),
-                numberOfEdges);
+        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getId(), numberOfNodes);
+        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_EDGES.getId(), numberOfEdges);
     }
 
     private void loadPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        numberOfNodes =
-                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getId());
-        numberOfEdges =
-                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_EDGES.getId());
+        numberOfNodes = preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getId());
+        numberOfEdges = preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_EDGES.getId());
     }
 
     private void setDefaultPreferences() {

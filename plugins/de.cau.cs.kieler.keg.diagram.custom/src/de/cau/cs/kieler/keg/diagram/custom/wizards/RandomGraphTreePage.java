@@ -83,11 +83,7 @@ public class RandomGraphTreePage extends WizardPage {
         nodesSpinner.setLayoutData(gridData);
         nodesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                try {
-                    numberOfNodes = Integer.parseInt(nodesSpinner.getText());
-                } catch (NumberFormatException exception) {
-                    numberOfNodes = 0;
-                }
+                numberOfNodes = nodesSpinner.getSelection();
             }
         });
         // add MAX_DEGREE option
@@ -101,11 +97,7 @@ public class RandomGraphTreePage extends WizardPage {
         degreeSpinner.setLayoutData(gridData);
         degreeSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                try {
-                    maxDegree = Integer.parseInt(degreeSpinner.getText());
-                } catch (NumberFormatException exception) {
-                    maxDegree = 0;
-                }
+                maxDegree = degreeSpinner.getSelection();
             }
         });
         // add MAX_WIDTH option
@@ -119,11 +111,7 @@ public class RandomGraphTreePage extends WizardPage {
         widthSpinner.setLayoutData(gridData);
         widthSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                try {
-                    maxWidth = Integer.parseInt(widthSpinner.getText());
-                } catch (NumberFormatException exception) {
-                    maxWidth = 0;
-                }
+                maxWidth = widthSpinner.getSelection();
             }
         });
     }
@@ -135,22 +123,16 @@ public class RandomGraphTreePage extends WizardPage {
      */
     public void savePreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getId(),
-                numberOfNodes);
-        preferenceStore.setValue(RandomGraphGenerator.MAX_DEGREE.getId(),
-                maxDegree);
-        preferenceStore.setValue(RandomGraphGenerator.MAX_WIDTH.getId(),
-                maxWidth);
+        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getId(), numberOfNodes);
+        preferenceStore.setValue(RandomGraphGenerator.MAX_DEGREE.getId(), maxDegree);
+        preferenceStore.setValue(RandomGraphGenerator.MAX_WIDTH.getId(), maxWidth);
     }
 
     private void loadPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        numberOfNodes =
-                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getId());
-        preferenceStore.setValue(RandomGraphGenerator.MAX_DEGREE.getId(),
-                maxDegree);
-        preferenceStore.setValue(RandomGraphGenerator.MAX_WIDTH.getId(),
-                maxWidth);
+        numberOfNodes = preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getId());
+        preferenceStore.setValue(RandomGraphGenerator.MAX_DEGREE.getId(), maxDegree);
+        preferenceStore.setValue(RandomGraphGenerator.MAX_WIDTH.getId(), maxWidth);
     }
 
     private void setDefaultPreferences() {

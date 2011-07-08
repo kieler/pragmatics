@@ -113,11 +113,7 @@ public class RandomGraphAnyPage extends WizardPage {
         nodesSpinner.setLayoutData(gridData);
         nodesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                try {
-                    numberOfNodes = Integer.parseInt(nodesSpinner.getText());
-                } catch (NumberFormatException exception) {
-                    numberOfNodes = 0;
-                }
+                numberOfNodes = nodesSpinner.getSelection();
             }
         });
         // add NUMBER_OF_EDGES option
@@ -127,8 +123,7 @@ public class RandomGraphAnyPage extends WizardPage {
         gridData.horizontalSpan = 2;
         edgesSwitch.setLayoutData(gridData);
         final Spinner edgesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        Util.addHelp(edgesSpinner,
-                Messages.RandomGraphAnyPage_number_of_edges_help);
+        Util.addHelp(edgesSpinner, Messages.RandomGraphAnyPage_number_of_edges_help);
         edgesSpinner.setValues(numberOfEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
         edgesSpinner.setEnabled(false);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
@@ -136,11 +131,7 @@ public class RandomGraphAnyPage extends WizardPage {
         edgesSpinner.setLayoutData(gridData);
         edgesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                try {
-                    numberOfEdges = Integer.parseInt(edgesSpinner.getText());
-                } catch (NumberFormatException exception) {
-                    numberOfEdges = 0;
-                }
+                numberOfEdges = edgesSpinner.getSelection();
             }
         });
         // add another way to specify the NUMBER_OF_EDGES option
@@ -150,8 +141,7 @@ public class RandomGraphAnyPage extends WizardPage {
         gridData.horizontalSpan = 2;
         densitySwitch.setLayoutData(gridData);
         final Spinner densitySpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        Util.addHelp(densitySpinner,
-                Messages.RandomGraphAnyPage_density_help);
+        Util.addHelp(densitySpinner, Messages.RandomGraphAnyPage_density_help);
         densitySpinner.setValues((int) (density * 100), 0, 100, 2, 1, 10);
         densitySpinner.setEnabled(false);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
@@ -159,11 +149,7 @@ public class RandomGraphAnyPage extends WizardPage {
         densitySpinner.setLayoutData(gridData);
         densitySpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                try {
-                    density = Float.parseFloat(densitySpinner.getText());
-                } catch (NumberFormatException exception) {
-                    density = 0;
-                }
+                density = ((float) densitySpinner.getSelection()) / 100f;
             }
         });
         // add MIN_OUTGOING_EDGES option
@@ -173,8 +159,7 @@ public class RandomGraphAnyPage extends WizardPage {
         gridData.horizontalSpan = 2;
         outgoingSwitch.setLayoutData(gridData);
         final Spinner minOutSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        Util.addHelp(minOutSpinner,
-                Messages.RandomGraphAnyPage_min_outgoing_help);
+        Util.addHelp(minOutSpinner, Messages.RandomGraphAnyPage_min_outgoing_help);
         minOutSpinner.setValues(minOutgoingEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
         minOutSpinner.setEnabled(false);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
@@ -182,11 +167,7 @@ public class RandomGraphAnyPage extends WizardPage {
         minOutSpinner.setLayoutData(gridData);
         minOutSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                try {
-                    minOutgoingEdges = Integer.parseInt(minOutSpinner.getText());
-                } catch (NumberFormatException exception) {
-                    minOutgoingEdges = 0;
-                }
+                minOutgoingEdges = minOutSpinner.getSelection();
             }
         });
         // add MAX_OUTGOING_EDGES option
@@ -195,8 +176,7 @@ public class RandomGraphAnyPage extends WizardPage {
         label = new Label(composite, SWT.NULL);
         label.setText(Messages.RandomGraphAnyPage_max_outgoing_caption);
         final Spinner maxOutSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        Util.addHelp(maxOutSpinner,
-                Messages.RandomGraphAnyPage_max_outgoing_help);
+        Util.addHelp(maxOutSpinner, Messages.RandomGraphAnyPage_max_outgoing_help);
         maxOutSpinner.setValues(maxOutgoingEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
         maxOutSpinner.setEnabled(false);
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
@@ -204,11 +184,7 @@ public class RandomGraphAnyPage extends WizardPage {
         maxOutSpinner.setLayoutData(gridData);
         maxOutSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                try {
-                    maxOutgoingEdges = Integer.parseInt(maxOutSpinner.getText());
-                } catch (NumberFormatException exception) {
-                    maxOutgoingEdges = 0;
-                }
+                maxOutgoingEdges = maxOutSpinner.getSelection();
             }
         });
         // add the switch functionality
@@ -303,44 +279,28 @@ public class RandomGraphAnyPage extends WizardPage {
      */
     public void savePreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getId(),
-                numberOfNodes);
-        preferenceStore.setValue(
-                RandomGraphGenerator.EDGE_DETERMINATION.getId(),
-                edgeDetermination);
-        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_EDGES.getId(),
-                numberOfEdges);
+        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getId(), numberOfNodes);
+        preferenceStore
+                .setValue(RandomGraphGenerator.EDGE_DETERMINATION.getId(), edgeDetermination);
+        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_EDGES.getId(), numberOfEdges);
         preferenceStore.setValue(PREFERENCE_DENSITY, density);
-        preferenceStore.setValue(
-                RandomGraphGenerator.MIN_OUTGOING_EDGES.getId(),
-                minOutgoingEdges);
-        preferenceStore.setValue(
-                RandomGraphGenerator.MAX_OUTGOING_EDGES.getId(),
-                maxOutgoingEdges);
-        preferenceStore.setValue(RandomGraphGenerator.SELF_LOOPS.getId(),
-                selfLoops);
-        preferenceStore.setValue(RandomGraphGenerator.MULTI_EDGES.getId(),
-                multiEdges);
+        preferenceStore.setValue(RandomGraphGenerator.MIN_OUTGOING_EDGES.getId(), minOutgoingEdges);
+        preferenceStore.setValue(RandomGraphGenerator.MAX_OUTGOING_EDGES.getId(), maxOutgoingEdges);
+        preferenceStore.setValue(RandomGraphGenerator.SELF_LOOPS.getId(), selfLoops);
+        preferenceStore.setValue(RandomGraphGenerator.MULTI_EDGES.getId(), multiEdges);
         preferenceStore.setValue(RandomGraphGenerator.CYCLES.getId(), cycles);
     }
 
     private void loadPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        numberOfNodes =
-                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getId());
-        edgeDetermination =
-                preferenceStore.getInt(RandomGraphGenerator.EDGE_DETERMINATION.getId());
-        numberOfEdges =
-                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_EDGES.getId());
+        numberOfNodes = preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getId());
+        edgeDetermination = preferenceStore.getInt(RandomGraphGenerator.EDGE_DETERMINATION.getId());
+        numberOfEdges = preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_EDGES.getId());
         density = preferenceStore.getFloat(PREFERENCE_DENSITY);
-        minOutgoingEdges =
-                preferenceStore.getInt(RandomGraphGenerator.MIN_OUTGOING_EDGES.getId());
-        maxOutgoingEdges =
-                preferenceStore.getInt(RandomGraphGenerator.MAX_OUTGOING_EDGES.getId());
-        selfLoops =
-                preferenceStore.getBoolean(RandomGraphGenerator.SELF_LOOPS.getId());
-        multiEdges =
-                preferenceStore.getBoolean(RandomGraphGenerator.MULTI_EDGES.getId());
+        minOutgoingEdges = preferenceStore.getInt(RandomGraphGenerator.MIN_OUTGOING_EDGES.getId());
+        maxOutgoingEdges = preferenceStore.getInt(RandomGraphGenerator.MAX_OUTGOING_EDGES.getId());
+        selfLoops = preferenceStore.getBoolean(RandomGraphGenerator.SELF_LOOPS.getId());
+        multiEdges = preferenceStore.getBoolean(RandomGraphGenerator.MULTI_EDGES.getId());
         cycles = preferenceStore.getBoolean(RandomGraphGenerator.CYCLES.getId());
     }
 

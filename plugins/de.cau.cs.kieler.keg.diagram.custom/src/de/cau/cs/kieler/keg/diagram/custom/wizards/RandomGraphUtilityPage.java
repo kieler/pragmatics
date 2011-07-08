@@ -101,7 +101,7 @@ public class RandomGraphUtilityPage extends WizardPage {
         hierarchyLevelSpinner.setLayoutData(gridData);
         hierarchyLevelSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                maxHierarchyLevel = Integer.parseInt(hierarchyLevelSpinner.getText());
+                maxHierarchyLevel = hierarchyLevelSpinner.getSelection();
             }
         });
         hierarchyLevelSpinner.setEnabled(hierarchyChance > 0.0f);
@@ -117,22 +117,14 @@ public class RandomGraphUtilityPage extends WizardPage {
         hierarchyFactorSpinner.setLayoutData(gridData);
         hierarchyFactorSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                try {
-                    hierarchyNodesFactor = Float.parseFloat(hierarchyFactorSpinner.getText());
-                } catch (NumberFormatException exception) {
-                    hierarchyNodesFactor = 0;
-                }
+                hierarchyNodesFactor = ((float) hierarchyFactorSpinner.getSelection()) / 100f;
             }
         });
         hierarchyFactorSpinner.setEnabled(hierarchyChance > 0.0f);
         // set the modify listener for the HIERARCHY_CHANCE option
         hierarchySpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                try {
-                    hierarchyChance = Float.parseFloat(hierarchySpinner.getText());
-                } catch (NumberFormatException exception) {
-                    hierarchyChance = 0;
-                }
+                hierarchyChance = ((float) hierarchySpinner.getSelection()) / 100f;
                 if (hierarchyChance > 0.0f) {
                     hierarchyLevelSpinner.setEnabled(true);
                     hierarchyFactorSpinner.setEnabled(true);
@@ -153,11 +145,7 @@ public class RandomGraphUtilityPage extends WizardPage {
         hypernodeSpinner.setLayoutData(gridData);
         hypernodeSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                try {
-                    hypernodeChance = Float.parseFloat(hypernodeSpinner.getText());
-                } catch (NumberFormatException exception) {
-                    hypernodeChance = 0;
-                }
+                hypernodeChance = ((float) hypernodeSpinner.getSelection()) / 100f;
             }
         });
         // add EDGE_DIRECTED_CHANCE option
@@ -171,11 +159,7 @@ public class RandomGraphUtilityPage extends WizardPage {
         edgeDirectedSpinner.setLayoutData(gridData);
         edgeDirectedSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                try {
-                    edgeDirectedChance = Float.parseFloat(edgeDirectedSpinner.getText());
-                } catch (NumberFormatException exception) {
-                    edgeDirectedChance = 0;
-                }
+                edgeDirectedChance = ((float) edgeDirectedSpinner.getSelection()) / 100f;
             }
         });
         // add PORTS option
@@ -205,14 +189,12 @@ public class RandomGraphUtilityPage extends WizardPage {
      */
     public void savePreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setValue(RandomGraphGenerator.HIERARCHY_CHANCE.getId(),
-                hierarchyChance);
+        preferenceStore.setValue(RandomGraphGenerator.HIERARCHY_CHANCE.getId(), hierarchyChance);
         preferenceStore.setValue(RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getId(),
                 maxHierarchyLevel);
         preferenceStore.setValue(RandomGraphGenerator.HIERARCHY_NODES_FACTOR.getId(),
                 hierarchyNodesFactor);
-        preferenceStore.setValue(RandomGraphGenerator.HYPERNODE_CHANCE.getId(),
-                hypernodeChance);
+        preferenceStore.setValue(RandomGraphGenerator.HYPERNODE_CHANCE.getId(), hypernodeChance);
         preferenceStore.setValue(RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getId(),
                 edgeDirectedChance);
         preferenceStore.setValue(RandomGraphGenerator.PORTS.getId(), ports);
@@ -220,31 +202,26 @@ public class RandomGraphUtilityPage extends WizardPage {
 
     private void loadPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        hierarchyChance =
-                preferenceStore.getFloat(RandomGraphGenerator.HIERARCHY_CHANCE.getId());
-        maxHierarchyLevel =
-                preferenceStore.getInt(RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getId());
-        hierarchyNodesFactor =
-                preferenceStore.getFloat(RandomGraphGenerator.HIERARCHY_NODES_FACTOR
-                        .getId());
-        hypernodeChance =
-                preferenceStore.getFloat(RandomGraphGenerator.HYPERNODE_CHANCE.getId());
-        edgeDirectedChance =
-                preferenceStore.getFloat(RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getId());
+        hierarchyChance = preferenceStore.getFloat(RandomGraphGenerator.HIERARCHY_CHANCE.getId());
+        maxHierarchyLevel = preferenceStore
+                .getInt(RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getId());
+        hierarchyNodesFactor = preferenceStore.getFloat(RandomGraphGenerator.HIERARCHY_NODES_FACTOR
+                .getId());
+        hypernodeChance = preferenceStore.getFloat(RandomGraphGenerator.HYPERNODE_CHANCE.getId());
+        edgeDirectedChance = preferenceStore.getFloat(RandomGraphGenerator.EDGE_DIRECTED_CHANCE
+                .getId());
         ports = preferenceStore.getBoolean(RandomGraphGenerator.PORTS.getId());
     }
 
     private void setDefaultPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setDefault(
-                RandomGraphGenerator.HIERARCHY_CHANCE.getId(),
+        preferenceStore.setDefault(RandomGraphGenerator.HIERARCHY_CHANCE.getId(),
                 RandomGraphGenerator.HIERARCHY_CHANCE.getDefault());
         preferenceStore.setDefault(RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getId(),
                 RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getDefault());
         preferenceStore.setDefault(RandomGraphGenerator.HIERARCHY_NODES_FACTOR.getId(),
                 RandomGraphGenerator.HIERARCHY_NODES_FACTOR.getDefault());
-        preferenceStore.setDefault(
-                RandomGraphGenerator.HYPERNODE_CHANCE.getId(),
+        preferenceStore.setDefault(RandomGraphGenerator.HYPERNODE_CHANCE.getId(),
                 RandomGraphGenerator.HYPERNODE_CHANCE.getDefault());
         preferenceStore.setDefault(RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getId(),
                 RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getDefault());

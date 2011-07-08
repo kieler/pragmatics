@@ -79,11 +79,7 @@ public class RandomGraphTriconnectedPage extends WizardPage {
         nodesSpinner.setLayoutData(gridData);
         nodesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                try {
-                    numberOfNodes = Integer.parseInt(nodesSpinner.getText());
-                } catch (NumberFormatException exception) {
-                    numberOfNodes = 0;
-                }
+                numberOfNodes = nodesSpinner.getSelection();
             }
         });
     }
@@ -95,14 +91,12 @@ public class RandomGraphTriconnectedPage extends WizardPage {
      */
     public void savePreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getId(),
-                numberOfNodes);
+        preferenceStore.setValue(RandomGraphGenerator.NUMBER_OF_NODES.getId(), numberOfNodes);
     }
 
     private void loadPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        numberOfNodes =
-                preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getId());
+        numberOfNodes = preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getId());
     }
 
     private void setDefaultPreferences() {
