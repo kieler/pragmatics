@@ -109,34 +109,6 @@ public class CompoundGraphImporter extends AbstractGraphImporter<KNode> {
     }
 
     /**
-     * Transforms a compound graph.
-     * 
-     * @param graph
-     *            the KGraph to be transformed.
-     * @param layeredNodes
-     *            the list of nodes to add dummy nodes to.
-     * @param layeredGraph
-     *            the layered graph.
-     * @param elemMap
-     *            the element map that maps the original {@code KGraph} elements to the transformed
-     *            {@code LGraph} elements.
-     * @param graphProperties
-     *            graph properties updated during the transformation
-     */
-
-    public void transformCompoundGraph(final KNode graph, final List<LNode> layeredNodes,
-            final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap,
-            final EnumSet<GraphProperties> graphProperties) {
-        // Comment next line in to make the dummy edges be removed after Layering
-        graphProperties.add(GraphProperties.FLAT_HIERARCHICAL);
-        // Prepare a map to insert Parent Nodes and Child nodes for the documentation of dummy
-        // edges.
-        Map<LNode, List<LNode>> parentChildMap = new HashMap<LNode, List<LNode>>();
-        recursiveTransformCompoundGraph(graph, graph, layeredNodes, layeredGraph, elemMap,
-                graphProperties, parentChildMap);
-    }
-
-    /**
      * Transforms a compound graph recursively.
      * 
      * @param currentNode
