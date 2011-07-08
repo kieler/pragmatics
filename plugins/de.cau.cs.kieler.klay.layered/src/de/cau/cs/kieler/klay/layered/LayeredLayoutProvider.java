@@ -156,7 +156,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // accordingly
         boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
         if (isCompound) {
-            graphImporter = new CompoundGraphImporter();
+            graphImporter = new CompoundKGraphImporter();
         } else {
             graphImporter = new KGraphImporter();
         }
