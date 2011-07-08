@@ -133,6 +133,11 @@ public final class Properties {
      * KNode that contained the origin of this node in the KGraph.
      */
     public static final IProperty<KNode> PARENT = new Property<KNode>("parent", null);
+    
+    /**
+     * LNode that is the left border node for the compound node the side dummy guards the side of.
+     */
+    public static final IProperty<LNode> SIDE_OWNER = new Property<LNode>("sideOwner", null); 
 
     /**
      * Flag indicating whether an LPort is set to a leave node in the inclusion tree to enable
