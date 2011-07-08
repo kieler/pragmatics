@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
@@ -45,6 +46,7 @@ import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.CompoundSideProcessor;
 import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
 import de.cau.cs.kieler.klay.layered.properties.EdgeType;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
@@ -771,22 +773,56 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
             Object origin = lnode.getProperty(Properties.ORIGIN);
 
             if (origin instanceof KNode) {
+
                 // set the node position
                 KShapeLayout nodeLayout = ((KNode) origin).getData(KShapeLayout.class);
 
-                nodeLayout.setXpos((float) (lnode.getPosition().x + offset.x));
-                nodeLayout.setYpos((float) (lnode.getPosition().y + offset.y));
+                // process compound node
+                if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.UPPER_COMPOUND_BORDER) {
 
-                // set port positions
-                if (!nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
-                    for (LPort lport : lnode.getPorts()) {
-                        origin = lport.getProperty(Properties.ORIGIN);
-                        if (origin instanceof KPort) {
-                            KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
-                            portLayout
-                                    .setXpos((float) (lport.getPosition().x - lport.getSize().x / 2.0));
-                            portLayout
-                                    .setYpos((float) (lport.getPosition().y - lport.getSize().y / 2.0));
+                    KInsets insets = parentLayout.getInsets();
+
+                    // get positions of the COMPOUND_SIDE dummy nodes at the edges.
+                    KVector posLeftUpper = findSideNodePos(lnode, true, false, layeredGraph);
+                    KVector posRightUpper = findSideNodePos(lnode, false, false, layeredGraph);
+                    KVector posLeftLower = findSideNodePos(lnode, true, true, layeredGraph);
+                    KVector posRightLower = findSideNodePos(lnode, false, true, layeredGraph);
+
+                    // set position of compound node (upper left corner)
+                    nodeLayout.setXpos((float) (posLeftUpper.x + offset.x));
+                    nodeLayout.setYpos((float) (posLeftUpper.y + offset.y));
+
+                    // set width and height of compound node
+                    nodeLayout.setWidth((float) (Math.max((posRightUpper.x - posLeftUpper.x),
+                            (posRightLower.x - posLeftLower.x)))
+                            + 2
+                            * borderSpacing
+                            + insets.getLeft() + insets.getRight());
+                    nodeLayout.setHeight((float) (Math.max((posLeftUpper.y - posLeftLower.y),
+                            (posRightUpper.y - posRightLower.y)))
+                            + 2
+                            * borderSpacing
+                            + insets.getTop() + insets.getBottom());
+
+                } else {
+
+                    nodeLayout.setXpos((float) (lnode.getPosition().x + offset.x));
+                    nodeLayout.setYpos((float) (lnode.getPosition().y + offset.y));
+
+                    // set port positions
+                    if (!nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
+                        for (LPort lport : lnode.getPorts()) {
+                            origin = lport.getProperty(Properties.ORIGIN);
+                            if (origin instanceof KPort) {
+                                KShapeLayout portLayout = ((KPort) origin)
+                                        .getData(KShapeLayout.class);
+                                portLayout
+                                        .setXpos((float) (lport.getPosition().x 
+                                                - lport.getSize().x / 2.0));
+                                portLayout
+                                        .setYpos((float) (lport.getPosition().y 
+                                                - lport.getSize().y / 2.0));
+                            }
                         }
                     }
                 }
@@ -813,38 +849,41 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
 
         // iterate through all edges
         for (LEdge ledge : edgeList) {
-            KEdge kedge = (KEdge) ledge.getProperty(Properties.ORIGIN);
-            KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-            KVectorChain bendPoints = ledge.getBendPoints();
+            EdgeType edgeType = ledge.getProperty(Properties.EDGE_TYPE);
+            if ((edgeType != EdgeType.COMPOUND_DUMMY) && (edgeType != EdgeType.COMPOUND_SIDE)) {
+                KEdge kedge = (KEdge) ledge.getProperty(Properties.ORIGIN);
+                KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+                KVectorChain bendPoints = ledge.getBendPoints();
 
-            // add the source port and target port positions to the vector chain
-            LPort sourcePort = ledge.getSource();
-            bendPoints.addFirst(KVector.add(sourcePort.getPosition(), sourcePort.getNode()
-                    .getPosition()));
-            LPort targetPort = ledge.getTarget();
-            bendPoints.addLast(KVector.add(targetPort.getPosition(), targetPort.getNode()
-                    .getPosition()));
+                // add the source port and target port positions to the vector chain
+                LPort sourcePort = ledge.getSource();
+                bendPoints.addFirst(KVector.add(sourcePort.getPosition(), sourcePort.getNode()
+                        .getPosition()));
+                LPort targetPort = ledge.getTarget();
+                bendPoints.addLast(KVector.add(targetPort.getPosition(), targetPort.getNode()
+                        .getPosition()));
 
-            // translate the bend points by the offset and apply the bend points
-            bendPoints.translate(offset);
-            edgeLayout.applyVectorChain(bendPoints);
+                // translate the bend points by the offset and apply the bend points
+                bendPoints.translate(offset);
+                edgeLayout.applyVectorChain(bendPoints);
 
-            // apply layout to labels
-            for (LLabel label : ledge.getLabels()) {
-                KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
-                KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
+                // apply layout to labels
+                for (LLabel label : ledge.getLabels()) {
+                    KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
+                    KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
 
-                KVector labelPos = new KVector(ledge.getSource().getPosition().x, ledge.getSource()
-                        .getPosition().y);
-                labelPos.add(ledge.getSource().getNode().getPosition());
-                labelPos.add(label.getPosition());
-                klabelLayout.setXpos((float) (labelPos.x + offset.x));
-                klabelLayout.setYpos((float) (labelPos.y + offset.y));
-            }
+                    KVector labelPos = new KVector(ledge.getSource().getPosition().x, ledge
+                            .getSource().getPosition().y);
+                    labelPos.add(ledge.getSource().getNode().getPosition());
+                    labelPos.add(label.getPosition());
+                    klabelLayout.setXpos((float) (labelPos.x + offset.x));
+                    klabelLayout.setYpos((float) (labelPos.y + offset.y));
+                }
 
-            // set spline option
-            if (splinesActive) {
-                edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
+                // set spline option
+                if (splinesActive) {
+                    edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
+                }
             }
         }
 
@@ -865,4 +904,62 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         }
     }
 
+    /**
+     * Finds and returns the position of the COMPOUND_SIDE dummy node with the upper resp. lower
+     * rightmost position.
+     * 
+     * @param lnode
+     *            left compound border dummy node that starts the compound node in question.
+     * @param lower
+     *            if true, the lower position is found, if false, the upper one.
+     * @param left
+     * 
+     * 
+     *            if true, the leftmost position is searched for.
+     * @param lGraph
+     *            TODO
+     * @return returns the position of the side dummy node with the right- resp. leftmost position,
+     *         upper resp. lower.
+     */
+    private KVector findSideNodePos(final LNode lnode, final boolean lower, final boolean left,
+            final LayeredGraph lGraph) {
+        Layer layer;
+        if (left) {
+            layer = lnode.getLayer();
+        } else {
+            List<Layer> layerList = lGraph.getLayers();
+            if (layerList == null) {
+                System.out.println("layerList is null");
+            } else {
+                if (layerList.isEmpty()) {
+                    System.out.println("layerList is empty.");
+                }
+            }
+            layer = CompoundSideProcessor.findSpanEnd(lnode, layerList);
+        }
+
+        // initialize according to value of lower
+        int index = layer.getNodes().size() - 1;
+        if (!lower) {
+            index = 0;
+        }
+
+        // find maximum (minimum) index
+        for (LNode layerNode : layer.getNodes()) {
+            if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.COMPOUND_SIDE
+                    && Properties.SIDE_OWNER == lnode) {
+                int test = layerNode.getIndex();
+                if (lower) {
+                    if (test > index) {
+                        index = test;
+                    }
+                } else {
+                    if (test < index) {
+                        index = test;
+                    }
+                }
+            }
+        }
+        return layer.getNodes().get(index).getPosition();
+    }
 }
