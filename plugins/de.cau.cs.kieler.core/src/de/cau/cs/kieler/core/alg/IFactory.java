@@ -30,6 +30,8 @@ public interface IFactory<T> {
     
     /**
      * Destroy a given instance by freeing all resources that are contained.
+     * 
+     * @param obj the instance to destroy
      */
     void destroy(T obj);
     
