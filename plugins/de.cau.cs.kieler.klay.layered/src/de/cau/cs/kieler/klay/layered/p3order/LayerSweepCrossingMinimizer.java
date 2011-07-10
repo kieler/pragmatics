@@ -517,7 +517,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 LNode fixedNode = fixedPort.getNode();
                 
                 if (fixedNode.getLayer() == node.getLayer()) {
-                    // Find the fixed node's vertex and calculate its barycenter (perhaps again)
+                    // Find the fixed node's vertex and calculate its barycenter
                     Vertex fixedVertex = layerVertices.get(fixedNode);
                     calculateBarycenter(fixedVertex, layerVertices, forward, workingSet);
                     
@@ -530,6 +530,25 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             }
             
             vertex.degree += freePort.getDegree();
+        }
+        
+        // Iterate over the node's barycenter associates
+        List<LNode> barycenterAssociates = node.getProperty(Properties.BARYCENTER_ASSOCIATES);
+        if (barycenterAssociates != null) {
+            for (LNode associate : barycenterAssociates) {
+                // Make sure the associate is in the same layer as this node
+                if (node.getLayer() != associate.getLayer()) {
+                    continue;
+                }
+                
+                // Find the associate's vertex and calculate its barycenter
+                Vertex associateVertex = layerVertices.get(associate);
+                calculateBarycenter(associateVertex, layerVertices, forward, workingSet);
+                
+                // Update this vertex's values
+                vertex.degree += Math.max(0, associateVertex.degree - 1);
+                vertex.summedWeight += associateVertex.summedWeight;
+            }
         }
         
         if (vertex.degree > 0) {

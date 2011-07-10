@@ -137,6 +137,9 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                 northDummyNodes.clear();
                 southDummyNodes.clear();
                 
+                // Create a list of barycenter associates for the node
+                List<LNode> barycenterAssociates = new LinkedList<LNode>();
+                
                 // Prepare a list of ports on the northern side, sorted from left
                 // to right (when viewed in the diagram); create the appropriate
                 // dummy nodes and assign them to the layer
@@ -145,7 +148,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                     portList.add(port);
                 }
 
-                createDummyNodes(portList, northDummyNodes, southDummyNodes);
+                createDummyNodes(portList, northDummyNodes, southDummyNodes, barycenterAssociates);
                 
                 int insertPoint = pointer;
                 LNode successor = node;
@@ -172,7 +175,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                     portList.add(0, port);
                 }
                 
-                createDummyNodes(portList, southDummyNodes, null);
+                createDummyNodes(portList, southDummyNodes, null, barycenterAssociates);
                 
                 LNode predecessor = node;
                 for (LNode dummy : southDummyNodes) {
@@ -188,6 +191,11 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                     
                     predecessor = dummy;
                 }
+                
+                // If the list of barycenter associates contains nodes, set the appropriate property
+                if (!barycenterAssociates.isEmpty()) {
+                    node.setProperty(Properties.BARYCENTER_ASSOCIATES, barycenterAssociates);
+                }
             }
         }
     }
@@ -201,9 +209,12 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
      * @param opposingSideDummyNodes all dummy nodes created due to north-south self-loops
      *                               for the southern side are placed in this list. When
      *                               called for southern ports, this may be {@code null}.
+     * @param barycenterAssociates dummy nodes created for anything other than self-loops
+     *                             are put in this list to remember to include them in the
+     *                             barycenter calculations later.
      */
     private void createDummyNodes(final List<LPort> ports, final List<LNode> dummyNodes,
-            final List<LNode> opposingSideDummyNodes) {
+            final List<LNode> opposingSideDummyNodes, final List<LNode> barycenterAssociates) {
         
         // We'll assemble lists of ports with only incoming, ports with only outgoing
         // and ports with both, incoming and outgoing edges
@@ -277,7 +288,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
             }
             
             // Otherwise, create a dummy node for them
-            createDummyNode(inPort, outPort, dummyNodes);
+            barycenterAssociates.add(createDummyNode(inPort, outPort, dummyNodes));
             
             inPortsIndex++;
             outPortsIndex--;
@@ -285,18 +296,18 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         
         // Give the rest of input and output ports their dummy nodes
         while (inPortsIndex < inPorts.size()) {
-            createDummyNode(inPorts.get(inPortsIndex), null, dummyNodes);
+            barycenterAssociates.add(createDummyNode(inPorts.get(inPortsIndex), null, dummyNodes));
             inPortsIndex++;
         }
         
         while (outPortsIndex >= 0) {
-            createDummyNode(null, outPorts.get(outPortsIndex), dummyNodes);
+            barycenterAssociates.add(createDummyNode(null, outPorts.get(outPortsIndex), dummyNodes));
             outPortsIndex--;
         }
         
         // in / out ports get their own dummy nodes
         for (LPort inOutPort : inOutPorts) {
-            createDummyNode(inOutPort, inOutPort, dummyNodes);
+            barycenterAssociates.add(createDummyNode(inOutPort, inOutPort, dummyNodes));
         }
     }
     
@@ -310,8 +321,9 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
      * @param inPort the input port whose edges to reroute. May be {@code null}.
      * @param outPort the output port whose edges to reroute. May be {@code null}.
      * @param dummyNodes list the created dummy node should be added to.
+     * @return the created dummy node.
      */
-    private void createDummyNode(final LPort inPort, final LPort outPort,
+    private LNode createDummyNode(final LPort inPort, final LPort outPort,
             final List<LNode> dummyNodes) {
         
         LNode dummy = new LNode();
@@ -356,6 +368,8 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         dummy.setProperty(Properties.CROSSING_HINT, crossingHint);
         
         dummyNodes.add(dummy);
+        
+        return dummy;
     }
     
     /**

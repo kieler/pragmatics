@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered.properties;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -128,6 +129,15 @@ public final class Properties {
      */
     public static final IProperty<Double> EXT_PORT_RATIO_OR_POSITION = new Property<Double>(
             "externalPortRatioOrPosition", 0.0);
+    
+    /**
+     * A list of nodes whose barycenters should go into the barycenter calculation of the node
+     * this property is set on. Nodes in this list are expected to be in the same layer as the
+     * node the property is set on. This is primarily used when edges are rerouted from a node
+     * to dummy nodes.
+     */
+    public static final IProperty<List<LNode>> BARYCENTER_ASSOCIATES = new Property<List<LNode>>(
+            "barycenterAssociates", null);
 
     /**
      * KNode that contained the origin of this node in the KGraph.
