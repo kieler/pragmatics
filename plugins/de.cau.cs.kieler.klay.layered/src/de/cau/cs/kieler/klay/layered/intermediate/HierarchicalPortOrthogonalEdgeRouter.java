@@ -25,7 +25,6 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.Insets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -226,12 +225,12 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             
             case FIXED_RATIO:
                 applyNorthSouthDummyRatio(dummy, nodeWidth);
-                Util.borderToContentAreaCoordinates(dummy, layeredGraph, true, false);
+                dummy.borderToContentAreaCoordinates(true, false);
                 break;
             
             case FIXED_POS:
                 applyNorthSouthDummyPosition(dummy);
-                Util.borderToContentAreaCoordinates(dummy, layeredGraph, true, false);
+                dummy.borderToContentAreaCoordinates(true, false);
                 break;
             }
         }
@@ -462,7 +461,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
         Insets.Double insets = graph.getInsets();
         float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
         KVector offset = graph.getOffset();
-        double graphHeight = graph.getSize().y + insets.top + insets.bottom + (2 * borderSpacing);
+        KVector graphActualSize = graph.getActualSize();
         
         for (LNode node : layer.getNodes()) {
             if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
@@ -490,8 +489,8 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             case WEST:
                 if (constraints == PortConstraints.FIXED_RATIO) {
                     double ratio = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
-                    nodePosition.y = graphHeight * ratio;
-                    Util.borderToContentAreaCoordinates(node, graph, false, true);
+                    nodePosition.y = graphActualSize.y * ratio;
+                    node.borderToContentAreaCoordinates(false, true);
                 }
                 break;
             

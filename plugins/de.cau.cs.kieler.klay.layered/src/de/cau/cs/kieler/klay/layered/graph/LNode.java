@@ -21,11 +21,13 @@ import java.util.List;
 
 import com.google.common.collect.Iterables;
 
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.util.CompoundCondition;
 import de.cau.cs.kieler.core.util.FilteredIterator;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * A node in a layered graph.
@@ -297,6 +299,36 @@ public class LNode extends LSizedGraphElement {
                 }
             }
         });
+    }
+    
+    /**
+     * Converts the position of this node from coordinates relative to the hierarchical node
+     * border to coordinates relative to that node's content area. The content area is the
+     * hierarchical node minus insets minus border spacing minus offset.
+     * 
+     * @param horizontal if {@code true}, the x coordinate will be translated.
+     * @param vertical if {@code true}, the y coordinate will be translated.
+     * @throws IllegalStateException if the node is not assigned to a layer in a layered graph.
+     */
+    public void borderToContentAreaCoordinates(final boolean horizontal, final boolean vertical) {
+        if (owner == null || owner.getGraph() == null) {
+            throw new IllegalStateException("node is not assigned to a layer in a graph.");
+        }
+        
+        LayeredGraph graph = owner.getGraph();
+        
+        Insets.Double insets = graph.getInsets();
+        float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
+        KVector offset = graph.getOffset();
+        KVector pos = getPosition();
+        
+        if (horizontal) {
+            pos.x = pos.x - insets.left - borderSpacing - offset.x;
+        }
+        
+        if (vertical) {
+            pos.y = pos.y - insets.top - borderSpacing - offset.y;
+        }
     }
 
 }

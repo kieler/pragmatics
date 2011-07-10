@@ -15,11 +15,7 @@ package de.cau.cs.kieler.klay.layered;
 
 import java.io.File;
 
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.klay.layered.graph.Insets;
-import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 
 /**
@@ -65,37 +61,5 @@ public final class Util {
      */
     public static String getDebugOutputFileBaseName(final LayeredGraph graph) {
         return Integer.toString(graph.hashCode() & ((1 << (Integer.SIZE / 2)) - 1)) + "-";
-    }
-    
-    
-    ///////////////////////////////////////////////////////////////////////////////
-    // Coordinate Conversions
-    
-    /**
-     * Converts the position of the given node from coordinates relative to the hierarchical node
-     * border to coordinates relative to that node's content area. The content area is the
-     * hierarchical node minus insets minus border spacing minus offset.
-     * 
-     * @param node the node whose coordinates to convert.
-     * @param graph the layered graph.
-     * @param horizontal if {@code true}, the x coordinate will be translated.
-     * @param vertical if {@code true}, the y coordinate will be translated.
-     */
-    public static void borderToContentAreaCoordinates(final LNode node, final LayeredGraph graph,
-            final boolean horizontal, final boolean vertical) {
-        
-        Insets.Double insets = graph.getInsets();
-        float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
-        KVector offset = graph.getOffset();
-        
-        KVector pos = node.getPosition();
-        
-        if (horizontal) {
-            pos.x = pos.x - insets.left - borderSpacing - offset.x;
-        }
-        
-        if (vertical) {
-            pos.y = pos.y - insets.top - borderSpacing - offset.y;
-        }
     }
 }

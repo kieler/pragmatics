@@ -57,12 +57,27 @@ public class LayeredGraph extends LGraphElement {
 
     /**
      * Returns the size of the graph, that is the bounding box that covers the
-     * whole drawing.
+     * whole drawing. The size does not include insets or anything.
      * 
      * @return the size of the layered graph
      */
     public KVector getSize() {
         return size;
+    }
+    
+    /**
+     * Returns the graph's size including any borders. If the graph represents a
+     * hierarchical node, the returned size represents the node's size. The resturned
+     * size can be modified at will without having any influence on the graph's size
+     * or the actual size returned on the next method call.
+     * 
+     * @return the graph's size including borders.
+     */
+    public KVector getActualSize() {
+        float borderSpacing = getProperty(Properties.BORDER_SPACING);
+        return new KVector(
+                size.x + insets.left + insets.right + (2 * borderSpacing),
+                size.y + insets.top + insets.bottom + (2 * borderSpacing));
     }
     
     /**

@@ -18,7 +18,6 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
@@ -66,7 +65,7 @@ public class HierarchicalPortPositionProcessor extends AbstractAlgorithm impleme
             return;
         }
         
-        double graphHeight = layeredGraph.getSize().y;
+        double graphHeight = layeredGraph.getActualSize().y;
         
         // Iterate over external port dummies
         for (LNode node : layer.getNodes()) {
@@ -83,7 +82,7 @@ public class HierarchicalPortPositionProcessor extends AbstractAlgorithm impleme
             }
             
             node.getPosition().y = finalYCoordinate;
-            Util.borderToContentAreaCoordinates(node, layeredGraph, false, true);
+            node.borderToContentAreaCoordinates(false, true);
         }
     }
     
