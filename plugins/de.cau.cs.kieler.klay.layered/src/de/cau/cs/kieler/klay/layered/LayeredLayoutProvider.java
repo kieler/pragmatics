@@ -94,9 +94,6 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             null,
 
             // Before Phase 3
-            /*
-             * For flattened hierarchical graphs: - COMPOUND_DUMMY_EDGE_REMOVER
-             */
             EnumSet.of(IntermediateLayoutProcessor.PORT_LIST_SORTER,
                     IntermediateLayoutProcessor.PORT_SIDE_PROCESSOR),
 
@@ -111,10 +108,26 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             null);
 
     /** additional processor dependencies for flattened hierarchical graphs. */
-    private static final IntermediateProcessingStrategy FLATTENED_HIERARCHY_PROCESSING_ADDITIONS 
-           = new IntermediateProcessingStrategy(
-            IntermediateProcessingStrategy.BEFORE_PHASE_4,
-            IntermediateLayoutProcessor.COMPOUND_SIDE_PROCESSOR);
+    private static final IntermediateProcessingStrategy FLATTENED_HIERARCHY_PROCESSING_ADDITIONS
+    = new IntermediateProcessingStrategy(
+    // Before Phase 1
+    null,
+
+    // Before Phase 2
+    null,
+
+    // Before Phase 3
+    
+    null,
+
+    // Before Phase 4
+    EnumSet.of(IntermediateLayoutProcessor.COMPOUND_SIDE_PROCESSOR),
+
+    // Before Phase 5
+    null,
+
+    // After Phase 5
+    EnumSet.of(IntermediateLayoutProcessor.COMPOUND_GRAPH_RESTORER));    
 
     // /////////////////////////////////////////////////////////////////////////////
     // Variables
@@ -447,20 +460,20 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }
 
-    // // //////////////////////////////////////////////////////////////////////////////////////
-    // // Hierarchy
-    // /**
-    // * Determines that the LayeredLayoutProvider handles complete hierarchy of the given layout
-    // * node.
-    // *
-    // * @param layoutNode
-    // * the graph to be layouted.
-    // * @return returns true in contrast to the default value.
-    // * @override overrides AbstractLayoutProvider.supportsHierarchy, returning true.
-    // *
-    // */
-    // public boolean supportsHierarchy(final KNode layoutNode) {
-    // return true;
-    // }
+//     // //////////////////////////////////////////////////////////////////////////////////////
+//     // Hierarchy
+//     /**
+//     * Determines that the LayeredLayoutProvider handles complete hierarchy of the given layout
+//     * node.
+//     *
+//     * @param layoutNode
+//     * the graph to be layouted.
+//     * @return returns true in contrast to the default value.
+//     * @override overrides AbstractLayoutProvider.supportsHierarchy, returning true.
+//     *
+//     */
+//     public boolean supportsHierarchy(final KNode layoutNode) {
+//     return true;
+//     }
 
 }
