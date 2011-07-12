@@ -155,6 +155,12 @@ public final class Properties {
      */
     public static final IProperty<Boolean> LEAVE_DUMMY_PORT = new Property<Boolean>(
             "leaveDummyPort", false);
+    
+    /**
+     * UPPER_BORDER_DUMMY node determining the compound node this dummy node belongs to.
+     */
+    public static final IProperty<LNode> COMPOUND_NODE = new Property<LNode>(
+            "CompoundNode", null);
 
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS
