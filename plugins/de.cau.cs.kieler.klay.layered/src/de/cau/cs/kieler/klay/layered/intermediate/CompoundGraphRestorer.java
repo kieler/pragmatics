@@ -120,40 +120,41 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
             if (edgeType == EdgeType.COMPOUND_DUMMY || edgeType == EdgeType.COMPOUND_SIDE) {
                 ledge.getSource().getOutgoingEdges().remove(ledge);
                 ledge.getTarget().getIncomingEdges().remove(ledge);
+            } else {
+
+                // connect all others to the associated compound node
+                // process Source
+                // determine source port
+                LPort sourcePort = ledge.getSource();
+                // determine source node
+                LNode sourceNode = sourcePort.getNode();
+                // determine nodeType of source
+                NodeType sourceNodeType = sourceNode.getProperty(Properties.NODE_TYPE);
+                LNode compoundNode = sourceNode.getProperty(Properties.COMPOUND_NODE);
+
+                // process according to source node type. Translate ports of dummy nodes to ports of
+                // the
+                // compound node.
+                switch (sourceNodeType) {
+                case LOWER_COMPOUND_BORDER:
+                    LPort newPort = transferPort(sourcePort, compoundNode);
+                    ledge.setSource(newPort);
+                    break;
+
+                case UPPER_COMPOUND_PORT:
+                case LOWER_COMPOUND_PORT:
+                    LPort newPort2 = transferPort(sourcePort, compoundNode);
+                    // in this case, we have to keep the port's origin in mind.
+                    newPort2.setProperty(Properties.ORIGIN,
+                            sourcePort.getProperty(Properties.ORIGIN));
+                    ledge.setSource(newPort2);
+                    break;
+
+                // Nothing to be done in case of UPPER_COMPOUND_BORDER
+                default:
+                    break;
+                }
             }
-
-            // connect all others to the associated compound node
-            // process Source
-            // determine source port
-            LPort sourcePort = ledge.getSource();
-            // determine source node
-            LNode sourceNode = sourcePort.getNode();
-            // determine nodeType of source
-            NodeType sourceNodeType = sourceNode.getProperty(Properties.NODE_TYPE);
-
-            // process according to source node type. Translate ports of dummy nodes to ports of the
-            // compound node.
-            switch (sourceNodeType) {
-            case LOWER_COMPOUND_BORDER:
-                LPort newPort = transferPort(sourcePort,
-                        sourceNode.getProperty(Properties.COMPOUND_NODE));
-                ledge.setSource(newPort);
-                break;
-
-            case UPPER_COMPOUND_PORT:
-            case LOWER_COMPOUND_PORT:
-                LPort newPort2 = transferPort(sourcePort,
-                        sourceNode.getProperty(Properties.COMPOUND_NODE));
-                // in this case, we have to keep the port's origin in mind.
-                newPort2.setProperty(Properties.ORIGIN, sourcePort.getProperty(Properties.ORIGIN));
-                ledge.setSource(newPort2);
-                break;
-
-            // Nothing to be done in case of UPPER_COMPOUND_BORDER
-            default:
-                break;
-            }
-
             // remove the now dispensable dummy nodes
             for (LNode removable : removables) {
                 List<LNode> layerNodes = removable.getLayer().getNodes();
