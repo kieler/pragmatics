@@ -14,9 +14,9 @@
 package de.cau.cs.kieler.klay.info;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
-import de.cau.cs.kieler.kiml.ui.layout.LayoutMapping;
+import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutEffect;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
 /**
  * Combination for updating the KIML Viewer when layout actions are performed.
