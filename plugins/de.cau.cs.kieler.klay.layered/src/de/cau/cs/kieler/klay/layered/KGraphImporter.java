@@ -58,7 +58,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author msp
  * @author cds
- * @author ima
  */
 public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
