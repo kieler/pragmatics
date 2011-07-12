@@ -383,6 +383,20 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
             final Map<KGraphElement, LGraphElement> elemMap, final List<LNode> dummyNodes,
             final List<KEdge> edgesList, final boolean incoming) {
 
+        LNode upperBorder = null;
+        if (incoming) {
+            // Create upper border dummy node to represent the compound node.
+            upperBorder = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_BORDER, dummyNodes);
+        } else {
+            for (LNode lnode : dummyNodes) {
+                if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.UPPER_COMPOUND_BORDER) {
+                    upperBorder = lnode;
+                    break;
+                }
+            }
+        }
+    
+
         for (KEdge kEdge : edgesList) {
             KEdgeLayout edgeLayout = kEdge.getData(KEdgeLayout.class);
 
@@ -423,9 +437,9 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
                 if (fromInside) {
                     representative = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_BORDER,
                             dummyNodes);
+                    representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
                 } else {
-                    representative = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_BORDER,
-                            dummyNodes);
+                    representative = upperBorder;
                 }
 
                 // If edge has a target port, create adequate compound port dummy node
@@ -433,9 +447,11 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
                 if (fromInside) {
                     representative = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_PORT,
                             dummyNodes);
+                    representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
                 } else {
                     representative = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_PORT,
                             dummyNodes);
+                    representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
                 }
             }
             if (!layeredNodes.contains(representative)) {
@@ -473,18 +489,21 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         }
 
         // If not done before (if the edge list is empty or containing only edges to/from
-        // descendants, a single border dummy node is created.
+        // descendants), a single lower border dummy node is added.
 
         NodeType nodeType = null;
         if (incoming) {
-            nodeType = NodeType.UPPER_COMPOUND_BORDER;
+            if (!(layeredNodes.contains(upperBorder))) {
+                layeredNodes.add(upperBorder);
+            }
         } else {
-            nodeType = NodeType.LOWER_COMPOUND_BORDER;
-        }
-        LNode dummyNode = createBorderDummyNode(node, nodeType, dummyNodes);
-        if (!(layeredNodes.contains(dummyNode))) {
-            layeredNodes.add(dummyNode);
-        }
+                nodeType = NodeType.LOWER_COMPOUND_BORDER;
+                LNode dummyNode = createBorderDummyNode(node, nodeType, dummyNodes);
+                dummyNode.setProperty(Properties.COMPOUND_NODE, upperBorder);
+                if (!(layeredNodes.contains(dummyNode))) {
+                    layeredNodes.add(dummyNode);
+                }
+            }
     }
 
     /**
@@ -624,7 +643,7 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
             final List<LNode> dummyList) {
         LNode dummyNode = null;
         if ((nodeType == NodeType.LOWER_COMPOUND_BORDER)
-                || (nodeType == NodeType.UPPER_COMPOUND_BORDER)) {
+        /* || (nodeType == NodeType.UPPER_COMPOUND_BORDER) */) {
             for (LNode dummy : dummyList) {
                 if (dummy.getProperty(Properties.NODE_TYPE) == nodeType) {
                     dummyNode = dummy;
@@ -750,16 +769,12 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
 
     // /////////////////////////////////////////////////////////////////////////////
     // Apply Layout Results
-    
+
     /**
      * {@inheritDoc}
      */
     public void applyLayout(final LayeredGraph layeredGraph) {
-        
-        if (layeredGraph.getLayers().isEmpty()) {
-            System.out.println("Apply layout gets a layered Graph with an empty layerList.");
-        }
-        
+
         KNode target = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
 
         // determine the border spacing, which influences the offset
@@ -861,10 +876,10 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
                 + insets.getRight();
         float height = (float) layeredGraph.getSize().y + 2 * borderSpacing + insets.getTop()
                 + insets.getBottom();
-        
+
         if (layeredGraph.getProperty(Properties.GRAPH_PROPERTIES).contains(
                 GraphProperties.EXTERNAL_PORTS)) {
-            
+
             // ports have been positioned using dummy nodes
             parentLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
             KimlUtil.resizeNode(target, width, height, false);
@@ -873,7 +888,5 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
             KimlUtil.resizeNode(target, width, height, true);
         }
     }
-
-
 
 }
