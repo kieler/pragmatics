@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.ui.layout;
+package de.cau.cs.kieler.kiml.ui.service;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,14 +28,14 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.kiml.CompoundLayoutConfig;
-import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
-import de.cau.cs.kieler.kiml.ILayoutConfig;
-import de.cau.cs.kieler.kiml.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutContext;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig;
+import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
 /**
  * The main class for configuration of KGraph instances.
@@ -168,7 +168,7 @@ public class LayoutOptionManager {
         EClass modelClass = modelElement.eClass();
         List<ILayoutConfig> configs = semanticConfigMap.get(modelClass);
         if (configs == null) {
-            configs = LayoutDataService.getInstance().getSemanticConfigs(modelClass);
+            configs = EclipseLayoutInfoService.getInstance().getSemanticConfigs(modelClass);
             semanticConfigMap.put(modelClass, configs);
         }
         return configs;

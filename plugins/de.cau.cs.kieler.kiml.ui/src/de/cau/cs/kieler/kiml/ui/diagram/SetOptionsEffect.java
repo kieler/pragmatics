@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.ui.layout;
+package de.cau.cs.kieler.kiml.ui.diagram;
 
 import java.util.Collections;
 import java.util.Map;
@@ -25,10 +25,12 @@ import org.eclipse.ui.IWorkbenchPart;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
-import de.cau.cs.kieler.kiml.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutContext;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.Messages;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -81,8 +83,8 @@ public class SetOptionsEffect extends AbstractEffect {
                 .getBridge(workbenchPart);
         if (bridge != null) {
             EditPart editPart = bridge.getEditPart(modelElement);
-            final EclipseLayoutDataService layoutDataService = EclipseLayoutDataService.getInstance();
-            DiagramLayoutManager<?> manager = layoutDataService.getManager(workbenchPart, editPart);
+            DiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
+                    .getManager(workbenchPart, editPart);
             if (manager != null) {
                 final IMutableLayoutConfig layoutConfig = manager.getLayoutConfig();
                 if (layoutConfig != null) {
@@ -97,7 +99,7 @@ public class SetOptionsEffect extends AbstractEffect {
                     KimlUiUtil.runModelChange(new Runnable() {
                         public void run() {
                             for (Map.Entry<String, Object> entry : optionMap.entrySet()) {
-                                LayoutOptionData<?> optionData = layoutDataService
+                                LayoutOptionData<?> optionData = LayoutDataService.getInstance()
                                         .getOptionData(entry.getKey());
                                 if (optionData != null) {
                                     layoutConfig.setValue(optionData, context, entry.getValue());

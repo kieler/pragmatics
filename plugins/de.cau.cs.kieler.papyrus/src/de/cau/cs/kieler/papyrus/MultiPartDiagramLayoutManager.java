@@ -19,7 +19,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.LayoutMapping;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
 /**
  * Layout manager wrapper for the Papyrus multi diagram editor.

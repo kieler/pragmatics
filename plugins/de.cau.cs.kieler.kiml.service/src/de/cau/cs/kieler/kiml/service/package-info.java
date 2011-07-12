@@ -13,7 +13,6 @@
  */
 
 /**
- * Classes with generic implementations to apply layout to GMF diagrams. These
- * serve as a wrapper of the KIML layout interface for graphical diagrams.
+ * Layout service classes that are used both in the client UI and in server applications.
  */
-package de.cau.cs.kieler.kiml.ui.layout;
+package de.cau.cs.kieler.kiml.service;

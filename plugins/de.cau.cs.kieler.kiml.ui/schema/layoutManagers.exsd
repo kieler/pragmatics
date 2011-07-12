@@ -60,7 +60,7 @@
                   Qualified name of a diagram layout manager class.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager:"/>
+                  <meta.attribute kind="java" basedOn="de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager:"/>
                </appinfo>
             </annotation>
          </attribute>

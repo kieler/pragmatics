@@ -35,7 +35,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 
 /**
  * Utility methods used for the KIML UI.
@@ -154,6 +153,24 @@ public final class KimlUiUtil {
             }
         });
     }
+    
+    /**
+     * Returns the layout option data that matches the given user-friendly name and is known by the
+     * given layout provider.
+     * 
+     * @param providerData a layout provider data
+     * @param optionName user-friendly name of a layout option
+     * @return the corresponding layout option data
+     */
+    public static LayoutOptionData<?> getOptionData(final LayoutAlgorithmData providerData,
+            final String optionName) {
+        for (LayoutOptionData<?> data : LayoutDataService.getInstance().getOptionData()) {
+            if (data.getName().equals(optionName) && providerData.knowsOption(data)) {
+                return data;
+            }
+        }
+        return null;
+    }
 
     /**
      * Retrieves a suitable layout option data instance that matches the given
@@ -166,8 +183,7 @@ public final class KimlUiUtil {
     public static LayoutOptionData<?> getOptionData(final LayoutAlgorithmData[] providerDataArray,
             final String displayName) {
         for (LayoutAlgorithmData providerData : providerDataArray) {
-            LayoutOptionData<?> optionData = EclipseLayoutDataService.getInstance().getOptionData(
-                    providerData, displayName);
+            LayoutOptionData<?> optionData = getOptionData(providerData, displayName);
             if (optionData != null) {
                 return optionData;
             }

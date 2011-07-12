@@ -19,7 +19,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutDataService;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -157,7 +159,8 @@ public class KimlUiPlugin extends AbstractUIPlugin {
         super.start(context);
         plugin = this;
         images = new Images();
-        EclipseLayoutDataService.createLayoutServices();
+        EclipseLayoutDataService.create();
+        EclipseLayoutInfoService.create();
     }
 
     /**
@@ -165,12 +168,13 @@ public class KimlUiPlugin extends AbstractUIPlugin {
      */
     @Override
     public void stop(final BundleContext context) throws Exception {
-        EclipseLayoutDataService layoutDataService = EclipseLayoutDataService.getInstance();
-        if (layoutDataService != null) {
-            layoutDataService.storePreferences();
-            for (LayoutAlgorithmData algoData : layoutDataService.getAlgorithmData()) {
-                algoData.getProviderPool().clear();
-            }
+        EclipseLayoutInfoService layoutInfoService = EclipseLayoutInfoService.getInstance();
+        if (layoutInfoService != null) {
+            layoutInfoService.storePreferences();
+        }
+        LayoutDataService layoutDataService = LayoutDataService.getInstance();
+        for (LayoutAlgorithmData algoData : layoutDataService.getAlgorithmData()) {
+            algoData.getProviderPool().clear();
         }
         plugin = null;
         if (images != null) {

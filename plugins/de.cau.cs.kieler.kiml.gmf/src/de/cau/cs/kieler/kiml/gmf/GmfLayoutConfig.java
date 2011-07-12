@@ -41,15 +41,15 @@ import de.cau.cs.kieler.core.model.gmf.GmfFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
-import de.cau.cs.kieler.kiml.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
+import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.gmf.layoutoptions.KOption;
 import de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyle;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
 
 /**
  * A layout configuration that stores layout options in the notation model of GMF diagrams.

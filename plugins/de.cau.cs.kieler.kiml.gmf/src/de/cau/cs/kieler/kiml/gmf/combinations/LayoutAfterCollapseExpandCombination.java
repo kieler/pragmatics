@@ -22,7 +22,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.model.gmf.triggers.ModelChangeTrigger.DiagramChangeState;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutEffect;
 
 /**
  * Applies automatic layout after the collapsed state of a compartment of a 

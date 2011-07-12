@@ -19,16 +19,15 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
-import de.cau.cs.kieler.kiml.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
+import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
+import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -84,7 +83,7 @@ public class LayoutPropertySource implements IPropertySource {
      * {@inheritDoc}
      */
     public Object getPropertyValue(final Object id) {
-        EclipseLayoutDataService layoutServices = EclipseLayoutDataService.getInstance();
+        LayoutDataService layoutServices = LayoutDataService.getInstance();
         LayoutOptionData<?> optionData = layoutServices.getOptionData((String) id);
         Object value;
         if (LayoutOptions.ALGORITHM_ID.equals(id)) {

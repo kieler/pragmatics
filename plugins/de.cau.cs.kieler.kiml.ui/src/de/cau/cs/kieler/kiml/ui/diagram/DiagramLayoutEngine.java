@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.ui.layout;
+package de.cau.cs.kieler.kiml.ui.diagram;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -28,10 +28,12 @@ import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
-import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
 import de.cau.cs.kieler.kiml.ui.util.DebugCanvas;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -94,7 +96,7 @@ public class DiagramLayoutEngine {
     public LayoutMapping<?> layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
             final boolean animate, final boolean progressBar, final boolean layoutAncestors,
             final boolean zoom, final ILayoutConfig extraLayoutConfig) {
-        DiagramLayoutManager<?> layoutManager = EclipseLayoutDataService.getInstance().getManager(
+        DiagramLayoutManager<?> layoutManager = EclipseLayoutInfoService.getInstance().getManager(
                 workbenchPart, diagramPart);
         if (layoutManager != null) {
             return layout(layoutManager, workbenchPart, diagramPart, animate, progressBar,

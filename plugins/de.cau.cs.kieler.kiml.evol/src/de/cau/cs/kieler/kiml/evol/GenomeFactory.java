@@ -30,13 +30,13 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
-import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
-import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.evol.genetic.Distribution;
 import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
 import de.cau.cs.kieler.kiml.evol.genetic.FloatTypeInfo;

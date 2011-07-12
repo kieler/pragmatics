@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml;
+package de.cau.cs.kieler.kiml.config;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -28,6 +28,10 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.kgraph.util.KGraphSwitch;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
+import de.cau.cs.kieler.kiml.LayoutContext;
+import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -217,11 +221,6 @@ public class DefaultLayoutConfig implements ILayoutConfig {
         String chDiagType = diagramType == null ? LayoutDataService.DIAGRAM_TYPE_GENERAL : diagramType;
         LayoutDataService layoutServices = LayoutDataService.getInstance();
         String layoutHint = theLayoutHint;
-        // check whether a specific provider is registered for the diagram type
-        if (layoutHint == null) {
-            layoutHint = (String) layoutServices.getOption(chDiagType,
-                    LayoutOptions.ALGORITHM_ID);
-        }
         
         // try to get a specific provider for the given hint
         LayoutAlgorithmData directHitData = layoutServices.getAlgorithmData(layoutHint);

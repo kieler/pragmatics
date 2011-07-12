@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.ui.layout;
+package de.cau.cs.kieler.kiml.ui.diagram;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutContext;
-import de.cau.cs.kieler.kiml.VolatileLayoutConfig;
+import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 
 /**
  * Performs automatic layout on a diagram editor for a given selection. The layout

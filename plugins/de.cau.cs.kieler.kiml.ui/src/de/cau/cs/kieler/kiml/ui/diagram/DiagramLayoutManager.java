@@ -11,11 +11,11 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.ui.layout;
+package de.cau.cs.kieler.kiml.ui.diagram;
 
 import org.eclipse.ui.IWorkbenchPart;
 
-import de.cau.cs.kieler.kiml.IMutableLayoutConfig;
+import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 
 /**
  * Abstract superclass for managers of diagram layout.

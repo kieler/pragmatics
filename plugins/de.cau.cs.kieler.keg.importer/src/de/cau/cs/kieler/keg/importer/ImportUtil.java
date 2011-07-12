@@ -50,9 +50,9 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
-import de.cau.cs.kieler.kiml.ui.layout.LayoutMapping;
+import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
 /**
  * A utility class for KEG import.
@@ -219,7 +219,7 @@ public final class ImportUtil {
                 // get the layout manager for the editor
                 @SuppressWarnings("unchecked")
                 DiagramLayoutManager<T> layoutManager = (DiagramLayoutManager<T>)
-                        EclipseLayoutDataService.getInstance().getManager(editorPart, null);
+                        EclipseLayoutInfoService.getInstance().getManager(editorPart, null);
                 if (layoutManager == null) {
                     // FIXME throw a more specific exception
                     lastException.set(new RuntimeException(

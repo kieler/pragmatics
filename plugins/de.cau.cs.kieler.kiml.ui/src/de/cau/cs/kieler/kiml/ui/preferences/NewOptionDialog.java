@@ -40,8 +40,9 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
 import de.cau.cs.kieler.kiml.ui.preferences.OptionsTableProvider.DataEntry;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutDataService;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
 /**
  * A dialog to add new default layout options in the preference page.
@@ -262,7 +263,7 @@ public class NewOptionDialog extends Dialog {
         dialog.setTitle(Messages.getString("kiml.ui.57")); //$NON-NLS-1$
         dialog.setContentProvider(ArrayContentProvider.getInstance());
         dialog.setLabelProvider(new LabelProvider());
-        List<Pair<String, String>> diagramTypes = EclipseLayoutDataService
+        List<Pair<String, String>> diagramTypes = EclipseLayoutInfoService
                 .getInstance().getDiagramTypes();
         SelectionData[] input = new SelectionData[diagramTypes.size()];
         int i = 0;
@@ -337,15 +338,15 @@ public class NewOptionDialog extends Dialog {
      */
     public DataEntry createDataEntry() {
         if (elementValue != null && optionValue != null) {
-            LayoutDataService layoutServices = LayoutDataService.getInstance();
             String name;
             if (elementType == ElementType.DIAG_TYPE) {
-                name = layoutServices.getDiagramTypeName(elementValue);
+                name = EclipseLayoutInfoService.getInstance().getDiagramTypeName(elementValue);
             } else {
                 int dotIndex = elementValue.lastIndexOf('.');
                 name = elementValue.substring(dotIndex + 1);
             }
-            LayoutOptionData<?> optionData = layoutServices.getOptionData(optionValue);
+            LayoutOptionData<?> optionData = LayoutDataService.getInstance()
+                    .getOptionData(optionValue);
             if (optionData != null) {
                 Object value = optionData.getDefault();
                 if (value == null) {

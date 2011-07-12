@@ -236,19 +236,19 @@ point="org.eclipse.ui.menus">
        point="de.cau.cs.kieler.core.kivi.combinations">
     <combination
           active="true"
-          class="de.cau.cs.kieler.kiml.ui.layout.LayoutCombination"
+          class="de.cau.cs.kieler.kiml.ui.diagram.LayoutCombination"
           description="Performs automatic layout when either of the buttons or the key combination is pressed."
           name="Automatic Layout">
     </combination>
     <combination
             active="true"
-            class="de.cau.cs.kieler.kiml.ui.layout.RandomLayoutCombination"
+            class="de.cau.cs.kieler.kiml.ui.diagram.RandomLayoutCombination"
             description="Apply a random layout on all components of the model. Can be used to experiment with other layouters afterwards."
             name="Random Layout">
     </combination>
     <combination
           active="true"
-          class="de.cau.cs.kieler.kiml.ui.layout.LayoutAfterDiagramReinitCombination"
+          class="de.cau.cs.kieler.kiml.ui.diagram.LayoutAfterDiagramReinitCombination"
           description="Performs an automatic layout after a diagram has been reinitialized from its model file"
           name="Layout After Diagram Reinitialization">
     </combination>

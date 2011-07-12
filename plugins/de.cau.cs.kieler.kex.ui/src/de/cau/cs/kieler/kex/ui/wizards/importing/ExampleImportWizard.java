@@ -44,7 +44,7 @@ import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.ui.KEXUIPlugin;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 
 /**
  * This wizard contains all elements for an kex import wizard.

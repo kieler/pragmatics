@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.ui.layout;
+package de.cau.cs.kieler.kiml.ui.service;
 
 import java.util.Map.Entry;
 import java.util.Set;
@@ -25,11 +25,11 @@ import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
-import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 
@@ -81,12 +81,12 @@ public class EclipseLayoutConfig implements ILayoutConfig {
      */
     public static Object getOption(final Object diagramPart, final EObject modelElement,
             final IProperty<?> property) {
-        LayoutDataService layoutServices = LayoutDataService.getInstance();
+        EclipseLayoutInfoService infoService = EclipseLayoutInfoService.getInstance();
         String id = property.getId();
         if (diagramPart != null) {
             // get option for the edit part class
             String clazzName = diagramPart.getClass().getName();
-            Object value = layoutServices.getOption(clazzName, id);
+            Object value = infoService.getOptionValue(clazzName, id);
             if (value != null) {
                 return value;
             }
@@ -94,7 +94,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         if (modelElement != null) {
             // get option for the domain model element class
             EClass eclazz = modelElement.eClass();
-            Object value = layoutServices.getOption(eclazz, id);
+            Object value = infoService.getOptionValue(eclazz, id);
             if (value != null) {
                 return value;
             }
@@ -168,7 +168,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
      * {@inheritDoc}
      */
     public Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
-        EclipseLayoutDataService layoutServices = EclipseLayoutDataService.getInstance();
+        EclipseLayoutInfoService infoService = EclipseLayoutInfoService.getInstance();
         Object result = null;
         
         // check default value set for the actual edit part or its model element
@@ -180,14 +180,16 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         
         if (optionData.hasTarget(LayoutOptionData.Target.PARENTS)) {
             // check default value for the diagram type of the selection's content
-            result = layoutServices.getOption(context.getProperty(DefaultLayoutConfig.CONTENT_DIAGT),
+            result = infoService.getOptionValue(context.getProperty(
+                    DefaultLayoutConfig.CONTENT_DIAGT),
                     optionData.getId());
             if (result != null) {
                 return result;
             }
         } else {
             // check default value for the diagram type of the selection's container
-            result = layoutServices.getOption(context.getProperty(DefaultLayoutConfig.CONTAINER_DIAGT),
+            result = infoService.getOptionValue(context.getProperty(
+                    DefaultLayoutConfig.CONTAINER_DIAGT),
                     optionData.getId());
             if (result != null) {
                 return result;
@@ -258,7 +260,8 @@ public class EclipseLayoutConfig implements ILayoutConfig {
      * {@inheritDoc}
      */
     public void transferValues(final KGraphData graphData, final LayoutContext context) {
-        LayoutDataService layoutServices = LayoutDataService.getInstance();
+        EclipseLayoutInfoService infoService = EclipseLayoutInfoService.getInstance();
+        LayoutDataService dataService = LayoutDataService.getInstance();
         Object value;
         
         // get dynamic values for specific options
@@ -281,9 +284,9 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         // get default layout options for the diagram type
         String diagramType = context.getProperty(DefaultLayoutConfig.CONTENT_DIAGT);
         if (diagramType != null) {
-            for (Entry<String, Object> entry : layoutServices.getOptions(diagramType).entrySet()) {
+            for (Entry<String, Object> entry : infoService.getOptionValues(diagramType).entrySet()) {
                 if (entry.getValue() != null) {
-                    LayoutOptionData<?> optionData = layoutServices.getOptionData(entry.getKey());
+                    LayoutOptionData<?> optionData = dataService.getOptionData(entry.getKey());
                     graphData.setProperty(optionData, entry.getValue());
                 }
             }
@@ -291,10 +294,10 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         
         // get default layout options for the domain model element
         if (modelElement != null) {
-            for (Entry<String, Object> entry : layoutServices.getOptions(
+            for (Entry<String, Object> entry : infoService.getOptionValues(
                     modelElement.eClass()).entrySet()) {
                 if (entry.getValue() != null) {
-                    LayoutOptionData<?> optionData = layoutServices.getOptionData(entry.getKey());
+                    LayoutOptionData<?> optionData = dataService.getOptionData(entry.getKey());
                     graphData.setProperty(optionData, entry.getValue());
                 }
             }
@@ -303,9 +306,9 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         // get default layout options for the edit part
         if (diagPart != null) {
             String clazzName = diagPart.getClass().getName();
-            for (Entry<String, Object> entry : layoutServices.getOptions(clazzName).entrySet()) {
+            for (Entry<String, Object> entry : infoService.getOptionValues(clazzName).entrySet()) {
                 if (entry.getValue() != null) {
-                    LayoutOptionData<?> optionData = layoutServices.getOptionData(entry.getKey());
+                    LayoutOptionData<?> optionData = dataService.getOptionData(entry.getKey());
                     graphData.setProperty(optionData, entry.getValue());
                 }
             }

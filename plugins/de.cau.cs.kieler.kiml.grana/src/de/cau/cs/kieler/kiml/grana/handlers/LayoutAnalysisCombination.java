@@ -20,8 +20,8 @@ import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
-import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
-import de.cau.cs.kieler.kiml.ui.layout.LayoutMapping;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutEffect;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
 /**
  * A view management combination that performs graph analysis after layout.

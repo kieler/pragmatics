@@ -16,7 +16,7 @@ package de.cau.cs.kieler.kiml.ui;
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.ui.IWorkbenchPart;
 
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
 /**
  * Tester class for checking whether the active editor is supported by KIML.
@@ -33,7 +33,7 @@ public class ActiveEditorSupportedTester extends PropertyTester {
             final Object[] args, final Object expectedValue) {
         if (receiver instanceof IWorkbenchPart) {
             IWorkbenchPart workbenchPart = (IWorkbenchPart) receiver;
-            return EclipseLayoutDataService.getInstance().getManager(workbenchPart, null) != null;
+            return EclipseLayoutInfoService.getInstance().getManager(workbenchPart, null) != null;
         }
         return false;
     }

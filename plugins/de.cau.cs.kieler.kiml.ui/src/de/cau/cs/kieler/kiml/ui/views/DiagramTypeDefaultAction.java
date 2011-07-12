@@ -20,8 +20,8 @@ import org.eclipse.ui.views.properties.IPropertySheetEntry;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -87,7 +87,7 @@ public class DiagramTypeDefaultAction extends Action {
             if (optionData.getId().equals(LayoutOptions.ALGORITHM_ID)) {
                 valueString = LayoutPropertySource.getLayoutHint(valueString);
             }
-            EclipseLayoutDataService.getInstance().storeOption(diagramType, optionData, valueString);
+            EclipseLayoutInfoService.getInstance().storeOption(diagramType, optionData, valueString);
         }
     }
     

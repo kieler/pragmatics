@@ -63,8 +63,8 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.layout.ApplyLayoutRequest;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
+import de.cau.cs.kieler.kiml.ui.diagram.ApplyLayoutRequest;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -125,7 +125,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 // set further options
                 IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
                 command.setObliqueRouting(preferenceStore
-                        .getBoolean(EclipseLayoutDataService.PREF_OBLIQUE_ROUTE));
+                        .getBoolean(EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE));
 
                 pointListMap.clear();
                 return new ICommandProxy(command);

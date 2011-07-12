@@ -45,7 +45,7 @@ import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.SourceType;
 import de.cau.cs.kieler.kex.ui.KEXUIPlugin;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 
 /**
  * This class contains the contents to run a quick start example.

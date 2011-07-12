@@ -11,10 +11,12 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml;
+package de.cau.cs.kieler.kiml.config;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.LayoutContext;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
 
 /**
  * An extension of the layout configuration interface for configurations that can be altered.

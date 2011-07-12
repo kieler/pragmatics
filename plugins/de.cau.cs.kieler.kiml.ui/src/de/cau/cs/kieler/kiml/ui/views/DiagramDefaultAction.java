@@ -23,14 +23,14 @@ import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
-import de.cau.cs.kieler.kiml.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
+import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -73,7 +73,7 @@ public class DiagramDefaultAction extends Action {
         if (bridge != null) {
             EditPart diagram = bridge.getEditPart(workbenchPart);
             if (diagram != null) {
-                DiagramLayoutManager<?> manager = EclipseLayoutDataService.getInstance()
+                DiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
                         .getManager(workbenchPart, diagram);
                 if (manager != null) {
                     final IMutableLayoutConfig layoutConfig = manager.getLayoutConfig();

@@ -11,12 +11,15 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml;
+package de.cau.cs.kieler.kiml.config;
 
 import org.eclipse.emf.ecore.EObject;
 
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.kiml.LayoutContext;
+import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**

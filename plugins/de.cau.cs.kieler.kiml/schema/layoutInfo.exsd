@@ -138,7 +138,7 @@
                   An implementation of a semantic layout configuration, which can decide for each model element individually what layout option values are assigned.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="de.cau.cs.kieler.kiml.SemanticLayoutConfig:"/>
+                  <meta.attribute kind="java" basedOn="de.cau.cs.kieler.kiml.config.SemanticLayoutConfig:"/>
                </appInfo>
             </annotation>
          </attribute>

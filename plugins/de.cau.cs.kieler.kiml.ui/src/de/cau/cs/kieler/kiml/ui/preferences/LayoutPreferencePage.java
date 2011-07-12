@@ -49,7 +49,7 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.LayoutOptionValidator;
 import de.cau.cs.kieler.kiml.ui.LayouterHintDialog;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
@@ -106,7 +106,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         obliqueCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
         obliqueCheckBox.setText(Messages.getString("kiml.ui.36")); //$NON-NLS-1$
         obliqueCheckBox.setSelection(getPreferenceStore().getBoolean(
-                EclipseLayoutDataService.PREF_OBLIQUE_ROUTE));
+                EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE));
         
         FillLayout layout = new FillLayout();
         layout.marginWidth = MARGIN_WIDTH;
@@ -127,15 +127,15 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         Group elementGroup = new Group(parent, SWT.NONE);
         elementGroup.setText(Messages.getString("kiml.ui.28")); //$NON-NLS-1$
         IPreferenceStore preferenceStore = getPreferenceStore();
-        LayoutDataService layoutServices = LayoutDataService.getInstance();
-        Collection<LayoutOptionData<?>> layoutOptionData = layoutServices.getOptionData();
+        LayoutDataService dataService = LayoutDataService.getInstance();
+        Collection<LayoutOptionData<?>> layoutOptionData = dataService.getOptionData();
         optionEntries = new LinkedList<OptionsTableProvider.DataEntry>();
 
         // add options for edit parts and domain model elements
-        Set<String> elements = EclipseLayoutDataService.getInstance().getRegisteredElements();
+        Set<String> elements = EclipseLayoutInfoService.getInstance().getRegisteredElements();
         for (String element : elements) {
             for (LayoutOptionData<?> data : layoutOptionData) {
-                String preference = EclipseLayoutDataService.getPreferenceName(element, data.getId());
+                String preference = EclipseLayoutInfoService.getPreferenceName(element, data.getId());
                 if (preferenceStore.contains(preference)) {
                     Object value = data.parseValue(preferenceStore.getString(preference));
                     if (value != null) {
@@ -154,10 +154,11 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         }
         
         // add options for diagram types
-        List<Pair<String, String>> diagramTypeList = layoutServices.getDiagramTypes();
+        List<Pair<String, String>> diagramTypeList = EclipseLayoutInfoService.getInstance()
+                .getDiagramTypes();
         for (Pair<String, String> diagramType : diagramTypeList) {
             for (LayoutOptionData<?> data : layoutOptionData) {
-                String preference = EclipseLayoutDataService.getPreferenceName(
+                String preference = EclipseLayoutInfoService.getPreferenceName(
                         diagramType.getFirst(), data.getId());
                 if (preferenceStore.contains(preference)) {
                     Object value = data.parseValue(preferenceStore.getString(preference));
@@ -401,7 +402,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         super.performDefaults();
         // set default values for the general options
         obliqueCheckBox.setSelection(getPreferenceStore().getDefaultBoolean(
-                EclipseLayoutDataService.PREF_OBLIQUE_ROUTE));
+                EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE));
         
         // clear the layout options table
         for (OptionsTableProvider.DataEntry entry : optionEntries) {
@@ -415,31 +416,30 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      */
     @Override
     public boolean performOk() {
-        EclipseLayoutDataService layoutServices = EclipseLayoutDataService.getInstance();
-        LayoutDataService.Registry registry = LayoutDataService.getRegistry();
+        EclipseLayoutInfoService infoService = EclipseLayoutInfoService.getInstance();
         // set new values for the general options
-        getPreferenceStore().setValue(EclipseLayoutDataService.PREF_OBLIQUE_ROUTE,
+        getPreferenceStore().setValue(EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE,
                 obliqueCheckBox.getSelection());
         
         // store data for the diagram element and diagram type options
         for (OptionsTableProvider.DataEntry entry : optionEntries) {
-            Object oldValue = layoutServices.getOption(entry.getElementId(),
+            Object oldValue = infoService.getOptionValue(entry.getElementId(),
                     entry.getOptionData().getId());
             Object newValue = entry.getValue();
             if (oldValue == null && newValue != null || !oldValue.equals(newValue)) {
-                String preference = EclipseLayoutDataService.getPreferenceName(
+                String preference = EclipseLayoutInfoService.getPreferenceName(
                         entry.getElementId(), entry.getOptionData().getId());
                 if (newValue == null) {
-                    registry.removeOption(entry.getElementId(),
+                    infoService.removeOptionValue(entry.getElementId(),
                             entry.getOptionData().getId());
                     getPreferenceStore().setToDefault(preference);
-                    layoutServices.getRegisteredElements().remove(entry.getElementId());
+                    infoService.getRegisteredElements().remove(entry.getElementId());
                 } else {
-                    registry.addOption(entry.getElementId(),
+                    infoService.addOptionValue(entry.getElementId(),
                             entry.getOptionData().getId(), newValue);
                     getPreferenceStore().setValue(preference, newValue.toString());
                     if (entry.getType() != ElementType.DIAG_TYPE) {
-                        layoutServices.getRegisteredElements().add(entry.getElementId());
+                        infoService.getRegisteredElements().add(entry.getElementId());
                     }
                 }
             }

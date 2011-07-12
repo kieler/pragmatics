@@ -34,9 +34,9 @@ import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
-import de.cau.cs.kieler.kiml.ui.layout.LayoutMapping;
+import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
 /**
  * This class provides static methods to start an analysis of a given diagram. Most of the defined
@@ -153,7 +153,7 @@ public final class DiagramAnalyzer {
         final List<AbstractInfoAnalysis> analysesSequence = AnalysisServices.getInstance()
                 .getExecutionOrder(analyses);
         lastResult = null;
-        final DiagramLayoutManager<?> manager = EclipseLayoutDataService.getInstance().getManager(
+        final DiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
                 editorPart, editPart);
         if (manager == null) {
             return Collections.emptyMap();

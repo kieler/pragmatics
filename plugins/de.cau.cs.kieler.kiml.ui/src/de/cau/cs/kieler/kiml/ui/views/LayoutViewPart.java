@@ -60,19 +60,18 @@ import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
-import de.cau.cs.kieler.kiml.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutContext;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
+import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
-import de.cau.cs.kieler.kiml.ui.layout.LayoutOptionManager;
+import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
 
 /**
  * A view that displays layout options for selected objects.
@@ -146,7 +145,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                 IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance()
                         .getBridge(object);
                 IWorkbenchPart part = currentContext.getProperty(EclipseLayoutConfig.WORKBENCH_PART);
-                DiagramLayoutManager<?> manager = EclipseLayoutDataService.getInstance().getManager(
+                DiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
                         part, object);
                 if (manager != null) {
                     EObject domainElement = bridge.getElement(object);
@@ -326,7 +325,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
      * {@inheritDoc}
      */
     public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
-        DiagramLayoutManager<?> manager = EclipseLayoutDataService.getInstance().getManager(part, null);
+        DiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(part, null);
         if (manager != null) {
             currentContext = new LayoutContext();
             currentContext.setProperty(EclipseLayoutConfig.WORKBENCH_PART, part);
@@ -435,7 +434,6 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                     }
                 }
                 // add the "set as default for diagram type" action
-                LayoutDataService layoutServices = LayoutDataService.getInstance();
                 String diagramType = (String) EclipseLayoutConfig.getOption(
                         currentContext.getProperty(LayoutContext.DIAGRAM_PART),
                         currentContext.getProperty(LayoutContext.DOMAIN_MODEL),
@@ -445,7 +443,8 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                         diagramTypeDefaultItem.setEnabled(false);
                     }
                 } else {
-                    String diagramTypeName = layoutServices.getDiagramTypeName(diagramType);
+                    String diagramTypeName = EclipseLayoutInfoService.getInstance()
+                            .getDiagramTypeName(diagramType);
                     if (diagramTypeName != null) {
                         if (!diagramTypeName.endsWith("s")) {
                             diagramTypeName += "s";

@@ -44,8 +44,6 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     public static final String ELEMENT_LAYOUT_TYPE = "layoutType";
     /** name of the 'category' element in the 'layout providers' extension point. */
     public static final String ELEMENT_CATEGORY = "category";
-    /** name of the 'diagram type' element in the 'layout info' extension point. */
-    public static final String ELEMENT_DIAGRAM_TYPE = "diagramType";
     /** name of the 'known option' element in the 'layout providers' extension point. */
     public static final String ELEMENT_KNOWN_OPTION = "knownOption";
     /** name of the 'layout  option' element in the 'layout providers' extension point. */

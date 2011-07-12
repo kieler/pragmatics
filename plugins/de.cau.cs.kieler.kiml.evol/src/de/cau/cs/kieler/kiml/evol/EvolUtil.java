@@ -54,25 +54,25 @@ import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
-import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
-import de.cau.cs.kieler.kiml.ILayoutConfig;
-import de.cau.cs.kieler.kiml.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.util.DiagramAnalyzer;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutDataService;
-import de.cau.cs.kieler.kiml.ui.layout.LayoutMapping;
-import de.cau.cs.kieler.kiml.ui.layout.LayoutOptionManager;
+import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
@@ -915,7 +915,7 @@ public final class EvolUtil {
     public static LayoutAlgorithmData getLayoutAlgorithmData(
             final IEditorPart editor, final EditPart editPart) {
         DiagramLayoutManager<?> manager =
-                EclipseLayoutDataService.getInstance().getManager(editor, editPart);
+                EclipseLayoutInfoService.getInstance().getManager(editor, editPart);
         IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(editor);
         if (manager != null && bridge != null) {
             LayoutContext context = new LayoutContext();
@@ -1060,7 +1060,6 @@ public final class EvolUtil {
      */
     private static List<LayoutContext> getLayoutConfigs(final Set<IEditorPart> editors) {
         List<LayoutContext> configs = new LinkedList<LayoutContext>();
-        EclipseLayoutDataService layoutServices = EclipseLayoutDataService.getInstance();
 
         // Handle current editor.
         IEditorPart currentEditor = getCurrentEditor();
@@ -1091,7 +1090,8 @@ public final class EvolUtil {
             = new Property<IMutableLayoutConfig>("context.layoutConfig");
     
     private static LayoutContext getContext(final IWorkbenchPart editor) {
-        DiagramLayoutManager<?> manager = EclipseLayoutDataService.getInstance().getManager(editor, null);
+        DiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
+                .getManager(editor, null);
         IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(editor);
         if (manager != null && bridge != null) {
             EditPart diagramPart = bridge.getEditPart(editor);

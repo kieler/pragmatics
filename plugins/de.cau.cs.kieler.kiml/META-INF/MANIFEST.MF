@@ -8,6 +8,7 @@ Require-Bundle: de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.kgraph;visibility:=reexport,
  com.google.guava;bundle-version="8.0.0"
 Export-Package: de.cau.cs.kieler.kiml,
+ de.cau.cs.kieler.kiml.config,
  de.cau.cs.kieler.kiml.klayoutdata;uses:="org.eclipse.emf.ecore,org.eclipse.emf.common.util,de.cau.cs.kieler.core.kgraph",
  de.cau.cs.kieler.kiml.klayoutdata.impl,
  de.cau.cs.kieler.kiml.klayoutdata.util,
