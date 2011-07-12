@@ -90,7 +90,10 @@ public enum IntermediateLayoutProcessor {
     /** Removes dummy nodes inserted by the north south side preprocessor and routes edges. */
     NORTH_SOUTH_PORT_POSTPROCESSOR,
     /** Takes the reversed edges of a graph and restores their original direction. */
-    REVERSED_EDGE_RESTORER;
+    REVERSED_EDGE_RESTORER,
+    /** Removes dummy nodes and -edges from compound graph representation,
+     *  positioning of compound nodes. */
+    COMPOUND_GRAPH_RESTORER;
     
     
     /**
@@ -116,6 +119,9 @@ public enum IntermediateLayoutProcessor {
             
         case COMPOUND_DUMMY_EDGE_REMOVER:
             return new CompoundDummyEdgeRemover();
+            
+        case COMPOUND_GRAPH_RESTORER:
+            return new CompoundGraphRestorer();
             
         case COMPOUND_SIDE_PROCESSOR:
             return new CompoundSideProcessor();
