@@ -323,13 +323,19 @@ public class GraphitiLayoutCommand extends RecordingCommand {
 
         // calculate reference point for the label
         KVector referencePoint;
-        if (decorator.isLocationRelative()) {
-            referencePoint = bendPoints.getPointOnLine(decorator.getLocation()
-                            * bendPoints.getLength());
+        //TODO bendpoints were empty sometimes while doing ptolemy rendering.
+        // this is a temporary workaround till someone finds out why they are empty.
+        if (bendPoints.isEmpty()) {
+            referencePoint = new KVector(0, 0);
+            //System.out.println("debug");
         } else {
-            referencePoint = bendPoints.getPointOnLine(decorator.getLocation());
+            if (decorator.isLocationRelative()) {
+                referencePoint = bendPoints.getPointOnLine(decorator.getLocation()
+                                * bendPoints.getLength());
+            } else {
+                referencePoint = bendPoints.getPointOnLine(decorator.getLocation());
+            }
         }
-
         KShapeLayout shapeLayout = klabel.getData(KShapeLayout.class);
         KVector position = shapeLayout.createVector();
         KNode parent = kedge.getSource();
