@@ -96,10 +96,10 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
         for (LNode compoundNode : compoundNodeList) {
 
             // get positions of the COMPOUND_SIDE dummy nodes at the borders.
-            KVector posLeftUpper = findSideNodePos(compoundNode, true, false, layeredGraph);
+            KVector posLeftUpper = findSideNodePos(compoundNode, false, true, layeredGraph);
             KVector posRightUpper = findSideNodePos(compoundNode, false, false, layeredGraph);
             KVector posLeftLower = findSideNodePos(compoundNode, true, true, layeredGraph);
-            KVector posRightLower = findSideNodePos(compoundNode, false, true, layeredGraph);
+            KVector posRightLower = findSideNodePos(compoundNode, true, false, layeredGraph);
 
             // set position of compound node (upper left corner)
             compoundNode.getPosition().x = posLeftUpper.x;
@@ -193,8 +193,6 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
      * @param lower
      *            if true, the lower position is found, if false, the upper one.
      * @param left
-     * 
-     * 
      *            if true, the leftmost position is searched for.
      * @param lGraph
      *            the complete LGraph.
@@ -233,6 +231,7 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
                 }
             }
         }
-        return layer.getNodes().get(index).getPosition();
+        KVector ret = layer.getNodes().get(index).getPosition();
+        return ret;
     }
 }
