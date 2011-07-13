@@ -24,14 +24,14 @@ import de.cau.cs.kieler.core.WrappedException;
 public class DefaultFactory<T> implements IFactory<T> {
 
     /** the class for which instances shall be created. */
-    private Class<T> clazz;
+    private Class<? extends T> clazz;
     
     /**
      * Creates an instance factory for the given class.
      * 
      * @param theclazz the class for which instances shall be created
      */
-    public DefaultFactory(final Class<T> theclazz) {
+    public DefaultFactory(final Class<? extends T> theclazz) {
         this.clazz = theclazz;
     }
     
