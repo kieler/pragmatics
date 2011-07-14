@@ -18,6 +18,7 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.CompoundKGraphImporter;
@@ -117,11 +118,17 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
         LNode lowerSideDummy = new LNode();
         lowerSideDummy.getSize().y = insets.getBottom();
         lowerSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
+        
+        // prepare update of layer-size
+        KVector oldLayerSize = layer.getSize();
+        
         // avoid index-out-of-bounds-exception
         if (layerNodes.size() == lowerIndex) {
             lowerSideDummy.setLayer(layer);
+            oldLayerSize.add(lowerSideDummy.getSize());
         } else {
             lowerSideDummy.setLayer(lowerIndex + 1, layer);
+            oldLayerSize.add(lowerSideDummy.getSize());
         }
 
         // create upper side node (lower layer index)
@@ -129,6 +136,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
         upperSideDummy.getSize().y = insets.getTop();
         upperSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
         upperSideDummy.setLayer(upperIndex, layer);
+        oldLayerSize.add(upperSideDummy.getSize());
 
         // create ports for connection-edges
         LPort lowPortWest = new LPort();
