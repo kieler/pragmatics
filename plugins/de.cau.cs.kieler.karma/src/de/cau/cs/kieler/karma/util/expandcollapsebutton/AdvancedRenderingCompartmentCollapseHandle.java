@@ -101,7 +101,7 @@ public class AdvancedRenderingCompartmentCollapseHandle extends AbstractHandle i
      * @param locator a custom locator to locate expand/collapse button
      */
     public AdvancedRenderingCompartmentCollapseHandle(final IGraphicalEditPart owner,
-            final IFigure collapseFigure, final IFigure expandFigure, final Locator locator) {
+            final IFigure collapseFigure, final IFigure expandFigure, final Locator locator, final Dimension size) {
         setOwner(owner);
         if (locator != null) {
             setLocator(locator);
@@ -109,8 +109,11 @@ public class AdvancedRenderingCompartmentCollapseHandle extends AbstractHandle i
             setLocator(new CollapseHandleLocator());
         }
         setCursor(Cursors.ARROW);
-
-        setSize(SIZE);
+        if (size != null) {
+            setSize(size);
+        } else {
+            setSize(SIZE);
+        }
         setLayoutManager(new StackLayout());
 
         add(switchableCollapseFigure = new SwitchableCollapseFigure(this));

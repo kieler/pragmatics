@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Locator;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.ResizableCompartmentEditPolicy;
 
@@ -36,6 +37,8 @@ public class AdvancedRenderingResizableCompartmentEditPolicy extends ResizableCo
     private IFigure expandFigure = null;
 
     private Locator collapseExpandLocator = null;
+    
+    private Dimension collapseExpandSize = null;
 
     @Override
     protected List createCollapseHandles() {
@@ -43,7 +46,7 @@ public class AdvancedRenderingResizableCompartmentEditPolicy extends ResizableCo
 
         List collapseHandles = new ArrayList();
         collapseHandle = new AdvancedRenderingCompartmentCollapseHandle(part, collapseFigure,
-                expandFigure, collapseExpandLocator);
+                expandFigure, collapseExpandLocator, collapseExpandSize);
         collapseHandles.add(collapseHandle);
         return collapseHandles;
     }
@@ -70,6 +73,14 @@ public class AdvancedRenderingResizableCompartmentEditPolicy extends ResizableCo
      */
     public void setCollapseExpandLocator(final Locator locator) {
         this.collapseExpandLocator = locator;
+    }
+    
+    /**
+     * set custom size of the clickable area to expand/collapse.
+     * @param dim
+     */
+    public void setCollapseExpandSize(final Dimension dim) {
+        this.collapseExpandSize = dim;
     }
 
 }
