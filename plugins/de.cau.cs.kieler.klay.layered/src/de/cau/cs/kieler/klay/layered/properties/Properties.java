@@ -21,6 +21,7 @@ import java.util.Set;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
@@ -161,6 +162,12 @@ public final class Properties {
      */
     public static final IProperty<LNode> COMPOUND_NODE = new Property<LNode>(
             "CompoundNode", null);
+    
+    /**
+     * KInsets of the KNode a upper border dummy node is representing.
+     */
+    public static final IProperty<KInsets> ORIGINAL_INSETS = 
+            new Property<KInsets>("OriginalInsets", null);
 
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS
