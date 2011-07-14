@@ -19,6 +19,7 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -94,6 +95,8 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
 
         // process compound nodes to determine size and position
         for (LNode compoundNode : compoundNodeList) {
+            
+            KInsets insets = compoundNode.getProperty(Properties.ORIGINAL_INSETS);
 
             // get positions of the COMPOUND_SIDE dummy nodes at the borders.
             KVector posLeftUpper = findSideNodePos(compoundNode, false, true, layeredGraph);
@@ -107,9 +110,9 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
 
             // set width and height of compound node
             compoundNode.getSize().x = (Math.max((posRightUpper.x - posLeftUpper.x),
-                    (posRightLower.x - posLeftLower.x)));
-            compoundNode.getSize().y = (Math.max((posLeftUpper.y - posLeftLower.y),
-                    (posRightUpper.y - posRightLower.y)));
+                            (posRightLower.x - posLeftLower.x))) + insets.getLeft() + insets.getRight();
+            compoundNode.getSize().y = (Math.max((posLeftLower.y - posLeftUpper.y),
+                    (posRightLower.y - posRightUpper.y))) + insets.getBottom();
         }
 
         // iterate through all edges
