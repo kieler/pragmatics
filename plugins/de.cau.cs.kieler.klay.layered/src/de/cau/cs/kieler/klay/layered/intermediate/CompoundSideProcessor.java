@@ -18,6 +18,7 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.CompoundKGraphImporter;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
@@ -102,7 +103,10 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
     private void insertSideDummies(final int startIndex, final int endIndex,
             final List<Layer> layers, final LNode openingBorder, final LEdge lowerConnector,
             final LEdge upperConnector) {
-
+        
+        // get the insets for origin of openingBorder
+        KInsets insets = openingBorder.getProperty(Properties.ORIGINAL_INSETS);
+        
         Layer layer = layers.get(startIndex);
         List<LNode> layerNodes = layer.getNodes();
 
@@ -111,6 +115,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
 
         // create lower side node (higher layer index)
         LNode lowerSideDummy = new LNode();
+        lowerSideDummy.getSize().y = insets.getBottom();
         lowerSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
         // avoid index-out-of-bounds-exception
         if (layerNodes.size() == lowerIndex) {
@@ -121,6 +126,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
 
         // create upper side node (lower layer index)
         LNode upperSideDummy = new LNode();
+        upperSideDummy.getSize().y = insets.getTop();
         upperSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
         upperSideDummy.setLayer(upperIndex, layer);
 
