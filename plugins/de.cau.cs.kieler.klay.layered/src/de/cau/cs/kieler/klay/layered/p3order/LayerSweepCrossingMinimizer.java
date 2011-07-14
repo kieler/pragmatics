@@ -882,11 +882,12 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
      *  - An eastern port can be connected to another eastern port.
      *  - A western port can be connected to another western port.
      * 
-     * The algorithm now works by assigning indices to eastern ports top-down, and to
-     * western ports bottom-up. (the link direction is not important) Then we traverse
-     * the ports. If we find an eastern port connected to another eastern port, the
-     * difference of their indices tells us how many other ports with incident edges
-     * lie between them and can cause crossings.
+     * The algorithm now works by assigning numbers to eastern ports top-down, and to
+     * western ports bottom-up, all the time dependent on their number of incident
+     * edges. (the link direction is not important) Then we traverse the ports. If we
+     * find an eastern port connected to another eastern port, the difference of their
+     * indices tells us how many other ports with incident edges lie between them and
+     * can cause crossings.
      * 
      * Part 2
      * Additional crossings can happen due to nodes being placed between a node and
@@ -920,11 +921,11 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             new HashMap<LNode, Pair<Integer, Integer>>();
         Map<LNode, Integer> dummyIndices = new HashMap<LNode, Integer>();
         
-        // Assign indices to the layer's eastern and western ports
-        Map<LPort, Integer> easternPortIndices = new HashMap<LPort, Integer>();
-        Map<LPort, Integer> westernPortIndices = new HashMap<LPort, Integer>();
+        // Assign numbers to the layer's eastern and western ports
+        Map<LPort, Integer> easternPortNumbers = new HashMap<LPort, Integer>();
+        Map<LPort, Integer> westernPortNumbers = new HashMap<LPort, Integer>();
         
-        assignEastWestPortIndices(layer, easternPortIndices, westernPortIndices);
+        numberEastWestPorts(layer, easternPortNumbers, westernPortNumbers);
         
         // Iterate through the nodes
         LNode currentNormalNode = null;
@@ -938,11 +939,11 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             for (LPort port : node.getPorts()) {
                 switch (port.getSide()) {
                 case EAST:
-                    crossings += countInLayerCrossings(port, easternPortIndices);
+                    crossings += countInLayerCrossings(port, easternPortNumbers);
                     break;
                 
                 case WEST:
-                    crossings += countInLayerCrossings(port, westernPortIndices);
+                    crossings += countInLayerCrossings(port, westernPortNumbers);
                     break;
                 }
             }
@@ -1033,41 +1034,42 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     }
     
     /**
-     * Assigns indices to the eastern ports of a layer, and to the western ports of a layer. An
-     * index is assigned to a port if it has incident edges. Eastern ports are indexed top-down,
-     * while western ports are indexed bottom-up.
+     * Assigns numbers to the eastern ports of a layer, and to the western ports of a layer. A
+     * number is assigned to a port if it has incident edges. Eastern ports are numbered top-down,
+     * while western ports are numbered bottom-up.
      * 
      * @param layer the layer whose ports to index.
      * @param easternMap map to put the eastern ports' indices in.
      * @param westernMap map to put the western ports' indices in.
      */
-    private void assignEastWestPortIndices(final LNode[] layer, final Map<LPort, Integer> easternMap,
+    private void numberEastWestPorts(final LNode[] layer, final Map<LPort, Integer> easternMap,
             final Map<LPort, Integer> westernMap) {
 
-        int currentEasternIndex = 0;
-        int currentWesternIndex = 0;
+        int currentEasternNumber = 0;
+        int currentWesternNumber = 0;
         
-        // Assign indices to eastern ports, top-down
+        // Assign numbers to eastern ports, top-down
         for (int nodeIndex = 0; nodeIndex < layer.length; nodeIndex++) {
             LNode node = layer[nodeIndex];
 
             if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 for (LPort easternPort : node.getPorts(PortSide.EAST)) {
                     if (easternPort.getDegree() > 0) {
-                        easternMap.put(easternPort, currentEasternIndex++);
+                        currentEasternNumber += easternPort.getDegree();
+                        easternMap.put(easternPort, currentEasternNumber);
                     }
                 }
             } else {
-                boolean easternPorts = false;
-
+                // Find the number of edges incident to eastern ports
                 for (LPort easternPort : node.getPorts(PortSide.EAST)) {
-                    if (easternPort.getDegree() > 0) {
-                        easternMap.put(easternPort, currentEasternIndex);
-                    }
+                    currentEasternNumber += easternPort.getDegree();
                 }
                 
-                if (easternPorts) {
-                    currentEasternIndex++;
+                // Assign the eastern number to all eastern ports
+                for (LPort easternPort : node.getPorts(PortSide.EAST)) {
+                    if (easternPort.getDegree() > 0) {
+                        easternMap.put(easternPort, currentEasternNumber);
+                    }
                 }
             }
         }
@@ -1079,20 +1081,21 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 for (LPort westernPort : node.getPorts(PortSide.WEST)) {
                     if (westernPort.getDegree() > 0) {
-                        westernMap.put(westernPort, currentWesternIndex++);
+                        currentWesternNumber += westernPort.getDegree();
+                        westernMap.put(westernPort, currentWesternNumber);
                     }
                 }
             } else {
-                boolean westernPorts = false;
-
+                // Find the number of edges incident to western ports
                 for (LPort westernPort : node.getPorts(PortSide.WEST)) {
-                    if (westernPort.getDegree() > 0) {
-                        westernMap.put(westernPort, currentWesternIndex);
-                    }
+                    currentWesternNumber += westernPort.getDegree();
                 }
                 
-                if (westernPorts) {
-                    currentWesternIndex++;
+                // Assign the western number to all western ports
+                for (LPort westernPort : node.getPorts(PortSide.WEST)) {
+                    if (westernPort.getDegree() > 0) {
+                        westernMap.put(westernPort, currentWesternNumber);
+                    }
                 }
             }
         }
@@ -1104,7 +1107,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
      * 
      * @param port the port whose edge crossings to count.
      * @param portIndices map of ports to their respective indices as calculated by
-     *                    {@link #assignEastWestPortIndices(LNode[], Map, Map)}.
+     *                    {@link #numberEastWestPorts(LNode[], Map, Map)}.
      * @return the maximum number of crossings for this port.
      */
     private int countInLayerCrossings(final LPort port, final Map<LPort, Integer> portIndices) {
