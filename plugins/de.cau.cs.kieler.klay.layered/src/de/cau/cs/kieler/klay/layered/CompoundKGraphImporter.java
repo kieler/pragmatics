@@ -382,20 +382,23 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
     private void transformCompoundEdgeList(final KNode node, final List<LNode> layeredNodes,
             final Map<KGraphElement, LGraphElement> elemMap, final List<LNode> dummyNodes,
             final List<KEdge> edgesList, final boolean incoming) {
-
+        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+        KInsets insets = nodeLayout.getInsets();
         LNode upperBorder = null;
         if (incoming) {
             // Create upper border dummy node to represent the compound node.
             upperBorder = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_BORDER, dummyNodes);
+            upperBorder.setProperty(Properties.ORIGINAL_INSETS, insets);
+            upperBorder.getSize().x = insets.getLeft();
         } else {
             for (LNode lnode : dummyNodes) {
-                if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.UPPER_COMPOUND_BORDER) {
+                if ((lnode.getProperty(Properties.NODE_TYPE) == NodeType.UPPER_COMPOUND_BORDER)
+                        && (lnode.getProperty(Properties.ORIGIN) == node)) {
                     upperBorder = lnode;
                     break;
                 }
             }
         }
-    
 
         for (KEdge kEdge : edgesList) {
             KEdgeLayout edgeLayout = kEdge.getData(KEdgeLayout.class);
@@ -438,6 +441,7 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
                     representative = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_BORDER,
                             dummyNodes);
                     representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
+                    representative.getSize().x = insets.getRight();
                 } else {
                     representative = upperBorder;
                 }
@@ -448,10 +452,12 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
                     representative = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_PORT,
                             dummyNodes);
                     representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
+                    representative.getSize().x = insets.getRight();
                 } else {
                     representative = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_PORT,
                             dummyNodes);
                     representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
+                    representative.getSize().x = insets.getLeft();
                 }
             }
             if (!layeredNodes.contains(representative)) {
@@ -489,7 +495,7 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         }
 
         // If not done before (if the edge list is empty or containing only edges to/from
-        // descendants), a single lower border dummy node is added.
+        // descendants), a single border dummy node is added.
 
         NodeType nodeType = null;
         if (incoming) {
@@ -497,13 +503,14 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
                 layeredNodes.add(upperBorder);
             }
         } else {
-                nodeType = NodeType.LOWER_COMPOUND_BORDER;
-                LNode dummyNode = createBorderDummyNode(node, nodeType, dummyNodes);
-                dummyNode.setProperty(Properties.COMPOUND_NODE, upperBorder);
-                if (!(layeredNodes.contains(dummyNode))) {
-                    layeredNodes.add(dummyNode);
-                }
+            nodeType = NodeType.LOWER_COMPOUND_BORDER;
+            LNode dummyNode = createBorderDummyNode(node, nodeType, dummyNodes);
+            dummyNode.setProperty(Properties.COMPOUND_NODE, upperBorder);
+            dummyNode.getSize().x = insets.getRight();
+            if (!(layeredNodes.contains(dummyNode))) {
+                layeredNodes.add(dummyNode);
             }
+        }
     }
 
     /**
