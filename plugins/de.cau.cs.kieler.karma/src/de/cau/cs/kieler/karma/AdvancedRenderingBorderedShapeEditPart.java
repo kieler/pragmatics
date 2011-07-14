@@ -21,11 +21,15 @@ import java.util.List;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef.EditPart;
+import org.eclipse.gef.EditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.IResizableCompartmentEditPart;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartUtil;
+import de.cau.cs.kieler.karma.util.expandcollapsebutton.AdvancedRenderingResizableCompartmentEditPolicy;
 
 /**
  * @author ckru
@@ -36,7 +40,7 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
     /**
      * Figure that that represents the model element.
      */
- // SUPPRESS CHECKSTYLE NEXT VisibilityModifier
+    // SUPPRESS CHECKSTYLE NEXT VisibilityModifier
     protected IFigure primaryShape;
 
     /**
@@ -45,7 +49,7 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
     private AdvancedRenderingEditPartUtil util;
 
     public NodeFigure MyNodePlate;
-    
+
     /**
      * The constructor. Just calls super.
      * 
@@ -81,16 +85,34 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
     public EObject getModelElement() {
         return this.getNotationView().getElement();
     }
-    
+
     /**
      * Flag for calling the updateFigure method only once while initializing the diagram.
      */
     private boolean updateTriggerFigure = true;
-    
+
+    /**
+     * This Method installs the AdvancedRenderingResizableCompartmentEditPolicy as Primary_drag_role
+     * editpolicy for all compartments of this Edit Part. This is necessary to make the
+     * expand/collapse button exchangable.
+     */
+    private void activateExchangableExpandCollapse() {
+        List<EditPart> resizeableCompartments = this.getResizableCompartments();
+        for (EditPart compartment : resizeableCompartments) {
+            if (compartment instanceof IResizableCompartmentEditPart) {
+                IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+                AdvancedRenderingResizableCompartmentEditPolicy arcep = 
+                    new AdvancedRenderingResizableCompartmentEditPolicy();
+                resizeComp.installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE, arcep);
+            }
+        }
+    }
+
     @Override
     public void refresh() {
         super.refresh();
         if (updateTriggerFigure) {
+            this.activateExchangableExpandCollapse();
             updateTriggerFigure = false;
             util.updateFigure(primaryShape, this.getModelElement(), this, true);
         }

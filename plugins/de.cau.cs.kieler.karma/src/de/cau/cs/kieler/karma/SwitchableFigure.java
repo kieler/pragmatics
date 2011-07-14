@@ -67,7 +67,7 @@ public class SwitchableFigure extends Shape {
     }
     
     @Override
-    public void paint(final Graphics graphics) {    
+    public void paint(final Graphics graphics) {
         if (currentFigure != null) {
             //some border stuff for better displaying the inner figure
             Rectangle newBounds = new Rectangle();
