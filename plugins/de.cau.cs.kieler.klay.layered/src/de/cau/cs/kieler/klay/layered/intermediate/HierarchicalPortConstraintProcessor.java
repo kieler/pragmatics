@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.kiml.options.Alignment;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -302,6 +303,7 @@ public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm imple
         newDummy.copyProperties(originalDummy);
         newDummy.setProperty(Properties.ORIGIN, originalDummy);
         newDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        newDummy.setProperty(LayoutOptions.ALIGNMENT, Alignment.CENTER);
         
         LPort inputPort = new LPort();
         inputPort.setNode(newDummy);
