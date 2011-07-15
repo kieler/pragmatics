@@ -37,6 +37,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
 //import de.cau.cs.kieler.kiml.options.EdgeRouting;
+import de.cau.cs.kieler.kiml.options.Alignment;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -385,14 +386,19 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
     private void transformCompoundEdgeList(final KNode node, final List<LNode> layeredNodes,
             final Map<KGraphElement, LGraphElement> elemMap, final List<LNode> dummyNodes,
             final List<KEdge> edgesList, final boolean incoming) {
+
+        // get layout data of the compound node
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         KInsets insets = nodeLayout.getInsets();
+        float borderSpacing = nodeLayout.getProperty(LayoutOptions.BORDER_SPACING);
         LNode upperBorder = null;
+
         if (incoming) {
             // Create upper border dummy node to represent the compound node.
             upperBorder = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_BORDER, dummyNodes);
             upperBorder.setProperty(Properties.ORIGINAL_INSETS, insets);
-            upperBorder.getSize().x = insets.getLeft();
+            upperBorder.setProperty(LayoutOptions.BORDER_SPACING, borderSpacing);
+            upperBorder.getSize().x = insets.getLeft() + borderSpacing;
         } else {
             for (LNode lnode : dummyNodes) {
                 if ((lnode.getProperty(Properties.NODE_TYPE) == NodeType.UPPER_COMPOUND_BORDER)
@@ -444,7 +450,7 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
                     representative = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_BORDER,
                             dummyNodes);
                     representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
-                    representative.getSize().x = insets.getRight();
+                    representative.getSize().x = insets.getRight() + borderSpacing;
                 } else {
                     representative = upperBorder;
                 }
@@ -455,12 +461,12 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
                     representative = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_PORT,
                             dummyNodes);
                     representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
-                    representative.getSize().x = insets.getRight();
+                    representative.getSize().x = insets.getRight() + borderSpacing;
                 } else {
                     representative = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_PORT,
                             dummyNodes);
                     representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
-                    representative.getSize().x = insets.getLeft();
+                    representative.getSize().x = insets.getLeft() + borderSpacing;
                 }
             }
             if (!layeredNodes.contains(representative)) {
@@ -509,7 +515,7 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
             nodeType = NodeType.LOWER_COMPOUND_BORDER;
             LNode dummyNode = createBorderDummyNode(node, nodeType, dummyNodes);
             dummyNode.setProperty(Properties.COMPOUND_NODE, upperBorder);
-            dummyNode.getSize().x = insets.getRight();
+            dummyNode.getSize().x = insets.getRight() + borderSpacing;
             if (!(layeredNodes.contains(dummyNode))) {
                 layeredNodes.add(dummyNode);
             }
@@ -667,11 +673,56 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
             dummyNode.setProperty(Properties.PARENT, node.getParent());
             dummyNode.getPosition().x = nodeLayout.getXpos();
             dummyNode.setProperty(Properties.NODE_TYPE, nodeType);
+            if (nodeType == NodeType.UPPER_COMPOUND_BORDER
+                    || nodeType == NodeType.UPPER_COMPOUND_PORT) {
+                dummyNode.setProperty(LayoutOptions.ALIGNMENT, Alignment.RIGHT);
+            }
+            if (nodeType == NodeType.LOWER_COMPOUND_BORDER
+                    || nodeType == NodeType.LOWER_COMPOUND_PORT) {
+                dummyNode.setProperty(LayoutOptions.ALIGNMENT, Alignment.LEFT);
+            }
             createDummyPort(dummyNode, PortSide.EAST);
             createDummyPort(dummyNode, PortSide.WEST);
+            if (nodeType == NodeType.UPPER_COMPOUND_BORDER) {
+                transferNodePropertiesAndAttributes(node, dummyNode);
+            }
             dummyList.add(dummyNode);
         }
         return dummyNode;
+    }
+
+    /**
+     * Transfers a compound nodes attributes and properties to the representative upper border dummy
+     * node.
+     * 
+     * @param node
+     *            The compound KNode to be represented.
+     * @param dummyNode
+     *            The upper border dummy node representing the compound node.
+     */
+    private void transferNodePropertiesAndAttributes(final KNode node, final LNode dummyNode) {
+
+//        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+//
+//        // port constraints are not handled for compound nodes at the moment, so set them to free
+//        nodeLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
+//
+//        // add the node's label, if any
+//        KLabel klabel = node.getLabel();
+//        if (klabel != null) {
+//            KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
+//
+//            LLabel newLabel = new LLabel(klabel.getText());
+//            newLabel.setProperty(Properties.ORIGIN, node);
+//            newLabel.getSize().x = labelLayout.getWidth();
+//            newLabel.getSize().y = labelLayout.getHeight();
+//            newLabel.getPosition().x = labelLayout.getXpos();
+//            newLabel.getPosition().y = labelLayout.getYpos();
+//            dummyNode.setLabel(newLabel);
+//        }
+//
+//        // set properties of the new node
+//        dummyNode.copyProperties(nodeLayout);
     }
 
     /**
@@ -817,7 +868,7 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         int index;
         for (index = 0; index < children.size(); index++) {
             KNode child = children.get(index);
-            recursiveApplyNodeLayout(child, layeredGraph, new KVector(0.0, 0.0));
+            recursiveApplyNodeLayout(child, layeredGraph);
         }
 
         // // along the way, we collect the list of edges to be processed later
@@ -918,24 +969,18 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
      *            the KNode currently in scope.
      * @param layeredGraph
      *            the complete layered graph.
-     * @param offsetSum
-     *            the sum of the offsets added to the positions of ancestors
      */
-    private void recursiveApplyNodeLayout(final KNode currentNode, final LayeredGraph layeredGraph,
-            final KVector offsetSum) {
+    private void recursiveApplyNodeLayout(final KNode currentNode, final LayeredGraph layeredGraph) {
 
+        // get parent of currentNode
         KNode parent = currentNode.getParent();
 
-        // determine the border spacing, which influences the offset
+        // determine the border spacing of the parent node
         KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
-        float borderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
+        float parentBorderSpacing = parentLayout.getProperty(Properties.BORDER_SPACING);
 
-        KVector offset = new KVector(borderSpacing + layeredGraph.getOffset().x, borderSpacing
-                + layeredGraph.getOffset().y);
-        
-        offsetSum.add(offset);
-
-        KInsets insets = parentLayout.getInsets();
+        // get insets
+        KInsets insetsParent = parentLayout.getInsets();
 
         // get current node's layout
         KShapeLayout nodeLayout = currentNode.getData(KShapeLayout.class);
@@ -952,28 +997,31 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         // get the size and margin of the node's representative
         KVector size = representative.getSize();
 
-        // if compound node, resize
+        // if currentNode is compound node, resize
         if (representative.getProperty(Properties.NODE_TYPE) == NodeType.UPPER_COMPOUND_BORDER) {
 
-            nodeLayout.setSize((float) (size.x + offset.x), (float) (size.y + offset.y));
+            nodeLayout.setSize((float) size.x, (float) size.y);
         }
 
+        // get position of currentNodes representative in the layered graph, which is not relative
+        // to the parent node
         KVector position = representative.getPosition();
 
+        // get the position which serves as point of origin for the currentNode (upper left corner
+        // of parent node plus insets)
+        KVector pointOfOrigin = new KVector((parentLayout.getXpos() + insetsParent.getLeft()),
+                (parentLayout.getYpos() + insetsParent.getTop()));
+
         // compute and set the node's relative positioning
-
-        KVector pointOfOrigin = new KVector((parentLayout.getXpos() + insets.getLeft()),
-                (parentLayout.getYpos() + insets.getTop()));
-
-        float relativeX = (float) (position.x + offsetSum.x - pointOfOrigin.x);
-        float relativeY = (float) (position.y + offsetSum.y - pointOfOrigin.y);
+        float relativeX = (float) (position.x + parentBorderSpacing - pointOfOrigin.x);
+        float relativeY = (float) (position.y - pointOfOrigin.y);
         nodeLayout.setPos(relativeX, relativeY);
 
         EList<KNode> children = currentNode.getChildren();
         int index;
         for (index = 0; index < children.size(); index++) {
             KNode child = children.get(index);
-            recursiveApplyNodeLayout(child, layeredGraph, offsetSum);
+            recursiveApplyNodeLayout(child, layeredGraph);
         }
         // TODO Complete method body (port and edge setting)
     }
