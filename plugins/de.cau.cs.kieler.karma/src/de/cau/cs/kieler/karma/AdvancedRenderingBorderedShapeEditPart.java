@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Locator;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
@@ -107,6 +109,75 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
             }
         }
     }
+    
+    /**
+     * set custom collapse figure.
+     * @param figure the new custom figure
+     */
+    public void setCollapseFigure(final IFigure figure) {
+        List<EditPart> resizeableCompartments = this.getResizableCompartments();
+        for (EditPart compartment : resizeableCompartments) {
+            if (compartment instanceof IResizableCompartmentEditPart) {
+                IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+                EditPolicy epol = resizeComp.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                if (epol instanceof AdvancedRenderingResizableCompartmentEditPolicy) {
+                    ((AdvancedRenderingResizableCompartmentEditPolicy)epol).setCollapseFigure(figure);
+                }
+            }
+        }
+    }
+
+    /**
+     * set custom expand figure.
+     * @param figure the new custom figure
+     */
+    public void setExpandFigure(final IFigure figure) {
+        List<EditPart> resizeableCompartments = this.getResizableCompartments();
+        for (EditPart compartment : resizeableCompartments) {
+            if (compartment instanceof IResizableCompartmentEditPart) {
+                IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+                EditPolicy epol = resizeComp.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                if (epol instanceof AdvancedRenderingResizableCompartmentEditPolicy) {
+                    ((AdvancedRenderingResizableCompartmentEditPolicy)epol).setExpandFigure(figure);
+                }
+            }
+        }
+    }
+
+    /**
+     * set custom collapse/expand locator.
+     * @param locator the new custom figure
+     */
+    public void setCollapseExpandLocator(final Locator locator) {
+        List<EditPart> resizeableCompartments = this.getResizableCompartments();
+        for (EditPart compartment : resizeableCompartments) {
+            if (compartment instanceof IResizableCompartmentEditPart) {
+                IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+                EditPolicy epol = resizeComp.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                if (epol instanceof AdvancedRenderingResizableCompartmentEditPolicy) {
+                    ((AdvancedRenderingResizableCompartmentEditPolicy)epol).setCollapseExpandLocator(locator);
+                }
+            }
+        }
+    }
+    
+    /**
+     * set custom size of the clickable area to expand/collapse.
+     * @param dim
+     */
+    public void setCollapseExpandSize(final Dimension dim) {
+        List<EditPart> resizeableCompartments = this.getResizableCompartments();
+        for (EditPart compartment : resizeableCompartments) {
+            if (compartment instanceof IResizableCompartmentEditPart) {
+                IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+                EditPolicy epol = resizeComp.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                if (epol instanceof AdvancedRenderingResizableCompartmentEditPolicy) {
+                    ((AdvancedRenderingResizableCompartmentEditPolicy)epol).setCollapseExpandSize(dim);
+                }
+            }
+        }
+    }
+    
 
     @Override
     public void refresh() {
