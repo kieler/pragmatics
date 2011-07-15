@@ -19,6 +19,9 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
+//import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.Alignment;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.CompoundKGraphImporter;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
@@ -103,10 +106,13 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
     private void insertSideDummies(final int startIndex, final int endIndex,
             final List<Layer> layers, final LNode openingBorder, final LEdge lowerConnector,
             final LEdge upperConnector) {
-        
+
         // get the insets for origin of openingBorder
         KInsets insets = openingBorder.getProperty(Properties.ORIGINAL_INSETS);
-        
+
+        // get the border spacing for the compound node
+        float borderSpacing = openingBorder.getProperty(LayoutOptions.BORDER_SPACING);
+
         Layer layer = layers.get(startIndex);
         List<LNode> layerNodes = layer.getNodes();
 
@@ -115,9 +121,11 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
 
         // create lower side node (higher layer index)
         LNode lowerSideDummy = new LNode();
-        lowerSideDummy.getSize().y = insets.getBottom();
+        lowerSideDummy.setProperty(LayoutOptions.ALIGNMENT, Alignment.LEFT);
+        lowerSideDummy.getSize().y = insets.getBottom() + borderSpacing;
         lowerSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
-        
+        lowerSideDummy.setProperty(Properties.SIDE_OWNER, openingBorder);
+
         // avoid index-out-of-bounds-exception
         if (layerNodes.size() == lowerIndex) {
             lowerSideDummy.setLayer(layer);
@@ -127,8 +135,10 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
 
         // create upper side node (lower layer index)
         LNode upperSideDummy = new LNode();
-        upperSideDummy.getSize().y = insets.getTop();
+        upperSideDummy.setProperty(LayoutOptions.ALIGNMENT, Alignment.LEFT);
+        upperSideDummy.getSize().y = insets.getTop() + borderSpacing;
         upperSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
+        upperSideDummy.setProperty(Properties.SIDE_OWNER, openingBorder);
         upperSideDummy.setLayer(upperIndex, layer);
 
         // create ports for connection-edges
@@ -173,8 +183,8 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
     }
 
     /**
-     * Finds the layer, in which the closing Compound Dummy Nodes for upperBorder are placed.
-     * Make sure the LNode you pass as a parameter is of the type UPPER_COMPOUND_BORDER.
+     * Finds the layer, in which the closing Compound Dummy Nodes for upperBorder are placed. Make
+     * sure the LNode you pass as a parameter is of the type UPPER_COMPOUND_BORDER.
      * 
      * @param upperBorder
      *            upper compound border dummy node for which the partner lower compound border dummy
