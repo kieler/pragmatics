@@ -20,6 +20,8 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
+//import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+//import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -95,24 +97,27 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
 
         // process compound nodes to determine size and position
         for (LNode compoundNode : compoundNodeList) {
-            
+
+            // get insets and border spacing
             KInsets insets = compoundNode.getProperty(Properties.ORIGINAL_INSETS);
+            float ownBorderSpacing = compoundNode.getProperty(Properties.BORDER_SPACING);
+            // KNode parent = compoundNode.getProperty(Properties.PARENT);
+            // KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
+            // float parentBorderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
 
             // get positions of the COMPOUND_SIDE dummy nodes at the borders.
             KVector posLeftUpper = findSideNodePos(compoundNode, false, true, layeredGraph);
             KVector posRightUpper = findSideNodePos(compoundNode, false, false, layeredGraph);
             KVector posLeftLower = findSideNodePos(compoundNode, true, true, layeredGraph);
-            KVector posRightLower = findSideNodePos(compoundNode, true, false, layeredGraph);
 
             // set position of compound node (upper left corner)
-            compoundNode.getPosition().x = posLeftUpper.x;
-            compoundNode.getPosition().y = posLeftUpper.y;
+            compoundNode.getPosition().x = posLeftUpper.x /* + parentBorderSpacing */;
+            compoundNode.getPosition().y = posLeftUpper.y /* + parentBorderSpacing */;
 
             // set width and height of compound node
-            compoundNode.getSize().x = (Math.max((posRightUpper.x - posLeftUpper.x),
-                            (posRightLower.x - posLeftLower.x))) + insets.getLeft() + insets.getRight();
-            compoundNode.getSize().y = (Math.max((posLeftLower.y - posLeftUpper.y),
-                    (posRightLower.y - posRightUpper.y))) + insets.getBottom();
+            compoundNode.getSize().x = (posRightUpper.x - posLeftUpper.x + 2 * ownBorderSpacing);
+            compoundNode.getSize().y = (posLeftLower.y - posLeftUpper.y + insets.getBottom() 
+                    + ownBorderSpacing);
         }
 
         // iterate through all edges
@@ -214,14 +219,14 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
 
         // initialize according to value of lower
         int index = layer.getNodes().size() - 1;
-        if (!lower) {
+        if (lower) {
             index = 0;
         }
 
-        // find maximum (minimum) index
+        // find maximum (minimum) index of a compound side node owned by this compound node
         for (LNode layerNode : layer.getNodes()) {
-            if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.COMPOUND_SIDE
-                    && Properties.SIDE_OWNER == lnode) {
+            if (layerNode.getProperty(Properties.NODE_TYPE) == NodeType.COMPOUND_SIDE
+                    && layerNode.getProperty(Properties.SIDE_OWNER) == lnode) {
                 int test = layerNode.getIndex();
                 if (lower) {
                     if (test > index) {
