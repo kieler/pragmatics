@@ -168,6 +168,7 @@ public final class Properties {
      */
     public static final IProperty<KInsets> ORIGINAL_INSETS = 
             new Property<KInsets>("OriginalInsets", null);
+    
 
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS
@@ -189,6 +190,15 @@ public final class Properties {
     /** factor for minimal spacing between edges. */
     public static final Property<Float> EDGE_SPACING_FACTOR = new Property<Float>(
             EDGE_SPACING_FACTOR_ID, DEF_EDGE_SPACING_FACTOR);
+
+    /** option identifier for barycenter associate factor. */
+    public static final String BARYCENTER_ASSOCIATE_FACTOR_ID = 
+        "de.cau.cs.kieler.klay.layered.barycenterAssociateFactor";
+    /** default value for barycenter associate factor. */
+    public static final float DEF_BARYCENTER_ASSOCIATE_FACTOR = 1.0f;
+    /** factor for barycenter associates going into a barycenter calculation. */
+    public static final Property<Float> BARYCENTER_ASSOCIATE_FACTOR = new Property<Float>(
+            BARYCENTER_ASSOCIATE_FACTOR_ID, DEF_BARYCENTER_ASSOCIATE_FACTOR);
 
     /** priority of elements. */
     public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY,
