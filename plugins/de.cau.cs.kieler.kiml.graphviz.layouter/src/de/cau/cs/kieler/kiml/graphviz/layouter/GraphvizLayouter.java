@@ -166,7 +166,7 @@ public class GraphvizLayouter {
 
         try {
             XtextResource resource = (XtextResource) resourceSet.createResource(URI
-                    .createURI("process.graphviz-dot"));
+                    .createURI("process.graphviz_dot"));
             resource.getContents().add(graphvizModel);
             resource.save(outputStream, null);
             outputStream.write('\n');
@@ -224,7 +224,7 @@ public class GraphvizLayouter {
 
         // parse the output stream of the dot process
         XtextResource resource = (XtextResource) resourceSet.createResource(URI
-                .createURI("process.graphviz-dot"));
+                .createURI("process.graphviz_dot"));
         try {
             resource.load(inputStream, null);
             EcoreUtil.resolveAll(resource);

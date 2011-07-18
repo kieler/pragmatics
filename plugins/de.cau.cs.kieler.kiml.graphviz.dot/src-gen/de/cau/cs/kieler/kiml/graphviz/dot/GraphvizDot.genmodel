@@ -8,75 +8,75 @@
     complianceLevel="5.0" copyrightFields="false" editPluginID="de.cau.cs.kieler.kiml.graphviz.dot.edit"
     editorPluginID="de.cau.cs.kieler.kiml.graphviz.dot.editor">
   <genPackages prefix="Dot" basePackage="de.cau.cs.kieler.kiml.graphviz.dot" disposableProviderFactory="true"
-      ecorePackage="GraphvizDot.ecore#/">
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="GraphvizDot.ecore#//EdgeOperator">
-      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//EdgeOperator/directed"/>
-      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//EdgeOperator/undirected"/>
+      ecorePackage="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//EdgeOperator">
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//EdgeOperator/directed"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//EdgeOperator/undirected"/>
     </genEnums>
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="GraphvizDot.ecore#//GraphType">
-      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//GraphType/graph"/>
-      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//GraphType/digraph"/>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//GraphType">
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//GraphType/graph"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//GraphType/digraph"/>
     </genEnums>
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="GraphvizDot.ecore#//AttributeType">
-      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//AttributeType/graph"/>
-      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//AttributeType/node"/>
-      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//AttributeType/edge"/>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//AttributeType">
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//AttributeType/graph"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//AttributeType/node"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//AttributeType/edge"/>
     </genEnums>
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="GraphvizDot.ecore#//CompassPoint">
-      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//CompassPoint/north"/>
-      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//CompassPoint/northEast"/>
-      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//CompassPoint/east"/>
-      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//CompassPoint/southEast"/>
-      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//CompassPoint/south"/>
-      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//CompassPoint/southWest"/>
-      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//CompassPoint/west"/>
-      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//CompassPoint/northWest"/>
-      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//CompassPoint/center"/>
-      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//CompassPoint/blank"/>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//CompassPoint">
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//CompassPoint/north"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//CompassPoint/northEast"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//CompassPoint/east"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//CompassPoint/southEast"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//CompassPoint/south"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//CompassPoint/southWest"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//CompassPoint/west"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//CompassPoint/northWest"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//CompassPoint/center"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//CompassPoint/blank"/>
     </genEnums>
-    <genClasses ecoreClass="GraphvizDot.ecore#//GraphvizModel">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//GraphvizModel/graphs"/>
+    <genClasses ecoreClass="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//GraphvizModel">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//GraphvizModel/graphs"/>
     </genClasses>
-    <genClasses ecoreClass="GraphvizDot.ecore#//Graph">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//Graph/strict"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//Graph/type"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//Graph/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//Graph/statements"/>
+    <genClasses ecoreClass="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Graph">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Graph/strict"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Graph/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Graph/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Graph/statements"/>
     </genClasses>
-    <genClasses ecoreClass="GraphvizDot.ecore#//Statement"/>
-    <genClasses ecoreClass="GraphvizDot.ecore#//EdgeStatement">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//EdgeStatement/sourceNode"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//EdgeStatement/edgeTargets"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//EdgeStatement/attributes"/>
+    <genClasses ecoreClass="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Statement"/>
+    <genClasses ecoreClass="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//EdgeStatement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//EdgeStatement/sourceNode"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//EdgeStatement/edgeTargets"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//EdgeStatement/attributes"/>
     </genClasses>
-    <genClasses ecoreClass="GraphvizDot.ecore#//EdgeTarget">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//EdgeTarget/operator"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//EdgeTarget/targetSubgraph"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//EdgeTarget/targetnode"/>
+    <genClasses ecoreClass="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//EdgeTarget">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//EdgeTarget/operator"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//EdgeTarget/targetSubgraph"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//EdgeTarget/targetnode"/>
     </genClasses>
-    <genClasses ecoreClass="GraphvizDot.ecore#//NodeStatement">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//NodeStatement/node"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//NodeStatement/attributes"/>
+    <genClasses ecoreClass="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//NodeStatement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//NodeStatement/node"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//NodeStatement/attributes"/>
     </genClasses>
-    <genClasses ecoreClass="GraphvizDot.ecore#//AttributeStatement">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//AttributeStatement/type"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//AttributeStatement/attributes"/>
+    <genClasses ecoreClass="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//AttributeStatement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//AttributeStatement/type"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//AttributeStatement/attributes"/>
     </genClasses>
-    <genClasses ecoreClass="GraphvizDot.ecore#//Subgraph">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//Subgraph/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//Subgraph/statements"/>
+    <genClasses ecoreClass="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Subgraph">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Subgraph/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Subgraph/statements"/>
     </genClasses>
-    <genClasses ecoreClass="GraphvizDot.ecore#//Attribute">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//Attribute/name"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//Attribute/value"/>
+    <genClasses ecoreClass="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Attribute">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Attribute/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Attribute/value"/>
     </genClasses>
-    <genClasses ecoreClass="GraphvizDot.ecore#//Node">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//Node/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//Node/port"/>
+    <genClasses ecoreClass="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Node">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Node/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Node/port"/>
     </genClasses>
-    <genClasses ecoreClass="GraphvizDot.ecore#//Port">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//Port/name"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//Port/compass_pt"/>
+    <genClasses ecoreClass="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Port">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Port/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Port/compass_pt"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

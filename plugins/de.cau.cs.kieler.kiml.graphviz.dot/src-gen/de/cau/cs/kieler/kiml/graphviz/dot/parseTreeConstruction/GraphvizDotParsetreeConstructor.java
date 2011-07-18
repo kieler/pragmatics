@@ -12,6 +12,7 @@ import de.cau.cs.kieler.kiml.graphviz.dot.services.GraphvizDotGrammarAccess;
 
 import com.google.inject.Inject;
 
+@SuppressWarnings("all")
 public class GraphvizDotParsetreeConstructor extends AbstractParseTreeConstructor {
 		
 	@Inject
@@ -51,7 +52,7 @@ protected class ThisRootNode extends RootToken {
 /************ begin Rule GraphvizModel ****************
  *
  * GraphvizModel:
- *   graphs+=Graph*;
+ * 	graphs+=Graph*;
  *
  **/
 
@@ -107,7 +108,7 @@ protected class GraphvizModel_GraphsAssignment extends AssignmentToken  {
 /************ begin Rule Graph ****************
  *
  * Graph:
- *   strict?="strict"? type=GraphType name=ID? "{" statements+=Statement* "}";
+ * 	strict?="strict"? type=GraphType name=ID? "{" statements+=Statement* "}";
  *
  **/
 
@@ -341,11 +342,11 @@ protected class Graph_RightCurlyBracketKeyword_5 extends KeywordToken  {
 /************ begin Rule Statement ****************
  *
  * Statement:
- *   (EdgeStatement|NodeStatement|Attribute|AttributeStatement|Subgraph) ";"?;
+ * 	(EdgeStatement | NodeStatement | Attribute | AttributeStatement | Subgraph) ";"?;
  *
  **/
 
-// (EdgeStatement|NodeStatement|Attribute|AttributeStatement|Subgraph) ";"?
+// (EdgeStatement | NodeStatement | Attribute | AttributeStatement | Subgraph) ";"?
 protected class Statement_Group extends GroupToken {
 	
 	public Statement_Group(AbstractToken lastRuleCallOrigin, AbstractToken next, int transitionIndex, IEObjectConsumer eObjectConsumer) {
@@ -378,7 +379,7 @@ protected class Statement_Group extends GroupToken {
 
 }
 
-// EdgeStatement|NodeStatement|Attribute|AttributeStatement|Subgraph
+// EdgeStatement | NodeStatement | Attribute | AttributeStatement | Subgraph
 protected class Statement_Alternatives_0 extends AlternativesToken {
 
 	public Statement_Alternatives_0(AbstractToken lastRuleCallOrigin, AbstractToken next, int transitionIndex, IEObjectConsumer eObjectConsumer) {
@@ -592,13 +593,11 @@ protected class Statement_SubgraphParserRuleCall_0_4 extends RuleCallToken {
 /************ begin Rule EdgeStatement ****************
  *
  * EdgeStatement:
- *   sourceNode=Node edgeTargets+=EdgeTarget+ ("[" attributes+=ListAttribute (","?
- *   attributes+=ListAttribute)* "]")?;
+ * 	sourceNode=Node edgeTargets+=EdgeTarget+ ("[" attributes+=ListAttribute (","? attributes+=ListAttribute)* "]")?;
  *
  **/
 
-// sourceNode=Node edgeTargets+=EdgeTarget+ ("[" attributes+=ListAttribute (","?
-// attributes+=ListAttribute)* "]")?
+// sourceNode=Node edgeTargets+=EdgeTarget+ ("[" attributes+=ListAttribute (","? attributes+=ListAttribute)* "]")?
 protected class EdgeStatement_Group extends GroupToken {
 	
 	public EdgeStatement_Group(AbstractToken lastRuleCallOrigin, AbstractToken next, int transitionIndex, IEObjectConsumer eObjectConsumer) {
@@ -911,11 +910,11 @@ protected class EdgeStatement_RightSquareBracketKeyword_2_3 extends KeywordToken
 /************ begin Rule EdgeTarget ****************
  *
  * EdgeTarget:
- *   operator=EdgeOperator (targetSubgraph=Subgraph|targetnode=Node);
+ * 	operator=EdgeOperator (targetSubgraph=Subgraph | targetnode=Node);
  *
  **/
 
-// operator=EdgeOperator (targetSubgraph=Subgraph|targetnode=Node)
+// operator=EdgeOperator (targetSubgraph=Subgraph | targetnode=Node)
 protected class EdgeTarget_Group extends GroupToken {
 	
 	public EdgeTarget_Group(AbstractToken lastRuleCallOrigin, AbstractToken next, int transitionIndex, IEObjectConsumer eObjectConsumer) {
@@ -977,7 +976,7 @@ protected class EdgeTarget_OperatorAssignment_0 extends AssignmentToken  {
 
 }
 
-// targetSubgraph=Subgraph|targetnode=Node
+// targetSubgraph=Subgraph | targetnode=Node
 protected class EdgeTarget_Alternatives_1 extends AlternativesToken {
 
 	public EdgeTarget_Alternatives_1(AbstractToken lastRuleCallOrigin, AbstractToken next, int transitionIndex, IEObjectConsumer eObjectConsumer) {
@@ -1100,8 +1099,7 @@ protected class EdgeTarget_TargetnodeAssignment_1_1 extends AssignmentToken  {
 /************ begin Rule NodeStatement ****************
  *
  * NodeStatement:
- *   node=Node ("[" attributes+=ListAttribute (","? attributes+=ListAttribute)*
- *   "]")?;
+ * 	node=Node ("[" attributes+=ListAttribute (","? attributes+=ListAttribute)* "]")?;
  *
  **/
 
@@ -1371,13 +1369,11 @@ protected class NodeStatement_RightSquareBracketKeyword_1_3 extends KeywordToken
 /************ begin Rule AttributeStatement ****************
  *
  * AttributeStatement:
- *   type=AttributeType "[" attributes+=ListAttribute (","?
- *   attributes+=ListAttribute)* "]";
+ * 	type=AttributeType "[" attributes+=ListAttribute (","? attributes+=ListAttribute)* "]";
  *
  **/
 
-// type=AttributeType "[" attributes+=ListAttribute (","? attributes+=ListAttribute
-// )* "]"
+// type=AttributeType "[" attributes+=ListAttribute (","? attributes+=ListAttribute)* "]"
 protected class AttributeStatement_Group extends GroupToken {
 	
 	public AttributeStatement_Group(AbstractToken lastRuleCallOrigin, AbstractToken next, int transitionIndex, IEObjectConsumer eObjectConsumer) {
@@ -1607,7 +1603,7 @@ protected class AttributeStatement_RightSquareBracketKeyword_4 extends KeywordTo
 /************ begin Rule Subgraph ****************
  *
  * Subgraph:
- *   {Subgraph} "subgraph" name=ID? "{" statements+=Statement* "}";
+ * 	{Subgraph} "subgraph" name=ID? "{" statements+=Statement* "}";
  *
  **/
 
@@ -1822,7 +1818,7 @@ protected class Subgraph_RightCurlyBracketKeyword_5 extends KeywordToken  {
 /************ begin Rule Attribute ****************
  *
  * Attribute:
- *   name=DotID "=" value=DotID;
+ * 	name=DotID "=" value=DotID;
  *
  **/
 
@@ -1951,7 +1947,7 @@ protected class Attribute_ValueAssignment_2 extends AssignmentToken  {
 /************ begin Rule ListAttribute ****************
  *
  * ListAttribute returns Attribute:
- *   name=DotID ("=" value=DotID)?;
+ * 	name=DotID ("=" value=DotID)?;
  *
  **/
 
@@ -2104,7 +2100,7 @@ protected class ListAttribute_ValueAssignment_1_1 extends AssignmentToken  {
 /************ begin Rule Node ****************
  *
  * Node:
- *   name=DotID (":" port=Port)?;
+ * 	name=DotID (":" port=Port)?;
  *
  **/
 
@@ -2269,11 +2265,11 @@ protected class Node_PortAssignment_1_1 extends AssignmentToken  {
 /************ begin Rule Port ****************
  *
  * Port:
- *   name=DotID (":" compass_pt=CompassPoint)?|compass_pt=CompassPoint;
+ * 	name=DotID (":" compass_pt=CompassPoint)? | compass_pt=CompassPoint;
  *
  **/
 
-// name=DotID (":" compass_pt=CompassPoint)?|compass_pt=CompassPoint
+// name=DotID (":" compass_pt=CompassPoint)? | compass_pt=CompassPoint
 protected class Port_Alternatives extends AlternativesToken {
 
 	public Port_Alternatives(AbstractToken lastRuleCallOrigin, AbstractToken next, int transitionIndex, IEObjectConsumer eObjectConsumer) {

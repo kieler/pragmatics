@@ -4,16 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
+import de.cau.cs.kieler.core.annotations.validation.AnnotationsJavaValidator;
 
-public class AbstractKaomJavaValidator extends AbstractDeclarativeValidator {
+public class AbstractKaomJavaValidator extends AnnotationsJavaValidator {
 
-@Override
+	@Override
 	protected List<EPackage> getEPackages() {
 	    List<EPackage> result = new ArrayList<EPackage>();
 	    result.add(EPackage.Registry.INSTANCE.getEPackage("http://kieler.cs.cau.de/KAOM"));
 	    result.add(EPackage.Registry.INSTANCE.getEPackage("http://kieler.cs.cau.de/annotations"));
-	    result.add(EPackage.Registry.INSTANCE.getEPackage("http://www.eclipse.org/emf/2002/Ecore"));
 		return result;
 	}
 

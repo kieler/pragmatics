@@ -1,10 +1,8 @@
 package de.cau.cs.kieler.kiml.graphviz.dot.parser.antlr.internal; 
 
-import java.io.InputStream;
 import org.eclipse.xtext.*;
 import org.eclipse.xtext.parser.*;
 import org.eclipse.xtext.parser.impl.*;
-import org.eclipse.xtext.parsetree.*;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.common.util.Enumerator;
@@ -12,7 +10,6 @@ import org.eclipse.xtext.parser.antlr.AbstractInternalAntlrParser;
 import org.eclipse.xtext.parser.antlr.XtextTokenStream;
 import org.eclipse.xtext.parser.antlr.XtextTokenStream.HiddenTokens;
 import org.eclipse.xtext.parser.antlr.AntlrDatatypeRuleToken;
-import org.eclipse.xtext.conversion.ValueConverterException;
 import de.cau.cs.kieler.kiml.graphviz.dot.services.GraphvizDotGrammarAccess;
 
 
@@ -28,39 +25,66 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_ID", "RULE_INT", "RULE_FLOAT", "RULE_STRING", "RULE_PREC_LINE", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'strict'", "'{'", "'}'", "';'", "'['", "','", "']'", "'subgraph'", "'='", "':'", "'->'", "'--'", "'graph'", "'digraph'", "'node'", "'edge'", "'n'", "'ne'", "'e'", "'se'", "'s'", "'sw'", "'w'", "'nw'", "'c'", "'_'"
     };
     public static final int RULE_ID=4;
-    public static final int RULE_STRING=7;
+    public static final int T__29=29;
+    public static final int T__28=28;
+    public static final int T__27=27;
+    public static final int T__26=26;
+    public static final int T__25=25;
+    public static final int T__24=24;
+    public static final int T__23=23;
+    public static final int T__22=22;
     public static final int RULE_ANY_OTHER=12;
-    public static final int RULE_INT=5;
+    public static final int T__21=21;
+    public static final int T__20=20;
     public static final int RULE_PREC_LINE=8;
-    public static final int RULE_WS=11;
     public static final int RULE_FLOAT=6;
     public static final int RULE_SL_COMMENT=10;
     public static final int EOF=-1;
     public static final int RULE_ML_COMMENT=9;
+    public static final int T__30=30;
+    public static final int T__19=19;
+    public static final int T__31=31;
+    public static final int RULE_STRING=7;
+    public static final int T__32=32;
+    public static final int T__33=33;
+    public static final int T__16=16;
+    public static final int T__34=34;
+    public static final int T__15=15;
+    public static final int T__35=35;
+    public static final int T__18=18;
+    public static final int T__36=36;
+    public static final int T__17=17;
+    public static final int T__37=37;
+    public static final int T__38=38;
+    public static final int T__14=14;
+    public static final int T__13=13;
+    public static final int RULE_INT=5;
+    public static final int RULE_WS=11;
+
+    // delegates
+    // delegators
+
 
         public InternalGraphvizDotParser(TokenStream input) {
-            super(input);
+            this(input, new RecognizerSharedState());
+        }
+        public InternalGraphvizDotParser(TokenStream input, RecognizerSharedState state) {
+            super(input, state);
+             
         }
         
 
-    public String[] getTokenNames() { return tokenNames; }
+    public String[] getTokenNames() { return InternalGraphvizDotParser.tokenNames; }
     public String getGrammarFileName() { return "../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g"; }
 
 
 
      	private GraphvizDotGrammarAccess grammarAccess;
      	
-        public InternalGraphvizDotParser(TokenStream input, IAstFactory factory, GraphvizDotGrammarAccess grammarAccess) {
+        public InternalGraphvizDotParser(TokenStream input, GraphvizDotGrammarAccess grammarAccess) {
             this(input);
-            this.factory = factory;
-            registerRules(grammarAccess.getGrammar());
             this.grammarAccess = grammarAccess;
-        }
-        
-        @Override
-        protected InputStream getTokenFile() {
-        	ClassLoader classLoader = getClass().getClassLoader();
-        	return classLoader.getResourceAsStream("de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.tokens");
+            registerRules(grammarAccess.getGrammar());
         }
         
         @Override
@@ -75,8 +99,8 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
 
 
-    // $ANTLR start entryRuleGraphvizModel
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:78:1: entryRuleGraphvizModel returns [EObject current=null] : iv_ruleGraphvizModel= ruleGraphvizModel EOF ;
+    // $ANTLR start "entryRuleGraphvizModel"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:68:1: entryRuleGraphvizModel returns [EObject current=null] : iv_ruleGraphvizModel= ruleGraphvizModel EOF ;
     public final EObject entryRuleGraphvizModel() throws RecognitionException {
         EObject current = null;
 
@@ -84,13 +108,14 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:79:2: (iv_ruleGraphvizModel= ruleGraphvizModel EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:80:2: iv_ruleGraphvizModel= ruleGraphvizModel EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:69:2: (iv_ruleGraphvizModel= ruleGraphvizModel EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:70:2: iv_ruleGraphvizModel= ruleGraphvizModel EOF
             {
-             currentNode = createCompositeNode(grammarAccess.getGraphvizModelRule(), currentNode); 
+             newCompositeNode(grammarAccess.getGraphvizModelRule()); 
             pushFollow(FOLLOW_ruleGraphvizModel_in_entryRuleGraphvizModel75);
             iv_ruleGraphvizModel=ruleGraphvizModel();
-            _fsp--;
+
+            state._fsp--;
 
              current =iv_ruleGraphvizModel; 
             match(input,EOF,FOLLOW_EOF_in_entryRuleGraphvizModel85); 
@@ -107,24 +132,24 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleGraphvizModel
+    // $ANTLR end "entryRuleGraphvizModel"
 
 
-    // $ANTLR start ruleGraphvizModel
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:87:1: ruleGraphvizModel returns [EObject current=null] : ( (lv_graphs_0_0= ruleGraph ) )* ;
+    // $ANTLR start "ruleGraphvizModel"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:77:1: ruleGraphvizModel returns [EObject current=null] : ( (lv_graphs_0_0= ruleGraph ) )* ;
     public final EObject ruleGraphvizModel() throws RecognitionException {
         EObject current = null;
 
         EObject lv_graphs_0_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:92:6: ( ( (lv_graphs_0_0= ruleGraph ) )* )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:93:1: ( (lv_graphs_0_0= ruleGraph ) )*
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:80:28: ( ( (lv_graphs_0_0= ruleGraph ) )* )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:81:1: ( (lv_graphs_0_0= ruleGraph ) )*
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:93:1: ( (lv_graphs_0_0= ruleGraph ) )*
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:81:1: ( (lv_graphs_0_0= ruleGraph ) )*
             loop1:
             do {
                 int alt1=2;
@@ -137,34 +162,29 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt1) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:94:1: (lv_graphs_0_0= ruleGraph )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:82:1: (lv_graphs_0_0= ruleGraph )
             	    {
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:94:1: (lv_graphs_0_0= ruleGraph )
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:95:3: lv_graphs_0_0= ruleGraph
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:82:1: (lv_graphs_0_0= ruleGraph )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:83:3: lv_graphs_0_0= ruleGraph
             	    {
             	     
-            	    	        currentNode=createCompositeNode(grammarAccess.getGraphvizModelAccess().getGraphsGraphParserRuleCall_0(), currentNode); 
+            	    	        newCompositeNode(grammarAccess.getGraphvizModelAccess().getGraphsGraphParserRuleCall_0()); 
             	    	    
             	    pushFollow(FOLLOW_ruleGraph_in_ruleGraphvizModel130);
             	    lv_graphs_0_0=ruleGraph();
-            	    _fsp--;
+
+            	    state._fsp--;
 
 
             	    	        if (current==null) {
-            	    	            current = factory.create(grammarAccess.getGraphvizModelRule().getType().getClassifier());
-            	    	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	    	            current = createModelElementForParent(grammarAccess.getGraphvizModelRule());
             	    	        }
-            	    	        try {
-            	    	       		add(
-            	    	       			current, 
-            	    	       			"graphs",
-            	    	        		lv_graphs_0_0, 
-            	    	        		"Graph", 
-            	    	        		currentNode);
-            	    	        } catch (ValueConverterException vce) {
-            	    				handleValueConverterException(vce);
-            	    	        }
-            	    	        currentNode = currentNode.getParent();
+            	           		add(
+            	           			current, 
+            	           			"graphs",
+            	            		lv_graphs_0_0, 
+            	            		"Graph");
+            	    	        afterParserOrEnumRuleCall();
             	    	    
 
             	    }
@@ -181,9 +201,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-             resetLookahead(); 
-                	lastConsumedNode = currentNode;
-                
+             leaveRule(); 
         }
          
             catch (RecognitionException re) { 
@@ -194,11 +212,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleGraphvizModel
+    // $ANTLR end "ruleGraphvizModel"
 
 
-    // $ANTLR start entryRuleGraph
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:125:1: entryRuleGraph returns [EObject current=null] : iv_ruleGraph= ruleGraph EOF ;
+    // $ANTLR start "entryRuleGraph"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:107:1: entryRuleGraph returns [EObject current=null] : iv_ruleGraph= ruleGraph EOF ;
     public final EObject entryRuleGraph() throws RecognitionException {
         EObject current = null;
 
@@ -206,13 +224,14 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:126:2: (iv_ruleGraph= ruleGraph EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:127:2: iv_ruleGraph= ruleGraph EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:108:2: (iv_ruleGraph= ruleGraph EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:109:2: iv_ruleGraph= ruleGraph EOF
             {
-             currentNode = createCompositeNode(grammarAccess.getGraphRule(), currentNode); 
+             newCompositeNode(grammarAccess.getGraphRule()); 
             pushFollow(FOLLOW_ruleGraph_in_entryRuleGraph166);
             iv_ruleGraph=ruleGraph();
-            _fsp--;
+
+            state._fsp--;
 
              current =iv_ruleGraph; 
             match(input,EOF,FOLLOW_EOF_in_entryRuleGraph176); 
@@ -229,31 +248,33 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleGraph
+    // $ANTLR end "entryRuleGraph"
 
 
-    // $ANTLR start ruleGraph
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:134:1: ruleGraph returns [EObject current=null] : ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}' ) ;
+    // $ANTLR start "ruleGraph"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:116:1: ruleGraph returns [EObject current=null] : ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}' ) ;
     public final EObject ruleGraph() throws RecognitionException {
         EObject current = null;
 
         Token lv_strict_0_0=null;
         Token lv_name_2_0=null;
+        Token otherlv_3=null;
+        Token otherlv_5=null;
         Enumerator lv_type_1_0 = null;
 
         EObject lv_statements_4_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:139:6: ( ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}' ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:140:1: ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}' )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:119:28: ( ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:120:1: ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}' )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:140:1: ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}' )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:140:2: ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}'
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:120:1: ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}' )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:120:2: ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}'
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:140:2: ( (lv_strict_0_0= 'strict' ) )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:120:2: ( (lv_strict_0_0= 'strict' ) )?
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -262,27 +283,20 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt2) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:141:1: (lv_strict_0_0= 'strict' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:121:1: (lv_strict_0_0= 'strict' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:141:1: (lv_strict_0_0= 'strict' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:142:3: lv_strict_0_0= 'strict'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:121:1: (lv_strict_0_0= 'strict' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:122:3: lv_strict_0_0= 'strict'
                     {
-                    lv_strict_0_0=(Token)input.LT(1);
-                    match(input,13,FOLLOW_13_in_ruleGraph219); 
+                    lv_strict_0_0=(Token)match(input,13,FOLLOW_13_in_ruleGraph219); 
 
-                            createLeafNode(grammarAccess.getGraphAccess().getStrictStrictKeyword_0_0(), "strict"); 
+                            newLeafNode(lv_strict_0_0, grammarAccess.getGraphAccess().getStrictStrictKeyword_0_0());
                         
 
                     	        if (current==null) {
-                    	            current = factory.create(grammarAccess.getGraphRule().getType().getClassifier());
-                    	            associateNodeWithAstElement(currentNode, current);
+                    	            current = createModelElement(grammarAccess.getGraphRule());
                     	        }
-                    	        
-                    	        try {
-                    	       		set(current, "strict", true, "strict", lastConsumedNode);
-                    	        } catch (ValueConverterException vce) {
-                    				handleValueConverterException(vce);
-                    	        }
+                           		setWithLastConsumed(current, "strict", true, "strict");
                     	    
 
                     }
@@ -293,35 +307,30 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:161:3: ( (lv_type_1_0= ruleGraphType ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:162:1: (lv_type_1_0= ruleGraphType )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:135:3: ( (lv_type_1_0= ruleGraphType ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:136:1: (lv_type_1_0= ruleGraphType )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:162:1: (lv_type_1_0= ruleGraphType )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:163:3: lv_type_1_0= ruleGraphType
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:136:1: (lv_type_1_0= ruleGraphType )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:137:3: lv_type_1_0= ruleGraphType
             {
              
-            	        currentNode=createCompositeNode(grammarAccess.getGraphAccess().getTypeGraphTypeEnumRuleCall_1_0(), currentNode); 
+            	        newCompositeNode(grammarAccess.getGraphAccess().getTypeGraphTypeEnumRuleCall_1_0()); 
             	    
             pushFollow(FOLLOW_ruleGraphType_in_ruleGraph254);
             lv_type_1_0=ruleGraphType();
-            _fsp--;
+
+            state._fsp--;
 
 
             	        if (current==null) {
-            	            current = factory.create(grammarAccess.getGraphRule().getType().getClassifier());
-            	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	            current = createModelElementForParent(grammarAccess.getGraphRule());
             	        }
-            	        try {
-            	       		set(
-            	       			current, 
-            	       			"type",
-            	        		lv_type_1_0, 
-            	        		"GraphType", 
-            	        		currentNode);
-            	        } catch (ValueConverterException vce) {
-            				handleValueConverterException(vce);
-            	        }
-            	        currentNode = currentNode.getParent();
+                   		set(
+                   			current, 
+                   			"type",
+                    		lv_type_1_0, 
+                    		"GraphType");
+            	        afterParserOrEnumRuleCall();
             	    
 
             }
@@ -329,7 +338,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:185:2: ( (lv_name_2_0= RULE_ID ) )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:153:2: ( (lv_name_2_0= RULE_ID ) )?
             int alt3=2;
             int LA3_0 = input.LA(1);
 
@@ -338,31 +347,24 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt3) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:186:1: (lv_name_2_0= RULE_ID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:154:1: (lv_name_2_0= RULE_ID )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:186:1: (lv_name_2_0= RULE_ID )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:187:3: lv_name_2_0= RULE_ID
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:154:1: (lv_name_2_0= RULE_ID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:155:3: lv_name_2_0= RULE_ID
                     {
-                    lv_name_2_0=(Token)input.LT(1);
-                    match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleGraph271); 
+                    lv_name_2_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleGraph271); 
 
-                    			createLeafNode(grammarAccess.getGraphAccess().getNameIDTerminalRuleCall_2_0(), "name"); 
+                    			newLeafNode(lv_name_2_0, grammarAccess.getGraphAccess().getNameIDTerminalRuleCall_2_0()); 
                     		
 
                     	        if (current==null) {
-                    	            current = factory.create(grammarAccess.getGraphRule().getType().getClassifier());
-                    	            associateNodeWithAstElement(currentNode, current);
+                    	            current = createModelElement(grammarAccess.getGraphRule());
                     	        }
-                    	        try {
-                    	       		set(
-                    	       			current, 
-                    	       			"name",
-                    	        		lv_name_2_0, 
-                    	        		"ID", 
-                    	        		lastConsumedNode);
-                    	        } catch (ValueConverterException vce) {
-                    				handleValueConverterException(vce);
-                    	        }
+                           		setWithLastConsumed(
+                           			current, 
+                           			"name",
+                            		lv_name_2_0, 
+                            		"ID");
                     	    
 
                     }
@@ -373,11 +375,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            match(input,14,FOLLOW_14_in_ruleGraph287); 
+            otherlv_3=(Token)match(input,14,FOLLOW_14_in_ruleGraph289); 
 
-                    createLeafNode(grammarAccess.getGraphAccess().getLeftCurlyBracketKeyword_3(), null); 
+                	newLeafNode(otherlv_3, grammarAccess.getGraphAccess().getLeftCurlyBracketKeyword_3());
                 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:213:1: ( (lv_statements_4_0= ruleStatement ) )*
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:175:1: ( (lv_statements_4_0= ruleStatement ) )*
             loop4:
             do {
                 int alt4=2;
@@ -390,34 +392,29 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt4) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:214:1: (lv_statements_4_0= ruleStatement )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:176:1: (lv_statements_4_0= ruleStatement )
             	    {
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:214:1: (lv_statements_4_0= ruleStatement )
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:215:3: lv_statements_4_0= ruleStatement
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:176:1: (lv_statements_4_0= ruleStatement )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:177:3: lv_statements_4_0= ruleStatement
             	    {
             	     
-            	    	        currentNode=createCompositeNode(grammarAccess.getGraphAccess().getStatementsStatementParserRuleCall_4_0(), currentNode); 
+            	    	        newCompositeNode(grammarAccess.getGraphAccess().getStatementsStatementParserRuleCall_4_0()); 
             	    	    
-            	    pushFollow(FOLLOW_ruleStatement_in_ruleGraph308);
+            	    pushFollow(FOLLOW_ruleStatement_in_ruleGraph310);
             	    lv_statements_4_0=ruleStatement();
-            	    _fsp--;
+
+            	    state._fsp--;
 
 
             	    	        if (current==null) {
-            	    	            current = factory.create(grammarAccess.getGraphRule().getType().getClassifier());
-            	    	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	    	            current = createModelElementForParent(grammarAccess.getGraphRule());
             	    	        }
-            	    	        try {
-            	    	       		add(
-            	    	       			current, 
-            	    	       			"statements",
-            	    	        		lv_statements_4_0, 
-            	    	        		"Statement", 
-            	    	        		currentNode);
-            	    	        } catch (ValueConverterException vce) {
-            	    				handleValueConverterException(vce);
-            	    	        }
-            	    	        currentNode = currentNode.getParent();
+            	           		add(
+            	           			current, 
+            	           			"statements",
+            	            		lv_statements_4_0, 
+            	            		"Statement");
+            	    	        afterParserOrEnumRuleCall();
             	    	    
 
             	    }
@@ -431,9 +428,9 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                 }
             } while (true);
 
-            match(input,15,FOLLOW_15_in_ruleGraph319); 
+            otherlv_5=(Token)match(input,15,FOLLOW_15_in_ruleGraph323); 
 
-                    createLeafNode(grammarAccess.getGraphAccess().getRightCurlyBracketKeyword_5(), null); 
+                	newLeafNode(otherlv_5, grammarAccess.getGraphAccess().getRightCurlyBracketKeyword_5());
                 
 
             }
@@ -441,9 +438,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-             resetLookahead(); 
-                	lastConsumedNode = currentNode;
-                
+             leaveRule(); 
         }
          
             catch (RecognitionException re) { 
@@ -454,11 +449,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleGraph
+    // $ANTLR end "ruleGraph"
 
 
-    // $ANTLR start entryRuleStatement
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:249:1: entryRuleStatement returns [EObject current=null] : iv_ruleStatement= ruleStatement EOF ;
+    // $ANTLR start "entryRuleStatement"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:205:1: entryRuleStatement returns [EObject current=null] : iv_ruleStatement= ruleStatement EOF ;
     public final EObject entryRuleStatement() throws RecognitionException {
         EObject current = null;
 
@@ -466,16 +461,17 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:250:2: (iv_ruleStatement= ruleStatement EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:251:2: iv_ruleStatement= ruleStatement EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:206:2: (iv_ruleStatement= ruleStatement EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:207:2: iv_ruleStatement= ruleStatement EOF
             {
-             currentNode = createCompositeNode(grammarAccess.getStatementRule(), currentNode); 
-            pushFollow(FOLLOW_ruleStatement_in_entryRuleStatement355);
+             newCompositeNode(grammarAccess.getStatementRule()); 
+            pushFollow(FOLLOW_ruleStatement_in_entryRuleStatement359);
             iv_ruleStatement=ruleStatement();
-            _fsp--;
+
+            state._fsp--;
 
              current =iv_ruleStatement; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleStatement365); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleStatement369); 
 
             }
 
@@ -489,14 +485,15 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleStatement
+    // $ANTLR end "entryRuleStatement"
 
 
-    // $ANTLR start ruleStatement
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:258:1: ruleStatement returns [EObject current=null] : ( (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph ) ( ';' )? ) ;
+    // $ANTLR start "ruleStatement"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:214:1: ruleStatement returns [EObject current=null] : ( (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph ) (otherlv_5= ';' )? ) ;
     public final EObject ruleStatement() throws RecognitionException {
         EObject current = null;
 
+        Token otherlv_5=null;
         EObject this_EdgeStatement_0 = null;
 
         EObject this_NodeStatement_1 = null;
@@ -508,4659 +505,105 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         EObject this_Subgraph_4 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:263:6: ( ( (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph ) ( ';' )? ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:264:1: ( (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph ) ( ';' )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:217:28: ( ( (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph ) (otherlv_5= ';' )? ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:218:1: ( (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph ) (otherlv_5= ';' )? )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:264:1: ( (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph ) ( ';' )? )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph ) ( ';' )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:218:1: ( (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph ) (otherlv_5= ';' )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:218:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph ) (otherlv_5= ';' )?
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:218:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )
             int alt5=5;
-            switch ( input.LA(1) ) {
-            case RULE_ID:
-                {
-                switch ( input.LA(2) ) {
-                case 22:
-                    {
-                    switch ( input.LA(3) ) {
-                    case RULE_ID:
-                        {
-                        switch ( input.LA(4) ) {
-                        case 22:
-                            {
-                            switch ( input.LA(5) ) {
-                            case 29:
-                                {
-                                int LA5_26 = input.LA(6);
-
-                                if ( ((LA5_26>=23 && LA5_26<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_26==EOF||(LA5_26>=RULE_ID && LA5_26<=RULE_STRING)||(LA5_26>=15 && LA5_26<=17)||LA5_26==20||LA5_26==25||(LA5_26>=27 && LA5_26<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 26, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 30:
-                                {
-                                int LA5_27 = input.LA(6);
-
-                                if ( ((LA5_27>=23 && LA5_27<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_27==EOF||(LA5_27>=RULE_ID && LA5_27<=RULE_STRING)||(LA5_27>=15 && LA5_27<=17)||LA5_27==20||LA5_27==25||(LA5_27>=27 && LA5_27<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 27, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 31:
-                                {
-                                int LA5_28 = input.LA(6);
-
-                                if ( (LA5_28==EOF||(LA5_28>=RULE_ID && LA5_28<=RULE_STRING)||(LA5_28>=15 && LA5_28<=17)||LA5_28==20||LA5_28==25||(LA5_28>=27 && LA5_28<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_28>=23 && LA5_28<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 28, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 32:
-                                {
-                                int LA5_29 = input.LA(6);
-
-                                if ( ((LA5_29>=23 && LA5_29<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_29==EOF||(LA5_29>=RULE_ID && LA5_29<=RULE_STRING)||(LA5_29>=15 && LA5_29<=17)||LA5_29==20||LA5_29==25||(LA5_29>=27 && LA5_29<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 29, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 33:
-                                {
-                                int LA5_30 = input.LA(6);
-
-                                if ( ((LA5_30>=23 && LA5_30<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_30==EOF||(LA5_30>=RULE_ID && LA5_30<=RULE_STRING)||(LA5_30>=15 && LA5_30<=17)||LA5_30==20||LA5_30==25||(LA5_30>=27 && LA5_30<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 30, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 34:
-                                {
-                                int LA5_31 = input.LA(6);
-
-                                if ( ((LA5_31>=23 && LA5_31<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_31==EOF||(LA5_31>=RULE_ID && LA5_31<=RULE_STRING)||(LA5_31>=15 && LA5_31<=17)||LA5_31==20||LA5_31==25||(LA5_31>=27 && LA5_31<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 31, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 35:
-                                {
-                                int LA5_32 = input.LA(6);
-
-                                if ( ((LA5_32>=23 && LA5_32<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_32==EOF||(LA5_32>=RULE_ID && LA5_32<=RULE_STRING)||(LA5_32>=15 && LA5_32<=17)||LA5_32==20||LA5_32==25||(LA5_32>=27 && LA5_32<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 32, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 36:
-                                {
-                                int LA5_33 = input.LA(6);
-
-                                if ( (LA5_33==EOF||(LA5_33>=RULE_ID && LA5_33<=RULE_STRING)||(LA5_33>=15 && LA5_33<=17)||LA5_33==20||LA5_33==25||(LA5_33>=27 && LA5_33<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_33>=23 && LA5_33<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 33, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 37:
-                                {
-                                int LA5_34 = input.LA(6);
-
-                                if ( (LA5_34==EOF||(LA5_34>=RULE_ID && LA5_34<=RULE_STRING)||(LA5_34>=15 && LA5_34<=17)||LA5_34==20||LA5_34==25||(LA5_34>=27 && LA5_34<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_34>=23 && LA5_34<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 34, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 38:
-                                {
-                                int LA5_35 = input.LA(6);
-
-                                if ( (LA5_35==EOF||(LA5_35>=RULE_ID && LA5_35<=RULE_STRING)||(LA5_35>=15 && LA5_35<=17)||LA5_35==20||LA5_35==25||(LA5_35>=27 && LA5_35<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_35>=23 && LA5_35<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 35, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            default:
-                                NoViableAltException nvae =
-                                    new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 25, input);
-
-                                throw nvae;
-                            }
-
-                            }
-                            break;
-                        case EOF:
-                        case RULE_ID:
-                        case RULE_INT:
-                        case RULE_FLOAT:
-                        case RULE_STRING:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 20:
-                        case 25:
-                        case 27:
-                        case 28:
-                            {
-                            alt5=2;
-                            }
-                            break;
-                        case 23:
-                        case 24:
-                            {
-                            alt5=1;
-                            }
-                            break;
-                        default:
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 11, input);
-
-                            throw nvae;
-                        }
-
-                        }
-                        break;
-                    case RULE_INT:
-                        {
-                        switch ( input.LA(4) ) {
-                        case 22:
-                            {
-                            switch ( input.LA(5) ) {
-                            case 29:
-                                {
-                                int LA5_26 = input.LA(6);
-
-                                if ( ((LA5_26>=23 && LA5_26<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_26==EOF||(LA5_26>=RULE_ID && LA5_26<=RULE_STRING)||(LA5_26>=15 && LA5_26<=17)||LA5_26==20||LA5_26==25||(LA5_26>=27 && LA5_26<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 26, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 30:
-                                {
-                                int LA5_27 = input.LA(6);
-
-                                if ( ((LA5_27>=23 && LA5_27<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_27==EOF||(LA5_27>=RULE_ID && LA5_27<=RULE_STRING)||(LA5_27>=15 && LA5_27<=17)||LA5_27==20||LA5_27==25||(LA5_27>=27 && LA5_27<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 27, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 31:
-                                {
-                                int LA5_28 = input.LA(6);
-
-                                if ( (LA5_28==EOF||(LA5_28>=RULE_ID && LA5_28<=RULE_STRING)||(LA5_28>=15 && LA5_28<=17)||LA5_28==20||LA5_28==25||(LA5_28>=27 && LA5_28<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_28>=23 && LA5_28<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 28, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 32:
-                                {
-                                int LA5_29 = input.LA(6);
-
-                                if ( ((LA5_29>=23 && LA5_29<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_29==EOF||(LA5_29>=RULE_ID && LA5_29<=RULE_STRING)||(LA5_29>=15 && LA5_29<=17)||LA5_29==20||LA5_29==25||(LA5_29>=27 && LA5_29<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 29, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 33:
-                                {
-                                int LA5_30 = input.LA(6);
-
-                                if ( ((LA5_30>=23 && LA5_30<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_30==EOF||(LA5_30>=RULE_ID && LA5_30<=RULE_STRING)||(LA5_30>=15 && LA5_30<=17)||LA5_30==20||LA5_30==25||(LA5_30>=27 && LA5_30<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 30, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 34:
-                                {
-                                int LA5_31 = input.LA(6);
-
-                                if ( ((LA5_31>=23 && LA5_31<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_31==EOF||(LA5_31>=RULE_ID && LA5_31<=RULE_STRING)||(LA5_31>=15 && LA5_31<=17)||LA5_31==20||LA5_31==25||(LA5_31>=27 && LA5_31<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 31, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 35:
-                                {
-                                int LA5_32 = input.LA(6);
-
-                                if ( ((LA5_32>=23 && LA5_32<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_32==EOF||(LA5_32>=RULE_ID && LA5_32<=RULE_STRING)||(LA5_32>=15 && LA5_32<=17)||LA5_32==20||LA5_32==25||(LA5_32>=27 && LA5_32<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 32, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 36:
-                                {
-                                int LA5_33 = input.LA(6);
-
-                                if ( (LA5_33==EOF||(LA5_33>=RULE_ID && LA5_33<=RULE_STRING)||(LA5_33>=15 && LA5_33<=17)||LA5_33==20||LA5_33==25||(LA5_33>=27 && LA5_33<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_33>=23 && LA5_33<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 33, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 37:
-                                {
-                                int LA5_34 = input.LA(6);
-
-                                if ( (LA5_34==EOF||(LA5_34>=RULE_ID && LA5_34<=RULE_STRING)||(LA5_34>=15 && LA5_34<=17)||LA5_34==20||LA5_34==25||(LA5_34>=27 && LA5_34<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_34>=23 && LA5_34<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 34, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 38:
-                                {
-                                int LA5_35 = input.LA(6);
-
-                                if ( (LA5_35==EOF||(LA5_35>=RULE_ID && LA5_35<=RULE_STRING)||(LA5_35>=15 && LA5_35<=17)||LA5_35==20||LA5_35==25||(LA5_35>=27 && LA5_35<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_35>=23 && LA5_35<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 35, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            default:
-                                NoViableAltException nvae =
-                                    new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 25, input);
-
-                                throw nvae;
-                            }
-
-                            }
-                            break;
-                        case EOF:
-                        case RULE_ID:
-                        case RULE_INT:
-                        case RULE_FLOAT:
-                        case RULE_STRING:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 20:
-                        case 25:
-                        case 27:
-                        case 28:
-                            {
-                            alt5=2;
-                            }
-                            break;
-                        case 23:
-                        case 24:
-                            {
-                            alt5=1;
-                            }
-                            break;
-                        default:
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 12, input);
-
-                            throw nvae;
-                        }
-
-                        }
-                        break;
-                    case RULE_FLOAT:
-                        {
-                        switch ( input.LA(4) ) {
-                        case 22:
-                            {
-                            switch ( input.LA(5) ) {
-                            case 29:
-                                {
-                                int LA5_26 = input.LA(6);
-
-                                if ( ((LA5_26>=23 && LA5_26<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_26==EOF||(LA5_26>=RULE_ID && LA5_26<=RULE_STRING)||(LA5_26>=15 && LA5_26<=17)||LA5_26==20||LA5_26==25||(LA5_26>=27 && LA5_26<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 26, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 30:
-                                {
-                                int LA5_27 = input.LA(6);
-
-                                if ( ((LA5_27>=23 && LA5_27<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_27==EOF||(LA5_27>=RULE_ID && LA5_27<=RULE_STRING)||(LA5_27>=15 && LA5_27<=17)||LA5_27==20||LA5_27==25||(LA5_27>=27 && LA5_27<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 27, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 31:
-                                {
-                                int LA5_28 = input.LA(6);
-
-                                if ( (LA5_28==EOF||(LA5_28>=RULE_ID && LA5_28<=RULE_STRING)||(LA5_28>=15 && LA5_28<=17)||LA5_28==20||LA5_28==25||(LA5_28>=27 && LA5_28<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_28>=23 && LA5_28<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 28, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 32:
-                                {
-                                int LA5_29 = input.LA(6);
-
-                                if ( ((LA5_29>=23 && LA5_29<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_29==EOF||(LA5_29>=RULE_ID && LA5_29<=RULE_STRING)||(LA5_29>=15 && LA5_29<=17)||LA5_29==20||LA5_29==25||(LA5_29>=27 && LA5_29<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 29, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 33:
-                                {
-                                int LA5_30 = input.LA(6);
-
-                                if ( ((LA5_30>=23 && LA5_30<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_30==EOF||(LA5_30>=RULE_ID && LA5_30<=RULE_STRING)||(LA5_30>=15 && LA5_30<=17)||LA5_30==20||LA5_30==25||(LA5_30>=27 && LA5_30<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 30, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 34:
-                                {
-                                int LA5_31 = input.LA(6);
-
-                                if ( ((LA5_31>=23 && LA5_31<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_31==EOF||(LA5_31>=RULE_ID && LA5_31<=RULE_STRING)||(LA5_31>=15 && LA5_31<=17)||LA5_31==20||LA5_31==25||(LA5_31>=27 && LA5_31<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 31, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 35:
-                                {
-                                int LA5_32 = input.LA(6);
-
-                                if ( ((LA5_32>=23 && LA5_32<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_32==EOF||(LA5_32>=RULE_ID && LA5_32<=RULE_STRING)||(LA5_32>=15 && LA5_32<=17)||LA5_32==20||LA5_32==25||(LA5_32>=27 && LA5_32<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 32, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 36:
-                                {
-                                int LA5_33 = input.LA(6);
-
-                                if ( (LA5_33==EOF||(LA5_33>=RULE_ID && LA5_33<=RULE_STRING)||(LA5_33>=15 && LA5_33<=17)||LA5_33==20||LA5_33==25||(LA5_33>=27 && LA5_33<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_33>=23 && LA5_33<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 33, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 37:
-                                {
-                                int LA5_34 = input.LA(6);
-
-                                if ( (LA5_34==EOF||(LA5_34>=RULE_ID && LA5_34<=RULE_STRING)||(LA5_34>=15 && LA5_34<=17)||LA5_34==20||LA5_34==25||(LA5_34>=27 && LA5_34<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_34>=23 && LA5_34<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 34, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 38:
-                                {
-                                int LA5_35 = input.LA(6);
-
-                                if ( (LA5_35==EOF||(LA5_35>=RULE_ID && LA5_35<=RULE_STRING)||(LA5_35>=15 && LA5_35<=17)||LA5_35==20||LA5_35==25||(LA5_35>=27 && LA5_35<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_35>=23 && LA5_35<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 35, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            default:
-                                NoViableAltException nvae =
-                                    new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 25, input);
-
-                                throw nvae;
-                            }
-
-                            }
-                            break;
-                        case EOF:
-                        case RULE_ID:
-                        case RULE_INT:
-                        case RULE_FLOAT:
-                        case RULE_STRING:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 20:
-                        case 25:
-                        case 27:
-                        case 28:
-                            {
-                            alt5=2;
-                            }
-                            break;
-                        case 23:
-                        case 24:
-                            {
-                            alt5=1;
-                            }
-                            break;
-                        default:
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 13, input);
-
-                            throw nvae;
-                        }
-
-                        }
-                        break;
-                    case RULE_STRING:
-                        {
-                        switch ( input.LA(4) ) {
-                        case 22:
-                            {
-                            switch ( input.LA(5) ) {
-                            case 29:
-                                {
-                                int LA5_26 = input.LA(6);
-
-                                if ( ((LA5_26>=23 && LA5_26<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_26==EOF||(LA5_26>=RULE_ID && LA5_26<=RULE_STRING)||(LA5_26>=15 && LA5_26<=17)||LA5_26==20||LA5_26==25||(LA5_26>=27 && LA5_26<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 26, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 30:
-                                {
-                                int LA5_27 = input.LA(6);
-
-                                if ( ((LA5_27>=23 && LA5_27<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_27==EOF||(LA5_27>=RULE_ID && LA5_27<=RULE_STRING)||(LA5_27>=15 && LA5_27<=17)||LA5_27==20||LA5_27==25||(LA5_27>=27 && LA5_27<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 27, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 31:
-                                {
-                                int LA5_28 = input.LA(6);
-
-                                if ( (LA5_28==EOF||(LA5_28>=RULE_ID && LA5_28<=RULE_STRING)||(LA5_28>=15 && LA5_28<=17)||LA5_28==20||LA5_28==25||(LA5_28>=27 && LA5_28<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_28>=23 && LA5_28<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 28, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 32:
-                                {
-                                int LA5_29 = input.LA(6);
-
-                                if ( ((LA5_29>=23 && LA5_29<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_29==EOF||(LA5_29>=RULE_ID && LA5_29<=RULE_STRING)||(LA5_29>=15 && LA5_29<=17)||LA5_29==20||LA5_29==25||(LA5_29>=27 && LA5_29<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 29, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 33:
-                                {
-                                int LA5_30 = input.LA(6);
-
-                                if ( ((LA5_30>=23 && LA5_30<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_30==EOF||(LA5_30>=RULE_ID && LA5_30<=RULE_STRING)||(LA5_30>=15 && LA5_30<=17)||LA5_30==20||LA5_30==25||(LA5_30>=27 && LA5_30<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 30, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 34:
-                                {
-                                int LA5_31 = input.LA(6);
-
-                                if ( ((LA5_31>=23 && LA5_31<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_31==EOF||(LA5_31>=RULE_ID && LA5_31<=RULE_STRING)||(LA5_31>=15 && LA5_31<=17)||LA5_31==20||LA5_31==25||(LA5_31>=27 && LA5_31<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 31, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 35:
-                                {
-                                int LA5_32 = input.LA(6);
-
-                                if ( ((LA5_32>=23 && LA5_32<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_32==EOF||(LA5_32>=RULE_ID && LA5_32<=RULE_STRING)||(LA5_32>=15 && LA5_32<=17)||LA5_32==20||LA5_32==25||(LA5_32>=27 && LA5_32<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 32, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 36:
-                                {
-                                int LA5_33 = input.LA(6);
-
-                                if ( (LA5_33==EOF||(LA5_33>=RULE_ID && LA5_33<=RULE_STRING)||(LA5_33>=15 && LA5_33<=17)||LA5_33==20||LA5_33==25||(LA5_33>=27 && LA5_33<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_33>=23 && LA5_33<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 33, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 37:
-                                {
-                                int LA5_34 = input.LA(6);
-
-                                if ( (LA5_34==EOF||(LA5_34>=RULE_ID && LA5_34<=RULE_STRING)||(LA5_34>=15 && LA5_34<=17)||LA5_34==20||LA5_34==25||(LA5_34>=27 && LA5_34<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_34>=23 && LA5_34<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 34, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 38:
-                                {
-                                int LA5_35 = input.LA(6);
-
-                                if ( (LA5_35==EOF||(LA5_35>=RULE_ID && LA5_35<=RULE_STRING)||(LA5_35>=15 && LA5_35<=17)||LA5_35==20||LA5_35==25||(LA5_35>=27 && LA5_35<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_35>=23 && LA5_35<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 35, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            default:
-                                NoViableAltException nvae =
-                                    new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 25, input);
-
-                                throw nvae;
-                            }
-
-                            }
-                            break;
-                        case EOF:
-                        case RULE_ID:
-                        case RULE_INT:
-                        case RULE_FLOAT:
-                        case RULE_STRING:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 20:
-                        case 25:
-                        case 27:
-                        case 28:
-                            {
-                            alt5=2;
-                            }
-                            break;
-                        case 23:
-                        case 24:
-                            {
-                            alt5=1;
-                            }
-                            break;
-                        default:
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 14, input);
-
-                            throw nvae;
-                        }
-
-                        }
-                        break;
-                    case 29:
-                        {
-                        int LA5_15 = input.LA(4);
-
-                        if ( ((LA5_15>=23 && LA5_15<=24)) ) {
-                            alt5=1;
-                        }
-                        else if ( (LA5_15==EOF||(LA5_15>=RULE_ID && LA5_15<=RULE_STRING)||(LA5_15>=15 && LA5_15<=17)||LA5_15==20||LA5_15==25||(LA5_15>=27 && LA5_15<=28)) ) {
-                            alt5=2;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 15, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 30:
-                        {
-                        int LA5_16 = input.LA(4);
-
-                        if ( ((LA5_16>=23 && LA5_16<=24)) ) {
-                            alt5=1;
-                        }
-                        else if ( (LA5_16==EOF||(LA5_16>=RULE_ID && LA5_16<=RULE_STRING)||(LA5_16>=15 && LA5_16<=17)||LA5_16==20||LA5_16==25||(LA5_16>=27 && LA5_16<=28)) ) {
-                            alt5=2;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 16, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 31:
-                        {
-                        int LA5_17 = input.LA(4);
-
-                        if ( ((LA5_17>=23 && LA5_17<=24)) ) {
-                            alt5=1;
-                        }
-                        else if ( (LA5_17==EOF||(LA5_17>=RULE_ID && LA5_17<=RULE_STRING)||(LA5_17>=15 && LA5_17<=17)||LA5_17==20||LA5_17==25||(LA5_17>=27 && LA5_17<=28)) ) {
-                            alt5=2;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 17, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 32:
-                        {
-                        int LA5_18 = input.LA(4);
-
-                        if ( ((LA5_18>=23 && LA5_18<=24)) ) {
-                            alt5=1;
-                        }
-                        else if ( (LA5_18==EOF||(LA5_18>=RULE_ID && LA5_18<=RULE_STRING)||(LA5_18>=15 && LA5_18<=17)||LA5_18==20||LA5_18==25||(LA5_18>=27 && LA5_18<=28)) ) {
-                            alt5=2;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 18, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 33:
-                        {
-                        int LA5_19 = input.LA(4);
-
-                        if ( (LA5_19==EOF||(LA5_19>=RULE_ID && LA5_19<=RULE_STRING)||(LA5_19>=15 && LA5_19<=17)||LA5_19==20||LA5_19==25||(LA5_19>=27 && LA5_19<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_19>=23 && LA5_19<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 19, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 34:
-                        {
-                        int LA5_20 = input.LA(4);
-
-                        if ( (LA5_20==EOF||(LA5_20>=RULE_ID && LA5_20<=RULE_STRING)||(LA5_20>=15 && LA5_20<=17)||LA5_20==20||LA5_20==25||(LA5_20>=27 && LA5_20<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_20>=23 && LA5_20<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 20, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 35:
-                        {
-                        int LA5_21 = input.LA(4);
-
-                        if ( (LA5_21==EOF||(LA5_21>=RULE_ID && LA5_21<=RULE_STRING)||(LA5_21>=15 && LA5_21<=17)||LA5_21==20||LA5_21==25||(LA5_21>=27 && LA5_21<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_21>=23 && LA5_21<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 21, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 36:
-                        {
-                        int LA5_22 = input.LA(4);
-
-                        if ( (LA5_22==EOF||(LA5_22>=RULE_ID && LA5_22<=RULE_STRING)||(LA5_22>=15 && LA5_22<=17)||LA5_22==20||LA5_22==25||(LA5_22>=27 && LA5_22<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_22>=23 && LA5_22<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 22, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 37:
-                        {
-                        int LA5_23 = input.LA(4);
-
-                        if ( (LA5_23==EOF||(LA5_23>=RULE_ID && LA5_23<=RULE_STRING)||(LA5_23>=15 && LA5_23<=17)||LA5_23==20||LA5_23==25||(LA5_23>=27 && LA5_23<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_23>=23 && LA5_23<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 23, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 38:
-                        {
-                        int LA5_24 = input.LA(4);
-
-                        if ( (LA5_24==EOF||(LA5_24>=RULE_ID && LA5_24<=RULE_STRING)||(LA5_24>=15 && LA5_24<=17)||LA5_24==20||LA5_24==25||(LA5_24>=27 && LA5_24<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_24>=23 && LA5_24<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 24, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    default:
-                        NoViableAltException nvae =
-                            new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 7, input);
-
-                        throw nvae;
-                    }
-
-                    }
-                    break;
-                case EOF:
-                case RULE_ID:
-                case RULE_INT:
-                case RULE_FLOAT:
-                case RULE_STRING:
-                case 15:
-                case 16:
-                case 17:
-                case 20:
-                case 25:
-                case 27:
-                case 28:
-                    {
-                    alt5=2;
-                    }
-                    break;
-                case 21:
-                    {
-                    alt5=3;
-                    }
-                    break;
-                case 23:
-                case 24:
-                    {
-                    alt5=1;
-                    }
-                    break;
-                default:
-                    NoViableAltException nvae =
-                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 1, input);
-
-                    throw nvae;
-                }
-
-                }
-                break;
-            case RULE_INT:
-                {
-                switch ( input.LA(2) ) {
-                case 22:
-                    {
-                    switch ( input.LA(3) ) {
-                    case RULE_ID:
-                        {
-                        switch ( input.LA(4) ) {
-                        case 22:
-                            {
-                            switch ( input.LA(5) ) {
-                            case 29:
-                                {
-                                int LA5_26 = input.LA(6);
-
-                                if ( ((LA5_26>=23 && LA5_26<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_26==EOF||(LA5_26>=RULE_ID && LA5_26<=RULE_STRING)||(LA5_26>=15 && LA5_26<=17)||LA5_26==20||LA5_26==25||(LA5_26>=27 && LA5_26<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 26, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 30:
-                                {
-                                int LA5_27 = input.LA(6);
-
-                                if ( ((LA5_27>=23 && LA5_27<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_27==EOF||(LA5_27>=RULE_ID && LA5_27<=RULE_STRING)||(LA5_27>=15 && LA5_27<=17)||LA5_27==20||LA5_27==25||(LA5_27>=27 && LA5_27<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 27, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 31:
-                                {
-                                int LA5_28 = input.LA(6);
-
-                                if ( (LA5_28==EOF||(LA5_28>=RULE_ID && LA5_28<=RULE_STRING)||(LA5_28>=15 && LA5_28<=17)||LA5_28==20||LA5_28==25||(LA5_28>=27 && LA5_28<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_28>=23 && LA5_28<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 28, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 32:
-                                {
-                                int LA5_29 = input.LA(6);
-
-                                if ( ((LA5_29>=23 && LA5_29<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_29==EOF||(LA5_29>=RULE_ID && LA5_29<=RULE_STRING)||(LA5_29>=15 && LA5_29<=17)||LA5_29==20||LA5_29==25||(LA5_29>=27 && LA5_29<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 29, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 33:
-                                {
-                                int LA5_30 = input.LA(6);
-
-                                if ( ((LA5_30>=23 && LA5_30<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_30==EOF||(LA5_30>=RULE_ID && LA5_30<=RULE_STRING)||(LA5_30>=15 && LA5_30<=17)||LA5_30==20||LA5_30==25||(LA5_30>=27 && LA5_30<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 30, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 34:
-                                {
-                                int LA5_31 = input.LA(6);
-
-                                if ( ((LA5_31>=23 && LA5_31<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_31==EOF||(LA5_31>=RULE_ID && LA5_31<=RULE_STRING)||(LA5_31>=15 && LA5_31<=17)||LA5_31==20||LA5_31==25||(LA5_31>=27 && LA5_31<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 31, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 35:
-                                {
-                                int LA5_32 = input.LA(6);
-
-                                if ( ((LA5_32>=23 && LA5_32<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_32==EOF||(LA5_32>=RULE_ID && LA5_32<=RULE_STRING)||(LA5_32>=15 && LA5_32<=17)||LA5_32==20||LA5_32==25||(LA5_32>=27 && LA5_32<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 32, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 36:
-                                {
-                                int LA5_33 = input.LA(6);
-
-                                if ( (LA5_33==EOF||(LA5_33>=RULE_ID && LA5_33<=RULE_STRING)||(LA5_33>=15 && LA5_33<=17)||LA5_33==20||LA5_33==25||(LA5_33>=27 && LA5_33<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_33>=23 && LA5_33<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 33, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 37:
-                                {
-                                int LA5_34 = input.LA(6);
-
-                                if ( (LA5_34==EOF||(LA5_34>=RULE_ID && LA5_34<=RULE_STRING)||(LA5_34>=15 && LA5_34<=17)||LA5_34==20||LA5_34==25||(LA5_34>=27 && LA5_34<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_34>=23 && LA5_34<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 34, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 38:
-                                {
-                                int LA5_35 = input.LA(6);
-
-                                if ( (LA5_35==EOF||(LA5_35>=RULE_ID && LA5_35<=RULE_STRING)||(LA5_35>=15 && LA5_35<=17)||LA5_35==20||LA5_35==25||(LA5_35>=27 && LA5_35<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_35>=23 && LA5_35<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 35, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            default:
-                                NoViableAltException nvae =
-                                    new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 25, input);
-
-                                throw nvae;
-                            }
-
-                            }
-                            break;
-                        case EOF:
-                        case RULE_ID:
-                        case RULE_INT:
-                        case RULE_FLOAT:
-                        case RULE_STRING:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 20:
-                        case 25:
-                        case 27:
-                        case 28:
-                            {
-                            alt5=2;
-                            }
-                            break;
-                        case 23:
-                        case 24:
-                            {
-                            alt5=1;
-                            }
-                            break;
-                        default:
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 11, input);
-
-                            throw nvae;
-                        }
-
-                        }
-                        break;
-                    case RULE_INT:
-                        {
-                        switch ( input.LA(4) ) {
-                        case 22:
-                            {
-                            switch ( input.LA(5) ) {
-                            case 29:
-                                {
-                                int LA5_26 = input.LA(6);
-
-                                if ( ((LA5_26>=23 && LA5_26<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_26==EOF||(LA5_26>=RULE_ID && LA5_26<=RULE_STRING)||(LA5_26>=15 && LA5_26<=17)||LA5_26==20||LA5_26==25||(LA5_26>=27 && LA5_26<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 26, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 30:
-                                {
-                                int LA5_27 = input.LA(6);
-
-                                if ( ((LA5_27>=23 && LA5_27<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_27==EOF||(LA5_27>=RULE_ID && LA5_27<=RULE_STRING)||(LA5_27>=15 && LA5_27<=17)||LA5_27==20||LA5_27==25||(LA5_27>=27 && LA5_27<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 27, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 31:
-                                {
-                                int LA5_28 = input.LA(6);
-
-                                if ( (LA5_28==EOF||(LA5_28>=RULE_ID && LA5_28<=RULE_STRING)||(LA5_28>=15 && LA5_28<=17)||LA5_28==20||LA5_28==25||(LA5_28>=27 && LA5_28<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_28>=23 && LA5_28<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 28, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 32:
-                                {
-                                int LA5_29 = input.LA(6);
-
-                                if ( ((LA5_29>=23 && LA5_29<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_29==EOF||(LA5_29>=RULE_ID && LA5_29<=RULE_STRING)||(LA5_29>=15 && LA5_29<=17)||LA5_29==20||LA5_29==25||(LA5_29>=27 && LA5_29<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 29, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 33:
-                                {
-                                int LA5_30 = input.LA(6);
-
-                                if ( ((LA5_30>=23 && LA5_30<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_30==EOF||(LA5_30>=RULE_ID && LA5_30<=RULE_STRING)||(LA5_30>=15 && LA5_30<=17)||LA5_30==20||LA5_30==25||(LA5_30>=27 && LA5_30<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 30, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 34:
-                                {
-                                int LA5_31 = input.LA(6);
-
-                                if ( ((LA5_31>=23 && LA5_31<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_31==EOF||(LA5_31>=RULE_ID && LA5_31<=RULE_STRING)||(LA5_31>=15 && LA5_31<=17)||LA5_31==20||LA5_31==25||(LA5_31>=27 && LA5_31<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 31, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 35:
-                                {
-                                int LA5_32 = input.LA(6);
-
-                                if ( ((LA5_32>=23 && LA5_32<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_32==EOF||(LA5_32>=RULE_ID && LA5_32<=RULE_STRING)||(LA5_32>=15 && LA5_32<=17)||LA5_32==20||LA5_32==25||(LA5_32>=27 && LA5_32<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 32, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 36:
-                                {
-                                int LA5_33 = input.LA(6);
-
-                                if ( (LA5_33==EOF||(LA5_33>=RULE_ID && LA5_33<=RULE_STRING)||(LA5_33>=15 && LA5_33<=17)||LA5_33==20||LA5_33==25||(LA5_33>=27 && LA5_33<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_33>=23 && LA5_33<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 33, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 37:
-                                {
-                                int LA5_34 = input.LA(6);
-
-                                if ( (LA5_34==EOF||(LA5_34>=RULE_ID && LA5_34<=RULE_STRING)||(LA5_34>=15 && LA5_34<=17)||LA5_34==20||LA5_34==25||(LA5_34>=27 && LA5_34<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_34>=23 && LA5_34<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 34, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 38:
-                                {
-                                int LA5_35 = input.LA(6);
-
-                                if ( (LA5_35==EOF||(LA5_35>=RULE_ID && LA5_35<=RULE_STRING)||(LA5_35>=15 && LA5_35<=17)||LA5_35==20||LA5_35==25||(LA5_35>=27 && LA5_35<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_35>=23 && LA5_35<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 35, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            default:
-                                NoViableAltException nvae =
-                                    new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 25, input);
-
-                                throw nvae;
-                            }
-
-                            }
-                            break;
-                        case EOF:
-                        case RULE_ID:
-                        case RULE_INT:
-                        case RULE_FLOAT:
-                        case RULE_STRING:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 20:
-                        case 25:
-                        case 27:
-                        case 28:
-                            {
-                            alt5=2;
-                            }
-                            break;
-                        case 23:
-                        case 24:
-                            {
-                            alt5=1;
-                            }
-                            break;
-                        default:
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 12, input);
-
-                            throw nvae;
-                        }
-
-                        }
-                        break;
-                    case RULE_FLOAT:
-                        {
-                        switch ( input.LA(4) ) {
-                        case 22:
-                            {
-                            switch ( input.LA(5) ) {
-                            case 29:
-                                {
-                                int LA5_26 = input.LA(6);
-
-                                if ( ((LA5_26>=23 && LA5_26<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_26==EOF||(LA5_26>=RULE_ID && LA5_26<=RULE_STRING)||(LA5_26>=15 && LA5_26<=17)||LA5_26==20||LA5_26==25||(LA5_26>=27 && LA5_26<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 26, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 30:
-                                {
-                                int LA5_27 = input.LA(6);
-
-                                if ( ((LA5_27>=23 && LA5_27<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_27==EOF||(LA5_27>=RULE_ID && LA5_27<=RULE_STRING)||(LA5_27>=15 && LA5_27<=17)||LA5_27==20||LA5_27==25||(LA5_27>=27 && LA5_27<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 27, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 31:
-                                {
-                                int LA5_28 = input.LA(6);
-
-                                if ( (LA5_28==EOF||(LA5_28>=RULE_ID && LA5_28<=RULE_STRING)||(LA5_28>=15 && LA5_28<=17)||LA5_28==20||LA5_28==25||(LA5_28>=27 && LA5_28<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_28>=23 && LA5_28<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 28, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 32:
-                                {
-                                int LA5_29 = input.LA(6);
-
-                                if ( ((LA5_29>=23 && LA5_29<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_29==EOF||(LA5_29>=RULE_ID && LA5_29<=RULE_STRING)||(LA5_29>=15 && LA5_29<=17)||LA5_29==20||LA5_29==25||(LA5_29>=27 && LA5_29<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 29, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 33:
-                                {
-                                int LA5_30 = input.LA(6);
-
-                                if ( ((LA5_30>=23 && LA5_30<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_30==EOF||(LA5_30>=RULE_ID && LA5_30<=RULE_STRING)||(LA5_30>=15 && LA5_30<=17)||LA5_30==20||LA5_30==25||(LA5_30>=27 && LA5_30<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 30, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 34:
-                                {
-                                int LA5_31 = input.LA(6);
-
-                                if ( ((LA5_31>=23 && LA5_31<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_31==EOF||(LA5_31>=RULE_ID && LA5_31<=RULE_STRING)||(LA5_31>=15 && LA5_31<=17)||LA5_31==20||LA5_31==25||(LA5_31>=27 && LA5_31<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 31, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 35:
-                                {
-                                int LA5_32 = input.LA(6);
-
-                                if ( ((LA5_32>=23 && LA5_32<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_32==EOF||(LA5_32>=RULE_ID && LA5_32<=RULE_STRING)||(LA5_32>=15 && LA5_32<=17)||LA5_32==20||LA5_32==25||(LA5_32>=27 && LA5_32<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 32, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 36:
-                                {
-                                int LA5_33 = input.LA(6);
-
-                                if ( (LA5_33==EOF||(LA5_33>=RULE_ID && LA5_33<=RULE_STRING)||(LA5_33>=15 && LA5_33<=17)||LA5_33==20||LA5_33==25||(LA5_33>=27 && LA5_33<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_33>=23 && LA5_33<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 33, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 37:
-                                {
-                                int LA5_34 = input.LA(6);
-
-                                if ( (LA5_34==EOF||(LA5_34>=RULE_ID && LA5_34<=RULE_STRING)||(LA5_34>=15 && LA5_34<=17)||LA5_34==20||LA5_34==25||(LA5_34>=27 && LA5_34<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_34>=23 && LA5_34<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 34, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 38:
-                                {
-                                int LA5_35 = input.LA(6);
-
-                                if ( (LA5_35==EOF||(LA5_35>=RULE_ID && LA5_35<=RULE_STRING)||(LA5_35>=15 && LA5_35<=17)||LA5_35==20||LA5_35==25||(LA5_35>=27 && LA5_35<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_35>=23 && LA5_35<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 35, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            default:
-                                NoViableAltException nvae =
-                                    new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 25, input);
-
-                                throw nvae;
-                            }
-
-                            }
-                            break;
-                        case EOF:
-                        case RULE_ID:
-                        case RULE_INT:
-                        case RULE_FLOAT:
-                        case RULE_STRING:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 20:
-                        case 25:
-                        case 27:
-                        case 28:
-                            {
-                            alt5=2;
-                            }
-                            break;
-                        case 23:
-                        case 24:
-                            {
-                            alt5=1;
-                            }
-                            break;
-                        default:
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 13, input);
-
-                            throw nvae;
-                        }
-
-                        }
-                        break;
-                    case RULE_STRING:
-                        {
-                        switch ( input.LA(4) ) {
-                        case 22:
-                            {
-                            switch ( input.LA(5) ) {
-                            case 29:
-                                {
-                                int LA5_26 = input.LA(6);
-
-                                if ( ((LA5_26>=23 && LA5_26<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_26==EOF||(LA5_26>=RULE_ID && LA5_26<=RULE_STRING)||(LA5_26>=15 && LA5_26<=17)||LA5_26==20||LA5_26==25||(LA5_26>=27 && LA5_26<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 26, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 30:
-                                {
-                                int LA5_27 = input.LA(6);
-
-                                if ( ((LA5_27>=23 && LA5_27<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_27==EOF||(LA5_27>=RULE_ID && LA5_27<=RULE_STRING)||(LA5_27>=15 && LA5_27<=17)||LA5_27==20||LA5_27==25||(LA5_27>=27 && LA5_27<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 27, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 31:
-                                {
-                                int LA5_28 = input.LA(6);
-
-                                if ( (LA5_28==EOF||(LA5_28>=RULE_ID && LA5_28<=RULE_STRING)||(LA5_28>=15 && LA5_28<=17)||LA5_28==20||LA5_28==25||(LA5_28>=27 && LA5_28<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_28>=23 && LA5_28<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 28, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 32:
-                                {
-                                int LA5_29 = input.LA(6);
-
-                                if ( ((LA5_29>=23 && LA5_29<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_29==EOF||(LA5_29>=RULE_ID && LA5_29<=RULE_STRING)||(LA5_29>=15 && LA5_29<=17)||LA5_29==20||LA5_29==25||(LA5_29>=27 && LA5_29<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 29, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 33:
-                                {
-                                int LA5_30 = input.LA(6);
-
-                                if ( ((LA5_30>=23 && LA5_30<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_30==EOF||(LA5_30>=RULE_ID && LA5_30<=RULE_STRING)||(LA5_30>=15 && LA5_30<=17)||LA5_30==20||LA5_30==25||(LA5_30>=27 && LA5_30<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 30, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 34:
-                                {
-                                int LA5_31 = input.LA(6);
-
-                                if ( ((LA5_31>=23 && LA5_31<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_31==EOF||(LA5_31>=RULE_ID && LA5_31<=RULE_STRING)||(LA5_31>=15 && LA5_31<=17)||LA5_31==20||LA5_31==25||(LA5_31>=27 && LA5_31<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 31, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 35:
-                                {
-                                int LA5_32 = input.LA(6);
-
-                                if ( ((LA5_32>=23 && LA5_32<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_32==EOF||(LA5_32>=RULE_ID && LA5_32<=RULE_STRING)||(LA5_32>=15 && LA5_32<=17)||LA5_32==20||LA5_32==25||(LA5_32>=27 && LA5_32<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 32, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 36:
-                                {
-                                int LA5_33 = input.LA(6);
-
-                                if ( (LA5_33==EOF||(LA5_33>=RULE_ID && LA5_33<=RULE_STRING)||(LA5_33>=15 && LA5_33<=17)||LA5_33==20||LA5_33==25||(LA5_33>=27 && LA5_33<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_33>=23 && LA5_33<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 33, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 37:
-                                {
-                                int LA5_34 = input.LA(6);
-
-                                if ( (LA5_34==EOF||(LA5_34>=RULE_ID && LA5_34<=RULE_STRING)||(LA5_34>=15 && LA5_34<=17)||LA5_34==20||LA5_34==25||(LA5_34>=27 && LA5_34<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_34>=23 && LA5_34<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 34, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 38:
-                                {
-                                int LA5_35 = input.LA(6);
-
-                                if ( (LA5_35==EOF||(LA5_35>=RULE_ID && LA5_35<=RULE_STRING)||(LA5_35>=15 && LA5_35<=17)||LA5_35==20||LA5_35==25||(LA5_35>=27 && LA5_35<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_35>=23 && LA5_35<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 35, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            default:
-                                NoViableAltException nvae =
-                                    new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 25, input);
-
-                                throw nvae;
-                            }
-
-                            }
-                            break;
-                        case EOF:
-                        case RULE_ID:
-                        case RULE_INT:
-                        case RULE_FLOAT:
-                        case RULE_STRING:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 20:
-                        case 25:
-                        case 27:
-                        case 28:
-                            {
-                            alt5=2;
-                            }
-                            break;
-                        case 23:
-                        case 24:
-                            {
-                            alt5=1;
-                            }
-                            break;
-                        default:
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 14, input);
-
-                            throw nvae;
-                        }
-
-                        }
-                        break;
-                    case 29:
-                        {
-                        int LA5_15 = input.LA(4);
-
-                        if ( ((LA5_15>=23 && LA5_15<=24)) ) {
-                            alt5=1;
-                        }
-                        else if ( (LA5_15==EOF||(LA5_15>=RULE_ID && LA5_15<=RULE_STRING)||(LA5_15>=15 && LA5_15<=17)||LA5_15==20||LA5_15==25||(LA5_15>=27 && LA5_15<=28)) ) {
-                            alt5=2;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 15, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 30:
-                        {
-                        int LA5_16 = input.LA(4);
-
-                        if ( ((LA5_16>=23 && LA5_16<=24)) ) {
-                            alt5=1;
-                        }
-                        else if ( (LA5_16==EOF||(LA5_16>=RULE_ID && LA5_16<=RULE_STRING)||(LA5_16>=15 && LA5_16<=17)||LA5_16==20||LA5_16==25||(LA5_16>=27 && LA5_16<=28)) ) {
-                            alt5=2;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 16, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 31:
-                        {
-                        int LA5_17 = input.LA(4);
-
-                        if ( ((LA5_17>=23 && LA5_17<=24)) ) {
-                            alt5=1;
-                        }
-                        else if ( (LA5_17==EOF||(LA5_17>=RULE_ID && LA5_17<=RULE_STRING)||(LA5_17>=15 && LA5_17<=17)||LA5_17==20||LA5_17==25||(LA5_17>=27 && LA5_17<=28)) ) {
-                            alt5=2;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 17, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 32:
-                        {
-                        int LA5_18 = input.LA(4);
-
-                        if ( ((LA5_18>=23 && LA5_18<=24)) ) {
-                            alt5=1;
-                        }
-                        else if ( (LA5_18==EOF||(LA5_18>=RULE_ID && LA5_18<=RULE_STRING)||(LA5_18>=15 && LA5_18<=17)||LA5_18==20||LA5_18==25||(LA5_18>=27 && LA5_18<=28)) ) {
-                            alt5=2;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 18, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 33:
-                        {
-                        int LA5_19 = input.LA(4);
-
-                        if ( (LA5_19==EOF||(LA5_19>=RULE_ID && LA5_19<=RULE_STRING)||(LA5_19>=15 && LA5_19<=17)||LA5_19==20||LA5_19==25||(LA5_19>=27 && LA5_19<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_19>=23 && LA5_19<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 19, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 34:
-                        {
-                        int LA5_20 = input.LA(4);
-
-                        if ( (LA5_20==EOF||(LA5_20>=RULE_ID && LA5_20<=RULE_STRING)||(LA5_20>=15 && LA5_20<=17)||LA5_20==20||LA5_20==25||(LA5_20>=27 && LA5_20<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_20>=23 && LA5_20<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 20, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 35:
-                        {
-                        int LA5_21 = input.LA(4);
-
-                        if ( (LA5_21==EOF||(LA5_21>=RULE_ID && LA5_21<=RULE_STRING)||(LA5_21>=15 && LA5_21<=17)||LA5_21==20||LA5_21==25||(LA5_21>=27 && LA5_21<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_21>=23 && LA5_21<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 21, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 36:
-                        {
-                        int LA5_22 = input.LA(4);
-
-                        if ( (LA5_22==EOF||(LA5_22>=RULE_ID && LA5_22<=RULE_STRING)||(LA5_22>=15 && LA5_22<=17)||LA5_22==20||LA5_22==25||(LA5_22>=27 && LA5_22<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_22>=23 && LA5_22<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 22, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 37:
-                        {
-                        int LA5_23 = input.LA(4);
-
-                        if ( (LA5_23==EOF||(LA5_23>=RULE_ID && LA5_23<=RULE_STRING)||(LA5_23>=15 && LA5_23<=17)||LA5_23==20||LA5_23==25||(LA5_23>=27 && LA5_23<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_23>=23 && LA5_23<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 23, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 38:
-                        {
-                        int LA5_24 = input.LA(4);
-
-                        if ( (LA5_24==EOF||(LA5_24>=RULE_ID && LA5_24<=RULE_STRING)||(LA5_24>=15 && LA5_24<=17)||LA5_24==20||LA5_24==25||(LA5_24>=27 && LA5_24<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_24>=23 && LA5_24<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 24, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    default:
-                        NoViableAltException nvae =
-                            new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 7, input);
-
-                        throw nvae;
-                    }
-
-                    }
-                    break;
-                case EOF:
-                case RULE_ID:
-                case RULE_INT:
-                case RULE_FLOAT:
-                case RULE_STRING:
-                case 15:
-                case 16:
-                case 17:
-                case 20:
-                case 25:
-                case 27:
-                case 28:
-                    {
-                    alt5=2;
-                    }
-                    break;
-                case 23:
-                case 24:
-                    {
-                    alt5=1;
-                    }
-                    break;
-                case 21:
-                    {
-                    alt5=3;
-                    }
-                    break;
-                default:
-                    NoViableAltException nvae =
-                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 2, input);
-
-                    throw nvae;
-                }
-
-                }
-                break;
-            case RULE_FLOAT:
-                {
-                switch ( input.LA(2) ) {
-                case 22:
-                    {
-                    switch ( input.LA(3) ) {
-                    case RULE_ID:
-                        {
-                        switch ( input.LA(4) ) {
-                        case 22:
-                            {
-                            switch ( input.LA(5) ) {
-                            case 29:
-                                {
-                                int LA5_26 = input.LA(6);
-
-                                if ( ((LA5_26>=23 && LA5_26<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_26==EOF||(LA5_26>=RULE_ID && LA5_26<=RULE_STRING)||(LA5_26>=15 && LA5_26<=17)||LA5_26==20||LA5_26==25||(LA5_26>=27 && LA5_26<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 26, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 30:
-                                {
-                                int LA5_27 = input.LA(6);
-
-                                if ( ((LA5_27>=23 && LA5_27<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_27==EOF||(LA5_27>=RULE_ID && LA5_27<=RULE_STRING)||(LA5_27>=15 && LA5_27<=17)||LA5_27==20||LA5_27==25||(LA5_27>=27 && LA5_27<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 27, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 31:
-                                {
-                                int LA5_28 = input.LA(6);
-
-                                if ( (LA5_28==EOF||(LA5_28>=RULE_ID && LA5_28<=RULE_STRING)||(LA5_28>=15 && LA5_28<=17)||LA5_28==20||LA5_28==25||(LA5_28>=27 && LA5_28<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_28>=23 && LA5_28<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 28, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 32:
-                                {
-                                int LA5_29 = input.LA(6);
-
-                                if ( ((LA5_29>=23 && LA5_29<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_29==EOF||(LA5_29>=RULE_ID && LA5_29<=RULE_STRING)||(LA5_29>=15 && LA5_29<=17)||LA5_29==20||LA5_29==25||(LA5_29>=27 && LA5_29<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 29, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 33:
-                                {
-                                int LA5_30 = input.LA(6);
-
-                                if ( ((LA5_30>=23 && LA5_30<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_30==EOF||(LA5_30>=RULE_ID && LA5_30<=RULE_STRING)||(LA5_30>=15 && LA5_30<=17)||LA5_30==20||LA5_30==25||(LA5_30>=27 && LA5_30<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 30, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 34:
-                                {
-                                int LA5_31 = input.LA(6);
-
-                                if ( ((LA5_31>=23 && LA5_31<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_31==EOF||(LA5_31>=RULE_ID && LA5_31<=RULE_STRING)||(LA5_31>=15 && LA5_31<=17)||LA5_31==20||LA5_31==25||(LA5_31>=27 && LA5_31<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 31, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 35:
-                                {
-                                int LA5_32 = input.LA(6);
-
-                                if ( ((LA5_32>=23 && LA5_32<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_32==EOF||(LA5_32>=RULE_ID && LA5_32<=RULE_STRING)||(LA5_32>=15 && LA5_32<=17)||LA5_32==20||LA5_32==25||(LA5_32>=27 && LA5_32<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 32, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 36:
-                                {
-                                int LA5_33 = input.LA(6);
-
-                                if ( (LA5_33==EOF||(LA5_33>=RULE_ID && LA5_33<=RULE_STRING)||(LA5_33>=15 && LA5_33<=17)||LA5_33==20||LA5_33==25||(LA5_33>=27 && LA5_33<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_33>=23 && LA5_33<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 33, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 37:
-                                {
-                                int LA5_34 = input.LA(6);
-
-                                if ( (LA5_34==EOF||(LA5_34>=RULE_ID && LA5_34<=RULE_STRING)||(LA5_34>=15 && LA5_34<=17)||LA5_34==20||LA5_34==25||(LA5_34>=27 && LA5_34<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_34>=23 && LA5_34<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 34, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 38:
-                                {
-                                int LA5_35 = input.LA(6);
-
-                                if ( (LA5_35==EOF||(LA5_35>=RULE_ID && LA5_35<=RULE_STRING)||(LA5_35>=15 && LA5_35<=17)||LA5_35==20||LA5_35==25||(LA5_35>=27 && LA5_35<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_35>=23 && LA5_35<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 35, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            default:
-                                NoViableAltException nvae =
-                                    new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 25, input);
-
-                                throw nvae;
-                            }
-
-                            }
-                            break;
-                        case EOF:
-                        case RULE_ID:
-                        case RULE_INT:
-                        case RULE_FLOAT:
-                        case RULE_STRING:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 20:
-                        case 25:
-                        case 27:
-                        case 28:
-                            {
-                            alt5=2;
-                            }
-                            break;
-                        case 23:
-                        case 24:
-                            {
-                            alt5=1;
-                            }
-                            break;
-                        default:
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 11, input);
-
-                            throw nvae;
-                        }
-
-                        }
-                        break;
-                    case RULE_INT:
-                        {
-                        switch ( input.LA(4) ) {
-                        case 22:
-                            {
-                            switch ( input.LA(5) ) {
-                            case 29:
-                                {
-                                int LA5_26 = input.LA(6);
-
-                                if ( ((LA5_26>=23 && LA5_26<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_26==EOF||(LA5_26>=RULE_ID && LA5_26<=RULE_STRING)||(LA5_26>=15 && LA5_26<=17)||LA5_26==20||LA5_26==25||(LA5_26>=27 && LA5_26<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 26, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 30:
-                                {
-                                int LA5_27 = input.LA(6);
-
-                                if ( ((LA5_27>=23 && LA5_27<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_27==EOF||(LA5_27>=RULE_ID && LA5_27<=RULE_STRING)||(LA5_27>=15 && LA5_27<=17)||LA5_27==20||LA5_27==25||(LA5_27>=27 && LA5_27<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 27, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 31:
-                                {
-                                int LA5_28 = input.LA(6);
-
-                                if ( (LA5_28==EOF||(LA5_28>=RULE_ID && LA5_28<=RULE_STRING)||(LA5_28>=15 && LA5_28<=17)||LA5_28==20||LA5_28==25||(LA5_28>=27 && LA5_28<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_28>=23 && LA5_28<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 28, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 32:
-                                {
-                                int LA5_29 = input.LA(6);
-
-                                if ( ((LA5_29>=23 && LA5_29<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_29==EOF||(LA5_29>=RULE_ID && LA5_29<=RULE_STRING)||(LA5_29>=15 && LA5_29<=17)||LA5_29==20||LA5_29==25||(LA5_29>=27 && LA5_29<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 29, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 33:
-                                {
-                                int LA5_30 = input.LA(6);
-
-                                if ( ((LA5_30>=23 && LA5_30<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_30==EOF||(LA5_30>=RULE_ID && LA5_30<=RULE_STRING)||(LA5_30>=15 && LA5_30<=17)||LA5_30==20||LA5_30==25||(LA5_30>=27 && LA5_30<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 30, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 34:
-                                {
-                                int LA5_31 = input.LA(6);
-
-                                if ( ((LA5_31>=23 && LA5_31<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_31==EOF||(LA5_31>=RULE_ID && LA5_31<=RULE_STRING)||(LA5_31>=15 && LA5_31<=17)||LA5_31==20||LA5_31==25||(LA5_31>=27 && LA5_31<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 31, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 35:
-                                {
-                                int LA5_32 = input.LA(6);
-
-                                if ( ((LA5_32>=23 && LA5_32<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_32==EOF||(LA5_32>=RULE_ID && LA5_32<=RULE_STRING)||(LA5_32>=15 && LA5_32<=17)||LA5_32==20||LA5_32==25||(LA5_32>=27 && LA5_32<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 32, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 36:
-                                {
-                                int LA5_33 = input.LA(6);
-
-                                if ( (LA5_33==EOF||(LA5_33>=RULE_ID && LA5_33<=RULE_STRING)||(LA5_33>=15 && LA5_33<=17)||LA5_33==20||LA5_33==25||(LA5_33>=27 && LA5_33<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_33>=23 && LA5_33<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 33, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 37:
-                                {
-                                int LA5_34 = input.LA(6);
-
-                                if ( (LA5_34==EOF||(LA5_34>=RULE_ID && LA5_34<=RULE_STRING)||(LA5_34>=15 && LA5_34<=17)||LA5_34==20||LA5_34==25||(LA5_34>=27 && LA5_34<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_34>=23 && LA5_34<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 34, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 38:
-                                {
-                                int LA5_35 = input.LA(6);
-
-                                if ( (LA5_35==EOF||(LA5_35>=RULE_ID && LA5_35<=RULE_STRING)||(LA5_35>=15 && LA5_35<=17)||LA5_35==20||LA5_35==25||(LA5_35>=27 && LA5_35<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_35>=23 && LA5_35<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 35, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            default:
-                                NoViableAltException nvae =
-                                    new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 25, input);
-
-                                throw nvae;
-                            }
-
-                            }
-                            break;
-                        case EOF:
-                        case RULE_ID:
-                        case RULE_INT:
-                        case RULE_FLOAT:
-                        case RULE_STRING:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 20:
-                        case 25:
-                        case 27:
-                        case 28:
-                            {
-                            alt5=2;
-                            }
-                            break;
-                        case 23:
-                        case 24:
-                            {
-                            alt5=1;
-                            }
-                            break;
-                        default:
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 12, input);
-
-                            throw nvae;
-                        }
-
-                        }
-                        break;
-                    case RULE_FLOAT:
-                        {
-                        switch ( input.LA(4) ) {
-                        case 22:
-                            {
-                            switch ( input.LA(5) ) {
-                            case 29:
-                                {
-                                int LA5_26 = input.LA(6);
-
-                                if ( ((LA5_26>=23 && LA5_26<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_26==EOF||(LA5_26>=RULE_ID && LA5_26<=RULE_STRING)||(LA5_26>=15 && LA5_26<=17)||LA5_26==20||LA5_26==25||(LA5_26>=27 && LA5_26<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 26, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 30:
-                                {
-                                int LA5_27 = input.LA(6);
-
-                                if ( ((LA5_27>=23 && LA5_27<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_27==EOF||(LA5_27>=RULE_ID && LA5_27<=RULE_STRING)||(LA5_27>=15 && LA5_27<=17)||LA5_27==20||LA5_27==25||(LA5_27>=27 && LA5_27<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 27, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 31:
-                                {
-                                int LA5_28 = input.LA(6);
-
-                                if ( (LA5_28==EOF||(LA5_28>=RULE_ID && LA5_28<=RULE_STRING)||(LA5_28>=15 && LA5_28<=17)||LA5_28==20||LA5_28==25||(LA5_28>=27 && LA5_28<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_28>=23 && LA5_28<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 28, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 32:
-                                {
-                                int LA5_29 = input.LA(6);
-
-                                if ( ((LA5_29>=23 && LA5_29<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_29==EOF||(LA5_29>=RULE_ID && LA5_29<=RULE_STRING)||(LA5_29>=15 && LA5_29<=17)||LA5_29==20||LA5_29==25||(LA5_29>=27 && LA5_29<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 29, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 33:
-                                {
-                                int LA5_30 = input.LA(6);
-
-                                if ( ((LA5_30>=23 && LA5_30<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_30==EOF||(LA5_30>=RULE_ID && LA5_30<=RULE_STRING)||(LA5_30>=15 && LA5_30<=17)||LA5_30==20||LA5_30==25||(LA5_30>=27 && LA5_30<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 30, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 34:
-                                {
-                                int LA5_31 = input.LA(6);
-
-                                if ( ((LA5_31>=23 && LA5_31<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_31==EOF||(LA5_31>=RULE_ID && LA5_31<=RULE_STRING)||(LA5_31>=15 && LA5_31<=17)||LA5_31==20||LA5_31==25||(LA5_31>=27 && LA5_31<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 31, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 35:
-                                {
-                                int LA5_32 = input.LA(6);
-
-                                if ( ((LA5_32>=23 && LA5_32<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_32==EOF||(LA5_32>=RULE_ID && LA5_32<=RULE_STRING)||(LA5_32>=15 && LA5_32<=17)||LA5_32==20||LA5_32==25||(LA5_32>=27 && LA5_32<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 32, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 36:
-                                {
-                                int LA5_33 = input.LA(6);
-
-                                if ( (LA5_33==EOF||(LA5_33>=RULE_ID && LA5_33<=RULE_STRING)||(LA5_33>=15 && LA5_33<=17)||LA5_33==20||LA5_33==25||(LA5_33>=27 && LA5_33<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_33>=23 && LA5_33<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 33, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 37:
-                                {
-                                int LA5_34 = input.LA(6);
-
-                                if ( (LA5_34==EOF||(LA5_34>=RULE_ID && LA5_34<=RULE_STRING)||(LA5_34>=15 && LA5_34<=17)||LA5_34==20||LA5_34==25||(LA5_34>=27 && LA5_34<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_34>=23 && LA5_34<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 34, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 38:
-                                {
-                                int LA5_35 = input.LA(6);
-
-                                if ( (LA5_35==EOF||(LA5_35>=RULE_ID && LA5_35<=RULE_STRING)||(LA5_35>=15 && LA5_35<=17)||LA5_35==20||LA5_35==25||(LA5_35>=27 && LA5_35<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_35>=23 && LA5_35<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 35, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            default:
-                                NoViableAltException nvae =
-                                    new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 25, input);
-
-                                throw nvae;
-                            }
-
-                            }
-                            break;
-                        case EOF:
-                        case RULE_ID:
-                        case RULE_INT:
-                        case RULE_FLOAT:
-                        case RULE_STRING:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 20:
-                        case 25:
-                        case 27:
-                        case 28:
-                            {
-                            alt5=2;
-                            }
-                            break;
-                        case 23:
-                        case 24:
-                            {
-                            alt5=1;
-                            }
-                            break;
-                        default:
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 13, input);
-
-                            throw nvae;
-                        }
-
-                        }
-                        break;
-                    case RULE_STRING:
-                        {
-                        switch ( input.LA(4) ) {
-                        case 22:
-                            {
-                            switch ( input.LA(5) ) {
-                            case 29:
-                                {
-                                int LA5_26 = input.LA(6);
-
-                                if ( ((LA5_26>=23 && LA5_26<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_26==EOF||(LA5_26>=RULE_ID && LA5_26<=RULE_STRING)||(LA5_26>=15 && LA5_26<=17)||LA5_26==20||LA5_26==25||(LA5_26>=27 && LA5_26<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 26, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 30:
-                                {
-                                int LA5_27 = input.LA(6);
-
-                                if ( ((LA5_27>=23 && LA5_27<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_27==EOF||(LA5_27>=RULE_ID && LA5_27<=RULE_STRING)||(LA5_27>=15 && LA5_27<=17)||LA5_27==20||LA5_27==25||(LA5_27>=27 && LA5_27<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 27, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 31:
-                                {
-                                int LA5_28 = input.LA(6);
-
-                                if ( (LA5_28==EOF||(LA5_28>=RULE_ID && LA5_28<=RULE_STRING)||(LA5_28>=15 && LA5_28<=17)||LA5_28==20||LA5_28==25||(LA5_28>=27 && LA5_28<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_28>=23 && LA5_28<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 28, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 32:
-                                {
-                                int LA5_29 = input.LA(6);
-
-                                if ( ((LA5_29>=23 && LA5_29<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_29==EOF||(LA5_29>=RULE_ID && LA5_29<=RULE_STRING)||(LA5_29>=15 && LA5_29<=17)||LA5_29==20||LA5_29==25||(LA5_29>=27 && LA5_29<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 29, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 33:
-                                {
-                                int LA5_30 = input.LA(6);
-
-                                if ( ((LA5_30>=23 && LA5_30<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_30==EOF||(LA5_30>=RULE_ID && LA5_30<=RULE_STRING)||(LA5_30>=15 && LA5_30<=17)||LA5_30==20||LA5_30==25||(LA5_30>=27 && LA5_30<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 30, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 34:
-                                {
-                                int LA5_31 = input.LA(6);
-
-                                if ( ((LA5_31>=23 && LA5_31<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_31==EOF||(LA5_31>=RULE_ID && LA5_31<=RULE_STRING)||(LA5_31>=15 && LA5_31<=17)||LA5_31==20||LA5_31==25||(LA5_31>=27 && LA5_31<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 31, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 35:
-                                {
-                                int LA5_32 = input.LA(6);
-
-                                if ( ((LA5_32>=23 && LA5_32<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_32==EOF||(LA5_32>=RULE_ID && LA5_32<=RULE_STRING)||(LA5_32>=15 && LA5_32<=17)||LA5_32==20||LA5_32==25||(LA5_32>=27 && LA5_32<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 32, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 36:
-                                {
-                                int LA5_33 = input.LA(6);
-
-                                if ( (LA5_33==EOF||(LA5_33>=RULE_ID && LA5_33<=RULE_STRING)||(LA5_33>=15 && LA5_33<=17)||LA5_33==20||LA5_33==25||(LA5_33>=27 && LA5_33<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_33>=23 && LA5_33<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 33, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 37:
-                                {
-                                int LA5_34 = input.LA(6);
-
-                                if ( (LA5_34==EOF||(LA5_34>=RULE_ID && LA5_34<=RULE_STRING)||(LA5_34>=15 && LA5_34<=17)||LA5_34==20||LA5_34==25||(LA5_34>=27 && LA5_34<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_34>=23 && LA5_34<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 34, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 38:
-                                {
-                                int LA5_35 = input.LA(6);
-
-                                if ( (LA5_35==EOF||(LA5_35>=RULE_ID && LA5_35<=RULE_STRING)||(LA5_35>=15 && LA5_35<=17)||LA5_35==20||LA5_35==25||(LA5_35>=27 && LA5_35<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_35>=23 && LA5_35<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 35, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            default:
-                                NoViableAltException nvae =
-                                    new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 25, input);
-
-                                throw nvae;
-                            }
-
-                            }
-                            break;
-                        case EOF:
-                        case RULE_ID:
-                        case RULE_INT:
-                        case RULE_FLOAT:
-                        case RULE_STRING:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 20:
-                        case 25:
-                        case 27:
-                        case 28:
-                            {
-                            alt5=2;
-                            }
-                            break;
-                        case 23:
-                        case 24:
-                            {
-                            alt5=1;
-                            }
-                            break;
-                        default:
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 14, input);
-
-                            throw nvae;
-                        }
-
-                        }
-                        break;
-                    case 29:
-                        {
-                        int LA5_15 = input.LA(4);
-
-                        if ( ((LA5_15>=23 && LA5_15<=24)) ) {
-                            alt5=1;
-                        }
-                        else if ( (LA5_15==EOF||(LA5_15>=RULE_ID && LA5_15<=RULE_STRING)||(LA5_15>=15 && LA5_15<=17)||LA5_15==20||LA5_15==25||(LA5_15>=27 && LA5_15<=28)) ) {
-                            alt5=2;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 15, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 30:
-                        {
-                        int LA5_16 = input.LA(4);
-
-                        if ( ((LA5_16>=23 && LA5_16<=24)) ) {
-                            alt5=1;
-                        }
-                        else if ( (LA5_16==EOF||(LA5_16>=RULE_ID && LA5_16<=RULE_STRING)||(LA5_16>=15 && LA5_16<=17)||LA5_16==20||LA5_16==25||(LA5_16>=27 && LA5_16<=28)) ) {
-                            alt5=2;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 16, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 31:
-                        {
-                        int LA5_17 = input.LA(4);
-
-                        if ( ((LA5_17>=23 && LA5_17<=24)) ) {
-                            alt5=1;
-                        }
-                        else if ( (LA5_17==EOF||(LA5_17>=RULE_ID && LA5_17<=RULE_STRING)||(LA5_17>=15 && LA5_17<=17)||LA5_17==20||LA5_17==25||(LA5_17>=27 && LA5_17<=28)) ) {
-                            alt5=2;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 17, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 32:
-                        {
-                        int LA5_18 = input.LA(4);
-
-                        if ( ((LA5_18>=23 && LA5_18<=24)) ) {
-                            alt5=1;
-                        }
-                        else if ( (LA5_18==EOF||(LA5_18>=RULE_ID && LA5_18<=RULE_STRING)||(LA5_18>=15 && LA5_18<=17)||LA5_18==20||LA5_18==25||(LA5_18>=27 && LA5_18<=28)) ) {
-                            alt5=2;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 18, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 33:
-                        {
-                        int LA5_19 = input.LA(4);
-
-                        if ( (LA5_19==EOF||(LA5_19>=RULE_ID && LA5_19<=RULE_STRING)||(LA5_19>=15 && LA5_19<=17)||LA5_19==20||LA5_19==25||(LA5_19>=27 && LA5_19<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_19>=23 && LA5_19<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 19, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 34:
-                        {
-                        int LA5_20 = input.LA(4);
-
-                        if ( (LA5_20==EOF||(LA5_20>=RULE_ID && LA5_20<=RULE_STRING)||(LA5_20>=15 && LA5_20<=17)||LA5_20==20||LA5_20==25||(LA5_20>=27 && LA5_20<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_20>=23 && LA5_20<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 20, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 35:
-                        {
-                        int LA5_21 = input.LA(4);
-
-                        if ( (LA5_21==EOF||(LA5_21>=RULE_ID && LA5_21<=RULE_STRING)||(LA5_21>=15 && LA5_21<=17)||LA5_21==20||LA5_21==25||(LA5_21>=27 && LA5_21<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_21>=23 && LA5_21<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 21, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 36:
-                        {
-                        int LA5_22 = input.LA(4);
-
-                        if ( (LA5_22==EOF||(LA5_22>=RULE_ID && LA5_22<=RULE_STRING)||(LA5_22>=15 && LA5_22<=17)||LA5_22==20||LA5_22==25||(LA5_22>=27 && LA5_22<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_22>=23 && LA5_22<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 22, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 37:
-                        {
-                        int LA5_23 = input.LA(4);
-
-                        if ( (LA5_23==EOF||(LA5_23>=RULE_ID && LA5_23<=RULE_STRING)||(LA5_23>=15 && LA5_23<=17)||LA5_23==20||LA5_23==25||(LA5_23>=27 && LA5_23<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_23>=23 && LA5_23<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 23, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 38:
-                        {
-                        int LA5_24 = input.LA(4);
-
-                        if ( (LA5_24==EOF||(LA5_24>=RULE_ID && LA5_24<=RULE_STRING)||(LA5_24>=15 && LA5_24<=17)||LA5_24==20||LA5_24==25||(LA5_24>=27 && LA5_24<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_24>=23 && LA5_24<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 24, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    default:
-                        NoViableAltException nvae =
-                            new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 7, input);
-
-                        throw nvae;
-                    }
-
-                    }
-                    break;
-                case 23:
-                case 24:
-                    {
-                    alt5=1;
-                    }
-                    break;
-                case EOF:
-                case RULE_ID:
-                case RULE_INT:
-                case RULE_FLOAT:
-                case RULE_STRING:
-                case 15:
-                case 16:
-                case 17:
-                case 20:
-                case 25:
-                case 27:
-                case 28:
-                    {
-                    alt5=2;
-                    }
-                    break;
-                case 21:
-                    {
-                    alt5=3;
-                    }
-                    break;
-                default:
-                    NoViableAltException nvae =
-                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 3, input);
-
-                    throw nvae;
-                }
-
-                }
-                break;
-            case RULE_STRING:
-                {
-                switch ( input.LA(2) ) {
-                case 21:
-                    {
-                    alt5=3;
-                    }
-                    break;
-                case 22:
-                    {
-                    switch ( input.LA(3) ) {
-                    case RULE_ID:
-                        {
-                        switch ( input.LA(4) ) {
-                        case 22:
-                            {
-                            switch ( input.LA(5) ) {
-                            case 29:
-                                {
-                                int LA5_26 = input.LA(6);
-
-                                if ( ((LA5_26>=23 && LA5_26<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_26==EOF||(LA5_26>=RULE_ID && LA5_26<=RULE_STRING)||(LA5_26>=15 && LA5_26<=17)||LA5_26==20||LA5_26==25||(LA5_26>=27 && LA5_26<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 26, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 30:
-                                {
-                                int LA5_27 = input.LA(6);
-
-                                if ( ((LA5_27>=23 && LA5_27<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_27==EOF||(LA5_27>=RULE_ID && LA5_27<=RULE_STRING)||(LA5_27>=15 && LA5_27<=17)||LA5_27==20||LA5_27==25||(LA5_27>=27 && LA5_27<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 27, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 31:
-                                {
-                                int LA5_28 = input.LA(6);
-
-                                if ( (LA5_28==EOF||(LA5_28>=RULE_ID && LA5_28<=RULE_STRING)||(LA5_28>=15 && LA5_28<=17)||LA5_28==20||LA5_28==25||(LA5_28>=27 && LA5_28<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_28>=23 && LA5_28<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 28, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 32:
-                                {
-                                int LA5_29 = input.LA(6);
-
-                                if ( ((LA5_29>=23 && LA5_29<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_29==EOF||(LA5_29>=RULE_ID && LA5_29<=RULE_STRING)||(LA5_29>=15 && LA5_29<=17)||LA5_29==20||LA5_29==25||(LA5_29>=27 && LA5_29<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 29, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 33:
-                                {
-                                int LA5_30 = input.LA(6);
-
-                                if ( ((LA5_30>=23 && LA5_30<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_30==EOF||(LA5_30>=RULE_ID && LA5_30<=RULE_STRING)||(LA5_30>=15 && LA5_30<=17)||LA5_30==20||LA5_30==25||(LA5_30>=27 && LA5_30<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 30, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 34:
-                                {
-                                int LA5_31 = input.LA(6);
-
-                                if ( ((LA5_31>=23 && LA5_31<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_31==EOF||(LA5_31>=RULE_ID && LA5_31<=RULE_STRING)||(LA5_31>=15 && LA5_31<=17)||LA5_31==20||LA5_31==25||(LA5_31>=27 && LA5_31<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 31, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 35:
-                                {
-                                int LA5_32 = input.LA(6);
-
-                                if ( ((LA5_32>=23 && LA5_32<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_32==EOF||(LA5_32>=RULE_ID && LA5_32<=RULE_STRING)||(LA5_32>=15 && LA5_32<=17)||LA5_32==20||LA5_32==25||(LA5_32>=27 && LA5_32<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 32, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 36:
-                                {
-                                int LA5_33 = input.LA(6);
-
-                                if ( (LA5_33==EOF||(LA5_33>=RULE_ID && LA5_33<=RULE_STRING)||(LA5_33>=15 && LA5_33<=17)||LA5_33==20||LA5_33==25||(LA5_33>=27 && LA5_33<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_33>=23 && LA5_33<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 33, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 37:
-                                {
-                                int LA5_34 = input.LA(6);
-
-                                if ( (LA5_34==EOF||(LA5_34>=RULE_ID && LA5_34<=RULE_STRING)||(LA5_34>=15 && LA5_34<=17)||LA5_34==20||LA5_34==25||(LA5_34>=27 && LA5_34<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_34>=23 && LA5_34<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 34, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 38:
-                                {
-                                int LA5_35 = input.LA(6);
-
-                                if ( (LA5_35==EOF||(LA5_35>=RULE_ID && LA5_35<=RULE_STRING)||(LA5_35>=15 && LA5_35<=17)||LA5_35==20||LA5_35==25||(LA5_35>=27 && LA5_35<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_35>=23 && LA5_35<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 35, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            default:
-                                NoViableAltException nvae =
-                                    new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 25, input);
-
-                                throw nvae;
-                            }
-
-                            }
-                            break;
-                        case EOF:
-                        case RULE_ID:
-                        case RULE_INT:
-                        case RULE_FLOAT:
-                        case RULE_STRING:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 20:
-                        case 25:
-                        case 27:
-                        case 28:
-                            {
-                            alt5=2;
-                            }
-                            break;
-                        case 23:
-                        case 24:
-                            {
-                            alt5=1;
-                            }
-                            break;
-                        default:
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 11, input);
-
-                            throw nvae;
-                        }
-
-                        }
-                        break;
-                    case RULE_INT:
-                        {
-                        switch ( input.LA(4) ) {
-                        case 22:
-                            {
-                            switch ( input.LA(5) ) {
-                            case 29:
-                                {
-                                int LA5_26 = input.LA(6);
-
-                                if ( ((LA5_26>=23 && LA5_26<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_26==EOF||(LA5_26>=RULE_ID && LA5_26<=RULE_STRING)||(LA5_26>=15 && LA5_26<=17)||LA5_26==20||LA5_26==25||(LA5_26>=27 && LA5_26<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 26, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 30:
-                                {
-                                int LA5_27 = input.LA(6);
-
-                                if ( ((LA5_27>=23 && LA5_27<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_27==EOF||(LA5_27>=RULE_ID && LA5_27<=RULE_STRING)||(LA5_27>=15 && LA5_27<=17)||LA5_27==20||LA5_27==25||(LA5_27>=27 && LA5_27<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 27, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 31:
-                                {
-                                int LA5_28 = input.LA(6);
-
-                                if ( (LA5_28==EOF||(LA5_28>=RULE_ID && LA5_28<=RULE_STRING)||(LA5_28>=15 && LA5_28<=17)||LA5_28==20||LA5_28==25||(LA5_28>=27 && LA5_28<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_28>=23 && LA5_28<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 28, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 32:
-                                {
-                                int LA5_29 = input.LA(6);
-
-                                if ( ((LA5_29>=23 && LA5_29<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_29==EOF||(LA5_29>=RULE_ID && LA5_29<=RULE_STRING)||(LA5_29>=15 && LA5_29<=17)||LA5_29==20||LA5_29==25||(LA5_29>=27 && LA5_29<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 29, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 33:
-                                {
-                                int LA5_30 = input.LA(6);
-
-                                if ( ((LA5_30>=23 && LA5_30<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_30==EOF||(LA5_30>=RULE_ID && LA5_30<=RULE_STRING)||(LA5_30>=15 && LA5_30<=17)||LA5_30==20||LA5_30==25||(LA5_30>=27 && LA5_30<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 30, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 34:
-                                {
-                                int LA5_31 = input.LA(6);
-
-                                if ( ((LA5_31>=23 && LA5_31<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_31==EOF||(LA5_31>=RULE_ID && LA5_31<=RULE_STRING)||(LA5_31>=15 && LA5_31<=17)||LA5_31==20||LA5_31==25||(LA5_31>=27 && LA5_31<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 31, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 35:
-                                {
-                                int LA5_32 = input.LA(6);
-
-                                if ( ((LA5_32>=23 && LA5_32<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_32==EOF||(LA5_32>=RULE_ID && LA5_32<=RULE_STRING)||(LA5_32>=15 && LA5_32<=17)||LA5_32==20||LA5_32==25||(LA5_32>=27 && LA5_32<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 32, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 36:
-                                {
-                                int LA5_33 = input.LA(6);
-
-                                if ( (LA5_33==EOF||(LA5_33>=RULE_ID && LA5_33<=RULE_STRING)||(LA5_33>=15 && LA5_33<=17)||LA5_33==20||LA5_33==25||(LA5_33>=27 && LA5_33<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_33>=23 && LA5_33<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 33, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 37:
-                                {
-                                int LA5_34 = input.LA(6);
-
-                                if ( (LA5_34==EOF||(LA5_34>=RULE_ID && LA5_34<=RULE_STRING)||(LA5_34>=15 && LA5_34<=17)||LA5_34==20||LA5_34==25||(LA5_34>=27 && LA5_34<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_34>=23 && LA5_34<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 34, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 38:
-                                {
-                                int LA5_35 = input.LA(6);
-
-                                if ( (LA5_35==EOF||(LA5_35>=RULE_ID && LA5_35<=RULE_STRING)||(LA5_35>=15 && LA5_35<=17)||LA5_35==20||LA5_35==25||(LA5_35>=27 && LA5_35<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_35>=23 && LA5_35<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 35, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            default:
-                                NoViableAltException nvae =
-                                    new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 25, input);
-
-                                throw nvae;
-                            }
-
-                            }
-                            break;
-                        case EOF:
-                        case RULE_ID:
-                        case RULE_INT:
-                        case RULE_FLOAT:
-                        case RULE_STRING:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 20:
-                        case 25:
-                        case 27:
-                        case 28:
-                            {
-                            alt5=2;
-                            }
-                            break;
-                        case 23:
-                        case 24:
-                            {
-                            alt5=1;
-                            }
-                            break;
-                        default:
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 12, input);
-
-                            throw nvae;
-                        }
-
-                        }
-                        break;
-                    case RULE_FLOAT:
-                        {
-                        switch ( input.LA(4) ) {
-                        case 22:
-                            {
-                            switch ( input.LA(5) ) {
-                            case 29:
-                                {
-                                int LA5_26 = input.LA(6);
-
-                                if ( ((LA5_26>=23 && LA5_26<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_26==EOF||(LA5_26>=RULE_ID && LA5_26<=RULE_STRING)||(LA5_26>=15 && LA5_26<=17)||LA5_26==20||LA5_26==25||(LA5_26>=27 && LA5_26<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 26, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 30:
-                                {
-                                int LA5_27 = input.LA(6);
-
-                                if ( ((LA5_27>=23 && LA5_27<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_27==EOF||(LA5_27>=RULE_ID && LA5_27<=RULE_STRING)||(LA5_27>=15 && LA5_27<=17)||LA5_27==20||LA5_27==25||(LA5_27>=27 && LA5_27<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 27, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 31:
-                                {
-                                int LA5_28 = input.LA(6);
-
-                                if ( (LA5_28==EOF||(LA5_28>=RULE_ID && LA5_28<=RULE_STRING)||(LA5_28>=15 && LA5_28<=17)||LA5_28==20||LA5_28==25||(LA5_28>=27 && LA5_28<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_28>=23 && LA5_28<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 28, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 32:
-                                {
-                                int LA5_29 = input.LA(6);
-
-                                if ( ((LA5_29>=23 && LA5_29<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_29==EOF||(LA5_29>=RULE_ID && LA5_29<=RULE_STRING)||(LA5_29>=15 && LA5_29<=17)||LA5_29==20||LA5_29==25||(LA5_29>=27 && LA5_29<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 29, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 33:
-                                {
-                                int LA5_30 = input.LA(6);
-
-                                if ( ((LA5_30>=23 && LA5_30<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_30==EOF||(LA5_30>=RULE_ID && LA5_30<=RULE_STRING)||(LA5_30>=15 && LA5_30<=17)||LA5_30==20||LA5_30==25||(LA5_30>=27 && LA5_30<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 30, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 34:
-                                {
-                                int LA5_31 = input.LA(6);
-
-                                if ( ((LA5_31>=23 && LA5_31<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_31==EOF||(LA5_31>=RULE_ID && LA5_31<=RULE_STRING)||(LA5_31>=15 && LA5_31<=17)||LA5_31==20||LA5_31==25||(LA5_31>=27 && LA5_31<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 31, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 35:
-                                {
-                                int LA5_32 = input.LA(6);
-
-                                if ( ((LA5_32>=23 && LA5_32<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_32==EOF||(LA5_32>=RULE_ID && LA5_32<=RULE_STRING)||(LA5_32>=15 && LA5_32<=17)||LA5_32==20||LA5_32==25||(LA5_32>=27 && LA5_32<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 32, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 36:
-                                {
-                                int LA5_33 = input.LA(6);
-
-                                if ( (LA5_33==EOF||(LA5_33>=RULE_ID && LA5_33<=RULE_STRING)||(LA5_33>=15 && LA5_33<=17)||LA5_33==20||LA5_33==25||(LA5_33>=27 && LA5_33<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_33>=23 && LA5_33<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 33, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 37:
-                                {
-                                int LA5_34 = input.LA(6);
-
-                                if ( (LA5_34==EOF||(LA5_34>=RULE_ID && LA5_34<=RULE_STRING)||(LA5_34>=15 && LA5_34<=17)||LA5_34==20||LA5_34==25||(LA5_34>=27 && LA5_34<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_34>=23 && LA5_34<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 34, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 38:
-                                {
-                                int LA5_35 = input.LA(6);
-
-                                if ( (LA5_35==EOF||(LA5_35>=RULE_ID && LA5_35<=RULE_STRING)||(LA5_35>=15 && LA5_35<=17)||LA5_35==20||LA5_35==25||(LA5_35>=27 && LA5_35<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_35>=23 && LA5_35<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 35, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            default:
-                                NoViableAltException nvae =
-                                    new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 25, input);
-
-                                throw nvae;
-                            }
-
-                            }
-                            break;
-                        case EOF:
-                        case RULE_ID:
-                        case RULE_INT:
-                        case RULE_FLOAT:
-                        case RULE_STRING:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 20:
-                        case 25:
-                        case 27:
-                        case 28:
-                            {
-                            alt5=2;
-                            }
-                            break;
-                        case 23:
-                        case 24:
-                            {
-                            alt5=1;
-                            }
-                            break;
-                        default:
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 13, input);
-
-                            throw nvae;
-                        }
-
-                        }
-                        break;
-                    case RULE_STRING:
-                        {
-                        switch ( input.LA(4) ) {
-                        case 22:
-                            {
-                            switch ( input.LA(5) ) {
-                            case 29:
-                                {
-                                int LA5_26 = input.LA(6);
-
-                                if ( ((LA5_26>=23 && LA5_26<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_26==EOF||(LA5_26>=RULE_ID && LA5_26<=RULE_STRING)||(LA5_26>=15 && LA5_26<=17)||LA5_26==20||LA5_26==25||(LA5_26>=27 && LA5_26<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 26, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 30:
-                                {
-                                int LA5_27 = input.LA(6);
-
-                                if ( ((LA5_27>=23 && LA5_27<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_27==EOF||(LA5_27>=RULE_ID && LA5_27<=RULE_STRING)||(LA5_27>=15 && LA5_27<=17)||LA5_27==20||LA5_27==25||(LA5_27>=27 && LA5_27<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 27, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 31:
-                                {
-                                int LA5_28 = input.LA(6);
-
-                                if ( (LA5_28==EOF||(LA5_28>=RULE_ID && LA5_28<=RULE_STRING)||(LA5_28>=15 && LA5_28<=17)||LA5_28==20||LA5_28==25||(LA5_28>=27 && LA5_28<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_28>=23 && LA5_28<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 28, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 32:
-                                {
-                                int LA5_29 = input.LA(6);
-
-                                if ( ((LA5_29>=23 && LA5_29<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_29==EOF||(LA5_29>=RULE_ID && LA5_29<=RULE_STRING)||(LA5_29>=15 && LA5_29<=17)||LA5_29==20||LA5_29==25||(LA5_29>=27 && LA5_29<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 29, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 33:
-                                {
-                                int LA5_30 = input.LA(6);
-
-                                if ( ((LA5_30>=23 && LA5_30<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_30==EOF||(LA5_30>=RULE_ID && LA5_30<=RULE_STRING)||(LA5_30>=15 && LA5_30<=17)||LA5_30==20||LA5_30==25||(LA5_30>=27 && LA5_30<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 30, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 34:
-                                {
-                                int LA5_31 = input.LA(6);
-
-                                if ( ((LA5_31>=23 && LA5_31<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_31==EOF||(LA5_31>=RULE_ID && LA5_31<=RULE_STRING)||(LA5_31>=15 && LA5_31<=17)||LA5_31==20||LA5_31==25||(LA5_31>=27 && LA5_31<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 31, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 35:
-                                {
-                                int LA5_32 = input.LA(6);
-
-                                if ( ((LA5_32>=23 && LA5_32<=24)) ) {
-                                    alt5=1;
-                                }
-                                else if ( (LA5_32==EOF||(LA5_32>=RULE_ID && LA5_32<=RULE_STRING)||(LA5_32>=15 && LA5_32<=17)||LA5_32==20||LA5_32==25||(LA5_32>=27 && LA5_32<=28)) ) {
-                                    alt5=2;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 32, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 36:
-                                {
-                                int LA5_33 = input.LA(6);
-
-                                if ( (LA5_33==EOF||(LA5_33>=RULE_ID && LA5_33<=RULE_STRING)||(LA5_33>=15 && LA5_33<=17)||LA5_33==20||LA5_33==25||(LA5_33>=27 && LA5_33<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_33>=23 && LA5_33<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 33, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 37:
-                                {
-                                int LA5_34 = input.LA(6);
-
-                                if ( (LA5_34==EOF||(LA5_34>=RULE_ID && LA5_34<=RULE_STRING)||(LA5_34>=15 && LA5_34<=17)||LA5_34==20||LA5_34==25||(LA5_34>=27 && LA5_34<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_34>=23 && LA5_34<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 34, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            case 38:
-                                {
-                                int LA5_35 = input.LA(6);
-
-                                if ( (LA5_35==EOF||(LA5_35>=RULE_ID && LA5_35<=RULE_STRING)||(LA5_35>=15 && LA5_35<=17)||LA5_35==20||LA5_35==25||(LA5_35>=27 && LA5_35<=28)) ) {
-                                    alt5=2;
-                                }
-                                else if ( ((LA5_35>=23 && LA5_35<=24)) ) {
-                                    alt5=1;
-                                }
-                                else {
-                                    NoViableAltException nvae =
-                                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 35, input);
-
-                                    throw nvae;
-                                }
-                                }
-                                break;
-                            default:
-                                NoViableAltException nvae =
-                                    new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 25, input);
-
-                                throw nvae;
-                            }
-
-                            }
-                            break;
-                        case EOF:
-                        case RULE_ID:
-                        case RULE_INT:
-                        case RULE_FLOAT:
-                        case RULE_STRING:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 20:
-                        case 25:
-                        case 27:
-                        case 28:
-                            {
-                            alt5=2;
-                            }
-                            break;
-                        case 23:
-                        case 24:
-                            {
-                            alt5=1;
-                            }
-                            break;
-                        default:
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 14, input);
-
-                            throw nvae;
-                        }
-
-                        }
-                        break;
-                    case 29:
-                        {
-                        int LA5_15 = input.LA(4);
-
-                        if ( ((LA5_15>=23 && LA5_15<=24)) ) {
-                            alt5=1;
-                        }
-                        else if ( (LA5_15==EOF||(LA5_15>=RULE_ID && LA5_15<=RULE_STRING)||(LA5_15>=15 && LA5_15<=17)||LA5_15==20||LA5_15==25||(LA5_15>=27 && LA5_15<=28)) ) {
-                            alt5=2;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 15, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 30:
-                        {
-                        int LA5_16 = input.LA(4);
-
-                        if ( ((LA5_16>=23 && LA5_16<=24)) ) {
-                            alt5=1;
-                        }
-                        else if ( (LA5_16==EOF||(LA5_16>=RULE_ID && LA5_16<=RULE_STRING)||(LA5_16>=15 && LA5_16<=17)||LA5_16==20||LA5_16==25||(LA5_16>=27 && LA5_16<=28)) ) {
-                            alt5=2;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 16, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 31:
-                        {
-                        int LA5_17 = input.LA(4);
-
-                        if ( ((LA5_17>=23 && LA5_17<=24)) ) {
-                            alt5=1;
-                        }
-                        else if ( (LA5_17==EOF||(LA5_17>=RULE_ID && LA5_17<=RULE_STRING)||(LA5_17>=15 && LA5_17<=17)||LA5_17==20||LA5_17==25||(LA5_17>=27 && LA5_17<=28)) ) {
-                            alt5=2;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 17, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 32:
-                        {
-                        int LA5_18 = input.LA(4);
-
-                        if ( ((LA5_18>=23 && LA5_18<=24)) ) {
-                            alt5=1;
-                        }
-                        else if ( (LA5_18==EOF||(LA5_18>=RULE_ID && LA5_18<=RULE_STRING)||(LA5_18>=15 && LA5_18<=17)||LA5_18==20||LA5_18==25||(LA5_18>=27 && LA5_18<=28)) ) {
-                            alt5=2;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 18, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 33:
-                        {
-                        int LA5_19 = input.LA(4);
-
-                        if ( (LA5_19==EOF||(LA5_19>=RULE_ID && LA5_19<=RULE_STRING)||(LA5_19>=15 && LA5_19<=17)||LA5_19==20||LA5_19==25||(LA5_19>=27 && LA5_19<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_19>=23 && LA5_19<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 19, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 34:
-                        {
-                        int LA5_20 = input.LA(4);
-
-                        if ( (LA5_20==EOF||(LA5_20>=RULE_ID && LA5_20<=RULE_STRING)||(LA5_20>=15 && LA5_20<=17)||LA5_20==20||LA5_20==25||(LA5_20>=27 && LA5_20<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_20>=23 && LA5_20<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 20, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 35:
-                        {
-                        int LA5_21 = input.LA(4);
-
-                        if ( (LA5_21==EOF||(LA5_21>=RULE_ID && LA5_21<=RULE_STRING)||(LA5_21>=15 && LA5_21<=17)||LA5_21==20||LA5_21==25||(LA5_21>=27 && LA5_21<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_21>=23 && LA5_21<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 21, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 36:
-                        {
-                        int LA5_22 = input.LA(4);
-
-                        if ( (LA5_22==EOF||(LA5_22>=RULE_ID && LA5_22<=RULE_STRING)||(LA5_22>=15 && LA5_22<=17)||LA5_22==20||LA5_22==25||(LA5_22>=27 && LA5_22<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_22>=23 && LA5_22<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 22, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 37:
-                        {
-                        int LA5_23 = input.LA(4);
-
-                        if ( (LA5_23==EOF||(LA5_23>=RULE_ID && LA5_23<=RULE_STRING)||(LA5_23>=15 && LA5_23<=17)||LA5_23==20||LA5_23==25||(LA5_23>=27 && LA5_23<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_23>=23 && LA5_23<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 23, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    case 38:
-                        {
-                        int LA5_24 = input.LA(4);
-
-                        if ( (LA5_24==EOF||(LA5_24>=RULE_ID && LA5_24<=RULE_STRING)||(LA5_24>=15 && LA5_24<=17)||LA5_24==20||LA5_24==25||(LA5_24>=27 && LA5_24<=28)) ) {
-                            alt5=2;
-                        }
-                        else if ( ((LA5_24>=23 && LA5_24<=24)) ) {
-                            alt5=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 24, input);
-
-                            throw nvae;
-                        }
-                        }
-                        break;
-                    default:
-                        NoViableAltException nvae =
-                            new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 7, input);
-
-                        throw nvae;
-                    }
-
-                    }
-                    break;
-                case 23:
-                case 24:
-                    {
-                    alt5=1;
-                    }
-                    break;
-                case EOF:
-                case RULE_ID:
-                case RULE_INT:
-                case RULE_FLOAT:
-                case RULE_STRING:
-                case 15:
-                case 16:
-                case 17:
-                case 20:
-                case 25:
-                case 27:
-                case 28:
-                    {
-                    alt5=2;
-                    }
-                    break;
-                default:
-                    NoViableAltException nvae =
-                        new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 4, input);
-
-                    throw nvae;
-                }
-
-                }
-                break;
-            case 25:
-            case 27:
-            case 28:
-                {
-                alt5=4;
-                }
-                break;
-            case 20:
-                {
-                alt5=5;
-                }
-                break;
-            default:
-                NoViableAltException nvae =
-                    new NoViableAltException("264:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )", 5, 0, input);
-
-                throw nvae;
-            }
-
+            alt5 = dfa5.predict(input);
             switch (alt5) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:265:5: this_EdgeStatement_0= ruleEdgeStatement
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:219:5: this_EdgeStatement_0= ruleEdgeStatement
                     {
                      
-                            currentNode=createCompositeNode(grammarAccess.getStatementAccess().getEdgeStatementParserRuleCall_0_0(), currentNode); 
+                            newCompositeNode(grammarAccess.getStatementAccess().getEdgeStatementParserRuleCall_0_0()); 
                         
-                    pushFollow(FOLLOW_ruleEdgeStatement_in_ruleStatement413);
+                    pushFollow(FOLLOW_ruleEdgeStatement_in_ruleStatement417);
                     this_EdgeStatement_0=ruleEdgeStatement();
-                    _fsp--;
+
+                    state._fsp--;
 
                      
                             current = this_EdgeStatement_0; 
-                            currentNode = currentNode.getParent();
+                            afterParserOrEnumRuleCall();
                         
 
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:275:5: this_NodeStatement_1= ruleNodeStatement
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:229:5: this_NodeStatement_1= ruleNodeStatement
                     {
                      
-                            currentNode=createCompositeNode(grammarAccess.getStatementAccess().getNodeStatementParserRuleCall_0_1(), currentNode); 
+                            newCompositeNode(grammarAccess.getStatementAccess().getNodeStatementParserRuleCall_0_1()); 
                         
-                    pushFollow(FOLLOW_ruleNodeStatement_in_ruleStatement440);
+                    pushFollow(FOLLOW_ruleNodeStatement_in_ruleStatement444);
                     this_NodeStatement_1=ruleNodeStatement();
-                    _fsp--;
+
+                    state._fsp--;
 
                      
                             current = this_NodeStatement_1; 
-                            currentNode = currentNode.getParent();
+                            afterParserOrEnumRuleCall();
                         
 
                     }
                     break;
                 case 3 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:285:5: this_Attribute_2= ruleAttribute
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:239:5: this_Attribute_2= ruleAttribute
                     {
                      
-                            currentNode=createCompositeNode(grammarAccess.getStatementAccess().getAttributeParserRuleCall_0_2(), currentNode); 
+                            newCompositeNode(grammarAccess.getStatementAccess().getAttributeParserRuleCall_0_2()); 
                         
-                    pushFollow(FOLLOW_ruleAttribute_in_ruleStatement467);
+                    pushFollow(FOLLOW_ruleAttribute_in_ruleStatement471);
                     this_Attribute_2=ruleAttribute();
-                    _fsp--;
+
+                    state._fsp--;
 
                      
                             current = this_Attribute_2; 
-                            currentNode = currentNode.getParent();
+                            afterParserOrEnumRuleCall();
                         
 
                     }
                     break;
                 case 4 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:295:5: this_AttributeStatement_3= ruleAttributeStatement
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:249:5: this_AttributeStatement_3= ruleAttributeStatement
                     {
                      
-                            currentNode=createCompositeNode(grammarAccess.getStatementAccess().getAttributeStatementParserRuleCall_0_3(), currentNode); 
+                            newCompositeNode(grammarAccess.getStatementAccess().getAttributeStatementParserRuleCall_0_3()); 
                         
-                    pushFollow(FOLLOW_ruleAttributeStatement_in_ruleStatement494);
+                    pushFollow(FOLLOW_ruleAttributeStatement_in_ruleStatement498);
                     this_AttributeStatement_3=ruleAttributeStatement();
-                    _fsp--;
+
+                    state._fsp--;
 
                      
                             current = this_AttributeStatement_3; 
-                            currentNode = currentNode.getParent();
+                            afterParserOrEnumRuleCall();
                         
 
                     }
                     break;
                 case 5 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:305:5: this_Subgraph_4= ruleSubgraph
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:259:5: this_Subgraph_4= ruleSubgraph
                     {
                      
-                            currentNode=createCompositeNode(grammarAccess.getStatementAccess().getSubgraphParserRuleCall_0_4(), currentNode); 
+                            newCompositeNode(grammarAccess.getStatementAccess().getSubgraphParserRuleCall_0_4()); 
                         
-                    pushFollow(FOLLOW_ruleSubgraph_in_ruleStatement521);
+                    pushFollow(FOLLOW_ruleSubgraph_in_ruleStatement525);
                     this_Subgraph_4=ruleSubgraph();
-                    _fsp--;
+
+                    state._fsp--;
 
                      
                             current = this_Subgraph_4; 
-                            currentNode = currentNode.getParent();
+                            afterParserOrEnumRuleCall();
                         
 
                     }
@@ -5168,7 +611,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:313:2: ( ';' )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:267:2: (otherlv_5= ';' )?
             int alt6=2;
             int LA6_0 = input.LA(1);
 
@@ -5177,11 +620,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt6) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:313:4: ';'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:267:4: otherlv_5= ';'
                     {
-                    match(input,16,FOLLOW_16_in_ruleStatement532); 
+                    otherlv_5=(Token)match(input,16,FOLLOW_16_in_ruleStatement538); 
 
-                            createLeafNode(grammarAccess.getStatementAccess().getSemicolonKeyword_1(), null); 
+                        	newLeafNode(otherlv_5, grammarAccess.getStatementAccess().getSemicolonKeyword_1());
                         
 
                     }
@@ -5195,9 +638,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-             resetLookahead(); 
-                	lastConsumedNode = currentNode;
-                
+             leaveRule(); 
         }
          
             catch (RecognitionException re) { 
@@ -5208,11 +649,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleStatement
+    // $ANTLR end "ruleStatement"
 
 
-    // $ANTLR start entryRuleEdgeStatement
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:325:1: entryRuleEdgeStatement returns [EObject current=null] : iv_ruleEdgeStatement= ruleEdgeStatement EOF ;
+    // $ANTLR start "entryRuleEdgeStatement"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:279:1: entryRuleEdgeStatement returns [EObject current=null] : iv_ruleEdgeStatement= ruleEdgeStatement EOF ;
     public final EObject entryRuleEdgeStatement() throws RecognitionException {
         EObject current = null;
 
@@ -5220,16 +661,17 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:326:2: (iv_ruleEdgeStatement= ruleEdgeStatement EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:327:2: iv_ruleEdgeStatement= ruleEdgeStatement EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:280:2: (iv_ruleEdgeStatement= ruleEdgeStatement EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:281:2: iv_ruleEdgeStatement= ruleEdgeStatement EOF
             {
-             currentNode = createCompositeNode(grammarAccess.getEdgeStatementRule(), currentNode); 
-            pushFollow(FOLLOW_ruleEdgeStatement_in_entryRuleEdgeStatement570);
+             newCompositeNode(grammarAccess.getEdgeStatementRule()); 
+            pushFollow(FOLLOW_ruleEdgeStatement_in_entryRuleEdgeStatement576);
             iv_ruleEdgeStatement=ruleEdgeStatement();
-            _fsp--;
+
+            state._fsp--;
 
              current =iv_ruleEdgeStatement; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleEdgeStatement580); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleEdgeStatement586); 
 
             }
 
@@ -5243,14 +685,17 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleEdgeStatement
+    // $ANTLR end "entryRuleEdgeStatement"
 
 
-    // $ANTLR start ruleEdgeStatement
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:334:1: ruleEdgeStatement returns [EObject current=null] : ( ( (lv_sourceNode_0_0= ruleNode ) ) ( (lv_edgeTargets_1_0= ruleEdgeTarget ) )+ ( '[' ( (lv_attributes_3_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_5_0= ruleListAttribute ) ) )* ']' )? ) ;
+    // $ANTLR start "ruleEdgeStatement"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:288:1: ruleEdgeStatement returns [EObject current=null] : ( ( (lv_sourceNode_0_0= ruleNode ) ) ( (lv_edgeTargets_1_0= ruleEdgeTarget ) )+ (otherlv_2= '[' ( (lv_attributes_3_0= ruleListAttribute ) ) ( (otherlv_4= ',' )? ( (lv_attributes_5_0= ruleListAttribute ) ) )* otherlv_6= ']' )? ) ;
     public final EObject ruleEdgeStatement() throws RecognitionException {
         EObject current = null;
 
+        Token otherlv_2=null;
+        Token otherlv_4=null;
+        Token otherlv_6=null;
         EObject lv_sourceNode_0_0 = null;
 
         EObject lv_edgeTargets_1_0 = null;
@@ -5260,44 +705,39 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         EObject lv_attributes_5_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:339:6: ( ( ( (lv_sourceNode_0_0= ruleNode ) ) ( (lv_edgeTargets_1_0= ruleEdgeTarget ) )+ ( '[' ( (lv_attributes_3_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_5_0= ruleListAttribute ) ) )* ']' )? ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:340:1: ( ( (lv_sourceNode_0_0= ruleNode ) ) ( (lv_edgeTargets_1_0= ruleEdgeTarget ) )+ ( '[' ( (lv_attributes_3_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_5_0= ruleListAttribute ) ) )* ']' )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:291:28: ( ( ( (lv_sourceNode_0_0= ruleNode ) ) ( (lv_edgeTargets_1_0= ruleEdgeTarget ) )+ (otherlv_2= '[' ( (lv_attributes_3_0= ruleListAttribute ) ) ( (otherlv_4= ',' )? ( (lv_attributes_5_0= ruleListAttribute ) ) )* otherlv_6= ']' )? ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:292:1: ( ( (lv_sourceNode_0_0= ruleNode ) ) ( (lv_edgeTargets_1_0= ruleEdgeTarget ) )+ (otherlv_2= '[' ( (lv_attributes_3_0= ruleListAttribute ) ) ( (otherlv_4= ',' )? ( (lv_attributes_5_0= ruleListAttribute ) ) )* otherlv_6= ']' )? )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:340:1: ( ( (lv_sourceNode_0_0= ruleNode ) ) ( (lv_edgeTargets_1_0= ruleEdgeTarget ) )+ ( '[' ( (lv_attributes_3_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_5_0= ruleListAttribute ) ) )* ']' )? )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:340:2: ( (lv_sourceNode_0_0= ruleNode ) ) ( (lv_edgeTargets_1_0= ruleEdgeTarget ) )+ ( '[' ( (lv_attributes_3_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_5_0= ruleListAttribute ) ) )* ']' )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:292:1: ( ( (lv_sourceNode_0_0= ruleNode ) ) ( (lv_edgeTargets_1_0= ruleEdgeTarget ) )+ (otherlv_2= '[' ( (lv_attributes_3_0= ruleListAttribute ) ) ( (otherlv_4= ',' )? ( (lv_attributes_5_0= ruleListAttribute ) ) )* otherlv_6= ']' )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:292:2: ( (lv_sourceNode_0_0= ruleNode ) ) ( (lv_edgeTargets_1_0= ruleEdgeTarget ) )+ (otherlv_2= '[' ( (lv_attributes_3_0= ruleListAttribute ) ) ( (otherlv_4= ',' )? ( (lv_attributes_5_0= ruleListAttribute ) ) )* otherlv_6= ']' )?
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:340:2: ( (lv_sourceNode_0_0= ruleNode ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:341:1: (lv_sourceNode_0_0= ruleNode )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:292:2: ( (lv_sourceNode_0_0= ruleNode ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:293:1: (lv_sourceNode_0_0= ruleNode )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:341:1: (lv_sourceNode_0_0= ruleNode )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:342:3: lv_sourceNode_0_0= ruleNode
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:293:1: (lv_sourceNode_0_0= ruleNode )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:294:3: lv_sourceNode_0_0= ruleNode
             {
              
-            	        currentNode=createCompositeNode(grammarAccess.getEdgeStatementAccess().getSourceNodeNodeParserRuleCall_0_0(), currentNode); 
+            	        newCompositeNode(grammarAccess.getEdgeStatementAccess().getSourceNodeNodeParserRuleCall_0_0()); 
             	    
-            pushFollow(FOLLOW_ruleNode_in_ruleEdgeStatement626);
+            pushFollow(FOLLOW_ruleNode_in_ruleEdgeStatement632);
             lv_sourceNode_0_0=ruleNode();
-            _fsp--;
+
+            state._fsp--;
 
 
             	        if (current==null) {
-            	            current = factory.create(grammarAccess.getEdgeStatementRule().getType().getClassifier());
-            	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	            current = createModelElementForParent(grammarAccess.getEdgeStatementRule());
             	        }
-            	        try {
-            	       		set(
-            	       			current, 
-            	       			"sourceNode",
-            	        		lv_sourceNode_0_0, 
-            	        		"Node", 
-            	        		currentNode);
-            	        } catch (ValueConverterException vce) {
-            				handleValueConverterException(vce);
-            	        }
-            	        currentNode = currentNode.getParent();
+                   		set(
+                   			current, 
+                   			"sourceNode",
+                    		lv_sourceNode_0_0, 
+                    		"Node");
+            	        afterParserOrEnumRuleCall();
             	    
 
             }
@@ -5305,7 +745,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:364:2: ( (lv_edgeTargets_1_0= ruleEdgeTarget ) )+
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:310:2: ( (lv_edgeTargets_1_0= ruleEdgeTarget ) )+
             int cnt7=0;
             loop7:
             do {
@@ -5319,34 +759,29 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt7) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:365:1: (lv_edgeTargets_1_0= ruleEdgeTarget )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:311:1: (lv_edgeTargets_1_0= ruleEdgeTarget )
             	    {
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:365:1: (lv_edgeTargets_1_0= ruleEdgeTarget )
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:366:3: lv_edgeTargets_1_0= ruleEdgeTarget
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:311:1: (lv_edgeTargets_1_0= ruleEdgeTarget )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:312:3: lv_edgeTargets_1_0= ruleEdgeTarget
             	    {
             	     
-            	    	        currentNode=createCompositeNode(grammarAccess.getEdgeStatementAccess().getEdgeTargetsEdgeTargetParserRuleCall_1_0(), currentNode); 
+            	    	        newCompositeNode(grammarAccess.getEdgeStatementAccess().getEdgeTargetsEdgeTargetParserRuleCall_1_0()); 
             	    	    
-            	    pushFollow(FOLLOW_ruleEdgeTarget_in_ruleEdgeStatement647);
+            	    pushFollow(FOLLOW_ruleEdgeTarget_in_ruleEdgeStatement653);
             	    lv_edgeTargets_1_0=ruleEdgeTarget();
-            	    _fsp--;
+
+            	    state._fsp--;
 
 
             	    	        if (current==null) {
-            	    	            current = factory.create(grammarAccess.getEdgeStatementRule().getType().getClassifier());
-            	    	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	    	            current = createModelElementForParent(grammarAccess.getEdgeStatementRule());
             	    	        }
-            	    	        try {
-            	    	       		add(
-            	    	       			current, 
-            	    	       			"edgeTargets",
-            	    	        		lv_edgeTargets_1_0, 
-            	    	        		"EdgeTarget", 
-            	    	        		currentNode);
-            	    	        } catch (ValueConverterException vce) {
-            	    				handleValueConverterException(vce);
-            	    	        }
-            	    	        currentNode = currentNode.getParent();
+            	           		add(
+            	           			current, 
+            	           			"edgeTargets",
+            	            		lv_edgeTargets_1_0, 
+            	            		"EdgeTarget");
+            	    	        afterParserOrEnumRuleCall();
             	    	    
 
             	    }
@@ -5364,7 +799,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                 cnt7++;
             } while (true);
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:388:3: ( '[' ( (lv_attributes_3_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_5_0= ruleListAttribute ) ) )* ']' )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:328:3: (otherlv_2= '[' ( (lv_attributes_3_0= ruleListAttribute ) ) ( (otherlv_4= ',' )? ( (lv_attributes_5_0= ruleListAttribute ) ) )* otherlv_6= ']' )?
             int alt10=2;
             int LA10_0 = input.LA(1);
 
@@ -5373,41 +808,36 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt10) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:388:5: '[' ( (lv_attributes_3_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_5_0= ruleListAttribute ) ) )* ']'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:328:5: otherlv_2= '[' ( (lv_attributes_3_0= ruleListAttribute ) ) ( (otherlv_4= ',' )? ( (lv_attributes_5_0= ruleListAttribute ) ) )* otherlv_6= ']'
                     {
-                    match(input,17,FOLLOW_17_in_ruleEdgeStatement659); 
+                    otherlv_2=(Token)match(input,17,FOLLOW_17_in_ruleEdgeStatement667); 
 
-                            createLeafNode(grammarAccess.getEdgeStatementAccess().getLeftSquareBracketKeyword_2_0(), null); 
+                        	newLeafNode(otherlv_2, grammarAccess.getEdgeStatementAccess().getLeftSquareBracketKeyword_2_0());
                         
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:392:1: ( (lv_attributes_3_0= ruleListAttribute ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:393:1: (lv_attributes_3_0= ruleListAttribute )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:332:1: ( (lv_attributes_3_0= ruleListAttribute ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:333:1: (lv_attributes_3_0= ruleListAttribute )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:393:1: (lv_attributes_3_0= ruleListAttribute )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:394:3: lv_attributes_3_0= ruleListAttribute
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:333:1: (lv_attributes_3_0= ruleListAttribute )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:334:3: lv_attributes_3_0= ruleListAttribute
                     {
                      
-                    	        currentNode=createCompositeNode(grammarAccess.getEdgeStatementAccess().getAttributesListAttributeParserRuleCall_2_1_0(), currentNode); 
+                    	        newCompositeNode(grammarAccess.getEdgeStatementAccess().getAttributesListAttributeParserRuleCall_2_1_0()); 
                     	    
-                    pushFollow(FOLLOW_ruleListAttribute_in_ruleEdgeStatement680);
+                    pushFollow(FOLLOW_ruleListAttribute_in_ruleEdgeStatement688);
                     lv_attributes_3_0=ruleListAttribute();
-                    _fsp--;
+
+                    state._fsp--;
 
 
                     	        if (current==null) {
-                    	            current = factory.create(grammarAccess.getEdgeStatementRule().getType().getClassifier());
-                    	            associateNodeWithAstElement(currentNode.getParent(), current);
+                    	            current = createModelElementForParent(grammarAccess.getEdgeStatementRule());
                     	        }
-                    	        try {
-                    	       		add(
-                    	       			current, 
-                    	       			"attributes",
-                    	        		lv_attributes_3_0, 
-                    	        		"ListAttribute", 
-                    	        		currentNode);
-                    	        } catch (ValueConverterException vce) {
-                    				handleValueConverterException(vce);
-                    	        }
-                    	        currentNode = currentNode.getParent();
+                           		add(
+                           			current, 
+                           			"attributes",
+                            		lv_attributes_3_0, 
+                            		"ListAttribute");
+                    	        afterParserOrEnumRuleCall();
                     	    
 
                     }
@@ -5415,7 +845,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:416:2: ( ( ',' )? ( (lv_attributes_5_0= ruleListAttribute ) ) )*
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:350:2: ( (otherlv_4= ',' )? ( (lv_attributes_5_0= ruleListAttribute ) ) )*
                     loop9:
                     do {
                         int alt9=2;
@@ -5428,9 +858,9 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
                         switch (alt9) {
                     	case 1 :
-                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:416:3: ( ',' )? ( (lv_attributes_5_0= ruleListAttribute ) )
+                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:350:3: (otherlv_4= ',' )? ( (lv_attributes_5_0= ruleListAttribute ) )
                     	    {
-                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:416:3: ( ',' )?
+                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:350:3: (otherlv_4= ',' )?
                     	    int alt8=2;
                     	    int LA8_0 = input.LA(1);
 
@@ -5439,11 +869,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     	    }
                     	    switch (alt8) {
                     	        case 1 :
-                    	            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:416:5: ','
+                    	            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:350:5: otherlv_4= ','
                     	            {
-                    	            match(input,18,FOLLOW_18_in_ruleEdgeStatement692); 
+                    	            otherlv_4=(Token)match(input,18,FOLLOW_18_in_ruleEdgeStatement702); 
 
-                    	                    createLeafNode(grammarAccess.getEdgeStatementAccess().getCommaKeyword_2_2_0(), null); 
+                    	                	newLeafNode(otherlv_4, grammarAccess.getEdgeStatementAccess().getCommaKeyword_2_2_0());
                     	                
 
                     	            }
@@ -5451,35 +881,30 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
                     	    }
 
-                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:420:3: ( (lv_attributes_5_0= ruleListAttribute ) )
-                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:421:1: (lv_attributes_5_0= ruleListAttribute )
+                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:354:3: ( (lv_attributes_5_0= ruleListAttribute ) )
+                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:355:1: (lv_attributes_5_0= ruleListAttribute )
                     	    {
-                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:421:1: (lv_attributes_5_0= ruleListAttribute )
-                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:422:3: lv_attributes_5_0= ruleListAttribute
+                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:355:1: (lv_attributes_5_0= ruleListAttribute )
+                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:356:3: lv_attributes_5_0= ruleListAttribute
                     	    {
                     	     
-                    	    	        currentNode=createCompositeNode(grammarAccess.getEdgeStatementAccess().getAttributesListAttributeParserRuleCall_2_2_1_0(), currentNode); 
+                    	    	        newCompositeNode(grammarAccess.getEdgeStatementAccess().getAttributesListAttributeParserRuleCall_2_2_1_0()); 
                     	    	    
-                    	    pushFollow(FOLLOW_ruleListAttribute_in_ruleEdgeStatement715);
+                    	    pushFollow(FOLLOW_ruleListAttribute_in_ruleEdgeStatement725);
                     	    lv_attributes_5_0=ruleListAttribute();
-                    	    _fsp--;
+
+                    	    state._fsp--;
 
 
                     	    	        if (current==null) {
-                    	    	            current = factory.create(grammarAccess.getEdgeStatementRule().getType().getClassifier());
-                    	    	            associateNodeWithAstElement(currentNode.getParent(), current);
+                    	    	            current = createModelElementForParent(grammarAccess.getEdgeStatementRule());
                     	    	        }
-                    	    	        try {
-                    	    	       		add(
-                    	    	       			current, 
-                    	    	       			"attributes",
-                    	    	        		lv_attributes_5_0, 
-                    	    	        		"ListAttribute", 
-                    	    	        		currentNode);
-                    	    	        } catch (ValueConverterException vce) {
-                    	    				handleValueConverterException(vce);
-                    	    	        }
-                    	    	        currentNode = currentNode.getParent();
+                    	           		add(
+                    	           			current, 
+                    	           			"attributes",
+                    	            		lv_attributes_5_0, 
+                    	            		"ListAttribute");
+                    	    	        afterParserOrEnumRuleCall();
                     	    	    
 
                     	    }
@@ -5496,9 +921,9 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                         }
                     } while (true);
 
-                    match(input,19,FOLLOW_19_in_ruleEdgeStatement727); 
+                    otherlv_6=(Token)match(input,19,FOLLOW_19_in_ruleEdgeStatement739); 
 
-                            createLeafNode(grammarAccess.getEdgeStatementAccess().getRightSquareBracketKeyword_2_3(), null); 
+                        	newLeafNode(otherlv_6, grammarAccess.getEdgeStatementAccess().getRightSquareBracketKeyword_2_3());
                         
 
                     }
@@ -5512,9 +937,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-             resetLookahead(); 
-                	lastConsumedNode = currentNode;
-                
+             leaveRule(); 
         }
          
             catch (RecognitionException re) { 
@@ -5525,11 +948,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleEdgeStatement
+    // $ANTLR end "ruleEdgeStatement"
 
 
-    // $ANTLR start entryRuleEdgeTarget
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:456:1: entryRuleEdgeTarget returns [EObject current=null] : iv_ruleEdgeTarget= ruleEdgeTarget EOF ;
+    // $ANTLR start "entryRuleEdgeTarget"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:384:1: entryRuleEdgeTarget returns [EObject current=null] : iv_ruleEdgeTarget= ruleEdgeTarget EOF ;
     public final EObject entryRuleEdgeTarget() throws RecognitionException {
         EObject current = null;
 
@@ -5537,16 +960,17 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:457:2: (iv_ruleEdgeTarget= ruleEdgeTarget EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:458:2: iv_ruleEdgeTarget= ruleEdgeTarget EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:385:2: (iv_ruleEdgeTarget= ruleEdgeTarget EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:386:2: iv_ruleEdgeTarget= ruleEdgeTarget EOF
             {
-             currentNode = createCompositeNode(grammarAccess.getEdgeTargetRule(), currentNode); 
-            pushFollow(FOLLOW_ruleEdgeTarget_in_entryRuleEdgeTarget765);
+             newCompositeNode(grammarAccess.getEdgeTargetRule()); 
+            pushFollow(FOLLOW_ruleEdgeTarget_in_entryRuleEdgeTarget777);
             iv_ruleEdgeTarget=ruleEdgeTarget();
-            _fsp--;
+
+            state._fsp--;
 
              current =iv_ruleEdgeTarget; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleEdgeTarget775); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleEdgeTarget787); 
 
             }
 
@@ -5560,11 +984,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleEdgeTarget
+    // $ANTLR end "entryRuleEdgeTarget"
 
 
-    // $ANTLR start ruleEdgeTarget
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:465:1: ruleEdgeTarget returns [EObject current=null] : ( ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) ) ) ;
+    // $ANTLR start "ruleEdgeTarget"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:393:1: ruleEdgeTarget returns [EObject current=null] : ( ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) ) ) ;
     public final EObject ruleEdgeTarget() throws RecognitionException {
         EObject current = null;
 
@@ -5575,44 +999,39 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         EObject lv_targetnode_2_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:470:6: ( ( ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) ) ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:471:1: ( ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:396:28: ( ( ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:397:1: ( ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) ) )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:471:1: ( ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:471:2: ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:397:1: ( ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:397:2: ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:471:2: ( (lv_operator_0_0= ruleEdgeOperator ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:472:1: (lv_operator_0_0= ruleEdgeOperator )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:397:2: ( (lv_operator_0_0= ruleEdgeOperator ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:398:1: (lv_operator_0_0= ruleEdgeOperator )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:472:1: (lv_operator_0_0= ruleEdgeOperator )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:473:3: lv_operator_0_0= ruleEdgeOperator
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:398:1: (lv_operator_0_0= ruleEdgeOperator )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:399:3: lv_operator_0_0= ruleEdgeOperator
             {
              
-            	        currentNode=createCompositeNode(grammarAccess.getEdgeTargetAccess().getOperatorEdgeOperatorEnumRuleCall_0_0(), currentNode); 
+            	        newCompositeNode(grammarAccess.getEdgeTargetAccess().getOperatorEdgeOperatorEnumRuleCall_0_0()); 
             	    
-            pushFollow(FOLLOW_ruleEdgeOperator_in_ruleEdgeTarget821);
+            pushFollow(FOLLOW_ruleEdgeOperator_in_ruleEdgeTarget833);
             lv_operator_0_0=ruleEdgeOperator();
-            _fsp--;
+
+            state._fsp--;
 
 
             	        if (current==null) {
-            	            current = factory.create(grammarAccess.getEdgeTargetRule().getType().getClassifier());
-            	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	            current = createModelElementForParent(grammarAccess.getEdgeTargetRule());
             	        }
-            	        try {
-            	       		set(
-            	       			current, 
-            	       			"operator",
-            	        		lv_operator_0_0, 
-            	        		"EdgeOperator", 
-            	        		currentNode);
-            	        } catch (ValueConverterException vce) {
-            				handleValueConverterException(vce);
-            	        }
-            	        currentNode = currentNode.getParent();
+                   		set(
+                   			current, 
+                   			"operator",
+                    		lv_operator_0_0, 
+                    		"EdgeOperator");
+            	        afterParserOrEnumRuleCall();
             	    
 
             }
@@ -5620,7 +1039,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:495:2: ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:415:2: ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) )
             int alt11=2;
             int LA11_0 = input.LA(1);
 
@@ -5632,43 +1051,38 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("495:2: ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) )", 11, 0, input);
+                    new NoViableAltException("", 11, 0, input);
 
                 throw nvae;
             }
             switch (alt11) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:495:3: ( (lv_targetSubgraph_1_0= ruleSubgraph ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:415:3: ( (lv_targetSubgraph_1_0= ruleSubgraph ) )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:495:3: ( (lv_targetSubgraph_1_0= ruleSubgraph ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:496:1: (lv_targetSubgraph_1_0= ruleSubgraph )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:415:3: ( (lv_targetSubgraph_1_0= ruleSubgraph ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:416:1: (lv_targetSubgraph_1_0= ruleSubgraph )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:496:1: (lv_targetSubgraph_1_0= ruleSubgraph )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:497:3: lv_targetSubgraph_1_0= ruleSubgraph
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:416:1: (lv_targetSubgraph_1_0= ruleSubgraph )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:417:3: lv_targetSubgraph_1_0= ruleSubgraph
                     {
                      
-                    	        currentNode=createCompositeNode(grammarAccess.getEdgeTargetAccess().getTargetSubgraphSubgraphParserRuleCall_1_0_0(), currentNode); 
+                    	        newCompositeNode(grammarAccess.getEdgeTargetAccess().getTargetSubgraphSubgraphParserRuleCall_1_0_0()); 
                     	    
-                    pushFollow(FOLLOW_ruleSubgraph_in_ruleEdgeTarget843);
+                    pushFollow(FOLLOW_ruleSubgraph_in_ruleEdgeTarget855);
                     lv_targetSubgraph_1_0=ruleSubgraph();
-                    _fsp--;
+
+                    state._fsp--;
 
 
                     	        if (current==null) {
-                    	            current = factory.create(grammarAccess.getEdgeTargetRule().getType().getClassifier());
-                    	            associateNodeWithAstElement(currentNode.getParent(), current);
+                    	            current = createModelElementForParent(grammarAccess.getEdgeTargetRule());
                     	        }
-                    	        try {
-                    	       		set(
-                    	       			current, 
-                    	       			"targetSubgraph",
-                    	        		lv_targetSubgraph_1_0, 
-                    	        		"Subgraph", 
-                    	        		currentNode);
-                    	        } catch (ValueConverterException vce) {
-                    				handleValueConverterException(vce);
-                    	        }
-                    	        currentNode = currentNode.getParent();
+                           		set(
+                           			current, 
+                           			"targetSubgraph",
+                            		lv_targetSubgraph_1_0, 
+                            		"Subgraph");
+                    	        afterParserOrEnumRuleCall();
                     	    
 
                     }
@@ -5680,37 +1094,32 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:520:6: ( (lv_targetnode_2_0= ruleNode ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:434:6: ( (lv_targetnode_2_0= ruleNode ) )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:520:6: ( (lv_targetnode_2_0= ruleNode ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:521:1: (lv_targetnode_2_0= ruleNode )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:434:6: ( (lv_targetnode_2_0= ruleNode ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:435:1: (lv_targetnode_2_0= ruleNode )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:521:1: (lv_targetnode_2_0= ruleNode )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:522:3: lv_targetnode_2_0= ruleNode
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:435:1: (lv_targetnode_2_0= ruleNode )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:436:3: lv_targetnode_2_0= ruleNode
                     {
                      
-                    	        currentNode=createCompositeNode(grammarAccess.getEdgeTargetAccess().getTargetnodeNodeParserRuleCall_1_1_0(), currentNode); 
+                    	        newCompositeNode(grammarAccess.getEdgeTargetAccess().getTargetnodeNodeParserRuleCall_1_1_0()); 
                     	    
-                    pushFollow(FOLLOW_ruleNode_in_ruleEdgeTarget870);
+                    pushFollow(FOLLOW_ruleNode_in_ruleEdgeTarget882);
                     lv_targetnode_2_0=ruleNode();
-                    _fsp--;
+
+                    state._fsp--;
 
 
                     	        if (current==null) {
-                    	            current = factory.create(grammarAccess.getEdgeTargetRule().getType().getClassifier());
-                    	            associateNodeWithAstElement(currentNode.getParent(), current);
+                    	            current = createModelElementForParent(grammarAccess.getEdgeTargetRule());
                     	        }
-                    	        try {
-                    	       		set(
-                    	       			current, 
-                    	       			"targetnode",
-                    	        		lv_targetnode_2_0, 
-                    	        		"Node", 
-                    	        		currentNode);
-                    	        } catch (ValueConverterException vce) {
-                    				handleValueConverterException(vce);
-                    	        }
-                    	        currentNode = currentNode.getParent();
+                           		set(
+                           			current, 
+                           			"targetnode",
+                            		lv_targetnode_2_0, 
+                            		"Node");
+                    	        afterParserOrEnumRuleCall();
                     	    
 
                     }
@@ -5730,9 +1139,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-             resetLookahead(); 
-                	lastConsumedNode = currentNode;
-                
+             leaveRule(); 
         }
          
             catch (RecognitionException re) { 
@@ -5743,11 +1150,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleEdgeTarget
+    // $ANTLR end "ruleEdgeTarget"
 
 
-    // $ANTLR start entryRuleNodeStatement
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:552:1: entryRuleNodeStatement returns [EObject current=null] : iv_ruleNodeStatement= ruleNodeStatement EOF ;
+    // $ANTLR start "entryRuleNodeStatement"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:460:1: entryRuleNodeStatement returns [EObject current=null] : iv_ruleNodeStatement= ruleNodeStatement EOF ;
     public final EObject entryRuleNodeStatement() throws RecognitionException {
         EObject current = null;
 
@@ -5755,16 +1162,17 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:553:2: (iv_ruleNodeStatement= ruleNodeStatement EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:554:2: iv_ruleNodeStatement= ruleNodeStatement EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:461:2: (iv_ruleNodeStatement= ruleNodeStatement EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:462:2: iv_ruleNodeStatement= ruleNodeStatement EOF
             {
-             currentNode = createCompositeNode(grammarAccess.getNodeStatementRule(), currentNode); 
-            pushFollow(FOLLOW_ruleNodeStatement_in_entryRuleNodeStatement907);
+             newCompositeNode(grammarAccess.getNodeStatementRule()); 
+            pushFollow(FOLLOW_ruleNodeStatement_in_entryRuleNodeStatement919);
             iv_ruleNodeStatement=ruleNodeStatement();
-            _fsp--;
+
+            state._fsp--;
 
              current =iv_ruleNodeStatement; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleNodeStatement917); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleNodeStatement929); 
 
             }
 
@@ -5778,14 +1186,17 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleNodeStatement
+    // $ANTLR end "entryRuleNodeStatement"
 
 
-    // $ANTLR start ruleNodeStatement
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:561:1: ruleNodeStatement returns [EObject current=null] : ( ( (lv_node_0_0= ruleNode ) ) ( '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* ']' )? ) ;
+    // $ANTLR start "ruleNodeStatement"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:469:1: ruleNodeStatement returns [EObject current=null] : ( ( (lv_node_0_0= ruleNode ) ) (otherlv_1= '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( (otherlv_3= ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* otherlv_5= ']' )? ) ;
     public final EObject ruleNodeStatement() throws RecognitionException {
         EObject current = null;
 
+        Token otherlv_1=null;
+        Token otherlv_3=null;
+        Token otherlv_5=null;
         EObject lv_node_0_0 = null;
 
         EObject lv_attributes_2_0 = null;
@@ -5793,44 +1204,39 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         EObject lv_attributes_4_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:566:6: ( ( ( (lv_node_0_0= ruleNode ) ) ( '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* ']' )? ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:567:1: ( ( (lv_node_0_0= ruleNode ) ) ( '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* ']' )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:472:28: ( ( ( (lv_node_0_0= ruleNode ) ) (otherlv_1= '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( (otherlv_3= ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* otherlv_5= ']' )? ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:473:1: ( ( (lv_node_0_0= ruleNode ) ) (otherlv_1= '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( (otherlv_3= ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* otherlv_5= ']' )? )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:567:1: ( ( (lv_node_0_0= ruleNode ) ) ( '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* ']' )? )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:567:2: ( (lv_node_0_0= ruleNode ) ) ( '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* ']' )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:473:1: ( ( (lv_node_0_0= ruleNode ) ) (otherlv_1= '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( (otherlv_3= ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* otherlv_5= ']' )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:473:2: ( (lv_node_0_0= ruleNode ) ) (otherlv_1= '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( (otherlv_3= ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* otherlv_5= ']' )?
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:567:2: ( (lv_node_0_0= ruleNode ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:568:1: (lv_node_0_0= ruleNode )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:473:2: ( (lv_node_0_0= ruleNode ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:474:1: (lv_node_0_0= ruleNode )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:568:1: (lv_node_0_0= ruleNode )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:569:3: lv_node_0_0= ruleNode
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:474:1: (lv_node_0_0= ruleNode )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:475:3: lv_node_0_0= ruleNode
             {
              
-            	        currentNode=createCompositeNode(grammarAccess.getNodeStatementAccess().getNodeNodeParserRuleCall_0_0(), currentNode); 
+            	        newCompositeNode(grammarAccess.getNodeStatementAccess().getNodeNodeParserRuleCall_0_0()); 
             	    
-            pushFollow(FOLLOW_ruleNode_in_ruleNodeStatement963);
+            pushFollow(FOLLOW_ruleNode_in_ruleNodeStatement975);
             lv_node_0_0=ruleNode();
-            _fsp--;
+
+            state._fsp--;
 
 
             	        if (current==null) {
-            	            current = factory.create(grammarAccess.getNodeStatementRule().getType().getClassifier());
-            	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	            current = createModelElementForParent(grammarAccess.getNodeStatementRule());
             	        }
-            	        try {
-            	       		set(
-            	       			current, 
-            	       			"node",
-            	        		lv_node_0_0, 
-            	        		"Node", 
-            	        		currentNode);
-            	        } catch (ValueConverterException vce) {
-            				handleValueConverterException(vce);
-            	        }
-            	        currentNode = currentNode.getParent();
+                   		set(
+                   			current, 
+                   			"node",
+                    		lv_node_0_0, 
+                    		"Node");
+            	        afterParserOrEnumRuleCall();
             	    
 
             }
@@ -5838,7 +1244,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:591:2: ( '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* ']' )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:491:2: (otherlv_1= '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( (otherlv_3= ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* otherlv_5= ']' )?
             int alt14=2;
             int LA14_0 = input.LA(1);
 
@@ -5847,41 +1253,36 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt14) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:591:4: '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* ']'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:491:4: otherlv_1= '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( (otherlv_3= ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* otherlv_5= ']'
                     {
-                    match(input,17,FOLLOW_17_in_ruleNodeStatement974); 
+                    otherlv_1=(Token)match(input,17,FOLLOW_17_in_ruleNodeStatement988); 
 
-                            createLeafNode(grammarAccess.getNodeStatementAccess().getLeftSquareBracketKeyword_1_0(), null); 
+                        	newLeafNode(otherlv_1, grammarAccess.getNodeStatementAccess().getLeftSquareBracketKeyword_1_0());
                         
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:595:1: ( (lv_attributes_2_0= ruleListAttribute ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:596:1: (lv_attributes_2_0= ruleListAttribute )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:495:1: ( (lv_attributes_2_0= ruleListAttribute ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:496:1: (lv_attributes_2_0= ruleListAttribute )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:596:1: (lv_attributes_2_0= ruleListAttribute )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:597:3: lv_attributes_2_0= ruleListAttribute
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:496:1: (lv_attributes_2_0= ruleListAttribute )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:497:3: lv_attributes_2_0= ruleListAttribute
                     {
                      
-                    	        currentNode=createCompositeNode(grammarAccess.getNodeStatementAccess().getAttributesListAttributeParserRuleCall_1_1_0(), currentNode); 
+                    	        newCompositeNode(grammarAccess.getNodeStatementAccess().getAttributesListAttributeParserRuleCall_1_1_0()); 
                     	    
-                    pushFollow(FOLLOW_ruleListAttribute_in_ruleNodeStatement995);
+                    pushFollow(FOLLOW_ruleListAttribute_in_ruleNodeStatement1009);
                     lv_attributes_2_0=ruleListAttribute();
-                    _fsp--;
+
+                    state._fsp--;
 
 
                     	        if (current==null) {
-                    	            current = factory.create(grammarAccess.getNodeStatementRule().getType().getClassifier());
-                    	            associateNodeWithAstElement(currentNode.getParent(), current);
+                    	            current = createModelElementForParent(grammarAccess.getNodeStatementRule());
                     	        }
-                    	        try {
-                    	       		add(
-                    	       			current, 
-                    	       			"attributes",
-                    	        		lv_attributes_2_0, 
-                    	        		"ListAttribute", 
-                    	        		currentNode);
-                    	        } catch (ValueConverterException vce) {
-                    				handleValueConverterException(vce);
-                    	        }
-                    	        currentNode = currentNode.getParent();
+                           		add(
+                           			current, 
+                           			"attributes",
+                            		lv_attributes_2_0, 
+                            		"ListAttribute");
+                    	        afterParserOrEnumRuleCall();
                     	    
 
                     }
@@ -5889,7 +1290,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:619:2: ( ( ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )*
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:513:2: ( (otherlv_3= ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )*
                     loop13:
                     do {
                         int alt13=2;
@@ -5902,9 +1303,9 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
                         switch (alt13) {
                     	case 1 :
-                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:619:3: ( ',' )? ( (lv_attributes_4_0= ruleListAttribute ) )
+                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:513:3: (otherlv_3= ',' )? ( (lv_attributes_4_0= ruleListAttribute ) )
                     	    {
-                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:619:3: ( ',' )?
+                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:513:3: (otherlv_3= ',' )?
                     	    int alt12=2;
                     	    int LA12_0 = input.LA(1);
 
@@ -5913,11 +1314,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     	    }
                     	    switch (alt12) {
                     	        case 1 :
-                    	            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:619:5: ','
+                    	            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:513:5: otherlv_3= ','
                     	            {
-                    	            match(input,18,FOLLOW_18_in_ruleNodeStatement1007); 
+                    	            otherlv_3=(Token)match(input,18,FOLLOW_18_in_ruleNodeStatement1023); 
 
-                    	                    createLeafNode(grammarAccess.getNodeStatementAccess().getCommaKeyword_1_2_0(), null); 
+                    	                	newLeafNode(otherlv_3, grammarAccess.getNodeStatementAccess().getCommaKeyword_1_2_0());
                     	                
 
                     	            }
@@ -5925,35 +1326,30 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
                     	    }
 
-                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:623:3: ( (lv_attributes_4_0= ruleListAttribute ) )
-                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:624:1: (lv_attributes_4_0= ruleListAttribute )
+                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:517:3: ( (lv_attributes_4_0= ruleListAttribute ) )
+                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:518:1: (lv_attributes_4_0= ruleListAttribute )
                     	    {
-                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:624:1: (lv_attributes_4_0= ruleListAttribute )
-                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:625:3: lv_attributes_4_0= ruleListAttribute
+                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:518:1: (lv_attributes_4_0= ruleListAttribute )
+                    	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:519:3: lv_attributes_4_0= ruleListAttribute
                     	    {
                     	     
-                    	    	        currentNode=createCompositeNode(grammarAccess.getNodeStatementAccess().getAttributesListAttributeParserRuleCall_1_2_1_0(), currentNode); 
+                    	    	        newCompositeNode(grammarAccess.getNodeStatementAccess().getAttributesListAttributeParserRuleCall_1_2_1_0()); 
                     	    	    
-                    	    pushFollow(FOLLOW_ruleListAttribute_in_ruleNodeStatement1030);
+                    	    pushFollow(FOLLOW_ruleListAttribute_in_ruleNodeStatement1046);
                     	    lv_attributes_4_0=ruleListAttribute();
-                    	    _fsp--;
+
+                    	    state._fsp--;
 
 
                     	    	        if (current==null) {
-                    	    	            current = factory.create(grammarAccess.getNodeStatementRule().getType().getClassifier());
-                    	    	            associateNodeWithAstElement(currentNode.getParent(), current);
+                    	    	            current = createModelElementForParent(grammarAccess.getNodeStatementRule());
                     	    	        }
-                    	    	        try {
-                    	    	       		add(
-                    	    	       			current, 
-                    	    	       			"attributes",
-                    	    	        		lv_attributes_4_0, 
-                    	    	        		"ListAttribute", 
-                    	    	        		currentNode);
-                    	    	        } catch (ValueConverterException vce) {
-                    	    				handleValueConverterException(vce);
-                    	    	        }
-                    	    	        currentNode = currentNode.getParent();
+                    	           		add(
+                    	           			current, 
+                    	           			"attributes",
+                    	            		lv_attributes_4_0, 
+                    	            		"ListAttribute");
+                    	    	        afterParserOrEnumRuleCall();
                     	    	    
 
                     	    }
@@ -5970,9 +1366,9 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                         }
                     } while (true);
 
-                    match(input,19,FOLLOW_19_in_ruleNodeStatement1042); 
+                    otherlv_5=(Token)match(input,19,FOLLOW_19_in_ruleNodeStatement1060); 
 
-                            createLeafNode(grammarAccess.getNodeStatementAccess().getRightSquareBracketKeyword_1_3(), null); 
+                        	newLeafNode(otherlv_5, grammarAccess.getNodeStatementAccess().getRightSquareBracketKeyword_1_3());
                         
 
                     }
@@ -5986,9 +1382,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-             resetLookahead(); 
-                	lastConsumedNode = currentNode;
-                
+             leaveRule(); 
         }
          
             catch (RecognitionException re) { 
@@ -5999,11 +1393,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleNodeStatement
+    // $ANTLR end "ruleNodeStatement"
 
 
-    // $ANTLR start entryRuleAttributeStatement
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:659:1: entryRuleAttributeStatement returns [EObject current=null] : iv_ruleAttributeStatement= ruleAttributeStatement EOF ;
+    // $ANTLR start "entryRuleAttributeStatement"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:547:1: entryRuleAttributeStatement returns [EObject current=null] : iv_ruleAttributeStatement= ruleAttributeStatement EOF ;
     public final EObject entryRuleAttributeStatement() throws RecognitionException {
         EObject current = null;
 
@@ -6011,16 +1405,17 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:660:2: (iv_ruleAttributeStatement= ruleAttributeStatement EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:661:2: iv_ruleAttributeStatement= ruleAttributeStatement EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:548:2: (iv_ruleAttributeStatement= ruleAttributeStatement EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:549:2: iv_ruleAttributeStatement= ruleAttributeStatement EOF
             {
-             currentNode = createCompositeNode(grammarAccess.getAttributeStatementRule(), currentNode); 
-            pushFollow(FOLLOW_ruleAttributeStatement_in_entryRuleAttributeStatement1080);
+             newCompositeNode(grammarAccess.getAttributeStatementRule()); 
+            pushFollow(FOLLOW_ruleAttributeStatement_in_entryRuleAttributeStatement1098);
             iv_ruleAttributeStatement=ruleAttributeStatement();
-            _fsp--;
+
+            state._fsp--;
 
              current =iv_ruleAttributeStatement; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleAttributeStatement1090); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleAttributeStatement1108); 
 
             }
 
@@ -6034,14 +1429,17 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleAttributeStatement
+    // $ANTLR end "entryRuleAttributeStatement"
 
 
-    // $ANTLR start ruleAttributeStatement
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:668:1: ruleAttributeStatement returns [EObject current=null] : ( ( (lv_type_0_0= ruleAttributeType ) ) '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* ']' ) ;
+    // $ANTLR start "ruleAttributeStatement"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:556:1: ruleAttributeStatement returns [EObject current=null] : ( ( (lv_type_0_0= ruleAttributeType ) ) otherlv_1= '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( (otherlv_3= ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* otherlv_5= ']' ) ;
     public final EObject ruleAttributeStatement() throws RecognitionException {
         EObject current = null;
 
+        Token otherlv_1=null;
+        Token otherlv_3=null;
+        Token otherlv_5=null;
         Enumerator lv_type_0_0 = null;
 
         EObject lv_attributes_2_0 = null;
@@ -6049,44 +1447,39 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         EObject lv_attributes_4_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:673:6: ( ( ( (lv_type_0_0= ruleAttributeType ) ) '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* ']' ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:674:1: ( ( (lv_type_0_0= ruleAttributeType ) ) '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* ']' )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:559:28: ( ( ( (lv_type_0_0= ruleAttributeType ) ) otherlv_1= '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( (otherlv_3= ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* otherlv_5= ']' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:560:1: ( ( (lv_type_0_0= ruleAttributeType ) ) otherlv_1= '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( (otherlv_3= ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* otherlv_5= ']' )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:674:1: ( ( (lv_type_0_0= ruleAttributeType ) ) '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* ']' )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:674:2: ( (lv_type_0_0= ruleAttributeType ) ) '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( ( ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* ']'
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:560:1: ( ( (lv_type_0_0= ruleAttributeType ) ) otherlv_1= '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( (otherlv_3= ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* otherlv_5= ']' )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:560:2: ( (lv_type_0_0= ruleAttributeType ) ) otherlv_1= '[' ( (lv_attributes_2_0= ruleListAttribute ) ) ( (otherlv_3= ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )* otherlv_5= ']'
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:674:2: ( (lv_type_0_0= ruleAttributeType ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:675:1: (lv_type_0_0= ruleAttributeType )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:560:2: ( (lv_type_0_0= ruleAttributeType ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:561:1: (lv_type_0_0= ruleAttributeType )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:675:1: (lv_type_0_0= ruleAttributeType )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:676:3: lv_type_0_0= ruleAttributeType
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:561:1: (lv_type_0_0= ruleAttributeType )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:562:3: lv_type_0_0= ruleAttributeType
             {
              
-            	        currentNode=createCompositeNode(grammarAccess.getAttributeStatementAccess().getTypeAttributeTypeEnumRuleCall_0_0(), currentNode); 
+            	        newCompositeNode(grammarAccess.getAttributeStatementAccess().getTypeAttributeTypeEnumRuleCall_0_0()); 
             	    
-            pushFollow(FOLLOW_ruleAttributeType_in_ruleAttributeStatement1136);
+            pushFollow(FOLLOW_ruleAttributeType_in_ruleAttributeStatement1154);
             lv_type_0_0=ruleAttributeType();
-            _fsp--;
+
+            state._fsp--;
 
 
             	        if (current==null) {
-            	            current = factory.create(grammarAccess.getAttributeStatementRule().getType().getClassifier());
-            	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	            current = createModelElementForParent(grammarAccess.getAttributeStatementRule());
             	        }
-            	        try {
-            	       		set(
-            	       			current, 
-            	       			"type",
-            	        		lv_type_0_0, 
-            	        		"AttributeType", 
-            	        		currentNode);
-            	        } catch (ValueConverterException vce) {
-            				handleValueConverterException(vce);
-            	        }
-            	        currentNode = currentNode.getParent();
+                   		set(
+                   			current, 
+                   			"type",
+                    		lv_type_0_0, 
+                    		"AttributeType");
+            	        afterParserOrEnumRuleCall();
             	    
 
             }
@@ -6094,39 +1487,34 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            match(input,17,FOLLOW_17_in_ruleAttributeStatement1146); 
+            otherlv_1=(Token)match(input,17,FOLLOW_17_in_ruleAttributeStatement1166); 
 
-                    createLeafNode(grammarAccess.getAttributeStatementAccess().getLeftSquareBracketKeyword_1(), null); 
+                	newLeafNode(otherlv_1, grammarAccess.getAttributeStatementAccess().getLeftSquareBracketKeyword_1());
                 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:702:1: ( (lv_attributes_2_0= ruleListAttribute ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:703:1: (lv_attributes_2_0= ruleListAttribute )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:582:1: ( (lv_attributes_2_0= ruleListAttribute ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:583:1: (lv_attributes_2_0= ruleListAttribute )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:703:1: (lv_attributes_2_0= ruleListAttribute )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:704:3: lv_attributes_2_0= ruleListAttribute
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:583:1: (lv_attributes_2_0= ruleListAttribute )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:584:3: lv_attributes_2_0= ruleListAttribute
             {
              
-            	        currentNode=createCompositeNode(grammarAccess.getAttributeStatementAccess().getAttributesListAttributeParserRuleCall_2_0(), currentNode); 
+            	        newCompositeNode(grammarAccess.getAttributeStatementAccess().getAttributesListAttributeParserRuleCall_2_0()); 
             	    
-            pushFollow(FOLLOW_ruleListAttribute_in_ruleAttributeStatement1167);
+            pushFollow(FOLLOW_ruleListAttribute_in_ruleAttributeStatement1187);
             lv_attributes_2_0=ruleListAttribute();
-            _fsp--;
+
+            state._fsp--;
 
 
             	        if (current==null) {
-            	            current = factory.create(grammarAccess.getAttributeStatementRule().getType().getClassifier());
-            	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	            current = createModelElementForParent(grammarAccess.getAttributeStatementRule());
             	        }
-            	        try {
-            	       		add(
-            	       			current, 
-            	       			"attributes",
-            	        		lv_attributes_2_0, 
-            	        		"ListAttribute", 
-            	        		currentNode);
-            	        } catch (ValueConverterException vce) {
-            				handleValueConverterException(vce);
-            	        }
-            	        currentNode = currentNode.getParent();
+                   		add(
+                   			current, 
+                   			"attributes",
+                    		lv_attributes_2_0, 
+                    		"ListAttribute");
+            	        afterParserOrEnumRuleCall();
             	    
 
             }
@@ -6134,7 +1522,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:726:2: ( ( ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )*
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:600:2: ( (otherlv_3= ',' )? ( (lv_attributes_4_0= ruleListAttribute ) ) )*
             loop16:
             do {
                 int alt16=2;
@@ -6147,9 +1535,9 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt16) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:726:3: ( ',' )? ( (lv_attributes_4_0= ruleListAttribute ) )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:600:3: (otherlv_3= ',' )? ( (lv_attributes_4_0= ruleListAttribute ) )
             	    {
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:726:3: ( ',' )?
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:600:3: (otherlv_3= ',' )?
             	    int alt15=2;
             	    int LA15_0 = input.LA(1);
 
@@ -6158,11 +1546,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             	    }
             	    switch (alt15) {
             	        case 1 :
-            	            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:726:5: ','
+            	            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:600:5: otherlv_3= ','
             	            {
-            	            match(input,18,FOLLOW_18_in_ruleAttributeStatement1179); 
+            	            otherlv_3=(Token)match(input,18,FOLLOW_18_in_ruleAttributeStatement1201); 
 
-            	                    createLeafNode(grammarAccess.getAttributeStatementAccess().getCommaKeyword_3_0(), null); 
+            	                	newLeafNode(otherlv_3, grammarAccess.getAttributeStatementAccess().getCommaKeyword_3_0());
             	                
 
             	            }
@@ -6170,35 +1558,30 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:730:3: ( (lv_attributes_4_0= ruleListAttribute ) )
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:731:1: (lv_attributes_4_0= ruleListAttribute )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:604:3: ( (lv_attributes_4_0= ruleListAttribute ) )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:605:1: (lv_attributes_4_0= ruleListAttribute )
             	    {
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:731:1: (lv_attributes_4_0= ruleListAttribute )
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:732:3: lv_attributes_4_0= ruleListAttribute
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:605:1: (lv_attributes_4_0= ruleListAttribute )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:606:3: lv_attributes_4_0= ruleListAttribute
             	    {
             	     
-            	    	        currentNode=createCompositeNode(grammarAccess.getAttributeStatementAccess().getAttributesListAttributeParserRuleCall_3_1_0(), currentNode); 
+            	    	        newCompositeNode(grammarAccess.getAttributeStatementAccess().getAttributesListAttributeParserRuleCall_3_1_0()); 
             	    	    
-            	    pushFollow(FOLLOW_ruleListAttribute_in_ruleAttributeStatement1202);
+            	    pushFollow(FOLLOW_ruleListAttribute_in_ruleAttributeStatement1224);
             	    lv_attributes_4_0=ruleListAttribute();
-            	    _fsp--;
+
+            	    state._fsp--;
 
 
             	    	        if (current==null) {
-            	    	            current = factory.create(grammarAccess.getAttributeStatementRule().getType().getClassifier());
-            	    	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	    	            current = createModelElementForParent(grammarAccess.getAttributeStatementRule());
             	    	        }
-            	    	        try {
-            	    	       		add(
-            	    	       			current, 
-            	    	       			"attributes",
-            	    	        		lv_attributes_4_0, 
-            	    	        		"ListAttribute", 
-            	    	        		currentNode);
-            	    	        } catch (ValueConverterException vce) {
-            	    				handleValueConverterException(vce);
-            	    	        }
-            	    	        currentNode = currentNode.getParent();
+            	           		add(
+            	           			current, 
+            	           			"attributes",
+            	            		lv_attributes_4_0, 
+            	            		"ListAttribute");
+            	    	        afterParserOrEnumRuleCall();
             	    	    
 
             	    }
@@ -6215,9 +1598,9 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                 }
             } while (true);
 
-            match(input,19,FOLLOW_19_in_ruleAttributeStatement1214); 
+            otherlv_5=(Token)match(input,19,FOLLOW_19_in_ruleAttributeStatement1238); 
 
-                    createLeafNode(grammarAccess.getAttributeStatementAccess().getRightSquareBracketKeyword_4(), null); 
+                	newLeafNode(otherlv_5, grammarAccess.getAttributeStatementAccess().getRightSquareBracketKeyword_4());
                 
 
             }
@@ -6225,9 +1608,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-             resetLookahead(); 
-                	lastConsumedNode = currentNode;
-                
+             leaveRule(); 
         }
          
             catch (RecognitionException re) { 
@@ -6238,11 +1619,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleAttributeStatement
+    // $ANTLR end "ruleAttributeStatement"
 
 
-    // $ANTLR start entryRuleSubgraph
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:766:1: entryRuleSubgraph returns [EObject current=null] : iv_ruleSubgraph= ruleSubgraph EOF ;
+    // $ANTLR start "entryRuleSubgraph"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:634:1: entryRuleSubgraph returns [EObject current=null] : iv_ruleSubgraph= ruleSubgraph EOF ;
     public final EObject entryRuleSubgraph() throws RecognitionException {
         EObject current = null;
 
@@ -6250,16 +1631,17 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:767:2: (iv_ruleSubgraph= ruleSubgraph EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:768:2: iv_ruleSubgraph= ruleSubgraph EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:635:2: (iv_ruleSubgraph= ruleSubgraph EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:636:2: iv_ruleSubgraph= ruleSubgraph EOF
             {
-             currentNode = createCompositeNode(grammarAccess.getSubgraphRule(), currentNode); 
-            pushFollow(FOLLOW_ruleSubgraph_in_entryRuleSubgraph1250);
+             newCompositeNode(grammarAccess.getSubgraphRule()); 
+            pushFollow(FOLLOW_ruleSubgraph_in_entryRuleSubgraph1274);
             iv_ruleSubgraph=ruleSubgraph();
-            _fsp--;
+
+            state._fsp--;
 
              current =iv_ruleSubgraph; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleSubgraph1260); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleSubgraph1284); 
 
             }
 
@@ -6273,48 +1655,46 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleSubgraph
+    // $ANTLR end "entryRuleSubgraph"
 
 
-    // $ANTLR start ruleSubgraph
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:775:1: ruleSubgraph returns [EObject current=null] : ( () 'subgraph' ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}' ) ;
+    // $ANTLR start "ruleSubgraph"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:643:1: ruleSubgraph returns [EObject current=null] : ( () otherlv_1= 'subgraph' ( (lv_name_2_0= RULE_ID ) )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}' ) ;
     public final EObject ruleSubgraph() throws RecognitionException {
         EObject current = null;
 
+        Token otherlv_1=null;
         Token lv_name_2_0=null;
+        Token otherlv_3=null;
+        Token otherlv_5=null;
         EObject lv_statements_4_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:780:6: ( ( () 'subgraph' ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}' ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:781:1: ( () 'subgraph' ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}' )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:646:28: ( ( () otherlv_1= 'subgraph' ( (lv_name_2_0= RULE_ID ) )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:647:1: ( () otherlv_1= 'subgraph' ( (lv_name_2_0= RULE_ID ) )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}' )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:781:1: ( () 'subgraph' ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}' )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:781:2: () 'subgraph' ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}'
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:647:1: ( () otherlv_1= 'subgraph' ( (lv_name_2_0= RULE_ID ) )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}' )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:647:2: () otherlv_1= 'subgraph' ( (lv_name_2_0= RULE_ID ) )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}'
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:781:2: ()
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:782:5: 
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:647:2: ()
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:648:5: 
             {
-             
-                    temp=factory.create(grammarAccess.getSubgraphAccess().getSubgraphAction_0().getType().getClassifier());
-                    current = temp; 
-                    temp = null;
-                    CompositeNode newNode = createCompositeNode(grammarAccess.getSubgraphAccess().getSubgraphAction_0(), currentNode.getParent());
-                newNode.getChildren().add(currentNode);
-                moveLookaheadInfo(currentNode, newNode);
-                currentNode = newNode; 
-                    associateNodeWithAstElement(currentNode, current); 
+
+                    current = forceCreateModelElement(
+                        grammarAccess.getSubgraphAccess().getSubgraphAction_0(),
+                        current);
                 
 
             }
 
-            match(input,20,FOLLOW_20_in_ruleSubgraph1304); 
+            otherlv_1=(Token)match(input,20,FOLLOW_20_in_ruleSubgraph1330); 
 
-                    createLeafNode(grammarAccess.getSubgraphAccess().getSubgraphKeyword_1(), null); 
+                	newLeafNode(otherlv_1, grammarAccess.getSubgraphAccess().getSubgraphKeyword_1());
                 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:796:1: ( (lv_name_2_0= RULE_ID ) )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:657:1: ( (lv_name_2_0= RULE_ID ) )?
             int alt17=2;
             int LA17_0 = input.LA(1);
 
@@ -6323,31 +1703,24 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt17) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:797:1: (lv_name_2_0= RULE_ID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:658:1: (lv_name_2_0= RULE_ID )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:797:1: (lv_name_2_0= RULE_ID )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:798:3: lv_name_2_0= RULE_ID
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:658:1: (lv_name_2_0= RULE_ID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:659:3: lv_name_2_0= RULE_ID
                     {
-                    lv_name_2_0=(Token)input.LT(1);
-                    match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleSubgraph1321); 
+                    lv_name_2_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleSubgraph1347); 
 
-                    			createLeafNode(grammarAccess.getSubgraphAccess().getNameIDTerminalRuleCall_2_0(), "name"); 
+                    			newLeafNode(lv_name_2_0, grammarAccess.getSubgraphAccess().getNameIDTerminalRuleCall_2_0()); 
                     		
 
                     	        if (current==null) {
-                    	            current = factory.create(grammarAccess.getSubgraphRule().getType().getClassifier());
-                    	            associateNodeWithAstElement(currentNode, current);
+                    	            current = createModelElement(grammarAccess.getSubgraphRule());
                     	        }
-                    	        try {
-                    	       		set(
-                    	       			current, 
-                    	       			"name",
-                    	        		lv_name_2_0, 
-                    	        		"ID", 
-                    	        		lastConsumedNode);
-                    	        } catch (ValueConverterException vce) {
-                    				handleValueConverterException(vce);
-                    	        }
+                           		setWithLastConsumed(
+                           			current, 
+                           			"name",
+                            		lv_name_2_0, 
+                            		"ID");
                     	    
 
                     }
@@ -6358,11 +1731,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            match(input,14,FOLLOW_14_in_ruleSubgraph1337); 
+            otherlv_3=(Token)match(input,14,FOLLOW_14_in_ruleSubgraph1365); 
 
-                    createLeafNode(grammarAccess.getSubgraphAccess().getLeftCurlyBracketKeyword_3(), null); 
+                	newLeafNode(otherlv_3, grammarAccess.getSubgraphAccess().getLeftCurlyBracketKeyword_3());
                 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:824:1: ( (lv_statements_4_0= ruleStatement ) )*
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:679:1: ( (lv_statements_4_0= ruleStatement ) )*
             loop18:
             do {
                 int alt18=2;
@@ -6375,34 +1748,29 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt18) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:825:1: (lv_statements_4_0= ruleStatement )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:680:1: (lv_statements_4_0= ruleStatement )
             	    {
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:825:1: (lv_statements_4_0= ruleStatement )
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:826:3: lv_statements_4_0= ruleStatement
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:680:1: (lv_statements_4_0= ruleStatement )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:681:3: lv_statements_4_0= ruleStatement
             	    {
             	     
-            	    	        currentNode=createCompositeNode(grammarAccess.getSubgraphAccess().getStatementsStatementParserRuleCall_4_0(), currentNode); 
+            	    	        newCompositeNode(grammarAccess.getSubgraphAccess().getStatementsStatementParserRuleCall_4_0()); 
             	    	    
-            	    pushFollow(FOLLOW_ruleStatement_in_ruleSubgraph1358);
+            	    pushFollow(FOLLOW_ruleStatement_in_ruleSubgraph1386);
             	    lv_statements_4_0=ruleStatement();
-            	    _fsp--;
+
+            	    state._fsp--;
 
 
             	    	        if (current==null) {
-            	    	            current = factory.create(grammarAccess.getSubgraphRule().getType().getClassifier());
-            	    	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	    	            current = createModelElementForParent(grammarAccess.getSubgraphRule());
             	    	        }
-            	    	        try {
-            	    	       		add(
-            	    	       			current, 
-            	    	       			"statements",
-            	    	        		lv_statements_4_0, 
-            	    	        		"Statement", 
-            	    	        		currentNode);
-            	    	        } catch (ValueConverterException vce) {
-            	    				handleValueConverterException(vce);
-            	    	        }
-            	    	        currentNode = currentNode.getParent();
+            	           		add(
+            	           			current, 
+            	           			"statements",
+            	            		lv_statements_4_0, 
+            	            		"Statement");
+            	    	        afterParserOrEnumRuleCall();
             	    	    
 
             	    }
@@ -6416,9 +1784,9 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                 }
             } while (true);
 
-            match(input,15,FOLLOW_15_in_ruleSubgraph1369); 
+            otherlv_5=(Token)match(input,15,FOLLOW_15_in_ruleSubgraph1399); 
 
-                    createLeafNode(grammarAccess.getSubgraphAccess().getRightCurlyBracketKeyword_5(), null); 
+                	newLeafNode(otherlv_5, grammarAccess.getSubgraphAccess().getRightCurlyBracketKeyword_5());
                 
 
             }
@@ -6426,9 +1794,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-             resetLookahead(); 
-                	lastConsumedNode = currentNode;
-                
+             leaveRule(); 
         }
          
             catch (RecognitionException re) { 
@@ -6439,11 +1805,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleSubgraph
+    // $ANTLR end "ruleSubgraph"
 
 
-    // $ANTLR start entryRuleAttribute
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:860:1: entryRuleAttribute returns [EObject current=null] : iv_ruleAttribute= ruleAttribute EOF ;
+    // $ANTLR start "entryRuleAttribute"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:709:1: entryRuleAttribute returns [EObject current=null] : iv_ruleAttribute= ruleAttribute EOF ;
     public final EObject entryRuleAttribute() throws RecognitionException {
         EObject current = null;
 
@@ -6451,16 +1817,17 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:861:2: (iv_ruleAttribute= ruleAttribute EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:862:2: iv_ruleAttribute= ruleAttribute EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:710:2: (iv_ruleAttribute= ruleAttribute EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:711:2: iv_ruleAttribute= ruleAttribute EOF
             {
-             currentNode = createCompositeNode(grammarAccess.getAttributeRule(), currentNode); 
-            pushFollow(FOLLOW_ruleAttribute_in_entryRuleAttribute1405);
+             newCompositeNode(grammarAccess.getAttributeRule()); 
+            pushFollow(FOLLOW_ruleAttribute_in_entryRuleAttribute1435);
             iv_ruleAttribute=ruleAttribute();
-            _fsp--;
+
+            state._fsp--;
 
              current =iv_ruleAttribute; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleAttribute1415); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleAttribute1445); 
 
             }
 
@@ -6474,57 +1841,53 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleAttribute
+    // $ANTLR end "entryRuleAttribute"
 
 
-    // $ANTLR start ruleAttribute
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:869:1: ruleAttribute returns [EObject current=null] : ( ( (lv_name_0_0= ruleDotID ) ) '=' ( (lv_value_2_0= ruleDotID ) ) ) ;
+    // $ANTLR start "ruleAttribute"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:718:1: ruleAttribute returns [EObject current=null] : ( ( (lv_name_0_0= ruleDotID ) ) otherlv_1= '=' ( (lv_value_2_0= ruleDotID ) ) ) ;
     public final EObject ruleAttribute() throws RecognitionException {
         EObject current = null;
 
+        Token otherlv_1=null;
         AntlrDatatypeRuleToken lv_name_0_0 = null;
 
         AntlrDatatypeRuleToken lv_value_2_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:874:6: ( ( ( (lv_name_0_0= ruleDotID ) ) '=' ( (lv_value_2_0= ruleDotID ) ) ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:875:1: ( ( (lv_name_0_0= ruleDotID ) ) '=' ( (lv_value_2_0= ruleDotID ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:721:28: ( ( ( (lv_name_0_0= ruleDotID ) ) otherlv_1= '=' ( (lv_value_2_0= ruleDotID ) ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:722:1: ( ( (lv_name_0_0= ruleDotID ) ) otherlv_1= '=' ( (lv_value_2_0= ruleDotID ) ) )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:875:1: ( ( (lv_name_0_0= ruleDotID ) ) '=' ( (lv_value_2_0= ruleDotID ) ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:875:2: ( (lv_name_0_0= ruleDotID ) ) '=' ( (lv_value_2_0= ruleDotID ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:722:1: ( ( (lv_name_0_0= ruleDotID ) ) otherlv_1= '=' ( (lv_value_2_0= ruleDotID ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:722:2: ( (lv_name_0_0= ruleDotID ) ) otherlv_1= '=' ( (lv_value_2_0= ruleDotID ) )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:875:2: ( (lv_name_0_0= ruleDotID ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:876:1: (lv_name_0_0= ruleDotID )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:722:2: ( (lv_name_0_0= ruleDotID ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:723:1: (lv_name_0_0= ruleDotID )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:876:1: (lv_name_0_0= ruleDotID )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:877:3: lv_name_0_0= ruleDotID
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:723:1: (lv_name_0_0= ruleDotID )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:724:3: lv_name_0_0= ruleDotID
             {
              
-            	        currentNode=createCompositeNode(grammarAccess.getAttributeAccess().getNameDotIDParserRuleCall_0_0(), currentNode); 
+            	        newCompositeNode(grammarAccess.getAttributeAccess().getNameDotIDParserRuleCall_0_0()); 
             	    
-            pushFollow(FOLLOW_ruleDotID_in_ruleAttribute1461);
+            pushFollow(FOLLOW_ruleDotID_in_ruleAttribute1491);
             lv_name_0_0=ruleDotID();
-            _fsp--;
+
+            state._fsp--;
 
 
             	        if (current==null) {
-            	            current = factory.create(grammarAccess.getAttributeRule().getType().getClassifier());
-            	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	            current = createModelElementForParent(grammarAccess.getAttributeRule());
             	        }
-            	        try {
-            	       		set(
-            	       			current, 
-            	       			"name",
-            	        		lv_name_0_0, 
-            	        		"DotID", 
-            	        		currentNode);
-            	        } catch (ValueConverterException vce) {
-            				handleValueConverterException(vce);
-            	        }
-            	        currentNode = currentNode.getParent();
+                   		set(
+                   			current, 
+                   			"name",
+                    		lv_name_0_0, 
+                    		"DotID");
+            	        afterParserOrEnumRuleCall();
             	    
 
             }
@@ -6532,39 +1895,34 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            match(input,21,FOLLOW_21_in_ruleAttribute1471); 
+            otherlv_1=(Token)match(input,21,FOLLOW_21_in_ruleAttribute1503); 
 
-                    createLeafNode(grammarAccess.getAttributeAccess().getEqualsSignKeyword_1(), null); 
+                	newLeafNode(otherlv_1, grammarAccess.getAttributeAccess().getEqualsSignKeyword_1());
                 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:903:1: ( (lv_value_2_0= ruleDotID ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:904:1: (lv_value_2_0= ruleDotID )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:744:1: ( (lv_value_2_0= ruleDotID ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:745:1: (lv_value_2_0= ruleDotID )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:904:1: (lv_value_2_0= ruleDotID )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:905:3: lv_value_2_0= ruleDotID
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:745:1: (lv_value_2_0= ruleDotID )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:746:3: lv_value_2_0= ruleDotID
             {
              
-            	        currentNode=createCompositeNode(grammarAccess.getAttributeAccess().getValueDotIDParserRuleCall_2_0(), currentNode); 
+            	        newCompositeNode(grammarAccess.getAttributeAccess().getValueDotIDParserRuleCall_2_0()); 
             	    
-            pushFollow(FOLLOW_ruleDotID_in_ruleAttribute1492);
+            pushFollow(FOLLOW_ruleDotID_in_ruleAttribute1524);
             lv_value_2_0=ruleDotID();
-            _fsp--;
+
+            state._fsp--;
 
 
             	        if (current==null) {
-            	            current = factory.create(grammarAccess.getAttributeRule().getType().getClassifier());
-            	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	            current = createModelElementForParent(grammarAccess.getAttributeRule());
             	        }
-            	        try {
-            	       		set(
-            	       			current, 
-            	       			"value",
-            	        		lv_value_2_0, 
-            	        		"DotID", 
-            	        		currentNode);
-            	        } catch (ValueConverterException vce) {
-            				handleValueConverterException(vce);
-            	        }
-            	        currentNode = currentNode.getParent();
+                   		set(
+                   			current, 
+                   			"value",
+                    		lv_value_2_0, 
+                    		"DotID");
+            	        afterParserOrEnumRuleCall();
             	    
 
             }
@@ -6578,9 +1936,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-             resetLookahead(); 
-                	lastConsumedNode = currentNode;
-                
+             leaveRule(); 
         }
          
             catch (RecognitionException re) { 
@@ -6591,11 +1947,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleAttribute
+    // $ANTLR end "ruleAttribute"
 
 
-    // $ANTLR start entryRuleListAttribute
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:935:1: entryRuleListAttribute returns [EObject current=null] : iv_ruleListAttribute= ruleListAttribute EOF ;
+    // $ANTLR start "entryRuleListAttribute"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:770:1: entryRuleListAttribute returns [EObject current=null] : iv_ruleListAttribute= ruleListAttribute EOF ;
     public final EObject entryRuleListAttribute() throws RecognitionException {
         EObject current = null;
 
@@ -6603,16 +1959,17 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:936:2: (iv_ruleListAttribute= ruleListAttribute EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:937:2: iv_ruleListAttribute= ruleListAttribute EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:771:2: (iv_ruleListAttribute= ruleListAttribute EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:772:2: iv_ruleListAttribute= ruleListAttribute EOF
             {
-             currentNode = createCompositeNode(grammarAccess.getListAttributeRule(), currentNode); 
-            pushFollow(FOLLOW_ruleListAttribute_in_entryRuleListAttribute1528);
+             newCompositeNode(grammarAccess.getListAttributeRule()); 
+            pushFollow(FOLLOW_ruleListAttribute_in_entryRuleListAttribute1560);
             iv_ruleListAttribute=ruleListAttribute();
-            _fsp--;
+
+            state._fsp--;
 
              current =iv_ruleListAttribute; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleListAttribute1538); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleListAttribute1570); 
 
             }
 
@@ -6626,57 +1983,53 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleListAttribute
+    // $ANTLR end "entryRuleListAttribute"
 
 
-    // $ANTLR start ruleListAttribute
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:944:1: ruleListAttribute returns [EObject current=null] : ( ( (lv_name_0_0= ruleDotID ) ) ( '=' ( (lv_value_2_0= ruleDotID ) ) )? ) ;
+    // $ANTLR start "ruleListAttribute"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:779:1: ruleListAttribute returns [EObject current=null] : ( ( (lv_name_0_0= ruleDotID ) ) (otherlv_1= '=' ( (lv_value_2_0= ruleDotID ) ) )? ) ;
     public final EObject ruleListAttribute() throws RecognitionException {
         EObject current = null;
 
+        Token otherlv_1=null;
         AntlrDatatypeRuleToken lv_name_0_0 = null;
 
         AntlrDatatypeRuleToken lv_value_2_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:949:6: ( ( ( (lv_name_0_0= ruleDotID ) ) ( '=' ( (lv_value_2_0= ruleDotID ) ) )? ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:950:1: ( ( (lv_name_0_0= ruleDotID ) ) ( '=' ( (lv_value_2_0= ruleDotID ) ) )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:782:28: ( ( ( (lv_name_0_0= ruleDotID ) ) (otherlv_1= '=' ( (lv_value_2_0= ruleDotID ) ) )? ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:783:1: ( ( (lv_name_0_0= ruleDotID ) ) (otherlv_1= '=' ( (lv_value_2_0= ruleDotID ) ) )? )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:950:1: ( ( (lv_name_0_0= ruleDotID ) ) ( '=' ( (lv_value_2_0= ruleDotID ) ) )? )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:950:2: ( (lv_name_0_0= ruleDotID ) ) ( '=' ( (lv_value_2_0= ruleDotID ) ) )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:783:1: ( ( (lv_name_0_0= ruleDotID ) ) (otherlv_1= '=' ( (lv_value_2_0= ruleDotID ) ) )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:783:2: ( (lv_name_0_0= ruleDotID ) ) (otherlv_1= '=' ( (lv_value_2_0= ruleDotID ) ) )?
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:950:2: ( (lv_name_0_0= ruleDotID ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:951:1: (lv_name_0_0= ruleDotID )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:783:2: ( (lv_name_0_0= ruleDotID ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:784:1: (lv_name_0_0= ruleDotID )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:951:1: (lv_name_0_0= ruleDotID )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:952:3: lv_name_0_0= ruleDotID
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:784:1: (lv_name_0_0= ruleDotID )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:785:3: lv_name_0_0= ruleDotID
             {
              
-            	        currentNode=createCompositeNode(grammarAccess.getListAttributeAccess().getNameDotIDParserRuleCall_0_0(), currentNode); 
+            	        newCompositeNode(grammarAccess.getListAttributeAccess().getNameDotIDParserRuleCall_0_0()); 
             	    
-            pushFollow(FOLLOW_ruleDotID_in_ruleListAttribute1584);
+            pushFollow(FOLLOW_ruleDotID_in_ruleListAttribute1616);
             lv_name_0_0=ruleDotID();
-            _fsp--;
+
+            state._fsp--;
 
 
             	        if (current==null) {
-            	            current = factory.create(grammarAccess.getListAttributeRule().getType().getClassifier());
-            	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	            current = createModelElementForParent(grammarAccess.getListAttributeRule());
             	        }
-            	        try {
-            	       		set(
-            	       			current, 
-            	       			"name",
-            	        		lv_name_0_0, 
-            	        		"DotID", 
-            	        		currentNode);
-            	        } catch (ValueConverterException vce) {
-            				handleValueConverterException(vce);
-            	        }
-            	        currentNode = currentNode.getParent();
+                   		set(
+                   			current, 
+                   			"name",
+                    		lv_name_0_0, 
+                    		"DotID");
+            	        afterParserOrEnumRuleCall();
             	    
 
             }
@@ -6684,7 +2037,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:974:2: ( '=' ( (lv_value_2_0= ruleDotID ) ) )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:801:2: (otherlv_1= '=' ( (lv_value_2_0= ruleDotID ) ) )?
             int alt19=2;
             int LA19_0 = input.LA(1);
 
@@ -6693,41 +2046,36 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt19) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:974:4: '=' ( (lv_value_2_0= ruleDotID ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:801:4: otherlv_1= '=' ( (lv_value_2_0= ruleDotID ) )
                     {
-                    match(input,21,FOLLOW_21_in_ruleListAttribute1595); 
+                    otherlv_1=(Token)match(input,21,FOLLOW_21_in_ruleListAttribute1629); 
 
-                            createLeafNode(grammarAccess.getListAttributeAccess().getEqualsSignKeyword_1_0(), null); 
+                        	newLeafNode(otherlv_1, grammarAccess.getListAttributeAccess().getEqualsSignKeyword_1_0());
                         
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:978:1: ( (lv_value_2_0= ruleDotID ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:979:1: (lv_value_2_0= ruleDotID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:805:1: ( (lv_value_2_0= ruleDotID ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:806:1: (lv_value_2_0= ruleDotID )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:979:1: (lv_value_2_0= ruleDotID )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:980:3: lv_value_2_0= ruleDotID
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:806:1: (lv_value_2_0= ruleDotID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:807:3: lv_value_2_0= ruleDotID
                     {
                      
-                    	        currentNode=createCompositeNode(grammarAccess.getListAttributeAccess().getValueDotIDParserRuleCall_1_1_0(), currentNode); 
+                    	        newCompositeNode(grammarAccess.getListAttributeAccess().getValueDotIDParserRuleCall_1_1_0()); 
                     	    
-                    pushFollow(FOLLOW_ruleDotID_in_ruleListAttribute1616);
+                    pushFollow(FOLLOW_ruleDotID_in_ruleListAttribute1650);
                     lv_value_2_0=ruleDotID();
-                    _fsp--;
+
+                    state._fsp--;
 
 
                     	        if (current==null) {
-                    	            current = factory.create(grammarAccess.getListAttributeRule().getType().getClassifier());
-                    	            associateNodeWithAstElement(currentNode.getParent(), current);
+                    	            current = createModelElementForParent(grammarAccess.getListAttributeRule());
                     	        }
-                    	        try {
-                    	       		set(
-                    	       			current, 
-                    	       			"value",
-                    	        		lv_value_2_0, 
-                    	        		"DotID", 
-                    	        		currentNode);
-                    	        } catch (ValueConverterException vce) {
-                    				handleValueConverterException(vce);
-                    	        }
-                    	        currentNode = currentNode.getParent();
+                           		set(
+                           			current, 
+                           			"value",
+                            		lv_value_2_0, 
+                            		"DotID");
+                    	        afterParserOrEnumRuleCall();
                     	    
 
                     }
@@ -6747,9 +2095,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-             resetLookahead(); 
-                	lastConsumedNode = currentNode;
-                
+             leaveRule(); 
         }
          
             catch (RecognitionException re) { 
@@ -6760,11 +2106,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleListAttribute
+    // $ANTLR end "ruleListAttribute"
 
 
-    // $ANTLR start entryRuleNode
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1010:1: entryRuleNode returns [EObject current=null] : iv_ruleNode= ruleNode EOF ;
+    // $ANTLR start "entryRuleNode"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:831:1: entryRuleNode returns [EObject current=null] : iv_ruleNode= ruleNode EOF ;
     public final EObject entryRuleNode() throws RecognitionException {
         EObject current = null;
 
@@ -6772,16 +2118,17 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1011:2: (iv_ruleNode= ruleNode EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1012:2: iv_ruleNode= ruleNode EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:832:2: (iv_ruleNode= ruleNode EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:833:2: iv_ruleNode= ruleNode EOF
             {
-             currentNode = createCompositeNode(grammarAccess.getNodeRule(), currentNode); 
-            pushFollow(FOLLOW_ruleNode_in_entryRuleNode1654);
+             newCompositeNode(grammarAccess.getNodeRule()); 
+            pushFollow(FOLLOW_ruleNode_in_entryRuleNode1688);
             iv_ruleNode=ruleNode();
-            _fsp--;
+
+            state._fsp--;
 
              current =iv_ruleNode; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleNode1664); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleNode1698); 
 
             }
 
@@ -6795,57 +2142,53 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleNode
+    // $ANTLR end "entryRuleNode"
 
 
-    // $ANTLR start ruleNode
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1019:1: ruleNode returns [EObject current=null] : ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_port_2_0= rulePort ) ) )? ) ;
+    // $ANTLR start "ruleNode"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:840:1: ruleNode returns [EObject current=null] : ( ( (lv_name_0_0= ruleDotID ) ) (otherlv_1= ':' ( (lv_port_2_0= rulePort ) ) )? ) ;
     public final EObject ruleNode() throws RecognitionException {
         EObject current = null;
 
+        Token otherlv_1=null;
         AntlrDatatypeRuleToken lv_name_0_0 = null;
 
         EObject lv_port_2_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1024:6: ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_port_2_0= rulePort ) ) )? ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1025:1: ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_port_2_0= rulePort ) ) )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:843:28: ( ( ( (lv_name_0_0= ruleDotID ) ) (otherlv_1= ':' ( (lv_port_2_0= rulePort ) ) )? ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:844:1: ( ( (lv_name_0_0= ruleDotID ) ) (otherlv_1= ':' ( (lv_port_2_0= rulePort ) ) )? )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1025:1: ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_port_2_0= rulePort ) ) )? )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1025:2: ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_port_2_0= rulePort ) ) )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:844:1: ( ( (lv_name_0_0= ruleDotID ) ) (otherlv_1= ':' ( (lv_port_2_0= rulePort ) ) )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:844:2: ( (lv_name_0_0= ruleDotID ) ) (otherlv_1= ':' ( (lv_port_2_0= rulePort ) ) )?
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1025:2: ( (lv_name_0_0= ruleDotID ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1026:1: (lv_name_0_0= ruleDotID )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:844:2: ( (lv_name_0_0= ruleDotID ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:845:1: (lv_name_0_0= ruleDotID )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1026:1: (lv_name_0_0= ruleDotID )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1027:3: lv_name_0_0= ruleDotID
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:845:1: (lv_name_0_0= ruleDotID )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:846:3: lv_name_0_0= ruleDotID
             {
              
-            	        currentNode=createCompositeNode(grammarAccess.getNodeAccess().getNameDotIDParserRuleCall_0_0(), currentNode); 
+            	        newCompositeNode(grammarAccess.getNodeAccess().getNameDotIDParserRuleCall_0_0()); 
             	    
-            pushFollow(FOLLOW_ruleDotID_in_ruleNode1710);
+            pushFollow(FOLLOW_ruleDotID_in_ruleNode1744);
             lv_name_0_0=ruleDotID();
-            _fsp--;
+
+            state._fsp--;
 
 
             	        if (current==null) {
-            	            current = factory.create(grammarAccess.getNodeRule().getType().getClassifier());
-            	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	            current = createModelElementForParent(grammarAccess.getNodeRule());
             	        }
-            	        try {
-            	       		set(
-            	       			current, 
-            	       			"name",
-            	        		lv_name_0_0, 
-            	        		"DotID", 
-            	        		currentNode);
-            	        } catch (ValueConverterException vce) {
-            				handleValueConverterException(vce);
-            	        }
-            	        currentNode = currentNode.getParent();
+                   		set(
+                   			current, 
+                   			"name",
+                    		lv_name_0_0, 
+                    		"DotID");
+            	        afterParserOrEnumRuleCall();
             	    
 
             }
@@ -6853,7 +2196,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1049:2: ( ':' ( (lv_port_2_0= rulePort ) ) )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:862:2: (otherlv_1= ':' ( (lv_port_2_0= rulePort ) ) )?
             int alt20=2;
             int LA20_0 = input.LA(1);
 
@@ -6862,41 +2205,36 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt20) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1049:4: ':' ( (lv_port_2_0= rulePort ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:862:4: otherlv_1= ':' ( (lv_port_2_0= rulePort ) )
                     {
-                    match(input,22,FOLLOW_22_in_ruleNode1721); 
+                    otherlv_1=(Token)match(input,22,FOLLOW_22_in_ruleNode1757); 
 
-                            createLeafNode(grammarAccess.getNodeAccess().getColonKeyword_1_0(), null); 
+                        	newLeafNode(otherlv_1, grammarAccess.getNodeAccess().getColonKeyword_1_0());
                         
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1053:1: ( (lv_port_2_0= rulePort ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1054:1: (lv_port_2_0= rulePort )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:866:1: ( (lv_port_2_0= rulePort ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:867:1: (lv_port_2_0= rulePort )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1054:1: (lv_port_2_0= rulePort )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1055:3: lv_port_2_0= rulePort
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:867:1: (lv_port_2_0= rulePort )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:868:3: lv_port_2_0= rulePort
                     {
                      
-                    	        currentNode=createCompositeNode(grammarAccess.getNodeAccess().getPortPortParserRuleCall_1_1_0(), currentNode); 
+                    	        newCompositeNode(grammarAccess.getNodeAccess().getPortPortParserRuleCall_1_1_0()); 
                     	    
-                    pushFollow(FOLLOW_rulePort_in_ruleNode1742);
+                    pushFollow(FOLLOW_rulePort_in_ruleNode1778);
                     lv_port_2_0=rulePort();
-                    _fsp--;
+
+                    state._fsp--;
 
 
                     	        if (current==null) {
-                    	            current = factory.create(grammarAccess.getNodeRule().getType().getClassifier());
-                    	            associateNodeWithAstElement(currentNode.getParent(), current);
+                    	            current = createModelElementForParent(grammarAccess.getNodeRule());
                     	        }
-                    	        try {
-                    	       		set(
-                    	       			current, 
-                    	       			"port",
-                    	        		lv_port_2_0, 
-                    	        		"Port", 
-                    	        		currentNode);
-                    	        } catch (ValueConverterException vce) {
-                    				handleValueConverterException(vce);
-                    	        }
-                    	        currentNode = currentNode.getParent();
+                           		set(
+                           			current, 
+                           			"port",
+                            		lv_port_2_0, 
+                            		"Port");
+                    	        afterParserOrEnumRuleCall();
                     	    
 
                     }
@@ -6916,9 +2254,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-             resetLookahead(); 
-                	lastConsumedNode = currentNode;
-                
+             leaveRule(); 
         }
          
             catch (RecognitionException re) { 
@@ -6929,11 +2265,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleNode
+    // $ANTLR end "ruleNode"
 
 
-    // $ANTLR start entryRulePort
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1085:1: entryRulePort returns [EObject current=null] : iv_rulePort= rulePort EOF ;
+    // $ANTLR start "entryRulePort"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:892:1: entryRulePort returns [EObject current=null] : iv_rulePort= rulePort EOF ;
     public final EObject entryRulePort() throws RecognitionException {
         EObject current = null;
 
@@ -6941,16 +2277,17 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1086:2: (iv_rulePort= rulePort EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1087:2: iv_rulePort= rulePort EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:893:2: (iv_rulePort= rulePort EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:894:2: iv_rulePort= rulePort EOF
             {
-             currentNode = createCompositeNode(grammarAccess.getPortRule(), currentNode); 
-            pushFollow(FOLLOW_rulePort_in_entryRulePort1780);
+             newCompositeNode(grammarAccess.getPortRule()); 
+            pushFollow(FOLLOW_rulePort_in_entryRulePort1816);
             iv_rulePort=rulePort();
-            _fsp--;
+
+            state._fsp--;
 
              current =iv_rulePort; 
-            match(input,EOF,FOLLOW_EOF_in_entryRulePort1790); 
+            match(input,EOF,FOLLOW_EOF_in_entryRulePort1826); 
 
             }
 
@@ -6964,14 +2301,15 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRulePort
+    // $ANTLR end "entryRulePort"
 
 
-    // $ANTLR start rulePort
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1094:1: rulePort returns [EObject current=null] : ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) ) ;
+    // $ANTLR start "rulePort"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:901:1: rulePort returns [EObject current=null] : ( ( ( (lv_name_0_0= ruleDotID ) ) (otherlv_1= ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) ) ;
     public final EObject rulePort() throws RecognitionException {
         EObject current = null;
 
+        Token otherlv_1=null;
         AntlrDatatypeRuleToken lv_name_0_0 = null;
 
         Enumerator lv_compass_pt_2_0 = null;
@@ -6979,13 +2317,13 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         Enumerator lv_compass_pt_3_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1099:6: ( ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1100:1: ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:904:28: ( ( ( ( (lv_name_0_0= ruleDotID ) ) (otherlv_1= ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:905:1: ( ( ( (lv_name_0_0= ruleDotID ) ) (otherlv_1= ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1100:1: ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:905:1: ( ( ( (lv_name_0_0= ruleDotID ) ) (otherlv_1= ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) )
             int alt22=2;
             int LA22_0 = input.LA(1);
 
@@ -6997,46 +2335,41 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("1100:1: ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) )", 22, 0, input);
+                    new NoViableAltException("", 22, 0, input);
 
                 throw nvae;
             }
             switch (alt22) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1100:2: ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:905:2: ( ( (lv_name_0_0= ruleDotID ) ) (otherlv_1= ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1100:2: ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1100:3: ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )?
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:905:2: ( ( (lv_name_0_0= ruleDotID ) ) (otherlv_1= ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:905:3: ( (lv_name_0_0= ruleDotID ) ) (otherlv_1= ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )?
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1100:3: ( (lv_name_0_0= ruleDotID ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1101:1: (lv_name_0_0= ruleDotID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:905:3: ( (lv_name_0_0= ruleDotID ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:906:1: (lv_name_0_0= ruleDotID )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1101:1: (lv_name_0_0= ruleDotID )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1102:3: lv_name_0_0= ruleDotID
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:906:1: (lv_name_0_0= ruleDotID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:907:3: lv_name_0_0= ruleDotID
                     {
                      
-                    	        currentNode=createCompositeNode(grammarAccess.getPortAccess().getNameDotIDParserRuleCall_0_0_0(), currentNode); 
+                    	        newCompositeNode(grammarAccess.getPortAccess().getNameDotIDParserRuleCall_0_0_0()); 
                     	    
-                    pushFollow(FOLLOW_ruleDotID_in_rulePort1837);
+                    pushFollow(FOLLOW_ruleDotID_in_rulePort1873);
                     lv_name_0_0=ruleDotID();
-                    _fsp--;
+
+                    state._fsp--;
 
 
                     	        if (current==null) {
-                    	            current = factory.create(grammarAccess.getPortRule().getType().getClassifier());
-                    	            associateNodeWithAstElement(currentNode.getParent(), current);
+                    	            current = createModelElementForParent(grammarAccess.getPortRule());
                     	        }
-                    	        try {
-                    	       		set(
-                    	       			current, 
-                    	       			"name",
-                    	        		lv_name_0_0, 
-                    	        		"DotID", 
-                    	        		currentNode);
-                    	        } catch (ValueConverterException vce) {
-                    				handleValueConverterException(vce);
-                    	        }
-                    	        currentNode = currentNode.getParent();
+                           		set(
+                           			current, 
+                           			"name",
+                            		lv_name_0_0, 
+                            		"DotID");
+                    	        afterParserOrEnumRuleCall();
                     	    
 
                     }
@@ -7044,7 +2377,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1124:2: ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )?
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:923:2: (otherlv_1= ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )?
                     int alt21=2;
                     int LA21_0 = input.LA(1);
 
@@ -7053,41 +2386,36 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt21) {
                         case 1 :
-                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1124:4: ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) )
+                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:923:4: otherlv_1= ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) )
                             {
-                            match(input,22,FOLLOW_22_in_rulePort1848); 
+                            otherlv_1=(Token)match(input,22,FOLLOW_22_in_rulePort1886); 
 
-                                    createLeafNode(grammarAccess.getPortAccess().getColonKeyword_0_1_0(), null); 
+                                	newLeafNode(otherlv_1, grammarAccess.getPortAccess().getColonKeyword_0_1_0());
                                 
-                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1128:1: ( (lv_compass_pt_2_0= ruleCompassPoint ) )
-                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1129:1: (lv_compass_pt_2_0= ruleCompassPoint )
+                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:927:1: ( (lv_compass_pt_2_0= ruleCompassPoint ) )
+                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:928:1: (lv_compass_pt_2_0= ruleCompassPoint )
                             {
-                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1129:1: (lv_compass_pt_2_0= ruleCompassPoint )
-                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1130:3: lv_compass_pt_2_0= ruleCompassPoint
+                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:928:1: (lv_compass_pt_2_0= ruleCompassPoint )
+                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:929:3: lv_compass_pt_2_0= ruleCompassPoint
                             {
                              
-                            	        currentNode=createCompositeNode(grammarAccess.getPortAccess().getCompass_ptCompassPointEnumRuleCall_0_1_1_0(), currentNode); 
+                            	        newCompositeNode(grammarAccess.getPortAccess().getCompass_ptCompassPointEnumRuleCall_0_1_1_0()); 
                             	    
-                            pushFollow(FOLLOW_ruleCompassPoint_in_rulePort1869);
+                            pushFollow(FOLLOW_ruleCompassPoint_in_rulePort1907);
                             lv_compass_pt_2_0=ruleCompassPoint();
-                            _fsp--;
+
+                            state._fsp--;
 
 
                             	        if (current==null) {
-                            	            current = factory.create(grammarAccess.getPortRule().getType().getClassifier());
-                            	            associateNodeWithAstElement(currentNode.getParent(), current);
+                            	            current = createModelElementForParent(grammarAccess.getPortRule());
                             	        }
-                            	        try {
-                            	       		set(
-                            	       			current, 
-                            	       			"compass_pt",
-                            	        		lv_compass_pt_2_0, 
-                            	        		"CompassPoint", 
-                            	        		currentNode);
-                            	        } catch (ValueConverterException vce) {
-                            				handleValueConverterException(vce);
-                            	        }
-                            	        currentNode = currentNode.getParent();
+                                   		set(
+                                   			current, 
+                                   			"compass_pt",
+                                    		lv_compass_pt_2_0, 
+                                    		"CompassPoint");
+                            	        afterParserOrEnumRuleCall();
                             	    
 
                             }
@@ -7108,37 +2436,32 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1153:6: ( (lv_compass_pt_3_0= ruleCompassPoint ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:946:6: ( (lv_compass_pt_3_0= ruleCompassPoint ) )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1153:6: ( (lv_compass_pt_3_0= ruleCompassPoint ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1154:1: (lv_compass_pt_3_0= ruleCompassPoint )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:946:6: ( (lv_compass_pt_3_0= ruleCompassPoint ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:947:1: (lv_compass_pt_3_0= ruleCompassPoint )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1154:1: (lv_compass_pt_3_0= ruleCompassPoint )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1155:3: lv_compass_pt_3_0= ruleCompassPoint
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:947:1: (lv_compass_pt_3_0= ruleCompassPoint )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:948:3: lv_compass_pt_3_0= ruleCompassPoint
                     {
                      
-                    	        currentNode=createCompositeNode(grammarAccess.getPortAccess().getCompass_ptCompassPointEnumRuleCall_1_0(), currentNode); 
+                    	        newCompositeNode(grammarAccess.getPortAccess().getCompass_ptCompassPointEnumRuleCall_1_0()); 
                     	    
-                    pushFollow(FOLLOW_ruleCompassPoint_in_rulePort1899);
+                    pushFollow(FOLLOW_ruleCompassPoint_in_rulePort1937);
                     lv_compass_pt_3_0=ruleCompassPoint();
-                    _fsp--;
+
+                    state._fsp--;
 
 
                     	        if (current==null) {
-                    	            current = factory.create(grammarAccess.getPortRule().getType().getClassifier());
-                    	            associateNodeWithAstElement(currentNode.getParent(), current);
+                    	            current = createModelElementForParent(grammarAccess.getPortRule());
                     	        }
-                    	        try {
-                    	       		set(
-                    	       			current, 
-                    	       			"compass_pt",
-                    	        		lv_compass_pt_3_0, 
-                    	        		"CompassPoint", 
-                    	        		currentNode);
-                    	        } catch (ValueConverterException vce) {
-                    				handleValueConverterException(vce);
-                    	        }
-                    	        currentNode = currentNode.getParent();
+                           		set(
+                           			current, 
+                           			"compass_pt",
+                            		lv_compass_pt_3_0, 
+                            		"CompassPoint");
+                    	        afterParserOrEnumRuleCall();
                     	    
 
                     }
@@ -7155,9 +2478,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-             resetLookahead(); 
-                	lastConsumedNode = currentNode;
-                
+             leaveRule(); 
         }
          
             catch (RecognitionException re) { 
@@ -7168,11 +2489,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end rulePort
+    // $ANTLR end "rulePort"
 
 
-    // $ANTLR start entryRuleDotID
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1185:1: entryRuleDotID returns [String current=null] : iv_ruleDotID= ruleDotID EOF ;
+    // $ANTLR start "entryRuleDotID"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:972:1: entryRuleDotID returns [String current=null] : iv_ruleDotID= ruleDotID EOF ;
     public final String entryRuleDotID() throws RecognitionException {
         String current = null;
 
@@ -7180,16 +2501,17 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1186:2: (iv_ruleDotID= ruleDotID EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1187:2: iv_ruleDotID= ruleDotID EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:973:2: (iv_ruleDotID= ruleDotID EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:974:2: iv_ruleDotID= ruleDotID EOF
             {
-             currentNode = createCompositeNode(grammarAccess.getDotIDRule(), currentNode); 
-            pushFollow(FOLLOW_ruleDotID_in_entryRuleDotID1936);
+             newCompositeNode(grammarAccess.getDotIDRule()); 
+            pushFollow(FOLLOW_ruleDotID_in_entryRuleDotID1974);
             iv_ruleDotID=ruleDotID();
-            _fsp--;
+
+            state._fsp--;
 
              current =iv_ruleDotID.getText(); 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleDotID1947); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleDotID1985); 
 
             }
 
@@ -7203,11 +2525,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleDotID
+    // $ANTLR end "entryRuleDotID"
 
 
-    // $ANTLR start ruleDotID
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1194:1: ruleDotID returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID | this_INT_1= RULE_INT | this_FLOAT_2= RULE_FLOAT | this_STRING_3= RULE_STRING ) ;
+    // $ANTLR start "ruleDotID"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:981:1: ruleDotID returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID | this_INT_1= RULE_INT | this_FLOAT_2= RULE_FLOAT | this_STRING_3= RULE_STRING ) ;
     public final AntlrDatatypeRuleToken ruleDotID() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -7216,13 +2538,13 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         Token this_FLOAT_2=null;
         Token this_STRING_3=null;
 
-         setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1199:6: ( (this_ID_0= RULE_ID | this_INT_1= RULE_INT | this_FLOAT_2= RULE_FLOAT | this_STRING_3= RULE_STRING ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1200:1: (this_ID_0= RULE_ID | this_INT_1= RULE_INT | this_FLOAT_2= RULE_FLOAT | this_STRING_3= RULE_STRING )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:984:28: ( (this_ID_0= RULE_ID | this_INT_1= RULE_INT | this_FLOAT_2= RULE_FLOAT | this_STRING_3= RULE_STRING ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:985:1: (this_ID_0= RULE_ID | this_INT_1= RULE_INT | this_FLOAT_2= RULE_FLOAT | this_STRING_3= RULE_STRING )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1200:1: (this_ID_0= RULE_ID | this_INT_1= RULE_INT | this_FLOAT_2= RULE_FLOAT | this_STRING_3= RULE_STRING )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:985:1: (this_ID_0= RULE_ID | this_INT_1= RULE_INT | this_FLOAT_2= RULE_FLOAT | this_STRING_3= RULE_STRING )
             int alt23=4;
             switch ( input.LA(1) ) {
             case RULE_ID:
@@ -7247,64 +2569,60 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("1200:1: (this_ID_0= RULE_ID | this_INT_1= RULE_INT | this_FLOAT_2= RULE_FLOAT | this_STRING_3= RULE_STRING )", 23, 0, input);
+                    new NoViableAltException("", 23, 0, input);
 
                 throw nvae;
             }
 
             switch (alt23) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1200:6: this_ID_0= RULE_ID
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:985:6: this_ID_0= RULE_ID
                     {
-                    this_ID_0=(Token)input.LT(1);
-                    match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleDotID1987); 
+                    this_ID_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleDotID2025); 
 
                     		current.merge(this_ID_0);
                         
                      
-                        createLeafNode(grammarAccess.getDotIDAccess().getIDTerminalRuleCall_0(), null); 
+                        newLeafNode(this_ID_0, grammarAccess.getDotIDAccess().getIDTerminalRuleCall_0()); 
                         
 
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1208:10: this_INT_1= RULE_INT
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:993:10: this_INT_1= RULE_INT
                     {
-                    this_INT_1=(Token)input.LT(1);
-                    match(input,RULE_INT,FOLLOW_RULE_INT_in_ruleDotID2013); 
+                    this_INT_1=(Token)match(input,RULE_INT,FOLLOW_RULE_INT_in_ruleDotID2051); 
 
                     		current.merge(this_INT_1);
                         
                      
-                        createLeafNode(grammarAccess.getDotIDAccess().getINTTerminalRuleCall_1(), null); 
+                        newLeafNode(this_INT_1, grammarAccess.getDotIDAccess().getINTTerminalRuleCall_1()); 
                         
 
                     }
                     break;
                 case 3 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1216:10: this_FLOAT_2= RULE_FLOAT
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1001:10: this_FLOAT_2= RULE_FLOAT
                     {
-                    this_FLOAT_2=(Token)input.LT(1);
-                    match(input,RULE_FLOAT,FOLLOW_RULE_FLOAT_in_ruleDotID2039); 
+                    this_FLOAT_2=(Token)match(input,RULE_FLOAT,FOLLOW_RULE_FLOAT_in_ruleDotID2077); 
 
                     		current.merge(this_FLOAT_2);
                         
                      
-                        createLeafNode(grammarAccess.getDotIDAccess().getFLOATTerminalRuleCall_2(), null); 
+                        newLeafNode(this_FLOAT_2, grammarAccess.getDotIDAccess().getFLOATTerminalRuleCall_2()); 
                         
 
                     }
                     break;
                 case 4 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1224:10: this_STRING_3= RULE_STRING
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1009:10: this_STRING_3= RULE_STRING
                     {
-                    this_STRING_3=(Token)input.LT(1);
-                    match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleDotID2065); 
+                    this_STRING_3=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleDotID2103); 
 
                     		current.merge(this_STRING_3);
                         
                      
-                        createLeafNode(grammarAccess.getDotIDAccess().getSTRINGTerminalRuleCall_3(), null); 
+                        newLeafNode(this_STRING_3, grammarAccess.getDotIDAccess().getSTRINGTerminalRuleCall_3()); 
                         
 
                     }
@@ -7315,9 +2633,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-             resetLookahead(); 
-            	    lastConsumedNode = currentNode;
-                
+             leaveRule(); 
         }
          
             catch (RecognitionException re) { 
@@ -7328,20 +2644,23 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleDotID
+    // $ANTLR end "ruleDotID"
 
 
-    // $ANTLR start ruleEdgeOperator
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1239:1: ruleEdgeOperator returns [Enumerator current=null] : ( ( '->' ) | ( '--' ) ) ;
+    // $ANTLR start "ruleEdgeOperator"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1024:1: ruleEdgeOperator returns [Enumerator current=null] : ( (enumLiteral_0= '->' ) | (enumLiteral_1= '--' ) ) ;
     public final Enumerator ruleEdgeOperator() throws RecognitionException {
         Enumerator current = null;
 
-         setCurrentLookahead(); resetLookahead(); 
+        Token enumLiteral_0=null;
+        Token enumLiteral_1=null;
+
+         enterRule(); 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1243:6: ( ( ( '->' ) | ( '--' ) ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1244:1: ( ( '->' ) | ( '--' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1026:28: ( ( (enumLiteral_0= '->' ) | (enumLiteral_1= '--' ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1027:1: ( (enumLiteral_0= '->' ) | (enumLiteral_1= '--' ) )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1244:1: ( ( '->' ) | ( '--' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1027:1: ( (enumLiteral_0= '->' ) | (enumLiteral_1= '--' ) )
             int alt24=2;
             int LA24_0 = input.LA(1);
 
@@ -7353,21 +2672,21 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("1244:1: ( ( '->' ) | ( '--' ) )", 24, 0, input);
+                    new NoViableAltException("", 24, 0, input);
 
                 throw nvae;
             }
             switch (alt24) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1244:2: ( '->' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1027:2: (enumLiteral_0= '->' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1244:2: ( '->' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1244:4: '->'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1027:2: (enumLiteral_0= '->' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1027:4: enumLiteral_0= '->'
                     {
-                    match(input,23,FOLLOW_23_in_ruleEdgeOperator2122); 
+                    enumLiteral_0=(Token)match(input,23,FOLLOW_23_in_ruleEdgeOperator2162); 
 
                             current = grammarAccess.getEdgeOperatorAccess().getDirectedEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
-                            createLeafNode(grammarAccess.getEdgeOperatorAccess().getDirectedEnumLiteralDeclaration_0(), null); 
+                            newLeafNode(enumLiteral_0, grammarAccess.getEdgeOperatorAccess().getDirectedEnumLiteralDeclaration_0()); 
                         
 
                     }
@@ -7376,15 +2695,15 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1250:6: ( '--' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1033:6: (enumLiteral_1= '--' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1250:6: ( '--' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1250:8: '--'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1033:6: (enumLiteral_1= '--' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1033:8: enumLiteral_1= '--'
                     {
-                    match(input,24,FOLLOW_24_in_ruleEdgeOperator2137); 
+                    enumLiteral_1=(Token)match(input,24,FOLLOW_24_in_ruleEdgeOperator2179); 
 
                             current = grammarAccess.getEdgeOperatorAccess().getUndirectedEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
-                            createLeafNode(grammarAccess.getEdgeOperatorAccess().getUndirectedEnumLiteralDeclaration_1(), null); 
+                            newLeafNode(enumLiteral_1, grammarAccess.getEdgeOperatorAccess().getUndirectedEnumLiteralDeclaration_1()); 
                         
 
                     }
@@ -7398,9 +2717,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-             resetLookahead(); 
-                	lastConsumedNode = currentNode;
-                
+             leaveRule(); 
         }
          
             catch (RecognitionException re) { 
@@ -7411,20 +2728,23 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleEdgeOperator
+    // $ANTLR end "ruleEdgeOperator"
 
 
-    // $ANTLR start ruleGraphType
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1260:1: ruleGraphType returns [Enumerator current=null] : ( ( 'graph' ) | ( 'digraph' ) ) ;
+    // $ANTLR start "ruleGraphType"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1043:1: ruleGraphType returns [Enumerator current=null] : ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'digraph' ) ) ;
     public final Enumerator ruleGraphType() throws RecognitionException {
         Enumerator current = null;
 
-         setCurrentLookahead(); resetLookahead(); 
+        Token enumLiteral_0=null;
+        Token enumLiteral_1=null;
+
+         enterRule(); 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1264:6: ( ( ( 'graph' ) | ( 'digraph' ) ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1265:1: ( ( 'graph' ) | ( 'digraph' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1045:28: ( ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'digraph' ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1046:1: ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'digraph' ) )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1265:1: ( ( 'graph' ) | ( 'digraph' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1046:1: ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'digraph' ) )
             int alt25=2;
             int LA25_0 = input.LA(1);
 
@@ -7436,21 +2756,21 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("1265:1: ( ( 'graph' ) | ( 'digraph' ) )", 25, 0, input);
+                    new NoViableAltException("", 25, 0, input);
 
                 throw nvae;
             }
             switch (alt25) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1265:2: ( 'graph' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1046:2: (enumLiteral_0= 'graph' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1265:2: ( 'graph' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1265:4: 'graph'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1046:2: (enumLiteral_0= 'graph' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1046:4: enumLiteral_0= 'graph'
                     {
-                    match(input,25,FOLLOW_25_in_ruleGraphType2180); 
+                    enumLiteral_0=(Token)match(input,25,FOLLOW_25_in_ruleGraphType2224); 
 
                             current = grammarAccess.getGraphTypeAccess().getGraphEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
-                            createLeafNode(grammarAccess.getGraphTypeAccess().getGraphEnumLiteralDeclaration_0(), null); 
+                            newLeafNode(enumLiteral_0, grammarAccess.getGraphTypeAccess().getGraphEnumLiteralDeclaration_0()); 
                         
 
                     }
@@ -7459,15 +2779,15 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1271:6: ( 'digraph' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1052:6: (enumLiteral_1= 'digraph' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1271:6: ( 'digraph' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1271:8: 'digraph'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1052:6: (enumLiteral_1= 'digraph' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1052:8: enumLiteral_1= 'digraph'
                     {
-                    match(input,26,FOLLOW_26_in_ruleGraphType2195); 
+                    enumLiteral_1=(Token)match(input,26,FOLLOW_26_in_ruleGraphType2241); 
 
                             current = grammarAccess.getGraphTypeAccess().getDigraphEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
-                            createLeafNode(grammarAccess.getGraphTypeAccess().getDigraphEnumLiteralDeclaration_1(), null); 
+                            newLeafNode(enumLiteral_1, grammarAccess.getGraphTypeAccess().getDigraphEnumLiteralDeclaration_1()); 
                         
 
                     }
@@ -7481,9 +2801,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-             resetLookahead(); 
-                	lastConsumedNode = currentNode;
-                
+             leaveRule(); 
         }
          
             catch (RecognitionException re) { 
@@ -7494,20 +2812,24 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleGraphType
+    // $ANTLR end "ruleGraphType"
 
 
-    // $ANTLR start ruleAttributeType
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1281:1: ruleAttributeType returns [Enumerator current=null] : ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) ) ;
+    // $ANTLR start "ruleAttributeType"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1062:1: ruleAttributeType returns [Enumerator current=null] : ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'node' ) | (enumLiteral_2= 'edge' ) ) ;
     public final Enumerator ruleAttributeType() throws RecognitionException {
         Enumerator current = null;
 
-         setCurrentLookahead(); resetLookahead(); 
+        Token enumLiteral_0=null;
+        Token enumLiteral_1=null;
+        Token enumLiteral_2=null;
+
+         enterRule(); 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1285:6: ( ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1286:1: ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1064:28: ( ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'node' ) | (enumLiteral_2= 'edge' ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1065:1: ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'node' ) | (enumLiteral_2= 'edge' ) )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1286:1: ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1065:1: ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'node' ) | (enumLiteral_2= 'edge' ) )
             int alt26=3;
             switch ( input.LA(1) ) {
             case 25:
@@ -7527,22 +2849,22 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("1286:1: ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) )", 26, 0, input);
+                    new NoViableAltException("", 26, 0, input);
 
                 throw nvae;
             }
 
             switch (alt26) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1286:2: ( 'graph' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1065:2: (enumLiteral_0= 'graph' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1286:2: ( 'graph' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1286:4: 'graph'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1065:2: (enumLiteral_0= 'graph' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1065:4: enumLiteral_0= 'graph'
                     {
-                    match(input,25,FOLLOW_25_in_ruleAttributeType2238); 
+                    enumLiteral_0=(Token)match(input,25,FOLLOW_25_in_ruleAttributeType2286); 
 
                             current = grammarAccess.getAttributeTypeAccess().getGraphEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
-                            createLeafNode(grammarAccess.getAttributeTypeAccess().getGraphEnumLiteralDeclaration_0(), null); 
+                            newLeafNode(enumLiteral_0, grammarAccess.getAttributeTypeAccess().getGraphEnumLiteralDeclaration_0()); 
                         
 
                     }
@@ -7551,15 +2873,15 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1292:6: ( 'node' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1071:6: (enumLiteral_1= 'node' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1292:6: ( 'node' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1292:8: 'node'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1071:6: (enumLiteral_1= 'node' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1071:8: enumLiteral_1= 'node'
                     {
-                    match(input,27,FOLLOW_27_in_ruleAttributeType2253); 
+                    enumLiteral_1=(Token)match(input,27,FOLLOW_27_in_ruleAttributeType2303); 
 
                             current = grammarAccess.getAttributeTypeAccess().getNodeEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
-                            createLeafNode(grammarAccess.getAttributeTypeAccess().getNodeEnumLiteralDeclaration_1(), null); 
+                            newLeafNode(enumLiteral_1, grammarAccess.getAttributeTypeAccess().getNodeEnumLiteralDeclaration_1()); 
                         
 
                     }
@@ -7568,15 +2890,15 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1298:6: ( 'edge' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1077:6: (enumLiteral_2= 'edge' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1298:6: ( 'edge' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1298:8: 'edge'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1077:6: (enumLiteral_2= 'edge' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1077:8: enumLiteral_2= 'edge'
                     {
-                    match(input,28,FOLLOW_28_in_ruleAttributeType2268); 
+                    enumLiteral_2=(Token)match(input,28,FOLLOW_28_in_ruleAttributeType2320); 
 
                             current = grammarAccess.getAttributeTypeAccess().getEdgeEnumLiteralDeclaration_2().getEnumLiteral().getInstance();
-                            createLeafNode(grammarAccess.getAttributeTypeAccess().getEdgeEnumLiteralDeclaration_2(), null); 
+                            newLeafNode(enumLiteral_2, grammarAccess.getAttributeTypeAccess().getEdgeEnumLiteralDeclaration_2()); 
                         
 
                     }
@@ -7590,9 +2912,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-             resetLookahead(); 
-                	lastConsumedNode = currentNode;
-                
+             leaveRule(); 
         }
          
             catch (RecognitionException re) { 
@@ -7603,20 +2923,31 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleAttributeType
+    // $ANTLR end "ruleAttributeType"
 
 
-    // $ANTLR start ruleCompassPoint
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1308:1: ruleCompassPoint returns [Enumerator current=null] : ( ( 'n' ) | ( 'ne' ) | ( 'e' ) | ( 'se' ) | ( 's' ) | ( 'sw' ) | ( 'w' ) | ( 'nw' ) | ( 'c' ) | ( '_' ) ) ;
+    // $ANTLR start "ruleCompassPoint"
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1087:1: ruleCompassPoint returns [Enumerator current=null] : ( (enumLiteral_0= 'n' ) | (enumLiteral_1= 'ne' ) | (enumLiteral_2= 'e' ) | (enumLiteral_3= 'se' ) | (enumLiteral_4= 's' ) | (enumLiteral_5= 'sw' ) | (enumLiteral_6= 'w' ) | (enumLiteral_7= 'nw' ) | (enumLiteral_8= 'c' ) | (enumLiteral_9= '_' ) ) ;
     public final Enumerator ruleCompassPoint() throws RecognitionException {
         Enumerator current = null;
 
-         setCurrentLookahead(); resetLookahead(); 
+        Token enumLiteral_0=null;
+        Token enumLiteral_1=null;
+        Token enumLiteral_2=null;
+        Token enumLiteral_3=null;
+        Token enumLiteral_4=null;
+        Token enumLiteral_5=null;
+        Token enumLiteral_6=null;
+        Token enumLiteral_7=null;
+        Token enumLiteral_8=null;
+        Token enumLiteral_9=null;
+
+         enterRule(); 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1312:6: ( ( ( 'n' ) | ( 'ne' ) | ( 'e' ) | ( 'se' ) | ( 's' ) | ( 'sw' ) | ( 'w' ) | ( 'nw' ) | ( 'c' ) | ( '_' ) ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1313:1: ( ( 'n' ) | ( 'ne' ) | ( 'e' ) | ( 'se' ) | ( 's' ) | ( 'sw' ) | ( 'w' ) | ( 'nw' ) | ( 'c' ) | ( '_' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1089:28: ( ( (enumLiteral_0= 'n' ) | (enumLiteral_1= 'ne' ) | (enumLiteral_2= 'e' ) | (enumLiteral_3= 'se' ) | (enumLiteral_4= 's' ) | (enumLiteral_5= 'sw' ) | (enumLiteral_6= 'w' ) | (enumLiteral_7= 'nw' ) | (enumLiteral_8= 'c' ) | (enumLiteral_9= '_' ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1090:1: ( (enumLiteral_0= 'n' ) | (enumLiteral_1= 'ne' ) | (enumLiteral_2= 'e' ) | (enumLiteral_3= 'se' ) | (enumLiteral_4= 's' ) | (enumLiteral_5= 'sw' ) | (enumLiteral_6= 'w' ) | (enumLiteral_7= 'nw' ) | (enumLiteral_8= 'c' ) | (enumLiteral_9= '_' ) )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1313:1: ( ( 'n' ) | ( 'ne' ) | ( 'e' ) | ( 'se' ) | ( 's' ) | ( 'sw' ) | ( 'w' ) | ( 'nw' ) | ( 'c' ) | ( '_' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1090:1: ( (enumLiteral_0= 'n' ) | (enumLiteral_1= 'ne' ) | (enumLiteral_2= 'e' ) | (enumLiteral_3= 'se' ) | (enumLiteral_4= 's' ) | (enumLiteral_5= 'sw' ) | (enumLiteral_6= 'w' ) | (enumLiteral_7= 'nw' ) | (enumLiteral_8= 'c' ) | (enumLiteral_9= '_' ) )
             int alt27=10;
             switch ( input.LA(1) ) {
             case 29:
@@ -7671,22 +3002,22 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("1313:1: ( ( 'n' ) | ( 'ne' ) | ( 'e' ) | ( 'se' ) | ( 's' ) | ( 'sw' ) | ( 'w' ) | ( 'nw' ) | ( 'c' ) | ( '_' ) )", 27, 0, input);
+                    new NoViableAltException("", 27, 0, input);
 
                 throw nvae;
             }
 
             switch (alt27) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1313:2: ( 'n' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1090:2: (enumLiteral_0= 'n' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1313:2: ( 'n' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1313:4: 'n'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1090:2: (enumLiteral_0= 'n' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1090:4: enumLiteral_0= 'n'
                     {
-                    match(input,29,FOLLOW_29_in_ruleCompassPoint2311); 
+                    enumLiteral_0=(Token)match(input,29,FOLLOW_29_in_ruleCompassPoint2365); 
 
                             current = grammarAccess.getCompassPointAccess().getNorthEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
-                            createLeafNode(grammarAccess.getCompassPointAccess().getNorthEnumLiteralDeclaration_0(), null); 
+                            newLeafNode(enumLiteral_0, grammarAccess.getCompassPointAccess().getNorthEnumLiteralDeclaration_0()); 
                         
 
                     }
@@ -7695,15 +3026,15 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1319:6: ( 'ne' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1096:6: (enumLiteral_1= 'ne' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1319:6: ( 'ne' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1319:8: 'ne'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1096:6: (enumLiteral_1= 'ne' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1096:8: enumLiteral_1= 'ne'
                     {
-                    match(input,30,FOLLOW_30_in_ruleCompassPoint2326); 
+                    enumLiteral_1=(Token)match(input,30,FOLLOW_30_in_ruleCompassPoint2382); 
 
                             current = grammarAccess.getCompassPointAccess().getNorthEastEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
-                            createLeafNode(grammarAccess.getCompassPointAccess().getNorthEastEnumLiteralDeclaration_1(), null); 
+                            newLeafNode(enumLiteral_1, grammarAccess.getCompassPointAccess().getNorthEastEnumLiteralDeclaration_1()); 
                         
 
                     }
@@ -7712,15 +3043,15 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1325:6: ( 'e' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1102:6: (enumLiteral_2= 'e' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1325:6: ( 'e' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1325:8: 'e'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1102:6: (enumLiteral_2= 'e' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1102:8: enumLiteral_2= 'e'
                     {
-                    match(input,31,FOLLOW_31_in_ruleCompassPoint2341); 
+                    enumLiteral_2=(Token)match(input,31,FOLLOW_31_in_ruleCompassPoint2399); 
 
                             current = grammarAccess.getCompassPointAccess().getEastEnumLiteralDeclaration_2().getEnumLiteral().getInstance();
-                            createLeafNode(grammarAccess.getCompassPointAccess().getEastEnumLiteralDeclaration_2(), null); 
+                            newLeafNode(enumLiteral_2, grammarAccess.getCompassPointAccess().getEastEnumLiteralDeclaration_2()); 
                         
 
                     }
@@ -7729,15 +3060,15 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1331:6: ( 'se' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1108:6: (enumLiteral_3= 'se' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1331:6: ( 'se' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1331:8: 'se'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1108:6: (enumLiteral_3= 'se' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1108:8: enumLiteral_3= 'se'
                     {
-                    match(input,32,FOLLOW_32_in_ruleCompassPoint2356); 
+                    enumLiteral_3=(Token)match(input,32,FOLLOW_32_in_ruleCompassPoint2416); 
 
                             current = grammarAccess.getCompassPointAccess().getSouthEastEnumLiteralDeclaration_3().getEnumLiteral().getInstance();
-                            createLeafNode(grammarAccess.getCompassPointAccess().getSouthEastEnumLiteralDeclaration_3(), null); 
+                            newLeafNode(enumLiteral_3, grammarAccess.getCompassPointAccess().getSouthEastEnumLiteralDeclaration_3()); 
                         
 
                     }
@@ -7746,15 +3077,15 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 5 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1337:6: ( 's' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1114:6: (enumLiteral_4= 's' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1337:6: ( 's' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1337:8: 's'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1114:6: (enumLiteral_4= 's' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1114:8: enumLiteral_4= 's'
                     {
-                    match(input,33,FOLLOW_33_in_ruleCompassPoint2371); 
+                    enumLiteral_4=(Token)match(input,33,FOLLOW_33_in_ruleCompassPoint2433); 
 
                             current = grammarAccess.getCompassPointAccess().getSouthEnumLiteralDeclaration_4().getEnumLiteral().getInstance();
-                            createLeafNode(grammarAccess.getCompassPointAccess().getSouthEnumLiteralDeclaration_4(), null); 
+                            newLeafNode(enumLiteral_4, grammarAccess.getCompassPointAccess().getSouthEnumLiteralDeclaration_4()); 
                         
 
                     }
@@ -7763,15 +3094,15 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 6 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1343:6: ( 'sw' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1120:6: (enumLiteral_5= 'sw' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1343:6: ( 'sw' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1343:8: 'sw'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1120:6: (enumLiteral_5= 'sw' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1120:8: enumLiteral_5= 'sw'
                     {
-                    match(input,34,FOLLOW_34_in_ruleCompassPoint2386); 
+                    enumLiteral_5=(Token)match(input,34,FOLLOW_34_in_ruleCompassPoint2450); 
 
                             current = grammarAccess.getCompassPointAccess().getSouthWestEnumLiteralDeclaration_5().getEnumLiteral().getInstance();
-                            createLeafNode(grammarAccess.getCompassPointAccess().getSouthWestEnumLiteralDeclaration_5(), null); 
+                            newLeafNode(enumLiteral_5, grammarAccess.getCompassPointAccess().getSouthWestEnumLiteralDeclaration_5()); 
                         
 
                     }
@@ -7780,15 +3111,15 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 7 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1349:6: ( 'w' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1126:6: (enumLiteral_6= 'w' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1349:6: ( 'w' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1349:8: 'w'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1126:6: (enumLiteral_6= 'w' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1126:8: enumLiteral_6= 'w'
                     {
-                    match(input,35,FOLLOW_35_in_ruleCompassPoint2401); 
+                    enumLiteral_6=(Token)match(input,35,FOLLOW_35_in_ruleCompassPoint2467); 
 
                             current = grammarAccess.getCompassPointAccess().getWestEnumLiteralDeclaration_6().getEnumLiteral().getInstance();
-                            createLeafNode(grammarAccess.getCompassPointAccess().getWestEnumLiteralDeclaration_6(), null); 
+                            newLeafNode(enumLiteral_6, grammarAccess.getCompassPointAccess().getWestEnumLiteralDeclaration_6()); 
                         
 
                     }
@@ -7797,15 +3128,15 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 8 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1355:6: ( 'nw' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1132:6: (enumLiteral_7= 'nw' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1355:6: ( 'nw' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1355:8: 'nw'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1132:6: (enumLiteral_7= 'nw' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1132:8: enumLiteral_7= 'nw'
                     {
-                    match(input,36,FOLLOW_36_in_ruleCompassPoint2416); 
+                    enumLiteral_7=(Token)match(input,36,FOLLOW_36_in_ruleCompassPoint2484); 
 
                             current = grammarAccess.getCompassPointAccess().getNorthWestEnumLiteralDeclaration_7().getEnumLiteral().getInstance();
-                            createLeafNode(grammarAccess.getCompassPointAccess().getNorthWestEnumLiteralDeclaration_7(), null); 
+                            newLeafNode(enumLiteral_7, grammarAccess.getCompassPointAccess().getNorthWestEnumLiteralDeclaration_7()); 
                         
 
                     }
@@ -7814,15 +3145,15 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 9 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1361:6: ( 'c' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1138:6: (enumLiteral_8= 'c' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1361:6: ( 'c' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1361:8: 'c'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1138:6: (enumLiteral_8= 'c' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1138:8: enumLiteral_8= 'c'
                     {
-                    match(input,37,FOLLOW_37_in_ruleCompassPoint2431); 
+                    enumLiteral_8=(Token)match(input,37,FOLLOW_37_in_ruleCompassPoint2501); 
 
                             current = grammarAccess.getCompassPointAccess().getCenterEnumLiteralDeclaration_8().getEnumLiteral().getInstance();
-                            createLeafNode(grammarAccess.getCompassPointAccess().getCenterEnumLiteralDeclaration_8(), null); 
+                            newLeafNode(enumLiteral_8, grammarAccess.getCompassPointAccess().getCenterEnumLiteralDeclaration_8()); 
                         
 
                     }
@@ -7831,15 +3162,15 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 10 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1367:6: ( '_' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1144:6: (enumLiteral_9= '_' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1367:6: ( '_' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1367:8: '_'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1144:6: (enumLiteral_9= '_' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1144:8: enumLiteral_9= '_'
                     {
-                    match(input,38,FOLLOW_38_in_ruleCompassPoint2446); 
+                    enumLiteral_9=(Token)match(input,38,FOLLOW_38_in_ruleCompassPoint2518); 
 
                             current = grammarAccess.getCompassPointAccess().getBlankEnumLiteralDeclaration_9().getEnumLiteral().getInstance();
-                            createLeafNode(grammarAccess.getCompassPointAccess().getBlankEnumLiteralDeclaration_9(), null); 
+                            newLeafNode(enumLiteral_9, grammarAccess.getCompassPointAccess().getBlankEnumLiteralDeclaration_9()); 
                         
 
                     }
@@ -7853,9 +3184,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-             resetLookahead(); 
-                	lastConsumedNode = currentNode;
-                
+             leaveRule(); 
         }
          
             catch (RecognitionException re) { 
@@ -7866,9 +3195,125 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleCompassPoint
+    // $ANTLR end "ruleCompassPoint"
+
+    // Delegated rules
 
 
+    protected DFA5 dfa5 = new DFA5(this);
+    static final String DFA5_eotS =
+        "\44\uffff";
+    static final String DFA5_eofS =
+        "\1\uffff\4\11\6\uffff\16\11\1\uffff\12\11";
+    static final String DFA5_minS =
+        "\5\4\2\uffff\1\4\3\uffff\16\4\1\35\12\4";
+    static final String DFA5_maxS =
+        "\5\34\2\uffff\1\46\3\uffff\16\34\1\46\12\34";
+    static final String DFA5_acceptS =
+        "\5\uffff\1\4\1\5\1\uffff\1\1\1\2\1\3\31\uffff";
+    static final String DFA5_specialS =
+        "\44\uffff}>";
+    static final String[] DFA5_transitionS = {
+            "\1\1\1\2\1\3\1\4\14\uffff\1\6\4\uffff\1\5\1\uffff\2\5",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\1\12\1\7\2\10\1\11\1\uffff"+
+            "\2\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\1\12\1\7\2\10\1\11\1\uffff"+
+            "\2\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\1\12\1\7\2\10\1\11\1\uffff"+
+            "\2\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\1\12\1\7\2\10\1\11\1\uffff"+
+            "\2\11",
+            "",
+            "",
+            "\1\13\1\14\1\15\1\16\25\uffff\1\17\1\20\1\21\1\22\1\23\1\24"+
+            "\1\25\1\26\1\27\1\30",
+            "",
+            "",
+            "",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\1\uffff\1\31\2\10\1\11\1\uffff"+
+            "\2\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\1\uffff\1\31\2\10\1\11\1\uffff"+
+            "\2\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\1\uffff\1\31\2\10\1\11\1\uffff"+
+            "\2\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\1\uffff\1\31\2\10\1\11\1\uffff"+
+            "\2\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\1\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11",
+            "\4\11\7\uffff\3\11\2\uffff\1\11\2\uffff\2\10\1\11\1\uffff\2"+
+            "\11"
+    };
+
+    static final short[] DFA5_eot = DFA.unpackEncodedString(DFA5_eotS);
+    static final short[] DFA5_eof = DFA.unpackEncodedString(DFA5_eofS);
+    static final char[] DFA5_min = DFA.unpackEncodedStringToUnsignedChars(DFA5_minS);
+    static final char[] DFA5_max = DFA.unpackEncodedStringToUnsignedChars(DFA5_maxS);
+    static final short[] DFA5_accept = DFA.unpackEncodedString(DFA5_acceptS);
+    static final short[] DFA5_special = DFA.unpackEncodedString(DFA5_specialS);
+    static final short[][] DFA5_transition;
+
+    static {
+        int numStates = DFA5_transitionS.length;
+        DFA5_transition = new short[numStates][];
+        for (int i=0; i<numStates; i++) {
+            DFA5_transition[i] = DFA.unpackEncodedString(DFA5_transitionS[i]);
+        }
+    }
+
+    class DFA5 extends DFA {
+
+        public DFA5(BaseRecognizer recognizer) {
+            this.recognizer = recognizer;
+            this.decisionNumber = 5;
+            this.eot = DFA5_eot;
+            this.eof = DFA5_eof;
+            this.min = DFA5_min;
+            this.max = DFA5_max;
+            this.accept = DFA5_accept;
+            this.special = DFA5_special;
+            this.transition = DFA5_transition;
+        }
+        public String getDescription() {
+            return "218:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_Attribute_2= ruleAttribute | this_AttributeStatement_3= ruleAttributeStatement | this_Subgraph_4= ruleSubgraph )";
+        }
+    }
  
 
     public static final BitSet FOLLOW_ruleGraphvizModel_in_entryRuleGraphvizModel75 = new BitSet(new long[]{0x0000000000000000L});
@@ -7876,100 +3321,100 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_ruleGraph_in_ruleGraphvizModel130 = new BitSet(new long[]{0x0000000006002002L});
     public static final BitSet FOLLOW_ruleGraph_in_entryRuleGraph166 = new BitSet(new long[]{0x0000000000000000L});
     public static final BitSet FOLLOW_EOF_in_entryRuleGraph176 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_13_in_ruleGraph219 = new BitSet(new long[]{0x0000000006000000L});
+    public static final BitSet FOLLOW_13_in_ruleGraph219 = new BitSet(new long[]{0x0000000006006010L});
     public static final BitSet FOLLOW_ruleGraphType_in_ruleGraph254 = new BitSet(new long[]{0x0000000000004010L});
     public static final BitSet FOLLOW_RULE_ID_in_ruleGraph271 = new BitSet(new long[]{0x0000000000004000L});
-    public static final BitSet FOLLOW_14_in_ruleGraph287 = new BitSet(new long[]{0x000000001A1080F0L});
-    public static final BitSet FOLLOW_ruleStatement_in_ruleGraph308 = new BitSet(new long[]{0x000000001A1080F0L});
-    public static final BitSet FOLLOW_15_in_ruleGraph319 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleStatement_in_entryRuleStatement355 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleStatement365 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleEdgeStatement_in_ruleStatement413 = new BitSet(new long[]{0x0000000000010002L});
-    public static final BitSet FOLLOW_ruleNodeStatement_in_ruleStatement440 = new BitSet(new long[]{0x0000000000010002L});
-    public static final BitSet FOLLOW_ruleAttribute_in_ruleStatement467 = new BitSet(new long[]{0x0000000000010002L});
-    public static final BitSet FOLLOW_ruleAttributeStatement_in_ruleStatement494 = new BitSet(new long[]{0x0000000000010002L});
-    public static final BitSet FOLLOW_ruleSubgraph_in_ruleStatement521 = new BitSet(new long[]{0x0000000000010002L});
-    public static final BitSet FOLLOW_16_in_ruleStatement532 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleEdgeStatement_in_entryRuleEdgeStatement570 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleEdgeStatement580 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleNode_in_ruleEdgeStatement626 = new BitSet(new long[]{0x0000000001800000L});
-    public static final BitSet FOLLOW_ruleEdgeTarget_in_ruleEdgeStatement647 = new BitSet(new long[]{0x0000000001820002L});
-    public static final BitSet FOLLOW_17_in_ruleEdgeStatement659 = new BitSet(new long[]{0x00000000000000F0L});
-    public static final BitSet FOLLOW_ruleListAttribute_in_ruleEdgeStatement680 = new BitSet(new long[]{0x00000000000C00F0L});
-    public static final BitSet FOLLOW_18_in_ruleEdgeStatement692 = new BitSet(new long[]{0x00000000000000F0L});
-    public static final BitSet FOLLOW_ruleListAttribute_in_ruleEdgeStatement715 = new BitSet(new long[]{0x00000000000C00F0L});
-    public static final BitSet FOLLOW_19_in_ruleEdgeStatement727 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleEdgeTarget_in_entryRuleEdgeTarget765 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleEdgeTarget775 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleEdgeOperator_in_ruleEdgeTarget821 = new BitSet(new long[]{0x00000000001000F0L});
-    public static final BitSet FOLLOW_ruleSubgraph_in_ruleEdgeTarget843 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleNode_in_ruleEdgeTarget870 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleNodeStatement_in_entryRuleNodeStatement907 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleNodeStatement917 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleNode_in_ruleNodeStatement963 = new BitSet(new long[]{0x0000000000020002L});
-    public static final BitSet FOLLOW_17_in_ruleNodeStatement974 = new BitSet(new long[]{0x00000000000000F0L});
-    public static final BitSet FOLLOW_ruleListAttribute_in_ruleNodeStatement995 = new BitSet(new long[]{0x00000000000C00F0L});
-    public static final BitSet FOLLOW_18_in_ruleNodeStatement1007 = new BitSet(new long[]{0x00000000000000F0L});
-    public static final BitSet FOLLOW_ruleListAttribute_in_ruleNodeStatement1030 = new BitSet(new long[]{0x00000000000C00F0L});
-    public static final BitSet FOLLOW_19_in_ruleNodeStatement1042 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleAttributeStatement_in_entryRuleAttributeStatement1080 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleAttributeStatement1090 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleAttributeType_in_ruleAttributeStatement1136 = new BitSet(new long[]{0x0000000000020000L});
-    public static final BitSet FOLLOW_17_in_ruleAttributeStatement1146 = new BitSet(new long[]{0x00000000000000F0L});
-    public static final BitSet FOLLOW_ruleListAttribute_in_ruleAttributeStatement1167 = new BitSet(new long[]{0x00000000000C00F0L});
-    public static final BitSet FOLLOW_18_in_ruleAttributeStatement1179 = new BitSet(new long[]{0x00000000000000F0L});
-    public static final BitSet FOLLOW_ruleListAttribute_in_ruleAttributeStatement1202 = new BitSet(new long[]{0x00000000000C00F0L});
-    public static final BitSet FOLLOW_19_in_ruleAttributeStatement1214 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleSubgraph_in_entryRuleSubgraph1250 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleSubgraph1260 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_20_in_ruleSubgraph1304 = new BitSet(new long[]{0x0000000000004010L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleSubgraph1321 = new BitSet(new long[]{0x0000000000004000L});
-    public static final BitSet FOLLOW_14_in_ruleSubgraph1337 = new BitSet(new long[]{0x000000001A1080F0L});
-    public static final BitSet FOLLOW_ruleStatement_in_ruleSubgraph1358 = new BitSet(new long[]{0x000000001A1080F0L});
-    public static final BitSet FOLLOW_15_in_ruleSubgraph1369 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleAttribute_in_entryRuleAttribute1405 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleAttribute1415 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleDotID_in_ruleAttribute1461 = new BitSet(new long[]{0x0000000000200000L});
-    public static final BitSet FOLLOW_21_in_ruleAttribute1471 = new BitSet(new long[]{0x00000000000000F0L});
-    public static final BitSet FOLLOW_ruleDotID_in_ruleAttribute1492 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleListAttribute_in_entryRuleListAttribute1528 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleListAttribute1538 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleDotID_in_ruleListAttribute1584 = new BitSet(new long[]{0x0000000000200002L});
-    public static final BitSet FOLLOW_21_in_ruleListAttribute1595 = new BitSet(new long[]{0x00000000000000F0L});
-    public static final BitSet FOLLOW_ruleDotID_in_ruleListAttribute1616 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleNode_in_entryRuleNode1654 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleNode1664 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleDotID_in_ruleNode1710 = new BitSet(new long[]{0x0000000000400002L});
-    public static final BitSet FOLLOW_22_in_ruleNode1721 = new BitSet(new long[]{0x0000007FE00000F0L});
-    public static final BitSet FOLLOW_rulePort_in_ruleNode1742 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rulePort_in_entryRulePort1780 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRulePort1790 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleDotID_in_rulePort1837 = new BitSet(new long[]{0x0000000000400002L});
-    public static final BitSet FOLLOW_22_in_rulePort1848 = new BitSet(new long[]{0x0000007FE0000000L});
-    public static final BitSet FOLLOW_ruleCompassPoint_in_rulePort1869 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleCompassPoint_in_rulePort1899 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleDotID_in_entryRuleDotID1936 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleDotID1947 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleDotID1987 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_INT_in_ruleDotID2013 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_FLOAT_in_ruleDotID2039 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_ruleDotID2065 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_23_in_ruleEdgeOperator2122 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_24_in_ruleEdgeOperator2137 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_25_in_ruleGraphType2180 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_26_in_ruleGraphType2195 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_25_in_ruleAttributeType2238 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_27_in_ruleAttributeType2253 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_28_in_ruleAttributeType2268 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_29_in_ruleCompassPoint2311 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_30_in_ruleCompassPoint2326 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_31_in_ruleCompassPoint2341 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_32_in_ruleCompassPoint2356 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_33_in_ruleCompassPoint2371 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_34_in_ruleCompassPoint2386 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_35_in_ruleCompassPoint2401 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_36_in_ruleCompassPoint2416 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_37_in_ruleCompassPoint2431 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_38_in_ruleCompassPoint2446 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_14_in_ruleGraph289 = new BitSet(new long[]{0x000000001A1080F0L});
+    public static final BitSet FOLLOW_ruleStatement_in_ruleGraph310 = new BitSet(new long[]{0x000000001A1080F0L});
+    public static final BitSet FOLLOW_15_in_ruleGraph323 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleStatement_in_entryRuleStatement359 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleStatement369 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleEdgeStatement_in_ruleStatement417 = new BitSet(new long[]{0x0000000000010002L});
+    public static final BitSet FOLLOW_ruleNodeStatement_in_ruleStatement444 = new BitSet(new long[]{0x0000000000010002L});
+    public static final BitSet FOLLOW_ruleAttribute_in_ruleStatement471 = new BitSet(new long[]{0x0000000000010002L});
+    public static final BitSet FOLLOW_ruleAttributeStatement_in_ruleStatement498 = new BitSet(new long[]{0x0000000000010002L});
+    public static final BitSet FOLLOW_ruleSubgraph_in_ruleStatement525 = new BitSet(new long[]{0x0000000000010002L});
+    public static final BitSet FOLLOW_16_in_ruleStatement538 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleEdgeStatement_in_entryRuleEdgeStatement576 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleEdgeStatement586 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleNode_in_ruleEdgeStatement632 = new BitSet(new long[]{0x0000000001800000L});
+    public static final BitSet FOLLOW_ruleEdgeTarget_in_ruleEdgeStatement653 = new BitSet(new long[]{0x0000000001820002L});
+    public static final BitSet FOLLOW_17_in_ruleEdgeStatement667 = new BitSet(new long[]{0x00000000000000F0L});
+    public static final BitSet FOLLOW_ruleListAttribute_in_ruleEdgeStatement688 = new BitSet(new long[]{0x00000000000C00F0L});
+    public static final BitSet FOLLOW_18_in_ruleEdgeStatement702 = new BitSet(new long[]{0x00000000000000F0L});
+    public static final BitSet FOLLOW_ruleListAttribute_in_ruleEdgeStatement725 = new BitSet(new long[]{0x00000000000C00F0L});
+    public static final BitSet FOLLOW_19_in_ruleEdgeStatement739 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleEdgeTarget_in_entryRuleEdgeTarget777 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleEdgeTarget787 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleEdgeOperator_in_ruleEdgeTarget833 = new BitSet(new long[]{0x000000001A1000F0L});
+    public static final BitSet FOLLOW_ruleSubgraph_in_ruleEdgeTarget855 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleNode_in_ruleEdgeTarget882 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleNodeStatement_in_entryRuleNodeStatement919 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleNodeStatement929 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleNode_in_ruleNodeStatement975 = new BitSet(new long[]{0x0000000000020002L});
+    public static final BitSet FOLLOW_17_in_ruleNodeStatement988 = new BitSet(new long[]{0x00000000000000F0L});
+    public static final BitSet FOLLOW_ruleListAttribute_in_ruleNodeStatement1009 = new BitSet(new long[]{0x00000000000C00F0L});
+    public static final BitSet FOLLOW_18_in_ruleNodeStatement1023 = new BitSet(new long[]{0x00000000000000F0L});
+    public static final BitSet FOLLOW_ruleListAttribute_in_ruleNodeStatement1046 = new BitSet(new long[]{0x00000000000C00F0L});
+    public static final BitSet FOLLOW_19_in_ruleNodeStatement1060 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleAttributeStatement_in_entryRuleAttributeStatement1098 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleAttributeStatement1108 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleAttributeType_in_ruleAttributeStatement1154 = new BitSet(new long[]{0x0000000000020000L});
+    public static final BitSet FOLLOW_17_in_ruleAttributeStatement1166 = new BitSet(new long[]{0x00000000000000F0L});
+    public static final BitSet FOLLOW_ruleListAttribute_in_ruleAttributeStatement1187 = new BitSet(new long[]{0x00000000000C00F0L});
+    public static final BitSet FOLLOW_18_in_ruleAttributeStatement1201 = new BitSet(new long[]{0x00000000000000F0L});
+    public static final BitSet FOLLOW_ruleListAttribute_in_ruleAttributeStatement1224 = new BitSet(new long[]{0x00000000000C00F0L});
+    public static final BitSet FOLLOW_19_in_ruleAttributeStatement1238 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleSubgraph_in_entryRuleSubgraph1274 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleSubgraph1284 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_20_in_ruleSubgraph1330 = new BitSet(new long[]{0x0000000000004010L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleSubgraph1347 = new BitSet(new long[]{0x0000000000004000L});
+    public static final BitSet FOLLOW_14_in_ruleSubgraph1365 = new BitSet(new long[]{0x000000001A1080F0L});
+    public static final BitSet FOLLOW_ruleStatement_in_ruleSubgraph1386 = new BitSet(new long[]{0x000000001A1080F0L});
+    public static final BitSet FOLLOW_15_in_ruleSubgraph1399 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleAttribute_in_entryRuleAttribute1435 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleAttribute1445 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleDotID_in_ruleAttribute1491 = new BitSet(new long[]{0x0000000000200000L});
+    public static final BitSet FOLLOW_21_in_ruleAttribute1503 = new BitSet(new long[]{0x00000000000000F0L});
+    public static final BitSet FOLLOW_ruleDotID_in_ruleAttribute1524 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleListAttribute_in_entryRuleListAttribute1560 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleListAttribute1570 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleDotID_in_ruleListAttribute1616 = new BitSet(new long[]{0x0000000000200002L});
+    public static final BitSet FOLLOW_21_in_ruleListAttribute1629 = new BitSet(new long[]{0x00000000000000F0L});
+    public static final BitSet FOLLOW_ruleDotID_in_ruleListAttribute1650 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleNode_in_entryRuleNode1688 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleNode1698 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleDotID_in_ruleNode1744 = new BitSet(new long[]{0x0000000000400002L});
+    public static final BitSet FOLLOW_22_in_ruleNode1757 = new BitSet(new long[]{0x0000007FE00000F0L});
+    public static final BitSet FOLLOW_rulePort_in_ruleNode1778 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rulePort_in_entryRulePort1816 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRulePort1826 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleDotID_in_rulePort1873 = new BitSet(new long[]{0x0000000000400002L});
+    public static final BitSet FOLLOW_22_in_rulePort1886 = new BitSet(new long[]{0x0000007FE00000F0L});
+    public static final BitSet FOLLOW_ruleCompassPoint_in_rulePort1907 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleCompassPoint_in_rulePort1937 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleDotID_in_entryRuleDotID1974 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleDotID1985 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleDotID2025 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_INT_in_ruleDotID2051 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_FLOAT_in_ruleDotID2077 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_ruleDotID2103 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_23_in_ruleEdgeOperator2162 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_24_in_ruleEdgeOperator2179 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_25_in_ruleGraphType2224 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_26_in_ruleGraphType2241 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_25_in_ruleAttributeType2286 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_27_in_ruleAttributeType2303 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_28_in_ruleAttributeType2320 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_29_in_ruleCompassPoint2365 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_30_in_ruleCompassPoint2382 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_31_in_ruleCompassPoint2399 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_32_in_ruleCompassPoint2416 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_33_in_ruleCompassPoint2433 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_34_in_ruleCompassPoint2450 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_35_in_ruleCompassPoint2467 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_36_in_ruleCompassPoint2484 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_37_in_ruleCompassPoint2501 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_38_in_ruleCompassPoint2518 = new BitSet(new long[]{0x0000000000000002L});
 
 }
