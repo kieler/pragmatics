@@ -34,6 +34,12 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 /**
  * A special edge crossings analysis for hyperedges. Works best with data flow diagrams.
  * 
+ * <p>There is one case of crossings which the algorithm fails to count. When an edge
+ * intersects another edge without joining it, but with the intersection point being a
+ * bend point, the crossing isn't counted. This is usually not a problem for orthogonally
+ * routed diagrams, but may be one for others. I haven't fixed that yet because there's
+ * no easy obvious way to do so, and the case is sufficiently rare.</p>
+ * 
  * @author msp
  * @author cds
  */
