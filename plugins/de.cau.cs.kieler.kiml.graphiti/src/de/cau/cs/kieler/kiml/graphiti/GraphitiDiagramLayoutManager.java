@@ -18,8 +18,9 @@ import java.util.Map.Entry;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
+import org.eclipse.graphiti.mm.algorithms.AbstractText;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.Text;
+import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ChopboxAnchor;
@@ -27,6 +28,8 @@ import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
+import org.eclipse.graphiti.mm.pictograms.FreeFormConnection;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
@@ -45,6 +48,7 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
@@ -227,8 +231,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             // find a label for the container shape
             for (Shape child : ((ContainerShape) shape).getChildren()) {
                 GraphicsAlgorithm textGa = child.getGraphicsAlgorithm();
-                if (textGa instanceof Text) {
-                    String labelText = ((Text) textGa).getValue();
+                if (textGa instanceof AbstractText) {
+                    String labelText = ((AbstractText) textGa).getValue();
                     KLabel label = childnode.getLabel();
                     label.setText(labelText);
                     graphicsAlg2ShapeLayout(textGa, label.getData(KShapeLayout.class), 0, 0);
@@ -238,9 +242,11 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         }
 
         for (Anchor anchor : shape.getAnchors()) {
-            // box-relative anchors are interpreted as ports
+            // box-relative anchors and fixed-position anchors are interpreted as ports
             if (anchor instanceof BoxRelativeAnchor) {
                 createPort(mapping, childnode, (BoxRelativeAnchor) anchor);
+            } else if (anchor instanceof FixPointAnchor) {
+                createPort(mapping, childnode, (FixPointAnchor) anchor);
             }
             // gather all connections in the diagram
             for (Connection c : anchor.getOutgoingConnections()) {
@@ -266,7 +272,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     }
 
     /**
-     * Create a port for the layout graph.
+     * Create a port for the layout graph using a box-relative anchor.
      * 
      * @param parentNode the parent node
      * @param bra the anchor
@@ -289,12 +295,44 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
 
         double parentWidth = referencedGa.getWidth();
         double parentHeight = referencedGa.getHeight();
+        float xPos = (float) (relWidth * parentWidth);
+        float yPos = (float) (relHeight * parentHeight);
+        
         GraphicsAlgorithm portGa = bra.getGraphicsAlgorithm(); 
-
-        float xPos = (float) (relWidth * parentWidth) + portGa.getX();
-        float yPos = (float) (relHeight * parentHeight) + portGa.getY();
+        if (portGa != null) {
+            xPos += portGa.getX();
+            yPos += portGa.getY();
+            portLayout.setSize(portGa.getWidth(), portGa.getHeight());
+        }
         portLayout.setPos(xPos, yPos);
-        portLayout.setSize(portGa.getWidth(), portGa.getHeight());
+        
+        return port;
+    }
+
+    /**
+     * Create a port for the layout graph using a fixed-position anchor.
+     * 
+     * @param parentNode the parent node
+     * @param fpa the anchor
+     * @param layoutConfig the layout configuration
+     */
+    private KPort createPort(final LayoutMapping<PictogramElement> mapping,
+            final KNode parentNode, final FixPointAnchor fpa) {
+        KPort port = KimlUtil.createInitializedPort();
+        port.setNode(parentNode);
+        KShapeLayout portLayout = port.getData(KShapeLayout.class);
+        mapping.getGraphMap().put(port, fpa);
+        
+        float xPos = fpa.getLocation().getX();
+        float yPos = fpa.getLocation().getY();
+
+        GraphicsAlgorithm portGa = fpa.getGraphicsAlgorithm(); 
+        if (portGa != null) {
+            xPos += portGa.getX();
+            yPos += portGa.getY();
+            portLayout.setSize(portGa.getWidth(), portGa.getHeight());
+        }
+        portLayout.setPos(xPos, yPos);
         
         return port;
     }
@@ -390,17 +428,25 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
 
         // set source and target point
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-        calculateAnchorEnds(edgeLayout.getSourcePoint(), sourceAnchor, sourceNode, sourcePort);
-        calculateAnchorEnds(edgeLayout.getTargetPoint(), targetAnchor, targetNode, targetPort);
-        // TODO set bend points for the new edge
+        calculateAnchorEnds(edgeLayout.getSourcePoint(), sourceNode, sourcePort);
+        calculateAnchorEnds(edgeLayout.getTargetPoint(), targetNode, targetPort);
+        // set bend points for the new edge
+        if (connection instanceof FreeFormConnection) {
+            for (Point point : ((FreeFormConnection) connection).getBendpoints()) {
+                KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+                kpoint.setX(point.getX());
+                kpoint.setY(point.getY());
+                edgeLayout.getBendPoints().add(kpoint);
+            }
+        }
 
         graphMap.put(edge, connection);
 
         // find labels for the connection
         for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
             GraphicsAlgorithm ga = decorator.getGraphicsAlgorithm();
-            if (ga instanceof Text) {
-                Text text = (Text) ga;
+            if (ga instanceof AbstractText) {
+                AbstractText text = (AbstractText) ga;
                 String labelText = text.getValue();
                 KLabel label = KimlUtil.createInitializedLabel(edge);
                 label.setText(labelText);
@@ -427,26 +473,26 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * 
      * @param point
      *            a start or end point of an edge
-     * @param anchor
-     *            the corresponding pictogram anchor
+     * @param node
+     *            the node that owns the anchor
+     * @param port
+     *            the port that represents the anchor
      */
-    private void calculateAnchorEnds(final KPoint point, final Anchor anchor, final KNode node,
-            final KPort port) {
-        if (anchor instanceof BoxRelativeAnchor && port != null) {
+    private void calculateAnchorEnds(final KPoint point, final KNode node, final KPort port) {
+        if (port != null) {
             KShapeLayout portLayout = port.getData(KShapeLayout.class);
-            float x = portLayout.getXpos() + portLayout.getWidth() / 2.0f;
-            float y = portLayout.getYpos() + portLayout.getHeight() / 2.0f;
+            float x = portLayout.getXpos() + portLayout.getWidth() / 2;
+            float y = portLayout.getYpos() + portLayout.getHeight() / 2;
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             x += nodeLayout.getXpos();
             y += nodeLayout.getYpos();
             point.setPos(x, y);
-        } else if (anchor instanceof ChopboxAnchor) {
+        } else {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             float x = nodeLayout.getWidth() / 2 + nodeLayout.getXpos();
             float y = nodeLayout.getHeight() / 2 + nodeLayout.getYpos();
             point.setPos(x, y);
         }
-        // TODO handle FixPointAnchors
     }
     
 }

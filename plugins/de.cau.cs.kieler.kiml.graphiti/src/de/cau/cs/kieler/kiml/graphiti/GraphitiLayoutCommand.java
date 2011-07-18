@@ -26,6 +26,7 @@ import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
+import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.FreeFormConnection;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
@@ -128,25 +129,31 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      */
     private void applyPortLayout(final KPort kport, final PictogramElement pelem) {
         KShapeLayout shapeLayout = kport.getData(KShapeLayout.class);
+        double offsetx = 0;
+        double offsety = 0;
+
+        // node insets need to be considered
+        KInsets insets = kport.getNode().getData(KShapeLayout.class).getInsets();
+        offsetx += insets.getLeft();
+        offsety += insets.getTop();
+
+        if (pelem.getGraphicsAlgorithm() != null) {
+            offsetx += pelem.getGraphicsAlgorithm().getX();
+            offsety += pelem.getGraphicsAlgorithm().getY();
+        }
+        
         if (pelem instanceof BoxRelativeAnchor) {
             BoxRelativeAnchor anchor = (BoxRelativeAnchor) pelem;
-            GraphicsAlgorithm ga = anchor.getReferencedGraphicsAlgorithm();
-
-            double offsetx = anchor.getGraphicsAlgorithm().getX();
-            double offsety = anchor.getGraphicsAlgorithm().getY();
-            // node insets need to be considered
-            KInsets insets = kport.getNode().getData(KShapeLayout.class).getInsets();
-            offsetx += insets.getLeft();
-            offsety += insets.getTop();
             
-            double relWidth = (shapeLayout.getXpos() - offsetx) / ga.getWidth();
+            GraphicsAlgorithm refGa = anchor.getReferencedGraphicsAlgorithm();
+            double relWidth = (shapeLayout.getXpos() - offsetx) / refGa.getWidth();
             if (relWidth < 0) {
                 relWidth = 0;
             }
             if (relWidth > 1) {
                 relWidth = 1;
             }
-            double relHeight = (shapeLayout.getYpos() - offsety) / ga.getHeight();
+            double relHeight = (shapeLayout.getYpos() - offsety) / refGa.getHeight();
             if (relHeight < 0) {
                 relHeight = 0;
             }
@@ -158,6 +165,11 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             anchor.setRelativeHeight(relHeight);
 
             featureProvider.layoutIfPossible(new LayoutContext(pelem));
+        } else if (pelem instanceof FixPointAnchor) {
+            FixPointAnchor anchor = (FixPointAnchor) pelem;
+
+            anchor.getLocation().setX((int) (shapeLayout.getXpos() - offsetx));
+            anchor.getLocation().setY((int) (shapeLayout.getYpos() - offsety));
         }
     }
 

@@ -19,8 +19,8 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.impl.LayoutContext;
 import org.eclipse.graphiti.features.impl.AbstractLayoutFeature;
+import org.eclipse.graphiti.mm.algorithms.AbstractText;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -104,7 +104,7 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
         // position of each child shape of the entity adjusted
         for (Shape shape : containerShape.getChildren()) {
             GraphicsAlgorithm ga = shape.getGraphicsAlgorithm();
-            if (ga instanceof Text) {
+            if (ga instanceof AbstractText) {
                 changed |= GraphitiUtil.setBounds(ga, 0,
                         AddPortFeature.PORT_SIZE + entityHeight + TEXT_DIST,
                         containerGa.getWidth(), TEXT_HEIGHT);

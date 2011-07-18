@@ -18,7 +18,7 @@ import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.AbstractUpdateFeature;
 import org.eclipse.graphiti.features.impl.Reason;
-import org.eclipse.graphiti.mm.algorithms.Text;
+import org.eclipse.graphiti.mm.algorithms.AbstractText;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
@@ -61,9 +61,8 @@ public class UpdateEntityFeature extends AbstractUpdateFeature {
             if (pictogramElement instanceof ContainerShape) {
                 ContainerShape cs = (ContainerShape) pictogramElement;
                 for (Shape shape : cs.getChildren()) {
-                    if (shape.getGraphicsAlgorithm() instanceof Text) {
-                        ((Text) shape.getGraphicsAlgorithm()).setValue(businessName);
-
+                    if (shape.getGraphicsAlgorithm() instanceof AbstractText) {
+                        ((AbstractText) shape.getGraphicsAlgorithm()).setValue(businessName);
                         return true;
                     }
                 }
@@ -83,8 +82,8 @@ public class UpdateEntityFeature extends AbstractUpdateFeature {
         if (pictogramElement instanceof ContainerShape) {
             ContainerShape cs = (ContainerShape) pictogramElement;
             for (Shape shape : cs.getChildren()) {
-                if (shape.getGraphicsAlgorithm() instanceof Text) {
-                    Text text = (Text) shape.getGraphicsAlgorithm();
+                if (shape.getGraphicsAlgorithm() instanceof AbstractText) {
+                    AbstractText text = (AbstractText) shape.getGraphicsAlgorithm();
                     pictogramName = text.getValue();
                 }
             }

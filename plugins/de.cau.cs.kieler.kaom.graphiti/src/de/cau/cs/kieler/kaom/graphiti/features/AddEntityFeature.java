@@ -17,8 +17,8 @@ import org.eclipse.graphiti.features.IDirectEditingInfo;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
+import org.eclipse.graphiti.mm.algorithms.MultiText;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
-import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
 import org.eclipse.graphiti.mm.pictograms.ChopboxAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -91,7 +91,7 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
 
         // the entity label
         Shape labelShape = peCreateService.createShape(entityShape, false);
-        Text text = gaService.createDefaultText(labelShape, entity.getName());
+        MultiText text = gaService.createDefaultMultiText(getDiagram(), labelShape, entity.getName());
         text.setStyle(styleProvider.getStyle());
         text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
         text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);

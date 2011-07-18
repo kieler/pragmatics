@@ -90,7 +90,7 @@ public class AddLinkFeature extends AbstractAddFeature {
         ConnectionDecorator textDecorator =
                 peCreateService.createConnectionDecorator(connection, true,
                         TEXT_LOCATION, true);
-        Text text = gaService.createDefaultText(textDecorator);
+        Text text = gaService.createDefaultText(getDiagram(), textDecorator);
         text.setStyle(styleProvider.getStyle());
         gaService.setLocation(text, TEXT_OFFSET, 0);
 
