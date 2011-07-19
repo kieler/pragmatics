@@ -19,7 +19,6 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
-//import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Alignment;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -51,7 +50,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * <dt>Slots:</dt>
  * <dd>After phase 3.</dd>
  * <dt>Same-slot dependencies:</dt>
- * <dd>none</dd>
+ * <dd>None.</dd>
  * </dl>
  * 
  * @author ima
@@ -121,7 +120,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
 
         // create lower side node (higher layer index)
         LNode lowerSideDummy = new LNode();
-        lowerSideDummy.setProperty(LayoutOptions.ALIGNMENT, Alignment.LEFT);
+        lowerSideDummy.setProperty(LayoutOptions.ALIGNMENT, Alignment.CENTER);
         lowerSideDummy.getSize().y = insets.getBottom() + borderSpacing;
         lowerSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
         lowerSideDummy.setProperty(Properties.SIDE_OWNER, openingBorder);
@@ -135,7 +134,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
 
         // create upper side node (lower layer index)
         LNode upperSideDummy = new LNode();
-        upperSideDummy.setProperty(LayoutOptions.ALIGNMENT, Alignment.LEFT);
+        upperSideDummy.setProperty(LayoutOptions.ALIGNMENT, Alignment.CENTER);
         upperSideDummy.getSize().y = insets.getTop() + borderSpacing;
         upperSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
         upperSideDummy.setProperty(Properties.SIDE_OWNER, openingBorder);
@@ -178,7 +177,8 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
             upperEdge.setSource(highPortEast);
 
             // handle next layer
-            insertSideDummies(startIndex + 1, endIndex, layers, openingBorder, lowerEdge, upperEdge);
+            insertSideDummies(startIndex + 1, endIndex, layers, openingBorder, lowerEdge,
+                    upperEdge);
         }
     }
 
