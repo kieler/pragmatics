@@ -64,7 +64,6 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
             ServerLayoutDataService lds = new ServerLayoutDataService();
             LayoutDataService.addService(lds);
             lds.loadLayoutProviderExtensions();
-            Logger.log("XXX", LayoutDataService.getInstance().getDump()); //FIXME remove for deployment
         }
     }
 
