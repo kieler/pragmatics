@@ -24,17 +24,17 @@ import de.cau.cs.kieler.kwebs.client.providers.EclipseProvidersStorageManager;
 import de.cau.cs.kieler.kwebs.client.providers.Providers;
 
 /**
- * .
+ * Activator for the client plugin. It provides storage management for the user defined provider list.
  *
  * @kieler.rating  2011-05-04 red
  * @author  swe
  */
 public class Activator extends Plugin {
 
-    /** */
+    /** The preference store associated with this plugin. */
     private static IPreferenceStore preferenceStore;
 
-    /** */
+    /** The instance of this activator. */
     private static Activator instance;
 
     /**
@@ -51,21 +51,23 @@ public class Activator extends Plugin {
     }
 
     /**
-     *
-     * @return
+     * Returns the instance of this activator.
+     * 
+     * @return the instance of this activator
      */
     public static Activator getInstance() {
         return instance;
     }
 
     /**
-     *
-     * @return
+     * Returns the preference store associated with this plugin.
+     * 
+     * @return the preference store associated with this plugin
      */
     public final synchronized IPreferenceStore getPreferenceStore() {
         if (preferenceStore == null) {
             preferenceStore = new ScopedPreferenceStore(
-                new InstanceScope(), getBundle().getSymbolicName()
+                InstanceScope.INSTANCE, getBundle().getSymbolicName()
             );
         }
         return preferenceStore;

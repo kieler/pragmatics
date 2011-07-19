@@ -9,8 +9,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
  de.cau.cs.kieler.core;bundle-version="0.6.0",
  de.cau.cs.kieler.kwebs;bundle-version="0.1.0",
  de.cau.cs.kieler.kiml;bundle-version="0.9.0",
- de.cau.cs.kieler.kiml.service;bundle-version="0.1.0",
- de.unido.ls5.eti.client.os;bundle-version="0.1.0"
+ de.cau.cs.kieler.kiml.service;bundle-version="0.1.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.cau.cs.kieler.kwebs.client.activator.Activator
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel

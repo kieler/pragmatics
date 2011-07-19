@@ -19,9 +19,8 @@ import java.util.Date;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
+import de.cau.cs.kieler.kwebs.client.Clients;
 import de.cau.cs.kieler.kwebs.client.IWebServiceClient;
-import de.cau.cs.kieler.kwebs.client.JaxWsClient;
-import de.cau.cs.kieler.kwebs.client.JetiClient;
 import de.cau.cs.kieler.kwebs.client.providers.Providers;
 import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
 import de.cau.cs.kieler.kwebs.util.Uris;
@@ -55,12 +54,7 @@ public final class Availability {
         String address = provider.getAddress();
         MessageBox box = new MessageBox(shell);
         if (Providers.isValidProvider(provider)) {
-            IWebServiceClient client = null;
-            if (Uris.isHttpURI(address) || Uris.isHttpsURI(address)) {
-                client = new JaxWsClient(provider);
-            } else if (Uris.isJetiURI(address)) {
-                client = new JetiClient(provider);
-            }
+            IWebServiceClient client = Clients.createClientForAddress(address);
             try {
                 String version = null;
                 Date start = null;

@@ -151,7 +151,7 @@ public final class Logger {
      * 
      * @return the run mode
      */
-    public final Mode getRunMode() {
+    public Mode getRunMode() {
         return runMode;        
     }
     
@@ -161,7 +161,7 @@ public final class Logger {
      * @param therunMode
      *            the new run mode
      */
-    public final void setRunMode(Mode therunMode) {
+    public void setRunMode(final Mode therunMode) {
         runMode = therunMode;        
     }
     
@@ -340,7 +340,8 @@ public final class Logger {
         LoggerEvent event = new LoggerEvent(
             date, clas, method, line, severity, tmp, data, throwable
         );
-        if (severity == Severity.ALWAYS || runMode == Mode.DEBUG && severity == Severity.DEBUG || severity.compareTo(sLog) >= 0) {
+        if (severity == Severity.ALWAYS || runMode == Mode.DEBUG && severity == Severity.DEBUG
+            || severity.compareTo(sLog) >= 0) {
             LOCK_LOG.lock();
             for (ILoggerListener listener : listeners) {
                 listener.loggerEvent(event);

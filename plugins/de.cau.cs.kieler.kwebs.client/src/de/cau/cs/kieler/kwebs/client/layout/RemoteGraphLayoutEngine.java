@@ -22,21 +22,18 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
+import de.cau.cs.kieler.kwebs.client.Clients;
 import de.cau.cs.kieler.kwebs.client.IWebServiceClient;
-import de.cau.cs.kieler.kwebs.client.JaxWsClient;
-import de.cau.cs.kieler.kwebs.client.JetiClient;
 import de.cau.cs.kieler.kwebs.client.preferences.Preferences;
 import de.cau.cs.kieler.kwebs.client.providers.Providers;
 import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
 import de.cau.cs.kieler.kwebs.formats.Formats;
 import de.cau.cs.kieler.kwebs.logging.Logger;
 import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
-import de.cau.cs.kieler.kwebs.service.LocalServiceException;
 import de.cau.cs.kieler.kwebs.service.ServiceException;
 import de.cau.cs.kieler.kwebs.transformation.KGraphXmiTransformer;
 import de.cau.cs.kieler.kwebs.util.Extensions;
 import de.cau.cs.kieler.kwebs.util.Graphs;
-import de.cau.cs.kieler.kwebs.util.Uris;
 
 /**
  * .
@@ -139,23 +136,10 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
                 if (client != null) {
                     client.disconnect();
                 }
-                String uri = provider.getAddress();
-                if (Uris.isHttpURI(uri) || Uris.isHttpsURI(uri)) {
-                    if (client != null && client instanceof JaxWsClient) {
-                        client.setProvider(provider);
-                    } else {
-                        client = new JaxWsClient(provider);
-                    }
-                } else if (Uris.isJetiURI(uri)) {
-                    if (client != null && client instanceof JetiClient) {
-                        client.setProvider(provider);
-                    } else {
-                        client = new JetiClient(provider);
-                    }
-                }
+                client = Clients.getClientForAddress(provider.getAddress());                
                 if (client == null) {
                     throw new IllegalStateException("Client object could not be generated");
-                }
+                } /*
                 try {
                     Logger.log(
                         "Using remote layout (" + provider.getName() + ", " + provider.getAddress() + ")"
@@ -164,22 +148,22 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
                     RemoteLayoutDataService.resetInstance();
                     RemoteLayoutDataService.getInstance().initializeWithClient(client);
                     Logger.log("Meta data retrieved");
-                    //LayoutDataService.setMode(LayoutDataService.REMOTEDATASERVICE);
+                    LayoutDataService.setMode(LayoutDataService.REMOTEDATASERVICE);
                     Logger.log("Switched to remote mode");
                 } catch (Exception e) {
                     Logger.log(Severity.FAILURE, "Initializing remote layout failed", e);
                     throw new LocalServiceException("Initializing remote layout failed", e);
-                }
+                }*/
             }
         } else {
-            try {
+            /*try {
                 Logger.log("Using local layout");
-                //LayoutDataService.setMode(LayoutDataService.ECLIPSEDATASERVICE);
+                LayoutDataService.setMode(LayoutDataService.ECLIPSEDATASERVICE);
                 Logger.log("Switched to local mode");
             } catch (Exception e) {
                 Logger.log(Severity.FAILURE, "Initializing local layout failed", e);
                 throw new LocalServiceException("Initializing local layout failed", e);
-            }
+            }*/
         }
     }
 
@@ -223,7 +207,7 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
      *
      * @param event
      */
-    public final void propertyChange(final PropertyChangeEvent event) { System.out.println("Layout Provider Preferences Change received");
+    public final synchronized void propertyChange(final PropertyChangeEvent event) { System.out.println("Layout Provider Preferences Change received");
         if (event.getProperty().equals(Preferences.PREFID_LAYOUT_SETTINGS_CHANGED)) {
             initialize();
         }

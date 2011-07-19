@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="de.cau.cs.kieler.kwebs.client.configuration" name="Configuration for the KIELER default remote layout provider" schema="schema/de.cau.cs.kieler.kwebs.client.configuration.exsd"/>
+   <extension-point id="de.cau.cs.kieler.kwebs.client.protocol.support" name="Configuration for the supported protocols and the according clients" schema="schema/de.cau.cs.kieler.kwebs.client.protocol.support.exsd"/>
    <extension
          point="org.eclipse.ui.preferencePages">
       <page

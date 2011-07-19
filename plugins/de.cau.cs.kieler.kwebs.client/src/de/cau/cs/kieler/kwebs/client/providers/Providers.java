@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kwebs.client.providers;
 
 import java.util.Vector;
 
+import de.cau.cs.kieler.kwebs.client.Clients;
 import de.cau.cs.kieler.kwebs.util.Uris;
 
 /**
@@ -127,6 +128,8 @@ public class Providers {
                &&
                Uris.isValidURI(provider.getAddress())
                &&
+               Clients.isAddressSupported(provider.getAddress())
+               &&
                (
                    !Uris.isHttpsURI(provider.getAddress())
                    ||
@@ -147,7 +150,7 @@ public class Providers {
      * @return
      */
     public static Provider createProvider(final String name,
-            final String address) {
+        final String address) {
         return INSTANCE.new Provider(name, address, null, null);
     }
 

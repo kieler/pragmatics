@@ -39,16 +39,9 @@ public final class Uris {
      * @return true if valid, false otherwise
      */
     public static boolean isValidURI(final String uri) {
-        String tmp = uri;
-        if (tmp != null && tmp.length() > 0) {
-            tmp = tmp.trim();
-            if (!tmp.toLowerCase().startsWith("http:")
-                && !tmp.toLowerCase().startsWith("https:")
-                && !tmp.toLowerCase().startsWith("eti:")) {
-                return false;
-            }
+        if (uri != null && uri.length() > 0) {
             try {
-                new URI(tmp);
+                new URI(uri);
                 return true;
             } catch (Exception e) {
                 return false;
@@ -92,6 +85,25 @@ public final class Uris {
     }
 
     /**
+     * Returns the protocol from an uri.
+     * 
+     * @param uri
+     *            the uri
+     * @return the protocol
+     */
+    public static String getProtocol(final String uri) {
+        //CHECKSTYLEOFF EmptyBlock
+        if (isValidURI(uri)) {
+            try {
+                return new URI(uri).getScheme();
+            } catch (Exception e) {
+            }
+        }
+        //CHECKSTYLEON EmptyBlock
+        return null;
+    }
+    
+    /**
      * Returns the host from an uri.
      * 
      * @param uri
@@ -99,18 +111,14 @@ public final class Uris {
      * @return the host
      */
     public static String getHost(final String uri) {
-
         //CHECKSTYLEOFF EmptyBlock
-
         if (isValidURI(uri)) {
             try {
                 return new URI(uri).getHost();
             } catch (Exception e) {
             }
         }
-
         //CHECKSTYLEON EmptyBlock
-
         return null;
     }
 
