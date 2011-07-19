@@ -101,9 +101,6 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
             // get insets and border spacing
             KInsets insets = compoundNode.getProperty(Properties.ORIGINAL_INSETS);
             float ownBorderSpacing = compoundNode.getProperty(Properties.BORDER_SPACING);
-            // KNode parent = compoundNode.getProperty(Properties.PARENT);
-            // KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
-            // float parentBorderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
 
             // get positions of the COMPOUND_SIDE dummy nodes at the borders.
             KVector posLeftUpper = findSideNodePos(compoundNode, false, true, layeredGraph);
@@ -111,11 +108,11 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
             KVector posLeftLower = findSideNodePos(compoundNode, true, true, layeredGraph);
 
             // set position of compound node (upper left corner)
-            compoundNode.getPosition().x = posLeftUpper.x /* + parentBorderSpacing */;
-            compoundNode.getPosition().y = posLeftUpper.y /* + parentBorderSpacing */;
+            compoundNode.getPosition().x = posLeftUpper.x;
+            compoundNode.getPosition().y = posLeftUpper.y;
 
             // set width and height of compound node
-            compoundNode.getSize().x = (posRightUpper.x - posLeftUpper.x + 2 * ownBorderSpacing);
+            compoundNode.getSize().x = (posRightUpper.x - posLeftUpper.x);
             compoundNode.getSize().y = (posLeftLower.y - posLeftUpper.y + insets.getBottom() 
                     + ownBorderSpacing);
         }
