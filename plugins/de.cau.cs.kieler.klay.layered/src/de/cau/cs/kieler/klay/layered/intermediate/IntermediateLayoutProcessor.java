@@ -69,10 +69,10 @@ public enum IntermediateLayoutProcessor {
     HYPEREDGE_DUMMY_MERGER,
     /** Sets the positions of ports. */
     PORT_POSITION_PROCESSOR,
-    /** Inserts dummy nodes and edges to achieve free drawing space for compound node borders. */
-    COMPOUND_SIDE_PROCESSOR,
     /** Calculates the margins of nodes according to the sizes of ports and labels. */
     NODE_MARGIN_CALCULATOR,
+    /** Inserts dummy nodes and edges to achieve free drawing space for compound node borders. */
+    COMPOUND_SIDE_PROCESSOR,
     
     // Before Phase 5
     
