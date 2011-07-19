@@ -64,7 +64,7 @@ public class ListItemGene extends AbstractGene<Integer> {
      *            the mutation info
      */
     public ListItemGene(
-            final Object theId,
+            final String theId,
             final Integer theValue,
             final ListItemTypeInfo theTypeInfo,
             final MutationInfo theMutationInfo) {
@@ -112,7 +112,7 @@ public class ListItemGene extends AbstractGene<Integer> {
         Integer value = this.getValue().intValue();
         int newInt = value.intValue();
         if (random.nextDouble() < prob) {
-            newInt = random.nextInt(upperBound - lowerBound + 1) + lowerBound;
+            newInt = random.nextInt((upperBound - lowerBound) + 1) + lowerBound;
         }
 
         result =
@@ -136,7 +136,7 @@ public class ListItemGene extends AbstractGene<Integer> {
             final int f1 = 17881;
             final int f2 = 41;
             this.cachedHash =
-                    this.getTypeInfo().getList().hashCode() * f1 + this.getId().hashCode() * f2
+                    (this.getTypeInfo().getList().hashCode() * f1) + (this.getId().hashCode() * f2)
                             + this.getValue().hashCode();
         }
 

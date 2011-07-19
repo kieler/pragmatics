@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.evol.alg;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
 /**
  * Abstract implementation of an evolutionary algorithm. Implementations of
@@ -21,13 +22,15 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
  * {@link #step()} can be used for stepwise execution. In this case,
  * {@link #reset()} must be called explicitly once before.
  *
+ * @kieler.rating 2011-07-08 yellow reviewed by swe, ima, msp
  * @author bdu
  */
 public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
 
     /**
      * Returns the generation number. The generation number is initially
-     * <code>0</code>. It is increased by <code>1</code> in each step.
+     * <code>0</code>. It is increased by <code>1</code> in each step of the
+     * algorithm.
      *
      * @return the generation number
      */
@@ -121,8 +124,20 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      **/
     protected abstract void survive();
 
+    /**
+     * Returns the collection of individuals.
+     *
+     * @return population
+     */
+    public final Population getPopulation() {
+        return this.population;
+    }
+
     // private fields
     /** The number of the current generation. */
     private int generationNumber = 0;
+
+    /** The current population. */
+    private final Population population = new Population();
 
 }

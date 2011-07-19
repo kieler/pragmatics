@@ -22,9 +22,9 @@ import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
-import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
@@ -169,7 +169,7 @@ class AdoptingRecursiveGraphLayoutEngine extends RecursiveGraphLayoutEngine {
         LayoutDataService layoutServices = LayoutDataService.getInstance();
 
         // Set layout options according to the genome.
-        for (final IGene<?> gene : individual) {
+        for (final IGene<?> gene : individual.getGenes()) {
 
             Object value = gene.getValue();
             Object id = gene.getId();

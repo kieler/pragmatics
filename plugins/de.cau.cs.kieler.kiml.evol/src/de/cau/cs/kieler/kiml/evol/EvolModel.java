@@ -126,7 +126,7 @@ public final class EvolModel {
             // user-rating fields for that purpose.
             double compensation = -theDelta / ((pop.size() - 1));
 
-            for (final Genome g : pop) {
+            for (final Genome g : pop.getGenomes()) {
                 rating = g.hasUserRating() ? g.getUserRating() : 0;
                 if (g == current) {
                     g.setUserRating(Double.valueOf(rating + theDelta));
@@ -139,7 +139,7 @@ public final class EvolModel {
             // Punish predictors
             String key = "proposedRating:" + current.getId();
             double newRating = current.hasUserRating() ? current.getUserRating() : 0.0;
-            for (final Genome predictor : this.getRatingPredictors()) {
+            for (final Genome predictor : this.getRatingPredictors().getGenomes()) {
                 Map<String, Object> features = predictor.getFeatures();
                 if ((features != null) && features.containsKey(key)) {
                     Double prediction = (Double) features.get(key);
@@ -209,7 +209,7 @@ public final class EvolModel {
             // XXX: this should be refactored. The predictors' fitness should
             // be calculated in a more sophisticated way.
             final double reward = 0.01;
-            for (final Genome predictor : predictors) {
+            for (final Genome predictor : predictors.getGenomes()) {
                 // presuming predictor != null
                 double oldRating = predictor.hasUserRating() ? predictor.getUserRating() : 0.0;
                 predictor.setUserRating(oldRating + reward);
@@ -238,7 +238,7 @@ public final class EvolModel {
         int pos = this.getPosition();
         assert (pos >= 0) && (pos < pop.size()) : "position out of range";
 
-        return pop.get(pos);
+        return pop.getGenomes().get(pos);
     }
 
     /**
@@ -453,7 +453,7 @@ public final class EvolModel {
 
         int result = -1;
         for (int i = 0; i < pop.size(); i++) {
-            Genome ind = pop.get(i);
+            Genome ind = pop.getGenomes().get(i);
             if (!ind.hasUserRating()) {
                 result = i;
                 break;

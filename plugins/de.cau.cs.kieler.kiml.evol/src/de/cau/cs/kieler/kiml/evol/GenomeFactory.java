@@ -110,7 +110,7 @@ final class GenomeFactory {
          * @return a gene
          */
         public IGene<?> newGene(
-                final Object theId, final Object theValue, final double theMutationProbability) {
+                final String theId, final Object theValue, final double theMutationProbability) {
 
             IGene<?> result;
 
@@ -189,7 +189,7 @@ final class GenomeFactory {
          * @return nothing
          */
         public IGene<?> newGene(
-                final Object theId, final Object theValue, final TypeInfo<?> theTypeInfo,
+                final String theId, final Object theValue, final TypeInfo<?> theTypeInfo,
                 final MutationInfo theMutationInfo) {
             throw new UnsupportedOperationException();
         }
@@ -208,7 +208,7 @@ final class GenomeFactory {
          * @return the new gene
          */
         private IGene<?> newBooleanGene(
-                final Object theId, final Object theValue, final double theMutationProbability,
+                final String theId, final Object theValue, final double theMutationProbability,
                 final Distribution distr) {
             IGene<?> result;
             boolean booleanValue = Boolean.parseBoolean(theValue.toString());
@@ -238,7 +238,7 @@ final class GenomeFactory {
          * @return the new gene
          */
         private IGene<?> newEnumGene(
-                final Object theId, final Object theRawValue,
+                final String theId, final Object theRawValue,
                 final double theMutationProbability, final LayoutOptionData<?> layoutOptionData) {
             IGene<?> result;
             int choicesCount = layoutOptionData.getChoices().length;
@@ -292,7 +292,7 @@ final class GenomeFactory {
          * @return the new gene
          */
         private IGene<?> newFloatGene(
-                final Object theId, final Object theRawValue,
+                final String theId, final Object theRawValue,
                 final double theMutationProbability, final String lowerBoundAttr,
                 final String upperBoundAttr, final String varianceAttr, final Distribution distr) {
             // TODO: Too many parameters --> refactor. Remove variance stuff.
@@ -364,7 +364,7 @@ final class GenomeFactory {
          * @return the new gene
          */
         private IGene<?> newIntegerGene(
-                final Object theId, final Object theRawValue,
+                final String theId, final Object theRawValue,
                 final double theMutationProbability, final String lowerBoundAttr,
                 final String upperBoundAttr, final String varianceAttr, final Distribution distr) {
             // TODO: Too many parameters --> refactor. Remove variance stuff.
@@ -456,7 +456,7 @@ final class GenomeFactory {
 
         IGeneFactory factory = new IGeneFactory() {
             public IGene<?> newGene(
-                    final Object theId, final Object theValue, final double theMutationProb) {
+                    final String theId, final Object theValue, final double theMutationProb) {
 
                 final float defaultValue = 1.0f;
                 final float lowerBound = 0.0f;
@@ -474,7 +474,7 @@ final class GenomeFactory {
 
 
             public IGene<?> newGene(
-                    final Object theId, final Object theValue, final TypeInfo<?> theTypeInfo,
+                    final String theId, final Object theValue, final TypeInfo<?> theTypeInfo,
                     final MutationInfo theMutationInfo) {
                 if (!(theTypeInfo instanceof FloatTypeInfo)) {
                     throw new IllegalArgumentException();
@@ -491,7 +491,7 @@ final class GenomeFactory {
         for (final String id : metricIds) {
             IGene<?> gene = factory.newGene(id, value, mutationProb);
             assert gene != null : "Failed to create gene for " + id;
-            result.add(gene);
+            result.getGenes().add(gene);
         }
         return result;
     }
@@ -740,7 +740,7 @@ final class GenomeFactory {
         if ((configs == null) || (layoutHintIds == null) || layoutHintIds.isEmpty()) {
             return null;
         }
-        
+
         /*
          * Discuss: If more than one ILayoutConfig is contained in the given list,
          * they may be for different layout algorithms.
@@ -791,7 +791,7 @@ final class GenomeFactory {
                         this.layoutOptionGeneFactory.newGene(id, value.toString(),
                                 uniformProb);
                 assert gene != null : "Failed to create gene for " + id;
-                result.add(gene);
+                result.getGenes().add(gene);
 
             } else {
                 EvolPlugin.logStatus("Option not registered as evolutionData: " + id);
@@ -829,7 +829,7 @@ final class GenomeFactory {
 
         // Create the layout hint gene.
         ListItemGene hintGene = createLayoutHintGene(algorithmIds, algorithmId);
-        result.add(hintGene);
+        result.getGenes().add(hintGene);
 
         // Collect all learnable layout options that are known by the
         // algorithms.
@@ -841,7 +841,7 @@ final class GenomeFactory {
 
         try {
             Genome extraGenes = createGenes(knownOptionIds, presentIds, uniformProb, null);
-            result.addAll(extraGenes);
+            result.getGenes().addAll(extraGenes.getGenes());
         } catch (final Exception exception) {
             throw new WrappedException(exception, "Genome could not be created.");
         }
@@ -893,7 +893,7 @@ final class GenomeFactory {
 
                 IGene<?> gene = geneFactory.newGene(optionId, value.toString(), prob);
                 assert gene != null : "Failed to create gene for " + optionId;
-                extraGenes.add(gene);
+                extraGenes.getGenes().add(gene);
             }
         }
         return extraGenes;

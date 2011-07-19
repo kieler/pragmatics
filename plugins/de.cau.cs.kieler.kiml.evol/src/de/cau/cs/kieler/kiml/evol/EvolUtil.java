@@ -291,7 +291,7 @@ public final class EvolUtil {
                 Map<String, Object> measurements = null;
 
                 int weightsGenomesCount = weightsGenomes.size();
-                for (final Genome weightGenome : weightsGenomes) {
+                for (final Genome weightGenome : weightsGenomes.getGenomes()) {
                     assert weightGenome != null;
 
                     Map<String, Double> weightsMap = extractMetricWeights(weightGenome);
@@ -365,7 +365,7 @@ public final class EvolUtil {
             // presuming metricIds != null
             Map<String, Double> result = new HashMap<String, Double>(metricIds.size());
 
-            for (final IGene<?> gene : genome) {
+            for (final IGene<?> gene : genome.getGenes()) {
                 // presuming gene != null
                 String id = (String) gene.getId();
 
@@ -1085,10 +1085,10 @@ public final class EvolUtil {
 
         return configs;
     }
-    
+
     public static final Property<IMutableLayoutConfig> LAYOUT_CONFIG
             = new Property<IMutableLayoutConfig>("context.layoutConfig");
-    
+
     private static LayoutContext getContext(final IWorkbenchPart editor) {
         DiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
                 .getManager(editor, null);
@@ -1100,12 +1100,12 @@ public final class EvolUtil {
             context.setProperty(LayoutContext.DOMAIN_MODEL, diagramElement);
             context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
             context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, editor);
-            
+
             LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
             IMutableLayoutConfig layoutConfig = optionManager.createConfig(diagramElement,
                     manager.getLayoutConfig());
             context.setProperty(LAYOUT_CONFIG, layoutConfig);
-            
+
             context.setProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS, true);
             layoutConfig.enrich(context);
             return context;
@@ -1210,7 +1210,7 @@ public final class EvolUtil {
 
                 String newLine = EvolPlugin.LINE_DELIMITER;
 
-                for (final IGene<?> gene : genome) {
+                for (final IGene<?> gene : genome.getGenes()) {
                     writer.append(gene.getId() + ";" + gene.getValue() + newLine);
                 }
 

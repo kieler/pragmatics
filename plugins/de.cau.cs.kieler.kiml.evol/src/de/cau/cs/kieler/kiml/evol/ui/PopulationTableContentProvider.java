@@ -45,7 +45,7 @@ public class PopulationTableContentProvider implements IStructuredContentProvide
         inputPopulation = (Population) inputElement;
         PopulationTableEntry[] result = new PopulationTableEntry[inputPopulation.size()];
         int i = 0;
-        for (final Genome individual : inputPopulation) {
+        for (final Genome individual : inputPopulation.getGenomes()) {
             result[i] = new PopulationTableEntry();
             result[i].setIndividual(individual);
             result[i].setIndex(i);

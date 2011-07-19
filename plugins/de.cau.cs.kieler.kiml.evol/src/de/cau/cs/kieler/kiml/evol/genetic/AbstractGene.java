@@ -38,7 +38,7 @@ public abstract class AbstractGene<T extends Comparable<? super T>> implements I
      *            the mutation info
      */
     AbstractGene(
-            final Object theId,
+            final String theId,
             final T theValue,
             final TypeInfo<T> theTypeInfo,
             final MutationInfo theMutationInfo) {
@@ -65,7 +65,7 @@ public abstract class AbstractGene<T extends Comparable<? super T>> implements I
     /**
      * The id of this gene.
      */
-    private final Object id;
+    private final String id;
 
     /**
      * The value of this gene.
@@ -92,7 +92,7 @@ public abstract class AbstractGene<T extends Comparable<? super T>> implements I
      *
      * @return the ID
      */
-    public Object getId() {
+    public String getId() {
         return this.id;
     }
 

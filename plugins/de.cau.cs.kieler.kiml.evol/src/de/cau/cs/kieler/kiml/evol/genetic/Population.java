@@ -15,20 +15,25 @@ package de.cau.cs.kieler.kiml.evol.genetic;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.ListIterator;
 
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.util.FilteredIterator;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.IFilterable;
 
 /**
- * A population is a list of individuals (genomes).
+ * A population has a list of individuals (genomes).
  *
  * @author bdu
  *
  */
-public class Population extends ArrayList<Genome> implements IFilterable<Population, Genome> {
+public class Population extends MapPropertyHolder
+ implements IFilterable<List<Genome>, Genome> {
+    // TODO: implement List<Genome>?
 
     /**
      * For {@link Serializable}.
@@ -68,7 +73,17 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
      *            {@link NullPointerException} is thrown.
      */
     public Population(final List<Genome> individuals) {
-        this.addAll(individuals);
+        this.getGenomes().addAll(individuals);
+    }
+
+    /**
+     * Creates a new {@link Population} instance using the given instance.
+     *
+     * @param thePopulation
+     *            a population
+     */
+    public Population(final Population thePopulation) {
+        this(thePopulation.getGenomes());
     }
 
     /**
@@ -77,11 +92,11 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
      *         {@code Double.NaN} if there are no individuals.
      */
     public Double getAverageRating() {
-        if (this.isEmpty()) {
+        if (this.getGenomes().isEmpty()) {
             return Double.valueOf(Double.NaN);
         }
         double ratingSum = 0.0;
-        for (final Genome ind : this) {
+        for (final Genome ind : this.getGenomes()) {
             ratingSum += ind.hasUserRating() ? ind.getUserRating() : 0.0;
         }
         return ratingSum / this.size();
@@ -96,11 +111,11 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
         StringBuilder result = new StringBuilder(this.size() * expectedLengthPerEntry);
 
         int i = 0;
-        for (final Genome ind : this) {
+        for (final Genome ind : this.getGenomes()) {
             // assuming individual is not null
             result.append("Individual #" + ++i + " (" + ind.getGeneration() + "." + ind.getId()
                     + "): " + ind.getUserRating() + newLine);
-            for (final IGene<?> gene : ind) {
+            for (final IGene<?> gene : ind.getGenes()) {
                 result.append(gene.getId() + ": " + gene.toString() + newLine);
             }
             result.append(newLine);
@@ -120,7 +135,7 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
      */
     public FilteredIterator<Genome> filteredIterator(final ICondition<Genome> filter) {
         FilteredIterator<Genome> result =
-                new FilteredIterator<Genome>(this.listIterator(), filter);
+                new FilteredIterator<Genome>(this.getGenomes().listIterator(), filter);
         return result;
     }
 
@@ -134,7 +149,7 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
         Genome result = null;
         if (size() > 0) {
             int pos = (int) (Math.random() * size());
-            result = get(pos);
+            result = getGenomes().get(pos);
         }
         return result;
     }
@@ -145,9 +160,72 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
         StringBuilder result = new StringBuilder();
 
         int i = 0;
-        for (final Genome ind : this) {
+        for (final Genome ind : this.getGenomes()) {
             result.append("#" + ++i + ": " + ind.toString() + newLine);
         }
         return result.toString();
+    }
+
+    private final List<Genome> genomes = new ArrayList<Genome>();
+
+    /**
+     *
+     * @return number of genomes in this population
+     */
+    public int size() {
+        return this.getGenomes().size();
+    }
+
+    /**
+     * @return the genomes
+     */
+    public List<Genome> getGenomes() {
+        return genomes;
+    }
+
+    /**
+     * Returns <tt>true</tt> if the genomes list contains no elements.
+     *
+     * @return <tt>true</tt> if the genomes list contains no elements
+     */
+    public boolean isEmpty() {
+        return this.genomes.isEmpty();
+    }
+
+    /**
+     * @param theInd
+     */
+    public void add(final Genome theInd) {
+        this.genomes.add(theInd);
+    }
+
+    /**
+     * @param theInd
+     */
+    public void remove(final Genome theInd) {
+        this.genomes.remove(theInd);
+    }
+
+    /**
+     * @param theI
+     * @param theOffspring
+     */
+    public void addAll(final int theI, final Population theOffspring) {
+        this.genomes.addAll(theI, (Collection<? extends Genome>) theOffspring);
+
+    }
+
+    /**
+     * @param theIndividuals
+     */
+    public void toArray(final Genome[] theIndividuals) {
+        this.genomes.toArray(theIndividuals);
+    }
+    
+    /**
+     * @return
+     */
+    public ListIterator<Genome> listIterator() {
+        return this.genomes.listIterator();
     }
 }

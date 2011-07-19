@@ -90,7 +90,7 @@ public final class EnumGene extends AbstractGene<Integer> {
      *            mutation probability
      */
     public EnumGene(
-            final Object theId,
+            final String theId,
             final int theValue,
             final Class<? extends Enum<?>> theEnumClass,
             final double theMutationProbability) {
@@ -105,7 +105,7 @@ public final class EnumGene extends AbstractGene<Integer> {
     // private fields
     /** The cashed hash value. */
     private Integer cachedHash;
-    
+
     /**
      * A formatter for Enum valued genes.
      */

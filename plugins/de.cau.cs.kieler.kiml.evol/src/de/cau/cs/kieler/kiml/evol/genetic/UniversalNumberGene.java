@@ -127,7 +127,7 @@ public class UniversalNumberGene extends AbstractGene<Float> {
      *            a mutation info
      */
     public UniversalNumberGene(
-            final Object theId,
+            final String theId,
             final Float theValue,
             final TypeInfo<Float> theTypeInfo,
             final MutationInfo theMutationInfo) {
@@ -278,7 +278,7 @@ public class UniversalNumberGene extends AbstractGene<Float> {
      *
      * @author bdu
      *
-     */   
+     */
     private static class FloatMutator implements IMutator {
         /**
          * Creates a {@link FloatMutator} instance.

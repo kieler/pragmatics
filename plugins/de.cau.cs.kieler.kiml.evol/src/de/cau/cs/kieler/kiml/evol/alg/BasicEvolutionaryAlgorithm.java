@@ -38,7 +38,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
      *            initial population
      */
     public BasicEvolutionaryAlgorithm(final Population thePopulation) {
-        this.population = new Population(thePopulation);
+        this.population = new Population(thePopulation.getGenomes());
         this.offspring = null;
         this.selection = null;
         IPreferenceStore store = EvolPlugin.getDefault().getPreferenceStore();
@@ -61,7 +61,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
      *
      * @return a shallow copy of the population
      */
-    public Population getPopulation() {
+    public Population getPopulationCopy() {
         return new Population(this.population);
     }
 
@@ -144,7 +144,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         System.out.println(" -- mutate all " + population.size() + ", each with probability of "
                 + prob);
         Population mutations = new Population();
-        for (final Genome ind : population) {
+        for (final Genome ind : population.getGenomes()) {
             Genome mutation = ind.newMutation(prob);
             if (mutation != null) {
                 // individual has mutated --> rating is outdated
@@ -260,13 +260,28 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     }
 
     // private fields
-    /** The current population. */
+    /**
+     * The current population.
+     *
+     * @deprecated
+     * */
+    @Deprecated
     private Population population;
 
-    /** The selected individuals. */
+    /**
+     * The selected individuals.
+     *
+     * @deprecated
+     * */
+    @Deprecated
     private Population selection;
 
-    /** The offspring individuals. */
+    /**
+     * The offspring individuals.
+     *
+     * @deprecated
+     * */
+    @Deprecated
     private Population offspring;
 
     /**
@@ -296,7 +311,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     // To obtain a constant population size, the following condition must hold:
     // ((POP_SIZE * SURV_R + (POP_SIZE * SEL_R * CRO_R)) * SURV_R) == POP_SIZE
     private double surv() {
-        return (1 / (1 + SELECTION_RATIO * CROSS_OVER_RATIO));
+        return (1 / (1 + (SELECTION_RATIO * CROSS_OVER_RATIO)));
     }
 
     /** Minimum number of individuals to select. */
