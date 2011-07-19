@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="de.cau.cs.kieler.kwebs.client.configuration" name="Configuration for the KIELER default remote layout provider" schema="schema/de.cau.cs.kieler.kwebs.client.configuration.exsd"/>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.kwebs.client.ui.LayoutProviderPreferencePage"
+            id="de.cau.cs.kieler.kwebs.client.ui.layoutproviderpreferencepage"
+            name="Layout Provider">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.kwebs.client.ui.LogView"
+            icon="icons/kiel_16.gif"
+            id="de.cau.cs.kieler.kwebs.client.ui.logview"
+            name="Remote Layout Log"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kwebs.client.configuration">
+      <defaultProvider
+            address="http://localhost:8442/layout"
+            name="KIELER Demo Layout Service">
+      </defaultProvider>
+   </extension>
+
+</plugin>
