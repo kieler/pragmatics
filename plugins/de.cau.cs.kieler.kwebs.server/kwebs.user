@@ -1,0 +1,8 @@
+# User configuration file for the KWebS server
+
+# Use this option to configure the path to the graphviz dot executable 
+#de.cau.cs.kieler.kwebs.graphviz.path=
+# Use this option to configure the timeout for the graphviz process
+#de.cau.cs.kieler.kwebs.graphviz.timeout=
+# Use this option to configure the timeout for the ogdf process
+#de.cau.cs.kieler.kwebs.ogdf.timeout=

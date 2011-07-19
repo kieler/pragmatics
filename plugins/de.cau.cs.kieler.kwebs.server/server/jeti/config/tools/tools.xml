@@ -1,0 +1,24 @@
+<etitoolserver>
+
+  <tool name="graphLayout" active="true" class="de.cau.cs.kieler.kwebs.server.service.JetiService" method="graphLayout">    
+    <description></description>
+    <longDescription></longDescription>
+    <parameter name="INPUT_GRAPH" class="de.unido.ls5.eti.toolserver.InputFileReference" required="true"/>
+    <parameter name="OUTPUT_GRAPH" class="de.unido.ls5.eti.toolserver.OutputFileReference" required="true"/>    
+    <parameter name="INPUT_FORMAT" class="java.lang.String" required="true"/>    
+    <parameter name="INPUT_OPTIONS" class="java.lang.String" required="false"/>    
+  </tool>
+
+  <tool name="getCapabilities" active="true" class="de.cau.cs.kieler.kwebs.server.service.JetiService" method="getCapabilities">    
+    <description></description>
+    <longDescription></longDescription>
+    <parameter name="OUTPUT_CAPABILITIES" class="de.unido.ls5.eti.toolserver.OutputFileReference" required="true"/>    
+  </tool>
+
+  <tool name="getVersion" active="true" class="de.cau.cs.kieler.kwebs.server.service.JetiService" method="getVersion">    
+    <description></description>
+    <longDescription></longDescription>
+    <parameter name="OUTPUT_VERSION" class="de.unido.ls5.eti.toolserver.OutputFileReference" required="true"/>    
+  </tool>
+
+</etitoolserver>

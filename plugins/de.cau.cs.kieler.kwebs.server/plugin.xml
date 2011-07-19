@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point 
+         id="de.cau.cs.kieler.kwebs.server.configuration" 
+         name="Configuration of the KIELER Layout Service"
+         schema="schema/de.cau.cs.kieler.kwebs.server.configuration.exsd"/>
+   <extension
+         id="de.cau.cs.kieler.kwebs.server.Application"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            icon="icons/kiel_64.gif"
+            visible="true">
+         <run
+               class="de.cau.cs.kieler.kwebs.server.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         id="Product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="de.cau.cs.kieler.kwebs.server.Application"
+            name="KIELER Layout Web Server">
+         <property
+               name="appName"
+               value="KIELER Layout Web Server">
+         </property>
+      </product>
+   </extension>
+
+</plugin>
