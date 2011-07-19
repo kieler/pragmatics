@@ -209,10 +209,11 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         }
 
         // Create dummy
+        PortSide portSide = KimlUtil.calcPortSide(kport, direction);
         LNode dummy = createExternalPortDummy(kport,
-                graphLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS),
-                KimlUtil.calcPortSide(kport, direction), inEdges - outEdges, layoutNodeSize,
-                kportPosition);
+                graphLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS), portSide, inEdges - outEdges,
+                layoutNodeSize, kportPosition);
+        dummy.setProperty(LayoutOptions.OFFSET, KimlUtil.calcPortOffset(kport, portSide));
         layeredNodes.add(dummy);
         elemMap.put(kport, dummy);
     }
@@ -312,7 +313,9 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
             // calculate port side
             PortSide newPortSide = KimlUtil.calcPortSide(kport, direction);
+            float offset = KimlUtil.calcPortOffset(kport, newPortSide);
             newPort.setSide(newPortSide);
+            newPort.setProperty(LayoutOptions.OFFSET, offset);
 
             if (newPortSide == PortSide.NORTH || newPortSide == PortSide.SOUTH) {
                 graphProperties.add(GraphProperties.NORTH_SOUTH_PORTS);

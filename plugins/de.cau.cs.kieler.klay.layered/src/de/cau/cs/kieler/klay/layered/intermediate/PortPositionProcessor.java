@@ -48,7 +48,6 @@ public class PortPositionProcessor extends AbstractAlgorithm implements ILayoutP
         // Iterate through all nodes
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-                // TODO: Calculate port positions for nodes with a FIXED_RATIO constraint.
                 if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isRatioFixed()) {
                     // The ports are not fixed to their positions, so arrange them
                     

@@ -247,6 +247,9 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
     private Color nodeFillColor;
     /** font used for node labels. */
     private Font nodeFont;
+    /** background color for labels. */
+    private Color labelBackColor;
+    
     /** color used for ports. */
     private Color portColor;
     /** font used for port labels. */
@@ -271,6 +274,7 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
         nodeBorderColor = new Color(display, 10, 57, 14);
         nodeFillColor = new Color(display, 87, 197, 133);
         nodeFont = new Font(display, "sans", NODE_FONT_SIZE, SWT.NORMAL);
+        labelBackColor = new Color(display, 243, 255, 199);
         portColor = new Color(display, 4, 17, 69);
         portFont = new Font(display, "sans", PORT_FONT_SIZE, SWT.NORMAL);
         edgeColor = new Color(display, 49, 77, 114);
@@ -286,6 +290,7 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
         nodeBorderColor.dispose();
         nodeFillColor.dispose();
         nodeFont.dispose();
+        labelBackColor.dispose();
         portColor.dispose();
         portFont.dispose();
         edgeColor.dispose();
@@ -390,11 +395,11 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
     private void paintLayoutNode(final KNode layoutNode, final GC graphics,
             final PaintRectangle area, final KVector offset) {
         // paint ports of the layout node
-        graphics.setForeground(portColor);
-        graphics.setBackground(portColor);
-        graphics.setAlpha(PORT_ALPHA);
         graphics.setFont(portFont);
+        graphics.setAlpha(PORT_ALPHA);
         for (KPort port : layoutNode.getPorts()) {
+            graphics.setForeground(portColor);
+            graphics.setBackground(portColor);
             PaintRectangle rect = boundsMap.get(port);
             if (rect == null) {
                 rect = new PaintRectangle(port.getData(KShapeLayout.class), offset);
@@ -414,7 +419,12 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
                     boundsMap.put(port.getLabel(), rect);
                 }
                 if (!rect.painted && rect.intersects(area)) {
-                    graphics.drawString(port.getLabel().getText(), rect.x, rect.y, true);
+                    graphics.setBackground(labelBackColor);
+                    graphics.fillRectangle(rect.x, rect.y, rect.width, rect.height);
+                    String text = port.getLabel().getText();
+                    if (text != null) {
+                        graphics.drawString(text, rect.x, rect.y, true);
+                    }
                     rect.painted = true;
                 }
             }
@@ -455,7 +465,12 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
                     rect = new PaintRectangle(child.getData(KEdgeLayout.class), subOffset);
                 }
                 if (!rect.painted && rect.intersects(area)) {
-                    graphics.drawString(child.getLabel().getText(), rect.x, rect.y, true);
+                    graphics.setBackground(labelBackColor);
+                    graphics.fillRectangle(rect.x, rect.y, rect.width, rect.height);
+                    String text = child.getLabel().getText();
+                    if (text != null) {
+                        graphics.drawString(text, rect.x, rect.y, true);
+                    }
                     rect.painted = true;
                 }
             }
@@ -568,7 +583,12 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
                     boundsMap.put(edgeLabel, rect);
                 }
                 if (!rect.painted && rect.intersects(area)) {
-                    graphics.drawString(edgeLabel.getText(), rect.x, rect.y, true);
+                    String text = edgeLabel.getText();
+                    graphics.setBackground(labelBackColor);
+                    graphics.fillRectangle(rect.x, rect.y, rect.width, rect.height);
+                    if (text != null) {
+                        graphics.drawString(text, rect.x, rect.y, true);
+                    }
                     rect.painted = true;
                 }
             }

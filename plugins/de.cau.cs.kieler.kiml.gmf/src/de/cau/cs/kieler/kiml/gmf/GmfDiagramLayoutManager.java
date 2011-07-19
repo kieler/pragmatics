@@ -56,6 +56,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.model.gmf.GmfFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
@@ -526,61 +527,59 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                 continue;
             }
             
+            // find a proper target node and target port
+            KGraphElement targetElem;
+            EditPart targetObj = connection.getTarget();
+            if (targetObj instanceof ConnectionEditPart) {
+                targetElem = graphMap.inverse().get(((ConnectionEditPart) targetObj).getTarget());
+                if (targetElem == null) {
+                    targetElem = graphMap.inverse().get(((ConnectionEditPart) targetObj)
+                            .getSource());
+                }
+            } else {
+                targetElem = graphMap.inverse().get(targetObj);
+            }
+            KNode targetNode = null;
+            KPort targetPort = null;
+            if (targetElem instanceof KNode) {
+                targetNode = (KNode) targetElem;
+            } else if (targetElem instanceof KPort) {
+                targetPort = (KPort) targetElem;
+                targetNode = targetPort.getNode();
+            } else {
+                continue;
+            }
+            
             // calculate offset for edge and label coordinates
-            float offsetx = 0, offsety = 0;
-            KNode sourceParentNode = sourceNode.getParent();
-            IGraphicalEditPart sourceParent = graphMap.get(sourceParentNode);
-            if (sourceParent != null) {
-                Rectangle sourceParentBounds = KimlUiUtil.getAbsoluteBounds(sourceParent.getFigure());
-                KInsets insets = sourceParentNode.getData(KShapeLayout.class).getInsets();
-                offsetx = sourceParentBounds.x + insets.getLeft();
-                offsety = sourceParentBounds.y + insets.getTop();
+            KVector offset = new KVector();
+            if (KimlUtil.isDescendant(targetNode, sourceNode)) {
+                KimlUtil.toRelative(offset, sourceNode);
+            } else {
+                KimlUtil.toRelative(offset, sourceNode.getParent());
             }
 
             if (!isOppositeEdge) {
-                // set source node and source port
+                // set source and target
                 edge.setSource(sourceNode);
                 if (sourcePort != null) {
                     edge.setSourcePort(sourcePort);
                     sourcePort.getEdges().add(edge);
                 }
-                
-                // find a proper target node and target port
-                KGraphElement targetElem;
-                EditPart targetObj = connection.getTarget();
-                if (targetObj instanceof ConnectionEditPart) {
-                    targetElem = graphMap.inverse().get(((ConnectionEditPart) targetObj).getTarget());
-                    if (targetElem == null) {
-                        targetElem = graphMap.inverse().get(((ConnectionEditPart) targetObj)
-                                .getSource());
-                    }
-                } else {
-                    targetElem = graphMap.inverse().get(targetObj);
-                }
-                if (targetElem instanceof KNode) {
-                    edge.setTarget((KNode) targetElem);
-                } else if (targetElem instanceof KPort) {
-                    KPort targetPort = (KPort) targetElem;
+                edge.setTarget(targetNode);
+                if (targetPort != null) {
                     edge.setTargetPort(targetPort);
                     targetPort.getEdges().add(edge);
-                    edge.setTarget(targetPort.getNode());
-                } else {
-                    edge.setSource(null);
-                    if (edge.getSourcePort() != null) {
-                        edge.getSourcePort().getEdges().remove(edge);
-                    }
-                    continue;
                 }
 
                 graphMap.put(edge, connection);
 
                 // store the current coordinates of the edge
                 KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-                setEdgeLayout(edgeLayout, connection, offsetx, offsety);
+                setEdgeLayout(edgeLayout, connection, offset);
             }
 
             // process edge labels
-            processEdgeLabels(mapping, connection, edge, edgeLabelPlacement, offsetx, offsety);
+            processEdgeLabels(mapping, connection, edge, edgeLabelPlacement, offset);
         }
     }
 
@@ -589,28 +588,29 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      * 
      * @param edgeLayout an edge layout
      * @param connection a connection edit part
-     * @param offsetx horizontal offset to be subtracted from coordinates
-     * @param offsety vertical offset to be subtracted from coordinates
+     * @param offset offset to be subtracted from coordinates
      */
     protected void setEdgeLayout(final KEdgeLayout edgeLayout, final ConnectionEditPart connection,
-        final float offsetx, final float offsety) {
+        final KVector offset) {
         Connection figure = connection.getConnectionFigure();
         PointList pointList = figure.getPoints();
+        
         KPoint sourcePoint = edgeLayout.getSourcePoint();
         Point firstPoint = KimlUiUtil.getAbsolutePoint(figure, 0);
-        sourcePoint.setX(firstPoint.x - offsetx);
-        sourcePoint.setY(firstPoint.y - offsety);
+        sourcePoint.setX(firstPoint.x - (float) offset.x);
+        sourcePoint.setY(firstPoint.y - (float) offset.y);
+        
         for (int i = 1; i < pointList.size() - 1; i++) {
             Point point = KimlUiUtil.getAbsolutePoint(figure, i);
             KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-            kpoint.setX(point.x - offsetx);
-            kpoint.setY(point.y - offsety);
+            kpoint.setX(point.x - (float) offset.x);
+            kpoint.setY(point.y - (float) offset.y);
             edgeLayout.getBendPoints().add(kpoint);
         }
         KPoint targetPoint = edgeLayout.getTargetPoint();
         Point lastPoint = KimlUiUtil.getAbsolutePoint(figure, pointList.size() - 1);
-        targetPoint.setX(lastPoint.x - offsetx);
-        targetPoint.setY(lastPoint.y - offsety);
+        targetPoint.setX(lastPoint.x - (float) offset.x);
+        targetPoint.setY(lastPoint.y - (float) offset.y);
     }
 
     /**
@@ -621,12 +621,11 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      * @param edge the layout edge
      * @param placement predefined placement for all labels, or {@code UNDEFINED} if the placement
      *            shall be derived from the edit part
-     * @param offsetx the offset for horizontal coordinates
-     * @param offsety the offset for vertical coordinates
+     * @param offset the offset for coordinates
      */
     protected void processEdgeLabels(final LayoutMapping<IGraphicalEditPart> mapping,
             final ConnectionEditPart connection, final KEdge edge,
-        final EdgeLabelPlacement placement, final float offsetx, final float offsety) {
+        final EdgeLabelPlacement placement, final KVector offset) {
         /*
          * ars: source and target is exchanged when defining it in the gmfgen file. So if Emma sets
          * a label to be placed as target on a connection, then the label will show up next to the
@@ -686,8 +685,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                         labelLayout.setProperty(LayoutOptions.FONT_SIZE,
                             font.getFontData()[0].getHeight());
                     }
-                    labelLayout.setXpos(labelBounds.x - offsetx);
-                    labelLayout.setYpos(labelBounds.y - offsety);
+                    labelLayout.setXpos(labelBounds.x - (float) offset.x);
+                    labelLayout.setYpos(labelBounds.y - (float) offset.y);
                     if (iconBounds != null) {
                         labelLayout.setWidth(labelBounds.width + iconBounds.width);
                     } else {

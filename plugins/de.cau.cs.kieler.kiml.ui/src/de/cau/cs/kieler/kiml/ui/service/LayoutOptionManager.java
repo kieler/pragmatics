@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.ui.IWorkbenchPart;
 
 import com.google.common.collect.Maps;
 
@@ -133,6 +134,10 @@ public class LayoutOptionManager {
         LayoutContext context = new LayoutContext();
         context.setProperty(LayoutContext.GRAPH_ELEM, graphElement);
         context.setProperty(LayoutContext.DIAGRAM_PART, layoutMapping.getGraphMap().get(graphElement));
+        IWorkbenchPart workbenchPart = layoutMapping.getProperty(IWorkbenchPart.class);
+        if (workbenchPart != null) {
+            context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
+        }
         
         // enrich the layout context using the basic configuration
         config.enrich(context);

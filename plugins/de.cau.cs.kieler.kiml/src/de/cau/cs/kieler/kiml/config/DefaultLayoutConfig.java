@@ -32,9 +32,6 @@ import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortSide;
 
 /**
  * Default implementation of the layout configuration interface. This configuration handles the
@@ -327,51 +324,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
      * {@inheritDoc}
      */
     public void transferValues(final KGraphData graphData, final LayoutContext context) {
-        KGraphElement graphElement = context.getProperty(LayoutContext.GRAPH_ELEM);
-
-        // set specific values for ports
-        if (graphElement instanceof KPort) {
-            setPortSide((KPort) graphElement, graphData);
-        }
-    }
-    
-    /**
-     * Determine the side and offset for the given port.
-     * 
-     * @param port a port from the layout graph
-     * @param graphData the property holder where values are set
-     */
-    private void setPortSide(final KPort port, final KGraphData graphData) {
-        // calculate port offset from the node border
-        float offset = 0;
-        KShapeLayout portLayout = port.getData(KShapeLayout.class);
-        float xpos = portLayout.getXpos(), ypos = portLayout.getYpos();
-        float width = portLayout.getWidth(), height = portLayout.getHeight();
-        KShapeLayout nodeLayout = port.getNode().getData(KShapeLayout.class);
-        float widthPercent = (xpos + width / 2) / nodeLayout.getWidth();
-        float heightPercent = (ypos + height / 2) / nodeLayout.getHeight();
-        if (widthPercent + heightPercent <= 1
-                && widthPercent - heightPercent <= 0) {
-            // port is on the left
-            offset = -(xpos + width);
-            graphData.setProperty(LayoutOptions.PORT_SIDE, PortSide.WEST);
-        } else if (widthPercent + heightPercent >= 1
-                && widthPercent - heightPercent >= 0) {
-            // port is on the right
-            offset = xpos - nodeLayout.getWidth();
-            graphData.setProperty(LayoutOptions.PORT_SIDE, PortSide.EAST);
-        } else if (heightPercent < 1.0f / 2) {
-            // port is on the top
-            offset = -(ypos + height);
-            graphData.setProperty(LayoutOptions.PORT_SIDE, PortSide.NORTH);
-        } else {
-            // port is on the bottom
-            offset = ypos - nodeLayout.getHeight();
-            graphData.setProperty(LayoutOptions.PORT_SIDE, PortSide.SOUTH);
-        }
-        if (offset != 0) {
-            graphData.setProperty(LayoutOptions.OFFSET, offset);
-        }
+        // nothing to do
     }
 
 }

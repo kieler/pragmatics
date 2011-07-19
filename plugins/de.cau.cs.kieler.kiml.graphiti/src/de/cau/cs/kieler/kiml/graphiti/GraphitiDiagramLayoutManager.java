@@ -18,12 +18,13 @@ import java.util.Map.Entry;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
+import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.mm.algorithms.AbstractText;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.styles.Font;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
-import org.eclipse.graphiti.mm.pictograms.ChopboxAnchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -32,8 +33,12 @@ import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.FreeFormConnection;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.graphiti.services.Graphiti;
+import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
+import org.eclipse.graphiti.ui.services.GraphitiUi;
+import org.eclipse.swt.SWTException;
 import org.eclipse.ui.IWorkbenchPart;
 
 import com.google.common.collect.BiMap;
@@ -43,6 +48,9 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.core.model.graphiti.GraphitiUtil;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
@@ -187,20 +195,15 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      *            the corresponding KNode
      * @param layoutConfig
      *            the layout configuration
-     * @return true if the node has any children
      */
-    private boolean buildLayoutGraphRecursively(final LayoutMapping<PictogramElement> mapping,
+    private void buildLayoutGraphRecursively(final LayoutMapping<PictogramElement> mapping,
             final ContainerShape parentElement, final KNode parentNode) {
-        boolean parentHasChildren = false;
         for (Shape shape : parentElement.getChildren()) {
             // relevant shapes are those that can be connected
             if (!shape.getAnchors().isEmpty()) {
-                parentHasChildren = true;
                 createNode(mapping, parentNode, shape);
             }
         }
-
-        return parentHasChildren;
     }
     
     /**
@@ -212,67 +215,65 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      */
     private KNode createNode(final LayoutMapping<PictogramElement> mapping,
             final KNode parentNode, final Shape shape) {
-        GraphicsAlgorithm nodeGa = shape.getGraphicsAlgorithm();
+        KNode childNode = KimlUtil.createInitializedNode();
+        childNode.setParent(parentNode);
 
-        KNode childnode = KimlUtil.createInitializedNode();
-        childnode.setParent(parentNode);
-        KShapeLayout nodeLayout = childnode.getData(KShapeLayout.class);
-        KInsets parentInsets = parentNode.getData(KShapeLayout.class).getInsets();
-        graphicsAlg2ShapeLayout(nodeGa, nodeLayout, -parentInsets.getLeft(), -parentInsets.getTop());
-        setInsets(nodeLayout, nodeGa);
+        // set the node's layout
+        KShapeLayout nodeLayout = childNode.getData(KShapeLayout.class);
+        GraphicsAlgorithm nodeGa = shape.getGraphicsAlgorithm();
+        KInsets nodeInsets = calcInsets(nodeGa);
+        nodeLayout.setProperty(GraphitiLayoutCommand.INVIS_INSETS, nodeInsets);
+        KInsets parentInsets = parentNode == null ? null : parentNode.getData(KShapeLayout.class)
+                .getProperty(GraphitiLayoutCommand.INVIS_INSETS);
+        if (parentInsets == null) {
+            nodeLayout.setPos(nodeGa.getX() + nodeInsets.getLeft(),
+                    nodeGa.getY() + nodeInsets.getTop());
+        } else {
+            nodeLayout.setPos(nodeGa.getX() + nodeInsets.getLeft() - parentInsets.getLeft(),
+                    nodeGa.getY() + nodeInsets.getTop() - parentInsets.getTop());
+        }
+        nodeLayout.setSize(nodeGa.getWidth() - nodeInsets.getLeft() - nodeInsets.getRight(),
+                nodeGa.getHeight() - nodeInsets.getTop() - nodeInsets.getBottom());
 
         // FIXME find a way to specify the minimal size dynamically
         nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, MIN_SIZE);
         nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, MIN_SIZE);
 
-        mapping.getGraphMap().put(childnode, shape);
+        mapping.getGraphMap().put(childNode, shape);
 
         if (shape instanceof ContainerShape) {
             // find a label for the container shape
             for (Shape child : ((ContainerShape) shape).getChildren()) {
-                GraphicsAlgorithm textGa = child.getGraphicsAlgorithm();
-                if (textGa instanceof AbstractText) {
-                    String labelText = ((AbstractText) textGa).getValue();
-                    KLabel label = childnode.getLabel();
-                    label.setText(labelText);
-                    graphicsAlg2ShapeLayout(textGa, label.getData(KShapeLayout.class), 0, 0);
+                GraphicsAlgorithm childGa = child.getGraphicsAlgorithm();
+                if (childGa instanceof AbstractText) {
+                    createLabel(childNode.getLabel(), (AbstractText) childGa,
+                            -nodeInsets.getLeft(), -nodeInsets.getTop());
                     break;
                 }
             }
+            
+            // process the children of the container shape
+            buildLayoutGraphRecursively(mapping, (ContainerShape) shape, childNode);
         }
 
         for (Anchor anchor : shape.getAnchors()) {
             // box-relative anchors and fixed-position anchors are interpreted as ports
             if (anchor instanceof BoxRelativeAnchor) {
-                createPort(mapping, childnode, (BoxRelativeAnchor) anchor);
+                createPort(mapping, childNode, (BoxRelativeAnchor) anchor);
             } else if (anchor instanceof FixPointAnchor) {
-                createPort(mapping, childnode, (FixPointAnchor) anchor);
+                createPort(mapping, childNode, (FixPointAnchor) anchor);
             }
             // gather all connections in the diagram
-            for (Connection c : anchor.getOutgoingConnections()) {
-                mapping.getProperty(CONNECTIONS).add(c);
-            }
+            mapping.getProperty(CONNECTIONS).addAll(anchor.getOutgoingConnections());
         }
         
-        return childnode;
-    }
-    
-    /**
-     * Transfer layout information from a pictogram graphics algorithm to a shape layout.
-     * 
-     * @param ga a graphics algorithm
-     * @param shapeLayout a shape layout
-     * @param xoffset x coordinate offset
-     * @param yoffset y coordinate offset
-     */
-    private void graphicsAlg2ShapeLayout(final GraphicsAlgorithm ga, final KShapeLayout shapeLayout,
-            final float xoffset, final float yoffset) {
-        shapeLayout.setPos(ga.getX() + xoffset, ga.getY() + yoffset);
-        shapeLayout.setSize(ga.getWidth(), ga.getHeight());
+        return childNode;
     }
 
     /**
-     * Create a port for the layout graph using a box-relative anchor.
+     * Create a port for the layout graph using a box-relative anchor. The referenced graphics
+     * algorithm of the anchor is assumed to be the same as the one returned by
+     * {@link GraphitiUtil#findVisibleGa(GraphicsAlgorithm)}.
      * 
      * @param parentNode the parent node
      * @param bra the anchor
@@ -336,52 +337,62 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         
         return port;
     }
-
+    
     /**
-     * Calculate insets from an invisible rectangle to the visible shape.
+     * Set up a label for a node or a port.
      * 
-     * @param shapeLayout the shape layout
-     * @param containerGa the container's graphics algorithm
+     * @param label a label
+     * @param abstractText the text graphics algorithm to set up the label
+     * @param offsetx the x coordinate offset
+     * @param offsety the y coordinate offset
      */
-    private void setInsets(final KShapeLayout shapeLayout, final GraphicsAlgorithm containerGa) {
-        GraphicsAlgorithm visibleGa = findVisibleGa(containerGa);
-        int left = 0;
-        int top = 0;
-        int right = 0;
-        int bottom = 0;
-        while (visibleGa != containerGa) {
-            left += visibleGa.getX();
-            top += visibleGa.getY();
-            GraphicsAlgorithm parentGa = visibleGa.getParentGraphicsAlgorithm();
-            right += parentGa.getWidth() - visibleGa.getX() - visibleGa.getWidth();
-            bottom += parentGa.getHeight() - visibleGa.getY() - visibleGa.getHeight();
-            visibleGa = parentGa;
-        }
-        KInsets insets = shapeLayout.getInsets();
-        insets.setLeft(left);
-        insets.setRight(right);
-        insets.setBottom(bottom);
-        insets.setTop(top);
-    }
-
-    /**
-     * Given a graphics algorithm, find the first child that is not invisible. If the GA itself
-     * is visible, it is returned
-     * 
-     * @param graphicsAlgorithm the parent graphics algorithm
-     * @return a visible graphics algorithm
-     */
-    private GraphicsAlgorithm findVisibleGa(final GraphicsAlgorithm graphicsAlgorithm) {
-        if (graphicsAlgorithm.getLineVisible() || graphicsAlgorithm.getFilled()) {
-            return graphicsAlgorithm;
-        }
-        for (GraphicsAlgorithm ga : graphicsAlgorithm.getGraphicsAlgorithmChildren()) {
-            GraphicsAlgorithm result = findVisibleGa(ga);
-            if (result != null) {
-                return result;
+    private void createLabel(final KLabel label, final AbstractText abstractText,
+            final float offsetx, final float offsety) {
+        String labelText = abstractText.getValue();
+        if (labelText != null) {
+            label.setText(labelText);
+            IGaService gaService = Graphiti.getGaService();
+            Font font = gaService.getFont(abstractText, true);
+            
+            IDimension textSize = null;
+            try {
+                textSize = GraphitiUi.getUiLayoutService().calculateTextSize(labelText, font);
+            } catch (SWTException exception) {
+                // ignore exception
             }
+            int xpos = abstractText.getX(), ypos = abstractText.getY();
+            int width = abstractText.getWidth(), height = abstractText.getHeight();
+            if (textSize != null) {
+                if (textSize.getWidth() < width) {
+                    int diff = width - textSize.getWidth();
+                    switch (gaService.getHorizontalAlignment(abstractText, true)) {
+                    case ALIGNMENT_CENTER:
+                        xpos += diff / 2;
+                        break;
+                    case ALIGNMENT_RIGHT:
+                        xpos += diff;
+                        break;
+                    }
+                    width -= diff;
+                }
+                if (textSize.getHeight() < height) {
+                    int diff = height - textSize.getHeight();
+                    switch (gaService.getVerticalAlignment(abstractText, true)) {
+                    case ALIGNMENT_MIDDLE:
+                        ypos += diff / 2;
+                        break;
+                    case ALIGNMENT_BOTTOM:
+                        ypos += diff;
+                        break;
+                    }
+                    height -= diff;
+                }
+            }
+            
+            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+            labelLayout.setPos(xpos + offsetx, ypos + offsety);
+            labelLayout.setSize(width, height);
         }
-        return null;
     }
 
     /** minimal value for the relative location of head labels. */
@@ -425,20 +436,39 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             sourceNode = (KNode) graphMap.inverse().get(sourceAnchor.getParent());
         }
         edge.setSource(sourceNode);
+        
+        if (sourceNode == null || targetNode == null) {
+            return;
+        }
 
+        // calculate offset for bend points and labels
+        KNode referenceNode = sourceNode;
+        if (!KimlUtil.isDescendant(targetNode, sourceNode)) {
+            referenceNode = sourceNode.getParent();
+        }
+        KVector offset = new KVector();
+        KimlUtil.toAbsolute(offset, referenceNode);
+        
         // set source and target point
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-        calculateAnchorEnds(edgeLayout.getSourcePoint(), sourceNode, sourcePort);
-        calculateAnchorEnds(edgeLayout.getTargetPoint(), targetNode, targetPort);
+        KVector sourcePoint = calculateAnchorEnds(sourceNode, sourcePort, referenceNode);
+        edgeLayout.getSourcePoint().applyVector(sourcePoint);
+        KVector targetPoint = calculateAnchorEnds(targetNode, targetPort, referenceNode);
+        edgeLayout.getTargetPoint().applyVector(targetPoint);
         // set bend points for the new edge
+        KVectorChain allPoints = new KVectorChain();
+        allPoints.add(sourcePoint);
         if (connection instanceof FreeFormConnection) {
             for (Point point : ((FreeFormConnection) connection).getBendpoints()) {
+                KVector v = new KVector(point.getX(), point.getY());
+                v.sub(offset);
+                allPoints.add(v);
                 KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                kpoint.setX(point.getX());
-                kpoint.setY(point.getY());
+                kpoint.applyVector(v);
                 edgeLayout.getBendPoints().add(kpoint);
             }
         }
+        allPoints.add(targetPoint);
 
         graphMap.put(edge, connection);
 
@@ -464,35 +494,79 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
                     }
                 }
                 labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, placement);
+                
+                // set label position
+                KVector labelPos;
+                if (decorator.isLocationRelative()) {
+                    labelPos = allPoints.getPointOnLine(decorator.getLocation()
+                                    * allPoints.getLength());
+                } else {
+                    labelPos = allPoints.getPointOnLine(decorator.getLocation());
+                }
+                labelPos.x += ga.getX();
+                labelPos.y += ga.getY();
+                labelLayout.applyVector(labelPos);
             }
         }
     }
 
     /**
-     * Write the coordinates of the given anchor into the given point.
+     * Returns an end point for an anchor.
      * 
-     * @param point
-     *            a start or end point of an edge
      * @param node
      *            the node that owns the anchor
      * @param port
      *            the port that represents the anchor
      */
-    private void calculateAnchorEnds(final KPoint point, final KNode node, final KPort port) {
+    private KVector calculateAnchorEnds(final KNode node, final KPort port, final KNode referenceNode) {
+        KVector pos = new KVector();
         if (port != null) {
+            // the anchor end is represented by a port (box-relative anchor or fix-point anchor)
             KShapeLayout portLayout = port.getData(KShapeLayout.class);
-            float x = portLayout.getXpos() + portLayout.getWidth() / 2;
-            float y = portLayout.getYpos() + portLayout.getHeight() / 2;
+            pos.x = portLayout.getXpos() + portLayout.getWidth() / 2;
+            pos.y = portLayout.getYpos() + portLayout.getHeight() / 2;
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            x += nodeLayout.getXpos();
-            y += nodeLayout.getYpos();
-            point.setPos(x, y);
+            pos.x += nodeLayout.getXpos();
+            pos.y += nodeLayout.getYpos();
         } else {
+            // the anchor end is calculated by a chopbox anchor
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            float x = nodeLayout.getWidth() / 2 + nodeLayout.getXpos();
-            float y = nodeLayout.getHeight() / 2 + nodeLayout.getYpos();
-            point.setPos(x, y);
+            pos.x = nodeLayout.getWidth() / 2 + nodeLayout.getXpos();
+            pos.y = nodeLayout.getHeight() / 2 + nodeLayout.getYpos();
         }
+        KimlUtil.toAbsolute(pos, node.getParent());
+        KimlUtil.toRelative(pos, referenceNode);
+        return pos;
+    }
+    
+
+
+    /**
+     * Calculate insets from an invisible rectangle to the first visible shape.
+     * 
+     * @param graphicsAlgorithm the parent graphics algorithm
+     * @return the insets
+     */
+    public static KInsets calcInsets(final GraphicsAlgorithm graphicsAlgorithm) {
+        GraphicsAlgorithm visibleGa = GraphitiUtil.findVisibleGa(graphicsAlgorithm);
+        int left = 0;
+        int top = 0;
+        int right = 0;
+        int bottom = 0;
+        while (visibleGa != graphicsAlgorithm) {
+            left += visibleGa.getX();
+            top += visibleGa.getY();
+            GraphicsAlgorithm parentGa = visibleGa.getParentGraphicsAlgorithm();
+            right += parentGa.getWidth() - visibleGa.getX() - visibleGa.getWidth();
+            bottom += parentGa.getHeight() - visibleGa.getY() - visibleGa.getHeight();
+            visibleGa = parentGa;
+        }
+        KInsets insets = KLayoutDataFactory.eINSTANCE.createKInsets();
+        insets.setLeft(left);
+        insets.setRight(right);
+        insets.setTop(top);
+        insets.setBottom(bottom);
+        return insets;
     }
     
 }

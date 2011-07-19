@@ -40,6 +40,8 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -55,6 +57,10 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * @author msp
  */
 public class GraphitiLayoutCommand extends RecordingCommand {
+    
+    /** node property for the insets caused by invisible shapes. */
+    public static final IProperty<KInsets> INVIS_INSETS = new Property<KInsets>(
+            "graphiti.layout.invisibleInsets");
 
     /** list of graph elements and pictogram elements to layout. */
     private List<Pair<KGraphElement, PictogramElement>> elements =
@@ -132,11 +138,6 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         double offsetx = 0;
         double offsety = 0;
 
-        // node insets need to be considered
-        KInsets insets = kport.getNode().getData(KShapeLayout.class).getInsets();
-        offsetx += insets.getLeft();
-        offsety += insets.getTop();
-
         if (pelem.getGraphicsAlgorithm() != null) {
             offsetx += pelem.getGraphicsAlgorithm().getX();
             offsety += pelem.getGraphicsAlgorithm().getY();
@@ -145,15 +146,15 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         if (pelem instanceof BoxRelativeAnchor) {
             BoxRelativeAnchor anchor = (BoxRelativeAnchor) pelem;
             
-            GraphicsAlgorithm refGa = anchor.getReferencedGraphicsAlgorithm();
-            double relWidth = (shapeLayout.getXpos() - offsetx) / refGa.getWidth();
+            KShapeLayout nodeLayout = kport.getNode().getData(KShapeLayout.class);
+            double relWidth = (shapeLayout.getXpos() - offsetx) / nodeLayout.getWidth();
             if (relWidth < 0) {
                 relWidth = 0;
             }
             if (relWidth > 1) {
                 relWidth = 1;
             }
-            double relHeight = (shapeLayout.getYpos() - offsety) / refGa.getHeight();
+            double relHeight = (shapeLayout.getYpos() - offsety) / nodeLayout.getHeight();
             if (relHeight < 0) {
                 relHeight = 0;
             }
@@ -187,14 +188,26 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         float xpos = shapeLayout.getXpos();
         float ypos = shapeLayout.getYpos();
         if (knode.getParent() != null) {
-            KInsets parentInsets = knode.getParent().getData(KShapeLayout.class).getInsets();
-            xpos += parentInsets.getLeft();
-            ypos += parentInsets.getRight();
+            KInsets parentInsets = knode.getParent().getData(KShapeLayout.class)
+                    .getProperty(INVIS_INSETS);
+            if (parentInsets != null) {
+                xpos += parentInsets.getLeft();
+                ypos += parentInsets.getRight();
+            }
+        }
+        float width = shapeLayout.getWidth();
+        float height = shapeLayout.getHeight();
+        KInsets nodeInsets = shapeLayout.getProperty(INVIS_INSETS);
+        if (nodeInsets != null) {
+            xpos -= nodeInsets.getLeft();
+            ypos -= nodeInsets.getTop();
+            width += nodeInsets.getLeft() + nodeInsets.getRight();
+            height += nodeInsets.getTop() + nodeInsets.getBottom();
         }
         ga.setX(Math.round(xpos));
         ga.setY(Math.round(ypos));
-        ga.setHeight(Math.round(shapeLayout.getHeight()));
-        ga.setWidth(Math.round(shapeLayout.getWidth()));
+        ga.setWidth(Math.round(width));
+        ga.setHeight(Math.round(height));
         featureProvider.layoutIfPossible(new LayoutContext(pelem));
     }
 
@@ -284,7 +297,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     }
 
     /** how much to move bend points out of the source or target node. */
-    private static final float ENDPOINT_MOVE = 2.0f;
+    private static final float ENDPOINT_MOVE = 3.0f;
 
     /**
      * Move the given bend point out of the node in order to approximate a
@@ -331,23 +344,21 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         KEdge kedge = (KEdge) klabel.getParent();
 
         // get vector chain for the bend points of the edge
-        KVectorChain bendPoints = getBendPoints(kedge);
+        KVectorChain bendPoints = new KVectorChain(getBendPoints(kedge));
+        KVector sourcePoint = calculateAnchorEnds(kedge.getSource(), kedge.getSourcePort());
+        bendPoints.addFirst(sourcePoint);
+        KVector targetPoint = calculateAnchorEnds(kedge.getTarget(), kedge.getTargetPort());
+        bendPoints.addLast(targetPoint);
 
         // calculate reference point for the label
         KVector referencePoint;
-        //TODO bendpoints were empty sometimes while doing ptolemy rendering.
-        // this is a temporary workaround till someone finds out why they are empty.
-        if (bendPoints.isEmpty()) {
-            referencePoint = new KVector(0, 0);
-            //System.out.println("debug");
+        if (decorator.isLocationRelative()) {
+            referencePoint = bendPoints.getPointOnLine(decorator.getLocation()
+                            * bendPoints.getLength());
         } else {
-            if (decorator.isLocationRelative()) {
-                referencePoint = bendPoints.getPointOnLine(decorator.getLocation()
-                                * bendPoints.getLength());
-            } else {
-                referencePoint = bendPoints.getPointOnLine(decorator.getLocation());
-            }
+            referencePoint = bendPoints.getPointOnLine(decorator.getLocation());
         }
+        
         KShapeLayout shapeLayout = klabel.getData(KShapeLayout.class);
         KVector position = shapeLayout.createVector();
         KNode parent = kedge.getSource();
@@ -357,6 +368,34 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         KimlUtil.toAbsolute(position, parent);
         ga.setX((int) Math.round(position.x - referencePoint.x));
         ga.setY((int) Math.round(position.y - referencePoint.y));
+    }
+
+    /**
+     * Returns an end point for an anchor.
+     * 
+     * @param node
+     *            the node that owns the anchor
+     * @param port
+     *            the port that represents the anchor
+     */
+    private KVector calculateAnchorEnds(final KNode node, final KPort port) {
+        KVector pos = new KVector();
+        if (port != null) {
+            // the anchor end is represented by a port (box-relative anchor or fix-point anchor)
+            KShapeLayout portLayout = port.getData(KShapeLayout.class);
+            pos.x = portLayout.getXpos() + portLayout.getWidth() / 2;
+            pos.y = portLayout.getYpos() + portLayout.getHeight() / 2;
+            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+            pos.x += nodeLayout.getXpos();
+            pos.y += nodeLayout.getYpos();
+        } else {
+            // the anchor end is calculated by a chopbox anchor
+            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+            pos.x = nodeLayout.getWidth() / 2 + nodeLayout.getXpos();
+            pos.y = nodeLayout.getHeight() / 2 + nodeLayout.getYpos();
+        }
+        KimlUtil.toAbsolute(pos, node.getParent());
+        return pos;
     }
 
 }

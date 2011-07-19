@@ -196,21 +196,17 @@ public final class KimlUtil {
      */
     public static PortSide calcPortSide(final KPort port, final Direction direction) {
         KShapeLayout portLayout = port.getData(KShapeLayout.class);
-        // FIXME ???
-//        PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
-//        if (portSide != PortSide.UNDEFINED) {
-//            return portSide;
-//        }
         
         // check direction-dependent criterion
         KShapeLayout nodeLayout = port.getNode().getData(KShapeLayout.class);
         float xpos = portLayout.getXpos(), ypos = portLayout.getYpos();
+        float nodeWidth = nodeLayout.getWidth(), nodeHeight = nodeLayout.getHeight();
         switch (direction) {
         case LEFT:
         case RIGHT:
             if (xpos < 0) {
                 return PortSide.WEST;
-            } else if (xpos > nodeLayout.getWidth()) {
+            } else if (xpos + portLayout.getWidth() > nodeWidth) {
                 return PortSide.EAST;
             }
             break;
@@ -218,14 +214,14 @@ public final class KimlUtil {
         case DOWN:
             if (ypos < 0) {
                 return PortSide.NORTH;
-            } else if (ypos > nodeLayout.getHeight()) {
+            } else if (ypos + portLayout.getHeight() > nodeHeight) {
                 return PortSide.SOUTH;
             }
         }
         
         // check general criterion
-        float widthPercent = (xpos + portLayout.getWidth() / 2) / nodeLayout.getWidth();
-        float heightPercent = (ypos + portLayout.getHeight() / 2) / nodeLayout.getHeight();
+        float widthPercent = (xpos + portLayout.getWidth() / 2) / nodeWidth;
+        float heightPercent = (ypos + portLayout.getHeight() / 2) / nodeHeight;
         if (widthPercent + heightPercent <= 1
                 && widthPercent - heightPercent <= 0) {
             // port is on the left
@@ -241,6 +237,31 @@ public final class KimlUtil {
             // port is on the bottom
             return PortSide.SOUTH;
         }
+    }
+    
+    /**
+     * Calculate the offset for a port, that is the amount by which it is moved outside of the node.
+     * An offset value of 0 means the port has no intersection with the node and touches the outside
+     * border of the node.
+     * 
+     * @param port a port
+     * @param side the side on the node for the given port
+     * @return the offset on the side
+     */
+    public static float calcPortOffset(final KPort port, final PortSide side) {
+        KShapeLayout portLayout = port.getData(KShapeLayout.class);
+        KShapeLayout nodeLayout = port.getNode().getData(KShapeLayout.class);
+        switch (side) {
+        case NORTH:
+            return -(portLayout.getYpos() + portLayout.getHeight());
+        case EAST:
+            return portLayout.getXpos() - nodeLayout.getWidth();
+        case SOUTH:
+            return portLayout.getYpos() - nodeLayout.getHeight();
+        case WEST:
+            return -(portLayout.getXpos() + portLayout.getWidth());
+        }
+        return 0;
     }
     
     /**

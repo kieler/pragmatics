@@ -62,7 +62,7 @@ public class EffectsWorker extends Thread {
                             listener.executedEffect(effect);
                         }
                     }
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     IStatus status = new Status(IStatus.ERROR, KiViPlugin.PLUGIN_ID,
                             "View Management effects queue catched an exception from a "
                                     + effect.getClass().getName() + " effect: " + e.getMessage(), e);

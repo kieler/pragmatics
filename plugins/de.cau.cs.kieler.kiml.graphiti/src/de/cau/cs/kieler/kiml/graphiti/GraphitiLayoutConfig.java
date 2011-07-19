@@ -30,9 +30,12 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.mm.pictograms.util.PictogramsSwitch;
+import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -80,35 +83,81 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
      * {@inheritDoc}
      */
     public void enrich(final LayoutContext context) {
-        Object editPart = context.getProperty(LayoutContext.DIAGRAM_PART);
-        if (editPart instanceof IPictogramElementEditPart) {
-            IPictogramElementEditPart focusEditPart = (IPictogramElementEditPart) editPart;
-            
+        Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
+        PictogramElement pictogramElem = null;
+        Diagram diagram = null;
+        if (diagramPart instanceof IPictogramElementEditPart) {
+            IPictogramElementEditPart focusEditPart = (IPictogramElementEditPart) diagramPart;
+            pictogramElem = focusEditPart.getPictogramElement();
+            diagram = focusEditPart.getConfigurationProvider().getDiagram();
+        } else if (diagramPart instanceof PictogramElement) {
+            pictogramElem = (PictogramElement) diagramPart;
+        }
+        if (pictogramElem != null) {
             // add pictogram element and domain model element to the context
-            PictogramElement pe = focusEditPart.getPictogramElement();
-            context.setProperty(PICTO_ELEM, pe);
-            if (pe.getLink() != null && pe.getLink().getBusinessObjects().size() > 0) {
+            context.setProperty(PICTO_ELEM, pictogramElem);
+            if (pictogramElem.getLink() != null
+                    && pictogramElem.getLink().getBusinessObjects().size() > 0) {
                 context.setProperty(LayoutContext.DOMAIN_MODEL,
-                        pe.getLink().getBusinessObjects().get(0));
+                        pictogramElem.getLink().getBusinessObjects().get(0));
+            }
+            
+            // determine the target type and container / containment edit parts
+            Maybe<PictogramElement> containerPe = Maybe.create();
+            Maybe<Boolean> hasPorts = Maybe.create();
+            Set<LayoutOptionData.Target> partTargets = findTarget(pictogramElem,
+                    containerPe, hasPorts);
+            if (partTargets != null) {
+                context.setProperty(LayoutContext.OPT_TARGETS, partTargets);
+            }
+            
+            // set whether the selected element is a node that contains ports
+            if (hasPorts.get() != null) {
+                context.setProperty(DefaultLayoutConfig.HAS_PORTS, hasPorts.get());
+            }
+            
+            // get aspect ratio for the current diagram
+            try {
+                Control control = null;
+                if (diagramPart instanceof EditPart) {
+                    control = ((EditPart) diagramPart).getViewer().getControl();
+                } else {
+                    IWorkbenchPart workbenchPart = context.getProperty(
+                            EclipseLayoutConfig.WORKBENCH_PART);
+                    if (workbenchPart instanceof DiagramEditor) {
+                        control = ((DiagramEditor) workbenchPart).getGraphicalViewer().getControl();
+                    }
+                }
+                if (control != null) {
+                    Point size = control.getSize();
+                    if (size.x > 0 && size.y > 0) {
+                        context.setProperty(EclipseLayoutConfig.ASPECT_RATIO,
+                                Math.round(ASPECT_RATIO_ROUND * (float) size.x / size.y)
+                                / ASPECT_RATIO_ROUND);
+                    }
+                }
+            } catch (SWTException exception) {
+                // ignore exception
             }
             
             if (context.getProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS)) {
-                // determine the target type and container / containment edit parts
-                Maybe<PictogramElement> containerPe = Maybe.create();
-                Maybe<Boolean> hasPorts = Maybe.create();
-                Set<LayoutOptionData.Target> partTargets = findTarget(pe,
-                        containerPe, hasPorts);
-                if (partTargets != null) {
-                    context.setProperty(LayoutContext.OPT_TARGETS, partTargets);
+                // find diagram pictogram element
+                if (diagram == null) {
+                    PictogramElement pe = pictogramElem;
+                    while (pe != null && !(pe instanceof Diagram)) {
+                        pe = (PictogramElement) pe.eContainer();
+                    }
+                    if (pe instanceof Diagram) {
+                        diagram = (Diagram) pe;
+                    }
                 }
                 
-                Diagram diagram = focusEditPart.getConfigurationProvider().getDiagram();
                 @SuppressWarnings("unchecked")
                 LayoutOptionData<String> algorithmOptionData = (LayoutOptionData<String>)
                         LayoutDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM_ID);
                 // get a layout hint for the content of the focused pictogram element
-                String contentLayoutHint = getValue(algorithmOptionData, PREFIX, pe);
-                if (contentLayoutHint == null) {
+                String contentLayoutHint = getValue(algorithmOptionData, PREFIX, pictogramElem);
+                if (contentLayoutHint == null && diagram != null) {
                     contentLayoutHint = getValue(algorithmOptionData, DEF_PREFIX, diagram);
                 }
                 if (contentLayoutHint != null) {
@@ -119,7 +168,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
                 if (containerPe.get() != null) {
                     String containerLayoutHint = getValue(algorithmOptionData, PREFIX,
                             containerPe.get());
-                    if (containerLayoutHint == null) {
+                    if (containerLayoutHint == null && diagram != null) {
                         containerLayoutHint = getValue(algorithmOptionData, DEF_PREFIX, diagram);
                     }
                     if (containerLayoutHint != null) {
@@ -130,23 +179,6 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
                         context.setProperty(LayoutContext.CONTAINER_DOMAIN_MODEL,
                                 link.getBusinessObjects().get(0));
                     }
-                }
-                
-                // set whether the selected element is a node that contains ports
-                if (hasPorts.get() != null) {
-                    context.setProperty(DefaultLayoutConfig.HAS_PORTS, hasPorts.get());
-                }
-                
-                // get aspect ratio for the current diagram
-                try {
-                    Point size = ((EditPart) editPart).getViewer().getControl().getSize();
-                    if (size.x > 0 && size.y > 0) {
-                        context.setProperty(EclipseLayoutConfig.ASPECT_RATIO,
-                                Math.round(ASPECT_RATIO_ROUND * (float) size.x / size.y)
-                                / ASPECT_RATIO_ROUND);
-                    }
-                } catch (SWTException exception) {
-                    // ignore exception
                 }
             }
         }   
