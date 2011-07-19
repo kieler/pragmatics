@@ -128,7 +128,7 @@ public class Providers {
                &&
                Uris.isValidURI(provider.getAddress())
                &&
-               Clients.isAddressSupported(provider.getAddress())
+               Clients.isProviderSupported(provider)
                &&
                (
                    !Uris.isHttpsURI(provider.getAddress())

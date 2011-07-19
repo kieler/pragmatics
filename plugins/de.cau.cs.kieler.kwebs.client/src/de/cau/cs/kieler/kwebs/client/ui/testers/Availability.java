@@ -54,7 +54,7 @@ public final class Availability {
         String address = provider.getAddress();
         MessageBox box = new MessageBox(shell);
         if (Providers.isValidProvider(provider)) {
-            IWebServiceClient client = Clients.createClientForAddress(address);
+            IWebServiceClient client = Clients.createClientForProvider(provider);
             try {
                 String version = null;
                 Date start = null;

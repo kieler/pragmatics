@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
+import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
 import de.cau.cs.kieler.kwebs.util.Uris;
 
 /**
@@ -92,7 +93,7 @@ public final class Clients {
                 Bundle contributor = Platform.getBundle(element.getContributor().getName());
                 if (contributor != null) {
                     try {
-                        clientClass = contributor.loadClass(clas).asSubclass(IWebServiceClient.class);
+                        clientClass = contributor.loadClass(clas).asSubclass(IWebServiceClient.class);                        
                         client = clientClass.newInstance();
                         StringTokenizer tokenizer = new StringTokenizer(protocols, ";");
                         String token = null;
@@ -102,7 +103,7 @@ public final class Clients {
                             clientForProtocol.put(token, client);
                         }
                     } catch (Exception e) {
-                        //throw new
+e.printStackTrace();
                     }
                 }
             }
@@ -113,53 +114,61 @@ public final class Clients {
      * Returns a client for a specific protocol from the pool or {@code null} if no client
      * is available for the specific protocol.
      * 
-     * @param address
-     *            the address to whichs protocol a compatible client is to be retrieved
+     * @param provider
+     *            the provider to whichs protocol a compatible client is to be retrieved
      * @return the client compatible with the given protocol or {@code null} 
      */
-    public static IWebServiceClient getClientForAddress(final String address) {
-        if (!Uris.isValidURI(address)) {
+    public static IWebServiceClient getClientForProvider(final Provider provider) {
+        if (!Uris.isValidURI(provider.getAddress())) {
             return null;
         }
-        String protocol = Uris.getProtocol(address).trim().toLowerCase();
-        return INSTANCE.clientForProtocol.get(protocol);
+        String protocol = Uris.getProtocol(provider.getAddress()).trim().toLowerCase();
+        IWebServiceClient client = INSTANCE.clientForProtocol.get(protocol);
+        if (client != null) {
+            client.setProvider(provider);
+        }
+        return client;
     }
 
     /**
      * Returns a newly instantiated client for a specific protocol or {@code null} if no client
      * is available for the specific protocol.
      * 
-     * @param address
-     *            the address to whichs protocol a compatible client is to be created
+     * @param provider
+     *            the provider to whichs protocol a compatible client is to be created
      * @return the client compatible with the given protocol or {@code null} 
      */
-    public static IWebServiceClient createClientForAddress(final String address) {
-        if (!Uris.isValidURI(address)) {
+    public static IWebServiceClient createClientForProvider(final Provider provider) {
+        if (!Uris.isValidURI(provider.getAddress())) {
             return null;
         }
-        String protocol = Uris.getProtocol(address).trim().toLowerCase();
-        IWebServiceClient result = null;
+        String protocol = Uris.getProtocol(provider.getAddress()).trim().toLowerCase();
+        IWebServiceClient client = null;
         //CHECKSTYLEOFF EmptyBlock
         try {
-            result = INSTANCE.clientClassForProtocol.get(protocol).newInstance();
+            client = INSTANCE.clientClassForProtocol.get(protocol).newInstance();
+            if (client != null) {
+                client.setProvider(provider);
+            }
+            return client;
         } catch (Exception e) {
         }
         //CHECKSTYLEON EmptyBlock
-        return result;
+        return client;
     }
     
     /**
-     * Returns whether a client for a particular protocol of an address can be supplied.
+     * Returns whether a client for a particular protocol of a provider can be supplied.
      * 
-     * @param address
-     *            the address
-     * @return whether a client for a particular protocol of an address can be supplied
+     * @param provider
+     *            the provider
+     * @return whether a client for a particular protocol of a provider can be supplied
      */
-    public static boolean isAddressSupported(final String address) {
-        if (!Uris.isValidURI(address)) {
+    public static boolean isProviderSupported(final Provider provider) {
+        if (!Uris.isValidURI(provider.getAddress())) {
             return false;
         }
-        String protocol = Uris.getProtocol(address).trim().toLowerCase();
+        String protocol = Uris.getProtocol(provider.getAddress()).trim().toLowerCase();
         return INSTANCE.clientForProtocol.containsKey(protocol);        
     }
     

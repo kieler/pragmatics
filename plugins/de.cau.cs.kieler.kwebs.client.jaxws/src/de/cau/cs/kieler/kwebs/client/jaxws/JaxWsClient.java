@@ -67,6 +67,14 @@ public class JaxWsClient extends AbstractWebServiceClient {
     /**
      * Constructs a new jaxws web service client.
      *
+     */
+    public JaxWsClient() {
+        super();
+    }
+
+    /**
+     * Constructs a new jaxws web service client pointing to the address of the given provider.
+     *
      * @param theprovider
      *            the {@link Provider} of the layout service to be used
      */
@@ -162,7 +170,7 @@ public class JaxWsClient extends AbstractWebServiceClient {
      * {@inheritDoc}
      */
     public final synchronized void setProvider(final Provider theprovider) {
-        if (!super.getProvider().equals(theprovider)) {
+        if (super.getProvider() == null || !super.getProvider().equals(theprovider)) {
             jaxWsService = null;
             jaxWsPort = null;
             super.setProvider(theprovider);

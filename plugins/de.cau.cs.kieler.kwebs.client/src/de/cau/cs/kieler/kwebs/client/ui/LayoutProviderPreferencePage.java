@@ -191,7 +191,8 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
         }
         // Fire property change event so that the RemoteGraphLayoutEngine can
         // initialize itself on the new conditions.
-        if (isDirty) { System.out.println("Layout Provider Preferences Change notified");
+        if (isDirty) { 
+//System.out.println("Layout Provider Preferences Change notified");
             store.firePropertyChangeEvent(
                 Preferences.PREFID_LAYOUT_SETTINGS_CHANGED, "1", "2"
             );

@@ -45,7 +45,15 @@ public final class JetiClient extends AbstractWebServiceClient {
     private EtiConnection etiCon;
 
     /**
-     * Constructs a jeti based web service client.
+     * Constructs a new jaxws web service client.
+     *
+     */
+    public JetiClient() {
+        super();
+    }
+    
+    /**
+     * Constructs a jeti based web service client pointing to the address of the given provider.
      *
      * @param theprovider
      *            the {@link Provider} of the layout service to be used
@@ -203,6 +211,16 @@ public final class JetiClient extends AbstractWebServiceClient {
         throw new LocalServiceException(
             "Could not connect to layout service at " + getProvider().getAddress()
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public final synchronized void setProvider(final Provider theprovider) {
+        if (super.getProvider() == null || !super.getProvider().equals(theprovider)) {
+            etiCon = null;
+            super.setProvider(theprovider);
+        }
     }
 
     /**

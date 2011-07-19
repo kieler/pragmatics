@@ -18,7 +18,8 @@ import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
 import de.cau.cs.kieler.kwebs.service.GraphLayouterOption;
 
 /**
- * Interface for a wweb service client.
+ * Interface for a web service client. Every implementation needs to provide a
+ * default constructor so that the {@link Clients} class can initialize it.
  *
  * @kieler.rating 2011-05-03 red
  *

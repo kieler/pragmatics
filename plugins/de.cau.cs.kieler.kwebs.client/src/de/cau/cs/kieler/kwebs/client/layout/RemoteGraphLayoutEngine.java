@@ -136,10 +136,13 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
                 if (client != null) {
                     client.disconnect();
                 }
-                client = Clients.getClientForAddress(provider.getAddress());                
+//System.out.println("Getting client for: " + provider.getAddress());
+                client = Clients.getClientForProvider(provider);                
                 if (client == null) {
                     throw new IllegalStateException("Client object could not be generated");
-                } /*
+                }
+//System.out.println(client.getClass().getCanonicalName());
+/*
                 try {
                     Logger.log(
                         "Using remote layout (" + provider.getName() + ", " + provider.getAddress() + ")"
@@ -153,17 +156,20 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
                 } catch (Exception e) {
                     Logger.log(Severity.FAILURE, "Initializing remote layout failed", e);
                     throw new LocalServiceException("Initializing remote layout failed", e);
-                }*/
+                }
+*/
             }
         } else {
-            /*try {
+/*
+            try {
                 Logger.log("Using local layout");
                 LayoutDataService.setMode(LayoutDataService.ECLIPSEDATASERVICE);
                 Logger.log("Switched to local mode");
             } catch (Exception e) {
                 Logger.log(Severity.FAILURE, "Initializing local layout failed", e);
                 throw new LocalServiceException("Initializing local layout failed", e);
-            }*/
+            }
+*/
         }
     }
 
@@ -207,7 +213,8 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
      *
      * @param event
      */
-    public final synchronized void propertyChange(final PropertyChangeEvent event) { System.out.println("Layout Provider Preferences Change received");
+    public final synchronized void propertyChange(final PropertyChangeEvent event) {
+//System.out.println("Layout Provider Preferences Change received");
         if (event.getProperty().equals(Preferences.PREFID_LAYOUT_SETTINGS_CHANGED)) {
             initialize();
         }

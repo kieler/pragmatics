@@ -45,6 +45,13 @@ public abstract class AbstractWebServiceClient implements IWebServiceClient {
     private String version;
 
     /**
+     * Constructs a new jaxws web service client.
+     *
+     */
+    protected AbstractWebServiceClient() {
+    }
+    
+    /**
      * Creates a new instance. Only to be used by sub classes.
      * 
      * @param theprovider
@@ -123,7 +130,7 @@ public abstract class AbstractWebServiceClient implements IWebServiceClient {
      * {@inheritDoc}
      */
     public synchronized void setProvider(final Provider theprovider) {
-        if (!provider.equals(theprovider)) {
+        if (provider == null || !provider.equals(theprovider)) {
             provider = theprovider;
             disconnect();
         }
