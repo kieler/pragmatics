@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.ui.diagram;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
@@ -28,14 +29,16 @@ import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
-import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
 import de.cau.cs.kieler.kiml.ui.util.DebugCanvas;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.kwebs.client.layout.RemoteGraphLayoutEngine;
+import de.cau.cs.kieler.kwebs.client.preferences.Preferences;
 
 /**
  * The entry class for automatic layout of graphical diagrams.
@@ -222,6 +225,8 @@ public class DiagramLayoutEngine {
     private DebugCanvas debugCanvas = new DebugCanvas();
     /** the graph layout engine used to layout diagrams. */
     private IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine(debugCanvas);
+    /** the graph layout engine used to layout diagrams remotely. */
+    private IGraphLayoutEngine remoteGraphLayoutEngine = new RemoteGraphLayoutEngine();
     /** the layout options manager for configuration of layout graphs. */
     private LayoutOptionManager layoutOptionManager = new LayoutOptionManager();
     
@@ -277,6 +282,9 @@ public class DiagramLayoutEngine {
         return layout(mapping, progressMonitor, extraLayoutConfig);
     }
     
+    /** The preference store for the KIELER related remote layout options. */
+    private IPreferenceStore preferenceStore = Preferences.getPreferenceStore();
+    
     /**
      * Perform layout on the given layout graph mapping.
      * 
@@ -298,24 +306,33 @@ public class DiagramLayoutEngine {
         
         mapping.setProperty(PROGRESS_MONITOR, progressMonitor);
         debugCanvas.setMapping(mapping);
+
+        // the layouter engine to be used
+        IGraphLayoutEngine layouterEngine = graphLayoutEngine;
         try {
-            
+            // use local or remote layout, default is local
+            boolean remoteLayout = false;            
+            if (preferenceStore != null) {
+                remoteLayout = preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE);
+            }            
+            if (remoteLayout) {
+                layouterEngine = remoteGraphLayoutEngine;
+            } else {
+                layouterEngine = graphLayoutEngine;            	
+            }            
             // perform layout on the layout graph
-            graphLayoutEngine.layout(mapping.getLayoutGraph(), progressMonitor);
-            
+            layouterEngine.layout(mapping.getLayoutGraph(), progressMonitor);            
             // check for cancellation
             if (progressMonitor.isCanceled()) {
                 return new Status(IStatus.CANCEL, KimlUiPlugin.PLUGIN_ID,  null);
             }
-
             // return a positive status
             return new Status(IStatus.OK, KimlUiPlugin.PLUGIN_ID, null);
-
         } catch (Throwable exception) {
             String message = Messages.getString("kiml.ui.1");
-            if (graphLayoutEngine.getLastLayoutProvider() != null) {
+            if (layouterEngine.getLastLayoutProvider() != null) {
                 message += " ("
-                        + graphLayoutEngine.getLastLayoutProvider().getClass().getSimpleName() + ")";
+                        + layouterEngine.getLastLayoutProvider().getClass().getSimpleName() + ")";
             }
             return new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID, message, exception);
         }
