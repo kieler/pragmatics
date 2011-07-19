@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="de.cau.cs.kieler.kwebs.logging" name="KIELER Layout Web Service Logging Configuration" schema="schema/de.cau.cs.kieler.kwebs.logging.exsd"/>
+   <extension
+         point="de.cau.cs.kieler.kwebs.server.configuration">
+      <transformer
+            implementationClass="de.cau.cs.kieler.kwebs.transformation.KGraphXmiTransformer"
+            supportedFormat="de.cau.cs.kieler.format.kgraph.xmi">
+      </transformer>
+   </extension>
+
+</plugin>
