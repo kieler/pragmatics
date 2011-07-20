@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.evol.genetic;
 
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
+
 /**
  * Interface for gene.
  *
@@ -21,7 +23,7 @@ package de.cau.cs.kieler.kiml.evol.genetic;
  * @author bdu
  *
  */
-public interface IGene<T extends Comparable<? super T>> {
+public interface IGene<T extends Comparable<? super T>> extends IPropertyHolder {
     /**
      * Return the value.
      *
@@ -44,7 +46,9 @@ public interface IGene<T extends Comparable<? super T>> {
      * Return a new IGene that has a changed value with a certain probability.
      *
      * @return new IGene with possibly mutated value.
+     * @deprecated separation of data and operations #1716
      */
+    @Deprecated
     IGene<T> newMutation();
 
     /**
@@ -53,7 +57,9 @@ public interface IGene<T extends Comparable<? super T>> {
      * @param otherGenes
      *            Some genes to be recombined with this instance.
      * @return a new instance
+     * @deprecated separation of data and operations #1716
      */
+    @Deprecated
     IGene<T> recombineWith(final IGene<T>... otherGenes);
 
     /**

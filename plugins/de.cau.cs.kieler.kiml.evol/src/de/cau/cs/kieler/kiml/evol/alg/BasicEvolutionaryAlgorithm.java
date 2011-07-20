@@ -61,12 +61,12 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
      *
      * @return a shallow copy of the population
      */
-    public Population getPopulationCopy() {
+    public final Population getPopulationCopy() {
         return new Population(this.population);
     }
 
     @Override
-    protected void crossOver() {
+    protected final void crossOver() {
         System.out.println("*** cross over");
         if (!selection.isEmpty()) {
 
@@ -106,21 +106,21 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
             }
 
             // add offspring to old survivors
-            population.addAll(0, offspring);
+            population.addAll(0, offspring.getGenomes());
         } else {
             System.out.println("Selection is EMPTY");
         }
     }
 
     @Override
-    protected void determineFitness() {
+    protected final void determineFitness() {
         System.out.println("*** determineFitness");
         // fitness is determined by the rating value.
         System.out.println(this.population.getDetails());
     }
 
     @Override
-    public void reset() {
+    public final void reset() {
         System.out.println("*** initialize");
         super.reset();
         // obtain more initial diversity by performing some mutations
@@ -132,13 +132,13 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     }
 
     @Override
-    public boolean isDone() {
+    public final boolean isDone() {
         // no stop criterion here -- algorithm shall run forever
         return false;
     }
 
     @Override
-    protected void mutate() {
+    protected final void mutate() {
         System.out.println("*** mutate");
         final double prob = MUTATION_APPLICATION_PROBABILITY;
         System.out.println(" -- mutate all " + population.size() + ", each with probability of "

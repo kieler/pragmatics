@@ -139,10 +139,9 @@ public class EvolPlugin extends AbstractUIPlugin {
     /**
      * {@inheritDoc}
      *
-     *
      */
     @Override
-    public void start(final BundleContext context) throws Exception {
+    public final void start(final BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
         EvolutionServices.createExtensionData();
@@ -152,7 +151,7 @@ public class EvolPlugin extends AbstractUIPlugin {
      * {@inheritDoc}
      */
     @Override
-    public void stop(final BundleContext context) throws Exception {
+    public final void stop(final BundleContext context) throws Exception {
         plugin = null;
         super.stop(context);
     }

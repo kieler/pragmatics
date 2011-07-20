@@ -139,7 +139,7 @@ public final class EvolModel {
             // Punish predictors
             String key = "proposedRating:" + current.getId();
             double newRating = current.hasUserRating() ? current.getUserRating() : 0.0;
-            for (final Genome predictor : this.getRatingPredictors().getGenomes()) {
+            for (final Genome predictor : getRatingPredictors().getGenomes()) {
                 Map<String, Object> features = predictor.getFeatures();
                 if ((features != null) && features.containsKey(key)) {
                     Double prediction = (Double) features.get(key);

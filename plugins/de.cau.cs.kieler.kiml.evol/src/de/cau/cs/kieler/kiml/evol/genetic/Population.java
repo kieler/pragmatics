@@ -31,8 +31,7 @@ import de.cau.cs.kieler.kiml.evol.IFilterable;
  * @author bdu
  *
  */
-public class Population extends MapPropertyHolder
- implements IFilterable<List<Genome>, Genome> {
+public class Population extends MapPropertyHolder implements IFilterable<List<Genome>, Genome> {
     // TODO: implement List<Genome>?
 
     /**
@@ -169,18 +168,19 @@ public class Population extends MapPropertyHolder
     private final List<Genome> genomes = new ArrayList<Genome>();
 
     /**
+     * @return the genomes
+     */
+    public List<Genome> getGenomes() {
+        return genomes;
+    }
+
+    // list interface implementations
+    /**
      *
      * @return number of genomes in this population
      */
     public int size() {
         return this.getGenomes().size();
-    }
-
-    /**
-     * @return the genomes
-     */
-    public List<Genome> getGenomes() {
-        return genomes;
     }
 
     /**
@@ -207,11 +207,11 @@ public class Population extends MapPropertyHolder
     }
 
     /**
-     * @param theI
+     * @param theIndex
      * @param theOffspring
      */
-    public void addAll(final int theI, final Population theOffspring) {
-        this.genomes.addAll(theI, (Collection<? extends Genome>) theOffspring);
+    public void addAll(final int theIndex, final Collection<? extends Genome> theOffspring) {
+        this.genomes.addAll(theIndex, theOffspring);
 
     }
 
@@ -221,9 +221,13 @@ public class Population extends MapPropertyHolder
     public void toArray(final Genome[] theIndividuals) {
         this.genomes.toArray(theIndividuals);
     }
-    
+
     /**
-     * @return
+     * Returns a list iterator over the elements in the genomes list (in proper
+     * sequence).
+     * 
+     * @return a list iterator over the elements in the genomes list (in proper
+     *         sequence)
      */
     public ListIterator<Genome> listIterator() {
         return this.genomes.listIterator();

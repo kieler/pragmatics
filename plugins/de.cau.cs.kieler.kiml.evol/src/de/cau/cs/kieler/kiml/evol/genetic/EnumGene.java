@@ -71,7 +71,7 @@ public final class EnumGene extends AbstractGene<Integer> {
             int newInt = value.intValue();
             if (random.nextDouble() < prob) {
                 // Uniform distribution
-                int lim = (upperBound - lowerBound + 1);
+                int lim = upperBound - lowerBound + 1;
                 newInt = random.nextInt(lim) + lowerBound;
             }
             return new EnumGene(template.getId(), newInt, enumClass, prob);

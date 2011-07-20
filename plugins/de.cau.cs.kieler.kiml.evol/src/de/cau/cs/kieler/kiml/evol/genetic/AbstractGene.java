@@ -15,6 +15,8 @@ package de.cau.cs.kieler.kiml.evol.genetic;
 
 import java.util.Random;
 
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
+
 /**
  * A gene is an immutable value container that is able to provide similar
  * versions of itself via mutation and recombination. It carries information
@@ -24,7 +26,9 @@ import java.util.Random;
  *
  * @param <T>
  */
-public abstract class AbstractGene<T extends Comparable<? super T>> implements IGene<T> {
+public abstract class AbstractGene<T extends Comparable<? super T>> extends MapPropertyHolder
+        implements
+            IGene<T> {
     /**
      * Creates a new {@link AbstractGene} instance.
      *
