@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.force;
 
+import java.util.List;
 import java.util.Random;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -35,7 +36,9 @@ public class ForceLayoutProvider extends AbstractLayoutProvider {
 
     /** the force model used by this layout algorithm. */
     private AbstractForceModel forceModel;
-    
+    /** connected components processor. */
+    private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
+
     /**
      * {@inheritDoc}
      */
@@ -53,8 +56,17 @@ public class ForceLayoutProvider extends AbstractLayoutProvider {
         // update the force model depending on user selection
         updateModel(fgraph.getProperty(Properties.FORCE_MODEL));
         
+        // split the input graph into components
+        List<FGraph> components = componentsProcessor.split(fgraph);
+        
         // perform the actual layout
-        forceModel.layout(fgraph);
+        for (FGraph comp : components) {
+            forceModel.layout(comp);
+            progressMonitor.worked(1.0f / components.size());
+        }
+        
+        // pack the components back into one graph
+        fgraph = componentsProcessor.pack(components);
         
         // apply the layout results to the original graph
         graphImporter.applyLayout(fgraph);

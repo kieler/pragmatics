@@ -42,15 +42,18 @@ public abstract class AbstractForceModel {
      * Initialize the force model with the given graph. Subclasses that override this
      * must call the superclass method first.
      * 
-     * @param graph a force graph
+     * @param fgraph a force graph
      */
-    protected void initialize(final FGraph graph) {
-        this.graph = graph;
-        this.random = graph.getProperty(Properties.RANDOM);
+    protected void initialize(final FGraph fgraph) {
+        this.graph = fgraph;
+        this.random = fgraph.getProperty(Properties.RANDOM);
+        
+        // calculate the adjacency matrix for the graph
+        fgraph.calcAdjacency();
         
         // if interactive mode is off, randomize the layout
-        if (!graph.getProperty(LayoutOptions.INTERACTIVE)) {
-            for (FNode node : graph.getNodes()) {
+        if (!fgraph.getProperty(LayoutOptions.INTERACTIVE)) {
+            for (FNode node : fgraph.getNodes()) {
                 KVector pos = node.getPosition();
                 pos.x = random.nextDouble();
                 pos.y = random.nextDouble();
@@ -58,8 +61,8 @@ public abstract class AbstractForceModel {
         }
         
         // create bend points for node repulsion
-        List<FBendpoint> bends = graph.getBendpoints();
-        for (FEdge edge : graph.getEdges()) {
+        List<FBendpoint> bends = fgraph.getBendpoints();
+        for (FEdge edge : fgraph.getEdges()) {
             int count = edge.getProperty(Properties.EDGE_REP);
             if (count > 0) {
                 for (int i = 0; i < count; i++) {

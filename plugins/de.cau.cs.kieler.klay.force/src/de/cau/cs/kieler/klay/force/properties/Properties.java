@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klay.force.properties;
 
 import java.util.Random;
 
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -33,6 +34,11 @@ public final class Properties {
     /** random number generator for the algorithm. */
     public static final IProperty<Random> RANDOM = new Property<Random>("random");
     
+    /** upper left corner of the graph's bounding box. */
+    public static final IProperty<KVector> BB_UPLEFT = new Property<KVector>("boundingBox.upLeft");
+    /** lower right corner of the graph's bounding box. */
+    public static final IProperty<KVector> BB_LOWRIGHT = new Property<KVector>("boundingBox.lowRight");
+    
     ///////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS
 
@@ -48,6 +54,12 @@ public final class Properties {
     public static final Property<Float> SPACING = new Property<Float>(
             LayoutOptions.SPACING, DEF_SPACING);
     
+    /** default value for aspect ratio. */
+    public static final float DEF_ASPECT_RATIO = 1.6f;
+    /** the aspect ratio for packing connected components. */
+    public static final Property<Float> ASPECT_RATIO = new Property<Float>(
+            LayoutOptions.ASPECT_RATIO, DEF_ASPECT_RATIO, 0.0f);
+
     /** priority of nodes or edges. */
     public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 1);
     
@@ -86,6 +98,11 @@ public final class Properties {
     public static final Property<Float> REPULSION = new Property<Float>(REPULSION_ID,
             DEF_REPULSION, 0.0f);
     
+    /** option identifier for separation of connected components. */
+    public static final String SEPARATE_CC_ID = "de.cau.cs.kieler.klay.force.separateConnComp";
+    /** property for choosing whether connected components are processed separately. */
+    public static final IProperty<Boolean> SEPARATE_CC = new Property<Boolean>(SEPARATE_CC_ID, true);
+
     ///////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
     

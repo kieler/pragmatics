@@ -46,6 +46,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.force.frc">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.force.separateConnComp">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"
@@ -92,6 +95,14 @@
             id="de.cau.cs.kieler.klay.force.repulsion"
             name="Eades Repulsion"
             type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="true"
+            description="Whether each connected component should be processed separately"
+            id="de.cau.cs.kieler.klay.force.separateConnComp"
+            name="Separate Connected Components"
+            type="boolean">
       </layoutOption>
    </extension>
 

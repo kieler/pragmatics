@@ -52,8 +52,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         // copy the properties of the KGraph to the force graph
         KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
         fgraph.copyProperties(sourceShapeLayout);
-        fgraph.checkProperties(Properties.SPACING, Properties.TEMPERATURE, Properties.ITERATIONS,
-                Properties.REPULSION);
+        fgraph.checkProperties(Properties.SPACING, Properties.ASPECT_RATIO, Properties.TEMPERATURE,
+                Properties.ITERATIONS, Properties.REPULSION);
                 
         // keep a list of created nodes in the force graph
         Map<KNode, FNode> elemMap = new HashMap<KNode, FNode>();
@@ -61,10 +61,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         // transform everything
         transformNodes(kgraph, fgraph, elemMap);
         transformEdges(kgraph, fgraph, elemMap);
-        
-        // calculate the adjacency matrix for the graph
-        fgraph.calcAdjacency();
-        
+                
         return fgraph;
     }
     

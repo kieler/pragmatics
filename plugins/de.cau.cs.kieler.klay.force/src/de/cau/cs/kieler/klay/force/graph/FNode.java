@@ -39,8 +39,6 @@ public class FNode extends FParticle {
     private FNode parent;
     /** List of child nodes. */
     private List<FNode> children;
-    /** Depth of this vertex in the compound hierarchy. */
-    private int depth = 0;
     
     /**
      * Create a new node.
@@ -66,9 +64,6 @@ public class FNode extends FParticle {
     public FNode(final String label, final FNode theParent) {
         this.label = label;
         this.parent = theParent;
-        if (theParent != null) {
-            depth = theParent.getDepth() + 1;
-        }
     }
     
     /**
@@ -137,6 +132,12 @@ public class FNode extends FParticle {
      * @return the depth
      */
     public int getDepth() {
+        int depth = 0;
+        FNode node = parent;
+        while (node != null) {
+            node = node.getParent();
+            depth++;
+        }
         return depth;
     }
     
