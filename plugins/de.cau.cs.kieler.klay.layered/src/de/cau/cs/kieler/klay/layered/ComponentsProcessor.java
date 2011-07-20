@@ -69,7 +69,7 @@ public class ComponentsProcessor extends AbstractAlgorithm {
             // perform DFS starting on each node, collecting connected components
             List<LayeredGraph> components = new LinkedList<LayeredGraph>();
             for (LNode node : graph.getLayerlessNodes()) {
-                List<LNode> component = dfs(node);
+                List<LNode> component = dfs(node, null);
                 if (component != null) {
                     LayeredGraph newGraph = new LayeredGraph();
                     newGraph.copyProperties(graph);
@@ -90,20 +90,20 @@ public class ComponentsProcessor extends AbstractAlgorithm {
      * @param node a node
      * @return the connected component, or {@code null} if the node was already visited
      */
-    private List<LNode> dfs(final LNode node) {
+    private List<LNode> dfs(final LNode node, final List<LNode> component) {
         if (node.id == 0) {
             node.id = 1;
-            List<LNode> component = new LinkedList<LNode>();
-            component.add(node);
+            List<LNode> c = component;
+            if (c == null) {
+                c = new LinkedList<LNode>();
+            }
+            c.add(node);
             for (LPort port1 : node.getPorts()) {
                 for (LPort port2 : port1.getConnectedPorts()) {
-                    List<LNode> c = dfs(port2.getNode());
-                    if (c != null) {
-                        component.addAll(c);
-                    }
+                    dfs(port2.getNode(), c);
                 }
             }
-            return component;
+            return c;
         }
         return null;
     }
