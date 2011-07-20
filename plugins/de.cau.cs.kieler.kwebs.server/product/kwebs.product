@@ -145,11 +145,11 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="de.cau.cs.kieler.kiml.graphviz.dot"/>
       <plugin id="de.cau.cs.kieler.kiml.graphviz.layouter"/>
       <plugin id="de.cau.cs.kieler.kiml.ogdf"/>
-      <plugin id="de.cau.cs.kieler.kiml.service"/>
+      <plugin id="de.cau.cs.kieler.kiml.service" fragment=""/>
       <plugin id="de.cau.cs.kieler.kwebs"/>
       <plugin id="de.cau.cs.kieler.kwebs.server"/>
-      <plugin id="de.unido.ls5.eti.client.os"/>
-      <plugin id="de.unido.ls5.eti.toolserver.os"/>
+      <plugin id="de.unido.ls5.eti.client.os" fragment=""/>
+      <plugin id="de.unido.ls5.eti.toolserver.os" fragment=""/>
       <plugin id="javax.activation"/>
       <plugin id="javax.jws"/>
       <plugin id="javax.xml"/>
@@ -157,8 +157,12 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="javax.xml.soap"/>
       <plugin id="javax.xml.stream"/>
       <plugin id="javax.xml.ws"/>
-      <plugin id="net.ogdf.bin"/>
-      <plugin id="net.ogdf.ogml"/>
+      <plugin id="net.ogdf.bin" fragment=""/>
+      <plugin id="net.ogdf.lib"/>
+      <plugin id="net.ogdf.lib.linux.x86" fragment="true"/>
+      <plugin id="net.ogdf.lib.macosx.x86" fragment="true"/>
+      <plugin id="net.ogdf.lib.macosx.x86_64" fragment="true"/>
+      <plugin id="net.ogdf.ogml" fragment=""/>
       <plugin id="org.antlr.runtime"/>
       <plugin id="org.aopalliance"/>
       <plugin id="org.apache.commons.codec"/>
@@ -189,7 +193,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="org.eclipse.swt.cocoa.macosx" fragment="true"/>
       <plugin id="org.eclipse.swt.cocoa.macosx.x86_64" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.aix.ppc" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.aix.ppc64" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.aix.ppc64" version="3.7.0.v3735b" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.hpux.ia64_32" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.ppc64" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.s390" fragment="true"/>
