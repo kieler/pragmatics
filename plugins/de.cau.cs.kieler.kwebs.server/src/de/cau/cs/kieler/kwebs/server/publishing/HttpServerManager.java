@@ -79,7 +79,7 @@ class HttpServerManager extends AbstractServerManager {
             server.start();
             endpoint = Endpoint.create(serviceObject);
             endpoint.setExecutor(Executors.newFixedThreadPool(
-                Integer.parseInt(properties.getProperty(Configuration.SERVER_POOLSIZE))
+                Integer.parseInt(Configuration.getConfigProperty(Configuration.SERVER_POOLSIZE))
             ));
             endpoint.publish(context);
         } catch (Exception e) {
@@ -126,14 +126,14 @@ class HttpServerManager extends AbstractServerManager {
             throw new IllegalStateException("Server has already been created");
         }
         try {
-            String address = properties.getProperty(Configuration.HTTP_ADDRESS);
+            String address = Configuration.getConfigProperty(Configuration.HTTP_ADDRESS);
             String host = Uris.getHost(address);
             if (host == null) {
                 Logger.log(Severity.WARNING, 
                     "The host you specified for the HTTP server is invalid."
                     + " Using default host " + HTTP_DEFAULTHOST + "."
                 );
-                host = "0.0.0.0";
+                host = HTTP_DEFAULTHOST;
             }
             int port = Uris.getPort(address);
             if (port == -1) {
@@ -145,7 +145,7 @@ class HttpServerManager extends AbstractServerManager {
             }
             server = HttpServer.create(
                 new InetSocketAddress(host, port),
-                Integer.parseInt(properties.getProperty(Configuration.SERVER_BACKLOG))
+                Integer.parseInt(Configuration.getConfigProperty(Configuration.SERVER_BACKLOG))
             );
         } catch (Exception e) {
             Logger.log(Severity.CRITICAL, "HTTP server could not be created", e);
@@ -164,7 +164,7 @@ class HttpServerManager extends AbstractServerManager {
             throw new IllegalStateException("Context has already been created");
         }
         try {
-            String address = properties.getProperty(Configuration.HTTP_ADDRESS);
+            String address = Configuration.getConfigProperty(Configuration.HTTP_ADDRESS);
             String path = Uris.getPath(address);
             if (path == null) {
                 Logger.log(Severity.FAILURE, 

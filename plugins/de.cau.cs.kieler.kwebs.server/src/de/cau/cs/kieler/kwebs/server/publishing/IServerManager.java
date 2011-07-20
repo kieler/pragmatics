@@ -14,8 +14,6 @@
 
 package de.cau.cs.kieler.kwebs.server.publishing;
 
-import java.util.Properties;
-
 /**
  * Interface declaration for the different server managers.
  *
@@ -23,14 +21,6 @@ import java.util.Properties;
  *
  */
 interface IServerManager {
-
-    /**
-     * Set the commonly shared service properties.
-     *
-     * @param theproperties
-     *            the service properties to be shared
-     */
-    void setProperties(final Properties theproperties);
 
     /**
      * Publish the given object with the server provided by this manager.

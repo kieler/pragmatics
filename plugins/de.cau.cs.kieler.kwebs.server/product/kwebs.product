@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="KIELER Layout Web Server" uid="de.cau.cs.kieler.kwebs.server.product" id="de.cau.cs.kieler.kwebs.server.Product" application="de.cau.cs.kieler.kwebs.server.Application" version="0.1.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="KIELER Layout Web Server" uid="de.cau.cs.kieler.kwebs.server.product" id="de.cau.cs.kieler.kwebs.server.Product" application="de.cau.cs.kieler.kwebs.server.Application" version="0.1.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -135,79 +135,11 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </license>
 
    <plugins>
-      <plugin id="com.google.collect"/>
-      <plugin id="com.google.guava"/>
-      <plugin id="com.google.inject"/>
-      <plugin id="com.ibm.icu"/>
-      <plugin id="de.cau.cs.kieler.core"/>
-      <plugin id="de.cau.cs.kieler.core.kgraph"/>
-      <plugin id="de.cau.cs.kieler.kiml"/>
-      <plugin id="de.cau.cs.kieler.kiml.graphviz.dot"/>
-      <plugin id="de.cau.cs.kieler.kiml.graphviz.layouter"/>
-      <plugin id="de.cau.cs.kieler.kiml.ogdf"/>
-      <plugin id="de.cau.cs.kieler.kiml.service" fragment=""/>
-      <plugin id="de.cau.cs.kieler.kwebs"/>
-      <plugin id="de.cau.cs.kieler.kwebs.server"/>
-      <plugin id="de.unido.ls5.eti.client.os" fragment=""/>
-      <plugin id="de.unido.ls5.eti.toolserver.os" fragment=""/>
-      <plugin id="javax.activation"/>
-      <plugin id="javax.jws"/>
-      <plugin id="javax.xml"/>
-      <plugin id="javax.xml.bind"/>
-      <plugin id="javax.xml.soap"/>
-      <plugin id="javax.xml.stream"/>
-      <plugin id="javax.xml.ws"/>
-      <plugin id="net.ogdf.bin" version="1.0.0.v201107192120" fragment=""/>
-      <plugin id="net.ogdf.ogml" fragment=""/>
-      <plugin id="org.antlr.runtime"/>
-      <plugin id="org.aopalliance"/>
-      <plugin id="org.apache.commons.codec"/>
-      <plugin id="org.apache.commons.lang"/>
-      <plugin id="org.apache.log4j"/>
-      <plugin id="org.eclipse.core.commands"/>
-      <plugin id="org.eclipse.core.contenttype"/>
-      <plugin id="org.eclipse.core.databinding"/>
-      <plugin id="org.eclipse.core.databinding.observable"/>
-      <plugin id="org.eclipse.core.databinding.property"/>
-      <plugin id="org.eclipse.core.expressions"/>
-      <plugin id="org.eclipse.core.jobs"/>
-      <plugin id="org.eclipse.core.runtime"/>
-      <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
-      <plugin id="org.eclipse.emf.common"/>
-      <plugin id="org.eclipse.emf.ecore"/>
-      <plugin id="org.eclipse.emf.ecore.xmi"/>
-      <plugin id="org.eclipse.equinox.app"/>
-      <plugin id="org.eclipse.equinox.common"/>
-      <plugin id="org.eclipse.equinox.preferences"/>
-      <plugin id="org.eclipse.equinox.registry"/>
-      <plugin id="org.eclipse.help"/>
-      <plugin id="org.eclipse.jface"/>
-      <plugin id="org.eclipse.jface.databinding"/>
-      <plugin id="org.eclipse.osgi"/>
-      <plugin id="org.eclipse.swt"/>
-      <plugin id="org.eclipse.swt.carbon.macosx" fragment="true"/>
-      <plugin id="org.eclipse.swt.cocoa.macosx" fragment="true"/>
-      <plugin id="org.eclipse.swt.cocoa.macosx.x86_64" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.aix.ppc" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.aix.ppc64" version="3.7.0.v3735b" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.hpux.ia64_32" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.linux.ppc64" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.linux.s390" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.linux.s390x" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.linux.x86" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.linux.x86_64" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.solaris.sparc" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.solaris.x86" fragment="true"/>
-      <plugin id="org.eclipse.swt.win32.win32.x86" fragment="true"/>
-      <plugin id="org.eclipse.swt.win32.win32.x86_64" fragment="true"/>
-      <plugin id="org.eclipse.ui"/>
-      <plugin id="org.eclipse.ui.carbon" fragment="true"/>
-      <plugin id="org.eclipse.ui.cocoa" fragment="true"/>
-      <plugin id="org.eclipse.ui.workbench"/>
-      <plugin id="org.eclipse.xtext"/>
-      <plugin id="org.eclipse.xtext.logging" fragment="true"/>
-      <plugin id="org.eclipse.xtext.util"/>
    </plugins>
+
+   <features>
+      <feature id="de.cau.cs.kieler.kwebs.server.feature" version="0.1.0.qualifier"/>
+   </features>
 
 
 </product>

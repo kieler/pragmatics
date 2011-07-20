@@ -212,6 +212,9 @@ public class JaxWsClient extends AbstractWebServiceClient {
                 );
                 jaxWsPort = jaxWsService.getPort(IGraphLayouterService.class);
             } catch (Exception e) {
+                Logger.log(Severity.FAILURE, 
+                    "Error while connecting to service provider: " + e.getMessage(),
+                e);
                 jaxWsService = null;
                 jaxWsPort = null;
                 restoreTruststoreProperties();
@@ -225,6 +228,13 @@ public class JaxWsClient extends AbstractWebServiceClient {
      * and caches the old settings.
      */
     private synchronized void setTruststoreProperties() {
+/* Only for debugging purposes        
+        System.out.println(
+            "Setting trust store properties to " 
+            + TRUSTSTORE_PROPERTY + "="+ getProvider().getTruststore() + ", " 
+            + TRUSTSTOREPASS_PROPERTY + "=" + getProvider().getTruststorePass()
+        );
+*/        
         oldTruststore = System.getProperty(TRUSTSTORE_PROPERTY);
         oldTruststorePass = System.getProperty(TRUSTSTOREPASS_PROPERTY);
         System.setProperty(TRUSTSTORE_PROPERTY, getProvider().getTruststore());

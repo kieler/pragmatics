@@ -93,7 +93,8 @@ public final class Clients {
                 Bundle contributor = Platform.getBundle(element.getContributor().getName());
                 if (contributor != null) {
                     try {
-                        clientClass = contributor.loadClass(clas).asSubclass(IWebServiceClient.class);                        
+                        clientClass = contributor.loadClass(clas).
+                            asSubclass(IWebServiceClient.class);
                         client = clientClass.newInstance();
                         StringTokenizer tokenizer = new StringTokenizer(protocols, ";");
                         String token = null;

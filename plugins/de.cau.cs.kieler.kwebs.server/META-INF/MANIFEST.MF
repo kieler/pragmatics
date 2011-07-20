@@ -4,7 +4,6 @@ Bundle-Name: KIELER Layout Web Service Server Components
 Bundle-SymbolicName: de.cau.cs.kieler.kwebs.server;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.jface;bundle-version="3.6.2",
  de.cau.cs.kieler.core;bundle-version="0.6.0",
  de.cau.cs.kieler.kiml;bundle-version="0.9.0",
  de.cau.cs.kieler.kiml.service;bundle-version="0.1.0",
@@ -18,6 +17,7 @@ Export-Package: de.cau.cs.kieler.kwebs.server,
  de.cau.cs.kieler.kwebs.server.configuration,
  de.cau.cs.kieler.kwebs.server.layout,
  de.cau.cs.kieler.kwebs.server.logging,
+ de.cau.cs.kieler.kwebs.server.management,
  de.cau.cs.kieler.kwebs.server.publishing,
  de.cau.cs.kieler.kwebs.server.service
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel

@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -33,6 +32,7 @@ import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.logging.DisplayLogging;
 import de.cau.cs.kieler.kwebs.server.logging.RoundTripFileLogging;
+import de.cau.cs.kieler.kwebs.server.management.ManagementService;
 import de.cau.cs.kieler.kwebs.server.publishing.ServicePublisher;
 import de.cau.cs.kieler.kwebs.util.Files;
 import de.cau.cs.kieler.kwebs.util.Io;
@@ -100,7 +100,10 @@ public class Application implements IApplication {
      */
     public final Object start(final IApplicationContext context) {
 
-        System.out.println(ApplicationHelper.toDisplayable(ApplicationHelper.TITLE_TEXT).replace("$VERSION$", getVersion()));
+        System.out.println(
+            ApplicationHelper.toDisplayable(ApplicationHelper.TITLE_TEXT).
+                replace("$VERSION$", getVersion())
+        );
         
         // Register display logging
         displayLogging = new DisplayLogging();
@@ -108,6 +111,8 @@ public class Application implements IApplication {
         
         String logPath = DEFAULT_LOGPATH;
         int logSize = DEFAULT_LOGSIZE;
+        
+        int managementPort = ManagementService.DEFAULT_MANAGEMENTPORT;
 
         // Parse command line arguments
         @SuppressWarnings("rawtypes")
@@ -118,10 +123,9 @@ public class Application implements IApplication {
         }
         
         // Read default config
-        Properties properties = ServicePublisher.getProperties();
-        Logger.log("Loading default configuration.");
+        Logger.log(Severity.ALWAYS, "Loading default configuration.");
         try {
-            properties.load(Io.getResourceStream(PLUGIN_ID, DEFAULT_CONFIG));
+            Configuration.loadFromStream(Io.getResourceStream(PLUGIN_ID, DEFAULT_CONFIG));
         } catch (Exception e) {
             Logger.log(Severity.FAILURE, "Could not load default configuration.");
             return IApplication.EXIT_OK;
@@ -137,8 +141,11 @@ public class Application implements IApplication {
                 userConfig = arguments.get(USERCONFIG_INDEX);
             }
         }
-        try {
-            properties.load(new FileInputStream(userConfig));
+        Logger.log(Severity.ALWAYS, 
+            "Loading user configuration: " + new File(userConfig).getAbsolutePath()
+        );
+        try {            
+            Configuration.loadFromStream(new FileInputStream(userConfig));
         } catch (Exception e) {
             Logger.log(Severity.WARNING, "Could not load user configuration.");
         }
@@ -154,22 +161,22 @@ public class Application implements IApplication {
                     if (!property.startsWith(PROPERTY_PREFIX)) {
                         property = PROPERTY_PREFIX + property;
                     }
-                    properties.setProperty(property, arguments.get(key));
+                    Configuration.setConfigProperty(property, arguments.get(key));
                 }
             }
         }
         
         // Update local vars from properties
-        if (properties.containsKey(Configuration.KWEBS_LOGPATH)) {
-            logPath = properties.getProperty(Configuration.KWEBS_LOGPATH);
+        if (Configuration.hasConfigProperty(Configuration.KWEBS_LOGPATH)) {
+            logPath = Configuration.getConfigProperty(Configuration.KWEBS_LOGPATH);
         }
-        if (properties.containsKey(Configuration.KWEBS_LOGSIZE)) {
+        if (Configuration.hasConfigProperty(Configuration.KWEBS_LOGSIZE)) {
             try {
-                logSize = Integer.parseInt(properties.getProperty(Configuration.KWEBS_LOGSIZE));
+                logSize = Integer.parseInt(Configuration.getConfigProperty(Configuration.KWEBS_LOGSIZE));
             } catch (Exception e) {
                 Logger.log(Severity.WARNING,
-                    "Invalid log size: " + properties.getProperty(Configuration.KWEBS_LOGSIZE)
-                    + ", using default log size of 10 mb"
+                    "Invalid log size: " + Configuration.getConfigProperty(Configuration.KWEBS_LOGSIZE)
+                    + ", using default log size of " + DEFAULT_LOGSIZE + " mb"
                 );
             }
         }
@@ -180,11 +187,33 @@ public class Application implements IApplication {
         
         // Create server configuration folder structure if it not already
         // exists.
-        createConfigurationFolder(properties);
+        createConfigurationFolder();
+
+        // Start the management servive
+        if (Configuration.hasConfigProperty(Configuration.MANAGEMENT_PORT)) {
+            try {
+                managementPort = Integer.parseInt(
+                    Configuration.getConfigProperty(Configuration.MANAGEMENT_PORT)
+                );
+            } catch (Exception e) {
+                Logger.log(Severity.WARNING,
+                    "Invalid management port: " 
+                    + Configuration.getConfigProperty(Configuration.MANAGEMENT_PORT)
+                    + ", using default port " + ManagementService.DEFAULT_MANAGEMENTPORT
+                );
+            }
+        }
+        Logger.log(Severity.ALWAYS, "Starting management service on port " + managementPort);
+        try {
+            ManagementService.startManagement(managementPort);
+            Logger.log(Severity.ALWAYS, "Management service started");            
+        } catch (Exception e) {
+            Logger.log(Severity.CRITICAL, "Management service could not be started", e);
+        }
         
         // Set plugin preferences of the necessary layouter plugins
         try {
-            setPluginPreferencesFromProperties(properties);
+            setPluginPreferencesFromConfiguration();
         } catch (Exception e) {
             Logger.log(Severity.CRITICAL, "Error while initializing layouter preferences", e);
             return IApplication.EXIT_OK;
@@ -192,7 +221,7 @@ public class Application implements IApplication {
         
         // Initialize server and publish service
         try {
-            ServicePublisher.publish();
+            ServicePublisher.publish();            
             while (!stopped) {
                 Thread.sleep(LOOP_TIMEOUT);
             }
@@ -205,6 +234,9 @@ public class Application implements IApplication {
             ServicePublisher.unpublish();
         }
 
+        // Unpublish management service
+        ManagementService.stopManagement();
+        
         // Unregister file logging
         Logger.removeLoggerListener(fileLogging);
         
@@ -222,9 +254,16 @@ public class Application implements IApplication {
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     public final void stop() {
+        stopped = true;
+    }
+
+    /**
+     * Shuts down the server.
+     */
+    public final void shutdownServer() {
         stopped = true;
     }
 
@@ -291,27 +330,27 @@ public class Application implements IApplication {
      * Sets the neccesary preferences from different layouter plugins in order
      * for them to function correctly.
      */
-    private void setPluginPreferencesFromProperties(final Properties properties) {
+    private void setPluginPreferencesFromConfiguration() {
         String value = null;
         File file = null;
-        if (!properties.containsKey(Configuration.GRAPHVIZ_PATH)) {
+        if (!Configuration.hasConfigProperty(Configuration.GRAPHVIZ_PATH)) {
             throw new IllegalStateException(
                 "Properties do not contain property for graphviz executable"
             );
         }
-        if (!properties.containsKey(Configuration.GRAPHVIZ_TIMEOUT)) {
+        if (!Configuration.hasConfigProperty(Configuration.GRAPHVIZ_TIMEOUT)) {
             throw new IllegalStateException(
                 "Properties do not contain property for graphviz timeout"
             );
         }
-        if (!properties.containsKey(Configuration.OGDF_TIMEOUT)) {
+        if (!Configuration.hasConfigProperty(Configuration.OGDF_TIMEOUT)) {
             throw new IllegalStateException(
                 "Properties do not contain property for ogdf timeout"
             );
         }
-        value = properties.getProperty(Configuration.GRAPHVIZ_PATH);
+        value = Configuration.getConfigProperty(Configuration.GRAPHVIZ_PATH);
         file = new File(value);
-        if (!file.exists() || !file.canExecute() ) {
+        if (!file.exists() || !file.canExecute()) {
             Logger.log(Severity.WARNING, 
                 "The specified graphviz executable does not exist or is not executable."
                 + " Graphviz based layout will not work."
@@ -321,10 +360,10 @@ public class Application implements IApplication {
             Logger.log(Severity.ALWAYS, "Setting graphviz executable: " + value);
             setPluginPreference(GRAPHVIZ_PLUGINID, GRAPHVIZ_EXECPREF, value);
         }
-        value = properties.getProperty(Configuration.GRAPHVIZ_TIMEOUT);
+        value = Configuration.getConfigProperty(Configuration.GRAPHVIZ_TIMEOUT);
         Logger.log(Severity.ALWAYS, "Setting graphviz timeout: " + value);
         setPluginPreference(GRAPHVIZ_PLUGINID, GRAPHVIZ_TIMEOUTPREF, value);        
-        value = properties.getProperty(Configuration.OGDF_TIMEOUT);
+        value = Configuration.getConfigProperty(Configuration.OGDF_TIMEOUT);
         Logger.log(Severity.ALWAYS, "Setting ogdf timeout: " + value);
         setPluginPreference(OGDF_PLUGINID, OGDF_TIMEOUTPREF, value);
     }
@@ -362,9 +401,9 @@ public class Application implements IApplication {
     /**
      * Builds the configuration folder structure needed for operation.
      */
-    private void createConfigurationFolder(final Properties properties) {        
+    private void createConfigurationFolder() {        
         for (String property : ApplicationHelper.CONFIGURATION_FILES) {
-            String file = properties.getProperty(property);
+            String file = Configuration.getConfigProperty(property);
             if (!new File(file).exists()) {
                 try {
                     Files.writeFile(file, Io.getResourceStream(PLUGIN_ID, file));

@@ -14,15 +14,30 @@
 
 package de.cau.cs.kieler.kwebs.server.configuration;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.Properties;
+
 /**
- * This class defines constants and default values for accessing
- * and storing layout service related configuration parameters.
+ * This class provides an application wide configuration context and
+ * defines constants and default values for accessing and storing application
+ * related configuration parameters.
  *
  * @kieler.rating  2011-05-04 red
  * @author  swe
  */
-public final class Configuration {
+public final class Configuration extends Properties {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8065497054352065920L;
+
+    /** The singleton instance. */
+    private static final Configuration INSTANCE
+        = new Configuration();
+    
     /** Common prefix for property identifiers. */
     private static final String PREFIX
         = "de.cau.cs.kieler.kwebs.";
@@ -135,6 +150,12 @@ public final class Configuration {
     public static final String KWEBS_LOGSIZE
         = PREFIX + "log.size";
     
+    // Management preferences
+
+    /** Port on which the server listens for management requests. */
+    public static final String MANAGEMENT_PORT
+        = PREFIX + "management.port";
+        
     //
 
     /**
@@ -143,6 +164,60 @@ public final class Configuration {
      */
     private Configuration() {
     }
-    
 
+    /**
+     * 
+     * @param inStream
+     * @throws IOException
+     */
+    public static synchronized void loadFromStream(final InputStream stream) throws IOException {
+        INSTANCE.load(stream);
+    }
+    
+    /**
+     * 
+     * @param reader
+     * @throws IOException
+     */
+    public static synchronized void loadFromReader(final Reader reader) throws IOException {
+        INSTANCE.load(reader);
+    }
+    
+    /**
+     * 
+     * @param stream
+     * @throws IOException
+     * @throws InvalidPropertiesFormatException
+     */
+    public static synchronized void loadFromXmlStream(final InputStream stream) throws IOException {
+        INSTANCE.loadFromXML(stream);
+    }
+    
+    /**
+     * 
+     * @param key
+     * @return
+     */
+    public static String getConfigProperty(final String key) {
+        return INSTANCE.getProperty(key);
+    }
+
+    /**
+     * 
+     * @param key
+     * @return
+     */
+    public static void setConfigProperty(final String key, final String value) {
+        INSTANCE.setProperty(key, value);
+    }
+
+    /**
+     * 
+     * @param key
+     * @return
+     */
+    public static boolean hasConfigProperty(final String key) {
+        return INSTANCE.containsKey(key);
+    }
+    
 }

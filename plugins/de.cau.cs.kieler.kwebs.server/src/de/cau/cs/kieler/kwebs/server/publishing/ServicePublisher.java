@@ -14,8 +14,6 @@
 
 package de.cau.cs.kieler.kwebs.server.publishing;
 
-import java.util.Properties;
-
 import de.cau.cs.kieler.kwebs.logging.Logger;
 import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
@@ -40,44 +38,25 @@ public final class ServicePublisher {
         = new ServicePublisher();
 
     /** Manager for publishing via http. */
-    private IServerManager httpManager;
+    private IServerManager httpManager
+        = new HttpServerManager();
 
     /** Manager for publishing via https. */
-    private IServerManager httpsManager;
+    private IServerManager httpsManager
+        = new HttpsServerManager();
 
     /** Manager for publishing via jETI. */
-    private IServerManager jetiManager;
+    private IServerManager jetiManager
+        = new JetiManager();
 
     /** Instance of the layouter web service to be published. */
     private IGraphLayouterService service
         = new JaxWsService();
 
     /**
-     *  The service context contains all relevant settings regarding
-     *  publishing.
-     */
-    private Properties properties
-        = new Properties();
-
-    /**
      * Private constructor.
      */
     private ServicePublisher() {
-        httpManager = new HttpServerManager();
-        httpsManager = new HttpsServerManager();
-        jetiManager = new JetiManager();
-        httpManager.setProperties(properties);
-        httpsManager.setProperties(properties);
-        jetiManager.setProperties(properties);
-    }
-
-    /**
-     * Returns the service context which holds all relevant
-     * properties regarding publishing.
-     * @return the service context
-     */
-    public static Properties getProperties() {
-        return INSTANCE.properties;
     }
 
     /**
@@ -88,15 +67,14 @@ public final class ServicePublisher {
         if (isPublished()) {
             throw new AlreadyPublishedException();
         }
-        Properties properties = INSTANCE.properties;
         try {
-            if (properties.getProperty(Configuration.PUBLISH_HTTP).equalsIgnoreCase("true")) {
+            if (Configuration.getConfigProperty(Configuration.PUBLISH_HTTP).equalsIgnoreCase("true")) {
                 INSTANCE.httpManager.publish(INSTANCE.service);
             }
-            if (properties.getProperty(Configuration.PUBLISH_HTTPS).equalsIgnoreCase("true")) {
+            if (Configuration.getConfigProperty(Configuration.PUBLISH_HTTPS).equalsIgnoreCase("true")) {
                 INSTANCE.httpsManager.publish(INSTANCE.service);
             }
-            if (properties.getProperty(Configuration.PUBLISH_JETI).equalsIgnoreCase("true")) {
+            if (Configuration.getConfigProperty(Configuration.PUBLISH_JETI).equalsIgnoreCase("true")) {
                 INSTANCE.jetiManager.publish(null);
             }
         } catch (Exception e) {

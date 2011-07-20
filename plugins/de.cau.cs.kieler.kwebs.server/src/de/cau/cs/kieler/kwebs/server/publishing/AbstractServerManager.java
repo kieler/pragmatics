@@ -14,31 +14,13 @@
 
 package de.cau.cs.kieler.kwebs.server.publishing;
 
-import java.util.Properties;
-
 /**
  * Abstract base implementation of the interface {@link IServerManager}.
  *
  * @author swe
  *
  */
+//FIXME remove this abstract class ???
 abstract class AbstractServerManager implements IServerManager {
-
-    // The class {@code AbstractServerManager} and its descendants are package private
-    // so no need for getters and setters here.
-
-    //CHECKSTYLEOFF VisibilityModifier
-
-    /** The shared service properties. */
-    protected Properties properties;
-
-    //CHECKSTYLEON VisibilityModifier
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setProperties(final Properties theproperties) {
-        properties = theproperties;
-    }
 
 }

@@ -216,7 +216,7 @@ public final class JetiClient extends AbstractWebServiceClient {
     /**
      * {@inheritDoc}
      */
-    public final synchronized void setProvider(final Provider theprovider) {
+    public synchronized void setProvider(Provider theprovider) {
         if (super.getProvider() == null || !super.getProvider().equals(theprovider)) {
             etiCon = null;
             super.setProvider(theprovider);

@@ -126,35 +126,35 @@ final class JetiManager extends AbstractServerManager {
         java.util.Properties props = new java.util.Properties();            
         props.put(
             Configuration.JETI_PROVIDER_ID.substring(PREFIX.length()),
-            properties.getProperty(Configuration.JETI_PROVIDER_ID)
+            Configuration.getConfigProperty(Configuration.JETI_PROVIDER_ID)
         );
         props.put(
             Configuration.JETI_TOOLXML.substring(PREFIX.length()),
-            properties.getProperty(Configuration.JETI_TOOLXML)
+            Configuration.getConfigProperty(Configuration.JETI_TOOLXML)
         );
         props.put(
             Configuration.JETI_SESSIONSFOLDER.substring(PREFIX.length()),
-            properties.getProperty(Configuration.JETI_SESSIONSFOLDER)
+            Configuration.getConfigProperty(Configuration.JETI_SESSIONSFOLDER)
         );
         props.put(
             Configuration.JETI_SESSIONSTIMEOUT.substring(PREFIX.length()),
-            properties.getProperty(Configuration.JETI_SESSIONSTIMEOUT)
+            Configuration.getConfigProperty(Configuration.JETI_SESSIONSTIMEOUT)
         );
         props.put(
             Configuration.JETI_SESSIONSCHECKINTERVAL.substring(PREFIX.length()),
-            properties.getProperty(Configuration.JETI_SESSIONSCHECKINTERVAL)
+            Configuration.getConfigProperty(Configuration.JETI_SESSIONSCHECKINTERVAL)
         );
         props.put(
             Configuration.JETI_SERVERHOSTNAME.substring(PREFIX.length()),
-            properties.getProperty(Configuration.JETI_SERVERHOSTNAME)
+            Configuration.getConfigProperty(Configuration.JETI_SERVERHOSTNAME)
         );
         props.put(
             Configuration.JETI_CONNECTORSEPPPORT.substring(PREFIX.length()),
-            properties.getProperty(Configuration.JETI_CONNECTORSEPPPORT)
+            Configuration.getConfigProperty(Configuration.JETI_CONNECTORSEPPPORT)
         );
         props.put(
             Configuration.JETI_DEBUG.substring(PREFIX.length()),
-            properties.getProperty(Configuration.JETI_DEBUG)
+            Configuration.getConfigProperty(Configuration.JETI_DEBUG)
         );
         return props;
     }
@@ -170,11 +170,11 @@ final class JetiManager extends AbstractServerManager {
         try {
             props.load(Io.getResourceStream(
                 Application.PLUGIN_ID,
-                properties.getProperty(Configuration.JETI_LOG4JCONFIG))
+                Configuration.getConfigProperty(Configuration.JETI_LOG4JCONFIG))
             );
             props.put(
                 "log4j.appender.A2.File", 
-                properties.getProperty(Configuration.JETI_LOGPATH)
+                Configuration.getConfigProperty(Configuration.JETI_LOGPATH)
             );
         } catch (Exception e) {
             Logger.log(Severity.FAILURE, "jETI log4j configuration could not be created", e);

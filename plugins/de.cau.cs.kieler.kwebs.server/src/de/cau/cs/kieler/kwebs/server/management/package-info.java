@@ -13,8 +13,7 @@
  */
 
 /**
- * This package contains the implementations for the service endpoint published via jaxws
- * and the tool class for jeti.
+ * This package contains the implementation of the management port for the server.
  */
 
-package de.cau.cs.kieler.kwebs.server.service;
+package de.cau.cs.kieler.kwebs.server.management;

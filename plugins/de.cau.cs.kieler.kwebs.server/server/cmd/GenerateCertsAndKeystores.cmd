@@ -41,6 +41,9 @@
 	ECHO Importing Server's certificate into Client's keystore
 	%KEYTOOL% -import -v -trustcacerts -alias tomcat -file client.cer -keystore server.jks -keypass %SERVER_KEYPASS% -storepass %SERVER_STOREPASS%
 
+    IF NOT EXIST "..\kwebs\security\certs\" MD "..\kwebs\security\certs\"
+    IF NOT EXIST "..\kwebs\security\keystores\" MD "..\kwebs\security\keystores\"
+    
 	MOVE /Y "*.cer" "..\kwebs\security\certs\"
 	MOVE /Y "*.jks" "..\kwebs\security\keystores\"
 	

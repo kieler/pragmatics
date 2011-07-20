@@ -27,7 +27,6 @@ import org.osgi.framework.Version;
 
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService;
-import de.cau.cs.kieler.kwebs.logging.Logger;
 
 /**
  * This class is the server equivalent of {@link EclipseLayoutServices} but

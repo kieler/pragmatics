@@ -337,20 +337,27 @@ public class Providers {
             name = thename;
             address = theaddress;
             truststore = thetruststore;
+            // JSSE requires the separator to be '/', even on windows
+            if (truststore != null) {
+                truststore = truststore.replace("\\", "/");
+            }
             truststorePass = thetruststorePass;
         }
 
         /**
-         *
-         * @return
+         * Returns the name of this provider.
+         * 
+         * @return the name of this provider
          */
         public String getName() {
             return name;
         }
 
         /**
-         *
-         * @param name
+         * Sets the name of this provider.
+         * 
+         * @param thename
+         *            the name of this provider
          */
         public void setName(final String thename) {
             name = thename;
@@ -358,16 +365,19 @@ public class Providers {
         }
 
         /**
-         *
-         * @return
+         * Returns the address where the service is located.
+         * 
+         * @return the address where the service is located
          */
         public String getAddress() {
             return address;
         }
 
         /**
-         *
-         * @param address
+         * Sets the address where the service is located.
+         * 
+         * @param theaddress
+         *            the address where the service is located
          */
         public void setAddress(final String theaddress) {
             address = theaddress;
@@ -375,33 +385,45 @@ public class Providers {
         }
 
         /**
-         *
-         * @return
+         * Returns the path to the trust store required to access a https based service.
+         * 
+         * @return the path to the trust store
          */
         public String getTruststore() {
             return truststore;
         }
 
         /**
-         *
-         * @param truststore
+         * Sets the path to the trust store required to access a https based service.
+         * 
+         * @param thetruststore
+         *            the path to the trust store
          */
         public void setTruststore(final String thetruststore) {
             truststore = thetruststore;
+            // JSSE requires the separator to be '/', even on windows
+            if (truststore != null) {
+                truststore = truststore.replace("\\", "/"); 
+            }                                                                          
             isDirty = true;
         }
 
         /**
-         *
-         * @return
+         * Returns the password required to access the https trust store associated
+         * with this provider.
+         * 
+         * @return the password for the trust store
          */
         public String getTruststorePass() {
             return truststorePass;
         }
 
         /**
-         *
-         * @param truststore
+         * Sets the password required to access the https trust store associated
+         * with this provider.
+         * 
+         * @param thetruststorePass
+         *            the password for the trust store
          */
         public void setTruststorePass(final String thetruststorePass) {
             truststorePass = thetruststorePass;
@@ -409,7 +431,24 @@ public class Providers {
         }
 
         /**
-         *
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            String result = name + ", " + address;
+            if (truststore != null) {
+                result += ", " + truststore;
+            }
+/* Just for testing purposes            
+            if (truststorePass != null) {
+                result += ", " + truststorePass;
+            }
+*/            
+            return result;
+        }
+        
+        /**
+         * {@inheritDoc}
          */
         @Override
         public boolean equals(final Object obj) {

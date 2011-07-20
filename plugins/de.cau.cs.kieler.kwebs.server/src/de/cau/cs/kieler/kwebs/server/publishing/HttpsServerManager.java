@@ -69,10 +69,10 @@ final class HttpsServerManager extends HttpServerManager {
                 = TrustManagerFactory.getInstance(
                       TrustManagerFactory.getDefaultAlgorithm()
                   );
-            String keystoreFile = properties.getProperty(
+            String keystoreFile = Configuration.getConfigProperty(
                 Configuration.HTTPSKEYSTORE_JKS_PATH
             );
-            String keystorePass = properties.getProperty(
+            String keystorePass = Configuration.getConfigProperty(
                 Configuration.HTTPSKEYSTORE_JKS_PASS
             );
             keyStore.load(
@@ -90,14 +90,14 @@ final class HttpsServerManager extends HttpServerManager {
             );
             HttpsConfigurator httpsConfigurator
                 = new HttpsConfigurator(sslContext);
-            String address = properties.getProperty(Configuration.HTTPS_ADDRESS);
+            String address = Configuration.getConfigProperty(Configuration.HTTPS_ADDRESS);
             String host = Uris.getHost(address);
             if (host == null) {
                 Logger.log(Severity.WARNING, 
                     "The host you specified for the HTTPS server is invalid."
                     + " Using default host " + HTTPS_DEFAULTHOST + "."
                 );
-                host = "0.0.0.0";
+                host = HTTPS_DEFAULTHOST;
             }
             int port = Uris.getPort(address);
             if (port == -1) {
@@ -109,7 +109,7 @@ final class HttpsServerManager extends HttpServerManager {
             }
             server = HttpsServer.create(
                 new InetSocketAddress(host, port),
-                Integer.parseInt(properties.getProperty(Configuration.SERVER_BACKLOG))
+                Integer.parseInt(Configuration.getConfigProperty(Configuration.SERVER_BACKLOG))
             );
             ((HttpsServer) server).setHttpsConfigurator(httpsConfigurator);
         } catch (Exception e) {
