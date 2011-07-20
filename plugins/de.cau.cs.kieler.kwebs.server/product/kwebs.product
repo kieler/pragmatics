@@ -158,9 +158,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="javax.xml.stream"/>
       <plugin id="javax.xml.ws"/>
       <plugin id="net.ogdf.bin" version="1.0.0.v201107192120" fragment=""/>
-      <plugin id="net.ogdf.lib.linux.x86" fragment="true"/>
-      <plugin id="net.ogdf.lib.macosx.x86" fragment="true"/>
-      <plugin id="net.ogdf.lib.macosx.x86_64" fragment="true"/>
       <plugin id="net.ogdf.ogml" fragment=""/>
       <plugin id="org.antlr.runtime"/>
       <plugin id="org.aopalliance"/>
