@@ -968,7 +968,7 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         // determine the border spacing of the parent node
         KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
 
-        // get insets
+        // get insets of parent node
         KInsets insetsParent = parentLayout.getInsets();
 
         // get current node's layout
@@ -976,10 +976,14 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
 
         // find the current node's representative in the layeredGraph
         LNode representative = null;
+        LNode parentRepresentative = null;
         for (LNode lnode : layeredGraph.getLayerlessNodes()) {
             if (lnode.getProperty(Properties.ORIGIN) == currentNode) {
                 representative = lnode;
-                break;
+                // break;
+            }
+            if (lnode.getProperty(Properties.ORIGIN) == parent) {
+                parentRepresentative = lnode;
             }
         }
 
@@ -1004,26 +1008,23 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         // calculate relative position
         if (!(currentNode.getParent() == layeredGraph.getProperty(Properties.ORIGIN))) {
 
-            // get the position which serves as point of origin for the currentNode (upper left
-            // corner of parent node plus insets) - note that this point has already been updated
-            // during the recursive calculation
-            KVector pointOfOrigin = new KVector((parentLayout.getXpos() + insetsParent.getLeft()),
-                    (parentLayout.getYpos() + insetsParent.getTop()));
+            KVector pointOfOrigin = parentRepresentative.getPosition();
+            pointOfOrigin.x += insetsParent.getLeft();
+            pointOfOrigin.y += insetsParent.getTop();
 
             // compute and set the node's relative positioning
-            float relativeX = (float) (position.x + graphBorderSpacing - pointOfOrigin.x);
-            float relativeY = (float) (position.y + graphBorderSpacing - pointOfOrigin.y);
+            float relativeX = (float) (position.x - pointOfOrigin.x);
+            float relativeY = (float) (position.y - pointOfOrigin.y);
             nodeLayout.setPos(relativeX, relativeY);
-        
-            
-         } else {
-        
-         // for nodes that are direct children of the layout node, only the border spacing of the
-         // drawing has to be respected
-         float newX = (float) (position.x + graphBorderSpacing);
-         float newY = (float) (position.y + graphBorderSpacing);
-         nodeLayout.setPos(newX, newY);
-         }
+
+        } else {
+
+            // for nodes that are direct children of the layout node, only the border spacing of the
+            // drawing has to be respected
+            float newX = (float) (position.x + graphBorderSpacing);
+            float newY = (float) (position.y + graphBorderSpacing);
+            nodeLayout.setPos(newX, newY);
+        }
 
         EList<KNode> children = currentNode.getChildren();
         int index;
