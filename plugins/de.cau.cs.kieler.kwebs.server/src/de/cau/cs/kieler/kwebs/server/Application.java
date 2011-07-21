@@ -28,6 +28,7 @@ import org.osgi.framework.Version;
 
 import de.cau.cs.kieler.kwebs.logging.ILoggerListener;
 import de.cau.cs.kieler.kwebs.logging.Logger;
+import de.cau.cs.kieler.kwebs.logging.Logger.Mode;
 import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.logging.DisplayLogging;
@@ -114,7 +115,9 @@ public class Application implements IApplication {
         int logSize = DEFAULT_LOGSIZE;
         
         int managementPort = ManagementService.DEFAULT_MANAGEMENTPORT;
-
+        
+        boolean debugMode = false;
+        
         // Parse command line arguments
         @SuppressWarnings("rawtypes")
         Map argumentsMap = context.getArguments();
@@ -176,7 +179,8 @@ public class Application implements IApplication {
                 logSize = Integer.parseInt(Configuration.getConfigProperty(Configuration.KWEBS_LOGSIZE));
             } catch (Exception e) {
                 Logger.log(Severity.WARNING,
-                    "Invalid log size: " + Configuration.getConfigProperty(Configuration.KWEBS_LOGSIZE)
+                    "Invalid log size: " 
+                    + Configuration.getConfigProperty(Configuration.KWEBS_LOGSIZE)
                     + ", using default log size of " + DEFAULT_LOGSIZE + " mb"
                 );
             }
@@ -185,6 +189,25 @@ public class Application implements IApplication {
         // Register file logging
         fileLogging = new RoundTripFileLogging(logPath, logSize);
         Logger.addLoggerListener(fileLogging);
+
+        // Optionally set the application in debug mode. In debug mode
+        // the logger output is more verbose.
+        if (Configuration.hasConfigProperty(Configuration.KWEBS_LOGDEBUGMODE)) {
+            try {
+                debugMode = Boolean.parseBoolean(
+                    Configuration.getConfigProperty(Configuration.KWEBS_LOGDEBUGMODE)
+                );
+                if (debugMode) {
+                    Logger.setRunMode(Mode.DEBUG);
+                }
+            } catch (Exception e) {
+                Logger.log(Severity.WARNING,
+                    "Invalid debug mode: " 
+                    + Configuration.getConfigProperty(Configuration.KWEBS_LOGDEBUGMODE)
+                    + ", using non debug mode"
+                );
+            }
+        }
         
         // Create server configuration folder structure if it not already
         // exists.

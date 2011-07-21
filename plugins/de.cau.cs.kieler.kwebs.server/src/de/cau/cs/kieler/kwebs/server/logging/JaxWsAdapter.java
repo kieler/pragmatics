@@ -23,7 +23,7 @@ import java.util.logging.LogRecord;
 
 import de.cau.cs.kieler.kwebs.logging.Logger;
 import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
-
+//FIXME just implemented for testing purposes yet.
 /**
  * Adapter for catching the jaxws logging events and log them in our own logger.
  *
@@ -44,6 +44,7 @@ public class JaxWsAdapter extends Handler {
      * 
      */
     public static void registerToLoggers() {
+        INSTANCE.setLevel(Level.ALL);
         LogManager logManager = LogManager.getLogManager();
         Enumeration<String> loggers = logManager.getLoggerNames();
         String loggerName = null;
@@ -54,12 +55,15 @@ public class JaxWsAdapter extends Handler {
             if (loggerName.startsWith(COMSUNXML_PREFIX)) {
                 Logger.log(Severity.DEBUG, "Registering to " + loggerName);
                 logger = logManager.getLogger(loggerName);
-                loggerHandlers = logger.getHandlers();
-                for (java.util.logging.Handler loggerHandler : loggerHandlers) {
-                    loggerHandler.setLevel(Level.OFF);
+                if (logger != null) {
+                    loggerHandlers = logger.getHandlers();
+                    for (java.util.logging.Handler loggerHandler : loggerHandlers) {
+                        loggerHandler.setLevel(Level.OFF);
+                    }                    
+                    logger.addHandler(INSTANCE);
+                } else {
+                    Logger.log(Severity.DEBUG, "Registered logger " + loggerName + " was null");
                 }
-                INSTANCE.setLevel(Level.ALL);
-                logger.addHandler(INSTANCE); 
             }
         }
     }

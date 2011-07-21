@@ -153,8 +153,8 @@ public final class Logger {
      * 
      * @return the run mode
      */
-    public Mode getRunMode() {
-        return runMode;        
+    public static Mode getRunMode() {
+        return INSTANCE.runMode;        
     }
     
     /**
@@ -163,8 +163,8 @@ public final class Logger {
      * @param therunMode
      *            the new run mode
      */
-    public void setRunMode(final Mode therunMode) {
-        runMode = therunMode;        
+    public static void setRunMode(final Mode therunMode) {
+        INSTANCE.runMode = therunMode;        
     }
     
     /**

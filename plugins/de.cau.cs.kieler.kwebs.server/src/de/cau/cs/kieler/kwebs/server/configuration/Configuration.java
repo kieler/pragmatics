@@ -149,6 +149,10 @@ public final class Configuration extends Properties {
     /** Roundttrip size of log file in mbytes. */
     public static final String KWEBS_LOGSIZE
         = PREFIX + "log.size";
+
+    /** Whether to set the application in debugging mode. */
+    public static final String KWEBS_LOGDEBUGMODE
+        = PREFIX + "log.debugMode";
     
     // Management preferences
 
