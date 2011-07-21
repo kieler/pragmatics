@@ -287,8 +287,9 @@ public class LogView extends ViewPart implements ILoggerListener {
             = 400;
 
         /**
-         *
-         * @return
+         * Returns a predefined fill layout.
+         * 
+         * @return a predefined fill layout
          */
         private FillLayout getFillLayout() {
             FillLayout layout = new FillLayout();
@@ -298,7 +299,11 @@ public class LogView extends ViewPart implements ILoggerListener {
         }
 
         /**
-         *
+         * Creates the ui elements of the detail view for a logger event.
+         * 
+         * @param parent
+         *            the parent ui element
+         * @return
          */
         protected final Control createContents(final Composite parent) {
 
@@ -407,8 +412,7 @@ public class LogView extends ViewPart implements ILoggerListener {
     }
 
     /**
-     * This is a callback that will allow us to create the viewer and initialize
-     * it.
+     * {@inheritDoc}
      */
     public final void createPartControl(final Composite parent) {
         viewer = new TableViewer(parent,
@@ -461,11 +465,11 @@ public class LogView extends ViewPart implements ILoggerListener {
         table.setMenu(menu);
     }
 
-    /** */
+    /** The date formatter used. */
     private static final SimpleDateFormat DATE_FORMATTER
         = new SimpleDateFormat("yyyy-dd-MM HH:mm:ss Z");
 
-    /** */
+    /** The names of the properties of a logger event. */
     private static final String[] EVENTLOCALNAMES_ARRAY
         = new String[] { "Date", "Level", "Message", "Class", "Method", "Line", "Exception" };
 
@@ -473,6 +477,11 @@ public class LogView extends ViewPart implements ILoggerListener {
     private static final int[] TABLECOLUMN_WIDTHS
         = new int[] {180, 80, 600, 100, 100, 100, 100};
 
+    /**
+     * 
+     * @param parent
+     * @param theviewer
+     */
     private void createColumns(final Composite parent,
         final TableViewer theviewer) {
         TableViewerColumn col = null;
@@ -599,16 +608,19 @@ public class LogView extends ViewPart implements ILoggerListener {
         = DEFAULT_MAXENTRIES;
 
     /**
-     *
-     * @return
+     * Returns the maximum number of entries displayed in this log view.
+     * 
+     * @return the maximum number of entries
      */
     public final int getMaxEntries() {
         return maxEntries;
     }
 
     /**
-     *
-     * @param maxEntries
+     * Sets the maximum number of entries displayed in this log view.
+     * 
+     * @param themaxEntries
+     *            the maximum number of entries
      */
     public final void setMaxEntries(final int themaxEntries) {
         maxEntries = themaxEntries;
@@ -617,17 +629,20 @@ public class LogView extends ViewPart implements ILoggerListener {
         entriesLock.unlock();
     }
 
-    /** */
+    /** The model of the table viewer. */
     private Vector<LoggerEvent> entries
         = new Vector<LoggerEvent>();
 
-    /** */
+    /** Lock for synchronizing model changes. */
     private Lock entriesLock
         = new ReentrantLock();
 
     /**
-     *
+     * Adds a logger event to the underlying model of the table viewer and displays it in the view.
+     * 
      * @param event
+     *            the logger event
+     *         
      */
     public final void loggerEvent(final LoggerEvent event) {
         entriesLock.lock();
@@ -637,7 +652,7 @@ public class LogView extends ViewPart implements ILoggerListener {
     }
 
     /**
-     *
+     * Updates the underlying model of the table viewer and optionally refreshes its view.
      */
     private void updateModel() {
         if (entries.size() >= maxEntries) {
@@ -652,7 +667,7 @@ public class LogView extends ViewPart implements ILoggerListener {
     }
 
     /**
-     *
+     * Clears the underlying model of the table viewer and updates its view.
      */
     private void clearModel() {
         entriesLock.lock();
@@ -662,7 +677,7 @@ public class LogView extends ViewPart implements ILoggerListener {
     }
 
     /**
-     *
+     * Sets a new model for the table viewer.
      */
     private void updateView() {
         try {
@@ -678,7 +693,7 @@ public class LogView extends ViewPart implements ILoggerListener {
     }
 
     /**
-     *
+     * Refreshes the table viewer.
      */
     private void refreshView() {
         try {

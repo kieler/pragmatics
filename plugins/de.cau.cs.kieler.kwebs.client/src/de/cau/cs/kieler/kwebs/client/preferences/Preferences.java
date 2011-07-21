@@ -74,8 +74,9 @@ public final class Preferences {
     }
 
     /**
-     *
-     * @return
+     * Returns the preference store for this plugin.
+     * 
+     * @return the preference store
      */
     public static IPreferenceStore getPreferenceStore() {
         return Activator.getInstance().getPreferenceStore();

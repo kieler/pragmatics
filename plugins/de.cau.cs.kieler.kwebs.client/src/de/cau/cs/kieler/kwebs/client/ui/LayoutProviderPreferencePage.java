@@ -73,36 +73,43 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
     /** . */
     private Button prEditButton4;
 
-    /** */
+    /** The table viewer used to display the user defined providers. */
     private TableViewer providerViewer;
 
-    /** */
+    /** The table used to display the user defined providers. */
     private Table providerTable;
 
-    /** */
+    /** The preference store used to store user selections. */
     private IPreferenceStore store;
 
     /**
-     *
+     * Creates the preference page for the remote layout options.
      */
     public LayoutProviderPreferencePage() {
         this(null, "Remote layout", null);
     }
 
     /**
-     *
+     * Creates the preference page for the remote layout options.
+     * 
      * @param title
+     *            the title
      * @param image
+     *            the image
      */
     public LayoutProviderPreferencePage(final String title, final ImageDescriptor image) {
         this(title, null, image);
     }
 
     /**
-     *
+     * Creates the preference page for the remote layout options.
+     * 
      * @param title
+     *            the title
      * @param description
+     *            the description
      * @param image
+     *            the image
      */
     public LayoutProviderPreferencePage(final String title, final String description,
         final ImageDescriptor image) {
@@ -119,7 +126,7 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     public final void init(final IWorkbench workbench) {
         store = Preferences.getPreferenceStore();
@@ -217,7 +224,8 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
     /**
      * Creates the group for layout provider options.
      *
-     * @param parent the parent control
+     * @param parent
+     *           the parent control
      * @return a group with general options
      */
     private Group createLayoutGroup1(final Composite parent) {
@@ -266,7 +274,8 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
     /**
      * Creates the group for layout provider options.
      *
-     * @param parent the parent control
+     * @param parent 
+     *            the parent control
      * @return a group with general options
      */
     private Group createLayoutGroup2(final Composite parent) {
@@ -321,9 +330,11 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
         = 300;
 
     /**
+     * Creates the group containing the layout provider table.
      *
-     * @param parent
-     * @return
+     * @param parent 
+     *            the parent control
+     * @return a group with the layout provider table
      */
     private Group createLayoutGroup3(final Composite parent) {
 
@@ -526,7 +537,8 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
     }
 
     /**
-     *
+     * Refreshes the viewer of the provider table. Used to reflect model
+     * changes.
      */
     private void refreshProviderViewer() {
         try {
@@ -542,7 +554,8 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
     }
 
     /**
-     *
+     * Sets the selected status of the ui elements according to their
+     * state from the preference store. 
      */
     private void initRemoteLayoutOptionsView() {
         boolean remoteLayout
@@ -555,7 +568,8 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
     }
 
     /**
-     *
+     * Sets the enabled status of the ui elements according to their
+     * state from the preference store. 
      */
     private void updateRemoteLayoutOptionsView() {
         boolean remoteLayout = providerRadio2.getSelection();

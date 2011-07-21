@@ -17,30 +17,31 @@ package de.cau.cs.kieler.kwebs.transformation;
 import de.cau.cs.kieler.core.kgraph.KNode;
 
 /**
- * .
+ * This interface defines an infrastructre for de-/serialization of graphs in order to transfer
+ * them between a client and the layout web service. The client uses concrete implementations of
+ * this interface in order to de-/serialize the graph to be layouted. The server uses an extension
+ * point mechanism to register the supported transformations.
+ * 
  * @kieler.rating  2011-05-04 red
  * @author  swe
  */
 public interface IGraphTransformer {
 
     /**
-     * Create KGraph from serial representation. The form of serialization
-     * and the underlying meta model is defined by {@code format}.
+     * Create a {@code KGraph} from serial representation.
      *
      * @param serializedGraph
      *            the serialized graph
-     * @return KNode
-     *            the graph as KGraph
+     * @return the graph as KGraph
      */
     KNode deserialize(final String serializedGraph);
 
     /**
-     * Serializes the given graph in the format supported by this transformer.
+     * Serializes the given {@code KGraph} in the format supported by this transformer.
      *
      * @param graph the given graph
      *
-     * @return String
-     *             serialization of the given graph
+     * @return serialization of the given graph
      */
     String serialize(final KNode graph);
 
@@ -48,8 +49,7 @@ public interface IGraphTransformer {
      * Returns the format supported by this transformer. Formats are defined
      * in {@link Formats}
      *
-     * @return String
-     *             the supported format
+     * @return the supported format
      */
     String getSupportedFormat();
 

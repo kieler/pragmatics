@@ -26,7 +26,7 @@ import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
 import de.cau.cs.kieler.kwebs.util.Uris;
 
 /**
- * .
+ * Utility class for testing availability of a provider with ui support.
  *
  * @kieler.rating 2011-05-03 red
  *
@@ -34,20 +34,17 @@ import de.cau.cs.kieler.kwebs.util.Uris;
  */
 public final class Availability {
 
-    /**
-     *
-     */
-    private Availability() {
-    }
-
     /** Number of requests for determining response time. */
-    private static final float RESPONSETIME_TESTCOUNT
+    private static final long RESPONSETIME_TESTCOUNT
         = 10;
 
     /**
-     *
+     * Tests whether a given provider can be reached.
+     * 
      * @param shell
+     *            the parent shell for the dialog
      * @param provider
+     *            the provider to be tested
      */
     public static void checkAvailability(final Shell shell, final Provider provider) {
         String name = provider.getName();
@@ -91,9 +88,23 @@ public final class Availability {
             } else if (!Uris.isValidURI(address)) {
                 box.setText("Invalid Address");
                 box.setMessage("The provider address is not valid:\n\n" + address);
-            }
+            } else if (Uris.isHttpsURI(address)) {
+                box.setText("Possibly Security Misconfigured");
+                box.setMessage(
+                    "Name and address seem to be ok."
+                    + " Perhaps your security configuration is not correct?"
+                    + " Please check the location of your trust store and the correctness"
+                    + " of the given password."
+                );
+            } 
             box.open();
         }
+    }
+
+    /**
+     * Private constructor for utility class.
+     */
+    private Availability() {
     }
 
 }

@@ -43,11 +43,11 @@ import de.cau.cs.kieler.kwebs.client.ui.testers.Availability;
  */
 public abstract class AbstractProviderDialog extends Dialog {
 
-    /** */
+    /** Return value when user pressed OK. */
     public static final int ACTION_OK
         = 0;
 
-    /** */
+    /** Return value when user pressed ABORT. */
     public static final int ACTION_ABORT
         = 1;
 
@@ -89,15 +89,15 @@ public abstract class AbstractProviderDialog extends Dialog {
 
     // **********
 
-    /** */
+    /** Standard width of labels. */
     private static final int LABEL_WIDTHHINT
         = 400;
 
-    /** */
+    /** Standard width of text fields. */
     private static final int TEXT_WIDTHHINT
         = 400;
 
-    /** */
+    /** Standard width of buttons. */
     private static final int BUTTON_WIDTHHINT
         = 80;
 
@@ -210,8 +210,9 @@ public abstract class AbstractProviderDialog extends Dialog {
     }
 
     /**
+     * Returns the name of the provider.
      *
-     * @return
+     * @return the contents of the text element for the provider name 
      */
     protected final String getName() {
         String name = providerName.getText();
@@ -222,8 +223,9 @@ public abstract class AbstractProviderDialog extends Dialog {
     }
 
     /**
-     *
-     * @return
+     * Returns the service address used when doing layout with this provider.
+     * 
+     * @return the contents of the text element for the provider address
      */
     protected final String getAddress() {
         String address = serviceAddress.getText();
@@ -234,8 +236,9 @@ public abstract class AbstractProviderDialog extends Dialog {
     }
 
     /**
-     *
-     * @return
+     * Returns the path to the trust store file used when doing layout with this provider.
+     * 
+     * @return the contents of the text element for the trust store path
      */
     protected final String getTruststore() {
         String truststoreValue = truststore.getText();
@@ -246,15 +249,17 @@ public abstract class AbstractProviderDialog extends Dialog {
     }
 
     /**
+     * Returns the password for the trust store file used when doing layout with this provider.
      *
-     * @return
+     * @return the contents of the text element for the trust store password
      */
     protected final String getTruststorePass() {
         return truststorePass.getText();
     }
 
     /**
-     *
+     * Checks whether the layout service derived from the user entered parameters
+     * is reachable.
      */
     protected final void checkAvailability() {
         Availability.checkAvailability(

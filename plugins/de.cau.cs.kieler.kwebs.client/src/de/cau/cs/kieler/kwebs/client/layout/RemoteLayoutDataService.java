@@ -44,7 +44,7 @@ public final class RemoteLayoutDataService extends XMLLayoutDataService {
     /**
      * Creates the singleton instance of this class. The layout capabilities
      * need to be retrieved afterwards through any client which implements the
-     * {@link de.cau.cs.kieler.kiws.kiml.client.ws.client.IKimlWebServiceClient} interface
+     * {@link IKimlWebServiceClient} interface
      * by calling {@link initializeWithClient} with the client as parameter.
      */
     public static synchronized void create() {
@@ -59,7 +59,7 @@ public final class RemoteLayoutDataService extends XMLLayoutDataService {
     }
 
     /**
-     *
+     * 
      */
     public static synchronized void resetInstance() {
         RemoteLayoutDataService lds =
@@ -84,9 +84,10 @@ public final class RemoteLayoutDataService extends XMLLayoutDataService {
     }
 
     /**
-     * .
+     * Initializes the layout service meta data with the given web service client.
      *
-     * @param client The client.
+     * @param client 
+     *            the client.
      */
     public synchronized void initializeWithClient(final IWebServiceClient client) {
         if (!client.isAvailable()) {
@@ -111,7 +112,7 @@ public final class RemoteLayoutDataService extends XMLLayoutDataService {
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     protected void reportError(final String message) {
@@ -119,7 +120,7 @@ public final class RemoteLayoutDataService extends XMLLayoutDataService {
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     protected void reportError(final String message, final Exception exception) {

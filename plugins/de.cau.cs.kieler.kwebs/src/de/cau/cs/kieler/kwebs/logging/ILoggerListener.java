@@ -30,6 +30,6 @@ public interface ILoggerListener {
      * 
      * @param event the logger event
      */
-    void loggerEvent(LoggerEvent event);
+    void loggerEvent(final LoggerEvent event);
     
 }

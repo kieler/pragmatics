@@ -13,7 +13,7 @@
  */
 
 /**
- * .
+ * This package contains commonly used utility classes.
  *
  */
 package de.cau.cs.kieler.kwebs.util;

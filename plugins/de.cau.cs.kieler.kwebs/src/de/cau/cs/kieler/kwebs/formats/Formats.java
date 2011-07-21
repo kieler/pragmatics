@@ -15,7 +15,8 @@
 package de.cau.cs.kieler.kwebs.formats;
 
 /**
- * Utility class defining the supported formats for the layout service.
+ * Utility class defining the supported formats for the layout service. A format
+ * is a combination of the meta model of a a graph and the used serialization. 
  *
  * @kieler.rating 2011-05-04 red
  *
@@ -23,15 +24,9 @@ package de.cau.cs.kieler.kwebs.formats;
  */
 public final class Formats {
 
-    /**
-     * Private constructor.
-     */
-    private Formats() {
-    }
-
     /** Constant defining the KGraph model in XMI serialization. */
     public static final String FORMAT_KGRAPH_XMI
-        = "de.cau.cs.kieler.format.kgraph.xmi"; //$NON-NLS-1$
+        = "de.cau.cs.kieler.format.kgraph.xmi";
 
     /**
      * Tests whether a given format identifier is supported
@@ -45,6 +40,12 @@ public final class Formats {
      */
     public static boolean isSupportedFormat(final String format) {
         return format.equals(FORMAT_KGRAPH_XMI);
+    }
+
+    /**
+     * Private constructor since this utility class shall not be instantiated.
+     */
+    private Formats() {
     }
 
 }

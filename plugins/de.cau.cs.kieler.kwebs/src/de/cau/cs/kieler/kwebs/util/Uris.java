@@ -17,19 +17,12 @@ package de.cau.cs.kieler.kwebs.util;
 import java.net.URI;
 
 /**
- * Utilities for testing user defined uris for correctness.
+ * Utilities for testing working with user defined uris.
  *
  * @kieler.rating  2011-05-04 red
  * @author  swe
  */
 public final class Uris {
-
-    /**
-     * Private Constructor. Util class must not
-     * be instantiated.
-     */
-    private Uris() {
-    }
 
     /**
      * Tests an user given uri for correctness.
@@ -158,6 +151,13 @@ public final class Uris {
         }
         //CHECKSTYLEON EmptyBlock
         return -1;
+    }
+
+    /**
+     * Private Constructor. Utility class must not
+     * be instantiated.
+     */
+    private Uris() {
     }
 
 }

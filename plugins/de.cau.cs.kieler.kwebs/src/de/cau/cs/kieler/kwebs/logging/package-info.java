@@ -13,7 +13,7 @@
  */
 
 /**
- * The logger used in KWEBS.
+ * The logger used in KWebS.
  *
  */
 package de.cau.cs.kieler.kwebs.logging;

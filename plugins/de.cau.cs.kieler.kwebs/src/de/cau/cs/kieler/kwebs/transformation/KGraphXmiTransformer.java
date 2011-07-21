@@ -106,7 +106,7 @@ public class KGraphXmiTransformer implements IGraphTransformer {
         return Formats.FORMAT_KGRAPH_XMI;
     }
 
-    //
+    // Private utility methods
 
     /**
      * Persists all KGraphData elements of a KNode graph.
@@ -160,10 +160,10 @@ public class KGraphXmiTransformer implements IGraphTransformer {
 
     /**
      * Creates a resource set ready to be used with the KGraph and KLayoutData meta model
-     * and XMI serialization and deserialization.
+     * and XMI de-/serialization.
      *
      * @return A resource set ready to be used with the KGraph and KLayoutData meta model
-     *         and XMI serialization and deserialization
+     *         and XMI de-/serialization
      */
     private ResourceSet createResourceSet() {
         ResourceSet resourceset = new ResourceSetImpl();

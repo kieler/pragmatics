@@ -28,7 +28,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kwebs.logging.Logger;
 
 /**
- * Utility class for duplicating layout information between structual identical
+ * Utility class for duplicating layout information between structually identical
  * graphs. Every graph element gets annotated with an unique identifier.
  * This is used to duplicate the calculated layout information from a layouted
  * graph back to the original graph.
@@ -39,18 +39,9 @@ import de.cau.cs.kieler.kwebs.logging.Logger;
  */
 public final class Graphs {
 
-    /** */
-    //private static final ResourceSet resourceSet
-    //    = createResourceSet();
-
-    /**
-     *
-     */
-    private Graphs() {
-    }
-
     /**
      * Duplicates layout information from source model to target model.
+     * 
      * @param sourceGraph the model which contains the layout information
      * @param targetGraph the model which gets the layout information
      */
@@ -75,8 +66,11 @@ public final class Graphs {
 
     /**
      * Copies layout information from the sourceElement to the targetElement.
-     * @param sourceElement the element which contains the layout information
-     * @param targetElement the element which gets the layout information
+     * 
+     * @param sourceElement
+     *            the element which contains the layout information
+     * @param targetElement 
+     *            the element which gets the layout information
      */
     private static void duplicateGraphElementLayout(
         final KGraphElement sourceElement,
@@ -102,10 +96,13 @@ public final class Graphs {
     }
 
     /**
-     * Creates a {@code #HashMap} of all {@code #KGraphElement} objects of the given
-     * graph indexed by by the id of it's {@code #KIdentifier} objects.
-     * @param graph The graph model
+     * Creates a {@code HashMap} of all {@code KGraphElement} objects of the given
+     * graph indexed by by the id of it's {@code KIdentifier} objects.
+     * 
+     * @param graph 
+     *            the graph model
      * @return HashMap
+     *            a map containing the graph elements indexed by their unique identifier
      */
     private static HashMap<String, KGraphElement> createHashmapByUniqueID(final KNode graph) {
         HashMap<String, KGraphElement> map = new HashMap<String, KGraphElement>();
@@ -132,6 +129,7 @@ public final class Graphs {
 
     /**
      * Annotates each element of a KGraph instance with an unique id.
+     * 
      * @param graph the graph to be annotated
      */
     public static void annotateGraphWithUniqueID(final KNode graph) {
@@ -148,10 +146,11 @@ public final class Graphs {
     }
 
    /**
-    * Determines the total number of layout nodes in the given layout graph.
+    * Determines the total number of nodes in the given graph.
     *
-    * @param node parent layout node to examine
-    * @return total number of child layout nodes
+    * @param node 
+    *            parent layout node to examine
+    * @return total number of child nodes
     */
    public static int countNodes(final KNode node) {
        int count = node.getChildren().size();
@@ -161,6 +160,13 @@ public final class Graphs {
            }
        }
        return count;
+   }
+
+   /**
+    * Private Constructor. Utility class must not
+    * be instantiated.
+    */
+   private Graphs() {
    }
 
 }

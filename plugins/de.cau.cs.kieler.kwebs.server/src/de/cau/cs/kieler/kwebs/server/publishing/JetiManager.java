@@ -108,6 +108,8 @@ final class JetiManager extends AbstractServerManager {
             etiConnector = new EtiSeppConnector();
         } catch (Exception e) {
             Logger.log(Severity.CRITICAL, "jETI server could not be created", e);
+            System.out.println(e.getMessage());
+            e.printStackTrace();
             throw new ServerNotCreatedException(e);
         }
     }

@@ -13,8 +13,8 @@
  */
 
 /**
- * This package contains a single class {@code RemoteLayoutConstants} which provides
- * constants needed by the KIELER web service infrastructure on client and server side.
+ * The class included in this package defines the supported formats for graph
+ * representation in KWebS.
  */
 
 package de.cau.cs.kieler.kwebs.formats;

@@ -13,7 +13,8 @@
  */
 
 /**
- * .
+ * This package defines the classes and the definition of the interface necessary for
+ * a client to communicate with the layout web service.
  */
 
 package de.cau.cs.kieler.kwebs.service;

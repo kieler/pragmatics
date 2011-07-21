@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 
 /**
- * Logger for the KIELER layout web service.
+ * Logger for the KWebS project.
  *
  * @kieler.rating  2011-05-04 red
  * @author  swe
@@ -57,6 +57,8 @@ public final class Logger {
 
     /** Enum defining the different severities of log entries. */
     public static enum Severity {
+        /** Just for internal use if the caller of a logging event did not specify its severity. */
+        UNDEFINED,
         /** Do logging despite of configured log level. */
         ALWAYS,
         /** Debug severity. */
@@ -173,7 +175,8 @@ public final class Logger {
      */
     public static void log(final String message) {
         StackTraceElement element = Thread.currentThread().getStackTrace()[2];
-        INSTANCE.log(
+        log(
+            null,
             element.getClassName(),
             element.getMethodName(),
             Integer.toString(element.getLineNumber()),
@@ -194,7 +197,8 @@ public final class Logger {
      */
     public static void log(final String message, final String data) {
         StackTraceElement element = Thread.currentThread().getStackTrace()[2];
-        INSTANCE.log(
+        log(
+            null,
             element.getClassName(),
             element.getMethodName(),
             Integer.toString(element.getLineNumber()),
@@ -215,7 +219,8 @@ public final class Logger {
      */
     public static void log(final Severity severity, final String message) {
         StackTraceElement element = Thread.currentThread().getStackTrace()[2];
-        INSTANCE.log(
+        log(
+            null,
             element.getClassName(),
             element.getMethodName(),
             Integer.toString(element.getLineNumber()),
@@ -238,7 +243,8 @@ public final class Logger {
      */
     public static void log(final Severity severity, final String message, final String data) {
         StackTraceElement element = Thread.currentThread().getStackTrace()[2];
-        INSTANCE.log(
+        log(
+            null,
             element.getClassName(),
             element.getMethodName(),
             Integer.toString(element.getLineNumber()),
@@ -261,7 +267,8 @@ public final class Logger {
      */
     public static void log(final Severity severity, final String message, final Throwable throwable) {
         StackTraceElement element = Thread.currentThread().getStackTrace()[2];
-        INSTANCE.log(
+        log(
+            null,
             element.getClassName(),
             element.getMethodName(),
             Integer.toString(element.getLineNumber()),
@@ -273,7 +280,7 @@ public final class Logger {
     }
 
     /**
-     * Log a message, additional dataand a throwable with severity {@code severity}.
+     * Log a message, additional data and a throwable with severity {@code severity}.
      *
      * @param severity
      *            the severity of the message
@@ -287,7 +294,8 @@ public final class Logger {
     public static void log(final Severity severity, final String message,
         final String data, final Throwable throwable) {
         StackTraceElement element = Thread.currentThread().getStackTrace()[2];
-        INSTANCE.log(
+        log(
+            null,
             element.getClassName(),
             element.getMethodName(),
             Integer.toString(element.getLineNumber()),
@@ -297,53 +305,84 @@ public final class Logger {
             throwable
         );
     }
-
+    
     /** The used date formatter. */
     private static final SimpleDateFormat DATE_FORMATTER
         = new SimpleDateFormat("yyyy-dd-MM HH:mm:ss Z");
 
     /**
-     * This method does the actual logging by creating a logger event and notifing all listeners
+     * This method does the actual logging by creating a logger event and notifying all listeners
      * in the order in which they have registered themselves.
      *
-     * @param clas
-     *            the class in which the logging event occured
-     * @param method
-     *            the method in which the logging event occured
-     * @param line
-     *            the line in which the logging event occured
-     * @param severity
+     * @param thedate
+     *            the optional date of the logging event
+     * @param theclass
+     *            the class in which the logging event occurred
+     * @param themethod
+     *            the method in which the logging event occurred
+     * @param theline
+     *            the line in which the logging event occurred
+     * @param theseverity
      *            the severity of the message
-     * @param message
+     * @param themessage
      *            the message to be logged
-     * @param data
-     *            additional data to be logged
-     * @param throwable
-     *            the throwable to be logged
+     * @param thedata
+     *            the optional additional data to be logged
+     * @param thethrowable
+     *            the optional throwable to be logged
      */
-    private void log(final String clas, final String method, final String line,
-        final Severity severity, final String message, final String data, final Throwable throwable) {
+    public static void log(final Date thedate, final String theclass, final String themethod,
+        final String theline, final Severity theseverity, final String themessage,
+        final String thedata, final Throwable thethrowable) {   
+        // Check parameter
         Date date = new Date();
-        Severity sLog = getLogLevel(clas, logLevel);
-        if (sLog == null) {
-            sLog = defaultLogLevel;
+        if (thedate != null) {
+            date = thedate;
+        }
+        String clas = "<unknown>";
+        if (theclass != null) {
+            clas = theclass;
         }
         String clasShort = (clas.lastIndexOf(".") > -1
-                ? clas.substring(clas.lastIndexOf(".") + 1)
-                        : clas
+            ? clas.substring(clas.lastIndexOf(".") + 1)
+                : clas
         );
-        String tmp = message.replace("$C", clas)
-                        .replace("$M", method)
-                            .replace("$L", line)
-                                .replace("$P", clasShort + "::" + method) //$NON-NLS-2$
-                                    .replace("$SC", clasShort);
-        LoggerEvent event = new LoggerEvent(
-            date, clas, method, line, severity, tmp, data, throwable
+        String method = "<unknown>";
+        if (themethod != null) {
+            method = themethod;
+        }
+        String line = "<unknown>";
+        if (theline != null) {
+            line = theline;
+        }
+        Severity severity = theseverity;
+        if (severity == null) {
+            // Use UNDEFINED log level if the caller did not specify a log level. 
+            severity = Severity.UNDEFINED;
+        }
+        String message = "<unknown>";
+        if (themessage != null) {
+            message = themessage.replace("$C", theclass)
+                          .replace("$M", themethod)
+                              .replace("$L", theline)
+                                  .replace("$P", clasShort + "::" + themethod)
+                                      .replace("$SC", clasShort);
+        }
+        LoggerEvent event = INSTANCE.new LoggerEvent(
+            date, clas, method, line, severity, message, thedata, thethrowable
         );
-        if (severity == Severity.ALWAYS || runMode == Mode.DEBUG && severity == Severity.DEBUG
-            || severity.compareTo(sLog) >= 0) {
+        // Get the defined level from which on the logging events of the calling
+        // class or package shall be logged. In most cases this is null.
+        Severity filterLevel = INSTANCE.getLogLevel(clas, logLevel);
+        // Use default log level if no log level was defined for the class or the package
+        // which did the logging call.
+        if (filterLevel == null) {
+            filterLevel = defaultLogLevel;
+        }
+        if (severity == Severity.ALWAYS || INSTANCE.runMode == Mode.DEBUG && severity == Severity.DEBUG
+            || severity.compareTo(filterLevel) >= 0) {
             LOCK_LOG.lock();
-            for (ILoggerListener listener : listeners) {
+            for (ILoggerListener listener : INSTANCE.listeners) {
                 listener.loggerEvent(event);
             }
             LOCK_LOG.unlock();

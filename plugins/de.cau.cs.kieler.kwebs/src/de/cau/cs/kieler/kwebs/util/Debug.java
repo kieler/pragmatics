@@ -25,13 +25,6 @@ import java.util.Map;
 public final class Debug {
 
     /**
-     * Private Constructor. Util class must not
-     * be instantiated.
-     */
-    private Debug() {
-    }
-
-    /**
      * Displays contents of a map.
      * 
      * @param map
@@ -53,5 +46,12 @@ public final class Debug {
             );
         }
     }
-    
+
+    /**
+     * Private Constructor. Utility class must not
+     * be instantiated.
+     */
+    private Debug() {
+    }
+
 }

@@ -21,24 +21,31 @@ import de.unido.ls5.eti.toolserver.InputFileReference;
 import de.unido.ls5.eti.toolserver.OutputFileReference;
 
 /**
- * .
+ * Implementation of the jeti based layout service.
+ * 
  * @kieler.rating  2011-05-04 red
  * @author  swe
  */
 public class JetiService extends AbstractService {
 
     /**
-     *
+     * Creates an instance of the jeti based layout service. This class is initialized
+     * from the jeti tool server every time a layout request is being received.
      */
     public JetiService() {
         ServerLayoutDataService.create();
     }
 
     /**
-     *
-     * @param serializedGraph
-     * @param serializedResult
+     * Does layout on a given graph.
+     * 
+     * @param inRef
+     *            reference to the input file in which the graph to do layout on is stored
+     * @param outRef
+     *            reference to the output file in which the graph which was layout done 
+     *            on is to be stored
      * @param format
+     *            the serial format of the graph {@see Formats}
      * @throws Exception
      */
     public final void graphLayout(final InputFileReference inRef,
@@ -47,11 +54,17 @@ public class JetiService extends AbstractService {
     }
 
     /**
-     *
-     * @param serializedGraph
-     * @param serializedResult
+     * Does layout on a given graph.
+     * 
+     * @param inRef
+     *            reference to the input file in which the graph to do layout on is stored
+     * @param outRef
+     *            reference to the output file in which the graph which was layout done 
+     *            on is to be stored
      * @param format
+     *            the serial format of the graph {@see Formats}
      * @param serializedOptions
+     *            optional layout options in their serialized form {@see GraphLayouterOption}
      * @throws Exception
      */
     public final void graphLayout(final InputFileReference inRef,
@@ -67,8 +80,10 @@ public class JetiService extends AbstractService {
     }
 
     /**
-     *
-     * @param pathToOutput
+     * Stores the meta data of the layout server in a file. 
+     * 
+     * @param outRef
+     *            reference to the output file
      * @throws Exception
      */
     public final void getCapabilities(final OutputFileReference outRef)
@@ -80,8 +95,10 @@ public class JetiService extends AbstractService {
     }
 
     /**
-     *
-     * @param pathToOutput
+     * Stores the version of the layout server in a file.
+     *  
+     * @param outRef
+     *            reference to the output file
      * @throws Exception
      */
     public final void getVersion(final OutputFileReference outRef)

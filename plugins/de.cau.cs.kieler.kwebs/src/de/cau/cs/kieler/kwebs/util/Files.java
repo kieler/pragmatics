@@ -29,7 +29,7 @@ import java.io.InputStream;
  */
 public final class Files {
 
-    /** Default buffer size for io operations. */
+    /** Default buffer size for i/o operations. */
     private static final int BUFFER_SIZE
         = 10240;
     
@@ -52,7 +52,7 @@ public final class Files {
      * @param path
      *            path to the file
      * @param data
-     *            String with file contents
+     *            string with file contents
      * @throws IOException 
      */
     public static void writeFile(final String path, final String data)
@@ -86,7 +86,7 @@ public final class Files {
     }
 
     /**
-     * Private Constructor. Util class must not
+     * Private Constructor. Utility class must not
      * be instantiated.
      */
     private Files() {

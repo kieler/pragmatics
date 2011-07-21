@@ -40,8 +40,10 @@ public class ManagementClient {
     private PrintWriter writer;
     
     /**
+     * Creates a new management client to manage the layout server running on localhost.
      * 
      * @param port
+     *            the port the management server listens for management requests
      * @throws IOException
      */
     public ManagementClient(final int port) throws IOException {

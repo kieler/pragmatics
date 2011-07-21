@@ -31,6 +31,7 @@ import de.cau.cs.kieler.kwebs.logging.Logger;
 import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.logging.DisplayLogging;
+import de.cau.cs.kieler.kwebs.server.logging.JaxWsAdapter;
 import de.cau.cs.kieler.kwebs.server.logging.RoundTripFileLogging;
 import de.cau.cs.kieler.kwebs.server.management.ManagementService;
 import de.cau.cs.kieler.kwebs.server.publishing.ServicePublisher;
@@ -221,7 +222,8 @@ public class Application implements IApplication {
         
         // Initialize server and publish service
         try {
-            ServicePublisher.publish();            
+            ServicePublisher.publish();   
+            JaxWsAdapter.registerToLoggers();
             while (!stopped) {
                 Thread.sleep(LOOP_TIMEOUT);
             }

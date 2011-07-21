@@ -13,7 +13,8 @@
  */
 
 /**
- * .
+ * This package defines an interface for the used transformers needed to de-/serialize
+ * graph models in order to transfer them between the client and the layout web service.
  *
  */
 package de.cau.cs.kieler.kwebs.transformation;

@@ -52,6 +52,7 @@ public class Providers {
 
     /**
      * Get the singleton instance.
+     * 
      * @return the singleton instance
      */
     public static Providers getInstance() {
@@ -109,7 +110,8 @@ public class Providers {
     /**
      * Checks whether a given name is a valid provider name.
      *
-     * @param name the provider name to be tested
+     * @param name 
+     *            the provider name to be tested
      * @return whether the name is valid or not
      */
     public static boolean isValidName(final String name) {
@@ -117,9 +119,12 @@ public class Providers {
     }
 
     /**
-     *
+     * Checks whether the given provider is valid, e.g. name and uri is valid
+     * and if the uri is https based whether the trust store parameters are valid.
+     * 
      * @param provider
-     * @return
+     *            the provider to be tested
+     * @return whether the provider is valid
      */
     public static boolean isValidProvider(final Provider provider) {
         return provider != null
@@ -142,12 +147,13 @@ public class Providers {
     }
 
     /**
-     *
+     * Creates a new provider.
+     * 
      * @param name
      *            the name of the provider
      * @param address
      *            the address of the layout service
-     * @return
+     * @return the newly created provider
      */
     public static Provider createProvider(final String name,
         final String address) {
@@ -155,7 +161,7 @@ public class Providers {
     }
 
     /**
-     *
+     * Creates a new provider.
      *
      * @param name
      *            the name of the provider
@@ -165,7 +171,7 @@ public class Providers {
      *            path to the truststore when using https
      * @param truststorepass
      *            password for the truststore
-     * @return
+     * @return the newly created provider
      */
     public static Provider createProvider(final String name, final String address,
         final String truststore, final String truststorepass) {
@@ -178,9 +184,10 @@ public class Providers {
     }
 
     /**
-     *
-     * @param name
-     * @param adress
+     * Adds a provider to the provider list.
+     * 
+     * @param provider
+     *            the provider to be added
      */
     public static synchronized void addProvider(final Provider provider) {
         if (!INSTANCE.providerList.contains(provider)) {
@@ -190,9 +197,10 @@ public class Providers {
     }
 
     /**
-     *
-     * @param index
-     * @return
+     * Removes a provider from the provider list.
+     * 
+     * @param provider
+     *            the provider to be removed
      */
     public static synchronized void removeProvider(final Provider provider) {
         if (INSTANCE.providerList.contains(provider)) {
@@ -202,10 +210,13 @@ public class Providers {
     }
 
     /**
-     *
+     * Finds and returns a provider matching the given criteria.
+     * 
      * @param name
+     *            the name of the provider to be searched for
      * @param address
-     * @return
+     *            the address of the provider to be searched for
+     * @return the provider or {@code null} if a matching provider could not be found
      */
     public static synchronized Provider findProvider(final String name,
         final String address) {
@@ -224,9 +235,11 @@ public class Providers {
     }
 
     /**
-     *
+     * Returns the index of a given provider in the provider list.
+     * 
      * @param provider
-     * @return
+     *            the provider to determine the index for
+     * @return the index or {@code -1} if the provider is not contained in the provider list
      */
     public static synchronized int getIndexByProvider(final Provider provider) {
         for (int position = 0; position < INSTANCE.providerList.size();
@@ -239,9 +252,11 @@ public class Providers {
     }
 
     /**
-     *
+     * Returns a provider from the provider list by the given index.
+     * 
      * @param index
-     * @return
+     *            the index of the provider
+     * @return the provider or {@code null} if the index is invalid
      */
     public static synchronized Provider getProviderByIndex(final int index) {
         Provider provider = null;
@@ -298,10 +313,10 @@ public class Providers {
         /** The address of the layout service. */
         private String address;
 
-        /** Path to the truststore when using https. */
+        /** Path to the trust store when using https. */
         private String truststore;
 
-        /** Password for the truststore. */
+        /** Password for the trust store. */
         private String truststorePass;
 
         /** Whether this provides has been changed. */
@@ -328,9 +343,9 @@ public class Providers {
          * @param theaddress
          *           the address of the layout service
          * @param thetruststore
-         *           path to the truststore when using https
+         *           path to the trust store when using https
          * @param thetruststorePass
-         *           password for the truststore
+         *           password for the trust store
          */
         private Provider(final String thename, final String theaddress,
             final String thetruststore, final String thetruststorePass) {
@@ -481,12 +496,12 @@ public class Providers {
         }
 
         /**
-         *
+         * {@inheritDoc}
          */
         @Override
         public int hashCode() {
-            //FIXME correct hashcode calculation
-            return (name + address + truststore).hashCode();
+            //FIXME correct hash code calculation
+            return (name + address + truststore + truststorePass).hashCode();
         }
 
     }

@@ -55,7 +55,7 @@ public final class Io {
      * 
      * @param stream
      *            the stream to be read
-     * @return String with stream contents
+     * @return string with stream contents
      * 
      * @throws IOException 
      */

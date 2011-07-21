@@ -166,26 +166,32 @@ public final class Configuration extends Properties {
     }
 
     /**
+     * Loads the property based server configuration from an input stream.
      * 
-     * @param inStream
+     * @param stream
+     *            the input stream to load from
      * @throws IOException
      */
     public static synchronized void loadFromStream(final InputStream stream) throws IOException {
         INSTANCE.load(stream);
     }
-    
+
     /**
+     * Loads the property based server configuration from a reader.
      * 
      * @param reader
+     *            the reader to load from
      * @throws IOException
      */
     public static synchronized void loadFromReader(final Reader reader) throws IOException {
         INSTANCE.load(reader);
     }
-    
+
     /**
+     * Loads the XML based server configuration from an input stream.
      * 
      * @param stream
+     *            the input stream to load from
      * @throws IOException
      * @throws InvalidPropertiesFormatException
      */
@@ -194,27 +200,35 @@ public final class Configuration extends Properties {
     }
     
     /**
+     * Returns the value of the configuration property defined by key.
      * 
      * @param key
-     * @return
+     *            the name of the configuration property
+     * @return the value of the configuration property. may be {@code null} 
      */
     public static String getConfigProperty(final String key) {
         return INSTANCE.getProperty(key);
     }
 
     /**
+     * Sets the value of the configuration property defined by key to the value
+     * defined by value.
      * 
      * @param key
-     * @return
+     *            the name of the configuration property
+     * @param value
+     *            the value of the configuration property
      */
     public static void setConfigProperty(final String key, final String value) {
         INSTANCE.setProperty(key, value);
     }
 
     /**
+     * Returns whether the configuration property defined by key is defined.
      * 
      * @param key
-     * @return
+     *            the name of the configuration property
+     * @return whether the configuration property defined by key is defined
      */
     public static boolean hasConfigProperty(final String key) {
         return INSTANCE.containsKey(key);

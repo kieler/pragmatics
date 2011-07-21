@@ -95,7 +95,13 @@ public abstract class AbstractService {
     /**
      * Base implementation of layout functionality.
      * 
-     * @return
+     * @param serializedGraph
+     *            the graph to do layout on in serial representation
+     * @param format
+     *            the format of the serial graph {@see Formats}
+     * @param options
+     *            the optional layout options
+     * @return the graph on which the layout was done in the same format as used for the source graph 
      */
     protected final String layout(final String serializedGraph,
         final String format, final GraphLayouterOption[] options) {

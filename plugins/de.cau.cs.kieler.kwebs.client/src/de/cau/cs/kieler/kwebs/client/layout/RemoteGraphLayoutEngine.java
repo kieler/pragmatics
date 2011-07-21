@@ -212,6 +212,7 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
      * change of service address.
      *
      * @param event
+     *            the property change event
      */
     public final synchronized void propertyChange(final PropertyChangeEvent event) {
 //System.out.println("Layout Provider Preferences Change received");
@@ -230,7 +231,7 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
     }
 
     /**
-     * Returns always {@code} null since the layout is permormed remotely.
+     * Returns always {@code} null since the layout is performed remotely.
      *
      * @return {@code null}
      */
