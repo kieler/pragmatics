@@ -21,8 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.common.util.EList;
-
 //import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -30,6 +28,7 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 //import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -38,6 +37,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
 //import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.Alignment;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -52,6 +52,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 // import de.cau.cs.kieler.klay.layered.intermediate.CompoundSideProcessor;
 //import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
+import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
 import de.cau.cs.kieler.klay.layered.properties.EdgeType;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
@@ -206,17 +207,6 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         // transform the ports
         for (KPort kport : sortedPorts) {
             KShapeLayout portLayout = kport.getData(KShapeLayout.class);
-
-            // // determine the port type
-            // int inEdges = 0, outEdges = 0;
-            // for (KEdge edge : kport.getEdges()) {
-            // if (edge.getSourcePort() == kport) {
-            // outEdges++;
-            // }
-            // if (edge.getTargetPort() == kport) {
-            // inEdges++;
-            // }
-            // }
 
             // create layered port, copying its position
             LPort newPort = new LPort();
@@ -829,10 +819,76 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         KShapeLayout parentLayout = target.getData(KShapeLayout.class);
         float borderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
 
-        // // calculate the offset
-        // KVector offset = new KVector(borderSpacing + layeredGraph.getOffset().x, borderSpacing
-        // + layeredGraph.getOffset().y);
+        // process nodes, collect edges while at it
+        List<LEdge> edgeList = new LinkedList<LEdge>();
 
+        for (LNode lnode : layeredGraph.getLayerlessNodes()) {
+            Object origin = lnode.getProperty(Properties.ORIGIN);
+            if (origin instanceof KNode) {
+                // apply the layout to the KNode
+                applyNodeLayout(layeredGraph, lnode);
+                // apply the layout to the KNode's ports
+                boolean isCompound = (lnode.getProperty(Properties.NODE_TYPE) 
+                        == NodeType.UPPER_COMPOUND_BORDER);
+                if (isCompound) {
+                    compoundApplyPortLayout((KNode) origin, layeredGraph, lnode);
+                } else {
+                    applyPortLayout((KNode) origin, layeredGraph, lnode);
+                }
+            } else if (origin instanceof KPort) {
+                // It's an external port. Set its position
+                KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
+                KVector portPosition = getExternalPortPosition(layeredGraph, lnode,
+                        portLayout.getWidth(), portLayout.getHeight());
+
+                portLayout.setXpos((float) portPosition.x);
+                portLayout.setYpos((float) portPosition.y);
+            }
+            // collect edges
+            for (LPort port : lnode.getPorts()) {
+                edgeList.addAll(port.getOutgoingEdges());
+            }
+        }
+
+        // check if the edge routing uses splines
+        EdgeRoutingStrategy routing = parentLayout.getProperty(Properties.EDGE_ROUTING);
+        boolean splinesActive = routing == EdgeRoutingStrategy.SIMPLE_SPLINES
+                || routing == EdgeRoutingStrategy.COMPLEX_SPLINES;
+
+        // iterate through all edges
+        for (LEdge ledge : edgeList) {
+            KEdge kedge = (KEdge) ledge.getProperty(Properties.ORIGIN);
+            KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+            KVectorChain bendPoints = ledge.getBendPoints();
+
+            // add the source port and target port positions to the vector chain
+            LPort sourcePort = ledge.getSource();
+            bendPoints.addFirst(KVector.add(sourcePort.getPosition(), sourcePort.getNode()
+                    .getPosition()));
+            LPort targetPort = ledge.getTarget();
+            bendPoints.addLast(KVector.add(targetPort.getPosition(), targetPort.getNode()
+                    .getPosition()));
+
+            // bendpoints' point of origin is left upper corner plus insets of source node, if
+            // target node is descendant of source node, left upper corner plus insets of parent of
+            // source node in any other case. Compute relative positions.
+            KShapeLayout refLayout;
+            if (KimlUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
+                refLayout = kedge.getSource().getData(KShapeLayout.class);
+            } else {
+                refLayout = kedge.getSource().getParent().getData(KShapeLayout.class);
+            }
+            KVector pointOfOrigin = new KVector((refLayout.getXpos() + refLayout.getInsets()
+                    .getLeft()), (refLayout.getYpos() + refLayout.getInsets().getTop()));
+            pointOfOrigin.negate();
+            bendPoints.translate(pointOfOrigin);
+            edgeLayout.applyVectorChain(bendPoints);
+
+            // set spline option
+            if (splinesActive) {
+                edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
+            }
+        }
         // set up the layout node
         KInsets insets = parentLayout.getInsets();
         float width = (float) layeredGraph.getSize().x + 2 * borderSpacing + insets.getLeft()
@@ -850,120 +906,26 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
             // ports have not been positioned yet - leave this for next layouter
             KimlUtil.resizeNode(target, width, height, true);
         }
-
-        EList<KNode> children = target.getChildren();
-        int index;
-        for (index = 0; index < children.size(); index++) {
-            KNode child = children.get(index);
-            recursiveApplyNodeLayout(child, layeredGraph);
-        }
-
-        // // along the way, we collect the list of edges to be processed later
-        // List<LEdge> edgeList = new LinkedList<LEdge>();
-        //
-        // // process the nodes
-        // for (LNode lnode : layeredGraph.getLayerlessNodes()) {
-        // Object origin = lnode.getProperty(Properties.ORIGIN);
-        //
-        // if (origin instanceof KNode) {
-        // // set the node position
-        // KShapeLayout nodeLayout = ((KNode) origin).getData(KShapeLayout.class);
-        //
-        // nodeLayout.setXpos((float) (lnode.getPosition().x + offset.x));
-        // nodeLayout.setYpos((float) (lnode.getPosition().y + offset.y));
-        //
-        // // if compound node, update width and height
-        // if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.UPPER_COMPOUND_BORDER) {
-        // nodeLayout.setSize((float) lnode.getSize().x, (float) lnode.getSize().y);
-        // }
-        //
-        // // set port positions
-        // if (!nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
-        // for (LPort lport : lnode.getPorts()) {
-        // origin = lport.getProperty(Properties.ORIGIN);
-        // if (origin instanceof KPort) {
-        // KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
-        // portLayout
-        // .setXpos((float) (lport.getPosition().x - lport.getSize().x / 2.0));
-        // portLayout
-        // .setYpos((float) (lport.getPosition().y - lport.getSize().y / 2.0));
-        // }
-        // }
-        // }
-        // } else if (origin instanceof KPort) {
-        // // It's an external port. Set its position
-        // KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
-        // KVector portPosition = getExternalPortPosition(layeredGraph, lnode,
-        // portLayout.getWidth(), portLayout.getHeight());
-        //
-        // portLayout.setXpos((float) portPosition.x);
-        // portLayout.setYpos((float) portPosition.y);
-        // }
-        //
-        // // collect edges
-        // for (LPort port : lnode.getPorts()) {
-        // edgeList.addAll(port.getOutgoingEdges());
-        // }
-        // }
-        //
-        // // check if the edge routing uses splines
-        // EdgeRoutingStrategy routing = parentLayout.getProperty(Properties.EDGE_ROUTING);
-        // boolean splinesActive = routing == EdgeRoutingStrategy.SIMPLE_SPLINES
-        // || routing == EdgeRoutingStrategy.COMPLEX_SPLINES;
-        //
-        // // iterate through all edges
-        // for (LEdge ledge : edgeList) {
-        // KEdge kedge = (KEdge) ledge.getProperty(Properties.ORIGIN);
-        // KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-        // KVectorChain bendPoints = ledge.getBendPoints();
-        //
-        // // add the source port and target port positions to the vector chain
-        // LPort sourcePort = ledge.getSource();
-        // bendPoints.addFirst(KVector.add(sourcePort.getPosition(), sourcePort.getNode()
-        // .getPosition()));
-        // LPort targetPort = ledge.getTarget();
-        // bendPoints.addLast(KVector.add(targetPort.getPosition(), targetPort.getNode()
-        // .getPosition()));
-        //
-        // // translate the bend points by the offset and apply the bend points
-        // bendPoints.translate(offset);
-        // edgeLayout.applyVectorChain(bendPoints);
-        //
-        // // apply layout to labels
-        // for (LLabel label : ledge.getLabels()) {
-        // KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
-        // KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
-        //
-        // KVector labelPos = new KVector(ledge.getSource().getPosition().x, ledge.getSource()
-        // .getPosition().y);
-        // labelPos.add(ledge.getSource().getNode().getPosition());
-        // labelPos.add(label.getPosition());
-        // klabelLayout.setXpos((float) (labelPos.x + offset.x));
-        // klabelLayout.setYpos((float) (labelPos.y + offset.y));
-        // }
-        //
-        // // set spline option
-        // if (splinesActive) {
-        // edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
-        // }
-        // }
     }
 
     /**
      * Applies layout to a single node.
      * 
-     * @param currentNode
-     *            the KNode currently in scope.
      * @param layeredGraph
      *            the complete layered graph.
+     * @param node
+     *            LNode representative of the KNode whose layout will be updated.
      */
-    private void recursiveApplyNodeLayout(final KNode currentNode, final LayeredGraph layeredGraph) {
+    private void applyNodeLayout(final LayeredGraph layeredGraph, final LNode node) {
 
         // Get borderSpacing of the graph
         float graphBorderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
 
+        // get original of node
+        KNode original = (KNode) node.getProperty(Properties.ORIGIN);
+
         // get parent of currentNode
-        KNode parent = currentNode.getParent();
+        KNode parent = original.getParent();
 
         // determine the border spacing of the parent node
         KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
@@ -972,27 +934,22 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         KInsets insetsParent = parentLayout.getInsets();
 
         // get current node's layout
-        KShapeLayout nodeLayout = currentNode.getData(KShapeLayout.class);
+        KShapeLayout nodeLayout = original.getData(KShapeLayout.class);
 
-        // find the current node's representative in the layeredGraph
-        LNode representative = null;
+        // find the representative of the original's parent in the layered graph.
         LNode parentRepresentative = null;
         for (LNode lnode : layeredGraph.getLayerlessNodes()) {
-            if (lnode.getProperty(Properties.ORIGIN) == currentNode) {
-                representative = lnode;
-                // break;
-            }
             if (lnode.getProperty(Properties.ORIGIN) == parent) {
                 parentRepresentative = lnode;
+                break;
             }
         }
 
         // determine, if the current node is a compound node
-        boolean isCompound = (representative.getProperty(Properties.NODE_TYPE) 
-                == NodeType.UPPER_COMPOUND_BORDER);
+        boolean isCompound = (node.getProperty(Properties.NODE_TYPE) == NodeType.UPPER_COMPOUND_BORDER);
 
         // get the size and margin of the node's representative
-        KVector size = representative.getSize();
+        KVector size = node.getSize();
 
         // if currentNode is compound node, resize
         if (isCompound) {
@@ -1001,12 +958,12 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         }
 
         // get position of currentNodes representative in the layered graph
-        KVector position = representative.getPosition();
+        KVector position = node.getPosition();
 
         // position of representative in the layered graph is not relative
         // to the parent node for nodes whose originals are not direct children of the layout node -
         // calculate relative position
-        if (!(currentNode.getParent() == layeredGraph.getProperty(Properties.ORIGIN))) {
+        if (!(original.getParent() == layeredGraph.getProperty(Properties.ORIGIN))) {
 
             KVector pointOfOrigin = parentRepresentative.getPosition();
             pointOfOrigin.x += insetsParent.getLeft();
@@ -1026,12 +983,67 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
             nodeLayout.setPos(newX, newY);
         }
 
-        EList<KNode> children = currentNode.getChildren();
-        int index;
-        for (index = 0; index < children.size(); index++) {
-            KNode child = children.get(index);
-            recursiveApplyNodeLayout(child, layeredGraph);
+    }
+
+    /**
+     * Applies layout to the ports of the given leave node.
+     * 
+     * @param kNode
+     *            KNode whose layout is to be updated.
+     * @param layeredGraph
+     *            The complete layered graph.
+     * @param representative
+     *            LNode which represents the kNode in the layered graph.
+     */
+    private void applyPortLayout(final KNode kNode, final LayeredGraph layeredGraph,
+            final LNode representative) {
+
+        KShapeLayout nodeLayout = kNode.getData(KShapeLayout.class);
+
+        // set port positions
+        if (!nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
+            for (LPort lport : representative.getPorts()) {
+                Object origin = lport.getProperty(Properties.ORIGIN);
+                if (origin instanceof KPort) {
+                    KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
+                    portLayout.setXpos((float) (lport.getPosition().x - lport.getSize().x / 2.0));
+                    portLayout.setYpos((float) (lport.getPosition().y - lport.getSize().y / 2.0));
+                }
+            }
         }
-        // TODO Complete method body (port and edge setting)
+    }
+
+    /**
+     * Applies layout to the ports of a given compound node.
+     * 
+     * @param kNode
+     *            compound kNode, whose layout is to be updated.
+     * @param layeredGraph
+     *            complete layered graph.
+     * @param representative
+     *            upper compound border node representing the compound node.
+     */
+    private void compoundApplyPortLayout(final KNode kNode, final LayeredGraph layeredGraph,
+            final LNode representative) {
+        //KShapeLayout nodeLayout = kNode.getData(KShapeLayout.class);
+        for (LPort lport : representative.getPorts()) {
+            Object origin = lport.getProperty(Properties.ORIGIN);
+            if (origin instanceof KPort) {
+                KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
+                portLayout.setPos((float) (lport.getPosition().x - (lport.getSize().x / 2)),
+                        (float) (lport.getPosition().y - (lport.getSize().y / 2)));
+//                 System.out.println("First position x: "+ portLayout.getXpos() +
+//                 ", First position y: " + portLayout.getYpos());
+//                // calculate the relative Position of the KPort to it's node
+//                KVector lPortPosition = lport.getPosition();
+//                KVector lNodePosition = representative.getPosition();
+//                KVector difference = lPortPosition.sub(lNodePosition);
+//                KVector kNodePosition = new KVector(nodeLayout.getXpos(), nodeLayout.getYpos());
+//                KVector newPosition = kNodePosition.add(difference);
+//                portLayout.setPos((float) newPosition.x, (float) newPosition.y);
+//                System.out.println("Second position x: " + portLayout.getXpos()
+//                        + ", Second position y: " + portLayout.getYpos());
+            }
+        }
     }
 }
