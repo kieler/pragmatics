@@ -33,7 +33,8 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
      */
     @Override
     public boolean supports(final Object object) {
-        return object instanceof IMultiDiagramEditor || object instanceof IPapyrusEditPart;
+        return object instanceof IMultiDiagramEditor || object instanceof IPapyrusEditPart
+                || object instanceof IGraphicalEditPart;
     }
     
     /**

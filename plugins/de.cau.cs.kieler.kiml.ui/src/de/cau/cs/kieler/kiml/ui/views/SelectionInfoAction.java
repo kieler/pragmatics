@@ -30,11 +30,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
+import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
@@ -159,19 +161,33 @@ public class SelectionInfoAction extends Action {
     private String createInfo() {
         LayoutDataService layoutServices = LayoutDataService.getInstance();
         StringBuilder builder = new StringBuilder();
+        
+        // display editor part
+        IWorkbenchPart workbenchPart = layoutView.getCurrentEditor();
+        if (workbenchPart != null) {
+            builder.append("<b>Workbench part class</b><ul><li>"
+                    + workbenchPart.getClass().getName() + "</li></ul>");
+        }
+        
+        // display edit part and domain model class
         Object diagramPart = layoutView.getCurrentEditPart();
-        IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(
-                diagramPart);
-        if (bridge != null) {
+        if (diagramPart != null) {
             builder.append("<b>Edit part class</b><ul><li>"
                     + diagramPart.getClass().getName() + "</li></ul>");
-            EObject model = bridge.getElement(diagramPart);
-            if (model != null) {
-                builder.append("<b>Domain model class</b><ul><li>"
-                        + model.eClass().getInstanceTypeName() + "</li></ul>");
+            try {
+                IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(
+                        diagramPart);
+                EObject model = bridge.getElement(diagramPart);
+                if (model != null) {
+                    builder.append("<b>Domain model class</b><ul><li>"
+                            + model.eClass().getInstanceTypeName() + "</li></ul>");
+                }
+            } catch (UnsupportedPartException exception) {
+                // ignore exception
             }
         }
         
+        // display layout algorithms
         LayoutAlgorithmData[] layouterData = layoutView.getCurrentLayouterData();
         if (layouterData != null && layouterData.length > 0) {
             builder.append("<b>Involved layout providers</b><ul>");
@@ -188,6 +204,7 @@ public class SelectionInfoAction extends Action {
             builder.append("</ul>");
         }
         
+        // display layout options
         List<IPropertySheetEntry> selectedOptions = layoutView.getSelection();
         if (!selectedOptions.isEmpty()) {
             builder.append("<b>Selected options</b><ul>");
