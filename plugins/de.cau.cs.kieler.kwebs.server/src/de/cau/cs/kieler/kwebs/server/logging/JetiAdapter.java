@@ -34,14 +34,12 @@ public class JetiAdapter extends AppenderSkeleton {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void close() {
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public boolean requiresLayout() {
         return false;
     }
@@ -53,7 +51,6 @@ public class JetiAdapter extends AppenderSkeleton {
     /**
      * {@inheritDoc}
      */
-    @Override
     protected void append(final LoggingEvent event) {
         Date date = new Date(event.getTimeStamp());
         Severity severity = null;
