@@ -17,11 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
-//import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-//import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -74,21 +71,17 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
 
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode lnode : layer.getNodes()) {
-                if (lnode.getProperty(Properties.ORIGIN) instanceof KNode) {
-
-                    NodeType nodeType = lnode.getProperty(Properties.NODE_TYPE);
-                    if (nodeType == NodeType.UPPER_COMPOUND_BORDER) {
-                        compoundNodeList.add(lnode);
-                    } else {
-                        if (nodeType == NodeType.LOWER_COMPOUND_BORDER
-                                || nodeType == NodeType.COMPOUND_SIDE
-                                || nodeType == NodeType.LOWER_COMPOUND_PORT
-                                || nodeType == NodeType.UPPER_COMPOUND_PORT) {
-                            removables.add(lnode);
-                        }
+                NodeType nodeType = lnode.getProperty(Properties.NODE_TYPE);
+                if (nodeType == NodeType.UPPER_COMPOUND_BORDER) {
+                    compoundNodeList.add(lnode);
+                } else {
+                    if (nodeType == NodeType.LOWER_COMPOUND_BORDER
+                            || nodeType == NodeType.COMPOUND_SIDE
+                            || nodeType == NodeType.LOWER_COMPOUND_PORT
+                            || nodeType == NodeType.UPPER_COMPOUND_PORT) {
+                        removables.add(lnode);
                     }
                 }
-
                 for (LEdge edge : lnode.getOutgoingEdges()) {
                     edgeList.add(edge);
                 }
@@ -113,8 +106,8 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
 
             // set width and height of compound node
             compoundNode.getSize().x = (posRightUpper.x - posLeftUpper.x);
-            compoundNode.getSize().y = (posLeftLower.y - posLeftUpper.y + insets.getBottom() 
-                    + ownBorderSpacing);
+            compoundNode.getSize().y = (posLeftLower.y - posLeftUpper.y 
+                    + insets.getBottom() + ownBorderSpacing);
         }
 
         // iterate through all edges
@@ -160,11 +153,11 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
                     break;
                 }
             }
-            // remove the now dispensable dummy nodes
-            for (LNode removable : removables) {
-                List<LNode> layerNodes = removable.getLayer().getNodes();
-                layerNodes.remove(removable);
-            }
+        }
+        // remove the now dispensable dummy nodes
+        for (LNode removable : removables) {
+            List<LNode> layerNodes = removable.getLayer().getNodes();
+            layerNodes.remove(removable);
         }
 
         getMonitor().done();
