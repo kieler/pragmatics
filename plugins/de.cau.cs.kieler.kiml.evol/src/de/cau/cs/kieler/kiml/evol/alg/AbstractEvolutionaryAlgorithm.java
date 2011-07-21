@@ -91,7 +91,11 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      * for parent selection. This can be the entire current population or a
      * subset thereof.
      **/
-    protected abstract void select();
+    protected final void select() {
+        System.out.println("*** select");
+        // presumes this.selectionOperation != null
+        this.selectionOperation.process(this.population);
+    }
 
     /**
      * Generates offspring by recombining selected parent individuals, depending
@@ -103,7 +107,11 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      * widely among different implementations.
      *
      **/
-    protected abstract void crossOver();
+    protected final void crossOver() {
+        System.out.println("*** cross over");
+        // presumes this.crossOverOperation != null
+        this.crossOverOperation.process(this.population);
+    }
 
     /**
      * Mutates offspring, depending on some mutation strategy. The mutation
@@ -111,7 +119,11 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      * altering the existing material in a random fashion.
      *
      **/
-    protected abstract void mutate();
+    protected final void mutate() {
+        System.out.println("*** mutate");
+        // presumes this.mutationOperation != null
+        this.mutationOperation.process(this.population);
+    }
 
     /**
      * Selects individuals that shall be preserved, and proceeds to the next
@@ -122,7 +134,26 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      * major influence on its chance for survival.
      *
      **/
-    protected abstract void survive();
+    protected final void survive() {
+        System.out.println("*** survive");
+        // presumes this.survivalOperation != null
+        this.survivalOperation.process(this.population);
+    }
+
+    /**
+     * @return the survivalOperation
+     */
+    protected final IEvolutionaryOperation getSurvivalOperation() {
+        return this.survivalOperation;
+    }
+
+    /**
+     * @param theSurvivalOperation
+     *            the survivalOperation to set
+     */
+    protected final void setSurvivalOperation(final IEvolutionaryOperation theSurvivalOperation) {
+        this.survivalOperation = theSurvivalOperation;
+    }
 
     /**
      * Returns the collection of individuals.
@@ -133,11 +164,68 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
         return this.population;
     }
 
+    /**
+     * @return the selectionOperation
+     */
+    protected final IEvolutionaryOperation getSelectionOperation() {
+        return this.selectionOperation;
+    }
+
+    /**
+     * @param theSelectionOperation
+     *            the selectionOperation to set
+     */
+    protected final void setSelectionOperation(final IEvolutionaryOperation theSelectionOperation) {
+        this.selectionOperation = theSelectionOperation;
+    }
+
+    /**
+     * @return the mutationOperation
+     */
+    protected final IEvolutionaryOperation getMutationOperation() {
+        return this.mutationOperation;
+    }
+
+    /**
+     * @param theMutationOperation
+     *            the mutationOperation to set
+     */
+    protected final void setMutationOperation(final IEvolutionaryOperation theMutationOperation) {
+        this.mutationOperation = theMutationOperation;
+    }
+
+    /**
+     * @return the crossoverOperation
+     */
+    protected final IEvolutionaryOperation getCrossOverOperation() {
+        return this.crossOverOperation;
+    }
+
+    /**
+     * @param theCrossOverOperation
+     *            the crossoverOperation to set
+     */
+    protected final void setCrossOverOperation(final IEvolutionaryOperation theCrossOverOperation) {
+        this.crossOverOperation = theCrossOverOperation;
+    }
+
     // private fields
     /** The number of the current generation. */
     private int generationNumber = 0;
 
     /** The current population. */
     private final Population population = new Population();
+
+    /** The select operation. */
+    private IEvolutionaryOperation selectionOperation = new NullOperation();
+
+    /** The mutation operation. */
+    private IEvolutionaryOperation mutationOperation = new NullOperation();
+
+    /** The crossover operation. */
+    private IEvolutionaryOperation crossOverOperation = new NullOperation();
+
+    /** The survival operation. */
+    private IEvolutionaryOperation survivalOperation = new NullOperation();
 
 }

@@ -13,13 +13,15 @@
  */
 package de.cau.cs.kieler.kiml.evol.genetic;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.FilteredIterator;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
@@ -31,20 +33,20 @@ import de.cau.cs.kieler.kiml.evol.IFilterable;
  * @author bdu
  *
  */
-public class Population extends MapPropertyHolder implements IFilterable<List<Genome>, Genome> {
-    // TODO: implement List<Genome>?
-
-    /**
-     * For {@link Serializable}.
-     */
-    private static final long serialVersionUID = -5511104369758838181L;
+public class Population extends MapPropertyHolder
+ implements
+            Iterable<Genome>,
+            IFilterable<List<Genome>, Genome> {
+    /** Property to mark individuals as selected. */
+    public static final IProperty<Boolean> SELECTED = new Property<Boolean>("evol.selected",
+            Boolean.FALSE);
 
     /**
      * Filter for rated individuals.
      */
     public static final ICondition<Genome> RATED_FILTER = new ICondition<Genome>() {
-        public boolean evaluate(final Genome item) {
-            return item.hasUserRating();
+        public boolean evaluate(final Genome genome) {
+            return genome.hasUserRating();
         }
     };
 
@@ -52,8 +54,17 @@ public class Population extends MapPropertyHolder implements IFilterable<List<Ge
      * Filter for unrated individuals.
      */
     public static final ICondition<Genome> UNRATED_FILTER = new ICondition<Genome>() {
-        public boolean evaluate(final Genome item) {
-            return !item.hasUserRating();
+        public boolean evaluate(final Genome genome) {
+            return !genome.hasUserRating();
+        }
+    };
+
+    /**
+     * Filter for selected individuals.
+     */
+    public static final ICondition<Genome> SELECTED_FILTER = new ICondition<Genome>() {
+        public boolean evaluate(final Genome genome) {
+            return genome.getProperty(SELECTED);
         }
     };
 
@@ -72,7 +83,7 @@ public class Population extends MapPropertyHolder implements IFilterable<List<Ge
      *            {@link NullPointerException} is thrown.
      */
     public Population(final List<Genome> individuals) {
-        this.getGenomes().addAll(individuals);
+        this.genomes.addAll(individuals);
     }
 
     /**
@@ -144,11 +155,11 @@ public class Population extends MapPropertyHolder implements IFilterable<List<Ge
      * @return an individual that is in the list, or {@code null}, if the list
      *         is empty.
      */
-    public Genome pick() {
+    public final Genome pick() {
         Genome result = null;
         if (size() > 0) {
             int pos = (int) (Math.random() * size());
-            result = getGenomes().get(pos);
+            result = this.genomes.get(pos);
         }
         return result;
     }
@@ -195,8 +206,8 @@ public class Population extends MapPropertyHolder implements IFilterable<List<Ge
     /**
      * @param theInd
      */
-    public void add(final Genome theInd) {
-        this.genomes.add(theInd);
+    public boolean add(final Genome theInd) {
+        return this.genomes.add(theInd);
     }
 
     /**
@@ -210,8 +221,8 @@ public class Population extends MapPropertyHolder implements IFilterable<List<Ge
      * @param theIndex
      * @param theOffspring
      */
-    public void addAll(final int theIndex, final Collection<? extends Genome> theOffspring) {
-        this.genomes.addAll(theIndex, theOffspring);
+    public boolean addAll(final int theIndex, final Collection<? extends Genome> theOffspring) {
+        return this.genomes.addAll(theIndex, theOffspring);
 
     }
 
@@ -225,11 +236,27 @@ public class Population extends MapPropertyHolder implements IFilterable<List<Ge
     /**
      * Returns a list iterator over the elements in the genomes list (in proper
      * sequence).
-     * 
+     *
      * @return a list iterator over the elements in the genomes list (in proper
      *         sequence)
      */
     public ListIterator<Genome> listIterator() {
         return this.genomes.listIterator();
     }
+
+    /* (non-Javadoc)
+     * @see java.util.List#clear()
+     */
+    public void clear() {
+        this.genomes.clear();
+
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Iterable#iterator()
+     */
+    public Iterator<Genome> iterator() {
+        return this.genomes.iterator();
+    }
+
 }

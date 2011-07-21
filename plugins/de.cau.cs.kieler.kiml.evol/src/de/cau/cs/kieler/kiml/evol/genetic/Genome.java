@@ -379,14 +379,15 @@ public class Genome extends MapPropertyHolder {
     /**
      * Performs a mutation step with the given probability. If a mutation step
      * is performed, this does not necessarily mean that any values are changed.
-     *
+     * 
      * @param prob
      *            Probability for the application of mutation.
-     *
+     * 
      * @return {@code true} if the mutation step was performed, {@code false} if
      *         the step was skipped.
-     *
+     * @deprecated
      */
+    @Deprecated
     public Genome newMutation(final double prob) {
         if (Math.random() < prob) {
             return newMutation();
@@ -398,11 +399,13 @@ public class Genome extends MapPropertyHolder {
     /**
      * Create a new genome that is a cross over of this genome and the given
      * genome.
-     *
+     * 
      * @param otherGenome
      *            a genome
      * @return a new genome
+     * @deprecated
      */
+    @Deprecated
     public Genome newRecombination(final Genome otherGenome) {
         return newRecombination(this, otherGenome);
     }
@@ -425,7 +428,9 @@ public class Genome extends MapPropertyHolder {
      * @param theRating
      *            a double value (may be negative). A higher value means a
      *            better rating.
+     * @deprecated
      */
+    @Deprecated
     public synchronized void setUserRating(final Double theRating) {
         System.out.println("Assign rating " + theRating + " to individual" + ": " + getId());
 
