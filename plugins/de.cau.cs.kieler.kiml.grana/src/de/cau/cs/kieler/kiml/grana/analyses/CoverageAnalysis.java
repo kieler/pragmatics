@@ -29,7 +29,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 /**
  * A drawing analysis that computes the percentage of the drawing area that is covered by
- * nodes and insets. The higher this value is to 1.0, the more effectively packed the layout
+ * nodes and insets. The closer this value is to 1.0, the more effectively packed the layout
  * is. This analysis depends on {@link AreaAnalysis} and {@link NodeSizeAnalysis}. Returns a
  * single-component result {@code (float coverage)}.
  * 
