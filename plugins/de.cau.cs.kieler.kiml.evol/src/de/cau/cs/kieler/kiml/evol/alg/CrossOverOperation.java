@@ -39,8 +39,14 @@ public class CrossOverOperation implements IEvolutionaryOperation {
     /** Minimum number of individuals to create by cross over. */
     private static final int MIN_CROSS_OVERS = 1;
 
-    /** Maximum number of individuals the create by cross over. */
+    /** Maximum number of individuals to create by cross over. */
     private static final int MAX_CROSS_OVERS = 1000;
+
+    /**
+     *
+     */
+    private static final BoundMultipleCalculator BOUND_MULTIPLE_CALCULATOR =
+            new BoundMultipleCalculator(CROSS_OVER_RATIO, MIN_CROSS_OVERS, MAX_CROSS_OVERS);
 
     /**
      * Indicates whether parthenogenesis (reproduction from only one parent) may
@@ -62,7 +68,7 @@ public class CrossOverOperation implements IEvolutionaryOperation {
      */
     public final void process(final Population population) {
 
-        Population selection = selection(population);
+        Population selection = selected(population);
 
         if (!selection.isEmpty()) {
 
@@ -72,11 +78,8 @@ public class CrossOverOperation implements IEvolutionaryOperation {
             // population.size() : 0;
 
             // TODO: ensure minimum population is preserved
-            BoundMultipleCalculator b =
-                    new BoundMultipleCalculator(CROSS_OVER_RATIO, MIN_CROSS_OVERS,
-                            MAX_CROSS_OVERS);
 
-            int crossOvers = b.scale(selection.size());
+            int crossOvers = BOUND_MULTIPLE_CALCULATOR.scale(selection.size());
 
             Population offspring = new Population();
             System.out.println(" -- generate " + crossOvers + " out of " + selection.size());
@@ -108,8 +111,14 @@ public class CrossOverOperation implements IEvolutionaryOperation {
                 offspring.add(new Genome(newGenome, generationNumber));
             }
 
-            // add offspring to old survivors
+            // deselect all
+            for (Genome genome : selection) {
+                genome.setProperty(Population.SELECTED, Boolean.FALSE);
+            }
+
+            // add offspring to current population (old survivors)
             population.addAll(0, offspring.getGenomes());
+
         } else {
             System.out.println("Selection is EMPTY");
         }
@@ -122,7 +131,7 @@ public class CrossOverOperation implements IEvolutionaryOperation {
      *            the population
      * @return selected genomes
      */
-    private Population selection(final Population population) {
+    private Population selected(final Population population) {
         Iterator<Genome> iter = population.filteredIterator(Population.SELECTED_FILTER);
 
         Population selection = new Population();
@@ -131,5 +140,6 @@ public class CrossOverOperation implements IEvolutionaryOperation {
         }
         return selection;
     }
+
 
 }

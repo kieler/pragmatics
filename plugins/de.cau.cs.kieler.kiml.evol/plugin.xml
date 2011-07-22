@@ -272,7 +272,7 @@
          </dependency>
       </provider>
       <provider
-            category="de.cau.cs.kieler.kiml.grana.drawingsCategory"
+            category="de.cau.cs.kieler.kiml.grana.drawing"
             class="de.cau.cs.kieler.kiml.evol.metrics.DimensionsAnalysis"
             description="measures the horizontal and vertical dimensions of the given graph drawing"
             id="de.cau.cs.kieler.kiml.grana.dimensions"

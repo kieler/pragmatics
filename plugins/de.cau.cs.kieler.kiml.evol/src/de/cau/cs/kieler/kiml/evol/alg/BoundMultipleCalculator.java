@@ -20,7 +20,7 @@ package de.cau.cs.kieler.kiml.evol.alg;
  * @author  bdu
  */
 public class BoundMultipleCalculator {
-    
+
     /**
      * Scaling factor.
      */

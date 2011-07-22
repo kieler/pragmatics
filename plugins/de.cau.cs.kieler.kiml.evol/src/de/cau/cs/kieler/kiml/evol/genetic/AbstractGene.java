@@ -113,12 +113,14 @@ public abstract class AbstractGene<T extends Comparable<? super T>> extends MapP
      * Provide a cross over of this gene by randomly picking one of the given
      * genes or this gene with uniform probability. Extending classes may
      * override this method in order to provide a more sophisticated cross over.
-     *
+     * 
      * @param otherGenes
      *            some genes that are to be recombined with this instance.
      * @return a new gene that is a cross over of this instance and the given
      *         genes.
+     * @deprecated
      */
+    @Deprecated
     public IGene<T> recombineWith(final IGene<T>... otherGenes) {
         // TODO: discuss: rather use a static recombine() method?
         IGene<T> result;

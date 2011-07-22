@@ -41,29 +41,11 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         setCrossOverOperation(new CrossOverOperation());
         setMutationOperation(new MutationOperation());
         setSurvivalOperation(new SurvivalOperation());
+        setEvaluationOperation(new EvaluationOperation());
 
         reset();
-        // System.out.println("Optimal surr:" + surv());
     }
 
-    /**
-     * Returns a shallow copy of the population. (The elements themselves are
-     * not copied.)
-     *
-     * @return a shallow copy of the population
-     * @deprecated
-     */
-    @Deprecated
-    public final Population getPopulationCopy() {
-        return new Population(this.getPopulation());
-    }
-
-    @Override
-    protected final void determineFitness() {
-        System.out.println("*** determineFitness");
-        // fitness is determined by the rating value.
-        System.out.println(this.getPopulation().getDetails());
-    }
 
     @Override
     public final void reset() {

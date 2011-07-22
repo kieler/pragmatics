@@ -17,11 +17,12 @@ import de.cau.cs.kieler.core.properties.IPropertyHolder;
 
 /**
  * Interface for gene.
- *
+ * 
+ * @kieler.rating 2011-07-08 yellow reviewed by swe, ima, msp
  * @param <T>
  *            type of data.
  * @author bdu
- *
+ * 
  */
 public interface IGene<T extends Comparable<? super T>> extends IPropertyHolder {
     /**

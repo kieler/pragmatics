@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
- * Copyright 2010 by
+ * Copyright 2011 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -27,12 +27,13 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 
 /**
- *
+ * 
  * A genome has a list of Gene objects. It can be used as an individual in an
  * evolutionary algorithm.
- *
+ * 
+ * @kieler.rating 2011-07-08 yellow reviewed by swe, ima, msp
  * @author bdu
- *
+ * 
  */
 public class Genome extends MapPropertyHolder {
 
@@ -158,14 +159,23 @@ public class Genome extends MapPropertyHolder {
                 result.getGenes().add(newGene);
             }
             // Use the average of the genomes' ratings as the new rating.
-            double ratingSum = 0;
-            for (final Genome genome : genomes) {
-                ratingSum += genome.hasUserRating() ? genome.getUserRating() : 0.0;
-            }
-            double average = ratingSum / genomes.length;
+            double average = averageRating(genomes);
             result.setUserRating(average);
         }
         return result;
+    }
+
+    /**
+     * @param genomes
+     * @return
+     */
+    private static double averageRating(final Genome... genomes) {
+        double ratingSum = 0;
+        for (final Genome genome : genomes) {
+            ratingSum += genome.hasUserRating() ? genome.getUserRating() : 0.0;
+        }
+        double average = ratingSum / genomes.length;
+        return average;
     }
 
     /**
@@ -367,7 +377,10 @@ public class Genome extends MapPropertyHolder {
     /**
      * Downscales the rating. This makes the rating less relevant without
      * discarding it completely. This can be used for outdated ratings.
+     *
+     * @deprecated
      */
+    @Deprecated
     public void fadeUserRating() {
         // Nice to have: implement more sophisticated fading of ratings
         if (hasUserRating()) {
@@ -379,10 +392,10 @@ public class Genome extends MapPropertyHolder {
     /**
      * Performs a mutation step with the given probability. If a mutation step
      * is performed, this does not necessarily mean that any values are changed.
-     * 
+     *
      * @param prob
      *            Probability for the application of mutation.
-     * 
+     *
      * @return {@code true} if the mutation step was performed, {@code false} if
      *         the step was skipped.
      * @deprecated
@@ -399,7 +412,7 @@ public class Genome extends MapPropertyHolder {
     /**
      * Create a new genome that is a cross over of this genome and the given
      * genome.
-     * 
+     *
      * @param otherGenome
      *            a genome
      * @return a new genome
@@ -428,24 +441,13 @@ public class Genome extends MapPropertyHolder {
      * @param theRating
      *            a double value (may be negative). A higher value means a
      *            better rating.
-     * @deprecated
+     * @deprecated use setProperty(USER_RATING, theRating);
      */
     @Deprecated
     public synchronized void setUserRating(final Double theRating) {
         System.out.println("Assign rating " + theRating + " to individual" + ": " + getId());
 
-        Double oldRating = getUserRating();
-
-        // compare new rating to previous one
-        if (hasUserRating() && (theRating != null)) {
-            if (oldRating < theRating) {
-                System.out.println("Ind. was under-rated (" + oldRating + " -> " + theRating + ")");
-            } else if (oldRating > theRating) {
-                System.out.println("Ind. was over-rated (" + oldRating + " -> " + theRating + ")");
-            }
-        }
-
-        this.userRating = theRating;
+        setProperty(USER_RATING, theRating);
     }
 
     @Override
@@ -487,6 +489,6 @@ public class Genome extends MapPropertyHolder {
      * @return the genes
      */
     public List<IGene<?>> getGenes() {
-        return genes;
+        return this.genes;
     }
 }

@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
- * Copyright 2010 by
+ * Copyright 2011 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -16,23 +16,20 @@
  */
 package de.cau.cs.kieler.kiml.evol.alg;
 
+import de.cau.cs.kieler.kiml.evol.genetic.Population;
+
 /**
- * Interface for listeners to evolutionary algorithms.
- * 
  * @author bdu
- * @deprecated
+ *
  */
-@Deprecated
-public interface IEvolutionListener {
+public class EvaluationOperation implements IEvolutionaryOperation {
 
     /**
-     * Called before a step is performed.
+     * {@inheritDoc}
      */
-    void beforeStep();
-
-    /**
-     * Called after a step is performed.
-     */
-    void afterStep();
+    public final void process(final Population population) {
+        // fitness is determined by the rating value.
+        System.out.println(population.getDetails());
+    }
 
 }

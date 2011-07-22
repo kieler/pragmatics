@@ -182,7 +182,7 @@ public class Population extends MapPropertyHolder
      * @return the genomes
      */
     public List<Genome> getGenomes() {
-        return genomes;
+        return this.genomes;
     }
 
     // list interface implementations

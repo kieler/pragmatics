@@ -84,7 +84,11 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
     }
 
     /** Determines fitness values for all individuals. **/
-    protected abstract void determineFitness();
+    protected final void determineFitness() {
+        System.out.println("*** determineFitness");
+        // presumes evaluationOperation != null
+        this.evaluationOperation.process(this.population);
+    }
 
     /**
      * Selects parent individuals for recombination, depending on some strategy
@@ -93,7 +97,7 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      **/
     protected final void select() {
         System.out.println("*** select");
-        // presumes this.selectionOperation != null
+        // presumes selectionOperation != null
         this.selectionOperation.process(this.population);
     }
 
@@ -109,7 +113,7 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      **/
     protected final void crossOver() {
         System.out.println("*** cross over");
-        // presumes this.crossOverOperation != null
+        // presumes crossOverOperation != null
         this.crossOverOperation.process(this.population);
     }
 
@@ -121,7 +125,7 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      **/
     protected final void mutate() {
         System.out.println("*** mutate");
-        // presumes this.mutationOperation != null
+        // presumes mutationOperation != null
         this.mutationOperation.process(this.population);
     }
 
@@ -136,7 +140,7 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      **/
     protected final void survive() {
         System.out.println("*** survive");
-        // presumes this.survivalOperation != null
+        // presumes survivalOperation != null
         this.survivalOperation.process(this.population);
     }
 
@@ -209,6 +213,22 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
         this.crossOverOperation = theCrossOverOperation;
     }
 
+    /**
+     * @return the evaluationOperation
+     */
+    protected final IEvolutionaryOperation getEvaluationOperation() {
+        return this.evaluationOperation;
+    }
+
+    /**
+     * @param theEvaluationOperation
+     *            the evaluationOperation to set
+     */
+    protected final void setEvaluationOperation(
+            final IEvolutionaryOperation theEvaluationOperation) {
+        this.evaluationOperation = theEvaluationOperation;
+    }
+
     // private fields
     /** The number of the current generation. */
     private int generationNumber = 0;
@@ -216,16 +236,19 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
     /** The current population. */
     private final Population population = new Population();
 
-    /** The select operation. */
+    /** The selection operation. */
     private IEvolutionaryOperation selectionOperation = new NullOperation();
 
     /** The mutation operation. */
     private IEvolutionaryOperation mutationOperation = new NullOperation();
 
-    /** The crossover operation. */
+    /** The cross over operation. */
     private IEvolutionaryOperation crossOverOperation = new NullOperation();
 
     /** The survival operation. */
     private IEvolutionaryOperation survivalOperation = new NullOperation();
+
+    /** The evaluation operation. */
+    private IEvolutionaryOperation evaluationOperation = new NullOperation();
 
 }

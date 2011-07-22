@@ -39,6 +39,9 @@ public class SurvivalOperation implements IEvolutionaryOperation {
     /** Maximum number of individuals that may survive. */
     private static final int MAX_SURVIVORS = 1000;
 
+    private static final BoundMultipleCalculator BOUND_MULTIPLE_CALCULATOR =
+            new BoundMultipleCalculator(SURVIVAL_RATIO, MIN_SURVIVORS, MAX_SURVIVORS);
+
     /**
      * {@inheritDoc}
      */
@@ -50,9 +53,7 @@ public class SurvivalOperation implements IEvolutionaryOperation {
         Arrays.sort(individuals, Genome.DESCENDING_RATING_COMPARATOR);
 
         // only some survive
-        BoundMultipleCalculator b =
-                new BoundMultipleCalculator(SURVIVAL_RATIO, MIN_SURVIVORS, MAX_SURVIVORS);
-        int keep = b.scale(count);
+        int keep = BOUND_MULTIPLE_CALCULATOR.scale(count);
         assert keep > 0;
         double minDist = individuals[0].size() * 0.2;
         Population survivors = new Population();
@@ -92,7 +93,6 @@ public class SurvivalOperation implements IEvolutionaryOperation {
         }
 
         population.clear();
-
         population.addAll(0, survivors.getGenomes());
 
         System.out.println(" -- dying out: ");
