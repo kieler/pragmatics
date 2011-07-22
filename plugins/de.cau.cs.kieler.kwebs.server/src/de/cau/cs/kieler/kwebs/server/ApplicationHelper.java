@@ -40,14 +40,17 @@ public final class ApplicationHelper {
     };
 
     /** 
-     *  Files to be read from plugin and stored in configuration folder identified
-     *  by their property ids form the default config.
+     *  Files to be read from plugin and stored in configuration folder.
      */
     public static final String[] CONFIGURATION_FILES = new String[]
     {
-        "de.cau.cs.kieler.kwebs.httpsKeystore.jks.path",
-        "de.cau.cs.kieler.kwebs.jeti.toolxml",
-        "de.cau.cs.kieler.kwebs.jeti.log4j.config"
+        "server/java/config/logging/logging.properties",
+        "server/jeti/config/log4j/log4j.properties",
+        "server/jeti/config/tools/tools.xml",
+        "server/kwebs/security/keystores/server.jks",
+        "server/kwebs/config/kwebs.properties",
+        "kwebs.user",
+        "kwebs.sh"        
     };
     
     /**

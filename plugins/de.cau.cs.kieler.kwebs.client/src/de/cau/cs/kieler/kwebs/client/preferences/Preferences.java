@@ -19,7 +19,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import de.cau.cs.kieler.kwebs.client.activator.Activator;
 
 /**
- * Preference constants used by the KIELER web service clients.
+ * Preference constants used by the KWebS web service clients.
  *
  * @kieler.rating  2011-05-04 red
  * @author  swe
@@ -37,10 +37,6 @@ public final class Preferences {
     /** */
     public static final String PREFID_LAYOUT_USE_REMOTE
         = PREFIX + "layout.use.remote";
-
-    /** */
-    public static final String PREFID_LAYOUT_USE_KIELER
-        = PREFIX + "layout.use.provider.kieler";
 
     /** */
     public static final String PREFID_LAYOUT_PROVIDER_INDEX
@@ -65,6 +61,10 @@ public final class Preferences {
     /** */
     public static final String PREFID_LAYOUT_PROVIDER_TRUSTSTOREPASSPREFIX
         = PREFIX + "layout.provider.truststorepassprefix";
+
+    /** */
+    public static final String PREFID_LAYOUT_PROVIDER_FIXEDPREFIX
+        = PREFIX + "layout.provider.fixed";
 
     /**
      * This is a container class for preference store constants so no

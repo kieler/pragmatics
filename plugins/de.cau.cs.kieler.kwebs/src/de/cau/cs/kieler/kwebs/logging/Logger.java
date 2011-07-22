@@ -114,15 +114,11 @@ public final class Logger {
 
     /**
      * Read logging configuration from extension registry. The logging configuration is realized
-     * through the extension point XXX.
+     * through the extension point {@code de.cau.cs.kieler.kwebs.logging} defined in plugin
+     * {@code de.cau.cs.kieler.kwebs}.
      */
     private void initialize() {
         IExtensionRegistry registry = Platform.getExtensionRegistry();
-        // if no registry is found, the logger is used on a non
-        // osgi platform so extensions can not be read.
-        if (registry == null) {
-            return;
-        }
         String name = null;
         String loglevel = null;
         Severity sLog = null;
@@ -145,7 +141,6 @@ public final class Logger {
                 }
             }
         }
-
     }
 
     /**

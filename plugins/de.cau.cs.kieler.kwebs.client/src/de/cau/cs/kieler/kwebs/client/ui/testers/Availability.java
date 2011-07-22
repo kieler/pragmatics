@@ -23,7 +23,6 @@ import de.cau.cs.kieler.kwebs.client.Clients;
 import de.cau.cs.kieler.kwebs.client.IWebServiceClient;
 import de.cau.cs.kieler.kwebs.client.providers.Providers;
 import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
-import de.cau.cs.kieler.kwebs.util.Uris;
 
 /**
  * Utility class for testing availability of a provider with ui support.
@@ -46,61 +45,48 @@ public final class Availability {
      * @param provider
      *            the provider to be tested
      */
-    public static void checkAvailability(final Shell shell, final Provider provider) {
-        String name = provider.getName();
-        String address = provider.getAddress();
+    public static void checkAvailability(final Shell shell, final Provider provider) {  
         MessageBox box = new MessageBox(shell);
-        if (Providers.isValidProvider(provider)) {
-            IWebServiceClient client = Clients.createClientForProvider(provider);
-            try {
-                String version = null;
-                Date start = null;
-                Date stop = null;
-                float responseTime = 0;
-                // first call to getVersion() is ignored for response time
-                // calculation since it involves establishing the connection
-                // and therefore is not representative
-                version = client.getVersion();
-                start = new Date();
-                for (int i = 0; i < RESPONSETIME_TESTCOUNT; i++) {
-                    version = client.getVersion();
-                }
-                stop = new Date();
-                responseTime = (stop.getTime() - start.getTime()) / RESPONSETIME_TESTCOUNT;
-                box.setText("Provider Details");
-                box.setMessage(
-                    "The provider is running version "
-                    + version
-                    + ", the servers response time is "
-                    + responseTime
-                    + " milliseconds."
-                );
-                box.open();
-            } catch (Exception e) {
-                box.setText("Provider not reachable");
-                box.setMessage("The Provider you selected is not reachable at the moment.");
-                box.open();
-            }
-        } else {
-            if (!Providers.isValidName(name)) {
-                box.setText("Invalid Name");
-                box.setMessage("The provider name is not valid.");
-            } else if (!Uris.isValidURI(address)) {
-                box.setText("Invalid Address");
-                box.setMessage("The provider address is not valid:\n\n" + address);
-            } else if (Uris.isHttpsURI(address)) {
-                box.setText("Possibly Security Misconfigured");
-                box.setMessage(
-                    "Name and address seem to be ok."
-                    + " Perhaps your security configuration is not correct?"
-                    + " Please check the location of your trust store and the correctness"
-                    + " of the given password."
-                );
-            } 
+        if (!Providers.isValidProvider(provider)) {
+            box.setText("Provider invalid");
+            box.setMessage(
+                "The selected provider is invalid. An availability test can not be performed."
+            );
             box.open();
-        }
+            return;
+        }  
+        IWebServiceClient client = Clients.createClientForProvider(provider);
+        try {
+            String version = null;
+            Date start = null;
+            Date stop = null;
+            float responseTime = 0;
+            // first call to getVersion() is ignored for response time
+            // calculation since it involves establishing the connection
+            // and therefore is not representative
+            version = client.getVersion();
+            start = new Date();
+            for (int i = 0; i < RESPONSETIME_TESTCOUNT; i++) {
+                version = client.getVersion();
+            }
+            stop = new Date();
+            responseTime = (stop.getTime() - start.getTime()) / RESPONSETIME_TESTCOUNT;
+            box.setText("Provider Details");
+            box.setMessage(
+                "The provider is running version "
+                + version
+                + ", the servers response time is "
+                + responseTime
+                + " milliseconds."
+            );
+            box.open();
+        } catch (Exception e) {
+            box.setText("Provider is not reachable");
+            box.setMessage("The Provider you selected is not reachable at the moment.");
+            box.open();
+        }   
     }
-
+    
     /**
      * Private constructor for utility class.
      */

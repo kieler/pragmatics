@@ -24,6 +24,8 @@ import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
+import de.cau.cs.kieler.kwebs.logging.Logger;
+import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.util.Uris;
 
 /**
@@ -83,28 +85,34 @@ public final class Clients {
                 protocols = element.getAttribute(ATTRIBUTE_PROTOCOLS);
                 clas = element.getAttribute(ATTRIBUTE_CLASS);
                 if (protocols == null || protocols.length() == 0) {
-                    //throw new
-                }
-                if (clas == null || clas.length() == 0) {
-                    //throw new
-                }
-                Class<? extends IWebServiceClient> clientClass = null;
-                IWebServiceClient client = null;
-                Bundle contributor = Platform.getBundle(element.getContributor().getName());
-                if (contributor != null) {
-                    try {
-                        clientClass = contributor.loadClass(clas).
-                            asSubclass(IWebServiceClient.class);
-                        client = clientClass.newInstance();
-                        StringTokenizer tokenizer = new StringTokenizer(protocols, ";");
-                        String token = null;
-                        while (tokenizer.hasMoreTokens()) {
-                            token = tokenizer.nextToken().trim().toLowerCase();
-                            clientClassForProtocol.put(token, clientClass);
-                            clientForProtocol.put(token, client);
+                    Logger.log(Severity.WARNING, 
+                        "No supported protocol specified, ignoring client definition"
+                    );
+                } else if (clas == null || clas.length() == 0) {
+                    Logger.log(Severity.WARNING, 
+                        "No implementation class specified, ignoring client definition"
+                    );
+                } else {
+                    Class<? extends IWebServiceClient> clientClass = null;
+                    IWebServiceClient client = null;
+                    Bundle contributor = Platform.getBundle(element.getContributor().getName());
+                    if (contributor != null) {
+                        try {
+                            clientClass = contributor.loadClass(clas).
+                                asSubclass(IWebServiceClient.class);
+                            client = clientClass.newInstance();
+                            StringTokenizer tokenizer = new StringTokenizer(protocols, ";");
+                            String token = null;
+                            while (tokenizer.hasMoreTokens()) {
+                                token = tokenizer.nextToken().trim().toLowerCase();
+                                clientClassForProtocol.put(token, clientClass);
+                                clientForProtocol.put(token, client);
+                            }
+                        } catch (Exception e) {
+                            Logger.log(Severity.WARNING, 
+                                "Implementation class not found, ignoring client definition",
+                            e);
                         }
-                    } catch (Exception e) {
-e.printStackTrace();
                     }
                 }
             }
@@ -120,10 +128,14 @@ e.printStackTrace();
      * @return the client compatible with the given protocol or {@code null} 
      */
     public static IWebServiceClient getClientForProvider(final Provider provider) {
-        if (!Uris.isValidURI(provider.getAddress())) {
+        String address = provider.getAddress();
+        if (!Uris.isValidURI(address)) {
             return null;
         }
-        String protocol = Uris.getProtocol(provider.getAddress()).trim().toLowerCase();
+        String protocol = Uris.getProtocol(address);
+        if (protocol == null) {
+            return null;
+        }
         IWebServiceClient client = INSTANCE.clientForProtocol.get(protocol);
         if (client != null) {
             client.setProvider(provider);
@@ -140,10 +152,14 @@ e.printStackTrace();
      * @return the client compatible with the given protocol or {@code null} 
      */
     public static IWebServiceClient createClientForProvider(final Provider provider) {
-        if (!Uris.isValidURI(provider.getAddress())) {
+        String address = provider.getAddress();
+        if (!Uris.isValidURI(address)) {
             return null;
         }
-        String protocol = Uris.getProtocol(provider.getAddress()).trim().toLowerCase();
+        String protocol = Uris.getProtocol(address);
+        if (protocol == null) {
+            return null;
+        }
         IWebServiceClient client = null;
         //CHECKSTYLEOFF EmptyBlock
         try {
@@ -166,10 +182,14 @@ e.printStackTrace();
      * @return whether a client for a particular protocol of a provider can be supplied
      */
     public static boolean isProviderSupported(final Provider provider) {
-        if (!Uris.isValidURI(provider.getAddress())) {
+        String address = provider.getAddress();
+        if (!Uris.isValidURI(address)) {
             return false;
         }
-        String protocol = Uris.getProtocol(provider.getAddress()).trim().toLowerCase();
+        String protocol = Uris.getProtocol(address);
+        if (protocol == null) {
+            return false;
+        }
         return INSTANCE.clientForProtocol.containsKey(protocol);        
     }
     

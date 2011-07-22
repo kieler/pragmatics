@@ -28,14 +28,16 @@ import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
 public interface IProvidersStorageManager {
     
     /**
+     * Import a provider list from some sort of storage.
      * 
-     * @param providers
      */
     void readProviders();
     
     /**
+     * Store a provider list to some sort of storage.
      * 
-     * @param providers
+     * @param providerList
+     *            the list to be stored
      */
     void storeProviders(final Vector<Provider> providerList);
     

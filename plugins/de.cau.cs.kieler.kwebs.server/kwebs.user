@@ -1,5 +1,19 @@
 # User configuration file for the KWebS server
 
+# Use this option to configure whether the layout will be published http based 
+#de.cau.cs.kieler.kwebs.publishHttp=true
+# Use this option to configure whether the layout will be published https based 
+#de.cau.cs.kieler.kwebs.publishHttps=false
+# Use this option to configure whether the layout will be published jeti based 
+#de.cau.cs.kieler.kwebs.publishJeti=false
+
+# Use this option to configure the address, port and context under which the http based layout will be published 
+#de.cau.cs.kieler.kwebs.httpAddress=http://0.0.0.0:8442/layout
+# Use this option to configure the address, port and context under which the https based layout will be published 
+#de.cau.cs.kieler.kwebs.httpsAddress=https://0.0.0.0:8443/layout
+# Use this option to configure the address and port under which the jeti based layout will be published 
+#de.cau.cs.kieler.kwebs.jetiAddress=eti://0.0.0.0:9867
+
 # Use this option to configure the path to the graphviz dot executable 
 #de.cau.cs.kieler.kwebs.graphviz.path=
 # Use this option to configure the timeout for the graphviz process

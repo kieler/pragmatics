@@ -32,7 +32,6 @@ import de.cau.cs.kieler.kwebs.logging.Logger;
 import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.service.ServiceException;
 import de.cau.cs.kieler.kwebs.transformation.KGraphXmiTransformer;
-import de.cau.cs.kieler.kwebs.util.Extensions;
 import de.cau.cs.kieler.kwebs.util.Graphs;
 
 /**
@@ -68,41 +67,12 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
     }
 
     /**
-     *
-     * @throws Throwable
+     * {@inheritDoc}
      */
     protected final void finalize() throws Throwable {
         preferenceStore.removePropertyChangeListener(this);
         super.finalize();
     }
-
-    /** */
-    private static final String EXTENSIONPOINT_ID
-        = "de.cau.cs.kieler.kwebs.client.configuration";
-
-    /** */
-    private static final String ELEMENT_DEFAULTPROVIDER
-        = "defaultProvider";
-
-    /** */
-    private static final String ATTRIBUTE_NAME
-        = "name";
-
-    /** */
-    private static final String ATTRIBUTE_ADDRESS
-        = "address";
-
-    /** Default name of the KIELER layout server is configured via extension. */
-    private static final String DEFAULT_NAME
-        = Extensions.get(
-              EXTENSIONPOINT_ID, ELEMENT_DEFAULTPROVIDER, ATTRIBUTE_NAME
-          );
-
-    /** Default address of the KIELER layout server is configured via extension. */
-    private static final String DEFAULT_ADDRESS
-        = Extensions.get(
-              EXTENSIONPOINT_ID, ELEMENT_DEFAULTPROVIDER, ATTRIBUTE_ADDRESS
-          );
 
     /**
      * Initializes the remote graph layout engine from the settings stored in the preference store.
@@ -111,24 +81,14 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         boolean remoteLayout = preferenceStore.getBoolean(
             Preferences.PREFID_LAYOUT_USE_REMOTE
         );
-        boolean kielerLayout = preferenceStore.getBoolean(
-            Preferences.PREFID_LAYOUT_USE_KIELER
-        );
         if (remoteLayout) {
-            Provider newProvider = null;
-            if (kielerLayout) {
-                newProvider = Providers.createProvider(
-                    DEFAULT_NAME, DEFAULT_ADDRESS
-                );
-            } else {
-                newProvider = Providers.getProviderByIndex(
-                    preferenceStore.getInt(
-                        Preferences.PREFID_LAYOUT_PROVIDER_INDEX
-                    )
-                );
-            }
+            Provider newProvider = Providers.getProviderByIndex(
+                preferenceStore.getInt(
+                    Preferences.PREFID_LAYOUT_PROVIDER_INDEX
+                )
+            );
             if (newProvider == null) {
-                // if this exception occurrs, check if the defaultProvider extension is set correctly
+                // if this exception occurs, check if the defaultProvider extension is set correctly
                 throw new IllegalStateException("Provider object could not be generated");
             }
             if (!newProvider.equals(provider)) {
@@ -136,12 +96,14 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
                 if (client != null) {
                     client.disconnect();
                 }
-//System.out.println("Getting client for: " + provider.getAddress());
+                Logger.log(Severity.DEBUG, "Getting client for: " + provider.getAddress());
                 client = Clients.getClientForProvider(provider);                
                 if (client == null) {
                     throw new IllegalStateException("Client object could not be generated");
                 }
-//System.out.println(client.getClass().getCanonicalName());
+                Logger.log(Severity.DEBUG, 
+                    "Client implementation class is " + client.getClass().getCanonicalName()
+                );
 /*
                 try {
                     Logger.log(
@@ -195,9 +157,9 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         String sourceXMI = transformer.serialize(layoutGraph);
         String resultXMI = null;
         try {
-            Logger.log("Sending graph", sourceXMI);
+            Logger.log(Severity.DEBUG, "Sending graph", sourceXMI);
             resultXMI = client.graphLayout(sourceXMI, Formats.FORMAT_KGRAPH_XMI, null);
-            Logger.log("Received graph", resultXMI);
+            Logger.log(Severity.DEBUG, "Received graph", resultXMI);
             KNode tempGraph = transformer.deserialize(resultXMI);
             Graphs.duplicateGraphLayoutByUniqueID(tempGraph, layoutGraph);
         } catch (Exception e) {
@@ -215,7 +177,7 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
      *            the property change event
      */
     public final synchronized void propertyChange(final PropertyChangeEvent event) {
-//System.out.println("Layout Provider Preferences Change received");
+        Logger.log(Severity.DEBUG, "Layout Provider Preferences Change received");
         if (event.getProperty().equals(Preferences.PREFID_LAYOUT_SETTINGS_CHANGED)) {
             initialize();
         }

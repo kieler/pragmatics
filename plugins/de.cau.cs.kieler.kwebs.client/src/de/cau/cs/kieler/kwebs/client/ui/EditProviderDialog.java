@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import de.cau.cs.kieler.kwebs.client.providers.Providers;
 import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
 
 /**
@@ -77,27 +76,27 @@ public class EditProviderDialog extends AbstractProviderDialog {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public final boolean close() {
-        return super.close();
+    protected void handleProviderUpdate(final Provider updatedProvider) {
+        if (!updatedProvider.equals(provider)) {
+            provider.setName(updatedProvider.getName());
+            provider.setAddress(updatedProvider.getAddress());
+            provider.setTruststore(updatedProvider.getTruststore());
+            provider.setTruststorePass(updatedProvider.getTruststorePass());
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    protected final void buttonPressed(final int buttonId) {
-        if (buttonId == ACTION_OK) {
-            Provider tmp = Providers.createProvider(getName(),
-                getAddress(), getTruststore(), getTruststorePass()
-            );
-            if (!tmp.equals(provider) && Providers.isValidProvider(tmp)) {
-                provider.setName(getName());
-                provider.setAddress(getAddress());
-                provider.setTruststore(getTruststore());
-                provider.setTruststorePass(getTruststorePass());
-            }
-        }
-        super.buttonPressed(buttonId);
+    protected boolean warningOnDouble(final Provider theprovider) {
+        return (theprovider != provider);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected boolean warningOnInvalid(final Provider theprovider) {
+        return true;
+    }
+    
 }

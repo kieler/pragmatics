@@ -197,7 +197,6 @@ public final class Configuration extends Properties {
      * @param stream
      *            the input stream to load from
      * @throws IOException
-     * @throws InvalidPropertiesFormatException
      */
     public static synchronized void loadFromXmlStream(final InputStream stream) throws IOException {
         INSTANCE.loadFromXML(stream);

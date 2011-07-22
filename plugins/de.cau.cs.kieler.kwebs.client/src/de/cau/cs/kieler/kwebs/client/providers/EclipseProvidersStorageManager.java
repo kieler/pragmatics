@@ -20,6 +20,9 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.kwebs.client.preferences.Preferences;
 import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
+import de.cau.cs.kieler.kwebs.logging.Logger;
+import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
+import de.cau.cs.kieler.kwebs.util.Extensions;
 
 /**
  * This utility class provides convenient access to the list of
@@ -51,6 +54,38 @@ public final class EclipseProvidersStorageManager implements IProvidersStorageMa
     private static final String TRUSTSTOREPASS_PREFIX
         = Preferences.PREFID_LAYOUT_PROVIDER_TRUSTSTOREPASSPREFIX;
 
+    /** Preference store prefix of the password for the trust store of a provider.*/
+    private static final String FIXED_PREFIX
+        = Preferences.PREFID_LAYOUT_PROVIDER_FIXEDPREFIX;
+
+    /** */
+    private static final String EXTENSIONPOINT_ID
+        = "de.cau.cs.kieler.kwebs.client.configuration";
+
+    /** */
+    private static final String ELEMENT_DEFAULTPROVIDER
+        = "defaultProvider";
+
+    /** */
+    private static final String ATTRIBUTE_NAME
+        = "name";
+
+    /** */
+    private static final String ATTRIBUTE_ADDRESS
+        = "address";
+
+    /** Default name of the KIELER layout server is configured via extension. */
+    private static final String DEFAULT_NAME
+        = Extensions.get(
+            EXTENSIONPOINT_ID, ELEMENT_DEFAULTPROVIDER, ATTRIBUTE_NAME
+        );
+
+    /** Default address of the KIELER layout server is configured via extension. */
+    private static final String DEFAULT_ADDRESS 
+        = Extensions.get(
+            EXTENSIONPOINT_ID, ELEMENT_DEFAULTPROVIDER, ATTRIBUTE_ADDRESS
+        );
+
     /**
      * {@inheritDoc}
      */
@@ -62,15 +97,19 @@ public final class EclipseProvidersStorageManager implements IProvidersStorageMa
         String address = null;
         String truststore = null;
         String truststorePass = null;
+        boolean fixed = false;
         String currNamePrefix = null;
         String currAddressPrefix = null;
         String currTruststorePrefix = null;
         String currTruststorePassPrefix = null;
+        String currFixedPrefix = null;
+        Provider tmpProvider = null;
         for (int position = 0; position < count; position++) {
             currNamePrefix = NAME_PREFIX + "." + position;
             currAddressPrefix = ADDRESS_PREFIX + "." + position;
             currTruststorePrefix = TRUSTSTORE_PREFIX + "." + position;
             currTruststorePassPrefix = TRUSTSTOREPASS_PREFIX + "." + position;
+            currFixedPrefix = FIXED_PREFIX + "." + position;
             if (!preferenceStore.contains(currNamePrefix)
                 || !preferenceStore.contains(currAddressPrefix)) {
                 break;
@@ -78,10 +117,32 @@ public final class EclipseProvidersStorageManager implements IProvidersStorageMa
             name = preferenceStore.getString(currNamePrefix);
             address = preferenceStore.getString(currAddressPrefix);
             truststore = preferenceStore.getString(currTruststorePrefix);
+            // Dont use default value "" but null in order to
+            // be compatible with the provider model
+            if (truststore.length() == 0) {
+                truststore = null;
+            }
+            // Dont use default value "" but null in order to
+            // be compatible with the provider model
             truststorePass = preferenceStore.getString(currTruststorePassPrefix);
-            Providers.addProvider(Providers.createProvider(
-                name, address, truststore, truststorePass
-            ));
+            if (truststorePass.length() == 0) {
+                truststorePass = null;
+            }
+            fixed = preferenceStore.getBoolean(currFixedPrefix);
+            tmpProvider = Providers.createProvider(
+                name, address, truststore, truststorePass, fixed
+            );
+            Providers.addProvider(tmpProvider);
+            Logger.log(Severity.DEBUG, "Read provider from store: " + tmpProvider);
+        }
+        // Check if KIELER default layout provider is in the provider list.
+        // If not, insert it.
+        Provider defaultProvider = Providers.createProvider(
+            DEFAULT_NAME, DEFAULT_ADDRESS, null, null, true
+        );
+        if (!Providers.containsProvider(defaultProvider)) {
+            Logger.log(Severity.DEBUG, "Adding default provider to the provider list");
+            Providers.addProvider(defaultProvider);
         }
     }
 
@@ -91,29 +152,34 @@ public final class EclipseProvidersStorageManager implements IProvidersStorageMa
     public synchronized void storeProviders(final Vector<Provider> providerList) {
         int count = providerList.size();
         preferenceStore.setValue(Preferences.PREFID_LAYOUT_PROVIDER_COUNT, count);
-        Provider provider = null;
+        Provider tmpProvider = null;
         for (int position = 0; position < count; position++) {
-            provider = providerList.get(position);
+            tmpProvider = providerList.get(position);
+            Logger.log(Severity.DEBUG, "Storing provider: " + tmpProvider);
             preferenceStore.setValue(
                 NAME_PREFIX + "." + position,
-                    provider.getName()
+                    tmpProvider.getName()
             );
             preferenceStore.setValue(
                 ADDRESS_PREFIX + "." + position,
-                    provider.getAddress()
+                    tmpProvider.getAddress()
             );
-            if (provider.getTruststore() != null) {
+            if (tmpProvider.getTruststore() != null) {
                 preferenceStore.setValue(
                     TRUSTSTORE_PREFIX + "." + position,
-                        provider.getTruststore()
+                        tmpProvider.getTruststore()
                 );
             }
-            if (provider.getTruststorePass() != null) {
+            if (tmpProvider.getTruststorePass() != null) {
                 preferenceStore.setValue(
                     TRUSTSTOREPASS_PREFIX + "." + position,
-                        provider.getTruststorePass()
+                        tmpProvider.getTruststorePass()
                 );
             }
+            preferenceStore.setValue(
+                FIXED_PREFIX + "." + position, 
+                    tmpProvider.isFixed()
+            );
         }
     }
 

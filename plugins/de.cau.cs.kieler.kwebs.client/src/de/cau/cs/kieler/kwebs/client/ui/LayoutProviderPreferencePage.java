@@ -45,6 +45,8 @@ import de.cau.cs.kieler.kwebs.client.preferences.Preferences;
 import de.cau.cs.kieler.kwebs.client.providers.Providers;
 import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
 import de.cau.cs.kieler.kwebs.client.ui.testers.Availability;
+import de.cau.cs.kieler.kwebs.logging.Logger;
+import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
 
 /**
  * Preference page for general KIML preferences.
@@ -57,20 +59,20 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
 
     /** Radio button for using local layout. */
     private Button providerRadio1;
+    
     /** Radio button for using remote layout. */
     private Button providerRadio2;
-    /** Radio button for using KIELER layout. */
-    private Button providerRadio3;
-    /** Radio button for using third party layout. */
-    private Button providerRadio4;
 
-    /** . */
+    /** Button for creating a new provider. */
     private Button prEditButton1;
-    /** . */
+    
+    /** Button for editing an existing provider. */
     private Button prEditButton2;
-    /** . */
+    
+    /** Button for deleting a provider. */
     private Button prEditButton3;
-    /** . */
+    
+    /** Button for testing the availability of a provider. */
     private Button prEditButton4;
 
     /** The table viewer used to display the user defined providers. */
@@ -86,7 +88,7 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
      * Creates the preference page for the remote layout options.
      */
     public LayoutProviderPreferencePage() {
-        this(null, "Remote layout", null);
+        this(null, "Preferences for the Web Service based Layout", null);
     }
 
     /**
@@ -144,10 +146,7 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
         Group layoutGroup1 = createLayoutGroup1(composite);
         layoutGroup1.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
-        Group layoutGroup2 = createLayoutGroup2(composite);
-        layoutGroup2.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-
-        Group layoutGroup3 = createLayoutGroup3(composite);
+        Group layoutGroup3 = createLayoutGroup2(composite);
         layoutGroup3.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
         initRemoteLayoutOptionsView();
@@ -180,11 +179,8 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
         }
         boolean remoteLayout = providerRadio2.getSelection();
         isDirty |= store.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE) != remoteLayout;
-        boolean kielerLayout = providerRadio3.getSelection();
-        isDirty |= store.getBoolean(Preferences.PREFID_LAYOUT_USE_KIELER) != kielerLayout;
         store.setValue(Preferences.PREFID_LAYOUT_USE_REMOTE, remoteLayout);
-        store.setValue(Preferences.PREFID_LAYOUT_USE_KIELER, kielerLayout);
-        if (remoteLayout && !kielerLayout) {
+        if (remoteLayout) {
             IStructuredSelection selection = (IStructuredSelection) providerViewer.getSelection();
             if (!selection.isEmpty()) {
                 Provider provider = (Provider) selection.getFirstElement();
@@ -199,7 +195,7 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
         // Fire property change event so that the RemoteGraphLayoutEngine can
         // initialize itself on the new conditions.
         if (isDirty) { 
-//System.out.println("Layout Provider Preferences Change notified");
+            Logger.log(Severity.DEBUG, "Layout Provider Preferences Change notified");
             store.firePropertyChangeEvent(
                 Preferences.PREFID_LAYOUT_SETTINGS_CHANGED, "1", "2"
             );
@@ -232,11 +228,11 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
 
         Group generalGroup = new Group(parent, SWT.NONE);
 
-        generalGroup.setText("Use local or remote layout");
+        generalGroup.setText("Which Layout do you want to use?");
 
         // add radio buttons for selection of local or remote provider
         providerRadio1 = new Button(generalGroup, SWT.RADIO | SWT.LEFT);
-        providerRadio1.setText("Local Layout");
+        providerRadio1.setText("Use local Layout");
 
         providerRadio1.addSelectionListener(
             new SelectionAdapter() {
@@ -249,62 +245,12 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
         );
 
         providerRadio2 = new Button(generalGroup, SWT.RADIO | SWT.LEFT);
-        providerRadio2.setText("Remote Layout");
+        providerRadio2.setText("Use remote Layout");
 
         providerRadio2.addSelectionListener(
             new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent e) {
                     if (e.widget == providerRadio2) {
-                        updateRemoteLayoutOptionsView();
-                    }
-                }
-            }
-        );
-
-        FillLayout layout = new FillLayout();
-
-        layout.marginWidth = MARGIN_WIDTH;
-
-        generalGroup.setLayout(layout);
-
-        return generalGroup;
-
-    }
-
-    /**
-     * Creates the group for layout provider options.
-     *
-     * @param parent 
-     *            the parent control
-     * @return a group with general options
-     */
-    private Group createLayoutGroup2(final Composite parent) {
-
-        Group generalGroup = new Group(parent, SWT.NONE);
-
-        generalGroup.setText("Use which provider");
-
-        // add radio buttons for selection of local or remote provider
-        providerRadio3 = new Button(generalGroup, SWT.RADIO | SWT.LEFT);
-        providerRadio3.setText("Use KIELER");
-
-        providerRadio3.addSelectionListener(
-            new SelectionAdapter() {
-            public void widgetSelected(final SelectionEvent e) {
-                    if (e.widget == providerRadio3) {
-                        updateRemoteLayoutOptionsView();
-                    }
-            }
-            }
-        );
-
-        providerRadio4 = new Button(generalGroup, SWT.RADIO | SWT.LEFT);
-        providerRadio4.setText("Use 3rd party");
-
-        providerRadio4.addSelectionListener(
-            new SelectionAdapter() {
-                public void widgetSelected(final SelectionEvent e) {
-                    if (e.widget == providerRadio4) {
                         updateRemoteLayoutOptionsView();
                     }
                 }
@@ -336,11 +282,11 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
      *            the parent control
      * @return a group with the layout provider table
      */
-    private Group createLayoutGroup3(final Composite parent) {
+    private Group createLayoutGroup2(final Composite parent) {
 
         Group generalGroup = new Group(parent, SWT.NONE);
 
-        generalGroup.setText("Layout providers");
+        generalGroup.setText("Available Layout Web Services:");
 
         // add table with list of available providers
         providerViewer = new TableViewer(generalGroup,
@@ -373,22 +319,11 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
 
         providerViewer.setContentProvider(
             new IStructuredContentProvider() {
-                /**
-                 *
-                 */
                 public void inputChanged(final Viewer v,
                     final Object oldInput, final Object newInput) {
                 }
-
-                /**
-                 *
-                 */
                 public void dispose() {
                 }
-
-                /**
-                 *
-                 */
                 public Object[] getElements(final Object parent) {
                     if (parent instanceof Providers) {
                         return Providers.toObjectArray();
@@ -443,12 +378,19 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
                         IStructuredSelection selection
                             = (IStructuredSelection) providerViewer.getSelection();
                         if (!selection.isEmpty()) {
-                            Provider provider
-                                = (Provider) selection.getFirstElement();
-                            EditProviderDialog dialog = new EditProviderDialog(
-                                parent.getShell(), provider
-                            );
-                            dialog.open();
+                            Provider provider = (Provider) selection.getFirstElement();
+                            if (!provider.isFixed()) {
+                                new EditProviderDialog(parent.getShell(), provider).open();
+                            } else {
+                                MessageBox box = new MessageBox(
+                                    parent.getShell(), SWT.OK
+                                );
+                                box.setText("Edit Provider");
+                                box.setMessage(
+                                    " This provider is fixed and can not be edited."    
+                                );
+                                box.open();
+                            }
                         }
                         refreshProviderViewer();
                     }
@@ -466,20 +408,32 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
                             = (IStructuredSelection) providerViewer.getSelection();
                         if (!selection.isEmpty()) {
                             Provider provider = (Provider) selection.getFirstElement();
-                            MessageBox box = new MessageBox(
-                                parent.getShell(), SWT.OK | SWT.CANCEL
-                            );
-                            box.setText("Delete provider");
-                            box.setMessage(
-                                " Do you really want to delete the provider \n\n"
-                                + provider.getName()
-                                + "\n\n" + provider.getAddress()
-                                + "\n\n"
-                                + "permanently ?"
-
-                            );
-                            if (box.open() == SWT.OK) {
-                                Providers.removeProvider(provider);
+                            MessageBox box = null;
+                            if (!provider.isFixed()) {
+                                box = new MessageBox(
+                                    parent.getShell(), SWT.OK | SWT.CANCEL
+                                );
+                                box.setText("Delete Provider");
+                                box.setMessage(
+                                    " Do you really want to delete the provider \n\n"
+                                    + provider.getName()
+                                    + "\n\n" + provider.getAddress()
+                                    + "\n\n"
+                                    + "from your list ?"
+    
+                                );
+                                if (box.open() == SWT.OK) {
+                                    Providers.removeProvider(provider);
+                                }
+                            } else {
+                                box = new MessageBox(
+                                    parent.getShell(), SWT.OK
+                                );
+                                box.setText("Delete Provider");
+                                box.setMessage(
+                                    " This provider is fixed and can not be deleted."    
+                                );
+                                box.open();
                             }
                         }
                         refreshProviderViewer();
@@ -497,11 +451,8 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
                         IStructuredSelection selection
                             = (IStructuredSelection) providerViewer.getSelection();
                         if (!selection.isEmpty()) {
-                            Provider provider
-                                = (Provider) selection.getFirstElement();
-                            Availability.checkAvailability(
-                                getShell(), provider
-                            );
+                            Provider provider = (Provider) selection.getFirstElement();
+                            Availability.checkAvailability(getShell(), provider);
                         }
                     }
                 }
@@ -525,10 +476,8 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
      */
     private TableViewerColumn createProviderViewerColumn(final String title,
         final int width, final int index) {
-        final TableViewerColumn viewerColumn
-            = new TableViewerColumn(providerViewer, SWT.NONE);
-        final TableColumn column
-            = viewerColumn.getColumn();
+        final TableViewerColumn viewerColumn = new TableViewerColumn(providerViewer, SWT.NONE);
+        final TableColumn column = viewerColumn.getColumn();
         column.setText(title);
         column.setWidth(width);
         column.setResizable(true);
@@ -558,12 +507,8 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
      * state from the preference store. 
      */
     private void initRemoteLayoutOptionsView() {
-        boolean remoteLayout
-            = store.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE);
-        boolean kielerLayout
-            = store.getBoolean(Preferences.PREFID_LAYOUT_USE_KIELER);
+        boolean remoteLayout = store.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE);
         (remoteLayout ? providerRadio2 : providerRadio1).setSelection(true);
-        (kielerLayout ? providerRadio3 : providerRadio4).setSelection(true);
         updateRemoteLayoutOptionsView();
     }
 
@@ -573,14 +518,11 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
      */
     private void updateRemoteLayoutOptionsView() {
         boolean remoteLayout = providerRadio2.getSelection();
-        boolean kielerLayout = providerRadio3.getSelection();
-        providerRadio3.setEnabled(remoteLayout);
-        providerRadio4.setEnabled(remoteLayout);
-        providerTable.setEnabled(remoteLayout & !kielerLayout);
-        prEditButton1.setEnabled(remoteLayout & !kielerLayout);
-        prEditButton2.setEnabled(remoteLayout & !kielerLayout);
-        prEditButton3.setEnabled(remoteLayout & !kielerLayout);
-        prEditButton4.setEnabled(remoteLayout & !kielerLayout);
+        providerTable.setEnabled(remoteLayout);
+        prEditButton1.setEnabled(remoteLayout);
+        prEditButton2.setEnabled(remoteLayout);
+        prEditButton3.setEnabled(remoteLayout);
+        prEditButton4.setEnabled(remoteLayout);
     }
 
 }

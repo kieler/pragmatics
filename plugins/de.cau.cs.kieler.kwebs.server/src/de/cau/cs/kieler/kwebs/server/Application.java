@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kwebs.server;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
@@ -26,16 +25,16 @@ import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.osgi.framework.Version;
 
+import de.cau.cs.kieler.kwebs.logging.DisplayLogging;
 import de.cau.cs.kieler.kwebs.logging.ILoggerListener;
 import de.cau.cs.kieler.kwebs.logging.Logger;
 import de.cau.cs.kieler.kwebs.logging.Logger.Mode;
 import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
-import de.cau.cs.kieler.kwebs.server.logging.DisplayLogging;
-import de.cau.cs.kieler.kwebs.server.logging.JaxWsAdapter;
 import de.cau.cs.kieler.kwebs.server.logging.RoundTripFileLogging;
 import de.cau.cs.kieler.kwebs.server.management.ManagementService;
 import de.cau.cs.kieler.kwebs.server.publishing.ServicePublisher;
+import de.cau.cs.kieler.kwebs.util.Arguments;
 import de.cau.cs.kieler.kwebs.util.Files;
 import de.cau.cs.kieler.kwebs.util.Io;
 
@@ -123,7 +122,7 @@ public class Application implements IApplication {
         Map argumentsMap = context.getArguments();
         Map<String, String> arguments = null;
         if (argumentsMap != null && argumentsMap.containsKey(ARGUMENTS_INDEX)) {
-            arguments = parseArgs((String[]) argumentsMap.get(ARGUMENTS_INDEX));
+            arguments = Arguments.parseArgs((String[]) argumentsMap.get(ARGUMENTS_INDEX));
         }
         
         // Read default config
@@ -245,8 +244,7 @@ public class Application implements IApplication {
         
         // Initialize server and publish service
         try {
-            ServicePublisher.publish();   
-            JaxWsAdapter.registerToLoggers();
+            ServicePublisher.publish();
             while (!stopped) {
                 Thread.sleep(LOOP_TIMEOUT);
             }
@@ -292,45 +290,6 @@ public class Application implements IApplication {
         stopped = true;
     }
 
-    /**
-     * Parses the command line arguments and stores the key/value
-     * pairs in a {@code HashMap}.
-     *
-     * @param args
-     *            Array of type {@code String} containing
-     *            the command line arguments
-     * @return a {@code HashMap<String, String>} containing key/value pairs generated
-     *         from the command line arguments
-     */
-    private static HashMap<String, String> parseArgs(final String[] args) {
-        HashMap<String, String> result = new HashMap<String, String>();
-        int index = 0;
-        String key = null;
-        String value = null;
-        for (String arg : args) {
-            if (arg.charAt(0) == '/' || arg.charAt(0) == '-') {
-                arg = arg.substring(1);
-            }
-            key = arg.toLowerCase();
-            value = null;
-            index = arg.indexOf("=");
-            if (index > -1) {
-                key = arg.substring(0, index).toLowerCase();
-                value = arg.substring(index + 1);
-                if (value.startsWith("\"")
-                    && value.endsWith("\"")) {
-                    value = value.substring(1, value.length() - 1).trim();
-                }
-                if (value.startsWith("'")
-                    && value.endsWith("'")) {
-                    value = value.substring(1, value.length() - 1).trim();
-                }
-            }
-            result.put(key, value);
-        }
-        return result;
-    }
-
     /** The plug-in id of the graphviz layouter. */
     private static final String GRAPHVIZ_PLUGINID
         = "de.cau.cs.kieler.kiml.graphviz.layouter";
@@ -352,7 +311,7 @@ public class Application implements IApplication {
         = "ogdf.timeout";
 
     /**
-     * Sets the neccesary preferences from different layouter plugins in order
+     * Sets the necessary preferences from different layouter plugins in order
      * for them to function correctly.
      */
     private void setPluginPreferencesFromConfiguration() {
@@ -427,8 +386,7 @@ public class Application implements IApplication {
      * Builds the configuration folder structure needed for operation.
      */
     private void createConfigurationFolder() {        
-        for (String property : ApplicationHelper.CONFIGURATION_FILES) {
-            String file = Configuration.getConfigProperty(property);
+        for (String file : ApplicationHelper.CONFIGURATION_FILES) {
             if (!new File(file).exists()) {
                 try {
                     Files.writeFile(file, Io.getResourceStream(PLUGIN_ID, file));

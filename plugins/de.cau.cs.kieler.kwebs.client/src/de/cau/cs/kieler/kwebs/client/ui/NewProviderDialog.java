@@ -49,17 +49,22 @@ public class NewProviderDialog extends AbstractProviderDialog {
     /**
      * {@inheritDoc}
      */
-    @Override
-    protected final void buttonPressed(final int buttonId) {
-        if (buttonId == ACTION_OK) {
-            Provider tmp = Providers.createProvider(
-                getName(), getAddress(), getTruststore(), getTruststorePass()
-            );
-            if (Providers.isValidProvider(tmp)) {
-                Providers.addProvider(tmp);
-            }
-        }
-        super.buttonPressed(buttonId);
+    protected void handleProviderUpdate(final Provider updatedProvider) {
+        Providers.addProvider(updatedProvider);        
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected boolean warningOnDouble(final Provider theprovider) {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected boolean warningOnInvalid(final Provider theprovider) {
+        return true;
     }
     
 }

@@ -108,17 +108,6 @@ public class Providers {
     }
 
     /**
-     * Checks whether a given name is a valid provider name.
-     *
-     * @param name 
-     *            the provider name to be tested
-     * @return whether the name is valid or not
-     */
-    public static boolean isValidName(final String name) {
-        return (name != null && name.length() > 0);
-    }
-
-    /**
      * Checks whether the given provider is valid, e.g. name and uri is valid
      * and if the uri is https based whether the trust store parameters are valid.
      * 
@@ -129,7 +118,7 @@ public class Providers {
     public static boolean isValidProvider(final Provider provider) {
         return provider != null
                &&
-               isValidName(provider.getName())
+               (provider.name != null && provider.name.length() > 0)
                &&
                Uris.isValidURI(provider.getAddress())
                &&
@@ -157,7 +146,7 @@ public class Providers {
      */
     public static Provider createProvider(final String name,
         final String address) {
-        return INSTANCE.new Provider(name, address, null, null);
+        return createProvider(name, address, null, null, false);
     }
 
     /**
@@ -175,10 +164,30 @@ public class Providers {
      */
     public static Provider createProvider(final String name, final String address,
         final String truststore, final String truststorepass) {
+        return createProvider(name, address, truststore, truststorepass, false);
+    }
+    
+    /**
+     * Creates a new provider.
+     *
+     * @param name
+     *            the name of the provider
+     * @param address
+     *            the address of the layout service
+     * @param truststore
+     *            path to the truststore when using https
+     * @param truststorepass
+     *            password for the truststore
+     * @param isFixed
+     *            whether this provider can be altered or deleted from the provider list
+     * @return the newly created provider
+     */
+    public static Provider createProvider(final String name, final String address,
+        final String truststore, final String truststorepass, final boolean isFixed) {
         Provider provider = null;
         if (name != null && name.length() > 0
             && address != null && address.length() > 0) {
-            provider = INSTANCE.new Provider(name, address, truststore, truststorepass);
+            provider = INSTANCE.new Provider(name, address, truststore, truststorepass, isFixed);
         }
         return provider;
     }
@@ -190,10 +199,10 @@ public class Providers {
      *            the provider to be added
      */
     public static synchronized void addProvider(final Provider provider) {
-        if (!INSTANCE.providerList.contains(provider)) {
+        //if (!INSTANCE.providerList.contains(provider)) {
             INSTANCE.providerList.add(provider);
             INSTANCE.isDirty = true;
-        }
+        //}
     }
 
     /**
@@ -203,35 +212,46 @@ public class Providers {
      *            the provider to be removed
      */
     public static synchronized void removeProvider(final Provider provider) {
-        if (INSTANCE.providerList.contains(provider)) {
-            INSTANCE.providerList.remove(provider);
-            INSTANCE.isDirty = true;
+        if (!provider.isFixed) {
+            if (INSTANCE.providerList.contains(provider)) {
+                INSTANCE.providerList.remove(provider);
+                INSTANCE.isDirty = true;
+            }
         }
     }
 
     /**
-     * Finds and returns a provider matching the given criteria.
+     * Returns a provider equal to the given provider.
      * 
-     * @param name
-     *            the name of the provider to be searched for
-     * @param address
-     *            the address of the provider to be searched for
-     * @return the provider or {@code null} if a matching provider could not be found
+     * @param provider
+     *            the provider to be compared
+     * @return a provider equal to the given provider or {@code null} if no equal
+     *         provider is in the provider list
      */
-    public static synchronized Provider findProvider(final String name,
-        final String address) {
-        Provider provider = null;
-        Provider test = INSTANCE.new Provider(name, address);
-        Provider tmp = null;
-        for (int position = 0; position < INSTANCE.providerList.size();
-            position++) {
-            tmp = INSTANCE.providerList.get(position);
-            if (tmp.equals(test)) {
-                provider = tmp;
-                break;
+    public static synchronized Provider findProvider(final Provider provider) {
+        for (int position = 0; position < INSTANCE.providerList.size(); position++) {
+            Provider tmpProvider = INSTANCE.providerList.get(position); 
+            if (tmpProvider.equals(provider)) {
+                return tmpProvider;
             }
         }
-        return provider;
+        return null;
+    }
+
+    /**
+     * Returns whether a given provider is already contained in the provider list.
+     * 
+     * @param provider
+     *            the provider to be searched for
+     * @return whether a given provider is already contained in the provider list
+     */
+    public static synchronized boolean containsProvider(final Provider provider) {
+        for (int position = 0; position < INSTANCE.providerList.size(); position++) {
+            if (INSTANCE.providerList.get(position).equals(provider)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -319,7 +339,11 @@ public class Providers {
         /** Password for the trust store. */
         private String truststorePass;
 
-        /** Whether this provides has been changed. */
+        /** Whether this provider may be changed or deleted. */
+        private boolean isFixed
+            = false;
+
+        /** Whether this provider has been changed. */
         private boolean isDirty
             = false;
 
@@ -332,7 +356,7 @@ public class Providers {
          *           the address of the layout service
          */
         private Provider(final String thename, final String theaddress) {
-            this(thename, theaddress, null, null);
+            this(thename, theaddress, null, null, false);
         }
 
         /**
@@ -349,6 +373,25 @@ public class Providers {
          */
         private Provider(final String thename, final String theaddress,
             final String thetruststore, final String thetruststorePass) {
+            this(thename, theaddress, thetruststore, thetruststorePass, false);
+        }
+        
+        /**
+         * Constructs a new provider.
+         *
+         * @param thename
+         *           the name of the provider
+         * @param theaddress
+         *           the address of the layout service
+         * @param thetruststore
+         *           path to the trust store when using https
+         * @param thetruststorePass
+         *           password for the trust store
+         * @param theisFixed
+         *           whether this provider can be altered or deleted from the provider list
+         */
+        private Provider(final String thename, final String theaddress,
+            final String thetruststore, final String thetruststorePass, final boolean theisFixed) {
             name = thename;
             address = theaddress;
             truststore = thetruststore;
@@ -357,8 +400,18 @@ public class Providers {
                 truststore = truststore.replace("\\", "/");
             }
             truststorePass = thetruststorePass;
+            isFixed = theisFixed;
         }
-
+        
+        /**
+         * Returns whether this provider can be changed or deleted from the provider list.
+         * 
+         * @return whether this provider can be changed or deleted from the provider list
+         */
+        public boolean isFixed() {
+            return isFixed;
+        }
+        
         /**
          * Returns the name of this provider.
          * 
@@ -481,16 +534,24 @@ public class Providers {
                 return false;
             }
             if (truststore == null) {
-                return (provider.truststore == null);
+                if (provider.truststore != null) {
+                    return false;
+                }
             }
-            if (!truststore.equals(provider.truststore)) {
-                return false;
+            if (truststore != null) {
+                if (!truststore.equals(provider.truststore)) {
+                    return false;
+                }
             }
             if (truststorePass == null) {
-                return (provider.truststorePass == null);
+                if (provider.truststorePass != null) {
+                    return false;
+                }
             }
-            if (!truststorePass.equals(provider.truststorePass)) {
-                return false;
+            if (truststorePass != null) {
+                if (!truststorePass.equals(provider.truststorePass)) {
+                    return false;
+                }
             }
             return true;
         }

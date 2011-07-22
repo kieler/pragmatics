@@ -259,12 +259,14 @@ public class LogView extends ViewPart implements ILoggerListener {
         private LoggerEvent event;
 
         /**
-         *
+         * Creates a new detail view for a logger event.
+         * 
          * @param parentShell
+         *            the parent shell of this dialog
          * @param theevent
+         *            the event to be displayed in detail
          */
-        public LoggerEventDetailDialog(final Shell parentShell,
-            final LoggerEvent theevent) {
+        public LoggerEventDetailDialog(final Shell parentShell, final LoggerEvent theevent) {
             super(parentShell);
             parentShell.setText("Details on the logging event");
             event = theevent;
@@ -303,7 +305,7 @@ public class LogView extends ViewPart implements ILoggerListener {
          * 
          * @param parent
          *            the parent ui element
-         * @return
+         * @return a control containing the ui elements
          */
         protected final Control createContents(final Composite parent) {
 

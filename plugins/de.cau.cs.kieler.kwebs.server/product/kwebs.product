@@ -11,8 +11,7 @@
 128m
 --launcher.XXMaxPermSize
 256m
--consoleLog
--noExit</programArgs>
+-consoleLog</programArgs>
       <vmArgs>-Xss4m
 -Xms512m
 -Xmn256m

@@ -15,6 +15,7 @@
 package de.cau.cs.kieler.kwebs.client.ui;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -28,10 +29,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import de.cau.cs.kieler.kwebs.client.Clients;
 import de.cau.cs.kieler.kwebs.client.providers.Providers;
+import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
 import de.cau.cs.kieler.kwebs.client.ui.testers.Availability;
 
 /**
@@ -42,14 +46,6 @@ import de.cau.cs.kieler.kwebs.client.ui.testers.Availability;
  * @author swe
  */
 public abstract class AbstractProviderDialog extends Dialog {
-
-    /** Return value when user pressed OK. */
-    public static final int ACTION_OK
-        = 0;
-
-    /** Return value when user pressed ABORT. */
-    public static final int ACTION_ABORT
-        = 1;
 
     //CHECKSTYLEOFF VisibilityModifier
     
@@ -71,10 +67,13 @@ public abstract class AbstractProviderDialog extends Dialog {
     //CHECKSTYLEON VisibilityModifier
     
     /**
-     * @param shell
+     * Crreates a dialog with elements for editing a provider.
+     * 
+     * @param parentShell
+     *            the parent shell of this dialog
      */
-    protected AbstractProviderDialog(final Shell shell) {
-        super(shell);
+    protected AbstractProviderDialog(final Shell parentShell) {
+        super(parentShell);
     }
 
     /**
@@ -101,6 +100,10 @@ public abstract class AbstractProviderDialog extends Dialog {
     private static final int BUTTON_WIDTHHINT
         = 80;
 
+    /** Prefix of a https uri. */
+    private static final String HTTPS_PREFIX
+        = "https";
+    
     /**
      *
      * @param parent
@@ -142,11 +145,12 @@ public abstract class AbstractProviderDialog extends Dialog {
         serviceAddress.addModifyListener(
             new ModifyListener() {
                 public void modifyText(final ModifyEvent e) {
-                    boolean enabled
-                        = serviceAddress.getText().trim().
-                              toLowerCase().startsWith("https");
-                   truststore.setEnabled(enabled);
-                   truststorePass.setEnabled(enabled);
+                    String address = getAddress();                    
+                    boolean enabled = (
+                        address != null && address.trim().toLowerCase().startsWith(HTTPS_PREFIX)
+                    );                    
+                    truststore.setEnabled(enabled);
+                    truststorePass.setEnabled(enabled);
                 }
             }
         );
@@ -159,7 +163,7 @@ public abstract class AbstractProviderDialog extends Dialog {
         truststore = new Text(group, SWT.SINGLE | SWT.BORDER);
         truststore.setLayoutData(layoutText);
 
-        //only enabled on https connections
+        // Only enabled on https connections
         truststore.setEnabled(false);
 
         final Button truststoreButton = new Button(group, SWT.NONE);
@@ -171,8 +175,7 @@ public abstract class AbstractProviderDialog extends Dialog {
             new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent e) {
                     if (e.widget == truststoreButton) {
-                        FileDialog dialog
-                            = new FileDialog(getShell(), SWT.OPEN);
+                        FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
                         dialog.setText("Select trust store");
                         String result = dialog.open();
                         if (result != null) {
@@ -183,6 +186,9 @@ public abstract class AbstractProviderDialog extends Dialog {
             }
         );
 
+        // Only enabled on https connections
+        truststoreButton.setEnabled(false);
+
         label = new Label(group, SWT.WRAP);
 
         label.setText("Password for trust store:");
@@ -190,6 +196,9 @@ public abstract class AbstractProviderDialog extends Dialog {
 
         truststorePass = new Text(group, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
         truststorePass.setLayoutData(layoutText);
+
+        // Only enabled on https connections
+        truststorePass.setEnabled(false);
 
         checkButton = new Button(group, SWT.NONE);
         checkButton.setText("Check");
@@ -209,6 +218,110 @@ public abstract class AbstractProviderDialog extends Dialog {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void buttonPressed(final int buttonId) {
+        if (buttonId == IDialogConstants.OK_ID) {
+            MessageBox box = null;
+            String name = getName();
+            if (name == null || name.length() == 0) {
+                box = new MessageBox(super.getShell(), SWT.CANCEL);
+                box.setText("No Provider Name");
+                box.setMessage("You have to specify a name for the provider.");
+                box.open();
+                return;
+            }
+            String address = getAddress();
+            if (address == null || address.length() == 0) {
+                box = new MessageBox(super.getShell(), SWT.CANCEL);
+                box.setText("No Provider Address");
+                box.setMessage("You have to specify an address for the provider.");
+                box.open();
+                return;
+            }
+            Provider updatedProvider = Providers.createProvider(
+                getName(), getAddress(), getTruststore(), getTruststorePass()
+            );   
+            if (Providers.containsProvider(updatedProvider) 
+                && warningOnDouble(Providers.findProvider(updatedProvider))) {
+                box = new MessageBox(super.getShell(), SWT.OK | SWT.CANCEL);
+                box.setText("Provider already exists");
+                box.setMessage(
+                    "The provider you configured already exists."
+                    + " Press Ok to ignore or Cancel to edit."
+                );
+                int result = box.open();
+                if (result == SWT.CANCEL) {
+                    return;
+                }
+            }   
+            // If the user entered protocol is not supported the resembled
+            // provider must not be added to the provider list since its selection
+            // would lead to a major exception.
+            if (!Clients.isProviderSupported(updatedProvider)) {
+                box = new MessageBox(super.getShell());
+                box.setText("Unsupported protocol");
+                box.setMessage(
+                    "The provider you configured is not valid, its"
+                    + " protocol is not supported. Press Ok to edit."
+                );
+                box.open();
+                return;
+            }
+            if (!Providers.isValidProvider(updatedProvider)
+                && warningOnInvalid(updatedProvider)) {
+                box = new MessageBox(super.getShell(), SWT.OK | SWT.CANCEL);
+                box.setText("Invalid Provider");
+                box.setMessage(
+                    "The provider you configured is not valid."
+                    + " Press Ok to ignore or Cancel to edit."
+                );
+                int result = box.open();
+                if (result == SWT.CANCEL) {
+                    return;
+                }
+            }
+            handleProviderUpdate(updatedProvider);
+            okPressed();
+        }
+        cancelPressed();
+    }
+    
+    /**
+     * Returns whether a warning should be displayed if an equal provider already
+     * exists in the provider list.
+     * 
+     * @param theprovider
+     *            the provider which is equal to the provider resembled by the 
+     *            currently entered provider data
+     * @return whether a warning should be displayed if an equal provider already
+     *         exists in the provider list
+     */
+    protected abstract boolean warningOnDouble(final Provider theprovider);
+
+    /**
+     * Returns whether a warning should be displayed if the current configuration 
+     * resembles an invalid provider.
+     * 
+     * @param theprovider
+     *            the provider resembling the currently entered provider data 
+     * @return whether a warning should be displayed if the current configuration 
+     *         resembles an invalid provider
+     */
+    protected abstract boolean warningOnInvalid(final Provider theprovider);
+    
+    /**
+     * To be implemented by inherited classes to handle the provider data
+     * edited in this dialog. This may be updating an existing provider or creating a new
+     * provider.
+     * 
+     * @param updatedProvider
+     *            the provider to handle
+     */
+    protected abstract void handleProviderUpdate(final Provider updatedProvider);
+    
     /**
      * Returns the name of the provider.
      *
@@ -264,9 +377,9 @@ public abstract class AbstractProviderDialog extends Dialog {
     protected final void checkAvailability() {
         Availability.checkAvailability(
             getShell(),
-                Providers.createProvider(
-                    getName(), getAddress(), getTruststore(), getTruststorePass()
-                )
+            Providers.createProvider(
+                getName(), getAddress(), getTruststore(), getTruststorePass()
+            )
         );
     }
 

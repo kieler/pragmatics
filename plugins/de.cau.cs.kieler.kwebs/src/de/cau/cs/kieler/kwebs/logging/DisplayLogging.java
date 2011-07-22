@@ -12,10 +12,10 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.kwebs.server.logging;
+package de.cau.cs.kieler.kwebs.logging;
 
-import de.cau.cs.kieler.kwebs.logging.ILoggerListener;
 import de.cau.cs.kieler.kwebs.logging.Logger.LoggerEvent;
+
 
 /**
  * This class registers as {@link ILoggerListener} and provides logging to screen.
