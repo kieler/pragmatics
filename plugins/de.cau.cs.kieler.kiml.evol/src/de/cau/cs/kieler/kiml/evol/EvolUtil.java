@@ -367,7 +367,7 @@ public final class EvolUtil {
 
             for (final IGene<?> gene : genome.getGenes()) {
                 // presuming gene != null
-                String id = (String) gene.getId();
+                String id = gene.getId();
 
                 if (!metricIds.contains(id)) {
                     // not a metric id --> skip
@@ -1086,9 +1086,19 @@ public final class EvolUtil {
         return configs;
     }
 
+    /**
+     * Layout configuration.
+     */
     public static final Property<IMutableLayoutConfig> LAYOUT_CONFIG
             = new Property<IMutableLayoutConfig>("context.layoutConfig");
 
+    /**
+     * Returns the layout context for the given editor.
+     *
+     * @param editor
+     *            an editor
+     * @return layout context for the given editor
+     */
     private static LayoutContext getContext(final IWorkbenchPart editor) {
         DiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
                 .getManager(editor, null);
