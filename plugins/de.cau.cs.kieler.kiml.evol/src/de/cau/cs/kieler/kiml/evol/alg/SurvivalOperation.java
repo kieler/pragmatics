@@ -50,9 +50,9 @@ public class SurvivalOperation implements IEvolutionaryOperation {
         Arrays.sort(individuals, Genome.DESCENDING_RATING_COMPARATOR);
 
         // only some survive
-        int keep =
-                BasicEvolutionaryAlgorithm.boundMultiple(count, SURVIVAL_RATIO, MIN_SURVIVORS,
-                        MAX_SURVIVORS);
+        BoundMultipleCalculator b =
+                new BoundMultipleCalculator(SURVIVAL_RATIO, MIN_SURVIVORS, MAX_SURVIVORS);
+        int keep = b.scale(count);
         assert keep > 0;
         double minDist = individuals[0].size() * 0.2;
         Population survivors = new Population();

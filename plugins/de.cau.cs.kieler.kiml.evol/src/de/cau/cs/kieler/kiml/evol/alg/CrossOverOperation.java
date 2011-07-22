@@ -72,10 +72,11 @@ public class CrossOverOperation implements IEvolutionaryOperation {
             // population.size() : 0;
 
             // TODO: ensure minimum population is preserved
+            BoundMultipleCalculator b =
+                    new BoundMultipleCalculator(CROSS_OVER_RATIO, MIN_CROSS_OVERS,
+                            MAX_CROSS_OVERS);
 
-            int crossOvers =
-                    BasicEvolutionaryAlgorithm.boundMultiple(selection.size(), CROSS_OVER_RATIO,
-                            MIN_CROSS_OVERS, MAX_CROSS_OVERS);
+            int crossOvers = b.scale(selection.size());
 
             Population offspring = new Population();
             System.out.println(" -- generate " + crossOvers + " out of " + selection.size());

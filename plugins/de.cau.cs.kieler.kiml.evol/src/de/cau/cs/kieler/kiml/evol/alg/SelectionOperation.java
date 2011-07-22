@@ -10,7 +10,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
  *
  */
 public final class SelectionOperation implements IEvolutionaryOperation {
-    
+
     /** Minimum number of individuals to select. */
     private static final int MIN_SELECT = 2;
 
@@ -36,9 +36,10 @@ public final class SelectionOperation implements IEvolutionaryOperation {
 
         // Only some are allowed to generate offspring
         // These are selected by truncation.
-        int select =
-                BasicEvolutionaryAlgorithm.boundMultiple(individuals.length, SELECTION_RATIO,
-                        MIN_SELECT, MAX_SELECT);
+
+        BoundMultipleCalculator boundMultipleCalculator =
+                new BoundMultipleCalculator(SELECTION_RATIO, MIN_SELECT, MAX_SELECT);
+        int select = boundMultipleCalculator.scale(individuals.length);
 
         System.out.println(" -- select " + select + " of " + count);
         for (final Genome ind : individuals) {

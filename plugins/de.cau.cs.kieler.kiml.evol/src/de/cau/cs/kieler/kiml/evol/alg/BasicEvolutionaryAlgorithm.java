@@ -83,33 +83,6 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         return false;
     }
 
-    /**
-     * Calculates a rounded multiple of the given number, and ensures that it is
-     * within the given bounds.
-     *
-     * @param number
-     *            the number
-     * @param factor
-     *            the factor
-     * @param min
-     *            lower bound
-     * @param max
-     *            upper bound. Must be greater or equal to lower bound.
-     * @return rounded fraction of the number, if it is within the bounds.
-     *         Otherwise, the nearest of the bounds is returned.
-     * @deprecated
-     */
-    @Deprecated
-    public static int boundMultiple(
-            final int number, final double factor, final int min, final int max) {
-        assert min <= max;
-
-        int proposal = (int) Math.round(number * factor);
-        int result = (proposal < min) ? min : (proposal > max ? max : proposal);
-
-        return result;
-    }
-
 
     // To obtain a constant population size, the following condition must hold:
     // ((POP_SIZE * SURV_R + (POP_SIZE * SEL_R * CRO_R)) * SURV_R) == POP_SIZE
