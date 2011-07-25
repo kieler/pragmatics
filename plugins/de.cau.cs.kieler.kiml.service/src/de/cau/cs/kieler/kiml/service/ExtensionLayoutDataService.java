@@ -218,7 +218,9 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
         try {
             IFactory<AbstractLayoutProvider> layoutProviderFactory = getLayoutProviderFactory(element);
             LayoutAlgorithmData algoData = createLayoutAlgorithmData(element);
-            algoData.createPool(layoutProviderFactory);
+            if (layoutProviderFactory != null) {
+                algoData.createPool(layoutProviderFactory);
+            }
             String layouterId = element.getAttribute(ATTRIBUTE_ID);
             if (layouterId == null || layouterId.length() == 0) {
                 reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
