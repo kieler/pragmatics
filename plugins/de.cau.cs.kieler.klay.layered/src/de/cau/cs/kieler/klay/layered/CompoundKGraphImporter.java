@@ -872,8 +872,9 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
 
             // add the source port and target port positions to the vector chain
             LPort sourcePort = ledge.getSource();
-            bendPoints.addFirst(KVector.add(sourcePort.getPosition(), sourcePort.getNode()
-                    .getPosition()));
+            LNode sourcePortNode = sourcePort.getNode();
+            KVector sourcePortNodePosition = sourcePortNode.getPosition();
+            bendPoints.addFirst(KVector.add(sourcePort.getPosition(), sourcePortNodePosition));
             LPort targetPort = ledge.getTarget();
             bendPoints.addLast(KVector.add(targetPort.getPosition(), targetPort.getNode()
                     .getPosition()));
@@ -1040,8 +1041,6 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
                 KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
                 portLayout.setPos((float) (lport.getPosition().x - (lport.getSize().x / 2)),
                         (float) (lport.getPosition().y - (lport.getSize().y / 2)));
-//                System.out.println("First position x: " + portLayout.getXpos()
-//                        + ", First position y: " + portLayout.getYpos());
             }
         }
     }
