@@ -120,7 +120,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
 
         // create lower side node (higher layer index)
         LNode lowerSideDummy = new LNode();
-        lowerSideDummy.setProperty(LayoutOptions.ALIGNMENT, Alignment.CENTER);
+        lowerSideDummy.setProperty(LayoutOptions.ALIGNMENT, Alignment.LEFT);
         lowerSideDummy.getSize().y = insets.getBottom() + borderSpacing;
         lowerSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
         lowerSideDummy.setProperty(Properties.SIDE_OWNER, openingBorder);
@@ -134,7 +134,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
 
         // create upper side node (lower layer index)
         LNode upperSideDummy = new LNode();
-        upperSideDummy.setProperty(LayoutOptions.ALIGNMENT, Alignment.CENTER);
+        upperSideDummy.setProperty(LayoutOptions.ALIGNMENT, Alignment.LEFT);
         upperSideDummy.getSize().y = insets.getTop() + borderSpacing;
         upperSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
         upperSideDummy.setProperty(Properties.SIDE_OWNER, openingBorder);
