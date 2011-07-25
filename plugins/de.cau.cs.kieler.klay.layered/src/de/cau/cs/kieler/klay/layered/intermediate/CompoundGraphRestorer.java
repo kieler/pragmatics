@@ -17,8 +17,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -106,9 +109,8 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
             compoundNode.getPosition().y = posLeftUpper.y;
 
             // set width and height of compound node
-            compoundNode.getSize().x = (posRightUpper.x - posLeftUpper.x);
-            compoundNode.getSize().y = (posLeftLower.y - posLeftUpper.y 
-                    + insets.getBottom() + ownBorderSpacing);
+            compoundNode.getSize().x = (posRightUpper.x - posLeftUpper.x + insets.getRight() + ownBorderSpacing);
+            compoundNode.getSize().y = (posLeftLower.y - posLeftUpper.y + insets.getBottom() + ownBorderSpacing);
         }
 
         // iterate through all edges
@@ -120,7 +122,6 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
                 ledge.getSource().getOutgoingEdges().remove(ledge);
                 ledge.getTarget().getIncomingEdges().remove(ledge);
             } else {
-
                 // connect all others to the possibly associated compound node(s)
 
                 // process Source
@@ -200,36 +201,66 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
     /**
      * Creates a new port of the compound node for a given dummy node port.
      * 
-     * @param sourcePort
+     * @param dummyPort
      *            the port to be translated into a compound node port.
      * @param sourceNode
      *            the no
      * @param compoundNode
      * @return
      */
-    private LPort transferPort(final LPort sourcePort, final LNode compoundNode) {
+    private LPort transferPort(final LPort dummyPort, final LNode compoundNode) {
+        // get node of dummyPort and its node type
+        LNode dummyNode = dummyPort.getNode();
+        NodeType dummyNodeType = dummyNode.getProperty(Properties.NODE_TYPE);
 
-        LNode sourceNode = sourcePort.getNode();
+        // get port side of dummyPort
+        PortSide dummyPortSide = dummyPort.getSide();
 
-        NodeType sourceNodeType = sourceNode.getProperty(Properties.NODE_TYPE);
+        // get Layout of the compound node
+        KShapeLayout compoundLayout = ((KNode) (compoundNode.getProperty(Properties.ORIGIN)))
+                .getData(KShapeLayout.class);
 
         LPort newPort = new LPort();
         newPort.setNode(compoundNode);
 
+        newPort.copyProperties(dummyPort);
+        newPort.getSize().x = dummyPort.getSize().x;
+        newPort.getSize().y = dummyPort.getSize().y;
+
         PortSide newPortSide;
-        if (sourceNodeType == NodeType.LOWER_COMPOUND_BORDER
-                || sourceNodeType == NodeType.LOWER_COMPOUND_PORT) {
+
+        if (dummyNodeType == NodeType.LOWER_COMPOUND_BORDER
+                || dummyNodeType == NodeType.LOWER_COMPOUND_PORT) {
             newPortSide = PortSide.EAST;
+
         } else {
             // in case of upper compound port
             newPortSide = PortSide.WEST;
         }
         if (newPortSide == PortSide.EAST) {
-            newPort.getPosition().x = compoundNode.getSize().x;
+            // translate from relative position with respect to dummyNode to relative position with
+            // respect to compoundNode
+            double nodeDiffX = dummyNode.getPosition().x - compoundNode.getPosition().x;
+            newPort.getPosition().x = dummyPort.getPosition().x + nodeDiffX;
+            if (dummyPortSide == PortSide.EAST) {
+                newPort.getPosition().x -= dummyNode.getSize().x;
+                newPort.getPosition().x += (compoundLayout.getInsets().getRight() + compoundLayout
+                        .getProperty(LayoutOptions.BORDER_SPACING));
+            }
+            // newPort.getPosition().x = compoundNode.getSize().x + (dummyPort.getSize().x / 2);
         } else {
-            newPort.getPosition().x = 0.0 - newPort.getSize().x;
+            newPort.getPosition().x = -(dummyPort.getSize().x / 2);
+            if (dummyPortSide == PortSide.WEST) {
+                newPort.getPosition().x += dummyNode.getSize().x;
+            }
         }
-        newPort.getPosition().y = sourcePort.getPosition().y;
+        // as position of dummyPort is relative to dummyNode, compute new relative value with
+        // respect to compoundNode.
+        double nodeDiffY = dummyNode.getPosition().y - compoundNode.getPosition().y;
+        newPort.getPosition().y = dummyPort.getPosition().y + nodeDiffY;
+
+        newPort.setSide(newPortSide);
+
         return newPort;
     }
 
