@@ -431,10 +431,13 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
             } else {
                 port = kEdge.getSourcePort();
             }
+            KShapeLayout portLayout = null;
+            if (port != null) {
+                portLayout = port.getData(KShapeLayout.class);
+            }
 
             // If edge has no target port, create a border dummy node resp. reuse the one
-            // created
-            // before
+            // created before
             if (port == null) {
                 if (fromInside) {
                     representative = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_BORDER,
@@ -475,7 +478,7 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
             Iterator<LPort> portIterator = representative.getPorts(portSide).iterator();
             dummyPort = portIterator.next();
 
-            if (incoming) {
+            if (incoming) {    
                 KPoint targetPoint = edgeLayout.getTargetPoint();
                 dummyPort.getPosition().x = targetPoint.getX() - representative.getPosition().x;
                 // dummyPort.getPosition().y = targetPoint.getY() - representative.getPosition().y;
@@ -488,8 +491,12 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
             }
 
             if (port != null) {
+                // copy properties and attributes of original port to dummy port.
                 elemMap.put(port, dummyPort);
                 dummyPort.setProperty(Properties.ORIGIN, port);
+                dummyPort.copyProperties(portLayout);
+                dummyPort.getSize().x = portLayout.getWidth();
+                dummyPort.getSize().y = portLayout.getHeight();
             }
         }
 
@@ -825,13 +832,14 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         for (LNode lnode : layeredGraph.getLayerlessNodes()) {
             Object origin = lnode.getProperty(Properties.ORIGIN);
             if (origin instanceof KNode) {
+                KNode kNode = (KNode) origin;
                 // apply the layout to the KNode
                 applyNodeLayout(layeredGraph, lnode);
                 // apply the layout to the KNode's ports
                 boolean isCompound = (lnode.getProperty(Properties.NODE_TYPE) 
                         == NodeType.UPPER_COMPOUND_BORDER);
                 if (isCompound) {
-                    compoundApplyPortLayout((KNode) origin, layeredGraph, lnode);
+                    compoundApplyPortLayout(kNode, layeredGraph, lnode);
                 } else {
                     applyPortLayout((KNode) origin, layeredGraph, lnode);
                 }
@@ -857,6 +865,7 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
 
         // iterate through all edges
         for (LEdge ledge : edgeList) {
+            
             KEdge kedge = (KEdge) ledge.getProperty(Properties.ORIGIN);
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
             KVectorChain bendPoints = ledge.getBendPoints();
@@ -1025,24 +1034,14 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
      */
     private void compoundApplyPortLayout(final KNode kNode, final LayeredGraph layeredGraph,
             final LNode representative) {
-        //KShapeLayout nodeLayout = kNode.getData(KShapeLayout.class);
         for (LPort lport : representative.getPorts()) {
             Object origin = lport.getProperty(Properties.ORIGIN);
             if (origin instanceof KPort) {
                 KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
                 portLayout.setPos((float) (lport.getPosition().x - (lport.getSize().x / 2)),
                         (float) (lport.getPosition().y - (lport.getSize().y / 2)));
-//                 System.out.println("First position x: "+ portLayout.getXpos() +
-//                 ", First position y: " + portLayout.getYpos());
-//                // calculate the relative Position of the KPort to it's node
-//                KVector lPortPosition = lport.getPosition();
-//                KVector lNodePosition = representative.getPosition();
-//                KVector difference = lPortPosition.sub(lNodePosition);
-//                KVector kNodePosition = new KVector(nodeLayout.getXpos(), nodeLayout.getYpos());
-//                KVector newPosition = kNodePosition.add(difference);
-//                portLayout.setPos((float) newPosition.x, (float) newPosition.y);
-//                System.out.println("Second position x: " + portLayout.getXpos()
-//                        + ", Second position y: " + portLayout.getYpos());
+//                System.out.println("First position x: " + portLayout.getXpos()
+//                        + ", First position y: " + portLayout.getYpos());
             }
         }
     }
