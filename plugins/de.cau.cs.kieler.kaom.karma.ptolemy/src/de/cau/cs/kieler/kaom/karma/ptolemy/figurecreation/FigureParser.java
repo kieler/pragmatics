@@ -112,12 +112,13 @@ public final class FigureParser {
                     // make a CircleFigure from a circle element.
                     // structure is different between draw2d and svg so positions are a bit hacked
                 } else if (tag.equals("circle")) {
+
                     Double x = Double.parseDouble(childElement.getAttribute("cx"));
-                    // Float y = Float.parseFloat(childElement.getAttribute("cy"));
+                    Double y = Double.parseDouble(childElement.getAttribute("cy"));
                     Double r = Double.parseDouble(childElement.getAttribute("r"));
                     String style = (String) childElement.getAttribute("style");
                     CircleFigure figure = new CircleFigure(r.intValue());
-                    figure.getBounds().setLocation(new PrecisionPoint((x + 1 - r), (x + 1 - r)));
+                    figure.getBounds().setLocation(new PrecisionPoint((x + 1 - r), (y + 1 - r)));
                     figure.getBounds().setSize((r.intValue() * 2), (r.intValue() * 2));
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
@@ -130,8 +131,8 @@ public final class FigureParser {
                     Double rx = Double.parseDouble(childElement.getAttribute("rx"));
                     Double ry = Double.parseDouble(childElement.getAttribute("ry"));
                     String style = (String) childElement.getAttribute("style");
-                    figure.setBounds(new Rectangle(new PrecisionPoint(x + 1 - rx, y + 1 - ry),
-                            new PrecisionPoint(rx, ry)));
+                    figure.getBounds().setLocation(new PrecisionPoint(x + 1 - rx, y + 1 - ry));
+                    figure.getBounds().setSize(new Dimension((int)Math.abs(rx * 2), (int)Math.abs(ry * 2)));
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
                     // make a PolyLineShape from a line element
