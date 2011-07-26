@@ -191,7 +191,7 @@ public final class LayoutOptions {
      * border, which is given by width and height, with subtracted insets.
      */
     public static final IProperty<Float> BORDER_SPACING = new Property<Float>(
-            BORDER_SPACING_ID, -1.0f, 0.0f);
+            BORDER_SPACING_ID, 0.0f);
     
     /** layout option key: debug mode (boolean). */
     public static final String DEBUG_MODE_ID = "de.cau.cs.kieler.debugMode";
