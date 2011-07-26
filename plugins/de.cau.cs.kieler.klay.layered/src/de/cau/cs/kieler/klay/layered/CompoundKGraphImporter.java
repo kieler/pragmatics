@@ -149,8 +149,6 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
             if (currentNode != graph) {
                 transformCompoundNodeWithEdges(currentNode, layeredNodes, layeredGraph, elemMap);
                 setCompoundDummyEdges(layeredNodes, parentChildMap);
-            } else {
-                System.out.println("The layoutNode has been reached in recursion.");
             }
         }
     }
@@ -478,7 +476,7 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
             Iterator<LPort> portIterator = representative.getPorts(portSide).iterator();
             dummyPort = portIterator.next();
 
-            if (incoming) {    
+            if (incoming) {
                 KPoint targetPoint = edgeLayout.getTargetPoint();
                 dummyPort.getPosition().x = targetPoint.getX() - representative.getPosition().x;
                 // dummyPort.getPosition().y = targetPoint.getY() - representative.getPosition().y;
@@ -824,7 +822,7 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
 
         // determine the border spacing, which influences the offset
         KShapeLayout parentLayout = target.getData(KShapeLayout.class);
-        float borderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
+        float graphBorderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
 
         // process nodes, collect edges while at it
         List<LEdge> edgeList = new LinkedList<LEdge>();
@@ -863,35 +861,87 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         boolean splinesActive = routing == EdgeRoutingStrategy.SIMPLE_SPLINES
                 || routing == EdgeRoutingStrategy.COMPLEX_SPLINES;
 
-        // iterate through all edges
+        // process edges
         for (LEdge ledge : edgeList) {
-            
+
+            // get layout of corresponding KEdge
             KEdge kedge = (KEdge) ledge.getProperty(Properties.ORIGIN);
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
             KVectorChain bendPoints = ledge.getBendPoints();
 
-            // add the source port and target port positions to the vector chain
-            LPort sourcePort = ledge.getSource();
-            LNode sourcePortNode = sourcePort.getNode();
-            KVector sourcePortNodePosition = sourcePortNode.getPosition();
-            bendPoints.addFirst(KVector.add(sourcePort.getPosition(), sourcePortNodePosition));
-            LPort targetPort = ledge.getTarget();
-            bendPoints.addLast(KVector.add(targetPort.getPosition(), targetPort.getNode()
-                    .getPosition()));
+            // get position of the node corresponding to the edge's source node (KNode)
+            KNode kSourceNode = kedge.getSource();
+            KShapeLayout kSourceNodeLayout = kSourceNode.getData(KShapeLayout.class);
+            KVector kSourceNodePosition = new KVector(kSourceNodeLayout.getXpos(),
+                    kSourceNodeLayout.getYpos());
 
-            // bendpoints' point of origin is left upper corner plus insets of source node, if
-            // target node is descendant of source node, left upper corner plus insets of parent of
-            // source node in any other case. Compute relative positions.
-            KShapeLayout refLayout;
+            // get position of the node corresponding to the edge's target node (KNode)
+            KNode kTargetNode = kedge.getTarget();
+            KShapeLayout kTargetNodeLayout = kTargetNode.getData(KShapeLayout.class);
+            KVector kTargetNodePosition = new KVector(kTargetNodeLayout.getXpos(),
+                    kTargetNodeLayout.getYpos());
+
+            // get position of the source port (LPort)
+            LPort sourcePort = ledge.getSource();
+            KVector sourcePortPosition = sourcePort.getPosition();
+
+            // get position of the source port (LPort)
+            LPort targetPort = ledge.getTarget();
+            KVector targetPortPosition = targetPort.getPosition();
+
+            // calculate starting point from sourcePortPosition, mind difference in reference point
+            // for bendpoint- and port coordinates
+            KVector edgeStart = sourcePortPosition;
             if (KimlUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
-                refLayout = kedge.getSource().getData(KShapeLayout.class);
+                edgeStart.x += kSourceNodeLayout.getInsets().getLeft();
+                edgeStart.y += kSourceNodeLayout.getInsets().getTop();
             } else {
-                refLayout = kedge.getSource().getParent().getData(KShapeLayout.class);
+                edgeStart.add(kSourceNodePosition);
+                KShapeLayout kSourceNodeParentLayout = kSourceNode.getParent().getData(
+                        KShapeLayout.class);
+                edgeStart.x += kSourceNodeParentLayout.getInsets().getLeft();
+                edgeStart.y += kSourceNodeParentLayout.getInsets().getTop();
             }
-            KVector pointOfOrigin = new KVector((refLayout.getXpos() + refLayout.getInsets()
-                    .getLeft()), (refLayout.getYpos() + refLayout.getInsets().getTop()));
-            pointOfOrigin.negate();
-            bendPoints.translate(pointOfOrigin);
+
+            // calculate end point from targetPortPosition, mind difference in reference point for
+            // bendpoint- and port coordinates
+            KVector edgeEnd = targetPortPosition;
+            if (KimlUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
+                edgeEnd.x += kTargetNodeLayout.getInsets().getLeft();
+                edgeEnd.y += kTargetNodeLayout.getInsets().getTop();
+            } else {
+                edgeEnd.add(kTargetNodePosition);
+                KShapeLayout kTargetNodeParentLayout = kTargetNode.getParent().getData(
+                        KShapeLayout.class);
+                edgeEnd.x += kTargetNodeParentLayout.getInsets().getLeft();
+                edgeEnd.x += kTargetNodeParentLayout.getInsets().getTop();
+            }
+
+            if (kSourceNode.getParent() == (KNode) layeredGraph.getProperty(Properties.ORIGIN)) {
+                KVector borderSpacingVec = new KVector(graphBorderSpacing, graphBorderSpacing);
+                bendPoints.translate(borderSpacingVec);
+            }
+
+            bendPoints.addFirst(edgeStart);
+            bendPoints.addLast(edgeEnd);
+
+            // if (!(kSourceNode.getParent() == (KNode)
+            // layeredGraph.getProperty(Properties.ORIGIN))) {
+            // // bendpoints' point of origin is left upper corner plus insets of source node, if
+            // // target node is descendant of source node, left upper corner plus insets of parent
+            // // of source node in any other case. Compute relative positions.
+            // KShapeLayout refLayout;
+            // if (KimlUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
+            // refLayout = kedge.getSource().getData(KShapeLayout.class);
+            // } else {
+            // refLayout = kedge.getSource().getParent().getData(KShapeLayout.class);
+            // }
+            // KVector pointOfOrigin = new KVector((refLayout.getXpos() + refLayout.getInsets()
+            // .getLeft()), (refLayout.getYpos() + refLayout.getInsets().getTop()));
+            // pointOfOrigin.negate();
+            // bendPoints.translate(pointOfOrigin);
+            // }
+
             edgeLayout.applyVectorChain(bendPoints);
 
             // set spline option
@@ -901,9 +951,9 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         }
         // set up the layout node
         KInsets insets = parentLayout.getInsets();
-        float width = (float) layeredGraph.getSize().x + 2 * borderSpacing + insets.getLeft()
+        float width = (float) layeredGraph.getSize().x + 2 * graphBorderSpacing + insets.getLeft()
                 + insets.getRight();
-        float height = (float) layeredGraph.getSize().y + 2 * borderSpacing + insets.getTop()
+        float height = (float) layeredGraph.getSize().y + 2 * graphBorderSpacing + insets.getTop()
                 + insets.getBottom();
 
         if (layeredGraph.getProperty(Properties.GRAPH_PROPERTIES).contains(
