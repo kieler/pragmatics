@@ -249,12 +249,8 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
                 newPort.getPosition().x += (compoundLayout.getInsets().getRight() + compoundLayout
                         .getProperty(LayoutOptions.BORDER_SPACING));
             }
-            // newPort.getPosition().x = compoundNode.getSize().x + (dummyPort.getSize().x / 2);
         } else {
             newPort.getPosition().x = -(dummyPort.getSize().x / 2);
-            if (dummyPortSide == PortSide.WEST) {
-                newPort.getPosition().x += dummyNode.getSize().x;
-            }
         }
         // as position of dummyPort is relative to dummyNode, compute new relative value with
         // respect to compoundNode.
