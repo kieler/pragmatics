@@ -168,6 +168,7 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
                 } else {
                     return images.getPropFalse();
                 }
+            case REMOTE_ENUM:
             case ENUM:
                 return images.getPropChoice();
             case INT:

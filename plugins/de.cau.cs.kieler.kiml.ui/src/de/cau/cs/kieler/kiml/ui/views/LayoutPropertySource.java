@@ -118,12 +118,20 @@ public class LayoutPropertySource implements IPropertySource {
             } else {
                 return value;
             }
+        case REMOTE_ENUM:
         case ENUM:
             if (value instanceof Enum<?>) {
                 return ((Enum<?>) value).ordinal();
-            } else {
-                return value;
+            } else if (value instanceof String) {
+                String[] choices = optionData.getChoices();
+                for (int i = 0; i < choices.length; i++) {
+                    if (choices[i].equals(value)) {
+                        return i;
+                    }
+                }
+                return 0;
             }
+            return value;
         case OBJECT:
             return value.toString();
         default:
@@ -148,6 +156,9 @@ public class LayoutPropertySource implements IPropertySource {
                     break;
                 case ENUM:
                     value = optionData.getEnumValue((Integer) value);
+                    break;
+                case REMOTE_ENUM:
+                    value = optionData.getChoices()[(Integer) value];
                     break;
                 default:
                     value = optionData.parseValue((String) value);

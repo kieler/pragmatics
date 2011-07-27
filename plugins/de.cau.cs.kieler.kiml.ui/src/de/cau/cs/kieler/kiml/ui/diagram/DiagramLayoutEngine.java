@@ -307,7 +307,7 @@ public class DiagramLayoutEngine {
         mapping.setProperty(PROGRESS_MONITOR, progressMonitor);
         debugCanvas.setMapping(mapping);
 
-        // the layouter engine to be used
+        // the layout engine to be used
         IGraphLayoutEngine layouterEngine = graphLayoutEngine;
         try {
             // use local or remote layout, default is local
@@ -318,7 +318,7 @@ public class DiagramLayoutEngine {
             if (remoteLayout) {
                 layouterEngine = remoteGraphLayoutEngine;
             } else {
-                layouterEngine = graphLayoutEngine;            	
+                layouterEngine = graphLayoutEngine;
             }            
             // perform layout on the layout graph
             layouterEngine.layout(mapping.getLayoutGraph(), progressMonitor);            

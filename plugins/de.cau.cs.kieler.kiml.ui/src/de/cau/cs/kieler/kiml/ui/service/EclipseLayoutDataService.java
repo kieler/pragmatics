@@ -44,7 +44,7 @@ public class EclipseLayoutDataService extends ExtensionLayoutDataService {
     /**
      * Create the layout data service and read extension point.
      */
-    public static void create() {
+    public static synchronized void create() {
         EclipseLayoutDataService layoutDataService = new EclipseLayoutDataService();
         LayoutDataService.addService(layoutDataService);
         layoutDataService.loadLayoutProviderExtensions();

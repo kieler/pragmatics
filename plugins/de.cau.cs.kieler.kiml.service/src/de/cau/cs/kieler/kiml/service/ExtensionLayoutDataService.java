@@ -16,8 +16,11 @@ package de.cau.cs.kieler.kiml.service;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.print.attribute.standard.Severity;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
@@ -28,6 +31,7 @@ import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
+import de.cau.cs.kieler.kwebs.logging.Logger;
 
 /**
  * A layout data service that reads its content from the Eclipse extension registry.
@@ -74,7 +78,13 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     public static final String ATTRIBUTE_PRIORITY = "priority";
     /** name of the 'type' attribute in the extension points. */
     public static final String ATTRIBUTE_TYPE = "type";
-
+    /** name of the 'enumValues' attribute used in doing remote layout. */
+    public static final String ATTRIBUTE_ENUMVALUES
+        = "enumValues";
+    /** The name of the 'implementation' attribute of a layout option of type 'remoteenum'. */
+    public static final String ATTRIBUTE_IMPLEMENTATION
+        = "implementation";
+    
     /**
      * Report an error that occurred while reading extensions.
      * 
@@ -94,14 +104,22 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     protected abstract void reportError(CoreException exception);
     
     /**
+     * Returns the extensions responsible for providing layout meta data. This method
+     * can be overridden by subclasses.
+     * 
+     * @return the extensions responsible for providing layout meta data
+     */
+    protected IConfigurationElement[] getProviderExtensions() {
+        return Platform.getExtensionRegistry().getConfigurationElementsFor(EXTP_ID_LAYOUT_PROVIDERS);
+    }
+    
+    /**
      * Loads and registers all layout provider extensions from the extension point.
      */
-    protected void loadLayoutProviderExtensions() {
+    protected void loadLayoutProviderExtensions() {    
         List<String[]> knownOptions = new LinkedList<String[]>();
-        IConfigurationElement[] extensions = Platform.getExtensionRegistry()
-                .getConfigurationElementsFor(EXTP_ID_LAYOUT_PROVIDERS);
+        IConfigurationElement[] extensions = getProviderExtensions();
         Registry registry = getRegistry();
-
         for (IConfigurationElement element : extensions) {
             if (ELEMENT_LAYOUT_ALGORITHM.equals(element.getName())) {
                 // register a layout algorithm from the extension
@@ -147,7 +165,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
                     reportError(EXTP_ID_LAYOUT_PROVIDERS, null, null, exception);
                 }
             }
-        }
+        }        
     }
     
     /**
@@ -272,14 +290,16 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
                         }
                     }
                 }
-            }
-            
+            }            
             getRegistry().addLayoutProvider(algoData);
-            
         } catch (Throwable throwable) {
             reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_CLASS, throwable);
         }
     }
+    
+    /** Plug-in id of the KIML plug-in. */
+    private static final String PLUGIN_ID
+        = "de.cau.cs.kieler.kiml";
     
     /**
      * Load a layout option from a configuration element.
@@ -294,13 +314,34 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
             return;
         }
         optionData.setId(optionId);
+        String optionType = element.getAttribute(ATTRIBUTE_TYPE);        
         try {
-            optionData.setType(element.getAttribute(ATTRIBUTE_TYPE));
+            if (optionType.equals(LayoutOptionData.REMOTEENUM_LITERAL)) {
+                // Compatibility fix. KIML needs the concrete enumeration instances.
+                // If the implementation is not from the main KIML plug-in, fall back
+                // to standard remote enumeration.
+                String implementation = element.getAttribute(ATTRIBUTE_IMPLEMENTATION);
+                if (implementation != null) {
+                    try {
+                        Class<?> enumClass = Platform.getBundle(PLUGIN_ID).loadClass(implementation);
+                        optionData.setType(LayoutOptionData.Type.ENUM);
+                        optionData.setOptionClass(enumClass);
+                    } catch (Exception e) {
+                        optionData.setType(LayoutOptionData.Type.UNDEFINED);
+                    }
+                }
+                if (optionData.getType().equals(LayoutOptionData.Type.UNDEFINED)) {
+                    optionData.setType(LayoutOptionData.Type.REMOTE_ENUM);
+                    optionData.parseRemoteEnumValues(element.getAttribute(ATTRIBUTE_ENUMVALUES));
+                }
+            } else {
+                optionData.setType(optionType);
+                optionData.setOptionClass(loadClass(element));
+            }
         } catch (IllegalArgumentException exception) {
             reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_TYPE, exception);
             return;
-        }
-        optionData.setOptionClass(loadClass(element));
+        }    
         try {
             Object defaultValue = optionData.parseValue(
                     element.getAttribute(ATTRIBUTE_DEFAULT));

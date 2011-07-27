@@ -86,7 +86,7 @@ public final class EclipseLayoutInfoService extends LayoutInfoService {
     /**
      * Create the layout info service and load extension points.
      */
-    public static void create() {
+    public static synchronized void create() {
         instance = new EclipseLayoutInfoService();
         instance.loadLayoutInfoExtensions();
         instance.loadLayoutManagerExtensions();

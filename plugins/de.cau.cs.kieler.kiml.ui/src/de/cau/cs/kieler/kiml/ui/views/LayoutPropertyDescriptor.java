@@ -60,6 +60,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                 } else {
                     return images.getPropFalse();
                 }
+            case REMOTE_ENUM:
             case ENUM:
                 return images.getPropChoice();
             case INT:
@@ -94,6 +95,8 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                     return (String) element;
                 }
             case BOOLEAN:
+            case REMOTE_ENUM:
+                return optionData.getChoices()[(Integer) element];
             case ENUM:
                 return optionData.getChoices()[(Integer) element];
             default:
@@ -155,6 +158,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             });
             return floatEditor;
         case BOOLEAN:
+        case REMOTE_ENUM:
         case ENUM:
             return new ComboBoxCellEditor(parent, optionData.getChoices(), SWT.READ_ONLY);
         case OBJECT:

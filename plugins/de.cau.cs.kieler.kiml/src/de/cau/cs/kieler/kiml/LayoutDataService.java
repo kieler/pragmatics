@@ -142,15 +142,15 @@ public class LayoutDataService {
         String type = getType(subInstance);
         if (!validDataServices.contains(type)) {
             throw new IllegalArgumentException(
-                        "Layout data service instance of class " //$NON-NLS-1$
-        		+ type
-        		+ " not supported" //$NON-NLS-1$
-        	);
+                "Layout data service instance of class "
+                + type
+                + " not supported"
+            );
         }
         if (subInstance == current) {
-        	throw new IllegalArgumentException(
-        		"Currently active layout data service cant be removed" //$NON-NLS-1$
-        	);
+            throw new IllegalArgumentException(
+                "Currently active layout data service cant be removed"
+            );
         }
         instances.remove(type);        
     }
@@ -182,15 +182,15 @@ public class LayoutDataService {
      */
     public static synchronized void setMode(final String mode) {
         if (validDataServices.contains(mode) 
-        	&& instances.containsKey(mode)) {
-            current = instances.get(mode);
+            && instances.containsKey(mode)) {
+            current = instances.get(mode);            
         } else {
-        	throw new IllegalArgumentException(
-        		"Mode " //$NON-NLS-1$ 
-        		+ mode 
-        		+ " not supported or layout data service was not" //$NON-NLS-1$
-        		+ " registered before" //$NON-NLS-1$        		
-        	);
+      	    throw new IllegalArgumentException(
+		"Mode " 
+		+ mode 
+		+ " not supported or layout data service was not"
+		+ " registered before"	
+    	    );
         }
     }
 
@@ -212,7 +212,7 @@ public class LayoutDataService {
     @SuppressWarnings("unchecked")
     public static <T extends LayoutDataService> T getInstanceOf(final String type) {
         if (validDataServices.contains(type)
-        	&& instances.containsKey(type)) {
+            && instances.containsKey(type)) {
             return (T) instances.get(type);
         }
         return null;

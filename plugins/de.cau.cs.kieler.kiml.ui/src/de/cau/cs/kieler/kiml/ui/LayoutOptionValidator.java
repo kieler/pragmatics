@@ -44,6 +44,7 @@ public class LayoutOptionValidator implements IInputValidator {
         String trimmedText = newText.trim();
         switch (optionData.getType()) {
         case BOOLEAN:
+        case REMOTE_ENUM:
         case ENUM:
             String[] choices = optionData.getChoices();
             for (int i = 0; i < choices.length; i++) {

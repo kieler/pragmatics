@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
@@ -44,7 +45,8 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     public static final String ENUM_LITERAL = "enum";
     /** literal value constant for data objects. */
     public static final String OBJECT_LITERAL = "object";
-    
+    /** literal value constant for enumeration coming from remote layout. */
+    public static final String REMOTEENUM_LITERAL = "remoteenum";
     /** default name for layout options for which no name is given. */
     public static final String DEFAULT_OPTION_NAME = "<Unnamed Option>";
 
@@ -63,7 +65,9 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
         /** enumeration type. */
         ENUM,
         /** {@link IDataObject} type. */
-        OBJECT;
+        OBJECT,
+        /** remote enumeration type. */
+        REMOTE_ENUM;         
         
         /**
          * Returns a user-friendly literal for the enumeration value.
@@ -84,6 +88,8 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
                 return ENUM_LITERAL;
             case OBJECT:
                 return OBJECT_LITERAL;
+            case REMOTE_ENUM:
+                return REMOTEENUM_LITERAL;
             default:
                 return toString();
             }
@@ -141,6 +147,18 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     private void checkEnumClass() {
         if (clazz == null || !clazz.isEnum()) {
             throw new IllegalStateException("Enumeration class expected for layout option " + id);
+        }
+    }
+
+    /**
+     * Checks whether the remote enumeration options have been correctly initialized.
+     */
+    private void checkRemoteEnumoptions() {
+        if (choices == null || choices.length == 0) {
+            throw new IllegalStateException(
+                "Remote enumeration values have not been initialized correctly"
+                + " for layout option with id " + id
+            );
         }
     }
 
@@ -228,6 +246,8 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             type = Type.ENUM;
         } else if (OBJECT_LITERAL.equalsIgnoreCase(typeLiteral)) {
             type = Type.OBJECT;
+        } else if (REMOTEENUM_LITERAL.equalsIgnoreCase(typeLiteral)) {
+            type = Type.REMOTE_ENUM;
         } else {
             throw new IllegalArgumentException("The given type literal is invalid.");
         }
@@ -245,7 +265,6 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
         if (valueString == null || valueString.length() == 0 || valueString.equals("null")) {
             return null;
         }
-
         switch (type) {
         case BOOLEAN:
             return (T) Boolean.valueOf(valueString);
@@ -280,9 +299,32 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             } catch (IllegalArgumentException exception) {
                 return null;
             }
+        case REMOTE_ENUM:
+            checkRemoteEnumoptions();
+            for (int i = 0; i < choices.length; i++) {
+                if (choices[i].equals(valueString)) {
+                    return (T) valueString;
+                }
+            }
+            return null;
         default:
             throw new IllegalStateException("Invalid type set for this layout option.");
         }
+    }
+
+    /**
+     * Parses the possible values for a remote enumeration from a space separated string.
+     * 
+     * @param valueString
+     *            the space separated string containing the possible values
+     */
+    public void parseRemoteEnumValues(final String valueString) {
+        Vector<String> tmp = new Vector<String>();
+        StringTokenizer tokenizer = new StringTokenizer(valueString, " ");
+        while (tokenizer.hasMoreTokens()) {
+            tmp.add(tokenizer.nextToken());
+        }      
+        choices = tmp.toArray(new String[0]);
     }
     
     /**
@@ -309,6 +351,9 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             return (T) enums[0];
         case OBJECT:
             return null;
+        case REMOTE_ENUM:
+             checkRemoteEnumoptions();
+             return (T) choices[0];
         default:
             throw new IllegalStateException("Invalid type set for this layout option.");
         }
@@ -339,6 +384,9 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             case BOOLEAN:
                 choices = BOOLEAN_CHOICES;
                 break;
+            case REMOTE_ENUM:
+                checkRemoteEnumoptions();
+                return choices;
             default:
                 choices = new String[0];
             }
@@ -358,7 +406,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             checkEnumClass();
             @SuppressWarnings({ "unchecked", "rawtypes" })
             Enum<?>[] enums = ((Class<Enum>) clazz).getEnumConstants();
-            return enums[intValue];
+            return enums[intValue]; 
         default:
             return null;
         }
