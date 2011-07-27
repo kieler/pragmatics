@@ -31,6 +31,7 @@ import de.cau.cs.kieler.kwebs.logging.Logger;
 import de.cau.cs.kieler.kwebs.logging.Logger.Mode;
 import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
+import de.cau.cs.kieler.kwebs.server.logging.JaxWsAdapter;
 import de.cau.cs.kieler.kwebs.server.logging.RoundTripFileLogging;
 import de.cau.cs.kieler.kwebs.server.management.ManagementService;
 import de.cau.cs.kieler.kwebs.server.publishing.ServicePublisher;
@@ -39,24 +40,24 @@ import de.cau.cs.kieler.kwebs.util.Files;
 import de.cau.cs.kieler.kwebs.util.Io;
 
 /**
- * The main eclipse application.
+ * The main server application.
  *
  * @kieler.rating  2011-05-04 red
  * @author  swe
  */
 public class Application implements IApplication {
 
-    /** */
+    /** The id of this plug-in. */
     public static final String PLUGIN_ID
         = "de.cau.cs.kieler.kwebs.server";
 
-    /** */
+    /** The file logger used. */
     private ILoggerListener fileLogging;
 
-    /** */
+    /** The display logger used in debug mode. */
     private ILoggerListener displayLogging;
 
-    /** */
+    /** Whether the server has been asked to terminate or not. */
     private boolean stopped
         = false;
 
@@ -68,15 +69,15 @@ public class Application implements IApplication {
     private static final String DEFAULT_LOGPATH
         = "./server/kwebs/logs/kwebs.log";
 
-    /** Default size of log file in mb. */
+    /** Default size of log file in megabytes. */
     private static final int DEFAULT_LOGSIZE
         = 10;
 
-    /** Default path to config file. */
+    /** Default path to configuration file. */
     private static final String DEFAULT_CONFIG
         = "server/kwebs/config/kwebs.properties";
 
-    /** Default path to user config file. */
+    /** Default path to user configuration file. */
     private static final String DEFAULT_USERCONFIG
         = "kwebs.user";
 
@@ -84,7 +85,7 @@ public class Application implements IApplication {
     private static final String ARGUMENTS_INDEX
         = "application.args";
 
-    /** Parameter map index of the user config path command line option. */
+    /** Parameter map index of the user configuration path command line option. */
     private static final String USERCONFIG_INDEX
         = "userconfig";
 
@@ -100,7 +101,7 @@ public class Application implements IApplication {
      * {@inheritDoc}
      */
     public final Object start(final IApplicationContext context) {
-
+        
         System.out.println(
             ApplicationHelper.toDisplayable(ApplicationHelper.TITLE_TEXT).
                 replace("$VERSION$", getVersion())
@@ -234,7 +235,7 @@ public class Application implements IApplication {
             Logger.log(Severity.CRITICAL, "Management service could not be started", e);
         }
         
-        // Set plugin preferences of the necessary layouter plugins
+        // Set necessary plug-in preferences of the used layout plug-ins
         try {
             setPluginPreferencesFromConfiguration();
         } catch (Exception e) {
@@ -244,6 +245,8 @@ public class Application implements IApplication {
         
         // Initialize server and publish service
         try {
+            Logger.log(Severity.DEBUG, "Registering logging adapter for jax-ws");
+            JaxWsAdapter.register();
             ServicePublisher.publish();
             while (!stopped) {
                 Thread.sleep(LOOP_TIMEOUT);
@@ -364,16 +367,10 @@ public class Application implements IApplication {
      */
     private void setPluginPreference(final String pluginid, final String preferenceid,
         final String value) {
-        /*ScopedPreferenceStore store = new ScopedPreferenceStore(InstanceScope.INSTANCE, pluginid);
-        System.out.println(pluginid + ", " + preferenceid + " : " + store.getString(preferenceid));
-        store.setValue(preferenceid, value);
-        try {
-            store.save();
-        } catch (Exception e) {
-            Logger.log(Severity.FAILURE, "Could not save preference store: " + pluginid);
-        }*/
         IEclipsePreferences store = InstanceScope.INSTANCE.getNode(pluginid);
-        //System.out.println(pluginid + ", " + preferenceid + " : " + store.get(preferenceid, ""));
+        Logger.log(Severity.DEBUG, 
+            pluginid + ", " + preferenceid + " : " + store.get(preferenceid, "")
+        );
         store.put(preferenceid, value);
         try {
             store.flush();
@@ -398,13 +395,18 @@ public class Application implements IApplication {
     }
 
     /**
-     * Read the version of this plugin.
+     * Read the version of this plug-in.
      * 
-     * @return the version of this plugin
+     * @return the version of this plug-in
      */
-    private String getVersion() {
-        Version tmp = Platform.getBundle(PLUGIN_ID).getVersion();
-        return tmp.getMajor() + "." + tmp.getMinor() + "." + tmp.getMicro();
+    public static String getVersion() {
+        String version = "<unknown>";
+        try {
+            version = Platform.getBundle(PLUGIN_ID).getVersion().toString();
+        } catch (Exception e) {
+            Logger.log(Severity.WARNING, "Could not read version of server", e);
+        }
+        return version;
     }
 
 }

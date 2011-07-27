@@ -15,6 +15,7 @@
 package de.cau.cs.kieler.kwebs.server.logging;
 
 import java.util.Date;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
@@ -27,11 +28,36 @@ import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
  * @kieler.rating  2011-05-04 red
  * @author  swe
  */
-public class JaxWsAdapter extends Handler {
+public class JaxWsAdapter extends Handler implements java.util.logging.Filter {
+        
+    /** The singleton instance. */
+    private static final JaxWsAdapter INSTANCE
+        = new JaxWsAdapter();
         
     /** Prefix added to messages from jaxws logging events. */ 
     private static final String JAXWS_PREFIX
         = "<JAXWS> ";
+    
+    /**
+     * Registers the singleton instance of this class as filter for the global
+     * java logger.
+     */
+    public static void register() {
+        java.util.logging.Logger topLogger = java.util.logging.Logger.getLogger("");
+        Handler consoleHandler = null;
+        for (java.util.logging.Handler handler : topLogger.getHandlers()) {
+            if (handler instanceof ConsoleHandler) {
+                consoleHandler = handler;
+                break;
+            }
+        }
+        if (consoleHandler == null) {
+            consoleHandler = new java.util.logging.ConsoleHandler();
+            topLogger.addHandler(consoleHandler);
+        }
+        consoleHandler.setFilter(INSTANCE);
+        
+    }
     
     /**
      * {@inheritDoc}
@@ -49,6 +75,14 @@ public class JaxWsAdapter extends Handler {
      * {@inheritDoc}
      */
     public void publish(final LogRecord record) {
+        isLoggable(record);
+    }    
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isLoggable(final LogRecord record) {
         Logger.log(Severity.DEBUG, "Publishing event to logger");
         Severity severity = Severity.ALWAYS;
         Logger.log(
@@ -61,6 +95,7 @@ public class JaxWsAdapter extends Handler {
             null,
             record.getThrown()
         ); 
-    }    
+        return false;
+    }
  
 }

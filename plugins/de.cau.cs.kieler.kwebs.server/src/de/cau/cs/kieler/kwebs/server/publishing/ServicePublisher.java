@@ -14,11 +14,11 @@
 
 package de.cau.cs.kieler.kwebs.server.publishing;
 
+import de.cau.cs.kieler.kwebs.service.IGraphLayouterService;
 import de.cau.cs.kieler.kwebs.logging.Logger;
 import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.service.JaxWsService;
-import de.cau.cs.kieler.kwebs.service.IGraphLayouterService;
 
 //FIXME If service is published via HTTP AND HTTPS, both
 //      servers are created with the full pool size. They should share.
@@ -37,11 +37,11 @@ public final class ServicePublisher {
     private static final ServicePublisher INSTANCE
         = new ServicePublisher();
 
-    /** Manager for publishing via http. */
+    /** Manager for publishing via HTTP. */
     private IServerManager httpManager
         = new HttpServerManager();
 
-    /** Manager for publishing via https. */
+    /** Manager for publishing via HTTPS. */
     private IServerManager httpsManager
         = new HttpsServerManager();
 
@@ -49,7 +49,7 @@ public final class ServicePublisher {
     private IServerManager jetiManager
         = new JetiManager();
 
-    /** Instance of the layouter web service to be published. */
+    /** Instance of the layout web service to be published. */
     private IGraphLayouterService service
         = new JaxWsService();
 
@@ -69,12 +69,15 @@ public final class ServicePublisher {
         }
         try {
             if (Configuration.getConfigProperty(Configuration.PUBLISH_HTTP).equalsIgnoreCase("true")) {
+                Logger.log("Publishing layout service via HTTP");
                 INSTANCE.httpManager.publish(INSTANCE.service);
             }
             if (Configuration.getConfigProperty(Configuration.PUBLISH_HTTPS).equalsIgnoreCase("true")) {
+                Logger.log("Publishing layout service via HTTPS");
                 INSTANCE.httpsManager.publish(INSTANCE.service);
             }
             if (Configuration.getConfigProperty(Configuration.PUBLISH_JETI).equalsIgnoreCase("true")) {
+                Logger.log("Publishing layout service via jETI");
                 INSTANCE.jetiManager.publish(null);
             }
         } catch (Exception e) {

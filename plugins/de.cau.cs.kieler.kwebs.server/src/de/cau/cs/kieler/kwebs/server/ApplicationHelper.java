@@ -28,8 +28,17 @@ public final class ApplicationHelper {
     {
         "KWebS - KIELER Layout Web Service (v$VERSION$)\n",
         "",
-        "Published by Christian-Albrechts-Universität zu Kiel",
-        "Published under the EPL v1.0 (see http://www.eclipse.org/legal/epl-v10.html)"
+        "Copyright 2011 by Real-Time and Embedded Systems Group, Department",
+        "of Computer Science, Christian-Albrechts-University of Kiel",
+        "Published under the EPL v1.0 (see http://www.eclipse.org/legal/epl-v10.html)",
+        "",
+        "This software makes use of jETI platform",
+        "",
+        "Java Electronic Tool Integration - jETI",
+        "Copyright (C) 2004-2011 Chair for Programming Systems, TU Dortmund",
+        "licensed under the GNU Lesser General Public License v3 or any later version.",
+        "http://www.gnu.org/licenses/lgpl-3.0.html",
+        "http://www.gnu.org/licenses/gpl-3.0-standalone.html"
     };
 
     /** */
@@ -50,7 +59,8 @@ public final class ApplicationHelper {
         "server/kwebs/security/keystores/server.jks",
         "server/kwebs/config/kwebs.properties",
         "kwebs.user",
-        "kwebs.sh"        
+        "kwebs_start.sh",
+        "kwebs_stop.sh"        
     };
     
     /**

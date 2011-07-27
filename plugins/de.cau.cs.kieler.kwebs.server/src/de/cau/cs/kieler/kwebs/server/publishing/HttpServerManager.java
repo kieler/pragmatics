@@ -59,7 +59,7 @@ class HttpServerManager extends AbstractServerManager {
     protected Endpoint endpoint;
     
     //CHECKSTYLEON VisibilityModifier
-    
+
     /**
      * Publishes this managers server and its associated serviced object.
      * 
@@ -78,6 +78,8 @@ class HttpServerManager extends AbstractServerManager {
             createContext();
             server.start();
             endpoint = Endpoint.create(serviceObject);
+            // Sets the executor of the endpoint. The newly created thread pool
+            // makes the endpoint handle the incoming requests concurrently.
             endpoint.setExecutor(Executors.newFixedThreadPool(
                 Integer.parseInt(Configuration.getConfigProperty(Configuration.SERVER_POOLSIZE))
             ));

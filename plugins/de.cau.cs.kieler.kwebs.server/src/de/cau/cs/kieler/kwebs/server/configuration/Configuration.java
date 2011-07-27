@@ -175,6 +175,7 @@ public final class Configuration extends Properties {
      * @param stream
      *            the input stream to load from
      * @throws IOException
+     *            if an i/o exception on the input stream occurrs
      */
     public static synchronized void loadFromStream(final InputStream stream) throws IOException {
         INSTANCE.load(stream);
@@ -186,6 +187,7 @@ public final class Configuration extends Properties {
      * @param reader
      *            the reader to load from
      * @throws IOException
+     *            if an i/o exception on the reader occurrs
      */
     public static synchronized void loadFromReader(final Reader reader) throws IOException {
         INSTANCE.load(reader);
@@ -197,6 +199,7 @@ public final class Configuration extends Properties {
      * @param stream
      *            the input stream to load from
      * @throws IOException
+     *            if an i/o exception on the input stream occurrs
      */
     public static synchronized void loadFromXmlStream(final InputStream stream) throws IOException {
         INSTANCE.loadFromXML(stream);

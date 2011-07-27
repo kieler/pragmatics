@@ -16,9 +16,9 @@ package de.cau.cs.kieler.kwebs.server.service;
 
 import javax.jws.WebService;
 
+import de.cau.cs.kieler.kwebs.service.IGraphLayouterService;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 import de.cau.cs.kieler.kwebs.service.GraphLayouterOption;
-import de.cau.cs.kieler.kwebs.service.IGraphLayouterService;
 import de.cau.cs.kieler.kwebs.service.RemoteServiceException;
 
 /**
@@ -73,6 +73,17 @@ public final class JaxWsService extends AbstractService
     public String getVersion() {
         try {
             return ServerLayoutDataService.getVersion();
+        } catch (Exception e) {
+            throw new RemoteServiceException(e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public byte[] getPreviewImage(final String previewImage) {
+        try {
+            return ServerLayoutDataService.getPreviewImage(previewImage);
         } catch (Exception e) {
             throw new RemoteServiceException(e);
         }

@@ -15,22 +15,36 @@
 package de.cau.cs.kieler.kwebs.server.layout;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Version;
 
 import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService;
+import de.cau.cs.kieler.kwebs.logging.Logger;
+import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
+import de.cau.cs.kieler.kwebs.server.Application;
+import de.cau.cs.kieler.kwebs.service.RemoteServiceException;
+import de.cau.cs.kieler.kwebs.servicedata.Category;
+import de.cau.cs.kieler.kwebs.servicedata.KnownOption;
+import de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm;
+import de.cau.cs.kieler.kwebs.servicedata.LayoutOption;
+import de.cau.cs.kieler.kwebs.servicedata.LayoutType;
+import de.cau.cs.kieler.kwebs.servicedata.RemoteEnum;
+import de.cau.cs.kieler.kwebs.servicedata.ServiceData;
+import de.cau.cs.kieler.kwebs.servicedata.ServiceDataFactory;
+import de.cau.cs.kieler.kwebs.servicedata.SupportedDiagram;
+import de.cau.cs.kieler.kwebs.servicedata.impl.ServiceDataFactoryImpl;
+import de.cau.cs.kieler.kwebs.servicedata.transformation.ServiceDataXmiTransformer;
+import de.cau.cs.kieler.kwebs.util.Io;
 
 /**
  * This class is the server equivalent of {@link EclipseLayoutServices} but
- * without the unneccesary support for ui interaction. It provides all
+ * without the unnecessary support for ui interaction. It provides all
  * extension based registered layout information at runtime and also the
  * client side needed meta data about supported layout capabilities.
  *
@@ -44,6 +58,13 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
 
     /** Caching the version of the plugin as service version. */
     private static String version;
+    
+    /** 
+     *  The cached preview images of the layout algorithms. The index is derived from the plug-in
+     *  name of the defining plug-in and the path to the preview image.
+     */
+    private static Map<String, byte[]> previewImages
+        = new HashMap<String, byte[]>();
 
     /**
      * Private constructor.
@@ -79,27 +100,6 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
     }
 
     /**
-     * {@inheritDoc}
-     *//*
-    protected Class<?> loadClass(final IConfigurationElement element) {
-        String className = element.getAttribute(ATTRIBUTE_CLASS);
-        Class<?> clas = super.loadClass(element);
-        if (clas == null) {
-            Logger.log(
-                Messages.getString(
-                    "server.ServerLayoutDataService.message.0" //$NON-NLS-1$
-                )
-                + " " + className + " " //$NON-NLS-1$ //$NON-NLS-2$
-                + Messages.getString(
-                    "server.ServerLayoutDataService.message.1" //$NON-NLS-1$
-                )
-            );
-            debugElement(element);
-        }
-        return clas;
-    }*/
-
-    /**
      * Returns the layout meta data in xml.
      *
      * @return String
@@ -120,13 +120,23 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
         return version;
     }
 
-    /** name of the 'preview' attribute in the extension points. */
-    public static final String ATTRIBUTE_PREVIEW
-        = "preview"; //$NON-NLS-1$
-
-    /** name of the 'appliesTo' attribute in the extension points. */
-    public static final String ATTRIBUTE_APPLIESTO
-        = "appliesTo"; //$NON-NLS-1$
+    /**
+     * Returns the requested preview image.
+     * 
+     * @param previewImage
+     *            the identifier of the preview image
+     * @return the requested preview image
+     */
+    public static byte[] getPreviewImage(final String previewImage) {
+        if (!previewImages.containsKey(previewImage)) {
+            throw new RemoteServiceException("No such preview image: " + previewImage);
+        }
+        return previewImages.get(previewImage);
+    }
+    
+    /** Type attribute value for enumeration layout options. */
+    private static final String TYPE_ENUM
+        = "enum";
 
     /**
      * Creates the XML representation of the layout capabilities of this
@@ -135,218 +145,234 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
     private void createCapabilities() {
         IConfigurationElement[] extensions =
             Platform.getExtensionRegistry()
-                .getConfigurationElementsFor(EXTP_ID_LAYOUT_PROVIDERS);
-        capabilities = "<?xml version='1.0' encoding='UTF-8'?>\n" //$NON-NLS-1$
-                       + "<lws:capabilities" //$NON-NLS-1$
-                       + " xmlns:lws='http://de.cau.cs.kieler/" //$NON-NLS-1$
-                       + "2011-05-15/LayoutService/lws.xsd'>\n"; //$NON-NLS-1$
+                .getConfigurationElementsFor(EXTP_ID_LAYOUT_PROVIDERS);        
+        ServiceDataFactory factory = ServiceDataFactoryImpl.init();
+        ServiceData serviceData = factory.createServiceData();      
+        serviceData.setVersion(Application.getVersion());
+        readExtensionCategories(factory, serviceData, extensions);
+        readExtensionLayoutTypes(factory, serviceData, extensions);
+        readExtensionLayoutOptions(factory, serviceData, extensions);
+        readExtensionLayoutAlgorithms(factory, serviceData, extensions);
+        capabilities = new ServiceDataXmiTransformer().serialize(serviceData);
+    }
+        
+    /**
+     * 
+     * @param factory
+     * @param serviceData
+     * @param extensions
+     */
+    private void readExtensionCategories(final ServiceDataFactory factory, 
+        final ServiceData serviceData, final IConfigurationElement[] extensions) {
         for (IConfigurationElement element : extensions) {
-            if (ELEMENT_LAYOUT_ALGORITHM.equals(element.getName())) {
-                createLACapability(element);
-            } else if (ELEMENT_LAYOUT_TYPE.equals(element.getName())) {
-                createLTCapability(element);
-            } else if (ELEMENT_CATEGORY.equals(element.getName())) {
-                createCATCapability(element);
-            } else if (ELEMENT_LAYOUT_OPTION.equals(element.getName())) {
-                createLOCapability(element);
+            if (element.getName().equals(ELEMENT_CATEGORY)) {
+                Category category = factory.createCategory();
+                category.setId(element.getAttribute(ATTRIBUTE_ID));
+                category.setName(element.getAttribute(ATTRIBUTE_NAME));
+                serviceData.getCategories().add(category);
             }
         }
-        capabilities += "\n</lws:capabilities>\n"; //$NON-NLS-1$
     }
 
     /**
-     *
-     * @param element
-     *            extension element defining the layout algorithm
+     * 
+     * @param factory
+     * @param serviceData
+     * @param extensions
      */
-    private void createLACapability(final IConfigurationElement element) {
-        IContributor contributor = element.getContributor();
-        
-        //CHECKSTYLEOFF MagicNumber
-        
-        if (contributor != null) {
-            String name = contributor.getName();
-            capabilities += "\n  <!-- contributed by: " //$NON-NLS-1$
-                            + name
-                            + " -->"; //$NON-NLS-1$
-        }
-        capabilities += getXMLElement(element, 2, false, "layoutAlgorithm",
-            new String[] {"id", "name", "class", "parameter",
-                "category", "type", "description", "preview"});
-        for (IConfigurationElement child : element.getChildren()) {
-            if (ELEMENT_KNOWN_OPTION.equals(child.getName())) {
-                capabilities += getXMLElement(child, 4, true, "knownOption",
-                    new String[] {"option", "default"});
-            } else if (ELEMENT_SUPPORTED_DIAGRAM.equals(child.getName())) {
-                capabilities += getXMLElement(child, 4, true, "supportedDiagram",
-                    new String[] {"type", "priority"});
+    private void readExtensionLayoutTypes(final ServiceDataFactory factory, 
+        final ServiceData serviceData, final IConfigurationElement[] extensions) {
+        for (IConfigurationElement element : extensions) {
+            if (element.getName().equals(ELEMENT_LAYOUT_TYPE)) {
+                LayoutType type = factory.createLayoutType();
+                type.setId(element.getAttribute(ATTRIBUTE_ID));
+                type.setName(element.getAttribute(ATTRIBUTE_NAME));
+                type.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
+                serviceData.getLayoutTypes().add(type);
             }
         }
-        capabilities += "\n  </lws:layoutAlgorithm>\n"; //$NON-NLS-1$
-        
-        //CHECKSTYLEON MagicNumber
-        
     }
 
     /**
-     *
-     * @param element
-     *            extension element defining the type of the layout algorithm
+     * 
+     * @param factory
+     * @param serviceData
+     * @param extensions
      */
-    private void createLTCapability(final IConfigurationElement element) {
-        capabilities += getXMLElement(element, 2, true, "layoutType",
-            new String[] {"id", "name", "description"});
-    }
-
-    /**
-     *
-     * @param element
-     *            extension element defining the category
-     */
-    private void createCATCapability(final IConfigurationElement element) {
-        capabilities += getXMLElement(element, 2, true, "category",
-            new String[] {"id", "name"});
-    }
-
-    /**
-     *
-     * @param element
-     *            extension element defining the layout option
-     */
-    private void createLOCapability(final IConfigurationElement element) {
-        String type = element.getAttribute("type");
-        String clas = element.getAttribute("class");
-        Map<String, List<String>> extraAtts
-            = new HashMap<String, List<String>>();
-        if (type != null && type.equals("enum") && clas != null) {
-            try {
-                //FIXME add other types like kvector
-                Class<?> c = Class.forName(clas);
-                if (c.isEnum()) {
-                    List<String> enumValues = new LinkedList<String>();
-                    for (Enum<?> e : (Enum<?>[]) c.getEnumConstants()) {
-                        enumValues.add(e.toString());
-                    }
-                    extraAtts.put("enumValues", enumValues);
-                } else {
-                    throw new IllegalArgumentException(
-                        clas + " is not an enum type." //$NON-NLS-1$
-                    );
-                }
-            } catch (Exception e) {
-                // TODO: handle exception
-            }
-        }
-        capabilities += getXMLElement(element, 2, true, "layoutOption",
-            new String[] {"id", "type", "name", "description",
-                "appliesto", "default", "class", "advanced"}, extraAtts);
-    }
-
-    /**
-     *
-     * @param element
-     *            extension element
-     * @param indent
-     *            indentation of the created tag
-     * @param isSimple
-     *            whether created tag shall contain child elements
-     * @param tagName
-     *            name of the tag
-     * @param attributes
-     *            attributes of the extension element to be
-     *            added to the created tag
-     *
-     * @return String
-     *             the created tag
-     */
-    private String getXMLElement(final IConfigurationElement element,
-        final int indent, final boolean isSimple, final String tagName,
-        final String[] attributes) {
-        return getXMLElement(element, indent, isSimple, tagName, attributes, null);
-    }
-
-    /**
-     *
-     * @param element
-     *            extension element
-     * @param indent
-     *            indentation of the created tag
-     * @param tagName
-     *            name of the tag
-     * @param attributes
-     *            attributes of the extension element to be
-     *            added to the created tag
-     *
-     * @return String
-     *             the created tag
-     */
-    private String getXMLElement(final IConfigurationElement element,
-        final int indent, final boolean isSimple, final String tagName,
-        final String[] attributes,
-        final Map<String, List<String>> extraAtts) {
-        String tag = "";
-        String attrs = "";
-        String value = null;
-        if (element != null && attributes != null) {
-            String prefix = "";
-            for (int i = 0; i < indent; i++) {
-                prefix += " ";
-            }
-            attrs = "";
-            for (String name : attributes) {
-                value = escapeChars(element.getAttribute(name));
-                if (value != null && value.length() > 0) {
-                    attrs += "\n" + prefix + "  " + name + "='" + value + "'";
-                }
-            }
-            if (extraAtts != null) {
-                for (String attrName : extraAtts.keySet()) {
-                    value = "";
-                    for (String attrValue : extraAtts.get(attrName)) {
-                        if (value.length() > 0) {
-                            value += " ";
+    private void readExtensionLayoutOptions(final ServiceDataFactory factory, 
+        final ServiceData serviceData, final IConfigurationElement[] extensions) {
+        for (IConfigurationElement element : extensions) {
+            if (element.getName().equals(ELEMENT_LAYOUT_OPTION)) {
+                LayoutOption option = factory.createLayoutOption();
+                option.setId(element.getAttribute(ATTRIBUTE_ID));
+                option.setName(element.getAttribute(ATTRIBUTE_NAME));
+                option.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
+                option.setAppliesTo(element.getAttribute(ATTRIBUTE_APPLIESTO));
+                option.setDefault(element.getAttribute(ATTRIBUTE_DEFAULT));
+                option.setImplementation(element.getAttribute(ATTRIBUTE_CLASS));
+                option.setAdvanced(Boolean.parseBoolean(element.getAttribute(ATTRIBUTE_ADVANCED)));
+                if (element.getAttribute(ATTRIBUTE_TYPE).equals(TYPE_ENUM)) {
+                    option.setType(LayoutOptionData.REMOTEENUM_LITERAL);        
+                    try {
+                        String className = element.getAttribute(ATTRIBUTE_CLASS);
+                        if (className == null || className.length() == 0) {
+                            throw new IllegalArgumentException(
+                                "Class name of enum layout option is not defined"
+                            );
                         }
-                        value += attrValue;
+                        @SuppressWarnings("rawtypes")
+                        Class<? extends Enum> classInstance 
+                            = Platform.getBundle(element.getContributor().getName()).
+                                loadClass(className).asSubclass(Enum.class);       
+                        RemoteEnum remoteEnum = factory.createRemoteEnum();
+                        for (Enum<?> enumInstance : (Enum<?>[]) classInstance.getEnumConstants()) {
+                            remoteEnum.getValues().add(enumInstance.toString());
+                        }
+                        option.setRemoteEnum(remoteEnum);
+                    } catch (Exception e) {
+                        reportError(null,  null, null, e);
                     }
-                    value = escapeChars(value);
-                    attrs += "\n" + prefix + "  "
-                          + attrName + "='" + value + "'";
+                } else {
+                    option.setType(element.getAttribute(ATTRIBUTE_TYPE));                    
+                }
+                serviceData.getLayoutOptions().add(option);
+            }
+        }
+    }
+
+    /** name of the 'preview' attribute in the extension points. */
+    public static final String ATTRIBUTE_PREVIEW = "preview";
+
+    /**
+     * 
+     * @param factory
+     * @param serviceData
+     * @param extensions
+     */
+    private void readExtensionLayoutAlgorithms(final ServiceDataFactory factory, 
+        final ServiceData serviceData, final IConfigurationElement[] extensions) {
+        for (IConfigurationElement element : extensions) {
+            if (element.getName().equals(ELEMENT_LAYOUT_ALGORITHM)) {
+                LayoutAlgorithm algorithm = factory.createLayoutAlgorithm();
+                // Possible missing version number is not so bad
+                //CHECKSTYLEOFF EmptyBlock
+                try {
+                    algorithm.setVersion(
+                        Platform.getBundle(element.getContributor().getName()).getVersion().toString()
+                    );
+                } catch (Exception e) {
+                }
+                //CHECKSTYLEON EmptyBlock
+                String pluginId = element.getContributor().getName();
+                String preview = element.getAttribute(ATTRIBUTE_PREVIEW);
+                String previewImage = null;
+                if (preview != null) {
+                    try {
+                        byte[] data = Io.readStream(Io.getResourceStream(pluginId, preview)).getBytes();
+                        // No need to expose internals
+                        previewImage = Integer.toHexString((pluginId + preview).hashCode());
+                        previewImages.put(previewImage, data);
+                        algorithm.setPreviewImage(previewImage);
+                    } catch (Exception e) {
+                        Logger.log(Severity.WARNING,
+                            "Could not load preview image ("
+                            + "contributor=" + pluginId
+                            + ", algorithm=" + element.getAttribute(ATTRIBUTE_ID)
+                            + ", preview=" + preview + ")",
+                            e
+                        );
+                    }
+                }
+                algorithm.setId(element.getAttribute(ATTRIBUTE_ID));
+                algorithm.setName(element.getAttribute(ATTRIBUTE_NAME));
+                Category category = getCategory(serviceData, element.getAttribute(ATTRIBUTE_CATEGORY));
+                if (category != null) {
+                    algorithm.setCategory(category);
+                }
+                LayoutType type = getLayoutType(serviceData, element.getAttribute(ATTRIBUTE_TYPE));
+                if (type != null) {
+                    algorithm.setType(type);
+                }
+                algorithm.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
+                serviceData.getLayoutAlgorithms().add(algorithm); 
+                for (IConfigurationElement child : element.getChildren()) {
+                    if (child.getName().equals(ELEMENT_KNOWN_OPTION)) {
+                        KnownOption option = factory.createKnownOption();
+                        LayoutOption tmpOption = getLayoutOption(
+                            serviceData, child.getAttribute(ATTRIBUTE_OPTION)
+                        );
+                        if (tmpOption == null) {
+                            throw new IllegalStateException(
+                                "Option for layout algorithm not found"
+                                + " (algorithm=" + algorithm.getId() 
+                                + ", option=" + child.getAttribute("option") + ")"
+                            );
+                        }
+                        option.setOption(tmpOption);
+                        option.setDefault(child.getAttribute(ATTRIBUTE_DEFAULT));
+                        algorithm.getKnownOptions().add(option);
+                    } else if (child.getName().equals(ELEMENT_SUPPORTED_DIAGRAM)) {
+                        SupportedDiagram diagram = factory.createSupportedDiagram();
+                        diagram.setType(child.getAttribute(ATTRIBUTE_TYPE));
+                        diagram.setPriority(Integer.parseInt(child.getAttribute(ATTRIBUTE_PRIORITY)));
+                        algorithm.getSupportedDiagrams().add(diagram);                        
+                    }
                 }
             }
-            tag += "\n" + prefix + "<lws:" + tagName;
-            if (attrs.length() > 0) {
-                tag += attrs + "\n" + prefix;
-            }
-            if (isSimple) {
-                 tag += "/";
-            }
-            tag += ">\n";
         }
-        return tag;
+    }
+    
+    /**
+     * 
+     * @param serviceData
+     * @param id
+     * @return
+     */
+    private Category getCategory(final ServiceData serviceData, final String id) {
+        for (Category category : serviceData.getCategories()) {
+            if (category.getId().equals(id)) {
+                return category;
+            }
+        }
+        return null;
     }
 
     /**
-     *
-     * @param value
-     *            the String to be escaped
-     * @return String
-     *             the escaped string
+     * 
+     * @param serviceData
+     * @param type
+     * @return
      */
-    private String escapeChars(final String value) {
-        if (value == null) {
-            return null;
+    private LayoutType getLayoutType(final ServiceData serviceData, final String type) {
+        for (LayoutType tmpType : serviceData.getLayoutTypes()) {
+            if (tmpType.getId().equals(type)) {
+                return tmpType;
+            }
         }
-        return value.replace("<", "&lt;").replace(">", "&gt;").
-               replace("&", "&amp;").replace("'", "&apos;").
-               replace("\"", "&quot;");
+        return null;
     }
 
-    /** Identifier of this plugin. */
+    /**
+     * 
+     * @param serviceData
+     * @param option
+     * @return
+     */
+    private LayoutOption getLayoutOption(final ServiceData serviceData, final String option) {
+        for (LayoutOption tmpOption : serviceData.getLayoutOptions()) {
+            if (tmpOption.getId().equals(option)) {
+                return tmpOption;
+            }
+        }
+        return null;
+    }
+    
+    /** Identifier of this plug-in. */
     private static final String PLUGIN_ID
         = "de.cau.cs.kieler.kwebs.server";
 
     /**
-     * Read the version of this plugin and cache it in private member.
+     * Read the version of this plug-in and cache it in private member.
      */
     private void createVersion() {
         Version tmp = Platform.getBundle(PLUGIN_ID).getVersion();
@@ -356,80 +382,24 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
     /**
      * {@inheritDoc}
      */
-    @Override
     protected void reportError(final String extensionPoint,
         final IConfigurationElement element, final String attribute,
         final Throwable exception) {
-/*
-        System.out.println("\n!!!!! FATAL (in ServerLayoutDataService):\n\n");
-        if (extensionPoint != null) {
-            System.out.println(
-                "EP  : " + extensionPoint + " \n" +
-                "EXCP: " + exception.getMessage() + " \n"
-            );
-            debugElement(element);
-        }
-        System.out.println("!!!!!\n");
-*/
+        Logger.log(
+            Severity.FAILURE, 
+            "Error while parsing extension point", 
+            (extensionPoint != null ? "\n\nExtension point: " + extensionPoint.toString() : "") 
+            + (element != null ? "\n\nElement: " + element.toString() : "")
+            + (attribute != null ? "\n\nAttribute: " + attribute : ""),
+            exception
+        );
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     protected void reportError(final CoreException exception) {
         reportError(null, null, null, exception);
     }
 
-    /**
-     *
-     * @param element
-     */
-/*
-    private static void debugElement(final IConfigurationElement element) {
-        System.out.println("###");
-        for (String name : element.getAttributeNames()) {
-            int l = 0;
-            
-            //CHECKSTYLEOFF MagicNumber
-            
-            if (name.length() <  8) {
-                l = 2;
-            } else if (name.length() < 16) {
-                l = 1;
-            }
-            
-            //CHECKSTYLEON MagicNumber
-            
-            System.out.print(name);
-            while (l > 0) {
-                System.out.print("\t");
-                l--;
-            }
-            System.out.println(": " + element.getAttribute(name));
-        }
-        System.out.println();
-        if (element.getAttribute("class") != null) {
-            String name = element.getAttribute("class");
-            @SuppressWarnings("rawtypes")
-            Class clas = null;
-            System.out.print("Class is avaliable   : ");
-            try {
-                clas = Class.forName(name);
-                System.out.println("YES");
-            } catch (Throwable e) {
-                System.out.println("NO");
-            }
-            System.out.print("Class is instantiable: ");
-            try {
-                clas.newInstance();
-                System.out.println("YES");
-            } catch (Throwable e) {
-                System.out.println("NO");
-            }
-        }
-        System.out.println("###\n");
-        //try { System.in.read(); } catch (Throwable e) {}
-    }
-*/
 }

@@ -6,7 +6,15 @@
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
    <description url="http://informatik.uni-kiel.de/rtsys/kwebs">
-      The KIELER KWebS contains all neccesary plugins for building the layout web server.
+      The KIELER KWebS server feature contains all neccesary plugins and features for building
+the layout web server. This feature uses
+libraries from the jETI project from the TU Dortmund.
+Java Electronic Tool Integration - jETI
+Copyright (C) 2004-2011 Chair for Programming Systems, TU Dortmund
+licensed under the GNU Lesser General Public License v3 or any
+later version, see
+http://www.gnu.org/licenses/lgpl-3.0.html
+http://www.gnu.org/licenses/gpl-3.0-standalone.html
    </description>
 
    <copyright>
@@ -108,6 +116,10 @@ This Agreement is governed by the laws of the State of New York and the intellec
          id="org.eclipse.rcp"
          version="0.0.0"/>
 
+   <includes
+         id="de.unido.ls5.eti.toolserver.feature"
+         version="0.0.0"/>
+
    <plugin
          id="com.google.collect"
          download-size="0"
@@ -194,20 +206,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <plugin
          id="de.cau.cs.kieler.kwebs.server"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.unido.ls5.eti.client.os"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.unido.ls5.eti.toolserver.os"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -22,5 +22,4 @@ package de.cau.cs.kieler.kwebs.server.publishing;
  */
 //FIXME remove this abstract class ???
 abstract class AbstractServerManager implements IServerManager {
-
 }
