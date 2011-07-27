@@ -378,14 +378,14 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         // get layout data of the compound node
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         KInsets insets = nodeLayout.getInsets();
-        float borderSpacing = nodeLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        float borderSpacing = nodeLayout.getProperty(Properties.BORDER_SPACING);
         LNode upperBorder = null;
 
         if (incoming) {
             // Create upper border dummy node to represent the compound node.
             upperBorder = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_BORDER, dummyNodes);
             upperBorder.setProperty(Properties.ORIGINAL_INSETS, insets);
-            upperBorder.setProperty(LayoutOptions.BORDER_SPACING, borderSpacing);
+            upperBorder.setProperty(Properties.BORDER_SPACING, borderSpacing);
             upperBorder.getSize().x = insets.getLeft() + borderSpacing;
         } else {
             for (LNode lnode : dummyNodes) {
