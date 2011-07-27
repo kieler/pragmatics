@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: jETI Common Classes
+Bundle-SymbolicName: de.unido.ls5.eti.common;singleton:=true
+Bundle-Version: 1.5.0.qualifier
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Vendor: Technische Universität Dortmund
+Export-Package: de.unido.ls5.eti.common,
+ de.unido.ls5.eti.common.certificates,
+ de.unido.ls5.eti.common.certificates.parameters
+Require-Bundle: org.apache.log4j;bundle-version="1.2.15",
+ org.apache.xerces;bundle-version="2.9.0",
+ org.apache.commons.lang;bundle-version="2.4.0"
