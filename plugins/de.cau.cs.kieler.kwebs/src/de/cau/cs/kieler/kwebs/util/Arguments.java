@@ -36,30 +36,38 @@ public final class Arguments {
      */
     public static HashMap<String, String> parseArgs(final String[] args) {
         HashMap<String, String> result = new HashMap<String, String>();
+        if (args == null || args.length == 0) {
+            return result;
+        }
         int index = 0;
         String key = null;
         String value = null;
         for (String arg : args) {
-            if (arg.charAt(0) == '/' || arg.charAt(0) == '-') {
-                arg = arg.substring(1);
-            }
-            value = null;
-            index = arg.indexOf("=");
-            if (index > -1) {
-                key = arg.substring(0, index);
-                value = arg.substring(index + 1);
-                if (value.startsWith("\"")
-                    && value.endsWith("\"")) {
-                    value = value.substring(1, value.length() - 1).trim();
+            // Exception on parsing of a command line argument is ignored
+            // since it can only come from an illegal formed argument
+            //CHECKSTYLEOFF EmptyBlock
+            try {
+                if (arg.charAt(0) == '/' || arg.charAt(0) == '-') {
+                    arg = arg.substring(1);
                 }
-                if (value.startsWith("'")
-                    && value.endsWith("'")) {
-                    value = value.substring(1, value.length() - 1).trim();
+                index = arg.indexOf("=");
+                // Ignoring arguments without '=' or of the form 'a=' or '=a'
+                if (index > 0 && index < arg.length() - 1) { 
+                    key = arg.substring(0, index);
+                    value = arg.substring(index + 1);
+                    if (value.startsWith("\"") && value.endsWith("\"")) {
+                        value = value.substring(1, value.length() - 1).trim();
+                    } else if (value.startsWith("'") && value.endsWith("'")) {
+                        value = value.substring(1, value.length() - 1).trim();
+                    }
+                    if (key != null && key.length() > 0 && value != null) {
+                        result.put(key, value);
+                    }
                 }
+            } catch (Exception e) {
+                System.out.println("!!! Illegal command line argument: " + arg);
             }
-            if (key.length() > 0 && value != null) {
-                result.put(key, value);
-            }
+            //CHECKSTYLEON EmptyBlock            
         }
         return result;
     }
