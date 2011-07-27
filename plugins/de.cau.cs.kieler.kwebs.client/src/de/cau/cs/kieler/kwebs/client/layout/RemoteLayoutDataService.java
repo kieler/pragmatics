@@ -14,10 +14,8 @@
 
 package de.cau.cs.kieler.kwebs.client.layout;
 
-import java.io.StringReader;
-
 import de.cau.cs.kieler.kiml.LayoutDataService;
-import de.cau.cs.kieler.kiml.service.XMLLayoutDataService;
+import de.cau.cs.kieler.kiml.service.ServiceModelLayoutDataService;
 import de.cau.cs.kieler.kwebs.client.IWebServiceClient;
 import de.cau.cs.kieler.kwebs.logging.Logger;
 import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
@@ -32,7 +30,7 @@ import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
  * @kieler.rating 2011-05-17 red
  * @author swe
  */
-public final class RemoteLayoutDataService extends XMLLayoutDataService {
+public final class RemoteLayoutDataService extends ServiceModelLayoutDataService {
 
     /**
      * This class needs to be instantiated through the {@link #create}
@@ -44,7 +42,7 @@ public final class RemoteLayoutDataService extends XMLLayoutDataService {
     /**
      * Creates the singleton instance of this class. The layout capabilities
      * need to be retrieved afterwards through any client which implements the
-     * {@link IKimlWebServiceClient} interface
+     * {@link IWebServiceClient} interface
      * by calling {@link initializeWithClient} with the client as parameter.
      */
     public static synchronized void create() {
@@ -100,7 +98,7 @@ public final class RemoteLayoutDataService extends XMLLayoutDataService {
         try {
             String capabilities = client.getCapabilities();
             Logger.log(Severity.INFO, "Received server meta data", capabilities);
-            super.initializeFromReader(new StringReader(capabilities));
+            super.initializeFromString(capabilities);
         } catch (Exception e) {
             Logger.log(Severity.FAILURE,
                 "Server meta data could not be retrieved or correctly processed",
@@ -114,7 +112,6 @@ public final class RemoteLayoutDataService extends XMLLayoutDataService {
     /**
      * {@inheritDoc}
      */
-    @Override
     protected void reportError(final String message) {
         Logger.log(Severity.FAILURE, "Error while parsing meta data", message);
     }
@@ -122,9 +119,8 @@ public final class RemoteLayoutDataService extends XMLLayoutDataService {
     /**
      * {@inheritDoc}
      */
-    @Override
-    protected void reportError(final String message, final Exception exception) {
-        Logger.log(Severity.FAILURE, "Exception while parsing meta data", message, exception);
+    protected void reportError(final String message, final Throwable throwable) {
+        Logger.log(Severity.FAILURE, "Exception while parsing meta data", message, throwable);
     }
 
 }

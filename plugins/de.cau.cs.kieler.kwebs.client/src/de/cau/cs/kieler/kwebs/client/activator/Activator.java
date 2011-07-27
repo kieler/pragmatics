@@ -16,10 +16,13 @@ package de.cau.cs.kieler.kwebs.client.activator;
 
 import java.util.Map;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.BundleContext;
 
@@ -28,21 +31,25 @@ import de.cau.cs.kieler.kwebs.client.providers.Providers;
 import de.cau.cs.kieler.kwebs.logging.DisplayLogging;
 import de.cau.cs.kieler.kwebs.logging.Logger;
 import de.cau.cs.kieler.kwebs.logging.Logger.Mode;
+import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.util.Arguments;
 
 /**
- * Activator for the client plugin. It provides storage management for the user defined provider list.
+ * Activator for the client plug-in. It provides storage management for the user defined provider list.
  *
  * @kieler.rating  2011-05-04 red
  * @author  swe
  */
 public class Activator extends Plugin {
 
-    /** The preference store associated with this plugin. */
+    /** The preference store associated with this plug-in. */
     private static IPreferenceStore preferenceStore;
 
     /** The instance of this activator. */
     private static Activator instance;
+
+    /** The bundle context of this activator. */
+    private static BundleContext bundleContext;
     
     /** Display logger used when in debug mode. */
     private DisplayLogging displayLogging;
@@ -62,11 +69,12 @@ public class Activator extends Plugin {
     public final void start(final BundleContext context) throws Exception {
         super.start(context);
         instance = this;
+        bundleContext = context;
         // Register eclipse storage manager
         Providers.registerStorageManager(new EclipseProvidersStorageManager());
         // Initialize providers from preference store
         Providers.read();
-        // Init debug mode
+        // Initialize debug mode if command line argument is given
         Map<String, String> arguments = Arguments.parseArgs(Platform.getApplicationArgs());
         if (Boolean.parseBoolean(arguments.get(KWEBS_LOGDEBUGMODE))) {
             displayLogging = new DisplayLogging();
@@ -96,9 +104,9 @@ public class Activator extends Plugin {
     }
 
     /**
-     * Returns the preference store associated with this plugin.
+     * Returns the preference store associated with this plug-in.
      * 
-     * @return the preference store associated with this plugin
+     * @return the preference store associated with this plug-in
      */
     public final synchronized IPreferenceStore getPreferenceStore() {
         if (preferenceStore == null) {
@@ -109,4 +117,26 @@ public class Activator extends Plugin {
         return preferenceStore;
     }
 
+    /**
+     * Returns an image descriptor to an image contained in this plug-in.
+     * 
+     * @param path
+     *            path to the image
+     * @return the image descriptor or {@code null} if the specified path is not
+     *         contained in this bundle
+     */
+    public static ImageDescriptor getImageDescriptor(final String path) {
+        ImageDescriptor descriptor = null;
+        if (path != null) {
+            try {        
+                descriptor = ImageDescriptor.createFromURL(
+                    FileLocator.find(bundleContext.getBundle(), new Path(path), null)
+                );
+            } catch (Exception e) {
+                Logger.log(Severity.WARNING, "Could not find image: " + path, e);
+            }
+        }
+        return descriptor;        
+    }
+    
 }

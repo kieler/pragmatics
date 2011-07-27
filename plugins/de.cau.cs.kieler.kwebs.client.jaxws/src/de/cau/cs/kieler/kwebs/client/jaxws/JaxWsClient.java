@@ -30,7 +30,7 @@ import de.cau.cs.kieler.kwebs.service.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.util.Uris;
 
 /**
- * Client implementation for the jaxws web service.
+ * Client implementation for the JAXWS web service.
  *
  * @kieler.rating 2011-05-12 red
  *
@@ -65,7 +65,7 @@ public class JaxWsClient extends AbstractWebServiceClient {
     private String oldTruststorePass;
 
     /**
-     * Constructs a new jaxws web service client.
+     * Constructs a new JAXWS web service client.
      *
      */
     public JaxWsClient() {
@@ -73,7 +73,7 @@ public class JaxWsClient extends AbstractWebServiceClient {
     }
 
     /**
-     * Constructs a new jaxws web service client pointing to the address of the given provider.
+     * Constructs a new JAXWS web service client pointing to the address of the given provider.
      *
      * @param theprovider
      *            the {@link Provider} of the layout service to be used
@@ -156,6 +156,23 @@ public class JaxWsClient extends AbstractWebServiceClient {
         if (ensureConnected()) {
             try {
                 return jaxWsPort.getVersion();
+            } catch (Exception e) {
+                Logger.log(Severity.CRITICAL, "Error while calling layout service", e);
+                throw new RemoteServiceException("Error while calling layout service", e);
+            }
+        }
+        throw new LocalServiceException(
+            "Could not connect to layout service at " + getProvider().getAddress()
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected final byte[] getPreviewImageImpl(final String previewImage) {
+        if (ensureConnected()) {
+            try {
+                return jaxWsPort.getPreviewImage(previewImage);
             } catch (Exception e) {
                 Logger.log(Severity.CRITICAL, "Error while calling layout service", e);
                 throw new RemoteServiceException("Error while calling layout service", e);

@@ -60,6 +60,9 @@ public abstract class AbstractProviderDialog extends Dialog {
 
     /** Password for trust store. */
     protected Text truststorePass;
+    
+    /** The button for the trust store selection dialog. */
+    protected Button truststoreButton;
 
     /** Button for testing service availability. */
     protected Button checkButton;
@@ -151,6 +154,7 @@ public abstract class AbstractProviderDialog extends Dialog {
                     );                    
                     truststore.setEnabled(enabled);
                     truststorePass.setEnabled(enabled);
+                    truststoreButton.setEnabled(enabled);
                 }
             }
         );
@@ -166,11 +170,9 @@ public abstract class AbstractProviderDialog extends Dialog {
         // Only enabled on https connections
         truststore.setEnabled(false);
 
-        final Button truststoreButton = new Button(group, SWT.NONE);
-        
+        truststoreButton = new Button(group, SWT.NONE);        
         truststoreButton.setText("Select");
         truststoreButton.setLayoutData(layoutButton);
-
         truststoreButton.addSelectionListener(
             new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent e) {

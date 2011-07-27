@@ -16,6 +16,8 @@ package de.cau.cs.kieler.kwebs.client;
 
 import java.net.InetAddress;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
 import de.cau.cs.kieler.kwebs.service.GraphLayouterOption;
@@ -44,8 +46,14 @@ public abstract class AbstractWebServiceClient implements IWebServiceClient {
     /** The version of the layout service. */
     private String version;
 
+    /** 
+     *  The cached preview images of the server side available layout algorithms.
+     */
+    private static Map<String, byte[]> previewImages
+        = new HashMap<String, byte[]>();
+
     /**
-     * Constructs a new jaxws web service client.
+     * Constructs a new JAXWS web service client.
      *
      */
     protected AbstractWebServiceClient() {
@@ -89,6 +97,16 @@ public abstract class AbstractWebServiceClient implements IWebServiceClient {
         return version;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public final synchronized byte[] getPreviewImage(final String previewImage) {
+        if (!previewImages.containsKey(previewImage)) {
+            previewImages.put(previewImage, getPreviewImageImpl(previewImage));
+        }
+        return previewImages.get(previewImage);
+    }
+
     /** Default timeout when trying to ping a layout service. */
     private static final int DEFAULT_SERVICE_AVAILABILITY_TIMEOUT
         = 10000;
@@ -117,6 +135,7 @@ public abstract class AbstractWebServiceClient implements IWebServiceClient {
         available = null;
         capabilities = null;
         version = null;       
+        previewImages.clear();
     }
     
     /**
@@ -157,7 +176,7 @@ public abstract class AbstractWebServiceClient implements IWebServiceClient {
         final String format, final GraphLayouterOption[] options);
 
     /**
-     * Does the concrete retrieval of thelayout server meta data. This method has to be implemented by
+     * Does the concrete retrieval of the layout server meta data. This method has to be implemented by
      * a concrete web service client in order to provide the architecture dependent
      * functionality.
      *
@@ -166,12 +185,21 @@ public abstract class AbstractWebServiceClient implements IWebServiceClient {
     protected abstract String getCapabilitiesImpl();
 
     /**
-     * Does the concrete retrieval of teh layout server version. This method has to be implemented by
+     * Does the concrete retrieval of the layout server version. This method has to be implemented by
      * a concrete web service client in order to provide the architecture dependent
      * functionality.
      *
      * @return the meta version
      */
     protected abstract String getVersionImpl();
+    
+    /**
+     * Does the concrete retrieval of a preview image.
+     * 
+     * @param previewImage
+     *            the identifier of a preview image
+     * @return the preview image as byte array
+     */
+    protected abstract byte[] getPreviewImageImpl(final String previewImage);
 
 }

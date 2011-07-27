@@ -144,6 +144,29 @@ public final class Logger {
     }
 
     /**
+     * Returns the default log level which is used to determine if a message
+     * should be logged when no log level specification was made for the
+     * class or package the log method caller is in.
+     * 
+     * @return the default log level
+     */
+    public static Severity getDefaultLogLevel() {
+        return defaultLogLevel;
+    }
+
+    /**
+     * Sets the default log level which is used to determine if a message
+     * should be logged when no log level specification was made for the
+     * class or package the log method caller is in.
+     * 
+     * @param thedafaultLogLevel
+     *            the new default log level
+     */
+    public static void setDefaultLogLevel(final Severity thedafaultLogLevel) {
+        defaultLogLevel = thedafaultLogLevel;
+    }
+    
+    /**
      * Returns the run mode of this logger.
      * 
      * @return the run mode
@@ -328,15 +351,33 @@ public final class Logger {
      */
     public static void log(final Date thedate, final String theclass, final String themethod,
         final String theline, final Severity theseverity, final String themessage,
-        final String thedata, final Throwable thethrowable) {   
+        final String thedata, final Throwable thethrowable) {
+        String clas = "<unknown>";
+        if (theclass != null) {
+            clas = theclass;
+        }
+        Severity severity = theseverity;
+        if (severity == null) {
+            // Use UNDEFINED log level if the caller did not specify a log level. 
+            severity = Severity.UNDEFINED;
+        }
+        // Get the defined level from which on the logging events of the calling
+        // class or package shall be logged. In most cases this is null.
+        Severity filterLevel = INSTANCE.getLogLevel(clas, logLevel);
+        // Use default log level if no log level was defined for the class or the package
+        // which did the logging call.
+        if (filterLevel == null) {
+            filterLevel = defaultLogLevel;
+        }
+        if (severity != Severity.ALWAYS 
+            && (severity != Severity.DEBUG || INSTANCE.runMode != Mode.DEBUG)
+            && severity.compareTo(filterLevel) < 0) {
+            return;
+        }
         // Check parameter
         Date date = new Date();
         if (thedate != null) {
             date = thedate;
-        }
-        String clas = "<unknown>";
-        if (theclass != null) {
-            clas = theclass;
         }
         String clasShort = (clas.lastIndexOf(".") > -1
             ? clas.substring(clas.lastIndexOf(".") + 1)
@@ -350,38 +391,22 @@ public final class Logger {
         if (theline != null) {
             line = theline;
         }
-        Severity severity = theseverity;
-        if (severity == null) {
-            // Use UNDEFINED log level if the caller did not specify a log level. 
-            severity = Severity.UNDEFINED;
-        }
         String message = "<unknown>";
         if (themessage != null) {
-            message = themessage.replace("$C", theclass)
-                          .replace("$M", themethod)
-                              .replace("$L", theline)
-                                  .replace("$P", clasShort + "::" + themethod)
+            message = themessage.replace("$C", clas)
+                          .replace("$M", method)
+                              .replace("$L", line)
+                                  .replace("$P", clasShort + "::" + method)
                                       .replace("$SC", clasShort);
         }
         LoggerEvent event = INSTANCE.new LoggerEvent(
             date, clas, method, line, severity, message, thedata, thethrowable
         );
-        // Get the defined level from which on the logging events of the calling
-        // class or package shall be logged. In most cases this is null.
-        Severity filterLevel = INSTANCE.getLogLevel(clas, logLevel);
-        // Use default log level if no log level was defined for the class or the package
-        // which did the logging call.
-        if (filterLevel == null) {
-            filterLevel = defaultLogLevel;
+        LOCK_LOG.lock();
+        for (ILoggerListener listener : INSTANCE.listeners) {
+            listener.loggerEvent(event);
         }
-        if (severity == Severity.ALWAYS || INSTANCE.runMode == Mode.DEBUG && severity == Severity.DEBUG
-            || severity.compareTo(filterLevel) >= 0) {
-            LOCK_LOG.lock();
-            for (ILoggerListener listener : INSTANCE.listeners) {
-                listener.loggerEvent(event);
-            }
-            LOCK_LOG.unlock();
-        }
+        LOCK_LOG.unlock();
     }
 
     /**

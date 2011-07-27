@@ -17,11 +17,18 @@ package de.cau.cs.kieler.kwebs.client.layout;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kwebs.client.Clients;
 import de.cau.cs.kieler.kwebs.client.IWebServiceClient;
 import de.cau.cs.kieler.kwebs.client.preferences.Preferences;
@@ -30,6 +37,7 @@ import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
 import de.cau.cs.kieler.kwebs.formats.Formats;
 import de.cau.cs.kieler.kwebs.logging.Logger;
 import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
+import de.cau.cs.kieler.kwebs.service.LocalServiceException;
 import de.cau.cs.kieler.kwebs.service.ServiceException;
 import de.cau.cs.kieler.kwebs.transformation.KGraphXmiTransformer;
 import de.cau.cs.kieler.kwebs.util.Graphs;
@@ -63,7 +71,6 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
     public RemoteGraphLayoutEngine() {
         preferenceStore = Preferences.getPreferenceStore();
         preferenceStore.addPropertyChangeListener(this);
-        initialize();
     }
 
     /**
@@ -76,63 +83,94 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
 
     /**
      * Initializes the remote graph layout engine from the settings stored in the preference store.
+     * 
+     * @return whether the initialization was successful
      */
-    public final void initialize() {
-        boolean remoteLayout = preferenceStore.getBoolean(
-            Preferences.PREFID_LAYOUT_USE_REMOTE
-        );
-        if (remoteLayout) {
-            Provider newProvider = Providers.getProviderByIndex(
-                preferenceStore.getInt(
-                    Preferences.PREFID_LAYOUT_PROVIDER_INDEX
-                )
-            );
-            if (newProvider == null) {
-                // if this exception occurs, check if the defaultProvider extension is set correctly
-                throw new IllegalStateException("Provider object could not be generated");
-            }
-            if (!newProvider.equals(provider)) {
-                provider = newProvider;
-                if (client != null) {
-                    client.disconnect();
-                }
-                Logger.log(Severity.DEBUG, "Getting client for: " + provider.getAddress());
-                client = Clients.getClientForProvider(provider);                
-                if (client == null) {
-                    throw new IllegalStateException("Client object could not be generated");
-                }
-                Logger.log(Severity.DEBUG, 
-                    "Client implementation class is " + client.getClass().getCanonicalName()
+    private synchronized boolean initialize() {
+        boolean remoteLayout = preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE);
+        try {
+            if (remoteLayout) {
+                Provider newProvider = Providers.getProviderByIndex(
+                    preferenceStore.getInt(Preferences.PREFID_LAYOUT_PROVIDER_INDEX)
                 );
-/*
-                try {
+                if (newProvider == null) {
+                    // if this exception occurs, check if the defaultProvider extension is set correctly
+                    throw new IllegalStateException("Provider object could not be generated");
+                }
+                if (!newProvider.equals(provider)) {
+                    provider = newProvider;
+                    if (client != null) {
+                        client.disconnect();
+                    }
+                    Logger.log(Severity.DEBUG, "Getting client for: " + provider.getAddress());
+                    client = Clients.getClientForProvider(provider);                
+                    if (client == null) {
+                        throw new IllegalStateException("Client object could not be generated");
+                    }
+                    Logger.log(Severity.DEBUG, 
+                        "Client implementation class is " + client.getClass().getCanonicalName()
+                    );
                     Logger.log(
                         "Using remote layout (" + provider.getName() + ", " + provider.getAddress() + ")"
-                    );
-                    Logger.log("Retrieving service meta data");
+                    );                    
+                    Logger.log(Severity.DEBUG, "Resetting remote layout data service");
                     RemoteLayoutDataService.resetInstance();
-                    RemoteLayoutDataService.getInstance().initializeWithClient(client);
-                    Logger.log("Meta data retrieved");
+                    Logger.log(Severity.DEBUG, "Switching layout data service to remote mode");
                     LayoutDataService.setMode(LayoutDataService.REMOTEDATASERVICE);
-                    Logger.log("Switched to remote mode");
-                } catch (Exception e) {
-                    Logger.log(Severity.FAILURE, "Initializing remote layout failed", e);
-                    throw new LocalServiceException("Initializing remote layout failed", e);
+                    Logger.log(Severity.DEBUG, "Retrieving service meta data");
+                    RemoteLayoutDataService.getInstance().initializeWithClient(client);
+                    Logger.log(Severity.DEBUG, "Meta data retrieved");                    
+                    Logger.log(Severity.DEBUG, "Switched layout data service to remote mode");
                 }
-*/
-            }
-        } else {
-/*
-            try {
+            } else {
                 Logger.log("Using local layout");
+                Logger.log(Severity.DEBUG, "Switching layout data service to local mode");
                 LayoutDataService.setMode(LayoutDataService.ECLIPSEDATASERVICE);
-                Logger.log("Switched to local mode");
-            } catch (Exception e) {
-                Logger.log(Severity.FAILURE, "Initializing local layout failed", e);
-                throw new LocalServiceException("Initializing local layout failed", e);
+                Logger.log(Severity.DEBUG, "Switched layout data service to local mode");
+                provider = null;
+                client = null;                  
             }
-*/
+            return true;
+        } catch (Exception e) {
+            if (remoteLayout) {
+                Logger.log(Severity.CRITICAL, "Initializing remote layout failed", e);
+                Logger.log(Severity.WARNING, "Switching back to local layout");
+                LayoutDataService.setMode(LayoutDataService.ECLIPSEDATASERVICE);
+                final Display display = PlatformUI.getWorkbench().getDisplay();
+                final Maybe<Shell> maybe = new Maybe<Shell>();
+                display.syncExec(
+                    new Runnable() {
+                        public void run() {
+                            maybe.set(display.getActiveShell());
+                        }                        
+                    }
+                );
+                final Shell shell = maybe.get();
+                if (shell == null) {
+                    Logger.log(Severity.WARNING, "Shell object is null, cant display error dialog");
+                } else {
+                    final String message = "The remote layout could not be initialized properly."
+                                    + " The error occurred was\n\n"
+                                    + "\"" + e.getMessage() + "\".\n\n"
+                                    + "The layout was temporarily set back to local.";
+                    display.syncExec(
+                        new Runnable() {
+                            public void run() {
+                                MessageBox box = new MessageBox(shell, SWT.OK);
+                                box.setText("Error Occurred");
+                                box.setMessage(message);
+                                box.open();                     
+                            }
+                        }
+                    );
+                }
+                provider = null;
+                client = null;                    
+            } else {
+                throw new LocalServiceException("Local layout failed", e);
+            }
         }
+        return false;
     }
 
     /**
@@ -142,16 +180,18 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
      * @param progressMonitor monitor to which progress of the layout algorithms is reported
      */
     public final void layout(final KNode layoutGraph, final IKielerProgressMonitor progressMonitor) {
-        if (!clientAvailable()) {
-            Logger.log(Severity.CRITICAL, "Client for remote layout is not available");
-            throw new ServiceException("Client for remote layout is not available");
+        boolean remoteLayout = preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE);
+        if (remoteLayout && client == null) {
+            if (!initialize()) {
+                return;
+            }
         }
-        System.out.println("Using " + client.getProvider().getAddress());
         int nodeCount = Graphs.countNodes(layoutGraph);
         String label = "Doing remote layout " + client.getProvider().getAddress();
         if (layoutGraph.getLabel().getText() != null) {
             label += " (" + layoutGraph.getLabel().getText() + ")";
         }
+        Logger.log(Severity.DEBUG, label);
         progressMonitor.begin(label, nodeCount);
         Graphs.annotateGraphWithUniqueID(layoutGraph);
         String sourceXMI = transformer.serialize(layoutGraph);
@@ -179,17 +219,8 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
     public final synchronized void propertyChange(final PropertyChangeEvent event) {
         Logger.log(Severity.DEBUG, "Layout Provider Preferences Change received");
         if (event.getProperty().equals(Preferences.PREFID_LAYOUT_SETTINGS_CHANGED)) {
-            initialize();
+            initialize();            
         }
-    }
-
-    /**
-     * Check whether client is ready or not.
-     *
-     * @return
-     */
-    private boolean clientAvailable() {
-        return (client != null && client.isAvailable());
     }
 
     /**

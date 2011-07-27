@@ -31,7 +31,7 @@ public interface IWebServiceClient {
      * Does the graph layout on the layout server the client is connected to.
      * 
      * @param serializedGraph
-     *            the graph to be layouted in serial representation
+     *            the graph to do layout on in serial representation
      * @param format
      *            the format used to serialize the graph {@see Formats}
      * @param options
@@ -57,6 +57,16 @@ public interface IWebServiceClient {
      */
     String getVersion();
 
+    /**
+     * Returns the preview image associated with a remotely available layout
+     * algorithm.
+     *  
+     * @param previewImage
+     *            the identifier of the preview image as defined in the servers meta data
+     * @return the preview image as byte array
+     */
+    byte[] getPreviewImage(final String previewImage);
+    
     /**
      * Checks whether the layout service this clients service address points to
      * is currently available.

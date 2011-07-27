@@ -7,6 +7,10 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: de.cau.cs.kieler.kwebs.formats,
  de.cau.cs.kieler.kwebs.logging,
  de.cau.cs.kieler.kwebs.service,
+ de.cau.cs.kieler.kwebs.servicedata,
+ de.cau.cs.kieler.kwebs.servicedata.impl,
+ de.cau.cs.kieler.kwebs.servicedata.transformation,
+ de.cau.cs.kieler.kwebs.servicedata.util,
  de.cau.cs.kieler.kwebs.transformation,
  de.cau.cs.kieler.kwebs.util
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",

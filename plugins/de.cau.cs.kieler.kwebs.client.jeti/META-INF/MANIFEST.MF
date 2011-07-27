@@ -7,5 +7,5 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Require-Bundle: de.cau.cs.kieler.kwebs;bundle-version="0.1.0",
  de.cau.cs.kieler.kwebs.client;bundle-version="0.1.0",
- de.unido.ls5.eti.client.os;bundle-version="0.1.0"
+ de.unido.ls5.eti.client;bundle-version="0.1.0"
 Export-Package: de.cau.cs.kieler.kwebs.client.jeti

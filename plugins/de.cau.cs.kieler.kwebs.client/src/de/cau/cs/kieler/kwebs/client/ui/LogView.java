@@ -133,11 +133,11 @@ public class LogView extends ViewPart implements ILoggerListener {
         private static final int ASCENDING
             = 0;
 
-        /** Show entries in decending order. */
+        /** Show entries in descending order. */
         private static final int DESCENDING
             = 1;
 
-        /** Enum for selecting the property to sort about. */
+        /** Enumeration for selecting the property to sort about. */
         public enum SortProperty {
             DATE,
             LEVEL,
@@ -157,8 +157,10 @@ public class LogView extends ViewPart implements ILoggerListener {
             = ASCENDING;
 
         /**
-         *
+         * Sets the property by which the providers are compared.
+         * 
          * @param theproperty
+         *            the property by which the providers are compared
          */
         public final void setPropertyToCompare(final SortProperty theproperty) {
             if (sortProperty == theproperty) {
@@ -173,14 +175,12 @@ public class LogView extends ViewPart implements ILoggerListener {
         }
 
         /**
-         *
+         * {@inheritDoc}
          */
         @Override
-        public final int compare(final Viewer theviewer, final Object e1,
-            final Object e2) {
+        public final int compare(final Viewer theviewer, final Object e1, final Object e2) {
             LoggerEvent event1 = (LoggerEvent) e1;
             LoggerEvent event2 = (LoggerEvent) e2;
-
             int result = 0;
             switch (sortProperty) {
                 case DATE:
@@ -213,7 +213,7 @@ public class LogView extends ViewPart implements ILoggerListener {
                 default:
                     result = 0;
             }
-            //flip direction on descending order
+            // Flip direction on descending order
             if (direction == DESCENDING) {
                 result = -result;
             }
@@ -223,13 +223,15 @@ public class LogView extends ViewPart implements ILoggerListener {
     }
 
     /**
-     *
+     * Returns a selection adapter.
+     * 
      * @param column
+     *            the table column
      * @param index
-     * @return
+     *            the index
+     * @return the selection adapter
      */
-    private SelectionAdapter getSelectionAdapter(final TableColumn column,
-        final int index) {
+    private SelectionAdapter getSelectionAdapter(final TableColumn column, final int index) {
         SelectionAdapter selectionAdapter = new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
@@ -437,8 +439,7 @@ public class LogView extends ViewPart implements ILoggerListener {
             new IDoubleClickListener() {
                 public void doubleClick(final DoubleClickEvent event) {
                     ISelection sel = event.getSelection();
-                    Object obj
-                        = ((IStructuredSelection) sel).getFirstElement();
+                    Object obj = ((IStructuredSelection) sel).getFirstElement();
                     if (obj instanceof LoggerEvent) {
                         Display display = Display.getCurrent();
                         Shell shell = new Shell(display);
@@ -569,10 +570,8 @@ public class LogView extends ViewPart implements ILoggerListener {
      */
     private TableViewerColumn createColumn(final TableViewer theviewer,
             final String title, final int width, final int index) {
-        final TableViewerColumn viewerColumn
-            = new TableViewerColumn(theviewer, SWT.NONE);
-        final TableColumn column
-            = viewerColumn.getColumn();
+        final TableViewerColumn viewerColumn = new TableViewerColumn(theviewer, SWT.NONE);
+        final TableColumn column = viewerColumn.getColumn();
         column.setText(title);
         column.setWidth(width);
         column.setResizable(true);

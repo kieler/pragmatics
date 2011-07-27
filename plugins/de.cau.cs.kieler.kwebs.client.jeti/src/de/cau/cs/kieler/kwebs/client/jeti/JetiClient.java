@@ -99,7 +99,6 @@ public final class JetiClient extends AbstractWebServiceClient {
     /**
      * {@inheritDoc}
      */
-    @Override
     protected String graphLayoutImpl(final String serializedGraph, final String format,
         final GraphLayouterOption[] options) {
         if (ensureConnected()) {
@@ -152,7 +151,6 @@ public final class JetiClient extends AbstractWebServiceClient {
     /**
      * {@inheritDoc}
      */
-    @Override
     protected String getCapabilitiesImpl() {
         if (ensureConnected()) {
             try {
@@ -184,7 +182,6 @@ public final class JetiClient extends AbstractWebServiceClient {
     /**
      * {@inheritDoc}
      */
-    @Override
     protected String getVersionImpl() {
         if (ensureConnected()) {
             try {
@@ -203,6 +200,41 @@ public final class JetiClient extends AbstractWebServiceClient {
                     sb.append(new String(buf, 0, read));
                 }
                 return sb.toString();
+            } catch (Exception e) {
+                Logger.log(Severity.CRITICAL, "Error while calling layout service", e);
+                throw new RemoteServiceException("Error while calling layout service", e);
+            }
+        }
+        throw new LocalServiceException(
+            "Could not connect to layout service at " + getProvider().getAddress()
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected byte[] getPreviewImageImpl(final String previewImage) {
+        if (ensureConnected()) {
+            try {
+                Map<String, String> etiParams = new HashMap<String, String>();
+                etiParams.put(
+                    "INPUT_PREVIEWIMAGEID",
+                    previewImage
+                );
+                etiParams.put(
+                    "OUTPUT_PREVIEWIMAGEDATA",
+                    "previewImageData.out"
+                );
+                etiCon.exec("getPreviewImage", etiParams);
+                VirtualFile vfIn = etiCon.retrieve("previewImageData.out");
+                StringBuffer sb = new StringBuffer();
+                InputStream in = vfIn.getInputStream();
+                byte[] buf = new byte[BUFFER_SIZE];
+                int read = 0;
+                while ((read = in.read(buf)) > 0) {
+                    sb.append(new String(buf, 0, read));
+                }
+                return sb.toString().getBytes();
             } catch (Exception e) {
                 Logger.log(Severity.CRITICAL, "Error while calling layout service", e);
                 throw new RemoteServiceException("Error while calling layout service", e);

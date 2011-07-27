@@ -18,15 +18,20 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -41,9 +46,11 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import de.cau.cs.kieler.kwebs.client.activator.Activator;
 import de.cau.cs.kieler.kwebs.client.preferences.Preferences;
 import de.cau.cs.kieler.kwebs.client.providers.Providers;
 import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
+import de.cau.cs.kieler.kwebs.client.ui.LayoutProviderPreferencePage.ProviderViewerComparator.SortProperty;
 import de.cau.cs.kieler.kwebs.client.ui.testers.Availability;
 import de.cau.cs.kieler.kwebs.logging.Logger;
 import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
@@ -77,7 +84,10 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
 
     /** The table viewer used to display the user defined providers. */
     private TableViewer providerViewer;
-
+    
+    /** The comparator used to sort the table when clicking on its column headers. */
+    private ProviderViewerComparator providerViewerComparator;
+    
     /** The table used to display the user defined providers. */
     private Table providerTable;
 
@@ -267,11 +277,15 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
 
     }
 
-    /** Width of the provider name column. */
+    /** Width of the provider fixed property column. */
+    private static final int PROVIDERFIXED_WIDTH
+        = 50;
+
+    /** Width of the provider name property column. */
     private static final int PROVIDERNAME_WIDTH
         = 100;
 
-    /** Width of the provider address column. */
+    /** Width of the provider address property column. */
     private static final int PROVIDERADDRESS_WIDTH
         = 300;
 
@@ -288,12 +302,31 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
 
         generalGroup.setText("Available Layout Web Services:");
 
-        // add table with list of available providers
+        // Add table with list of available providers
         providerViewer = new TableViewer(generalGroup,
             SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL
         );
 
         TableViewerColumn col = null;
+
+        col = createProviderViewerColumn("Fixed", PROVIDERFIXED_WIDTH, 0);
+        col.setLabelProvider(new ColumnLabelProvider() {
+            @Override
+            public Image getImage(final Object element) {
+                Image image = null;
+                if (((Provider) element).isFixed()) {
+                    ImageDescriptor descriptor = Activator.getImageDescriptor("icons/locked.gif");                    
+                    if (descriptor != null) {
+                        image = descriptor.createImage();
+                    }
+                }
+                return image;
+            }
+            @Override
+            public String getText(final Object element) {
+                return null;
+            }
+        });
 
         col = createProviderViewerColumn("Name", PROVIDERNAME_WIDTH, 0);
         col.setLabelProvider(new ColumnLabelProvider() {
@@ -302,7 +335,6 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
                 return ((Provider) element).getName();
             }
         });
-
 
         col = createProviderViewerColumn("Address", PROVIDERADDRESS_WIDTH, 0);
         col.setLabelProvider(new ColumnLabelProvider() {
@@ -329,6 +361,34 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
                         return Providers.toObjectArray();
                     }
                     return new Object[0];
+                }
+            }
+        );
+        
+        providerViewerComparator = new ProviderViewerComparator();
+        
+        providerViewer.setComparator(providerViewerComparator);
+
+        providerViewer.addDoubleClickListener(
+            new IDoubleClickListener() {
+                public void doubleClick(final DoubleClickEvent event) {
+                    ISelection selection = event.getSelection();
+                    Object obj = ((IStructuredSelection) selection).getFirstElement();
+                    if (obj instanceof Provider) {
+                        Provider provider = (Provider) obj;
+                        if (!provider.isFixed()) {
+                            new EditProviderDialog(parent.getShell(), provider).open();
+                        } else {
+                            MessageBox box = new MessageBox(
+                                parent.getShell(), SWT.OK
+                            );
+                            box.setText("Edit Provider");
+                            box.setMessage(
+                                "This provider is fixed and can not be edited."    
+                            );
+                            box.open();
+                        }
+                    }
                 }
             }
         );
@@ -387,7 +447,7 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
                                 );
                                 box.setText("Edit Provider");
                                 box.setMessage(
-                                    " This provider is fixed and can not be edited."    
+                                    "This provider is fixed and can not be edited."    
                                 );
                                 box.open();
                             }
@@ -470,6 +530,88 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
 
     /**
      *
+     * @author swe
+     *
+     */
+    static class ProviderViewerComparator extends ViewerComparator {
+
+        /** Show entries in ascending order. */
+        private static final int ASCENDING
+            = 0;
+
+        /** Show entries in descending order. */
+        private static final int DESCENDING
+            = 1;
+
+        /** Enumeration for selecting the property to sort about. */
+        public enum SortProperty {
+            /** Sort providers by their fixed property. */
+            FIXED,
+            /** Sort providers by their name. */
+            NAME,
+            /** Sort providers by their address. */
+            ADDRESS
+        }
+
+        /** Order by this priority. */
+        private SortProperty sortProperty
+            = SortProperty.NAME;
+
+        /** The selected order. */
+        private int direction
+            = ASCENDING;
+
+        /**
+         * Sets the property by which the providers are compared.
+         * 
+         * @param theproperty
+         *            the property by which the providers are compared
+         */
+        public final void setPropertyToCompare(final SortProperty theproperty) {
+            if (sortProperty == theproperty) {
+                this.direction = (this.direction == DESCENDING
+                    ? ASCENDING
+                        : DESCENDING
+                );
+            } else {
+                sortProperty  = theproperty;
+                direction = DESCENDING;
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public final int compare(final Viewer theviewer, final Object e1, final Object e2) {
+            Provider provider1 = (Provider) e1;
+            Provider event2 = (Provider) e2;
+            int result = 0;
+            switch (sortProperty) {
+                case FIXED:
+                    result = Boolean.valueOf(provider1.isFixed()).
+                                 compareTo(Boolean.valueOf(event2.isFixed()));
+                    break;
+                case NAME:
+                    result = provider1.getName().compareTo(event2.getName());
+                    break;
+                case ADDRESS:
+                    result = provider1.getAddress().compareTo(event2.getAddress());
+                    break;
+                default:
+                    result = 0;
+            }
+            // Flip direction on descending order
+            if (direction == DESCENDING) {
+                result = -result;
+            }
+            return result;
+        }
+
+    }
+
+    /**
+     *
      * @param title
      * @param width
      * @return
@@ -482,7 +624,36 @@ public class LayoutProviderPreferencePage extends PreferencePage implements
         column.setWidth(width);
         column.setResizable(true);
         column.setMoveable(true);
+        column.addSelectionListener(createColumnSelectionAdapter(column, index));
         return viewerColumn;
+    }
+
+    /**
+     * Returns a selection adapter.
+     * 
+     * @param column
+     *            the table column
+     * @param index
+     *            the index
+     * @return the selection adapter
+     */
+    private SelectionAdapter createColumnSelectionAdapter(final TableColumn column, final int index) {
+        SelectionAdapter selectionAdapter = new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                providerViewerComparator.setPropertyToCompare(SortProperty.values()[index]);
+                int dir = providerViewer.getTable().getSortDirection();
+                if (providerViewer.getTable().getSortColumn() == column) {
+                    dir = (dir == SWT.UP ? SWT.DOWN : SWT.UP);
+                } else {
+                    dir = SWT.DOWN;
+                }
+                providerViewer.getTable().setSortDirection(dir);
+                providerViewer.getTable().setSortColumn(column);
+                providerViewer.refresh();
+            }
+        };
+        return selectionAdapter;
     }
 
     /**

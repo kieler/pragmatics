@@ -17,6 +17,7 @@ package de.cau.cs.kieler.kwebs.service;
 import javax.jws.WebService;
 import javax.jws.WebParam;
 
+
 /**
  * This is the definition of the interface published by the layout service.
  * By implementing its methods the server provides the layout functionality.
@@ -38,14 +39,12 @@ public interface IGraphLayouterService {
     /**
      * This is the main method published by the web service.
      *
-     * @param serializedGraph the graph in serialized form to be layouted
+     * @param serializedGraph the graph in serialized form to do layout on
      * @param format the model and the form of serialization used {@see Formats}
      * @param options optional layout options like algorithm to be used
      *
-     * @return {@link GraphLayouterResult} whether the layout was successful
-     *         or an error or exception occurred and the layouted graph in the
-     *         same serialized form as was given by the client or a textual
-     *         representation of the error or exception tha occured
+     * @return String containing the graph on which layout was done in the
+     *         same serialized form as was given by the client
      */
     String graphLayout(
         @WebParam(name = "serializedGraph") final String serializedGraph,
@@ -57,7 +56,7 @@ public interface IGraphLayouterService {
      * Returns the meta data of the layout service, e.g. what layout
      * algorithms and options are supported.
      *
-     * @return String containing a xml representation of the meta data
+     * @return String containing a XML representation of the meta data
      */
     String getCapabilities();
 
@@ -68,4 +67,14 @@ public interface IGraphLayouterService {
      */
     String getVersion();
 
+    /**
+     * Returns the preview image associated with a remotely available layout
+     * algorithm.
+     *  
+     * @param previewImage
+     *            the identifier of the preview image as defined in the servers meta data
+     * @return the preview image as byte array
+     */
+    byte[] getPreviewImage(final String previewImage);
+    
 }
