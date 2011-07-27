@@ -110,7 +110,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
         KInsets insets = openingBorder.getProperty(Properties.ORIGINAL_INSETS);
 
         // get the border spacing for the compound node
-        float borderSpacing = openingBorder.getProperty(LayoutOptions.BORDER_SPACING);
+        float borderSpacing = openingBorder.getProperty(Properties.BORDER_SPACING);
 
         Layer layer = layers.get(startIndex);
         List<LNode> layerNodes = layer.getNodes();
