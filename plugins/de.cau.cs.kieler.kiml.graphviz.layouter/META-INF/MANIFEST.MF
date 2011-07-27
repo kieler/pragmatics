@@ -7,7 +7,7 @@ Bundle-Activator: de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayouterPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.emf.ecore;bundle-version="2.5.0",
- org.eclipse.xtext,
+ org.eclipse.xtext;bundle-version="2.0.0",
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.kiml.graphviz.dot

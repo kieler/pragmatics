@@ -5,7 +5,7 @@ Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Bundle-Version: 0.4.0.qualifier
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.graphviz.dot; singleton:=true
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.eclipse.xtext,
+Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0",
  org.eclipse.xtext.generator;resolution:=optional,
  de.itemis.xtext.antlr;resolution:=optional,
  org.apache.commons.logging;resolution:=optional,
@@ -18,9 +18,9 @@ Require-Bundle: org.eclipse.xtext,
  org.eclipse.emf.ecore,
  org.eclipse.emf.common,
  org.antlr.runtime,
- de.cau.cs.kieler.core.kgraph;bundle-version="0.3.0",
- de.cau.cs.kieler.core;bundle-version="0.5.0",
- de.cau.cs.kieler.kiml;bundle-version="0.8.0"
+ de.cau.cs.kieler.core.kgraph,
+ de.cau.cs.kieler.core,
+ de.cau.cs.kieler.kiml
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: de.cau.cs.kieler.kiml.graphviz.dot,
