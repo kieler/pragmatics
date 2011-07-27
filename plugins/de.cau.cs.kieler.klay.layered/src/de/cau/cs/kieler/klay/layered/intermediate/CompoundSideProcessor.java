@@ -17,11 +17,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.options.Alignment;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.CompoundKGraphImporter;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -177,8 +179,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
             upperEdge.setSource(highPortEast);
 
             // handle next layer
-            insertSideDummies(startIndex + 1, endIndex, layers, openingBorder, lowerEdge,
-                    upperEdge);
+            insertSideDummies(startIndex + 1, endIndex, layers, openingBorder, lowerEdge, upperEdge);
         }
     }
 
@@ -228,6 +229,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
     private int findUltimateIndex(final Layer layer, final LNode upperBorder,
             final boolean lowerSide) {
         List<LNode> nodes = layer.getNodes();
+        KNode upperBorderOrigin = (KNode) upperBorder.getProperty(Properties.ORIGIN);
         int ret = 0;
         // to find the minimum, initialize with highest index
         if (!lowerSide) {
@@ -238,7 +240,6 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
         for (LNode lnode : nodes) {
             if (lnode.getProperty(Properties.ORIGIN) instanceof KNode) {
                 KNode origin = (KNode) lnode.getProperty(Properties.ORIGIN);
-                KNode upperBorderOrigin = (KNode) upperBorder.getProperty(Properties.ORIGIN);
                 if (CompoundKGraphImporter.isDescendant(upperBorderOrigin, origin)) {
                     int test = lnode.getIndex();
                     if (lowerSide) {
@@ -248,6 +249,26 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
                     } else {
                         if (test < ret) {
                             ret = test;
+                        }
+                    }
+                }
+            }
+            if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
+                LEdge edge = (LEdge) lnode.getProperty(Properties.ORIGIN);
+                if (edge.getProperty(Properties.ORIGIN) instanceof KEdge) {
+                    LNode sourceNode = edge.getSource().getNode();
+                    KNode kSourceNode = (KNode) (sourceNode.getProperty(Properties.ORIGIN));
+                    if (sourceNode == upperBorder
+                            || KimlUtil.isDescendant(kSourceNode, upperBorderOrigin)) {
+                        int test = lnode.getIndex();
+                        if (lowerSide) {
+                            if (test > ret) {
+                                ret = test;
+                            }
+                        } else {
+                            if (test < ret) {
+                                ret = test;
+                            }
                         }
                     }
                 }
