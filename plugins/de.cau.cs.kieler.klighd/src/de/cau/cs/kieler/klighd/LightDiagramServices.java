@@ -314,7 +314,7 @@ public final class LightDiagramServices {
         return null;
     }
 
-    private static final int MAX_DEPTH = 5;
+    private static final int MAX_DEPTH = 10;
     private int currentDepth;
 
     /**

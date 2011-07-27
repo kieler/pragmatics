@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 
-import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.ViewContext;
 
@@ -45,7 +44,7 @@ public class DiagramViewPart extends ViewPart {
     public static final String DEFAULT_NAME = "Light Diagram";
 
     /** the viewer for this view part. */
-    private IViewer<Object> viewer;
+    private ContextViewer viewer;
 
     /**
      * {@inheritDoc}
@@ -68,11 +67,11 @@ public class DiagramViewPart extends ViewPart {
     }
 
     /**
-     * Returns the viewer represented by this view part.
+     * Returns the context viewer represented by this view part.
      * 
-     * @return the viewer
+     * @return the context viewer
      */
-    public IViewer<Object> getViewer() {
+    public ContextViewer getViewer() {
         return viewer;
     }
 

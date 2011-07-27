@@ -157,11 +157,19 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
                 selections.add(new SelectionObject(diagramObject, modelObject));
             }
             // trigger the selection trigger
-            SelectionState state =
-                    new SelectionState(viewId, currentViewContext, currentViewer, selections,
-                            selectionEvent.isSelection());
+            SelectionState state = new SelectionState(viewId, currentViewContext, currentViewer,
+                    selections, selectionEvent.isSelection());
             trigger.trigger(state);
         }
+    }
+
+    /**
+     * Returns the currently active viewer.
+     * 
+     * @return the viewer
+     */
+    public IViewer<?> getActiveViewer() {
+        return currentViewer;
     }
 
 }
