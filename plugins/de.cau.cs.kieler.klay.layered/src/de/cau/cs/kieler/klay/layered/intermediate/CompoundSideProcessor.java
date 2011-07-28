@@ -255,9 +255,12 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
             }
             if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
                 LEdge edge = (LEdge) lnode.getProperty(Properties.ORIGIN);
-                if (edge.getProperty(Properties.ORIGIN) instanceof KEdge) {
+                Object origin = edge.getProperty(Properties.ORIGIN);
+                if (origin instanceof KEdge) {
                     LNode sourceNode = edge.getSource().getNode();
-                    KNode kSourceNode = (KNode) (sourceNode.getProperty(Properties.ORIGIN));
+                    //KNode kSourceNode = (KNode) (sourceNode.getProperty(Properties.ORIGIN));
+                    KEdge originEdge = (KEdge) origin;
+                    KNode kSourceNode = originEdge.getSource();
                     if (sourceNode == upperBorder
                             || KimlUtil.isDescendant(kSourceNode, upperBorderOrigin)) {
                         int test = lnode.getIndex();
