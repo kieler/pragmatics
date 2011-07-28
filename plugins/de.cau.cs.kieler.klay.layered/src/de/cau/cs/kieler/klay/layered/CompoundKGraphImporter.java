@@ -891,11 +891,11 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
             KVector targetPortPosition = targetPort.getPosition();
 
             // adjust bendpoint-positions
-            if (kSourceNode.getParent() == (KNode) layeredGraph.getProperty(Properties.ORIGIN)) {
-                // respect graph's border spacing
-                KVector borderSpacingVec = new KVector(graphBorderSpacing, graphBorderSpacing);
-                bendPoints.translate(borderSpacingVec);
-            } else {
+
+            // respect graph's border spacing
+            KVector borderSpacingVec = new KVector(graphBorderSpacing, graphBorderSpacing);
+            bendPoints.translate(borderSpacingVec);
+            if (!(kSourceNode.getParent() == (KNode) layeredGraph.getProperty(Properties.ORIGIN))) {
                 // calculate relative positioning
                 KVector bendpointOffset = new KVector();
                 if (KimlUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
@@ -916,13 +916,23 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
                 edgeStart.add(kSourceNodePosition);
             }
 
+            KVector difference = getAbsolute(kTargetNode).sub(getAbsolute(kSourceNode));
+            
             // calculate end point of edge
             KVector edgeEnd = targetPortPosition;
             if (KimlUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
                 edgeEnd.x += kTargetNodeLayout.getInsets().getLeft();
                 edgeEnd.y += kTargetNodeLayout.getInsets().getTop();
             } else {
-                edgeEnd.add(kTargetNodePosition);
+                if (kSourceNode.getParent() == kTargetNode.getParent()) {
+                    edgeEnd.add(kTargetNodePosition);
+                } else {
+                edgeEnd.add(kSourceNodePosition);
+                edgeEnd.add(difference);
+                // mind the fact, that getAbsolute calculates absolute coordinates plus insets.
+                edgeEnd.x -= kTargetNodeLayout.getInsets().getLeft();
+                edgeEnd.y -= kTargetNodeLayout.getInsets().getTop();
+                }
             }
 
             // add starting- and endpoint of edge to bendpoints
@@ -1091,13 +1101,13 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
      */
     private KVector getAbsolute(final KNode kNode) {
         KShapeLayout nodeLayout = kNode.getData(KShapeLayout.class);
-        KVector position = new KVector(nodeLayout.getXpos() + nodeLayout.getInsets().getLeft(), 
+        KVector position = new KVector(nodeLayout.getXpos() + nodeLayout.getInsets().getLeft(),
                 nodeLayout.getYpos() + nodeLayout.getInsets().getTop());
-     if (kNode.getParent().getParent() == null) {
-         return position;
-     } else {
-         return getAbsolute(kNode.getParent()).add(position);
-     }
+        if (kNode.getParent().getParent() == null) {
+            return position;
+        } else {
+            return getAbsolute(kNode.getParent()).add(position);
+        }
     }
-         
+
 }
