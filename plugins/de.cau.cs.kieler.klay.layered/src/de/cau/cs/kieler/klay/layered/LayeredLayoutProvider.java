@@ -86,7 +86,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
     /** intermediate processing strategy for basic graphs. */
     private static final IntermediateProcessingStrategy BASELINE_PROCESSING_STRATEGY 
-            = new IntermediateProcessingStrategy(
+                                                        = new IntermediateProcessingStrategy(
     // Before Phase 1
             null,
 
@@ -108,26 +108,26 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             null);
 
     /** additional processor dependencies for flattened hierarchical graphs. */
-    private static final IntermediateProcessingStrategy FLATTENED_HIERARCHY_PROCESSING_ADDITIONS
-    = new IntermediateProcessingStrategy(
+    private static final IntermediateProcessingStrategy FLATTENED_HIERARCHY_PROCESSING_ADDITIONS 
+                                                                = new IntermediateProcessingStrategy(
     // Before Phase 1
-    null,
+            null,
 
-    // Before Phase 2
-    null,
+            // Before Phase 2
+            null,
 
-    // Before Phase 3
-    
-    null,
+            // Before Phase 3
 
-    // Before Phase 4
-    EnumSet.of(IntermediateLayoutProcessor.COMPOUND_SIDE_PROCESSOR),
+            null,
 
-    // Before Phase 5
-    null,
+            // Before Phase 4
+            EnumSet.of(IntermediateLayoutProcessor.COMPOUND_SIDE_PROCESSOR),
 
-    // After Phase 5
-    EnumSet.of(IntermediateLayoutProcessor.COMPOUND_GRAPH_RESTORER));    
+            // Before Phase 5
+            null,
+
+            // After Phase 5
+            EnumSet.of(IntermediateLayoutProcessor.COMPOUND_GRAPH_RESTORER));
 
     // /////////////////////////////////////////////////////////////////////////////
     // Variables
@@ -147,10 +147,10 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
     /** intermediate layout processor strategy. */
     private IntermediateProcessingStrategy intermediateProcessingStrategy 
-            = new IntermediateProcessingStrategy();
+                                         = new IntermediateProcessingStrategy();
     /** collection of instantiated intermediate modules. */
-    private Map<IntermediateLayoutProcessor, ILayoutProcessor> intermediateLayoutProcessorCache
-                                    = new HashMap<IntermediateLayoutProcessor, ILayoutProcessor>();
+    private Map<IntermediateLayoutProcessor, ILayoutProcessor> intermediateLayoutProcessorCache 
+                 = new HashMap<IntermediateLayoutProcessor, ILayoutProcessor>();
 
     /** list of layout processors that compose the current algorithm. */
     private List<ILayoutProcessor> algorithm = new LinkedList<ILayoutProcessor>();
@@ -460,20 +460,25 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }
 
-//     // //////////////////////////////////////////////////////////////////////////////////////
-//     // Hierarchy
-//     /**
-//     * Determines that the LayeredLayoutProvider handles complete hierarchy of the given layout
-//     * node.
-//     *
-//     * @param layoutNode
-//     * the graph to be layouted.
-//     * @return returns true in contrast to the default value.
-//     * @override overrides AbstractLayoutProvider.supportsHierarchy, returning true.
-//     *
-//     */
-//     public boolean supportsHierarchy(final KNode layoutNode) {
-//     return true;
-//     }
+    // //////////////////////////////////////////////////////////////////////////////////////
+    // Hierarchy
+    /**
+     * Determines that the LayeredLayoutProvider handles complete hierarchy of the given layout
+     * node.
+     * 
+     * @param layoutNode
+     *            the graph to be layouted.
+     * @return returns true in contrast to the default value.
+     * @override overrides AbstractLayoutProvider.supportsHierarchy, returning true.
+     * 
+     */
+    public boolean supportsHierarchy(final KNode layoutNode) {
+
+        KShapeLayout sourceShapeLayout = layoutNode.getData(KShapeLayout.class);
+
+        // Check if hierarchy handling for a compound graph is requested, choose return value
+        // accordingly
+        return sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
+    }
 
 }
