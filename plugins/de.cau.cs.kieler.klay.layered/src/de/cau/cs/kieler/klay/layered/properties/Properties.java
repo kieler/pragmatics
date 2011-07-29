@@ -19,6 +19,7 @@ import java.util.Random;
 import java.util.Set;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -168,6 +169,12 @@ public final class Properties {
      */
     public static final IProperty<KInsets> ORIGINAL_INSETS = 
             new Property<KInsets>("OriginalInsets", null);
+    
+    /**
+     * Position of UPPER_BORDER_DUMMY-Node before repositioning in the CompoundGraphRestorer.
+     */
+    public static final IProperty<KVector> ORIGINAL_DUMMY_POSITION =
+            new Property<KVector>("OriginalDummyPosition", null);
     
 
     // /////////////////////////////////////////////////////////////////////////////
