@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klighd.gmf;
 
 import org.eclipse.gef.RootEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramGraphicalViewer;
 import org.eclipse.gmf.runtime.diagram.ui.services.editpart.EditPartService;
 import org.eclipse.gmf.runtime.notation.Diagram;
@@ -27,7 +26,7 @@ import de.cau.cs.kieler.klighd.AbstractViewer;
  * 
  * @author mri
  */
-public class GMFDiagramViewer extends AbstractViewer<Diagram> {
+public class GmfDiagramViewer extends AbstractViewer<Diagram> {
 
     /** the graphical viewer. */
     private DiagramGraphicalViewer graphicalViewer;
@@ -38,7 +37,7 @@ public class GMFDiagramViewer extends AbstractViewer<Diagram> {
      * @param graphicalViewer
      *            the graphical viewer
      */
-    public GMFDiagramViewer(final DiagramGraphicalViewer graphicalViewer) {
+    public GmfDiagramViewer(final DiagramGraphicalViewer graphicalViewer) {
         this.graphicalViewer = graphicalViewer;
     }
 
@@ -58,8 +57,17 @@ public class GMFDiagramViewer extends AbstractViewer<Diagram> {
         graphicalViewer.setRootEditPart(rootEditPart);
         // set the content
         graphicalViewer.setContents(model);
-        // disable the edit mode
-        ((DiagramEditPart) graphicalViewer.getContents()).disableEditMode();
+        // TODO disable the edit mode in general, only enable for layout
+        // ((DiagramEditPart) graphicalViewer.getContents()).disableEditMode();
+    }
+
+    /**
+     * Returns GMF graphical viewer used by this viewer to show the GMF notation model.
+     * 
+     * @return the GMF graphical viewer
+     */
+    public DiagramGraphicalViewer getDiagramGraphicalViewer() {
+        return graphicalViewer;
     }
 
 }

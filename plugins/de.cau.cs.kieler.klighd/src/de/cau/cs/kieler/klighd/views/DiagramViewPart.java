@@ -21,6 +21,9 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.gmf.runtime.diagram.core.DiagramEditingDomainFactory;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -30,6 +33,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 
+import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.ViewContext;
 
@@ -51,6 +55,7 @@ public class DiagramViewPart extends ViewPart {
      */
     @Override
     public void createPartControl(final Composite parent) {
+        addLayoutButton();
         // create a context viewer
         viewer = new ContextViewer(parent, getViewSite().getSecondaryId());
         // install a drop handler for the view
@@ -103,9 +108,8 @@ public class DiagramViewPart extends ViewPart {
                             IFile file = (IFile) resource;
                             Object model = loadModel(file);
                             if (model != null) {
-                                ViewContext viewContext =
-                                        LightDiagramServices.getInstance().getValidViewContext(
-                                                model);
+                                ViewContext viewContext = LightDiagramServices.getInstance()
+                                        .getValidViewContext(model);
                                 if (viewContext != null) {
                                     viewer.setModel(viewContext);
                                 } else {
@@ -150,13 +154,13 @@ public class DiagramViewPart extends ViewPart {
      * @return the model
      */
     private Object loadModel(final IFile file) {
-        TransactionalEditingDomain transactionalEditingDomain =
-                TransactionalEditingDomain.Factory.INSTANCE.createEditingDomain();
-        // DiagramEditingDomainFactory.INSTANCE.createEditingDomain();
+        //TransactionalEditingDomain.Factory factory = TransactionalEditingDomain.Factory.INSTANCE;
+        TransactionalEditingDomain transactionalEditingDomain = DiagramEditingDomainFactory.INSTANCE
+                .createEditingDomain();
+        // factory.createEditingDomain();
         ResourceSet resourceSet = transactionalEditingDomain.getResourceSet();
-        Resource resource =
-                resourceSet.createResource(URI.createPlatformResourceURI(file.getFullPath()
-                        .toOSString(), true));
+        Resource resource = resourceSet.createResource(URI.createPlatformResourceURI(file
+                .getFullPath().toOSString(), true));
         try {
             resource.load(null);
         } catch (IOException e) {
@@ -167,6 +171,23 @@ public class DiagramViewPart extends ViewPart {
         } else {
             return null;
         }
+    }
+
+    // TODO just for testing purposes
+    private void addLayoutButton() {
+        IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
+        final DiagramViewPart view = this;
+        Action layout = new Action("Layout") {
+            public void run() {
+                try {
+                    DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
+                    layoutEngine.layout(view, null, true, false, false, false, null);
+                } catch (UnsupportedOperationException e) {
+                    // whatever
+                }
+            }
+        };
+        mgr.add(layout);
     }
 
 }

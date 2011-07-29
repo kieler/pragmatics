@@ -29,7 +29,7 @@ import de.cau.cs.kieler.klighd.IViewerProvider;
  * 
  * @author mri
  */
-public class GMFViewerProvider implements IViewerProvider {
+public class GmfViewerProvider implements IViewerProvider {
 
     /**
      * {@inheritDoc}
@@ -39,7 +39,7 @@ public class GMFViewerProvider implements IViewerProvider {
         DiagramGraphicalViewer graphicalViewer = new DiagramGraphicalViewer();
         graphicalViewer.createControl(parent);
         editDomain.addViewer(graphicalViewer);
-        GMFDiagramViewer viewer = new GMFDiagramViewer(graphicalViewer);
+        GmfDiagramViewer viewer = new GmfDiagramViewer(graphicalViewer);
         // from GraphicalEditor
         graphicalViewer.getControl().setBackground(ColorConstants.listBackground);
         // from DiagramEditor

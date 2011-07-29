@@ -4,9 +4,15 @@
    <extension
          point="de.cau.cs.kieler.klighd.viewerProviders">
       <viewer
-            class="de.cau.cs.kieler.klighd.gmf.GMFViewerProvider"
+            class="de.cau.cs.kieler.klighd.gmf.GmfViewerProvider"
             id="de.cau.cs.kieler.klighd.gmf.viewerProvider">
       </viewer>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.ui.layoutManagers">
+      <manager
+            class="de.cau.cs.kieler.klighd.gmf.layout.GmfDiagramViewLayoutManager">
+      </manager>
    </extension>
 
 </plugin>

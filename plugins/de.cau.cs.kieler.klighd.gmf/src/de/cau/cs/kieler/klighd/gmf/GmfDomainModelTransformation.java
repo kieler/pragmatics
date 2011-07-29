@@ -25,7 +25,7 @@ import de.cau.cs.kieler.klighd.IModelTransformation;
  * 
  * @author mri
  */
-public class GMFDomainModelTransformation implements IModelTransformation<EObject, Diagram> {
+public class GmfDomainModelTransformation implements IModelTransformation<EObject, Diagram> {
 
     /** the last domain model a diagram was requested for. */
     private EObject lastDomainModel = null;
