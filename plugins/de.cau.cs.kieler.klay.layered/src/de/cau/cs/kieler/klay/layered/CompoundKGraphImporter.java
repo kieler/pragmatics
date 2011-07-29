@@ -1022,7 +1022,8 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         // calculate relative position
         if (!(original.getParent() == layeredGraph.getProperty(Properties.ORIGIN))) {
 
-            KVector pointOfOrigin = parentRepresentative.getPosition();
+            KVector parentRepPos = parentRepresentative.getPosition();
+            KVector pointOfOrigin = new KVector(parentRepPos.x, parentRepPos.y);
             pointOfOrigin.x += insetsParent.getLeft();
             pointOfOrigin.y += insetsParent.getTop();
 
