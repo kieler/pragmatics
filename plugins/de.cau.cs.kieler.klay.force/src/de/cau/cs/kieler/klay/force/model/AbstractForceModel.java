@@ -37,6 +37,11 @@ public abstract class AbstractForceModel {
     private Random random;
     /** the graph for which this model was initialized. */
     private FGraph graph;
+    /** upper bound for particle coordinates. */
+    private double coordBound;
+    
+    /** factor by which nodes influence the coordinates bound. */
+    private static final double NODE_BOUND_FACTOR = 8;
     
     /**
      * Initialize the force model with the given graph. Subclasses that override this
@@ -50,6 +55,10 @@ public abstract class AbstractForceModel {
         
         // calculate the adjacency matrix for the graph
         fgraph.calcAdjacency();
+        
+        // calculate an upper bound for particle coordinates
+        coordBound = Math.max(fgraph.getNodes().size() * NODE_BOUND_FACTOR + fgraph.getEdges().size(),
+                NODE_BOUND_FACTOR * NODE_BOUND_FACTOR);
         
         // if interactive mode is off, randomize the layout
         if (!fgraph.getProperty(LayoutOptions.INTERACTIVE)) {
@@ -94,17 +103,17 @@ public abstract class AbstractForceModel {
     /**
      * Perform layout on the given force graph.
      * 
-     * @param graph a force graph
+     * @param fgraph a force graph
      */
-    public void layout(final FGraph graph) {
-        initialize(graph);
+    public void layout(final FGraph fgraph) {
+        initialize(fgraph);
         int iterations = 0;
         
         while (moreIterations(iterations)) {
             
             // calculate attractive and repulsive forces
-            for (FNode v : graph.getNodes()) {
-                for (FParticle u : graph.getParticles()) {
+            for (FNode v : fgraph.getNodes()) {
+                for (FParticle u : fgraph.getParticles()) {
                     if (u != v) {
                         KVector displacement = calcDisplacement(u, v);
                         if (displacement != null) {
@@ -115,9 +124,11 @@ public abstract class AbstractForceModel {
             }
             
             // apply calculated displacement
-            for (FNode v : graph.getNodes()) {
-                v.getPosition().add(v.getDisplacement());
-                v.getDisplacement().reset();
+            for (FNode v : fgraph.getNodes()) {
+                KVector d = v.getDisplacement();
+                d.applyBounds(-coordBound, -coordBound, coordBound, coordBound);
+                v.getPosition().add(d);
+                d.reset();
             }
             
             iterationDone();
