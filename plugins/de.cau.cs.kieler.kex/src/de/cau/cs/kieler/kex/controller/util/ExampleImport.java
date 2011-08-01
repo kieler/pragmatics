@@ -69,9 +69,10 @@ public final class ExampleImport {
      * @param checkDuplicate
      *            , flag for checking example duplication in project.
      * @return directopens, {@link List} of {@link String}.
+     * @throws Exception
      */
     public static List<String> importExamples(final IPath selectedResource,
-            final List<Example> selectedExamples, final boolean checkDuplicate) {
+            final List<Example> selectedExamples, final boolean checkDuplicate) throws Exception {
 
         List<String> directOpens = new ArrayList<String>();
         List<String> finishedResources = new ArrayList<String>();
@@ -92,8 +93,9 @@ public final class ExampleImport {
                         example.getNamespaceId(), exampleBeginIndex, checkDuplicate,
                         finishedResources);
             }
-        } finally {
+        } catch (Exception e) {
             deleteResources(finishedResources);
+            throw e;
         }
         return directOpens;
     }

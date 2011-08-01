@@ -158,7 +158,7 @@ public final class ExampleManager {
      * @return {@link List} of {@link String}
      */
     public List<String> importExamples(final IPath selectedResource,
-            final List<Example> selectedExamples, final boolean checkDuplicate) {
+            final List<Example> selectedExamples, final boolean checkDuplicate) throws Exception {
         ExampleImport.validate(selectedResource, selectedExamples, checkDuplicate);
         return ExampleImport.importExamples(selectedResource, selectedExamples, checkDuplicate);
     }
@@ -189,19 +189,6 @@ public final class ExampleManager {
      */
     public InputStream getEmptyPic() {
         return ExampleImport.getEmptyPic();
-    }
-
-    /**
-     * Imports a quickstart example.
-     * 
-     * @param quickStarter
-     *            , {@link Example}
-     * @return files which can be open directly, List<String>
-     */
-    public List<String> quickStartImport(final Example quickStarter) {
-        List<Example> quickStarts = new ArrayList<Example>();
-        quickStarts.add(quickStarter);
-        return ExampleImport.importExamples(null, quickStarts, false);
     }
 
     /**

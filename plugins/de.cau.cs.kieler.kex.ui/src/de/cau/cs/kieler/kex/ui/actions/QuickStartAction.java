@@ -115,7 +115,7 @@ public class QuickStartAction implements IIntroAction {
             List<String> directOpens = ExampleManager.get().importExamples(projectPath, examples,
                     false);
             postfix(directOpens, params.getProperty("autoLayout") != null);
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             StatusManager.getManager()
                     .handle(new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID,
                             "Could not import example", e), StatusManager.SHOW);
