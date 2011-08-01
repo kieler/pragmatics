@@ -13,6 +13,10 @@
             type="de.cau.cs.kieler.type.layered">
          <supportedDiagram
                priority="15"
+               type="de.cau.cs.kieler.layout.diagrams.general">
+         </supportedDiagram>
+         <supportedDiagram
+               priority="15"
                type="de.cau.cs.kieler.layout.diagrams.dataFlow">
          </supportedDiagram>
          <knownOption

@@ -132,12 +132,8 @@
             preview="images/fdp.png"
             type="de.cau.cs.kieler.type.force">
          <supportedDiagram
-               priority="6"
+               priority="4"
                type="de.cau.cs.kieler.layout.diagrams.general">
-         </supportedDiagram>
-         <supportedDiagram
-               priority="6"
-               type="de.cau.cs.kieler.layout.diagrams.usecaseDiagram">
          </supportedDiagram>
          <knownOption
                default="40"
@@ -178,10 +174,6 @@
             parameter="TWOPI"
             preview="images/twopi.png"
             type="de.cau.cs.kieler.type.tree">
-         <supportedDiagram
-               priority="6"
-               type="de.cau.cs.kieler.layout.diagrams.general">
-         </supportedDiagram>
          <knownOption
                default="60"
                option="de.cau.cs.kieler.spacing">
@@ -218,10 +210,6 @@
             parameter="CIRCO"
             preview="images/circo.png"
             type="de.cau.cs.kieler.type.circle">
-         <supportedDiagram
-               priority="6"
-               type="de.cau.cs.kieler.layout.diagrams.general">
-         </supportedDiagram>
          <knownOption
                default="40"
                option="de.cau.cs.kieler.spacing">

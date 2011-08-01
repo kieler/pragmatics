@@ -358,6 +358,10 @@
             preview="images/planarization.png"
             type="de.cau.cs.kieler.type.orthogonal">
          <supportedDiagram
+               priority="5"
+               type="de.cau.cs.kieler.layout.diagrams.general">
+         </supportedDiagram>
+         <supportedDiagram
                priority="10"
                type="de.cau.cs.kieler.layout.diagrams.classDiagram">
          </supportedDiagram>
@@ -405,6 +409,10 @@
             parameter="FMMM"
             preview="images/fmmm.png"
             type="de.cau.cs.kieler.type.force">
+         <supportedDiagram
+               priority="6"
+               type="de.cau.cs.kieler.layout.diagrams.general">
+         </supportedDiagram>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.qualityVsSpeed">
          </knownOption>
@@ -497,6 +505,14 @@
             parameter="GEM"
             preview="images/gem.png"
             type="de.cau.cs.kieler.type.force">
+         <supportedDiagram
+               priority="8"
+               type="de.cau.cs.kieler.layout.diagrams.general">
+         </supportedDiagram>
+         <supportedDiagram
+               priority="8"
+               type="de.cau.cs.kieler.layout.diagrams.usecaseDiagram">
+         </supportedDiagram>
          <knownOption
                default="15"
                option="de.cau.cs.kieler.borderSpacing">
