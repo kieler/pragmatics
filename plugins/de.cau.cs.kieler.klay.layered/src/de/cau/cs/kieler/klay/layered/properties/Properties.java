@@ -30,7 +30,6 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer.Region;
-import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
 
 /**
  * Container for priority definitions.
@@ -234,12 +233,6 @@ public final class Properties {
     /** whether nodes shall be distributed during layer assignment. */
     public static final IProperty<Boolean> DISTRIBUTE_NODES = new Property<Boolean>(
             DISTRIBUTE_NODES_ID, false);
-
-    /** option identifier for edge routing. */
-    public static final String EDGE_ROUTING_ID = "de.cau.cs.kieler.klay.layered.edgeRouting";
-    /** property to choose an edge routing strategy. */
-    public static final IProperty<EdgeRoutingStrategy> EDGE_ROUTING = new Property<EdgeRoutingStrategy>(
-            EDGE_ROUTING_ID, EdgeRoutingStrategy.POLYLINE);
 
     /** option identifier for node layering. */
     public static final String NODE_LAYERING_ID = "de.cau.cs.kieler.klay.layered.nodeLayering";

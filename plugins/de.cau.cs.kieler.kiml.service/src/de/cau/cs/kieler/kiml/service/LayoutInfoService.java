@@ -124,9 +124,13 @@ public abstract class LayoutInfoService {
                 } else {
                     LayoutOptionData<?> optionData = layoutDataService.getOptionData(option);
                     if (optionData != null) {
-                        Object value = optionData.parseValue(valueString);
-                        if (value != null) {
-                            addOptionValue(clazz, option, value);
+                        try {
+                            Object value = optionData.parseValue(valueString);
+                            if (value != null) {
+                                addOptionValue(clazz, option, value);
+                            }
+                        } catch (IllegalStateException exception) {
+                            reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_VALUE, exception);
                         }
                     }
 

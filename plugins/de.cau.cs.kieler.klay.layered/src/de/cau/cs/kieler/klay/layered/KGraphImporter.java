@@ -46,7 +46,6 @@ import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 //import de.cau.cs.kieler.klay.layered.properties.NodeType;
 //import de.cau.cs.kieler.klay.layered.properties.NodeType;
@@ -607,9 +606,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         }
 
         // check if the edge routing uses splines
-        EdgeRoutingStrategy routing = parentLayout.getProperty(Properties.EDGE_ROUTING);
-        boolean splinesActive = routing == EdgeRoutingStrategy.SIMPLE_SPLINES
-                || routing == EdgeRoutingStrategy.COMPLEX_SPLINES;
+        EdgeRouting routing = parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
+        boolean splinesActive = routing == EdgeRouting.SPLINES;
 
         // iterate through all edges
         for (LEdge ledge : edgeList) {

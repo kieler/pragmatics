@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.p5edges;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -30,10 +29,12 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author jjc
  */
-public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer {
+public class SimpleLabelPlacer {
 
     /**
-     * {@inheritDoc}
+     * Calculates label positions for given graph and stores them in it.
+     * 
+     * @param thelayeredGraph The respective graph
      */
     public void placeLabels(final LayeredGraph thelayeredGraph) {
         
@@ -118,7 +119,11 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
     }
 
     /**
-     * {@inheritDoc}
+     * Gives the size of the longest label in the given layer.
+     * You should only consider those of source ports.
+     * 
+     * @param thelayer The layer to check 
+     * @return The longest LLabel
      */
     public LLabel longestLabel(final Layer thelayer) {
         LLabel longest = new LLabel("");
@@ -134,13 +139,5 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
         
         return longest;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void reset() {
-        super.reset();
-    }
-
 
 }

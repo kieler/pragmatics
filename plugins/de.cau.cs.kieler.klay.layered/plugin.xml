@@ -40,7 +40,8 @@
                option="de.cau.cs.kieler.klay.layered.nodeLayering">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.edgeRouting">
+               default="POLYLINE"
+               option="de.cau.cs.kieler.edgeRouting">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.portConstraints">
@@ -81,15 +82,6 @@
                option="de.cau.cs.kieler.fixedSize">
          </knownOption>
       </layoutAlgorithm>
-      <layoutOption
-            appliesTo="parents"
-            class="de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy"
-            default="POLYLINE"
-            description="Strategy for edge routing"
-            id="de.cau.cs.kieler.klay.layered.edgeRouting"
-            name="Edge Routing"
-            type="enum">
-      </layoutOption>
       <layoutOption
             advanced="true"
             appliesTo="parents"
@@ -170,14 +162,6 @@
             name="Separate Connected Components"
             type="boolean">
       </layoutOption>
-   </extension>
-   <extension
-         point="de.cau.cs.kieler.kiml.layoutInfo">
-      <option
-            class="de.cau.cs.kieler.layout.diagrams.dataFlow"
-            option="de.cau.cs.kieler.klay.layered.edgeRouting"
-            value="ORTHOGONAL">
-      </option>
    </extension>
 
 </plugin>

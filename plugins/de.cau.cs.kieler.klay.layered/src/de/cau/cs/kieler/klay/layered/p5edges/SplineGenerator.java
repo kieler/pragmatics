@@ -16,7 +16,6 @@ package de.cau.cs.kieler.klay.layered.p5edges;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.CubicSplineInterpolator;
 import de.cau.cs.kieler.core.math.ISplineInterpolator;
@@ -28,7 +27,17 @@ import de.cau.cs.kieler.core.math.KVector;
  * 
  * @author uru
  */
-public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineGenerator {
+public class SplineGenerator {
+
+    /**
+     * Defines whether curvature should be increased or decreased.
+     */
+    public enum Curvature {
+        /** increase. */
+        increase,
+        /** decrease. */
+        decrease;
+    }
 
     private ISplineInterpolator interp = new CubicSplineInterpolator();
 
@@ -48,7 +57,15 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
     private static final double MAX_DISTANCE = 0.75d;
 
     /**
-     * {@inheritDoc}
+     * generates a simple piecewise bezier curve for given points.
+     * 
+     * @param pArray
+     *            array with points which should be lay on the spline
+     * @param vectorQ
+     *            outgoing tangent vector of the initial node
+     * @param vectorS
+     *            incoming tangent vector of the final node
+     * @return created spline
      */
     public BezierSpline generateSpline(final LinkedList<KVector> pArray, final KVector vectorQ,
             final KVector vectorS) {
@@ -117,14 +134,24 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
     }
 
     /**
-     * {@inheritDoc}
+     * generates a simple piecewise bezier curve for given points.
+     * 
+     * @param pArray
+     *            array with points which should be lay on the spline
+     * @return created spline
      */
     public BezierSpline generateSpline(final LinkedList<KVector> pArray) {
         return generateSpline(pArray, null, null);
     }
 
     /**
-     * {@inheritDoc}
+     * Generates a spline representation for straight edges.
+     * 
+     * @param q
+     *            start point
+     * @param s
+     *            end point
+     * @return BezierSpline representation.
      */
     public BezierSpline generateShortSpline(final KVector q, final KVector s) {
 
@@ -139,24 +166,36 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
     }
 
     /**
-     * {@inheritDoc}
+     * perturb the control points of the spline in an attempt to make the spline fit. The approach
+     * is similar to the straightening approach. We try to decrease the curvature of the spline. If
+     * this does not seem to improve the fit, we try to increase the curvature. Since this process
+     * may never terminate, max_iterations controls how many times to try.
+     * 
+     * @param pArray
+     *            array with points which should be lay on the spline
+     * @param ospline
+     *            spline to be refined
+     * @param mode
+     *            either decrease or increase the curvature
+     * @return created spline
      */
     public boolean refineSpline(final LinkedList<KVector> pArray, final BezierSpline ospline,
-            final curvature mode) {
+            final Curvature mode) {
 
         for (BezierCurve curve : ospline.getCurves()) {
             KVector fstdir = KVector.sub(curve.fstControlPnt, curve.start).normalize();
             KVector snddir = KVector.sub(curve.sndControlPnt, curve.end).normalize();
             double dist = KVector.distance(curve.start, curve.fstControlPnt);
             double dist2 = KVector.distance(curve.end, curve.sndControlPnt);
-            if (mode == curvature.decrease) {
+            switch (mode) {
+            case decrease:
                 curve.fstControlPnt.sub(fstdir.scale(DECREASE_FACTOR * dist));
                 curve.sndControlPnt.sub(snddir.scale(DECREASE_FACTOR * dist2));
-            } else if (mode == curvature.increase) {
+                break;
+            case increase:
                 curve.fstControlPnt.add(fstdir.scale(INCREASE_FACTOR * dist));
                 curve.sndControlPnt.add(snddir.scale(INCREASE_FACTOR * dist2));
-            } else {
-                return false;
+                break;
             }
 
             removeFunnyCycles(ospline);
@@ -166,7 +205,12 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
     }
 
     /**
-     * {@inheritDoc}
+     * straighten_spline adjusts the control points of the spline to reduce the curvature. the
+     * method is only used if there's only one bezier segment in the spline
+     * 
+     * @param spline
+     *            spline to be straightened
+     * @return true if successful otherwise false
      */
     public boolean straightenSpline(final BezierSpline spline) {
         if (spline.getCurves().size() != 1) {

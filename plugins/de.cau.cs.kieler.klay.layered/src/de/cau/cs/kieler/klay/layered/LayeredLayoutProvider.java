@@ -30,6 +30,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
@@ -40,11 +41,9 @@ import de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
-import de.cau.cs.kieler.klay.layered.p5edges.ComplexSplineEdgeRouter;
-import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.PolylineEdgeRouter;
-import de.cau.cs.kieler.klay.layered.p5edges.SimpleSplineEdgeRouter;
+import de.cau.cs.kieler.klay.layered.p5edges.SplineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -259,21 +258,16 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         }
 
         // check which edge router to use
-        EdgeRoutingStrategy routing = parentLayout.getProperty(Properties.EDGE_ROUTING);
+        EdgeRouting routing = parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
         switch (routing) {
         case ORTHOGONAL:
             if (!(edgeRouter instanceof OrthogonalEdgeRouter)) {
                 edgeRouter = new OrthogonalEdgeRouter();
             }
             break;
-        case SIMPLE_SPLINES:
-            if (!(edgeRouter instanceof SimpleSplineEdgeRouter)) {
-                edgeRouter = new SimpleSplineEdgeRouter();
-            }
-            break;
-        case COMPLEX_SPLINES:
-            if (!(edgeRouter instanceof ComplexSplineEdgeRouter)) {
-                edgeRouter = new ComplexSplineEdgeRouter();
+        case SPLINES:
+            if (!(edgeRouter instanceof SplineEdgeRouter)) {
+                edgeRouter = new SplineEdgeRouter();
             }
             break;
         default:

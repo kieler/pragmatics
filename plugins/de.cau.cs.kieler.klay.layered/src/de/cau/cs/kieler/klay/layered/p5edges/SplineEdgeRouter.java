@@ -45,16 +45,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author uru
  */
-public class SimpleSplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
-
-    /** minimal spacing between objects. */
-    private float spacing;
-
-    /** spline generator. */
-    private ISplineGenerator splineGen = new SimpleSplineGenerator();
-
-    /** label placer. */
-    private ILabelPlacer labelPlacer = new SimpleLabelPlacer();
+public class SplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
 
     /** amounts of points treated the same way. */
     private static final int HIGH_LIMIT = 7;
@@ -70,6 +61,14 @@ public class SimpleSplineEdgeRouter extends AbstractAlgorithm implements ILayout
     /** at least this many points are needed to handle the spline. */
     private static final int MINIMAL_POINTS_HANDLES = 4;
     
+    /** maximal number of edges for which the default node spacing is taken. */
+    private static final int MAX_EDGES = 3;
+    
+    /** spline generator. */
+    private SplineGenerator splineGen = new SplineGenerator();
+    /** label placer. */
+    private SimpleLabelPlacer labelPlacer = new SimpleLabelPlacer();
+
     /**
      * {@inheritDoc}
      */
@@ -82,18 +81,22 @@ public class SimpleSplineEdgeRouter extends AbstractAlgorithm implements ILayout
      */
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Simple spline routing", 1);
-        spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        double defspacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         
         // contains nodes from which long edges are starting
         LinkedList<LEdge> longEdges = new LinkedList<LEdge>();
         LinkedList<LongEdge> realLongEdges = new LinkedList<LongEdge>();
         LinkedList<LEdge> shortEdges = new LinkedList<LEdge>();
         // set horizontal positioning for each layer
-        double xpos = 0.0f;
+        double xpos = 0.0, spacing = 0.0;
         List<LLabel> consideredLabelsInLayerSize = new LinkedList<LLabel>();
         for (Layer layer : layeredGraph.getLayers()) {
             layer.placeNodes(xpos);
+            int edgeCount = 0;
             for (LNode node : layer.getNodes()) {
+                for (LPort port : node.getPorts()) {
+                    edgeCount += port.getOutgoingEdges().size();
+                }
                 // filter out start points of long edges
                 if (node.getProperty(Properties.NODE_TYPE) != NodeType.LONG_EDGE) {
                     for (LPort port : node.getPorts()) {
@@ -109,6 +112,8 @@ public class SimpleSplineEdgeRouter extends AbstractAlgorithm implements ILayout
                     }
                 }
             }
+            // determine placement of next layer based on the number of edges
+            spacing = edgeCount <= MAX_EDGES ? defspacing : defspacing * Math.sqrt(edgeCount);
             xpos += layer.getSize().x + spacing;
             LLabel longestLabelHere = labelPlacer.longestLabel(layer);
             if (!consideredLabelsInLayerSize.contains(longestLabelHere)) {
@@ -118,7 +123,7 @@ public class SimpleSplineEdgeRouter extends AbstractAlgorithm implements ILayout
         }
         layeredGraph.getSize().x = xpos - spacing;
 
-        // get user defined minimal angle for straigt edges heading in and out nodes.
+        // get user defined minimal angle for straight edges heading in and out nodes.
         int minimalAngle = layeredGraph.getProperty(Properties.MIN_EDGE_ANGLE);
         // check all short edges
         if (minimalAngle != 0) {
