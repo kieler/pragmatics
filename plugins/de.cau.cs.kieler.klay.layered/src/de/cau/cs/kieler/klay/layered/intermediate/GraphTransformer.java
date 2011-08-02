@@ -59,6 +59,7 @@ public class GraphTransformer extends AbstractAlgorithm implements ILayoutProces
      * {@inheritDoc}
      */
     public void process(final LayeredGraph layeredGraph) {
+        getMonitor().begin("Graph transformation (" + mode + ")", 1);
         List<LNode> nodes = new LinkedList<LNode>(layeredGraph.getLayerlessNodes());
         for (Layer layer : layeredGraph.getLayers()) {
             nodes.addAll(layer.getNodes());
@@ -80,6 +81,7 @@ public class GraphTransformer extends AbstractAlgorithm implements ILayoutProces
             transpose(layeredGraph.getSize());
             break;
         }
+        getMonitor().done();
     }
     
     /**
