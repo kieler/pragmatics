@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klay.info.views;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -484,13 +485,13 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
             paintLabels = false;
             for (KEdge edge : child.getIncomingEdges()) {
                 if (edge.getSource().getParent() != child) {
-                    paintEdge(edge, graphics, area, subOffset);
+                    paintEdge(edge, graphics, area);
                 }
             }
             paintLabels = oldPaintLabels;
             for (KEdge edge : child.getOutgoingEdges()) {
                 if (edge.getTarget().getParent() != child) {
-                    paintEdge(edge, graphics, area, subOffset);
+                    paintEdge(edge, graphics, area);
                 }
             }
         }
@@ -508,8 +509,15 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
      * @param offset
      *            offset to be added to relative coordinates
      */
-    private void paintEdge(final KEdge edge, final GC graphics, final PaintRectangle area,
-            final KVector offset) {
+    private void paintEdge(final KEdge edge, final GC graphics, final PaintRectangle area) {
+        // calculate an offset for edge coordinates
+        KVector offset = new KVector();
+        KNode parent = edge.getSource();
+        if (!KimlUtil.isDescendant(edge.getTarget(), parent)) {
+            parent = parent.getParent();
+        }
+        KimlUtil.toAbsolute(offset, parent);
+        
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         boolean hasPorts = edge.getSourcePort() != null && edge.getTargetPort() != null;
         BendsIterator sourceIter = null, targetIter = null;
