@@ -27,9 +27,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
-import com.google.inject.Injector;
-
-import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotStandaloneSetup;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
 import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation;
 import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation.Command;
@@ -57,8 +54,6 @@ import de.cau.cs.kieler.core.util.NonBlockingInputStream;
  */
 public class GraphvizLayouter {
 
-    /** the resource set used for parsing and serialization. */
-    private XtextResourceSet resourceSet;
     /** base file name for debug output. */
     private String debugFileName;
 
@@ -95,22 +90,19 @@ public class GraphvizLayouter {
             return;
         }
 
-        // create an Xtext resource set for parsing and serialization
-        if (resourceSet == null) {
-            Injector injector = new GraphvizDotStandaloneSetup().createInjectorAndDoEMFRegistration();
-            resourceSet = injector.getInstance(XtextResourceSet.class);
-            resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-        }
-
         // start the graphviz process, or retrieve the previously used process
         Process graphvizProcess = graphvizTool.startProcess(command);
 
-        // translate the KGraph to Graphviz and write to the process
+        // create an Xtext resource set for parsing and serialization
         KGraphDotTransformation transformation = new KGraphDotTransformation(parentNode);
+        XtextResourceSet resourceSet = transformation.createResourceSet();
+        resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+
+        // translate the KGraph to Graphviz and write to the process
         GraphvizModel graphvizInput = transformation.transform(command,
                 progressMonitor.subTask(SMALL_TASK));
         writeDotGraph(graphvizInput, new BufferedOutputStream(graphvizProcess.getOutputStream()),
-                progressMonitor.subTask(LARGE_TASK), debugMode, graphvizTool);
+                progressMonitor.subTask(LARGE_TASK), debugMode, graphvizTool, resourceSet);
 
         // wait for Graphviz to give some output
         graphvizTool.waitForInput(graphvizProcess.getInputStream(), graphvizProcess.getErrorStream(),
@@ -120,7 +112,7 @@ public class GraphvizLayouter {
             // read Graphviz output and apply layout information to the KGraph
             GraphvizModel graphvizOutput = readDotGraph(
                     new BufferedInputStream(graphvizProcess.getInputStream()),
-                    progressMonitor.subTask(LARGE_TASK), debugMode, graphvizTool);
+                    progressMonitor.subTask(LARGE_TASK), debugMode, graphvizTool, resourceSet);
             transformation.applyLayout(graphvizOutput, progressMonitor.subTask(SMALL_TASK));
         }
 
@@ -138,10 +130,14 @@ public class GraphvizLayouter {
      *            a monitor to which progress is reported
      * @param debugMode
      *            whether debug mode is active
+     * @param graphvizTool
+     *            Graphviz process handler
+     * @param resourceSet
+     *            the resource set for serialization
      */
     private void writeDotGraph(final GraphvizModel graphvizModel, final OutputStream processStream,
             final IKielerProgressMonitor monitor, final boolean debugMode,
-            final GraphvizTool graphvizTool) {
+            final GraphvizTool graphvizTool, final XtextResourceSet resourceSet) {
         monitor.begin("Serialize model", 1);
         OutputStream outputStream = processStream;
         // enable debug output if needed
@@ -189,17 +185,21 @@ public class GraphvizLayouter {
     /**
      * Reads and parses a serialized Graphviz model.
      * 
-     * @param inputStream
+     * @param processStream
      *            input stream from which the model is read
      * @param monitor
      *            a monitor to which progress is reported
      * @param debugMode
      *            whether debug mode is active
+     * @param graphvizTool
+     *            Graphviz process handler
+     * @param resourceSet
+     *            the resoure set for parsing
      * @return an instance of the parsed graphviz model
      */
     private GraphvizModel readDotGraph(final InputStream processStream,
             final IKielerProgressMonitor monitor, final boolean debugMode,
-            final GraphvizTool graphvizTool) {
+            final GraphvizTool graphvizTool, final XtextResourceSet resourceSet) {
         monitor.begin("Parse output", 1);
         InputStream inputStream = new NonBlockingInputStream(processStream);
         // enable debug output if needed

@@ -21,6 +21,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.eclipse.xtext.resource.XtextResourceSet;
+
+import com.google.inject.Injector;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
@@ -31,6 +35,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotStandaloneSetup;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.AttributeStatement;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.AttributeType;
@@ -62,6 +67,21 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * @author mri
  */
 public class KGraphDotTransformation {
+    
+    /** the injector for creation of resources. */
+    private static Injector injector;
+    
+    /**
+     * Return a new instance of a resource set for parsing and serializing.
+     * 
+     * @return a resource set
+     */
+    public XtextResourceSet createResourceSet() {
+        if (injector == null) {
+            injector = new GraphvizDotStandaloneSetup().createInjectorAndDoEMFRegistration();
+        }
+        return injector.getInstance(XtextResourceSet.class);
+    }
 
     /** definition of Graphviz commands. */
     public enum Command {

@@ -23,14 +23,11 @@ import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
-import com.google.inject.Injector;
-
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.kiml.export.AbstractExporter;
-import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotStandaloneSetup;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
 import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation;
 
@@ -72,26 +69,17 @@ public class DotExporter extends AbstractExporter {
      * {@inheritDoc}
      */
     public void doExport(final KNode graph, final OutputStream stream,
-            final MapPropertyHolder options,
-            final IKielerProgressMonitor monitor) {
+            final MapPropertyHolder options, final IKielerProgressMonitor monitor) {
         monitor.begin(Messages.DotExporter_export_kgraph_to_dot_task, 2);
         try {
             // transform the graph
-            KGraphDotTransformation transformation =
-                    new KGraphDotTransformation(graph);
-            GraphvizModel dotGraph =
-                    transformation.transform(
-                            KGraphDotTransformation.Command.DOT,
-                            monitor.subTask(1));
+            KGraphDotTransformation transformation = new KGraphDotTransformation(graph);
+            GraphvizModel dotGraph = transformation.transform(KGraphDotTransformation.Command.DOT,
+                    monitor.subTask(1));
             // write to file
-            Injector injector =
-                    new GraphvizDotStandaloneSetup()
-                            .createInjectorAndDoEMFRegistration();
-            XtextResourceSet resourceSet =
-                    injector.getInstance(XtextResourceSet.class);
-            XtextResource resource =
-                    (XtextResource) resourceSet.createResource(URI
-                            .createURI("http:///My.graphviz-dot")); //$NON-NLS-1$
+            XtextResourceSet resourceSet = transformation.createResourceSet();
+            XtextResource resource = (XtextResource) resourceSet.createResource(URI
+                    .createURI("http:///My.graphviz_dot")); //$NON-NLS-1$
             resource.getContents().add(dotGraph);
             Map<String, Object> resourceOptions = new HashMap<String, Object>();
             resourceOptions.put(XMLResource.OPTION_ENCODING, "UTF-8"); //$NON-NLS-1$
