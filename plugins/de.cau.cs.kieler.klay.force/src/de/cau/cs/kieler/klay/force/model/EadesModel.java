@@ -25,8 +25,14 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  */
 public class EadesModel extends AbstractForceModel {
 
+    /** factor used for force calculations when the distance of two particles is zero. */
+    private static final double ZERO_FACTOR = 100;
+
+    /** the maximal number of iterations after which the model stops. */
     private int maxIterations = Properties.DEF_ITERATIONS;
+    /** the spring length that determines the optimal distance of connected nodes. */
     private double springLength = Properties.DEF_SPACING;
+    /** additional factor for repulsive forces. */
     private double repulsionFactor = Properties.DEF_REPULSION;
     
     /**
@@ -57,7 +63,8 @@ public class EadesModel extends AbstractForceModel {
 
         // compute distance (z in the original algorithm)
         KVector displacement = forcee.getPosition().differenceCreate(forcer.getPosition());
-        double d = displacement.getLength();
+        double length = displacement.getLength();
+        double d = Math.max(0, length - forcer.getRadius() - forcee.getRadius());
         
         // calculate attractive or repulsive force, depending of adjacency
         double force;
@@ -69,7 +76,7 @@ public class EadesModel extends AbstractForceModel {
         }
 
         // scale distance vector to the amount of repulsive forces
-        displacement.scale(force / d);
+        displacement.scale(force / length);
 
         return displacement;
     }
@@ -82,7 +89,11 @@ public class EadesModel extends AbstractForceModel {
      * @return a force exerted on the forcee 
      */
     private static double repulsive(final double d, final double r) {
-        return r / (d * d);
+        if (d > 0) {
+            return r / (d * d);
+        } else {
+            return r * ZERO_FACTOR;
+        }
     }
     
     /**
@@ -93,7 +104,11 @@ public class EadesModel extends AbstractForceModel {
      * @return a force exerted on the forcee
      */
     public static double attractive(final double d, final double s) {
-        return Math.log(d / s);
+        if (d > 0) {
+            return Math.log(d / s);
+        } else {
+            return -ZERO_FACTOR;
+        }
     }
 
 }

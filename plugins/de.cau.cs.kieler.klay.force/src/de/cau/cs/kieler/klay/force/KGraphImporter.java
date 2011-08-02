@@ -175,10 +175,10 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         for (FNode node : fgraph.getNodes()) {
             KVector pos = node.getPosition();
             KVector size = node.getSize();
-            minXPos = Math.min(minXPos, pos.x);
-            minYPos = Math.min(minYPos, pos.y);
-            maxXPos = Math.max(maxXPos, pos.x + size.x);
-            maxYPos = Math.max(maxYPos, pos.y + size.y);
+            minXPos = Math.min(minXPos, pos.x - size.x / 2);
+            minYPos = Math.min(minYPos, pos.y - size.y / 2);
+            maxXPos = Math.max(maxXPos, pos.x + size.x / 2);
+            maxYPos = Math.max(maxYPos, pos.y + size.y / 2);
         }
         KVector offset = new KVector(borderSpacing - minXPos, borderSpacing - minYPos);
         
@@ -190,8 +190,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 // set the node position
                 KShapeLayout nodeLayout = ((KNode) object).getData(KShapeLayout.class);
                 KVector nodePos = fnode.getPosition().add(offset);
-                nodeLayout.setXpos((float) nodePos.x - nodeLayout.getWidth());
-                nodeLayout.setYpos((float) nodePos.y - nodeLayout.getHeight());
+                nodeLayout.setXpos((float) nodePos.x - nodeLayout.getWidth() / 2);
+                nodeLayout.setYpos((float) nodePos.y - nodeLayout.getHeight() / 2);
             }
         }
         

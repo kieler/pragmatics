@@ -28,10 +28,16 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  */
 public class FruchtermanReingoldModel extends AbstractForceModel {
 
+    /** factor that determines the C constant used for calculation of K. */
     private static final double SPACING_FACTOR = 0.01;
+    /** factor used for repulsive force when the distance of two particles is zero. */
+    private static final double ZERO_FACTOR = 100;
     
+    /** the current temperature of the system. */
     private double temperature = Properties.DEF_TEMPERATURE;
+    /** the temperature threshold for stopping the model. */
     private double threshold;
+    /** the main constant used for force calculations. */
     private double k;
     
     /**
@@ -73,7 +79,8 @@ public class FruchtermanReingoldModel extends AbstractForceModel {
 
         // compute distance (z in the original algorithm)
         KVector displacement = forcee.getPosition().differenceCreate(forcer.getPosition());
-        double d = displacement.getLength();
+        double length = displacement.getLength();
+        double d = Math.max(0, length - forcer.getRadius() - forcee.getRadius());
         
         // calculate repulsive force, independent of adjacency
         double force = repulsive(d, k) * forcer.getProperty(Properties.PRIORITY);
@@ -85,7 +92,7 @@ public class FruchtermanReingoldModel extends AbstractForceModel {
         }
 
         // scale distance vector to the amount of repulsive forces
-        displacement.scale(force * temperature / d);
+        displacement.scale(force * temperature / length);
 
         return displacement;
     }
@@ -107,7 +114,11 @@ public class FruchtermanReingoldModel extends AbstractForceModel {
      * @return the amount of the repulsive force
      */
     private static double repulsive(final double d, final double k) {
-        return k * k / d;
+        if (d > 0) {
+            return k * k / d;
+        } else {
+            return k * k * ZERO_FACTOR;
+        }
     }
     
     /**

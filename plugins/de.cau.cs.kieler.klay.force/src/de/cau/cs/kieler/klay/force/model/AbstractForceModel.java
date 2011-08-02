@@ -39,10 +39,10 @@ public abstract class AbstractForceModel extends AbstractAlgorithm {
     /** the graph for which this model was initialized. */
     private FGraph graph;
     /** upper bound for particle coordinates. */
-    private double coordBound;
+    private double dispBound;
     
-    /** factor by which nodes influence the coordinates bound. */
-    private static final double NODE_BOUND_FACTOR = 8;
+    /** factor by which nodes influence the displacement bound. */
+    private static final double DISP_BOUND_FACTOR = 16;
     
     /**
      * Initialize the force model with the given graph. Subclasses that override this
@@ -57,9 +57,9 @@ public abstract class AbstractForceModel extends AbstractAlgorithm {
         // calculate the adjacency matrix for the graph
         fgraph.calcAdjacency();
         
-        // calculate an upper bound for particle coordinates
-        coordBound = Math.max(fgraph.getNodes().size() * NODE_BOUND_FACTOR + fgraph.getEdges().size(),
-                NODE_BOUND_FACTOR * NODE_BOUND_FACTOR);
+        // calculate an upper bound for particle displacement
+        dispBound = Math.max(fgraph.getNodes().size() * DISP_BOUND_FACTOR + fgraph.getEdges().size(),
+                DISP_BOUND_FACTOR * DISP_BOUND_FACTOR);
         
         // if interactive mode is off, randomize the layout
         if (!fgraph.getProperty(LayoutOptions.INTERACTIVE)) {
@@ -128,7 +128,7 @@ public abstract class AbstractForceModel extends AbstractAlgorithm {
             // apply calculated displacement
             for (FNode v : fgraph.getNodes()) {
                 KVector d = v.getDisplacement();
-                d.applyBounds(-coordBound, -coordBound, coordBound, coordBound);
+                d.applyBounds(-dispBound, -dispBound, dispBound, dispBound);
                 v.getPosition().add(d);
                 d.reset();
             }
