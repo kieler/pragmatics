@@ -223,11 +223,15 @@ public abstract class OgdfLayouter {
             // wait for the process to finish the layout and send the layout information
             final IKielerProgressMonitor subMon = progressMonitor.subTask(PROCESS_WORK);
             subMon.begin("Wait OGDF Reply", 1);
-            if (!ogdfServer.waitForInput(process.getInputStream(), new Aborter() {
+            boolean dataok = ogdfServer.waitForInput(process.getInputStream(), new Aborter() {
                 public boolean shouldAbort() {
                     return subMon.isCanceled();
                 }
-            })) {
+            });
+            if (subMon.isCanceled()) {
+                return;
+            }
+            if (!dataok) {
                 // FIXME throw a more specific exception
                 throw new RuntimeException("A timeout occured while waiting for the OGDF process."
                         + " Try increasing the timeout value in the preferences.");

@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.force.model;
 import java.util.List;
 import java.util.Random;
 
+import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.force.graph.FBendpoint;
@@ -31,7 +32,7 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  *
  * @author msp
  */
-public abstract class AbstractForceModel {
+public abstract class AbstractForceModel extends AbstractAlgorithm {
 
     /** the random number generator used for this model. */
     private Random random;
@@ -106,10 +107,11 @@ public abstract class AbstractForceModel {
      * @param fgraph a force graph
      */
     public void layout(final FGraph fgraph) {
+        getMonitor().begin("Component Layout", 1);
         initialize(fgraph);
         int iterations = 0;
         
-        while (moreIterations(iterations)) {
+        while (moreIterations(iterations) && !getMonitor().isCanceled()) {
             
             // calculate attractive and repulsive forces
             for (FNode v : fgraph.getNodes()) {
@@ -134,6 +136,7 @@ public abstract class AbstractForceModel {
             iterationDone();
             iterations++;
         }
+        getMonitor().done();
     }
     
     /**
