@@ -22,9 +22,9 @@ import de.cau.cs.kieler.core.math.KVector;
  */
 public abstract class LSizedGraphElement extends LGraphElement {
     
-    /** the current position of the node. */
+    /** the current position of the element. */
     private KVector pos = new KVector();
-    /** the size of the node. */
+    /** the size of the element. */
     private KVector size = new KVector();
 
 

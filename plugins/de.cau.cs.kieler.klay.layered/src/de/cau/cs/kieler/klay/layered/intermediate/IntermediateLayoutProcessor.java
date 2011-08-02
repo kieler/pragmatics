@@ -31,6 +31,12 @@ public enum IntermediateLayoutProcessor {
     
     // Before Phase 1
     
+    /** Mirrors the graph to perform a right-to-left drawing. */
+    LEFT_DIR_PREPROCESSOR,
+    /** Transposes the graph to perform a top-bottom drawing. */
+    DOWN_DIR_PREPROCESSOR,
+    /** Mirrors and transposes the graph to perform a bottom-up drawing. */
+    UP_DIR_PREPROCESSOR,
     /** Makes sure nodes with layer constraints have only incoming or only outgoing edges. */
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
     
@@ -93,7 +99,13 @@ public enum IntermediateLayoutProcessor {
     REVERSED_EDGE_RESTORER,
     /** Removes dummy nodes and -edges from compound graph representation,
      *  positioning of compound nodes. */
-    COMPOUND_GRAPH_RESTORER;
+    COMPOUND_GRAPH_RESTORER,
+    /** Mirrors the graph to perform a right-to-left drawing. */
+    LEFT_DIR_POSTPROCESSOR,
+    /** Transposes the graph to perform a top-bottom drawing. */
+    DOWN_DIR_POSTPROCESSOR,
+    /** Mirrors and transposes the graph to perform a bottom-up drawing. */
+    UP_DIR_POSTPROCESSOR;
     
     
     /**
@@ -126,6 +138,10 @@ public enum IntermediateLayoutProcessor {
         case COMPOUND_SIDE_PROCESSOR:
             return new CompoundSideProcessor();
             
+        case DOWN_DIR_POSTPROCESSOR:
+        case DOWN_DIR_PREPROCESSOR:
+            return new GraphTransformer(GraphTransformer.Mode.TRANSPOSE);
+            
         case HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR:
             return new HierarchicalPortConstraintProcessor();
         
@@ -146,6 +162,10 @@ public enum IntermediateLayoutProcessor {
         
         case LAYER_CONSTRAINT_PROCESSOR:
             return new LayerConstraintProcessor();
+            
+        case LEFT_DIR_POSTPROCESSOR:
+        case LEFT_DIR_PREPROCESSOR:
+            return new GraphTransformer(GraphTransformer.Mode.MIRROR);
         
         case EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER:
             return new EdgeAndLayerConstraintEdgeReverser();
@@ -182,6 +202,10 @@ public enum IntermediateLayoutProcessor {
         
         case SELF_LOOP_PROCESSOR:
             return new SelfLoopProcessor();
+            
+        case UP_DIR_POSTPROCESSOR:
+        case UP_DIR_PREPROCESSOR:
+            return new GraphTransformer(GraphTransformer.Mode.MIRROR_AND_TRANSPOSE);
         
         default:
             return null;

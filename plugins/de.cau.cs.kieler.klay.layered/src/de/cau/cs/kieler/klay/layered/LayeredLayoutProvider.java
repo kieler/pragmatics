@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -86,7 +87,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     /** intermediate processing strategy for basic graphs. */
     private static final IntermediateProcessingStrategy BASELINE_PROCESSING_STRATEGY 
                                                         = new IntermediateProcessingStrategy(
-    // Before Phase 1
+            // Before Phase 1
             null,
 
             // Before Phase 2
@@ -109,7 +110,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     /** additional processor dependencies for flattened hierarchical graphs. */
     private static final IntermediateProcessingStrategy FLATTENED_HIERARCHY_PROCESSING_ADDITIONS 
                                                                 = new IntermediateProcessingStrategy(
-    // Before Phase 1
+            // Before Phase 1
             null,
 
             // Before Phase 2
@@ -318,9 +319,9 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      */
     private List<ILayoutProcessor> getIntermediateProcessorList(final int slotIndex) {
         // fetch the set of layout processors configured for the given slot
-        List<ILayoutProcessor> result = new LinkedList<ILayoutProcessor>();
         Set<IntermediateLayoutProcessor> processors = intermediateProcessingStrategy
                 .getProcessors(slotIndex);
+        List<ILayoutProcessor> result = new ArrayList<ILayoutProcessor>(processors.size());
 
         // iterate through the layout processors and add them to the result list
         for (IntermediateLayoutProcessor processor : processors) {
@@ -355,6 +356,28 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // Basic strategy
         IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy(
                 BASELINE_PROCESSING_STRATEGY);
+        
+        // graph transformations for unusual layout directions
+        switch (graph.getProperty(LayoutOptions.DIRECTION)) {
+        case LEFT:
+            strategy.addLayoutProcessor(IntermediateProcessingStrategy.BEFORE_PHASE_1,
+                    IntermediateLayoutProcessor.LEFT_DIR_PREPROCESSOR);
+            strategy.addLayoutProcessor(IntermediateProcessingStrategy.AFTER_PHASE_5,
+                    IntermediateLayoutProcessor.LEFT_DIR_POSTPROCESSOR);
+            break;
+        case DOWN:
+            strategy.addLayoutProcessor(IntermediateProcessingStrategy.BEFORE_PHASE_1,
+                    IntermediateLayoutProcessor.DOWN_DIR_PREPROCESSOR);
+            strategy.addLayoutProcessor(IntermediateProcessingStrategy.AFTER_PHASE_5,
+                    IntermediateLayoutProcessor.DOWN_DIR_POSTPROCESSOR);
+            break;
+        case UP:
+            strategy.addLayoutProcessor(IntermediateProcessingStrategy.BEFORE_PHASE_1,
+                    IntermediateLayoutProcessor.UP_DIR_PREPROCESSOR);
+            strategy.addLayoutProcessor(IntermediateProcessingStrategy.AFTER_PHASE_5,
+                    IntermediateLayoutProcessor.UP_DIR_POSTPROCESSOR);
+            break;
+        }
 
         // Additional dependencies
         if (graphProperties.contains(GraphProperties.FLAT_HIERARCHICAL)) {
