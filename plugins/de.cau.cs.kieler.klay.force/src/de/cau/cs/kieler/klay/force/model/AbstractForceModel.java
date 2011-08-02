@@ -63,10 +63,11 @@ public abstract class AbstractForceModel extends AbstractAlgorithm {
         
         // if interactive mode is off, randomize the layout
         if (!fgraph.getProperty(LayoutOptions.INTERACTIVE)) {
+            double posScale = graph.getNodes().size();
             for (FNode node : fgraph.getNodes()) {
                 KVector pos = node.getPosition();
-                pos.x = random.nextDouble();
-                pos.y = random.nextDouble();
+                pos.x = random.nextDouble() * posScale;
+                pos.y = random.nextDouble() * posScale;
             }
         }
         
