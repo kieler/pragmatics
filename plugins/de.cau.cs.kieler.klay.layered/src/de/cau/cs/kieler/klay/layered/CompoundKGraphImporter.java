@@ -342,9 +342,9 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         // Iterate incoming and outgoing edges, transform them and create dummy nodes and ports
         // representing the node.
         transformCompoundEdgeList(node, layeredNodes, elemMap, dummyNodes, node.getIncomingEdges(),
-                true);
+                true, layeredGraph);
         transformCompoundEdgeList(node, layeredNodes, elemMap, dummyNodes, node.getOutgoingEdges(),
-                false);
+                false, layeredGraph);
     }
 
     /**
@@ -370,10 +370,12 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
      * @param incoming
      *            True, if the List is a List of incoming edges, false if it is a List of outgoing
      *            edges.
+     * @param layeredGraph
+     *            The layered graph.
      */
     private void transformCompoundEdgeList(final KNode node, final List<LNode> layeredNodes,
             final Map<KGraphElement, LGraphElement> elemMap, final List<LNode> dummyNodes,
-            final List<KEdge> edgesList, final boolean incoming) {
+            final List<KEdge> edgesList, final boolean incoming, final LayeredGraph layeredGraph) {
 
         // get layout data of the compound node
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
@@ -466,15 +468,17 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
 
             // Connect the edge to the dummy node, to western port for incoming edges, to
             // eastern for outgoing ones
-            LPort dummyPort = null;
             PortSide portSide = null;
             if (incoming) {
                 portSide = PortSide.WEST;
             } else {
                 portSide = PortSide.EAST;
             }
-            Iterator<LPort> portIterator = representative.getPorts(portSide).iterator();
-            dummyPort = portIterator.next();
+            LPort dummyPort = createDummyPort(representative, portSide);
+            // make sure, edges do not overlap
+            float edgeSpacing = layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR)
+                    * layeredGraph.getProperty(Properties.OBJ_SPACING);
+            representative.getSize().y += edgeSpacing;
 
             if (incoming) {
                 KPoint targetPoint = edgeLayout.getTargetPoint();
@@ -888,13 +892,13 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
      * Applies the layout of a single edge.
      * 
      * @param ledge
-     *      edge whose layout is to be applied.
+     *            edge whose layout is to be applied.
      * @param graphBorderSpacing
-     *      borderSpacing of the whole graph.
+     *            borderSpacing of the whole graph.
      * @param layeredGraph
-     *      the complete layered graph.
+     *            the complete layered graph.
      * @param splinesActive
-     *      signifies if the edge routing uses splines.
+     *            signifies if the edge routing uses splines.
      */
     private void applyEdgeLayout(final LEdge ledge, final double graphBorderSpacing,
             final MapPropertyHolder layeredGraph, final boolean splinesActive) {
