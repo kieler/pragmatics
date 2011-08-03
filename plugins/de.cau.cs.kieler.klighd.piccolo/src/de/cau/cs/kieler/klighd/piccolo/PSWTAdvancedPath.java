@@ -444,9 +444,44 @@ public class PSWTAdvancedPath extends PSWTPath {
      * 
      * @param width
      *            the line width
+	 *
+     * @author chsch : change native type to object type as it may cause {@link NullPointerException}s otherwise.
      */
-    public void setLineWidth(final double width) {
-        lineWidth = width;
+    public void setLineWidth(final Integer width) {
+    if (width != null) {
+    		lineWidth = width;
+    	}
+        
+    }
+
+    /**
+     * Sets the line width of the path.
+     * 
+     * @param width
+     *            the line width
+     *            
+     * @author chsch : change native type to object type as it may cause {@link NullPointerException}s otherwise.
+     */
+    public void setLineWidth(final Float width) {
+    if (width != null) {
+    		lineWidth = width;
+    	}
+        
+    }
+
+    /**
+     * Sets the line width of the path.
+     * 
+     * @param width
+     *            the line width
+     *            
+     * @author chsch : change native type to object type as it may cause {@link NullPointerException}s otherwise.
+     */
+    public void setLineWidth(final Double width) {
+    if (width != null) {
+    		lineWidth = width;
+    	}
+        
     }
 
     /**
