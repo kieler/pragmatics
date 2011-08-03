@@ -241,16 +241,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
             if (lnode.getProperty(Properties.ORIGIN) instanceof KNode) {
                 KNode origin = (KNode) lnode.getProperty(Properties.ORIGIN);
                 if (CompoundKGraphImporter.isDescendant(upperBorderOrigin, origin)) {
-                    int test = lnode.getIndex();
-                    if (lowerSide) {
-                        if (test > ret) {
-                            ret = test;
-                        }
-                    } else {
-                        if (test < ret) {
-                            ret = test;
-                        }
-                    }
+                   ret = compareIndex(lnode, ret, lowerSide);
                 }
             }
             if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
@@ -258,23 +249,51 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
                 Object origin = edge.getProperty(Properties.ORIGIN);
                 if (origin instanceof KEdge) {
                     LNode sourceNode = edge.getSource().getNode();
-                    //KNode kSourceNode = (KNode) (sourceNode.getProperty(Properties.ORIGIN));
+                    // KNode kSourceNode = (KNode) (sourceNode.getProperty(Properties.ORIGIN));
                     KEdge originEdge = (KEdge) origin;
                     KNode kSourceNode = originEdge.getSource();
                     if (sourceNode == upperBorder
                             || KimlUtil.isDescendant(kSourceNode, upperBorderOrigin)) {
-                        int test = lnode.getIndex();
-                        if (lowerSide) {
-                            if (test > ret) {
-                                ret = test;
-                            }
-                        } else {
-                            if (test < ret) {
-                                ret = test;
-                            }
-                        }
+                        ret = compareIndex(lnode, ret, lowerSide);
                     }
                 }
+            }
+            // keep north-south-port dummies and their nodes together
+            if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
+                LNode portNode = lnode.getProperty(Properties.IN_LAYER_LAYOUT_UNIT);
+                KNode originPortNode = (KNode) portNode.getProperty(Properties.ORIGIN);
+                if (KimlUtil.isDescendant(originPortNode, upperBorderOrigin)) {
+                   ret = compareIndex(lnode, ret, lowerSide);
+                }
+            }
+        }
+        return ret;
+    }
+    
+    /** 
+     * Compares a node's index to an actual index to update a maximum/minimum value.
+     * 
+     * @param lnode
+     *      node whose index is to be compared.
+     * @param actualValue
+     *      the actual maximum/minimum value.
+     * @param lowerSide
+     *      if true, the maximum is to be updated, if false, the minimum.
+     * @return
+     *      returns the updated max or min value.
+     */
+    private int compareIndex(final LNode lnode, final int actualValue, final boolean lowerSide) {
+        
+        int test = lnode.getIndex();
+        int ret = 0;
+        ret += actualValue;
+        if (lowerSide) {
+            if (test > ret) {
+                ret = test;
+            }
+        } else {
+            if (test < ret) {
+                ret = test;
             }
         }
         return ret;
