@@ -44,6 +44,7 @@ import de.cau.cs.kieler.klighd.KLighDPlugin;
 public class XtendBasedTransformation implements IModelTransformation<Object, Object> {
 
     private static final String TRANSFORMATION_EXTENSION_NAME = "transform";
+    private static final String DEFAULT_TRANSFORMATION_EXTENSION_NAME = "onError";
 
     private URL extfile;
     private String extension;
@@ -117,7 +118,7 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
 
                             // check whether the xtend file imports the package containing this
                             // class
-                            // this check test only the last subpackage name (is sufficient right
+                            // this check tests only the last subpackage name (is sufficient right
                             // now)
                             for (String name : ext.getImportedNamespaces()) {
                                 isDeclared |= name.endsWith(ePackage.getNsPrefix());
@@ -173,6 +174,18 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
         params[0] = model;
 
         EObject result = null;
+
+        // the following allows to handle erroneous transformations while developing those
+        //  transformations; by this a valid model is returned anyway;
+        //  due to the performance optimization the light diagram service
+        //  will most likely mark the initial input model to be not supported
+        //  if "null" is returned by the transformation
+        try {
+            result = (EObject) facade.call(DEFAULT_TRANSFORMATION_EXTENSION_NAME, new Object[0]);
+        } catch (Exception e) {
+        	/* nothing */        	
+        }        
+        
         try {
             result = (EObject) facade.call(this.extension, params);
         } catch (Exception e) {
