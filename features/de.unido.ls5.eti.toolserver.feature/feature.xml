@@ -5,7 +5,7 @@
       version="1.5.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
-   <description>
+   <description url="http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/Projects/KWebS">
       This feature contains the plugins needed for the jETI embedded
 tool server used in the KIELER layout server. This feature uses
 libraries from the jETI project from the TU Dortmund.
@@ -163,6 +163,13 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <plugin
          id="de.unido.ls5.eti.sps.apis"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.xerces"
          download-size="0"
          install-size="0"
          version="0.0.0"
