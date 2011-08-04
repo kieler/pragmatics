@@ -18,6 +18,8 @@ import java.util.Map;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
+import de.cau.cs.kieler.kiml.grana.AnalysisFailed.Type;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 
 /**
@@ -51,8 +53,7 @@ public class NarrownessMetric implements IAnalysis {
 
             if (!(dimsResult instanceof Pair)) {
                 // This should happen only when the dims analysis failed.
-                // FIXME throw a more specific exception
-                throw new RuntimeException("Narrowness metric analysis failed.");
+                return new AnalysisFailed(Type.Dependency);
             }
 
             Pair<Float, Float> dims = (Pair<Float, Float>) dimsResult;
@@ -63,8 +64,8 @@ public class NarrownessMetric implements IAnalysis {
             boolean isYdimZero = ydim == 0.0f;
 
             if (isXdimZero && isYdimZero) {
-                // FIXME throw a more specific exception
-                throw new RuntimeException("Narrowness metric analysis failed.");
+                return new AnalysisFailed(Type.Dependency,
+                        new IllegalStateException("Zero area."));
             }
 
             float heightToWidthRatio = isXdimZero ? Float.POSITIVE_INFINITY : ydim / xdim;

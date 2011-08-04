@@ -18,6 +18,7 @@ import java.util.Map;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 
 /**
@@ -51,8 +52,9 @@ public class FlatnessMetric implements IAnalysis {
 
             if (!(dimsResult instanceof Pair<?, ?>)) {
                 // This should happen only when the dims analysis failed.
-                // FIXME throw a more specific exception
-                throw new RuntimeException("Flatness metric analysis failed.");
+
+                // Flatness metric analysis failed.
+                return new AnalysisFailed(AnalysisFailed.Type.Dependency);
             }
 
             Pair<Float, Float> dims = (Pair<Float, Float>) dimsResult;
@@ -63,8 +65,8 @@ public class FlatnessMetric implements IAnalysis {
             boolean isYdimZero = ydim == 0.0f;
 
             if (isXdimZero && isYdimZero) {
-                // FIXME throw a more specific exception
-                throw new RuntimeException("Flatness metric analysis failed.");
+                return new AnalysisFailed(AnalysisFailed.Type.Failed, new IllegalStateException(
+                        "Flatness metric analysis failed because of zero length or height."));
             }
 
             float heightToWidthRatio = isXdimZero ? Float.POSITIVE_INFINITY : ydim / xdim;
@@ -80,7 +82,6 @@ public class FlatnessMetric implements IAnalysis {
 
             assert (0.0f <= result) && (result <= 1.0f) : "Metric result out of bounds: "
                     + result;
-
         } finally {
             // We must close the monitor.
             progressMonitor.done();

@@ -17,6 +17,8 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
+import de.cau.cs.kieler.kiml.grana.AnalysisFailed.Type;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 
 /**
@@ -50,8 +52,7 @@ public class EdgeUniformityMetric implements IAnalysis {
             Object edgeLengthResult = results.get(GRANA_EDGE_LENGTH);
 
             if (!(edgeLengthResult instanceof Object[])) {
-                // FIXME throw a more specific exception
-                throw new RuntimeException("Edge length uniformity analysis failed.");
+                return new AnalysisFailed(Type.Dependency);
             }
 
             Object[] mmr = (Object[]) edgeLengthResult;
@@ -67,7 +68,7 @@ public class EdgeUniformityMetric implements IAnalysis {
             // FIXME this correlates with the layout size?
             if (rangeToAverageRatio < 1.0f) {
                 // relatively small range
-                result = 1.0f - rangeToAverageRatio * half;
+                result = 1.0f - (rangeToAverageRatio * half);
             } else {
                 // relatively big range
                 result = (1.0f / rangeToAverageRatio) * half;
