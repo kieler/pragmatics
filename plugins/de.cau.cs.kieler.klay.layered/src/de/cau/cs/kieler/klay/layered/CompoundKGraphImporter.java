@@ -920,22 +920,27 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         KVector kTargetNodePosition = new KVector(kTargetNodeLayout.getXpos(),
                 kTargetNodeLayout.getYpos());
 
+        // determine, if edge establishes adjacency between a node and one of its descendants
+        boolean descendantEdge = KimlUtil.isDescendant(kTargetNode, kSourceNode);
+
         // get position of the source port (LPort)
         LPort sourcePort = ledge.getSource();
         KVector sourcePortPosition = sourcePort.getPosition();
+       
 
-        // get position of the source port (LPort)
+        // get position of the target port (LPort)
         LPort targetPort = ledge.getTarget();
-        KVector targetPortPosition = targetPort.getPosition();
+        KVector targetPortPosition = targetPort.getPosition();        
 
         // adjust bendpoint-positions
         // respect graph's border spacing
         KVector borderSpacingVec = new KVector(graphBorderSpacing, graphBorderSpacing);
         bendPoints.translate(borderSpacingVec);
-        if (!(kSourceNode.getParent() == (KNode) layeredGraph.getProperty(Properties.ORIGIN))) {
+        if (!(kSourceNode.getParent() == (KNode) layeredGraph.getProperty(Properties.ORIGIN))
+                || descendantEdge) {
             // calculate relative positioning
             KVector bendpointOffset = new KVector();
-            if (KimlUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
+            if (descendantEdge) {
                 bendpointOffset = getAbsolute(kSourceNode);
             } else {
                 bendpointOffset = getAbsolute(kSourceNode.getParent());
@@ -946,8 +951,7 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
 
         // calculate starting point of edge
         KVector edgeStart = new KVector(0, 0);
-        if ((!kSourceNode.getChildren().isEmpty())
-                && (KimlUtil.isDescendant(kTargetNode, kSourceNode))
+        if ((!kSourceNode.getChildren().isEmpty()) && (descendantEdge)
                 && !(sourcePort.getProperty(Properties.ORIGIN) instanceof KPort)) {
             // edges starting at an UPPER_COMPOUND_BORDER node need special treatment, because
             // their source node has been repositioned after edge routing.
@@ -956,17 +960,12 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         } else {
             edgeStart.add(sourcePortPosition);
         }
-        if (KimlUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
-            edgeStart.x += kSourceNodeLayout.getInsets().getLeft();
-            edgeStart.y += kSourceNodeLayout.getInsets().getTop();
+        if (descendantEdge) {
+            edgeStart.x -= kSourceNodeLayout.getInsets().getLeft();
+            edgeStart.y -= kSourceNodeLayout.getInsets().getTop();
         } else {
             edgeStart.add(kSourceNodePosition);
         }
-
-        // // if there are bendpoints, adjust starting point of edge to first bendpoint
-        // if (!bendPoints.isEmpty()) {
-        // edgeStart.y = bendPoints.getFirst().y;
-        // }
 
         KVector difference = getAbsolute(kTargetNode).sub(getAbsolute(kSourceNode));
 
@@ -986,19 +985,14 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         } else {
             edgeEnd.add(targetPortPosition);
         }
-        if (KimlUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
-            edgeEnd.x += kTargetNodeLayout.getInsets().getLeft();
-            edgeEnd.y += kTargetNodeLayout.getInsets().getTop();
+        if (kSourceNode.getParent() == kTargetNode.getParent()) {
+            edgeEnd.add(kTargetNodePosition);
         } else {
-            if (kSourceNode.getParent() == kTargetNode.getParent()) {
-                edgeEnd.add(kTargetNodePosition);
-            } else {
-                edgeEnd.add(kSourceNodePosition);
-                edgeEnd.add(difference);
-                // mind the fact, that getAbsolute calculates absolute coordinates plus insets.
-                edgeEnd.x -= kTargetNodeLayout.getInsets().getLeft();
-                edgeEnd.y -= kTargetNodeLayout.getInsets().getTop();
-            }
+            edgeEnd.add(kSourceNodePosition);
+            edgeEnd.add(difference);
+            // mind the fact, that getAbsolute calculates absolute coordinates plus insets.
+            edgeEnd.x -= kTargetNodeLayout.getInsets().getLeft();
+            edgeEnd.y -= kTargetNodeLayout.getInsets().getTop();
         }
 
         // if there are bendpoints, adjust endpoint of edge to last bendpoint
