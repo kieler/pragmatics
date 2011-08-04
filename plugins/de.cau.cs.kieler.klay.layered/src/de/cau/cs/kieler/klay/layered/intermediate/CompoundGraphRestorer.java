@@ -213,13 +213,6 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
         LNode dummyNode = dummyPort.getNode();
         NodeType dummyNodeType = dummyNode.getProperty(Properties.NODE_TYPE);
 
-//        // get port side of dummyPort
-//        PortSide dummyPortSide = dummyPort.getSide();
-//
-//        // get Layout of the compound node
-//        KShapeLayout compoundLayout = ((KNode) (compoundNode.getProperty(Properties.ORIGIN)))
-//                .getData(KShapeLayout.class);
-
         LPort newPort = new LPort();
         newPort.setNode(compoundNode);
 
@@ -239,15 +232,6 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
         }
         if (newPortSide == PortSide.EAST) {
             newPort.getPosition().x = compoundNode.getSize().x + dummyPort.getSize().x / 2;
-//            // translate from relative position with respect to dummyNode to relative position with
-//            // respect to compoundNode
-//            double nodeDiffX = dummyNode.getPosition().x - compoundNode.getPosition().x;
-//            newPort.getPosition().x = dummyPort.getPosition().x + nodeDiffX;
-//            if (dummyPortSide == PortSide.EAST) {
-//                newPort.getPosition().x -= dummyNode.getSize().x;
-//                newPort.getPosition().x += (compoundLayout.getInsets().getRight() + compoundLayout
-//                        .getProperty(Properties.BORDER_SPACING));
-//            }
         } else {
             newPort.getPosition().x = -(dummyPort.getSize().x / 2);
         }
