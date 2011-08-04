@@ -14,10 +14,10 @@
 
 package de.cau.cs.kieler.kwebs.server.publishing;
 
-import de.cau.cs.kieler.kwebs.service.IGraphLayouterService;
-import de.cau.cs.kieler.kwebs.logging.Logger;
-import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
+import de.cau.cs.kieler.kwebs.IGraphLayoutService;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
+import de.cau.cs.kieler.kwebs.server.logging.Logger;
+import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.service.JaxWsService;
 
 //FIXME If service is published via HTTP AND HTTPS, both
@@ -49,8 +49,12 @@ public final class ServicePublisher {
     private IServerManager jetiManager
         = new JetiManager();
 
+    /** Manager for publishing diverse support handlers. */
+    private IServerManager supportManager
+        = new SupportingServerManager();
+
     /** Instance of the layout web service to be published. */
-    private IGraphLayouterService service
+    private IGraphLayoutService service
         = new JaxWsService();
 
     /**
@@ -60,25 +64,46 @@ public final class ServicePublisher {
     }
 
     /**
+     * Returns the singleton instance.
+     * 
+     * @return the singleton instance
+     */
+    public static ServicePublisher getInstance() {
+        return INSTANCE;
+    }
+    
+    /**
      * Publishes the web service.
      *
      */
-    public static synchronized void publish() {
+    public synchronized void publish() {
         if (isPublished()) {
             throw new AlreadyPublishedException();
         }
         try {
-            if (Configuration.getConfigProperty(Configuration.PUBLISH_HTTP).equalsIgnoreCase("true")) {
+            if (Configuration.getInstance().getConfigProperty(Configuration.PUBLISH_HTTP).
+                    equalsIgnoreCase("true")
+               ) {
                 Logger.log("Publishing layout service via HTTP");
-                INSTANCE.httpManager.publish(INSTANCE.service);
+                httpManager.publish(service);
             }
-            if (Configuration.getConfigProperty(Configuration.PUBLISH_HTTPS).equalsIgnoreCase("true")) {
+            if (Configuration.getInstance().getConfigProperty(Configuration.PUBLISH_HTTPS).
+                    equalsIgnoreCase("true")
+               ) {
                 Logger.log("Publishing layout service via HTTPS");
-                INSTANCE.httpsManager.publish(INSTANCE.service);
+                httpsManager.publish(service);
             }
-            if (Configuration.getConfigProperty(Configuration.PUBLISH_JETI).equalsIgnoreCase("true")) {
+            if (Configuration.getInstance().getConfigProperty(Configuration.PUBLISH_JETI).
+                    equalsIgnoreCase("true")
+               ) {
                 Logger.log("Publishing layout service via jETI");
-                INSTANCE.jetiManager.publish(null);
+                jetiManager.publish(null);
+            }
+            if (Configuration.getInstance().getConfigProperty(Configuration.PUBLISH_SUPPORTSERVER).
+                    equalsIgnoreCase("true")
+               ) {
+                Logger.log("Publishing support server");
+                supportManager.publish(null);
             }
         } catch (Exception e) {
             Logger.log(Severity.CRITICAL, "Web service could not be published", e);
@@ -91,10 +116,11 @@ public final class ServicePublisher {
      * Unpublishes the web service.
      *
      */
-    public static synchronized void unpublish() {
-        INSTANCE.httpManager.unpublish();
-        INSTANCE.httpsManager.unpublish();
-        INSTANCE.jetiManager.unpublish();
+    public synchronized void unpublish() {
+        httpManager.unpublish();
+        httpsManager.unpublish();
+        jetiManager.unpublish();
+        supportManager.unpublish();
     }
 
     /**
@@ -102,10 +128,9 @@ public final class ServicePublisher {
      *
      * @return whether service is published or not
      */
-    public static synchronized boolean isPublished() {
-        return (INSTANCE.httpManager.isPublished()
-                || INSTANCE.httpsManager.isPublished()
-                || INSTANCE.jetiManager.isPublished());
+    public synchronized boolean isPublished() {
+        return (httpManager.isPublished() || httpsManager.isPublished() 
+                || jetiManager.isPublished() || supportManager.isPublished());
     }
 
 }

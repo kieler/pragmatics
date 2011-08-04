@@ -14,21 +14,21 @@
 
 package de.cau.cs.kieler.kwebs.server.layout;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.osgi.framework.Version;
 
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService;
-import de.cau.cs.kieler.kwebs.logging.Logger;
-import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.Application;
-import de.cau.cs.kieler.kwebs.service.RemoteServiceException;
+import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
+import de.cau.cs.kieler.kwebs.server.logging.Logger;
+import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.servicedata.Category;
 import de.cau.cs.kieler.kwebs.servicedata.KnownOption;
 import de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm;
@@ -40,11 +40,11 @@ import de.cau.cs.kieler.kwebs.servicedata.ServiceDataFactory;
 import de.cau.cs.kieler.kwebs.servicedata.SupportedDiagram;
 import de.cau.cs.kieler.kwebs.servicedata.impl.ServiceDataFactoryImpl;
 import de.cau.cs.kieler.kwebs.servicedata.transformation.ServiceDataXmiTransformer;
-import de.cau.cs.kieler.kwebs.util.Io;
+import de.cau.cs.kieler.kwebs.util.Resources;
 
 /**
  * This class is the server equivalent of {@link EclipseLayoutServices} but
- * without the unnecessary support for ui interaction. It provides all
+ * without the unnecessary support for UI interaction. It provides all
  * extension based registered layout information at runtime and also the
  * client side needed meta data about supported layout capabilities.
  *
@@ -54,11 +54,8 @@ import de.cau.cs.kieler.kwebs.util.Io;
 public final class ServerLayoutDataService extends ExtensionLayoutDataService {
 
     /** Caching the layout service meta data. */
-    private static String capabilities;
+    private static String serviceDataXMI;
 
-    /** Caching the version of the plugin as service version. */
-    private static String version;
-    
     /** 
      *  The cached preview images of the layout algorithms. The index is derived from the plug-in
      *  name of the defining plug-in and the path to the preview image.
@@ -70,8 +67,7 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
      * Private constructor.
      */
     private ServerLayoutDataService() {
-        createCapabilities();
-        createVersion();
+        createServiceDataXMI();
     }
 
     /**
@@ -100,24 +96,13 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
     }
 
     /**
-     * Returns the layout meta data in xml.
+     * Returns the layout meta data in XMI.
      *
      * @return String
      *             the meta data
      */
-    public static String getCapabilities() {
-        return capabilities;
-    }
-
-    /**
-     * Returns the version of this plugin which is used to identify
-     * the version of this layout service.
-     *
-     * @return String
-     *             the version
-     */
-    public static String getVersion() {
-        return version;
+    public static String getServiceData() {
+        return serviceDataXMI;
     }
 
     /**
@@ -125,12 +110,10 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
      * 
      * @param previewImage
      *            the identifier of the preview image
-     * @return the requested preview image
+     * @return the requested preview image or {@code null} if the specified
+     *         preview image could not be found
      */
     public static byte[] getPreviewImage(final String previewImage) {
-        if (!previewImages.containsKey(previewImage)) {
-            throw new RemoteServiceException("No such preview image: " + previewImage);
-        }
         return previewImages.get(previewImage);
     }
     
@@ -142,7 +125,7 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
      * Creates the XML representation of the layout capabilities of this
      * server.
      */
-    private void createCapabilities() {
+    private void createServiceDataXMI() {
         IConfigurationElement[] extensions =
             Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(EXTP_ID_LAYOUT_PROVIDERS);        
@@ -153,7 +136,7 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
         readExtensionLayoutTypes(factory, serviceData, extensions);
         readExtensionLayoutOptions(factory, serviceData, extensions);
         readExtensionLayoutAlgorithms(factory, serviceData, extensions);
-        capabilities = new ServiceDataXmiTransformer().serialize(serviceData);
+        serviceDataXMI = new ServiceDataXmiTransformer().serialize(serviceData);
     }
         
     /**
@@ -254,25 +237,27 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
         for (IConfigurationElement element : extensions) {
             if (element.getName().equals(ELEMENT_LAYOUT_ALGORITHM)) {
                 LayoutAlgorithm algorithm = factory.createLayoutAlgorithm();
-                // Possible missing version number is not so bad
-                //CHECKSTYLEOFF EmptyBlock
                 try {
                     algorithm.setVersion(
                         Platform.getBundle(element.getContributor().getName()).getVersion().toString()
                     );
                 } catch (Exception e) {
+                    // Possible missing version number is not so bad
                 }
-                //CHECKSTYLEON EmptyBlock
                 String pluginId = element.getContributor().getName();
                 String preview = element.getAttribute(ATTRIBUTE_PREVIEW);
-                String previewImage = null;
                 if (preview != null) {
                     try {
-                        byte[] data = Io.readStream(Io.getResourceStream(pluginId, preview)).getBytes();
-                        // No need to expose internals
-                        previewImage = Integer.toHexString((pluginId + preview).hashCode());
-                        previewImages.put(previewImage, data);
-                        algorithm.setPreviewImage(previewImage);
+                        byte[] data = Resources.readStreamAsByteArray(
+                            Resources.getResourceStream(pluginId, preview)
+                        );
+                        String previewImageName = Integer.toHexString((pluginId + preview).hashCode()) 
+                                                  + "/" + new File(preview).getName();
+                        String previewImage = Configuration.getInstance().getConfigProperty(
+                            Configuration.SUPPORTINGSERVER_ADDRESS
+                        ) + "/" + previewImageName;
+                        previewImages.put(previewImageName, data);
+                        algorithm.setPreviewImage(previewImage);  
                     } catch (Exception e) {
                         Logger.log(Severity.WARNING,
                             "Could not load preview image ("
@@ -367,18 +352,6 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
         return null;
     }
     
-    /** Identifier of this plug-in. */
-    private static final String PLUGIN_ID
-        = "de.cau.cs.kieler.kwebs.server";
-
-    /**
-     * Read the version of this plug-in and cache it in private member.
-     */
-    private void createVersion() {
-        Version tmp = Platform.getBundle(PLUGIN_ID).getVersion();
-        version = tmp.getMajor() + "." + tmp.getMinor() + "." + tmp.getMicro();
-    }
-
     /**
      * {@inheritDoc}
      */

@@ -21,7 +21,9 @@ import de.cau.cs.kieler.kwebs.client.activator.Activator;
 /**
  * Preference constants used by the KWebS web service clients.
  *
- * @kieler.rating  2011-05-04 red
+ * @kieler.rating  2011-08-02 proposed yellow
+ *     reviewed by ckru, mri, msp
+ *     
  * @author  swe
  */
 public final class Preferences {
@@ -39,32 +41,36 @@ public final class Preferences {
         = PREFIX + "layout.use.remote";
 
     /** */
-    public static final String PREFID_LAYOUT_PROVIDER_INDEX
-        = PREFIX + "layout.provider.index";
+    public static final String PREFID_LAYOUT_SERVERCONFIG_COUNT
+        = PREFIX + "layout.serverconfig.count";
 
     /** */
-    public static final String PREFID_LAYOUT_PROVIDER_COUNT
-        = PREFIX + "layout.provider.count";
+    public static final String PREFID_LAYOUT_SERVERCONFIG_NAMEPREFIX
+        = PREFIX + "layout.serverconfig.nameprefix";
 
     /** */
-    public static final String PREFID_LAYOUT_PROVIDER_NAMEPREFIX
-        = PREFIX + "layout.provider.nameprefix";
+    public static final String PREFID_LAYOUT_SERVERCONFIG_ADDRESSPREFIX
+        = PREFIX + "layout.serverconfig.addressprefix";
 
     /** */
-    public static final String PREFID_LAYOUT_PROVIDER_ADDRESSPREFIX
-        = PREFIX + "layout.provider.addressprefix";
+    public static final String PREFID_LAYOUT_SERVERCONFIG_TRUSTSTOREPREFIX
+        = PREFIX + "layout.serverconfig.truststoreprefix";
 
     /** */
-    public static final String PREFID_LAYOUT_PROVIDER_TRUSTSTOREPREFIX
-        = PREFIX + "layout.provider.truststoreprefix";
+    public static final String PREFID_LAYOUT_SERVERCONFIG_TRUSTSTOREPASSPREFIX
+        = PREFIX + "layout.serverconfig.truststorepassprefix";
 
-    /** */
-    public static final String PREFID_LAYOUT_PROVIDER_TRUSTSTOREPASSPREFIX
-        = PREFIX + "layout.provider.truststorepassprefix";
+    /** Index prefix for the preference defining whether a provider is fixed.  */
+    public static final String PREFID_LAYOUT_SERVERCONFIG_FIXEDPREFIX
+        = PREFIX + "layout.serverconfig.fixed";
 
-    /** */
-    public static final String PREFID_LAYOUT_PROVIDER_FIXEDPREFIX
-        = PREFIX + "layout.provider.fixed";
+    /** Index prefix for the preference defining whether a provider is the currently active provider.  */
+    public static final String PREFID_LAYOUT_SERVERCONFIG_ACTIVEPREFIX
+        = PREFIX + "layout.serverconfig.active";
+
+    /** Index prefix for the preference defining whether a provider is the standard provider.  */
+    public static final String PREFID_LAYOUT_SERVERCONFIG_STANDARDPREFIX
+        = PREFIX + "layout.serverconfig.standard";
 
     /**
      * This is a container class for preference store constants so no
@@ -74,7 +80,7 @@ public final class Preferences {
     }
 
     /**
-     * Returns the preference store for this plugin.
+     * Returns the preference store for this plug-in.
      * 
      * @return the preference store
      */

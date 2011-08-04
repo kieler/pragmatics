@@ -13,7 +13,7 @@
  */
 
 /**
- * Server side logging listeners.
+ * The logger used in KWebS.
+ *
  */
-
 package de.cau.cs.kieler.kwebs.server.logging;

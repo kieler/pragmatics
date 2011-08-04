@@ -56,7 +56,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="class" type="string" use="required">
+         <attribute name="implementation" type="string" use="required">
             <annotation>
                <documentation>
                   The implementation class that supports the given protocols.

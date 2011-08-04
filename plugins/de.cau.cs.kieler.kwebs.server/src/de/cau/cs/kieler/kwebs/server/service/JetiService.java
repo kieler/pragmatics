@@ -14,14 +14,14 @@
 
 package de.cau.cs.kieler.kwebs.server.service;
 
+import de.cau.cs.kieler.kwebs.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
-import de.cau.cs.kieler.kwebs.service.GraphLayouterOption;
-import de.cau.cs.kieler.kwebs.util.Files;
+import de.cau.cs.kieler.kwebs.util.Resources;
 import de.unido.ls5.eti.toolserver.InputFileReference;
 import de.unido.ls5.eti.toolserver.OutputFileReference;
 
 /**
- * Implementation of the jeti based layout service.
+ * Implementation of the jETI based layout service.
  * 
  * @kieler.rating  2011-05-04 red
  * @author  swe
@@ -29,8 +29,8 @@ import de.unido.ls5.eti.toolserver.OutputFileReference;
 public class JetiService extends AbstractService {
 
     /**
-     * Creates an instance of the jeti based layout service. This class is initialized
-     * from the jeti tool server every time a layout request is being received.
+     * Creates an instance of the jETI based layout service. This class is initialized
+     * from the jETI tool server every time a layout request is being received.
      */
     public JetiService() {
         ServerLayoutDataService.create();
@@ -48,8 +48,8 @@ public class JetiService extends AbstractService {
      *            the serial format of the graph {@see Formats}
      * @throws Exception
      */
-    public final void graphLayout(final InputFileReference inRef,
-        final OutputFileReference outRef, final String format) throws Exception {
+    public final void graphLayout(final InputFileReference inRef, final OutputFileReference outRef, 
+        final String format) throws Exception {
         graphLayout(inRef, outRef, format, null);
     }
 
@@ -67,16 +67,15 @@ public class JetiService extends AbstractService {
      *            optional layout options in their serialized form {@see GraphLayouterOption}
      * @throws Exception
      */
-    public final void graphLayout(final InputFileReference inRef,
-        final OutputFileReference outRef, final String format,
-        final String serializedOptions) throws Exception {
-        String serializedGraph = Files.readFile(inRef.toString());
-        GraphLayouterOption[] options = null;
+    public final void graphLayout(final InputFileReference inRef, final OutputFileReference outRef,
+        final String format, final String serializedOptions) throws Exception {
+        String serializedGraph = Resources.readFileAsString(inRef.toString());
+        GraphLayoutOption[] options = null;
         if (serializedOptions != null) {
-            options = GraphLayouterOption.stringToArray(serializedOptions);
+            options = GraphLayoutOption.stringToArray(serializedOptions);
         }
         String serializedResult = layout(serializedGraph, format, options);
-        Files.writeFile(outRef.toString(), serializedResult);
+        Resources.writeFile(outRef.toString(), serializedResult);
     }
 
     /**
@@ -86,26 +85,11 @@ public class JetiService extends AbstractService {
      *            reference to the output file
      * @throws Exception
      */
-    public final void getCapabilities(final OutputFileReference outRef)
+    public final void getServiceData(final OutputFileReference outRef)
         throws Exception {
-        Files.writeFile(
+        Resources.writeFile(
             outRef.toString(),
-            ServerLayoutDataService.getCapabilities()
-        );
-    }
-
-    /**
-     * Stores the version of the layout server in a file.
-     *  
-     * @param outRef
-     *            reference to the output file
-     * @throws Exception
-     */
-    public final void getVersion(final OutputFileReference outRef)
-        throws Exception {
-        Files.writeFile(
-            outRef.toString(),
-            ServerLayoutDataService.getVersion()
+            ServerLayoutDataService.getServiceData()
         );
     }
 

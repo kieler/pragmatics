@@ -14,7 +14,7 @@
 
 package de.cau.cs.kieler.kwebs.server.logging;
 
-import de.cau.cs.kieler.kwebs.logging.Logger.LoggerEvent;
+import de.cau.cs.kieler.kwebs.server.logging.Logger.LoggerEvent;
 
 /**
  * This class registers as {@link ILoggerListener} and provides size based round trip

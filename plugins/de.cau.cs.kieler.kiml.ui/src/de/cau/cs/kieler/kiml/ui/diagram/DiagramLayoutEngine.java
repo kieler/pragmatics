@@ -307,10 +307,10 @@ public class DiagramLayoutEngine {
         mapping.setProperty(PROGRESS_MONITOR, progressMonitor);
         debugCanvas.setMapping(mapping);
 
-        // the layout engine to be used
+        // The layout engine to be used, default is local
         IGraphLayoutEngine layouterEngine = graphLayoutEngine;
         try {
-            // use local or remote layout, default is local
+            // Use local or remote layout, default is local
             boolean remoteLayout = false;            
             if (preferenceStore != null) {
                 remoteLayout = preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE);

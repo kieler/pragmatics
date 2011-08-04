@@ -16,36 +16,33 @@ package de.cau.cs.kieler.kwebs.client.jeti;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.cau.cs.kieler.kwebs.client.AbstractWebServiceClient;
-import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
-import de.cau.cs.kieler.kwebs.logging.Logger;
-import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
-import de.cau.cs.kieler.kwebs.service.GraphLayouterOption;
-import de.cau.cs.kieler.kwebs.service.LocalServiceException;
-import de.cau.cs.kieler.kwebs.service.RemoteServiceException;
+import de.cau.cs.kieler.kwebs.GraphLayoutOption;
+import de.cau.cs.kieler.kwebs.LocalServiceException;
+import de.cau.cs.kieler.kwebs.RemoteServiceException;
+import de.cau.cs.kieler.kwebs.client.AbstractLayoutServiceClient;
+import de.cau.cs.kieler.kwebs.client.providers.ServerConfig;
 import de.unido.ls5.eti.client.ByteArrayVirtualFile;
 import de.unido.ls5.eti.client.EtiConnection;
 import de.unido.ls5.eti.client.EtiConnectionSepp;
 import de.unido.ls5.eti.client.VirtualFile;
 
 /**
- * Client implementation for the jeti web service.
+ * Client implementation for the jETI web service.
  *
  * @kieler.rating 2011-05-12 red
  *
  * @author swe
  */
-public final class JetiClient extends AbstractWebServiceClient {
+public final class JetiClient extends AbstractLayoutServiceClient {
 
     /** The jETI connection used. */
     private EtiConnection etiCon;
 
     /**
-     * Constructs a new jaxws web service client.
+     * Constructs a new jETI web service client.
      *
      */
     public JetiClient() {
@@ -53,13 +50,13 @@ public final class JetiClient extends AbstractWebServiceClient {
     }
     
     /**
-     * Constructs a jeti based web service client pointing to the address of the given provider.
+     * Constructs a jETI based web service client pointing to the address of the given provider.
      *
-     * @param theprovider
-     *            the {@link Provider} of the layout service to be used
+     * @param theserverConfig
+     *            the {@link ServerConfig} of the layout service to be used
      */
-    public JetiClient(final Provider theprovider) {
-        super(theprovider);
+    public JetiClient(final ServerConfig theserverConfig) {
+        super(theserverConfig);
     }
 
     // Implementation if the IWebServiceClient interface
@@ -67,25 +64,38 @@ public final class JetiClient extends AbstractWebServiceClient {
     /**
      * {@inheritDoc}
      */
-    public boolean isConnected() {
+    public synchronized boolean isConnected() {
         return (etiCon != null);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void connect() {
-        if (!ensureConnected()) {
+    public synchronized void connect() {
+        if (!isAvailable()) {
             throw new LocalServiceException(
-                "Could not connect to layout service at " + getProvider().getAddress()
+                "Could not connect to layout service at " + getServerConfig().getAddress()
             );
+        }
+        if (etiCon == null) {
+            try {
+                etiCon = new EtiConnectionSepp(getServerConfig().getAddress());
+                // Just dummy login, security currently
+                // not implemented in jETI tool server
+                etiCon.login("foo", "bar");
+            } catch (Exception e) {
+                etiCon = null;
+                throw new LocalServiceException(
+                    "Could not connect to layout service at " + getServerConfig().getAddress(), e
+                );
+            }
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public void disconnect() {
+    public synchronized void disconnect() {
         super.disconnect();
         etiCon = null;
     }
@@ -99,181 +109,104 @@ public final class JetiClient extends AbstractWebServiceClient {
     /**
      * {@inheritDoc}
      */
-    protected String graphLayoutImpl(final String serializedGraph, final String format,
-        final GraphLayouterOption[] options) {
-        if (ensureConnected()) {
-            try {
-                Map<String, String> etiParams = new HashMap<String, String>();
-                etiParams.put(
-                    "INPUT_GRAPH",
-                    "graph.in"
-                );
-                etiParams.put(
-                    "OUTPUT_GRAPH",
-                    "graph.out"
-                );
-                etiParams.put(
-                    "INPUT_FORMAT",
-                    format
-                );
-                if (options != null && options.length > 0) {
-                    etiParams.put(
-                        "INPUT_OPTIONS",
-                        GraphLayouterOption.arrayToString(options)
-                    );
-                }
-                byte[] byteGraph = serializedGraph.getBytes();
-                ByteArrayVirtualFile vfOut = new ByteArrayVirtualFile(
-                    new ByteArrayInputStream(byteGraph),
-                    "graph.in"
-                );
-                etiCon.store(vfOut);
-                etiCon.exec("graphLayout", etiParams);
-                VirtualFile vfIn = etiCon.retrieve("graph.out");
-                StringBuffer sb = new StringBuffer();
-                InputStream in = vfIn.getInputStream();
-                byte[] buf = new byte[BUFFER_SIZE];
-                int read = 0;
-                while ((read = in.read(buf)) > 0) {
-                    sb.append(new String(buf, 0, read));
-                }
-                return sb.toString();
-            } catch (Exception e) {
-                Logger.log(Severity.CRITICAL, "Error while calling layout service", e);
-                throw new RemoteServiceException("Error while calling layout service", e);
-            }
+    public String graphLayout(final String serializedGraph, final String format,
+        final GraphLayoutOption[] options) {
+        if (!isConnected()) {
+            connect();
         }
-        throw new LocalServiceException(
-            "Could not connect to layout service at " + getProvider().getAddress()
-        );
+        try {
+            Map<String, String> etiParams = new HashMap<String, String>();
+            etiParams.put(
+                "INPUT_GRAPH",
+                "graph.in"
+            );
+            etiParams.put(
+                "OUTPUT_GRAPH",
+                "graph.out"
+            );
+            etiParams.put(
+                "INPUT_FORMAT",
+                format
+            );
+/* Just for testing purposes
+            GraphLayouterOption[] options2 = new GraphLayouterOption[] {
+                new GraphLayouterOption(
+                    "de.cau.cs.kieler.algorithm", 
+                    "de.cau.cs.kieler.kiml.ogdf.DavidsonHarel"
+                )
+            };
+            if (options2 != null && options2.length > 0) {
+                etiParams.put(
+                    "INPUT_OPTIONS",
+                    GraphLayouterOption.arrayToString(options2)
+                );
+            }
+*/
+            if (options != null && options.length > 0) {
+                etiParams.put(
+                    "INPUT_OPTIONS",
+                    GraphLayoutOption.arrayToString(options)
+                );
+            }
+            byte[] byteGraph = serializedGraph.getBytes();
+            ByteArrayVirtualFile vfOut = new ByteArrayVirtualFile(
+                new ByteArrayInputStream(byteGraph),
+                "graph.in"
+            );
+            etiCon.store(vfOut);
+            etiCon.exec("graphLayout", etiParams);
+            VirtualFile vfIn = etiCon.retrieve("graph.out");
+            StringBuffer sb = new StringBuffer();
+            InputStream in = vfIn.getInputStream();
+            byte[] buf = new byte[BUFFER_SIZE];
+            int read = 0;
+            while ((read = in.read(buf)) > 0) {
+                sb.append(new String(buf, 0, read));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            disconnect();
+            throw new RemoteServiceException("Error while calling layout service", e);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    protected String getCapabilitiesImpl() {
-        if (ensureConnected()) {
-            try {
-                Map<String, String> etiParams = new HashMap<String, String>();
-                etiParams.put(
-                    "OUTPUT_CAPABILITIES",
-                    "capabilities.out"
-                );
-                etiCon.exec("getCapabilities", etiParams);
-                VirtualFile vfIn = etiCon.retrieve("capabilities.out");
-                StringBuffer sb = new StringBuffer();
-                InputStream in = vfIn.getInputStream();
-                byte[] buf = new byte[BUFFER_SIZE];
-                int read = 0;
-                while ((read = in.read(buf)) > 0) {
-                    sb.append(new String(buf, 0, read));
-                }
-                return sb.toString();
-            } catch (Exception e) {
-                Logger.log(Severity.CRITICAL, "Error while calling layout service", e);
-                throw new RemoteServiceException("Error while calling layout service", e);
-            }
+    public String getServiceData() {
+        if (!isConnected()) {
+            connect();
         }
-        throw new LocalServiceException(
-            "Could not connect to layout service at " + getProvider().getAddress()
-        );
+        try {
+            Map<String, String> etiParams = new HashMap<String, String>();
+            etiParams.put(
+                "OUTPUT_SERVICEDATA",
+                "serviceData.out"
+            );
+            etiCon.exec("getServiceData", etiParams);
+            VirtualFile vfIn = etiCon.retrieve("serviceData.out");
+            StringBuffer sb = new StringBuffer();
+            InputStream in = vfIn.getInputStream();
+            byte[] buf = new byte[BUFFER_SIZE];
+            int read = 0;
+            while ((read = in.read(buf)) > 0) {
+                sb.append(new String(buf, 0, read));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            disconnect();
+            throw new RemoteServiceException("Error while calling layout service", e);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    protected String getVersionImpl() {
-        if (ensureConnected()) {
-            try {
-                Map<String, String> etiParams = new HashMap<String, String>();
-                etiParams.put(
-                    "OUTPUT_VERSION",
-                    "version.out"
-                );
-                etiCon.exec("getVersion", etiParams);
-                VirtualFile vfIn = etiCon.retrieve("version.out");
-                StringBuffer sb = new StringBuffer();
-                InputStream in = vfIn.getInputStream();
-                byte[] buf = new byte[BUFFER_SIZE];
-                int read = 0;
-                while ((read = in.read(buf)) > 0) {
-                    sb.append(new String(buf, 0, read));
-                }
-                return sb.toString();
-            } catch (Exception e) {
-                Logger.log(Severity.CRITICAL, "Error while calling layout service", e);
-                throw new RemoteServiceException("Error while calling layout service", e);
-            }
-        }
-        throw new LocalServiceException(
-            "Could not connect to layout service at " + getProvider().getAddress()
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected byte[] getPreviewImageImpl(final String previewImage) {
-        if (ensureConnected()) {
-            try {
-                Map<String, String> etiParams = new HashMap<String, String>();
-                etiParams.put(
-                    "INPUT_PREVIEWIMAGEID",
-                    previewImage
-                );
-                etiParams.put(
-                    "OUTPUT_PREVIEWIMAGEDATA",
-                    "previewImageData.out"
-                );
-                etiCon.exec("getPreviewImage", etiParams);
-                VirtualFile vfIn = etiCon.retrieve("previewImageData.out");
-                StringBuffer sb = new StringBuffer();
-                InputStream in = vfIn.getInputStream();
-                byte[] buf = new byte[BUFFER_SIZE];
-                int read = 0;
-                while ((read = in.read(buf)) > 0) {
-                    sb.append(new String(buf, 0, read));
-                }
-                return sb.toString().getBytes();
-            } catch (Exception e) {
-                Logger.log(Severity.CRITICAL, "Error while calling layout service", e);
-                throw new RemoteServiceException("Error while calling layout service", e);
-            }
-        }
-        throw new LocalServiceException(
-            "Could not connect to layout service at " + getProvider().getAddress()
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public synchronized void setProvider(final Provider theprovider) {
-        if (super.getProvider() == null || !super.getProvider().equals(theprovider)) {
+    public synchronized void setServerConfig(final ServerConfig theserverConfig) {
+        if (super.getServerConfig() == null || !super.getServerConfig().equals(theserverConfig)) {
             etiCon = null;
-            super.setProvider(theprovider);
+            super.setServerConfig(theserverConfig);
         }
-    }
-
-    /**
-     * Ensures that this client is actually connected to the layout service.
-     *
-     * @return whether the connection is established.
-     */
-    private synchronized boolean ensureConnected() {
-        if (isAvailable()) {
-            if (etiCon == null) {
-                try {
-                    etiCon = new EtiConnectionSepp(new URI(getProvider().getAddress()));
-                    // just dummy login, security currently
-                    // not implemented in jeti toolserver
-                    etiCon.login("foo", "bar");
-                } catch (Exception e) {
-                    etiCon = null;
-                }
-            }
-        }
-        return (isAvailable() && etiCon != null);
     }
 
 }

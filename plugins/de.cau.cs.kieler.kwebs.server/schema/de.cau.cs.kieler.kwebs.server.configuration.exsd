@@ -17,8 +17,9 @@
          </appinfo>
       </annotation>
       <complexType>
-         <sequence>
-            <element ref="transformer" minOccurs="0" maxOccurs="unbounded"/>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="transformer"/>
+            <element ref="supportHandler"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -56,13 +57,35 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="implementationClass" type="string" use="required">
+         <attribute name="implementation" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kwebs.transformation.IGraphTransformer"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="supportHandler">
+      <complexType>
+         <attribute name="path" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The path under which a support handler will be published in the supporting server.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="implementation" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The handler implementation which will be published under the defined path.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":com.sun.net.httpserver.HttpHandler"/>
                </appinfo>
             </annotation>
          </attribute>

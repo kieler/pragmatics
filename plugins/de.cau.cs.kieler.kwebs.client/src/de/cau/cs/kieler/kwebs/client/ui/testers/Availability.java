@@ -14,18 +14,17 @@
 
 package de.cau.cs.kieler.kwebs.client.ui.testers;
 
-import java.util.Date;
-
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
-import de.cau.cs.kieler.kwebs.client.Clients;
-import de.cau.cs.kieler.kwebs.client.IWebServiceClient;
-import de.cau.cs.kieler.kwebs.client.providers.Providers;
-import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
+import de.cau.cs.kieler.kwebs.client.LayoutServiceClients;
+import de.cau.cs.kieler.kwebs.client.ILayoutServiceClient;
+import de.cau.cs.kieler.kwebs.client.providers.ServerConfig;
+import de.cau.cs.kieler.kwebs.client.providers.ServerConfigs;
+import de.cau.cs.kieler.kwebs.client.providers.ServerConfigs.ServerConfigError;
 
 /**
- * Utility class for testing availability of a provider with ui support.
+ * Utility class for testing availability of a server configuration with UI support.
  *
  * @kieler.rating 2011-05-03 red
  *
@@ -33,58 +32,57 @@ import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
  */
 public final class Availability {
 
-    /** Number of requests for determining response time. */
-    private static final long RESPONSETIME_TESTCOUNT
-        = 10;
-
     /**
-     * Tests whether a given provider can be reached.
+     * Tests whether a given server configuration can be reached.
      * 
      * @param shell
      *            the parent shell for the dialog
-     * @param provider
-     *            the provider to be tested
+     * @param serverConfig
+     *            the server configuration to be tested
      */
-    public static void checkAvailability(final Shell shell, final Provider provider) {  
+    public static void checkAvailability(final Shell shell, final ServerConfig serverConfig) {  
         MessageBox box = new MessageBox(shell);
-        if (!Providers.isValidProvider(provider)) {
-            box.setText("Provider invalid");
-            box.setMessage(
-                "The selected provider is invalid. An availability test can not be performed."
-            );
+        ServerConfigError why = ServerConfigs.getInstance().isValidServerConfig(serverConfig); 
+        if (why != ServerConfigError.ERROR_OK) {
+            box.setText("Server Configuration invalid");
+            String message = "The selected server configuration is invalid."
+                             + " An availability test can not be performed."
+                             + " The reason why this server configuration is not valid is:\n\n";
+            if (why == ServerConfigError.ERROR_NOSERVERCONFIG) {
+                message += "The server configuration object is not valid (is null).";
+            } else if (why == ServerConfigError.ERROR_INVALIDNAME) {
+                message += "The name of the server configuration is empty.";
+            } else if (why == ServerConfigError.ERROR_INVALIDADDRESS) {
+                message += "The address is empty or not correct.";
+            } else if (why == ServerConfigError.ERROR_NOPROTOCOL) {
+                message += "The address does not specify a protocol.";
+            } else if (why == ServerConfigError.ERROR_PROTOCOLNOTSUPPORTED) {
+                message += "The protocol is not supported."
+                           + "\n\nPlease make sure that the appropriate plug-in for the protocol"
+                           + " is available in your KIELER installation.";
+            } else if (why == ServerConfigError.ERROR_NOTRUSTSTORE) {
+                message += "You have specified a server configuration which is using a HTTPS based"
+                           + " connection but the trust store for establishing the connection is"
+                           + " missing.";
+            } else if (why == ServerConfigError.ERROR_NOTRUSTSTOREPASS) {
+                message += "You have specified a server configuration which is using a HTTPS based"
+                            + " connection but the password for the trust store is missing.";
+            }
+            box.setMessage(message);
             box.open();
             return;
         }  
-        IWebServiceClient client = Clients.createClientForProvider(provider);
+        ILayoutServiceClient client = LayoutServiceClients.getInstance().
+            createClientForServerConfig(serverConfig);
         try {
-            String version = null;
-            Date start = null;
-            Date stop = null;
-            float responseTime = 0;
-            // first call to getVersion() is ignored for response time
-            // calculation since it involves establishing the connection
-            // and therefore is not representative
-            version = client.getVersion();
-            start = new Date();
-            for (int i = 0; i < RESPONSETIME_TESTCOUNT; i++) {
-                version = client.getVersion();
-            }
-            stop = new Date();
-            responseTime = (stop.getTime() - start.getTime()) / RESPONSETIME_TESTCOUNT;
-            box.setText("Provider Details");
-            box.setMessage(
-                "The provider is running version "
-                + version
-                + ", the servers response time is "
-                + responseTime
-                + " milliseconds."
-            );
-            box.open();
+            client.connect();
+            box.setText("Server Configuration is reachable");
+            box.setMessage("The server configuration you selected is reachable.");
         } catch (Exception e) {
-            box.setText("Provider is not reachable");
-            box.setMessage("The Provider you selected is not reachable at the moment.");
-            box.open();
+            box.setText("Server Configuration is not reachable");
+            box.setMessage("The server configuration you selected is not reachable at the moment.");
         }   
+        box.open();
     }
     
     /**

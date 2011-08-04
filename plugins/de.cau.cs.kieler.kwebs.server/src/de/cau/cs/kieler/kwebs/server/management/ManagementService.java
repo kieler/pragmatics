@@ -23,8 +23,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
-import de.cau.cs.kieler.kwebs.logging.Logger;
-import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
+import de.cau.cs.kieler.kwebs.server.logging.Logger;
+import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.publishing.ServicePublisher;
 
 /**
@@ -181,12 +181,12 @@ public final class ManagementService {
                 if (request.equals(ManagementCommands.COMMAND_ALIVE)) {
                     // Nothing to do
                 } else if (request.equals(ManagementCommands.COMMAND_PUBLISH)) {
-                    if (ServicePublisher.isPublished()) {
+                    if (ServicePublisher.getInstance().isPublished()) {
                         response = "Cannot publish service, service is already published";
                         acknowledgement = ManagementCommands.RESPONSE_NACK;
                     } else {
                         try {
-                            ServicePublisher.publish();
+                            ServicePublisher.getInstance().publish();
                             response = "Service has been published";
                         } catch (Exception e) {
                             response = "Error while publishing service\n"
@@ -195,12 +195,12 @@ public final class ManagementService {
                         }
                     }
                 } else if (request.equals(ManagementCommands.COMMAND_UNPUBLISH)) {
-                    if (!ServicePublisher.isPublished()) {
+                    if (!ServicePublisher.getInstance().isPublished()) {
                         response = "Cannot unpublish service, service is not published";
                         acknowledgement = ManagementCommands.RESPONSE_NACK;
                     } else {
                         try {
-                            ServicePublisher.unpublish();
+                            ServicePublisher.getInstance().unpublish();
                             response = "Service has been unpublished";
                         } catch (Exception e) {
                             response = "Error while unpublishing service\n"
@@ -209,7 +209,7 @@ public final class ManagementService {
                         }
                     }
                 } else if (request.equals(ManagementCommands.COMMAND_PUBLISHED)) {
-                    if (ServicePublisher.isPublished()) {
+                    if (ServicePublisher.getInstance().isPublished()) {
                         response = "Service is in published state";
                     } else {
                         response = "Service is in unpublished state";

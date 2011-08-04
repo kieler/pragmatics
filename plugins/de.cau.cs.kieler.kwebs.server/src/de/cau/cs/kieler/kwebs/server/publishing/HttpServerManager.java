@@ -18,14 +18,14 @@ import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 
 import java.net.InetSocketAddress;
+import java.net.URI;
 import java.util.concurrent.Executors;
 
 import javax.xml.ws.Endpoint;
 
-import de.cau.cs.kieler.kwebs.logging.Logger;
-import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
-import de.cau.cs.kieler.kwebs.util.Uris;
+import de.cau.cs.kieler.kwebs.server.logging.Logger;
+import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 
 /**
  * Manager for publishing a service object over HTTP.
@@ -66,7 +66,7 @@ class HttpServerManager extends AbstractServerManager {
      * @param serviceObject
      *            the service object to be published
      */
-    public void publish(final Object serviceObject) {
+    public synchronized void publish(final Object serviceObject) {
         if (serviceObject == null) {
             throw new NoServiceObjectException();
         }
@@ -81,7 +81,7 @@ class HttpServerManager extends AbstractServerManager {
             // Sets the executor of the endpoint. The newly created thread pool
             // makes the endpoint handle the incoming requests concurrently.
             endpoint.setExecutor(Executors.newFixedThreadPool(
-                Integer.parseInt(Configuration.getConfigProperty(Configuration.SERVER_POOLSIZE))
+                Integer.parseInt(config.getConfigProperty(Configuration.SERVER_POOLSIZE))
             ));
             endpoint.publish(context);
         } catch (Exception e) {
@@ -100,7 +100,7 @@ class HttpServerManager extends AbstractServerManager {
     /**
      * Unpublished this managers server.
      */
-    public void unpublish() {
+    public synchronized void unpublish() {
         if (endpoint != null) {
             endpoint.stop();
             endpoint = null;
@@ -115,7 +115,7 @@ class HttpServerManager extends AbstractServerManager {
      * 
      * @return whether this managers server is published or not
      */
-    public boolean isPublished() {
+    public synchronized boolean isPublished() {
         return (endpoint != null && endpoint.isPublished());
     }
 
@@ -128,8 +128,8 @@ class HttpServerManager extends AbstractServerManager {
             throw new IllegalStateException("Server has already been created");
         }
         try {
-            String address = Configuration.getConfigProperty(Configuration.HTTP_ADDRESS);
-            String host = Uris.getHost(address);
+            URI address = new URI(config.getConfigProperty(Configuration.HTTP_ADDRESS));
+            String host = address.getHost();
             if (host == null) {
                 Logger.log(Severity.WARNING, 
                     "The host you specified for the HTTP server is invalid."
@@ -137,7 +137,7 @@ class HttpServerManager extends AbstractServerManager {
                 );
                 host = HTTP_DEFAULTHOST;
             }
-            int port = Uris.getPort(address);
+            int port = address.getPort();
             if (port == -1) {
                 Logger.log(Severity.WARNING, 
                     "The port you specified for the HTTP server is invalid."
@@ -147,7 +147,7 @@ class HttpServerManager extends AbstractServerManager {
             }
             server = HttpServer.create(
                 new InetSocketAddress(host, port),
-                Integer.parseInt(Configuration.getConfigProperty(Configuration.SERVER_BACKLOG))
+                Integer.parseInt(config.getConfigProperty(Configuration.SERVER_BACKLOG))
             );
         } catch (Exception e) {
             Logger.log(Severity.CRITICAL, "HTTP server could not be created", e);
@@ -166,12 +166,11 @@ class HttpServerManager extends AbstractServerManager {
             throw new IllegalStateException("Context has already been created");
         }
         try {
-            String address = Configuration.getConfigProperty(Configuration.HTTP_ADDRESS);
-            String path = Uris.getPath(address);
+            URI address = new URI(config.getConfigProperty(Configuration.HTTP_ADDRESS));
+            String path = address.getPath();
             if (path == null) {
                 Logger.log(Severity.FAILURE, 
                     "The path you specified for the HTTP server is invalid."
-                    + " Using default port 80."
                 );                
                 throw new ContextNotCreatedException();
             }

@@ -15,6 +15,8 @@
 package de.cau.cs.kieler.kwebs.util;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
@@ -25,15 +27,15 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.kwebs.logging.Logger;
 
 /**
  * Utility class for duplicating layout information between structually identical
  * graphs. Every graph element gets annotated with an unique identifier.
- * This is used to duplicate the calculated layout information from a layouted
- * graph back to the original graph.
+ * This is used to duplicate the calculated layout information from a 
+ * graph which was layout done on back to the original graph.
  *
- * @kieler.rating 2011-05-04 red
+ * @kieler.rating 2011-08-02 proposed yellow
+ *     reviewed by ckru, mri, msp
  *
  * @author swe
  */
@@ -48,10 +50,8 @@ public final class Graphs {
     public static void duplicateGraphLayoutByUniqueID(final KNode sourceGraph,
         final KNode targetGraph) {
         if (sourceGraph != null && targetGraph != null) {
-            HashMap<String, KGraphElement> sourceMap
-                = createHashmapByUniqueID(sourceGraph);
-            HashMap<String, KGraphElement> targetMap 
-                = createHashmapByUniqueID(targetGraph);
+            HashMap<String, KGraphElement> sourceMap = createHashmapByUniqueID(sourceGraph);
+            HashMap<String, KGraphElement> targetMap = createHashmapByUniqueID(targetGraph);
             KGraphElement kgeSource = null;
             KGraphElement kgeTarget = null;
             for (String srcId : sourceMap.keySet()) {
@@ -72,8 +72,7 @@ public final class Graphs {
      * @param targetElement 
      *            the element which gets the layout information
      */
-    private static void duplicateGraphElementLayout(
-        final KGraphElement sourceElement,
+    private static void duplicateGraphElementLayout(final KGraphElement sourceElement,
         final KGraphElement targetElement) {
         if (sourceElement != null && targetElement != null) {
             KShapeLayout sourceKSL = sourceElement.getData(KShapeLayout.class);
@@ -107,19 +106,17 @@ public final class Graphs {
     private static HashMap<String, KGraphElement> createHashmapByUniqueID(final KNode graph) {
         HashMap<String, KGraphElement> map = new HashMap<String, KGraphElement>();
         if (graph != null) {
-            TreeIterator<EObject> teo = graph.eAllContents();
+            TreeIterator<EObject> iterator = graph.eAllContents();
             EObject eObject = null;
-            KGraphElement kge = null;
-            KIdentifier kid = null;
-            while (teo.hasNext()) {
-                eObject = teo.next();
+            KGraphElement kgraphElement = null;
+            KIdentifier kidentifier = null;
+            while (iterator.hasNext()) {
+                eObject = iterator.next();
                 if (eObject instanceof KGraphElement) {
-                    kge = ((KGraphElement) eObject);
-                    kid = (KIdentifier) kge.getData(KIdentifier.class);
-                    if (kid == null) {
-                        Logger.log("Source element without identifier, ignoring element");
-                    } else {
-                        map.put(kid.getId(), kge);
+                    kgraphElement = ((KGraphElement) eObject);
+                    kidentifier = (KIdentifier) kgraphElement.getData(KIdentifier.class);
+                    if (kidentifier != null) {
+                        map.put(kidentifier.getId(), kgraphElement);
                     }
                 }
             }
@@ -134,10 +131,10 @@ public final class Graphs {
      */
     public static void annotateGraphWithUniqueID(final KNode graph) {
         if (graph != null) {
-            TreeIterator<EObject> teo = graph.eAllContents();
+            TreeIterator<EObject> identifier = graph.eAllContents();
             EObject eObject = null;
-            while (teo.hasNext()) {
-                eObject = teo.next();
+            while (identifier.hasNext()) {
+                eObject = identifier.next();
                 if (eObject instanceof KGraphElement) {
                     KimlUtil.createIdentifier((KGraphElement) eObject);
                 }
@@ -148,13 +145,13 @@ public final class Graphs {
    /**
     * Determines the total number of nodes in the given graph.
     *
-    * @param node 
+    * @param graph 
     *            parent layout node to examine
     * @return total number of child nodes
     */
-   public static int countNodes(final KNode node) {
-       int count = node.getChildren().size();
-       for (KNode child : node.getChildren()) {
+   public static int countNodes(final KNode graph) {
+       int count = graph.getChildren().size();
+       for (KNode child : graph.getChildren()) {
            if (!child.getChildren().isEmpty()) {
                count += countNodes(child);
            }
@@ -162,6 +159,65 @@ public final class Graphs {
        return count;
    }
 
+   /**
+    * Returns a list containing all the elements from a given graph which are exactly of the specified
+    * type.
+    * 
+    * @param <T>
+    *            the type of the elements
+    * @param graph
+    *            the graph of which the elements of the defined type shall be returned
+    * @param type
+    *            class defining the type of the elements which are to be returned
+    * @return
+    */
+   public static <T> List<T> getAllElementsOfType(final KNode graph, final Class<T> type) {
+       return getAllElementsOfType(graph, type, true);
+   }
+   
+   /**
+    * Returns a list containing all the elements from a given graph which are of the specified
+    * type or sub classes of it.
+    * 
+    * @param <T>
+    *            the type of the elements
+    * @param graph
+    *            the graph of which the elements of the defined type shall be returned
+    * @param type
+    *            class defining the type of the elements which are to be returned
+    * @param maySubclass
+    *            whether the returned list may contain subclass instances
+    * @return a list containing all the elements from a given graph which are of the specified type
+    */
+   @SuppressWarnings("unchecked")
+   public static <T> List<T> getAllElementsOfType(final KNode graph, final Class<T> type, 
+       final boolean maySubclass) {
+       if (graph == null) {
+           throw new IllegalArgumentException("Graph can not be null");
+       }
+       if (type == null) {
+           throw new IllegalArgumentException("Type can not be null");
+       }
+       List<T> result = new LinkedList<T>();
+       TreeIterator<EObject> teo = graph.eAllContents();
+       EObject eObject = null;
+       while (teo.hasNext()) {
+           eObject = teo.next();
+           if (maySubclass) {
+               if (type.isAssignableFrom(eObject.getClass())) {
+                   result.add((T) eObject);                   
+               }
+           } else {
+               if (eObject.getClass().equals(type)) {
+                   if (!result.contains(eObject)) {
+                       result.add((T) eObject);
+                   }
+               }
+           }
+       }
+       return result;
+   }
+   
    /**
     * Private Constructor. Utility class must not
     * be instantiated.

@@ -5,12 +5,14 @@
       version="0.1.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
-   <description url="http://informatik.uni-kiel.de/rtsys/kwebs">
+   <description url="http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/Projects/KWebS">
       This feature enables jETI web service based layout in the KIELER
-modeling environment. This feature uses libraries from the jETI project from the TU Dortmund.
+modeling environment. This feature uses libraries from the jETI
+project from the TU Dortmund.
 Java Electronic Tool Integration - jETI
 Copyright (C) 2004-2011 Chair for Programming Systems, TU Dortmund
-licensed under the GNU Lesser General Public License v3 or any later version, see
+licensed under the GNU Lesser General Public License v3 or any
+later version, see
 http://www.gnu.org/licenses/lgpl-3.0.html
 http://www.gnu.org/licenses/gpl-3.0-standalone.html
    </description>

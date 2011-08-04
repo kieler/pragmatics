@@ -44,7 +44,7 @@ public final class Configuration extends Properties {
 
     // Properties for HTTP based publishing
 
-    /** Shall service be published via http? */
+    /** Shall service be published via HTTP? */
     public static final String PUBLISH_HTTP
         = PREFIX + "publishHttp";
 
@@ -54,11 +54,11 @@ public final class Configuration extends Properties {
 
     // Preferences for HTTPS based publishing
 
-    /** Shall service be published via https? */
+    /** Shall service be published via HTTPS? */
     public static final String PUBLISH_HTTPS
         = PREFIX + "publishHttps";
 
-    /** https service address. */
+    /** HTTPS service address. */
     public static final String HTTPS_ADDRESS
         = PREFIX + "httpsAddress";
 
@@ -146,14 +146,22 @@ public final class Configuration extends Properties {
     public static final String KWEBS_LOGPATH
         = PREFIX + "log.path";
     
-    /** Roundttrip size of log file in mbytes. */
+    /** Round trip size of log file in mega bytes. */
     public static final String KWEBS_LOGSIZE
         = PREFIX + "log.size";
 
     /** Whether to set the application in debugging mode. */
     public static final String KWEBS_LOGDEBUGMODE
         = PREFIX + "log.debugMode";
-    
+
+    /** Address for the preview image server. */
+    public static final String SUPPORTINGSERVER_ADDRESS
+        = PREFIX + "supportServerAddress";
+
+    /** Shall the preview image server be published? */
+    public static final String PUBLISH_SUPPORTSERVER
+        = PREFIX + "publishSupportServer";
+
     // Management preferences
 
     /** Port on which the server listens for management requests. */
@@ -170,15 +178,24 @@ public final class Configuration extends Properties {
     }
 
     /**
+     * Get the singleton instance.
+     *
+     * @return the singleton instance
+     */
+    public static Configuration getInstance() {
+        return INSTANCE;
+    }
+
+    /**
      * Loads the property based server configuration from an input stream.
      * 
      * @param stream
      *            the input stream to load from
      * @throws IOException
-     *            if an i/o exception on the input stream occurrs
+     *            if an i/o exception on the input stream occurs
      */
-    public static synchronized void loadFromStream(final InputStream stream) throws IOException {
-        INSTANCE.load(stream);
+    public synchronized void loadFromStream(final InputStream stream) throws IOException {
+        load(stream);
     }
 
     /**
@@ -187,10 +204,10 @@ public final class Configuration extends Properties {
      * @param reader
      *            the reader to load from
      * @throws IOException
-     *            if an i/o exception on the reader occurrs
+     *            if an i/o exception on the reader occurs
      */
-    public static synchronized void loadFromReader(final Reader reader) throws IOException {
-        INSTANCE.load(reader);
+    public synchronized void loadFromReader(final Reader reader) throws IOException {
+        load(reader);
     }
 
     /**
@@ -199,10 +216,10 @@ public final class Configuration extends Properties {
      * @param stream
      *            the input stream to load from
      * @throws IOException
-     *            if an i/o exception on the input stream occurrs
+     *            if an i/o exception on the input stream occurs
      */
-    public static synchronized void loadFromXmlStream(final InputStream stream) throws IOException {
-        INSTANCE.loadFromXML(stream);
+    public synchronized void loadFromXmlStream(final InputStream stream) throws IOException {
+        loadFromXML(stream);
     }
     
     /**
@@ -212,8 +229,8 @@ public final class Configuration extends Properties {
      *            the name of the configuration property
      * @return the value of the configuration property. may be {@code null} 
      */
-    public static String getConfigProperty(final String key) {
-        return INSTANCE.getProperty(key);
+    public synchronized String getConfigProperty(final String key) {
+        return getProperty(key);
     }
 
     /**
@@ -225,8 +242,8 @@ public final class Configuration extends Properties {
      * @param value
      *            the value of the configuration property
      */
-    public static void setConfigProperty(final String key, final String value) {
-        INSTANCE.setProperty(key, value);
+    public synchronized void setConfigProperty(final String key, final String value) {
+        setProperty(key, value);
     }
 
     /**
@@ -236,8 +253,8 @@ public final class Configuration extends Properties {
      *            the name of the configuration property
      * @return whether the configuration property defined by key is defined
      */
-    public static boolean hasConfigProperty(final String key) {
-        return INSTANCE.containsKey(key);
+    public synchronized boolean hasConfigProperty(final String key) {
+        return containsKey(key);
     }
     
 }

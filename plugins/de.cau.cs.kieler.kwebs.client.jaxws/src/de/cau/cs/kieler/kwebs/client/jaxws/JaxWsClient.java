@@ -19,30 +19,27 @@ import java.net.URL;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
-import de.cau.cs.kieler.kwebs.client.AbstractWebServiceClient;
-import de.cau.cs.kieler.kwebs.client.providers.Providers.Provider;
-import de.cau.cs.kieler.kwebs.logging.Logger;
-import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
-import de.cau.cs.kieler.kwebs.service.GraphLayouterOption;
-import de.cau.cs.kieler.kwebs.service.IGraphLayouterService;
-import de.cau.cs.kieler.kwebs.service.LocalServiceException;
-import de.cau.cs.kieler.kwebs.service.RemoteServiceException;
-import de.cau.cs.kieler.kwebs.util.Uris;
+import de.cau.cs.kieler.kwebs.GraphLayoutOption;
+import de.cau.cs.kieler.kwebs.IGraphLayoutService;
+import de.cau.cs.kieler.kwebs.LocalServiceException;
+import de.cau.cs.kieler.kwebs.RemoteServiceException;
+import de.cau.cs.kieler.kwebs.client.AbstractLayoutServiceClient;
+import de.cau.cs.kieler.kwebs.client.providers.ServerConfig;
 
 /**
- * Client implementation for the JAXWS web service.
+ * Client implementation for the JAX-WS web service.
  *
  * @kieler.rating 2011-05-12 red
  *
  * @author swe
  */
-public class JaxWsClient extends AbstractWebServiceClient {
+public class JaxWsClient extends AbstractLayoutServiceClient {
 
     /** The service object. */
     private Service jaxWsService;
 
     /** The web service interface used. */
-    private IGraphLayouterService jaxWsPort;
+    private IGraphLayoutService jaxWsPort;
 
     /** Java system property for the trust store to be used. */
     private static final String TRUSTSTORE_PROPERTY
@@ -65,7 +62,7 @@ public class JaxWsClient extends AbstractWebServiceClient {
     private String oldTruststorePass;
 
     /**
-     * Constructs a new JAXWS web service client.
+     * Constructs a new JAX-WS web service client.
      *
      */
     public JaxWsClient() {
@@ -73,13 +70,14 @@ public class JaxWsClient extends AbstractWebServiceClient {
     }
 
     /**
-     * Constructs a new JAXWS web service client pointing to the address of the given provider.
+     * Constructs a new JAX-WS web service client pointing to the address of the given server
+     * configuration.
      *
-     * @param theprovider
-     *            the {@link Provider} of the layout service to be used
+     * @param theserverConfig
+     *            the {@link ServerConfig} of the layout service to be used
      */
-    public JaxWsClient(final Provider theprovider) {
-        super(theprovider);
+    public JaxWsClient(final ServerConfig theserverConfig) {
+        super(theserverConfig);
     }
 
     // Implementation if the IWebServiceClient interface
@@ -91,14 +89,45 @@ public class JaxWsClient extends AbstractWebServiceClient {
         return (jaxWsService != null && jaxWsPort != null);
     }
 
+    /** */
+    private static final String QNAME_NS
+        = "http://rtsys.informatik.uni-kiel.de/layout";
+
+    /** */
+    private static final String QNAME_SERVICE
+        = "LayoutService";
+
+    /** Postfix to be added to the service address when connecting to a layout service. */
+    private static final String WSDL_POSTFIX
+        = "?wsdl";
+
     /**
      * {@inheritDoc}
      */
     public synchronized void connect() {
-        if (!ensureConnected()) {
+        if (!isAvailable()) {
             throw new LocalServiceException(
-                "Could not connect to layout service at " + getProvider().getAddress()
+                "Could not connect to layout service at " + getServerConfig().getAddress()
             );
+        }
+        if (jaxWsService == null) {
+            if (getServerConfig().getAddress().toString().toLowerCase().startsWith("https:")) {
+                setTruststoreProperties();
+            }
+            try {
+                jaxWsService = Service.create(
+                    new URL(super.getServerConfig().getAddress() + WSDL_POSTFIX),
+                    new QName(QNAME_NS, QNAME_SERVICE)
+                );
+                jaxWsPort = jaxWsService.getPort(IGraphLayoutService.class);
+            } catch (Exception e) {
+                jaxWsService = null;
+                jaxWsPort = null;
+                restoreTruststoreProperties();
+                throw new LocalServiceException(
+                    "Could not connect to layout service at " + getServerConfig().getAddress(), e
+                );
+            }
         }
     }
 
@@ -117,131 +146,47 @@ public class JaxWsClient extends AbstractWebServiceClient {
     /**
      * {@inheritDoc}
      */
-    protected final String graphLayoutImpl(final String serializedGraph,
-        final String format, final GraphLayouterOption[] options) {
-        if (ensureConnected()) {
-            try {
-                return jaxWsPort.graphLayout(serializedGraph, format, options);
-            } catch (Exception e) {
-                Logger.log(Severity.CRITICAL, "Error while calling layout service", e);
-                throw new RemoteServiceException("Error while calling layout service", e);
-            }
+    public final String graphLayout(final String serializedGraph, final String format, 
+        final GraphLayoutOption[] options) {
+        if (!isConnected()) {
+            connect();
         }
-        throw new LocalServiceException(
-            "Could not connect to layout service at " + getProvider().getAddress()
-        );
+        try {
+            return jaxWsPort.graphLayout(serializedGraph, format, options);
+        } catch (Exception e) {
+            disconnect();
+            throw new RemoteServiceException("Error while calling layout service", e);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    protected final String getCapabilitiesImpl() {
-        if (ensureConnected()) {
-            try {
-                return jaxWsPort.getCapabilities();
-            } catch (Exception e) {
-                Logger.log(Severity.CRITICAL, "Error while calling layout service", e);
-                throw new RemoteServiceException("Error while calling layout service", e);
-            }
+    public final String getServiceData() {
+        if (!isConnected()) {
+            connect();
         }
-        throw new LocalServiceException(
-            "Could not connect to layout service at " + getProvider().getAddress()
-        );
+        try {
+            return jaxWsPort.getServiceData();
+        } catch (Exception e) {
+            disconnect();
+            throw new RemoteServiceException("Error while calling layout service", e);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    protected final String getVersionImpl() {
-        if (ensureConnected()) {
-            try {
-                return jaxWsPort.getVersion();
-            } catch (Exception e) {
-                Logger.log(Severity.CRITICAL, "Error while calling layout service", e);
-                throw new RemoteServiceException("Error while calling layout service", e);
-            }
-        }
-        throw new LocalServiceException(
-            "Could not connect to layout service at " + getProvider().getAddress()
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected final byte[] getPreviewImageImpl(final String previewImage) {
-        if (ensureConnected()) {
-            try {
-                return jaxWsPort.getPreviewImage(previewImage);
-            } catch (Exception e) {
-                Logger.log(Severity.CRITICAL, "Error while calling layout service", e);
-                throw new RemoteServiceException("Error while calling layout service", e);
-            }
-        }
-        throw new LocalServiceException(
-            "Could not connect to layout service at " + getProvider().getAddress()
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public final synchronized void setProvider(final Provider theprovider) {
-        if (super.getProvider() == null || !super.getProvider().equals(theprovider)) {
+    public final synchronized void setServerConfig(final ServerConfig theserverConfig) {
+        if (super.getServerConfig() == null || !super.getServerConfig().equals(theserverConfig)) {
             jaxWsService = null;
             jaxWsPort = null;
-            super.setProvider(theprovider);
+            super.setServerConfig(theserverConfig);
         }
     }
 
-    /** */
-    private static final String QNAME_NS
-        = "http://kieler.layout/";
-
-    /** */
-    private static final String QNAME_SERVICE
-        = "LayoutService";
-
-    /** Postfix to be added to the service address when connecting to a layout service. */
-    private static final String WSDL_POSTFIX
-        = "?wsdl";
-
-
     /**
-     * Ensures that this client is actually connected to the layout service.
-     *
-     * @return whether the connection is established.
-     */
-    private synchronized boolean ensureConnected() {
-        if (!isAvailable()) {
-            throw new LocalServiceException(
-                "Could not connect to layout service at " + getProvider().getAddress()
-            );
-        }
-        if (jaxWsService == null) {
-            if (Uris.isHttpsURI(getProvider().getAddress())) {
-                setTruststoreProperties();
-            }
-            try {
-                jaxWsService = Service.create(
-                    new URL(super.getProvider().getAddress() + WSDL_POSTFIX),
-                    new QName(QNAME_NS, QNAME_SERVICE)
-                );
-                jaxWsPort = jaxWsService.getPort(IGraphLayouterService.class);
-            } catch (Exception e) {
-                Logger.log(Severity.FAILURE, 
-                    "Error while connecting to service provider: " + e.getMessage(),
-                e);
-                jaxWsService = null;
-                jaxWsPort = null;
-                restoreTruststoreProperties();
-            }
-        }
-        return (isAvailable() && jaxWsService != null && jaxWsPort != null);
-    }
-
-    /**
-     * Sets the trust store system properties for use with the current https based web service
+     * Sets the trust store system properties for use with the current HTTPS based web service
      * and caches the old settings.
      */
     private synchronized void setTruststoreProperties() {
@@ -254,8 +199,8 @@ public class JaxWsClient extends AbstractWebServiceClient {
 */        
         oldTruststore = System.getProperty(TRUSTSTORE_PROPERTY);
         oldTruststorePass = System.getProperty(TRUSTSTOREPASS_PROPERTY);
-        System.setProperty(TRUSTSTORE_PROPERTY, getProvider().getTruststore());
-        System.setProperty(TRUSTSTOREPASS_PROPERTY, getProvider().getTruststorePass());
+        System.setProperty(TRUSTSTORE_PROPERTY, getServerConfig().getTruststore());
+        System.setProperty(TRUSTSTOREPASS_PROPERTY, getServerConfig().getTruststorePass());
     }
 
     /**

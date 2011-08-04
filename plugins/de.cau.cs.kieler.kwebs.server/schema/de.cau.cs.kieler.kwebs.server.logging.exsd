@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="de.cau.cs.kieler.ws.common" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="de.cau.cs.kieler.ws.common" id="de.cau.cs.kieler.ws.logging" name="Settings for KIELER Layout Web Service Logging"/>
+      </appinfo>
+      <documentation>
+         Here the logging for the KIELER Layout Web Service can be configured.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="classLogLevel" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="defaultLogLevel" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="classLogLevel">
+      <annotation>
+         <documentation>
+            Used to define a specific log level for a fully qualified java package or class name.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="qualifiedName" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Defines the fully qualified java package or class name for which the log level is to be configured.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="logLevel" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Defines the log level to be set for the fully qualified java package or class name. The log level can be one of Logger.Severity{DEBUG, INFO, WARNING, FAILURE, CRITICAL}.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="defaultLogLevel">
+      <annotation>
+         <documentation>
+            Used to define the default log level for all java packages or classes.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="logLevel" type="string">
+            <annotation>
+               <documentation>
+                  Defines the log level to be set for all java packages or classes. The log level can be one of Logger.Severity{DEBUG, INFO, WARNING, FAILURE, CRITICAL}.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+
+</schema>

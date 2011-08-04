@@ -7,29 +7,24 @@
          point="org.eclipse.ui.preferencePages">
       <page
             category="de.cau.cs.kieler.kiml.ui.preferences.layout"
-            class="de.cau.cs.kieler.kwebs.client.ui.LayoutProviderPreferencePage"
-            id="de.cau.cs.kieler.kwebs.client.ui.layoutproviderpreferencepage"
+            class="de.cau.cs.kieler.kwebs.client.ui.RemoteLayoutPreferencePage"
+            id="de.cau.cs.kieler.kwebs.client.ui.remotelayoutpreferencepage"
             name="Remote Layout">
       </page>
    </extension>
    <extension
-         point="org.eclipse.ui.views">
-      <view
-            allowMultiple="false"
-            category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.kwebs.client.ui.LogView"
-            icon="icons/kiel_16.gif"
-            id="de.cau.cs.kieler.kwebs.client.ui.logview"
-            name="Remote Layout Log"
-            restorable="true">
-      </view>
-   </extension>
-   <extension
-         point="de.cau.cs.kieler.kwebs.client.configuration">
-      <defaultProvider
-            address="http://localhost:8442/layout"
-            name="KIELER Demo Layout Service">
-      </defaultProvider>
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.trim.status">
+         <toolbar
+               id="de.cau.cs.kieler.kwebs.client.kwebsstatusbar">
+            <control
+                  class="de.cau.cs.kieler.kwebs.client.ui.KWebSStatusBar"
+                  id="de.cau.cs.kieler.kwebs.client.ui.kwebsstatusbar">
+            </control>
+         </toolbar>
+      </menuContribution>
    </extension>
 
 </plugin>

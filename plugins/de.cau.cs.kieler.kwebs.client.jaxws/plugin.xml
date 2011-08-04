@@ -4,9 +4,17 @@
    <extension
          point="de.cau.cs.kieler.kwebs.client.protocol.support">
       <protocolSupport
-            class="de.cau.cs.kieler.kwebs.client.jaxws.JaxWsClient"
+            implementation="de.cau.cs.kieler.kwebs.client.jaxws.JaxWsClient"
             protocols="http;https">
       </protocolSupport>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kwebs.client.configuration">
+      <defaultServerConfig
+            address="http://10.6.0.206:8442/layout"
+            isStandard="true"
+            name="KIELER Demo Layout Service (HTTP)">
+      </defaultServerConfig>
    </extension>
 
 </plugin>

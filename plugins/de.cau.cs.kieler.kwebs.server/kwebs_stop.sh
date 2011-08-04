@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Shutdown script for the KWebS server
 # Version 0.00

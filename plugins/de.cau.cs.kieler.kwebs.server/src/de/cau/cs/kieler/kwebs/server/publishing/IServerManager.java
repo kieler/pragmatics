@@ -30,7 +30,7 @@ interface IServerManager {
      *
      * @return whether publishing was successful
      */
-    void publish(final Object theobject);
+    void publish(Object theobject);
 
     /**
      * Unpublish the published object.

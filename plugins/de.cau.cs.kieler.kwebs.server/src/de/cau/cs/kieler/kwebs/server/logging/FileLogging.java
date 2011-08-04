@@ -24,8 +24,7 @@ import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import de.cau.cs.kieler.kwebs.logging.ILoggerListener;
-import de.cau.cs.kieler.kwebs.logging.Logger.LoggerEvent;
+import de.cau.cs.kieler.kwebs.server.logging.Logger.LoggerEvent;
 
 /**
  * This class implements {@link ILoggerListener} and provides basic

@@ -45,6 +45,7 @@ public class ManagementClient {
      * @param port
      *            the port the management server listens for management requests
      * @throws IOException
+     *             if the connection to the management server can not be established
      */
     public ManagementClient(final int port) throws IOException {
         socket = new Socket(InetAddress.getByName("localhost"), port);

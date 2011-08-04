@@ -18,8 +18,9 @@ package de.cau.cs.kieler.kwebs.formats;
  * Utility class defining the supported formats for the layout service. A format
  * is a combination of the meta model of a a graph and the used serialization. 
  *
- * @kieler.rating 2011-05-04 red
- *
+ * @kieler.rating 2011-08-02 proposed yellow
+ *     reviewed by ckru, mri, msp
+ *     
  * @author swe
  */
 public final class Formats {

@@ -16,11 +16,8 @@ package de.cau.cs.kieler.kiml.service;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.print.attribute.standard.Severity;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
@@ -31,7 +28,6 @@ import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
-import de.cau.cs.kieler.kwebs.logging.Logger;
 
 /**
  * A layout data service that reads its content from the Eclipse extension registry.

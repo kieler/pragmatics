@@ -9,23 +9,10 @@
     <parameter name="INPUT_OPTIONS" class="java.lang.String" required="false"/>    
   </tool>
 
-  <tool name="getCapabilities" active="true" class="de.cau.cs.kieler.kwebs.server.service.JetiService" method="getCapabilities">    
+  <tool name="getServiceData" active="true" class="de.cau.cs.kieler.kwebs.server.service.JetiService" method="getServiceData">    
     <description></description>
     <longDescription></longDescription>
-    <parameter name="OUTPUT_CAPABILITIES" class="de.unido.ls5.eti.toolserver.OutputFileReference" required="true"/>    
-  </tool>
-
-  <tool name="getVersion" active="true" class="de.cau.cs.kieler.kwebs.server.service.JetiService" method="getVersion">    
-    <description></description>
-    <longDescription></longDescription>
-    <parameter name="OUTPUT_VERSION" class="de.unido.ls5.eti.toolserver.OutputFileReference" required="true"/>    
-  </tool>
-
-  <tool name="getPreviewImage" active="true" class="de.cau.cs.kieler.kwebs.server.service.JetiService" method="getPreviewImage">    
-    <description></description>
-    <longDescription></longDescription>
-    <parameter name="INPUT_PREVIEWIMAGEID" class="java.lang.String" required="true"/>    
-    <parameter name="OUTPUT_PREVIEWIMAGEDATA" class="de.unido.ls5.eti.toolserver.OutputFileReference" required="true"/>    
+    <parameter name="OUTPUT_SERVICEDATA" class="de.unido.ls5.eti.toolserver.OutputFileReference" required="true"/>    
   </tool>
 
 </etitoolserver>

@@ -17,8 +17,8 @@
          </appinfo>
       </annotation>
       <complexType>
-         <sequence>
-            <element ref="defaultProvider"/>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="defaultServerConfig"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,7 +47,7 @@
       </complexType>
    </element>
 
-   <element name="defaultProvider">
+   <element name="defaultServerConfig">
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
@@ -60,6 +60,13 @@
             <annotation>
                <documentation>
                   
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isStandard" type="boolean">
+            <annotation>
+               <documentation>
+                  Defines whether this default provider should be set when the user clicks &apos;Restore Defaults&apos; on the preference page.
                </documentation>
             </annotation>
          </attribute>

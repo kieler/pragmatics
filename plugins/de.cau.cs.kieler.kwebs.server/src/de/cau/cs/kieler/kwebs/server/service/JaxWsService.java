@@ -16,10 +16,10 @@ package de.cau.cs.kieler.kwebs.server.service;
 
 import javax.jws.WebService;
 
-import de.cau.cs.kieler.kwebs.service.IGraphLayouterService;
+import de.cau.cs.kieler.kwebs.GraphLayoutOption;
+import de.cau.cs.kieler.kwebs.IGraphLayoutService;
+import de.cau.cs.kieler.kwebs.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
-import de.cau.cs.kieler.kwebs.service.GraphLayouterOption;
-import de.cau.cs.kieler.kwebs.service.RemoteServiceException;
 
 /**
  * Main service class to be published as jaxws web service.
@@ -28,14 +28,13 @@ import de.cau.cs.kieler.kwebs.service.RemoteServiceException;
  * @author  swe
  */
 @WebService(
-    endpointInterface = "de.cau.cs.kieler.kwebs.service.IGraphLayouterService",
+    endpointInterface = "de.cau.cs.kieler.kwebs.IGraphLayoutService",
     name = "LayoutServicePort",
     portName = "LayoutServicePort",
     serviceName = "LayoutService",
-    targetNamespace = "http://kieler.layout/"
+    targetNamespace = "http://rtsys.informatik.uni-kiel.de/layout"
 )
-public final class JaxWsService extends AbstractService
-    implements IGraphLayouterService {
+public final class JaxWsService extends AbstractService implements IGraphLayoutService {
 
     /**
      *
@@ -48,7 +47,7 @@ public final class JaxWsService extends AbstractService
      * {@inheritDoc}
      */
     public String graphLayout(final String serializedGraph,
-        final String format, final GraphLayouterOption[] options) {
+        final String format, final GraphLayoutOption[] options) {
         try {
             return layout(serializedGraph, format, options);
         } catch (Exception e) {
@@ -59,31 +58,9 @@ public final class JaxWsService extends AbstractService
     /**
      * {@inheritDoc}
      */
-    public String getCapabilities() {
+    public String getServiceData() {
         try {
-            return ServerLayoutDataService.getCapabilities();
-        } catch (Exception e) {
-            throw new RemoteServiceException(e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getVersion() {
-        try {
-            return ServerLayoutDataService.getVersion();
-        } catch (Exception e) {
-            throw new RemoteServiceException(e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public byte[] getPreviewImage(final String previewImage) {
-        try {
-            return ServerLayoutDataService.getPreviewImage(previewImage);
+            return ServerLayoutDataService.getServiceData();
         } catch (Exception e) {
             throw new RemoteServiceException(e);
         }

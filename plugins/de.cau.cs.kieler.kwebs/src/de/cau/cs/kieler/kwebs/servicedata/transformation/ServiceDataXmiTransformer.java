@@ -29,18 +29,21 @@ import de.cau.cs.kieler.kwebs.servicedata.ServiceData;
 import de.cau.cs.kieler.kwebs.servicedata.ServiceDataPackage;
 
 /**
- * Transformer for the KGraph model and XMI serialization.
+ * This class is used for the serialization and deserialization of the service data model.
  *
- * @kieler.rating 2011-05-04 red
+ * @kieler.rating 2011-08-02 proposed yellow
+ *     reviewed by ckru, mri, msp
  *
  * @author swe
  */
 public class ServiceDataXmiTransformer {
 
     /**
-     * 
+     * Deserializes a given serialized service data model.
+     *  
      * @param serializedData
-     * @return
+     *            the serialized service data model
+     * @return a service data model
      */
     public final ServiceData deserialize(final String serializedData) {
         ServiceData serviceMeta = null;
@@ -67,9 +70,11 @@ public class ServiceDataXmiTransformer {
     }
 
     /**
+     * Serializes a given service data model.
      * 
      * @param serviceData
-     * @return
+     *            a service data model
+     * @return a serialized service data model
      */
     public final String serialize(final ServiceData serviceData) {
         String serializedMeta = null;
@@ -91,8 +96,9 @@ public class ServiceDataXmiTransformer {
     }
 
     /**
-     * 
-     * @return
+     * Creates an EMF resource set used for serialization and deserialization.
+     *  
+     * @return a resource set
      */
     private ResourceSet createResourceSet() {
         ResourceSet resourceset = new ResourceSetImpl();

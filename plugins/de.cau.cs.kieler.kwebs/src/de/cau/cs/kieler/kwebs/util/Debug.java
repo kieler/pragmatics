@@ -19,7 +19,9 @@ import java.util.Map;
 /**
  * Debugging utilities, mostly for displaying objects.
  * 
- * @kieler.rating  2011-05-04 red
+ * @kieler.rating  2011-08-02 proposed yellow
+ *     reviewed by ckru, mri, msp
+ *     
  * @author  swe
  */
 public final class Debug {

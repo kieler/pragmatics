@@ -5,8 +5,9 @@
       version="0.1.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
-   <description url="http://informatik.uni-kiel.de/rtsys/kwebs">
-      The KIELER KWebS server feature contains all neccesary plugins and features for building
+   <description url="http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/Projects/KWebS">
+      The KIELER KWebS server feature contains all neccesary plugins
+and features for building
 the layout web server. This feature uses
 libraries from the jETI project from the TU Dortmund.
 Java Electronic Tool Integration - jETI

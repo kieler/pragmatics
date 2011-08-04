@@ -5,6 +5,7 @@
          id="de.cau.cs.kieler.kwebs.server.configuration" 
          name="Configuration of the KIELER Layout Service"
          schema="schema/de.cau.cs.kieler.kwebs.server.configuration.exsd"/>
+   <extension-point id="de.cau.cs.kieler.kwebs.server.logging" name="KIELER Layout Web Service Logging Configuration" schema="schema/de.cau.cs.kieler.kwebs.server.logging.exsd"/>
    <extension
          id="de.cau.cs.kieler.kwebs.server.Application"
          point="org.eclipse.core.runtime.applications">
@@ -31,9 +32,19 @@
    <extension
          point="de.cau.cs.kieler.kwebs.server.configuration">
       <transformer
-            implementationClass="de.cau.cs.kieler.kwebs.transformation.KGraphXmiTransformer"
+            implementation="de.cau.cs.kieler.kwebs.transformation.KGraphXmiTransformer"
             supportedFormat="de.cau.cs.kieler.format.kgraph.xmi">
       </transformer>
+      <supportHandler
+            implementation="de.cau.cs.kieler.kwebs.server.publishing.PreviewImageHandler"
+            path="previewImages">
+      </supportHandler>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kwebs.server.logging">
+      <defaultLogLevel
+            logLevel="INFO">
+      </defaultLogLevel>
    </extension>
 
 </plugin>

@@ -4,9 +4,16 @@
    <extension
          point="de.cau.cs.kieler.kwebs.client.protocol.support">
       <protocolSupport
-            class="de.cau.cs.kieler.kwebs.client.jeti.JetiClient"
+            implementation="de.cau.cs.kieler.kwebs.client.jeti.JetiClient"
             protocols="eti">
       </protocolSupport>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kwebs.client.configuration">
+      <defaultServerConfig
+            address="eti://10.6.0.206:9867/layout"
+            name="KIELER Demo Layout Service (jETI)">
+      </defaultServerConfig>
    </extension>
 
 </plugin>

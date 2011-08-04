@@ -14,11 +14,19 @@
 
 package de.cau.cs.kieler.kwebs.client.layout;
 
+import java.net.URL;
+
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.statushandlers.StatusManager;
+
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
-import de.cau.cs.kieler.kiml.service.ServiceModelLayoutDataService;
-import de.cau.cs.kieler.kwebs.client.IWebServiceClient;
-import de.cau.cs.kieler.kwebs.logging.Logger;
-import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
+import de.cau.cs.kieler.kiml.service.ServiceDataLayoutDataService;
+import de.cau.cs.kieler.kwebs.client.ILayoutServiceClient;
+import de.cau.cs.kieler.kwebs.client.activator.Activator;
 
 /**
  * This class is designed for retrieving the layout capabilities of a
@@ -30,7 +38,7 @@ import de.cau.cs.kieler.kwebs.logging.Logger.Severity;
  * @kieler.rating 2011-05-17 red
  * @author swe
  */
-public final class RemoteLayoutDataService extends ServiceModelLayoutDataService {
+public final class RemoteLayoutDataService extends ServiceDataLayoutDataService {
 
     /**
      * This class needs to be instantiated through the {@link #create}
@@ -42,7 +50,7 @@ public final class RemoteLayoutDataService extends ServiceModelLayoutDataService
     /**
      * Creates the singleton instance of this class. The layout capabilities
      * need to be retrieved afterwards through any client which implements the
-     * {@link IWebServiceClient} interface
+     * {@link ILayoutServiceClient} interface
      * by calling {@link initializeWithClient} with the client as parameter.
      */
     public static synchronized void create() {
@@ -64,10 +72,19 @@ public final class RemoteLayoutDataService extends ServiceModelLayoutDataService
             LayoutDataService.getInstanceOf(
                 LayoutDataService.REMOTEDATASERVICE
         );
-        if (lds != null) {
+        // Remember current mode
+        String currentMode = LayoutDataService.getMode();
+        if (lds != null) {          
+            // Set the mode temporarily to local mode since the
+            // RemoteLayoutDataService instance can only be removed
+            // if it is not the currently active instance.
+            LayoutDataService.setMode(ECLIPSEDATASERVICE);            
             LayoutDataService.removeService(lds);
         }
+        // Create new RemoteLayoutDataService instance and register it
         create();
+        // Switch back to original mode
+        LayoutDataService.setMode(currentMode);
     }
 
     /**
@@ -87,40 +104,72 @@ public final class RemoteLayoutDataService extends ServiceModelLayoutDataService
      * @param client 
      *            the client.
      */
-    public synchronized void initializeWithClient(final IWebServiceClient client) {
+    public synchronized void initializeWithClient(final ILayoutServiceClient client) {
         if (!client.isAvailable()) {
             throw new ServiceUnavailableException(
                 "The service on address "
-                + client.getProvider().getAddress()
+                + client.getServerConfig().getAddress()
                 + " is currently not reachable"
             );
         }
         try {
-            String capabilities = client.getCapabilities();
-            Logger.log(Severity.INFO, "Received server meta data", capabilities);
+            String capabilities = client.getServiceData();
             super.initializeFromString(capabilities);
         } catch (Exception e) {
-            Logger.log(Severity.FAILURE,
-                "Server meta data could not be retrieved or correctly processed",
-            e);
+            StatusManager.getManager().handle(
+                new Status(
+                    IStatus.ERROR, 
+                    Activator.PLUGIN_ID, 
+                    "Server meta data could not be retrieved or correctly processed", 
+                    null
+                )
+            );
             throw new IllegalStateException(
                 "Server meta data could not be retrieved or correctly processed",
             e);
         }
     }
 
+    /** name of the 'previewImage' attribute layout algorithms meta data. */
+    public static final String ATTRIBUTE_PREVIEWIMAGE 
+        = "previewImage";
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected LayoutAlgorithmData createLayoutAlgorithmData(final IConfigurationElement element) {
+        RemoteLayoutAlgorithmData algoData = new RemoteLayoutAlgorithmData();
+        String previewImage = element.getAttribute(ATTRIBUTE_PREVIEWIMAGE);
+        if (previewImage != null) {
+            try {
+                algoData.setPreviewImage(ImageDescriptor.createFromURL(new URL(previewImage)));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return algoData;
+    }
+
     /**
      * {@inheritDoc}
      */
     protected void reportError(final String message) {
-        Logger.log(Severity.FAILURE, "Error while parsing meta data", message);
+        reportError(message, null);
     }
 
     /**
      * {@inheritDoc}
      */
     protected void reportError(final String message, final Throwable throwable) {
-        Logger.log(Severity.FAILURE, "Exception while parsing meta data", message, throwable);
+        StatusManager.getManager().handle(
+            new Status(
+                IStatus.ERROR, 
+                Activator.PLUGIN_ID, 
+                message,
+                throwable
+            )
+        );
     }
 
 }
