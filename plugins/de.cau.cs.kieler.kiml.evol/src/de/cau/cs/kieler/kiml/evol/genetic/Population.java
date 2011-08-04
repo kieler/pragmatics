@@ -123,7 +123,7 @@ public class Population extends MapPropertyHolder
         int i = 0;
         for (final Genome ind : this.getGenomes()) {
             // assuming individual is not null
-            result.append("Individual #" + ++i + " (" + ind.getGeneration() + "." + ind.getId()
+            result.append("Individual #" + ++i + " (" + ind.getGenerationNumber() + "." + ind.getId()
                     + "): " + ind.getUserRating() + newLine);
             for (final IGene<?> gene : ind.getGenes()) {
                 result.append(gene.getId() + ": " + gene.toString() + newLine);

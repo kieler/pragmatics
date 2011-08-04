@@ -25,15 +25,16 @@ import java.util.Map;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.evol.alg.MutationOperation;
 
 /**
- * 
+ *
  * A genome has a list of Gene objects. It can be used as an individual in an
  * evolutionary algorithm.
- * 
+ *
  * @kieler.rating 2011-07-08 yellow reviewed by swe, ima, msp
  * @author bdu
- * 
+ *
  */
 public class Genome extends MapPropertyHolder {
 
@@ -167,7 +168,7 @@ public class Genome extends MapPropertyHolder {
 
     /**
      * @param genomes
-     * @return
+     * @return the average rating of the given genomes
      */
     private static double averageRating(final Genome... genomes) {
         double ratingSum = 0;
@@ -183,7 +184,7 @@ public class Genome extends MapPropertyHolder {
      *
      * @return number of genes
      */
-    public int size() {
+    public final int size() {
         if (this.getGenes() == null) {
             return 0;
         }
@@ -195,7 +196,7 @@ public class Genome extends MapPropertyHolder {
      */
     public Genome() {
         super();
-        this.generation = 0;
+        this.generationNumber = 0;
     }
 
     /**
@@ -205,7 +206,7 @@ public class Genome extends MapPropertyHolder {
      *            template genome; must not be {@code null}
      */
     public Genome(final Genome genome) {
-        this(genome, genome.generation);
+        this(genome, genome.generationNumber);
     }
 
     /**
@@ -231,7 +232,7 @@ public class Genome extends MapPropertyHolder {
         this.userRating = theGenome.getUserRating();
         this.features = theGenome.getFeatures();
 
-        this.generation = theGeneration;
+        this.generationNumber = theGeneration;
         System.out.println("Created individual " + toString());
     }
 
@@ -243,14 +244,14 @@ public class Genome extends MapPropertyHolder {
      */
     public Genome(final int theGeneration) {
         super();
-        this.generation = theGeneration;
+        this.generationNumber = theGeneration;
     }
 
     // private fields
     /**
      * Indicates the generation in which the individual was created.
      */
-    private final int generation;
+    private final int generationNumber;
 
     /**
      * The genes of this genome.
@@ -267,7 +268,10 @@ public class Genome extends MapPropertyHolder {
 
     /**
      * A map of features associated to this genome.
+     *
+     * @deprecated
      */
+    @Deprecated
     private Map<String, Object> features = Collections.emptyMap();
 
     /**
@@ -317,7 +321,7 @@ public class Genome extends MapPropertyHolder {
      * based on these features.
      *
      * @return an unmodifiable view of the map of features
-     * @deprecated
+     * @deprecated replace by properties
      */
     @Deprecated
     public Map<String, Object> getFeatures() {
@@ -325,12 +329,14 @@ public class Genome extends MapPropertyHolder {
     }
 
     /**
-     * Generation the individual belongs to.
+     * Number of the generation the individual belongs to.
      *
-     * @return Generation.
+     * @return Generation number
+     * @deprecated replace by property
      */
-    public int getGeneration() {
-        return this.generation;
+    @Deprecated
+    public int getGenerationNumber() {
+        return this.generationNumber;
     }
 
     /**
@@ -453,7 +459,7 @@ public class Genome extends MapPropertyHolder {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        result.append(this.generation);
+        result.append(this.generationNumber);
         result.append(".");
         result.append(getId());
         result.append(" (");
@@ -471,9 +477,11 @@ public class Genome extends MapPropertyHolder {
      * mutated version of itself.
      *
      * @return mutated copy of this genome
+     * @deprecated TODO move this into {@link MutationOperation}
      */
+    @Deprecated
     private Genome newMutation() {
-        Genome newGenome = new Genome(this.generation);
+        Genome newGenome = new Genome(this.generationNumber);
         for (final IGene<?> gene : this.getGenes()) {
             // presuming gene != null
             IGene<?> newGene = gene.newMutation();

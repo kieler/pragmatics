@@ -28,8 +28,8 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
 public interface IEvolutionaryOperation {
 
     /**
-     * Performs the evolutionary operation (in place) on the given population.
-     *
+     * Performs the evolutionary operation on the given population (in place).
+     * 
      * @param population
      *            a population
      */

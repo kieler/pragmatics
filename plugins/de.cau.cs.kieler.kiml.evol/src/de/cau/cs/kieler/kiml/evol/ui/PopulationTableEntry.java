@@ -31,7 +31,7 @@ public class PopulationTableEntry {
      */
     public String getId() {
         if (this.individual != null) {
-            return this.individual.getGeneration() + "." + this.individual.getId();
+            return this.individual.getGenerationNumber() + "." + this.individual.getId();
         }
         return null;
     }

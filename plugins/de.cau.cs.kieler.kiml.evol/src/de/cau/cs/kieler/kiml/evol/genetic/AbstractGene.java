@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.evol.genetic;
 import java.util.Random;
 
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
+import de.cau.cs.kieler.kiml.evol.alg.CrossOverOperation;
 
 /**
  * A gene is an immutable value container that is able to provide similar
@@ -113,12 +114,12 @@ public abstract class AbstractGene<T extends Comparable<? super T>> extends MapP
      * Provide a cross over of this gene by randomly picking one of the given
      * genes or this gene with uniform probability. Extending classes may
      * override this method in order to provide a more sophisticated cross over.
-     * 
+     *
      * @param otherGenes
      *            some genes that are to be recombined with this instance.
      * @return a new gene that is a cross over of this instance and the given
      *         genes.
-     * @deprecated
+     * @deprecated TODO move this to {@link CrossOverOperation}
      */
     @Deprecated
     public IGene<T> recombineWith(final IGene<T>... otherGenes) {

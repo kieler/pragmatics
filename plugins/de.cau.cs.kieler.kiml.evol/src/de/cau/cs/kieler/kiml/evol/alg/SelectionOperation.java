@@ -21,8 +21,10 @@ import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
 /**
- * @author bdu
+ * Operation to select parent individuals for recombination.
  *
+ * @author bdu
+ * 
  */
 public final class SelectionOperation implements IEvolutionaryOperation {
 
@@ -66,21 +68,21 @@ public final class SelectionOperation implements IEvolutionaryOperation {
 
         Population selection = new Population();
         int count = population.size();
-        Genome[] individuals = new Genome[count];
-        population.toArray(individuals);
-        Arrays.sort(individuals, Genome.DESCENDING_RATING_COMPARATOR);
+        Genome[] candidates = new Genome[count];
+        population.toArray(candidates);
+        Arrays.sort(candidates, Genome.DESCENDING_RATING_COMPARATOR);
 
         // Only some are allowed to generate offspring
         // These are selected by truncation.
 
-        int select = BOUND_MULTIPLE_CALCULATOR.scale(individuals.length);
+        int select = BOUND_MULTIPLE_CALCULATOR.scale(candidates.length);
 
         System.out.println(" -- select " + select + " of " + count);
-        for (final Genome ind : individuals) {
+        for (final Genome candidate : candidates) {
             if (selection.size() < select) {
-                selection.add(ind);
-                ind.setProperty(Population.SELECTED, true);
-                System.out.println(" -- select: " + ind);
+                selection.add(candidate);
+                candidate.setProperty(Population.SELECTED, true);
+                System.out.println(" -- select: " + candidate);
             } else {
                 break;
             }

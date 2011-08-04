@@ -16,6 +16,8 @@
  */
 package de.cau.cs.kieler.kiml.evol.alg;
 
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
@@ -24,18 +26,23 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
  *
  */
 public class MutationOperation implements IEvolutionaryOperation {
+    /** Default value for the mutation application probability. */
+    private static final double MUTATION_APPLICATION_PROBABILITY_DEFAULT = 0.6;
+
     /**
      * The mutation application probability. This is the probability for each
      * individual to be subject to mutation.
      */
-    private static final double MUTATION_APPLICATION_PROBABILITY = 0.6;
+    private static final IProperty<Double> MUTATION_APPLICATION_PROBABILITY =
+            new Property<Double>("evol.mutationApplicationProbability",
+                    MUTATION_APPLICATION_PROBABILITY_DEFAULT);
 
     /**
      * {@inheritDoc}
      */
     public final void process(final Population population) {
 
-        final double prob = MUTATION_APPLICATION_PROBABILITY;
+        final double prob = MUTATION_APPLICATION_PROBABILITY.getDefault();
         System.out.println(" -- mutate all " + population.size() + ", each with probability of "
                 + prob);
         Population mutations = new Population();

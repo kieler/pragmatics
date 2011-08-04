@@ -20,33 +20,52 @@ import java.util.Iterator;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
 /**
+ * Generates offspring by recombining selected parent individuals. The genetic
+ * material of two or more parent individuals is put together to produce one or
+ * more offspring.
+ *
  * @author bdu
  *
  */
 public class CrossOverOperation implements IEvolutionaryOperation {
 
+    /** Default value for the cross over ratio. */
+    private static final double CROSS_OVER_RATIO_DEFAULT = 1.2;
+
     /**
      * The cross over ratio. Indicates how many offspring individuals shall be
      * created per selected individual.
      */
-    private static final double CROSS_OVER_RATIO = 1.2;
+    private static final IProperty<Double> CROSS_OVER_RATIO = new Property<Double>(
+            "evol.crossOverRatio", CROSS_OVER_RATIO_DEFAULT);
+
+    /** Default value for minimum number if individuals to create by cross over. */
+    private static final int MIN_CROSS_OVERS_DEFAULT = 1;
 
     /** Minimum number of individuals to create by cross over. */
-    private static final int MIN_CROSS_OVERS = 1;
+    private static final IProperty<Integer> MIN_CROSS_OVERS = new Property<Integer>(
+            "evol.minCrossOvers", MIN_CROSS_OVERS_DEFAULT);
+
+    /** Default value for maximum number of individuals to create by cross over. */
+    private static final int MAX_CROSS_OVERS_DEFAULT = 1000;
 
     /** Maximum number of individuals to create by cross over. */
-    private static final int MAX_CROSS_OVERS = 1000;
+    private static final IProperty<Integer> MAX_CROSS_OVERS = new Property<Integer>(
+            "evol.maxCrossOvers", MAX_CROSS_OVERS_DEFAULT);
 
     /**
      *
      */
     private static final BoundMultipleCalculator BOUND_MULTIPLE_CALCULATOR =
-            new BoundMultipleCalculator(CROSS_OVER_RATIO, MIN_CROSS_OVERS, MAX_CROSS_OVERS);
+            new BoundMultipleCalculator(CROSS_OVER_RATIO.getDefault(),
+                    MIN_CROSS_OVERS.getDefault(), MAX_CROSS_OVERS.getDefault());
 
     /**
      * Indicates whether parthenogenesis (reproduction from only one parent) may
