@@ -171,7 +171,7 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
                 switch (targetNodeType) {
                 case LOWER_COMPOUND_BORDER:
                     LPort newPort = transferPort(targetPort, compoundNodeTarget);
-                    ledge.setSource(newPort);
+                    ledge.setTarget(newPort);
                     break;
 
                 case UPPER_COMPOUND_PORT:
