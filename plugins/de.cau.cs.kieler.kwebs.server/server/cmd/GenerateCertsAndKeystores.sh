@@ -33,7 +33,7 @@ echo Copyright 2011 by Real-Time and Embedded Systems Group, Department
 echo of Computer Science, Christian-Albrechts-University of Kiel
 echo Published under the EPL v1.0 \(see http://www.eclipse.org/legal/epl-v10.html\)
 echo
-JAVA_HOME=/home/jeti/jdk1.6.0_25
+JAVA_HOME=/usr/lib/jvm/java-6-sun
 if [ "$JAVA_HOME"=="" ];
 then
     echo You must set JAVA_HOME to point at your Java Development Kit installation
@@ -61,7 +61,7 @@ echo Please enter the password for the servers java keystore:
 read SERVER_PASS
 
 #Generate CA
-ERRORLEVEL=$(openssl req -new -x509 -out cacert.pem -days %VALIDITY% -config ca.conf)
+ERRORLEVEL=$(openssl req -new -x509 -out cacert.pem -days $VALIDITY -config ca.conf)
 
 if [ "$RESULT" == "0" ];
 then
@@ -86,7 +86,7 @@ fi
 
 #Java keytool can not import private keys so we make a key store in pkcs12 format which we will later
 #convert to java key store format by importing it with the keytool
-ERRORLEVEL=$(openssl pkcs12 -passout pass:%SERVER_PASS% -export -in servercert.pem -inkey serverkey.pem -out server.pkcs12)
+ERRORLEVEL=$(openssl pkcs12 -passout pass:$SERVER_PASS -export -in servercert.pem -inkey serverkey.pem -out server.pkcs12)
 
 if [ "$RESULT" == "0" ];
 then
@@ -94,7 +94,7 @@ then
 fi
 
 #Import the PKCS12 key store into a newly created java key store
-ERRORLEVEL=$($KEYTOOL -importkeystore -deststorepass %SERVER_PASS% -destkeypass %SERVER_PASS% -destkeystore server.jks -srckeystore server.pkcs12 -srcstoretype PKCS12 -srcstorepass %SERVER_PASS% -srcalias 1 -destalias %SERVER_ALIAS%)
+ERRORLEVEL=$($KEYTOOL -importkeystore -deststorepass $SERVER_PASS -destkeypass $SERVER_PASS -destkeystore server.jks -srckeystore server.pkcs12 -srcstoretype PKCS12 -srcstorepass $SERVER_PASS -srcalias 1 -destalias $SERVER_ALIAS)
 
 if [ "$RESULT" == "0" ];
 then
@@ -121,7 +121,7 @@ echo Please enter the password for the clients java trust store:
 read CLIENT_PASS
 
 #Add the server certificate to the client trust store
-ERRORLEVEL=$($KEYTOOL -import -v -trustcacerts -alias "%SERVER_ALIAS%" -file servercert.der -keystore client.jks -keypass %CLIENT_PASS% -storepass %CLIENT_PASS%)
+ERRORLEVEL=$($KEYTOOL -import -v -trustcacerts -alias "$SERVER_ALIAS" -file servercert.der -keystore client.jks -keypass $CLIENT_PASS -storepass $CLIENT_PASS)
 
 if [ "$RESULT" == "0" ];
 then
@@ -129,11 +129,14 @@ then
 fi
 
 #Add the ca certificate to the client trust store to complete the verification chain
-ERRORLEVEL=$($KEYTOOL -import -v -trustcacerts -alias "%TRUSTCA_ALIAS%" -file cacert.der -keystore client.jks -keypass %CLIENT_PASS% -storepass %CLIENT_PASS%)
+ERRORLEVEL=$($KEYTOOL -import -v -trustcacerts -alias "$TRUSTCA_ALIAS" -file cacert.der -keystore client.jks -keypass $CLIENT_PASS -storepass $CLIENT_PASS)
 
 if [ "$RESULT" == "0" ];
 then
     exit 1;
 fi
+
+cp *.jks ../kwebs/security/keystores/
+cp *.jks ../kwebs/web/security/
 
 RemoveTemps

@@ -18,5 +18,4 @@ Export-Package: de.cau.cs.kieler.kwebs.client,
  de.cau.cs.kieler.kwebs.client.layout,
  de.cau.cs.kieler.kwebs.client.preferences,
  de.cau.cs.kieler.kwebs.client.providers,
- de.cau.cs.kieler.kwebs.client.ui,
- de.cau.cs.kieler.kwebs.client.ui.testers
+ de.cau.cs.kieler.kwebs.client.ui

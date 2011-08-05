@@ -49,15 +49,17 @@ public class FileLogging implements ILoggerListener {
         = new ReentrantLock();
 
     /**
-     *
-     * @param logFileName
+     * Creates a new file logger instance.
+     * 
+     * @param thelogFileName
+     *            name of the log file to be used
      */
     public FileLogging(final String thelogFileName) {
         setLogFileName(thelogFileName);
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     protected void finalize() throws Throwable {
@@ -66,16 +68,19 @@ public class FileLogging implements ILoggerListener {
     }
 
     /**
-     *
-     * @return
+     * Returns the currently used log file.
+     * 
+     * @return the currently used log file
      */
     public final String getLogFileName() {
         return logFileName;
     }
 
     /**
-     *
-     * @param logFileName
+     * Sets the currently used log file.
+     * 
+     * @param thelogFileName
+     *             the log file to be used
      * @throws IllegalArgumentException
      */
     public final void setLogFileName(final String thelogFileName) {
@@ -103,17 +108,20 @@ public class FileLogging implements ILoggerListener {
     }
 
     /**
-     *
-     * @return
+     * Returns whether this logger is correctly initialized.
+     * 
+     * @return whether this logger is correctly initialized
      */
     public final boolean isInitialized() {
         return (logWriter != null);
     }
 
     /**
-     *
-     * @return
+     * Returns the size of the log file which is currently used.
+     * 
+     * @return the size of the log file which is currently used
      * @throws IllegalAccessException
+     *             if this logger is not initialized
      */
     public final long size() throws IllegalAccessException {
         if (!isInitialized()) {
@@ -125,7 +133,7 @@ public class FileLogging implements ILoggerListener {
     }
 
     /**
-     *
+     * Clears the currently used log file.
      */
     public final void clear() {
         logLock.lock();
@@ -145,6 +153,9 @@ public class FileLogging implements ILoggerListener {
 
     /**
      * Flushes and closes the log.
+     * 
+     * @throws IOException
+     *             if an I/O error occurs.
      */
     public final void close() throws IOException {
         flushNClose();
@@ -220,11 +231,11 @@ public class FileLogging implements ILoggerListener {
         = new SimpleDateFormat("yyyy-dd-MM HH:mm:ss Z");
 
     /**
-     * Creates a csv record from a logger event.
+     * Creates a CSV record from a logger event.
      *
      * @param event
      *            the logger event
-     * @return the csv record
+     * @return the CSV record
      */
     public final String getCsvRecord(final LoggerEvent event) {
         String str = "";
@@ -243,11 +254,11 @@ public class FileLogging implements ILoggerListener {
     }
 
     /**
-     * Create a csv field entry by escaping the given string.
+     * Create a CSV field entry by escaping the given string.
      *
      * @param string
      *            the string to be escaped
-     * @return the csv field
+     * @return the CSV field
      */
     private String getCsvField(final String string) {
         String tmp = string;

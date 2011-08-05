@@ -15,16 +15,17 @@
 package de.cau.cs.kieler.kwebs.client.jaxws;
 
 import java.net.URL;
+import java.util.List;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
 
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
-import de.cau.cs.kieler.kwebs.IGraphLayoutService;
 import de.cau.cs.kieler.kwebs.LocalServiceException;
 import de.cau.cs.kieler.kwebs.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.client.AbstractLayoutServiceClient;
 import de.cau.cs.kieler.kwebs.client.providers.ServerConfig;
+import de.cau.cs.kieler.kwebs.jaxws.LayoutService;
+import de.cau.cs.kieler.kwebs.jaxws.LayoutServicePort;
 
 /**
  * Client implementation for the JAX-WS web service.
@@ -36,10 +37,10 @@ import de.cau.cs.kieler.kwebs.client.providers.ServerConfig;
 public class JaxWsClient extends AbstractLayoutServiceClient {
 
     /** The service object. */
-    private Service jaxWsService;
+    private LayoutService layoutService;
 
     /** The web service interface used. */
-    private IGraphLayoutService jaxWsPort;
+    private LayoutServicePort layoutPort;
 
     /** Java system property for the trust store to be used. */
     private static final String TRUSTSTORE_PROPERTY
@@ -80,13 +81,13 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
         super(theserverConfig);
     }
 
-    // Implementation if the IWebServiceClient interface
+    // Implementation if the ILayoutServiceClient interface
 
     /**
      * {@inheritDoc}
      */
     public synchronized boolean isConnected() {
-        return (jaxWsService != null && jaxWsPort != null);
+        return (layoutService != null && layoutPort != null);
     }
 
     /** */
@@ -110,19 +111,19 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
                 "Could not connect to layout service at " + getServerConfig().getAddress()
             );
         }
-        if (jaxWsService == null) {
+        if (layoutService == null) {
             if (getServerConfig().getAddress().toString().toLowerCase().startsWith("https:")) {
                 setTruststoreProperties();
             }
             try {
-                jaxWsService = Service.create(
+                layoutService = new LayoutService(
                     new URL(super.getServerConfig().getAddress() + WSDL_POSTFIX),
                     new QName(QNAME_NS, QNAME_SERVICE)
                 );
-                jaxWsPort = jaxWsService.getPort(IGraphLayoutService.class);
+                layoutPort = layoutService.getLayoutServicePort();
             } catch (Exception e) {
-                jaxWsService = null;
-                jaxWsPort = null;
+                layoutService = null;
+                layoutPort = null;
                 restoreTruststoreProperties();
                 throw new LocalServiceException(
                     "Could not connect to layout service at " + getServerConfig().getAddress(), e
@@ -136,8 +137,8 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
      */
     public synchronized void disconnect() {
         super.disconnect();
-        jaxWsService = null;
-        jaxWsPort = null;
+        layoutService = null;
+        layoutPort = null;
         restoreTruststoreProperties();
     }
 
@@ -147,12 +148,12 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
      * {@inheritDoc}
      */
     public final String graphLayout(final String serializedGraph, final String format, 
-        final GraphLayoutOption[] options) {
+        final List<GraphLayoutOption> options) {
         if (!isConnected()) {
             connect();
         }
         try {
-            return jaxWsPort.graphLayout(serializedGraph, format, options);
+            return layoutPort.graphLayout(serializedGraph, format, options);
         } catch (Exception e) {
             disconnect();
             throw new RemoteServiceException("Error while calling layout service", e);
@@ -167,7 +168,7 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
             connect();
         }
         try {
-            return jaxWsPort.getServiceData();
+            return layoutPort.getServiceData();
         } catch (Exception e) {
             disconnect();
             throw new RemoteServiceException("Error while calling layout service", e);
@@ -179,8 +180,8 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
      */
     public final synchronized void setServerConfig(final ServerConfig theserverConfig) {
         if (super.getServerConfig() == null || !super.getServerConfig().equals(theserverConfig)) {
-            jaxWsService = null;
-            jaxWsPort = null;
+            layoutService = null;
+            layoutPort = null;
             super.setServerConfig(theserverConfig);
         }
     }

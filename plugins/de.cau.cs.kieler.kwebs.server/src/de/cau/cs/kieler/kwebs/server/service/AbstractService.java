@@ -113,7 +113,7 @@ public abstract class AbstractService {
      * @return the graph on which the layout was done in the same format as used for the source graph 
      */
     protected final String layout(final String serializedGraph, final String format, 
-        final GraphLayoutOption[] options) {
+        final List<GraphLayoutOption> options) {
         // Parameter testing
         if (serializedGraph == null) {
             throw new IllegalArgumentException("No graph given");

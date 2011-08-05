@@ -69,7 +69,7 @@ public class Application implements IApplication {
 
     /** Default size of log file in megabytes. */
     private static final int DEFAULT_LOGSIZE
-        = 10;
+        = 1;
 
     /** Default path to configuration file. */
     private static final String DEFAULT_CONFIG
@@ -390,7 +390,7 @@ public class Application implements IApplication {
                 try {
                     Resources.writeFile(file, Resources.getResourceStream(PLUGIN_ID, file));
                 } catch (Exception e) {
-                    Logger.log(Severity.FAILURE, "Could not create config file " + file);
+                    Logger.log(Severity.FAILURE, "Could not create config file " + file, e);
                 }
             }
         }        

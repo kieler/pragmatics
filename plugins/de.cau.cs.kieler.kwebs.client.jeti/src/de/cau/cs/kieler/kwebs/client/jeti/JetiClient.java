@@ -17,6 +17,7 @@ package de.cau.cs.kieler.kwebs.client.jeti;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
@@ -110,7 +111,7 @@ public final class JetiClient extends AbstractLayoutServiceClient {
      * {@inheritDoc}
      */
     public String graphLayout(final String serializedGraph, final String format,
-        final GraphLayoutOption[] options) {
+        final List<GraphLayoutOption> options) {
         if (!isConnected()) {
             connect();
         }
@@ -142,10 +143,10 @@ public final class JetiClient extends AbstractLayoutServiceClient {
                 );
             }
 */
-            if (options != null && options.length > 0) {
+            if (options != null && options.size() > 0) {
                 etiParams.put(
                     "INPUT_OPTIONS",
-                    GraphLayoutOption.arrayToString(options)
+                    GraphLayoutOption.listToString(options)
                 );
             }
             byte[] byteGraph = serializedGraph.getBytes();

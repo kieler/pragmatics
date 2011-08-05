@@ -104,8 +104,12 @@ class HttpServerManager extends AbstractServerManager {
         if (endpoint != null) {
             endpoint.stop();
             endpoint = null;
+        }
+        if (server != null) {
             server.stop(0);
             server = null;
+        }
+        if (context != null) {
             context = null;
         }
     }

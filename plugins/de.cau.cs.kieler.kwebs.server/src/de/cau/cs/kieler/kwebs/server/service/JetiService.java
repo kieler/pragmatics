@@ -14,6 +14,8 @@
 
 package de.cau.cs.kieler.kwebs.server.service;
 
+import java.util.List;
+
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 import de.cau.cs.kieler.kwebs.util.Resources;
@@ -70,9 +72,9 @@ public class JetiService extends AbstractService {
     public final void graphLayout(final InputFileReference inRef, final OutputFileReference outRef,
         final String format, final String serializedOptions) throws Exception {
         String serializedGraph = Resources.readFileAsString(inRef.toString());
-        GraphLayoutOption[] options = null;
+        List<GraphLayoutOption> options = null;
         if (serializedOptions != null) {
-            options = GraphLayoutOption.stringToArray(serializedOptions);
+            options = GraphLayoutOption.stringToList(serializedOptions);
         }
         String serializedResult = layout(serializedGraph, format, options);
         Resources.writeFile(outRef.toString(), serializedResult);

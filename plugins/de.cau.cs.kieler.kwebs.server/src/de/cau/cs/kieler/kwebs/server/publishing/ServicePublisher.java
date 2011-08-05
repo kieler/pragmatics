@@ -14,7 +14,7 @@
 
 package de.cau.cs.kieler.kwebs.server.publishing;
 
-import de.cau.cs.kieler.kwebs.IGraphLayoutService;
+import de.cau.cs.kieler.kwebs.jaxws.LayoutServicePort;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
@@ -54,7 +54,7 @@ public final class ServicePublisher {
         = new SupportingServerManager();
 
     /** Instance of the layout web service to be published. */
-    private IGraphLayoutService service
+    private LayoutServicePort service
         = new JaxWsService();
 
     /**

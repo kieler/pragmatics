@@ -90,7 +90,7 @@ public final class Resources {
     public static void writeFile(final String path, final InputStream stream)
         throws IOException {
         File dir = new File(path).getParentFile();
-        if (!dir.exists()) {
+        if (dir != null && !dir.exists()) {
             dir.mkdirs();
         }
         FileOutputStream fOut = new FileOutputStream(path);

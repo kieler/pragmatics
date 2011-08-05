@@ -39,7 +39,6 @@ import de.cau.cs.kieler.kwebs.client.LayoutServiceClients;
 import de.cau.cs.kieler.kwebs.client.providers.ServerConfig;
 import de.cau.cs.kieler.kwebs.client.providers.ServerConfigs;
 import de.cau.cs.kieler.kwebs.client.providers.ServerConfigs.ServerConfigError;
-import de.cau.cs.kieler.kwebs.client.ui.testers.Availability;
 
 /**
  * Abstract class for providing basic dialog functionality for {@link NewServerConfigDialog}
@@ -389,12 +388,10 @@ public abstract class AbstractServerConfigDialog extends Dialog {
      * is reachable.
      */
     protected final void checkAvailability() {
-        Availability.checkAvailability(
-            getShell(),
-            ServerConfigs.getInstance().createServerConfig(
-                getName(), getAddress(), getTruststore(), getTruststorePass()
-            )
+        ServerConfig serverConfig = ServerConfigs.getInstance().createServerConfig(
+            getName(), getAddress(), getTruststore(), getTruststorePass()
         );
+        new CheckAvailabilityDialog(getShell(), serverConfig).open();
     }
 
 }

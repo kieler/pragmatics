@@ -237,10 +237,12 @@ public class SupportingServerManager extends AbstractServerManager {
      * 
      */
     private synchronized void clearContexts() {
-        for (HttpContext context : contexts) {
-            server.removeContext(context);            
+        if (server != null && contexts != null) {
+            for (HttpContext context : contexts) {
+                server.removeContext(context);            
+            }
+            contexts = null;
         }
-        contexts = null;
     }
     
 }

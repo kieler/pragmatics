@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KIELER Base Plugin for JAX-WS Support
+Bundle-SymbolicName: de.cau.cs.kieler.kwebs.jaxws
+Bundle-Version: 0.1.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Require-Bundle: de.cau.cs.kieler.kwebs;bundle-version="0.1.0"
+Export-Package: de.cau.cs.kieler.kwebs.jaxws

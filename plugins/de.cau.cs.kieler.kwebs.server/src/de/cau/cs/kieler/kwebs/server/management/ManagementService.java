@@ -18,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -25,6 +26,7 @@ import java.net.SocketTimeoutException;
 
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
+import de.cau.cs.kieler.kwebs.server.publishing.NotPublishedException;
 import de.cau.cs.kieler.kwebs.server.publishing.ServicePublisher;
 
 /**
@@ -33,7 +35,7 @@ import de.cau.cs.kieler.kwebs.server.publishing.ServicePublisher;
  * @kieler.rating  2011-05-04 red
  * @author  swe
  */
-public final class ManagementService {
+public final class ManagementService implements UncaughtExceptionHandler {
 
     /** Default port for the management service. */
     public static final int DEFAULT_MANAGEMENTPORT
@@ -47,14 +49,15 @@ public final class ManagementService {
     private RequestListener requestListener 
         = new RequestListener();
     
-    private Thread requestThread
-        = new Thread(requestListener);
+    private Thread requestThread;
     
     /**
      * Private constructor.
      *
      */
     private ManagementService() {
+        requestThread = new Thread(requestListener);
+        requestThread.setUncaughtExceptionHandler(this);
     }
 
     /**
@@ -65,7 +68,11 @@ public final class ManagementService {
      */
     public static synchronized void startManagement(final int port) {
         INSTANCE.requestListener.setPort(port);
-        INSTANCE.requestThread.start(); 
+        try {
+            INSTANCE.requestThread.start();
+        } catch (Exception e) {
+            throw new NotPublishedException(e);
+        }
     }
     
     /**
@@ -233,6 +240,13 @@ public final class ManagementService {
             }
         }
         
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void uncaughtException(Thread t, Throwable e) {
+        Logger.log(Severity.FAILURE, "Error in management service: " + e.getMessage(), e);
     }
     
 }

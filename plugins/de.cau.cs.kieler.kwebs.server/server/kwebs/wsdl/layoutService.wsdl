@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<definitions 
+	name="LayoutService"
+	xmlns="http://schemas.xmlsoap.org/wsdl/" 
+	xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" 
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+	xmlns:tns="http://rtsys.informatik.uni-kiel.de/layout" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="http://rtsys.informatik.uni-kiel.de/layout">
+	
+	<!-- Abstract part of the web service definition -->
+	
+	<!-- Define the abstract data types of this web service -->
+	
+	<types>
+		<xs:schema
+			version="1.0" 
+			xmlns:tns="http://rtsys.informatik.uni-kiel.de/layout" 
+			xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+			targetNamespace="http://rtsys.informatik.uni-kiel.de/layout">
+		
+			<xs:element name="getServiceData" type="tns:getServiceData"/>	
+			<xs:element name="getServiceDataResponse" type="tns:getServiceDataResponse"/>	
+			<xs:element name="graphLayout" type="tns:graphLayout"/>	
+			<xs:element name="graphLayoutResponse" type="tns:graphLayoutResponse"/>
+			
+			<xs:complexType name="graphLayout">
+				<xs:sequence>
+					<!-- 'minOccurs' and 'maxOccurs' attribute defaults to '1' -->
+					<xs:element name="serializedGraph" type="xs:string"/>
+					<!-- 'minOccurs' and 'maxOccurs' attribute defaults to '1' -->
+					<xs:element name="format" type="xs:string"/>
+					<xs:element name="options" type="tns:graphLayoutOption" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:complexType>
+			
+			<xs:complexType name="graphLayoutOption">
+				<xs:sequence>
+					<!-- 'minOccurs' and 'maxOccurs' attribute defaults to '1' -->
+					<xs:element name="id" type="xs:string"/>
+					<!-- 'minOccurs' and 'maxOccurs' attribute defaults to '1' -->
+					<xs:element name="value" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			
+			<xs:complexType name="graphLayoutResponse">
+				<xs:sequence>
+					<!-- 'minOccurs' and 'maxOccurs' attribute defaults to '1' -->
+					<xs:element name="return" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			
+			<xs:complexType name="getServiceData">
+				<xs:sequence/>
+			</xs:complexType>
+			
+			<xs:complexType name="getServiceDataResponse">
+				<xs:sequence>
+					<!-- 'minOccurs' and 'maxOccurs' attribute defaults to '1' -->
+					<xs:element name="return" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			
+		</xs:schema>
+	</types>
+	
+	<!-- Define the abstract messages used by the operations of this web service -->
+	
+	<message name="graphLayout">
+		<part name="parameters" element="tns:graphLayout"/>
+	</message>
+	
+	<message name="graphLayoutResponse">
+		<part name="parameters" element="tns:graphLayoutResponse"/>
+	</message>
+	
+	<message name="getServiceData">
+		<part name="parameters" element="tns:getServiceData"/>
+	</message>
+	
+	<message name="getServiceDataResponse">
+		<part name="parameters" element="tns:getServiceDataResponse"/>
+	</message>
+
+	<!-- Define the abstract operations of this web service -->
+	
+	<portType name="LayoutServicePort">
+		
+		<operation name="graphLayout">
+			<input wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/graphLayoutRequest" message="tns:graphLayout"/>
+			<output wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/graphLayoutResponse" message="tns:graphLayoutResponse"/>
+		</operation>
+		
+		<operation name="getServiceData">
+			<input wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/getServiceDataRequest" message="tns:getServiceData"/>
+			<output wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/getServiceDataResponse" message="tns:getServiceDataResponse"/>
+		</operation>
+		
+	</portType>
+
+	<!-- Concrete part of the web service definition -->
+	
+	<!-- Define the concrete data binding of the abstract operations and the concrete transport binding -->
+	
+	<binding name="LayoutServicePortBinding" type="tns:LayoutServicePort">
+		
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		
+		<operation name="graphLayout">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+		
+		<operation name="getServiceData">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+		
+	</binding>
+	
+	<!-- Define the web service endpoint -->
+	
+	<service name="LayoutService">
+		<port name="LayoutServicePort" binding="tns:LayoutServicePortBinding">
+			<soap:address location="http://localhost:8442/layout"/>
+		</port>
+	</service>
+
+</definitions>

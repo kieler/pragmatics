@@ -6,5 +6,6 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Require-Bundle: de.cau.cs.kieler.kwebs;bundle-version="0.1.0",
- de.cau.cs.kieler.kwebs.client;bundle-version="0.1.0"
+ de.cau.cs.kieler.kwebs.client;bundle-version="0.1.0",
+ de.cau.cs.kieler.kwebs.jaxws;bundle-version="0.1.0"
 Export-Package: de.cau.cs.kieler.kwebs.client.jaxws

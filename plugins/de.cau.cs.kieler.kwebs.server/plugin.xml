@@ -39,6 +39,10 @@
             implementation="de.cau.cs.kieler.kwebs.server.publishing.PreviewImageHandler"
             path="previewImages">
       </supportHandler>
+      <supportHandler
+            implementation="de.cau.cs.kieler.kwebs.server.publishing.WebContentHandler"
+            path="resources">
+      </supportHandler>
    </extension>
    <extension
          point="de.cau.cs.kieler.kwebs.server.logging">

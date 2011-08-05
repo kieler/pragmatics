@@ -160,8 +160,8 @@ public final class Graphs {
    }
 
    /**
-    * Returns a list containing all the elements from a given graph which are exactly of the specified
-    * type.
+    * Returns a list containing all the elements from a given graph which are of the specified
+    * type or sub classes of it.
     * 
     * @param <T>
     *            the type of the elements
@@ -169,7 +169,8 @@ public final class Graphs {
     *            the graph of which the elements of the defined type shall be returned
     * @param type
     *            class defining the type of the elements which are to be returned
-    * @return
+    * @return a list containing all the elements from a given graph which are of the specified type
+    *         or sub classes of it
     */
    public static <T> List<T> getAllElementsOfType(final KNode graph, final Class<T> type) {
        return getAllElementsOfType(graph, type, true);

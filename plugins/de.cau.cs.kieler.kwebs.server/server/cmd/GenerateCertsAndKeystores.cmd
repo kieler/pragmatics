@@ -90,7 +90,10 @@
     %KEYTOOL% -import -v -trustcacerts -alias "%TRUSTCA_ALIAS%" -file cacert.der -keystore client.jks -keypass %CLIENT_PASS% -storepass %CLIENT_PASS%
 
     IF "%ERRORLEVEL%" NEQ "0" GOTO :end
-
+	
+	COPY /Y "*.jks" "..\kwebs\security\keystores\"
+	COPY /Y "client.jks" "..\kwebs\web\security\"
+	
     CALL :RemoveTemps
 
     GOTO :end

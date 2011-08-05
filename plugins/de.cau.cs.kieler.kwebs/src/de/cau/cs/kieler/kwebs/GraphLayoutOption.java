@@ -14,6 +14,8 @@
 
 package de.cau.cs.kieler.kwebs;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -140,11 +142,27 @@ public class GraphLayoutOption {
     public String toString() {
         return id + "=" + value;
     }
+
+    /**
+     * Returns a string representation of a list of options.
+     * 
+     * @param options 
+     *            a list of options
+     * @return string representation of the list 
+     */    
+    public static String listToString(final List<GraphLayoutOption> options) {
+        String result = "";
+        if (options != null) {
+            result = arrayToString(options.toArray(new GraphLayoutOption[0]));
+        }
+        return result;
+    }
     
     /**
      * Returns a string representation of an array of options.
      * 
-     * @param options an array of options
+     * @param options 
+     *            an array of options
      * @return string representation of the array
      */
     public static String arrayToString(final GraphLayoutOption[] options) {
@@ -159,11 +177,28 @@ public class GraphLayoutOption {
        }
        return result;
     }
+
+    /**
+     * Returns a List of options which is created from its string representation.
+     * 
+     * @param options 
+     *            string containing serialized array of options
+     * @return a list of options
+     */
+    public static List<GraphLayoutOption> stringToList(final String options) {
+        LinkedList<GraphLayoutOption> result = new LinkedList<GraphLayoutOption>();
+        GraphLayoutOption[] array = stringToArray(options);
+        for (GraphLayoutOption option : array) {
+            result.add(option);
+        }
+        return result;
+    }
     
     /**
      * Returns an array of options which is created from its string representation.
      * 
-     * @param options string containing serialized array of options
+     * @param options 
+     *            string containing serialized array of options
      * @return an array of options
      */
     public static GraphLayoutOption[] stringToArray(final String options) {
@@ -180,7 +215,7 @@ public class GraphLayoutOption {
                     vectoredOptions.add(option);
                 }
             }
-            result = vectoredOptions.toArray(result);
+            result = vectoredOptions.toArray(new GraphLayoutOption[0]);
         }
         return result;
     }

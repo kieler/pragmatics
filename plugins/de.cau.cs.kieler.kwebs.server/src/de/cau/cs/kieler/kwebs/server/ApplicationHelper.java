@@ -53,6 +53,11 @@ public final class ApplicationHelper {
      */
     public static final String[] CONFIGURATION_FILES = new String[]
     {
+        "server/cmd/GenerateCertsAndKeystores.cmd",
+        "server/cmd/GenerateCertsAndKeystores.sh",
+        "server/cmd/ca.conf",
+        "server/cmd/csr.conf",
+        "server/cmd/sign.conf",
         "server/java/config/logging/logging.properties",
         "server/jeti/config/log4j/log4j.properties",
         "server/jeti/config/tools/tools.xml",

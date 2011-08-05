@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xs:schema
+	version="1.0" 
+	xmlns:tns="http://rtsys.informatik.uni-kiel.de/layout" 
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="http://rtsys.informatik.uni-kiel.de/layout">
+
+	<xs:element name="getServiceData" type="tns:getServiceData"/>	
+	<xs:element name="getServiceDataResponse" type="tns:getServiceDataResponse"/>	
+	<xs:element name="graphLayout" type="tns:graphLayout"/>	
+	<xs:element name="graphLayoutResponse" type="tns:graphLayoutResponse"/>
+	
+	<xs:complexType name="graphLayout">
+		<xs:sequence>
+			<!-- 'minOccurs' and 'maxOccurs' attribute defaults to '1' -->
+			<xs:element name="serializedGraph" type="xs:string"/>
+			<!-- 'minOccurs' and 'maxOccurs' attribute defaults to '1' -->
+			<xs:element name="format" type="xs:string"/>
+			<xs:element name="options" type="tns:graphLayoutOption" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="graphLayoutOption">
+		<xs:sequence>
+			<!-- 'minOccurs' and 'maxOccurs' attribute defaults to '1' -->
+			<xs:element name="id" type="xs:string"/>
+			<!-- 'minOccurs' and 'maxOccurs' attribute defaults to '1' -->
+			<xs:element name="value" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="graphLayoutResponse">
+		<xs:sequence>
+			<!-- 'minOccurs' and 'maxOccurs' attribute defaults to '1' -->
+			<xs:element name="return" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="getServiceData">
+		<xs:sequence/>
+	</xs:complexType>
+	
+	<xs:complexType name="getServiceDataResponse">
+		<xs:sequence>
+			<!-- 'minOccurs' and 'maxOccurs' attribute defaults to '1' -->
+			<xs:element name="return" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+</xs:schema>

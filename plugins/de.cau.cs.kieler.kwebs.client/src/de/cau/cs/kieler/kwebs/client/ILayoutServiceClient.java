@@ -14,6 +14,8 @@
 
 package de.cau.cs.kieler.kwebs.client;
 
+import java.util.List;
+
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.client.providers.ServerConfig;
 
@@ -41,7 +43,7 @@ public interface ILayoutServiceClient {
      * @return the graph which was layout done on in the same serial representation as used
      *         in the call to {@code graphLayout}
      */
-    String graphLayout(String serializedGraph, String format, GraphLayoutOption[] options);
+    String graphLayout(String serializedGraph, String format, List<GraphLayoutOption> options);
 
     /**
      * Returns the meta data from the layout service.

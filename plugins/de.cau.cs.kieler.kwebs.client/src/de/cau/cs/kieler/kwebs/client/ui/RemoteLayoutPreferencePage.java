@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
@@ -52,7 +53,6 @@ import de.cau.cs.kieler.kwebs.client.providers.ServerConfig;
 import de.cau.cs.kieler.kwebs.client.providers.ServerConfigs;
 import de.cau.cs.kieler.kwebs.client.ui.RemoteLayoutPreferencePage.
     ServerConfigViewerComparator.SortProperty;
-import de.cau.cs.kieler.kwebs.client.ui.testers.Availability;
 
 /**
  * Preference page for general KIML preferences.
@@ -490,7 +490,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
                             = (IStructuredSelection) serverConfigViewer.getSelection();
                         if (!selection.isEmpty()) {
                             ServerConfig serverConfig = (ServerConfig) selection.getFirstElement();
-                            Availability.checkAvailability(getShell(), serverConfig);
+                            new CheckAvailabilityDialog(getShell(), serverConfig).open();
                         }
                     }
                 }
@@ -676,7 +676,15 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
      */
     private void initRemoteLayoutOptionsView() {
         boolean remoteLayout = store.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE);
-        (remoteLayout ? serverConfigRadio2 : serverConfigRadio1).setSelection(true);
+        if (remoteLayout) {
+            serverConfigRadio2.setSelection(true);
+            ServerConfig activeConfig = ServerConfigs.getInstance().getActiveServerConfig();
+            if (activeConfig != null) {
+                serverConfigViewer.setSelection(new StructuredSelection(activeConfig), true);
+            }
+        } else {
+            serverConfigRadio1.setSelection(true);
+        }
         updateRemoteLayoutOptionsView();
     }
 
