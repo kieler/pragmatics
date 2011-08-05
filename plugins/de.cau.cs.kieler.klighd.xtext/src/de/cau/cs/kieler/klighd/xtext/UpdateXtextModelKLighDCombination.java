@@ -54,7 +54,7 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
     }
 
     private void schedule(final EventType eventType, final XtextResource resource) {
-        if (resource.getContents().isEmpty()) {
+        if (resource == null || resource.getContents() == null || resource.getContents().isEmpty()) {
             return;
         }
         if (!LightDiagramServices.getInstance().maybeSupports(resource.getContents().get(0))) {
