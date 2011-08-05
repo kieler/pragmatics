@@ -41,7 +41,7 @@ public class LayoutService
     public LayoutService() {
         super(__getWsdlLocation(), LAYOUTSERVICE_QNAME);
     }
-
+/*
     public LayoutService(WebServiceFeature... features) {
         super(__getWsdlLocation(), LAYOUTSERVICE_QNAME, features);
     }
@@ -53,15 +53,15 @@ public class LayoutService
     public LayoutService(URL wsdlLocation, WebServiceFeature... features) {
         super(wsdlLocation, LAYOUTSERVICE_QNAME, features);
     }
-
+*/
     public LayoutService(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);
     }
-
+/*
     public LayoutService(URL wsdlLocation, QName serviceName, WebServiceFeature... features) {
         super(wsdlLocation, serviceName, features);
     }
-
+*/
     /**
      * 
      * @return

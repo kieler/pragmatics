@@ -14,14 +14,17 @@ Require-Bundle: org.eclipse.core.runtime,
  de.unido.ls5.eti.toolserver;bundle-version="0.1.0",
  org.apache.log4j;bundle-version="1.2.15"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: de.cau.cs.kieler.kwebs.server,
+Export-Package: com.sun.net.httpserver,
+ com.sun.net.httpserver.spi,
+ de.cau.cs.kieler.kwebs.server,
  de.cau.cs.kieler.kwebs.server.configuration,
  de.cau.cs.kieler.kwebs.server.layout,
  de.cau.cs.kieler.kwebs.server.logging,
  de.cau.cs.kieler.kwebs.server.management,
  de.cau.cs.kieler.kwebs.server.publishing,
  de.cau.cs.kieler.kwebs.server.service,
- de.cau.cs.kieler.kwebs.server.util
+ de.cau.cs.kieler.kwebs.server.util,
+ sun.net.httpserver
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Eclipse-RegisterBuddy: org.apache.log4j
 
