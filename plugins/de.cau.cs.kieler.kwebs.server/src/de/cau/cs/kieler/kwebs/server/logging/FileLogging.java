@@ -183,7 +183,10 @@ public class FileLogging implements ILoggerListener {
             logFile = new File(logFileName);
             boolean doCreate = !logFile.exists();
             if (doCreate) {
-                logFile.getParentFile().mkdirs();
+                File path = logFile.getParentFile();
+                if (path != null && !path.exists()) {
+                    path.mkdirs();
+                }
                 logFile.createNewFile();
             }
             logWriter = new BufferedWriter(new FileWriter(logFile, appendTo));

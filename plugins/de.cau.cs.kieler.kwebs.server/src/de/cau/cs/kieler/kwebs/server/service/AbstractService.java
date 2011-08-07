@@ -43,7 +43,9 @@ import de.cau.cs.kieler.kwebs.transformation.IGraphTransformer;
 import de.cau.cs.kieler.kwebs.util.Graphs;
 
 /**
- * .
+ * This abstract base class provides the implementation of the layout functionality. Web service 
+ * architecture specific service implementations may sub class this class in order to use the provided
+ * layout.
  *
  * @kieler.rating  2011-05-04 red
  * @author  swe
@@ -129,9 +131,12 @@ public abstract class AbstractService {
             throw new IllegalStateException("Transformer could not be acquired");
         }
         monitor.begin("", 1);
-        KNode graph = transformer.deserialize(serializedGraph);
-        // Parse the transmitted layout options for annotation
-        // of the deserialized graph
+        // Get the graph instance of which the layout is to be calculated
+        Object graph = transformer.deserialize(serializedGraph);
+        // Derive the structure of the graph instance
+        KNode layout = transformer.deriveLayout(graph);
+        // Parse the transmitted layout options and annotate
+        // the layout structure
         if (options != null) {
             LayoutDataService dataService = LayoutDataService.getInstance();
             LayoutOptionData<?> layoutOption = null;        
@@ -147,7 +152,7 @@ public abstract class AbstractService {
                                 + layoutOptionValue.toString() 
                                 + ")"
                             );
-                            annotateGraphParentsWithOption(graph, layoutOption, layoutOptionValue);
+                            annotateGraphParentsWithOption(layout, layoutOption, layoutOptionValue);
                         }                        
                         if (layoutOption.hasTarget(Target.NODES)) {
                             Logger.log(
@@ -156,7 +161,7 @@ public abstract class AbstractService {
                                 + layoutOptionValue.toString() 
                                 + ")"
                             );
-                            annotateGraphNodesWithOption(graph, layoutOption, layoutOptionValue);
+                            annotateGraphNodesWithOption(layout, layoutOption, layoutOptionValue);
                         }
                         if (layoutOption.hasTarget(Target.EDGES)) {
                             Logger.log(
@@ -165,7 +170,7 @@ public abstract class AbstractService {
                                 + layoutOptionValue.toString() 
                                 + ")"
                             );
-                            annotateGraphEdgesWithOption(graph, layoutOption, layoutOptionValue);
+                            annotateGraphEdgesWithOption(layout, layoutOption, layoutOptionValue);
                         }
                         if (layoutOption.hasTarget(Target.PORTS)) {
                             Logger.log(
@@ -174,7 +179,7 @@ public abstract class AbstractService {
                                 + layoutOptionValue.toString() 
                                 + ")"
                             );
-                            annotateGraphPortsWithOption(graph, layoutOption, layoutOptionValue);
+                            annotateGraphPortsWithOption(layout, layoutOption, layoutOptionValue);
                         }
                         if (layoutOption.hasTarget(Target.LABELS)) {
                             Logger.log(
@@ -183,14 +188,16 @@ public abstract class AbstractService {
                                 + layoutOptionValue.toString() 
                                 + ")"
                             );
-                            annotateGraphLabelsWithOption(graph, layoutOption, layoutOptionValue);
+                            annotateGraphLabelsWithOption(layout, layoutOption, layoutOptionValue);
                         }
                     }
                 }
             }
         }        
-        // Actually do the layout
-        layoutEngine.layout(graph, monitor);
+        // Actually do the layout on the structure
+        layoutEngine.layout(layout, monitor);
+        // Apply the calculated layout back to the graph instance
+        transformer.applyLayout(graph, layout);
         // Create and return the resulting graph in serialized form
         String serializedResult = transformer.serialize(graph);
         monitor.done();

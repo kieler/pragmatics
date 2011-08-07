@@ -72,9 +72,9 @@ public class CheckAvailabilityDialog extends Dialog {
                             createClientForServerConfig(serverConfig);
                         try {
                             client.connect();
-                            setMessageText("The layout service you selected is reachable");
+                            setMessageText("The layout service you selected is reachable.");
                         } catch (Exception e) {
-                            setMessageText("The layout service you selected is not reachable");
+                            setMessageText("The layout service you selected is not reachable.");
                         }
                     } else {
                         String text = "The selected server configuration is invalid."

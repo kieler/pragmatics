@@ -33,6 +33,13 @@ public class TransformationException extends RuntimeException {
     public TransformationException() {
         super();
     }
+
+    /**
+     * Constructor with a message.
+     */
+    public TransformationException(final String message) {
+        super(message);
+    }
     
     /**
      * Constructor for enclosing another throwable.

@@ -154,11 +154,18 @@ public final class Configuration extends Properties {
     public static final String KWEBS_LOGDEBUGMODE
         = PREFIX + "log.debugMode";
 
-    /** Address for the preview image server. */
+    // The external address of the support server is needed when back referencing URL's are to be created.
+    // The ServerLayoutDataService for example embeds URL's to the prefix images.
+    
+    /** The external address of the server. */
+    public static final String SUPPORTINGSERVER_EXTERNALADDRESS
+        = PREFIX + "supportServerExternalAddress";
+
+    /** Address for the support server. */
     public static final String SUPPORTINGSERVER_ADDRESS
         = PREFIX + "supportServerAddress";
 
-    /** Shall the preview image server be published? */
+    /** Shall the support server be published? */
     public static final String PUBLISH_SUPPORTSERVER
         = PREFIX + "publishSupportServer";
 

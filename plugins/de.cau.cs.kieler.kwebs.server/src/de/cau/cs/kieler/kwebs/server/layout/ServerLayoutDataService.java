@@ -24,11 +24,13 @@ import org.eclipse.core.runtime.Platform;
 
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService;
+import de.cau.cs.kieler.kiml.service.ProgrammaticLayoutDataService;
 import de.cau.cs.kieler.kwebs.server.Application;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
+import de.cau.cs.kieler.kwebs.server.publishing.PreviewImageHandler;
+import de.cau.cs.kieler.kwebs.server.publishing.SupportingServerManager;
 import de.cau.cs.kieler.kwebs.servicedata.Category;
 import de.cau.cs.kieler.kwebs.servicedata.KnownOption;
 import de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm;
@@ -51,7 +53,7 @@ import de.cau.cs.kieler.kwebs.util.Resources;
  * @kieler.rating  2011-05-09 red
  * @author  swe
  */
-public final class ServerLayoutDataService extends ExtensionLayoutDataService {
+public final class ServerLayoutDataService extends ProgrammaticLayoutDataService {
 
     /** Caching the layout service meta data. */
     private static String serviceDataXMI;
@@ -62,7 +64,37 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
      */
     private static Map<String, byte[]> previewImages
         = new HashMap<String, byte[]>();
-
+    
+    /** Default path for the preview image handler. */
+    private static final String DEFAULT_PREVIEWIMAGESPATH
+        = "preview";
+    
+    /** The path under which the preview image handler is published. */
+    private static String previewImagesPath
+        = DEFAULT_PREVIEWIMAGESPATH;
+    
+    static {
+        String path = null;
+        String implementation = null;      
+        for (IConfigurationElement element : SupportingServerManager.getHandlerConfigurationElements()) {
+            if (element.getName().equals(SupportingServerManager.ELEMENT_SUPPORTHANDLER)) {
+                path = element.getAttribute(SupportingServerManager.ATTRIBUTE_PATH);
+                implementation = element.getAttribute(SupportingServerManager.ATTRIBUTE_IMPLEMENTATION);
+                if (implementation.equals(PreviewImageHandler.class.getCanonicalName())) {
+                    previewImagesPath = path;                    
+                }
+            }
+        }
+        if (previewImages == null) {
+            Logger.log(
+                Severity.WARNING, 
+                "No path for the preview image handler found. Using default path of "
+                + DEFAULT_PREVIEWIMAGESPATH + "."
+            );
+            
+        }
+    }
+    
     /**
      * Private constructor.
      */
@@ -80,6 +112,7 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
             ServerLayoutDataService lds = new ServerLayoutDataService();
             LayoutDataService.addService(lds);
             lds.loadLayoutProviderExtensions();
+            lds.registerProgrammaticOptions();
         }
     }
 
@@ -254,8 +287,8 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
                         String previewImageName = Integer.toHexString((pluginId + preview).hashCode()) 
                                                   + "/" + new File(preview).getName();
                         String previewImage = Configuration.getInstance().getConfigProperty(
-                            Configuration.SUPPORTINGSERVER_ADDRESS
-                        ) + "/" + previewImageName;
+                            Configuration.SUPPORTINGSERVER_EXTERNALADDRESS
+                        ) + "/" + previewImagesPath + "/" + previewImageName;
                         previewImages.put(previewImageName, data);
                         algorithm.setPreviewImage(previewImage);  
                     } catch (Exception e) {

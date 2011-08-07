@@ -81,7 +81,12 @@ public class WebContentHandler implements HttpHandler {
             Logger.log(
                 Severity.WARNING, "Invalid request received for web content: " + uri, 
                 e
-            );
+            );   
+        }
+        if (reference == null || reference.length() == 0) {
+            Logger.log(Severity.INFO, "Forwarding request to index page");
+            forward(exchange, "index.html");
+            return;
         }
         byte[] data = null;
         if (reference != null) {          
@@ -100,8 +105,8 @@ public class WebContentHandler implements HttpHandler {
         if (data != null && type != null) {    
             headers.add("Content-type", type);
             if (type == "application/octet-stream") {
-                //headers.add("Content-Disposition", "attachment; filename=" + name);                
-                //headers.add("Content-Transfer-Encoding", "binary");
+                headers.add("Content-Disposition", "attachment; filename=" + name);                
+                headers.add("Content-Transfer-Encoding", "binary");
             }
         } else {
             data = ("<b>Resource '" + reference + "' does not exist.</b>").getBytes();
@@ -117,4 +122,23 @@ public class WebContentHandler implements HttpHandler {
         os.close();
     }        
 
+    /**
+     * Forwards a request.
+     * 
+     * @param exchange
+     *            the HTTP exchange object
+     * @param uri
+     *            the address the request is to be forwarded to
+     * @throws IOException
+     *            if an exception occurs
+     */
+    private void forward(final HttpExchange exchange, final String uri) throws IOException {
+        String forward = exchange.getHttpContext().getPath()
+                         + "/" + uri;
+        Headers headers = exchange.getResponseHeaders();
+        headers.add("Location", forward);
+        exchange.sendResponseHeaders(HttpURLConnection.HTTP_MOVED_PERM, 0);
+        exchange.getResponseBody().close();
+    }
+    
 }

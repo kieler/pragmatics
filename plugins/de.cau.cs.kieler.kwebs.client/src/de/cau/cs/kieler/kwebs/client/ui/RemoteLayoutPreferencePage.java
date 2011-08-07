@@ -696,7 +696,8 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         boolean remoteLayout = serverConfigRadio2.getSelection();
         ServerConfig serverConfig = null;
         ISelection selection = serverConfigViewer.getSelection();
-        if (!selection.isEmpty()) {        
+        boolean empty = selection.isEmpty(); 
+        if (!empty) {        
             Object obj = ((IStructuredSelection) selection).getFirstElement();        
             if (obj instanceof ServerConfig) {
                 serverConfig = (ServerConfig) obj;
@@ -710,10 +711,10 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         }
         serverConfigTable.setEnabled(remoteLayout);
         scEditButton1.setEnabled(remoteLayout);
-        scEditButton2.setEnabled(remoteLayout && !fixed);
-        scEditButton3.setEnabled(remoteLayout && !fixed && !active);
-        scEditButton4.setEnabled(remoteLayout);
-        scEditButton5.setEnabled(remoteLayout && !active);        
+        scEditButton2.setEnabled(remoteLayout && !empty && !fixed);
+        scEditButton3.setEnabled(remoteLayout && !empty && !fixed && !active);
+        scEditButton4.setEnabled(remoteLayout && !empty );
+        scEditButton5.setEnabled(remoteLayout && !empty && !active);        
     }
 
 }

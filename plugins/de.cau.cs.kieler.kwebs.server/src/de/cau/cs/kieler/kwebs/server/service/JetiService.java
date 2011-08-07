@@ -71,6 +71,7 @@ public class JetiService extends AbstractService {
      */
     public final void graphLayout(final InputFileReference inRef, final OutputFileReference outRef,
         final String format, final String serializedOptions) throws Exception {
+        try {
         String serializedGraph = Resources.readFileAsString(inRef.toString());
         List<GraphLayoutOption> options = null;
         if (serializedOptions != null) {
@@ -78,6 +79,10 @@ public class JetiService extends AbstractService {
         }
         String serializedResult = layout(serializedGraph, format, options);
         Resources.writeFile(outRef.toString(), serializedResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     /**

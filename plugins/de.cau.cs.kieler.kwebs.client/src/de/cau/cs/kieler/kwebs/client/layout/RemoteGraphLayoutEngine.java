@@ -190,7 +190,7 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         try {
             resultXMI = client.graphLayout(sourceXMI, Formats.FORMAT_KGRAPH_XMI, null);
             //storeXmi(resultXMI, true);
-            KNode tempGraph = transformer.deserialize(resultXMI);
+            KNode tempGraph = (KNode) transformer.deserialize(resultXMI);
             Graphs.duplicateGraphLayoutByUniqueID(tempGraph, layoutGraph);
         } catch (Exception e) {
             throw new RemoteServiceException("Error occurred while doing remote layout", e);

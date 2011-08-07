@@ -62,19 +62,19 @@ public class SupportingServerManager extends AbstractServerManager {
         = new HashMap<String, HttpHandler>();
     
     /** The extension point ID. */
-    private static final String EXTENSIONPOINT_ID
+    public static final String EXTENSIONPOINT_ID
         = "de.cau.cs.kieler.kwebs.server.configuration";
     
     /** The name of supportHandler element. */
-    private static final String ELEMENT_SUPPORTHANDLER
+    public static final String ELEMENT_SUPPORTHANDLER
         = "supportHandler";
 
     /** The name of the path attribute. */
-    private static final String ATTRIBUTE_PATH
+    public static final String ATTRIBUTE_PATH
         = "path";
 
     /** The name of the implementation attribute. */
-    private static final String ATTRIBUTE_IMPLEMENTATION
+    public static final String ATTRIBUTE_IMPLEMENTATION
         = "implementation";
     
     /**
@@ -82,11 +82,10 @@ public class SupportingServerManager extends AbstractServerManager {
      * from the extension point.
      */
     public SupportingServerManager() {
-        IExtensionRegistry registry = Platform.getExtensionRegistry();
         String path = null;
         String implementation = null;        
         Bundle contributor = null;
-        for (IConfigurationElement element : registry.getConfigurationElementsFor(EXTENSIONPOINT_ID)) {
+        for (IConfigurationElement element : getHandlerConfigurationElements()) {
             if (element.getName().equals(ELEMENT_SUPPORTHANDLER)) {
                 path = element.getAttribute(ATTRIBUTE_PATH);
                 implementation = element.getAttribute(ATTRIBUTE_IMPLEMENTATION);
@@ -121,6 +120,16 @@ public class SupportingServerManager extends AbstractServerManager {
                 }
             }
         }
+    }
+    
+    /**
+     * Returns all extension elements responsible for registering a handler to the support server.
+     * 
+     * @return all extension elements responsible for registering a handler to the support server.
+     */
+    public static IConfigurationElement[] getHandlerConfigurationElements() {
+        IExtensionRegistry registry = Platform.getExtensionRegistry();
+        return registry.getConfigurationElementsFor(EXTENSIONPOINT_ID);
     }
     
     /**
@@ -228,7 +237,6 @@ public class SupportingServerManager extends AbstractServerManager {
         } catch (Exception e) {
             Logger.log(Severity.CRITICAL, "Support server contexts could not be created", e);
             clearContexts();
-            e.printStackTrace();
             throw new ContextNotCreatedException(e);
         }
     }

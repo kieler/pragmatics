@@ -37,7 +37,7 @@
       </transformer>
       <supportHandler
             implementation="de.cau.cs.kieler.kwebs.server.publishing.PreviewImageHandler"
-            path="previewImages">
+            path="preview">
       </supportHandler>
       <supportHandler
             implementation="de.cau.cs.kieler.kwebs.server.publishing.WebContentHandler"

@@ -17,8 +17,6 @@ package de.cau.cs.kieler.kwebs.transformation;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -33,15 +31,9 @@ import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
-import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
-import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
-import de.cau.cs.kieler.kiml.options.EdgeType;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.options.Shape;
 import de.cau.cs.kieler.kwebs.formats.Formats;
 
 /**
@@ -53,74 +45,12 @@ import de.cau.cs.kieler.kwebs.formats.Formats;
  */
 public class KGraphXmiTransformer implements IGraphTransformer {
 
-    /** 
-     *  Map which indexes the programmatic layout options defined in {@link LayoutOptions}
-     *  encapsulated in an appropriate {@link LayoutOptionData} by their identifiers.
-     */
-    private static Map<String, LayoutOptionData<?>> programaticOptions
-        = new HashMap<String, LayoutOptionData<?>>();
-    
-    /**
-     * Build the map
-     */
-    static {
-        addProgramaticOption(LayoutOptions.COMMENT_BOX, Boolean.class);
-        addProgramaticOption(LayoutOptions.DIAGRAM_TYPE, String.class);
-        addProgramaticOption(LayoutOptions.EDGE_LABEL_PLACEMENT, EdgeLabelPlacement.class);
-        addProgramaticOption(LayoutOptions.EDGE_TYPE, EdgeType.class);
-        addProgramaticOption(LayoutOptions.FONT_NAME, String.class);
-        addProgramaticOption(LayoutOptions.FONT_SIZE, Integer.class);
-        addProgramaticOption(LayoutOptions.HYPERNODE, Boolean.class);
-        addProgramaticOption(LayoutOptions.MIN_HEIGHT, Float.class);
-        addProgramaticOption(LayoutOptions.MIN_WIDTH, Float.class);
-        addProgramaticOption(LayoutOptions.NO_LAYOUT, Boolean.class);
-        addProgramaticOption(LayoutOptions.OFFSET, Float.class);
-        addProgramaticOption(LayoutOptions.PORT_SIDE, PortSide.class);
-        addProgramaticOption(LayoutOptions.PORT_RANK, Integer.class);
-        addProgramaticOption(LayoutOptions.SHAPE, Shape.class);
-    }
-
-    /**
-     * Creates an appropriate {@link LayoutOptionData} instance from a programmatic property.
-     * 
-     * @param property
-     *            the property to build a {@code LayoutOptionData} instance from
-     * @param optionClass
-     *            the class of the property
-     */
-    private static void addProgramaticOption(final IProperty<?> property, final Class<?> optionClass) {
-        LayoutOptionData<Object> optionData = new LayoutOptionData<Object>();
-        String id = property.getId();
-        String type = null;
-        if (optionClass.equals(Boolean.class)) {
-            type = LayoutOptionData.BOOLEAN_LITERAL;
-        } else if (optionClass.equals(Integer.class)) {
-            type = LayoutOptionData.INT_LITERAL;
-        } else if (optionClass.equals(String.class)) {
-            type = LayoutOptionData.STRING_LITERAL;
-        } else if (optionClass.equals(Float.class)) {
-            type = LayoutOptionData.FLOAT_LITERAL;
-        } else if (Enum.class.isAssignableFrom(optionClass)) {
-            type = LayoutOptionData.ENUM_LITERAL;
-        }
-        if (type == null) {            
-            return;
-        }
-        optionData.setId(id);
-        optionData.setType(type);
-        if (type == LayoutOptionData.ENUM_LITERAL || type == LayoutOptionData.OBJECT_LITERAL) {
-            optionData.setOptionClass(optionClass);
-        }
-        optionData.setDefault(property.getDefault());
-        programaticOptions.put(id, optionData);
-    }
-
     // implementation of the interface {@link IGraphTransformer}
 
     /**
      * {@inheritDoc}
      */
-    public final KNode deserialize(final String serializedGraph) {
+    public final Object deserialize(final String serializedGraph) {
         KNode graph = null;
         try {
             ByteArrayInputStream inStream = new ByteArrayInputStream(serializedGraph.getBytes());
@@ -148,27 +78,43 @@ public class KGraphXmiTransformer implements IGraphTransformer {
     /**
      * {@inheritDoc}
      */
-    public final String serialize(final KNode graph) {
+    public final String serialize(final Object graph) {
         String xmi = null;
+        if (!(graph instanceof KNode)) {
+            throw new TransformationException("Given graph object is not a KGraph instance");
+        }
         try {
-            persistDataElements(graph);
+            persistDataElements((KNode) graph);
             URI uri = URI.createURI("outputstream://temp.kgraph");
             ResourceSet resourceSet = createResourceSet();
             Resource resource = resourceSet.createResource(uri);
             resource.unload();
-            resource.getContents().add(graph);            
+            resource.getContents().add((KNode) graph);            
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             resource.save(outStream, Collections.EMPTY_MAP);
             outStream.flush();
             xmi = new String(outStream.toByteArray());
             outStream.close();
-            unpersistDataElements(graph);
+            unpersistDataElements((KNode) graph);
         } catch (Exception e) {
             throw new TransformationException(e);
         }
         return xmi;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public KNode deriveLayout(final Object graph) {
+        return (KNode) graph;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void applyLayout(final Object graph, final KNode layout) {
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -220,9 +166,6 @@ public class KGraphXmiTransformer implements IGraphTransformer {
                         String value = persistentEntry.getValue();
                         if (key != null && value != null) {                            
                             LayoutOptionData<?> layoutOptionData = services.getOptionData(key);
-                            if (layoutOptionData == null) {
-                                layoutOptionData = programaticOptions.get(key);
-                            }
                             if (layoutOptionData != null) {
                                 Object layoutOptionValue = layoutOptionData.
                                     parseValue(persistentEntry.getValue());

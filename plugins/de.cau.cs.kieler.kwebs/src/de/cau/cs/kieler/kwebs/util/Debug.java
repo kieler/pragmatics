@@ -15,6 +15,8 @@
 package de.cau.cs.kieler.kwebs.util;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Debugging utilities, mostly for displaying objects.
@@ -38,13 +40,30 @@ public final class Debug {
             String caller = element.getClassName() 
                             + ":" + element.getMethodName()
                             + ":" + Integer.toString(element.getLineNumber());
-            String clas = map.getClass().getCanonicalName();            
-            String content = map.toString();
-            content = "   " + content.substring(1);
-            content = content.substring(0, content.length() - 1);
-            content = content.replace(",", "\n  ");
+            String clas = map.getClass().getCanonicalName();
+            StringBuffer content = new StringBuffer();
+            @SuppressWarnings("unchecked")
+            Set<Object> keys = (Set<Object>) map.keySet();
+            if (!keys.isEmpty()) {
+                boolean isComparable = false;
+                for (Object object : keys) {
+                    isComparable = Comparable.class.isAssignableFrom(object.getClass());
+                    break;
+                }
+                if (isComparable) {
+                    keys = new TreeSet<Object>(keys);
+                }
+                for (Object key : keys) {
+                    content.append("   " + key + " = " + map.get(key) + "\n");
+                }
+            } else {
+                content.append("Map is empty.");
+            }
             System.out.println(
-                "CALLER: " + caller + "\nCLASS OF MAP: " + clas + "\nCONTENT OF MAP:\n" + content + "\n"
+                "CALLER: " + caller 
+                + "\nCLASS OF MAP: " + clas 
+                + "\nCONTENT OF MAP:\n" + content.toString() 
+                + "\n"
             );
         }
     }

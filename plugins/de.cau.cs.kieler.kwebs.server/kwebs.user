@@ -7,16 +7,21 @@
 # Use this option to configure whether the layout will be published jeti based 
 #de.cau.cs.kieler.kwebs.publishJeti=false
 # Use this option to configure whether the support server will be published
-#de.cau.cs.kieler.kwebs.publishSupportServer=false
+#de.cau.cs.kieler.kwebs.publishSupportServer=true
 
 # Use this option to configure the address, port and context under which the http based layout will be published 
 #de.cau.cs.kieler.kwebs.httpAddress=http://0.0.0.0:8442/layout
 # Use this option to configure the address, port and context under which the https based layout will be published 
 #de.cau.cs.kieler.kwebs.httpsAddress=https://0.0.0.0:8443/layout
-# Use this option to configure the address and port under which the jeti based layout will be published 
-#de.cau.cs.kieler.kwebs.jetiAddress=eti://0.0.0.0:9867
 # Use this option to configure the address and port under which the support server will be published
 #de.cau.cs.kieler.kwebs.supportServerAddress=http://0.0.0.0:8444
+# Use this option to configure the external address of the support server 
+de.cau.cs.kieler.kwebs.supportServerExternalAddress=http://localhost:8444
+
+# Use this option to configure the address under which the jETI server will be published
+#de.cau.cs.kieler.kwebs.jeti.server.hostname=localhost
+# Use this option to configure the port under which the jETI server will be published
+#de.cau.cs.kieler.kwebs.jeti.connector.sepp.port=9867
 
 # Use this option to configure the path to your servers key store
 #de.cau.cs.kieler.kwebs.httpsKeystore.jks.path=
