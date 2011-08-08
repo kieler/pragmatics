@@ -14,9 +14,16 @@
 
 package de.cau.cs.kieler.kwebs.client.jaxws;
 
+import java.io.FileInputStream;
 import java.net.URL;
+import java.security.KeyStore;
+import java.security.SecureRandom;
 import java.util.List;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
 import javax.xml.namespace.QName;
 
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
@@ -41,26 +48,6 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
 
     /** The web service interface used. */
     private LayoutServicePort layoutPort;
-
-    /** Java system property for the trust store to be used. */
-    private static final String TRUSTSTORE_PROPERTY
-        = "javax.net.ssl.trustStore";
-
-    /** Java system property for the trust store password. */
-    private static final String TRUSTSTOREPASS_PROPERTY
-        = "javax.net.ssl.trustStorePassword";
-
-    /**
-     *  Remember settings of the trust store property to restore after
-     *  service has been used.
-     */
-    private String oldTruststore;
-
-    /**
-     *  Remember settings of the trust store password property to restore after
-     *  service has been used.
-     */
-    private String oldTruststorePass;
 
     /**
      * Constructs a new JAX-WS web service client.
@@ -112,10 +99,10 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
             );
         }
         if (layoutService == null) {
-            if (getServerConfig().getAddress().toString().toLowerCase().startsWith("https:")) {
-                setTruststoreProperties();
-            }
             try {
+                if (getServerConfig().getAddress().toString().toLowerCase().startsWith("https:")) {
+                    initSSL(getServerConfig().getTruststore(), getServerConfig().getTruststorePass());
+                }
                 layoutService = new LayoutService(
                     new URL(super.getServerConfig().getAddress() + WSDL_POSTFIX),
                     new QName(QNAME_NS, QNAME_SERVICE)
@@ -124,8 +111,9 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
             } catch (Exception e) {
                 layoutService = null;
                 layoutPort = null;
-                restoreTruststoreProperties();
+                releaseSSL();
                 setLastError(e);
+                e.printStackTrace();
                 throw new LocalServiceException(
                     "Could not connect to layout service at " + getServerConfig().getAddress(), e
                 );
@@ -140,7 +128,7 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
         super.disconnect();
         layoutService = null;
         layoutPort = null;
-        restoreTruststoreProperties();
+        releaseSSL();
     }
 
     // Implementation of the abstract methods from AbstractWebServiceClient
@@ -188,53 +176,53 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
             super.setServerConfig(theserverConfig);
         }
     }
+    
+    /** Remember the default SSL socket factory. */
+    private SSLSocketFactory sslSocketFactory;
 
     /**
-     * Sets the trust store system properties for use with the current HTTPS based web service
-     * and caches the old settings.
+     * Initializes the SSL context needed for communication with a HTTPS based layout provider.
+     * 
+     * @param truststore
+     *            path to the trust store file
+     * @param truststorePass
+     *            password for the trust store file
+     * @throws Exception
      */
-    private synchronized void setTruststoreProperties() {
-/* Only for debugging purposes        
-        System.out.println(
-            "Setting trust store properties to " 
-            + TRUSTSTORE_PROPERTY + "=" + getServerConfig().getTruststore() + ", " 
-            + TRUSTSTOREPASS_PROPERTY + "=" + getServerConfig().getTruststorePass()
+    private synchronized void initSSL(final String truststore, final String truststorePass) 
+        throws Exception {
+        if (sslSocketFactory != null) {
+            throw new IllegalAccessException("SSL already initialized, call releaseSSL first");
+        }
+        TrustManagerFactory trustManagerFactory
+            = TrustManagerFactory.getInstance(
+                  TrustManagerFactory.getDefaultAlgorithm()
+              );
+        KeyStore keyStore
+            = KeyStore.getInstance("JKS");
+        keyStore.load(
+            new FileInputStream(truststore),
+            truststorePass.toCharArray()
         );
-*/        
-        oldTruststore = System.getProperty(TRUSTSTORE_PROPERTY);
-        oldTruststorePass = System.getProperty(TRUSTSTOREPASS_PROPERTY);
-/* Only for debugging purposes        
-        System.out.println(
-            "Prior trust store properties are " 
-            + TRUSTSTORE_PROPERTY + "=" + oldTruststore + ", " 
-            + TRUSTSTOREPASS_PROPERTY + "=" + oldTruststorePass
+        trustManagerFactory.init(keyStore);
+        SSLContext sslContext = SSLContext.getInstance("TLS");            
+        sslContext.init(
+            null,
+                trustManagerFactory.getTrustManagers(),
+                    new SecureRandom()
         );
-*/        
-        System.setProperty(TRUSTSTORE_PROPERTY, getServerConfig().getTruststore());
-        System.setProperty(TRUSTSTOREPASS_PROPERTY, getServerConfig().getTruststorePass());
-/* Only for debugging purposes        
-        System.out.println(
-            "Trust store properties are " 
-            + TRUSTSTORE_PROPERTY + "=" + System.getProperty(TRUSTSTORE_PROPERTY) + ", " 
-            + TRUSTSTOREPASS_PROPERTY + "=" + System.getProperty(TRUSTSTOREPASS_PROPERTY)
-        );
-*/        
+        sslSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
+        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
     }
-
+    
     /**
-     * Sets the trust store system properties back to the cached values.
+     * Sets the SSL configuration to system defaults.
      */
-    private synchronized void restoreTruststoreProperties() {
-        if (oldTruststore != null) {
-            System.setProperty(TRUSTSTORE_PROPERTY, oldTruststore);
-        } else {
-            System.clearProperty(TRUSTSTORE_PROPERTY);
-        }            
-        if (oldTruststorePass != null) {
-            System.setProperty(TRUSTSTOREPASS_PROPERTY, oldTruststorePass);
-        } else {
-            System.clearProperty(TRUSTSTOREPASS_PROPERTY);
+    private synchronized void releaseSSL() {
+        if (sslSocketFactory != null) {
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslSocketFactory);
+            sslSocketFactory = null;
         }
     }
-
+    
 }

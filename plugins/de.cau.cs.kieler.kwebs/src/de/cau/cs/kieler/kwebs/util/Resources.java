@@ -145,6 +145,30 @@ public final class Resources {
         return result;
     }
 
+    /** 
+     * @param pluginid
+     * @param resource
+     * @return
+     */
+    public static byte[] readFileOrPluginResourceAsByteArray(final String pluginid, 
+        final String resource) {
+        byte[] result = null;    
+        try {
+            result = readFileAsByteArray(resource);
+        } catch (Exception e) {
+            //Ignore exception on file access and look in plug-in for resource
+        }
+        if (result == null) {
+            try {
+                result = readStreamAsByteArray(getResourceStream(pluginid, resource));
+            } catch (Exception e) {
+                // Ignore since no logging possible due to the fact that this utility
+                // class is used on both server and client side.
+            }
+        }
+        return result;
+    }
+    
     /**
      * Creates an input stream to a bundled resource.
      * 

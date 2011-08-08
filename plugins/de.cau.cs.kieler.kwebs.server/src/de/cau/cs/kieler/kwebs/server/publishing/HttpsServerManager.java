@@ -14,6 +14,7 @@
 
 package de.cau.cs.kieler.kwebs.server.publishing;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
@@ -27,9 +28,11 @@ import javax.net.ssl.TrustManagerFactory;
 import com.sun.net.httpserver.HttpsConfigurator;
 import com.sun.net.httpserver.HttpsServer;
 
+import de.cau.cs.kieler.kwebs.server.Application;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
+import de.cau.cs.kieler.kwebs.util.Resources;
 
 /**
  * Manager for publishing a service object over HTTPS.
@@ -71,8 +74,12 @@ final class HttpsServerManager extends HttpServerManager {
                   );
             String keystoreFile = config.getConfigProperty(Configuration.HTTPSKEYSTORE_JKS_PATH);
             String keystorePass = config.getConfigProperty(Configuration.HTTPSKEYSTORE_JKS_PASS);
+            byte[] keystoreData = Resources.readFileOrPluginResourceAsByteArray(
+                Application.PLUGIN_ID, keystoreFile
+            );  
             keyStore.load(
-                new FileInputStream(keystoreFile),
+                //new FileInputStream(keystoreFile),
+                new ByteArrayInputStream(keystoreData),
                 keystorePass.toCharArray()
             );
             keyManagerFactory.init(

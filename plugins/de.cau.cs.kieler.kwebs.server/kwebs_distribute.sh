@@ -28,6 +28,9 @@ sudo -u kieler ssh layout@layout '[ -f /home/layout/kwebs-backup/kwebs.user ] &&
 # Restore scripts
 #sudo -u kieler ssh layout@layout '[ -d /home/layout/kwebs-scripts ] && cp -f /home/layout/kwebs-scripts/kwebs_*.sh /home/layout/kwebs || echo "no scripts to restore"'
 
+# Set SSL infrastructure generator script to executable
+sudo -u kieler ssh layout@layout 'cd kwebs/server/cmd; chmod u+x GenerateCertsAndKeystores.sh'
+
 # Set scripts to executable (just to be sure) and start the layout service
 sudo -u kieler ssh layout@layout 'cd kwebs; chmod u+x kwebs_*.sh; ./kwebs_start.sh'
 

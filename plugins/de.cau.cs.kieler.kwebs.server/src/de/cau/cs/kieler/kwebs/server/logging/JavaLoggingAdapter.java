@@ -17,6 +17,7 @@ package de.cau.cs.kieler.kwebs.server.logging;
 import java.util.Date;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
@@ -83,7 +84,12 @@ public class JavaLoggingAdapter extends Handler implements java.util.logging.Fil
     @Override
     public boolean isLoggable(final LogRecord record) {
         Logger.log(Severity.DEBUG, "Publishing event to logger");
-        Severity severity = Severity.ALWAYS;
+        Severity severity = Severity.INFO;
+        if (record.getLevel() == Level.WARNING) {
+            severity = Severity.WARNING;
+        } else if (record.getLevel() == Level.SEVERE) {
+            severity = Severity.FAILURE;
+        }
         Logger.log(
             new Date(record.getMillis()),
             record.getSourceClassName(),

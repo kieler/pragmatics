@@ -33,11 +33,11 @@ echo Copyright 2011 by Real-Time and Embedded Systems Group, Department
 echo of Computer Science, Christian-Albrechts-University of Kiel
 echo Published under the EPL v1.0 \(see http://www.eclipse.org/legal/epl-v10.html\)
 echo
-JAVA_HOME=/usr/lib/jvm/java-6-sun
-if [ "$JAVA_HOME"=="" ];
+
+if [ "$JAVA_HOME" == "" ];
 then
     echo You must set JAVA_HOME to point at your Java Development Kit installation
-#    exit
+    exit 1
 fi
 
 KEYTOOL=$JAVA_HOME/bin/keytool
@@ -136,7 +136,17 @@ then
     exit 1;
 fi
 
+if [ ! -d "../kwebs/security/keystores" ];
+then
+    mkdir -p "../kwebs/security/keystores"
+fi
+
+if [ ! -d "../kwebs/web/security" ];
+then
+    mkdir -p "../kwebs/web/security"
+fi
+
 cp *.jks ../kwebs/security/keystores/
-cp *.jks ../kwebs/web/security/
+cp client.jks ../kwebs/web/security/
 
 RemoveTemps

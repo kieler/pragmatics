@@ -49,6 +49,18 @@
       <defaultLogLevel
             logLevel="INFO">
       </defaultLogLevel>
+      <classLogLevel
+            logLevel="WARNING"
+            qualifiedName="de.unido.ls5.eti">
+      </classLogLevel>
+      <classLogLevel
+            logLevel="WARNING"
+            qualifiedName="org.apache.log4j">
+      </classLogLevel>
+      <classLogLevel
+            logLevel="WARNING"
+            qualifiedName="com.sun.xml.ws.server">
+      </classLogLevel>
    </extension>
 
 </plugin>

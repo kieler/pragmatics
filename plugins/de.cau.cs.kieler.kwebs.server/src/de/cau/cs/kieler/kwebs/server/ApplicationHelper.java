@@ -63,6 +63,7 @@ public final class ApplicationHelper {
         "server/jeti/config/tools/tools.xml",
         "server/kwebs/security/keystores/server.jks",
         "server/kwebs/config/kwebs.properties",
+        "server/kwebs/web/security/client.jks",
         "kwebs.user",
         "kwebs_start.sh",
         "kwebs_stop.sh"        

@@ -89,10 +89,14 @@ public class WebContentHandler implements HttpHandler {
             return;
         }
         byte[] data = null;
-        if (reference != null) {          
-            data = Resources.readStreamAsByteArray(
-                Resources.getResourceStream(Application.PLUGIN_ID, WEBCONTENT_ROOT + "/" + reference)
-            );
+        if (reference != null) {        
+            try {
+                data = Resources.readFileOrPluginResourceAsByteArray(
+                    Application.PLUGIN_ID, WEBCONTENT_ROOT + "/" + reference
+                );
+            } catch (Exception e) {
+                Logger.log(Severity.WARNING, "Invalid resource request: " + uri, e);
+            }
         }
         /*System.out.println(
             reference 
