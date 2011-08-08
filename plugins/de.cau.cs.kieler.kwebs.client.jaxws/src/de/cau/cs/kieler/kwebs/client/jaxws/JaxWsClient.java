@@ -125,6 +125,7 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
                 layoutService = null;
                 layoutPort = null;
                 restoreTruststoreProperties();
+                setLastError(e);
                 throw new LocalServiceException(
                     "Could not connect to layout service at " + getServerConfig().getAddress(), e
                 );
@@ -156,6 +157,7 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
             return layoutPort.graphLayout(serializedGraph, format, options);
         } catch (Exception e) {
             disconnect();
+            setLastError(e);
             throw new RemoteServiceException("Error while calling layout service", e);
         }
     }
@@ -171,10 +173,11 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
             return layoutPort.getServiceData();
         } catch (Exception e) {
             disconnect();
+            setLastError(e);
             throw new RemoteServiceException("Error while calling layout service", e);
         }
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -194,14 +197,28 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
 /* Only for debugging purposes        
         System.out.println(
             "Setting trust store properties to " 
-            + TRUSTSTORE_PROPERTY + "="+ getProvider().getTruststore() + ", " 
-            + TRUSTSTOREPASS_PROPERTY + "=" + getProvider().getTruststorePass()
+            + TRUSTSTORE_PROPERTY + "=" + getServerConfig().getTruststore() + ", " 
+            + TRUSTSTOREPASS_PROPERTY + "=" + getServerConfig().getTruststorePass()
         );
 */        
         oldTruststore = System.getProperty(TRUSTSTORE_PROPERTY);
         oldTruststorePass = System.getProperty(TRUSTSTOREPASS_PROPERTY);
+/* Only for debugging purposes        
+        System.out.println(
+            "Prior trust store properties are " 
+            + TRUSTSTORE_PROPERTY + "=" + oldTruststore + ", " 
+            + TRUSTSTOREPASS_PROPERTY + "=" + oldTruststorePass
+        );
+*/        
         System.setProperty(TRUSTSTORE_PROPERTY, getServerConfig().getTruststore());
         System.setProperty(TRUSTSTOREPASS_PROPERTY, getServerConfig().getTruststorePass());
+/* Only for debugging purposes        
+        System.out.println(
+            "Trust store properties are " 
+            + TRUSTSTORE_PROPERTY + "=" + System.getProperty(TRUSTSTORE_PROPERTY) + ", " 
+            + TRUSTSTOREPASS_PROPERTY + "=" + System.getProperty(TRUSTSTOREPASS_PROPERTY)
+        );
+*/        
     }
 
     /**

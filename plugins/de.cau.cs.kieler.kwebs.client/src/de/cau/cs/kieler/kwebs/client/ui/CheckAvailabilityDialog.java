@@ -16,12 +16,16 @@ package de.cau.cs.kieler.kwebs.client.ui;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import de.cau.cs.kieler.kwebs.client.ILayoutServiceClient;
@@ -44,10 +48,16 @@ public class CheckAvailabilityDialog extends Dialog {
     private Label message;
     
     /** The button for closing this dialog. */
-    private Button button;
+    private Button okButton;
+
+    /** The button for viewing the error log. */
+    private Button errorButton;
     
     /** The tester thread. */
     private Thread thread;
+    
+    /** The client used to test connectivity. */
+    private ILayoutServiceClient client;
     
     /**
      * Creates a dialog for testing the availability of the layout service of a given server
@@ -68,13 +78,17 @@ public class CheckAvailabilityDialog extends Dialog {
                     ServerConfigError why = ServerConfigs.getInstance().
                         isValidServerConfig(serverConfig);
                     if (why == ServerConfigError.ERROR_OK) {
-                        ILayoutServiceClient client = LayoutServiceClients.getInstance().
+                        client = LayoutServiceClients.getInstance().
                             createClientForServerConfig(serverConfig);
                         try {
                             client.connect();
                             setMessageText("The layout service you selected is reachable.");
                         } catch (Exception e) {
                             setMessageText("The layout service you selected is not reachable.");
+                            setButtonVisible(errorButton, true);
+                            setButtonEnabled(errorButton, true);
+                        } finally {
+                            client.disconnect();
                         }
                     } else {
                         String text = "The selected server configuration is invalid."
@@ -103,7 +117,7 @@ public class CheckAvailabilityDialog extends Dialog {
                         }
                         setMessageText(text);
                     }
-                    setButtonEnabled(true);
+                    setButtonEnabled(okButton, true);
                 }            
             }
         );
@@ -129,15 +143,36 @@ public class CheckAvailabilityDialog extends Dialog {
     /**
      * Sets the enabled state of the OK button.
      * 
+     * @param button
+     *            the button to be enabled or disabled
      * @param enabled
      *            whether the button shall be enabled
      */
-    private void setButtonEnabled(final boolean enabled) {
+    private void setButtonEnabled(final Button button, final boolean enabled) {
         Display display = Display.getDefault();
         display.syncExec(
             new Runnable() {
                 public void run() {
                     button.setEnabled(enabled);
+                };                
+            }
+        );
+    }
+
+    /**
+     * Sets the visible state of the OK button.
+     * 
+     * @param button
+     *            the button to be made visible or not visible
+     * @param visible
+     *            whether the button shall be visible
+     */
+    private void setButtonVisible(final Button button, final boolean visible) {
+        Display display = Display.getDefault();
+        display.syncExec(
+            new Runnable() {
+                public void run() {
+                    button.setVisible(visible);
                 };                
             }
         );
@@ -174,14 +209,42 @@ public class CheckAvailabilityDialog extends Dialog {
         thread.start();
         return composite;        
     }
-    
+
+    /** Id for the view error log button. */
+    private static final int ID_ERRRORVIEW 
+        = 10000;
+
     /**
      * {@inheritDoc}
      */
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
-        button = super.createButton(parent, OK, "OK", true);
-        button.setEnabled(false);
+        errorButton = super.createButton(parent, ID_ERRRORVIEW, "View error", true);
+        errorButton.setEnabled(false);
+        errorButton.setVisible(false);
+        errorButton.addSelectionListener(
+            new SelectionAdapter() {
+                public void widgetSelected(final SelectionEvent e) {
+                    if (e.getSource() == errorButton) {
+                        String[] messages = client.getLastError();
+                        String  text = "\n\nThe error occurred was:\n\n"; 
+                        if (messages != null) {                            
+                            for (String line : messages) {
+                                text += line + "\n";
+                            }
+                        } else {
+                            text += "No error description available.";
+                        }    
+                        MessageBox box = new MessageBox(getShell(), SWT.OK);
+                        box.setText("Error log");
+                        box.setMessage(text);
+                        box.open();
+                    }
+                };
+            }
+        );
+        okButton = super.createButton(parent, OK, "OK", true);
+        okButton.setEnabled(false);
     }
     
 }

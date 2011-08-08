@@ -15,6 +15,7 @@
 package de.cau.cs.kieler.kwebs.client;
 
 import java.net.InetAddress;
+import java.util.Vector;
 
 import de.cau.cs.kieler.kwebs.client.providers.ServerConfig;
 
@@ -37,6 +38,9 @@ public abstract class AbstractLayoutServiceClient implements ILayoutServiceClien
     /** Whether the service is available or not. */
     private Boolean available;
 
+    /** The last error occured. */
+    private String[] lastError;
+    
     /**
      * Protected constructor.
      *
@@ -98,5 +102,29 @@ public abstract class AbstractLayoutServiceClient implements ILayoutServiceClien
             disconnect();
         }
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    public String[] getLastError() {
+        return lastError;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setLastError(final Throwable thelastError) {
+        Vector<String> messages = new Vector<String>();
+        Throwable error = thelastError;
+        while (error != null) {
+            String message = error.getMessage();
+            if (message == null) {
+                message = "<undefined message>";
+            }            
+            messages.add(message);
+            error = error.getCause();
+        }
+        lastError = messages.toArray(new String[0]);
+    }
+
 }

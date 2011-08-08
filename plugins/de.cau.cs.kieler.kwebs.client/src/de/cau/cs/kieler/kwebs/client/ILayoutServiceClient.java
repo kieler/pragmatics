@@ -93,4 +93,19 @@ public interface ILayoutServiceClient {
      */
     void setServerConfig(ServerConfig theserverConfig);
 
+    /**
+     * Returns a string array containing the messages of the the last exception occurred.
+     * 
+     * @return string array containing the messages of the last thrown exception 
+     *         or {@code null} if everything went fine
+     */
+    String[] getLastError();
+
+    /**
+     * Sets the last error occurred.
+     * 
+     * @param thelastError the last error occurred
+     */
+    void setLastError(Throwable thelastError);
+    
 }
