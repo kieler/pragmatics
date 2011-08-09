@@ -245,7 +245,7 @@ public final class ManagementService implements UncaughtExceptionHandler {
     /**
      * {@inheritDoc}
      */
-    public void uncaughtException(Thread t, Throwable e) {
+    public void uncaughtException(final Thread t, final Throwable e) {
         Logger.log(Severity.FAILURE, "Error in management service: " + e.getMessage(), e);
     }
     

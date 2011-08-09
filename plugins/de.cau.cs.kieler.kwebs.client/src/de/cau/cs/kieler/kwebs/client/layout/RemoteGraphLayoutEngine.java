@@ -143,14 +143,20 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
                     final String message = "The remote layout could not be initialized properly."
                                            + " The error occurred was\n\n"
                                            + "\"" + e.getMessage() + "\".\n\n"
-                                           + "The layout was temporarily set back to local.";
+                                           + "Perhaps the configured layout server is not available at"
+                                           + " the moment or the configuration you selected is not"
+                                           + " accurate. The layout was temporarily set back to local."
+                                           + " Do you want to switch to local mode permanently ?";
                     display.syncExec(
                         new Runnable() {
                             public void run() {
-                                MessageBox box = new MessageBox(shell, SWT.OK);
+                                MessageBox box = new MessageBox(shell, SWT.YES | SWT.NO);
                                 box.setText("Error Occurred");
                                 box.setMessage(message);
-                                box.open();                     
+                                int result = box.open();
+                                if (result == SWT.YES) {
+                                    SwitchLayoutMode.toLocal();
+                                }
                             }
                         }
                     );

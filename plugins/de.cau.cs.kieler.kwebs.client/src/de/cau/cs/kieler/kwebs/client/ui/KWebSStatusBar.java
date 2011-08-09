@@ -21,15 +21,21 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 
 import de.cau.cs.kieler.kwebs.client.activator.Activator;
+import de.cau.cs.kieler.kwebs.client.layout.SwitchLayoutMode;
 import de.cau.cs.kieler.kwebs.client.preferences.Preferences;
 
 /**
@@ -48,6 +54,9 @@ public class KWebSStatusBar extends WorkbenchWindowControlContribution
     
     /** The label containing the image displayed in the status bar. */
     private Label image;
+    
+    /** The popup menu for right mouse click on tray image. */
+    private Menu trayPopup;
     
     /** The preference store. */
     private IPreferenceStore preferenceStore
@@ -96,6 +105,14 @@ public class KWebSStatusBar extends WorkbenchWindowControlContribution
         image.addMouseListener(
             new MouseListener() {            
                 public void mouseUp(final MouseEvent e) {
+                    if (e.getSource() == image) {
+                        // Not sure what happens when the used mouse only has two buttons,
+                        // so we test for button 2 and 3 which is normally middle/wheelclick and right
+                        // mouse button.
+                        if (e.button == 2 || e.button == 3) {
+                            trayPopup.setVisible(true);
+                        }
+                    }
                 }                
                 public void mouseDown(final MouseEvent e) {
                 }                
@@ -106,6 +123,33 @@ public class KWebSStatusBar extends WorkbenchWindowControlContribution
                         null, 
                         null
                     ).open();
+                }
+            }
+        );
+        trayPopup = new Menu(parent.getShell(), SWT.POP_UP);
+        final MenuItem localLayout = new MenuItem(trayPopup, SWT.PUSH);
+        localLayout.setText("Local Layout");
+        localLayout.setImage(localImage);
+        localLayout.addSelectionListener(
+            new SelectionAdapter() {
+                @Override
+                public void widgetSelected(final SelectionEvent e) {
+                    if (e.getSource() == localLayout) {
+                        SwitchLayoutMode.toLocal();
+                    }
+                }
+            }
+        );
+        final MenuItem remoteLayout = new MenuItem(trayPopup, SWT.PUSH);
+        remoteLayout.setText("Remote Layout");
+        remoteLayout.setImage(remoteImage);
+        remoteLayout.addSelectionListener(
+            new SelectionAdapter() {
+                @Override
+                public void widgetSelected(final SelectionEvent e) {
+                    if (e.getSource() == remoteLayout) {
+                        SwitchLayoutMode.toRemote();
+                    }
                 }
             }
         );
@@ -126,26 +170,50 @@ public class KWebSStatusBar extends WorkbenchWindowControlContribution
     }
 
     /** Path to the resource for the image for doing local layout. */
-    private static final String LOCAL_IMAGE
+    private static final String LOCAL_IMAGEPATH
         = "icons/local.gif";
 
     /** Path to the resource for the image for doing remote layout. */
-    private static final String REMOTE_IMAGE
+    private static final String REMOTE_IMAGEPATH
         = "icons/remote.gif";
 
+    /** Image for doing local layout. */
+    private static Image localImage;
+
+    /** Image for doing remote layout. */
+    private static Image remoteImage;
+
+    /** Initialize the images. */
+    static {
+        ImageDescriptor descriptor = Activator.getImageDescriptor(LOCAL_IMAGEPATH);
+        if (descriptor != null) {
+            localImage = descriptor.createImage();
+        }
+        descriptor = Activator.getImageDescriptor(REMOTE_IMAGEPATH);
+        if (descriptor != null) {
+            remoteImage = descriptor.createImage();
+        }
+    }
+    
     /**
-     * Sets the text of the status label.
+     * Sets the icon of the status label.
      */
     public void setStatusInfo() {
         boolean remoteLayout = preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE);
-        ImageDescriptor descriptor = null;
+        Image icon = null;
+        String tooltip = null;
         if (remoteLayout) {
-            descriptor = Activator.getImageDescriptor(REMOTE_IMAGE);
+            icon = remoteImage;
+            tooltip = "You are using remote layout.";
         } else {
-            descriptor = Activator.getImageDescriptor(LOCAL_IMAGE);
+            icon = localImage;
+            tooltip = "You are using local layout.";
         }          
-        if (descriptor != null) {
-            image.setImage(descriptor.createImage());
+        tooltip += " You can double click on this item to change layout settings"
+                   + " or switch between local and remote layout by using the right mouse button.";
+        image.setToolTipText(tooltip);
+        if (icon != null) {
+            image.setImage(icon);
         }
     }    
 

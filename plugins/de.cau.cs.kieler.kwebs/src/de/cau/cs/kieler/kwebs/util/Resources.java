@@ -146,9 +146,15 @@ public final class Resources {
     }
 
     /** 
+     * Reads data from a path specified by {@code resource}. If not successful the data
+     * is read from the plug-in specified by {@code pluginid}.
+     *  
      * @param pluginid
+     *            the plug-in id for reading from a plug-in
      * @param resource
-     * @return
+     *            the resource path specifing either the file or the resource identifier
+     * @return a byte array containing the read data or {@code null} if neither a matching
+     *         file or a matching resource could be found
      */
     public static byte[] readFileOrPluginResourceAsByteArray(final String pluginid, 
         final String resource) {

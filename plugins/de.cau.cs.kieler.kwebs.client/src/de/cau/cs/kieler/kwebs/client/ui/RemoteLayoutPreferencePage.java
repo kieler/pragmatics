@@ -713,7 +713,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         scEditButton1.setEnabled(remoteLayout);
         scEditButton2.setEnabled(remoteLayout && !empty && !fixed);
         scEditButton3.setEnabled(remoteLayout && !empty && !fixed && !active);
-        scEditButton4.setEnabled(remoteLayout && !empty );
+        scEditButton4.setEnabled(remoteLayout && !empty);
         scEditButton5.setEnabled(remoteLayout && !empty && !active);        
     }
 

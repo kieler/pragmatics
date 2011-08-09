@@ -36,6 +36,9 @@ public class TransformationException extends RuntimeException {
 
     /**
      * Constructor with a message.
+     * 
+     * @param message
+     *            the message describing the exception
      */
     public TransformationException(final String message) {
         super(message);

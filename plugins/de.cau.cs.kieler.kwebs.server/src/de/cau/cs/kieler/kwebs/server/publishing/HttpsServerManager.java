@@ -15,7 +15,6 @@
 package de.cau.cs.kieler.kwebs.server.publishing;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.security.KeyStore;
