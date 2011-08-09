@@ -18,6 +18,8 @@ package de.cau.cs.kieler.kiml.evol.alg;
 
 import java.util.Arrays;
 
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
@@ -26,21 +28,40 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
  *
  */
 public class SurvivalOperation implements IEvolutionaryOperation {
+    
+    /**
+     * Default value for the survival ratio.
+     */
+    private static final double SURVIVAL_RATIO_DEFAULT = 0.54;
 
     /**
      * The survival ratio. This indicates the ratio of surviving individuals,
      * relative to the population size.
      */
-    private static final double SURVIVAL_RATIO = 0.54;
+    private static final IProperty<Double> SURVIVAL_RATIO = new Property<Double>(
+            "evol.survivalRatio", SURVIVAL_RATIO_DEFAULT);
+
+    /**
+     * Default value for minimum number of survivors.
+     */
+    private static final int MIN_SURVIVORS_DEFAULT = 5;
 
     /** Minimum number of individuals that must survive. */
-    private static final int MIN_SURVIVORS = 5;
+    private static final IProperty<Integer> MIN_SURVIVORS = new Property<Integer>(
+            "evol.minSurvivors", MIN_SURVIVORS_DEFAULT);
+
+    /**
+     * Default value for maximum number of survivors.
+     */
+    private static final int MAX_SURVIVORS_DEFAULT = 1000;
 
     /** Maximum number of individuals that may survive. */
-    private static final int MAX_SURVIVORS = 1000;
+    private static final IProperty<Integer> MAX_SURVIVORS = new Property<Integer>(
+            "evol.maxSurvivors", MAX_SURVIVORS_DEFAULT);
 
     private static final BoundMultipleCalculator BOUND_MULTIPLE_CALCULATOR =
-            new BoundMultipleCalculator(SURVIVAL_RATIO, MIN_SURVIVORS, MAX_SURVIVORS);
+            new BoundMultipleCalculator(SURVIVAL_RATIO_DEFAULT, MIN_SURVIVORS_DEFAULT,
+                    MAX_SURVIVORS_DEFAULT);
 
     /**
      * {@inheritDoc}

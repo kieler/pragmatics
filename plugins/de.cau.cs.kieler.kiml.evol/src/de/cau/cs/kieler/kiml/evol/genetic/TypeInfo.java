@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.evol.genetic;
 
+import de.cau.cs.kieler.core.properties.IProperty;
+
 
 /**
  * A type info describes the parameters of a type that is used in an
@@ -22,7 +24,8 @@ package de.cau.cs.kieler.kiml.evol.genetic;
  *
  * @param <T>
  */
-public abstract class TypeInfo<T extends Comparable<? super T>> {
+public abstract class TypeInfo<T extends Comparable<? super T>>
+ implements IProperty<T> {
     /**
      * Constructor for a type info.
      *
@@ -39,8 +42,8 @@ public abstract class TypeInfo<T extends Comparable<? super T>> {
      */
     public TypeInfo(
             final T theDefaultValue,
-            final T theLowerBound,
-            final T theUpperBound,
+            final Comparable<T> theLowerBound,
+            final Comparable<T> theUpperBound,
             final IValueFormatter theFormatter,
             final Class<?> theClass) {
 
@@ -50,11 +53,9 @@ public abstract class TypeInfo<T extends Comparable<? super T>> {
             throw new IllegalArgumentException();
         }
 
-        if (theLowerBound.compareTo(theUpperBound) > 0) {
-            throw new IllegalArgumentException("lower bound > upper bound");
-        } else if (theLowerBound.compareTo(theDefaultValue) > 0) {
+        if (theLowerBound.compareTo(theDefaultValue) > 0) {
             throw new IllegalArgumentException("default value < lower bound");
-        } else if (theDefaultValue.compareTo(theUpperBound) > 0) {
+        } else if (theUpperBound.compareTo(theDefaultValue) <= 0) {
             throw new IllegalArgumentException("default value > upper bound");
         }
 
@@ -68,21 +69,21 @@ public abstract class TypeInfo<T extends Comparable<? super T>> {
     /**
      * @return the default value
      */
-    public T getDefaultValue() {
+    public T getDefault() {
         return this.defaultValue;
     }
 
     /**
      * @return the lower bound
      */
-    public T getLowerBound() {
+    public Comparable<T> getLowerBound() {
         return this.lowerBound;
     }
 
     /**
      * @return the upper bound
      */
-    public T getUpperBound() {
+    public Comparable<T> getUpperBound() {
         return this.upperBound;
     }
 
@@ -96,7 +97,7 @@ public abstract class TypeInfo<T extends Comparable<? super T>> {
     public boolean isValueWithinBounds(final T theValue) {
         boolean result =
                 (this.lowerBound.compareTo(theValue) <= 0)
-                        && (theValue.compareTo(this.upperBound) <= 0);
+                        && (this.upperBound.compareTo(theValue) > 0);
         return result;
     }
 
@@ -120,9 +121,9 @@ public abstract class TypeInfo<T extends Comparable<? super T>> {
     /** The default value. */
     private final T defaultValue;
     /** The lower bound. */
-    private final T lowerBound;
+    private final Comparable<T> lowerBound;
     /** The upper bound. */
-    private final T upperBound;
+    private final Comparable<T> upperBound;
     /** The default value formatter. */
     private final IValueFormatter valueFormatter;
     /** The class of the value. */

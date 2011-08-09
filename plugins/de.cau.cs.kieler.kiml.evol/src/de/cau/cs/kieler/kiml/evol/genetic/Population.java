@@ -34,7 +34,7 @@ import de.cau.cs.kieler.kiml.evol.IFilterable;
  *
  */
 public class Population extends MapPropertyHolder
- implements
+        implements
             Iterable<Genome>,
             IFilterable<List<Genome>, Genome> {
     /** Property to mark individuals as selected. */
@@ -206,31 +206,46 @@ public class Population extends MapPropertyHolder
     /**
      * @param theInd
      */
-    public boolean add(final Genome theInd) {
+    public final boolean add(final Genome theInd) {
         return this.genomes.add(theInd);
     }
 
     /**
-     * @param theInd
+     * @param genome
+     *            element to be removed from this list, if present
+     * @return <tt>true</tt> if this list contained the specified element
      */
-    public void remove(final Genome theInd) {
-        this.genomes.remove(theInd);
+    /* (non-Javadoc)
+     * @see java.util.List#remove(java.lang.Object)
+     */
+    public final boolean remove(final Genome genome) {
+        return this.genomes.remove(genome);
     }
 
     /**
-     * @param theIndex
-     * @param theOffspring
+     * @param index
+     *            index at which to insert the first element from the specified
+     *            collection
+     * @param genomes
+     *            collection containing elements to be added to this list
+     * @return <tt>true</tt> if this list changed as a result of the call
      */
-    public boolean addAll(final int theIndex, final Collection<? extends Genome> theOffspring) {
-        return this.genomes.addAll(theIndex, theOffspring);
-
+    public final boolean addAll(
+final int index, final Collection<? extends Genome> genomes) {
+        return this.genomes.addAll(index, genomes);
     }
 
     /**
-     * @param theIndividuals
+     * @param genomes
+     *            the array into which the elements of this list are to be
+     *            stored, if it is big enough; otherwise, a new array of the
+     *            same runtime type is allocated for this purpose.
      */
-    public void toArray(final Genome[] theIndividuals) {
-        this.genomes.toArray(theIndividuals);
+    /* (non-Javadoc)
+     * @see java.util.List#toArray()
+     */
+    public final void toArray(final Genome[] genomes) {
+        this.genomes.toArray(genomes);
     }
 
     /**
@@ -239,6 +254,9 @@ public class Population extends MapPropertyHolder
      *
      * @return a list iterator over the elements in the genomes list (in proper
      *         sequence)
+     */
+    /* (non-Javadoc)
+     * @see java.util.List#listIterator()
      */
     public ListIterator<Genome> listIterator() {
         return this.genomes.listIterator();
@@ -259,4 +277,12 @@ public class Population extends MapPropertyHolder
         return this.genomes.iterator();
     }
 
+
+    /* (non-Javadoc)
+     * @see java.util.List#toArray()
+     */
+    public Object[] toArray() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

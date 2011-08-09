@@ -21,9 +21,9 @@ import java.util.List;
 
 /**
  * Convenience integer type info. Use only for genes of type {@link ListItemGene}.
- * 
+ *
  * @author bdu
- * 
+ *
  */
 public class ListItemTypeInfo extends TypeInfo<Integer> {
 
@@ -64,7 +64,7 @@ public class ListItemTypeInfo extends TypeInfo<Integer> {
     @Override
     public Class<List<?>> getTypeClass() {
         final Class<List<?>> typeClass = (Class<List<?>>) super.getTypeClass();
-        return (typeClass);
+        return typeClass;
     }
 
     /**
@@ -72,6 +72,14 @@ public class ListItemTypeInfo extends TypeInfo<Integer> {
      */
     public List<?> getList() {
         return Collections.unmodifiableList(this.list);
+    }
+
+    /* (non-Javadoc)
+     * @see de.cau.cs.kieler.core.properties.IProperty#getId()
+     */
+    public String getId() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

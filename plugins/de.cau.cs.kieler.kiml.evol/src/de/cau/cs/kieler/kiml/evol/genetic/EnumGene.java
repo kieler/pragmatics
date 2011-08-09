@@ -13,70 +13,12 @@
  */
 package de.cau.cs.kieler.kiml.evol.genetic;
 
-import java.util.Random;
 
 /**
  *
  * @author bdu
  */
 public final class EnumGene extends AbstractGene<Integer> {
-
-    /**
-     * A gene factory that creates Enum mutations.
-     *
-     * @author bdu
-     *
-     */
-    private static final class EnumMutator {
-
-        /**
-         * Creates a new {@link EnumMutator} instance.
-         *
-         */
-        private EnumMutator() {
-            // Nothing to do here.
-        }
-
-        /**
-         * Creates a new mutation of the given template.
-         *
-         * @param template
-         *            the template
-         * @param mutationInfo
-         *            the mutation info
-         * @return the new mutation
-         */
-        public static EnumGene newMutation(
-                final EnumGene template, final MutationInfo mutationInfo) {
-            if ((template == null) || (mutationInfo == null)) {
-                throw new IllegalArgumentException();
-            }
-
-            EnumTypeInfo typeInfo = template.getTypeInfo();
-            assert typeInfo != null;
-
-            Random random = template.getRandomGenerator();
-            assert random != null;
-
-            double prob = mutationInfo.getProbability();
-
-            Distribution distr = mutationInfo.getDistr();
-            assert distr == Distribution.UNIFORM;
-
-            Class<? extends Enum<?>> enumClass = typeInfo.getTypeClass();
-            Integer lowerBound = typeInfo.getLowerBound();
-            Integer upperBound = typeInfo.getUpperBound();
-            Integer value = template.getValue();
-
-            int newInt = value.intValue();
-            if (random.nextDouble() < prob) {
-                // Uniform distribution
-                int lim = upperBound - lowerBound + 1;
-                newInt = random.nextInt(lim) + lowerBound;
-            }
-            return new EnumGene(template.getId(), newInt, enumClass, prob);
-        }
-    }
 
     /**
      *
@@ -110,8 +52,9 @@ public final class EnumGene extends AbstractGene<Integer> {
      * A formatter for Enum valued genes.
      */
     private static final IValueFormatter ENUM_FORMATTER = new IValueFormatter() {
+
         /**
-         *
+         * {@inheritDoc}
          */
         public String getString(final Object o) {
             if (o instanceof EnumGene) {
@@ -233,7 +176,9 @@ this.getValue());
      * @param mutationInfo
      *            the mutation info
      * @return the new mutation
+     * @deprecated
      */
+    @Deprecated
     private EnumGene newMutation(final EnumGene template, final MutationInfo mutationInfo) {
         return EnumMutator.newMutation(template, mutationInfo);
     }

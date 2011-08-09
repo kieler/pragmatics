@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.kiml.evol.genetic;
 
 import java.text.DecimalFormat;
-import java.util.Random;
 
 /**
  * An implementation of {@link IGene}, fitting for various number formats.
@@ -74,7 +73,7 @@ public class UniversalNumberGene extends AbstractGene<Float> {
             if (o instanceof Integer) {
                 return ((Integer) o).toString();
             } else if (o instanceof UniversalNumberGene) {
-                return (Math.round(((UniversalNumberGene) o).getValue().floatValue()) + "");
+                return Math.round(((UniversalNumberGene) o).getValue().floatValue()) + "";
             }
 
             return null;
@@ -147,12 +146,20 @@ public class UniversalNumberGene extends AbstractGene<Float> {
 
     /**
      * {@inheritDoc}
+     * @deprecated separation of data and operations #1716
      */
-    public IGene<Float> newMutation() {
+    @Deprecated
+    public final IGene<Float> newMutation() {
         final IGene<Float> result = newMutation(getMutationInfo());
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @deprecated separation of data and operations #1716
+     */
+    @Deprecated
     @Override
     public IGene<Float> recombineWith(final IGene<Float>... theOtherGenes) {
 
@@ -188,13 +195,15 @@ public class UniversalNumberGene extends AbstractGene<Float> {
 
         return super.recombineWith(theOtherGenes);
     }
-
+    
     /**
      * Mutates the value. The mutation details are specified in
      * <code>theMutationInfo</code>.
-     *
+     * 
      * @return a new IGeneData with the mutated value.
+     * @deprecated
      */
+    @Deprecated
     private IGene<Float> newMutation(final MutationInfo theMutationInfo) {
         final Class<?> clazz = getTypeInfo().getTypeClass();
         if (clazz == Boolean.class) {
@@ -205,180 +214,6 @@ public class UniversalNumberGene extends AbstractGene<Float> {
             return new IntegerMutator().newMutation(this, theMutationInfo);
         }
         return null;
-    }
-
-    /**
-     * Interface for a factory that creates mutated genes.
-     *
-     * @author bdu
-     *
-     */
-    public static interface IMutator {
-        /**
-         *
-         * @param template
-         *            the template; may not be {@code null}
-         * @param mutationInfo
-         *            the mutation info; may not be {@code null}
-         * @return a new gene
-         */
-        IGene<Float> newMutation(final UniversalNumberGene template, final MutationInfo mutationInfo);
-    }
-
-    /**
-     * A gene factory that creates boolean mutations.
-     *
-     * @author bdu
-     *
-     */
-    private static class BooleanMutator implements IMutator {
-        private static final double PROBABILITY_FOR_TRUE = 0.5;
-
-        /**
-         * Creates a {@link BooleanMutator} instance.
-         */
-        public BooleanMutator() {
-            // Nothing to do here.
-        }
-
-        public IGene<Float> newMutation(
-                final UniversalNumberGene template, final MutationInfo mutationInfo) {
-
-            if ((template == null) || (mutationInfo == null)) {
-                throw new IllegalArgumentException();
-            }
-
-            TypeInfo<Float> typeInfo = template.getTypeInfo();
-            assert typeInfo != null;
-
-            Random random = template.getRandomGenerator();
-            assert random != null;
-
-            // get mutation parameters
-            double prob = mutationInfo.getProbability();
-
-            Distribution distr = mutationInfo.getDistr();
-            assert distr == Distribution.UNIFORM;
-
-            Float newValue;
-            if (random.nextDouble() < prob) {
-                // assign a random boolean value (may be the same as before)
-                newValue =
-                        Float.valueOf(random.nextDouble() < PROBABILITY_FOR_TRUE ? 1.0f : 0.0f);
-
-            } else {
-                newValue = template.getValue();
-            }
-            return new UniversalNumberGene(template.getId(), newValue, typeInfo, mutationInfo);
-        }
-    }
-
-    /**
-     * A gene factory that creates float mutations.
-     *
-     * @author bdu
-     *
-     */
-    private static class FloatMutator implements IMutator {
-        /**
-         * Creates a {@link FloatMutator} instance.
-         */
-        public FloatMutator() {
-            // Nothing to do here.
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public IGene<Float> newMutation(
-                final UniversalNumberGene template, final MutationInfo mutationInfo) {
-
-            if ((template == null) || (mutationInfo == null)) {
-                throw new IllegalArgumentException();
-            }
-
-            Random random = template.getRandomGenerator();
-            assert random != null;
-
-            TypeInfo<Float> typeInfo = template.getTypeInfo();
-            assert typeInfo != null;
-
-            double prob = mutationInfo.getProbability();
-            double var = mutationInfo.getVariance();
-            Distribution distr = mutationInfo.getDistr();
-            assert distr == Distribution.GAUSSIAN;
-
-            Float value = template.getValue();
-            Float newValue = value;
-            if (Math.random() < prob) {
-                // produce a new value within the valid bounds.
-                do {
-                    double gauss = random.nextGaussian() * Math.sqrt(var);
-                    newValue = Float.valueOf((float) (value.doubleValue() + gauss));
-                } while (!typeInfo.isValueWithinBounds(newValue));
-            }
-            return new UniversalNumberGene(template.getId(), newValue, typeInfo, mutationInfo);
-        }
-    }
-
-    /**
-     * A gene factory that creates integer mutations.
-     *
-     * @author bdu
-     *
-     */
-    private static class IntegerMutator implements IMutator {
-
-        /**
-         * Creates a new {@link IntegerMutator} instance.
-         *
-         */
-        public IntegerMutator() {
-            // Nothing to do here.
-        }
-
-        public IGene<Float> newMutation(
-                final UniversalNumberGene template, final MutationInfo mutationInfo) {
-
-            if ((template == null) || (mutationInfo == null)) {
-                throw new IllegalArgumentException();
-            }
-
-            TypeInfo<Float> typeInfo = template.getTypeInfo();
-            assert typeInfo != null;
-
-            Random random = template.getRandomGenerator();
-            assert random != null;
-
-            double prob = mutationInfo.getProbability();
-            double var = mutationInfo.getVariance();
-            Distribution distr = mutationInfo.getDistr();
-            Integer lowerBound = Integer.valueOf(typeInfo.getLowerBound().intValue());
-            Integer upperBound = Integer.valueOf(typeInfo.getUpperBound().intValue());
-
-            Integer value = Integer.valueOf(template.getValue().intValue());
-            Integer newInt = value;
-            if (random.nextDouble() < prob) {
-                switch (distr) {
-                case GAUSSIAN:
-                    do {
-                        // produce a new value within the valid bounds.
-                        double gauss = random.nextGaussian() * Math.sqrt(var);
-                        double newValue = value.doubleValue() + gauss;
-                        newInt = Integer.valueOf((int) Math.round(newValue));
-                    } while (!typeInfo.isValueWithinBounds(Float.valueOf(newInt.floatValue())));
-                    break;
-                case UNIFORM:
-                    newInt = random.nextInt(upperBound - lowerBound + 1) + lowerBound;
-                    break;
-                default:
-                    // execution should never reach this line.
-                    throw new AssertionError("Unknown distribution in switch: " + distr);
-                }
-            }
-            return new UniversalNumberGene(template.getId(), newInt.floatValue(),
-                    typeInfo, mutationInfo);
-        }
     }
 
     /**

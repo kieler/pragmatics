@@ -93,7 +93,10 @@ public class ListItemGene extends AbstractGene<Integer> {
 
     /**
      * {@inheritDoc}
+     *
+     * @deprecated
      */
+    @Deprecated
     public IGene<Integer> newMutation() {
         ListItemGene result;
 
@@ -106,13 +109,15 @@ public class ListItemGene extends AbstractGene<Integer> {
         assert distr == Distribution.UNIFORM;
 
         TypeInfo<Integer> typeInfo = this.getTypeInfo();
-        Integer lowerBound = typeInfo.getLowerBound();
-        Integer upperBound = typeInfo.getUpperBound();
+        Comparable<Integer> lowerBound = typeInfo.getLowerBound();
+        Comparable<Integer> upperBound = typeInfo.getUpperBound();
 
         Integer value = this.getValue().intValue();
         int newInt = value.intValue();
         if (random.nextDouble() < prob) {
-            newInt = random.nextInt((upperBound - lowerBound) + 1) + lowerBound;
+            // FIXME need values of bounds
+            // newInt = random.nextInt((upperBound - lowerBound) + 1) +
+            // lowerBound;
         }
 
         result =

@@ -168,6 +168,7 @@ public class Genome extends MapPropertyHolder {
 
     /**
      * @param genomes
+     *            genomes
      * @return the average rating of the given genomes
      */
     private static double averageRating(final Genome... genomes) {
@@ -378,6 +379,15 @@ public class Genome extends MapPropertyHolder {
      */
     public boolean hasUserRating() {
         return this.getProperty(USER_RATING) != null;
+    }
+
+    /**
+     * @param property
+     * @return
+     */
+    public boolean hasProperty(final IProperty<?> property) {
+        return this.getAllProperties().containsKey(property)
+                && (this.getProperty(property) != null);
     }
 
     /**

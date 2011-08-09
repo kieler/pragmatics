@@ -23,10 +23,10 @@ package de.cau.cs.kieler.kiml.evol.genetic;
  *
  */
 public final class FloatTypeInfo extends TypeInfo<Float> {
-    
+
     /**
      * Creates a new {@link FloatTypeInfo} instance.
-     * 
+     *
      * @param theDefaultValue
      *            default value; must be within the specified bounds
      * @param theLowerBound
@@ -45,5 +45,13 @@ public final class FloatTypeInfo extends TypeInfo<Float> {
             final IValueFormatter theFormatter,
             final Class<?> theClass) {
         super(theDefaultValue, theLowerBound, theUpperBound, theFormatter, theClass);
+    }
+    
+    /* (non-Javadoc)
+     * @see de.cau.cs.kieler.core.properties.IProperty#getId()
+     */
+    public String getId() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

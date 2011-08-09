@@ -68,4 +68,12 @@ public final class EnumTypeInfo extends TypeInfo<Integer> {
         }
         return theEnumClass.getEnumConstants().length;
     }
+    
+    /* (non-Javadoc)
+     * @see de.cau.cs.kieler.core.properties.IProperty#getId()
+     */
+    public String getId() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
