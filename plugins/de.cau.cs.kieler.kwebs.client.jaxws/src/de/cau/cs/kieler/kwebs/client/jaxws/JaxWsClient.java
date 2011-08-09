@@ -68,8 +68,6 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
         super(theserverConfig);
     }
 
-    // Implementation if the ILayoutServiceClient interface
-
     /**
      * {@inheritDoc}
      */
@@ -130,8 +128,6 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
         layoutPort = null;
         releaseSSL();
     }
-
-    // Implementation of the abstract methods from AbstractWebServiceClient
 
     /**
      * {@inheritDoc}
@@ -194,23 +190,31 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
         if (sslSocketFactory != null) {
             throw new IllegalAccessException("SSL already initialized, call releaseSSL first");
         }
+        // Create a trust manager factory
         TrustManagerFactory trustManagerFactory
             = TrustManagerFactory.getInstance(
                   TrustManagerFactory.getDefaultAlgorithm()
               );
+        // Load the clients trust store
         KeyStore keyStore
             = KeyStore.getInstance("JKS");
         keyStore.load(
             new FileInputStream(truststore),
             truststorePass.toCharArray()
         );
+        // Initialize the trust manager factory with the loaded trust store.
+        // Here the trusted certificate from the trust store is imported. 
         trustManagerFactory.init(keyStore);
+        // Initialize a SSL context with a trust manager which trusts the
+        // imported certificate
         SSLContext sslContext = SSLContext.getInstance("TLS");            
         sslContext.init(
             null,
                 trustManagerFactory.getTrustManagers(),
                     new SecureRandom()
         );
+        // Exchange the default SSL socket factory with our own and
+        // remember system default factory
         sslSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
         HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
     }
@@ -220,6 +224,7 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
      */
     private synchronized void releaseSSL() {
         if (sslSocketFactory != null) {
+            // Set system SSL socket factory back to default
             HttpsURLConnection.setDefaultSSLSocketFactory(sslSocketFactory);
             sslSocketFactory = null;
         }
