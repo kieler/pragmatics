@@ -31,7 +31,8 @@ then
     # Delete the file containing the process id
     rm -rf $PIDFILE
 
+	# Wait some time just to be sure...
+	sleep 5
+	
 fi
 
-# Wait some time just to be sure...
-sleep 5

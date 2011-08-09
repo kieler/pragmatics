@@ -33,11 +33,13 @@ WEB_SSL_CONTENT=server/kwebs/web/security
 # Restore server SSL configuration
 if [ -d $KWEBS_BACKUP/$SERVER_SSL_CONTENT ];
 then
-  mv $KWEBS_BACKUP/$SERVER_SSL_CONTENT/*.jks $SERVER_SSL_CONTENT
+    mkdir -p $SERVER_SSL_CONTENT
+    mv $KWEBS_BACKUP/$SERVER_SSL_CONTENT/*.jks $SERVER_SSL_CONTENT
 fi
 
 # Restore user SSL configuration
 if [ -d $KWEBS_BACKUP/$WEB_SSL_CONTENT ];
 then
-  mv $KWEBS_BACKUP/$WEB_SSL_CONTENT/client.jks $WEB_SSL_CONTENT
+    mkdir -p $WEB_SSL_CONTENT
+    mv $KWEBS_BACKUP/$WEB_SSL_CONTENT/client.jks $WEB_SSL_CONTENT
 fi

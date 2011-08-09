@@ -45,10 +45,8 @@ import de.cau.cs.kieler.kwebs.servicedata.transformation.ServiceDataXmiTransform
 import de.cau.cs.kieler.kwebs.util.Resources;
 
 /**
- * This class is the server equivalent of {@link EclipseLayoutServices} but
- * without the unnecessary support for UI interaction. It provides all
- * extension based registered layout information at runtime and also the
- * client side needed meta data about supported layout capabilities.
+ * This singleton class provides all extension based registered layout information at runtime 
+ * and also the client side needed meta data about supported layout capabilities.
  *
  * @kieler.rating  2011-05-09 red
  * @author  swe
