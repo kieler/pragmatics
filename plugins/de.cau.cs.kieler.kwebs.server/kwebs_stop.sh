@@ -4,18 +4,18 @@
 # Version 0.00
 #
 # Author swe
-# Last edit 21.07.2011
+# Last edit 10.08.2011
 
 # !!!!!
 # Please remember making this script executable by
-# doing chmod u+x kwebs.sh
+# doing chmod u+x kwebs_stop.sh
 # !!!!!
 
 PIDFILE=kwebs.pid
 
 if [ -f $PIDFILE ];
 then
-    
+
     # Read the pid from file
     read PID < $PIDFILE
 

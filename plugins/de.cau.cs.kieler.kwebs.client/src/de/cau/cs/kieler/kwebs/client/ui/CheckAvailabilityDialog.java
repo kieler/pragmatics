@@ -114,6 +114,8 @@ public class CheckAvailabilityDialog extends Dialog {
                             text += "You have specified a server configuration which is using"
                                     + " a HTTPS based connection but the password for the"
                                     + " trust store is missing.";
+                        } else {
+                            text += "An unspecified error occured.";
                         }
                         setMessageText(text);
                     }
@@ -193,7 +195,7 @@ public class CheckAvailabilityDialog extends Dialog {
 
     /** Standard height of labels. */
     private static final int LABEL_HEIGHTHINT
-        = 60;
+        = 120;
 
     /**
      * {@inheritDoc}
