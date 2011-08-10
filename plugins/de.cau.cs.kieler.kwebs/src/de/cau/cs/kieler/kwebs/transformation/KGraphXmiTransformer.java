@@ -17,6 +17,8 @@ package de.cau.cs.kieler.kwebs.transformation;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -26,6 +28,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 import de.cau.cs.kieler.core.kgraph.KGraphData;
@@ -54,7 +57,10 @@ public class KGraphXmiTransformer implements IGraphTransformer {
     public final Object deserialize(final String serializedGraph) {
         KNode graph = null;
         try {
-            ByteArrayInputStream inStream = new ByteArrayInputStream(serializedGraph.getBytes());
+            ByteArrayInputStream inStream = new ByteArrayInputStream(
+                serializedGraph.getBytes("UTF-8")
+                //serializedGraph.getBytes()
+            );
             URI uri = URI.createURI("inputstream://temp.kgraph");
             ResourceSet resourceSet = createResourceSet();
             Resource resource = resourceSet.createResource(uri);
@@ -93,7 +99,10 @@ public class KGraphXmiTransformer implements IGraphTransformer {
             resource.unload();
             resource.getContents().add((KNode) graph);            
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            resource.save(outStream, Collections.EMPTY_MAP);
+            Map<String, String> options = new HashMap<String, String>();
+            options.put(XMLResource.OPTION_ENCODING, "UTF-8");
+            //resource.save(outStream, Collections.EMPTY_MAP);
+            resource.save(outStream, options);
             outStream.flush();
             xmi = new String(outStream.toByteArray());
             outStream.close();

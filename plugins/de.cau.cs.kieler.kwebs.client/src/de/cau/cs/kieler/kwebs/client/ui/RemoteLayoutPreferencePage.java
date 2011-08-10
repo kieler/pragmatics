@@ -498,7 +498,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         );
 
         scEditButton5 = new Button(comp, SWT.PUSH | SWT.CENTER);
-        scEditButton5.setText("Active");
+        scEditButton5.setText("Select");
         scEditButton5.addSelectionListener(
             new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent e) {

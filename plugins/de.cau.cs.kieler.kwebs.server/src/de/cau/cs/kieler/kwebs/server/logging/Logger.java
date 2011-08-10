@@ -146,7 +146,6 @@ public final class Logger {
                 }
             }
         }
-        Debug.printMap(logLevel);
     }
 
     /**
