@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 import de.cau.cs.kieler.core.kgraph.KGraphData;
@@ -84,7 +85,8 @@ public class KGraphXmiTransformer implements IGraphTransformer {
             throw new TransformationException("Given graph object is not a KGraph instance");
         }
         try {
-            persistDataElements((KNode) graph);
+            EcoreUtil.resolveAll((KNode) graph);
+            persistDataElements((KNode) graph);            
             URI uri = URI.createURI("outputstream://temp.kgraph");
             ResourceSet resourceSet = createResourceSet();
             Resource resource = resourceSet.createResource(uri);

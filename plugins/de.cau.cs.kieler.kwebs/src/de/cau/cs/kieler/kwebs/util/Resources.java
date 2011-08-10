@@ -152,7 +152,7 @@ public final class Resources {
      * @param pluginid
      *            the plug-in id for reading from a plug-in
      * @param resource
-     *            the resource path specifing either the file or the resource identifier
+     *            the resource path specifying either the file or the resource identifier
      * @return a byte array containing the read data or {@code null} if neither a matching
      *         file or a matching resource could be found
      */
@@ -167,6 +167,37 @@ public final class Resources {
         if (result == null) {
             try {
                 result = readStreamAsByteArray(getResourceStream(pluginid, resource));
+            } catch (Exception e) {
+                // Ignore since no logging possible due to the fact that this utility
+                // class is used on both server and client side.
+            }
+        }
+        return result;
+    }
+
+    /** 
+     * Returns an input stream on a file specified by {@code resource}. If the file does not
+     * exist an input stream to the bundled resource from the plug-in specified by {@code pluginid}
+     * is created.
+     *  
+     * @param pluginid
+     *            the plug-in id for reading from a plug-in
+     * @param resource
+     *            the resource path specifying either the file or the resource identifier
+     * @return an input stream on the resource or {@code null} if neither a matching
+     *         file or a matching resource could be found
+     */
+    public static InputStream getFileOrPluginResourceStream(final String pluginid, 
+        final String resource) {
+        InputStream result = null;
+        try {
+            result = new FileInputStream(new File(resource));
+        } catch (Exception e) {
+            //Ignore exception on file access and look in plug-in for resource
+        }
+        if (result == null) {
+            try {
+                result = getResourceStream(pluginid, resource);
             } catch (Exception e) {
                 // Ignore since no logging possible due to the fact that this utility
                 // class is used on both server and client side.
