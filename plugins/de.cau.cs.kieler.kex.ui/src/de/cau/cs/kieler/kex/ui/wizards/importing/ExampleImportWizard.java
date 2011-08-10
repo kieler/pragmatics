@@ -54,144 +54,166 @@ import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
  */
 public class ExampleImportWizard extends Wizard implements IImportWizard {
 
-    private static final int WARNING_BORDER = 5;
+	private static final int WARNING_BORDER = 5;
 
-    private static final String ERROR_TITLE = "Could not complete Import";
+	private static final String ERROR_TITLE = "Could not complete Import";
 
-    private ImportExamplePage mainPage;
-    private ImportDestPage destinationPage;
-    private boolean checkDuplicate;
+	private ImportExamplePage mainPage;
+	private ImportDestPage destinationPage;
+	private boolean checkDuplicate;
 
-    /**
-     * Constructor for {@link ExampleImportWizard}.
-     */
-    public ExampleImportWizard() {
-        super();
-    }
+	/**
+	 * Constructor for {@link ExampleImportWizard}.
+	 */
+	public ExampleImportWizard() {
+		super();
+	}
 
-    /**
-     * initializes the Wizard and adds the mainpage of Type {@link WizardPage} to it.
-     * 
-     * @param workbench
-     *            , {@link IWorkbench}
-     * @param selection
-     *            , {@link IStructuredSelection}
-     */
-    public void init(final IWorkbench workbench, final IStructuredSelection selection) {
-        setWindowTitle("KIELER Examples Import");
-        setNeedsProgressMonitor(true);
+	/**
+	 * initializes the Wizard and adds the mainpage of Type {@link WizardPage}
+	 * to it.
+	 * 
+	 * @param workbench
+	 *            , {@link IWorkbench}
+	 * @param selection
+	 *            , {@link IStructuredSelection}
+	 */
+	public void init(final IWorkbench workbench,
+			final IStructuredSelection selection) {
+		setWindowTitle("KIELER Examples Import");
+		setNeedsProgressMonitor(true);
 
-        this.checkDuplicate = false;
-        try {
-            ExampleManager.get().load(true);
-        } catch (RuntimeException e) {
-            IStatus status = new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID,
-                    Messages.getString("loadError"), e);
-            StatusManager.getManager().handle(status, StatusManager.SHOW);
-        }
-        mainPage = new ImportExamplePage("Import Examples", selection);
-        destinationPage = new ImportDestPage("Location", selection);
-    }
+		this.checkDuplicate = false;
+		try {
+			ExampleManager.get().load(true);
+		} catch (RuntimeException e) {
+			IStatus status = new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID,
+					Messages.getString("loadError"), e);
+			StatusManager.getManager().handle(status, StatusManager.SHOW);
+		}
+		mainPage = new ImportExamplePage("Import Examples", selection);
+		destinationPage = new ImportDestPage("Location", selection);
+	}
 
-    @Override
-    public final void addPages() {
-        super.addPages();
-        addPage(mainPage);
-        addPage(destinationPage);
-    }
+	@Override
+	public final void addPages() {
+		super.addPages();
+		addPage(mainPage);
+		addPage(destinationPage);
+	}
 
-    @Override
-    public final boolean performFinish() {
-        try {
-            List<Example> checkedExamples = mainPage.getCheckedExamples();
+	@Override
+	public final boolean performFinish() {
+		try {
+			List<Example> checkedExamples = mainPage.getCheckedExamples();
 
-            if (checkedExamples.isEmpty()) {
-                // FIXME throw a more specific exception
-                throw new RuntimeException(ErrorMessage.NO_EXAMPLE_SELECTED);
-            }
+			if (checkedExamples.isEmpty()) {
+				// FIXME throw a more specific exception
+				throw new RuntimeException(ErrorMessage.NO_EXAMPLE_SELECTED);
+			}
 
-            // warning if more examples selected than warning_border.
-            if (checkedExamples.size() > WARNING_BORDER
-                    && !MessageDialog.openQuestion(this.getShell(), "More than " + WARNING_BORDER
-                            + " examples selected",
-                            "Importing may take a while. Do you really want to continue?")) {
-                return false;
-            }
+			// warning if more examples selected than warning_border.
+			if (checkedExamples.size() > WARNING_BORDER
+					&& !MessageDialog
+							.openQuestion(this.getShell(), "More than "
+									+ WARNING_BORDER + " examples selected",
+									"Importing may take a while. Do you really want to continue?")) {
+				return false;
+			}
 
-            IPath destinationLocation = destinationPage.getResourcePath();
-            if (destinationLocation == null || destinationLocation.isEmpty()) {
-                // FIXME throw a more specific exception
-                throw new RuntimeException("No import location has been set.");
-            }
-            ExampleManager.get().generateProject(destinationLocation);
-            List<String> directOpens;
-            try {
-                directOpens = ExampleManager.get().importExamples(destinationLocation,
-                        checkedExamples, checkDuplicate);
-            } catch (Exception e) {
-                StatusManager.getManager().handle(
-                        new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID,
-                                "Could not import example", e), StatusManager.SHOW);
-                return false;
-            }
+			IPath destinationLocation = destinationPage.getResourcePath();
+			if (destinationLocation == null || destinationLocation.isEmpty()) {
+				// FIXME throw a more specific exception
+				throw new RuntimeException("No import location has been set.");
+			}
+			ExampleManager.get().generateProject(destinationLocation);
+			List<String> directOpens;
+			try {
+				directOpens = ExampleManager.get().importExamples(
+						destinationLocation, checkedExamples, checkDuplicate);
+			} catch (Exception e) {
+				StatusManager.getManager().handle(
+						new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID,
+								"Problem at importing example", e),
+						StatusManager.SHOW);
+				return false;
+			}
 
-            this.getShell().setVisible(false);
+			this.getShell().setVisible(false);
 
-            // refresh workspace
-            IContainer element = ResourcesPlugin.getWorkspace().getRoot();
-            try {
-                if (element != null) {
-                    element.refreshLocal(IContainer.DEPTH_INFINITE, new NullProgressMonitor());
-                }
-            } catch (CoreException e1) {
-                // do nothing
-            }
+			// refresh workspace
+			IContainer element = ResourcesPlugin.getWorkspace().getRoot();
+			try {
+				if (element != null) {
+					element.refreshLocal(IContainer.DEPTH_INFINITE,
+							new NullProgressMonitor());
+				}
+			} catch (CoreException e1) {
+				// do nothing
+			}
 
-            // open direct opens
-            if (directOpens != null && directOpens.size() > 0 && destinationPage.openImports()) {
-                IWorkbenchWindow win = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-                IWorkbenchPage page = win.getActivePage();
-                for (String path : directOpens) {
-                    IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
-                            .findFilesForLocationURI(URIUtil.toURI(path), IResource.FILE);
-                    if (files.length == 1) {
-                        IEditorDescriptor defaultEditor = PlatformUI.getWorkbench()
-                                .getEditorRegistry().getDefaultEditor(files[0].getName());
-                        if (defaultEditor == null) {
-                            defaultEditor = PlatformUI.getWorkbench().getEditorRegistry()
-                                    .findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-                        }
-                        try {
-                            page.openEditor(new FileEditorInput(files[0]), defaultEditor.getId());
-                            if (destinationPage.autoLayout()) {
-                                DiagramLayoutEngine.INSTANCE.layout(PlatformUI.getWorkbench()
-                                        .getActiveWorkbenchWindow().getPartService()
-                                        .getActivePart(), null, false, true, false, true);
-                            }
-                        } catch (PartInitException e) {
-                            IStatus status = new Status(IStatus.WARNING, KEXUIPlugin.PLUGIN_ID,
-                                    "Could not open editor.", e);
-                            StatusManager.getManager().handle(status, StatusManager.SHOW);
-                            continue;
-                        }
-                    }
-                }
-            }
-        } catch (RuntimeException e) {
-            if (e.getLocalizedMessage().equals(ErrorMessage.DUPLICATE_EXAMPLE)) {
-                checkDuplicate = !MessageDialog.openQuestion(getShell(), ERROR_TITLE,
-                        e.getLocalizedMessage() + " Do you want to override it?");
-            } else if (e instanceof UnsupportedOperationException) {
-                IStatus status = new Status(IStatus.WARNING, KEXUIPlugin.PLUGIN_ID, ERROR_TITLE, e);
-                StatusManager.getManager().handle(status, StatusManager.SHOW);
-                return true;
-            } else {
-                IStatus status = new Status(IStatus.WARNING, KEXUIPlugin.PLUGIN_ID, ERROR_TITLE, e);
-                StatusManager.getManager().handle(status, StatusManager.SHOW);
-            }
-            this.getShell().setVisible(true);
-            return false;
-        }
-        return true;
-    }
+			// open direct opens
+			if (directOpens != null && directOpens.size() > 0
+					&& destinationPage.openImports()) {
+				IWorkbenchWindow win = PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow();
+				IWorkbenchPage page = win.getActivePage();
+				for (String path : directOpens) {
+					IFile[] files = ResourcesPlugin
+							.getWorkspace()
+							.getRoot()
+							.findFilesForLocationURI(URIUtil.toURI(path),
+									IResource.FILE);
+					if (files.length == 1) {
+						IEditorDescriptor defaultEditor = PlatformUI
+								.getWorkbench().getEditorRegistry()
+								.getDefaultEditor(files[0].getName());
+						if (defaultEditor == null) {
+							defaultEditor = PlatformUI
+									.getWorkbench()
+									.getEditorRegistry()
+									.findEditor(
+											IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+						}
+						try {
+							page.openEditor(new FileEditorInput(files[0]),
+									defaultEditor.getId());
+							if (destinationPage.autoLayout()) {
+								DiagramLayoutEngine.INSTANCE.layout(PlatformUI
+										.getWorkbench()
+										.getActiveWorkbenchWindow()
+										.getPartService().getActivePart(),
+										null, false, true, false, true);
+							}
+						} catch (PartInitException e) {
+							IStatus status = new Status(IStatus.WARNING,
+									KEXUIPlugin.PLUGIN_ID,
+									"Could not open editor.", e);
+							StatusManager.getManager().handle(status,
+									StatusManager.SHOW);
+							continue;
+						}
+					}
+				}
+			}
+		} catch (RuntimeException e) {
+			if (e.getLocalizedMessage().equals(ErrorMessage.DUPLICATE_EXAMPLE)) {
+				checkDuplicate = !MessageDialog.openQuestion(getShell(),
+						ERROR_TITLE, e.getLocalizedMessage()
+								+ " Do you want to override it?");
+			} else if (e instanceof UnsupportedOperationException) {
+				IStatus status = new Status(IStatus.WARNING,
+						KEXUIPlugin.PLUGIN_ID, ERROR_TITLE, e);
+				StatusManager.getManager().handle(status, StatusManager.SHOW);
+				return true;
+			} else {
+				IStatus status = new Status(IStatus.WARNING,
+						KEXUIPlugin.PLUGIN_ID, ERROR_TITLE, e);
+				StatusManager.getManager().handle(status, StatusManager.SHOW);
+			}
+			this.getShell().setVisible(true);
+			return false;
+		}
+		return true;
+	}
 }
