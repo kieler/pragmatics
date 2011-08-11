@@ -45,10 +45,10 @@ public abstract class ServiceDataLayoutDataService extends ProgrammaticLayoutDat
      */
     protected ServiceDataLayoutDataService() {
     }
-
     
     /**
-     * Initializes the layout meta data from a reader.
+     * Initializes the layout meta data from a string retrieved from the layout service.
+     * The host part is needed for retrieving the preview images.
      * 
      * @param serializedData
      *            the data which contains layout meta data

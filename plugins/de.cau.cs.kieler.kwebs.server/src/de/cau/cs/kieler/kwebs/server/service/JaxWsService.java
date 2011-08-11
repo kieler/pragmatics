@@ -16,14 +16,12 @@ package de.cau.cs.kieler.kwebs.server.service;
 
 import java.util.List;
 
-import javax.jws.HandlerChain;
 import javax.jws.WebService;
 
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.jaxws.LayoutServicePort;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
-import de.cau.cs.kieler.kwebs.util.Resources;
 
 /**
  * Main service class to be published as JAX-WS web service.
@@ -40,11 +38,9 @@ import de.cau.cs.kieler.kwebs.util.Resources;
     serviceName = "LayoutService",
     targetNamespace = "http://rtsys.informatik.uni-kiel.de/layout",
     wsdlLocation = "server/kwebs/wsdl/layoutService.wsdl"
-)
-//@HandlerChain(file = "handlerchain/handlerchain.xml")  
+)  
 public final class JaxWsService extends AbstractService implements LayoutServicePort {
-private int sCount = 0;
-private int fCount = 0;
+
     /**
      * Creates a new instance of the JAX-WS based layout service.
      */
@@ -58,31 +54,9 @@ private int fCount = 0;
     public String graphLayout(final String serializedGraph, final String format, 
         final List<GraphLayoutOption> options) { 
         try {
-            String result = layout(serializedGraph, format, options);
-            handle(serializedGraph, "succeeded", sCount++);
-            return result;
-            //return layout(serializedGraph, format, options);
-        } catch (Exception e) {
-            handle(serializedGraph, "failed", fCount++);
+            return layout(serializedGraph, format, options);
+        } catch (Exception e) {         
             throw new RemoteServiceException(e.getMessage());
-        }
-    }
-
-    /** */
-    private static final String ROOT
-        = "/home/layout/kwebs/testdata";
-
-    /**
-     * 
-     * @param  
-     * @param 
-     * @param
-     */
-    private void handle(final String serializedGraph, final String prefix, final int index) {
-        try {
-            Resources.writeFile(ROOT + "/" + prefix + "_" + index + ".xmi", serializedGraph);
-        } catch (Exception e) {
-            // Ignore
         }
     }
 

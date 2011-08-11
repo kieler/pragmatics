@@ -15,6 +15,7 @@
 package de.cau.cs.kieler.kwebs.server.layout;
 
 import java.io.File;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,25 +72,46 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
     private static String previewImagesPath
         = DEFAULT_PREVIEWIMAGESPATH;
     
+    /** Default port for accessing preview images. Same as port of support server. */
+    private static final int DEFAULT_PREVIEWIMAGESPORT
+        = 8444;
+    
+    /** The port under which the preview image handler is published. */
+    private static int previewImagesPort
+        = -1;
+    
     static {
-        String path = null;
         String implementation = null;      
         for (IConfigurationElement element : SupportingServerManager.getHandlerConfigurationElements()) {
             if (element.getName().equals(SupportingServerManager.ELEMENT_SUPPORTHANDLER)) {
-                path = element.getAttribute(SupportingServerManager.ATTRIBUTE_PATH);
                 implementation = element.getAttribute(SupportingServerManager.ATTRIBUTE_IMPLEMENTATION);
                 if (implementation.equals(PreviewImageHandler.class.getCanonicalName())) {
-                    previewImagesPath = path;                    
+                    previewImagesPath = element.getAttribute(SupportingServerManager.ATTRIBUTE_PATH);
                 }
             }
         }
-        if (previewImages == null) {
+        if (previewImagesPath == null) {
             Logger.log(
                 Severity.WARNING, 
                 "No path for the preview image handler found. Using default path of "
                 + DEFAULT_PREVIEWIMAGESPATH + "."
+            );            
+        }
+        try {
+            URI uri = new URI(
+                Configuration.getInstance().getConfigProperty(Configuration.SUPPORTINGSERVER_ADDRESS)
             );
-            
+            previewImagesPort = uri.getPort();
+        } catch (Exception e) {
+            // Ignore since an undefined port will be handled after the try-catch-block
+        }
+        if (previewImagesPort == -1) {
+            Logger.log(
+                Severity.WARNING, 
+                "No port for the preview image handler found. Using default path of "
+                + DEFAULT_PREVIEWIMAGESPATH + "."
+            );
+            previewImagesPort = DEFAULT_PREVIEWIMAGESPORT;
         }
     }
     
@@ -284,11 +306,10 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
                         );
                         String previewImageName = Integer.toHexString((pluginId + preview).hashCode()) 
                                                   + "/" + new File(preview).getName();
-                        String previewImage = Configuration.getInstance().getConfigProperty(
-                            Configuration.SUPPORTINGSERVER_EXTERNALADDRESS
-                        ) + "/" + previewImagesPath + "/" + previewImageName;
+                        String previewImagePath = previewImagesPath + "/" + previewImageName;
                         previewImages.put(previewImageName, data);
-                        algorithm.setPreviewImage(previewImage);  
+                        algorithm.setPreviewImagePath(previewImagePath);  
+                        algorithm.setPreviewImagePort(previewImagesPort);
                     } catch (Exception e) {
                         Logger.log(Severity.WARNING,
                             "Could not load preview image ("

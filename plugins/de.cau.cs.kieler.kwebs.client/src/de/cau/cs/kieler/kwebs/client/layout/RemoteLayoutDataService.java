@@ -14,6 +14,7 @@
 
 package de.cau.cs.kieler.kwebs.client.layout;
 
+import java.net.URI;
 import java.net.URL;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -113,7 +114,8 @@ public final class RemoteLayoutDataService extends ServiceDataLayoutDataService 
             );
         }
         try {
-            String capabilities = client.getServiceData();
+            previewImageHost = client.getServerConfig().getAddress().getHost();  
+            String capabilities = client.getServiceData();           
             super.initializeFromString(capabilities);
         } catch (Exception e) {
             StatusManager.getManager().handle(
@@ -130,22 +132,31 @@ public final class RemoteLayoutDataService extends ServiceDataLayoutDataService 
         }
     }
 
-    /** name of the 'previewImage' attribute layout algorithms meta data. */
-    public static final String ATTRIBUTE_PREVIEWIMAGE 
-        = "previewImage";
+    /** name of the 'previewImagePath' attribute layout algorithms meta data. */
+    public static final String ATTRIBUTE_PREVIEWIMAGEPATH 
+        = "previewImagePath";
 
+    /** name of the 'previewImagePath' attribute layout algorithms meta data. */
+    public static final String ATTRIBUTE_PREVIEWIMAGEPORT 
+        = "previewImagePort";
+
+    /** Needed for getting the preview images. Necessary value is set by initializeWithClient(). */
+    private String previewImageHost;
+    
     /**
      * {@inheritDoc}
      */
     @Override
     protected LayoutAlgorithmData createLayoutAlgorithmData(final IConfigurationElement element) {
         RemoteLayoutAlgorithmData algoData = new RemoteLayoutAlgorithmData();
-        String previewImage = element.getAttribute(ATTRIBUTE_PREVIEWIMAGE);
-        if (previewImage != null) {
+        String previewImagePath = element.getAttribute(ATTRIBUTE_PREVIEWIMAGEPATH);
+        String previewImagePort = element.getAttribute(ATTRIBUTE_PREVIEWIMAGEPORT);
+        if (previewImagePath != null && previewImagePort != null) {
+            String url = "http://" + previewImageHost + ":" + previewImagePort + "/" + previewImagePath;
             try {
-                algoData.setPreviewImage(ImageDescriptor.createFromURL(new URL(previewImage)));
+                algoData.setPreviewImage(ImageDescriptor.createFromURL(new URL(url)));
             } catch (Exception e) {
-                e.printStackTrace();
+                reportError("Could not load preview image: " + url, e);
             }
         }
         return algoData;

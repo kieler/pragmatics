@@ -173,9 +173,13 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
         return element;
     }
     
-    /** Name of the previewImage attribute. */
-    private static final String ATTRIBUTE_PREVIEWIMAGE
-        = "previewImage";
+    /** Name of the previewImagePath attribute. */
+    private static final String ATTRIBUTE_PREVIEWIMAGEPATH
+        = "previewImagePath";
+
+    /** Name of the previewImagePort attribute. */
+    private static final String ATTRIBUTE_PREVIEWIMAGEPORT
+        = "previewImagePort";
     
     /**
      * 
@@ -188,10 +192,12 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
         );
         element.addAttribute(ExtensionLayoutDataService.ATTRIBUTE_ID, algorithm.getId());
         element.addAttribute(ExtensionLayoutDataService.ATTRIBUTE_NAME, algorithm.getName());
-        String previewImage = algorithm.getPreviewImage();
-        if (previewImage != null) {
-            element.addAttribute(ATTRIBUTE_PREVIEWIMAGE, previewImage);
+        String previewImagePath = algorithm.getPreviewImagePath();
+        if (previewImagePath != null) {
+            element.addAttribute(ATTRIBUTE_PREVIEWIMAGEPATH, previewImagePath);
         }
+        int previewImagePort = algorithm.getPreviewImagePort();
+        element.addAttribute(ATTRIBUTE_PREVIEWIMAGEPORT, new Integer(previewImagePort).toString());
         LayoutType tmpType = algorithm.getType();
         if (tmpType != null) {
             element.addAttribute(

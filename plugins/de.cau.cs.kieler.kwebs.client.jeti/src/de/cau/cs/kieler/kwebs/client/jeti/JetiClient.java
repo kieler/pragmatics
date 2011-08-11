@@ -80,14 +80,24 @@ public final class JetiClient extends AbstractLayoutServiceClient {
         }
         if (etiCon == null) {
             try {
+                // Create a new connection to the jETI server
                 etiCon = new EtiConnectionSepp(getServerConfig().getAddress());
+            } catch (Exception e) {
+                etiCon = null;
+                throw new LocalServiceException(
+                    "Could not connect to layout service at " + getServerConfig().getAddress(), e
+                );
+            }
+        }
+        if (etiCon != null) {
+            try {
                 // Just dummy login, security currently
                 // not implemented in jETI tool server
                 etiCon.login("foo", "bar");
             } catch (Exception e) {
                 etiCon = null;
                 throw new LocalServiceException(
-                    "Could not connect to layout service at " + getServerConfig().getAddress(), e
+                    "Could not login on layout service at " + getServerConfig().getAddress(), e
                 );
             }
         }

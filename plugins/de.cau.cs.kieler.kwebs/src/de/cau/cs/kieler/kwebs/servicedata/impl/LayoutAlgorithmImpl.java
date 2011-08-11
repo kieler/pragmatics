@@ -44,7 +44,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.impl.LayoutAlgorithmImpl#getCategory <em>Category</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.impl.LayoutAlgorithmImpl#getType <em>Type</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.impl.LayoutAlgorithmImpl#getVersion <em>Version</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.impl.LayoutAlgorithmImpl#getPreviewImage <em>Preview Image</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.impl.LayoutAlgorithmImpl#getPreviewImagePath <em>Preview Image Path</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.impl.LayoutAlgorithmImpl#getPreviewImagePort <em>Preview Image Port</em>}</li>
  * </ul>
  * </p>
  *
@@ -172,24 +173,44 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
     protected String version = VERSION_EDEFAULT;
 
     /**
-     * The default value of the '{@link #getPreviewImage() <em>Preview Image</em>}' attribute.
+     * The default value of the '{@link #getPreviewImagePath() <em>Preview Image Path</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getPreviewImage()
+     * @see #getPreviewImagePath()
      * @generated
      * @ordered
      */
-    protected static final String PREVIEW_IMAGE_EDEFAULT = null;
+    protected static final String PREVIEW_IMAGE_PATH_EDEFAULT = null;
 
     /**
-     * The cached value of the '{@link #getPreviewImage() <em>Preview Image</em>}' attribute.
+     * The cached value of the '{@link #getPreviewImagePath() <em>Preview Image Path</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getPreviewImage()
+     * @see #getPreviewImagePath()
      * @generated
      * @ordered
      */
-    protected String previewImage = PREVIEW_IMAGE_EDEFAULT;
+    protected String previewImagePath = PREVIEW_IMAGE_PATH_EDEFAULT;
+
+    /**
+     * The default value of the '{@link #getPreviewImagePort() <em>Preview Image Port</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getPreviewImagePort()
+     * @generated
+     * @ordered
+     */
+    protected static final int PREVIEW_IMAGE_PORT_EDEFAULT = 0;
+
+    /**
+     * The cached value of the '{@link #getPreviewImagePort() <em>Preview Image Port</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getPreviewImagePort()
+     * @generated
+     * @ordered
+     */
+    protected int previewImagePort = PREVIEW_IMAGE_PORT_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -399,8 +420,8 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
      * <!-- end-user-doc -->
      * @generated
      */
-    public String getPreviewImage() {
-        return previewImage;
+    public String getPreviewImagePath() {
+        return previewImagePath;
     }
 
     /**
@@ -408,11 +429,32 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setPreviewImage(String newPreviewImage) {
-        String oldPreviewImage = previewImage;
-        previewImage = newPreviewImage;
+    public void setPreviewImagePath(String newPreviewImagePath) {
+        String oldPreviewImagePath = previewImagePath;
+        previewImagePath = newPreviewImagePath;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE, oldPreviewImage, previewImage));
+            eNotify(new ENotificationImpl(this, Notification.SET, ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PATH, oldPreviewImagePath, previewImagePath));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public int getPreviewImagePort() {
+        return previewImagePort;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setPreviewImagePort(int newPreviewImagePort) {
+        int oldPreviewImagePort = previewImagePort;
+        previewImagePort = newPreviewImagePort;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PORT, oldPreviewImagePort, previewImagePort));
     }
 
     /**
@@ -457,8 +499,10 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
                 return basicGetType();
             case ServiceDataPackage.LAYOUT_ALGORITHM__VERSION:
                 return getVersion();
-            case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE:
-                return getPreviewImage();
+            case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PATH:
+                return getPreviewImagePath();
+            case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PORT:
+                return getPreviewImagePort();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -498,8 +542,11 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
             case ServiceDataPackage.LAYOUT_ALGORITHM__VERSION:
                 setVersion((String)newValue);
                 return;
-            case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE:
-                setPreviewImage((String)newValue);
+            case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PATH:
+                setPreviewImagePath((String)newValue);
+                return;
+            case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PORT:
+                setPreviewImagePort((Integer)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -537,8 +584,11 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
             case ServiceDataPackage.LAYOUT_ALGORITHM__VERSION:
                 setVersion(VERSION_EDEFAULT);
                 return;
-            case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE:
-                setPreviewImage(PREVIEW_IMAGE_EDEFAULT);
+            case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PATH:
+                setPreviewImagePath(PREVIEW_IMAGE_PATH_EDEFAULT);
+                return;
+            case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PORT:
+                setPreviewImagePort(PREVIEW_IMAGE_PORT_EDEFAULT);
                 return;
         }
         super.eUnset(featureID);
@@ -568,8 +618,10 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
                 return type != null;
             case ServiceDataPackage.LAYOUT_ALGORITHM__VERSION:
                 return VERSION_EDEFAULT == null ? version != null : !VERSION_EDEFAULT.equals(version);
-            case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE:
-                return PREVIEW_IMAGE_EDEFAULT == null ? previewImage != null : !PREVIEW_IMAGE_EDEFAULT.equals(previewImage);
+            case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PATH:
+                return PREVIEW_IMAGE_PATH_EDEFAULT == null ? previewImagePath != null : !PREVIEW_IMAGE_PATH_EDEFAULT.equals(previewImagePath);
+            case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PORT:
+                return previewImagePort != PREVIEW_IMAGE_PORT_EDEFAULT;
         }
         return super.eIsSet(featureID);
     }
@@ -592,8 +644,10 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
         result.append(description);
         result.append(", version: ");
         result.append(version);
-        result.append(", previewImage: ");
-        result.append(previewImage);
+        result.append(", previewImagePath: ");
+        result.append(previewImagePath);
+        result.append(", previewImagePort: ");
+        result.append(previewImagePort);
         result.append(')');
         return result.toString();
     }

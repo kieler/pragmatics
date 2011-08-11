@@ -26,11 +26,15 @@ fi
 if [ -d "../src/de/cau/cs/kieler/kwebs/jaxws" ];
 then
 	rm -f "../src/de/cau/cs/kieler/kwebs/jaxws/*.java"
+else
+    mkdir "../src/de/cau/cs/kieler/kwebs/jaxws"
 fi
 
 if [ -d "../bin" ];
 then
 	rm -rf "../bin"
+else
+    mkdir "../bin"
 fi
 
 mkdir "../src"

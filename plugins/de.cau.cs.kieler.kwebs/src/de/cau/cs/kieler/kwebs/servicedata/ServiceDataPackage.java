@@ -206,13 +206,22 @@ public interface ServiceDataPackage extends EPackage {
     int LAYOUT_ALGORITHM__VERSION = 7;
 
     /**
-     * The feature id for the '<em><b>Preview Image</b></em>' attribute.
+     * The feature id for the '<em><b>Preview Image Path</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int LAYOUT_ALGORITHM__PREVIEW_IMAGE = 8;
+    int LAYOUT_ALGORITHM__PREVIEW_IMAGE_PATH = 8;
+
+    /**
+     * The feature id for the '<em><b>Preview Image Port</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int LAYOUT_ALGORITHM__PREVIEW_IMAGE_PORT = 9;
 
     /**
      * The number of structural features of the '<em>Layout Algorithm</em>' class.
@@ -221,7 +230,7 @@ public interface ServiceDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int LAYOUT_ALGORITHM_FEATURE_COUNT = 9;
+    int LAYOUT_ALGORITHM_FEATURE_COUNT = 10;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.kwebs.servicedata.impl.LayoutTypeImpl <em>Layout Type</em>}' class.
@@ -673,15 +682,26 @@ public interface ServiceDataPackage extends EPackage {
     EAttribute getLayoutAlgorithm_Version();
 
     /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm#getPreviewImage <em>Preview Image</em>}'.
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm#getPreviewImagePath <em>Preview Image Path</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Preview Image</em>'.
-     * @see de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm#getPreviewImage()
+     * @return the meta object for the attribute '<em>Preview Image Path</em>'.
+     * @see de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm#getPreviewImagePath()
      * @see #getLayoutAlgorithm()
      * @generated
      */
-    EAttribute getLayoutAlgorithm_PreviewImage();
+    EAttribute getLayoutAlgorithm_PreviewImagePath();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm#getPreviewImagePort <em>Preview Image Port</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Preview Image Port</em>'.
+     * @see de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm#getPreviewImagePort()
+     * @see #getLayoutAlgorithm()
+     * @generated
+     */
+    EAttribute getLayoutAlgorithm_PreviewImagePort();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.kwebs.servicedata.LayoutType <em>Layout Type</em>}'.
@@ -1099,12 +1119,20 @@ public interface ServiceDataPackage extends EPackage {
         EAttribute LAYOUT_ALGORITHM__VERSION = eINSTANCE.getLayoutAlgorithm_Version();
 
         /**
-         * The meta object literal for the '<em><b>Preview Image</b></em>' attribute feature.
+         * The meta object literal for the '<em><b>Preview Image Path</b></em>' attribute feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        EAttribute LAYOUT_ALGORITHM__PREVIEW_IMAGE = eINSTANCE.getLayoutAlgorithm_PreviewImage();
+        EAttribute LAYOUT_ALGORITHM__PREVIEW_IMAGE_PATH = eINSTANCE.getLayoutAlgorithm_PreviewImagePath();
+
+        /**
+         * The meta object literal for the '<em><b>Preview Image Port</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute LAYOUT_ALGORITHM__PREVIEW_IMAGE_PORT = eINSTANCE.getLayoutAlgorithm_PreviewImagePort();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.kwebs.servicedata.impl.LayoutTypeImpl <em>Layout Type</em>}' class.

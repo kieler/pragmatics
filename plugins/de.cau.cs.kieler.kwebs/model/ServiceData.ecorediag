@@ -40,8 +40,12 @@
         <layoutConstraint xmi:type="notation:Location" xmi:id="_QtukYbexEeCt7uJmpzhUxg"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_gkPxILexEeCt7uJmpzhUxg" type="2001">
-        <element xmi:type="ecore:EAttribute" href="ServiceData.ecore#//LayoutAlgorithm/previewImage"/>
+        <element xmi:type="ecore:EAttribute" href="ServiceData.ecore#//LayoutAlgorithm/previewImagePath"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_gkPxIbexEeCt7uJmpzhUxg"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_6AEyocPjEeCJnZyobryCFw" type="2001">
+        <element xmi:type="ecore:EAttribute" href="ServiceData.ecore#//LayoutAlgorithm/previewImagePort"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_6AEyosPjEeCJnZyobryCFw"/>
       </children>
       <styles xmi:type="notation:DrawerStyle" xmi:id="_bgfBVbd6EeC-2ajTAOMHDA"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_bgfBVrd6EeC-2ajTAOMHDA"/>

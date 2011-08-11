@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kwebs.servicedata.transformation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,14 +58,13 @@ public class ServiceDataXmiTransformer {
             try {
                 Map<String, String> options = new HashMap<String, String>();
                 options.put(XMLResource.OPTION_ENCODING, "UTF-8");
-                //resource.load(inStream, Collections.EMPTY_MAP);
                 resource.load(inStream, options);
                 eObject = resource.getContents().get(0);
                 if (eObject instanceof ServiceData) {
                     serviceMeta = (ServiceData) eObject;
                 }
             } catch (Throwable e) {
-                e.printStackTrace();
+                System.err.println(e.getMessage());
             }
             inStream.close();
         } catch (Exception e) {
@@ -93,13 +91,12 @@ public class ServiceDataXmiTransformer {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             Map<String, String> options = new HashMap<String, String>();
             options.put(XMLResource.OPTION_ENCODING, "UTF-8");
-            //resource.save(outStream, Collections.EMPTY_MAP);
             resource.save(outStream, options);
             outStream.flush();
             serializedMeta = new String(outStream.toByteArray());
             outStream.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
         return serializedMeta;
     }

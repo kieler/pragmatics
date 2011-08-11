@@ -1,0 +1,7 @@
+<handler-chains xmlns="http://java.sun.com/xml/ns/javaee">  
+   <handler-chain>  
+      <handler>  
+         <handler-class>de.cau.cs.kieler.kwebs.jaxws.handlers.DebugHandler</handler-class>  
+      </handler>  
+   </handler-chain>  
+</handler-chains>  
