@@ -109,20 +109,20 @@
 		<operation name="graphLayout">
 			<soap:operation soapAction=""/>
 			<input>
-				<soap:body use="literal"/>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 			</input>
 			<output>
-				<soap:body use="literal"/>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 			</output>
 		</operation>
 		
 		<operation name="getServiceData">
 			<soap:operation soapAction=""/>
 			<input>
-				<soap:body use="literal"/>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 			</input>
 			<output>
-				<soap:body use="literal"/>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 			</output>
 		</operation>
 		

@@ -23,18 +23,18 @@ then
 	exit
 fi
 
-if [ -d "..\src" ];
+if [ -d "../src/de/cau/cs/kieler/kwebs/jaxws" ];
 then
-	rm -rf "../src"
+	rm -f "../src/de/cau/cs/kieler/kwebs/jaxws/*.java"
 fi
 
-if [ -d "..\bin" ];
+if [ -d "../bin" ];
 then
 	rm -rf "../bin"
 fi
 
-mkdir "..\src"
-mkdir "..\bin"
+mkdir "../src"
+mkdir "../bin"
 
-"$JAVA_HOME\bin\java.exe" -jar "$JAXWS_HOME\lib\jaxws-tools.jar" -Xendorsed -keep -s "..\src" -d "..\bin" -p de.cau.cs.kieler.kwebs.jaxws layout.wsdl 
+"$JAVA_HOME/bin/java.exe" -jar "$JAXWS_HOME/lib/jaxws-tools.jar" -Xendorsed -keep -s "../src" -d "../bin" -p de.cau.cs.kieler.kwebs.jaxws layout.wsdl 
 	

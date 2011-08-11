@@ -14,6 +14,9 @@
 
 package de.cau.cs.kieler.kwebs.client.layout;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -23,6 +26,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -227,8 +233,9 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
     }
 /*
     private static final String ROOT
-        = "C:/examples";
+        = "/home/layout/kwebs/examples";
     
+    private int count = 0;
     private void storeXmi(final String xmi, final boolean isResult) {
         final Display display = PlatformUI.getWorkbench().getDisplay();
         final Maybe<String> title = new Maybe<String>();
@@ -252,16 +259,20 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
             }
         );        
         String filename = title.get();
-        if (filename != null) {
+        if (filename != null && filename.length() > 0) {
             //CHECKSTYLEOFF EmptyBlock
             try {
                 if (!new File(ROOT).exists()) {
                     new File(ROOT).mkdirs();
                 }
                 filename = ROOT 
-                           + "/" + filename.substring(0, filename.indexOf("."))
+                           + "/" + filename.substring(0, 
+                               (filename.indexOf(".") > -1 
+                                    ? filename.indexOf(".") 
+                                        : filename.length())
+                           )
                            + (isResult ? "_result" : "")
-                           + ".xmi";
+                           + count++ + ".xmi";
                 File file = new File(filename);
                 if (!file.exists()) {
                     FileOutputStream outstream = new FileOutputStream(file);
@@ -270,6 +281,7 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
                     outstream.close();                    
                 }
             } catch (Exception e) {
+                System.err.println(e.getMessage());
             }
             //CHECKSTYLEON EmptyBlock
         }

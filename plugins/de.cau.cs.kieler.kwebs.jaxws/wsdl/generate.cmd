@@ -15,10 +15,10 @@
 	IF "%JAVA_HOME%"=="" GOTO :NoJavaHome
 	IF "%JAXWS_HOME%"=="" GOTO :NoJaxWsHome
 	
-	IF EXIST "..\src" rd /q /s "..\src"
+	IF EXIST "..\src\de\cau\cs\kieler\kwebs\jaxws" DEL /Q "..\src\de\cau\cs\kieler\kwebs\jaxws\*.java"
 	IF EXIST "..\bin" rd /q /s "..\bin"
 	
-	md "..\src"
+	md "..\src\de\cau\cs\kieler\kwebs\jaxws"
 	md "..\bin"
 	
 	"%JAVA_HOME%\bin\java.exe" -jar "%JAXWS_HOME%\lib\jaxws-tools.jar" -Xendorsed -keep -s "..\src" -d "..\bin" -p de.cau.cs.kieler.kwebs.jaxws layout.wsdl 

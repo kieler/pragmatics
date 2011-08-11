@@ -64,9 +64,12 @@ public final class ApplicationHelper {
         "server/kwebs/security/keystores/server.jks",
         "server/kwebs/config/kwebs.properties",
         "server/kwebs/web/security/client.jks",
+        "server/kwebs/wsdl/layoutService.wsdl",
         "kwebs.user",
         "kwebs_start.sh",
-        "kwebs_stop.sh"        
+        "kwebs_stop.sh",
+        "kwebs_backup.sh",
+        "kwebs_restore.sh"          
     };
     
     /**

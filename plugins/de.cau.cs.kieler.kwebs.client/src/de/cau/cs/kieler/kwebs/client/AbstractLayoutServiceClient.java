@@ -66,6 +66,9 @@ public abstract class AbstractLayoutServiceClient implements ILayoutServiceClien
      * {@inheritDoc}
      */
     public final synchronized boolean isAvailable() {
+        // Not useable; the implementation of InetAddress.isReachable generally fails on
+        // real servers due to the fact that the request is being blocked by the servers firewall.
+        /*
         if (available != null) {
             return available;
         }
@@ -77,6 +80,10 @@ public abstract class AbstractLayoutServiceClient implements ILayoutServiceClien
             available = false;
         }
         return available;
+        */
+        // Therefore we always return true and let the client implementation handle
+        // the availability detection.
+        return true;
     }
 
     /**

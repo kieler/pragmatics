@@ -17,12 +17,15 @@ package de.cau.cs.kieler.kwebs.servicedata.transformation;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 import de.cau.cs.kieler.kwebs.servicedata.ServiceData;
@@ -54,7 +57,10 @@ public class ServiceDataXmiTransformer {
             Resource resource = resourceSet.createResource(uri);
             EObject eObject = null;
             try {
-                resource.load(inStream, Collections.EMPTY_MAP);
+                Map<String, String> options = new HashMap<String, String>();
+                options.put(XMLResource.OPTION_ENCODING, "UTF-8");
+                //resource.load(inStream, Collections.EMPTY_MAP);
+                resource.load(inStream, options);
                 eObject = resource.getContents().get(0);
                 if (eObject instanceof ServiceData) {
                     serviceMeta = (ServiceData) eObject;
@@ -85,7 +91,10 @@ public class ServiceDataXmiTransformer {
             resource.unload();
             resource.getContents().add(serviceData);            
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            resource.save(outStream, Collections.EMPTY_MAP);
+            Map<String, String> options = new HashMap<String, String>();
+            options.put(XMLResource.OPTION_ENCODING, "UTF-8");
+            //resource.save(outStream, Collections.EMPTY_MAP);
+            resource.save(outStream, options);
             outStream.flush();
             serializedMeta = new String(outStream.toByteArray());
             outStream.close();

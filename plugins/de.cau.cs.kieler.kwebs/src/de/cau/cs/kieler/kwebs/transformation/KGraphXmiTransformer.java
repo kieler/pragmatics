@@ -66,7 +66,10 @@ public class KGraphXmiTransformer implements IGraphTransformer {
             Resource resource = resourceSet.createResource(uri);
             EObject eObject = null;
             try {
-                resource.load(inStream, Collections.EMPTY_MAP);
+                Map<String, String> options = new HashMap<String, String>();
+                options.put(XMLResource.OPTION_ENCODING, "UTF-8");
+                //resource.load(inStream, Collections.EMPTY_MAP);
+                resource.load(inStream, options);
                 eObject = resource.getContents().get(0);
                 if (eObject instanceof KNode) {
                     graph = (KNode) eObject;
@@ -104,7 +107,7 @@ public class KGraphXmiTransformer implements IGraphTransformer {
             //resource.save(outStream, Collections.EMPTY_MAP);
             resource.save(outStream, options);
             outStream.flush();
-            xmi = new String(outStream.toByteArray());
+            xmi = new String(outStream.toByteArray(), "UTF-8");
             outStream.close();
             unpersistDataElements((KNode) graph);
         } catch (Exception e) {
