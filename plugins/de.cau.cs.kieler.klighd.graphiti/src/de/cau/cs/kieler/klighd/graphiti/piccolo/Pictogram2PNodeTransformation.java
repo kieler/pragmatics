@@ -97,10 +97,11 @@ public class Pictogram2PNodeTransformation implements
         // create the diagram context with a model resolver
         PiccoloDiagramContext diagramContext = new PiccoloDiagramContext();
         // use two layers, one for nodes and one for edges
-        PNode nodes = new PNode();
+        DiagramNode root = new DiagramNode(diagram);
         PNode edges = new PNode();
-        diagramContext.addLayerRoot(nodes);
+        diagramContext.addLayerRoot(root);
         diagramContext.addLayerRoot(edges);
+        diagramContext.setRootNode(root);
         // determine default colors from the diagram graphics algorithm
         GraphicsAlgorithm ga = diagram.getGraphicsAlgorithm();
         Color fc, bc;
@@ -113,7 +114,7 @@ public class Pictogram2PNodeTransformation implements
         }
         // transform shapes
         for (Shape shape : diagram.getChildren()) {
-            transformShape(nodes, shape, fc, bc);
+            transformShape(root, shape, fc, bc);
         }
         // transform connections
         for (Connection connection : diagram.getConnections()) {
@@ -134,12 +135,17 @@ public class Pictogram2PNodeTransformation implements
      * @param bc
      *            the default background color for this shape
      */
-    private void transformShape(final PNode parent, final Shape shape, final Color fc,
+    private void transformShape(final AbstractParentNode parent, final Shape shape, final Color fc,
             final Color bc) {
         ShapeNode shapeNode = new ShapeNode(shape);
         elementMap.put(shape, shapeNode);
-        parent.addChild(shapeNode);
-        shapeNode.setPickable(shape.isActive());
+        if (shape.isActive()) {
+            parent.addShape(shapeNode);
+            shapeNode.setPickable(true);
+        } else {
+            parent.addChild(shapeNode);
+            shapeNode.setPickable(false);            
+        }
         // determine colors and transform the graphics algorithm
         GraphicsAlgorithm ga = shape.getGraphicsAlgorithm();
         Color gaFc, gaBc;
@@ -362,7 +368,10 @@ public class Pictogram2PNodeTransformation implements
 
     private PSWTAdvancedPath transformRectangle(final Rectangle r, final Color fc, final Color bc) {
         PSWTAdvancedPath rect = PSWTAdvancedPath.createRectangle(0, 0, r.getWidth(), r.getHeight());
-        rect.setLineWidth(r.getLineWidth());
+        Integer lineWidth = r.getLineWidth();
+        if (lineWidth != null) {
+            rect.setLineWidth(lineWidth);
+        }
         if (r.getLineVisible()) {
             rect.setStrokeColor(transformColor(fc));
         } else {
@@ -381,7 +390,10 @@ public class Pictogram2PNodeTransformation implements
         PSWTAdvancedPath rrect =
                 PSWTAdvancedPath.createRoundRectangle(0, 0, rr.getWidth(), rr.getHeight(),
                         rr.getCornerWidth(), rr.getCornerHeight());
-        rrect.setLineWidth(rr.getLineWidth());
+        Integer lineWidth = rr.getLineWidth();
+        if (lineWidth != null) {
+            rrect.setLineWidth(lineWidth);
+        }
         if (rr.getLineVisible()) {
             rrect.setStrokeColor(transformColor(fc));
         } else {
@@ -398,7 +410,10 @@ public class Pictogram2PNodeTransformation implements
     private PSWTAdvancedPath transformEllipse(final Ellipse e, final Color fc, final Color bc) {
         PSWTAdvancedPath ellipse =
                 PSWTAdvancedPath.createEllipse(0, 0, e.getWidth(), e.getHeight());
-        ellipse.setLineWidth(e.getLineWidth());
+        Integer lineWidth = e.getLineWidth();
+        if (lineWidth != null) {
+            ellipse.setLineWidth(lineWidth);
+        }
         if (e.getLineVisible()) {
             ellipse.setStrokeColor(transformColor(fc));
         } else {
@@ -420,7 +435,10 @@ public class Pictogram2PNodeTransformation implements
                 points[i++] = new java.awt.Point(point.getX(), point.getY());
             }
             PSWTAdvancedPath polygon = PSWTAdvancedPath.createPolygon(points);
-            polygon.setLineWidth(p.getLineWidth());
+            Integer lineWidth = p.getLineWidth();
+            if (lineWidth != null) {
+                polygon.setLineWidth(lineWidth);
+            }
             if (p.getLineVisible()) {
                 polygon.setStrokeColor(transformColor(fc));
             } else {
@@ -448,7 +466,10 @@ public class Pictogram2PNodeTransformation implements
         } else {
             line = new PSWTAdvancedPath();
         }
-        line.setLineWidth(p.getLineWidth());
+        Integer lineWidth = p.getLineWidth();
+        if (lineWidth != null) {
+            line.setLineWidth(lineWidth);
+        }
         if (p.getLineVisible()) {
             line.setStrokeColor(transformColor(fc));
         } else {

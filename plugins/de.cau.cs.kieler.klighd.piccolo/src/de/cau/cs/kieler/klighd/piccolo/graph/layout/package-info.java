@@ -13,6 +13,6 @@
  */
 
 /**
- * Base package of the KLighD piccolo plugin.
+ * Package containing classes for the layout of Piccolo graph diagrams.
  */
-package de.cau.cs.kieler.klighd.piccolo;
+package de.cau.cs.kieler.klighd.piccolo.graph.layout;

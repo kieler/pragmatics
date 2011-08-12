@@ -13,6 +13,6 @@
  */
 
 /**
- * Base package of the KLighD piccolo plugin.
+ * Interfaces for the description of a graph structure in Piccolo.
  */
-package de.cau.cs.kieler.klighd.piccolo;
+package de.cau.cs.kieler.klighd.piccolo.graph;

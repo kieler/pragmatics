@@ -16,6 +16,8 @@ package de.cau.cs.kieler.klighd.graphiti.piccolo;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
@@ -24,7 +26,11 @@ import org.eclipse.graphiti.mm.pictograms.ChopboxAnchor;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.util.PictogramsSwitch;
 
+import de.cau.cs.kieler.klighd.piccolo.PEmptyNode;
+import de.cau.cs.kieler.klighd.piccolo.graph.IGraphEdge;
+import de.cau.cs.kieler.klighd.piccolo.graph.IGraphPort;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolo.util.PBounds;
 
 /**
@@ -32,7 +38,7 @@ import edu.umd.cs.piccolo.util.PBounds;
  * 
  * @author mri
  */
-public class AnchorNode extends PNode implements PropertyChangeListener {
+public class AnchorNode extends PEmptyNode implements IGraphPort, PropertyChangeListener {
 
     private static final long serialVersionUID = 1406179264277421131L;
 
@@ -45,6 +51,9 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
     private PNode reference;
     /** the Piccolo child node which represents this anchor. */
     private PNode repNode;
+
+    /** the anchors outgoing connections. */
+    private List<IGraphEdge> outgoingConnections = new LinkedList<IGraphEdge>();
 
     /**
      * Constructs an AnchorNode.
@@ -76,7 +85,7 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
         }
         super.addChild(index, child);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -123,10 +132,9 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
             updateAnchorPosition(referencePoint);
             // chopbox anchor point from representing child node
             PBounds bounds = repNode.getGlobalBounds();
-            Point2D intersection =
-                    getIntersectionWithBounds(bounds.getX() + bounds.getWidth() / 2, bounds.getY()
-                            + bounds.getHeight() / 2, referencePoint.getX(), referencePoint.getY(),
-                            bounds);
+            Point2D intersection = getIntersectionWithBounds(bounds.getX() + bounds.getWidth() / 2,
+                    bounds.getY() + bounds.getHeight() / 2, referencePoint.getX(),
+                    referencePoint.getY(), bounds);
             return intersection;
         } else {
             return getAnchorPosition(referencePoint);
@@ -149,6 +157,25 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
      */
     public PNode getReferenceNode() {
         return reference;
+    }
+
+    /**
+     * Returns whether this anchor is a port, i.e. has a graphical representation and can be moved.
+     * 
+     * @return true if this anchor is a port; false else
+     */
+    public boolean isPort() {
+        return repNode != null && getPickable();
+    }
+
+    /**
+     * Adds an outgoing connection. Only call from {@code ConnectionNode}.
+     * 
+     * @param connection
+     *            the connection
+     */
+    void addOutgoingConnection(final ConnectionNode connection) {
+        outgoingConnections.add(connection);
     }
 
     /**
@@ -211,75 +238,63 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
         if (xOut <= bounds.getX()) {
             if (yOut <= bounds.getY()) {
                 // intersection with top or left line
-                Point2D s =
-                        computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
-                                bounds.getMaxX(), bounds.getY());
+                Point2D s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
+                        bounds.getMaxX(), bounds.getY());
                 if (s == null) {
-                    s =
-                            computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
-                                    bounds.getX(), bounds.getMaxY());
+                    s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
+                            bounds.getX(), bounds.getMaxY());
                 }
                 return s;
             } else if (yOut >= bounds.getMaxY()) {
                 // intersection with bottom or left line
-                Point2D s =
-                        computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getMaxY(),
-                                bounds.getMaxX(), bounds.getMaxY());
+                Point2D s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(),
+                        bounds.getMaxY(), bounds.getMaxX(), bounds.getMaxY());
                 if (s == null) {
-                    s =
-                            computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
-                                    bounds.getX(), bounds.getMaxY());
+                    s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
+                            bounds.getX(), bounds.getMaxY());
                 }
                 return s;
             } else {
                 // intersection with left line
-                Point2D s =
-                        computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
-                                bounds.getX(), bounds.getMaxY());
+                Point2D s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
+                        bounds.getX(), bounds.getMaxY());
                 return s;
             }
         } else if (xOut >= bounds.getMaxX()) {
             if (yOut <= bounds.getY()) {
                 // intersection with top or right line
-                Point2D s =
-                        computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
-                                bounds.getMaxX(), bounds.getY());
+                Point2D s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
+                        bounds.getMaxX(), bounds.getY());
                 if (s == null) {
-                    s =
-                            computeIntersection(xIn, yIn, xOut, yOut, bounds.getMaxX(),
-                                    bounds.getY(), bounds.getMaxX(), bounds.getMaxY());
+                    s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getMaxX(), bounds.getY(),
+                            bounds.getMaxX(), bounds.getMaxY());
                 }
                 return s;
             } else if (yOut >= bounds.getMaxY()) {
                 // intersection with bottom or right line
-                Point2D s =
-                        computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getMaxY(),
-                                bounds.getMaxX(), bounds.getMaxY());
+                Point2D s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(),
+                        bounds.getMaxY(), bounds.getMaxX(), bounds.getMaxY());
                 if (s == null) {
-                    s =
-                            computeIntersection(xIn, yIn, xOut, yOut, bounds.getMaxX(),
-                                    bounds.getY(), bounds.getMaxX(), bounds.getMaxY());
+                    s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getMaxX(), bounds.getY(),
+                            bounds.getMaxX(), bounds.getMaxY());
                 }
                 return s;
             } else {
                 // intersection with right line
-                Point2D s =
-                        computeIntersection(xIn, yIn, xOut, yOut, bounds.getMaxX(), bounds.getY(),
-                                bounds.getMaxX(), bounds.getMaxY());
+                Point2D s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getMaxX(),
+                        bounds.getY(), bounds.getMaxX(), bounds.getMaxY());
                 return s;
             }
         } else {
             if (yOut <= bounds.getY()) {
                 // intersection with top line
-                Point2D s =
-                        computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
-                                bounds.getMaxX(), bounds.getY());
+                Point2D s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
+                        bounds.getMaxX(), bounds.getY());
                 return s;
             } else if (yOut >= bounds.getMaxY()) {
                 // intersection with bottom line
-                Point2D s =
-                        computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getMaxY(),
-                                bounds.getMaxX(), bounds.getMaxY());
+                Point2D s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(),
+                        bounds.getMaxY(), bounds.getMaxX(), bounds.getMaxY());
                 return s;
             } else {
                 // TODO find a better point here
@@ -313,6 +328,37 @@ public class AnchorNode extends PNode implements PropertyChangeListener {
      */
     public void propertyChange(final PropertyChangeEvent evt) {
         firePropertyChange(0, PROPERTY_ANCHOR, null, null);
+    }
+
+    // Implementation of the ...kligh.piccolo.graph interfaces
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setRelativeBounds(final PBounds bounds) {
+        PAffineTransform transform = getTransformReference(true);
+        translate(bounds.getX() - transform.getTranslateX(),
+                bounds.getY() - transform.getTranslateY());
+        // TODO resize the shape
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PBounds getRelativeBounds() {
+        PAffineTransform transform = getTransformReference(true);
+        PBounds bounds = repNode != null ? repNode.getBounds() : getBounds();
+        PBounds relativeBounds = new PBounds();
+        relativeBounds.setRect(transform.getTranslateX(), transform.getTranslateY(),
+                bounds.getWidth(), bounds.getHeight());
+        return relativeBounds;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<IGraphEdge> getOutgoingEdges() {
+        return outgoingConnections;
     }
 
 }

@@ -42,6 +42,8 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
     private PSWTCanvas canvas;
     /** the current selection event handler. */
     private PSWTSimpleSelectionEventHandler selectionHandler = null;
+    /** the current diagram context. */
+    private PiccoloDiagramContext diagramContext = null;
 
     /**
      * Creates a Piccolo viewer with default style.
@@ -81,6 +83,7 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
      * {@inheritDoc}
      */
     public void setModel(final PiccoloDiagramContext model) {
+        diagramContext = model;
         // remove the old selection handler
         if (selectionHandler != null) {
             canvas.removeInputEventListener(selectionHandler);
@@ -124,6 +127,15 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
         for (PLayer layer : layers) {
             layer.removeAllChildren();
         }
+    }
+    
+    /**
+     * Returns the currently active diagram context.
+     * 
+     * @return the diagram context or null if no diagram context is active
+     */
+    public PiccoloDiagramContext getDiagramContext() {
+        return diagramContext;
     }
 
     /**

@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klighd.graphiti.piccolo;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,6 +25,10 @@ import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.FreeFormConnection;
 
+import de.cau.cs.kieler.klighd.piccolo.PEmptyNode;
+import de.cau.cs.kieler.klighd.piccolo.graph.IGraphEdge;
+import de.cau.cs.kieler.klighd.piccolo.graph.IGraphNode;
+import de.cau.cs.kieler.klighd.piccolo.graph.IGraphPort;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolox.swt.PSWTPath;
 
@@ -32,7 +37,7 @@ import edu.umd.cs.piccolox.swt.PSWTPath;
  * 
  * @author mri
  */
-public class ConnectionNode extends PNode implements PropertyChangeListener {
+public class ConnectionNode extends PEmptyNode implements IGraphEdge, PropertyChangeListener {
 
     private static final long serialVersionUID = -8752895610400744167L;
 
@@ -62,6 +67,7 @@ public class ConnectionNode extends PNode implements PropertyChangeListener {
             final AnchorNode targetAnchor) {
         this.connection = connection;
         this.sourceAnchor = sourceAnchor;
+        sourceAnchor.addOutgoingConnection(this);
         this.targetAnchor = targetAnchor;
         sourceAnchor.addPropertyChangeListener(AnchorNode.PROPERTY_ANCHOR, this);
         targetAnchor.addPropertyChangeListener(AnchorNode.PROPERTY_ANCHOR, this);
@@ -147,9 +153,8 @@ public class ConnectionNode extends PNode implements PropertyChangeListener {
         if (xps.length > 2) {
             // if bend points are present use them to determine anchor positions
             source = getSourceAnchor().getAnchorPoint(new Point2D.Double(xps[1], yps[1]));
-            target =
-                    getTargetAnchor().getAnchorPoint(
-                            new Point2D.Double(xps[xps.length - 2], yps[yps.length - 2]));
+            target = getTargetAnchor().getAnchorPoint(
+                    new Point2D.Double(xps[xps.length - 2], yps[yps.length - 2]));
         } else {
             // if no bend points are present use the center points of the connected nodes
             Point2D reference;
@@ -180,25 +185,14 @@ public class ConnectionNode extends PNode implements PropertyChangeListener {
     /**
      * {@inheritDoc}
      */
-    public void propertyChange(final PropertyChangeEvent evt) {
+    public synchronized void propertyChange(final PropertyChangeEvent evt) {
         // FIXME under rare circumstances this can throw NP exceptions
         if (polyline != null) {
             // update the anchor points
             if (evt.getSource() == sourceAnchor) {
-                Point2D anchorPoint =
-                        sourceAnchor.getAnchorPoint(new Point2D.Double(xps[1], yps[1]));
-                if (anchorPoint != null) {
-                    xps[0] = (float) anchorPoint.getX();
-                    yps[0] = (float) anchorPoint.getY();
-                }
+                updateSourceAnchor();
             } else if (evt.getSource() == targetAnchor) {
-                Point2D anchorPoint =
-                        targetAnchor.getAnchorPoint(new Point2D.Double(xps[xps.length - 2],
-                                yps[yps.length - 2]));
-                if (anchorPoint != null) {
-                    xps[xps.length - 1] = (float) anchorPoint.getX();
-                    yps[yps.length - 1] = (float) anchorPoint.getY();
-                }
+                updateTargetAnchor();
             } else {
                 return;
             }
@@ -225,4 +219,96 @@ public class ConnectionNode extends PNode implements PropertyChangeListener {
             decoration.updateDecoration(xps, yps);
         }
     }
+
+    private void updateSourceAnchor() {
+        Point2D anchorPoint = sourceAnchor.getAnchorPoint(new Point2D.Double(xps[1], yps[1]));
+        if (anchorPoint != null) {
+            xps[0] = (float) anchorPoint.getX();
+            yps[0] = (float) anchorPoint.getY();
+        }
+    }
+
+    private void updateTargetAnchor() {
+        Point2D anchorPoint = targetAnchor.getAnchorPoint(new Point2D.Double(xps[xps.length - 2],
+                yps[yps.length - 2]));
+        if (anchorPoint != null) {
+            xps[xps.length - 1] = (float) anchorPoint.getX();
+            yps[yps.length - 1] = (float) anchorPoint.getY();
+        }
+    }
+
+    // Implementation of the ...kligh.piccolo.graph interfaces
+
+    /**
+     * {@inheritDoc}
+     */
+    public IGraphNode getSource() {
+        PNode source = getSourceAnchor().getParent();
+        if (source instanceof IGraphNode) {
+            return (IGraphNode) source;
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IGraphNode getTarget() {
+        PNode target = getTargetAnchor().getParent();
+        if (target instanceof IGraphNode) {
+            return (IGraphNode) target;
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IGraphPort getSourcePort() {
+        AnchorNode anchor = getSourceAnchor();
+        if (anchor.isPort()) {
+            return anchor;
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IGraphPort getTargetPort() {
+        AnchorNode anchor = getTargetAnchor();
+        if (anchor.isPort()) {
+            return anchor;
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized void setBends(final List<Point2D> bends) {
+        // ignore first and last bend
+        for (int i = 1; i < bends.size() - 1; ++i) {
+            Point2D bend = bends.get(i);
+            xps[i] = (float) bend.getX();
+            yps[i] = (float) bend.getY();
+        }
+        // update anchor points
+        updateSourceAnchor();
+        updateTargetAnchor();
+        // update the polyline to reflect the changes
+        updatePolyline();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<Point2D> getBends() {
+        List<Point2D> bends = new ArrayList<Point2D>();
+        for (int i = 0; i < xps.length; ++i) {
+            bends.add(new Point2D.Double(xps[i], yps[i]));
+        }
+        return bends;
+    }
+
 }

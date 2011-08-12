@@ -13,21 +13,27 @@
  */
 package de.cau.cs.kieler.klighd.graphiti.piccolo;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 
-import edu.umd.cs.piccolo.PNode;
+import de.cau.cs.kieler.klighd.piccolo.graph.IGraphEdge;
+import de.cau.cs.kieler.klighd.piccolo.graph.IGraphNode;
+import de.cau.cs.kieler.klighd.piccolo.graph.IGraphPort;
+import edu.umd.cs.piccolo.util.PAffineTransform;
+import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * A Piccolo node wrapping a Pictogram shape.
  * 
  * @author mri
  */
-public class ShapeNode extends PNode {
+public class ShapeNode extends AbstractParentNode implements IGraphNode {
 
     private static final long serialVersionUID = 6280554909111287283L;
 
@@ -35,6 +41,8 @@ public class ShapeNode extends PNode {
     private Shape shape;
     /** a mapping between Pictogram anchors and Piccolo anchor nodes. */
     private Map<Anchor, AnchorNode> anchorMap = new LinkedHashMap<Anchor, AnchorNode>();
+    /** the list of ports. */
+    private List<IGraphPort> ports = new ArrayList<IGraphPort>();
 
     /**
      * Constructs a ShapeNode.
@@ -64,6 +72,10 @@ public class ShapeNode extends PNode {
     public void addAnchor(final AnchorNode anchorNode) {
         addChild(anchorNode);
         anchorMap.put(anchorNode.getPictogramAnchor(), anchorNode);
+        // if the anchor has a visual representation consider it a port
+        if (anchorNode.getRepresentationNode() != null && anchorNode.getPickable()) {
+            ports.add(anchorNode);
+        }
     }
 
     /**
@@ -84,6 +96,58 @@ public class ShapeNode extends PNode {
      */
     public AnchorNode getAnchorNode(final Anchor anchor) {
         return anchorMap.get(anchor);
+    }
+
+    // Implementation of the ...kligh.piccolo.graph interfaces
+
+//    /**
+//     * {@inheritDoc}
+//     */
+//    public Insets getInsets() {
+//        // TODO return real insets here
+//        return new Insets();
+//    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setRelativeBounds(final PBounds bounds) {
+        PAffineTransform transform = getTransformReference(true);
+        translate(bounds.getX() - transform.getTranslateX(),
+                bounds.getY() - transform.getTranslateY());
+        //TODO resize the shape
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PBounds getRelativeBounds() {
+        PAffineTransform transform = getTransformReference(true);
+        PBounds bounds = getBounds();
+        PBounds relativeBounds = new PBounds();
+        relativeBounds.setRect(transform.getTranslateX(), transform.getTranslateY(),
+                bounds.getWidth(), bounds.getHeight());
+        return relativeBounds;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<IGraphPort> getPorts() {
+        return ports;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<IGraphEdge> getOutgoingEdges() {
+        List<IGraphEdge> outgoingEdges = new ArrayList<IGraphEdge>(ports.size());
+        for (IGraphPort port : anchorMap.values()) {
+            for (IGraphEdge edge : port.getOutgoingEdges()) {
+                outgoingEdges.add(edge);
+            }
+        }
+        return outgoingEdges;
     }
 
 }

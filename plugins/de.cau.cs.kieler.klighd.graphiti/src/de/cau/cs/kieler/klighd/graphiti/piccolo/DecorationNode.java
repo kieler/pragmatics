@@ -17,14 +17,14 @@ import java.awt.geom.Point2D;
 
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 
-import edu.umd.cs.piccolo.PNode;
+import de.cau.cs.kieler.klighd.piccolo.PEmptyNode;
 
 /**
  * A Piccolo node representing a connection decorator.
  * 
  * @author mri
  */
-public class DecorationNode extends PNode {
+public class DecorationNode extends PEmptyNode {
 
     private static final long serialVersionUID = 8658315866234781559L;
 
