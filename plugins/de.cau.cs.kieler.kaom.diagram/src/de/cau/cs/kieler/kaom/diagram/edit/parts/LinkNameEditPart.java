@@ -46,11 +46,12 @@ import de.cau.cs.kieler.kaom.diagram.edit.policies.KaomTextSelectionEditPolicy;
 import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
 import de.cau.cs.kieler.kaom.diagram.providers.KaomElementTypes;
 import de.cau.cs.kieler.kaom.diagram.providers.KaomParserProvider;
+import de.cau.cs.kieler.karma.AdvancedRenderingLabelEditPart;
 
 /**
  * @generated
  */
-public class LinkNameEditPart extends LabelEditPart implements ITextAwareEditPart {
+public class LinkNameEditPart extends AdvancedRenderingLabelEditPart implements ITextAwareEditPart {
 
     /**
      * @generated
@@ -509,7 +510,7 @@ public class LinkNameEditPart extends LabelEditPart implements ITextAwareEditPar
     /**
      * @generated
      */
-    protected void handleNotificationEvent(Notification event) {
+    public void handleNotificationEvent(Notification event) {
         Object feature = event.getFeature();
         if (NotationPackage.eINSTANCE.getFontStyle_FontColor().equals(feature)) {
             Integer c = (Integer) event.getNewValue();
