@@ -41,6 +41,10 @@ public final class EclipseServerConfigsStorageManager implements IServerConfigsS
     private IPreferenceStore preferenceStore
         = Preferences.getPreferenceStore();
 
+    /** Cached instance of the ServerConfigs singleton. */
+    private ServerConfigs serverConfigs 
+        = ServerConfigs.getInstance();
+    
     /** Preference store prefix of the name of a server configuration.*/
     private static final String NAME_PREFIX
         = Preferences.PREFID_LAYOUT_SERVERCONFIG_NAMEPREFIX;
@@ -92,7 +96,7 @@ public final class EclipseServerConfigsStorageManager implements IServerConfigsS
     /**
      * {@inheritDoc}
      */
-    public synchronized void readServerConfigs() {
+    public synchronized void readServerConfigs() {        
         int count = preferenceStore.getInt(
             Preferences.PREFID_LAYOUT_SERVERCONFIG_COUNT
         );
@@ -153,10 +157,10 @@ public final class EclipseServerConfigsStorageManager implements IServerConfigsS
                     )
                 );
             }
-            tmpServerConfig = ServerConfigs.getInstance().createServerConfig(
+            tmpServerConfig = serverConfigs.createServerConfig(
                 name, uri, truststore, truststorePass, fixed, active, standard
             );
-            ServerConfigs.getInstance().addServerConfig(tmpServerConfig);
+            serverConfigs.addServerConfig(tmpServerConfig);
         }
         // Check if KIELER default layout server configurations are in the server configuration list.
         // If not, insert them.
@@ -173,22 +177,23 @@ public final class EclipseServerConfigsStorageManager implements IServerConfigsS
                     // Ignore here, null URI will be handled in call to createServerConfig()
                 }
                 boolean isStandard = Boolean.parseBoolean(element.getAttribute(ATTRIBUTE_ISSTANDARD));
-                ServerConfig defaultServerConfig = ServerConfigs.getInstance().createServerConfig(
+                ServerConfig defaultServerConfig = serverConfigs.createServerConfig(
                     serverConfigName, uri, null, null, true, false, isStandard
                 );
                 if (defaultServerConfig != null) {
-                    if (!ServerConfigs.getInstance().containsServerConfig(defaultServerConfig)) {
-                        ServerConfigs.getInstance().addServerConfig(defaultServerConfig);
+                    if (!serverConfigs.containsServerConfig(defaultServerConfig)) {
+                        serverConfigs.addServerConfig(defaultServerConfig);
                     }
                 }
             }
         }
         // If the user has not selected an active server configuration yet, set the standard 
         // server configuration as active server configuration.
-        if (ServerConfigs.getInstance().getActiveServerConfig() == null) {
-            ServerConfigs.getInstance().setActiveServerConfig(
-                ServerConfigs.getInstance().getStandardServerConfig()
-            );
+        if (serverConfigs.getActiveServerConfig() == null) {
+            ServerConfig standardConfig = serverConfigs.getStandardServerConfig();
+            if (standardConfig != null) {
+                serverConfigs.setActiveServerConfig(standardConfig);
+            }
         }
     }
 
@@ -201,38 +206,43 @@ public final class EclipseServerConfigsStorageManager implements IServerConfigsS
         ServerConfig tmpServerConfig = null;
         for (int position = 0; position < count; position++) {
             tmpServerConfig = serverConfigList.get(position);
-            preferenceStore.setValue(
-                NAME_PREFIX + "." + position,
-                tmpServerConfig.getName()
-            );
-            preferenceStore.setValue(
-                ADDRESS_PREFIX + "." + position,
-                tmpServerConfig.getAddress().toString()
-            );
-            if (tmpServerConfig.getTruststore() != null) {
+            // Do not save fixed server configurations since they represent
+            // the default configurations which are defined via extension and
+            // shall only be available if the according plug-in is present
+            if (!tmpServerConfig.isFixed()) {
                 preferenceStore.setValue(
-                    TRUSTSTORE_PREFIX + "." + position,
-                    tmpServerConfig.getTruststore()
+                    NAME_PREFIX + "." + position,
+                    tmpServerConfig.getName()
+                );
+                preferenceStore.setValue(
+                    ADDRESS_PREFIX + "." + position,
+                    tmpServerConfig.getAddress().toString()
+                );
+                if (tmpServerConfig.getTruststore() != null) {
+                    preferenceStore.setValue(
+                        TRUSTSTORE_PREFIX + "." + position,
+                        tmpServerConfig.getTruststore()
+                    );
+                }
+                if (tmpServerConfig.getTruststorePass() != null) {
+                    preferenceStore.setValue(
+                        TRUSTSTOREPASS_PREFIX + "." + position,
+                        tmpServerConfig.getTruststorePass()
+                    );
+                }
+                preferenceStore.setValue(
+                    FIXED_PREFIX + "." + position, 
+                    tmpServerConfig.isFixed()
+                );
+                preferenceStore.setValue(
+                    ACTIVE_PREFIX + "." + position, 
+                    tmpServerConfig.isActive()
+                );
+                preferenceStore.setValue(
+                    STANDARD_PREFIX + "." + position, 
+                    tmpServerConfig.isStandard()
                 );
             }
-            if (tmpServerConfig.getTruststorePass() != null) {
-                preferenceStore.setValue(
-                    TRUSTSTOREPASS_PREFIX + "." + position,
-                    tmpServerConfig.getTruststorePass()
-                );
-            }
-            preferenceStore.setValue(
-                FIXED_PREFIX + "." + position, 
-                tmpServerConfig.isFixed()
-            );
-            preferenceStore.setValue(
-                ACTIVE_PREFIX + "." + position, 
-                tmpServerConfig.isActive()
-            );
-            preferenceStore.setValue(
-                STANDARD_PREFIX + "." + position, 
-                tmpServerConfig.isStandard()
-            );
         }
     }
 

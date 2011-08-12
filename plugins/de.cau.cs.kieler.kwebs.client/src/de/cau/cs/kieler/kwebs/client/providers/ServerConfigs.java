@@ -367,8 +367,8 @@ public final class ServerConfigs {
                     serverConfig.isDirty = true;
                 }
             }
+            isDirty = true;
         }
-        isDirty = true;
     }
 
     /**
@@ -407,8 +407,8 @@ public final class ServerConfigs {
                     serverConfig.isDirty = true;
                 }
             }
+            isDirty = true;
         }
-        isDirty = true;
     }
 
     /**
