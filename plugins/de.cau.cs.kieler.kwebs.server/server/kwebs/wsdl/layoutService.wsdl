@@ -77,7 +77,7 @@
 
       <xs:complexType name="getPreviewImageResponse">
         <xs:sequence>
-          <xs:element name="return" type="xs:base64Binary" nillable="true"/>
+          <xs:element name="return" type="xs:base64Binary"/>
         </xs:sequence>
       </xs:complexType>
 

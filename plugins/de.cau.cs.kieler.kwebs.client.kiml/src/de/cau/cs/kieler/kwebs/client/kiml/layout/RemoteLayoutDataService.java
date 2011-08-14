@@ -182,11 +182,16 @@ public final class RemoteLayoutDataService extends ServiceDataLayoutDataService 
         if (previewImageHostAvailable) {
             if (previewImagePath != null) {
                 try {
+                    algoData.setPreviewImage(new LayoutServiceImageDescriptor(
+                        previewImageClient, previewImagePath
+                    ));
+                    /*
                     algoData.setPreviewImage(ImageDescriptor.createFromImageData(
                         new ImageData(new ByteArrayInputStream(
                             previewImageClient.getPreviewImage(previewImagePath)
                         ))
                     ));
+                    */
                 } catch (Exception e) {
                     previewImageHostAvailable = false;
                     reportError("Could not load preview image: " + previewImagePath, e);
