@@ -49,18 +49,23 @@
    </element>
 
    <element name="transformer">
+      <annotation>
+         <documentation>
+            With this extension a transformer for the serializiation and deserialization of models for a specific meta model can be defined. This transformer will also be responsible for deriving a KGraph representation of the internal structure of the models and for applying the calculated layout back to the original model.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="supportedFormat" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The supported meta model and form of serialization supported by this transformer.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="implementation" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The fully qualified implementation class of the transformer.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kwebs.transformation.IGraphTransformer"/>
@@ -71,6 +76,11 @@
    </element>
 
    <element name="supportHandler">
+      <annotation>
+         <documentation>
+            With this extension a handler can be defined which is published with the support server under the given path.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="path" type="string" use="required">
             <annotation>
@@ -87,6 +97,13 @@
                <appinfo>
                   <meta.attribute kind="java" basedOn=":com.sun.net.httpserver.HttpHandler"/>
                </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="publish" type="boolean">
+            <annotation>
+               <documentation>
+                  Whether to actually publish this support handler or not.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

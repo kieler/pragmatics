@@ -2,14 +2,14 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="de.cau.cs.kieler.kwebs.client.protocol.support">
+         point="de.cau.cs.kieler.kwebs.client.kiml.protocol.support">
       <protocolSupport
             implementation="de.cau.cs.kieler.kwebs.client.jaxws.JaxWsClient"
             protocols="http;https">
       </protocolSupport>
    </extension>
    <extension
-         point="de.cau.cs.kieler.kwebs.client.configuration">
+         point="de.cau.cs.kieler.kwebs.client.kiml.configuration">
       <defaultServerConfig
             address="http://10.6.0.206:8442/layout"
             isStandard="true"

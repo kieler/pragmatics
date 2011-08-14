@@ -1,30 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="de.cau.cs.kieler.kwebs.client.configuration" name="Configuration for the KIELER default remote layout provider" schema="schema/de.cau.cs.kieler.kwebs.client.configuration.exsd"/>
-   <extension-point id="de.cau.cs.kieler.kwebs.client.protocol.support" name="Configuration for the supported protocols and the according clients" schema="schema/de.cau.cs.kieler.kwebs.client.protocol.support.exsd"/>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            category="de.cau.cs.kieler.kiml.ui.preferences.layout"
-            class="de.cau.cs.kieler.kwebs.client.ui.RemoteLayoutPreferencePage"
-            id="de.cau.cs.kieler.kwebs.client.ui.remotelayoutpreferencepage"
-            name="Remote Layout">
-      </page>
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:org.eclipse.ui.trim.status">
-         <toolbar
-               id="de.cau.cs.kieler.kwebs.client.kwebsstatusbar">
-            <control
-                  class="de.cau.cs.kieler.kwebs.client.ui.KWebSStatusBar"
-                  id="de.cau.cs.kieler.kwebs.client.ui.kwebsstatusbar">
-            </control>
-         </toolbar>
-      </menuContribution>
-   </extension>
-
 </plugin>

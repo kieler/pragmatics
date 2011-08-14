@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "LayoutService", targetNamespace = "http://rtsys.informatik.uni-kiel.de/layout", wsdlLocation = "file:/D:/Daten%20von%20Benutzern/Stephan/Documents/Eclipse/Workspace.KIELER/de.cau.cs.kieler.kwebs.jaxws/wsdl/layout.wsdl")
+@WebServiceClient(name = "LayoutService", targetNamespace = "http://rtsys.informatik.uni-kiel.de/layout", wsdlLocation = "file:/D:/Daten%20von%20Benutzern/Stephan/Desktop/wsdl/test/layout.wsdl")
 public class LayoutService
     extends Service
 {
@@ -30,7 +30,7 @@ public class LayoutService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("file:/D:/Daten%20von%20Benutzern/Stephan/Documents/Eclipse/Workspace.KIELER/de.cau.cs.kieler.kwebs.jaxws/wsdl/layout.wsdl");
+            url = new URL("file:/D:/Daten%20von%20Benutzern/Stephan/Desktop/wsdl/test/layout.wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }
@@ -41,7 +41,7 @@ public class LayoutService
     public LayoutService() {
         super(__getWsdlLocation(), LAYOUTSERVICE_QNAME);
     }
-/*
+/* Constructors are not compatible with JAX-WS RI 2.1.6 which is used in JDK 1.6
     public LayoutService(WebServiceFeature... features) {
         super(__getWsdlLocation(), LAYOUTSERVICE_QNAME, features);
     }
@@ -57,7 +57,7 @@ public class LayoutService
     public LayoutService(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);
     }
-/*
+/* Constructor is not compatible with JAX-WS RI 2.1.6 which is used in JDK 1.6
     public LayoutService(URL wsdlLocation, QName serviceName, WebServiceFeature... features) {
         super(wsdlLocation, serviceName, features);
     }

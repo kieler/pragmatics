@@ -76,6 +76,10 @@ public class SupportingServerManager extends AbstractServerManager {
     /** The name of the implementation attribute. */
     public static final String ATTRIBUTE_IMPLEMENTATION
         = "implementation";
+
+    /** The name of the publish attribute. */
+    public static final String ATTRIBUTE_PUBLISH
+        = "publish";
     
     /**
      * Constructs a new manager for the support server. Reads all registered handlers
@@ -84,39 +88,43 @@ public class SupportingServerManager extends AbstractServerManager {
     public SupportingServerManager() {
         String path = null;
         String implementation = null;        
+        String publish = null;
         Bundle contributor = null;
         for (IConfigurationElement element : getHandlerConfigurationElements()) {
             if (element.getName().equals(ELEMENT_SUPPORTHANDLER)) {
                 path = element.getAttribute(ATTRIBUTE_PATH);
                 implementation = element.getAttribute(ATTRIBUTE_IMPLEMENTATION);
-                if (path != null && path.length() > 0) {
-                    if (implementation != null && implementation.length() > 0) {
-                        try {
-                            contributor = Platform.getBundle(element.getContributor().getName());
-                            HttpHandler handler = contributor.loadClass(implementation).
-                                asSubclass(HttpHandler.class).newInstance();
-                            if (!path.startsWith("/")) {
-                                path = "/" + path;
+                publish = element.getAttribute(ATTRIBUTE_PUBLISH);
+                if (publish == null || publish.equalsIgnoreCase("true")) {
+                    if (path != null && path.length() > 0) {
+                        if (implementation != null && implementation.length() > 0) {
+                            try {
+                                contributor = Platform.getBundle(element.getContributor().getName());
+                                HttpHandler handler = contributor.loadClass(implementation).
+                                    asSubclass(HttpHandler.class).newInstance();
+                                if (!path.startsWith("/")) {
+                                    path = "/" + path;
+                                }
+                                handlers.put(path, handler);
+                            } catch (Exception e) {
+                                Logger.log(
+                                    Severity.FAILURE, 
+                                    "Handler class could not be instantiated: " + implementation,
+                                    e
+                                );
                             }
-                            handlers.put(path, handler);
-                        } catch (Exception e) {
+                        } else {
                             Logger.log(
-                                Severity.FAILURE, 
-                                "Handler class could not be instantiated: " + implementation,
-                                e
+                                Severity.WARNING, 
+                                "Implementation attribute of support handler invalid, ignoring handler."
                             );
                         }
                     } else {
                         Logger.log(
                             Severity.WARNING, 
-                            "Implementation attribute of support handler not valid, ignoring handler."
+                            "Path attribute of support handler not valid, ignoring handler."
                         );
                     }
-                } else {
-                    Logger.log(
-                        Severity.WARNING, 
-                        "Path attribute of support handler not valid, ignoring handler."
-                    );
                 }
             }
         }

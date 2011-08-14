@@ -8,6 +8,7 @@ import javax.xml.namespace.QName;
 
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
 
+
 /**
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
@@ -25,16 +26,28 @@ import de.cau.cs.kieler.kwebs.GraphLayoutOption;
 @XmlRegistry
 public class ObjectFactory {
 
+    private final static QName _ServiceFault_QNAME = new QName("http://rtsys.informatik.uni-kiel.de/layout", "ServiceFault");
     private final static QName _GetServiceData_QNAME = new QName("http://rtsys.informatik.uni-kiel.de/layout", "getServiceData");
     private final static QName _GetServiceDataResponse_QNAME = new QName("http://rtsys.informatik.uni-kiel.de/layout", "getServiceDataResponse");
+    private final static QName _GetPreviewImage_QNAME = new QName("http://rtsys.informatik.uni-kiel.de/layout", "getPreviewImage");
     private final static QName _GraphLayoutResponse_QNAME = new QName("http://rtsys.informatik.uni-kiel.de/layout", "graphLayoutResponse");
     private final static QName _GraphLayout_QNAME = new QName("http://rtsys.informatik.uni-kiel.de/layout", "graphLayout");
+    private final static QName _GetPreviewImageResponse_QNAME = new QName("http://rtsys.informatik.uni-kiel.de/layout", "getPreviewImageResponse");
+    private final static QName _GetPreviewImageResponseReturn_QNAME = new QName("", "return");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: de.cau.cs.kieler.kwebs.jaxws
      * 
      */
     public ObjectFactory() {
+    }
+
+    /**
+     * Create an instance of {@link GetPreviewImage }
+     * 
+     */
+    public GetPreviewImage createGetPreviewImage() {
+        return new GetPreviewImage();
     }
 
     /**
@@ -46,11 +59,27 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link GetPreviewImageResponse }
+     * 
+     */
+    public GetPreviewImageResponse createGetPreviewImageResponse() {
+        return new GetPreviewImageResponse();
+    }
+
+    /**
      * Create an instance of {@link GraphLayout }
      * 
      */
     public GraphLayout createGraphLayout() {
         return new GraphLayout();
+    }
+
+    /**
+     * Create an instance of {@link ServiceFault }
+     * 
+     */
+    public ServiceFault createServiceFault() {
+        return new ServiceFault();
     }
 
     /**
@@ -78,6 +107,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ServiceFault }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://rtsys.informatik.uni-kiel.de/layout", name = "ServiceFault")
+    public JAXBElement<ServiceFault> createServiceFault(ServiceFault value) {
+        return new JAXBElement<ServiceFault>(_ServiceFault_QNAME, ServiceFault.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetServiceData }{@code >}}
      * 
      */
@@ -96,6 +134,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetPreviewImage }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://rtsys.informatik.uni-kiel.de/layout", name = "getPreviewImage")
+    public JAXBElement<GetPreviewImage> createGetPreviewImage(GetPreviewImage value) {
+        return new JAXBElement<GetPreviewImage>(_GetPreviewImage_QNAME, GetPreviewImage.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GraphLayoutResponse }{@code >}}
      * 
      */
@@ -111,6 +158,24 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://rtsys.informatik.uni-kiel.de/layout", name = "graphLayout")
     public JAXBElement<GraphLayout> createGraphLayout(GraphLayout value) {
         return new JAXBElement<GraphLayout>(_GraphLayout_QNAME, GraphLayout.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetPreviewImageResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://rtsys.informatik.uni-kiel.de/layout", name = "getPreviewImageResponse")
+    public JAXBElement<GetPreviewImageResponse> createGetPreviewImageResponse(GetPreviewImageResponse value) {
+        return new JAXBElement<GetPreviewImageResponse>(_GetPreviewImageResponse_QNAME, GetPreviewImageResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "return", scope = GetPreviewImageResponse.class)
+    public JAXBElement<byte[]> createGetPreviewImageResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_GetPreviewImageResponseReturn_QNAME, byte[].class, GetPreviewImageResponse.class, ((byte[]) value));
     }
 
 }

@@ -77,8 +77,8 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
         = 8444;
     
     /** The port under which the preview image handler is published. */
-    private static int previewImagesPort
-        = -1;
+    //private static int previewImagesPort
+    //    = -1;
     
     static {
         String implementation = null;      
@@ -97,6 +97,7 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
                 + DEFAULT_PREVIEWIMAGESPATH + "."
             );            
         }
+/*        
         try {
             URI uri = new URI(
                 Configuration.getInstance().getConfigProperty(Configuration.SUPPORTINGSERVER_ADDRESS)
@@ -113,6 +114,7 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
             );
             previewImagesPort = DEFAULT_PREVIEWIMAGESPORT;
         }
+*/        
     }
     
     /**
@@ -306,10 +308,10 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
                         );
                         String previewImageName = Integer.toHexString((pluginId + preview).hashCode()) 
                                                   + "/" + new File(preview).getName();
-                        String previewImagePath = previewImagesPath + "/" + previewImageName;
+                        String previewImagePath = /*previewImagesPath + "/" +*/ previewImageName;
                         previewImages.put(previewImageName, data);
                         algorithm.setPreviewImagePath(previewImagePath);  
-                        algorithm.setPreviewImagePort(previewImagesPort);
+                        //algorithm.setPreviewImagePort(previewImagesPort);
                     } catch (Exception e) {
                         Logger.log(Severity.WARNING,
                             "Could not load preview image ("

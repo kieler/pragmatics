@@ -65,7 +65,7 @@ public class LayoutDataService {
 
     /** Mode constant for remote data service instance. */
     public static final String REMOTEDATASERVICE
-        = "de.cau.cs.kieler.kwebs.client.layout.RemoteLayoutDataService"; //$NON-NLS-1$
+        = "de.cau.cs.kieler.kwebs.client.kiml.layout.RemoteLayoutDataService"; //$NON-NLS-1$
 
     /** Mode constant for server data service instance. */
     public static final String SERVICEDATASERVICE

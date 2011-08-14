@@ -14,6 +14,9 @@
 
 package de.cau.cs.kieler.kwebs.formats;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Utility class defining the supported formats for the layout service. A format
  * is a combination of the meta model of a a graph and the used serialization. 
@@ -29,6 +32,15 @@ public final class Formats {
     public static final String FORMAT_KGRAPH_XMI
         = "de.cau.cs.kieler.format.kgraph.xmi";
 
+    /** The list of supported formats. */
+    private static final List<String> supportedFormats
+        = new LinkedList<String>();
+    
+    /** Initialize the list of supported formats. */
+    static {
+        supportedFormats.add(FORMAT_KGRAPH_XMI);
+    }
+    
     /**
      * Tests whether a given format identifier is supported
      * by the layout service.
@@ -40,7 +52,7 @@ public final class Formats {
      *             Whether the given format is supported or not
      */
     public static boolean isSupportedFormat(final String format) {
-        return format.equals(FORMAT_KGRAPH_XMI);
+        return supportedFormats.contains(format);
     }
 
     /**

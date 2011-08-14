@@ -14,10 +14,8 @@
 
 package de.cau.cs.kieler.kwebs.client;
 
-import java.net.InetAddress;
 import java.util.Vector;
 
-import de.cau.cs.kieler.kwebs.client.providers.ServerConfig;
 
 /**
  * Abstract base implementation of the {@link ILayoutServiceClient} interface.
@@ -35,11 +33,8 @@ public abstract class AbstractLayoutServiceClient implements ILayoutServiceClien
     /** The provider of the layout service. */
     private ServerConfig serverConfig;
 
-    /** Whether the service is available or not. */
-    private Boolean available;
-
-    /** The last error occured. */
-    private String[] lastError;
+    /** The last error occurred. */
+    private Throwable lastError;
     
     /**
      * Protected constructor.
@@ -58,41 +53,17 @@ public abstract class AbstractLayoutServiceClient implements ILayoutServiceClien
         serverConfig = theserverConfig;
     }
 
-    /** Default timeout when trying to ping a layout service. */
-    private static final int DEFAULT_SERVICE_AVAILABILITY_TIMEOUT
-        = 10000;
-
     /**
-     * {@inheritDoc}
+     * This base implementation does not really check for availability but always returns
+     * {@code true}. The only way to check for availability at this point is to check whether the
+     * given server address answers to a ping. Since many fire walls filter a ping this is not an 
+     * adequate way to check for availability. Protocol specific implementations may override if 
+     * they have more specific ways to check for availability. 
      */
-    public final synchronized boolean isAvailable() {
-        // Not useable; the implementation of InetAddress.isReachable generally fails on
-        // real servers due to the fact that the request is being blocked by the servers firewall.
-        /*
-        if (available != null) {
-            return available;
-        }
-        try {
-            available =
-                InetAddress.getByName(serverConfig.getAddress().getHost()).
-                    isReachable(DEFAULT_SERVICE_AVAILABILITY_TIMEOUT);
-        } catch (Exception e) {
-            available = false;
-        }
-        return available;
-        */
-        // Therefore we always return true and let the client implementation handle
-        // the availability detection.
+    public synchronized boolean isAvailable() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public synchronized void disconnect() {
-        available = null;
-    }
-    
     /**
      * {@inheritDoc}
      */
@@ -113,16 +84,9 @@ public abstract class AbstractLayoutServiceClient implements ILayoutServiceClien
     /**
      * {@inheritDoc}
      */
-    public String[] getLastError() {
-        return lastError;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setLastError(final Throwable thelastError) {
+    public String[] getLastErrorAsStringArray() {
         Vector<String> messages = new Vector<String>();
-        Throwable error = thelastError;
+        Throwable error = lastError;
         while (error != null) {
             String message = error.getMessage();
             if (message == null) {
@@ -131,7 +95,21 @@ public abstract class AbstractLayoutServiceClient implements ILayoutServiceClien
             messages.add(message);
             error = error.getCause();
         }
-        lastError = messages.toArray(new String[0]);
+        return messages.toArray(new String[0]);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Throwable getLastError() {
+        return lastError;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setLastError(final Throwable thelastError) {
+        lastError = thelastError;
     }
 
 }

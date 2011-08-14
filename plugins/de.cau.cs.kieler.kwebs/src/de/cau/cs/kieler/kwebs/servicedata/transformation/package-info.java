@@ -13,7 +13,8 @@
  */
 
 /**
- * .
+ * This package contains the class needed for serialization and deserialization of the services
+ * meta data in order to exchange the meta data between the server and a client.
  */
 
 package de.cau.cs.kieler.kwebs.servicedata.transformation;

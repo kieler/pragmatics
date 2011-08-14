@@ -14,9 +14,11 @@
 
 package de.cau.cs.kieler.kwebs.server.service;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
+import de.cau.cs.kieler.kwebs.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 import de.cau.cs.kieler.kwebs.util.Resources;
 import de.unido.ls5.eti.toolserver.InputFileReference;
@@ -48,10 +50,10 @@ public class JetiService extends AbstractService {
      *            on is to be stored
      * @param format
      *            the serial format of the graph {@see Formats}
-     * @throws Exception
+     * @throws RemoteServiceException
      */
     public final void graphLayout(final InputFileReference inRef, final OutputFileReference outRef, 
-        final String format) throws Exception {
+        final String format) throws RemoteServiceException {
         graphLayout(inRef, outRef, format, null);
     }
 
@@ -67,21 +69,22 @@ public class JetiService extends AbstractService {
      *            the serial format of the graph {@see Formats}
      * @param serializedOptions
      *            optional layout options in their serialized form {@see GraphLayouterOption}
-     * @throws Exception
+     * @throws RemoteServiceException
+     *            if an exception occurs while processing the request
      */
     public final void graphLayout(final InputFileReference inRef, final OutputFileReference outRef,
-        final String format, final String serializedOptions) throws Exception {
+        final String format, final String serializedOptions) throws RemoteServiceException {
         try {
-        String serializedGraph = Resources.readFileAsString(inRef.toString());
-        List<GraphLayoutOption> options = null;
-        if (serializedOptions != null) {
-            options = GraphLayoutOption.stringToList(serializedOptions);
-        }
-        String serializedResult = layout(serializedGraph, format, options);
-        Resources.writeFile(outRef.toString(), serializedResult);
+            byte[] data = Resources.readFileAsByteArray(inRef.toString());
+            String serializedGraph = new String(data, "UTF-8");
+            List<GraphLayoutOption> options = null;
+            if (serializedOptions != null) {
+                options = GraphLayoutOption.stringToList(serializedOptions);
+            }
+            String serializedResult = layout(serializedGraph, format, options);
+            Resources.writeFile(outRef.toString(), serializedResult);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+            throw new RemoteServiceException(e.getMessage());
         }
     }
 
@@ -90,14 +93,48 @@ public class JetiService extends AbstractService {
      * 
      * @param outRef
      *            reference to the output file
-     * @throws Exception
+     * @throws RemoteServiceException
+     *            if an exception occurs while processing the request
      */
     public final void getServiceData(final OutputFileReference outRef)
-        throws Exception {
-        Resources.writeFile(
-            outRef.toString(),
-            ServerLayoutDataService.getServiceData()
-        );
+        throws RemoteServiceException {
+        try {
+            Resources.writeFile(
+                outRef.toString(),
+                ServerLayoutDataService.getServiceData()
+            );
+        } catch (Exception e) {
+            throw new RemoteServiceException(e.getMessage());
+        }
+    }
+
+    /**
+     * Stores the requested preview image in a file. 
+     * 
+     * @param previewImage
+     *            the identifier of the preview image
+     * @param outRef
+     *            reference to the preview image file
+     * @throws RemoteServiceException
+     *            if an exception occurs while processing the request
+     */
+    public final void getPreviewImage(final String previewImage, final OutputFileReference outRef)
+        throws RemoteServiceException {
+        if (previewImage == null) {
+            throw new RemoteServiceException("No preview image identifier");
+        }
+        byte[] data = ServerLayoutDataService.getPreviewImage(previewImage);
+        if (data == null) {
+            throw new RemoteServiceException("Preview image identifier not valid");
+        }
+        try {
+            Resources.writeFile(
+                outRef.toString(),
+                new ByteArrayInputStream(data)
+            );
+        } catch (Exception e) {
+            throw new RemoteServiceException(e.getMessage());
+        }
     }
 
 }

@@ -19,8 +19,9 @@ import java.util.List;
 import javax.jws.WebService;
 
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
-import de.cau.cs.kieler.kwebs.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.jaxws.LayoutServicePort;
+import de.cau.cs.kieler.kwebs.jaxws.ServiceFault;
+import de.cau.cs.kieler.kwebs.jaxws.ServiceFault_Exception;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 
 /**
@@ -50,25 +51,63 @@ public final class JaxWsService extends AbstractService implements LayoutService
 
     /**
      * {@inheritDoc}
+     * @throws ServiceFault_Exception 
      */
     public String graphLayout(final String serializedGraph, final String format, 
-        final List<GraphLayoutOption> options) { 
+        final List<GraphLayoutOption> options) throws ServiceFault_Exception { 
         try {
             return layout(serializedGraph, format, options);
-        } catch (Exception e) {         
-            throw new RemoteServiceException(e.getMessage());
+        } catch (Exception e) {  
+            throw createException(0, e);
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getServiceData() {
+    public String getServiceData() throws ServiceFault_Exception {
         try {
             return ServerLayoutDataService.getServiceData();
         } catch (Exception e) {
-            throw new RemoteServiceException(e.getMessage());
+            throw createException(0, e);
         }
+    }
+
+    /**
+     * Returns the preview image associated with a remotely available layout
+     * algorithm.
+     *  
+     * @param previewImage
+     *            the identifier of the preview image as defined in the servers meta data
+     * @return the preview image as byte array
+     */
+    public byte[] getPreviewImage(final String previewImage) throws ServiceFault_Exception {
+        try {
+            return ServerLayoutDataService.getPreviewImage(previewImage);
+        } catch (Exception e) {
+            throw createException(0, e);
+        }
+    }
+    
+    /**
+     * Creates a {@code ServiceFault_Exception} from an exception thrown while serving a service
+     * request with the according error code.
+     * 
+     * @param code
+     *            the error code
+     * @param throwable
+     *            the exception occurred
+     * @return the {@code ServiceFault_Exception}
+     */
+    private ServiceFault_Exception createException(final int code, final Throwable throwable) {        
+        ServiceFault fault = new ServiceFault();
+        fault.setCode(code);
+        String message = throwable.getMessage();
+        if (message == null) {
+            message = "Unknown cause";
+        }
+        fault.setMessage(message);
+        return new ServiceFault_Exception(message, fault);
     }
 
 }

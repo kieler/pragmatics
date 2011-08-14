@@ -12,13 +12,14 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.kwebs.client.providers;
+package de.cau.cs.kieler.kwebs.client;
 
 import java.net.URI;
 
 /**
  * This utility class resembles a server configuration as the user can edit
- * it on the preference page for remote layout.
+ * it on the preference page for remote layout. It can also be used for non KIELER
+ * clients to easily manage server configurations.
  *
  * @kieler.rating 2011-08-02 proposed yellow
  *     reviewed by ckru, mri, msp
@@ -26,44 +27,40 @@ import java.net.URI;
  * @author swe
  */
 public final class ServerConfig {
-
-    //CHECKSTYLEOFF VisibilityModifier
     
     /** The name of the server configuration. */
-    String name;
+    private String name;
 
     /** The address of the layout service. */
-    URI address;
+    private URI address;
 
     /** Path to the trust store when using HTTPS. */
-    String truststore;
+    private String truststore;
 
     /** Password for the trust store. */
-    String truststorePass;
+    private String truststorePass;
 
     /** Whether this server configuration may be changed or deleted. */
-    boolean isFixed
+    private boolean isFixed
         = false;
 
     /** Whether this server configuration has been changed. */
-    boolean isDirty
+    private boolean isDirty
         = false;
 
     /**
      *  Whether this server configuration is the currently selected server configuration 
      *  for doing remote layout.
      */
-    boolean isActive
+    private boolean isActive
         = false;
 
     /** 
      *  Whether this server configuration is the standard server configuration for 
      *  doing remote layout. 
      */
-    boolean isStandard
+    private boolean isStandard
         = false;
-    
-    //CHECKSTYLEON VisibilityModifier
     
     /**
      * Constructs a new server configuration.
@@ -73,7 +70,7 @@ public final class ServerConfig {
      * @param theaddress
      *           the address of the layout service
      */
-    ServerConfig(final String thename, final URI theaddress) {
+    public ServerConfig(final String thename, final URI theaddress) {
         this(thename, theaddress, null, null, false, false, false);
     }
 
@@ -89,7 +86,7 @@ public final class ServerConfig {
      * @param thetruststorePass
      *           password for the trust store
      */
-    ServerConfig(final String thename, final URI theaddress,
+    public ServerConfig(final String thename, final URI theaddress,
         final String thetruststore, final String thetruststorePass) {
         this(thename, theaddress, thetruststore, thetruststorePass, false, false, false);
     }
@@ -115,7 +112,7 @@ public final class ServerConfig {
      *           whether this server configuration shall be the standard 
      *           server configuration for doing remote layout
      */
-    ServerConfig(final String thename, final URI theaddress,
+    public ServerConfig(final String thename, final URI theaddress,
         final String thetruststore, final String thetruststorePass, final boolean theisFixed,
         final boolean theisActive, final boolean theisStandard) {
         name = thename;
@@ -143,6 +140,37 @@ public final class ServerConfig {
     }
 
     /**
+     * Sets whether this server configuration can be changed or deleted from the server
+     * configuration list.
+     * 
+     * @param theisFixed
+     *            whether this server configuration can be changed or deleted from the server
+     *            configuration list.
+     */
+    public void setFixed(final boolean theisFixed) {
+        isFixed = theisFixed;
+    }
+
+    /**
+     * Returns whether this server configuration has been changed.
+     * 
+     * @return whether this server configuration has been changed
+     */
+    public boolean isDirty() {
+        return isDirty;
+    }
+
+    /**
+     * Sets whether this server configuration has been altered.
+     * 
+     * @param theisDirty
+     *            whether this server configuration has been altered
+     */
+    public void setDirty(final boolean theisDirty) {
+        isDirty = theisDirty;
+    }
+
+    /**
      * Returns whether this server configuration shall be the currently active server configuration 
      * for doing remote layout.
      * 
@@ -151,6 +179,16 @@ public final class ServerConfig {
      */
     public boolean isActive() {
         return isActive;
+    }
+
+    /**
+     * Sets whether this server configuration is currently used for doing remote layout
+     * 
+     * @param theisActive
+     *            whether this server configuration is currently used for doing remote layout
+     */
+    public void setActive(final boolean theisActive) {
+        isActive = theisActive;
     }
 
     /**
@@ -163,7 +201,16 @@ public final class ServerConfig {
     public boolean isStandard() {
         return isStandard;
     }
-    
+
+    /**
+     * Sets whether this server configuration is the default configuration for doing layout.
+     * 
+     * @param theisStandard
+     *            whether this server configuration is the default configuration for doing layout
+     */
+    public void setStandard(final boolean theisStandard) {
+        isStandard = theisStandard;
+    }
     /**
      * Returns the name of this server configuration.
      * 

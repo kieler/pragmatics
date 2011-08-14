@@ -1,50 +1,65 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<xs:schema
-	version="1.0" 
-	xmlns:tns="http://rtsys.informatik.uni-kiel.de/layout" 
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-	targetNamespace="http://rtsys.informatik.uni-kiel.de/layout">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xs:schema xmlns:tns="http://rtsys.informatik.uni-kiel.de/layout" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://rtsys.informatik.uni-kiel.de/layout" version="1.0">
 
-	<xs:element name="getServiceData" type="tns:getServiceData"/>	
-	<xs:element name="getServiceDataResponse" type="tns:getServiceDataResponse"/>	
-	<xs:element name="graphLayout" type="tns:graphLayout"/>	
-	<xs:element name="graphLayoutResponse" type="tns:graphLayoutResponse"/>
-	
-	<xs:complexType name="graphLayout">
-		<xs:sequence>
-			<!-- 'minOccurs' and 'maxOccurs' attribute defaults to '1' -->
-			<xs:element name="serializedGraph" type="xs:string"/>
-			<!-- 'minOccurs' and 'maxOccurs' attribute defaults to '1' -->
-			<xs:element name="format" type="xs:string"/>
-			<xs:element name="options" type="tns:graphLayoutOption" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-		</xs:sequence>
-	</xs:complexType>
-	
-	<xs:complexType name="graphLayoutOption">
-		<xs:sequence>
-			<!-- 'minOccurs' and 'maxOccurs' attribute defaults to '1' -->
-			<xs:element name="id" type="xs:string"/>
-			<!-- 'minOccurs' and 'maxOccurs' attribute defaults to '1' -->
-			<xs:element name="value" type="xs:string"/>
-		</xs:sequence>
-	</xs:complexType>
-	
-	<xs:complexType name="graphLayoutResponse">
-		<xs:sequence>
-			<!-- 'minOccurs' and 'maxOccurs' attribute defaults to '1' -->
-			<xs:element name="return" type="xs:string"/>
-		</xs:sequence>
-	</xs:complexType>
-	
-	<xs:complexType name="getServiceData">
-		<xs:sequence/>
-	</xs:complexType>
-	
-	<xs:complexType name="getServiceDataResponse">
-		<xs:sequence>
-			<!-- 'minOccurs' and 'maxOccurs' attribute defaults to '1' -->
-			<xs:element name="return" type="xs:string"/>
-		</xs:sequence>
-	</xs:complexType>
-	
+  <xs:element name="getPreviewImage" type="tns:getPreviewImage"/>
+  <xs:element name="getPreviewImageResponse" type="tns:getPreviewImageResponse"/>
+
+  <xs:element name="getServiceData" type="tns:getServiceData"/>
+  <xs:element name="getServiceDataResponse" type="tns:getServiceDataResponse"/>
+
+  <xs:element name="graphLayout" type="tns:graphLayout"/>
+  <xs:element name="graphLayoutResponse" type="tns:graphLayoutResponse"/>
+
+  <xs:element name="ServiceFault" type="tns:ServiceFault"/>
+
+  <xs:complexType name="graphLayoutResponse">
+    <xs:sequence>
+    <xs:element name="return" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="graphLayout">
+    <xs:sequence>
+      <xs:element name="serializedGraph" type="xs:string"/>
+      <xs:element name="format" type="xs:string"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="options" nillable="true" type="tns:graphLayoutOption"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="graphLayoutOption">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="value" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ServiceFault">
+    <xs:sequence>
+      <xs:element name="code" type="xs:int"/>
+      <xs:element name="message" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getServiceData">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="getServiceDataResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getPreviewImage">
+    <xs:sequence>
+      <xs:element name="previewImage" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getPreviewImageResponse">
+    <xs:sequence>
+      <xs:element name="return" nillable="true" type="xs:base64Binary"/>
+    </xs:sequence>
+  </xs:complexType>
+
 </xs:schema>

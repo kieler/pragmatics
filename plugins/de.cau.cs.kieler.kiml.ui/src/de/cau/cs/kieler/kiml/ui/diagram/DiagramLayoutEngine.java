@@ -37,8 +37,8 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
 import de.cau.cs.kieler.kiml.ui.util.DebugCanvas;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.kwebs.client.layout.RemoteGraphLayoutEngine;
-import de.cau.cs.kieler.kwebs.client.preferences.Preferences;
+import de.cau.cs.kieler.kwebs.client.kiml.layout.RemoteGraphLayoutEngine;
+import de.cau.cs.kieler.kwebs.client.kiml.preferences.Preferences;
 
 /**
  * The entry class for automatic layout of graphical diagrams.

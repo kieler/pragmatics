@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kwebs.transformation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 

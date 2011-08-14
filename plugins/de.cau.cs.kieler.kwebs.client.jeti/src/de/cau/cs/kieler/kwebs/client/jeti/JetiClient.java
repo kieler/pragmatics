@@ -24,7 +24,8 @@ import de.cau.cs.kieler.kwebs.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.LocalServiceException;
 import de.cau.cs.kieler.kwebs.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.client.AbstractLayoutServiceClient;
-import de.cau.cs.kieler.kwebs.client.providers.ServerConfig;
+import de.cau.cs.kieler.kwebs.client.ServerConfig;
+import de.cau.cs.kieler.kwebs.util.Resources;
 import de.unido.ls5.eti.client.ByteArrayVirtualFile;
 import de.unido.ls5.eti.client.EtiConnection;
 import de.unido.ls5.eti.client.EtiConnectionSepp;
@@ -65,8 +66,18 @@ public final class JetiClient extends AbstractLayoutServiceClient {
     /**
      * {@inheritDoc}
      */
-    public synchronized boolean isConnected() {
-        return (etiCon != null);
+    public synchronized boolean isConnected() {        
+        if (etiCon != null) {
+            try {
+                // Just dummy login, security currently
+                // not implemented in jETI tool server
+                etiCon.login("foo", "bar");
+                return true;
+            } catch (Exception e) {
+                etiCon = null;
+            }            
+        }
+        return false;
     }
 
     /**
@@ -96,6 +107,7 @@ public final class JetiClient extends AbstractLayoutServiceClient {
                 etiCon.login("foo", "bar");
             } catch (Exception e) {
                 etiCon = null;
+                setLastError(e);
                 throw new LocalServiceException(
                     "Could not login on layout service at " + getServerConfig().getAddress(), e
                 );
@@ -107,7 +119,6 @@ public final class JetiClient extends AbstractLayoutServiceClient {
      * {@inheritDoc}
      */
     public synchronized void disconnect() {
-        super.disconnect();
         etiCon = null;
     }
 
@@ -159,7 +170,7 @@ public final class JetiClient extends AbstractLayoutServiceClient {
                     GraphLayoutOption.listToString(options)
                 );
             }
-            byte[] byteGraph = serializedGraph.getBytes();
+            byte[] byteGraph = serializedGraph.getBytes("UTF-8");
             ByteArrayVirtualFile vfOut = new ByteArrayVirtualFile(
                 new ByteArrayInputStream(byteGraph),
                 "graph.in"
@@ -177,6 +188,7 @@ public final class JetiClient extends AbstractLayoutServiceClient {
             return sb.toString();
         } catch (Exception e) {
             disconnect();
+            setLastError(e);
             throw new RemoteServiceException("Error while calling layout service", e);
         }
     }
@@ -206,6 +218,34 @@ public final class JetiClient extends AbstractLayoutServiceClient {
             return sb.toString();
         } catch (Exception e) {
             disconnect();
+            setLastError(e);
+            throw new RemoteServiceException("Error while calling layout service", e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public byte[] getPreviewImage(final String previewImage) {
+        if (!isConnected()) {
+            connect();
+        }
+        try {
+            Map<String, String> etiParams = new HashMap<String, String>();
+            etiParams.put(
+                "INPUT_PREVIEWIMAGE",
+                previewImage
+            );
+            etiParams.put(
+                "OUTPUT_PREVIEWIMAGE",
+                "previewImage.out"
+            );
+            etiCon.exec("getPreviewImage", etiParams);
+            VirtualFile vfIn = etiCon.retrieve("previewImage.out");
+            return Resources.readStreamAsByteArray(vfIn.getInputStream());
+        } catch (Exception e) {
+            disconnect();
+            setLastError(e);
             throw new RemoteServiceException("Error while calling layout service", e);
         }
     }

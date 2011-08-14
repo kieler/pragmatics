@@ -17,7 +17,6 @@ package de.cau.cs.kieler.kwebs.client;
 import java.util.List;
 
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
-import de.cau.cs.kieler.kwebs.client.providers.ServerConfig;
 
 /**
  * Interface for a web service client. Every implementation needs to provide a
@@ -51,6 +50,15 @@ public interface ILayoutServiceClient {
      * @return the meta data
      */
     String getServiceData();
+
+    /**
+     * Returns a byte array containing the preview image
+     * 
+     * @param previewImage
+     *            the identifier of the preview image
+     * @return a byte array containing the preview image
+     */
+    byte[] getPreviewImage(String previewImage);
 
     /**
      * Checks whether the layout service this clients service address points to
@@ -99,8 +107,15 @@ public interface ILayoutServiceClient {
      * @return string array containing the messages of the last thrown exception 
      *         or {@code null} if everything went fine
      */
-    String[] getLastError();
+    String[] getLastErrorAsStringArray();
 
+    /**
+     * Returns the last error occurred.
+     * 
+     * @return the last error occurred as throwable or {@code null} if everything went fine
+     */
+    Throwable getLastError();
+    
     /**
      * Sets the last error occurred.
      * 

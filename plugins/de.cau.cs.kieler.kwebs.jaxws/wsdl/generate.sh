@@ -11,34 +11,34 @@ echo Published under the EPL v1.0 (see http://www.eclipse.org/legal/epl-v10.html
 
 if [ "$JAVA_HOME"=="" ];
 then
-	echo You have to set the environment variable JAVA_HOME pointing to your
-	echo local Java installation.
-	exit
+  echo You have to set the environment variable JAVA_HOME pointing to your
+  echo local Java installation.
+  exit
 fi
 
 if [ "$JAXWS_HOME"=="" ];
 then
-	echo You have to set the environment variable JAXWS_HOME pointing to your
-	echo local installation of the JAX-WS reference implementation.
-	exit
+  echo You have to set the environment variable JAXWS_HOME pointing to your
+  echo local installation of the JAX-WS reference implementation.
+  exit
 fi
 
-if [ -d "../src/de/cau/cs/kieler/kwebs/jaxws" ];
+if [ -d "../src" ];
 then
-	rm -f "../src/de/cau/cs/kieler/kwebs/jaxws/*.java"
-else
-    mkdir "../src/de/cau/cs/kieler/kwebs/jaxws"
+    rm -rf "../src"
+fi
+if [ ! -d "../src" ];
+then
+    mkdir "../src"
 fi
 
 if [ -d "../bin" ];
 then
-	rm -rf "../bin"
-else
+    rm -rf "../bin"
+fi
+if [ ! -d "../bin" ];
+then
     mkdir "../bin"
 fi
 
-mkdir "../src"
-mkdir "../bin"
-
-"$JAVA_HOME/bin/java.exe" -jar "$JAXWS_HOME/lib/jaxws-tools.jar" -Xendorsed -keep -s "../src" -d "../bin" -p de.cau.cs.kieler.kwebs.jaxws layout.wsdl 
-	
+"$JAVA_HOME/bin/java.exe" -jar "$JAXWS_HOME/lib/jaxws-tools.jar" -Xendorsed -keep -s "../src" -d "../bin" -p de.cau.cs.kieler.kwebs.jaxws layout.wsdl

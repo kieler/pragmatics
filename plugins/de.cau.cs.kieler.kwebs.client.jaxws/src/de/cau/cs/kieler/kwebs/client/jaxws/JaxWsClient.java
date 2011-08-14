@@ -30,7 +30,7 @@ import de.cau.cs.kieler.kwebs.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.LocalServiceException;
 import de.cau.cs.kieler.kwebs.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.client.AbstractLayoutServiceClient;
-import de.cau.cs.kieler.kwebs.client.providers.ServerConfig;
+import de.cau.cs.kieler.kwebs.client.ServerConfig;
 import de.cau.cs.kieler.kwebs.jaxws.LayoutService;
 import de.cau.cs.kieler.kwebs.jaxws.LayoutServicePort;
 
@@ -111,7 +111,6 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
                 layoutPort = null;
                 releaseSSL();
                 setLastError(e);
-                e.printStackTrace();
                 throw new LocalServiceException(
                     "Could not connect to layout service at " + getServerConfig().getAddress(), e
                 );
@@ -123,10 +122,11 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
      * {@inheritDoc}
      */
     public synchronized void disconnect() {
-        super.disconnect();
-        layoutService = null;
-        layoutPort = null;
-        releaseSSL();
+        if (layoutService != null) {
+            layoutService = null;
+            layoutPort = null;
+            releaseSSL();
+        }
     }
 
     /**
@@ -155,6 +155,22 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
         }
         try {
             return layoutPort.getServiceData();
+        } catch (Exception e) {
+            disconnect();
+            setLastError(e);
+            throw new RemoteServiceException("Error while calling layout service", e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public final byte[] getPreviewImage(final String previewImage) {
+        if (!isConnected()) {
+            connect();
+        }
+        try {
+            return layoutPort.getPreviewImage(previewImage);
         } catch (Exception e) {
             disconnect();
             setLastError(e);

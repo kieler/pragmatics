@@ -45,7 +45,7 @@ import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.ILayoutData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
-import de.cau.cs.kieler.kwebs.client.layout.RemoteLayoutAlgorithmData;
+import de.cau.cs.kieler.kwebs.client.kiml.layout.RemoteLayoutAlgorithmData;
 
 /**
  * A dialog to browse and select layout algorithms or layout types.

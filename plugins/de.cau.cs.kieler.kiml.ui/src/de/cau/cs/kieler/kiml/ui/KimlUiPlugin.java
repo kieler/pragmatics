@@ -21,7 +21,7 @@ import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutDataService;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
-import de.cau.cs.kieler.kwebs.client.layout.RemoteLayoutDataService;
+import de.cau.cs.kieler.kwebs.client.kiml.layout.RemoteLayoutDataService;
 
 /**
  * The activator class controls the plug-in life cycle.
