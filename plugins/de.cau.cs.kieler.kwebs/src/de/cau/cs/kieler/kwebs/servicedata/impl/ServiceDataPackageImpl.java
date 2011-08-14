@@ -297,15 +297,6 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getLayoutAlgorithm_PreviewImagePort() {
-        return (EAttribute)layoutAlgorithmEClass.getEStructuralFeatures().get(9);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EClass getLayoutType() {
         return layoutTypeEClass;
     }
@@ -571,7 +562,6 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
         createEReference(layoutAlgorithmEClass, LAYOUT_ALGORITHM__TYPE);
         createEAttribute(layoutAlgorithmEClass, LAYOUT_ALGORITHM__VERSION);
         createEAttribute(layoutAlgorithmEClass, LAYOUT_ALGORITHM__PREVIEW_IMAGE_PATH);
-        createEAttribute(layoutAlgorithmEClass, LAYOUT_ALGORITHM__PREVIEW_IMAGE_PORT);
 
         layoutTypeEClass = createEClass(LAYOUT_TYPE);
         createEAttribute(layoutTypeEClass, LAYOUT_TYPE__ID);
@@ -652,7 +642,6 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
         initEReference(getLayoutAlgorithm_Type(), this.getLayoutType(), null, "type", null, 0, 1, LayoutAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getLayoutAlgorithm_Version(), ecorePackage.getEString(), "version", null, 0, 1, LayoutAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getLayoutAlgorithm_PreviewImagePath(), ecorePackage.getEString(), "previewImagePath", null, 0, 1, LayoutAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getLayoutAlgorithm_PreviewImagePort(), ecorePackage.getEInt(), "previewImagePort", null, 0, 1, LayoutAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(layoutTypeEClass, LayoutType.class, "LayoutType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getLayoutType_Id(), ecorePackage.getEString(), "id", null, 1, 1, LayoutType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

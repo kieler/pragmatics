@@ -26,8 +26,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 
-import de.cau.cs.kieler.kwebs.util.Debug;
-
 /**
  * Logger for the KWebS project.
  *

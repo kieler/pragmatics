@@ -52,7 +52,7 @@ public interface ILayoutServiceClient {
     String getServiceData();
 
     /**
-     * Returns a byte array containing the preview image
+     * Returns a byte array containing the preview image.
      * 
      * @param previewImage
      *            the identifier of the preview image

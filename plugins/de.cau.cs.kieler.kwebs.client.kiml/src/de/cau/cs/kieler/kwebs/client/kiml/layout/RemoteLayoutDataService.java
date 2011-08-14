@@ -121,7 +121,7 @@ public final class RemoteLayoutDataService extends ServiceDataLayoutDataService 
             previewImageClient = client;
             previewImageHostAvailable = true;
             //previewImageHost = client.getServerConfig().getAddress().getHost();  
-            String capabilities = client.getServiceData();           
+            String capabilities = client.getServiceData();     
             super.initializeFromString(capabilities);
         } catch (Exception e) {
             StatusManager.getManager().handle(

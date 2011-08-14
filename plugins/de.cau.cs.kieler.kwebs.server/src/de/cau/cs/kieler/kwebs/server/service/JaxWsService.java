@@ -50,8 +50,17 @@ public final class JaxWsService extends AbstractService implements LayoutService
     }
 
     /**
-     * {@inheritDoc}
-     * @throws ServiceFault_Exception 
+     * Does remote layout on a given graph in serialized form.
+     *  
+     * @param serializedGraph
+     *            the serialized graph model
+     * @param format
+     *            identifier for the graphs meta model and form of serialization {@see Formats}
+     * @param options
+     *            an optional list of layout options
+     * @return the graph which was layout done on in the same serialization as the given graph
+     * @throws ServiceFault_Exception
+     *             if an error occurs
      */
     public String graphLayout(final String serializedGraph, final String format, 
         final List<GraphLayoutOption> options) throws ServiceFault_Exception { 
@@ -63,7 +72,11 @@ public final class JaxWsService extends AbstractService implements LayoutService
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the layout services meta data as XMI.
+     *  
+     * @return the layout services meta data as XMI.
+     * @throws ServiceFault_Exception
+     *             if an error occurs
      */
     public String getServiceData() throws ServiceFault_Exception {
         try {
@@ -80,6 +93,8 @@ public final class JaxWsService extends AbstractService implements LayoutService
      * @param previewImage
      *            the identifier of the preview image as defined in the servers meta data
      * @return the preview image as byte array
+     * @throws ServiceFault_Exception
+     *             if an error occurs
      */
     public byte[] getPreviewImage(final String previewImage) throws ServiceFault_Exception {
         try {

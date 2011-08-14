@@ -33,12 +33,12 @@ public final class Formats {
         = "de.cau.cs.kieler.format.kgraph.xmi";
 
     /** The list of supported formats. */
-    private static final List<String> supportedFormats
+    private static final List<String> SUPPORTED_FORMATS
         = new LinkedList<String>();
     
     /** Initialize the list of supported formats. */
     static {
-        supportedFormats.add(FORMAT_KGRAPH_XMI);
+        SUPPORTED_FORMATS.add(FORMAT_KGRAPH_XMI);
     }
     
     /**
@@ -52,7 +52,7 @@ public final class Formats {
      *             Whether the given format is supported or not
      */
     public static boolean isSupportedFormat(final String format) {
-        return supportedFormats.contains(format);
+        return SUPPORTED_FORMATS.contains(format);
     }
 
     /**

@@ -45,7 +45,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.impl.LayoutAlgorithmImpl#getType <em>Type</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.impl.LayoutAlgorithmImpl#getVersion <em>Version</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.impl.LayoutAlgorithmImpl#getPreviewImagePath <em>Preview Image Path</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.impl.LayoutAlgorithmImpl#getPreviewImagePort <em>Preview Image Port</em>}</li>
  * </ul>
  * </p>
  *
@@ -191,26 +190,6 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
      * @ordered
      */
     protected String previewImagePath = PREVIEW_IMAGE_PATH_EDEFAULT;
-
-    /**
-     * The default value of the '{@link #getPreviewImagePort() <em>Preview Image Port</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getPreviewImagePort()
-     * @generated
-     * @ordered
-     */
-    protected static final int PREVIEW_IMAGE_PORT_EDEFAULT = 0;
-
-    /**
-     * The cached value of the '{@link #getPreviewImagePort() <em>Preview Image Port</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getPreviewImagePort()
-     * @generated
-     * @ordered
-     */
-    protected int previewImagePort = PREVIEW_IMAGE_PORT_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -441,27 +420,6 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
      * <!-- end-user-doc -->
      * @generated
      */
-    public int getPreviewImagePort() {
-        return previewImagePort;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void setPreviewImagePort(int newPreviewImagePort) {
-        int oldPreviewImagePort = previewImagePort;
-        previewImagePort = newPreviewImagePort;
-        if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PORT, oldPreviewImagePort, previewImagePort));
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     @Override
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
@@ -501,8 +459,6 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
                 return getVersion();
             case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PATH:
                 return getPreviewImagePath();
-            case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PORT:
-                return getPreviewImagePort();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -545,9 +501,6 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
             case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PATH:
                 setPreviewImagePath((String)newValue);
                 return;
-            case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PORT:
-                setPreviewImagePort((Integer)newValue);
-                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -587,9 +540,6 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
             case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PATH:
                 setPreviewImagePath(PREVIEW_IMAGE_PATH_EDEFAULT);
                 return;
-            case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PORT:
-                setPreviewImagePort(PREVIEW_IMAGE_PORT_EDEFAULT);
-                return;
         }
         super.eUnset(featureID);
     }
@@ -620,8 +570,6 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
                 return VERSION_EDEFAULT == null ? version != null : !VERSION_EDEFAULT.equals(version);
             case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PATH:
                 return PREVIEW_IMAGE_PATH_EDEFAULT == null ? previewImagePath != null : !PREVIEW_IMAGE_PATH_EDEFAULT.equals(previewImagePath);
-            case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PORT:
-                return previewImagePort != PREVIEW_IMAGE_PORT_EDEFAULT;
         }
         return super.eIsSet(featureID);
     }
@@ -646,8 +594,6 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
         result.append(version);
         result.append(", previewImagePath: ");
         result.append(previewImagePath);
-        result.append(", previewImagePort: ");
-        result.append(previewImagePort);
         result.append(')');
         return result.toString();
     }

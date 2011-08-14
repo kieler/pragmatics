@@ -182,7 +182,7 @@ public final class ServerConfig {
     }
 
     /**
-     * Sets whether this server configuration is currently used for doing remote layout
+     * Sets whether this server configuration is currently used for doing remote layout.
      * 
      * @param theisActive
      *            whether this server configuration is currently used for doing remote layout

@@ -50,10 +50,11 @@ public class JetiService extends AbstractService {
      *            on is to be stored
      * @param format
      *            the serial format of the graph {@see Formats}
-     * @throws RemoteServiceException
+     * @throws Exception
+     *             if an error occurs
      */
     public final void graphLayout(final InputFileReference inRef, final OutputFileReference outRef, 
-        final String format) throws RemoteServiceException {
+        final String format) throws Exception {
         graphLayout(inRef, outRef, format, null);
     }
 
@@ -69,11 +70,12 @@ public class JetiService extends AbstractService {
      *            the serial format of the graph {@see Formats}
      * @param serializedOptions
      *            optional layout options in their serialized form {@see GraphLayouterOption}
-     * @throws RemoteServiceException
      *            if an exception occurs while processing the request
+     * @throws Exception
+     *             if an error occurs
      */
     public final void graphLayout(final InputFileReference inRef, final OutputFileReference outRef,
-        final String format, final String serializedOptions) throws RemoteServiceException {
+        final String format, final String serializedOptions) throws Exception {
         try {
             byte[] data = Resources.readFileAsByteArray(inRef.toString());
             String serializedGraph = new String(data, "UTF-8");
@@ -93,11 +95,11 @@ public class JetiService extends AbstractService {
      * 
      * @param outRef
      *            reference to the output file
-     * @throws RemoteServiceException
+     * @throws Exception
      *            if an exception occurs while processing the request
      */
     public final void getServiceData(final OutputFileReference outRef)
-        throws RemoteServiceException {
+        throws Exception {
         try {
             Resources.writeFile(
                 outRef.toString(),
@@ -115,11 +117,11 @@ public class JetiService extends AbstractService {
      *            the identifier of the preview image
      * @param outRef
      *            reference to the preview image file
-     * @throws RemoteServiceException
+     * @throws Exception
      *            if an exception occurs while processing the request
      */
     public final void getPreviewImage(final String previewImage, final OutputFileReference outRef)
-        throws RemoteServiceException {
+        throws Exception {
         if (previewImage == null) {
             throw new RemoteServiceException("No preview image identifier");
         }

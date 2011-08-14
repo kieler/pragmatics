@@ -59,6 +59,8 @@ public abstract class AbstractLayoutServiceClient implements ILayoutServiceClien
      * given server address answers to a ping. Since many fire walls filter a ping this is not an 
      * adequate way to check for availability. Protocol specific implementations may override if 
      * they have more specific ways to check for availability. 
+     * 
+     * @return whether the endpoint configured in the server configuration of this client is reachable
      */
     public synchronized boolean isAvailable() {
         return true;

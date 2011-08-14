@@ -14,9 +14,6 @@ final  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
 
 package de.cau.cs.kieler.kwebs.client.kiml.ui;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -46,17 +43,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import de.cau.cs.kieler.kwebs.client.ILayoutServiceClient;
 import de.cau.cs.kieler.kwebs.client.ServerConfig;
-import de.cau.cs.kieler.kwebs.client.kiml.LayoutServiceClients;
 import de.cau.cs.kieler.kwebs.client.kiml.ServerConfigs;
-import de.cau.cs.kieler.kwebs.client.kiml.ServerConfigs.ServerConfigError;
 import de.cau.cs.kieler.kwebs.client.kiml.activator.Activator;
 import de.cau.cs.kieler.kwebs.client.kiml.preferences.Preferences;
 import de.cau.cs.kieler.kwebs.client.kiml.ui.RemoteLayoutPreferencePage.ServerConfigViewerComparator.SortProperty;

@@ -178,8 +178,8 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
         = "previewImagePath";
 
     /** Name of the previewImagePort attribute. */
-    private static final String ATTRIBUTE_PREVIEWIMAGEPORT
-        = "previewImagePort";
+    //private static final String ATTRIBUTE_PREVIEWIMAGEPORT
+    //    = "previewImagePort";
     
     /**
      * 
@@ -196,8 +196,10 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
         if (previewImagePath != null) {
             element.addAttribute(ATTRIBUTE_PREVIEWIMAGEPATH, previewImagePath);
         }
+/*        
         int previewImagePort = algorithm.getPreviewImagePort();
         element.addAttribute(ATTRIBUTE_PREVIEWIMAGEPORT, new Integer(previewImagePort).toString());
+*/        
         LayoutType tmpType = algorithm.getType();
         if (tmpType != null) {
             element.addAttribute(

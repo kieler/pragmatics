@@ -27,7 +27,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm#getType <em>Type</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm#getVersion <em>Version</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm#getPreviewImagePath <em>Preview Image Path</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm#getPreviewImagePort <em>Preview Image Port</em>}</li>
  * </ul>
  * </p>
  *
@@ -249,31 +248,5 @@ public interface LayoutAlgorithm extends EObject {
      * @generated
      */
     void setPreviewImagePath(String value);
-
-    /**
-     * Returns the value of the '<em><b>Preview Image Port</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Preview Image Port</em>' attribute isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Preview Image Port</em>' attribute.
-     * @see #setPreviewImagePort(int)
-     * @see de.cau.cs.kieler.kwebs.servicedata.ServiceDataPackage#getLayoutAlgorithm_PreviewImagePort()
-     * @model
-     * @generated
-     */
-    int getPreviewImagePort();
-
-    /**
-     * Sets the value of the '{@link de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm#getPreviewImagePort <em>Preview Image Port</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Preview Image Port</em>' attribute.
-     * @see #getPreviewImagePort()
-     * @generated
-     */
-    void setPreviewImagePort(int value);
 
 } // LayoutAlgorithm

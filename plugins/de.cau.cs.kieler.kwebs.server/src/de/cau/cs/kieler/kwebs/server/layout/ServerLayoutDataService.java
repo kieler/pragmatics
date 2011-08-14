@@ -15,7 +15,6 @@
 package de.cau.cs.kieler.kwebs.server.layout;
 
 import java.io.File;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +26,6 @@ import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.service.ProgrammaticLayoutDataService;
 import de.cau.cs.kieler.kwebs.server.Application;
-import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.publishing.PreviewImageHandler;
@@ -73,8 +71,8 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
         = DEFAULT_PREVIEWIMAGESPATH;
     
     /** Default port for accessing preview images. Same as port of support server. */
-    private static final int DEFAULT_PREVIEWIMAGESPORT
-        = 8444;
+    //private static final int DEFAULT_PREVIEWIMAGESPORT
+    //    = 8444;
     
     /** The port under which the preview image handler is published. */
     //private static int previewImagesPort
