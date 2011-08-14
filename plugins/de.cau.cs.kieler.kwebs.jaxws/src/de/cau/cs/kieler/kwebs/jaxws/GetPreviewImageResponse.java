@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class GetPreviewImageResponse {
 
-    @XmlElementRef(name = "return", type = JAXBElement.class, required = false)
+    @XmlElementRef(name = "return", type = JAXBElement.class)
     protected JAXBElement<byte[]> _return;
 
     /**
