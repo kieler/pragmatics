@@ -195,12 +195,6 @@ public final class LightDiagramServices {
                     Bundle contributingBundle =
                             Platform.getBundle(element.getContributor().getName());
 
-                    try {
-                        Platform.getBundle("de.menges.alister_2_0.topology.generator").start();
-                    } catch (BundleException e1) {
-                        e1.printStackTrace();
-                    }
-
                     extFile = extFile.replaceAll("::", "/") + ".ext";
 
                     URL extFileURL = null;
