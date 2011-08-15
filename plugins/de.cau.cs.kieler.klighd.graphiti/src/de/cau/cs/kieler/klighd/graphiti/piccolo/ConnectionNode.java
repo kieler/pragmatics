@@ -187,18 +187,18 @@ public class ConnectionNode extends PEmptyNode implements IGraphEdge, PropertyCh
      */
     public synchronized void propertyChange(final PropertyChangeEvent evt) {
         // FIXME under rare circumstances this can throw NP exceptions
-        if (polyline != null) {
-            // update the anchor points
-            if (evt.getSource() == sourceAnchor) {
-                updateSourceAnchor();
-            } else if (evt.getSource() == targetAnchor) {
-                updateTargetAnchor();
-            } else {
-                return;
-            }
-            // update the polyline to reflect the changes to the anchor points
-            updatePolyline();
-        }
+//        if (polyline != null) {
+//            // update the anchor points
+//            if (evt.getSource() == sourceAnchor) {
+//                updateSourceAnchor();
+//            } else if (evt.getSource() == targetAnchor) {
+//                updateTargetAnchor();
+//            } else {
+//                return;
+//            }
+//            // update the polyline to reflect the changes to the anchor points
+//            updatePolyline();
+//        }
     }
 
     /**
@@ -287,7 +287,19 @@ public class ConnectionNode extends PEmptyNode implements IGraphEdge, PropertyCh
      * {@inheritDoc}
      */
     public synchronized void setBends(final List<Point2D> bends) {
-        // ignore first and last bend
+        // expand bend point list if necessary
+        if (xps.length != bends.size()) {
+            int size = bends.size();
+            float[] xpsNew = new float[size];
+            float[] ypsNew = new float[size];
+            xpsNew[0] = xps[0];
+            ypsNew[0] = yps[0];
+            xpsNew[size - 1] = xps[xps.length - 1];
+            ypsNew[size - 1] = yps[yps.length - 1];
+            xps = xpsNew;
+            yps = ypsNew;
+        }
+        // ignore first and last bend point
         for (int i = 1; i < bends.size() - 1; ++i) {
             Point2D bend = bends.get(i);
             xps[i] = (float) bend.getX();

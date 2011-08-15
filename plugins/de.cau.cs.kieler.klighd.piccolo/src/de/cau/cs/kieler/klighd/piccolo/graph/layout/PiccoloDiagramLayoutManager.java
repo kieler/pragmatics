@@ -33,6 +33,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
+import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.piccolo.PiccoloViewer;
@@ -58,7 +59,7 @@ public class PiccoloDiagramLayoutManager extends DiagramLayoutManager<IGraphObje
     /** the list of edges found in the graph. */
     public static final IProperty<List<IGraphEdge>> EDGES = new Property<List<IGraphEdge>>(
             "piccolo.edges");
-
+    
     /**
      * {@inheritDoc}
      */
@@ -126,6 +127,7 @@ public class PiccoloDiagramLayoutManager extends DiagramLayoutManager<IGraphObje
 
         // create the mapping
         LayoutMapping<IGraphObject> mapping = buildLayoutGraph(layoutRoot);
+        mapping.setProperty(LayoutOptionManager.USE_ECLIPSE_LAYOUT_CONFIG, false);
 
         // create a layout configuration
         // mapping.getLayoutConfigs().add(getLayoutConfig());
@@ -272,6 +274,8 @@ public class PiccoloDiagramLayoutManager extends DiagramLayoutManager<IGraphObje
                 layoutBendPoint.setPos((float) bendPoint.getX(), (float) bendPoint.getY());
                 edgeLayout.getBendPoints().add(layoutBendPoint);
             }
+            
+            mapping.getGraphMap().put(layoutEdge, edge);
 
             // TODO edge labels
         }
@@ -291,6 +295,7 @@ public class PiccoloDiagramLayoutManager extends DiagramLayoutManager<IGraphObje
                 rootNode.addActivity(applyLayoutActivity);
             }
         } else {
+            // instantly apply the layout
             applyLayoutActivity.apply();
         }
         // TODO zoom-to-fit

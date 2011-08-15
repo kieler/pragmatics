@@ -15,6 +15,8 @@ package de.cau.cs.kieler.klighd.piccolo.graph.layout;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -97,6 +99,24 @@ public class ApplyLayoutActivity extends PInterpolatingActivity {
                 }
             }
         }
+        // edges can depend on the position of nodes and ports so handle positionals first
+        Collections.sort(layoutTransitions, new Comparator<ILayoutTransition>() {
+            public int compare(final ILayoutTransition lt1, final ILayoutTransition lt2) {
+                if (lt1 instanceof PositionalLayoutTransition) {
+                    if (lt2 instanceof EdgeLayoutTransition) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                } else {
+                    if (lt2 instanceof EdgeLayoutTransition) {
+                        return 0;
+                    } else {
+                        return 1;
+                    }
+                }
+            }
+        });
         // TODO add transitions for labels (or is the transitional code sufficient)?
     }
 
@@ -222,14 +242,11 @@ public class ApplyLayoutActivity extends PInterpolatingActivity {
             KPoint layoutTargetBend = edgeLayout.getTargetPoint();
             List<KPoint> layoutBends = edgeLayout.getBendPoints();
             targetBends = new ArrayList<Point2D>(layoutBends.size() + 2);
-            targetBends
-                    .set(0, new Point2D.Double(layoutSourceBend.getX(), layoutSourceBend.getY()));
-            targetBends.set(layoutBends.size() + 1, new Point2D.Double(layoutTargetBend.getX(),
-                    layoutTargetBend.getY()));
-            for (int i = 0; i < layoutBends.size(); ++i) {
-                KPoint point = layoutBends.get(i);
-                targetBends.set(i + 1, new Point2D.Double(point.getX(), point.getY()));
+            targetBends.add(new Point2D.Double(layoutSourceBend.getX(), layoutSourceBend.getY()));
+            for (KPoint point : layoutBends) {
+                targetBends.add(new Point2D.Double(point.getX(), point.getY()));
             }
+            targetBends.add(new Point2D.Double(layoutTargetBend.getX(), layoutTargetBend.getY()));
             // for a smooth transition of bends the maximum number of bends in the source and target
             // layout are required
             int sourceNumber = sourceBendsTemp.size();
@@ -256,7 +273,7 @@ public class ApplyLayoutActivity extends PInterpolatingActivity {
             // prepare the bend point buffer
             tempBends = new ArrayList<Point2D>(maxNumber);
             for (int i = 0; i < maxNumber; ++i) {
-                tempBends.set(i, new Point2D.Double());
+                tempBends.add(new Point2D.Double());
             }
         }
 
@@ -422,7 +439,7 @@ public class ApplyLayoutActivity extends PInterpolatingActivity {
                 edge.setBends(tempBends);
             }
         }
-        
+
     }
 
 }

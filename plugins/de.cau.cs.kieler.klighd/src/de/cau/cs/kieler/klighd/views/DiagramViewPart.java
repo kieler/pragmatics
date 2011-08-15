@@ -183,7 +183,7 @@ public class DiagramViewPart extends ViewPart {
                     DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
                     layoutEngine.layout(view, null, true, false, false, false, null);
                 } catch (UnsupportedOperationException e) {
-                    // whatever
+                    // do nothing (empty view)
                 }
             }
         };
