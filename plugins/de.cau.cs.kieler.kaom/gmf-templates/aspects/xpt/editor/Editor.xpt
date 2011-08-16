@@ -82,7 +82,7 @@ public «className»() {
  * Additional constructor for creating the editor without a palette
  * @param hasFlyoutPalette
  */
-public KaomDiagramEditor(boolean hasFlyoutPalette) {
+public  «className»(boolean hasFlyoutPalette) {
 	super(hasFlyoutPalette);
 }
 «ENDDEFINE»
