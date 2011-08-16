@@ -66,6 +66,14 @@ public class KaomDiagramEditor extends DiagramDocumentEditor implements IGotoMar
     }
 
     /**
+     * Additional constructor for creating the editor without a palette
+     * @param hasFlyoutPalette
+     */
+    public KaomDiagramEditor(boolean hasFlyoutPalette) {
+        super(hasFlyoutPalette);
+    }
+    
+    /**
      * @generated
      */
     protected String getContextID() {
