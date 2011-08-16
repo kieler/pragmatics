@@ -23,6 +23,8 @@ import de.cau.cs.kieler.kwebs.jaxws.LayoutServicePort;
 import de.cau.cs.kieler.kwebs.jaxws.ServiceFault;
 import de.cau.cs.kieler.kwebs.jaxws.ServiceFault_Exception;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
+import de.cau.cs.kieler.kwebs.server.logging.Logger;
+import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 
 /**
  * Main service class to be published as JAX-WS web service.
@@ -64,9 +66,15 @@ public final class JaxWsService extends AbstractService implements LayoutService
      */
     public String graphLayout(final String serializedGraph, final String format, 
         final List<GraphLayoutOption> options) throws ServiceFault_Exception { 
+        Logger.log(Severity.DEBUG, "Handling layout request");
         try {
-            return layout(serializedGraph, format, options);
-        } catch (Exception e) {  
+            String result = layout(serializedGraph, format, options);
+            Logger.log(Severity.DEBUG, "Handling layout request succeeded");
+            return result;
+        } catch (Exception e) {
+            Logger.log(Severity.WARNING, 
+                "Handling layout request failed: " + e.getMessage(), e
+            );
             throw createException(0, e);
         }
     }
@@ -97,9 +105,15 @@ public final class JaxWsService extends AbstractService implements LayoutService
      *             if an error occurs
      */
     public byte[] getPreviewImage(final String previewImage) throws ServiceFault_Exception {
+        Logger.log(Severity.DEBUG, "Handling preview image request");
         try {
-            return ServerLayoutDataService.getPreviewImage(previewImage);
+            byte[] result = ServerLayoutDataService.getPreviewImage(previewImage);
+            Logger.log(Severity.DEBUG, "Handling preview image request succeeded");
+            return result;
         } catch (Exception e) {
+            Logger.log(Severity.WARNING, 
+                "Handling preview image request failed: " + e.getMessage(), e
+            );
             throw createException(0, e);
         }
     }
