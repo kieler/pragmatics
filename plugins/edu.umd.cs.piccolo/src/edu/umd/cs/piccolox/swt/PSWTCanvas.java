@@ -41,6 +41,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Cursor;
@@ -463,6 +464,7 @@ public class PSWTCanvas extends Composite implements PComponent {
         MouseInputSource mouseInputSource = new MouseInputSource();
         addMouseListener(mouseInputSource);
         addMouseMoveListener(mouseInputSource);
+        addMouseWheelListener(mouseInputSource);
 
         addKeyListener(new KeyboardInputSource());
     }
@@ -639,7 +641,7 @@ public class PSWTCanvas extends Composite implements PComponent {
         }
     }
 
-    private final class MouseInputSource implements MouseListener, MouseMoveListener {
+    private final class MouseInputSource implements MouseListener, MouseMoveListener, MouseWheelListener {
         public void mouseMove(final MouseEvent me) {
             if (isButton1Pressed || isButton2Pressed || isButton3Pressed) {
                 final java.awt.event.MouseEvent inputEvent = new PSWTMouseEvent(me,
@@ -733,6 +735,13 @@ public class PSWTCanvas extends Composite implements PComponent {
             sendInputEventToInputManager(inputEvent, java.awt.event.MouseEvent.MOUSE_PRESSED);
             inputEvent = new PSWTMouseEvent(me, java.awt.event.MouseEvent.MOUSE_RELEASED, 2);
             sendInputEventToInputManager(inputEvent, java.awt.event.MouseEvent.MOUSE_RELEASED);
+        }
+
+        public void mouseScrolled(final MouseEvent e) {
+            final java.awt.event.MouseWheelEvent inputEvent = new PSWTMouseWheelEvent(e,
+                    java.awt.event.MouseEvent.MOUSE_WHEEL,
+                    java.awt.event.MouseWheelEvent.WHEEL_UNIT_SCROLL);
+            sendInputEventToInputManager(inputEvent, java.awt.event.MouseWheelEvent.WHEEL_UNIT_SCROLL);
         }
     }
 }
