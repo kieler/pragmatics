@@ -515,5 +515,14 @@ public class PSWTAdvancedPath extends PSWTPath {
         super.updateBoundsFromPath();
         updatingBoundsFromPath = false;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setStrokeColor(final Paint strokeColor) {
+        strokePaint = strokeColor;
+        super.setStrokeColor(strokeColor);
+    }
 
 }

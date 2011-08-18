@@ -68,7 +68,7 @@ public class PSWTSimpleSelectionHandle extends PNode {
 
     private void createHandle() {
         if (getParent() != null) {
-            PBounds bounds = getParent().getFullBoundsReference();
+            PBounds bounds = getParent().getBoundsReference();
             double leftX = -MARGIN;
             double rightX = bounds.getWidth() + MARGIN;
             double topY = -MARGIN;

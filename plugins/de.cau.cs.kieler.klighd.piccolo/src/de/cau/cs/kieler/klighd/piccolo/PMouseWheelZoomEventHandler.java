@@ -20,7 +20,7 @@ import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 
 /**
- * This handler provides basic zooming funcionality for the canvas.
+ * This handler provides basic zooming functionality for the canvas using the mouse wheel.
  * 
  * @author mri
  */
