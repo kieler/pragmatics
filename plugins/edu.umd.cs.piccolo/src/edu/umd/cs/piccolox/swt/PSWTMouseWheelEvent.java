@@ -26,7 +26,7 @@ public class PSWTMouseWheelEvent extends MouseWheelEvent {
 
     public PSWTMouseWheelEvent(final org.eclipse.swt.events.MouseEvent me, final int type,
             final int scrollType) {
-        super(fakeSrc, type, me.time, 0, me.x, me.y, 1, false, scrollType, me.count, 1);
+        super(fakeSrc, type, me.time, 0, me.x, me.y, 1, false, scrollType, me.count, me.count < 0 ? -1 : 1);
         swtEvent = me;
     }
     
