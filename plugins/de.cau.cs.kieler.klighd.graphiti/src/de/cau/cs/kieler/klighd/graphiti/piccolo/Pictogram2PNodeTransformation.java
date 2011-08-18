@@ -428,7 +428,6 @@ public class Pictogram2PNodeTransformation implements
     }
 
     private PSWTAdvancedPath transformPolygon(final Polygon p, final Color fc, final Color bc) {
-        System.out.println("polygon " + p);
         if (p.getPoints().size() > 0) {
             Point2D[] points = new Point2D[p.getPoints().size()];
             int i = 0;
@@ -437,18 +436,15 @@ public class Pictogram2PNodeTransformation implements
             }
             PSWTAdvancedPath polygon = PSWTAdvancedPath.createPolygon(points);
             Integer lineWidth = p.getLineWidth();
-            System.out.println("lineWidth " + lineWidth);
             if (lineWidth != null) {
                 polygon.setLineWidth(lineWidth);
             }
             if (p.getLineVisible()) {
-                System.out.println("stroke color " + transformColor(fc));
                 polygon.setStrokeColor(transformColor(fc));
             } else {
                 polygon.setStrokeColor(null);
             }
             if (p.getFilled()) {
-                System.out.println("paint        " + transformColor(bc));
                 polygon.setPaint(transformColor(bc));
             } else {
                 polygon.setPaint(null);
