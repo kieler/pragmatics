@@ -142,9 +142,6 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        System.out.println("");
-
         return false;
     }
 
@@ -183,7 +180,7 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
         try {
             result = (EObject) facade.call(DEFAULT_TRANSFORMATION_EXTENSION_NAME, new Object[0]);
         } catch (Exception e) {
-        	/* nothing */        	
+            /* nothing */
         }        
         
         try {

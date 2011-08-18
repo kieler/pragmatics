@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleException;
 
 import de.cau.cs.kieler.klighd.transformations.XtendBasedTransformation;
 
@@ -45,7 +44,8 @@ public final class LightDiagramServices {
     /** identifier of the extension point for viewer providers. */
     public static final String EXTP_ID_VIEWER_PROVIDERS = "de.cau.cs.kieler.klighd.viewerProviders";
     /** identifier of the extension point for model transformations. */
-    public static final String EXTP_ID_MODEL_TRANSFORMATIONS = "de.cau.cs.kieler.klighd.modelTransformations";
+    public static final String EXTP_ID_MODEL_TRANSFORMATIONS =
+            "de.cau.cs.kieler.klighd.modelTransformations";
     /** name of the 'viewer' element. */
     public static final String ELEMENT_VIEWER = "viewer";
 
@@ -72,9 +72,11 @@ public final class LightDiagramServices {
     /** the singleton instance. */
     private static LightDiagramServices instance;
     /** a mapping between viewer provider id's and the instances. */
-    private Map<String, IViewerProvider> idViewerProviderMapping = new LinkedHashMap<String, IViewerProvider>();
+    private Map<String, IViewerProvider> idViewerProviderMapping =
+            new LinkedHashMap<String, IViewerProvider>();
     /** a mapping between transformation id's and the instances. */
-    private Map<String, IModelTransformation<Object, ?>> idModelTransformationMapping = new LinkedHashMap<String, IModelTransformation<Object, ?>>();
+    private Map<String, IModelTransformation<Object, ?>> idModelTransformationMapping =
+            new LinkedHashMap<String, IModelTransformation<Object, ?>>();
     /**
      * a collection of classes of models that are definitely not supported by the available
      * viewers/transformations, maintained in order to improve the performance.
@@ -168,7 +170,8 @@ public final class LightDiagramServices {
                 if (ELEMENT_TRANSFORMATION.equals(element.getName())) {
                     // initialize model transformation from the extension point
                     @SuppressWarnings("unchecked")
-                    IModelTransformation<Object, ?> modelTransformation = (IModelTransformation<Object, ?>) element
+                    IModelTransformation<Object, ?> modelTransformation = 
+                            (IModelTransformation<Object, ?>) element
                             .createExecutableExtension(ATTRIBUTE_CLASS);
                     if (modelTransformation != null) {
                         String id = element.getAttribute(ATTRIBUTE_ID);
@@ -187,22 +190,19 @@ public final class LightDiagramServices {
                     String extension = element.getAttribute(ATTRIBUTE_EXTENSION);
                     Bundle contributingBundle = Platform.getBundle(element.getContributor()
                             .getName());
+                    String coContributingBundlesName = element
+                            .getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE);
 
-                    extFile = extFile.replaceAll("::", "/") + ".ext";
+                    // "normalize" the Xtend file path
+                    extFile = extFile.replaceAll("::", "/");
+                    if (!extFile.endsWith(".ext")) {
+                        extFile = extFile + ".ext";
+                    }
 
                     URL extFileURL = null;
                     if (contributingBundle != null) {
-                        extFileURL = Thread.currentThread().getContextClassLoader()
-                                .getResource(extFile);
-
-                        if (extFileURL == null) {
-                            extFileURL = Thread.currentThread().getContextClassLoader()
-                                    .getResource("transformations/" + extFile);
-                        }
-
-                        if (extFileURL == null) {
-                            extFileURL = contributingBundle.getEntry(extFile);
-                        }
+                        // try to reveal the Xtend file in the bundle the extension is declared in
+                        extFileURL = contributingBundle.getEntry(extFile);
 
                         if (extFileURL == null) {
                             extFileURL = contributingBundle.getEntry("src/" + extFile);
@@ -212,29 +212,27 @@ public final class LightDiagramServices {
                             extFileURL = contributingBundle.getEntry("transformations/" + extFile);
                         }
 
-                        if (extFileURL == null
-                                && element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE) != null
-                                && !element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE).equals(
-                                        "")) {
-                            extFileURL = Platform.getBundle(
-                                    element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE))
-                                    .getEntry(extFile);
+                        // in case a the Xtend file is located in a bundle different from
+                        //  'contributingBundle' try to reveal that bundle and the Xtend file by
+                        //   means of the 'contributingBundle' entry in the extension (refered to as
+                        //   coContributingBundlesName)
+                        // this, however, should not be used extensively but is helpful during the
+                        //   prototyping state
+                        if (extFileURL == null && coContributingBundlesName != null
+                                && !coContributingBundlesName.equals("")) {
+                            Bundle coContributingBundle = Platform
+                                    .getBundle(coContributingBundlesName);
+                            extFileURL = coContributingBundle.getEntry(extFile);
 
                             if (extFileURL == null) {
-                                extFileURL = Platform.getBundle(
-                                        element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE))
-                                        .getEntry("src/" + extFile);
+                                extFileURL = coContributingBundle.getEntry("src/" + extFile);
                             }
 
                             if (extFileURL == null) {
-                                extFileURL = Platform.getBundle(
-                                        element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE))
-                                        .getEntry("transformations/" + extFile);
+                                extFileURL = coContributingBundle.getEntry("transformations/"
+                                        + extFile);
                             }
-
                         }
-
-                        System.out.println(extFileURL);
                     }
 
                     if (extFileURL == null) {
