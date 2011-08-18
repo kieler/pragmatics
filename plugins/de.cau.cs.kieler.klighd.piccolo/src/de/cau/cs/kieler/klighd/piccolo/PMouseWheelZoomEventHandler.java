@@ -83,7 +83,6 @@ public class PMouseWheelZoomEventHandler extends PBasicInputEventHandler {
      */
     @Override
     public void mouseWheelRotated(final PInputEvent event) {
-        System.out.println("wheeeeel " + event.getWheelRotation());
         final PCamera camera = event.getCamera();
         double scaleDelta = 1.0 + ZOOM_SENSITIVITY * event.getWheelRotation();
 
