@@ -620,6 +620,7 @@ public class SWTGraphics2D extends Graphics2D {
      */
     public void drawPolyline(final double[] pts) {
         final int[] intPts = SWTShapeManager.transform(pts, transform);
+        gc.setLineWidth(getTransformedLineWidth());
         gc.drawPolyline(intPts);
     }
 
@@ -632,7 +633,7 @@ public class SWTGraphics2D extends Graphics2D {
             ptArray[2 * i] = TEMP_POINT.x;
             ptArray[2 * i + 1] = TEMP_POINT.y;
         }
-
+        gc.setLineWidth(getTransformedLineWidth());
         gc.drawPolygon(ptArray);
     }
 
@@ -1152,7 +1153,7 @@ public class SWTGraphics2D extends Graphics2D {
      *            path to draw
      */
     public void drawPath(final Path p) {
-        gc.setLineWidth((int) (lineWidth + 0.5));
+        gc.setLineWidth(getTransformedLineWidth());
         gc.setTransform(swtTransform);
         gc.drawPath(p);
         gc.setTransform(null);
