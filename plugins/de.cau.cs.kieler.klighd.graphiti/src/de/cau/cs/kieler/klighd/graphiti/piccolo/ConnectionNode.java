@@ -290,17 +290,10 @@ public class ConnectionNode extends PEmptyNode implements IGraphEdge, PropertyCh
         // expand bend point list if necessary
         if (xps.length != bends.size()) {
             int size = bends.size();
-            float[] xpsNew = new float[size];
-            float[] ypsNew = new float[size];
-            xpsNew[0] = xps[0];
-            ypsNew[0] = yps[0];
-            xpsNew[size - 1] = xps[xps.length - 1];
-            ypsNew[size - 1] = yps[yps.length - 1];
-            xps = xpsNew;
-            yps = ypsNew;
+            xps = new float[size];
+            yps = new float[size];
         }
-        // ignore first and last bend point
-        for (int i = 1; i < bends.size() - 1; ++i) {
+        for (int i = 0; i < bends.size(); ++i) {
             Point2D bend = bends.get(i);
             xps[i] = (float) bend.getX();
             yps[i] = (float) bend.getY();
