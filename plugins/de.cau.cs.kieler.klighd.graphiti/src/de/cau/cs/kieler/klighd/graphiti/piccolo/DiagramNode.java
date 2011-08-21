@@ -16,6 +16,10 @@ package de.cau.cs.kieler.klighd.graphiti.piccolo;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphParent;
+import edu.umd.cs.piccolo.PCamera;
+import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.PRoot;
+import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolo.util.PBounds;
 
 /**
@@ -29,6 +33,8 @@ public class DiagramNode extends AbstractParentNode implements IGraphParent {
 
     /** the Pictogram diagram represented by this node. */
     private Diagram diagram;
+    /** the Piccolo camera for this diagram node. */
+    private PCamera camera = null;
 
     /**
      * Constructs a diagram node.
@@ -53,15 +59,42 @@ public class DiagramNode extends AbstractParentNode implements IGraphParent {
      * {@inheritDoc}
      */
     public void setRelativeBounds(final PBounds bounds) {
-        //TODO set bounding box here
+        if (camera == null) {
+            findCamera();
+        }
+        // transform the viewport
+        if (camera != null) {
+            PAffineTransform transform = camera.getViewTransformReference();
+            camera.translateView(bounds.getX() - transform.getTranslateX(), bounds.getY()
+                    - transform.getTranslateY());
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public PBounds getRelativeBounds() {
-        //TODO return the real BB here
-        return getFullBounds();
+        if (camera == null) {
+            findCamera();
+        }
+        if (camera != null) {
+            // get the transform of the viewport
+            PAffineTransform transform = camera.getViewTransformReference();
+            // TODO evaluate whether width and height are important here
+            PBounds bounds = new PBounds(transform.getTranslateX(), transform.getTranslateY(), 0.0, 0.0);
+            return bounds;
+        }
+        return new PBounds(0.0, 0.0, 0.0, 0.0);
     }
 
+    private void findCamera() {
+        // the first child of the root should be the camera
+        PRoot root = getRoot();
+        if (root != null && root.getChildrenReference().size() > 0) {
+            PNode cameraCandidate = root.getChild(0);
+            if (cameraCandidate instanceof PCamera) {
+                camera = (PCamera) cameraCandidate;
+            }
+        }
+    }
 }
