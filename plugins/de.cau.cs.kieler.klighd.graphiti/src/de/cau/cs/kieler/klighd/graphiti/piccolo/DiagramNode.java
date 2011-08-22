@@ -80,8 +80,9 @@ public class DiagramNode extends AbstractParentNode implements IGraphParent {
         if (camera != null) {
             // get the transform of the viewport
             PAffineTransform transform = camera.getViewTransformReference();
-            // TODO evaluate whether width and height are important here
-            PBounds bounds = new PBounds(transform.getTranslateX(), transform.getTranslateY(), 0.0, 0.0);
+            PBounds diagramBounds = getFullBounds();
+            PBounds bounds = new PBounds(transform.getTranslateX(), transform.getTranslateY(),
+                    diagramBounds.width, diagramBounds.height);
             return bounds;
         }
         return new PBounds(0.0, 0.0, 0.0, 0.0);
