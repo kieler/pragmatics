@@ -40,7 +40,7 @@ public class PSWTAlignedText extends PSWTText {
 
     /** the text alignment. */
     private Alignment alignment = Alignment.LEFT;
-
+    
     /**
      * {@inheritDoc}
      */
@@ -66,6 +66,16 @@ public class PSWTAlignedText extends PSWTText {
         sg2.translate(offset, 0);
         super.paintAsText(ppc);
         sg2.translate(-offset, 0);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void paintAsGreek(final PPaintContext ppc) {
+        if (lines.size() > 0 && ((String) lines.get(0)).length() > 0) {
+            super.paintAsGreek(ppc);
+        }
     }
 
     /**
