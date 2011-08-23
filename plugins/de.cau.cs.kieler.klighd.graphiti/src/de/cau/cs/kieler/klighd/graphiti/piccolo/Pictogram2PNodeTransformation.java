@@ -368,10 +368,7 @@ public class Pictogram2PNodeTransformation implements
 
     private PSWTAdvancedPath transformRectangle(final Rectangle r, final Color fc, final Color bc) {
         PSWTAdvancedPath rect = PSWTAdvancedPath.createRectangle(0, 0, r.getWidth(), r.getHeight());
-        Integer lineWidth = r.getLineWidth();
-        if (lineWidth != null) {
-            rect.setLineWidth(lineWidth);
-        }
+        rect.setLineWidth(getLineWidth(r, 1));
         if (r.getLineVisible()) {
             rect.setStrokeColor(transformColor(fc));
         } else {
@@ -390,10 +387,7 @@ public class Pictogram2PNodeTransformation implements
         PSWTAdvancedPath rrect =
                 PSWTAdvancedPath.createRoundRectangle(0, 0, rr.getWidth(), rr.getHeight(),
                         rr.getCornerWidth(), rr.getCornerHeight());
-        Integer lineWidth = rr.getLineWidth();
-        if (lineWidth != null) {
-            rrect.setLineWidth(lineWidth);
-        }
+        rrect.setLineWidth(getLineWidth(rr, 1));
         if (rr.getLineVisible()) {
             rrect.setStrokeColor(transformColor(fc));
         } else {
@@ -410,10 +404,7 @@ public class Pictogram2PNodeTransformation implements
     private PSWTAdvancedPath transformEllipse(final Ellipse e, final Color fc, final Color bc) {
         PSWTAdvancedPath ellipse =
                 PSWTAdvancedPath.createEllipse(0, 0, e.getWidth(), e.getHeight());
-        Integer lineWidth = e.getLineWidth();
-        if (lineWidth != null) {
-            ellipse.setLineWidth(lineWidth);
-        }
+        ellipse.setLineWidth(getLineWidth(e, 1));
         if (e.getLineVisible()) {
             ellipse.setStrokeColor(transformColor(fc));
         } else {
@@ -435,10 +426,7 @@ public class Pictogram2PNodeTransformation implements
                 points[i++] = new java.awt.Point(point.getX(), point.getY());
             }
             PSWTAdvancedPath polygon = PSWTAdvancedPath.createPolygon(points);
-            Integer lineWidth = p.getLineWidth();
-            if (lineWidth != null) {
-                polygon.setLineWidth(lineWidth);
-            }
+            polygon.setLineWidth(getLineWidth(p, 1));
             if (p.getLineVisible()) {
                 polygon.setStrokeColor(transformColor(fc));
             } else {
@@ -466,10 +454,7 @@ public class Pictogram2PNodeTransformation implements
         } else {
             line = new PSWTAdvancedPath();
         }
-        Integer lineWidth = p.getLineWidth();
-        if (lineWidth != null) {
-            line.setLineWidth(lineWidth);
-        }
+        line.setLineWidth(getLineWidth(p, 1));
         if (p.getLineVisible()) {
             line.setStrokeColor(transformColor(fc));
         } else {
@@ -574,6 +559,27 @@ public class Pictogram2PNodeTransformation implements
         if (style.getStyleContainer() != null && style.getStyleContainer() instanceof Style) {
             Style parentStyle = (Style) style.getStyleContainer();
             return getBackgroundColor(parentStyle, def);
+        }
+        return def;
+    }
+    
+    private int getLineWidth(final GraphicsAlgorithm ga, final int def) {
+        if (ga.getLineWidth() != null) {
+            return ga.getLineWidth();
+        }
+        if (ga.getStyle() != null) {
+            return getLineWidth(ga.getStyle(), def);
+        }
+        return def;
+    }
+    
+    private int getLineWidth(final Style style, final int def) {
+        if (style.getLineWidth() != null) {
+            return style.getLineWidth();
+        }
+        if (style.getStyleContainer() != null && style.getStyleContainer() instanceof Style) {
+            Style parentStyle = (Style) style.getStyleContainer();
+            return getLineWidth(parentStyle, def);
         }
         return def;
     }
