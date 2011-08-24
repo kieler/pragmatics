@@ -13,10 +13,15 @@
  */
 package de.cau.cs.kieler.kiml.ogdf;
 
+import java.util.List;
+
 import net.ogdf.bin.OgdfServer;
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -43,14 +48,13 @@ public class PlanarizationLayouter extends OgdfLayouter {
     private static final IProperty<Direction> DIRECTION = new Property<Direction>(
             LayoutOptions.DIRECTION, Direction.UP);
     /** the 'preprocessCliques' option identifier. */
-    private static final String PREPROCESS_CLIQUES_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.preprocessCliques";
+    private static final String PREPROCESS_CLIQUES_ID
+        = "de.cau.cs.kieler.kiml.ogdf.option.preprocessCliques";
     /** 'preprocessCliques' property. */
     private static final IProperty<Boolean> PREPROCESS_CLIQUES = new Property<Boolean>(
             PREPROCESS_CLIQUES_ID, false);
     /** the 'minCliqueSize' option identifier. */
-    private static final String MIN_CLIQUE_SIZE_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.minCliqueSize";
+    private static final String MIN_CLIQUE_SIZE_ID = "de.cau.cs.kieler.kiml.ogdf.option.minCliqueSize";
     /** 'minCliqueSize' property. */
     private static final IProperty<Integer> MIN_CLIQUE_SIZE = new Property<Integer>(
             MIN_CLIQUE_SIZE_ID, 10);
@@ -123,6 +127,54 @@ public class PlanarizationLayouter extends OgdfLayouter {
      */
     protected void postProcess(final KNode layoutNode) {
         loopRouter.exclude();
+        removeDuplicateBends(layoutNode);
+    }
+
+    private static final float TOLERANCE = 5.0f;
+    private static final float TOLERANCE2 = TOLERANCE * TOLERANCE;
+
+    /**
+     * Drops bend points which are adjacent to the start or end point when their position is
+     * identical or close to identical.
+     * 
+     * @param layoutNode
+     *            the parent node
+     */
+    private void removeDuplicateBends(final KNode layoutNode) {
+        for (KNode node : layoutNode.getChildren()) {
+            for (KEdge edge : node.getOutgoingEdges()) {
+                KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                KPoint source = edgeLayout.getSourcePoint();
+                KPoint target = edgeLayout.getTargetPoint();
+                List<KPoint> bends = edgeLayout.getBendPoints();
+                // merge with source point
+                while (!bends.isEmpty()) {
+                    KPoint bend = bends.get(0);
+                    if (distance2(source, bend) < TOLERANCE2) {
+                        // drop the bend point
+                        bends.remove(0);
+                    } else {
+                        break;
+                    }
+                }
+                // merge with target point
+                while (!bends.isEmpty()) {
+                    KPoint bend = bends.get(bends.size() - 1);
+                    if (distance2(target, bend) < TOLERANCE2) {
+                        // drop the bend point
+                        bends.remove(bends.size() - 1);
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private float distance2(final KPoint p1, final KPoint p2) {
+        float dX = p2.getX() - p1.getX();
+        float dY = p2.getY() - p1.getY();
+        return dX * dX + dY * dY;
     }
 
 }
