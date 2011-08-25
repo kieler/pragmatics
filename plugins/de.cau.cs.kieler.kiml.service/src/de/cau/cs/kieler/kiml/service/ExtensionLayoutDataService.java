@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
@@ -106,7 +107,18 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
      * @return the extensions responsible for providing layout meta data
      */
     protected IConfigurationElement[] getProviderExtensions() {
-        return Platform.getExtensionRegistry().getConfigurationElementsFor(EXTP_ID_LAYOUT_PROVIDERS);
+        IConfigurationElement[] result = null;
+        IExtensionRegistry registry = null;
+        try {
+            registry = Platform.getExtensionRegistry();
+        } catch (Exception e) {
+            // Ignore since an exception here means that this instance
+            // is not being run in an eclipse environment
+        }
+        if (registry != null) {
+            result = registry.getConfigurationElementsFor(EXTP_ID_LAYOUT_PROVIDERS);
+        }
+        return result;
     }
     
     /**
@@ -115,6 +127,9 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     protected void loadLayoutProviderExtensions() {    
         List<String[]> knownOptions = new LinkedList<String[]>();
         IConfigurationElement[] extensions = getProviderExtensions();
+        if (extensions == null || extensions.length == 0) {
+            return;
+        }
         Registry registry = getRegistry();
         for (IConfigurationElement element : extensions) {
             if (ELEMENT_LAYOUT_ALGORITHM.equals(element.getName())) {

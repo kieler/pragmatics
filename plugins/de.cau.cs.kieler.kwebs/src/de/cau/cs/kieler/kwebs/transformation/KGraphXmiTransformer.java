@@ -34,6 +34,8 @@ import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
@@ -168,6 +170,11 @@ public class KGraphXmiTransformer implements IGraphTransformer {
             EObject eObject  = null;
             EList<PersistentEntry> persistentEntries = null;
             LayoutDataService services = LayoutDataService.getInstance();
+/*            
+            if (services == null) {
+                throw new IllegalStateException("No service data instance registered");
+            }
+*/            
             KGraphData kgraphData = null;
             while (iterator.hasNext()) {
                 eObject = iterator.next();
@@ -177,14 +184,19 @@ public class KGraphXmiTransformer implements IGraphTransformer {
                     for (PersistentEntry persistentEntry : persistentEntries) {
                         String key = persistentEntry.getKey();
                         String value = persistentEntry.getValue();
-                        if (key != null && value != null) {                            
-                            LayoutOptionData<?> layoutOptionData = services.getOptionData(key);
-                            if (layoutOptionData != null) {
-                                Object layoutOptionValue = layoutOptionData.
-                                    parseValue(persistentEntry.getValue());
-                                if (layoutOptionValue != null) {
-                                    kgraphData.setProperty(layoutOptionData, layoutOptionValue);
+                        if (key != null && value != null) {     
+                            if (services != null) { // For use in KIELER
+                                LayoutOptionData<?> layoutOptionData = services.getOptionData(key);
+                                if (layoutOptionData != null) {
+                                    Object layoutOptionValue = layoutOptionData.
+                                        parseValue(persistentEntry.getValue());
+                                    if (layoutOptionValue != null) {
+                                        kgraphData.setProperty(layoutOptionData, layoutOptionValue);
+                                    }
                                 }
+                            } else { // For use outside of KIELER
+                                IProperty<String> property = new Property<String>(key);
+                                kgraphData.setProperty(property, value);
                             }
                         }
                     }

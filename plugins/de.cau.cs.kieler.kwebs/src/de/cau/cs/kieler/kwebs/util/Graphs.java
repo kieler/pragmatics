@@ -204,19 +204,37 @@ public final class Graphs {
        EObject eObject = null;
        while (teo.hasNext()) {
            eObject = teo.next();
-           if (maySubclass) {
-               if (type.isAssignableFrom(eObject.getClass())) {
-                   result.add((T) eObject);                   
-               }
-           } else {
-               if (eObject.getClass().equals(type)) {
-                   if (!result.contains(eObject)) {
-                       result.add((T) eObject);
-                   }
-               }
+           if (assignable(eObject, type, maySubclass) && !result.contains(eObject)) {
+               result.add((T) eObject);               
            }
        }
+       if (assignable(graph, type, maySubclass) && !result.contains(graph)) {
+           result.add((T) graph);
+       }
        return result;
+   }
+   
+   /**
+    * Checks whether a given instance is an instance of a given class or sub class of it.
+    * 
+    * @param eObject
+    *            the instance to be checked
+    * @param type
+    *            the class to test against
+    * @param maySubclass
+    *            whether the match must be equal or sub classing is allowed
+    * @return whether a given instance is an instance of a given class or sub class of it
+    */
+   private static <T> boolean assignable(final EObject eObject, final Class<T> type, 
+       final boolean maySubclass) {
+       if (eObject != null && type != null) {
+           if (maySubclass) {
+               return type.isAssignableFrom(eObject.getClass());
+           } else {
+               return eObject.getClass().equals(type);
+           }
+       }
+       return (eObject.equals(type));
    }
    
    /**

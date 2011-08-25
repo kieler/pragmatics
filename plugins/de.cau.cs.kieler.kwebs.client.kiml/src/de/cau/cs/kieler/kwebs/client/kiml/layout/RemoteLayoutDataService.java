@@ -14,7 +14,7 @@
 
 package de.cau.cs.kieler.kwebs.client.kiml.layout;
 
-import java.io.ByteArrayInputStream;
+//import java.io.ByteArrayInputStream;
 //import java.net.HttpURLConnection;
 //import java.net.URL;
 //import java.net.URLConnection;
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.ImageData;
+//import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;

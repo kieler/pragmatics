@@ -431,6 +431,15 @@ public final class ServerConfigs {
     }
 
     /**
+     * Returns the number of server configurations contained.
+     * 
+     * @return the number of server configurations contained
+     */
+    public synchronized int countConfigs() {
+        return serverConfigList.size();
+    }
+    
+    /**
      * Sets the dirty state of this server configuration list.
      *
      * @param theisDirty

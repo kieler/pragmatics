@@ -66,6 +66,10 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
     /** the preference store. */
     private IPreferenceStore preferenceStore;
 
+    /** The chached instance of the ServerConfigs singleton. */
+    private ServerConfigs serverConfigs 
+        = ServerConfigs.getInstance();
+    
     /** The transformer used for serialization and deserialization of the KGraph instances. */
     private KGraphXmiTransformer transformer
         = new KGraphXmiTransformer();
@@ -94,9 +98,25 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
      * @return whether the initialization was successful
      */
     private synchronized boolean initialize() {
-        boolean remoteLayout = preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE);
+        boolean remoteLayout = preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE);        
         try {
             if (remoteLayout) {
+                if( serverConfigs.countConfigs() == 0) {
+                    LayoutDataService.setMode(LayoutDataService.ECLIPSEDATASERVICE);
+                    int result = displayMessage(
+                        "No Services configured",
+                        "You do not have any layout service configured."
+                        + " Doing layout remotely is not possible at the moment."
+                        + " You can configure layout services by double clicking on the tray icon."
+                        + " The layout was temporarily set back to local."
+                        + " Do you want to switch to local mode permanently ?",
+                        SWT.YES | SWT.NO
+                    );               
+                    if (result == SWT.YES) {
+                        SwitchLayoutMode.toLocal();
+                    }
+                    return true; 
+                }
                 ServerConfig oldserverConfig = null;
                 if (client != null) {
                     oldserverConfig = client.getServerConfig();
@@ -126,48 +146,21 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         } catch (Exception e) {
             if (remoteLayout) {
                 LayoutDataService.setMode(LayoutDataService.ECLIPSEDATASERVICE);
-                final Display display = PlatformUI.getWorkbench().getDisplay();
-                final Maybe<Shell> maybe = new Maybe<Shell>();
-                display.syncExec(
-                    new Runnable() {
-                        public void run() {
-                            maybe.set(display.getActiveShell());
-                        }                        
-                    }
-                );
-                final Shell shell = maybe.get();
-                if (shell == null) {
-                    StatusManager.getManager().handle(
-                        new Status(
-                            IStatus.WARNING, 
-                            Activator.PLUGIN_ID, 
-                            "Shell object is null, can not display error dialog", 
-                            null
-                        )
-                    );
-                } else {
-                    final String message = "The remote layout could not be initialized properly."
-                                           + " The error occurred was\n\n"
-                                           + "\"" + e.getMessage() + "\".\n\n"
-                                           + "Perhaps the configured layout server is not available at"
-                                           + " the moment or the configuration you selected is not"
-                                           + " accurate. The layout was temporarily set back to local."
-                                           + " Do you want to switch to local mode permanently ?";
-                    display.syncExec(
-                        new Runnable() {
-                            public void run() {
-                                MessageBox box = new MessageBox(shell, SWT.YES | SWT.NO);
-                                box.setText("Error Occurred");
-                                box.setMessage(message);
-                                int result = box.open();
-                                if (result == SWT.YES) {
-                                    SwitchLayoutMode.toLocal();
-                                }
-                            }
-                        }
-                    );
+                client = null;
+                int result = displayMessage(
+                    "Error Occured", 
+                    "The remote layout could not be initialized properly."
+                    + " The error occurred was\n\n"
+                    + "\"" + e.getMessage() + "\".\n\n"
+                    + "Perhaps the configured layout server is not available at"
+                    + " the moment or the configuration you selected is not"
+                    + " accurate. The layout was temporarily set back to local."
+                    + " Do you want to switch to local mode permanently ?",
+                    SWT.YES | SWT.NO
+                );               
+                if (result == SWT.YES) {
+                    SwitchLayoutMode.toLocal();
                 }
-                client = null;                    
             } else {
                 throw new LocalServiceException("Local layout failed", e);
             }
@@ -175,6 +168,42 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         return false;
     }
 
+    private int displayMessage(final String title, final String message, final int style) {
+        final Maybe<Integer> result = new Maybe<Integer>(SWT.ERROR);
+        final Display display = PlatformUI.getWorkbench().getDisplay();
+        final Maybe<Shell> maybe = new Maybe<Shell>();
+        display.syncExec(
+            new Runnable() {
+                public void run() {
+                    maybe.set(display.getActiveShell());
+                }                        
+            }
+        );
+        final Shell shell = maybe.get();
+        if (shell == null) {
+            StatusManager.getManager().handle(
+                new Status(
+                    IStatus.WARNING, 
+                    Activator.PLUGIN_ID, 
+                    "Shell object is null, can not display error dialog", 
+                    null
+                )
+            );
+        } else {
+            display.syncExec(
+                new Runnable() {
+                    public void run() {
+                        MessageBox box = new MessageBox(shell, style);
+                        box.setText(title);
+                        box.setMessage(message);
+                        result.set(box.open());
+                    }
+                }
+            );
+        }
+        return result.get();
+    }
+    
     /**
      * Performs remote layout on the given layout graph.
      *
