@@ -66,7 +66,8 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
      */
     public PiccoloViewer(final Composite parent, final int style) {
         canvas = new PSWTCanvas(parent, style);
-        canvas.setDoubleBuffered(false);
+        // this reduces flickering drastically
+        canvas.setDoubleBuffered(true);
         canvas.setDefaultRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
         // canvas.removeInputEventListener(canvas.getPanEventHandler());
         // prevent conflicts with selection handler
