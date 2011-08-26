@@ -9,6 +9,11 @@
             description="Combination that updates the KlighD view if a model change in an Xtext editor happens"
             name="de.cau.cs.kieler.klighd.xtext.UpdateXtextModelKLighDCombination">
       </combination>
+      <combination
+            active="true"
+            class="de.cau.cs.kieler.klighd.xtext.VisualizeSelectedModelElementCombination"
+            name="de.cau.cs.kieler.klighd.xtext.VisualizeSelectedModelElementCombination">
+      </combination>
    </extension>
 
 </plugin>

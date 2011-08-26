@@ -25,6 +25,7 @@ import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
+import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService.LocationScheme;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.model.triggers.DiagramTrigger.DiagramState;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -50,8 +51,7 @@ public class RandomLayoutCombination extends AbstractCombination {
     private static final String ZOOM_TO_FIT = "de.cau.cs.kieler.kiml.zoomToFit";
     /** parameter id for progress bar. */
     private static final String PROGRESS_BAR = "de.cau.cs.kieler.kiml.progressBar";
-    
-   
+
     /**
      * Setup Buttons in the Constructor.
      */
@@ -61,8 +61,9 @@ public class RandomLayoutCombination extends AbstractCombination {
 
         KiviMenuContributionService.INSTANCE.addToolbarButton(this, RANDOM_BUTTON, "Random Layout",
                 "Do a random layout on the current diagram. "
-                + "Invalidates all positions but keeps the original layout options.",
-                iconRandom, SWT.PUSH, null, EDITOR_IDS.toArray(new String[2]));
+                        + "Invalidates all positions but keeps the original layout options.",
+                iconRandom, SWT.PUSH, LocationScheme.MENU_POPUP_TOOLBAR, null,
+                EDITOR_IDS.toArray(new String[2]));
     }
 
     /**
@@ -78,11 +79,11 @@ public class RandomLayoutCombination extends AbstractCombination {
         boolean animate = preferenceStore.getBoolean(ANIMATE);
         boolean zoom = preferenceStore.getBoolean(ZOOM_TO_FIT);
         boolean progressBar = preferenceStore.getBoolean(PROGRESS_BAR);
-        //dontUndo();
+        // dontUndo();
         if (this.getTriggerState() instanceof ButtonState
                 && button.getButtonId().equals(RANDOM_BUTTON)) {
-            LayoutEffect layout = new LayoutEffect(diagram.getDiagramPart(), null, zoom, progressBar,
-                    true, animate);
+            LayoutEffect layout = new LayoutEffect(diagram.getDiagramPart(), null, zoom,
+                    progressBar, true, animate);
             TreeIterator<?> iterator = diagram.getSemanticModel().eAllContents();
             while (iterator.hasNext()) {
                 Object object = iterator.next();
@@ -92,9 +93,9 @@ public class RandomLayoutCombination extends AbstractCombination {
                 }
             }
             this.schedule(layout);
-        } 
+        }
     }
-    
+
     /**
      * Return the preference store for the KIML UI plugin.
      * 
@@ -103,5 +104,5 @@ public class RandomLayoutCombination extends AbstractCombination {
     private static IPreferenceStore getPreferenceStore() {
         return KimlUiPlugin.getDefault().getPreferenceStore();
     }
-    
+
 }

@@ -19,6 +19,7 @@ import org.eclipse.swt.SWT;
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.KiViPlugin;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
+import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService.LocationScheme;
 
 /**
  * A simple demo Combination for using Buttons in KIELER View Management (KiVi).
@@ -48,7 +49,7 @@ public class KiviMenuContributionDemoCombination extends AbstractCombination {
         // here we register this button only for the standard text editor
         String visibleIn = "org.eclipse.ui.DefaultTextEditor";
         KiviMenuContributionService.INSTANCE.addToolbarButton(this, buttonIds[1], "Demo Button 2",
-                tooltip, icon, SWT.PUSH, null, visibleIn);
+                tooltip, icon, SWT.PUSH, LocationScheme.MENU_POPUP_TOOLBAR, null, visibleIn);
     }
 
     /**

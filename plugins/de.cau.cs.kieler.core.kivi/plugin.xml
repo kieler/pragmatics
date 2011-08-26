@@ -40,7 +40,7 @@
             locationURI="toolbar:de.cau.cs.kieler">
          <dynamic
                class="de.cau.cs.kieler.core.kivi.internal.KiviContributionItem"
-               id="de.cau.cs.kieler.kivi.dynamic">
+               id="de.cau.cs.kieler.kivi.dynamic.toolbar">
          </dynamic>
       </menuContribution>
       <menuContribution
@@ -48,7 +48,7 @@
             locationURI="menu:de.cau.cs.kieler">
          <dynamic
                class="de.cau.cs.kieler.core.kivi.internal.KiviContributionItem"
-               id="de.cau.cs.kieler.kivi.dynamic">
+               id="de.cau.cs.kieler.kivi.dynamic.menu">
          </dynamic>
       </menuContribution>
       <menuContribution
@@ -56,7 +56,7 @@
             locationURI="popup:de.cau.cs.kieler">
          <dynamic
                class="de.cau.cs.kieler.core.kivi.internal.KiviContributionItem"
-               id="de.cau.cs.kieler.kivi.dynamic">
+               id="de.cau.cs.kieler.kivi.dynamic.popup">
          </dynamic>
       </menuContribution>
    </extension>

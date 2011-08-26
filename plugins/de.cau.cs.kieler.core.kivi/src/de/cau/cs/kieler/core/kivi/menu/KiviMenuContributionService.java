@@ -34,7 +34,30 @@ public class KiviMenuContributionService {
 
     /** internal list of Buttons. */
     private List<ButtonConfiguration> buttonConfigurations = new ArrayList<ButtonConfiguration>();
+    
+    /** 
+     * A location scheme enumeration allowing to determine the locations of KIVi menu contributions.
+     *   
+     * @author chsch
+     */
+    public enum LocationScheme {
+        /** Menu contribution is to be attached to main menu only. */
+        MENU,
+        /** Menu contribution is to be attached to popup menus only. */
+        POPUP,
+        /** Menu contribution is to be attached to tool bar only. */
+        TOOLBAR,
+        /** Menu contribution is to be attached to both main and popup menu. */
+        MENU_POPUP,
+        /** Menu contribution is to be attached to both main menu and toolbar. */
+        MENU_TOOLBAR,
+        /** Menu contribution is to be attached to both popup menu and toolbar. */
+        POPUP_TOOLBAR,
+        /** Menu contribution is to be attached to main menu, popup menu, and toolbar. */
+        MENU_POPUP_TOOLBAR
+    }
 
+    // CHECKSTYLEOFF ParameterNumber
     /**
      * Add a button configuration with all possible parameters.
      * 
@@ -55,6 +78,9 @@ public class KiviMenuContributionService {
      *            plugin ID and the relative path of the icon within that plugin.
      * @param style
      *            an SWT style constant, either SWT.PUSH, SWT.RADIO or SWT.CHECK
+     * @param locationSchemeExpression
+     *            an {@link LocationScheme} enumeration value indicating the locations the button is
+     *            to be attached to
      * @param visibilityExpression
      *            an eclipse core Expression that gets registered as visibility expression, may be
      *            null
@@ -64,10 +90,13 @@ public class KiviMenuContributionService {
      */
     public void addToolbarButton(final ICombination responsibleCombination, final String id,
             final String label, final String tooltip, final ImageDescriptor icon, final int style,
-            final Expression visibilityExpression, final String... activeEditors) {
+            final LocationScheme locationSchemeExpression, final Expression visibilityExpression,
+            final String... activeEditors) {
+        assert locationSchemeExpression != null;
         addButtonConfiguration(new ButtonConfiguration(responsibleCombination, id, label, tooltip,
-                icon, style, visibilityExpression, activeEditors));
+                icon, style, locationSchemeExpression, visibilityExpression, activeEditors));
     }
+    // CHECKSTYLEON ParameterNumber
 
     /**
      * Add a button configuration with only a few parameters.
@@ -91,7 +120,7 @@ public class KiviMenuContributionService {
     public void addToolbarButton(final ICombination responsibleCombination, final String id,
             final String tooltip, final ImageDescriptor icon, final String... activeEditors) {
         addButtonConfiguration(new ButtonConfiguration(responsibleCombination, id, "KiviButton",
-                tooltip, icon, SWT.PUSH, null, activeEditors));
+                tooltip, icon, SWT.PUSH, LocationScheme.MENU_POPUP_TOOLBAR, null, activeEditors));
     }
 
     /**
@@ -110,7 +139,7 @@ public class KiviMenuContributionService {
     public void addToolbarButton(final ICombination responsibleCombination, final String id,
             final String label) {
         addButtonConfiguration(new ButtonConfiguration(responsibleCombination, id, label, null,
-                null, SWT.PUSH, null, null));
+                null, SWT.PUSH, LocationScheme.MENU_POPUP_TOOLBAR, null, null));
     }
 
     /**
@@ -153,7 +182,7 @@ public class KiviMenuContributionService {
     /**
      * A container class for configurations for buttons.
      * 
-     * @author haf
+     * @author haf, chsch
      * 
      */
     public static class ButtonConfiguration {
@@ -164,13 +193,16 @@ public class KiviMenuContributionService {
         private ImageDescriptor icon;
         private int style;
 
+        private LocationScheme locationSchemeExpression;
         private Expression visibilityExpression;
         private String[] activeEditors;
 
         private ICombination responsiveCombination;
 
+        // CHECKSTYLEOFF ParameterNumber
         ButtonConfiguration(final ICombination responsiveCombination, final String id,
-                final String label, final String tooltip, final ImageDescriptor icon, final int style,
+                final String label, final String tooltip, final ImageDescriptor icon,
+                final int style, final LocationScheme locationSchemeExpression,
                 final Expression visibilityExpression, final String[] activeEditors) {
             this.responsiveCombination = responsiveCombination;
             this.id = id;
@@ -178,9 +210,11 @@ public class KiviMenuContributionService {
             this.tooltip = tooltip;
             this.icon = icon;
             this.style = style;
+            this.locationSchemeExpression = locationSchemeExpression;
             this.visibilityExpression = visibilityExpression;
             this.activeEditors = activeEditors;
         }
+        // CHECKSTYLEOFF ParameterNumber
 
         /**
          * @return the id
@@ -215,6 +249,13 @@ public class KiviMenuContributionService {
          */
         public int getStyle() {
             return style;
+        }
+
+        /**
+         * @return the visibilityExpression
+         */
+        public LocationScheme getLocationSchemeExpression() {
+            return locationSchemeExpression;
         }
 
         /**

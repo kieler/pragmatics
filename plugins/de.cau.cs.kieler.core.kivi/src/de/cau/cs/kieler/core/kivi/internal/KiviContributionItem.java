@@ -43,6 +43,7 @@ import de.cau.cs.kieler.core.kivi.KiVi;
 import de.cau.cs.kieler.core.kivi.menu.ButtonHandler;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService.ButtonConfiguration;
+import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService.LocationScheme;
 
 /**
  * Dynamic toolbar contribution for the use with KIELER View Management. It extends the idea of
@@ -101,7 +102,8 @@ public class KiviContributionItem extends CompoundContributionItem implements
 
     // dunno how to get the formatter to make a linebreak here
     // CHECKSTYLEOFF MaximumLineLength
-    private static Map<String, IContributionItem> idButtonMap = new HashMap<String, IContributionItem>();
+    private static Map<String, IContributionItem> idButtonMap
+            = new HashMap<String, IContributionItem>();
     private static Map<IContributionItem, ButtonHandler> buttonsHandlerMap
             = new HashMap<IContributionItem, ButtonHandler>();
     private static Map<IContributionItem, ButtonHandler> oldButtonsHandlerMap;
@@ -109,6 +111,40 @@ public class KiviContributionItem extends CompoundContributionItem implements
 
     // CHECKSTYLEON MaximumLineLength
 
+    /**
+     * 
+     * @author chsch
+     */
+    private enum InternalLocationScheme {
+        MENU,
+        POPUP,
+        TOOLBAR;
+        
+        public boolean isContainedIn(final LocationScheme theLocation) {
+            switch (this) {
+            case MENU:
+                return theLocation.equals(LocationScheme.MENU)
+                        || theLocation.equals(LocationScheme.MENU_POPUP)
+                        || theLocation.equals(LocationScheme.MENU_TOOLBAR)
+                        || theLocation.equals(LocationScheme.MENU_POPUP_TOOLBAR);
+            case POPUP:
+                return theLocation.equals(LocationScheme.POPUP)
+                        || theLocation.equals(LocationScheme.MENU_POPUP)
+                        || theLocation.equals(LocationScheme.POPUP_TOOLBAR)
+                        || theLocation.equals(LocationScheme.MENU_POPUP_TOOLBAR);
+            case TOOLBAR:
+                return theLocation.equals(LocationScheme.TOOLBAR)
+                        || theLocation.equals(LocationScheme.MENU_TOOLBAR)
+                        || theLocation.equals(LocationScheme.POPUP_TOOLBAR)
+                        || theLocation.equals(LocationScheme.MENU_POPUP_TOOLBAR);
+            default:
+                return true;
+            }
+        }
+    }
+    
+    private InternalLocationScheme location;
+    
     /**
      * {@inheritDoc}
      */
@@ -118,6 +154,14 @@ public class KiviContributionItem extends CompoundContributionItem implements
         this.menuService = (InternalMenuService) serviceLocator.getService(IMenuService.class);
         this.evaluationService = (IEvaluationService) serviceLocator
                 .getService(IEvaluationService.class);
+        
+        if (this.getId().endsWith("menu")) {
+            this.location = InternalLocationScheme.MENU;
+        } else if (this.getId().endsWith("popup")) {
+            this.location = InternalLocationScheme.POPUP;
+        } else if (this.getId().endsWith("toolbar")) {
+            this.location = InternalLocationScheme.TOOLBAR;
+        }
     }
 
     /**
@@ -148,7 +192,8 @@ public class KiviContributionItem extends CompoundContributionItem implements
         for (ButtonConfiguration config : buttonConfigurations) {
 
             // only create a button if the corresponding combination is active
-            if (config.getResponsiveCombination().isActive()) {
+            if (config.getResponsiveCombination().isActive()
+                    && this.location.isContainedIn(config.getLocationSchemeExpression())) {
 
                 // get a command and register the Kivi ButtonHandler for it
                 Command cmd = commandService.getCommand(config.getId());
