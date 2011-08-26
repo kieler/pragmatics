@@ -40,7 +40,8 @@ public class KiviMenuContributionDemoCombination extends AbstractCombination {
         KiviMenuContributionService.INSTANCE.addToolbarButton(this, buttonIds[0], "SimpleButton");
 
         // define a button with all fancy stuff like icon, tooltip and visibility
-        String tooltip = "Demo Button for KiVi Button API. Deactivate combination in KiVi preferences to remove this.";
+        String tooltip = "Demo Button for KiVi Button API."
+                + "Deactivate combination in KiVi preferences to remove this.";
         ImageDescriptor icon = KiViPlugin.imageDescriptorFromPlugin(KiViPlugin.PLUGIN_ID,
                 "icons/producer.png");
         // a button can be made visible only for specific editors (given by Editor IDs)

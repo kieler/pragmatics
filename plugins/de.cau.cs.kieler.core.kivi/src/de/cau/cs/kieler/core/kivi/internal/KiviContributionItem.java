@@ -245,6 +245,7 @@ public class KiviContributionItem extends CompoundContributionItem implements
                         CompositeExpression and = new AndExpression();
                         and.add(visibilityExpression);
                         and.add(config.getVisibilityExpression());
+                        visibilityExpression = and;
                     }
                 }
                 if (visibilityExpression != null) {

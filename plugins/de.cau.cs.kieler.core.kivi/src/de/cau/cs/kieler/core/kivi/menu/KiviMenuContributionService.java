@@ -25,7 +25,7 @@ import de.cau.cs.kieler.core.kivi.ICombination;
 /**
  * A simple programmatic API to specify toolbar buttons to be used with the KIELER View Management.
  * 
- * @author haf
+ * @author haf, chsch
  */
 public class KiviMenuContributionService {
 
@@ -41,21 +41,22 @@ public class KiviMenuContributionService {
      * @author chsch
      */
     public enum LocationScheme {
-        /** Menu contribution is to be attached to main menu only. */
+        /** Menu contribution is to be attached to the main menu only. */
         MENU,
         /** Menu contribution is to be attached to popup menus only. */
         POPUP,
-        /** Menu contribution is to be attached to tool bar only. */
+        /** Menu contribution is to be attached to the toolbar only. */
         TOOLBAR,
-        /** Menu contribution is to be attached to both main and popup menu. */
+        /** Menu contribution is to be attached to both main and popup menus. */
         MENU_POPUP,
         /** Menu contribution is to be attached to both main menu and toolbar. */
         MENU_TOOLBAR,
-        /** Menu contribution is to be attached to both popup menu and toolbar. */
+        /** Menu contribution is to be attached to both popup menus and toolbar. */
         POPUP_TOOLBAR,
-        /** Menu contribution is to be attached to main menu, popup menu, and toolbar. */
+        /** Menu contribution is to be attached to main menu, popup menus, and toolbar. */
         MENU_POPUP_TOOLBAR
     }
+    
 
     // CHECKSTYLEOFF ParameterNumber
     /**
@@ -77,9 +78,9 @@ public class KiviMenuContributionService {
      *            specified. An Image descriptor can be obtained by the plugin activator with the
      *            plugin ID and the relative path of the icon within that plugin.
      * @param style
-     *            an SWT style constant, either SWT.PUSH, SWT.RADIO or SWT.CHECK
+     *            a SWT style constant, either SWT.PUSH, SWT.RADIO or SWT.CHECK
      * @param locationSchemeExpression
-     *            an {@link LocationScheme} enumeration value indicating the locations the button is
+     *            a {@link LocationScheme} enumeration value indicating the locations the button is
      *            to be attached to
      * @param visibilityExpression
      *            an eclipse core Expression that gets registered as visibility expression, may be
