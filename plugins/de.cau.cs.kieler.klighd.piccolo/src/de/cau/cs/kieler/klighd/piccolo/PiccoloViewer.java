@@ -28,7 +28,6 @@ import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.PRoot;
 import edu.umd.cs.piccolo.event.PInputEventFilter;
-import edu.umd.cs.piccolo.util.PPaintContext;
 import edu.umd.cs.piccolox.swt.PSWTCanvas;
 
 /**

@@ -138,6 +138,14 @@ public class ApplyLayoutActivity extends PInterpolatingActivity {
     public void apply() {
         setRelativeTargetValue(1.0f);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean isAnimation() {
+        return true;
+    }
 
     /**
      * The interface for layout transitions.
