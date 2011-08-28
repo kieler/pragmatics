@@ -36,7 +36,8 @@ import edu.umd.cs.piccolo.activities.PInterpolatingActivity;
 import edu.umd.cs.piccolo.util.PBounds;
 
 /**
- * The Piccolo activity for applying a layout back to a diagram utilizing the graph interfaces.
+ * The Piccolo activity for applying a layout back to a diagram utilizing the interfaces from the
+ * {@code de.cau.cs.kieler.klighd.piccolo.graph} package.
  * 
  * @author mri
  */
@@ -138,7 +139,7 @@ public class ApplyLayoutActivity extends PInterpolatingActivity {
     public void apply() {
         setRelativeTargetValue(1.0f);
     }
-    
+
     /**
      * {@inheritDoc}
      */

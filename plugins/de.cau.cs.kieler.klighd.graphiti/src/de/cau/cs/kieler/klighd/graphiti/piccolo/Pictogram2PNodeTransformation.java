@@ -47,7 +47,7 @@ import org.eclipse.graphiti.mm.pictograms.util.PictogramsSwitch;
 import de.cau.cs.kieler.klighd.IModelTransformation;
 import de.cau.cs.kieler.klighd.piccolo.PSWTAdvancedPath;
 import de.cau.cs.kieler.klighd.piccolo.PSWTAlignedText;
-import de.cau.cs.kieler.klighd.piccolo.PSWTClipper;
+import de.cau.cs.kieler.klighd.piccolo.PChildClip;
 import de.cau.cs.kieler.klighd.piccolo.PiccoloDiagramContext;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolox.swt.PSWTText;
@@ -359,7 +359,7 @@ public class Pictogram2PNodeTransformation implements
 
     private PNode transformClippedGraphicsAlgorithm(final PNode parent, final GraphicsAlgorithm ga,
             final Color fc, final Color bc) {
-        PNode clipper = new PSWTClipper();
+        PNode clipper = new PChildClip();
         clipper.setPickable(false);
         PNode node = transformGraphicsAlgorithm(clipper, ga, fc, bc);
         parent.addChild(clipper);

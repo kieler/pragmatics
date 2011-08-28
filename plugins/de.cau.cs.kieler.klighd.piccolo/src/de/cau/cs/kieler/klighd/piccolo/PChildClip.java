@@ -21,7 +21,7 @@ import edu.umd.cs.piccolo.util.PPaintContext;
  * 
  * @author mri
  */
-public class PSWTClipper extends PNode {
+public class PChildClip extends PNode {
 
     private static final long serialVersionUID = -2651702857927623226L;
 
