@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klighd.graphiti.piccolo;
 
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphParent;
 import edu.umd.cs.piccolo.PCamera;
@@ -27,7 +28,7 @@ import edu.umd.cs.piccolo.util.PBounds;
  * 
  * @author mri
  */
-public class DiagramNode extends AbstractParentNode implements IGraphParent {
+public class DiagramNode extends AbstractParentNode implements IPictogramNode, IGraphParent {
 
     private static final long serialVersionUID = 6594473069619851592L;
 
@@ -47,11 +48,9 @@ public class DiagramNode extends AbstractParentNode implements IGraphParent {
     }
 
     /**
-     * Returns the Pictogram diagram represented by this node.
-     * 
-     * @return the Pictogram diagram
+     * {@inheritDoc}
      */
-    public Diagram getPictogramDiagram() {
+    public PictogramElement getPictogramElement() {
         return diagram;
     }
 
@@ -101,4 +100,5 @@ public class DiagramNode extends AbstractParentNode implements IGraphParent {
             }
         }
     }
+    
 }

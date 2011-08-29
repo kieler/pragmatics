@@ -287,18 +287,24 @@ public class PiccoloDiagramLayoutManager extends DiagramLayoutManager<IGraphObje
     @Override
     public void applyLayout(final LayoutMapping<IGraphObject> mapping, final boolean zoomToFit,
             final int animationTime) {
+        // apply the layout using a Piccolo activity
         ApplyLayoutActivity applyLayoutActivity = new ApplyLayoutActivity(mapping, animationTime);
         if (animationTime > 0) {
             if (mapping.getParentElement() instanceof PNode) {
                 // schedule the activity
                 PNode rootNode = (PNode) mapping.getParentElement();
-                rootNode.addActivity(applyLayoutActivity);
+                if (!rootNode.addActivity(applyLayoutActivity)) {
+                    // TODO handle a failure to schedule the activity
+                }
             }
         } else {
             // instantly apply the layout
             applyLayoutActivity.apply();
         }
-        //TODO zoom-to-fit
+        if (zoomToFit) {
+            // apply zoom-to-fit using a Piccolo activity
+         // TODO zoom-to-fit
+        }
     }
 
     /**

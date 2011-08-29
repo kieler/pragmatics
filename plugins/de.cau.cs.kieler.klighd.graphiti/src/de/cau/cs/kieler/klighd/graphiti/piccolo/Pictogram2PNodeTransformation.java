@@ -50,6 +50,7 @@ import de.cau.cs.kieler.klighd.piccolo.PSWTAlignedText;
 import de.cau.cs.kieler.klighd.piccolo.PChildClip;
 import de.cau.cs.kieler.klighd.piccolo.PiccoloDiagramContext;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolox.swt.PSWTText;
 
 /**
@@ -154,10 +155,12 @@ public class Pictogram2PNodeTransformation implements
             gaBc = getBackgroundColor(ga, bc);
             PNode gaNode = transformClippedGraphicsAlgorithm(shapeNode, ga, gaFc, gaBc);
             if (gaNode != null) {
-                gaNode.translate(-ga.getX(), -ga.getY());
-                shapeNode.translate(ga.getX(), ga.getY());
+                PAffineTransform transform = gaNode.getTransformReference(true);
+                shapeNode.translate(transform.getTranslateX(), transform.getTranslateY());
+                gaNode.translate(-transform.getTranslateX(), -transform.getTranslateY());
                 shapeNode.setWidth(ga.getWidth());
                 shapeNode.setHeight(ga.getHeight());
+                shapeNode.setRepresentationNode(gaNode);
             }
         } else {
             gaFc = fc;
@@ -198,13 +201,8 @@ public class Pictogram2PNodeTransformation implements
             reference = gaMap.get(referenceGa);
         }
         if (reference == null) {
-            referenceGa = parent.getPictogramShape().getGraphicsAlgorithm();
-            if (referenceGa != null) {
-                reference = gaMap.get(referenceGa);
-                if (reference == null) {
-                    reference = parent;
-                }
-            } else {
+            reference = parent.getRepresentationNode();
+            if (reference == null) {
                 reference = parent;
             }
         }
@@ -218,7 +216,15 @@ public class Pictogram2PNodeTransformation implements
         if (ga != null) {
             Color gaFc = getForegroundColor(ga, fc);
             Color gaBc = getBackgroundColor(ga, bc);
-            transformGraphicsAlgorithm(anchorNode, ga, gaFc, gaBc);
+            PNode repNode = transformGraphicsAlgorithm(anchorNode, ga, gaFc, gaBc);
+            if (repNode != null) {
+                PAffineTransform transform = repNode.getTransformReference(true);
+                anchorNode.translate(transform.getTranslateX(), transform.getTranslateY());
+                repNode.translate(-transform.getTranslateX(), -transform.getTranslateY());
+                anchorNode.setWidth(ga.getWidth());
+                anchorNode.setHeight(ga.getHeight());
+                anchorNode.setRepresentationNode(repNode);
+            }            
         }
         anchorMap.put(anchor, anchorNode);
         anchorNode.setVisible(anchor.isVisible());
@@ -359,10 +365,10 @@ public class Pictogram2PNodeTransformation implements
 
     private PNode transformClippedGraphicsAlgorithm(final PNode parent, final GraphicsAlgorithm ga,
             final Color fc, final Color bc) {
-        PNode clipper = new PChildClip();
-        clipper.setPickable(false);
-        PNode node = transformGraphicsAlgorithm(clipper, ga, fc, bc);
-        parent.addChild(clipper);
+        PNode clip = new PChildClip();
+        clip.setPickable(false);
+        PNode node = transformGraphicsAlgorithm(clip, ga, fc, bc);
+        parent.addChild(clip);
         return node;
     }
 
@@ -588,13 +594,9 @@ public class Pictogram2PNodeTransformation implements
      * {@inheritDoc}
      */
     public Object getSourceObject(final Object object) {
-        if (object instanceof ShapeNode) {
-            return ((ShapeNode) object).getPictogramShape();
-        } else if (object instanceof ConnectionNode) {
-            return ((ConnectionNode) object).getPictogramConnection();
-        } else if (object instanceof AnchorNode) {
-            return ((AnchorNode) object).getPictogramAnchor();
-        }
+        if (object instanceof IPictogramNode) {
+            return ((IPictogramNode) object).getPictogramElement();
+        } 
         return null;
     }
     

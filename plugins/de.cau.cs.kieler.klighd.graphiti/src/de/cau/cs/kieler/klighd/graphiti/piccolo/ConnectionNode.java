@@ -24,6 +24,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.FreeFormConnection;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
 import de.cau.cs.kieler.klighd.piccolo.PEmptyNode;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphEdge;
@@ -37,7 +38,8 @@ import edu.umd.cs.piccolox.swt.PSWTPath;
  * 
  * @author mri
  */
-public class ConnectionNode extends PEmptyNode implements IGraphEdge, PropertyChangeListener {
+public class ConnectionNode extends PEmptyNode implements IPictogramNode, IGraphEdge,
+        PropertyChangeListener {
 
     private static final long serialVersionUID = -8752895610400744167L;
 
@@ -74,11 +76,9 @@ public class ConnectionNode extends PEmptyNode implements IGraphEdge, PropertyCh
     }
 
     /**
-     * Returns the Pictogram connection represented by this node.
-     * 
-     * @return the Pictogram connection
+     * {@inheritDoc}
      */
-    public Connection getPictogramConnection() {
+    public PictogramElement getPictogramElement() {
         return connection;
     }
 
@@ -187,18 +187,18 @@ public class ConnectionNode extends PEmptyNode implements IGraphEdge, PropertyCh
      */
     public synchronized void propertyChange(final PropertyChangeEvent evt) {
         // FIXME under rare circumstances this can throw NP exceptions
-//        if (polyline != null) {
-//            // update the anchor points
-//            if (evt.getSource() == sourceAnchor) {
-//                updateSourceAnchor();
-//            } else if (evt.getSource() == targetAnchor) {
-//                updateTargetAnchor();
-//            } else {
-//                return;
-//            }
-//            // update the polyline to reflect the changes to the anchor points
-//            updatePolyline();
-//        }
+        // if (polyline != null) {
+        // // update the anchor points
+        // if (evt.getSource() == sourceAnchor) {
+        // updateSourceAnchor();
+        // } else if (evt.getSource() == targetAnchor) {
+        // updateTargetAnchor();
+        // } else {
+        // return;
+        // }
+        // // update the polyline to reflect the changes to the anchor points
+        // updatePolyline();
+        // }
     }
 
     /**

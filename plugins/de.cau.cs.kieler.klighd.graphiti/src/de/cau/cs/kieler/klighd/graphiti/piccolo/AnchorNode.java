@@ -24,6 +24,7 @@ import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ChopboxAnchor;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.util.PictogramsSwitch;
 
 import de.cau.cs.kieler.klighd.piccolo.PEmptyNode;
@@ -38,7 +39,8 @@ import edu.umd.cs.piccolo.util.PBounds;
  * 
  * @author mri
  */
-public class AnchorNode extends PEmptyNode implements IGraphPort, PropertyChangeListener {
+public class AnchorNode extends PEmptyNode implements IPictogramNode, IGraphPort,
+        PropertyChangeListener {
 
     private static final long serialVersionUID = 1406179264277421131L;
 
@@ -49,7 +51,7 @@ public class AnchorNode extends PEmptyNode implements IGraphPort, PropertyChange
     private Anchor anchor;
     /** the Piccolo node this anchor references. */
     private PNode reference;
-    /** the Piccolo child node which represents this anchor. */
+    /** the Piccolo node which represents this anchor. */
     private PNode repNode;
 
     /** the anchors outgoing connections. */
@@ -75,76 +77,19 @@ public class AnchorNode extends PEmptyNode implements IGraphPort, PropertyChange
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void addChild(final int index, final PNode child) {
-        if (child != null && index == 0) {
-            repNode = child;
-            repNode.addPropertyChangeListener(PNode.PROPERTY_BOUNDS, this);
-        }
-        super.addChild(index, child);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PNode removeChild(final int index) {
-        if (getChild(index) == repNode) {
-            repNode.removePropertyChangeListener(PNode.PROPERTY_BOUNDS, this);
-            repNode = null;
-        }
-        return super.removeChild(index);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void removeAllChildren() {
-        repNode.removePropertyChangeListener(PNode.PROPERTY_BOUNDS, this);
-        repNode = null;
-        super.removeAllChildren();
-    }
-
-    /**
-     * Returns the Pictogram anchor represented by this node.
+     * Sets the node representing this anchor which should be a child of this node.
      * 
-     * @return the Pictogram anchor
-     * 
+     * @param representation
+     *            the representation node
      */
-    public Anchor getPictogramAnchor() {
-        return anchor;
+    public void setRepresentationNode(final PNode representation) {
+        repNode = representation;
     }
 
     /**
-     * Returns the absolute coordinates of the anchor point for this anchor. Also updates the
-     * position of this anchor accordingly.
+     * Returns the node representing this anchor.
      * 
-     * @param referencePoint
-     *            the reference point for computing the anchor point or null if no such point is
-     *            available
-     * @return the anchor point or null if no anchor point could be determined
-     */
-    public Point2D getAnchorPoint(final Point2D referencePoint) {
-        if (repNode != null) {
-            updateAnchorPosition(referencePoint);
-            // chopbox anchor point from representing child node
-            PBounds bounds = repNode.getGlobalBounds();
-            Point2D intersection = getIntersectionWithBounds(bounds.getX() + bounds.getWidth() / 2,
-                    bounds.getY() + bounds.getHeight() / 2, referencePoint.getX(),
-                    referencePoint.getY(), bounds);
-            return intersection;
-        } else {
-            return getAnchorPosition(referencePoint);
-        }
-    }
-
-    /**
-     * Returns the node that represents this anchor if it exists.
-     * 
-     * @return the node representing this anchor or null if no such node exists
+     * @return the representation node
      */
     public PNode getRepresentationNode() {
         return repNode;
@@ -166,6 +111,37 @@ public class AnchorNode extends PEmptyNode implements IGraphPort, PropertyChange
      */
     public boolean isPort() {
         return repNode != null && getPickable();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PictogramElement getPictogramElement() {
+        return anchor;
+    }
+
+    /**
+     * Returns the absolute coordinates of the anchor point for this anchor. Also updates the
+     * position of this anchor accordingly.
+     * 
+     * @param referencePoint
+     *            the reference point for computing the anchor point or null if no such point is
+     *            available
+     * @return the anchor point or null if no anchor point could be determined
+     */
+    public Point2D getAnchorPoint(final Point2D referencePoint) {
+        if (repNode != null) {
+            updateAnchorPosition(referencePoint);
+            // chopbox anchor point from representing child node
+            PBounds bounds = repNode.getGlobalBounds();
+            Point2D intersection =
+                    getIntersectionWithBounds(bounds.getX() + bounds.getWidth() / 2, bounds.getY()
+                            + bounds.getHeight() / 2, referencePoint.getX(), referencePoint.getY(),
+                            bounds);
+            return intersection;
+        } else {
+            return getAnchorPosition(referencePoint);
+        }
     }
 
     /**
@@ -238,63 +214,75 @@ public class AnchorNode extends PEmptyNode implements IGraphPort, PropertyChange
         if (xOut <= bounds.getX()) {
             if (yOut <= bounds.getY()) {
                 // intersection with top or left line
-                Point2D s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
-                        bounds.getMaxX(), bounds.getY());
+                Point2D s =
+                        computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
+                                bounds.getMaxX(), bounds.getY());
                 if (s == null) {
-                    s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
-                            bounds.getX(), bounds.getMaxY());
+                    s =
+                            computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
+                                    bounds.getX(), bounds.getMaxY());
                 }
                 return s;
             } else if (yOut >= bounds.getMaxY()) {
                 // intersection with bottom or left line
-                Point2D s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(),
-                        bounds.getMaxY(), bounds.getMaxX(), bounds.getMaxY());
+                Point2D s =
+                        computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getMaxY(),
+                                bounds.getMaxX(), bounds.getMaxY());
                 if (s == null) {
-                    s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
-                            bounds.getX(), bounds.getMaxY());
+                    s =
+                            computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
+                                    bounds.getX(), bounds.getMaxY());
                 }
                 return s;
             } else {
                 // intersection with left line
-                Point2D s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
-                        bounds.getX(), bounds.getMaxY());
+                Point2D s =
+                        computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
+                                bounds.getX(), bounds.getMaxY());
                 return s;
             }
         } else if (xOut >= bounds.getMaxX()) {
             if (yOut <= bounds.getY()) {
                 // intersection with top or right line
-                Point2D s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
-                        bounds.getMaxX(), bounds.getY());
+                Point2D s =
+                        computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
+                                bounds.getMaxX(), bounds.getY());
                 if (s == null) {
-                    s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getMaxX(), bounds.getY(),
-                            bounds.getMaxX(), bounds.getMaxY());
+                    s =
+                            computeIntersection(xIn, yIn, xOut, yOut, bounds.getMaxX(),
+                                    bounds.getY(), bounds.getMaxX(), bounds.getMaxY());
                 }
                 return s;
             } else if (yOut >= bounds.getMaxY()) {
                 // intersection with bottom or right line
-                Point2D s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(),
-                        bounds.getMaxY(), bounds.getMaxX(), bounds.getMaxY());
+                Point2D s =
+                        computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getMaxY(),
+                                bounds.getMaxX(), bounds.getMaxY());
                 if (s == null) {
-                    s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getMaxX(), bounds.getY(),
-                            bounds.getMaxX(), bounds.getMaxY());
+                    s =
+                            computeIntersection(xIn, yIn, xOut, yOut, bounds.getMaxX(),
+                                    bounds.getY(), bounds.getMaxX(), bounds.getMaxY());
                 }
                 return s;
             } else {
                 // intersection with right line
-                Point2D s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getMaxX(),
-                        bounds.getY(), bounds.getMaxX(), bounds.getMaxY());
+                Point2D s =
+                        computeIntersection(xIn, yIn, xOut, yOut, bounds.getMaxX(), bounds.getY(),
+                                bounds.getMaxX(), bounds.getMaxY());
                 return s;
             }
         } else {
             if (yOut <= bounds.getY()) {
                 // intersection with top line
-                Point2D s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
-                        bounds.getMaxX(), bounds.getY());
+                Point2D s =
+                        computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getY(),
+                                bounds.getMaxX(), bounds.getY());
                 return s;
             } else if (yOut >= bounds.getMaxY()) {
                 // intersection with bottom line
-                Point2D s = computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(),
-                        bounds.getMaxY(), bounds.getMaxX(), bounds.getMaxY());
+                Point2D s =
+                        computeIntersection(xIn, yIn, xOut, yOut, bounds.getX(), bounds.getMaxY(),
+                                bounds.getMaxX(), bounds.getMaxY());
                 return s;
             } else {
                 // TODO find a better point here
@@ -336,8 +324,9 @@ public class AnchorNode extends PEmptyNode implements IGraphPort, PropertyChange
      * {@inheritDoc}
      */
     public void setRelativeBounds(final PBounds bounds) {
-        PAffineTransform transform = getTransformReference(true);
-        translate(bounds.getX() - transform.getTranslateX(),
+        PAffineTransform transform =
+                repNode != null ? repNode.getTransformReference(true) : getTransformReference(true);
+        transform.translate(bounds.getX() - transform.getTranslateX(),
                 bounds.getY() - transform.getTranslateY());
         // TODO resize the shape
     }
@@ -346,7 +335,8 @@ public class AnchorNode extends PEmptyNode implements IGraphPort, PropertyChange
      * {@inheritDoc}
      */
     public PBounds getRelativeBounds() {
-        PAffineTransform transform = getTransformReference(true);
+        PAffineTransform transform =
+                repNode != null ? repNode.getTransformReference(true) : getTransformReference(true);
         PBounds bounds = repNode != null ? repNode.getBounds() : getBounds();
         PBounds relativeBounds = new PBounds();
         relativeBounds.setRect(transform.getTranslateX(), transform.getTranslateY(),

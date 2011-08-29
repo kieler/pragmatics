@@ -20,11 +20,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphEdge;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphNode;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphPort;
+import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolo.util.PBounds;
 
@@ -33,16 +35,19 @@ import edu.umd.cs.piccolo.util.PBounds;
  * 
  * @author mri
  */
-public class ShapeNode extends AbstractParentNode implements IGraphNode {
+public class ShapeNode extends AbstractParentNode implements IPictogramNode, IGraphNode {
 
     private static final long serialVersionUID = 6280554909111287283L;
 
     /** the Pictogram shape represented by this node. */
     private Shape shape;
     /** a mapping between Pictogram anchors and Piccolo anchor nodes. */
-    private Map<Anchor, AnchorNode> anchorMap = new LinkedHashMap<Anchor, AnchorNode>();
+    private Map<PictogramElement, AnchorNode> anchorMap =
+            new LinkedHashMap<PictogramElement, AnchorNode>();
     /** the list of ports. */
     private List<IGraphPort> ports = new ArrayList<IGraphPort>();
+    /** the Piccolo node which represents this shape. */
+    private PNode repNode = null;
 
     /**
      * Constructs a ShapeNode.
@@ -55,12 +60,29 @@ public class ShapeNode extends AbstractParentNode implements IGraphNode {
     }
 
     /**
-     * Returns the Pictogram shape represented by this node.
-     * 
-     * @return the Pictogram shape
+     * {@inheritDoc}
      */
-    public Shape getPictogramShape() {
+    public PictogramElement getPictogramElement() {
         return shape;
+    }
+
+    /**
+     * Sets the node representing this shape which should be a child of this node.
+     * 
+     * @param representation
+     *            the representation node
+     */
+    public void setRepresentationNode(final PNode representation) {
+        repNode = representation;
+    }
+
+    /**
+     * Returns the node representing this shape.
+     * 
+     * @return the representation node
+     */
+    public PNode getRepresentationNode() {
+        return repNode;
     }
 
     /**
@@ -71,7 +93,7 @@ public class ShapeNode extends AbstractParentNode implements IGraphNode {
      */
     public void addAnchor(final AnchorNode anchorNode) {
         addChild(anchorNode);
-        anchorMap.put(anchorNode.getPictogramAnchor(), anchorNode);
+        anchorMap.put(anchorNode.getPictogramElement(), anchorNode);
         // if the anchor has a visual representation consider it a port
         if (anchorNode.getRepresentationNode() != null && anchorNode.getPickable()) {
             ports.add(anchorNode);
@@ -100,13 +122,13 @@ public class ShapeNode extends AbstractParentNode implements IGraphNode {
 
     // Implementation of the ...kligh.piccolo.graph interfaces
 
-//    /**
-//     * {@inheritDoc}
-//     */
-//    public Insets getInsets() {
-//        // TODO return real insets here
-//        return new Insets();
-//    }
+    // /**
+    // * {@inheritDoc}
+    // */
+    // public Insets getInsets() {
+    // // TODO return real insets here
+    // return new Insets();
+    // }
 
     /**
      * {@inheritDoc}
@@ -115,7 +137,7 @@ public class ShapeNode extends AbstractParentNode implements IGraphNode {
         PAffineTransform transform = getTransformReference(true);
         translate(bounds.getX() - transform.getTranslateX(),
                 bounds.getY() - transform.getTranslateY());
-        //TODO resize the shape
+        // TODO resize the shape
     }
 
     /**
@@ -123,7 +145,7 @@ public class ShapeNode extends AbstractParentNode implements IGraphNode {
      */
     public PBounds getRelativeBounds() {
         PAffineTransform transform = getTransformReference(true);
-        PBounds bounds = getBounds();
+        PBounds bounds = repNode != null ? repNode.getBounds() : getBounds();
         PBounds relativeBounds = new PBounds();
         relativeBounds.setRect(transform.getTranslateX(), transform.getTranslateY(),
                 bounds.getWidth(), bounds.getHeight());
