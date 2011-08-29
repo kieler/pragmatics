@@ -65,8 +65,10 @@ public class DiagramNode extends AbstractParentNode implements IGraphParent {
         // transform the viewport
         if (camera != null) {
             PAffineTransform transform = camera.getViewTransformReference();
-            camera.translateView(bounds.getX() - transform.getTranslateX(), bounds.getY()
-                    - transform.getTranslateY());
+            double scale = transform.getScale();
+            double deltaX = (bounds.getX() - transform.getTranslateX()) / scale;
+            double deltaY = (bounds.getY() - transform.getTranslateY()) / scale;
+            camera.translateView(deltaX, deltaY);
         }
     }
 
@@ -83,6 +85,7 @@ public class DiagramNode extends AbstractParentNode implements IGraphParent {
             PBounds diagramBounds = getFullBounds();
             PBounds bounds = new PBounds(transform.getTranslateX(), transform.getTranslateY(),
                     diagramBounds.width, diagramBounds.height);
+
             return bounds;
         }
         return new PBounds(0.0, 0.0, 0.0, 0.0);
