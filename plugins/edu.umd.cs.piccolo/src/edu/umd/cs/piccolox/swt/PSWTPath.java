@@ -335,7 +335,7 @@ public class PSWTPath extends PNode {
     }
 
     private void drawShape(final SWTGraphics2D g2) {
-        final double lineWidth = g2.getTransformedLineWidth();
+        final double lineWidth = g2.getLineWidth();
         if (shape instanceof Rectangle2D) {
             g2.drawRect(shapePts[0] + lineWidth / 2, shapePts[1] + lineWidth / 2, shapePts[2] - lineWidth, shapePts[3]
                     - lineWidth);
@@ -358,7 +358,7 @@ public class PSWTPath extends PNode {
     }
 
     private void fillShape(final SWTGraphics2D g2) {
-        final double lineWidth = g2.getTransformedLineWidth();
+        final double lineWidth = g2.getLineWidth();
         if (shape instanceof Rectangle2D) {
             g2.fillRect(shapePts[0] + lineWidth / 2, shapePts[1] + lineWidth / 2, shapePts[2] - lineWidth, shapePts[3]
                     - lineWidth);

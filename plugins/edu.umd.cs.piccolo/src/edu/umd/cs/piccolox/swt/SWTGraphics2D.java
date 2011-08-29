@@ -1236,6 +1236,15 @@ public class SWTGraphics2D extends Graphics2D {
     }
 
     /**
+     * Returns the line width to use when drawing shapes.
+     * 
+     * @return width of line when drawing shapes
+     */
+    public double getLineWidth() {
+        return this.lineWidth;
+    }
+    
+    /**
      * Computes the width of the line after it passes through the current transform.
      * 
      * @return resulting width of line after being transform
