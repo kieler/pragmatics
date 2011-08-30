@@ -14,6 +14,7 @@
 
 package de.cau.cs.kieler.kwebs.server.publishing;
 
+import java.io.IOException;
 import java.util.Properties;
 import java.util.Timer;
 
@@ -31,7 +32,10 @@ import de.unido.ls5.eti.toolserver.SessionTimeouter;
 /**
  * Manager for wrapping the jETI tool server.
  * Concurrent safety has to be provided by using instance.
- *
+ * 
+ * @kieler.rating  2011-08-25 proposed yellow
+ *      reviewed by ckru, msp, mri
+ *      
  * @author swe
  *
  */
@@ -44,8 +48,8 @@ final class JetiManager extends AbstractServerManager {
      * {@inheritDoc}
      */
     public synchronized void publish(final Object theobject) {
-        createServer();
         try {                    
+            createServer();
             etiConnector.start(EtiConfig.getProperties());
         } catch (Exception e) {
             Logger.log(Severity.CRITICAL, "jETI server could not be published", e);
@@ -72,7 +76,7 @@ final class JetiManager extends AbstractServerManager {
      * {@inheritDoc}
      */
     public synchronized boolean isPublished() {
-        return (etiConnector != null); //FIXME unscharf
+        return (etiConnector != null);
     }
 
     /** */
@@ -86,36 +90,51 @@ final class JetiManager extends AbstractServerManager {
         if (etiConnector != null) {
             throw new AlreadyPublishedException();
         }
+        java.util.Properties log4jProps = null;
         try {
-            java.util.Properties log4jProps = createLog4jProperties();
-            if (log4jProps == null) {
-                throw new ServerNotCreatedException();
-            }
-            org.apache.log4j.PropertyConfigurator.configure(log4jProps);
-            org.apache.log4j.Logger.getLogger(ServicePublisher.class);        
-            java.util.Properties jetiProps = createJetiProperties();
-            EtiConfig.setProperties(jetiProps);
-            EtiConfig.setExecutor(new EtiExecutorImpl());
-            Long checkInterval
-                = new Long(jetiProps.getProperty(JETICONFIG_SCI));
-            Timer sessionTimeout
-                = new Timer();
-            sessionTimeout.schedule(
-                new SessionTimeouter(),
-                checkInterval.longValue(),
-                checkInterval.longValue()
-            );
-            etiConnector = new EtiSeppConnector();
-        } catch (Exception e) {
-            Logger.log(Severity.CRITICAL, "jETI server could not be created", e);
+            log4jProps = createLog4jProperties();
+        } catch (IOException e) {
             throw new ServerNotCreatedException(e);
         }
+        org.apache.log4j.PropertyConfigurator.configure(log4jProps);
+        org.apache.log4j.Logger.getLogger(ServicePublisher.class);        
+        java.util.Properties jetiProps = createJetiProperties();
+        EtiConfig.setProperties(jetiProps);
+        EtiConfig.setExecutor(new EtiExecutorImpl());
+        //FIXME simple long?
+        long checkInterval
+            = new Long(jetiProps.getProperty(JETICONFIG_SCI)).longValue();
+        Timer sessionTimeout
+            = new Timer();
+        sessionTimeout.schedule(
+            new SessionTimeouter(), checkInterval, checkInterval
+        );
+        etiConnector = new EtiSeppConnector();
     }
 
-    /** */
+    /** 
+     *  Prefix to be cut off from the jETI property identifiers when they are put
+     *  in the jETI configuration.
+     */
     private static final String PREFIX
         = "de.cau.cs.kieler.kwebs.";
 
+    /** 
+     *  Statically defined array of the property identifiers
+     *  relevant for initializing the jETI configuration.
+     */
+    private static final String[] JETI_PROPERTIES
+        = new String[] {
+            Configuration.JETI_PROVIDER_ID,
+            Configuration.JETI_TOOLXML,
+            Configuration.JETI_SESSIONSFOLDER,
+            Configuration.JETI_SESSIONSTIMEOUT,
+            Configuration.JETI_SESSIONSCHECKINTERVAL,
+            Configuration.JETI_SERVERHOSTNAME,
+            Configuration.JETI_CONNECTORSEPPPORT,
+            Configuration.JETI_DEBUG
+        };
+    
     /**
      * Creates a {@code java.util.Properties} object containing relevant data
      * for publishing the embedded jETI tool server.
@@ -123,39 +142,10 @@ final class JetiManager extends AbstractServerManager {
      * @return the properties
      */
     private java.util.Properties createJetiProperties() {
-        java.util.Properties props = new java.util.Properties();            
-        props.put(
-            Configuration.JETI_PROVIDER_ID.substring(PREFIX.length()),
-            config.getConfigProperty(Configuration.JETI_PROVIDER_ID)
-        );
-        props.put(
-            Configuration.JETI_TOOLXML.substring(PREFIX.length()),
-            config.getConfigProperty(Configuration.JETI_TOOLXML)
-        );
-        props.put(
-            Configuration.JETI_SESSIONSFOLDER.substring(PREFIX.length()),
-            config.getConfigProperty(Configuration.JETI_SESSIONSFOLDER)
-        );
-        props.put(
-            Configuration.JETI_SESSIONSTIMEOUT.substring(PREFIX.length()),
-            config.getConfigProperty(Configuration.JETI_SESSIONSTIMEOUT)
-        );
-        props.put(
-            Configuration.JETI_SESSIONSCHECKINTERVAL.substring(PREFIX.length()),
-            config.getConfigProperty(Configuration.JETI_SESSIONSCHECKINTERVAL)
-        );
-        props.put(
-            Configuration.JETI_SERVERHOSTNAME.substring(PREFIX.length()),
-            config.getConfigProperty(Configuration.JETI_SERVERHOSTNAME)
-        );
-        props.put(
-            Configuration.JETI_CONNECTORSEPPPORT.substring(PREFIX.length()),
-            config.getConfigProperty(Configuration.JETI_CONNECTORSEPPPORT)
-        );
-        props.put(
-            Configuration.JETI_DEBUG.substring(PREFIX.length()),
-            config.getConfigProperty(Configuration.JETI_DEBUG)
-        );
+        java.util.Properties props = new java.util.Properties();  
+        for (String prop : JETI_PROPERTIES) {
+            props.put(prop.substring(PREFIX.length()), config.getConfigProperty(prop));  
+        }
         return props;
     }
 
@@ -164,22 +154,20 @@ final class JetiManager extends AbstractServerManager {
      * for configuring log4j logger used by jETI tool server.
      * 
      * @return the properties
+     * @throws IOException
+     *             If the via the KWebS configuration defined configuration file for jog4j
+     *             does not exist or is not readable
      */
-    private Properties createLog4jProperties() {
+    private Properties createLog4jProperties() throws IOException {
         Properties props = new Properties();
-        try {
-            props.load(Resources.getResourceStream(
-                Application.PLUGIN_ID,
-                config.getConfigProperty(Configuration.JETI_LOG4JCONFIG))
-            );
-            props.put(
-                "log4j.appender.A2.File", 
-                config.getConfigProperty(Configuration.JETI_LOGPATH)
-            );
-        } catch (Exception e) {
-            Logger.log(Severity.FAILURE, "jETI log4j configuration could not be created", e);
-            props = null;
-        }
+        props.load(Resources.getResourceStream(
+            Application.PLUGIN_ID,
+            config.getConfigProperty(Configuration.JETI_LOG4JCONFIG))
+        );
+        props.put(
+            "log4j.appender.A2.File", 
+            config.getConfigProperty(Configuration.JETI_LOGPATH)
+        );
         return props;
     }
     

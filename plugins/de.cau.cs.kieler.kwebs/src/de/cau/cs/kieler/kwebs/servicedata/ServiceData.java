@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.ServiceData#getLayoutOptions <em>Layout Options</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.ServiceData#getCategories <em>Categories</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.ServiceData#getVersion <em>Version</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.ServiceData#getSupportedFormats <em>Supported Formats</em>}</li>
  * </ul>
  * </p>
  *
@@ -120,5 +121,21 @@ public interface ServiceData extends EObject {
      * @generated
      */
     void setVersion(String value);
+
+    /**
+     * Returns the value of the '<em><b>Supported Formats</b></em>' containment reference list.
+     * The list contents are of type {@link de.cau.cs.kieler.kwebs.servicedata.SupportedFormat}.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Supported Formats</em>' containment reference list isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Supported Formats</em>' containment reference list.
+     * @see de.cau.cs.kieler.kwebs.servicedata.ServiceDataPackage#getServiceData_SupportedFormats()
+     * @model containment="true"
+     * @generated
+     */
+    EList<SupportedFormat> getSupportedFormats();
 
 } // ServiceData

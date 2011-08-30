@@ -17,14 +17,15 @@ package de.cau.cs.kieler.kwebs.transformation;
 import de.cau.cs.kieler.core.kgraph.KNode;
 
 /**
- * This interface defines an infrastructure for serialization and deserialization of graphs 
+ * This interface defines an infrastructure for serialization and deserialization of models 
  * in order to transfer them between a client and the layout web service. The client uses concrete
- * implementations of this interface in order to serialize and deserialize the graph to do layout on.
+ * implementations of this interface in order to serialize and deserialize the model to do layout on.
  * The server uses an extension point mechanism to register the supported transformations. Depending on 
  * the format identifier supported by the client when he does a layout request the server acquires a 
- * compatible transformer to derive a {@code KGraph} representation of the graph to do layout on. After
- * calculation of the layout on the derived {@code KGraph} the server applies the layout back to the 
- * original graph instance.
+ * compatible transformer to derive the model instance from the serialized model and the the graph 
+ * structure of the model, represented by a {@code KGraph} instance. After calculating the layout, the 
+ * initially derived model instance is applied with the calculated layout before it is being serialized
+ * and sent back to the client. 
  *            
  * @kieler.rating  2011-05-04 red
  * @author  swe

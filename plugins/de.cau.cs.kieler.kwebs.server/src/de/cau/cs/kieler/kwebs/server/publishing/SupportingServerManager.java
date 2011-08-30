@@ -38,7 +38,9 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
  * This class implements a HTTP server which can be used for different kinds of support for
  * the layout service. A {@link HttpHandler} can be registered via extension point.
  *
- * @kieler.rating  2011-05-04 red
+ * @kieler.rating  2011-08-25 proposed yellow
+ *      reviewed by ckru, msp, mri
+ *      
  * @author  swe
  */
 public class SupportingServerManager extends AbstractServerManager {
@@ -242,10 +244,8 @@ public class SupportingServerManager extends AbstractServerManager {
             for (String path : handlers.keySet()) {
                 contexts.add(server.createContext(path, handlers.get(path)));
             }
-        } catch (Exception e) {
-            Logger.log(Severity.CRITICAL, "Support server contexts could not be created", e);
+        } finally {
             clearContexts();
-            throw new ContextNotCreatedException(e);
         }
     }
 

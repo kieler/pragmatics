@@ -115,13 +115,22 @@ public interface ServiceDataPackage extends EPackage {
     int SERVICE_DATA__VERSION = 4;
 
     /**
+     * The feature id for the '<em><b>Supported Formats</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int SERVICE_DATA__SUPPORTED_FORMATS = 5;
+
+    /**
      * The number of structural features of the '<em>Service Data</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int SERVICE_DATA_FEATURE_COUNT = 5;
+    int SERVICE_DATA_FEATURE_COUNT = 6;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.kwebs.servicedata.impl.LayoutAlgorithmImpl <em>Layout Algorithm</em>}' class.
@@ -510,6 +519,53 @@ public interface ServiceDataPackage extends EPackage {
 
 
     /**
+     * The meta object id for the '{@link de.cau.cs.kieler.kwebs.servicedata.impl.SupportedFormatImpl <em>Supported Format</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kwebs.servicedata.impl.SupportedFormatImpl
+     * @see de.cau.cs.kieler.kwebs.servicedata.impl.ServiceDataPackageImpl#getSupportedFormat()
+     * @generated
+     */
+    int SUPPORTED_FORMAT = 8;
+
+    /**
+     * The feature id for the '<em><b>Id</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int SUPPORTED_FORMAT__ID = 0;
+
+    /**
+     * The feature id for the '<em><b>Description</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int SUPPORTED_FORMAT__DESCRIPTION = 1;
+
+    /**
+     * The feature id for the '<em><b>Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int SUPPORTED_FORMAT__NAME = 2;
+
+    /**
+     * The number of structural features of the '<em>Supported Format</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int SUPPORTED_FORMAT_FEATURE_COUNT = 3;
+
+
+    /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.kwebs.servicedata.ServiceData <em>Service Data</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -573,6 +629,17 @@ public interface ServiceDataPackage extends EPackage {
      * @generated
      */
     EAttribute getServiceData_Version();
+
+    /**
+     * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kwebs.servicedata.ServiceData#getSupportedFormats <em>Supported Formats</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference list '<em>Supported Formats</em>'.
+     * @see de.cau.cs.kieler.kwebs.servicedata.ServiceData#getSupportedFormats()
+     * @see #getServiceData()
+     * @generated
+     */
+    EReference getServiceData_SupportedFormats();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm <em>Layout Algorithm</em>}'.
@@ -953,6 +1020,49 @@ public interface ServiceDataPackage extends EPackage {
     EAttribute getRemoteEnum_Values();
 
     /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.kwebs.servicedata.SupportedFormat <em>Supported Format</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Supported Format</em>'.
+     * @see de.cau.cs.kieler.kwebs.servicedata.SupportedFormat
+     * @generated
+     */
+    EClass getSupportedFormat();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kwebs.servicedata.SupportedFormat#getId <em>Id</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Id</em>'.
+     * @see de.cau.cs.kieler.kwebs.servicedata.SupportedFormat#getId()
+     * @see #getSupportedFormat()
+     * @generated
+     */
+    EAttribute getSupportedFormat_Id();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kwebs.servicedata.SupportedFormat#getDescription <em>Description</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Description</em>'.
+     * @see de.cau.cs.kieler.kwebs.servicedata.SupportedFormat#getDescription()
+     * @see #getSupportedFormat()
+     * @generated
+     */
+    EAttribute getSupportedFormat_Description();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kwebs.servicedata.SupportedFormat#getName <em>Name</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Name</em>'.
+     * @see de.cau.cs.kieler.kwebs.servicedata.SupportedFormat#getName()
+     * @see #getSupportedFormat()
+     * @generated
+     */
+    EAttribute getSupportedFormat_Name();
+
+    /**
      * Returns the factory that creates the instances of the model.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1023,6 +1133,14 @@ public interface ServiceDataPackage extends EPackage {
          * @generated
          */
         EAttribute SERVICE_DATA__VERSION = eINSTANCE.getServiceData_Version();
+
+        /**
+         * The meta object literal for the '<em><b>Supported Formats</b></em>' containment reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference SERVICE_DATA__SUPPORTED_FORMATS = eINSTANCE.getServiceData_SupportedFormats();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.kwebs.servicedata.impl.LayoutAlgorithmImpl <em>Layout Algorithm</em>}' class.
@@ -1317,6 +1435,40 @@ public interface ServiceDataPackage extends EPackage {
          * @generated
          */
         EAttribute REMOTE_ENUM__VALUES = eINSTANCE.getRemoteEnum_Values();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.kwebs.servicedata.impl.SupportedFormatImpl <em>Supported Format</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.kwebs.servicedata.impl.SupportedFormatImpl
+         * @see de.cau.cs.kieler.kwebs.servicedata.impl.ServiceDataPackageImpl#getSupportedFormat()
+         * @generated
+         */
+        EClass SUPPORTED_FORMAT = eINSTANCE.getSupportedFormat();
+
+        /**
+         * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute SUPPORTED_FORMAT__ID = eINSTANCE.getSupportedFormat_Id();
+
+        /**
+         * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute SUPPORTED_FORMAT__DESCRIPTION = eINSTANCE.getSupportedFormat_Description();
+
+        /**
+         * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute SUPPORTED_FORMAT__NAME = eINSTANCE.getSupportedFormat_Name();
 
     }
 

@@ -32,7 +32,7 @@ import de.cau.cs.kieler.kwebs.servicedata.transformation.ServiceDataXmiTransform
  * @kieler.rating 2011-05-17 red
  * @author swe
  */
-public abstract class ServiceDataLayoutDataService extends ProgrammaticLayoutDataService {
+public abstract class ServiceDataLayoutDataService extends ExtensionLayoutDataService {
 
     /** 
      *  The extension elements created from the layout meta data received
@@ -75,7 +75,6 @@ public abstract class ServiceDataLayoutDataService extends ProgrammaticLayoutDat
             }
             extensions = vectorElements.toArray(new IConfigurationElement[0]);
             loadLayoutProviderExtensions();
-            registerProgrammaticOptions();
         } catch (Exception e) {
             reportError("Error while parsing layout server meta data", e);
         }

@@ -28,8 +28,10 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 
 /**
  * Main service class to be published as JAX-WS web service.
- *
- * @kieler.rating  2011-05-04 red
+ * 
+ * @kieler.rating  2011-08-25 proposed yellow
+ *      reviewed by ckru, msp, mri
+ *      
  * @author  swe
  */
 // The attributes are necessary because otherwise JAX-WS would use package and class name for
@@ -48,7 +50,7 @@ public final class JaxWsService extends AbstractService implements LayoutService
      * Creates a new instance of the JAX-WS based layout service.
      */
     public JaxWsService() {
-        ServerLayoutDataService.create();
+        super();
     }
 
     /**
@@ -88,7 +90,7 @@ public final class JaxWsService extends AbstractService implements LayoutService
      */
     public String getServiceData() throws ServiceFault_Exception {
         try {
-            return ServerLayoutDataService.getServiceData();
+            return ServerLayoutDataService.getInstance().getServiceData();
         } catch (Exception e) {
             throw createException(0, e);
         }
@@ -107,7 +109,7 @@ public final class JaxWsService extends AbstractService implements LayoutService
     public byte[] getPreviewImage(final String previewImage) throws ServiceFault_Exception {
         Logger.log(Severity.DEBUG, "Handling preview image request");
         try {
-            byte[] result = ServerLayoutDataService.getPreviewImage(previewImage);
+            byte[] result = ServerLayoutDataService.getInstance().getPreviewImage(previewImage);
             Logger.log(Severity.DEBUG, "Handling preview image request succeeded");
             return result;
         } catch (Exception e) {

@@ -88,6 +88,9 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
     /** Button for selecting a server configuration. */
     private Button scEditButton5;
 
+    /** Button for displaying details on the layout service of a server configuration. */
+    private Button scEditButton6;
+
     /** The table viewer used to display the user defined server configuration. */
     private TableViewer serverConfigViewer;
     
@@ -491,6 +494,25 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
                         if (!selection.isEmpty()) {
                             ServerConfig serverConfig = (ServerConfig) selection.getFirstElement();
                             Job job = new CheckAvailabilityJob(getShell(), serverConfig);
+                            job.setUser(true);
+                            job.schedule();
+                        }
+                    }
+                }
+            }
+        );
+
+        scEditButton6 = new Button(comp, SWT.PUSH | SWT.CENTER);
+        scEditButton6.setText("Details...");
+        scEditButton6.addSelectionListener(
+            new SelectionAdapter() {
+                public void widgetSelected(final SelectionEvent e) {
+                    if (e.widget == scEditButton6) {
+                        IStructuredSelection selection
+                            = (IStructuredSelection) serverConfigViewer.getSelection();
+                        if (!selection.isEmpty()) {
+                            ServerConfig serverConfig = (ServerConfig) selection.getFirstElement();
+                            Job job = new ServerDetailsJob(getShell(), serverConfig);
                             job.setUser(true);
                             job.schedule();
                         }

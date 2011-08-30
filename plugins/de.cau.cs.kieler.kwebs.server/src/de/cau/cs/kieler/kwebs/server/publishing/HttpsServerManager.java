@@ -15,10 +15,17 @@
 package de.cau.cs.kieler.kwebs.server.publishing;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -36,7 +43,10 @@ import de.cau.cs.kieler.kwebs.util.Resources;
 /**
  * Manager for publishing a service object over HTTPS.
  * Concurrent safety has to be provided by using instance.
- *
+ * 
+ * @kieler.rating  2011-08-25 proposed yellow
+ *      reviewed by ckru, msp, mri
+ *      
  * @author swe
  *
  */
@@ -53,71 +63,76 @@ final class HttpsServerManager extends HttpServerManager {
     /**
      * Creates the {@code HttpsServer} instance configured to listen on the host and port specified by
      * the property {@code Configuration.HTTPS_ADDRESS}.
+     * 
+     * @throws NoSuchAlgorithmException 
+     * @throws KeyStoreException 
+     * @throws IOException 
+     * @throws CertificateException 
+     * @throws UnrecoverableKeyException 
+     * @throws KeyManagementException 
+     * @throws URISyntaxException 
      */
-    protected synchronized void createServer() {
+    protected synchronized void createServer() throws NoSuchAlgorithmException, 
+        KeyStoreException, CertificateException, IOException, 
+        UnrecoverableKeyException, KeyManagementException, URISyntaxException {
         if (server != null) {
             throw new AlreadyPublishedException();
         }
-        try {
-            SSLContext sslContext
-                = SSLContext.getInstance("TLS");
-            KeyManagerFactory keyManagerFactory
-                = KeyManagerFactory.getInstance(
-                      KeyManagerFactory.getDefaultAlgorithm()
-                  );
-            KeyStore keyStore
-                = KeyStore.getInstance("JKS");
-            TrustManagerFactory trustManagerFactory
-                = TrustManagerFactory.getInstance(
-                      TrustManagerFactory.getDefaultAlgorithm()
-                  );
-            String keystoreFile = config.getConfigProperty(Configuration.HTTPSKEYSTORE_JKS_PATH);
-            String keystorePass = config.getConfigProperty(Configuration.HTTPSKEYSTORE_JKS_PASS);
-            byte[] keystoreData = Resources.readFileOrPluginResourceAsByteArray(
-                Application.PLUGIN_ID, keystoreFile
-            );  
-            keyStore.load(
-                //new FileInputStream(keystoreFile),
-                new ByteArrayInputStream(keystoreData),
-                keystorePass.toCharArray()
+        SSLContext sslContext
+            = SSLContext.getInstance("TLS");
+        KeyManagerFactory keyManagerFactory
+            = KeyManagerFactory.getInstance(
+                  KeyManagerFactory.getDefaultAlgorithm()
+              );
+        KeyStore keyStore
+            = KeyStore.getInstance("JKS");
+        TrustManagerFactory trustManagerFactory
+            = TrustManagerFactory.getInstance(
+                  TrustManagerFactory.getDefaultAlgorithm()
+              );
+        String keystoreFile = config.getConfigProperty(Configuration.HTTPSKEYSTORE_JKS_PATH);
+        String keystorePass = config.getConfigProperty(Configuration.HTTPSKEYSTORE_JKS_PASS);
+        byte[] keystoreData = Resources.readFileOrPluginResourceAsByteArray(
+            Application.PLUGIN_ID, keystoreFile
+        );  
+        keyStore.load(
+            //new FileInputStream(keystoreFile),
+            new ByteArrayInputStream(keystoreData),
+            keystorePass.toCharArray()
+        );
+        keyManagerFactory.init(
+            keyStore, keystorePass.toCharArray()
+        );
+        trustManagerFactory.init(keyStore);
+        sslContext.init(
+            keyManagerFactory.getKeyManagers(),
+                trustManagerFactory.getTrustManagers(),
+                    new SecureRandom()
+        );
+        HttpsConfigurator httpsConfigurator
+            = new HttpsConfigurator(sslContext);
+        URI address = new URI(config.getConfigProperty(Configuration.HTTPS_ADDRESS));
+        String host = address.getHost();
+        if (host == null) {
+            Logger.log(Severity.WARNING, 
+                "The host you specified for the HTTPS server is invalid."
+                + " Using default host " + HTTPS_DEFAULTHOST + "."
             );
-            keyManagerFactory.init(
-                keyStore, keystorePass.toCharArray()
-            );
-            trustManagerFactory.init(keyStore);
-            sslContext.init(
-                keyManagerFactory.getKeyManagers(),
-                    trustManagerFactory.getTrustManagers(),
-                        new SecureRandom()
-            );
-            HttpsConfigurator httpsConfigurator
-                = new HttpsConfigurator(sslContext);
-            URI address = new URI(config.getConfigProperty(Configuration.HTTPS_ADDRESS));
-            String host = address.getHost();
-            if (host == null) {
-                Logger.log(Severity.WARNING, 
-                    "The host you specified for the HTTPS server is invalid."
-                    + " Using default host " + HTTPS_DEFAULTHOST + "."
-                );
-                host = HTTPS_DEFAULTHOST;
-            }
-            int port = address.getPort();
-            if (port == -1) {
-                Logger.log(Severity.WARNING, 
-                    "The port you specified for the HTTPS server is invalid."
-                    + " Using default port" + HTTPS_DEFAULTPORT + "."
-                );
-                port = HTTPS_DEFAULTPORT;
-            }
-            server = HttpsServer.create(
-                new InetSocketAddress(host, port),
-                Integer.parseInt(config.getConfigProperty(Configuration.SERVER_BACKLOG))
-            );
-            ((HttpsServer) server).setHttpsConfigurator(httpsConfigurator);
-        } catch (Exception e) {
-            Logger.log(Severity.CRITICAL, "HTTPS server could not be created", e);
-            throw new ServerNotCreatedException(e);
+            host = HTTPS_DEFAULTHOST;
         }
+        int port = address.getPort();
+        if (port == -1) {
+            Logger.log(Severity.WARNING, 
+                "The port you specified for the HTTPS server is invalid."
+                + " Using default port" + HTTPS_DEFAULTPORT + "."
+            );
+            port = HTTPS_DEFAULTPORT;
+        }
+        server = HttpsServer.create(
+            new InetSocketAddress(host, port),
+            Integer.parseInt(config.getConfigProperty(Configuration.SERVER_BACKLOG))
+        );
+        ((HttpsServer) server).setHttpsConfigurator(httpsConfigurator);
     }
 
 }

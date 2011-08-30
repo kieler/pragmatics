@@ -40,6 +40,7 @@ import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kwebs.formats.Formats;
+import de.cau.cs.kieler.kwebs.util.Graphs;
 
 /**
  * Transformer for the KGraph model and XMI serialization.
@@ -60,25 +61,21 @@ public class KGraphXmiTransformer implements IGraphTransformer {
         try {
             ByteArrayInputStream inStream = new ByteArrayInputStream(
                 serializedGraph.getBytes("UTF-8")
-                //serializedGraph.getBytes()
             );
             URI uri = URI.createURI("inputstream://temp.kgraph");
             ResourceSet resourceSet = createResourceSet();
             Resource resource = resourceSet.createResource(uri);
             EObject eObject = null;
-            try {
-                Map<String, String> options = new HashMap<String, String>();
-                options.put(XMLResource.OPTION_ENCODING, "UTF-8");
-                //resource.load(inStream, Collections.EMPTY_MAP);
-                resource.load(inStream, options);
-                eObject = resource.getContents().get(0);
-                if (eObject instanceof KNode) {
-                    graph = (KNode) eObject;
-                    unpersistDataElements(graph);
-                }
-            } catch (Throwable e) {
-                e.printStackTrace();
+            Map<String, String> options = new HashMap<String, String>();
+            options.put(XMLResource.OPTION_ENCODING, "UTF-8");
+            resource.load(inStream, options);
+            eObject = resource.getContents().get(0);
+            if (eObject instanceof KNode) {
+                graph = (KNode) eObject;
+                unpersistDataElements(graph);
             }
+            // Make sure all graph elements are configured according to specs
+            Graphs.validateAllElements(graph);
             inStream.close();
         } catch (Exception e) {
             throw new TransformationException(e);
@@ -105,7 +102,6 @@ public class KGraphXmiTransformer implements IGraphTransformer {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             Map<String, String> options = new HashMap<String, String>();
             options.put(XMLResource.OPTION_ENCODING, "UTF-8");
-            //resource.save(outStream, Collections.EMPTY_MAP);
             resource.save(outStream, options);
             outStream.flush();
             xmi = new String(outStream.toByteArray(), "UTF-8");
@@ -128,6 +124,7 @@ public class KGraphXmiTransformer implements IGraphTransformer {
      * {@inheritDoc}
      */
     public void applyLayout(final Object graph, final KNode layout) {
+        // Nothing to do since the given graph and layout are the same instance
     }
     
     /**
@@ -170,11 +167,6 @@ public class KGraphXmiTransformer implements IGraphTransformer {
             EObject eObject  = null;
             EList<PersistentEntry> persistentEntries = null;
             LayoutDataService services = LayoutDataService.getInstance();
-/*            
-            if (services == null) {
-                throw new IllegalStateException("No service data instance registered");
-            }
-*/            
             KGraphData kgraphData = null;
             while (iterator.hasNext()) {
                 eObject = iterator.next();

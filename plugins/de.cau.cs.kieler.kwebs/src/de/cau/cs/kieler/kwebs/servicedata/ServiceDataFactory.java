@@ -98,6 +98,15 @@ public interface ServiceDataFactory extends EFactory {
     RemoteEnum createRemoteEnum();
 
     /**
+     * Returns a new object of class '<em>Supported Format</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Supported Format</em>'.
+     * @generated
+     */
+    SupportedFormat createSupportedFormat();
+
+    /**
      * Returns the package supported by this factory.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->

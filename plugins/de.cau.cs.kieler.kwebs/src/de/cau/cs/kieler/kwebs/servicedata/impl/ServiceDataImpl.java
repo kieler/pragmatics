@@ -11,6 +11,7 @@ import de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm;
 import de.cau.cs.kieler.kwebs.servicedata.LayoutOption;
 import de.cau.cs.kieler.kwebs.servicedata.LayoutType;
 import de.cau.cs.kieler.kwebs.servicedata.ServiceData;
+import de.cau.cs.kieler.kwebs.servicedata.SupportedFormat;
 import de.cau.cs.kieler.kwebs.servicedata.ServiceDataPackage;
 
 import java.util.Collection;
@@ -41,6 +42,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.impl.ServiceDataImpl#getLayoutOptions <em>Layout Options</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.impl.ServiceDataImpl#getCategories <em>Categories</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.impl.ServiceDataImpl#getVersion <em>Version</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kwebs.servicedata.impl.ServiceDataImpl#getSupportedFormats <em>Supported Formats</em>}</li>
  * </ul>
  * </p>
  *
@@ -106,6 +108,16 @@ public class ServiceDataImpl extends EObjectImpl implements ServiceData {
      * @ordered
      */
     protected String version = VERSION_EDEFAULT;
+
+    /**
+     * The cached value of the '{@link #getSupportedFormats() <em>Supported Formats</em>}' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getSupportedFormats()
+     * @generated
+     * @ordered
+     */
+    protected EList<SupportedFormat> supportedFormats;
 
     /**
      * <!-- begin-user-doc -->
@@ -200,6 +212,18 @@ public class ServiceDataImpl extends EObjectImpl implements ServiceData {
      * <!-- end-user-doc -->
      * @generated
      */
+    public EList<SupportedFormat> getSupportedFormats() {
+        if (supportedFormats == null) {
+            supportedFormats = new EObjectContainmentEList<SupportedFormat>(SupportedFormat.class, this, ServiceDataPackage.SERVICE_DATA__SUPPORTED_FORMATS);
+        }
+        return supportedFormats;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     @Override
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
@@ -211,6 +235,8 @@ public class ServiceDataImpl extends EObjectImpl implements ServiceData {
                 return ((InternalEList<?>)getLayoutOptions()).basicRemove(otherEnd, msgs);
             case ServiceDataPackage.SERVICE_DATA__CATEGORIES:
                 return ((InternalEList<?>)getCategories()).basicRemove(otherEnd, msgs);
+            case ServiceDataPackage.SERVICE_DATA__SUPPORTED_FORMATS:
+                return ((InternalEList<?>)getSupportedFormats()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
@@ -233,6 +259,8 @@ public class ServiceDataImpl extends EObjectImpl implements ServiceData {
                 return getCategories();
             case ServiceDataPackage.SERVICE_DATA__VERSION:
                 return getVersion();
+            case ServiceDataPackage.SERVICE_DATA__SUPPORTED_FORMATS:
+                return getSupportedFormats();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -265,6 +293,10 @@ public class ServiceDataImpl extends EObjectImpl implements ServiceData {
             case ServiceDataPackage.SERVICE_DATA__VERSION:
                 setVersion((String)newValue);
                 return;
+            case ServiceDataPackage.SERVICE_DATA__SUPPORTED_FORMATS:
+                getSupportedFormats().clear();
+                getSupportedFormats().addAll((Collection<? extends SupportedFormat>)newValue);
+                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -292,6 +324,9 @@ public class ServiceDataImpl extends EObjectImpl implements ServiceData {
             case ServiceDataPackage.SERVICE_DATA__VERSION:
                 setVersion(VERSION_EDEFAULT);
                 return;
+            case ServiceDataPackage.SERVICE_DATA__SUPPORTED_FORMATS:
+                getSupportedFormats().clear();
+                return;
         }
         super.eUnset(featureID);
     }
@@ -314,6 +349,8 @@ public class ServiceDataImpl extends EObjectImpl implements ServiceData {
                 return categories != null && !categories.isEmpty();
             case ServiceDataPackage.SERVICE_DATA__VERSION:
                 return VERSION_EDEFAULT == null ? version != null : !VERSION_EDEFAULT.equals(version);
+            case ServiceDataPackage.SERVICE_DATA__SUPPORTED_FORMATS:
+                return supportedFormats != null && !supportedFormats.isEmpty();
         }
         return super.eIsSet(featureID);
     }

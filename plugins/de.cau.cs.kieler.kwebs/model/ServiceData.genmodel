@@ -5,13 +5,15 @@
     modelPluginID="de.cau.cs.kieler.kwebs" modelName="ServiceData" importerID="org.eclipse.emf.importer.ecore"
     complianceLevel="5.0" copyrightFields="false">
   <foreignModel>ServiceData.ecore</foreignModel>
-  <genPackages prefix="ServiceData" basePackage="de.cau.cs.kieler.kwebs" disposableProviderFactory="true"
-      ecorePackage="ServiceData.ecore#/">
+  <genPackages prefix="ServiceData" basePackage="de.cau.cs.kieler.kwebs" resource="XML"
+      disposableProviderFactory="true" adapterFactory="false" ecorePackage="ServiceData.ecore#/">
     <genClasses ecoreClass="ServiceData.ecore#//ServiceData">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ServiceData.ecore#//ServiceData/layoutAlgorithms"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ServiceData.ecore#//ServiceData/layoutTypes"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ServiceData.ecore#//ServiceData/layoutOptions"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ServiceData.ecore#//ServiceData/categories"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ServiceData.ecore#//ServiceData/version"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ServiceData.ecore#//ServiceData/supportedFormats"/>
     </genClasses>
     <genClasses ecoreClass="ServiceData.ecore#//LayoutAlgorithm">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ServiceData.ecore#//LayoutAlgorithm/id"/>
@@ -21,6 +23,8 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ServiceData.ecore#//LayoutAlgorithm/supportedDiagrams"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ServiceData.ecore#//LayoutAlgorithm/category"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ServiceData.ecore#//LayoutAlgorithm/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ServiceData.ecore#//LayoutAlgorithm/version"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ServiceData.ecore#//LayoutAlgorithm/previewImagePath"/>
     </genClasses>
     <genClasses ecoreClass="ServiceData.ecore#//LayoutType">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ServiceData.ecore#//LayoutType/id"/>
@@ -35,7 +39,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ServiceData.ecore#//LayoutOption/appliesTo"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ServiceData.ecore#//LayoutOption/default"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ServiceData.ecore#//LayoutOption/advanced"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ServiceData.ecore#//LayoutOption/remoteEnum"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ServiceData.ecore#//LayoutOption/remoteEnum"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ServiceData.ecore#//LayoutOption/implementation"/>
     </genClasses>
     <genClasses ecoreClass="ServiceData.ecore#//Category">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ServiceData.ecore#//Category/id"/>
@@ -51,6 +56,10 @@
     </genClasses>
     <genClasses ecoreClass="ServiceData.ecore#//RemoteEnum">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ServiceData.ecore#//RemoteEnum/values"/>
+    </genClasses>
+    <genClasses ecoreClass="ServiceData.ecore#//SupportedFormat">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ServiceData.ecore#//SupportedFormat/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ServiceData.ecore#//SupportedFormat/description"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

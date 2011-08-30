@@ -40,7 +40,9 @@ import de.cau.cs.kieler.kwebs.util.Resources;
 /**
  * The main server application.
  *
- * @kieler.rating  2011-05-04 red
+ * @kieler.rating  2011-08-25 proposed yellow
+ *      reviewed by ckru, msp, mri
+ *      
  * @author  swe
  */
 public class Application implements IApplication {
@@ -54,14 +56,14 @@ public class Application implements IApplication {
 
     /** The display logger used in debug mode. */
     private ILoggerListener displayLogging;
-
-    /** Whether the server has been asked to terminate or not. */
-    private boolean stopped
+    
+    /** Object to synchronize and wait on for termination request. */
+    private Object termSync
+        = new Object();
+    
+    /** Whether the server shall terminate. */
+    private boolean termRequested
         = false;
-
-    /** Timeout for main application loop. */
-    private static final long LOOP_TIMEOUT
-        = 1000;
 
     /** Default path of the log file. */
     private static final String DEFAULT_LOGPATH
@@ -250,8 +252,11 @@ public class Application implements IApplication {
             Logger.log(Severity.DEBUG, "Registering logging adapter for jax-ws");
             JavaLoggingAdapter.register();
             ServicePublisher.getInstance().publish();
-            while (!stopped) {
-                Thread.sleep(LOOP_TIMEOUT);
+            //FIXME synchronized/wait/notify
+            synchronized (termSync) {
+                while (!termRequested) {
+                    termSync.wait();
+                }
             }
         } catch (Exception e) {
             Logger.log(Severity.CRITICAL, "Error while initializing layout server", e);
@@ -285,14 +290,15 @@ public class Application implements IApplication {
      * {@inheritDoc}
      */
     public final void stop() {
-        stopped = true;
+        shutdownServer();
     }
 
     /**
      * Shuts down the server.
      */
-    public final void shutdownServer() {
-        stopped = true;
+    public final synchronized void shutdownServer() {
+        termRequested = true;
+        termSync.notify();
     }
 
     /** The plug-in id of the graphviz layouter. */

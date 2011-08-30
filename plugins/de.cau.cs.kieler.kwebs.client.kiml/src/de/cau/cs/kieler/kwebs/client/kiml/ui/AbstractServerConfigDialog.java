@@ -70,6 +70,9 @@ public abstract class AbstractServerConfigDialog extends Dialog {
     /** Button for testing service availability. */
     protected Button checkButton;
 
+    /** Button for showing service details. */
+    protected Button detailButton;
+
     //CHECKSTYLEON VisibilityModifier
     
     /**
@@ -204,7 +207,11 @@ public abstract class AbstractServerConfigDialog extends Dialog {
 
         // Only enabled on HTTPS connections
         truststorePass.setEnabled(false);
-
+        
+        // Dummy button for sorting the UI
+        Button dummy = new Button(group, SWT.NONE);
+        dummy.setVisible(false);
+        
         checkButton = new Button(group, SWT.NONE);
         checkButton.setText("Check...");
         checkButton.setLayoutData(layoutButton);
@@ -214,6 +221,20 @@ public abstract class AbstractServerConfigDialog extends Dialog {
                 public void widgetSelected(final SelectionEvent e) {
                     if (e.widget == checkButton) {
                         checkAvailability();
+                    }
+                }
+            }
+        );
+
+        detailButton = new Button(group, SWT.NONE);
+        detailButton.setText("Details...");
+        detailButton.setLayoutData(layoutButton);
+
+        detailButton.addSelectionListener(
+            new SelectionAdapter() {
+                public void widgetSelected(final SelectionEvent e) {
+                    if (e.widget == detailButton) {
+                        displayDetails();
                     }
                 }
             }
@@ -393,6 +414,19 @@ public abstract class AbstractServerConfigDialog extends Dialog {
             getName(), getAddress(), getTruststore(), getTruststorePass()
         );
         Job job = new CheckAvailabilityJob(getShell(), serverConfig);
+        job.setUser(true);
+        job.schedule();
+    }
+
+    /**
+     * Checks whether the layout service derived from the user entered parameters
+     * is reachable.
+     */
+    protected final void displayDetails() {
+        ServerConfig serverConfig = ServerConfigs.getInstance().createServerConfig(
+            getName(), getAddress(), getTruststore(), getTruststorePass()
+        );
+        Job job = new ServerDetailsJob(getShell(), serverConfig);
         job.setUser(true);
         job.schedule();
     }

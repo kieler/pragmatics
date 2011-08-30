@@ -57,7 +57,7 @@ public class PreviewImageHandler implements HttpHandler {
         }
         byte[] data = null;
         if (index != null && type != null) {                            
-            data = ServerLayoutDataService.getPreviewImage(index);
+            data = ServerLayoutDataService.getInstance().getPreviewImage(index);
         }
         if (data != null) {
             exchange.getResponseHeaders().add("Content-type", "image/" + type);     

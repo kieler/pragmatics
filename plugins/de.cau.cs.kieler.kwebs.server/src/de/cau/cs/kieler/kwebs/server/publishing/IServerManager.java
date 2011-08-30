@@ -16,6 +16,9 @@ package de.cau.cs.kieler.kwebs.server.publishing;
 
 /**
  * Interface declaration for the different server managers.
+ * 
+ * @kieler.rating  2011-08-25 proposed yellow
+ *      reviewed by ckru, msp, mri
  *
  * @author swe
  *

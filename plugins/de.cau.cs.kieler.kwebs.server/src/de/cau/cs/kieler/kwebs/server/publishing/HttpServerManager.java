@@ -30,7 +30,10 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 /**
  * Manager for publishing a service object over HTTP.
  * Concurrent safety has to be provided by using instance.
- *
+ * 
+ * @kieler.rating  2011-08-25 proposed yellow
+ *      reviewed by ckru, msp, mri
+ *      
  * @author swe
  *
  */
@@ -78,8 +81,8 @@ class HttpServerManager extends AbstractServerManager {
             createContext();
             server.start();
             endpoint = Endpoint.create(serviceObject);
-            // Sets the executor of the endpoint. The newly created thread pool
-            // makes the endpoint handle the incoming requests concurrently.
+            // Sets the executor of the end point. The newly created thread pool
+            // makes the end point handle the incoming requests concurrently.
             endpoint.setExecutor(Executors.newFixedThreadPool(
                 Integer.parseInt(config.getConfigProperty(Configuration.SERVER_POOLSIZE))
             ));
@@ -125,64 +128,68 @@ class HttpServerManager extends AbstractServerManager {
 
     /**
      * Creates the {@code HttpServer} instance configured to listen on the host and port specified by
-     * the property {@code Configuration.HTTP_ADDRESS}.
+     * the property {@code Configuration.HTTP_ADDRESS}. It is not allowed to call this method when a 
+     * server instance has already been created. This attempt will cause a 
+     * {@code IllegalStateException} to be thrown.
+     * 
+     * @throws Exception
+     *             if the configured server address is not valid or the server instance
+     *             creation failed.
      */
-    protected void createServer() {
+    protected void createServer() throws Exception {
         if (server != null) {
             throw new IllegalStateException("Server has already been created");
         }
-        try {
-            URI address = new URI(config.getConfigProperty(Configuration.HTTP_ADDRESS));
-            String host = address.getHost();
-            if (host == null) {
-                Logger.log(Severity.WARNING, 
-                    "The host you specified for the HTTP server is invalid."
-                    + " Using default host " + HTTP_DEFAULTHOST + "."
-                );
-                host = HTTP_DEFAULTHOST;
-            }
-            int port = address.getPort();
-            if (port == -1) {
-                Logger.log(Severity.WARNING, 
-                    "The port you specified for the HTTP server is invalid."
-                    + " Using default port " + HTTP_DEFAULTPORT + "."
-                );
-                port = HTTP_DEFAULTPORT;
-            }
-            server = HttpServer.create(
-                new InetSocketAddress(host, port),
-                Integer.parseInt(config.getConfigProperty(Configuration.SERVER_BACKLOG))
+        URI address = new URI(config.getConfigProperty(Configuration.HTTP_ADDRESS));
+        String host = address.getHost();
+        if (host == null) {
+            Logger.log(Severity.WARNING, 
+                "The host you specified for the HTTP server is invalid."
+                + " Using default host " + HTTP_DEFAULTHOST + "."
             );
-        } catch (Exception e) {
-            Logger.log(Severity.CRITICAL, "HTTP server could not be created", e);
-            throw new ServerNotCreatedException(e);
+            host = HTTP_DEFAULTHOST;
         }
+        int port = address.getPort();
+        if (port == -1) {
+            Logger.log(Severity.WARNING, 
+                "The port you specified for the HTTP server is invalid."
+                + " Using default port " + HTTP_DEFAULTPORT + "."
+            );
+            port = HTTP_DEFAULTPORT;
+        }
+        server = HttpServer.create(
+            new InetSocketAddress(host, port),
+            Integer.parseInt(config.getConfigProperty(Configuration.SERVER_BACKLOG))
+        );
     }
 
     /**
-     * Creates the {@code HttpContext} under which this server is publishing the serviced object.
+     * Creates the {@code HttpContext} under which this server is publishing the serviced object. A 
+     * context instance can only be created when the server instance has been created and no other 
+     * context instance so far. Any attempt to do otherwise will cause a {@code IllegalStateException} 
+     * to be thrown. 
+     * 
+     * @throws Exception
+     *             if the configured server address is not valid or does not contain a valid path or 
+     *             the context instance creation failed.
+     *            
      */
-    protected void createContext() {
+    protected void createContext() throws Exception {
         if (server == null) {
             throw new IllegalStateException("Server has not been created");
         }
         if (context != null) {
             throw new IllegalStateException("Context has already been created");
         }
-        try {
-            URI address = new URI(config.getConfigProperty(Configuration.HTTP_ADDRESS));
-            String path = address.getPath();
-            if (path == null) {
-                Logger.log(Severity.FAILURE, 
-                    "The path you specified for the HTTP server is invalid."
-                );                
-                throw new ContextNotCreatedException();
-            }
-            context = server.createContext(path);
-        } catch (Exception e) {
-            Logger.log(Severity.CRITICAL, "HTTP server context could not be created", e);
-            throw new ContextNotCreatedException(e);
+        URI address = new URI(config.getConfigProperty(Configuration.HTTP_ADDRESS));
+        String path = address.getPath();
+        if (path == null) {
+            Logger.log(Severity.FAILURE, 
+                "The path you specified for the HTTP server is invalid."
+            );                
+            throw new ContextNotCreatedException();
         }
+        context = server.createContext(path);
     }
 
 }

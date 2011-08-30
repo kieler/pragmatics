@@ -68,6 +68,7 @@ public class ServiceDataFactoryImpl extends EFactoryImpl implements ServiceDataF
             case ServiceDataPackage.KNOWN_OPTION: return createKnownOption();
             case ServiceDataPackage.SUPPORTED_DIAGRAM: return createSupportedDiagram();
             case ServiceDataPackage.REMOTE_ENUM: return createRemoteEnum();
+            case ServiceDataPackage.SUPPORTED_FORMAT: return createSupportedFormat();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
@@ -151,6 +152,16 @@ public class ServiceDataFactoryImpl extends EFactoryImpl implements ServiceDataF
     public RemoteEnum createRemoteEnum() {
         RemoteEnumImpl remoteEnum = new RemoteEnumImpl();
         return remoteEnum;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public SupportedFormat createSupportedFormat() {
+        SupportedFormatImpl supportedFormat = new SupportedFormatImpl();
+        return supportedFormat;
     }
 
     /**

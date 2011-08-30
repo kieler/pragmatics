@@ -21,11 +21,13 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
-//FIXME just implemented for testing purposes yet.
+
 /**
  * Adapter for catching the jaxws logging events and log them in our own logger.
  *
- * @kieler.rating  2011-05-04 red
+ * @kieler.rating  2011-08-25 proposed yellow
+ *      reviewed by ckru, msp, mri
+ *      
  * @author  swe
  */
 public class JavaLoggingAdapter extends Handler implements java.util.logging.Filter {

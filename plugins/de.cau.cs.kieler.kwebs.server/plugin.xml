@@ -33,6 +33,7 @@
          point="de.cau.cs.kieler.kwebs.server.configuration">
       <transformer
             implementation="de.cau.cs.kieler.kwebs.transformation.KGraphXmiTransformer"
+            name="FORMAT_KGRAPH_XMI"
             supportedFormat="de.cau.cs.kieler.format.kgraph.xmi">
       </transformer>
       <supportHandler

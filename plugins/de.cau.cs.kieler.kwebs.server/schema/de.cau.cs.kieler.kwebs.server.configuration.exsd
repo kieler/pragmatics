@@ -58,7 +58,7 @@
          <attribute name="supportedFormat" type="string" use="required">
             <annotation>
                <documentation>
-                  The supported meta model and form of serialization supported by this transformer.
+                  An unique identifier string describing the supported meta model and form of serialization supported by this transformer.
                </documentation>
             </annotation>
          </attribute>
@@ -70,6 +70,20 @@
                <appinfo>
                   <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kwebs.transformation.IGraphTransformer"/>
                </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  A textual description of the supported format and form of serialization.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A displayable name for the transformer.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

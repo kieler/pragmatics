@@ -21,10 +21,15 @@ import java.util.List;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KGraphFactory;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -160,6 +165,70 @@ public final class Graphs {
    }
 
    /**
+    * Ensures that each element contained in a KGraph instance is attributed correctly for
+    * usage in KIML.
+    * 
+    * @param graph
+    *            the KGraph instance to validate the elements of 
+    */
+   public static void validateAllElements(final KNode graph) {
+       if (graph == null) {
+           throw new IllegalArgumentException("Graph instance is null");
+       }
+       KGraphFactory elementFactory = KGraphFactory.eINSTANCE;
+       KLayoutDataFactory layoutFactory = KLayoutDataFactory.eINSTANCE;
+       List<KGraphElement> elements = getAllElementsOfType(graph, KGraphElement.class);
+       for (KGraphElement element : elements) {
+           KShapeLayout sLayout = element.getData(KShapeLayout.class);
+           KEdgeLayout eLayout = element.getData(KEdgeLayout.class);
+           // Make sure nodes are OK
+           if (element instanceof KNode) {                   
+               if (sLayout == null) {
+                   sLayout = layoutFactory.createKShapeLayout();                   
+                   element.getData().add(sLayout);
+               } 
+               if (sLayout.getInsets() == null) {
+                   sLayout.setInsets(layoutFactory.createKInsets());
+               }
+               KNode node = (KNode) element;
+               if (node.getLabel() == null) {
+                   KLabel label = elementFactory.createKLabel();
+                   label.getData().add(layoutFactory.createKShapeLayout());
+                   label.setParent(node);
+                   label.setText("");
+                   node.setLabel(label);
+               }        
+           // Make sure ports are OK           
+           } else if (element instanceof KPort) {                   
+               if (sLayout == null) {
+                   element.getData().add(layoutFactory.createKShapeLayout());
+               }    
+               KPort port = (KPort) element;
+               if (port.getLabel() == null) {
+                   KLabel label = elementFactory.createKLabel();
+                   label.getData().add(layoutFactory.createKShapeLayout());
+                   label.setParent(port);
+                   label.setText("");
+                   port.setLabel(label);
+               }                       
+           // Make sure labels are OK
+           } else if (element instanceof KLabel) {                   
+               if (sLayout == null) {
+                   element.getData().add(layoutFactory.createKShapeLayout());
+               }
+           // Make sure edges are OK
+           } else if (element instanceof KEdge) {                   
+               if (eLayout == null) {
+                   eLayout = layoutFactory.createKEdgeLayout();
+                   eLayout.setSourcePoint(layoutFactory.createKPoint());
+                   eLayout.setTargetPoint(layoutFactory.createKPoint());
+                   element.getData().add(eLayout);
+               }   
+           }
+       }
+   }
+   
+   /**
     * Returns a list containing all the elements from a given graph which are of the specified
     * type or sub classes of it.
     * 
@@ -204,11 +273,11 @@ public final class Graphs {
        EObject eObject = null;
        while (teo.hasNext()) {
            eObject = teo.next();
-           if (assignable(eObject, type, maySubclass) && !result.contains(eObject)) {
+           if (assignable(eObject, type, maySubclass)) {
                result.add((T) eObject);               
            }
        }
-       if (assignable(graph, type, maySubclass) && !result.contains(graph)) {
+       if (assignable(graph, type, maySubclass)) {
            result.add((T) graph);
        }
        return result;

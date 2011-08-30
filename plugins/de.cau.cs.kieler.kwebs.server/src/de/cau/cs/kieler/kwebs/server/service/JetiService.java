@@ -27,7 +27,9 @@ import de.unido.ls5.eti.toolserver.OutputFileReference;
 /**
  * Implementation of the jETI based layout service.
  * 
- * @kieler.rating  2011-05-04 red
+ * @kieler.rating  2011-08-25 proposed yellow
+ *      reviewed by ckru, msp, mri
+ *      
  * @author  swe
  */
 public class JetiService extends AbstractService {
@@ -37,7 +39,7 @@ public class JetiService extends AbstractService {
      * from the jETI tool server every time a layout request is being received.
      */
     public JetiService() {
-        ServerLayoutDataService.create();
+        super();
     }
 
     /**
@@ -103,7 +105,7 @@ public class JetiService extends AbstractService {
         try {
             Resources.writeFile(
                 outRef.toString(),
-                ServerLayoutDataService.getServiceData()
+                ServerLayoutDataService.getInstance().getServiceData()
             );
         } catch (Exception e) {
             throw new RemoteServiceException(e.getMessage());
@@ -125,7 +127,7 @@ public class JetiService extends AbstractService {
         if (previewImage == null) {
             throw new RemoteServiceException("No preview image identifier");
         }
-        byte[] data = ServerLayoutDataService.getPreviewImage(previewImage);
+        byte[] data = ServerLayoutDataService.getInstance().getPreviewImage(previewImage);
         if (data == null) {
             throw new RemoteServiceException("Preview image identifier not valid");
         }

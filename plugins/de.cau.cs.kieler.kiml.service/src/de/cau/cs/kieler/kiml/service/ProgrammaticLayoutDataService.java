@@ -23,9 +23,10 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.Shape;
 
 /**
- * A LAyout data service that knows about the options defined vie extension and programmatic options.
+ * A Layout data service that knows about the options defined vie extension and programmatic options.
  *
- * @kieler.rating 2011-05-04 red
+ * @kieler.rating 2011-08-25 proposed yellow
+ *     reviewed by ckru, mri, msp
  *
  * @author swe
  */

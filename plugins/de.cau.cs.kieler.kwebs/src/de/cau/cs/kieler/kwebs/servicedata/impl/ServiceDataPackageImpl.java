@@ -17,6 +17,7 @@ import de.cau.cs.kieler.kwebs.servicedata.ServiceDataFactory;
 import de.cau.cs.kieler.kwebs.servicedata.ServiceDataPackage;
 import de.cau.cs.kieler.kwebs.servicedata.SupportedDiagram;
 
+import de.cau.cs.kieler.kwebs.servicedata.SupportedFormat;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
@@ -86,6 +87,13 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
      * @generated
      */
     private EClass remoteEnumEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass supportedFormatEClass = null;
 
     /**
      * Creates an instance of the model <b>Package</b>, registered with
@@ -200,6 +208,15 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
      */
     public EAttribute getServiceData_Version() {
         return (EAttribute)serviceDataEClass.getEStructuralFeatures().get(4);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getServiceData_SupportedFormats() {
+        return (EReference)serviceDataEClass.getEStructuralFeatures().get(5);
     }
 
     /**
@@ -522,6 +539,42 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
      * <!-- end-user-doc -->
      * @generated
      */
+    public EClass getSupportedFormat() {
+        return supportedFormatEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getSupportedFormat_Id() {
+        return (EAttribute)supportedFormatEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getSupportedFormat_Description() {
+        return (EAttribute)supportedFormatEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getSupportedFormat_Name() {
+        return (EAttribute)supportedFormatEClass.getEStructuralFeatures().get(2);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public ServiceDataFactory getServiceDataFactory() {
         return (ServiceDataFactory)getEFactoryInstance();
     }
@@ -551,6 +604,7 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
         createEReference(serviceDataEClass, SERVICE_DATA__LAYOUT_OPTIONS);
         createEReference(serviceDataEClass, SERVICE_DATA__CATEGORIES);
         createEAttribute(serviceDataEClass, SERVICE_DATA__VERSION);
+        createEReference(serviceDataEClass, SERVICE_DATA__SUPPORTED_FORMATS);
 
         layoutAlgorithmEClass = createEClass(LAYOUT_ALGORITHM);
         createEAttribute(layoutAlgorithmEClass, LAYOUT_ALGORITHM__ID);
@@ -593,6 +647,11 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
 
         remoteEnumEClass = createEClass(REMOTE_ENUM);
         createEAttribute(remoteEnumEClass, REMOTE_ENUM__VALUES);
+
+        supportedFormatEClass = createEClass(SUPPORTED_FORMAT);
+        createEAttribute(supportedFormatEClass, SUPPORTED_FORMAT__ID);
+        createEAttribute(supportedFormatEClass, SUPPORTED_FORMAT__DESCRIPTION);
+        createEAttribute(supportedFormatEClass, SUPPORTED_FORMAT__NAME);
     }
 
     /**
@@ -631,6 +690,7 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
         initEReference(getServiceData_LayoutOptions(), this.getLayoutOption(), null, "layoutOptions", null, 0, -1, ServiceData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getServiceData_Categories(), this.getCategory(), null, "categories", null, 0, -1, ServiceData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getServiceData_Version(), ecorePackage.getEString(), "version", null, 0, 1, ServiceData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getServiceData_SupportedFormats(), this.getSupportedFormat(), null, "supportedFormats", null, 0, -1, ServiceData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(layoutAlgorithmEClass, LayoutAlgorithm.class, "LayoutAlgorithm", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getLayoutAlgorithm_Id(), ecorePackage.getEString(), "id", null, 1, 1, LayoutAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -673,6 +733,11 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
 
         initEClass(remoteEnumEClass, RemoteEnum.class, "RemoteEnum", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getRemoteEnum_Values(), ecorePackage.getEString(), "values", null, 0, -1, RemoteEnum.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(supportedFormatEClass, SupportedFormat.class, "SupportedFormat", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getSupportedFormat_Id(), ecorePackage.getEString(), "id", null, 0, 1, SupportedFormat.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getSupportedFormat_Description(), ecorePackage.getEString(), "description", null, 0, 1, SupportedFormat.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getSupportedFormat_Name(), ecorePackage.getEString(), "name", null, 0, 1, SupportedFormat.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         // Create resource
         createResource(eNS_URI);

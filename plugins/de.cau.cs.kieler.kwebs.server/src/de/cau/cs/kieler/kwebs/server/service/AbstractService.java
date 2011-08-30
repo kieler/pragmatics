@@ -37,6 +37,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.formats.Formats;
+import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.transformation.IGraphTransformer;
@@ -53,54 +54,18 @@ import de.cau.cs.kieler.kwebs.util.Graphs;
 public abstract class AbstractService {
 
     /** The layout engine used. */
-    private RecursiveGraphLayoutEngine layoutEngine
+    private static RecursiveGraphLayoutEngine layoutEngine
         = new RecursiveGraphLayoutEngine(null);
 
-    /** Mapping of format identifiers {@see Formats} to transformer instances. */
-    private Hashtable<String, IGraphTransformer> transformers 
-        = new Hashtable<String, IGraphTransformer>();
-
-    /** */
-    private static final String EXTENSIONPOINT_ID
-        = "de.cau.cs.kieler.kwebs.server.configuration";
-
-    /** */
-    private static final String ELEMENT_TRANSFORMER
-        = "transformer";
-
-    /** */
-    private static final String ATTRIBUTE_SUPPORTEDFORMAT
-        = "supportedFormat";
-
-    /** */
-    private static final String ATTRIBUTE_IMPLEMENTATION
-        = "implementation";
-
+    /** Cached instance of server side layout data service. */
+    private static ServerLayoutDataService dataService;
+    
     /**
-     * 
+     * Protected constructor. Initialized the layout data services.
      */
     protected AbstractService() {
-        IExtensionRegistry registry = Platform.getExtensionRegistry();
-        for (IConfigurationElement element : registry.getConfigurationElementsFor(EXTENSIONPOINT_ID)) {
-            if (element.getName().equals(ELEMENT_TRANSFORMER)) {
-                String format = element.getAttribute(ATTRIBUTE_SUPPORTEDFORMAT);
-                String implementation = element.getAttribute(ATTRIBUTE_IMPLEMENTATION);
-                if (Formats.isSupportedFormat(format)) {
-                    if (!transformers.containsKey(format)) {
-                        try {
-                            Bundle contributor 
-                                = Platform.getBundle(element.getContributor().getName());
-                            IGraphTransformer transformer 
-                                = (IGraphTransformer)
-                                      (contributor.loadClass(implementation).newInstance());
-                            transformers.put(format, transformer);                                
-                        } catch (Exception e) {
-                                //FIXME handle
-                        }
-                    }
-                }
-            }
-        }
+        ServerLayoutDataService.create();
+        dataService = ServerLayoutDataService.getInstance();
     }
     
     /**
@@ -126,7 +91,7 @@ public abstract class AbstractService {
         Logger.log(Severity.DEBUG, "Starting layout");
         //FIXME monitor timeout
         IKielerProgressMonitor monitor = new BasicProgressMonitor();
-        IGraphTransformer transformer = transformers.get(format);
+        IGraphTransformer transformer = dataService.getTransformer(format);
         if (transformer == null) {
             throw new IllegalStateException("Transformer could not be acquired");
         }
@@ -138,7 +103,7 @@ public abstract class AbstractService {
         // Parse the transmitted layout options and annotate
         // the layout structure
         if (options != null) {
-            LayoutDataService dataService = LayoutDataService.getInstance();
+            //LayoutDataService dataService = LayoutDataService.getInstance();
             LayoutOptionData<?> layoutOption = null;        
             for (GraphLayoutOption option : options) {
                 layoutOption = dataService.getOptionData(option.getId());
