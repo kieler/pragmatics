@@ -61,6 +61,8 @@ public class DiagramViewPart extends ViewPart {
         // install a drop handler for the view
         installDropHandler(parent);
         viewer.setModel("No model selected.");
+        // register the context viewer as selection provider on the workbench
+        getSite().setSelectionProvider(viewer);
     }
 
     /**
@@ -108,8 +110,9 @@ public class DiagramViewPart extends ViewPart {
                             IFile file = (IFile) resource;
                             Object model = loadModel(file);
                             if (model != null) {
-                                ViewContext viewContext = LightDiagramServices.getInstance()
-                                        .getValidViewContext(model);
+                                ViewContext viewContext =
+                                        LightDiagramServices.getInstance().getValidViewContext(
+                                                model);
                                 if (viewContext != null) {
                                     viewer.setModel(viewContext);
                                 } else {
@@ -154,13 +157,14 @@ public class DiagramViewPart extends ViewPart {
      * @return the model
      */
     private Object loadModel(final IFile file) {
-        //TransactionalEditingDomain.Factory factory = TransactionalEditingDomain.Factory.INSTANCE;
-        TransactionalEditingDomain transactionalEditingDomain = DiagramEditingDomainFactory.INSTANCE
-                .createEditingDomain();
+        // TransactionalEditingDomain.Factory factory = TransactionalEditingDomain.Factory.INSTANCE;
+        TransactionalEditingDomain transactionalEditingDomain =
+                DiagramEditingDomainFactory.INSTANCE.createEditingDomain();
         // factory.createEditingDomain();
         ResourceSet resourceSet = transactionalEditingDomain.getResourceSet();
-        Resource resource = resourceSet.createResource(URI.createPlatformResourceURI(file
-                .getFullPath().toOSString(), true));
+        Resource resource =
+                resourceSet.createResource(URI.createPlatformResourceURI(file.getFullPath()
+                        .toOSString(), true));
         try {
             resource.load(null);
         } catch (IOException e) {

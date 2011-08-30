@@ -18,7 +18,7 @@ import java.util.Collection;
 import de.cau.cs.kieler.klighd.IViewer;
 
 /**
- * A viewer event representing a selection.
+ * A viewer event representing a selection or an unselection.
  * 
  * @author mri
  */
