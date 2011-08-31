@@ -267,7 +267,7 @@ public class ApplyLayoutActivity extends PInterpolatingActivity {
             if (sourceNumber == targetNumber) {
                 // no proxies required
                 for (int i = 0; i < maxNumber; ++i) {
-                    Point2D sourceBend = (Point2D) sourceBendsTemp.get(0).clone();
+                    Point2D sourceBend = (Point2D) sourceBendsTemp.get(i).clone();
                     Point2D targetBend = targetBends.get(i);
                     sourceBends[i] = sourceBend;
                     deltaBends[i] = new Point2D.Double(targetBend.getX() - sourceBend.getX(),

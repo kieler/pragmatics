@@ -23,6 +23,7 @@ import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 
+import de.cau.cs.kieler.klighd.piccolo.IChildRepresentedNode;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphEdge;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphNode;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphPort;
@@ -35,7 +36,8 @@ import edu.umd.cs.piccolo.util.PBounds;
  * 
  * @author mri
  */
-public class ShapeNode extends AbstractParentNode implements IPictogramNode, IGraphNode {
+public class ShapeNode extends AbstractParentNode implements IChildRepresentedNode, IPictogramNode,
+        IGraphNode {
 
     private static final long serialVersionUID = 6280554909111287283L;
 
@@ -67,19 +69,14 @@ public class ShapeNode extends AbstractParentNode implements IPictogramNode, IGr
     }
 
     /**
-     * Sets the node representing this shape which should be a child of this node.
-     * 
-     * @param representation
-     *            the representation node
+     * {@inheritDoc}
      */
-    public void setRepresentationNode(final PNode representation) {
-        repNode = representation;
+    public void setRepresentationNode(final PNode representationNode) {
+        repNode = representationNode;
     }
 
     /**
-     * Returns the node representing this shape.
-     * 
-     * @return the representation node
+     * {@inheritDoc}
      */
     public PNode getRepresentationNode() {
         return repNode;

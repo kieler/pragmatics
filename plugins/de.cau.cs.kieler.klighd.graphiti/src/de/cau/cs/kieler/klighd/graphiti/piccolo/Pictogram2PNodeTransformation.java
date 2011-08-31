@@ -17,6 +17,8 @@ import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.graphiti.mm.Property;
+import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.AbstractText;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
@@ -45,9 +47,10 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.mm.pictograms.util.PictogramsSwitch;
 
 import de.cau.cs.kieler.klighd.IModelTransformation;
+import de.cau.cs.kieler.klighd.piccolo.IChildRepresentedNode;
+import de.cau.cs.kieler.klighd.piccolo.PChildClip;
 import de.cau.cs.kieler.klighd.piccolo.PSWTAdvancedPath;
 import de.cau.cs.kieler.klighd.piccolo.PSWTAlignedText;
-import de.cau.cs.kieler.klighd.piccolo.PChildClip;
 import de.cau.cs.kieler.klighd.piccolo.PiccoloDiagramContext;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PAffineTransform;
@@ -99,6 +102,7 @@ public class Pictogram2PNodeTransformation implements
         PiccoloDiagramContext diagramContext = new PiccoloDiagramContext();
         // use two layers, one for nodes and one for edges
         DiagramNode root = new DiagramNode(diagram);
+        transferProperties(diagram, root);
         PNode edges = new PNode();
         diagramContext.addLayerRoot(root);
         diagramContext.addLayerRoot(edges);
@@ -139,13 +143,14 @@ public class Pictogram2PNodeTransformation implements
     private void transformShape(final AbstractParentNode parent, final Shape shape, final Color fc,
             final Color bc) {
         ShapeNode shapeNode = new ShapeNode(shape);
+        transferProperties(shape, shapeNode);
         elementMap.put(shape, shapeNode);
         if (shape.isActive()) {
             parent.addShape(shapeNode);
             shapeNode.setPickable(true);
         } else {
             parent.addChild(shapeNode);
-            shapeNode.setPickable(false);            
+            shapeNode.setPickable(false);
         }
         // determine colors and transform the graphics algorithm
         GraphicsAlgorithm ga = shape.getGraphicsAlgorithm();
@@ -153,14 +158,13 @@ public class Pictogram2PNodeTransformation implements
         if (ga != null) {
             gaFc = getForegroundColor(ga, fc);
             gaBc = getBackgroundColor(ga, bc);
-            PNode gaNode = transformClippedGraphicsAlgorithm(shapeNode, ga, gaFc, gaBc);
+            PNode gaNode = transformClippedGraphicsAlgorithm(shapeNode, shapeNode, ga, gaFc, gaBc);
             if (gaNode != null) {
                 PAffineTransform transform = gaNode.getTransformReference(true);
                 shapeNode.translate(transform.getTranslateX(), transform.getTranslateY());
                 gaNode.translate(-transform.getTranslateX(), -transform.getTranslateY());
                 shapeNode.setWidth(ga.getWidth());
                 shapeNode.setHeight(ga.getHeight());
-                shapeNode.setRepresentationNode(gaNode);
             }
         } else {
             gaFc = fc;
@@ -208,6 +212,7 @@ public class Pictogram2PNodeTransformation implements
         }
         // create the anchor
         AnchorNode anchorNode = new AnchorNode(anchor, reference);
+        transferProperties(anchor, anchorNode);
         elementMap.put(anchor, anchorNode);
         parent.addAnchor(anchorNode);
         anchorNode.setPickable(anchor.isActive());
@@ -216,15 +221,14 @@ public class Pictogram2PNodeTransformation implements
         if (ga != null) {
             Color gaFc = getForegroundColor(ga, fc);
             Color gaBc = getBackgroundColor(ga, bc);
-            PNode repNode = transformGraphicsAlgorithm(anchorNode, ga, gaFc, gaBc);
+            PNode repNode = transformGraphicsAlgorithm(anchorNode, anchorNode, ga, gaFc, gaBc);
             if (repNode != null) {
                 PAffineTransform transform = repNode.getTransformReference(true);
                 anchorNode.translate(transform.getTranslateX(), transform.getTranslateY());
                 repNode.translate(-transform.getTranslateX(), -transform.getTranslateY());
                 anchorNode.setWidth(ga.getWidth());
                 anchorNode.setHeight(ga.getHeight());
-                anchorNode.setRepresentationNode(repNode);
-            }            
+            }
         }
         anchorMap.put(anchor, anchorNode);
         anchorNode.setVisible(anchor.isVisible());
@@ -270,7 +274,7 @@ public class Pictogram2PNodeTransformation implements
                 // transform graphics algorithm for this decorator
                 Color gaFc = getForegroundColor(ga, fc);
                 Color gaBc = getBackgroundColor(ga, bc);
-                transformGraphicsAlgorithm(decoration, ga, gaFc, gaBc);
+                transformGraphicsAlgorithm(null, decoration, ga, gaFc, gaBc);
             }
             node.updateDecorations();
         }
@@ -283,6 +287,7 @@ public class Pictogram2PNodeTransformation implements
         if (source != null && target != null && ffc.getGraphicsAlgorithm() != null
                 && ffc.getGraphicsAlgorithm() instanceof Polyline) {
             ConnectionNode connection = new ConnectionNode(ffc, source, target);
+            transferProperties(ffc, connection);
             elementMap.put(ffc, connection);
             PSWTAdvancedPath path =
                     transformPolyline((Polyline) ffc.getGraphicsAlgorithm(), fc, bc);
@@ -302,6 +307,8 @@ public class Pictogram2PNodeTransformation implements
     /**
      * Transforms a Pictogram graphics algorithm to a Piccolo node.
      * 
+     * @param nodeWithRep
+     *            the parent node with child representation
      * @param parent
      *            the parent Piccolo node
      * @param ga
@@ -310,10 +317,12 @@ public class Pictogram2PNodeTransformation implements
      *            the default foreground color for this graphics algorithm
      * @param bc
      *            the default background color for this graphics algorithm
-     * @return the Piccolo node representing the graphics algorithm
+     * @return the Piccolo node representing the graphics algorithm if it is visible or the first
+     *         visible child; if the graphics algorithm and all of it's children are invisible it
+     *         returns null
      */
-    private PNode transformGraphicsAlgorithm(final PNode parent, final GraphicsAlgorithm ga,
-            final Color fc, final Color bc) {
+    private PNode transformGraphicsAlgorithm(final IChildRepresentedNode nodeWithRep,
+            final PNode parent, final GraphicsAlgorithm ga, final Color fc, final Color bc) {
         PNode node = new AlgorithmsSwitch<PNode>() {
             public PNode caseRectangle(final Rectangle object) {
                 return transformRectangle(object, fc, bc);
@@ -353,21 +362,27 @@ public class Pictogram2PNodeTransformation implements
             node.translate(ga.getX(), ga.getY());
             parent.addChild(node);
             gaMap.put(ga, node);
+            // set as representation if required
+            if (nodeWithRep != null && nodeWithRep.getRepresentationNode() == null
+                    && (ga.getLineVisible() || ga.getFilled())) {
+                nodeWithRep.setRepresentationNode(node);
+            }
             // transform child graphics algorithms
             for (GraphicsAlgorithm childGa : ga.getGraphicsAlgorithmChildren()) {
                 Color childFc = getForegroundColor(childGa, fc);
                 Color childBc = getBackgroundColor(childGa, bc);
-                transformGraphicsAlgorithm(node, childGa, childFc, childBc);
+                // remember the visible child node
+                transformGraphicsAlgorithm(nodeWithRep, node, childGa, childFc, childBc);
             }
         }
         return node;
     }
 
-    private PNode transformClippedGraphicsAlgorithm(final PNode parent, final GraphicsAlgorithm ga,
-            final Color fc, final Color bc) {
+    private PNode transformClippedGraphicsAlgorithm(final IChildRepresentedNode nodeWithRep,
+            final PNode parent, final GraphicsAlgorithm ga, final Color fc, final Color bc) {
         PNode clip = new PChildClip();
         clip.setPickable(false);
-        PNode node = transformGraphicsAlgorithm(clip, ga, fc, bc);
+        PNode node = transformGraphicsAlgorithm(nodeWithRep, clip, ga, fc, bc);
         parent.addChild(clip);
         return node;
     }
@@ -568,7 +583,7 @@ public class Pictogram2PNodeTransformation implements
         }
         return def;
     }
-    
+
     private int getLineWidth(final GraphicsAlgorithm ga, final int def) {
         if (ga.getLineWidth() != null) {
             return ga.getLineWidth();
@@ -578,7 +593,7 @@ public class Pictogram2PNodeTransformation implements
         }
         return def;
     }
-    
+
     private int getLineWidth(final Style style, final int def) {
         if (style.getLineWidth() != null) {
             return style.getLineWidth();
@@ -589,17 +604,24 @@ public class Pictogram2PNodeTransformation implements
         }
         return def;
     }
-    
+
+    private void transferProperties(final PropertyContainer propertyContainer, final PNode node) {
+        // add the properties as attributes to the node
+        for (Property property : propertyContainer.getProperties()) {
+            node.addAttribute(property.getKey(), property.getValue());
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
     public Object getSourceObject(final Object object) {
         if (object instanceof IPictogramNode) {
             return ((IPictogramNode) object).getPictogramElement();
-        } 
+        }
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */

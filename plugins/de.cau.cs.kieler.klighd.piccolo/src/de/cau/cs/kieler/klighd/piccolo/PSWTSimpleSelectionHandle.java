@@ -32,7 +32,7 @@ public class PSWTSimpleSelectionHandle extends PNode {
     /** the width and height of the handle squares. */
     private static final float SQUARE_WH = 5;
     /** the line width of the handle lines. */
-    private static final float LINE_W = 2;
+    private static final float LINE_W = 1;
     /** the distance between the center of the handle and the referenced node. */
     private static final double MARGIN = 5;
 
@@ -70,7 +70,7 @@ public class PSWTSimpleSelectionHandle extends PNode {
         if (getParent() != null) {
             PBounds bounds = getParent().getBoundsReference();
             double leftX = -MARGIN;
-            double rightX = bounds.getWidth() + MARGIN;
+            double rightX = bounds.getWidth() + MARGIN + 1;
             double topY = -MARGIN;
             double bottomY = bounds.getHeight() + MARGIN;
             // create the corner squares

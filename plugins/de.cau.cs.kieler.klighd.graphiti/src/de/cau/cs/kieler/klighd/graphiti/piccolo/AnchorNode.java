@@ -27,6 +27,7 @@ import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.util.PictogramsSwitch;
 
+import de.cau.cs.kieler.klighd.piccolo.IChildRepresentedNode;
 import de.cau.cs.kieler.klighd.piccolo.PEmptyNode;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphEdge;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphPort;
@@ -39,8 +40,8 @@ import edu.umd.cs.piccolo.util.PBounds;
  * 
  * @author mri
  */
-public class AnchorNode extends PEmptyNode implements IPictogramNode, IGraphPort,
-        PropertyChangeListener {
+public class AnchorNode extends PEmptyNode implements IChildRepresentedNode, IPictogramNode,
+        IGraphPort, PropertyChangeListener {
 
     private static final long serialVersionUID = 1406179264277421131L;
 
@@ -52,7 +53,7 @@ public class AnchorNode extends PEmptyNode implements IPictogramNode, IGraphPort
     /** the Piccolo node this anchor references. */
     private PNode reference;
     /** the Piccolo node which represents this anchor. */
-    private PNode repNode;
+    private PNode repNode = null;
 
     /** the anchors outgoing connections. */
     private List<IGraphEdge> outgoingConnections = new LinkedList<IGraphEdge>();
@@ -77,19 +78,14 @@ public class AnchorNode extends PEmptyNode implements IPictogramNode, IGraphPort
     }
 
     /**
-     * Sets the node representing this anchor which should be a child of this node.
-     * 
-     * @param representation
-     *            the representation node
+     * {@inheritDoc}
      */
-    public void setRepresentationNode(final PNode representation) {
-        repNode = representation;
+    public void setRepresentationNode(final PNode representationNode) {
+        repNode = representationNode;
     }
 
     /**
-     * Returns the node representing this anchor.
-     * 
-     * @return the representation node
+     * {@inheritDoc}
      */
     public PNode getRepresentationNode() {
         return repNode;
@@ -324,8 +320,7 @@ public class AnchorNode extends PEmptyNode implements IPictogramNode, IGraphPort
      * {@inheritDoc}
      */
     public void setRelativeBounds(final PBounds bounds) {
-        PAffineTransform transform =
-                repNode != null ? repNode.getTransformReference(true) : getTransformReference(true);
+        PAffineTransform transform = getTransformReference(true);
         transform.translate(bounds.getX() - transform.getTranslateX(),
                 bounds.getY() - transform.getTranslateY());
         // TODO resize the shape
@@ -335,8 +330,7 @@ public class AnchorNode extends PEmptyNode implements IPictogramNode, IGraphPort
      * {@inheritDoc}
      */
     public PBounds getRelativeBounds() {
-        PAffineTransform transform =
-                repNode != null ? repNode.getTransformReference(true) : getTransformReference(true);
+        PAffineTransform transform = getTransformReference(true);
         PBounds bounds = repNode != null ? repNode.getBounds() : getBounds();
         PBounds relativeBounds = new PBounds();
         relativeBounds.setRect(transform.getTranslateX(), transform.getTranslateY(),

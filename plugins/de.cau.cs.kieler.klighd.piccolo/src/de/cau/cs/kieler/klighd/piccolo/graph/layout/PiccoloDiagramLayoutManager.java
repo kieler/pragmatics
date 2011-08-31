@@ -25,6 +25,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -59,6 +60,9 @@ public class PiccoloDiagramLayoutManager extends DiagramLayoutManager<IGraphObje
     /** the list of edges found in the graph. */
     public static final IProperty<List<IGraphEdge>> EDGES = new Property<List<IGraphEdge>>(
             "piccolo.edges");
+    
+    /** the Piccolo attribute layout config. */
+    private ILayoutConfig attributeLayoutConfig = new PiccoloAttributeLayoutConfig();
 
     /**
      * {@inheritDoc}
@@ -129,8 +133,8 @@ public class PiccoloDiagramLayoutManager extends DiagramLayoutManager<IGraphObje
         LayoutMapping<IGraphObject> mapping = buildLayoutGraph(layoutRoot);
         mapping.setProperty(LayoutOptionManager.USE_ECLIPSE_LAYOUT_CONFIG, false);
 
-        // create a layout configuration
-        // mapping.getLayoutConfigs().add(getLayoutConfig());
+        // add the Piccolo layout config
+        mapping.getLayoutConfigs().add(attributeLayoutConfig);
 
         return mapping;
     }
