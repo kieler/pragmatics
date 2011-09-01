@@ -37,12 +37,11 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
      *            information.
      */
     public void execute(final XtextModelChangeState state) {
-        String id = state.getEditorInputPath().toOSString();
-
+        XtextResource resource = state.getResource();
+        String id = resource.getURI().toPlatformString(false);
         if (state.getEventType().equals(EventType.CLOSED)) {
             this.schedule(new KLighDCloseDiagramEffect(id));
         } else {
-            XtextResource resource = state.getResource();
             if (resource == null || resource.getContents() == null
                     || resource.getContents().isEmpty()) {
                 return;
