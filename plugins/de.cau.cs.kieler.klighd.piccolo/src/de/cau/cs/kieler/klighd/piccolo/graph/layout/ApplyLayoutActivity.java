@@ -364,14 +364,21 @@ public class ApplyLayoutActivity extends PInterpolatingActivity {
         private float[] createIndexRelativePositionMapping(final List<Point2D> bends) {
             float[] mapping = new float[bends.size()];
             float length = getPolylineLength(bends);
-            Point2D lastBend = bends.get(0);
-            mapping[0] = 0.0f;
-            float currentLength = 0.0f;
-            for (int i = 1; i < bends.size(); ++i) {
-                Point2D currentBend = bends.get(i);
-                currentLength += lastBend.distance(currentBend);
-                mapping[i] = currentLength / length;
-                lastBend = currentBend;
+            if (length > 0) {
+                Point2D lastBend = bends.get(0);
+                mapping[0] = 0.0f;
+                float currentLength = 0.0f;
+                for (int i = 1; i < bends.size(); ++i) {
+                    Point2D currentBend = bends.get(i);
+                    currentLength += lastBend.distance(currentBend);
+                    mapping[i] = currentLength / length;
+                    lastBend = currentBend;
+                }
+            } else {
+                for (int i = 0; i < bends.size() - 1; ++i) {
+                    mapping[i] = 0.0f;
+                    mapping[bends.size() - 1] = 1.0f;
+                }
             }
             return mapping;
         }
@@ -409,7 +416,7 @@ public class ApplyLayoutActivity extends PInterpolatingActivity {
                 }
                 lastBend = currentBend;
             }
-            return new Point2D.Double();
+            return (Point2D) bends.get(0).clone();
         }
 
         /**
