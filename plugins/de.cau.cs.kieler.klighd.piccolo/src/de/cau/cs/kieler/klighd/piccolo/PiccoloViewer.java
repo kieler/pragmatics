@@ -72,6 +72,7 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
         // prevent conflicts with selection handler
         canvas.getPanEventHandler().setEventFilter(
                 new PInputEventFilter(InputEvent.BUTTON1_MASK, InputEvent.CTRL_MASK));
+        // exchange the zoom event handler
         canvas.removeInputEventListener(canvas.getZoomEventHandler());
         canvas.addInputEventListener(new PMouseWheelZoomEventHandler());
     }

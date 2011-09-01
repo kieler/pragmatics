@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klighd.graphiti.piccolo;
 
+import java.util.List;
+
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
@@ -90,13 +92,19 @@ public class DiagramNode extends AbstractParentNode implements IPictogramNode, I
         return new PBounds(0.0, 0.0, 0.0, 0.0);
     }
 
+    /**
+     * Tries to find the camera for this node.
+     */
+    @SuppressWarnings("unchecked")
     private void findCamera() {
         // the first child of the root should be the camera
         PRoot root = getRoot();
-        if (root != null && root.getChildrenReference().size() > 0) {
-            PNode cameraCandidate = root.getChild(0);
-            if (cameraCandidate instanceof PCamera) {
-                camera = (PCamera) cameraCandidate;
+        if (root != null) {
+            for (PNode child : (List<PNode>) root.getChildrenReference()) {
+                if (child instanceof PCamera) {
+                    camera = (PCamera) child;
+                    break;
+                }
             }
         }
     }

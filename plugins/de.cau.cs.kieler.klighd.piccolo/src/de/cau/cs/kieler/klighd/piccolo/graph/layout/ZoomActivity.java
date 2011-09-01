@@ -26,30 +26,13 @@ public class ZoomActivity extends PInterpolatingActivity {
     /** the default duration for the activity. */
     private static final long DEFAULT_DURATION = 1000;
 
-    /**
-     * Constructs a zoom activity on a given camera. The activity performs a zoom-to-fit for the
-     * camera.
-     * 
-     * @param camera
-     *            the camera
-     */
-    public ZoomActivity(final PCamera camera) {
-        super(DEFAULT_DURATION);
-    }
-
-    /**
-     * Constructs a zoom activity on a given camera with a specified duration. The activity performs
-     * a zoom-to-fit for the camera.
-     * 
-     * @param camera
-     *            the camera
-     * @param duration
-     *            the duration over which the activity performs the zoom-to-fit
-     */
-    public ZoomActivity(final PCamera camera, final long duration) {
-        super(duration);
-    }
-
+    /** the camera to perform the zoom on. */
+    private PCamera camera;
+    /** the source scale. */
+    private double sourceScale;
+    /** the target scale. */
+    private double targetScale;
+    
     /**
      * Constructs a zoom activity on a given camera. The activity performs a zoom to the given
      * scale.
@@ -60,7 +43,7 @@ public class ZoomActivity extends PInterpolatingActivity {
      *            the scale to zoom to
      */
     public ZoomActivity(final PCamera camera, final double scale) {
-        super(DEFAULT_DURATION);
+        this(camera, scale, DEFAULT_DURATION);
     }
 
     /**
@@ -76,6 +59,42 @@ public class ZoomActivity extends PInterpolatingActivity {
      */
     public ZoomActivity(final PCamera camera, final double scale, final long duration) {
         super(duration);
+        this.camera = camera;
+        this.targetScale = scale;
+        // disable slow-in-slow-out by default
+        setSlowInSlowOut(true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void activityStarted() {
+        this.sourceScale = camera.getViewTransformReference().getScale();
+        super.activityStarted();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setRelativeTargetValue(final float zeroToOne) {
+        camera.setViewScale(sourceScale + zeroToOne * (targetScale - sourceScale));
+    }
+
+    /**
+     * Instantly applies the effect of this activity that is applying the zoom-to-fit.
+     */
+    public void apply() {
+        setRelativeTargetValue(1.0f);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean isAnimation() {
+        return true;
     }
 
 }

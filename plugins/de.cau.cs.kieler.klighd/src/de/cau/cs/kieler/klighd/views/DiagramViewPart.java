@@ -185,7 +185,7 @@ public class DiagramViewPart extends ViewPart {
             public void run() {
                 try {
                     DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
-                    layoutEngine.layout(view, null, true, false, false, false, null);
+                    layoutEngine.layout(view, null, true, false, false, true, null);
                 } catch (UnsupportedOperationException e) {
                     // do nothing (empty view)
                 }

@@ -46,7 +46,10 @@ import de.cau.cs.kieler.klighd.piccolo.graph.IGraphPort;
 import de.cau.cs.kieler.klighd.piccolo.graph.Insets;
 import de.cau.cs.kieler.klighd.views.ContextViewer;
 import de.cau.cs.kieler.klighd.views.DiagramViewPart;
+import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.PRoot;
+import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolo.util.PBounds;
 
 /**
@@ -60,7 +63,7 @@ public class PiccoloDiagramLayoutManager extends DiagramLayoutManager<IGraphObje
     /** the list of edges found in the graph. */
     public static final IProperty<List<IGraphEdge>> EDGES = new Property<List<IGraphEdge>>(
             "piccolo.edges");
-    
+
     /** the Piccolo attribute layout config. */
     private ILayoutConfig attributeLayoutConfig = new PiccoloAttributeLayoutConfig();
 
@@ -297,17 +300,62 @@ public class PiccoloDiagramLayoutManager extends DiagramLayoutManager<IGraphObje
             if (mapping.getParentElement() instanceof PNode) {
                 // schedule the activity
                 PNode rootNode = (PNode) mapping.getParentElement();
-                if (!rootNode.addActivity(applyLayoutActivity)) {
-                    // TODO handle a failure to schedule the activity
-                }
+                rootNode.addActivity(applyLayoutActivity);
             }
         } else {
             // instantly apply the layout
             applyLayoutActivity.apply();
         }
         if (zoomToFit) {
-            // apply zoom-to-fit using a Piccolo activity
-         // TODO zoom-to-fit
+            applyZoomToFit(mapping, animationTime);
+        }
+    }
+
+    /**
+     * Schedules a zoom activity which performs the zoom-to-fit using the information from the given
+     * layout mapping.
+     * 
+     * @param mapping
+     *            the layout mapping
+     * @param animation
+     *            time the time over which to apply the zoom-to-fit
+     */
+    @SuppressWarnings("unchecked")
+    private void applyZoomToFit(final LayoutMapping<IGraphObject> mapping, final int animationTime) {
+        if (mapping.getParentElement() instanceof PNode) {
+            PNode parentNode = (PNode) mapping.getParentElement();
+            // find the root node
+            PRoot rootNode = parentNode.getRoot();
+            if (rootNode != null) {
+                // find the camera
+                PCamera camera = null;
+                for (PNode child : (List<PNode>) rootNode.getChildrenReference()) {
+                    if (child instanceof PCamera) {
+                        camera = (PCamera) child;
+                        break;
+                    }
+                }
+                // schedule a zoom activity if a camera has been found
+                if (camera != null) {
+                    // compute the required scale
+                    KShapeLayout shapeLayout = mapping.getLayoutGraph().getData(KShapeLayout.class);
+                    PBounds bounds = camera.getViewBounds();
+                    PAffineTransform transform = camera.getViewTransformReference();
+                    double normalizedWidth = bounds.width * transform.getScale();
+                    double normalizedHeight = bounds.height * transform.getScale();
+                    double scaleX = normalizedWidth / shapeLayout.getWidth();
+                    double scaleY = normalizedHeight / shapeLayout.getHeight();
+                    double scale = Math.min(scaleX, scaleY);
+                    // schedule a zoom activity to apply the scaling
+                    ZoomActivity zoomActivity = new ZoomActivity(camera, scale, animationTime);
+                    if (animationTime > 0) {
+                        parentNode.addActivity(zoomActivity);
+                    } else {
+                        // instantly apply the zoom-to-fit
+                        zoomActivity.apply();
+                    }
+                }
+            }
         }
     }
 
