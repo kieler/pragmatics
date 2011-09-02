@@ -136,22 +136,14 @@ public class Pair<F, S> {
      */
     @Override
     public int hashCode() {
-        if (first == null && second == null) {
-            return 0;
-        } else if (first == null) {
-            return second.hashCode();
-        } else if (second == null) {
-            return first.hashCode();
-        } else {
-            int firstCode = first.hashCode();
-            int first1 = firstCode & MASK1;
-            int first2 = firstCode & MASK2;
-            int secondCode = second.hashCode();
-            int second1 = secondCode & MASK1;
-            int second2 = secondCode & MASK2;
-            return (first1 ^ ((second2 >> HALF_WORD) & MASK1))
-                    | (first2 ^ (second1 << HALF_WORD));
-        }
+        int firstCode = first == null ? 0 : first.hashCode();
+        int first1 = firstCode & MASK1;
+        int first2 = firstCode & MASK2;
+        int secondCode = second == null ? 0 : second.hashCode();
+        int second1 = secondCode & MASK1;
+        int second2 = secondCode & MASK2;
+        return (first1 ^ ((second2 >> HALF_WORD) & MASK1))
+                | (first2 ^ (second1 << HALF_WORD));
     }
 
     /**

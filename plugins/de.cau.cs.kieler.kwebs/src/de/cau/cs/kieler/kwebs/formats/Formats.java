@@ -14,8 +14,9 @@
 
 package de.cau.cs.kieler.kwebs.formats;
 
-import java.util.LinkedList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 /**
  * Utility class defining the supported formats for the layout service. A format
@@ -28,18 +29,26 @@ import java.util.List;
  */
 public final class Formats {
 
-    /** Constant defining the KGraph model in XMI serialization. */
+    /** The KGraph model in XMI serialization. */
     public static final String FORMAT_KGRAPH_XMI
         = "de.cau.cs.kieler.format.kgraph.xmi";
+    /** The OGML format. */
+    public static final String FORMAT_OGML
+        = "net.ogdf.ogml";
+    /** The GraphML format. */
+    public static final String FORMAT_GRAPHML
+        = "org.graphdrawing.graphml";
+    /** The Graphviz Dot format. */
+    public static final String FORMAT_DOT
+        = "org.graphviz.dot";
+    /** The Matrix Market format. */
+    public static final String FORMAT_MATRIX
+        = "gov.nist.math.matrix";
 
     /** The list of supported formats. */
     private static final List<String> SUPPORTED_FORMATS
-        = new LinkedList<String>();
-    
-    /** Initialize the list of supported formats. */
-    static {
-        SUPPORTED_FORMATS.add(FORMAT_KGRAPH_XMI);
-    }
+        = Lists.newArrayList(FORMAT_KGRAPH_XMI, FORMAT_OGML, FORMAT_GRAPHML, FORMAT_DOT,
+                FORMAT_MATRIX);
     
     /**
      * Tests whether a given format identifier is supported

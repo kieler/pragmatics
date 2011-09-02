@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kwebs.server.configuration">
+      <transformer
+            implementation="de.cau.cs.kieler.kwebs.server.formats.GraphMLTransformer"
+            supportedFormat="org.graphdrawing.graphml">
+      </transformer>
+      <transformer
+            implementation="de.cau.cs.kieler.kwebs.server.formats.DotTransformer"
+            supportedFormat="org.graphviz.dot">
+      </transformer>
+      <transformer
+            implementation="de.cau.cs.kieler.kwebs.server.formats.MatrixTransformer"
+            supportedFormat="gov.nist.math.matrix">
+      </transformer>
+      <transformer
+            implementation="de.cau.cs.kieler.kwebs.server.formats.OgmlTransformer"
+            supportedFormat="net.ogdf.ogml">
+      </transformer>
+   </extension>
+
+</plugin>

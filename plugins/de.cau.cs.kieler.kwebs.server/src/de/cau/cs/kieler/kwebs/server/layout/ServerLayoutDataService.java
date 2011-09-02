@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
- * Copyright 2008 by
+ * Copyright 2011 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -66,8 +66,8 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
         = new HashMap<String, byte[]>();
 
     /** Mapping of format identifiers {@see Formats} to transformer instances. */
-    private Hashtable<String, IGraphTransformer> transformers 
-        = new Hashtable<String, IGraphTransformer>();
+    private Hashtable<String, IGraphTransformer<?>> transformers 
+        = new Hashtable<String, IGraphTransformer<?>>();
 
     /**
      * Private constructor.
@@ -134,7 +134,7 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
      * @return a compatible transformer instance or {@code null} if the format identifier
      *         does not belong to a supported format. 
      */
-    public IGraphTransformer getTransformer(final String format) {
+    public IGraphTransformer<?> getTransformer(final String format) {
        return transformers.get(format); 
     }
     
@@ -377,8 +377,7 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
                         try {
                             Bundle contributor 
                                 = Platform.getBundle(element.getContributor().getName());
-                            IGraphTransformer transformer 
-                                = (IGraphTransformer)
+                            IGraphTransformer<?> transformer = (IGraphTransformer<?>)
                                       (contributor.loadClass(implementation).newInstance());
                             transformers.put(id, transformer);                                
                         } catch (Exception e) {

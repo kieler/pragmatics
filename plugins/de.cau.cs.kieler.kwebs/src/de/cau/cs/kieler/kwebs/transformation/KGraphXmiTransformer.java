@@ -16,7 +16,10 @@ package de.cau.cs.kieler.kwebs.transformation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
@@ -29,6 +32,8 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
@@ -49,14 +54,14 @@ import de.cau.cs.kieler.kwebs.util.Graphs;
  *
  * @author swe
  */
-public class KGraphXmiTransformer implements IGraphTransformer {
+public class KGraphXmiTransformer implements IGraphTransformer<KNode> {
 
     // implementation of the interface {@link IGraphTransformer}
 
     /**
      * {@inheritDoc}
      */
-    public final Object deserialize(final String serializedGraph) {
+    public final KNode deserialize(final String serializedGraph) {
         KNode graph = null;
         try {
             ByteArrayInputStream inStream = new ByteArrayInputStream(
@@ -77,7 +82,9 @@ public class KGraphXmiTransformer implements IGraphTransformer {
             // Make sure all graph elements are configured according to specs
             Graphs.validateAllElements(graph);
             inStream.close();
-        } catch (Exception e) {
+        } catch (UnsupportedEncodingException e) {
+            throw new TransformationException(e);
+        } catch (IOException e) {
             throw new TransformationException(e);
         }
         return graph;
@@ -86,19 +93,16 @@ public class KGraphXmiTransformer implements IGraphTransformer {
     /**
      * {@inheritDoc}
      */
-    public final String serialize(final Object graph) {
+    public final String serialize(final KNode graph) {
         String xmi = null;
-        if (!(graph instanceof KNode)) {
-            throw new TransformationException("Given graph object is not a KGraph instance");
-        }
         try {
-            EcoreUtil.resolveAll((KNode) graph);
-            persistDataElements((KNode) graph);            
+            EcoreUtil.resolveAll(graph);
+            persistDataElements(graph);            
             URI uri = URI.createURI("outputstream://temp.kgraph");
             ResourceSet resourceSet = createResourceSet();
             Resource resource = resourceSet.createResource(uri);
             resource.unload();
-            resource.getContents().add((KNode) graph);            
+            resource.getContents().add(graph);            
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             Map<String, String> options = new HashMap<String, String>();
             options.put(XMLResource.OPTION_ENCODING, "UTF-8");
@@ -106,8 +110,8 @@ public class KGraphXmiTransformer implements IGraphTransformer {
             outStream.flush();
             xmi = new String(outStream.toByteArray(), "UTF-8");
             outStream.close();
-            unpersistDataElements((KNode) graph);
-        } catch (Exception e) {
+            unpersistDataElements(graph);
+        } catch (IOException e) {
             throw new TransformationException(e);
         }
         return xmi;
@@ -116,14 +120,16 @@ public class KGraphXmiTransformer implements IGraphTransformer {
     /**
      * {@inheritDoc}
      */
-    public KNode deriveLayout(final Object graph) {
-        return (KNode) graph;
+    public List<KNode> deriveLayout(final KNode graph) {
+        // TODO validate the graph
+        return Lists.newArrayList(graph);
     }
     
     /**
      * {@inheritDoc}
      */
-    public void applyLayout(final Object graph, final KNode layout) {
+    public void applyLayout(final KNode graph, final List<KNode> layout) {
+        // nothing to do
         // Nothing to do since the given graph and layout are the same instance
     }
     
@@ -134,7 +140,7 @@ public class KGraphXmiTransformer implements IGraphTransformer {
         return Formats.FORMAT_KGRAPH_XMI;
     }
 
-    // Private utility methods
+    /*--------- Private utility methods ----------*/
 
     /**
      * Persists all KGraphData elements of a KNode graph.

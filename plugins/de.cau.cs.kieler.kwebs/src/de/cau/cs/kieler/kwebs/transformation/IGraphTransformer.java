@@ -14,6 +14,8 @@
 
 package de.cau.cs.kieler.kwebs.transformation;
 
+import java.util.List;
+
 import de.cau.cs.kieler.core.kgraph.KNode;
 
 /**
@@ -29,17 +31,19 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  *            
  * @kieler.rating  2011-05-04 red
  * @author  swe
+ * @param <T> type of created graph objects
  */
-public interface IGraphTransformer {
+public interface IGraphTransformer<T> {
 
     /**
-     * Create a graph instance from serial representation.
+     * Create a graph instance from serial representation. The returned object may actually
+     * contain multiple graphs.
      *
      * @param serializedGraph
      *            the serialized graph
      * @return the graph instance
      */
-    Object deserialize(String serializedGraph);
+    T deserialize(String serializedGraph);
 
     /**
      * Serializes the given graph instance in the format supported 
@@ -49,27 +53,27 @@ public interface IGraphTransformer {
      *
      * @return serialization of the given graph
      */
-    String serialize(Object graph);
+    String serialize(T graph);
 
     /**
-     * Returns a KGraph representation of the structure of the given graph instance which
+     * Returns KGraph representations of the structure of the given graph instance which
      * can be used to calculate the layout of the given graph instance.
      * 
      * @param graph
      *            the graph instance
      * @return KGraph representation of the graph structure
      */
-    KNode deriveLayout(Object graph);
+    List<KNode> deriveLayout(T graph);
     
     /**
-     * Applies the calculated layout to the given graph instance.
+     * Applies the calculated layouts to the given graph instance.
      * 
      * @param graph
      *            the graph instance
      * @param layout
-     *            the calculated layout
+     *            the calculated layouts
      */
-    void applyLayout(Object graph, KNode layout);
+    void applyLayout(T graph, List<KNode> layout);
     
     /**
      * Returns the format supported by this transformer. Formats are defined

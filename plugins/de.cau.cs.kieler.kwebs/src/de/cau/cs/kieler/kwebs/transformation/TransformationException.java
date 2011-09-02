@@ -54,4 +54,16 @@ public class TransformationException extends RuntimeException {
         super(throwable);
     }
     
+    /**
+     * Constructor with a message for enclosing another throwable.
+     * 
+     * @param message
+     *            the message describing the exception
+     * @param throwable
+     *            a throwable to be enclosed by this exception
+     */
+    public TransformationException(final String message, final Throwable throwable) {
+        super(message, throwable);
+    }
+    
 }

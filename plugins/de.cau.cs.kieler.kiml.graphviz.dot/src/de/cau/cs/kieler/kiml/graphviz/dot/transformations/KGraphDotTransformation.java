@@ -121,75 +121,6 @@ public class KGraphDotTransformation {
     /** extra-large default value for minimal spacing. */
     public static final float DEF_SPACING_XLARGE = 60.0f;
     
-    /** Bounding box. */
-    private static final String ATTR_BOUNDINGBOX = "bb";
-    /** Comment. */
-    private static final String ATTR_COMMENT = "comment";
-    /** Set edge type for drawing arrowheads. */
-    private static final String ATTR_EDGEDIR = "dir";
-    /** Preferred edge length, in inches (fdp, neato only). */
-    private static final String ATTR_EDGELEN = "len";
-    /**
-     * If true, the node size is specified by the values of the width and height
-     * attributes only and is not expanded to contain the text label.
-     */
-    private static final String ATTR_FIXEDSIZE = "fixedsize";
-    /** Font used for text. */
-    private static final String ATTR_FONTNAME = "fontname";
-    /** Font size, in points, used for text. */
-    private static final String ATTR_FONTSIZE = "fontsize";
-    /** Text label to be placed near head of edge. */
-    private static final String ATTR_HEADLABEL = "headlabel";
-    /** Head label position, in points. */
-    private static final String ATTR_HEADLP = "head_lp";
-    /** Height of node, in inches. */
-    private static final String ATTR_HEIGHT = "height";
-    /** Text label attached to objects. */
-    private static final String ATTR_LABEL = "label";
-    /**
-     * This, along with labeldistance, determine where the headlabel (taillabel)
-     * are placed with respect to the head (tail) in polar coordinates.
-     */
-    private static final String ATTR_LABELANGLE = "labelangle";
-    /**
-     * Multiplicative scaling factor adjusting the distance that the
-     * headlabel(taillabel) is from the head(tail) node.
-     */
-    private static final String ATTR_LABELDISTANCE = "labeldistance";
-    /** Label position, in points. */
-    private static final String ATTR_LABELPOS = "lp";
-    /** Determines if and how node overlaps should be removed (not dot). */
-    private static final String ATTR_OVERLAP = "overlap";
-    /** Position of node, or spline control points. */
-    private static final String ATTR_POS = "pos";
-    /** Specifies the minimum separation between all nodes (circo only). */
-    private static final String ATTR_MINDIST = "mindist";
-    /** Sets direction of graph layout (dot only). */
-    private static final String ATTR_RANKDIR = "rankdir";
-    /**
-     * In dot, this gives the desired rank separation, in inches. In twopi,
-     * specifies radial separation of concentric circles. (twopi, dot only)
-     */
-    private static final String ATTR_RANKSEP = "ranksep";
-    /** Set the shape of a node. */
-    private static final String ATTR_SHAPE = "shape";
-    /**
-     * Controls how, and if, edges are represented. If true, edges are drawn as
-     * splines routed around nodes; if false, edges are drawn as line segments.
-     */
-    private static final String ATTR_SPLINES = "splines";
-    /**
-     * Parameter used to determine the initial layout of nodes (fdp, neato
-     * only).
-     */
-    private static final String ATTR_START = "start";
-    /** Text label to be placed near tail of edge. */
-    private static final String ATTR_TAILLABEL = "taillabel";
-    /** Tail label position, in points. */
-    private static final String ATTR_TAILLP = "tail_lp";
-    /** Width of node, in inches. */
-    private static final String ATTR_WIDTH = "width";
-
     /** default multiplier for font sizes. */
     private static final double FONT_SIZE_MULT = 1.4;
 
@@ -294,7 +225,7 @@ public class KGraphDotTransformation {
             /*
              * KLabel label = childNode.getLabel();
              * attributes.getEntries().add(createAttribute
-             * (GraphvizAPI.ATTR_LABEL, createString(label.getText())));
+             * (GraphvizAPI.Attributes.LABEL, createString(label.getText())));
              */
             // set width and height
             if (!shapeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
@@ -302,9 +233,9 @@ public class KGraphDotTransformation {
             }
             String width = Float.toString(shapeLayout.getWidth() / DPI);
             String height = Float.toString(shapeLayout.getHeight() / DPI);
-            attributes.add(createAttribute(ATTR_WIDTH, width));
-            attributes.add(createAttribute(ATTR_HEIGHT, height));
-            attributes.add(createAttribute(ATTR_FIXEDSIZE, "true"));
+            attributes.add(createAttribute(Attributes.WIDTH, width));
+            attributes.add(createAttribute(Attributes.HEIGHT, height));
+            attributes.add(createAttribute(Attributes.FIXEDSIZE, "true"));
             // add node position if interactive layout is chosen
             if (interactive) {
                 float xpos = (shapeLayout.getXpos() - offset) / DPI;
@@ -314,11 +245,11 @@ public class KGraphDotTransformation {
                 String posString =
                         "\"" + Float.toString(xpos) + ","
                                 + Float.toString(ypos) + "\"";
-                attributes.add(createAttribute(ATTR_POS, posString));
+                attributes.add(createAttribute(Attributes.POS, posString));
             }
             // set node shape
             // TODO customize the node shape
-            attributes.add(createAttribute(ATTR_SHAPE, "box"));
+            attributes.add(createAttribute(Attributes.SHAPE, "box"));
 
             graph.getStatements().add(nodeStatement);
         }
@@ -348,12 +279,12 @@ public class KGraphDotTransformation {
 
                     List<Attribute> attributes = edgeStatement.getAttributes();
                     // disable drawing arrows for the edges
-                    attributes.add(createAttribute(ATTR_EDGEDIR, "none"));
+                    attributes.add(createAttribute(Attributes.EDGEDIR, "none"));
                     // add edge labels at head, tail, and middle position
                     setEdgeLabels(outgoingEdge, attributes, vertical);
                     // add comment with edge identifier
                     String edgeID = getEdgeID(outgoingEdge);
-                    attributes.add(createAttribute(ATTR_COMMENT, "\"" + edgeID
+                    attributes.add(createAttribute(Attributes.COMMENT, "\"" + edgeID
                             + "\""));
                     graphElementMap.put(edgeID, outgoingEdge);
 
@@ -404,16 +335,16 @@ public class KGraphDotTransformation {
         }
         String spacingVal = Float.toString(minSpacing / DPI);
         if (command == Command.DOT || command == Command.TWOPI) {
-            graphAttrs.add(createAttribute(ATTR_RANKSEP, spacingVal));
+            graphAttrs.add(createAttribute(Attributes.RANKSEP, spacingVal));
         }
         if (command == Command.CIRCO) {
-            graphAttrs.add(createAttribute(ATTR_MINDIST, spacingVal));
+            graphAttrs.add(createAttribute(Attributes.MINDIST, spacingVal));
         } else if (command == Command.NEATO || command == Command.FDP) {
             AttributeStatement edgeAttrStatement =
                     DotFactory.eINSTANCE.createAttributeStatement();
             edgeAttrStatement.setType(AttributeType.EDGE);
             List<Attribute> edgeAttrs = edgeAttrStatement.getAttributes();
-            edgeAttrs.add(createAttribute(ATTR_EDGELEN, spacingVal));
+            edgeAttrs.add(createAttribute(Attributes.EDGELEN, spacingVal));
             graph.getStatements().add(edgeAttrStatement);
         }
         // set offset to border
@@ -425,29 +356,29 @@ public class KGraphDotTransformation {
         if (command == Command.DOT) {
             switch (parentLayout.getProperty(LayoutOptions.DIRECTION)) {
             case DOWN:
-                graphAttrs.add(createAttribute(ATTR_RANKDIR, "TB"));
+                graphAttrs.add(createAttribute(Attributes.RANKDIR, "TB"));
                 break;
             case UP:
-                graphAttrs.add(createAttribute(ATTR_RANKDIR, "BT"));
+                graphAttrs.add(createAttribute(Attributes.RANKDIR, "BT"));
                 break;
             case LEFT:
-                graphAttrs.add(createAttribute(ATTR_RANKDIR, "RL"));
+                graphAttrs.add(createAttribute(Attributes.RANKDIR, "RL"));
                 break;
             default:
-                graphAttrs.add(createAttribute(ATTR_RANKDIR, "LR"));
+                graphAttrs.add(createAttribute(Attributes.RANKDIR, "LR"));
                 break;
             }
         }
         // enable node overlap avoidance
         if (command != Command.DOT) {
-            graphAttrs.add(createAttribute(ATTR_OVERLAP, "false"));
+            graphAttrs.add(createAttribute(Attributes.OVERLAP, "false"));
         }
         // enable or disable drawing of splines
         EdgeRouting edgeRouting =
                 parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
         useSplines =
                 (edgeRouting != EdgeRouting.POLYLINE && edgeRouting != EdgeRouting.ORTHOGONAL);
-        graphAttrs.add(createAttribute(ATTR_SPLINES,
+        graphAttrs.add(createAttribute(Attributes.SPLINES,
                 Boolean.toString(useSplines)));
         // configure initial placement of nodes
         if (command == Command.NEATO) {
@@ -459,7 +390,7 @@ public class KGraphDotTransformation {
             } else if (seed < 0) {
                 seed = -seed;
             }
-            graphAttrs.add(createAttribute(ATTR_START, "random" + seed));
+            graphAttrs.add(createAttribute(Attributes.START, "random" + seed));
         }
         graph.getStatements().add(graphAttrStatement);
     }
@@ -558,36 +489,36 @@ public class KGraphDotTransformation {
                 midLabel.append(isVertical ? "O" : "\nO");
             }
         }
-        attributes.add(createAttribute(ATTR_LABEL,
+        attributes.add(createAttribute(Attributes.LABEL,
                 createString(midLabel.toString())));
         // set head label
         if (headLabel.length() > 0) {
-            attributes.add(createAttribute(ATTR_HEADLABEL,
+            attributes.add(createAttribute(Attributes.HEADLABEL,
                     createString(headLabel.toString())));
         }
         // set tail label
         if (tailLabel.length() > 0) {
-            attributes.add(createAttribute(ATTR_TAILLABEL,
+            attributes.add(createAttribute(Attributes.TAILLABEL,
                     createString(tailLabel.toString())));
         }
         // set font name
         if (fontName != null && fontName.length() > 0) {
-            attributes.add(createAttribute(ATTR_FONTNAME, "\"" + fontName
+            attributes.add(createAttribute(Attributes.FONTNAME, "\"" + fontName
                     + "\""));
         }
         // set font size
         if (fontSize > 0) {
-            attributes.add(createAttribute(ATTR_FONTSIZE,
+            attributes.add(createAttribute(Attributes.FONTSIZE,
                     Integer.toString(fontSize)));
         }
         // set label distance
         float distance = edgeLayout.getProperty(LABEL_DISTANCE);
         if (distance >= 0.0f) {
-            attributes.add(createAttribute(ATTR_LABELDISTANCE,
+            attributes.add(createAttribute(Attributes.LABELDISTANCE,
                     Float.toString(distance)));
             if (distance > 1.0f) {
                 float labelAngle = DEF_LABEL_ANGLE / distance;
-                attributes.add(createAttribute(ATTR_LABELANGLE,
+                attributes.add(createAttribute(Attributes.LABELANGLE,
                         Float.toString(labelAngle)));
             }
         }
@@ -678,15 +609,15 @@ public class KGraphDotTransformation {
                 float xpos = 0.0f, ypos = 0.0f, width = 0.0f, height = 0.0f;
                 for (Attribute attribute : nodeStatement.getAttributes()) {
                     try {
-                        if (attribute.getName().equals(ATTR_POS)) {
+                        if (attribute.getName().equals(Attributes.POS)) {
                             KVector pos = parsePoint(attribute.getValue());
                             xpos = (float) pos.x + offset;
                             ypos = (float) pos.y + offset;
-                        } else if (attribute.getName().equals(ATTR_WIDTH)) {
+                        } else if (attribute.getName().equals(Attributes.WIDTH)) {
                             StringTokenizer tokenizer = new StringTokenizer(attribute.getValue(),
                                     ATTRIBUTE_DELIM);
                             width = Float.parseFloat(tokenizer.nextToken()) * DPI;
-                        } else if (attribute.getName().equals(ATTR_HEIGHT)) {
+                        } else if (attribute.getName().equals(Attributes.HEIGHT)) {
                             StringTokenizer tokenizer = new StringTokenizer(attribute.getValue(),
                                     ATTRIBUTE_DELIM);
                             height = Float.parseFloat(tokenizer.nextToken()) * DPI;
@@ -702,14 +633,14 @@ public class KGraphDotTransformation {
                 // process an edge
                 EdgeStatement edgeStatement = (EdgeStatement) statement;
                 Map<String, String> attributeMap = createAttributeMap(edgeStatement.getAttributes());
-                KEdge kedge = (KEdge) graphElementMap.get(attributeMap.get(ATTR_COMMENT));
+                KEdge kedge = (KEdge) graphElementMap.get(attributeMap.get(Attributes.COMMENT));
                 if (kedge == null) {
                     continue;
                 }
                 KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
                 List<KPoint> edgePoints = edgeLayout.getBendPoints();
                 edgePoints.clear();
-                String posString = attributeMap.get(ATTR_POS);
+                String posString = attributeMap.get(Attributes.POS);
                 
                 // parse the list of spline control coordinates
                 List<List<KVector>> splines = new LinkedList<List<KVector>>();
@@ -760,17 +691,17 @@ public class KGraphDotTransformation {
                 }
 
                 // process the edge labels
-                String labelPos = attributeMap.get(ATTR_LABELPOS);
+                String labelPos = attributeMap.get(Attributes.LABELPOS);
                 if (labelPos != null) {
                     applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.CENTER,
                             edgeOffsetx, edgeOffsety);
                 }
-                labelPos = attributeMap.get(ATTR_HEADLP);
+                labelPos = attributeMap.get(Attributes.HEADLP);
                 if (labelPos != null) {
                     applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.HEAD,
                             edgeOffsetx, edgeOffsety);
                 }
-                labelPos = attributeMap.get(ATTR_TAILLP);
+                labelPos = attributeMap.get(Attributes.TAILLP);
                 if (labelPos != null) {
                     applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.TAIL,
                             offset, offset);
@@ -781,7 +712,7 @@ public class KGraphDotTransformation {
                 AttributeStatement attributeStatement = (AttributeStatement) statement;
                 if (attributeStatement.getType() == AttributeType.GRAPH) {
                     for (Attribute attribute : attributeStatement.getAttributes()) {
-                        if (attribute.getName().equals(ATTR_BOUNDINGBOX)) {
+                        if (attribute.getName().equals(Attributes.BOUNDINGBOX)) {
                             try {
                                 StringTokenizer tokenizer = new StringTokenizer(attribute.getValue(),
                                         ATTRIBUTE_DELIM);

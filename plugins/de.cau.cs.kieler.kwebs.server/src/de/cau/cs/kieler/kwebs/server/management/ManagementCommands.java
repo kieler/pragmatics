@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
- * Copyright 2008 by
+ * Copyright 2011 by
  * + Christian-Albrechts-University of Kiel
  *     + Department of Computer Science
  *         + Real-Time and Embedded Systems Group
