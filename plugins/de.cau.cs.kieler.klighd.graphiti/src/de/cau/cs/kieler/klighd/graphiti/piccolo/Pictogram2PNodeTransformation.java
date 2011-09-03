@@ -46,12 +46,12 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.mm.pictograms.util.PictogramsSwitch;
 
-import de.cau.cs.kieler.klighd.IModelTransformation;
 import de.cau.cs.kieler.klighd.piccolo.IChildRepresentedNode;
 import de.cau.cs.kieler.klighd.piccolo.PChildClip;
 import de.cau.cs.kieler.klighd.piccolo.PSWTAdvancedPath;
 import de.cau.cs.kieler.klighd.piccolo.PSWTAlignedText;
 import de.cau.cs.kieler.klighd.piccolo.PiccoloDiagramContext;
+import de.cau.cs.kieler.klighd.transformations.AbstractModelTransformation;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolox.swt.PSWTText;
@@ -61,8 +61,8 @@ import edu.umd.cs.piccolox.swt.PSWTText;
  * 
  * @author mri
  */
-public class Pictogram2PNodeTransformation implements
-        IModelTransformation<Diagram, PiccoloDiagramContext> {
+public class Pictogram2PNodeTransformation extends
+        AbstractModelTransformation<Diagram, PiccoloDiagramContext> {
 
     /** the Pictogram color for white. */
     private static final Color WHITE = StylesFactory.eINSTANCE.createColor();
@@ -615,7 +615,7 @@ public class Pictogram2PNodeTransformation implements
     /**
      * {@inheritDoc}
      */
-    public Object getSourceObject(final Object object) {
+    public Object getSourceElement(final Object object) {
         if (object instanceof IPictogramNode) {
             return ((IPictogramNode) object).getPictogramElement();
         }
@@ -625,15 +625,8 @@ public class Pictogram2PNodeTransformation implements
     /**
      * {@inheritDoc}
      */
-    public Object getTargetObject(final Object object) {
+    public Object getTargetElement(final Object object) {
         return elementMap.get(object);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean supports(final Object model) {
-        return model instanceof Diagram;
     }
 
 }

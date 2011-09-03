@@ -13,6 +13,6 @@
  */
 
 /**
- * KiVi combinations for KLighD.
+ * The package for the KLighD viewer implementations.
  */
-package de.cau.cs.kieler.klighd.combinations;
+package de.cau.cs.kieler.klighd.viewers;

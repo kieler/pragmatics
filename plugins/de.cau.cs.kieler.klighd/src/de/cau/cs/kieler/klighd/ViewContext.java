@@ -71,39 +71,39 @@ public class ViewContext {
     }
 
     /**
-     * Returns the object in the source model that translates to the given object in the context's
+     * Returns the element in the source model that translates to the given object in the context's
      * model by using the transformations invoked to obtain that model.
      * 
      * @param object
      *            the object in the context's model
-     * @return the object in the source model or null if the link could not be made
+     * @return the element in the source model or null if the link could not be made
      */
-    public Object getSourceObject(final Object object) {
+    public Object getSourceElement(final Object object) {
         Object source = object;
         for (IModelTransformation<?, ?> transformation : transformationsRev) {
             if (source == null) {
                 return null;
             }
-            source = transformation.getSourceObject(source);
+            source = transformation.getSourceElement(source);
         }
         return source;
     }
 
     /**
-     * Returns the object in the context's model that derives from the given object in the source
+     * Returns the element in the context's model that derives from the given element in the source
      * model by using the transformations invoked to obtain the context's model.
      * 
      * @param object
-     *            the object in the source model
-     * @return the object in the context's model or null if the link could not be made
+     *            the element in the source model
+     * @return the element in the context's model or null if the link could not be made
      */
-    public Object getTargetObject(final Object object) {
+    public Object getTargetElement(final Object object) {
         Object target = object;
         for (IModelTransformation<?, ?> transformation : transformations) {
             if (target == null) {
                 return null;
             }
-            target = transformation.getTargetObject(target);
+            target = transformation.getTargetElement(target);
         }
         return target;
     }

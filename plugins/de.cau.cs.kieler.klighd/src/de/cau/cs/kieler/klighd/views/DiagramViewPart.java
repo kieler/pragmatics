@@ -36,6 +36,7 @@ import org.eclipse.ui.part.ViewPart;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.ViewContext;
+import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 
 /**
  * A view which is able to display models in light-weight diagrams.
@@ -206,5 +207,5 @@ public class DiagramViewPart extends ViewPart {
         };
         mgr.add(layout);
     }
-
+    
 }

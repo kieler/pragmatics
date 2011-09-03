@@ -36,23 +36,23 @@ public interface IModelTransformation<S, T> {
     T transform(final S model);
 
     /**
-     * Returns the object in the source model which is represented by the given object in the target
+     * Returns the element in the source model which is represented by the given element in the target
      * model.
      * 
      * @param object
-     *            the object in the target model
-     * @return the object in the source model
+     *            the element in the target model
+     * @return the element in the source model or null if the element could not be found
      */
-    Object getSourceObject(final Object object);
+    Object getSourceElement(final Object object);
 
     /**
-     * Returns the object in the target model which represents the given object in the source model.
+     * Returns the element in the target model which represents the given element in the source model.
      * 
      * @param object
-     *            the object in the source model
-     * @return the object in the target model
+     *            the element in the source model
+     * @return the element in the target model or null if the element could not be found
      */
-    Object getTargetObject(final Object object);
+    Object getTargetElement(final Object object);
 
     /**
      * Returns whether the given model is a valid source for the transformation.

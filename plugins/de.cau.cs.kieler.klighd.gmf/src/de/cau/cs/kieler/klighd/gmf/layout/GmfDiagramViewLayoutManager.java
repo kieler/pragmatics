@@ -22,7 +22,7 @@ import de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.gmf.GmfDiagramViewer;
-import de.cau.cs.kieler.klighd.views.ContextViewer;
+import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 
 /**

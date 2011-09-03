@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighd.views;
+package de.cau.cs.kieler.klighd.viewers;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -179,7 +179,7 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
             List<SelectionObject> selections = new LinkedList<SelectionObject>();
             for (Object diagramObject : selectionEvent.getDiagramObjects()) {
                 // get the model object represented by the selected object
-                Object modelObject = currentViewContext.getSourceObject(diagramObject);
+                Object modelObject = currentViewContext.getSourceElement(diagramObject);
                 selections.add(new SelectionObject(diagramObject, modelObject));
             }
             // trigger the selection trigger
