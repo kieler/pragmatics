@@ -96,7 +96,7 @@ public class DiagramViewPart extends ViewPart {
      * Installs a handler for dropping resources on the view.
      */
     private void installDropHandler(final Composite parent) {
-        DropTarget target = new DropTarget(parent, DND.DROP_MOVE | DND.DROP_DEFAULT);
+        DropTarget target = new DropTarget(parent, DND.DROP_COPY | DND.DROP_DEFAULT);
         final ResourceTransfer resourceTransfer = ResourceTransfer.getInstance();
         target.setTransfer(new Transfer[] { resourceTransfer });
         target.addDropListener(new DropTargetListener() {
@@ -132,11 +132,23 @@ public class DiagramViewPart extends ViewPart {
             }
 
             public void dragOperationChanged(final DropTargetEvent event) {
-                // do nothing
+                if (event.detail == DND.DROP_DEFAULT) {
+                    if ((event.operations & DND.DROP_COPY) != 0) {
+                        event.detail = DND.DROP_COPY;
+                    } else {
+                        event.detail = DND.DROP_NONE;
+                    }
+                }
             }
 
             public void dragEnter(final DropTargetEvent event) {
-                // do nothing
+                if (event.detail == DND.DROP_DEFAULT) {
+                    if ((event.operations & DND.DROP_COPY) != 0) {
+                        event.detail = DND.DROP_COPY;
+                    } else {
+                        event.detail = DND.DROP_NONE;
+                    }
+                }
             }
 
             public void dragOver(final DropTargetEvent event) {
@@ -146,6 +158,7 @@ public class DiagramViewPart extends ViewPart {
             public void dragLeave(final DropTargetEvent event) {
                 // do nothing
             }
+            
         });
     }
 

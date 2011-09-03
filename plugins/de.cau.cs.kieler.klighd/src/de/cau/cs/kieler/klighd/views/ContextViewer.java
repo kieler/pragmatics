@@ -114,13 +114,19 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
             currentViewContext = viewContext;
             // set the model
             currentViewer.setModel(viewContext.getModel());
+            // reset the current selection
+            resetSelection();
         } else if (currentViewContext != null
                 && currentViewContext.getViewerProvider().supports(model)) {
             // if the current viewer supports the given model set it as new input model
             currentViewer.setModel(model);
+            // reset the current selection
+            resetSelection();
         } else if (model instanceof String) {
             // if the model is a string show it
             showMessage((String) model);
+            // reset the current selection
+            resetSelection();
         }
     }
 
@@ -143,8 +149,6 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
         currentViewer = (IViewer<Object>) viewer;
         parent.layout();
         currentViewer.addEventListener(this);
-        // reset the current selection
-        resetSelection();
     }
 
     private synchronized void removeViewer() {
