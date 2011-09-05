@@ -18,7 +18,7 @@ import java.util.Set;
 
 /**
  * An abstract base class for viewers which provides an implementation for the handling of
- * listeners.
+ * listeners and an empty implementation for advanced functionality.
  * 
  * @author mri
  * 
@@ -30,6 +30,13 @@ public abstract class AbstractViewer<T> implements IViewer<T> {
     /** the listeners registered on this viewer. */
     private Set<IViewerEventListener> listeners = new LinkedHashSet<IViewerEventListener>();
 
+    /**
+     * {@inheritDoc}
+     */
+    public void highlight(final Object diagramElement, final long duration) {
+        // do nothing
+    }
+    
     /**
      * {@inheritDoc}
      */

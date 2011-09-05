@@ -245,6 +245,16 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
     /**
      * {@inheritDoc}
      */
+    @Override
+    public void highlight(final Object diagramElement, final long duration) {
+        if (currentViewer != null) {
+            currentViewer.highlight(diagramElement, duration);
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     public void addSelectionChangedListener(final ISelectionChangedListener listener) {
         selectionListeners.add(listener);
     }

@@ -75,6 +75,13 @@ public class StringViewer implements IViewer<String> {
     /**
      * {@inheritDoc}
      */
+    public void highlight(final Object diagramElement, final long duration) {
+        // do nothing
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     public void addEventListener(final IViewerEventListener listener) {
         // do nothing
     }

@@ -41,6 +41,16 @@ public interface IViewer<T> {
     void setModel(final T model);
 
     /**
+     * Highlights the given diagram element for the specified duration.
+     * 
+     * @param diagramElement
+     *            the diagram element
+     * @param duration
+     *            the duration
+     */
+    void highlight(final Object diagramElement, final long duration);
+
+    /**
      * Adds an event listener to the viewer.
      * 
      * @param listener
