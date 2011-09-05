@@ -38,6 +38,7 @@ import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.piccolo.PiccoloViewer;
+import de.cau.cs.kieler.klighd.piccolo.activities.ZoomActivity;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphEdge;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphNode;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphObject;

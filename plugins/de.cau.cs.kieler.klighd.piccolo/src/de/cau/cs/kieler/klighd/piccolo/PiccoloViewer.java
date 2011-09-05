@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klighd.piccolo;
 
+import java.awt.Color;
 import java.awt.event.InputEvent;
 import java.util.Collection;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.eclipse.swt.widgets.Control;
 
 import de.cau.cs.kieler.klighd.AbstractViewer;
 import de.cau.cs.kieler.klighd.events.SelectionEvent;
+import de.cau.cs.kieler.klighd.piccolo.activities.HighlightActivity;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
@@ -67,7 +69,7 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
         canvas = new PSWTCanvas(parent, style);
         // this reduces flickering drastically
         canvas.setDoubleBuffered(true);
-        //canvas.setDefaultRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
+        // canvas.setDefaultRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
         // canvas.removeInputEventListener(canvas.getPanEventHandler());
         // prevent conflicts with selection handler
         canvas.getPanEventHandler().setEventFilter(
@@ -97,18 +99,25 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
         // fill the layers
         int index = 0;
         PCamera camera = canvas.getCamera();
+        resetCamera(camera);
         resizeAndResetLayers(model.getLayerRoots().size() + 1);
         for (PNode rootNode : model.getLayerRoots()) {
             camera.getLayer(index++).addChild(rootNode);
         }
         // add a node for the marquee
-        PNode marqueeParent = new PNode();
+        PEmptyNode marqueeParent = new PEmptyNode();
         camera.getLayer(index).addChild(marqueeParent);
         // add a selection handler
         selectionHandler = new PSWTSimpleSelectionEventHandler(camera, marqueeParent);
         canvas.addInputEventListener(selectionHandler);
         // forward the selection events
         selectionHandler.addSelectionListener(this);
+    }
+    
+    private void resetCamera(final PCamera camera) {
+        camera.getViewTransformReference().setToIdentity();
+        // applies the manual reset of the camera performed above
+        camera.translateView(0, 0);
     }
 
     private void resizeAndResetLayers(final int count) {
@@ -133,7 +142,22 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
             layer.removeAllChildren();
         }
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void highlight(final Object diagramElement, final long duration) {
+        if (diagramElement instanceof PNode) {
+            PNode node = (PNode) diagramElement;
+            // CHECKSTYLEOFF MagicNumber
+            HighlightActivity highlightActivity =
+                    new HighlightActivity(node, new Color(0, 255, 0), 2.0, duration);
+            // CHECKSTYLEON MagicNumber
+            node.addActivity(highlightActivity);
+        }
+    }
+
     /**
      * Returns the currently active diagram context.
      * 
