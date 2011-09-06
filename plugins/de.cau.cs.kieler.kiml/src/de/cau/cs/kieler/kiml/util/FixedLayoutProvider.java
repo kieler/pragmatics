@@ -56,7 +56,9 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
             // set the fixed position of the node, or leave it as it is
             KVector pos = nodeLayout.getProperty(LayoutOptions.POSITION);
             if (pos == null) {
-                nodeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
+                if (node.getChildren().isEmpty()) {
+                    nodeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
+                }
             } else {
                 nodeLayout.applyVector(pos);
                 // set the fixed size of the node

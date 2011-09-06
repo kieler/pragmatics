@@ -468,10 +468,18 @@ public final class KimlUtil {
         PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         float minNorth = MIN_PORT_DISTANCE, minEast = MIN_PORT_DISTANCE,
                 minSouth = MIN_PORT_DISTANCE, minWest = MIN_PORT_DISTANCE;
-        if (portConstraints == PortConstraints.FIXED_POS) {
-            for (KPort port : node.getPorts()) {
-                KShapeLayout portLayout = port.getData(KShapeLayout.class);
-                switch (portLayout.getProperty(LayoutOptions.PORT_SIDE)) {
+        Direction direction = node.getParent() == null
+                ? nodeLayout.getProperty(LayoutOptions.DIRECTION)
+                : node.getParent().getData(KShapeLayout.class).getProperty(LayoutOptions.DIRECTION);
+        for (KPort port : node.getPorts()) {
+            KShapeLayout portLayout = port.getData(KShapeLayout.class);
+            PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
+            if (portSide == PortSide.UNDEFINED) {
+                portSide = calcPortSide(port, direction);
+                portLayout.setProperty(LayoutOptions.PORT_SIDE, portSide);
+            }
+            if (portConstraints == PortConstraints.FIXED_POS) {
+                switch (portSide) {
                 case NORTH:
                     minNorth = Math.max(minNorth, portLayout.getXpos()
                             + portLayout.getWidth());
@@ -489,11 +497,8 @@ public final class KimlUtil {
                             + portLayout.getHeight());
                     break;
                 }
-            }
-        } else {
-            for (KPort port : node.getPorts()) {
-                KShapeLayout portLayout = port.getData(KShapeLayout.class);
-                switch (portLayout.getProperty(LayoutOptions.PORT_SIDE)) {
+            } else {
+                switch (portSide) {
                 case NORTH:
                     minNorth += MIN_PORT_DISTANCE + portLayout.getWidth();
                     break;
@@ -544,11 +549,19 @@ public final class KimlUtil {
 
         // update port positions
         if (movePorts) {
+            Direction direction = node.getParent() == null
+                    ? nodeLayout.getProperty(LayoutOptions.DIRECTION)
+                    : node.getParent().getData(KShapeLayout.class).getProperty(LayoutOptions.DIRECTION);
             boolean fixedPorts = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS)
                     == PortConstraints.FIXED_POS;
             for (KPort port : node.getPorts()) {
                 KShapeLayout portLayout = port.getData(KShapeLayout.class);
-                switch (portLayout.getProperty(LayoutOptions.PORT_SIDE)) {
+                PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
+                if (portSide == PortSide.UNDEFINED) {
+                    portSide = calcPortSide(port, direction);
+                    portLayout.setProperty(LayoutOptions.PORT_SIDE, portSide);
+                }
+                switch (portSide) {
                 case NORTH:
                     if (!fixedPorts) {
                         portLayout.setXpos(portLayout.getXpos() * widthRatio);

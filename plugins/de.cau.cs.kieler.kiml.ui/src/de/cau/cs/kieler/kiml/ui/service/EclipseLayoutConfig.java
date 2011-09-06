@@ -116,12 +116,6 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         // get main edit part and domain model element
         Object diagPart = context.getProperty(LayoutContext.DIAGRAM_PART);
         EObject domainElem = context.getProperty(LayoutContext.DOMAIN_MODEL);
-        if (domainElem == null && diagPart != null) {
-            IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance()
-                    .getBridge(diagPart);
-            domainElem = bridge.getElement(diagPart);
-            context.setProperty(LayoutContext.DOMAIN_MODEL, domainElem);
-        }
 
         // set diagram type for the content of the main edit part
         String diagramType = (String) getOption(diagPart, domainElem, LayoutOptions.DIAGRAM_TYPE);
