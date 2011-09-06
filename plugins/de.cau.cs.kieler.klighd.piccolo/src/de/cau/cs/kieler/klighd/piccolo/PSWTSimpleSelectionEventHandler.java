@@ -90,9 +90,7 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
      */
     public boolean select(final PNode node) {
         if (internalSelect(node)) {
-            List<PNode> nodes = new LinkedList<PNode>();
-            nodes.add(node);
-            notifyListenersSelection(nodes);
+            notifyListeners();
             return true;
         }
         return false;
@@ -116,14 +114,14 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
      *            the nodes
      */
     public void select(final Collection<PNode> nodes) {
-        List<PNode> newlySelectedNodes = new LinkedList<PNode>();
+        boolean unselected = false;
         for (PNode node : nodes) {
             if (internalSelect(node)) {
-                newlySelectedNodes.add(node);
+                unselected = true;
             }
         }
-        if (newlySelectedNodes.size() > 0) {
-            notifyListenersSelection(newlySelectedNodes);
+        if (unselected) {
+            notifyListeners();
         }
     }
 
@@ -136,9 +134,7 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
      */
     public boolean unselect(final PNode node) {
         if (internalUnselect(node)) {
-            List<PNode> nodes = new LinkedList<PNode>();
-            nodes.add(node);
-            notifyListenersUnselection(nodes);
+            notifyListeners();
             return true;
         }
         return false;
@@ -159,14 +155,14 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
      *            the nodes
      */
     public void unselect(final Collection<PNode> nodes) {
-        List<PNode> newlyUnselectedNodes = new LinkedList<PNode>();
+        boolean unselected = false;
         for (PNode node : nodes) {
             if (internalUnselect(node)) {
-                newlyUnselectedNodes.add(node);
+                unselected = true;
             }
         }
-        if (newlyUnselectedNodes.size() > 0) {
-            notifyListenersUnselection(newlyUnselectedNodes);
+        if (unselected) {
+            notifyListeners();
         }
     }
 
@@ -174,14 +170,13 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
      * Removes all nodes from the selection.
      */
     public void unselectAll() {
-        List<PNode> newlyUnselectedNodes = new LinkedList<PNode>();
         for (PNode node : selectedNodes) {
             PSWTSimpleSelectionHandle.removeSelectionHandle(node);
-            newlyUnselectedNodes.add(node);
         }
+        boolean unselected = selectedNodes.size() > 0;
         selectedNodes.clear();
-        if (newlyUnselectedNodes.size() > 0) {
-            notifyListenersUnselection(newlyUnselectedNodes);
+        if (unselected) {
+            notifyListeners();
         }
     }
 
@@ -225,15 +220,9 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
         listeners.remove(listener);
     }
 
-    private void notifyListenersSelection(final Collection<PNode> nodes) {
+    private void notifyListeners() {
         for (INodeSelectionListener listener : listeners) {
-            listener.nodesSelected(this, nodes);
-        }
-    }
-
-    private void notifyListenersUnselection(final Collection<PNode> nodes) {
-        for (INodeSelectionListener listener : listeners) {
-            listener.nodesUnselected(this, nodes);
+            listener.selected(this, getSelectionReference());
         }
     }
 

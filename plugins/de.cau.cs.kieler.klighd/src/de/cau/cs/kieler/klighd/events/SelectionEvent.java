@@ -18,51 +18,36 @@ import java.util.Collection;
 import de.cau.cs.kieler.klighd.IViewer;
 
 /**
- * A viewer event representing a selection or an unselection.
+ * A viewer event representing a selection or unselection which contains a list of currently
+ * selected diagram elements.
  * 
  * @author mri
  */
 public class SelectionEvent extends AbstractViewerEvent {
 
-    /** the selected diagram objects. */
-    private Collection<?> diagramObjects;
-    /** whether the event represents a selection or an unselection. */
-    private boolean selected;
+    /** the selected diagram elements. */
+    private Collection<?> diagramElements;
 
     /**
      * Constructs a selection event.
      * 
      * @param viewer
      *            the source viewer
-     * @param diagramObjects
-     *            the selected diagram objects
-     * @param selected
-     *            true if the event represent a selection; false if the event represents an
-     *            unselection
+     * @param diagramElements
+     *            the selected diagram elements
      */
-    public SelectionEvent(final IViewer<?> viewer, final Collection<?> diagramObjects,
-            final boolean selected) {
+    public SelectionEvent(final IViewer<?> viewer, final Collection<?> diagramElements) {
         super(viewer);
-        this.diagramObjects = diagramObjects;
-        this.selected = selected;
+        this.diagramElements = diagramElements;
     }
 
     /**
-     * Returns the selected diagram objects.
+     * Returns the selected diagram elements.
      * 
-     * @return the selected diagram objects
+     * @return the selected diagram elements
      */
-    public Collection<?> getDiagramObjects() {
-        return diagramObjects;
-    }
-
-    /**
-     * Returns whether this event represents a selection or an unselection.
-     * 
-     * @return true if this event represents a selection; false if it represents an unselection
-     */
-    public boolean isSelection() {
-        return selected;
+    public Collection<?> getDiagramElements() {
+        return diagramElements;
     }
 
 }

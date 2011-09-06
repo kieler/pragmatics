@@ -22,7 +22,7 @@ import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.activities.PInterpolatingActivity;
 
 /**
- * The Piccolo activity for highlighting a node by changing the line color and width.
+ * The Piccolo activity for highlighting a node by changing the color.
  * 
  * @author mri
  */
@@ -32,37 +32,34 @@ public class HighlightActivity extends PInterpolatingActivity {
     private PNode node;
     /** the node casted to a {@code PSWTAdvancedPath} if possible. */
     private PSWTAdvancedPath path = null;
+    /** the source color for the stroke highlight. */
+    private Color sourceStrokeColor = null;
+    /** the target color for the stroke highlight. */
+    private Color targetStrokeColor;
     /** the source color for the highlight. */
     private Color sourceColor = null;
     /** the target color for the highlight. */
     private Color targetColor;
-    /** the source line width. */
-    private double sourceLineWidth;
-    /** the target line width. */
-    private double targetLineWidth;
-    /** the target line width factor. */
-    private double targetLineWidthFactor;
 
     /**
      * Constructs a highlight activity.
      * 
      * @param node
      *            the highlight node
+     * @param strokeColor
+     *            the stroke color for the highlight
      * @param color
      *            the color for the highlight
-     * @param lineWidthFactor
-     *            the line width factor for the highlight if the node type supports it (i.e.
-     *            PSWTAdvancedPath)
      * @param duration
      *            the duration over which the highlight is performed
      */
-    public HighlightActivity(final PNode node, final Color color, final double lineWidthFactor,
+    public HighlightActivity(final PNode node, final Color strokeColor, final Color color,
             final long duration) {
         super(duration);
         setMode(PInterpolatingActivity.SOURCE_TO_DESTINATION_TO_SOURCE);
         this.node = node;
+        targetStrokeColor = strokeColor;
         targetColor = color;
-        targetLineWidthFactor = lineWidthFactor;
     }
 
     /**
@@ -71,16 +68,19 @@ public class HighlightActivity extends PInterpolatingActivity {
     @Override
     protected void activityStarted() {
         if (getFirstLoop()) {
-            // get the source color if available
+            // get the source stroke color if possible
+            if (node instanceof PSWTAdvancedPath) {
+                path = (PSWTAdvancedPath) node;
+                // get the source stroke color
+                Paint paint = path.getStrokePaint();
+                if (paint instanceof Color) {
+                    sourceStrokeColor = (Color) paint;
+                }
+            }
+            // get the source color
             Paint paint = node.getPaint();
             if (paint instanceof Color) {
                 sourceColor = (Color) paint;
-            }
-            // get the line width if possible
-            if (node instanceof PSWTAdvancedPath) {
-                path = (PSWTAdvancedPath) node;
-                sourceLineWidth = path.getLineWidth();
-                targetLineWidth = targetLineWidthFactor * sourceLineWidth;
             }
         }
         super.activityStarted();
@@ -91,31 +91,25 @@ public class HighlightActivity extends PInterpolatingActivity {
      */
     @Override
     public void setRelativeTargetValue(final float zeroToOne) {
+        // set stroke color if possible
+        if (sourceStrokeColor != null) {
+            Color color = getColor(zeroToOne, sourceStrokeColor, targetStrokeColor);
+            path.setStrokeColor(color);
+        }
         // set color if possible
         if (sourceColor != null) {
-            float red =
-                    sourceColor.getRed() + zeroToOne
-                            * (targetColor.getRed() - sourceColor.getRed());
-            float green =
-                    sourceColor.getGreen() + zeroToOne
-                            * (targetColor.getGreen() - sourceColor.getGreen());
-            float blue =
-                    sourceColor.getBlue() + zeroToOne
-                            * (targetColor.getBlue() - sourceColor.getBlue());
-            float alpha =
-                    sourceColor.getAlpha() + zeroToOne
-                            * (targetColor.getAlpha() - sourceColor.getAlpha());
-            Color color = new Color((int) red, (int) green, (int) blue, (int) alpha);
-            if (path != null) {
-                path.setStrokeColor(color);
-            } else {
-                node.setPaint(color);
-            }
+            Color color = getColor(zeroToOne, sourceColor, targetColor);
+            node.setPaint(color);
         }
-        // set line width if possible
-        if (path != null) {
-            path.setLineWidth(sourceLineWidth + zeroToOne * (targetLineWidth - sourceLineWidth));
-        }
+    }
+
+    private Color getColor(final float zeroToOne, final Color source, final Color target) {
+        float red = source.getRed() + zeroToOne * (target.getRed() - source.getRed());
+        float green = source.getGreen() + zeroToOne * (target.getGreen() - source.getGreen());
+        float blue = source.getBlue() + zeroToOne * (target.getBlue() - source.getBlue());
+        float alpha = source.getAlpha() + zeroToOne * (target.getAlpha() - source.getAlpha());
+        Color color = new Color((int) red, (int) green, (int) blue, (int) alpha);
+        return color;
     }
 
 }

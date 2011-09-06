@@ -113,7 +113,7 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
         // forward the selection events
         selectionHandler.addSelectionListener(this);
     }
-    
+
     private void resetCamera(final PCamera camera) {
         camera.getViewTransformReference().setToIdentity();
         // applies the manual reset of the camera performed above
@@ -148,11 +148,17 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
      */
     @Override
     public void highlight(final Object diagramElement, final long duration) {
+        // TODO this is far from final
         if (diagramElement instanceof PNode) {
             PNode node = (PNode) diagramElement;
+            if (node instanceof IChildRepresentedNode) {
+                IChildRepresentedNode childRepNode = (IChildRepresentedNode) node;
+                node = childRepNode.getRepresentationNode();
+            }
             // CHECKSTYLEOFF MagicNumber
             HighlightActivity highlightActivity =
-                    new HighlightActivity(node, new Color(0, 255, 0), 2.0, duration);
+                    new HighlightActivity(node, new Color(0, 0, 255), new Color(150, 150, 255),
+                            duration);
             // CHECKSTYLEON MagicNumber
             node.addActivity(highlightActivity);
         }
@@ -170,17 +176,9 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
     /**
      * {@inheritDoc}
      */
-    public void nodesSelected(final PSWTSimpleSelectionEventHandler handler,
+    public void selected(final PSWTSimpleSelectionEventHandler handler,
             final Collection<PNode> nodes) {
-        notifyListeners(new SelectionEvent(this, nodes, true));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void nodesUnselected(final PSWTSimpleSelectionEventHandler handler,
-            final Collection<PNode> nodes) {
-        notifyListeners(new SelectionEvent(this, nodes, false));
+        notifyListeners(new SelectionEvent(this, nodes));
     }
 
 }

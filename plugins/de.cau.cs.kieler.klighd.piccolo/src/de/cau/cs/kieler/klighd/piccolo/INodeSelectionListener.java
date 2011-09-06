@@ -32,17 +32,6 @@ public interface INodeSelectionListener {
      * @param nodes
      *            the selected nodes
      */
-    void nodesSelected(final PSWTSimpleSelectionEventHandler handler, final Collection<PNode> nodes);
-
-    /**
-     * Handles the unselection of a number of nodes.
-     * 
-     * @param handler
-     *            the handler notifying the listener
-     * @param nodes
-     *            the unselected nodes
-     */
-    void nodesUnselected(final PSWTSimpleSelectionEventHandler handler,
-            final Collection<PNode> nodes);
+    void selected(final PSWTSimpleSelectionEventHandler handler, final Collection<PNode> nodes);
 
 }

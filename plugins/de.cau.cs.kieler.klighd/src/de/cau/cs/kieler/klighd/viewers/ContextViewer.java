@@ -34,9 +34,9 @@ import de.cau.cs.kieler.klighd.IViewerEventListener;
 import de.cau.cs.kieler.klighd.IViewerProvider;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.events.SelectionEvent;
-import de.cau.cs.kieler.klighd.triggers.SelectionTrigger;
-import de.cau.cs.kieler.klighd.triggers.SelectionTrigger.SelectionObject;
-import de.cau.cs.kieler.klighd.triggers.SelectionTrigger.SelectionState;
+import de.cau.cs.kieler.klighd.triggers.KlighdSelectionTrigger;
+import de.cau.cs.kieler.klighd.triggers.KlighdSelectionTrigger.KlighdSelectionState;
+import de.cau.cs.kieler.klighd.triggers.KlighdSelectionTrigger.KlighdSelectionState.SelectionElement;
 
 /**
  * A viewer for instances of type {@code ViewContext}. This viewer acts as a wrapper for the viewer
@@ -173,19 +173,17 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
     }
 
     private void handleSelectionEvent(final SelectionEvent selectionEvent) {
-        SelectionTrigger trigger = SelectionTrigger.getInstance();
+        KlighdSelectionTrigger trigger = KlighdSelectionTrigger.getInstance();
         if (trigger != null) {
             // create the selection objects
-            List<SelectionObject> selections = new LinkedList<SelectionObject>();
-            for (Object diagramObject : selectionEvent.getDiagramObjects()) {
-                // get the model object represented by the selected object
-                Object modelObject = currentViewContext.getSourceElement(diagramObject);
-                selections.add(new SelectionObject(diagramObject, modelObject));
+            List<SelectionElement> selections = new LinkedList<SelectionElement>();
+            // create the selection state
+            KlighdSelectionState state =
+                    new KlighdSelectionState(viewId, currentViewContext, currentViewer, selections);
+            // fill the selection
+            for (Object diagramObject : selectionEvent.getDiagramElements()) {
+                selections.add(state.new SelectionElement(diagramObject));
             }
-            // trigger the selection trigger
-            SelectionState state =
-                    new SelectionState(viewId, currentViewContext, currentViewer, selections,
-                            selectionEvent.isSelection());
             trigger.trigger(state);
         }
         // update the selection status for the ISelectionProvider interface
@@ -194,11 +192,8 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
 
     private void updateSelection(final SelectionEvent selectionEvent) {
         synchronized (selection) {
-            if (selectionEvent.isSelection()) {
-                selection.selectedElements.addAll(selectionEvent.getDiagramObjects());
-            } else {
-                selection.selectedElements.removeAll(selectionEvent.getDiagramObjects());
-            }
+            selection.selectedElements.clear();
+            selection.selectedElements.addAll(selectionEvent.getDiagramElements());
         }
         notifySelectionListeners();
     }

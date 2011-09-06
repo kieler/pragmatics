@@ -26,6 +26,7 @@ import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.FreeFormConnection;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
+import de.cau.cs.kieler.klighd.piccolo.IChildRepresentedNode;
 import de.cau.cs.kieler.klighd.piccolo.PEmptyNode;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphEdge;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphNode;
@@ -38,8 +39,8 @@ import edu.umd.cs.piccolox.swt.PSWTPath;
  * 
  * @author mri
  */
-public class ConnectionNode extends PEmptyNode implements IPictogramNode, IGraphEdge,
-        PropertyChangeListener {
+public class ConnectionNode extends PEmptyNode implements IChildRepresentedNode, IPictogramNode,
+        IGraphEdge, PropertyChangeListener {
 
     private static final long serialVersionUID = -8752895610400744167L;
 
@@ -80,6 +81,20 @@ public class ConnectionNode extends PEmptyNode implements IPictogramNode, IGraph
      */
     public PictogramElement getPictogramElement() {
         return connection;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void setRepresentationNode(final PNode representationNode) {
+        // set otherwise
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PNode getRepresentationNode() {
+        return polyline;
     }
 
     /**
@@ -153,8 +168,9 @@ public class ConnectionNode extends PEmptyNode implements IPictogramNode, IGraph
         if (xps.length > 2) {
             // if bend points are present use them to determine anchor positions
             source = getSourceAnchor().getAnchorPoint(new Point2D.Double(xps[1], yps[1]));
-            target = getTargetAnchor().getAnchorPoint(
-                    new Point2D.Double(xps[xps.length - 2], yps[yps.length - 2]));
+            target =
+                    getTargetAnchor().getAnchorPoint(
+                            new Point2D.Double(xps[xps.length - 2], yps[yps.length - 2]));
         } else {
             // if no bend points are present use the center points of the connected nodes
             Point2D reference;
@@ -186,7 +202,6 @@ public class ConnectionNode extends PEmptyNode implements IPictogramNode, IGraph
      * {@inheritDoc}
      */
     public synchronized void propertyChange(final PropertyChangeEvent evt) {
-        // FIXME under rare circumstances this can throw NP exceptions
         // if (polyline != null) {
         // // update the anchor points
         // if (evt.getSource() == sourceAnchor) {
@@ -229,8 +244,9 @@ public class ConnectionNode extends PEmptyNode implements IPictogramNode, IGraph
     }
 
     private void updateTargetAnchor() {
-        Point2D anchorPoint = targetAnchor.getAnchorPoint(new Point2D.Double(xps[xps.length - 2],
-                yps[yps.length - 2]));
+        Point2D anchorPoint =
+                targetAnchor.getAnchorPoint(new Point2D.Double(xps[xps.length - 2],
+                        yps[yps.length - 2]));
         if (anchorPoint != null) {
             xps[xps.length - 1] = (float) anchorPoint.getX();
             yps[yps.length - 1] = (float) anchorPoint.getY();
