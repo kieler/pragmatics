@@ -176,34 +176,4 @@ public class KlighdDiagramEffect extends AbstractEffect {
         return viewer;
     }
 
-    /**
-     * A special {@link KlighdDiagramEffect} allowing to close a KLighD view. TODO is this a
-     * reasonable way to realize the requirement?
-     * 
-     * @author chsch
-     */
-    public static class KLighDCloseDiagramEffect extends KlighdDiagramEffect {
-
-        /**
-         * Constructs an effect that closes the diagram view associated with the given id.
-         * 
-         * @param id
-         *            identifier of the view to be closed.
-         */
-        public KLighDCloseDiagramEffect(final String id) {
-            super(id);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void execute() {
-            MonitoredOperation.runInUI(new Runnable() {
-                public void run() {
-                    DiagramViewUtil.closeView(KLighDCloseDiagramEffect.super.id);
-                }
-            }, true);
-        }
-    }
-
 }

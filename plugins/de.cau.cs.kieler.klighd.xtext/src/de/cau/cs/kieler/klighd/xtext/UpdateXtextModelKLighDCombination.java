@@ -16,11 +16,11 @@ package de.cau.cs.kieler.klighd.xtext;
 import org.eclipse.xtext.resource.XtextResource;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState; // SUPPRESS CHECKSTYLE LineLength
-import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState.EventType; // SUPPRESS CHECKSTYLE LineLength
+import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState;
+import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState.EventType;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
+import de.cau.cs.kieler.klighd.effects.KlighdCloseDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
-import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect.KLighDCloseDiagramEffect;
 
 /**
  * A combination for initializing/refreshing of KLighD views of Xtext-based models.
@@ -40,7 +40,7 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
         XtextResource resource = state.getResource();
         String id = resource.getURI().toPlatformString(false);
         if (state.getEventType().equals(EventType.CLOSED)) {
-            this.schedule(new KLighDCloseDiagramEffect(id));
+            this.schedule(new KlighdCloseDiagramEffect(id));
         } else {
             if (resource == null || resource.getContents() == null
                     || resource.getContents().isEmpty()) {
