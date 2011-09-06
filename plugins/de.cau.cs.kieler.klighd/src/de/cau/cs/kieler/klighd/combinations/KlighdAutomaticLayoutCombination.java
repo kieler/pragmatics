@@ -13,10 +13,14 @@
  */
 package de.cau.cs.kieler.klighd.combinations;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.core.util.Maybe;
+import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutCombination;
 import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdLayoutEffect;
 import de.cau.cs.kieler.klighd.views.DiagramViewPart;
@@ -48,10 +52,23 @@ public class KlighdAutomaticLayoutCombination extends AbstractCombination {
             }, true);
             // schedule the layout effect if the view could be found
             if (view.get() != null) {
-                schedule(new KlighdLayoutEffect(view.get(), diagramEffect.getViewer(), true, false,
-                        false, true));
+                IPreferenceStore preferenceStore = getPreferenceStore();
+                boolean animate = preferenceStore.getBoolean(LayoutCombination.ANIMATE);
+                boolean zoom = preferenceStore.getBoolean(LayoutCombination.ZOOM_TO_FIT);
+                boolean progressBar = preferenceStore.getBoolean(LayoutCombination.PROGRESS_BAR);
+                schedule(new KlighdLayoutEffect(view.get(), diagramEffect.getViewer(), zoom,
+                        progressBar, false, animate));
             }
         }
+    }
+
+    /**
+     * Return the preference store for the KIML UI plugin.
+     * 
+     * @return the preference store
+     */
+    private static IPreferenceStore getPreferenceStore() {
+        return KimlUiPlugin.getDefault().getPreferenceStore();
     }
 
 }
