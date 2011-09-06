@@ -246,7 +246,7 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
             currentViewer.highlight(diagramElement, duration);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -268,6 +268,15 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
      */
     public IViewer<?> getActiveViewer() {
         return currentViewer;
+    }
+
+    /**
+     * Returns the currently active view context.
+     * 
+     * @return the view context
+     */
+    public ViewContext getCurrentViewContext() {
+        return currentViewContext;
     }
 
     /**

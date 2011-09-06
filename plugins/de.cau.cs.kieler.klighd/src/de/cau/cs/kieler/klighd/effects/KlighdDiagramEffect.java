@@ -18,6 +18,7 @@ import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.ViewContext;
+import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 import de.cau.cs.kieler.klighd.views.DiagramViewUtil;
 
 /**
@@ -36,6 +37,8 @@ public class KlighdDiagramEffect extends AbstractEffect {
 
     // the following fields are valid AFTER the effect executed
 
+    /** the created/updated view. */
+    private DiagramViewPart view = null;
     /** the created view context. */
     private ViewContext viewContext = null;
     /** the created viewer. */
@@ -122,7 +125,13 @@ public class KlighdDiagramEffect extends AbstractEffect {
             MonitoredOperation.runInUI(new Runnable() {
                 public void run() {
                     if (!DiagramViewUtil.updateView(id, name, model)) {
-                        DiagramViewUtil.createView(id, name, model);
+                        view = DiagramViewUtil.createView(id, name, model);
+                    } else {
+                        view = DiagramViewUtil.getView(id);
+                    }
+                    if (view != null) {
+                        viewContext = view.getViewer().getCurrentViewContext();
+                        viewer = view.getViewer().getActiveViewer();
                     }
                 }
             }, true);
@@ -154,6 +163,16 @@ public class KlighdDiagramEffect extends AbstractEffect {
      */
     public Object getModel() {
         return model;
+    }
+
+    /**
+     * Returns the view created or updated as part of the effect.
+     * 
+     * @return the view or null when called before the effect executed, the execute failed or was
+     *         invalid
+     */
+    public DiagramViewPart getView() {
+        return view;
     }
 
     /**
