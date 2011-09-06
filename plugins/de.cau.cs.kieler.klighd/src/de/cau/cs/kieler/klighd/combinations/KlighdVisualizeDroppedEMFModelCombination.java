@@ -28,6 +28,9 @@ import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
 import de.cau.cs.kieler.klighd.triggers.KlighdResourceDropTrigger.KlighdResourceDropState;
 
 /**
+ * A view management combination which EMF resources which are dropped on KLighD views and updates
+ * the view with the model loaded from the resource.
+ * 
  * @author mri
  */
 public class KlighdVisualizeDroppedEMFModelCombination extends AbstractCombination {

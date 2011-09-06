@@ -23,6 +23,12 @@
             description="Enables the visualization of EMF models in resources dropped on KLighD views."
             name="Visualize dropped EMF Resources in KLighD Views ">
       </combination>
+      <combination
+            active="true"
+            class="de.cau.cs.kieler.klighd.combinations.KlighdAutomaticLayoutCombination"
+            description="Applies automatic layout on KLighD views which have been created or updated using the appropriate effect."
+            name="Automatic Layout after KLighD View Creation and Update">
+      </combination>
    </extension>
 
 </plugin>
