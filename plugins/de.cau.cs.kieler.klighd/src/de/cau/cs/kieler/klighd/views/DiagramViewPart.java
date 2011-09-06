@@ -13,15 +13,7 @@
  */
 package de.cau.cs.kieler.klighd.views;
 
-import java.io.IOException;
-
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gmf.runtime.diagram.core.DiagramEditingDomainFactory;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.dnd.DND;
@@ -34,8 +26,8 @@ import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
-import de.cau.cs.kieler.klighd.LightDiagramServices;
-import de.cau.cs.kieler.klighd.ViewContext;
+import de.cau.cs.kieler.klighd.triggers.KlighdResourceDropTrigger;
+import de.cau.cs.kieler.klighd.triggers.KlighdResourceDropTrigger.KlighdResourceDropState;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 
 /**
@@ -103,26 +95,16 @@ public class DiagramViewPart extends ViewPart {
         target.addDropListener(new DropTargetListener() {
 
             public void drop(final DropTargetEvent event) {
-                if (resourceTransfer.isSupportedType(event.currentDataType)
-                        && event.data instanceof IResource[]) {
-                    IResource[] resources = (IResource[]) event.data;
-                    for (IResource resource : resources) {
-                        if (resource instanceof IFile) {
-                            IFile file = (IFile) resource;
-                            Object model = loadModel(file);
-                            if (model != null) {
-                                ViewContext viewContext =
-                                        LightDiagramServices.getInstance().getValidViewContext(
-                                                model);
-                                if (viewContext != null) {
-                                    viewer.setModel(viewContext);
-                                } else {
-                                    viewer.setModel("Could not find a viewer for the resource.");
-                                }
-                            } else {
-                                viewer.setModel("The file does not contain an EMF resource.");
-                            }
-                            break;
+                KlighdResourceDropTrigger trigger = KlighdResourceDropTrigger.getInstance();
+                if (trigger != null) {
+                    if (resourceTransfer.isSupportedType(event.currentDataType)
+                            && event.data instanceof IResource[]) {
+                        IResource[] resources = (IResource[]) event.data;
+                        if (resources.length > 0) {
+                            KlighdResourceDropState state =
+                                    new KlighdResourceDropState(getViewSite().getSecondaryId(),
+                                            resources[0]);
+                            trigger.trigger(state);
                         }
                     }
                 }
@@ -159,36 +141,8 @@ public class DiagramViewPart extends ViewPart {
             public void dragLeave(final DropTargetEvent event) {
                 // do nothing
             }
-            
-        });
-    }
 
-    /**
-     * Loads an EMF model from the given file.
-     * 
-     * @param file
-     *            the file
-     * @return the model
-     */
-    private Object loadModel(final IFile file) {
-        // TransactionalEditingDomain.Factory factory = TransactionalEditingDomain.Factory.INSTANCE;
-        TransactionalEditingDomain transactionalEditingDomain =
-                DiagramEditingDomainFactory.INSTANCE.createEditingDomain();
-        // factory.createEditingDomain();
-        ResourceSet resourceSet = transactionalEditingDomain.getResourceSet();
-        Resource resource =
-                resourceSet.createResource(URI.createPlatformResourceURI(file.getFullPath()
-                        .toOSString(), true));
-        try {
-            resource.load(null);
-        } catch (IOException e) {
-            return null;
-        }
-        if (resource.getContents().size() > 0) {
-            return resource.getContents().get(0);
-        } else {
-            return null;
-        }
+        });
     }
 
     // TODO just for testing purposes
@@ -207,5 +161,5 @@ public class DiagramViewPart extends ViewPart {
         };
         mgr.add(layout);
     }
-    
+
 }

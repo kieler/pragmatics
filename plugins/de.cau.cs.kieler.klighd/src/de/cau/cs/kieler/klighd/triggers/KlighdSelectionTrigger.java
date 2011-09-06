@@ -22,7 +22,7 @@ import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.ViewContext;
 
 /**
- * A KiVi trigger which listens on the selection of diagram elements in KLighD diagrams.
+ * A view management trigger which listens on the selection of diagram elements in KLighD diagrams.
  * 
  * @author mri
  */

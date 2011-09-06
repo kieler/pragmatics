@@ -25,7 +25,7 @@ import de.cau.cs.kieler.klighd.ViewContext;
  */
 public abstract class AbstractKlighdTriggerState extends AbstractTriggerState {
 
-    /** the id of the view associated with this selection. */
+    /** the identifier of the view associated with this selection. */
     private String viewId = null;
     /** the view context in which the selection occurred. */
     private ViewContext viewContext = null;
@@ -44,7 +44,7 @@ public abstract class AbstractKlighdTriggerState extends AbstractTriggerState {
      * in which the trigger that lead to this trigger state fired.
      * 
      * @param viewId
-     *            the id of the view
+     *            the identifier of the view
      * @param viewContext
      *            the view context
      * @param viewer
@@ -58,9 +58,9 @@ public abstract class AbstractKlighdTriggerState extends AbstractTriggerState {
     }
 
     /**
-     * Returns the id of the view associated with this selection.
+     * Returns the identifier of the view associated with this selection.
      * 
-     * @return the id of view
+     * @return the identifier of the view or null for the default view
      */
     public String getViewId() {
         return viewId;

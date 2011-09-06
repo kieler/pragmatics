@@ -15,5 +15,14 @@
             restorable="true">
       </view>
    </extension>
+   <extension
+         point="de.cau.cs.kieler.core.kivi.combinations">
+      <combination
+            active="true"
+            class="de.cau.cs.kieler.klighd.combinations.KlighdVisualizeDroppedEMFModelCombination"
+            description="Enables the visualization of EMF models in resources dropped on KLighD views."
+            name="Visualize dropped EMF Resources in KLighD Views ">
+      </combination>
+   </extension>
 
 </plugin>
