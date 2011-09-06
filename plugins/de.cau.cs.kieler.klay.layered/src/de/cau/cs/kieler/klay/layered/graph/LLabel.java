@@ -18,7 +18,7 @@ package de.cau.cs.kieler.klay.layered.graph;
  * 
  * @author jjc
  */
-public class LLabel extends LSizedGraphElement {
+public class LLabel extends LShape {
 
     /** text of the label. */
     private String text;

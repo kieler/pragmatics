@@ -510,7 +510,7 @@ public class OrthogonalRoutingGenerator {
         // write the acyclic dependency graph to an output file
         if (debugPrefix != null) {
             writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0 : sourceLayerIndex + 1,
-                    hyperNodes, "full");
+                    hyperNodes, "acyclic");
         }
         
         // assign ranks to the hypernodes

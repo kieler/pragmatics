@@ -20,7 +20,7 @@ import de.cau.cs.kieler.core.math.KVector;
  * 
  * @author cds
  */
-public abstract class LSizedGraphElement extends LGraphElement {
+public abstract class LShape extends LGraphElement {
     
     /** the current position of the element. */
     private KVector pos = new KVector();

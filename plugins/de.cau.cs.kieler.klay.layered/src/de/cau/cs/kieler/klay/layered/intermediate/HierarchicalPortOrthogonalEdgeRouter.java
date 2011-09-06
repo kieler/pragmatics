@@ -25,7 +25,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.graph.Insets;
+import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -210,7 +210,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
         
         PortConstraints constraints = layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         KVector graphSize = layeredGraph.getSize();
-        Insets.Double graphInsets = layeredGraph.getInsets();
+        LInsets.Double graphInsets = layeredGraph.getInsets();
         float borderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
         double nodeWidth = graphSize.x + graphInsets.left + graphInsets.right + 2 * borderSpacing;
         
@@ -458,7 +458,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             final LayeredGraph graph) {
         
         // Get some geometric values from the graph
-        Insets.Double insets = graph.getInsets();
+        LInsets.Double insets = graph.getInsets();
         float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
         KVector offset = graph.getOffset();
         KVector graphActualSize = graph.getActualSize();

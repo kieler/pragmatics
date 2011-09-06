@@ -18,9 +18,9 @@ package de.cau.cs.kieler.klay.layered.graph;
  * representation of the insets is left to subclasses.
  * 
  * @author cds
- * @see Insets.Double
+ * @see LInsets.Double
  */
-public class Insets {
+public class LInsets {
     // Allow public fields in this utility classes.
     // CHECKSTYLEOFF VisibilityModifier
     
@@ -29,7 +29,7 @@ public class Insets {
      * 
      * @author cds
      */
-    public static class Double extends Insets {
+    public static class Double extends LInsets {
         /**
          * The inset from the top.
          */
@@ -79,8 +79,8 @@ public class Insets {
          */
         @Override
         public boolean equals(final Object obj) {
-            if (obj instanceof Insets.Double) {
-                Insets.Double other = (Insets.Double) obj;
+            if (obj instanceof LInsets.Double) {
+                LInsets.Double other = (LInsets.Double) obj;
                 
                 return this.top == other.top
                     && this.bottom == other.bottom

@@ -43,7 +43,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.klay.layered.graph.Insets;
+import de.cau.cs.kieler.klay.layered.graph.LInsets;
 //import de.cau.cs.kieler.klay.layered.graph.Insets.Double;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
@@ -85,7 +85,7 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
 
         // copy the insets to the layered graph
         KInsets kinsets = sourceShapeLayout.getInsets();
-        Insets.Double linsets = layeredGraph.getInsets();
+        LInsets.Double linsets = layeredGraph.getInsets();
 
         linsets.left = kinsets.getLeft();
         linsets.right = kinsets.getRight();

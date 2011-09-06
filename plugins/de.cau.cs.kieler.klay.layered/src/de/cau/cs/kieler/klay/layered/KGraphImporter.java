@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.layered;
 import java.util.EnumSet;
 import java.util.HashMap;
 //import java.util.Iterator;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.klay.layered.graph.Insets;
+import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -82,7 +83,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // copy the insets to the layered graph
         KInsets kinsets = sourceShapeLayout.getInsets();
-        Insets.Double linsets = layeredGraph.getInsets();
+        LInsets.Double linsets = layeredGraph.getInsets();
 
         linsets.left = kinsets.getLeft();
         linsets.right = kinsets.getRight();
@@ -339,16 +340,10 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         newNode.copyProperties(nodeLayout);
 
         // if we have a hypernode without ports, create a default input and output port
-        if (newNode.getProperty(LayoutOptions.HYPERNODE) && newNode.getPorts().isEmpty()) {
+        if (newNode.getProperty(LayoutOptions.HYPERNODE)) {
+            graphProperties.add(GraphProperties.HYPERNODES);
+            graphProperties.add(GraphProperties.HYPEREDGES);
             newNode.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
-
-            LPort inputPort = new LPort();
-            inputPort.setSide(PortSide.WEST);
-            inputPort.setNode(newNode);
-
-            LPort outputPort = new LPort();
-            outputPort.setSide(PortSide.EAST);
-            outputPort.setNode(newNode);
         }
     }
 
@@ -470,7 +465,14 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         if (sourcePort == null) {
             if (sourceNode.getProperty(LayoutOptions.HYPERNODE)) {
                 // Hypernodes have an eastern output port
-                sourcePort = sourceNode.getPorts(PortSide.EAST).iterator().next();
+                Iterator<LPort> portIter = sourceNode.getPorts(PortSide.EAST).iterator();
+                if (portIter.hasNext()) {
+                    sourcePort = portIter.next();
+                } else {        
+                    sourcePort = new LPort();
+                    sourcePort.setNode(sourceNode);
+                    sourcePort.setSide(PortSide.EAST);
+                }
             } else {
                 sourcePort = new LPort();
                 sourcePort.setNode(sourceNode);
@@ -485,7 +487,14 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         if (targetPort == null) {
             if (targetNode.getProperty(LayoutOptions.HYPERNODE)) {
                 // Hypernodes have a western input port
-                targetPort = targetNode.getPorts(PortSide.WEST).iterator().next();
+                Iterator<LPort> portIter = targetNode.getPorts(PortSide.WEST).iterator();
+                if (portIter.hasNext()) {
+                    targetPort = portIter.next();
+                } else {
+                    targetPort = new LPort();
+                    targetPort.setNode(targetNode);
+                    targetPort.setSide(PortSide.WEST);
+                }
             } else {
                 targetPort = new LPort();
                 targetPort.setNode(targetNode);

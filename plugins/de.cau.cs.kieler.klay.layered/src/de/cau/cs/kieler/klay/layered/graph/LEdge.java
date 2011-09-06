@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.layered.graph;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -132,6 +133,26 @@ public class LEdge extends LGraphElement {
      */
     public KVectorChain getBendPoints() {
         return bendPoints;
+    }
+    
+    /**
+     * Return a new vector representing the source point of the edge, which has the same
+     * reference point as the bend points.
+     * 
+     * @return the source point
+     */
+    public KVector getSourcePoint() {
+        return source.getNode().getPosition().sumCreate(source.getPosition());
+    }
+    
+    /**
+     * Return a new vector representing the target point of the edge, which has the same
+     * reference point as the bend points.
+     * 
+     * @return the target point.
+     */
+    public KVector getTargetPoint() {
+        return target.getNode().getPosition().sumCreate(target.getPosition());
     }
 
     /**

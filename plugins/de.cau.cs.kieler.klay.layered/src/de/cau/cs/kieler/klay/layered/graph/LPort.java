@@ -37,7 +37,7 @@ import de.cau.cs.kieler.kiml.options.PortType;
  *
  * @author msp
  */
-public class LPort extends LSizedGraphElement {
+public class LPort extends LShape {
 
     /** the owning node. */
     private LNode owner;

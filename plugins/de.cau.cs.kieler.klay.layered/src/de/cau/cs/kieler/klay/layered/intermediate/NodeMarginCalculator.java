@@ -18,7 +18,7 @@ import java.awt.geom.Rectangle2D;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.graph.Insets;
+import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -102,7 +102,7 @@ public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutPr
                 }
                 
                 // Reset the margin
-                Insets.Double margin = node.getMargin();
+                LInsets.Double margin = node.getMargin();
                 margin.top = node.getPosition().y - boundingBox.y;
                 margin.bottom = boundingBox.getMaxY() - (node.getPosition().y + node.getSize().y);
                 margin.left = node.getPosition().x - boundingBox.x;

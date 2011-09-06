@@ -39,7 +39,7 @@ public class LayeredGraph extends LGraphElement {
     /** the total size of the drawing, without offset. */
     private KVector size = new KVector();
     /** the graph's insets. */
-    private Insets.Double insets = new Insets.Double(0, 0, 0, 0);
+    private LInsets.Double insets = new LInsets.Double(0, 0, 0, 0);
     /** the offset to be added to all positions. */
     private KVector offset = new KVector();
     /** nodes that are not currently part of a layer. */
@@ -86,7 +86,7 @@ public class LayeredGraph extends LGraphElement {
      * 
      * @return the insets.
      */
-    public Insets.Double getInsets() {
+    public LInsets.Double getInsets() {
         return insets;
     }
 

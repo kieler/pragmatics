@@ -34,7 +34,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *
  * @author msp
  */
-public class LNode extends LSizedGraphElement {
+public class LNode extends LShape {
     
     /** the owning layer. */
     private Layer owner;
@@ -43,7 +43,7 @@ public class LNode extends LSizedGraphElement {
     /** this node's label, if any. */
     private LLabel label = null;
     /** this node's insets. */
-    private Insets.Double margin = new Insets.Double();
+    private LInsets.Double margin = new LInsets.Double();
 
     /**
      * {@inheritDoc}
@@ -245,7 +245,7 @@ public class LNode extends LSizedGraphElement {
      *  
      * @return the node's margin. May be modified.
      */
-    public Insets.Double getMargin() {
+    public LInsets.Double getMargin() {
         return margin;
     }
     
@@ -317,7 +317,7 @@ public class LNode extends LSizedGraphElement {
         
         LayeredGraph graph = owner.getGraph();
         
-        Insets.Double insets = graph.getInsets();
+        LInsets.Double insets = graph.getInsets();
         float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
         KVector offset = graph.getOffset();
         KVector pos = getPosition();

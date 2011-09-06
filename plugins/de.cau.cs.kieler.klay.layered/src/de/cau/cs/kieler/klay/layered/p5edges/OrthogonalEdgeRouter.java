@@ -148,6 +148,10 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         new IntermediateProcessingStrategy(IntermediateProcessingStrategy.BEFORE_PHASE_3,
                 IntermediateLayoutProcessor.SELF_LOOP_PROCESSOR);
     
+    /** additional processor dependencies for graphs with hypernodes. */
+    private static final IntermediateProcessingStrategy HYPERNODE_PROCESSING_ADDITIONS =
+        new IntermediateProcessingStrategy(IntermediateProcessingStrategy.AFTER_PHASE_5,
+                IntermediateLayoutProcessor.HYPERNODE_PROCESSOR);
     
     /**
      * {@inheritDoc}
@@ -178,6 +182,10 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
 
         if (graphProperties.contains(GraphProperties.SELF_LOOPS)) {
             strategy.addAll(SELF_LOOP_PROCESSING_ADDITIONS);
+        }
+        
+        if (graphProperties.contains(GraphProperties.HYPERNODES)) {
+            strategy.addAll(HYPERNODE_PROCESSING_ADDITIONS);
         }
         
         return strategy;

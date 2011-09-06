@@ -89,6 +89,8 @@ public enum IntermediateLayoutProcessor {
     
     // After Phase 5
     
+    /** Moves hypernodes horizontally for better placement. */
+    HYPERNODE_PROCESSOR,
     /** Routes edges incident to hierarchical ports orthogonally. */
     HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER,
     /** Takes a properly layered graph and removes the dummy nodes due to proper layering. */
@@ -156,6 +158,9 @@ public enum IntermediateLayoutProcessor {
             
         case HYPEREDGE_DUMMY_MERGER:
             return new HyperedgeDummyMerger();
+            
+        case HYPERNODE_PROCESSOR:
+            return new HypernodesProcessor();
         
         case IN_LAYER_CONSTRAINT_PROCESSOR:
             return new InLayerConstraintProcessor();
