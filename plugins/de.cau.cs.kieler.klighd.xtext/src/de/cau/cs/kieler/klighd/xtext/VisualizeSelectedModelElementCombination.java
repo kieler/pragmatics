@@ -18,10 +18,8 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.xtext.nodemodel.ILeafNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.XtextResource;
@@ -32,6 +30,7 @@ import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService.LocationScheme;
+import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
 
 /**
  * A combination for initializing/refreshing of KLighD views of Xtext-based models.
@@ -40,30 +39,45 @@ import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService.LocationSchem
  */
 public class VisualizeSelectedModelElementCombination extends AbstractCombination {
 
+    static String rbClassId = "de.menges.logic.logic.Ruleblock";
+    static String smClassId = "de.menges.logic.logic.StateMachine";
+
+    static String rbButtonId = "de.cau.cs.kieler.visualizeModelElementRB";
+    static String smButtonId = "de.cau.cs.kieler.visualizeModelElementSM";
+
+    String editorId;
+    Object resource;
+
     /**
      * Constructor.
      */
     public VisualizeSelectedModelElementCombination() {
         Expression visibilityExpression;
         try {
-            visibilityExpression = new TestModelElementExpression(
-                    Class.forName("de.menges.logic.logic.Ruleblock"));
-            
-            KiviMenuContributionService.INSTANCE.addToolbarButton(this,
-                    "de.cau.cs.kieler.visualizeModelElementRB", "RuleblockButton", "Test", null,
-                    SWT.PUSH, LocationScheme.POPUP, visibilityExpression, "de.menges.logic.Logic");
+            visibilityExpression = new TestModelElementExpression(Class.forName(rbClassId));
 
-            visibilityExpression = new TestModelElementExpression(
-                    Class.forName("de.menges.logic.logic.StateMachine"));
-            
-            KiviMenuContributionService.INSTANCE.addToolbarButton(this,
-                    "de.cau.cs.kieler.visualizeModelElementSM", "StateMachineButton", "Test", null,
-                    SWT.PUSH, LocationScheme.POPUP, visibilityExpression, "de.menges.logic.Logic");
-            
+            KiviMenuContributionService.INSTANCE.addToolbarButton(this, rbButtonId,
+                    "Paint Ruleblock", "Test", null, SWT.PUSH, LocationScheme.POPUP,
+                    visibilityExpression, "de.menges.logic.Logic");
+
+            visibilityExpression = new TestModelElementExpression(Class.forName(smClassId));
+
+            KiviMenuContributionService.INSTANCE.addToolbarButton(this, smButtonId,
+                    "Paint StateMachine", "Test", null, SWT.PUSH, LocationScheme.POPUP,
+                    visibilityExpression, "de.menges.logic.Logic");
+
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
+    }
+
+    public void setEditorId(String id) {
+        this.editorId = id;
+    }
+
+    public void setResource(Object resource) {
+        this.resource = resource;
     }
 
     /**
@@ -72,22 +86,15 @@ public class VisualizeSelectedModelElementCombination extends AbstractCombinatio
      * @param button
      *            A {@link de.cau.cs.kieler.core.kivi.ITriggerState} carrying the necessary
      *            information.
+     * 
      */
     public void execute(final ButtonState button) {
-        // look which button was pressed last
-        if (button.getButtonId().equals("de.cau.cs.kieler.visualizeModelElement")) {
-            Display.getDefault().asyncExec(new Runnable() {
-
-                public void run() {
-                    MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Huhu",
-                            "Boohh");
-
-                }
-            });
+        // TODO name angeben
+        if (editorId != null && resource != null) {
+            this.schedule(new KlighdDiagramEffect(editorId, resource));
         }
     }
-    
-    
+
     /**
      * 
      * @author chsch
@@ -95,28 +102,33 @@ public class VisualizeSelectedModelElementCombination extends AbstractCombinatio
     private class TestModelElementExpression extends Expression {
 
         private Class<?> clazz;
-        
+
         TestModelElementExpression(final Class<?> theClazz) {
             this.clazz = theClazz;
         }
-        
+
         @Override
         public EvaluationResult evaluate(final IEvaluationContext context) throws CoreException {
             Boolean result = false;
             try {
-                final XtextEditor editor = (XtextEditor) context.getVariable("activePart");
+                Object part = context.getVariable("activePart");
+                if(!(part instanceof XtextEditor)){
+                    return EvaluationResult.valueOf(result);
+                }
+                final XtextEditor editor = (XtextEditor) part;
                 // FileEditorInput input = (FileEditorInput)
                 // context.getVariable("activeEditorInput");
                 // final TextSelection selection = (TextSelection) context.getVariable("selection");
-
                 result = editor.getDocument().readOnly(new IUnitOfWork<Boolean, XtextResource>() {
 
                     public Boolean exec(final XtextResource state) throws Exception {
+                        setEditorId(state.getURI().toPlatformString(false));
                         TextSelection selection = (TextSelection) editor.getSelectionProvider()
                                 .getSelection();
                         ILeafNode leaf = NodeModelUtils.findLeafNodeAtOffset(state.getParseResult()
                                 .getRootNode(), selection.getOffset());
                         EObject eo = leaf.getSemanticElement();
+                        setResource(eo);
                         return TestModelElementExpression.this.clazz.isInstance(eo);
                     }
 
@@ -125,6 +137,6 @@ public class VisualizeSelectedModelElementCombination extends AbstractCombinatio
                 /* nothing */
             }
             return EvaluationResult.valueOf(result);
-       }
-    }    
+        }
+    }
 }
