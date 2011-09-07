@@ -220,8 +220,10 @@ public class MatrixTransformer implements IGraphTransformer<Matrix> {
         List<KVectorChain> layout = transData.getSourceGraph().getLayout();
         // first lines: coordinates of node positions
         for (KNode node : transData.getProperty(NODES)) {
+            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             KVectorChain chain = new KVectorChain();
-            chain.add(node.getData(KShapeLayout.class).createVector());
+            chain.add(nodeLayout.getXpos() + nodeLayout.getWidth() / 2,
+                    nodeLayout.getYpos() + nodeLayout.getHeight() / 2);
             layout.add(chain);
         }
         // remaining lines: coordinates of edge bend points
