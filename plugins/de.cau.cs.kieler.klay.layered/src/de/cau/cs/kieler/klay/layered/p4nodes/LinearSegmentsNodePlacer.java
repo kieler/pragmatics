@@ -640,12 +640,14 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 // Set the node position
                 node.getPosition().y = uppermostPlace + offset + node.getMargin().top;
 
-                // Adjust layer size
+                // Adjust layer size, but don't waste space for hypernodes
                 Layer layer = node.getLayer();
                 layer.getSize().y = uppermostPlace + offset + node.getMargin().top
                         + node.getSize().y + node.getMargin().bottom;
-                layer.getSize().x = Math.max(layer.getSize().x, node.getSize().x
-                        + node.getMargin().left + node.getMargin().right);
+                if (!node.getProperty(LayoutOptions.HYPERNODE)) {
+                    layer.getSize().x = Math.max(layer.getSize().x, node.getSize().x
+                            + node.getMargin().left + node.getMargin().right);
+                }
 
                 recentNodeNormal[layer.getIndex()] = node.getProperty(Properties.NODE_TYPE) 
                     == NodeType.NORMAL;

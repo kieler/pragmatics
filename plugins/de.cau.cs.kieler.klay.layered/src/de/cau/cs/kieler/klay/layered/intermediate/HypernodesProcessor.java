@@ -20,7 +20,6 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -29,7 +28,15 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
- * TODO comment.
+ * Improves the placement of hypernodes by moving them such that they replace the join
+ * points of connected edges.
+ * 
+ * <dl>
+ *   <dt>Precondition:</dt><dd>a layered graph with all five phases done</dd>
+ *   <dt>Postcondition:</dt><dd>the position of some hypernodes as well as some bend
+ *     points of connected edges may be changed</dd>
+ *   <dt>Slots:</dt><dd>after phase 5</dd>
+ * </dl>
  *
  * @author msp
  */
@@ -47,7 +54,7 @@ public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutPro
                     int outEdges = 0, inEdges = 0;
                     for (LPort port : node.getPorts()) {
                         outEdges += port.getOutgoingEdges().size();
-                        inEdges = port.getIncomingEdges().size();
+                        inEdges += port.getIncomingEdges().size();
                     }
                     moveHypernode(layeredGraph, node, inEdges <= outEdges);
                 }
@@ -57,13 +64,22 @@ public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutPro
         getMonitor().done();
     }
     
+    /**
+     * Move the given hypernode either towards the previous layer or towards the next layer.
+     * 
+     * @param layeredGraph a layered graph
+     * @param hypernode a node that is marked with {@link LayoutOptions.HYPERNODE}
+     * @param right if true, the node is moved right (to the next layer), else it
+     *     is moved left (to the previous layer)
+     */
     private void moveHypernode(final LayeredGraph layeredGraph, final LNode hypernode,
             final boolean right) {
         // find edges that constitute the first join point of the hyperedge
         List<LEdge> bendEdges = new LinkedList<LEdge>();
-        double bendx = layeredGraph.getSize().x;
+        double bendx = 0;
         if (right) {
-            for (LPort port : hypernode.getPorts(PortType.OUTPUT)) {
+            bendx = layeredGraph.getSize().x;
+            for (LPort port : hypernode.getPorts()) {
                 for (LEdge edge : port.getOutgoingEdges()) {
                     if (!edge.getBendPoints().isEmpty()) {
                         KVector firstPoint = edge.getBendPoints().getFirst();
@@ -78,7 +94,7 @@ public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutPro
                 }
             }
         } else {
-            for (LPort port : hypernode.getPorts(PortType.INPUT)) {
+            for (LPort port : hypernode.getPorts()) {
                 for (LEdge edge : port.getIncomingEdges()) {
                     if (!edge.getBendPoints().isEmpty()) {
                         KVector lastPoint = edge.getBendPoints().getLast();
@@ -112,15 +128,20 @@ public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutPro
                     first = edge.getBendPoints().removeFirst();
                     second = edge.getBendPoints().isEmpty() ? edge.getTargetPoint()
                             : edge.getBendPoints().getFirst();
+                    if (second.y >= first.y) {
+                        edge.setSource(southPort);
+                    } else {
+                        edge.setSource(northPort);
+                    }
                 } else {
                     first = edge.getBendPoints().removeLast();
                     second = edge.getBendPoints().isEmpty() ? edge.getSourcePoint()
                             : edge.getBendPoints().getLast();
-                }
-                if (second.y >= first.y) {
-                    edge.setSource(southPort);
-                } else {
-                    edge.setSource(northPort);
+                    if (second.y >= first.y) {
+                        edge.setTarget(southPort);
+                    } else {
+                        edge.setTarget(northPort);
+                    }
                 }
             }
             // move the node to new position
