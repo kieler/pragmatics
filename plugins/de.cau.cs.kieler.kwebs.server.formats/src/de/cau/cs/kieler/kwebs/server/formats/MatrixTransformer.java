@@ -168,6 +168,7 @@ public class MatrixTransformer implements IGraphTransformer<Matrix> {
         for (int i = 0; i < nodec; i++) {
             nodes[i] = KimlUtil.createInitializedNode();
             nodes[i].setParent(parent);
+            nodes[i].getLabel().setText(Integer.toString(i + 1));
         }
         List<KEdge> edgeList = new LinkedList<KEdge>();
         
@@ -217,19 +218,29 @@ public class MatrixTransformer implements IGraphTransformer<Matrix> {
      */
     public void applyLayout(final TransformationData<Matrix> transData) {
         List<KVectorChain> layout = transData.getSourceGraph().getLayout();
+        // first lines: coordinates of node positions
         for (KNode node : transData.getProperty(NODES)) {
             KVectorChain chain = new KVectorChain();
             chain.add(node.getData(KShapeLayout.class).createVector());
             layout.add(chain);
         }
+        // remaining lines: coordinates of edge bend points
         for (KEdge edge : transData.getProperty(EDGES)) {
             KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
             if (!edgeLayout.getBendPoints().isEmpty()) {
-                KVectorChain vectorChain = new KVectorChain();
-                for (KPoint bendPoint : edgeLayout.getBendPoints()) {
-                    vectorChain.add(bendPoint.getX(), bendPoint.getY());
+                try {
+                    KVectorChain vectorChain = new KVectorChain();
+                    // the first pair of numbers indicates the source and target node
+                    vectorChain.add(Double.valueOf(edge.getSource().getLabel().getText()),
+                            Double.valueOf(edge.getTarget().getLabel().getText()));
+                    // the remaining numbers are bend point coordinates
+                    for (KPoint bendPoint : edgeLayout.getBendPoints()) {
+                        vectorChain.add(bendPoint.getX(), bendPoint.getY());
+                    }
+                    layout.add(vectorChain);
+                } catch (NumberFormatException exception) {
+                    // ignore exception
                 }
-                layout.add(vectorChain);
             }
         }
     }
