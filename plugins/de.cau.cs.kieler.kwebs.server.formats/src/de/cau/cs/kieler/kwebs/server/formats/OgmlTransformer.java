@@ -13,23 +13,13 @@
  */
 package de.cau.cs.kieler.kwebs.server.formats;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.ecore.xmi.XMLResource;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.ogdf.ogml.DocumentRoot;
@@ -43,20 +33,26 @@ import net.ogdf.ogml.util.OgmlResourceFactoryImpl;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kwebs.formats.Formats;
-import de.cau.cs.kieler.kwebs.transformation.IGraphTransformer;
-import de.cau.cs.kieler.kwebs.transformation.TransformationException;
+import de.cau.cs.kieler.kwebs.transformation.AbstractEmfTransformer;
+import de.cau.cs.kieler.kwebs.transformation.TransformationData;
 
 /**
  * Transformer for OGML.
  *
  * @author msp
  */
-public class OgmlTransformer implements IGraphTransformer<DocumentRoot> {
+public class OgmlTransformer extends AbstractEmfTransformer<DocumentRoot> {
 
+    /** map of GraphML node identifiers to KNodes. */
+    private static final IProperty<Map<String, KNode>> NODE_ID_MAP
+            = new Property<Map<String, KNode>>("nodeIdMap");
+    
     /**
      * {@inheritDoc}
      */
@@ -67,55 +63,9 @@ public class OgmlTransformer implements IGraphTransformer<DocumentRoot> {
     /**
      * {@inheritDoc}
      */
-    public DocumentRoot deserialize(final String serializedGraph) {
-        DocumentRoot graph = null;
-        try {
-            ByteArrayInputStream inStream = new ByteArrayInputStream(
-                serializedGraph.getBytes("UTF-8")
-            );
-            URI uri = URI.createURI("inputstream://temp.ogml");
-            ResourceSet resourceSet = createResourceSet();
-            Resource resource = resourceSet.createResource(uri);
-            EObject eObject = null;
-            Map<String, String> options = new HashMap<String, String>();
-            options.put(XMLResource.OPTION_ENCODING, "UTF-8");
-            resource.load(inStream, options);
-            eObject = resource.getContents().get(0);
-            if (eObject instanceof DocumentRoot) {
-                graph = (DocumentRoot) eObject;
-            }
-            inStream.close();
-        } catch (UnsupportedEncodingException e) {
-            throw new TransformationException(e);
-        } catch (IOException e) {
-            throw new TransformationException(e);
-        }
-        return graph;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String serialize(final DocumentRoot graph) {
-        String xmi = null;
-        try {
-            EcoreUtil.resolveAll(graph);
-            URI uri = URI.createURI("outputstream://temp.ogml");
-            ResourceSet resourceSet = createResourceSet();
-            Resource resource = resourceSet.createResource(uri);
-            resource.unload();
-            resource.getContents().add(graph);            
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            Map<String, String> options = new HashMap<String, String>();
-            options.put(XMLResource.OPTION_ENCODING, "UTF-8");
-            resource.save(outStream, options);
-            outStream.flush();
-            xmi = new String(outStream.toByteArray(), "UTF-8");
-            outStream.close();
-        } catch (IOException e) {
-            throw new TransformationException(e);
-        }
-        return xmi;
+    @Override
+    protected String getFileExtension() {
+        return "ogml";
     }
 
     /**
@@ -123,7 +73,7 @@ public class OgmlTransformer implements IGraphTransformer<DocumentRoot> {
      *
      * @return a resource set
      */
-    private ResourceSet createResourceSet() {
+    protected ResourceSet createResourceSet() {
         ResourceSet resourceset = new ResourceSetImpl();
         resourceset.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
             Resource.Factory.Registry.DEFAULT_EXTENSION,
@@ -139,23 +89,21 @@ public class OgmlTransformer implements IGraphTransformer<DocumentRoot> {
     /**
      * {@inheritDoc}
      */
-    public List<KNode> deriveLayout(final DocumentRoot graph) {
-        KNode knode = transformGraph(graph.getOgml().getGraph());
-        return Lists.newArrayList(knode);
+    public void deriveLayout(final TransformationData<DocumentRoot> transData) {
+        Map<String, KNode> nodeIdMap = Maps.newHashMap();
+        transData.setProperty(NODE_ID_MAP, nodeIdMap);
+        transformGraph(transData.getSourceGraph().getOgml().getGraph(), transData);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void applyLayout(final DocumentRoot graph, final List<KNode> layout) {
+    public void applyLayout(final TransformationData<DocumentRoot> transData) {
         // TODO Auto-generated method stub
         
     }
 
     //---------- Transformation OGML to KGraph ----------//  
-    
-    /** map of GraphML node identifiers to KNodes. */
-    private Map<String, KNode> nodeIdMap = Maps.newHashMap();
     
     /**
      * Transform the given list of nodes.
@@ -163,14 +111,15 @@ public class OgmlTransformer implements IGraphTransformer<DocumentRoot> {
      * @param nodes a list of OGDF nodes
      * @param parent the parent KNode to which new nodes are added
      */
-    private void transform(final List<NodeType> nodes, final KNode parent) {
+    private void transform(final List<NodeType> nodes, final KNode parent,
+            final TransformationData<DocumentRoot> transData) {
         for (NodeType node : nodes) {
-            KNode knode = transformNode(node.getId(), parent);
+            KNode knode = transformNode(node.getId(), parent, transData);
             if (!node.getLabel().isEmpty()) {
                 knode.getLabel().setText(node.getLabel().get(0).getContent());
             }
             // transform subgraph
-            transform(node.getNode(), knode);
+            transform(node.getNode(), knode, transData);
         }
     }
     
@@ -180,17 +129,18 @@ public class OgmlTransformer implements IGraphTransformer<DocumentRoot> {
      * @param graph an OGDF graph
      * @return a new top-level KNode
      */
-    private KNode transformGraph(final GraphType graph) {
+    private void transformGraph(final GraphType graph,
+            final TransformationData<DocumentRoot> transData) {
         KNode parent = KimlUtil.createInitializedNode();
 
         // transform nodes
-        transform(graph.getStructure().getNode(), parent);
+        transform(graph.getStructure().getNode(), parent, transData);
         
         for (EdgeType edge : graph.getStructure().getEdge()) {
             // transform edges
             if (edge.getSource().size() == 1 && edge.getTarget().size() == 1) {
-                KNode source = transformNode(edge.getSource().get(0).getIdRef(), parent);
-                KNode target = transformNode(edge.getTarget().get(0).getIdRef(), parent);
+                KNode source = transformNode(edge.getSource().get(0).getIdRef(), parent, transData);
+                KNode target = transformNode(edge.getTarget().get(0).getIdRef(), parent, transData);
                 KEdge kedge = KimlUtil.createInitializedEdge();
                 kedge.setSource(source);
                 kedge.setTarget(target);
@@ -205,13 +155,13 @@ public class OgmlTransformer implements IGraphTransformer<DocumentRoot> {
                 hypernode.setParent(parent);
                 hypernode.getData(KShapeLayout.class).setProperty(LayoutOptions.HYPERNODE, true);
                 for (SourceTargetType sourceref : edge.getSource()) {
-                    KNode source = transformNode(sourceref.getIdRef(), parent);
+                    KNode source = transformNode(sourceref.getIdRef(), parent, transData);
                     KEdge kedge = KimlUtil.createInitializedEdge();
                     kedge.setSource(source);
                     kedge.setTarget(hypernode);
                 }
                 for (SourceTargetType targetref : edge.getTarget()) {
-                    KNode target = transformNode(targetref.getIdRef(), parent);
+                    KNode target = transformNode(targetref.getIdRef(), parent, transData);
                     KEdge kedge = KimlUtil.createInitializedEdge();
                     kedge.setSource(hypernode);
                     kedge.setTarget(target);
@@ -222,7 +172,7 @@ public class OgmlTransformer implements IGraphTransformer<DocumentRoot> {
             }
         }
         
-        return parent;
+        transData.getLayoutGraphs().add(parent);
     }
     
     /**
@@ -232,7 +182,9 @@ public class OgmlTransformer implements IGraphTransformer<DocumentRoot> {
      * @param parent the parent where the new KNode is stored
      * @return a KNode instance
      */
-    private KNode transformNode(final String nodeId, final KNode parent) {
+    private KNode transformNode(final String nodeId, final KNode parent,
+            final TransformationData<DocumentRoot> transData) {
+        Map<String, KNode> nodeIdMap = transData.getProperty(NODE_ID_MAP);
         KNode knode = nodeIdMap.get(nodeId);
         if (knode == null) {
             knode = KimlUtil.createInitializedNode();

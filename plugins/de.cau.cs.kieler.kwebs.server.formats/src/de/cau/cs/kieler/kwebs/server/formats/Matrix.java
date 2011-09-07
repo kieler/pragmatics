@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kwebs.server.formats;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.math.KVectorChain;
@@ -39,8 +40,8 @@ public class Matrix {
         /**
          * Create a new entry.
          * 
-         * @param i row number
-         * @param j column number
+         * @param i row number (0-based)
+         * @param j column number (0-based)
          * @param value the value (1 for edge i&rarr;j, -1 for edge j&rarr;i)
          */
         public Entry(final int i, final int j, final int value) {
@@ -59,7 +60,7 @@ public class Matrix {
     /** the adjacency list, or {@code null}. */
     private List<Entry> list;
     /** the layout specification. */
-    private List<KVectorChain> layout;
+    private List<KVectorChain> layout = new LinkedList<KVectorChain>();
     
     /**
      * Creates a matrix of given size.

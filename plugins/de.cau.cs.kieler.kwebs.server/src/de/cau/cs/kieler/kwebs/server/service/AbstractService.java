@@ -22,7 +22,6 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Target;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
@@ -34,6 +33,7 @@ import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.transformation.IGraphTransformer;
+import de.cau.cs.kieler.kwebs.transformation.TransformationData;
 import de.cau.cs.kieler.kwebs.util.Graphs;
 
 /**
@@ -107,19 +107,20 @@ public abstract class AbstractService {
         // Get the graph instances of which the layout is to be calculated
         T graph = transformer.deserialize(serializedGraph);
         // Derive the layout structures of the graph instances
-        List<KNode> layouts = transformer.deriveLayout(graph);
+        TransformationData<T> transData = new TransformationData<T>(graph);
+        transformer.deriveLayout(transData);
         // Parse the transmitted layout options and annotate the layout structure
         if (options != null) {
-            for (KNode layout : layouts) {
+            for (KNode layout : transData.getLayoutGraphs()) {
                 annotateGraph(layout, options);
             }
         }        
         // Actually do the layout on the structure
-        for (KNode layout : layouts) {
+        for (KNode layout : transData.getLayoutGraphs()) {
             layoutEngine.layout(layout, new BasicProgressMonitor());
         }
         // Apply the calculated layout back to the graph instance
-        transformer.applyLayout(graph, layouts);
+        transformer.applyLayout(transData);
         // Create and return the resulting graph in serialized form
         String serializedResult = transformer.serialize(graph);
         return serializedResult;

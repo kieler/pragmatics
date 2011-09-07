@@ -14,10 +14,6 @@
 
 package de.cau.cs.kieler.kwebs.transformation;
 
-import java.util.List;
-
-import de.cau.cs.kieler.core.kgraph.KNode;
-
 /**
  * This interface defines an infrastructure for serialization and deserialization of models 
  * in order to transfer them between a client and the layout web service. The client uses concrete
@@ -46,7 +42,7 @@ public interface IGraphTransformer<T> {
     T deserialize(String serializedGraph);
 
     /**
-     * Serializes the given graph instance in the format supported 
+     * Serialize the given graph instance in the format supported 
      * by this transformer.
      *
      * @param graph the graph instance
@@ -56,27 +52,25 @@ public interface IGraphTransformer<T> {
     String serialize(T graph);
 
     /**
-     * Returns KGraph representations of the structure of the given graph instance which
-     * can be used to calculate the layout of the given graph instance.
+     * Create KGraph representations of the structure of the given graph instance which
+     * can be used to calculate the layout of the given graph instance. The KGraphs are
+     * attached to a transformation data object.
      * 
-     * @param graph
-     *            the graph instance
-     * @return KGraph representation of the graph structure
+     * @param data
+     *            the transformation data instance
      */
-    List<KNode> deriveLayout(T graph);
+    void deriveLayout(TransformationData<T> data);
     
     /**
-     * Applies the calculated layouts to the given graph instance.
+     * Apply the calculated layouts to the original graph instance.
      * 
-     * @param graph
-     *            the graph instance
-     * @param layout
-     *            the calculated layouts
+     * @param data
+     *            the transformation data instance
      */
-    void applyLayout(T graph, List<KNode> layout);
+    void applyLayout(TransformationData<T> data);
     
     /**
-     * Returns the format supported by this transformer. Formats are defined
+     * Return the format supported by this transformer. Formats are defined
      * in {@link Formats}
      *
      * @return the supported format

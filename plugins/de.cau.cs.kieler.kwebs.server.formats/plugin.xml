@@ -4,19 +4,27 @@
    <extension
          point="de.cau.cs.kieler.kwebs.server.configuration">
       <transformer
+            description="See http://graphml.graphdrawing.org/"
             implementation="de.cau.cs.kieler.kwebs.server.formats.GraphMLTransformer"
+            name="GraphML"
             supportedFormat="org.graphdrawing.graphml">
       </transformer>
       <transformer
+            description="See http://www.graphviz.org/"
             implementation="de.cau.cs.kieler.kwebs.server.formats.DotTransformer"
+            name="Graphviz Dot"
             supportedFormat="org.graphviz.dot">
       </transformer>
       <transformer
+            description="See http://math.nist.gov/MatrixMarket/"
             implementation="de.cau.cs.kieler.kwebs.server.formats.MatrixTransformer"
+            name="Matrix"
             supportedFormat="gov.nist.math.matrix">
       </transformer>
       <transformer
+            description="Open Graph Markup Language"
             implementation="de.cau.cs.kieler.kwebs.server.formats.OgmlTransformer"
+            name="OGML"
             supportedFormat="net.ogdf.ogml">
       </transformer>
    </extension>

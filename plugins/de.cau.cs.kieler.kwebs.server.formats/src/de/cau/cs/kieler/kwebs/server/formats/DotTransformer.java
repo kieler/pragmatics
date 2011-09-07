@@ -13,21 +13,10 @@
  */
 package de.cau.cs.kieler.kwebs.server.formats;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
 import com.google.common.collect.Maps;
@@ -37,6 +26,8 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotStandaloneSetup;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute;
@@ -56,15 +47,22 @@ import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kwebs.formats.Formats;
-import de.cau.cs.kieler.kwebs.transformation.IGraphTransformer;
-import de.cau.cs.kieler.kwebs.transformation.TransformationException;
+import de.cau.cs.kieler.kwebs.transformation.AbstractEmfTransformer;
+import de.cau.cs.kieler.kwebs.transformation.TransformationData;
 
 /**
  * A transformer for Graphviz Dot.
  *
  * @author msp
  */
-public class DotTransformer implements IGraphTransformer<GraphvizModel> {
+public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
+    
+    /** map of Graphviz node identifiers to their KNode instances. */
+    private static final IProperty<Map<String, KNode>> NODE_ID_MAP
+            = new Property<Map<String, KNode>>("nodeIdMap");
+    /** map of Graphviz port identifiers to their KPort instances. */
+    private static final IProperty<Map<Pair<KNode, String>, KPort>> PORT_ID_MAP
+            = new Property<Map<Pair<KNode, String>, KPort>>("portIdMap");
     
     /** the injector for creation of resources. */
     private static Injector injector;
@@ -79,63 +77,16 @@ public class DotTransformer implements IGraphTransformer<GraphvizModel> {
     /**
      * {@inheritDoc}
      */
-    public GraphvizModel deserialize(final String serializedGraph) {
-        GraphvizModel graph = null;
-        try {
-            ByteArrayInputStream inStream = new ByteArrayInputStream(
-                serializedGraph.getBytes("UTF-8")
-            );
-            URI uri = URI.createURI("inputstream://temp.graphviz_dot");
-            ResourceSet resourceSet = createResourceSet();
-            Resource resource = resourceSet.createResource(uri);
-            EObject eObject = null;
-            Map<String, String> options = new HashMap<String, String>();
-            options.put(XMLResource.OPTION_ENCODING, "UTF-8");
-            resource.load(inStream, options);
-            eObject = resource.getContents().get(0);
-            if (eObject instanceof GraphvizModel) {
-                graph = (GraphvizModel) eObject;
-            }
-            inStream.close();
-        } catch (UnsupportedEncodingException e) {
-            throw new TransformationException(e);
-        } catch (IOException e) {
-            throw new TransformationException(e);
-        }
-        return graph;
+    @Override
+    protected String getFileExtension() {
+        return "graphviz_dot";
     }
 
     /**
      * {@inheritDoc}
      */
-    public String serialize(final GraphvizModel graph) {
-        String xmi = null;
-        try {
-            EcoreUtil.resolveAll(graph);
-            URI uri = URI.createURI("outputstream://temp.graphviz_dot");
-            ResourceSet resourceSet = createResourceSet();
-            Resource resource = resourceSet.createResource(uri);
-            resource.unload();
-            resource.getContents().add(graph);            
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            Map<String, String> options = new HashMap<String, String>();
-            options.put(XMLResource.OPTION_ENCODING, "UTF-8");
-            resource.save(outStream, options);
-            outStream.flush();
-            xmi = new String(outStream.toByteArray(), "UTF-8");
-            outStream.close();
-        } catch (IOException e) {
-            throw new TransformationException(e);
-        }
-        return xmi;
-    }
-
-    /**
-     * Creates a resource set ready to be used with the GraphML meta model.
-     *
-     * @return a resource set
-     */
-    private ResourceSet createResourceSet() {
+    @Override
+    protected ResourceSet createResourceSet() {
         if (injector == null) {
             injector = new GraphvizDotStandaloneSetup().createInjectorAndDoEMFRegistration();
         }
@@ -145,31 +96,27 @@ public class DotTransformer implements IGraphTransformer<GraphvizModel> {
     /**
      * {@inheritDoc}
      */
-    public List<KNode> deriveLayout(final GraphvizModel model) {
-        List<KNode> result = new LinkedList<KNode>();
-        for (Graph graph : model.getGraphs()) {
+    public void deriveLayout(final TransformationData<GraphvizModel> transData) {
+        for (Graph graph : transData.getSourceGraph().getGraphs()) {
             KNode parent = KimlUtil.createInitializedNode();
-            transform(graph.getStatements(), parent);
-            result.add(parent);
+            Map<String, KNode> nodeIdMap = Maps.newHashMap();
+            transData.setProperty(NODE_ID_MAP, nodeIdMap);
+            Map<Pair<KNode, String>, KPort> portIdMap = Maps.newHashMap();
+            transData.setProperty(PORT_ID_MAP, portIdMap);
+            transform(graph.getStatements(), parent, transData);
+            transData.getLayoutGraphs().add(parent);
         }
-        return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void applyLayout(final GraphvizModel graph, final List<KNode> layout) {
+    public void applyLayout(final TransformationData<GraphvizModel> transData) {
         // TODO Auto-generated method stub
         
     }
     
     /*---------- Transformation Dot to KGraph ----------*/
-    
-    /** map of Dot node identifiers to KNodes. */
-    private Map<String, KNode> nodeIdMap = Maps.newHashMap();
-    /** map of Dot port identifiers to KPorts. */
-    private Map<Pair<KNode, String>, KPort> portIdMap = Maps.newHashMap();
-    
     
     /**
      * Transform a Dot graph to a KNode.
@@ -177,12 +124,13 @@ public class DotTransformer implements IGraphTransformer<GraphvizModel> {
      * @param statements a list of Dot statements
      * @param parent a KNode
      */
-    private void transform(final List<Statement> statements, final KNode parent) {
+    private void transform(final List<Statement> statements, final KNode parent,
+            final TransformationData<GraphvizModel> transData) {
         DotSwitch<Object> statementSwitch = new DotSwitch<Object>() {
             
             @Override
             public Object caseNodeStatement(final NodeStatement statement) {
-                KNode knode = transformNode(statement.getNode().getName(), parent);
+                KNode knode = transformNode(statement.getNode().getName(), parent, transData);
                 for (Attribute attr : statement.getAttributes()) {
                     if (Attributes.LABEL.equals(attr.getName())) {
                         knode.getLabel().setText(attr.getValue());
@@ -193,15 +141,15 @@ public class DotTransformer implements IGraphTransformer<GraphvizModel> {
             
             @Override
             public Object caseEdgeStatement(final EdgeStatement statement) {
-                transformEdge(statement, parent);
+                transformEdge(statement, parent, transData);
                 return null;
             }
 
             @Override
             public Object caseSubgraph(final Subgraph subgraph) {
-                KNode subKNode = transformNode(subgraph.getName(), parent);
+                KNode subKNode = transformNode(subgraph.getName(), parent, transData);
                 subKNode.setParent(parent);
-                transform(subgraph.getStatements(), subKNode);
+                transform(subgraph.getStatements(), subKNode, transData);
                 return null;
             }
 
@@ -221,9 +169,6 @@ public class DotTransformer implements IGraphTransformer<GraphvizModel> {
         for (Statement statement : statements) {
             statementSwitch.doSwitch(statement);
         }
-        
-        nodeIdMap.clear();
-        portIdMap.clear();
     }
     
     /**
@@ -231,9 +176,12 @@ public class DotTransformer implements IGraphTransformer<GraphvizModel> {
      * 
      * @param nodeId a node identifier
      * @param parent the parent where the new KNode is stored
+     * @param transData the transformation data instance
      * @return a KNode instance
      */
-    private KNode transformNode(final String nodeId, final KNode parent) {
+    private KNode transformNode(final String nodeId, final KNode parent,
+            final TransformationData<GraphvizModel> transData) {
+        Map<String, KNode> nodeIdMap = transData.getProperty(NODE_ID_MAP);
         KNode knode = nodeIdMap.get(nodeId);
         if (knode == null) {
             knode = KimlUtil.createInitializedNode();
@@ -250,9 +198,12 @@ public class DotTransformer implements IGraphTransformer<GraphvizModel> {
      * 
      * @param portId a port identifier
      * @param node the node to which the new KPort belongs
+     * @param transData the transformation data instance
      * @return a KPort instance
      */
-    private KPort transformPort(final String portId, final KNode node) {
+    private KPort transformPort(final String portId, final KNode node,
+            final TransformationData<GraphvizModel> transData) {
+        Map<Pair<KNode, String>, KPort> portIdMap = transData.getProperty(PORT_ID_MAP);
         Pair<KNode, String> key = new Pair<KNode, String>(node, portId);
         KPort kport = portIdMap.get(key);
         if (kport == null) {
@@ -271,12 +222,13 @@ public class DotTransformer implements IGraphTransformer<GraphvizModel> {
      * @param statement an edge statement
      * @param parent the parent node
      */
-    private void transformEdge(final EdgeStatement statement, final KNode parent) {
-        KNode source = transformNode(statement.getSourceNode().getName(), parent);
+    private void transformEdge(final EdgeStatement statement, final KNode parent,
+            final TransformationData<GraphvizModel> transData) {
+        KNode source = transformNode(statement.getSourceNode().getName(), parent, transData);
         KPort sourcePort = null;
         if (statement.getSourceNode().getPort() != null) {
             sourcePort = transformPort(statement.getSourceNode().getPort()
-                    .getCompass_pt().getName(), source);
+                    .getCompass_pt().getName(), source, transData);
         }
         for (EdgeTarget edgeTarget : statement.getEdgeTargets()) {
             KEdge kedge = KimlUtil.createInitializedEdge();
@@ -285,12 +237,12 @@ public class DotTransformer implements IGraphTransformer<GraphvizModel> {
             KNode target;
             Node edgeTargetNode = edgeTarget.getTargetnode();
             if (edgeTargetNode == null) {
-                target = transformNode(edgeTarget.getTargetSubgraph().getName(), parent);
+                target = transformNode(edgeTarget.getTargetSubgraph().getName(), parent, transData);
             } else {
-                target = transformNode(edgeTargetNode.getName(), parent);
+                target = transformNode(edgeTargetNode.getName(), parent, transData);
                 if (edgeTargetNode.getPort() != null) {
                     kedge.setTargetPort(transformPort(edgeTargetNode.getPort()
-                            .getCompass_pt().getName(), target));
+                            .getCompass_pt().getName(), target, transData));
                 }
             }
             kedge.setTarget(target);

@@ -20,17 +20,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import com.google.common.collect.Lists;
-
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kwebs.formats.Formats;
 import de.cau.cs.kieler.kwebs.transformation.IGraphTransformer;
+import de.cau.cs.kieler.kwebs.transformation.TransformationData;
 import de.cau.cs.kieler.kwebs.transformation.TransformationException;
 
 /**
@@ -41,6 +43,11 @@ import de.cau.cs.kieler.kwebs.transformation.TransformationException;
  */
 public class MatrixTransformer implements IGraphTransformer<Matrix> {
 
+    /** the nodes that are created by this transformer, in order as given by the matrix. */
+    private static final IProperty<KNode[]> NODES = new Property<KNode[]>("nodes");
+    /** the edges that are created by this transformer. */
+    private static final IProperty<KEdge[]> EDGES = new Property<KEdge[]>("edges");
+    
     /**
      * {@inheritDoc}
      */
@@ -100,7 +107,7 @@ public class MatrixTransformer implements IGraphTransformer<Matrix> {
                                 value = Double.compare(dval, 0);
                             }
                             if (value != 0) {
-                                adjlist.add(new Matrix.Entry(i, j, value));
+                                adjlist.add(new Matrix.Entry(i - 1, j - 1, value));
                             }
                         }
                     } while (line != null);
@@ -150,18 +157,14 @@ public class MatrixTransformer implements IGraphTransformer<Matrix> {
         return builder.toString();
     }
     
-    /** the node array in order of increasing index. */
-    private KNode[] nodes;
-    /** the edge array in column-major i,j order (array form) or in order as received (coord. form). */
-    private KEdge[] edges;
-
     /**
      * {@inheritDoc}
      */
-    public List<KNode> deriveLayout(final Matrix graph) {
+    public void deriveLayout(final TransformationData<Matrix> transData) {
+        Matrix matrix = transData.getSourceGraph();
         KNode parent = KimlUtil.createInitializedNode();
-        int nodec = Math.max(graph.getRows(), graph.getColumns());
-        nodes = new KNode[nodec];
+        int nodec = Math.max(matrix.getRows(), matrix.getColumns());
+        KNode[] nodes = new KNode[nodec];
         for (int i = 0; i < nodec; i++) {
             nodes[i] = KimlUtil.createInitializedNode();
             nodes[i].setParent(parent);
@@ -169,10 +172,10 @@ public class MatrixTransformer implements IGraphTransformer<Matrix> {
         List<KEdge> edgeList = new LinkedList<KEdge>();
         
         // transform matrix form
-        int[][] m = graph.getMatrix();
+        int[][] m = matrix.getMatrix();
         if (m != null) {
-            for (int i = 0; i < graph.getRows(); i++) {
-                for (int j = 0; j < graph.getColumns(); j++) {
+            for (int i = 0; i < matrix.getRows(); i++) {
+                for (int j = 0; j < matrix.getColumns(); j++) {
                     if (m[i][j] != 0) {
                         KEdge kedge = KimlUtil.createInitializedEdge();
                         edgeList.add(kedge);
@@ -189,9 +192,9 @@ public class MatrixTransformer implements IGraphTransformer<Matrix> {
         }
         
         // transform coordinates form
-        List<Matrix.Entry> list = graph.getList();
+        List<Matrix.Entry> list = matrix.getList();
         for (Matrix.Entry entry : list) {
-            if (entry.i <= nodec && entry.j <= nodec && entry.value != 0) {
+            if (entry.i < nodec && entry.j < nodec && entry.value != 0) {
                 KEdge kedge = KimlUtil.createInitializedEdge();
                 edgeList.add(kedge);
                 if (entry.value > 0) {
@@ -204,22 +207,30 @@ public class MatrixTransformer implements IGraphTransformer<Matrix> {
             }
         }
 
-        edges = edgeList.toArray(new KEdge[edgeList.size()]);
-        return Lists.newArrayList(parent);
+        transData.getLayoutGraphs().add(parent);
+        transData.setProperty(NODES, nodes);
+        transData.setProperty(EDGES, edgeList.toArray(new KEdge[edgeList.size()]));
     }
 
     /**
      * {@inheritDoc}
      */
-    public void applyLayout(final Matrix graph, final List<KNode> layoutGraphs) {
-        List<KVectorChain> layout = graph.getLayout();
-        for (KNode node : nodes) {
+    public void applyLayout(final TransformationData<Matrix> transData) {
+        List<KVectorChain> layout = transData.getSourceGraph().getLayout();
+        for (KNode node : transData.getProperty(NODES)) {
             KVectorChain chain = new KVectorChain();
             chain.add(node.getData(KShapeLayout.class).createVector());
             layout.add(chain);
         }
-        for (KEdge edge : edges) {
-            layout.add(edge.getData(KEdgeLayout.class).createVectorChain());
+        for (KEdge edge : transData.getProperty(EDGES)) {
+            KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+            if (!edgeLayout.getBendPoints().isEmpty()) {
+                KVectorChain vectorChain = new KVectorChain();
+                for (KPoint bendPoint : edgeLayout.getBendPoints()) {
+                    vectorChain.add(bendPoint.getX(), bendPoint.getY());
+                }
+                layout.add(vectorChain);
+            }
         }
     }
 

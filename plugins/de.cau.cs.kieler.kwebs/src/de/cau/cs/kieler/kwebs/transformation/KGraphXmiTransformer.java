@@ -14,26 +14,13 @@
 
 package de.cau.cs.kieler.kwebs.transformation;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-
-import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
@@ -54,82 +41,72 @@ import de.cau.cs.kieler.kwebs.util.Graphs;
  *
  * @author swe
  */
-public class KGraphXmiTransformer implements IGraphTransformer<KNode> {
-
-    // implementation of the interface {@link IGraphTransformer}
+public class KGraphXmiTransformer extends AbstractEmfTransformer<KNode> {
 
     /**
      * {@inheritDoc}
      */
-    public final KNode deserialize(final String serializedGraph) {
-        KNode graph = null;
-        try {
-            ByteArrayInputStream inStream = new ByteArrayInputStream(
-                serializedGraph.getBytes("UTF-8")
-            );
-            URI uri = URI.createURI("inputstream://temp.kgraph");
-            ResourceSet resourceSet = createResourceSet();
-            Resource resource = resourceSet.createResource(uri);
-            EObject eObject = null;
-            Map<String, String> options = new HashMap<String, String>();
-            options.put(XMLResource.OPTION_ENCODING, "UTF-8");
-            resource.load(inStream, options);
-            eObject = resource.getContents().get(0);
-            if (eObject instanceof KNode) {
-                graph = (KNode) eObject;
-                unpersistDataElements(graph);
-            }
-            // Make sure all graph elements are configured according to specs
-            Graphs.validateAllElements(graph);
-            inStream.close();
-        } catch (UnsupportedEncodingException e) {
-            throw new TransformationException(e);
-        } catch (IOException e) {
-            throw new TransformationException(e);
-        }
+    @Override
+    public KNode deserialize(final String serializedGraph) {
+        KNode graph = super.deserialize(serializedGraph);
+        unpersistDataElements(graph);
         return graph;
     }
 
     /**
      * {@inheritDoc}
      */
-    public final String serialize(final KNode graph) {
-        String xmi = null;
-        try {
-            EcoreUtil.resolveAll(graph);
-            persistDataElements(graph);            
-            URI uri = URI.createURI("outputstream://temp.kgraph");
-            ResourceSet resourceSet = createResourceSet();
-            Resource resource = resourceSet.createResource(uri);
-            resource.unload();
-            resource.getContents().add(graph);            
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            Map<String, String> options = new HashMap<String, String>();
-            options.put(XMLResource.OPTION_ENCODING, "UTF-8");
-            resource.save(outStream, options);
-            outStream.flush();
-            xmi = new String(outStream.toByteArray(), "UTF-8");
-            outStream.close();
-            unpersistDataElements(graph);
-        } catch (IOException e) {
-            throw new TransformationException(e);
-        }
-        return xmi;
+    @Override
+    public String serialize(final KNode graph) {
+        persistDataElements(graph);
+        return super.serialize(graph);
     }
 
     /**
      * {@inheritDoc}
      */
-    public List<KNode> deriveLayout(final KNode graph) {
-        // TODO validate the graph
-        return Lists.newArrayList(graph);
+    @Override
+    protected ResourceSet createResourceSet() {
+        ResourceSet resourceset = new ResourceSetImpl();
+        resourceset.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
+            Resource.Factory.Registry.DEFAULT_EXTENSION,
+            new XMIResourceFactoryImpl()
+        );
+        resourceset.getPackageRegistry().put(
+            KGraphPackage.eNS_URI,
+            KGraphPackage.eINSTANCE
+        );
+        resourceset.getPackageRegistry().put(
+            KLayoutDataPackage.eNS_URI,
+            KLayoutDataPackage.eINSTANCE
+        );
+        return resourceset;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getFileExtension() {
+        return "kgraph";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void deriveLayout(final TransformationData<KNode> transData) {
+        KNode graph = transData.getSourceGraph();
+        
+        // Make sure all graph elements are configured according to specs
+        Graphs.validateAllElements(graph);
+        // Forward the validated graph as layout graph
+        transData.getLayoutGraphs().add(graph);
     }
     
     /**
      * {@inheritDoc}
      */
-    public void applyLayout(final KNode graph, final List<KNode> layout) {
-        // nothing to do
+    public void applyLayout(final TransformationData<KNode> transData) {
         // Nothing to do since the given graph and layout are the same instance
     }
     
@@ -201,30 +178,6 @@ public class KGraphXmiTransformer implements IGraphTransformer<KNode> {
                 }
             }
         }
-    }
-
-    /**
-     * Creates a resource set ready to be used with the KGraph and KLayoutData meta model
-     * for serialization and deserialization in XMI.
-     *
-     * @return A resource set ready to be used with the KGraph and KLayoutData meta model
-     *         for serialization and deserialization in XMI
-     */
-    private ResourceSet createResourceSet() {
-        ResourceSet resourceset = new ResourceSetImpl();
-        resourceset.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
-            Resource.Factory.Registry.DEFAULT_EXTENSION,
-            new XMIResourceFactoryImpl()
-        );
-        resourceset.getPackageRegistry().put(
-            KGraphPackage.eNS_URI,
-            KGraphPackage.eINSTANCE
-        );
-        resourceset.getPackageRegistry().put(
-            KLayoutDataPackage.eNS_URI,
-            KLayoutDataPackage.eINSTANCE
-        );
-        return resourceset;
     }
 
 }
