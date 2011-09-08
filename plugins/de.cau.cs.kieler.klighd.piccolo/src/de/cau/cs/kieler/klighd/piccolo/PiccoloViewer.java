@@ -144,6 +144,8 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
         }
     }
 
+    private Object highlightKey = new Object();
+
     /**
      * {@inheritDoc}
      */
@@ -165,7 +167,8 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
                             new Color(background.getR(), background.getG(), background.getB());
                 }
                 // apply the highlighting effect
-                Util.setHighlight(node, foregroundColor, backgroundColor, lineWidthFactor);
+                HighlightUtil.setHighlight(highlightKey, node, foregroundColor, backgroundColor,
+                        lineWidthFactor);
             }
         }
     }
@@ -179,7 +182,7 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
             if (diagramElement instanceof PNode) {
                 PNode node = (PNode) diagramElement;
                 // remove the highlighting effect
-                Util.removeHighlight(node);
+                HighlightUtil.removeHighlight(highlightKey, node);
             }
         }
     }

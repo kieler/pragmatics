@@ -36,11 +36,17 @@ import edu.umd.cs.piccolo.util.PNodeFilter;
  * This handler provides simple interaction for node selection. Clicking selects the object under
  * the cursor and dragging with control pressed offers marquee selection. This handler does not
  * modify the selected nodes in any way, it just provides selection functionality. Much of the
- * implementation is based on {@code PSelectionEventHandler}.
+ * implementation is based on {@code PSelectionEventHandler}.<br <br
+ * The selection is visualized by applying a highlighting effect using {@code HighlightUtil}.
  * 
  * @author mri
  */
 public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
+
+    /** the key for the selection highlighting effect. */
+    private static final Object SELECTION_HIGHLIGHT_KEY = new Object();
+    /** the line width factor for the selection highlighting effect. */
+    private static final float SELECTION_LINE_WIDTH_FACTOR = 2.0f;
 
     /** the camera this handler references. */
     private PCamera camera;
@@ -101,7 +107,10 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
             return false;
         }
         if (selectedNodes.add(node)) {
-            PSWTSimpleSelectionHandle.addSelectionHandle(node);
+            Color foreground = HighlightUtil.darker(HighlightUtil.getForegroundColor(node));
+            Color background = HighlightUtil.darker(HighlightUtil.getBackgroundColor(node));
+            HighlightUtil.setHighlight(SELECTION_HIGHLIGHT_KEY, node, foreground, background,
+                    SELECTION_LINE_WIDTH_FACTOR);
             return true;
         }
         return false;
@@ -142,7 +151,7 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
 
     private boolean internalUnselect(final PNode node) {
         if (selectedNodes.remove(node)) {
-            PSWTSimpleSelectionHandle.removeSelectionHandle(node);
+            HighlightUtil.removeHighlight(SELECTION_HIGHLIGHT_KEY, node);
             return true;
         }
         return false;
@@ -171,7 +180,7 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
      */
     public void unselectAll() {
         for (PNode node : selectedNodes) {
-            PSWTSimpleSelectionHandle.removeSelectionHandle(node);
+            HighlightUtil.removeHighlight(SELECTION_HIGHLIGHT_KEY, node);
         }
         boolean unselected = selectedNodes.size() > 0;
         selectedNodes.clear();
