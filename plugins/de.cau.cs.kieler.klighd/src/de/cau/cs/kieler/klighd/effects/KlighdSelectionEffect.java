@@ -38,6 +38,23 @@ public class KlighdSelectionEffect {
      * 
      * @param viewId
      *            the view identifier
+     * @param element
+     *            the element
+     * @param isDiagramElement
+     *            true if the element is a diagram element; false if the element is a model element
+     */
+    public KlighdSelectionEffect(final String viewId, final Object element,
+            final boolean isDiagramElement) {
+        this.viewId = viewId;
+        this.elements = new Object[] { element };
+        this.areDiagramElements = isDiagramElement;
+    }
+
+    /**
+     * Constructs a selection effect.
+     * 
+     * @param viewId
+     *            the view identifier
      * @param elements
      *            the elements
      * @param areDiagramElements
@@ -78,5 +95,5 @@ public class KlighdSelectionEffect {
             }
         }
     }
-    
+
 }
