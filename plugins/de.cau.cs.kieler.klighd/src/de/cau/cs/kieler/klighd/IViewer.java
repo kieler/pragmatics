@@ -41,14 +41,95 @@ public interface IViewer<T> {
     void setModel(final T model);
 
     /**
-     * Highlights the given diagram element for the specified duration.
+     * Sets a highlighting effect on the given diagram elements using the specified foreground and
+     * background color and factor for the line width.
+     * 
+     * @param diagramElements
+     *            the diagram elements
+     * @param foreground
+     *            the foreground color or null for no change
+     * @param background
+     *            the background color or null for no change
+     * @param lineWidthFactor
+     *            the factor the line width is increased by (1.0f for no change)
+     */
+    void setHighlight(final Object[] diagramElements, final KlighdColor foreground,
+            final KlighdColor background, final float lineWidthFactor);
+
+    /**
+     * Removes the highlighting effect from the given diagram elements if any.
+     * 
+     * @param diagramElements
+     *            the diagram elements
+     */
+    void removeHighlight(final Object[] diagramElements);
+
+    /**
+     * Sets the given selection of diagram elements as current selection.
+     * 
+     * @param diagramElements
+     *            the diagram elements
+     */
+    void setSelection(final Object[] diagramElements);
+
+    /**
+     * Clears the current selection.
+     */
+    void clearSelection();
+
+    /**
+     * Adds the given diagram elements to the current selection if possible.
+     * 
+     * @param diagramElements
+     *            the diagram elements
+     */
+    void select(final Object[] diagramElements);
+
+    /**
+     * Removes the given diagram elements from the current selection if possible.
+     * 
+     * @param diagramElements
+     *            the diagram elements
+     */
+    void unselect(final Object[] diagramElements);
+
+    /**
+     * Reveals the given diagram element over the specified duration.
      * 
      * @param diagramElement
      *            the diagram element
      * @param duration
      *            the duration
      */
-    void highlight(final Object diagramElement, final long duration);
+    void reveal(final Object diagramElement, final int duration);
+
+    /**
+     * Centers on the given diagram element over the specified duration.
+     * 
+     * @param diagramElement
+     *            the diagram element
+     * @param duration
+     *            the duration
+     */
+    void centerOn(final Object diagramElement, final int duration);
+
+    /**
+     * Zooms to the given zoom level over the specified duration.
+     * 
+     * @param zoomLevel
+     *            the zoom level
+     * @param duration
+     *            the duration
+     */
+    void zoom(final float zoomLevel, final int duration);
+
+    /**
+     * Peforms a zoom-to-fit over the specified duration.
+     * 
+     * @param duration
+     *            the duration
+     */
+    void zoomToFit(final int duration);
 
     /**
      * Adds an event listener to the viewer.

@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import de.cau.cs.kieler.klighd.AbstractViewer;
+import de.cau.cs.kieler.klighd.KlighdColor;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.IViewerEvent;
 import de.cau.cs.kieler.klighd.IViewerEventListener;
@@ -241,9 +241,80 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
      * {@inheritDoc}
      */
     @Override
-    public void highlight(final Object diagramElement, final long duration) {
+    public void setHighlight(final Object[] diagramElements, final KlighdColor foreground,
+            final KlighdColor background, final float lineWidthFactor) {
         if (currentViewer != null) {
-            currentViewer.highlight(diagramElement, duration);
+            currentViewer.setHighlight(diagramElements, foreground, background, lineWidthFactor);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeHighlight(final Object[] diagramElements) {
+        if (currentViewer != null) {
+            currentViewer.removeHighlight(diagramElements);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void select(final Object[] diagramElements) {
+        if (currentViewer != null) {
+            currentViewer.select(diagramElements);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void unselect(final Object[] diagramElements) {
+        if (currentViewer != null) {
+            currentViewer.unselect(diagramElements);
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reveal(final Object diagramElement, final int duration) {
+        if (currentViewer != null) {
+            currentViewer.reveal(diagramElement, duration);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void centerOn(final Object diagramElement, final int duration) {
+        if (currentViewer != null) {
+            currentViewer.centerOn(diagramElement, duration);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void zoom(final float zoomLevel, final int duration) {
+        if (currentViewer != null) {
+            currentViewer.zoom(zoomLevel, duration);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void zoomToFit(final int duration) {
+        if (currentViewer != null) {
+            currentViewer.zoomToFit(duration);
         }
     }
 

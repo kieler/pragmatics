@@ -13,65 +13,27 @@
  */
 package de.cau.cs.kieler.klighd.viewers;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-import de.cau.cs.kieler.klighd.KlighdColor;
-import de.cau.cs.kieler.klighd.IViewerEventListener;
 import de.cau.cs.kieler.klighd.IViewer;
+import de.cau.cs.kieler.klighd.IViewerEvent;
+import de.cau.cs.kieler.klighd.IViewerEventListener;
+import de.cau.cs.kieler.klighd.KlighdColor;
 
 /**
- * A viewer for string messages.
+ * An abstract base class for viewers which provides an implementation for the handling of listeners
+ * and an empty implementation for advanced functionality.
  * 
  * @author mri
+ * 
+ * @param <T>
+ *            the type of the model this viewer accepts
  */
-public class StringViewer implements IViewer<String> {
+public abstract class AbstractViewer<T> implements IViewer<T> {
 
-    /** the canvas used to display the message. */
-    private Canvas canvas = null;
-    /** the currently displayed message. */
-    private String message = "";
-
-    /**
-     * Constructs a string viewer.
-     * 
-     * @param parent
-     *            the parent composite
-     */
-    public StringViewer(final Composite parent) {
-        // add a canvas for displaying the message
-        canvas = new Canvas(parent, SWT.NONE);
-        canvas.addPaintListener(new PaintListener() {
-            public void paintControl(final PaintEvent e) {
-                synchronized (message) {
-                    e.gc.drawString(message, 0, 0, true);
-                }
-            }
-        });
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Control getControl() {
-        return canvas;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setModel(final String model) {
-        if (model == null) {
-            return;
-        }
-        synchronized (message) {
-            message = model;
-        }
-    }
+    /** the listeners registered on this viewer. */
+    private Set<IViewerEventListener> listeners = new LinkedHashSet<IViewerEventListener>();
 
     /**
      * {@inheritDoc}
@@ -87,7 +49,7 @@ public class StringViewer implements IViewer<String> {
     public void removeHighlight(final Object[] diagramElements) {
         // do nothing
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -133,29 +95,41 @@ public class StringViewer implements IViewer<String> {
     /**
      * {@inheritDoc}
      */
-    public void reveal(final Object diagramElement, final int duration) {
+    public void reveal(final Object diagramObject, final int duration) {
         // do nothing
     }
 
     /**
      * {@inheritDoc}
      */
-    public void centerOn(final Object diagramElement, final int duration) {
+    public void centerOn(final Object diagramObject, final int duration) {
         // do nothing
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void addEventListener(final IViewerEventListener listener) {
-        // do nothing
+        listeners.add(listener);
     }
 
     /**
      * {@inheritDoc}
      */
     public void removeEventListener(final IViewerEventListener listener) {
-        // do nothing
+        listeners.remove(listener);
+    }
+
+    /**
+     * Notifies the registered listeners about the occurrence of an event.
+     * 
+     * @param event
+     *            the viewer event
+     */
+    protected void notifyListeners(final IViewerEvent event) {
+        for (IViewerEventListener listener : listeners) {
+            listener.handleEvent(event);
+        }
     }
 
 }

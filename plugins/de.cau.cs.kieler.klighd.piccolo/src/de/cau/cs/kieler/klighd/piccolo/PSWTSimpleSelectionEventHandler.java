@@ -34,9 +34,9 @@ import edu.umd.cs.piccolo.util.PNodeFilter;
 
 /**
  * This handler provides simple interaction for node selection. Clicking selects the object under
- * the cursor and dragging offers marquee selection. This handler does not modify the selected nodes
- * in any way, it just provides selection functionality. Much of the implementation is based on
- * {@code PSelectionEventHandler}.
+ * the cursor and dragging with control pressed offers marquee selection. This handler does not
+ * modify the selected nodes in any way, it just provides selection functionality. Much of the
+ * implementation is based on {@code PSelectionEventHandler}.
  * 
  * @author mri
  */
@@ -267,9 +267,9 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
         if (marqueeSelection) {
             if (isMarqueeSelection(event)) {
                 computeMarqueeSelection(event);
-                endMarqueeSelection(event);   
+                endMarqueeSelection(event);
             } else {
-                endMarqueeSelection(event);   
+                endMarqueeSelection(event);
             }
         } else {
             endSelection(event);

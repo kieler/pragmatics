@@ -19,7 +19,7 @@ import org.eclipse.gmf.runtime.diagram.ui.services.editpart.EditPartService;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.swt.widgets.Control;
 
-import de.cau.cs.kieler.klighd.AbstractViewer;
+import de.cau.cs.kieler.klighd.viewers.AbstractViewer;
 
 /**
  * A wrapper for a {@code DiagramGraphicalViewer} to fit the {@code IViewer} interface.

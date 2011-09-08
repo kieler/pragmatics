@@ -22,9 +22,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import de.cau.cs.kieler.klighd.AbstractViewer;
+import de.cau.cs.kieler.klighd.KlighdColor;
 import de.cau.cs.kieler.klighd.events.SelectionEvent;
-import de.cau.cs.kieler.klighd.piccolo.activities.HighlightActivity;
+import de.cau.cs.kieler.klighd.piccolo.activities.ZoomActivity;
+import de.cau.cs.kieler.klighd.viewers.AbstractViewer;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
@@ -147,20 +148,148 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
      * {@inheritDoc}
      */
     @Override
-    public void highlight(final Object diagramElement, final long duration) {
-        // TODO this is far from final
+    public void setHighlight(final Object[] diagramElements, final KlighdColor foreground,
+            final KlighdColor background, final float lineWidthFactor) {
+        for (Object diagramElement : diagramElements) {
+            if (diagramElement instanceof PNode) {
+                PNode node = (PNode) diagramElement;
+                // transform the colors to AWT colors
+                Color foregroundColor = null;
+                if (foreground != null) {
+                    foregroundColor =
+                            new Color(foreground.getR(), foreground.getG(), foreground.getB());
+                }
+                Color backgroundColor = null;
+                if (background != null) {
+                    backgroundColor =
+                            new Color(background.getR(), background.getG(), background.getB());
+                }
+                // apply the highlighting effect
+                Util.setHighlight(node, foregroundColor, backgroundColor, lineWidthFactor);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeHighlight(final Object[] diagramElements) {
+        for (Object diagramElement : diagramElements) {
+            if (diagramElement instanceof PNode) {
+                PNode node = (PNode) diagramElement;
+                // remove the highlighting effect
+                Util.removeHighlight(node);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setSelection(final Object[] diagramElements) {
+        if (selectionHandler != null) {
+            selectionHandler.unselectAll();
+            select(diagramElements);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clearSelection() {
+        if (selectionHandler != null) {
+            selectionHandler.unselectAll();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void select(final Object[] diagramElements) {
+        if (selectionHandler != null) {
+            for (Object diagramElement : diagramElements) {
+                if (diagramElement instanceof PNode) {
+                    PNode node = (PNode) diagramElement;
+                    // does the node belong to this viewer?
+                    if (node.getRoot() == canvas.getRoot()) {
+                        selectionHandler.select(node);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void unselect(final Object[] diagramElements) {
+        if (selectionHandler != null) {
+            for (Object diagramElement : diagramElements) {
+                if (diagramElement instanceof PNode) {
+                    PNode node = (PNode) diagramElement;
+                    selectionHandler.unselect(node);
+                }
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void zoom(final float zoomLevel, final int duration) {
+        ZoomActivity zoomActivity = new ZoomActivity(canvas.getCamera(), zoomLevel, duration);
+        if (duration > 0) {
+            canvas.getRoot().addActivity(zoomActivity);
+        } else {
+            zoomActivity.apply();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void zoomToFit(final int duration) {
+        if (diagramContext != null) {
+            if (diagramContext.getRootNode() instanceof PNode) {
+                PNode node = (PNode) diagramContext.getRootNode();
+                // move and zoom the camera so it includes the full bounds
+                PCamera camera = canvas.getCamera();
+                camera.animateViewToCenterBounds(node.getFullBounds(), true, duration);
+                // FIXME centers the bb instead of left aligning it and could need some padding
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reveal(final Object diagramElement, final int duration) {
         if (diagramElement instanceof PNode) {
             PNode node = (PNode) diagramElement;
-            if (node instanceof IChildRepresentedNode) {
-                IChildRepresentedNode childRepNode = (IChildRepresentedNode) node;
-                node = childRepNode.getRepresentationNode();
-            }
-            // CHECKSTYLEOFF MagicNumber
-            HighlightActivity highlightActivity =
-                    new HighlightActivity(node, new Color(0, 0, 255), new Color(150, 150, 255),
-                            duration);
-            // CHECKSTYLEON MagicNumber
-            node.addActivity(highlightActivity);
+            // move the camera so it includes the bounds of the node
+            PCamera camera = canvas.getCamera();
+            camera.animateViewToPanToBounds(node.getFullBounds(), duration);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void centerOn(final Object diagramElement, final int duration) {
+        if (diagramElement instanceof PNode) {
+            PNode node = (PNode) diagramElement;
+            // center the camera on the node
+            PCamera camera = canvas.getCamera();
+            camera.animateViewToCenterBounds(node.getFullBounds(), false, duration);
         }
     }
 

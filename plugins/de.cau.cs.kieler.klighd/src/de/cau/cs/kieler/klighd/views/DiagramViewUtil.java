@@ -28,7 +28,8 @@ import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.ViewContext;
 
 /**
- * A utility class for creating and updating diagram views.
+ * A utility class for creating and updating diagram views. All methods in this utility class have
+ * to be called in the UI thread.
  * 
  * @author mri
  */
@@ -164,7 +165,7 @@ public final class DiagramViewUtil {
      * @author chsch
      */
     public static boolean closeView(final String id) {
-        if (id == null || id.equals("")) {
+        if (id.equals("")) {
             return false;
         }
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
