@@ -607,9 +607,9 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             // calculate offset for edge and label coordinates
             KVector offset = new KVector();
             if (KimlUtil.isDescendant(targetNode, sourceNode)) {
-                KimlUtil.toRelative(offset, sourceNode);
+                KimlUtil.toAbsolute(offset, sourceNode);
             } else {
-                KimlUtil.toRelative(offset, sourceNode.getParent());
+                KimlUtil.toAbsolute(offset, sourceNode.getParent());
             }
 
             if (!isOppositeEdge) {

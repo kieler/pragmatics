@@ -536,12 +536,15 @@ public final class KimlUtil {
     public static void resizeNode(final KNode node, final float newWidth, final float newHeight,
             final boolean movePorts) {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+        if (nodeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
+            // don't resize nodes that aren't laid out
+            return;
+        }
         KVector oldSize = new KVector(nodeLayout.getWidth(), nodeLayout.getHeight());
         KVector newSize = new KVector(
                 Math.max(newWidth, nodeLayout.getProperty(LayoutOptions.MIN_WIDTH)),
                 Math.max(newHeight, nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT)));
         
-        nodeLayout.setSize((float) newSize.x, (float) newSize.y);
         float widthRatio = (float) (newSize.x / oldSize.x);
         float heightRatio = (float) (newSize.y / oldSize.y);
         float widthDiff = (float) (newSize.x - oldSize.x);
@@ -587,6 +590,9 @@ public final class KimlUtil {
                 }
             }
         }
+        
+        // resize the node AFTER ports have been placed, since calcPortSide needs the old size
+        nodeLayout.setSize((float) newSize.x, (float) newSize.y);
         
         // update label position
         KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);

@@ -145,6 +145,8 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
      */
     private KVector processEdge(final KEdge edge) {
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+        boolean sameHierarchy = edge.getSource().getParent() == edge.getTarget().getParent();
+        KVector maxv = new KVector();
         KVectorChain bendPoints = edgeLayout.getProperty(LayoutOptions.BEND_POINTS);
         if (bendPoints == null || bendPoints.size() < 2) {
             edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
@@ -153,10 +155,11 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         }
         
         // determine maximal coordinates
-        KVector maxv = new KVector();
-        for (KPoint point : edgeLayout.getBendPoints()) {
-            maxv.x = Math.max(maxv.x, point.getX());
-            maxv.y = Math.max(maxv.y, point.getY());
+        if (sameHierarchy) {
+            for (KPoint point : edgeLayout.getBendPoints()) {
+                maxv.x = Math.max(maxv.x, point.getX());
+                maxv.y = Math.max(maxv.y, point.getY());
+            }
         }
         
         for (KLabel label : edge.getLabels()) {
@@ -167,8 +170,10 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                 labelLayout.applyVector(pos);
                 labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
             }
-            maxv.x = Math.max(maxv.x, labelLayout.getXpos() + labelLayout.getWidth());
-            maxv.y = Math.max(maxv.y, labelLayout.getYpos() + labelLayout.getHeight());
+            if (sameHierarchy) {
+                maxv.x = Math.max(maxv.x, labelLayout.getXpos() + labelLayout.getWidth());
+                maxv.y = Math.max(maxv.y, labelLayout.getYpos() + labelLayout.getHeight());
+            }
         }
         return maxv;
     }

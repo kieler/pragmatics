@@ -116,6 +116,9 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         // get main edit part and domain model element
         Object diagPart = context.getProperty(LayoutContext.DIAGRAM_PART);
         EObject domainElem = context.getProperty(LayoutContext.DOMAIN_MODEL);
+        /* Don't try to find the domain model element here, since another layout config
+         * could have disabled it on purpose.
+         */
 
         // set diagram type for the content of the main edit part
         String diagramType = (String) getOption(diagPart, domainElem, LayoutOptions.DIAGRAM_TYPE);
