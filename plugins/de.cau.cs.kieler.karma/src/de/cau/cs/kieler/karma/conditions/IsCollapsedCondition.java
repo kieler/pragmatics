@@ -24,10 +24,8 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
 import org.eclipse.ui.IEditorPart;
 
-import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.model.gmf.GmfFrameworkBridge;
 import de.cau.cs.kieler.core.ui.util.EditorUtils;
-import de.cau.cs.kieler.karma.ICustomCondition;
 
 /**
  * Condition for evaluating whether a model element is in a collapsed state in the opened diagram. 
