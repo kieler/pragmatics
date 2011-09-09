@@ -628,5 +628,13 @@ public class Pictogram2PNodeTransformation extends
     public Object getTargetElement(final Object object) {
         return elementMap.get(object);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean supports(final Object model) {
+        return model instanceof Diagram;
+    }
 
 }
