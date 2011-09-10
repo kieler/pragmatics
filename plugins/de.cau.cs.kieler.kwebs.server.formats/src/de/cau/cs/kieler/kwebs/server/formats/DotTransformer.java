@@ -14,9 +14,11 @@
 package de.cau.cs.kieler.kwebs.server.formats;
 
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
 import com.google.common.collect.Maps;
@@ -26,12 +28,16 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotStandaloneSetup;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.AttributeStatement;
+import de.cau.cs.kieler.kiml.graphviz.dot.dot.AttributeType;
+import de.cau.cs.kieler.kiml.graphviz.dot.dot.DotFactory;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.EdgeStatement;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.EdgeTarget;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.Graph;
@@ -42,11 +48,13 @@ import de.cau.cs.kieler.kiml.graphviz.dot.dot.Statement;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.Subgraph;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.util.DotSwitch;
 import de.cau.cs.kieler.kiml.graphviz.dot.transformations.Attributes;
+import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.kwebs.formats.Formats;
+import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.transformation.AbstractEmfTransformer;
 import de.cau.cs.kieler.kwebs.transformation.TransformationData;
 
@@ -63,16 +71,16 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
     /** map of Graphviz port identifiers to their KPort instances. */
     private static final IProperty<Map<Pair<KNode, String>, KPort>> PORT_ID_MAP
             = new Property<Map<Pair<KNode, String>, KPort>>("portIdMap");
+    /** original Graphviz statements attached to graph elements. */
+    private static final IProperty<Statement> PROP_STATEMENT
+            = new Property<Statement>("dotTransformer.statement");
+    /** original Graphviz identifiers attached to graph elements. */
+    private static final IProperty<String> PROP_ID = new Property<String>("dotTransformer.name");
+    /** original Graphviz graph attached to parent nodes. */
+    private static final IProperty<Graph> PROP_GRAPH = new Property<Graph>("dotTransformer.graph");
     
     /** the injector for creation of resources. */
     private static Injector injector;
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getSupportedFormat() {
-        return Formats.FORMAT_DOT;
-    }
 
     /**
      * {@inheritDoc}
@@ -105,6 +113,7 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
             transData.setProperty(PORT_ID_MAP, portIdMap);
             transform(graph.getStatements(), parent, transData);
             transData.getLayoutGraphs().add(parent);
+            parent.getData(KShapeLayout.class).setProperty(PROP_GRAPH, graph);
         }
     }
 
@@ -112,9 +121,12 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
      * {@inheritDoc}
      */
     public void applyLayout(final TransformationData<GraphvizModel> transData) {
-        // TODO Auto-generated method stub
-        
+        for (KNode layoutNode : transData.getLayoutGraphs()) {
+            applyLayout(layoutNode, new KVector(),
+                    layoutNode.getData(KShapeLayout.class).getProperty(PROP_GRAPH));
+        }
     }
+    
     
     /*---------- Transformation Dot to KGraph ----------*/
     
@@ -128,38 +140,34 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
             final TransformationData<GraphvizModel> transData) {
         DotSwitch<Object> statementSwitch = new DotSwitch<Object>() {
             
-            @Override
             public Object caseNodeStatement(final NodeStatement statement) {
-                KNode knode = transformNode(statement.getNode().getName(), parent, transData);
-                for (Attribute attr : statement.getAttributes()) {
-                    if (Attributes.LABEL.equals(attr.getName())) {
-                        knode.getLabel().setText(attr.getValue());
-                    }
-                }
+                transformNode(statement, parent, transData);
                 return null;
             }
             
-            @Override
             public Object caseEdgeStatement(final EdgeStatement statement) {
                 transformEdge(statement, parent, transData);
                 return null;
             }
 
-            @Override
             public Object caseSubgraph(final Subgraph subgraph) {
                 KNode subKNode = transformNode(subgraph.getName(), parent, transData);
-                subKNode.setParent(parent);
-                transform(subgraph.getStatements(), subKNode, transData);
+                KShapeLayout nodeLayout = subKNode.getData(KShapeLayout.class);
+                if (nodeLayout.getProperty(PROP_STATEMENT) != null) {
+                    Logger.log("Discarding subgraph \"" + subgraph.getName()
+                            + "\" since its id is already used.");
+                } else {
+                    nodeLayout.setProperty(PROP_STATEMENT, subgraph);
+                    transform(subgraph.getStatements(), subKNode, transData);
+                }
                 return null;
             }
 
-            @Override
             public Object caseAttributeStatement(final AttributeStatement statement) {
                 // TODO evaluate global node and edge attributes
                 return null;
             }
 
-            @Override
             public Object caseAttribute(final Attribute attribute) {
                 // TODO evaluate graph attributes
                 return null;
@@ -168,6 +176,48 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
         };
         for (Statement statement : statements) {
             statementSwitch.doSwitch(statement);
+        }
+    }
+    
+    /**
+     * Transforms a node.
+     * 
+     * @param statement a node statement
+     * @param parent the parent node
+     * @param transData the transformation data instance
+     */
+    private void transformNode(final NodeStatement statement, final KNode parent,
+            final TransformationData<GraphvizModel> transData) {
+        KNode knode = transformNode(statement.getNode().getName(), parent, transData);
+        KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
+        if (nodeLayout.getProperty(PROP_STATEMENT) != null) {
+            Logger.log("Discarding node \"" + statement.getNode().getName()
+                    + "\" since its id is already used.");
+        } else {
+            nodeLayout.setProperty(PROP_STATEMENT, statement);
+            
+            // evaluate attributes for the new node
+            for (Attribute attr : statement.getAttributes()) {
+                try {
+                    if (Attributes.LABEL.equals(attr.getName())) {
+                        knode.getLabel().setText(attr.getValue());
+                    } else if (Attributes.POS.equals(attr.getName())) {
+                        KVector pos = KGraphDotTransformation.parsePoint(attr.getValue());
+                        pos.scale(KGraphDotTransformation.DPI);
+                        nodeLayout.applyVector(pos);
+                    } else if (Attributes.WIDTH.equals(attr.getName())) {
+                        nodeLayout.setWidth(Float.parseFloat(attr.getValue())
+                                * KGraphDotTransformation.DPI);
+                    } else if (Attributes.HEIGHT.equals(attr.getName())) {
+                        nodeLayout.setHeight(Float.parseFloat(attr.getValue())
+                                * KGraphDotTransformation.DPI);
+                    }
+                } catch (NumberFormatException exception) {
+                    Logger.log("Discarding attribute \"" + attr.getName()
+                            + "\" for node \"" + statement.getNode().getName()
+                            + "\" since its value could not be parsed correctly.");
+                }
+            }
         }
     }
     
@@ -188,6 +238,7 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
             knode.setParent(parent);
             if (nodeId != null) {
                 nodeIdMap.put(nodeId, knode);
+                knode.getData(KShapeLayout.class).setProperty(PROP_ID, nodeId);
             }
         }
         return knode;
@@ -221,33 +272,60 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
      * 
      * @param statement an edge statement
      * @param parent the parent node
+     * @param transData the transformation data instance
      */
     private void transformEdge(final EdgeStatement statement, final KNode parent,
             final TransformationData<GraphvizModel> transData) {
-        KNode source = transformNode(statement.getSourceNode().getName(), parent, transData);
+        String sourceName = statement.getSourceNode().getName();
+        KNode source = transformNode(sourceName, parent, transData);
         KPort sourcePort = null;
         if (statement.getSourceNode().getPort() != null) {
             sourcePort = transformPort(statement.getSourceNode().getPort()
                     .getCompass_pt().getName(), source, transData);
         }
-        for (EdgeTarget edgeTarget : statement.getEdgeTargets()) {
+        ListIterator<EdgeTarget> targetIter = statement.getEdgeTargets().listIterator();
+        while (targetIter.hasNext()) {
+            EdgeTarget edgeTarget = targetIter.next();
             KEdge kedge = KimlUtil.createInitializedEdge();
             kedge.setSource(source);
             kedge.setSourcePort(sourcePort);
             KNode target;
+            KPort targetPort = null;
             Node edgeTargetNode = edgeTarget.getTargetnode();
+            String targetName;
             if (edgeTargetNode == null) {
-                target = transformNode(edgeTarget.getTargetSubgraph().getName(), parent, transData);
+                targetName = edgeTarget.getTargetSubgraph().getName();
+                target = transformNode(targetName, parent, transData);
             } else {
-                target = transformNode(edgeTargetNode.getName(), parent, transData);
+                targetName = edgeTargetNode.getName();
+                target = transformNode(targetName, parent, transData);
                 if (edgeTargetNode.getPort() != null) {
-                    kedge.setTargetPort(transformPort(edgeTargetNode.getPort()
-                            .getCompass_pt().getName(), target, transData));
+                    targetPort = transformPort(edgeTargetNode.getPort()
+                            .getCompass_pt().getName(), target, transData);
                 }
             }
             kedge.setTarget(target);
+            kedge.setTargetPort(targetPort);
             
-            // add edge labels
+            KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+            if (targetIter.previousIndex() == 0) {
+                // this is the first target - just store the edge statement
+                edgeLayout.setProperty(PROP_STATEMENT, statement);
+            } else {
+                // the edge statement has more that one target - create a copy
+                EdgeStatement newStatement = DotFactory.eINSTANCE.createEdgeStatement();
+                Node sourceNode = DotFactory.eINSTANCE.createNode();
+                sourceNode.setName(sourceName);
+                newStatement.setSourceNode(sourceNode);
+                targetIter.remove();
+                newStatement.getEdgeTargets().add(edgeTarget);
+                for (Attribute attr : statement.getAttributes()) {
+                    newStatement.getAttributes().add(EcoreUtil.copy(attr));
+                }
+                edgeLayout.setProperty(PROP_STATEMENT, newStatement);
+            }
+            
+            // evaluate attributes for the new edge
             for (Attribute attr : statement.getAttributes()) {
                 if (Attributes.LABEL.equals(attr.getName())) {
                     KLabel label = KimlUtil.createInitializedLabel(kedge);
@@ -269,8 +347,183 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
                     kedge.getLabels().add(label);
                 }
             }
+            
+            // the edge target is the source for the next edge target
+            source = target;
+            sourceName = targetName;
+            sourcePort = targetPort;
         }
+    }
+    
 
+    /*---------- Layout Transfer KGraph to Dot ----------*/
+
+    /**
+     * Apply layout to a parent node and its children.
+     * 
+     * @param parent a parent node
+     * @param offset the node's offset in the graph
+     * @param graph the Graphviz graph
+     */
+    private void applyLayout(final KNode parent, final KVector offset, final Graph graph) {
+        for (KNode knode : parent.getChildren()) {
+            KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
+            Statement statement = nodeLayout.getProperty(PROP_STATEMENT);
+            if (statement == null) {
+                // the node was only declared implicitly - create an explicit declaration
+                NodeStatement stm = DotFactory.eINSTANCE.createNodeStatement();
+                Node node = DotFactory.eINSTANCE.createNode();
+                node.setName(nodeLayout.getProperty(PROP_ID));
+                stm.setNode(node);
+                graph.getStatements().add(stm);
+                statement = stm;
+            }
+            if (statement instanceof NodeStatement) {
+                List<Attribute> attributes = ((NodeStatement) statement).getAttributes();
+                // transfer node position
+                removeAttributes(attributes, Attributes.POS);
+                double xpos = (nodeLayout.getXpos() + nodeLayout.getWidth() / 2 + offset.x)
+                        / KGraphDotTransformation.DPI;
+                double ypos = (nodeLayout.getYpos() + nodeLayout.getHeight() / 2 + offset.y)
+                        / KGraphDotTransformation.DPI;
+                String posString = "\"" + Double.toString(xpos) + "," + Double.toString(ypos) + "\"";
+                attributes.add(KGraphDotTransformation.createAttribute(Attributes.POS, posString));
+                // transfer node size
+                removeAttributes(attributes, Attributes.WIDTH);
+                attributes.add(KGraphDotTransformation.createAttribute(Attributes.WIDTH,
+                        Float.toString(nodeLayout.getWidth() / KGraphDotTransformation.DPI)));
+                removeAttributes(attributes, Attributes.HEIGHT);
+                attributes.add(KGraphDotTransformation.createAttribute(Attributes.HEIGHT,
+                        Float.toString(nodeLayout.getHeight() / KGraphDotTransformation.DPI)));
+            } else if (statement instanceof Subgraph) {
+                applyLayout(knode, new KVector(offset).translate(nodeLayout.getXpos(),
+                        nodeLayout.getYpos()), graph);
+            }
+            
+            for (KEdge kedge : knode.getOutgoingEdges()) {
+                applyLayout(kedge, offset, graph);
+            }
+        }
+        
+        // transfer graph size to bounding box
+        List<Statement> statements;
+        KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
+        Statement graphStm = parentLayout.getProperty(PROP_STATEMENT);
+        if (graphStm instanceof Subgraph) {
+            statements = ((Subgraph) graphStm).getStatements();
+        } else {
+            statements = graph.getStatements();
+        }
+        removeGraphAttributes(statements, Attributes.BOUNDINGBOX);
+        float width = parentLayout.getWidth() / KGraphDotTransformation.DPI;
+        float height = parentLayout.getHeight() / KGraphDotTransformation.DPI;
+        String bbString = "\"0,0," + Float.toString(width)
+                + "," + Float.toString(height) + "\"";
+        statements.add(KGraphDotTransformation.createAttribute(
+                Attributes.BOUNDINGBOX, bbString));
+    }
+    
+    /**
+     * Apply layout to an edge and its labels.
+     * 
+     * @param edge an edge
+     * @param offset its offset in the graph
+     * @param graph the Graphviz graph
+     */
+    private void applyLayout(final KEdge edge, final KVector offset, final Graph graph) {
+        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+        EdgeStatement edgeStatement = (EdgeStatement) edgeLayout.getProperty(PROP_STATEMENT);
+        if (edgeStatement.eContainer() == null) {
+            // this can happen when an edge with multiple target declarations was found
+            graph.getStatements().add(edgeStatement);
+        }
+        
+        // transfer edge bend points and source / target points
+        List<Attribute> attributes = edgeStatement.getAttributes();
+        removeAttributes(attributes, Attributes.POS);
+        StringBuilder bendpointString = new StringBuilder("\"");
+        KVectorChain vectorChain = edgeLayout.createVectorChain();
+        ListIterator<KVector> chainIter = vectorChain.listIterator();
+        while (chainIter.hasNext()) {
+            KVector point = chainIter.next().add(offset).scale(1.0 / KGraphDotTransformation.DPI);
+            bendpointString.append(point.x);
+            bendpointString.append(',');
+            bendpointString.append(point.y);
+            if (chainIter.hasNext()) {
+                bendpointString.append(' ');
+            }
+        }
+        bendpointString.append('\"');
+        attributes.add(KGraphDotTransformation.createAttribute(Attributes.POS,
+                bendpointString.toString()));
+        
+        // transfer label positions
+        for (KLabel label : edge.getLabels()) {
+            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+            if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
+                String attrKey = null;
+                switch (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)) {
+                case CENTER:
+                    attrKey = Attributes.LABELPOS;
+                    break;
+                case HEAD:
+                    attrKey = Attributes.HEADLP;
+                    break;
+                case TAIL:
+                    attrKey = Attributes.TAILLP;
+                    break;
+                }
+                if (attrKey != null) {
+                    removeAttributes(attributes, attrKey);
+                    double xpos = (labelLayout.getXpos() + labelLayout.getWidth() / 2 + offset.x)
+                            / KGraphDotTransformation.DPI;
+                    double ypos = (labelLayout.getYpos() + labelLayout.getHeight() / 2 + offset.y)
+                            / KGraphDotTransformation.DPI;
+                    String posString = "\"" + Double.toString(xpos)
+                            + "," + Double.toString(ypos) + "\"";
+                    attributes.add(KGraphDotTransformation.createAttribute(attrKey, posString));
+                }
+            }
+        }
+    }
+    
+    /**
+     * Removes all graph-related occurrences of the given key from a statement list.
+     * 
+     * @param statements a list of statements
+     * @param key an attribute key
+     */
+    private void removeGraphAttributes(final List<Statement> statements, final String key) {
+        ListIterator<Statement> stmIter = statements.listIterator();
+        while (stmIter.hasNext()) {
+            Statement stm = stmIter.next();
+            if (stm instanceof Attribute) {
+                if (key.equals(((Attribute) stm).getName())) {
+                    stmIter.remove();
+                }
+            } else if (stm instanceof AttributeStatement) {
+                AttributeStatement attrStatement = (AttributeStatement) stm;
+                if (attrStatement.getType() == AttributeType.GRAPH) {
+                    removeAttributes(attrStatement.getAttributes(), key);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Removes all occurrences of the given key from an attributes list.
+     * 
+     * @param attributes a list of attributes
+     * @param key an attribute key
+     */
+    private void removeAttributes(final List<Attribute> attributes, final String key) {
+        ListIterator<Attribute> attrIter = attributes.listIterator();
+        while (attrIter.hasNext()) {
+            Attribute attr = attrIter.next();
+            if (key.equals(attr.getName())) {
+                attrIter.remove();
+            }
+        }
     }
     
 }

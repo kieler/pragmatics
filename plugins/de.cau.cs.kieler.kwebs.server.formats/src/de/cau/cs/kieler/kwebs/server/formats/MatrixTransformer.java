@@ -30,7 +30,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.kwebs.formats.Formats;
 import de.cau.cs.kieler.kwebs.transformation.IGraphTransformer;
 import de.cau.cs.kieler.kwebs.transformation.TransformationData;
 import de.cau.cs.kieler.kwebs.transformation.TransformationException;
@@ -47,13 +46,6 @@ public class MatrixTransformer implements IGraphTransformer<Matrix> {
     private static final IProperty<KNode[]> NODES = new Property<KNode[]>("nodes");
     /** the edges that are created by this transformer. */
     private static final IProperty<KEdge[]> EDGES = new Property<KEdge[]>("edges");
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getSupportedFormat() {
-        return Formats.FORMAT_MATRIX;
-    }
     
     // CHECKSTYLEOFF MagicNumber
 

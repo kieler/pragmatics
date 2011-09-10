@@ -31,7 +31,6 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
-import de.cau.cs.kieler.kwebs.formats.Formats;
 import de.cau.cs.kieler.kwebs.util.Graphs;
 
 /**
@@ -108,13 +107,6 @@ public class KGraphXmiTransformer extends AbstractEmfTransformer<KNode> {
      */
     public void applyLayout(final TransformationData<KNode> transData) {
         // Nothing to do since the given graph and layout are the same instance
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public final String getSupportedFormat() {
-        return Formats.FORMAT_KGRAPH_XMI;
     }
 
     /*--------- Private utility methods ----------*/

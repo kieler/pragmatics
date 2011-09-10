@@ -33,12 +33,12 @@ public class TransformationData<T> extends MapPropertyHolder {
     private List<KNode> layoutGraphs = new LinkedList<KNode>();
     
     /**
-     * Create a transformation data instance for the given source graph.
+     * Set the original graph read from a serialized form.
      * 
-     * @param sourceGraph the original graph read from a serialized form
+     * @param thesourceGraph the source graph
      */
-    public TransformationData(final T sourceGraph) {
-        this.sourceGraph = sourceGraph;
+    public void setSourceGraph(final T thesourceGraph) {
+        this.sourceGraph = thesourceGraph;
     }
     
     /**

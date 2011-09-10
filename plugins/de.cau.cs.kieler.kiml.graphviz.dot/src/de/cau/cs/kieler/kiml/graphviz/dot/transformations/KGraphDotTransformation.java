@@ -60,17 +60,17 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
- * This class implements a transformation from the KGraph metamodel to the Dot
- * metamodel. Furthermore it contains functionality to apply layout information
- * attached to a Dot model to a KGraph model.
+ * This class implements a transformation from the KGraph metamodel to the Dot metamodel.
+ * Furthermore it contains functionality to apply layout information attached to a Dot model to a
+ * KGraph model.
  * 
  * @author mri
  */
 public class KGraphDotTransformation {
-    
+
     /** the injector for creation of resources. */
     private static Injector injector;
-    
+
     /**
      * Return a new instance of a resource set for parsing and serializing.
      * 
@@ -97,7 +97,7 @@ public class KGraphDotTransformation {
         FDP,
         /** command for Circo layout. */
         CIRCO;
-        
+
         /**
          * {@inheritDoc}
          */
@@ -106,32 +106,28 @@ public class KGraphDotTransformation {
             return super.toString().toLowerCase(Locale.ENGLISH);
         }
     }
-    
+
     /** layout option identifier for label distance. */
-    public static final String LABEL_DISTANCE_ID =
-            "de.cau.cs.kieler.graphviz.labelDistance";
+    public static final String LABEL_DISTANCE_ID = "de.cau.cs.kieler.graphviz.labelDistance";
     /** label distance property. */
-    public static final IProperty<Float> LABEL_DISTANCE = new Property<Float>(
-            LABEL_DISTANCE_ID, 1.0f);
-    
+    public static final IProperty<Float> LABEL_DISTANCE = new Property<Float>(LABEL_DISTANCE_ID, 1.0f);
+
     /** small default value for minimal spacing. */
     public static final float DEF_SPACING_SMALL = 16.0f;
     /** large default value for minimal spacing. */
     public static final float DEF_SPACING_LARGE = 40.0f;
     /** extra-large default value for minimal spacing. */
     public static final float DEF_SPACING_XLARGE = 60.0f;
-    
+    /** dots per inch specification, needed by Graphviz for some values. */
+    public static final float DPI = 72.0f;
+
     /** default multiplier for font sizes. */
     private static final double FONT_SIZE_MULT = 1.4;
-
-    /** dots per inch specification, needed by Graphviz for some values. */
-    private static final float DPI = 72.0f;
     /** set of delimiters used to parse attribute values. */
     private static final String ATTRIBUTE_DELIM = "\", \t\n\r";
 
     /** maps each identifier of a graph element to the instance of the element. */
-    private HashMap<String, KGraphElement> graphElementMap =
-            new HashMap<String, KGraphElement>();
+    private HashMap<String, KGraphElement> graphElementMap = new HashMap<String, KGraphElement>();
     /** offset value to be added to all coordinates. */
     private float offset;
     /** indicates whether splines are used. */
@@ -159,29 +155,26 @@ public class KGraphDotTransformation {
      *            the progress monitor
      * @return the Dot instance
      */
-    public GraphvizModel transform(final Command command,
-            final IKielerProgressMonitor monitor) {
+    public GraphvizModel transform(final Command command, final IKielerProgressMonitor monitor) {
         return createDotGraph(kgraph, command, monitor);
     }
 
     /**
-     * Applies the layout information attached to the given Dot instance to the
-     * KGraph instance using the mapping created by a previous call to
-     * {@code transform}. Has to be called after a call to {@code transform}.
+     * Applies the layout information attached to the given Dot instance to the KGraph instance
+     * using the mapping created by a previous call to {@code transform}. Has to be called after a
+     * call to {@code transform}.
      * 
      * @param model
      *            the Dot instance
      * @param monitor
      *            the progress monitor
      */
-    public void applyLayout(final GraphvizModel model,
-            final IKielerProgressMonitor monitor) {
+    public void applyLayout(final GraphvizModel model, final IKielerProgressMonitor monitor) {
         retrieveLayoutResult(kgraph, model, monitor);
     }
 
     /**
-     * Maps a {@code KNode} to the internal Graphviz data structure used by the
-     * Dot parser.
+     * Maps a {@code KNode} to the internal Graphviz data structure used by the Dot parser.
      * 
      * @param parent
      *            a {@code KNode} with the graph to layout
@@ -189,14 +182,12 @@ public class KGraphDotTransformation {
      *            the command string identifying the layout method
      * @param monitor
      *            progress monitor
-     * @return an instance of a graphviz model that corresponds to the input
-     *         graph
+     * @return an instance of a graphviz model that corresponds to the input graph
      */
-    private GraphvizModel createDotGraph(final KNode parent,
-            final Command command, final IKielerProgressMonitor monitor) {
+    private GraphvizModel createDotGraph(final KNode parent, final Command command,
+            final IKielerProgressMonitor monitor) {
         monitor.begin("Create Dot model", 1);
-        GraphvizModel graphvizModel =
-                DotFactory.eINSTANCE.createGraphvizModel();
+        GraphvizModel graphvizModel = DotFactory.eINSTANCE.createGraphvizModel();
         Graph graph = DotFactory.eINSTANCE.createGraph();
         graph.setType(GraphType.DIGRAPH);
         graphvizModel.getGraphs().add(graph);
@@ -206,13 +197,11 @@ public class KGraphDotTransformation {
         setGraphAttributes(graph, command, parentLayout);
 
         // get interactive layout option
-        boolean interactive =
-                parentLayout.getProperty(LayoutOptions.INTERACTIVE);
+        boolean interactive = parentLayout.getProperty(LayoutOptions.INTERACTIVE);
 
         // create nodes
         for (KNode childNode : parent.getChildren()) {
-            NodeStatement nodeStatement =
-                    DotFactory.eINSTANCE.createNodeStatement();
+            NodeStatement nodeStatement = DotFactory.eINSTANCE.createNodeStatement();
             Node node = DotFactory.eINSTANCE.createNode();
             String nodeID = getNodeID(childNode);
             graphElementMap.put(nodeID, childNode);
@@ -221,12 +210,6 @@ public class KGraphDotTransformation {
 
             List<Attribute> attributes = nodeStatement.getAttributes();
             KShapeLayout shapeLayout = childNode.getData(KShapeLayout.class);
-            // set label - removed as it is currently not needed for layout
-            /*
-             * KLabel label = childNode.getLabel();
-             * attributes.getEntries().add(createAttribute
-             * (GraphvizAPI.Attributes.LABEL, createString(label.getText())));
-             */
             // set width and height
             if (!shapeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
                 KimlUtil.resizeNode(childNode);
@@ -239,12 +222,8 @@ public class KGraphDotTransformation {
             // add node position if interactive layout is chosen
             if (interactive) {
                 float xpos = (shapeLayout.getXpos() - offset) / DPI;
-                float ypos =
-                        (parentLayout.getHeight() - shapeLayout.getYpos() - offset)
-                                / DPI;
-                String posString =
-                        "\"" + Float.toString(xpos) + ","
-                                + Float.toString(ypos) + "\"";
+                float ypos = (parentLayout.getHeight() - shapeLayout.getYpos() - offset) / DPI;
+                String posString = "\"" + Float.toString(xpos) + "," + Float.toString(ypos) + "\"";
                 attributes.add(createAttribute(Attributes.POS, posString));
             }
             // set node shape
@@ -255,23 +234,17 @@ public class KGraphDotTransformation {
         }
 
         // create edges
-        Direction layoutDirection =
-                parentLayout.getProperty(LayoutOptions.DIRECTION);
-        boolean vertical =
-                layoutDirection == Direction.DOWN
-                        || layoutDirection == Direction.UP;
+        Direction layoutDirection = parentLayout.getProperty(LayoutOptions.DIRECTION);
+        boolean vertical = layoutDirection == Direction.DOWN || layoutDirection == Direction.UP;
         for (KNode childNode : parent.getChildren()) {
             for (KEdge outgoingEdge : childNode.getOutgoingEdges()) {
                 // consider only edges on the same hierarchy level
-                if (childNode.getParent() == outgoingEdge.getTarget()
-                        .getParent()) {
-                    EdgeStatement edgeStatement =
-                            DotFactory.eINSTANCE.createEdgeStatement();
+                if (childNode.getParent() == outgoingEdge.getTarget().getParent()) {
+                    EdgeStatement edgeStatement = DotFactory.eINSTANCE.createEdgeStatement();
                     Node sourceNode = DotFactory.eINSTANCE.createNode();
                     sourceNode.setName(getNodeID(outgoingEdge.getSource()));
                     edgeStatement.setSourceNode(sourceNode);
-                    EdgeTarget edgeTarget =
-                            DotFactory.eINSTANCE.createEdgeTarget();
+                    EdgeTarget edgeTarget = DotFactory.eINSTANCE.createEdgeTarget();
                     Node targetNode = DotFactory.eINSTANCE.createNode();
                     targetNode.setName(getNodeID(outgoingEdge.getTarget()));
                     edgeTarget.setTargetnode(targetNode);
@@ -284,14 +257,12 @@ public class KGraphDotTransformation {
                     setEdgeLabels(outgoingEdge, attributes, vertical);
                     // add comment with edge identifier
                     String edgeID = getEdgeID(outgoingEdge);
-                    attributes.add(createAttribute(Attributes.COMMENT, "\"" + edgeID
-                            + "\""));
+                    attributes.add(createAttribute(Attributes.COMMENT, "\"" + edgeID + "\""));
                     graphElementMap.put(edgeID, outgoingEdge);
 
                     graph.getStatements().add(edgeStatement);
                 } else {
-                    KEdgeLayout edgeLayout =
-                            outgoingEdge.getData(KEdgeLayout.class);
+                    KEdgeLayout edgeLayout = outgoingEdge.getData(KEdgeLayout.class);
                     edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 }
             }
@@ -313,8 +284,7 @@ public class KGraphDotTransformation {
      */
     private void setGraphAttributes(final Graph graph, final Command command,
             final KGraphData parentLayout) {
-        AttributeStatement graphAttrStatement =
-                DotFactory.eINSTANCE.createAttributeStatement();
+        AttributeStatement graphAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
         graphAttrStatement.setType(AttributeType.GRAPH);
         List<Attribute> graphAttrs = graphAttrStatement.getAttributes();
         // set minimal spacing
@@ -340,8 +310,7 @@ public class KGraphDotTransformation {
         if (command == Command.CIRCO) {
             graphAttrs.add(createAttribute(Attributes.MINDIST, spacingVal));
         } else if (command == Command.NEATO || command == Command.FDP) {
-            AttributeStatement edgeAttrStatement =
-                    DotFactory.eINSTANCE.createAttributeStatement();
+            AttributeStatement edgeAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
             edgeAttrStatement.setType(AttributeType.EDGE);
             List<Attribute> edgeAttrs = edgeAttrStatement.getAttributes();
             edgeAttrs.add(createAttribute(Attributes.EDGELEN, spacingVal));
@@ -374,12 +343,9 @@ public class KGraphDotTransformation {
             graphAttrs.add(createAttribute(Attributes.OVERLAP, "false"));
         }
         // enable or disable drawing of splines
-        EdgeRouting edgeRouting =
-                parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
-        useSplines =
-                (edgeRouting != EdgeRouting.POLYLINE && edgeRouting != EdgeRouting.ORTHOGONAL);
-        graphAttrs.add(createAttribute(Attributes.SPLINES,
-                Boolean.toString(useSplines)));
+        EdgeRouting edgeRouting = parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
+        useSplines = (edgeRouting != EdgeRouting.POLYLINE && edgeRouting != EdgeRouting.ORTHOGONAL);
+        graphAttrs.add(createAttribute(Attributes.SPLINES, Boolean.toString(useSplines)));
         // configure initial placement of nodes
         if (command == Command.NEATO) {
             Integer seed = parentLayout.getProperty(LayoutOptions.RANDOM_SEED);
@@ -404,8 +370,7 @@ public class KGraphDotTransformation {
      *            value of the attribute
      * @return instance of a Dot attribute
      */
-    private static Attribute createAttribute(final String name,
-            final String value) {
+    public static Attribute createAttribute(final String name, final String value) {
         Attribute attribute = DotFactory.eINSTANCE.createAttribute();
         attribute.setName(name);
         attribute.setValue(value);
@@ -425,22 +390,20 @@ public class KGraphDotTransformation {
      * @param isVertical
      *            indicates whether vertical layout direction is active
      */
-    private static void setEdgeLabels(final KEdge kedge,
-            final List<Attribute> attributes, final boolean isVertical) {
+    private static void setEdgeLabels(final KEdge kedge, final List<Attribute> attributes,
+            final boolean isVertical) {
         KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
         // as Graphviz only supports positioning of one label per label
         // placement, all labels
         // are stacked to one big label as workaround
-        StringBuilder midLabel = new StringBuilder(), headLabel =
-                new StringBuilder(), tailLabel = new StringBuilder();
+        StringBuilder midLabel = new StringBuilder(), headLabel = new StringBuilder(), tailLabel = new StringBuilder();
         String fontName = null;
         int fontSize = 0;
         boolean isCenterFontName = false, isCenterFontSize = false;
         for (KLabel label : kedge.getLabels()) {
             StringBuilder buffer = midLabel;
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-            EdgeLabelPlacement placement =
-                    labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+            EdgeLabelPlacement placement = labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
             boolean takeFontName = false, takeFontSize = false;
             switch (placement) {
             case CENTER:
@@ -482,44 +445,36 @@ public class KGraphDotTransformation {
         if (midLabel.length() == 0) {
             midLabel.append(' ');
         } else {
-            float labelSpacing =
-                    edgeLayout.getProperty(LayoutOptions.LABEL_SPACING);
+            float labelSpacing = edgeLayout.getProperty(LayoutOptions.LABEL_SPACING);
             int charsToAdd = (labelSpacing < 1 ? 1 : (int) labelSpacing) - 1;
             for (int i = 0; i < charsToAdd; i++) {
                 midLabel.append(isVertical ? "O" : "\nO");
             }
         }
-        attributes.add(createAttribute(Attributes.LABEL,
-                createString(midLabel.toString())));
+        attributes.add(createAttribute(Attributes.LABEL, createString(midLabel.toString())));
         // set head label
         if (headLabel.length() > 0) {
-            attributes.add(createAttribute(Attributes.HEADLABEL,
-                    createString(headLabel.toString())));
+            attributes.add(createAttribute(Attributes.HEADLABEL, createString(headLabel.toString())));
         }
         // set tail label
         if (tailLabel.length() > 0) {
-            attributes.add(createAttribute(Attributes.TAILLABEL,
-                    createString(tailLabel.toString())));
+            attributes.add(createAttribute(Attributes.TAILLABEL, createString(tailLabel.toString())));
         }
         // set font name
         if (fontName != null && fontName.length() > 0) {
-            attributes.add(createAttribute(Attributes.FONTNAME, "\"" + fontName
-                    + "\""));
+            attributes.add(createAttribute(Attributes.FONTNAME, "\"" + fontName + "\""));
         }
         // set font size
         if (fontSize > 0) {
-            attributes.add(createAttribute(Attributes.FONTSIZE,
-                    Integer.toString(fontSize)));
+            attributes.add(createAttribute(Attributes.FONTSIZE, Integer.toString(fontSize)));
         }
         // set label distance
         float distance = edgeLayout.getProperty(LABEL_DISTANCE);
         if (distance >= 0.0f) {
-            attributes.add(createAttribute(Attributes.LABELDISTANCE,
-                    Float.toString(distance)));
+            attributes.add(createAttribute(Attributes.LABELDISTANCE, Float.toString(distance)));
             if (distance > 1.0f) {
                 float labelAngle = DEF_LABEL_ANGLE / distance;
-                attributes.add(createAttribute(Attributes.LABELANGLE,
-                        Float.toString(labelAngle)));
+                attributes.add(createAttribute(Attributes.LABELANGLE, Float.toString(labelAngle)));
             }
         }
     }
@@ -530,8 +485,8 @@ public class KGraphDotTransformation {
     private static final char MAX_OUT_CHAR = 126;
 
     /**
-     * Creates a properly parsable string by adding the escape character '\\'
-     * wherever needed and replacing illegal characters.
+     * Creates a properly parsable string by adding the escape character '\\' wherever needed and
+     * replacing illegal characters.
      * 
      * @param label
      *            a label string from the KGraph structure
@@ -577,18 +532,20 @@ public class KGraphDotTransformation {
     private String getEdgeID(final KEdge edge) {
         return "edge" + edge.hashCode();
     }
-    
+
     /**
      * Applies layout information from a Graphviz model to the original graph.
      * <p>
-     * GraphViz uses cubic B-Splines, some generalization of Bezier curves. The
-     * B-Splines are converted here to a polyline that is understood by Eclipse.
-     * See Eclipse bugs 234808 and 168307 on addressing Bezier curves in
-     * Eclipse.
+     * GraphViz uses cubic B-Splines, some generalization of Bezier curves. The B-Splines are
+     * converted here to a polyline that is understood by Eclipse. See Eclipse bugs 234808 and
+     * 168307 on addressing Bezier curves in Eclipse.
      * 
-     * @param parentNode parent node of the original graph
-     * @param graphvizModel graphviz model with layout information
-     * @param monitor progress monitor
+     * @param parentNode
+     *            parent node of the original graph
+     * @param graphvizModel
+     *            graphviz model with layout information
+     * @param monitor
+     *            progress monitor
      */
     private void retrieveLayoutResult(final KNode parentNode, final GraphvizModel graphvizModel,
             final IKielerProgressMonitor monitor) {
@@ -628,7 +585,7 @@ public class KGraphDotTransformation {
                 }
                 nodeLayout.setXpos(xpos - width / 2);
                 nodeLayout.setYpos(ypos - height / 2);
-                
+
             } else if (statement instanceof EdgeStatement) {
                 // process an edge
                 EdgeStatement edgeStatement = (EdgeStatement) statement;
@@ -641,11 +598,11 @@ public class KGraphDotTransformation {
                 List<KPoint> edgePoints = edgeLayout.getBendPoints();
                 edgePoints.clear();
                 String posString = attributeMap.get(Attributes.POS);
-                
+
                 // parse the list of spline control coordinates
                 List<List<KVector>> splines = new LinkedList<List<KVector>>();
-                Pair<KPoint, KPoint> endpoints = parseSplinePoints(posString, splines,
-                        edgeOffsetx, edgeOffsety);
+                Pair<KPoint, KPoint> endpoints = parseSplinePoints(posString, splines, edgeOffsetx,
+                        edgeOffsety);
 
                 KPoint sourcePoint = endpoints.getFirst();
                 KPoint targetPoint = endpoints.getSecond();
@@ -693,20 +650,19 @@ public class KGraphDotTransformation {
                 // process the edge labels
                 String labelPos = attributeMap.get(Attributes.LABELPOS);
                 if (labelPos != null) {
-                    applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.CENTER,
-                            edgeOffsetx, edgeOffsety);
+                    applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.CENTER, edgeOffsetx,
+                            edgeOffsety);
                 }
                 labelPos = attributeMap.get(Attributes.HEADLP);
                 if (labelPos != null) {
-                    applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.HEAD,
-                            edgeOffsetx, edgeOffsety);
+                    applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.HEAD, edgeOffsetx,
+                            edgeOffsety);
                 }
                 labelPos = attributeMap.get(Attributes.TAILLP);
                 if (labelPos != null) {
-                    applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.TAIL,
-                            offset, offset);
+                    applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.TAIL, offset, offset);
                 }
-                
+
             } else if (statement instanceof AttributeStatement) {
                 // process an attribute
                 AttributeStatement attributeStatement = (AttributeStatement) statement;
@@ -722,7 +678,7 @@ public class KGraphDotTransformation {
                                 float topy = Float.parseFloat(tokenizer.nextToken());
                                 boundingBox = new KVector(rightx - leftx, bottomy - topy);
                                 // on some platforms the edges have an offset, but the nodes don't
-                                //  -- maybe a Graphviz bug?
+                                // -- maybe a Graphviz bug?
                                 edgeOffsetx -= leftx;
                                 edgeOffsety -= topy;
                             } catch (NumberFormatException exception) {
@@ -738,24 +694,27 @@ public class KGraphDotTransformation {
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         if (boundingBox != null) {
             KInsets insets = parentLayout.getInsets();
-            float width = (float) boundingBox.x + insets.getLeft()
-                    + insets.getRight() + 2 * offset;
-            float height = (float) boundingBox.y + insets.getTop()
-                    + insets.getBottom() + 2 * offset;
+            float width = (float) boundingBox.x + insets.getLeft() + insets.getRight() + 2 * offset;
+            float height = (float) boundingBox.y + insets.getTop() + insets.getBottom() + 2 * offset;
             KimlUtil.resizeNode(parentNode, width, height, false);
             parentLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
         }
         monitor.done();
     }
-    
+
     /**
      * Applies the edge label positions for the given edge.
      * 
-     * @param kedge edge for which labels are processed
-     * @param posString string with label position
-     * @param placement label placement to choose
-     * @param offsetx x offset added to positions
-     * @param offsety y offset added to positions
+     * @param kedge
+     *            edge for which labels are processed
+     * @param posString
+     *            string with label position
+     * @param placement
+     *            label placement to choose
+     * @param offsetx
+     *            x offset added to positions
+     * @param offsety
+     *            y offset added to positions
      */
     private void applyEdgeLabelPos(final KEdge kedge, final String posString,
             final EdgeLabelPlacement placement, final float offsetx, final float offsety) {
@@ -783,10 +742,10 @@ public class KGraphDotTransformation {
     }
 
     /**
-     * Converts a list of attributes to a map of attribute names to their
-     * values.
+     * Converts a list of attributes to a map of attribute names to their values.
      * 
-     * @param attributes attribute list
+     * @param attributes
+     *            attribute list
      * @return a hash map that contains all given attributes
      */
     private static Map<String, String> createAttributeMap(final List<Attribute> attributes) {
@@ -796,14 +755,18 @@ public class KGraphDotTransformation {
         }
         return attributeMap;
     }
-    
+
     /**
      * Puts the points of a position string into a list of splines.
      * 
-     * @param posString string with spline points
-     * @param splines list of splines
-     * @param offsetx offset in x coordinate
-     * @param offsety offset in y coordinate
+     * @param posString
+     *            string with spline points
+     * @param splines
+     *            list of splines
+     * @param offsetx
+     *            offset in x coordinate
+     * @param offsety
+     *            offset in y coordinate
      * @return the source and the target point, if specified by the position string
      */
     private static Pair<KPoint, KPoint> parseSplinePoints(final String posString,
@@ -840,17 +803,18 @@ public class KGraphDotTransformation {
         }
         return new Pair<KPoint, KPoint>(sourcePoint, targetPoint);
     }
-    
+
     /** default number of characters in new string builders. */
     private static final int DEF_BUILDER_SIZE = 8;
-    
+
     /**
      * Parses a point from a Graphviz string.
      * 
-     * @param string string from which the point is parsed
+     * @param string
+     *            string from which the point is parsed
      * @return a point with x and y coordinates
      */
-    private static KVector parsePoint(final String string) {
+    public static KVector parsePoint(final String string) {
         double x = 0.0f, y = 0.0f;
         StringBuilder xbuilder = null, ybuilder = null;
         boolean commaRead = false;

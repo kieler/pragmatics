@@ -40,7 +40,6 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.kwebs.formats.Formats;
 import de.cau.cs.kieler.kwebs.transformation.AbstractEmfTransformer;
 import de.cau.cs.kieler.kwebs.transformation.TransformationData;
 
@@ -57,15 +56,6 @@ public class GraphMLTransformer extends AbstractEmfTransformer<DocumentRoot> {
     /** map of GraphML port identifiers to KPorts. */
     private static final IProperty<Map<Pair<KNode, String>, KPort>> PORT_ID_MAP
             = new Property<Map<Pair<KNode, String>, KPort>>("portIdMap");
-
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getSupportedFormat() {
-        return Formats.FORMAT_GRAPHML;
-    }
-
     /**
      * {@inheritDoc}
      */

@@ -107,7 +107,8 @@ public abstract class AbstractService {
         // Get the graph instances of which the layout is to be calculated
         T graph = transformer.deserialize(serializedGraph);
         // Derive the layout structures of the graph instances
-        TransformationData<T> transData = new TransformationData<T>(graph);
+        TransformationData<T> transData = new TransformationData<T>();
+        transData.setSourceGraph(graph);
         transformer.deriveLayout(transData);
         // Parse the transmitted layout options and annotate the layout structure
         if (options != null) {
@@ -122,7 +123,7 @@ public abstract class AbstractService {
         // Apply the calculated layout back to the graph instance
         transformer.applyLayout(transData);
         // Create and return the resulting graph in serialized form
-        String serializedResult = transformer.serialize(graph);
+        String serializedResult = transformer.serialize(transData.getSourceGraph());
         return serializedResult;
     }
     

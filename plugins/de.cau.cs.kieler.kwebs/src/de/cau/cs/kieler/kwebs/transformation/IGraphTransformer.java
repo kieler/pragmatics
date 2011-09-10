@@ -68,13 +68,5 @@ public interface IGraphTransformer<T> {
      *            the transformation data instance
      */
     void applyLayout(TransformationData<T> data);
-    
-    /**
-     * Return the format supported by this transformer. Formats are defined
-     * in {@link Formats}
-     *
-     * @return the supported format
-     */
-    String getSupportedFormat();
 
 }
