@@ -57,13 +57,13 @@ public class VisualizeSelectedModelElementCombination extends AbstractCombinatio
             visibilityExpression = new TestModelElementExpression(Class.forName(rbClassId));
 
             KiviMenuContributionService.INSTANCE.addToolbarButton(this, rbButtonId,
-                    "Paint Ruleblock", "Test", null, SWT.PUSH, LocationScheme.POPUP,
+                    "Draw Ruleblock", "Test", null, SWT.PUSH, LocationScheme.POPUP,
                     visibilityExpression, "de.menges.logic.Logic");
 
             visibilityExpression = new TestModelElementExpression(Class.forName(smClassId));
 
             KiviMenuContributionService.INSTANCE.addToolbarButton(this, smButtonId,
-                    "Paint StateMachine", "Test", null, SWT.PUSH, LocationScheme.POPUP,
+                    "Draw StateMachine", "Test", null, SWT.PUSH, LocationScheme.POPUP,
                     visibilityExpression, "de.menges.logic.Logic");
 
         } catch (ClassNotFoundException e) {
