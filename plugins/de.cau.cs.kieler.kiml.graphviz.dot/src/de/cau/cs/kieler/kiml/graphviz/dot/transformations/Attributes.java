@@ -30,6 +30,8 @@ public final class Attributes {
     public static final String BOUNDINGBOX = "bb";
     /** Comment. */
     public static final String COMMENT = "comment";
+    /** If true, allow edges between clusters. */
+    public static final String COMPOUND = "compound";
     /** Set edge type for drawing arrowheads. */
     public static final String EDGEDIR = "dir";
     /** Preferred edge length, in inches (fdp, neato only). */
@@ -63,6 +65,10 @@ public final class Attributes {
     public static final String LABELDISTANCE = "labeldistance";
     /** Label position, in points. */
     public static final String LABELPOS = "lp";
+    /** Logical head of an edge. */
+    public static final String LHEAD = "lhead";
+    /** Logical tail of an edge. */
+    public static final String LTAIL = "ltail";
     /** Determines if and how node overlaps should be removed (not dot). */
     public static final String OVERLAP = "overlap";
     /** Position of node, or spline control points. */
@@ -88,6 +94,8 @@ public final class Attributes {
      * only).
      */
     public static final String START = "start";
+    /** Set style for node or edge. */
+    public static final String STYLE = "style";
     /** Text label to be placed near tail of edge. */
     public static final String TAILLABEL = "taillabel";
     /** Tail label position, in points. */

@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.LinkedList;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
@@ -38,6 +39,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.ForkedOutputStream;
 import de.cau.cs.kieler.core.util.ForwardingInputStream;
 import de.cau.cs.kieler.core.util.NonBlockingInputStream;
+import de.cau.cs.kieler.core.util.Pair;
 
 /**
  * Layouter that calls Graphviz through a child process to perform layout. The graph structure and
@@ -226,7 +228,7 @@ public class GraphvizLayouter {
         XtextResource resource = (XtextResource) resourceSet.createResource(URI
                 .createURI("process.graphviz_dot"));
         try {
-            resource.load(inputStream, null);
+            resource.load(getFilteredStream(inputStream), null);
             EcoreUtil.resolveAll(resource);
         } catch (IOException exception) {
             graphvizTool.endProcess();
@@ -261,4 +263,86 @@ public class GraphvizLayouter {
         monitor.done();
         return graphvizModel;
     }
+    
+    /** buffer size used for the filtered input stream. */
+    private static final int BUFFER_SIZE = 256;
+    
+    /**
+     * Read the whole input stream into a buffer and filter all line breaks from it.
+     * 
+     * @param inputStream an input stream
+     * @return a new input stream that reads from a filtered buffer
+     * @throws IOException if any read operation fails
+     */
+    private InputStream getFilteredStream(final InputStream inputStream) throws IOException {
+        final LinkedList<Pair<byte[], Integer>> buffer = new LinkedList<Pair<byte[], Integer>>();
+        while (inputStream.available() > 0) {
+            byte[] bs = new byte[BUFFER_SIZE];
+            int n = inputStream.read(bs);
+            buffer.add(new Pair<byte[], Integer>(bs, n));
+        }
+        return new InputStream() {
+            private int p = 0;
+
+            /**
+             * Read the next character from the buffer.
+             * 
+             * @return the next character
+             */
+            private int internalRead() {
+                if (buffer.isEmpty()) {
+                    return -1;
+                }
+                return buffer.getFirst().getFirst()[p];
+            }
+            
+            /**
+             * Advance by one character in the buffer.
+             */
+            private void internalAdvance() {
+                p++;
+                if (p >= buffer.getFirst().getSecond()) {
+                    buffer.removeFirst();
+                    p = 0;
+                }
+            }
+            
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public int read() throws IOException {
+                int c = internalRead();
+                if (c >= 0) {
+                    internalAdvance();
+                    if (c == '\\') {
+                        int c2 = internalRead();
+                        if (c2 == '\n' || c2 == '\r') {
+                            internalAdvance();
+                            if (c2 == '\r') {
+                                int c3 = internalRead();
+                                if (c3 == '\n') {
+                                    internalAdvance();
+                                }
+                            }
+                            c = internalRead();
+                        }
+                    }
+                }
+                return c;
+            }
+            
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public int available() {
+                if (buffer.isEmpty()) {
+                    return 0;
+                }
+                return buffer.getFirst().getSecond() - p;
+            }
+        };
+    }
+    
 }

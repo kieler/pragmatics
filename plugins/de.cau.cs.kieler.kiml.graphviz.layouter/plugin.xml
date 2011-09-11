@@ -70,6 +70,9 @@
          <knownOption
                option="de.cau.cs.kieler.debugMode">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layoutHierarchy">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -163,6 +166,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.debugMode">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layoutHierarchy">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm

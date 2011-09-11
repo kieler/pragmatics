@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.graphviz.dot.transformations;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +31,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
@@ -48,6 +48,7 @@ import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.Node;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.Statement;
+import de.cau.cs.kieler.kiml.graphviz.dot.dot.Subgraph;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
@@ -128,8 +129,6 @@ public class KGraphDotTransformation {
 
     /** maps each identifier of a graph element to the instance of the element. */
     private HashMap<String, KGraphElement> graphElementMap = new HashMap<String, KGraphElement>();
-    /** offset value to be added to all coordinates. */
-    private float offset;
     /** indicates whether splines are used. */
     private boolean useSplines;
 
@@ -156,7 +155,17 @@ public class KGraphDotTransformation {
      * @return the Dot instance
      */
     public GraphvizModel transform(final Command command, final IKielerProgressMonitor monitor) {
-        return createDotGraph(kgraph, command, monitor);
+        monitor.begin("Create Dot model", 1);
+        GraphvizModel graphvizModel = DotFactory.eINSTANCE.createGraphvizModel();
+        Graph graph = DotFactory.eINSTANCE.createGraph();
+        graph.setType(GraphType.DIGRAPH);
+        graphvizModel.getGraphs().add(graph);
+        boolean layoutHierarchy = kgraph.getData(KShapeLayout.class)
+                .getProperty(LayoutOptions.LAYOUT_HIERARCHY)
+                && (command == Command.DOT || command == Command.FDP);
+        transform(kgraph, graph.getStatements(), command, layoutHierarchy, new KVector());
+        monitor.done();
+        return graphvizModel;
     }
 
     /**
@@ -170,119 +179,181 @@ public class KGraphDotTransformation {
      *            the progress monitor
      */
     public void applyLayout(final GraphvizModel model, final IKielerProgressMonitor monitor) {
-        retrieveLayoutResult(kgraph, model, monitor);
+        monitor.begin("Transfer layout result", 1);
+        float borderSpacing = kgraph.getData(KShapeLayout.class)
+                .getProperty(LayoutOptions.BORDER_SPACING);
+        if (borderSpacing < 0) {
+            borderSpacing = DEF_SPACING_SMALL / 2;
+        }
+        Graph graph = model.getGraphs().get(0);
+        
+        // process nodes and subgraphs
+        KVector baseOffset = new KVector(borderSpacing, borderSpacing);
+        KVector edgeOffset = applyLayout(kgraph, graph.getStatements(), baseOffset);
+        
+        // finally process the edges
+        LinkedList<Statement> statements = new LinkedList<Statement>(graph.getStatements());
+        while (!statements.isEmpty()) {
+            Statement statement = statements.removeFirst();
+            if (statement instanceof EdgeStatement) {
+                applyEdgeLayout((EdgeStatement) statement, baseOffset, edgeOffset);
+            } else if (statement instanceof Subgraph) {
+                statements.addAll(((Subgraph) statement).getStatements());
+            }
+        }
+
+        monitor.done();
     }
 
     /**
-     * Maps a {@code KNode} to the internal Graphviz data structure used by the Dot parser.
+     * Transform the content of the given parent node.
      * 
-     * @param parent
-     *            a {@code KNode} with the graph to layout
-     * @param command
-     *            the command string identifying the layout method
-     * @param monitor
-     *            progress monitor
-     * @return an instance of a graphviz model that corresponds to the input graph
+     * @param parent a parent node
+     * @param statements the list to which new statements are added
+     * @param command the processed Graphviz command
+     * @param hierarchy whether hierarchy mode is active
+     * @param offset offset of the parent node in the whole graph
      */
-    private GraphvizModel createDotGraph(final KNode parent, final Command command,
-            final IKielerProgressMonitor monitor) {
-        monitor.begin("Create Dot model", 1);
-        GraphvizModel graphvizModel = DotFactory.eINSTANCE.createGraphvizModel();
-        Graph graph = DotFactory.eINSTANCE.createGraph();
-        graph.setType(GraphType.DIGRAPH);
-        graphvizModel.getGraphs().add(graph);
-
+    private void transform(final KNode parent, final List<Statement> statements,
+            final Command command, final boolean hierarchy, final KVector offset) {
         // set attributes for the whole graph
         KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
-        setGraphAttributes(graph, command, parentLayout);
+        setGraphAttributes(statements, command, parentLayout);
 
         // get interactive layout option
         boolean interactive = parentLayout.getProperty(LayoutOptions.INTERACTIVE);
 
-        // create nodes
+        // create nodes and subgraphs
         for (KNode childNode : parent.getChildren()) {
+            KShapeLayout nodeLayout = childNode.getData(KShapeLayout.class);
             NodeStatement nodeStatement = DotFactory.eINSTANCE.createNodeStatement();
+            List<Attribute> attributes = nodeStatement.getAttributes();
+            String nodeID;
+            // if hierarchy mode is active, create a subgraph, else a regular node
+            if (hierarchy && !childNode.getChildren().isEmpty()) {
+                String clusterNodeID = getNodeID(childNode, NodeType.CLUSTER);
+                graphElementMap.put(clusterNodeID, childNode);
+                Subgraph subgraph = DotFactory.eINSTANCE.createSubgraph();
+                subgraph.setName(clusterNodeID);
+                statements.add(subgraph);
+                // transform child nodes recursively
+                double subgraphx = nodeLayout.getXpos() + nodeLayout.getInsets().getLeft();
+                double subgraphy = nodeLayout.getYpos() + nodeLayout.getInsets().getTop();
+                transform(childNode, subgraph.getStatements(), command, true,
+                        new KVector(offset).translate(subgraphx, subgraphy));
+                // create a dummy node for compound edges
+                nodeID = getNodeID(childNode, NodeType.DUMMY);
+                attributes.add(createAttribute(Attributes.STYLE, "invis"));
+                attributes.add(createAttribute(Attributes.WIDTH, "0"));
+                attributes.add(createAttribute(Attributes.HEIGHT, "0"));
+            } else {
+                nodeID = getNodeID(childNode, NodeType.NODE);
+                graphElementMap.put(nodeID, childNode);
+                // set width and height
+                if (!nodeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
+                    KimlUtil.resizeNode(childNode);
+                }
+                String width = Float.toString(nodeLayout.getWidth() / DPI);
+                String height = Float.toString(nodeLayout.getHeight() / DPI);
+                attributes.add(createAttribute(Attributes.WIDTH, width));
+                attributes.add(createAttribute(Attributes.HEIGHT, height));
+                // add node position if interactive layout is chosen
+                if (interactive) {
+                    double xpos = (nodeLayout.getXpos() - offset.x) / DPI;
+                    double ypos = (parentLayout.getHeight() - nodeLayout.getYpos() - offset.y) / DPI;
+                    String posString = "\"" + Double.toString(xpos)
+                            + "," + Double.toString(ypos) + "\"";
+                    attributes.add(createAttribute(Attributes.POS, posString));
+                }
+                // set node shape
+                attributes.add(createAttribute(Attributes.SHAPE, "box"));
+            }
+            attributes.add(createAttribute(Attributes.FIXEDSIZE, "true"));
             Node node = DotFactory.eINSTANCE.createNode();
-            String nodeID = getNodeID(childNode);
-            graphElementMap.put(nodeID, childNode);
             node.setName(nodeID);
             nodeStatement.setNode(node);
-
-            List<Attribute> attributes = nodeStatement.getAttributes();
-            KShapeLayout shapeLayout = childNode.getData(KShapeLayout.class);
-            // set width and height
-            if (!shapeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
-                KimlUtil.resizeNode(childNode);
-            }
-            String width = Float.toString(shapeLayout.getWidth() / DPI);
-            String height = Float.toString(shapeLayout.getHeight() / DPI);
-            attributes.add(createAttribute(Attributes.WIDTH, width));
-            attributes.add(createAttribute(Attributes.HEIGHT, height));
-            attributes.add(createAttribute(Attributes.FIXEDSIZE, "true"));
-            // add node position if interactive layout is chosen
-            if (interactive) {
-                float xpos = (shapeLayout.getXpos() - offset) / DPI;
-                float ypos = (parentLayout.getHeight() - shapeLayout.getYpos() - offset) / DPI;
-                String posString = "\"" + Float.toString(xpos) + "," + Float.toString(ypos) + "\"";
-                attributes.add(createAttribute(Attributes.POS, posString));
-            }
-            // set node shape
-            // TODO customize the node shape
-            attributes.add(createAttribute(Attributes.SHAPE, "box"));
-
-            graph.getStatements().add(nodeStatement);
+            statements.add(nodeStatement);
         }
 
         // create edges
         Direction layoutDirection = parentLayout.getProperty(LayoutOptions.DIRECTION);
         boolean vertical = layoutDirection == Direction.DOWN || layoutDirection == Direction.UP;
-        for (KNode childNode : parent.getChildren()) {
-            for (KEdge outgoingEdge : childNode.getOutgoingEdges()) {
-                // consider only edges on the same hierarchy level
-                if (childNode.getParent() == outgoingEdge.getTarget().getParent()) {
+        for (KNode source : parent.getChildren()) {
+            for (KEdge edge : source.getOutgoingEdges()) {
+                KNode target = edge.getTarget();
+                // cross-hierarchy edges are considered only if hierarchy mode is active
+                if (source.getParent() == target.getParent()
+                        || hierarchy && isInsideGraph(target)) {
                     EdgeStatement edgeStatement = DotFactory.eINSTANCE.createEdgeStatement();
+                    List<Attribute> attributes = edgeStatement.getAttributes();
+                    // set source node or cluster
                     Node sourceNode = DotFactory.eINSTANCE.createNode();
-                    sourceNode.setName(getNodeID(outgoingEdge.getSource()));
+                    if (hierarchy && !source.getChildren().isEmpty()) {
+                        sourceNode.setName(getNodeID(source, NodeType.DUMMY));
+                        attributes.add(createAttribute(Attributes.LTAIL,
+                                getNodeID(source, NodeType.CLUSTER)));
+                    } else {
+                        sourceNode.setName(getNodeID(source, NodeType.NODE));
+                    }
                     edgeStatement.setSourceNode(sourceNode);
+                    // set target node or cluster
                     EdgeTarget edgeTarget = DotFactory.eINSTANCE.createEdgeTarget();
                     Node targetNode = DotFactory.eINSTANCE.createNode();
-                    targetNode.setName(getNodeID(outgoingEdge.getTarget()));
+                    if (hierarchy && !target.getChildren().isEmpty()) {
+                        targetNode.setName(getNodeID(target, NodeType.DUMMY));
+                        attributes.add(createAttribute(Attributes.LHEAD, getNodeID(target,
+                                NodeType.CLUSTER)));
+                    } else {
+                        targetNode.setName(getNodeID(target, NodeType.NODE));
+                    }
                     edgeTarget.setTargetnode(targetNode);
                     edgeStatement.getEdgeTargets().add(edgeTarget);
 
-                    List<Attribute> attributes = edgeStatement.getAttributes();
                     // disable drawing arrows for the edges
                     attributes.add(createAttribute(Attributes.EDGEDIR, "none"));
                     // add edge labels at head, tail, and middle position
-                    setEdgeLabels(outgoingEdge, attributes, vertical);
+                    setEdgeLabels(edge, attributes, vertical);
                     // add comment with edge identifier
-                    String edgeID = getEdgeID(outgoingEdge);
+                    String edgeID = getEdgeID(edge);
                     attributes.add(createAttribute(Attributes.COMMENT, "\"" + edgeID + "\""));
-                    graphElementMap.put(edgeID, outgoingEdge);
-
-                    graph.getStatements().add(edgeStatement);
+                    graphElementMap.put(edgeID, edge);
+                    statements.add(edgeStatement);
                 } else {
-                    KEdgeLayout edgeLayout = outgoingEdge.getData(KEdgeLayout.class);
+                    KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
                     edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 }
             }
         }
-
-        monitor.done();
-        return graphvizModel;
+    }
+    
+    /**
+     * Determines whether the given node is contained in the currently processed layout graph.
+     * 
+     * @param node a node
+     * @return true if the node is in the layout graph
+     */
+    private boolean isInsideGraph(final KNode node) {
+        KNode n = node;
+        do {
+            if (n == kgraph) {
+                return true;
+            }
+            n = n.getParent();
+        } while (n != null);
+        return false;
     }
 
     /**
      * Sets attributes for the whole graph.
      * 
-     * @param graph
-     *            a graph for serialization to Graphviz
+     * @param statements
+     *            the statement list for adding attributes
      * @param command
      *            a layouter command
      * @param parentLayout
      *            the layout data for the parent node
      */
-    private void setGraphAttributes(final Graph graph, final Command command,
+    private void setGraphAttributes(final List<Statement> statements, final Command command,
             final KGraphData parentLayout) {
         AttributeStatement graphAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
         graphAttrStatement.setType(AttributeType.GRAPH);
@@ -314,12 +385,7 @@ public class KGraphDotTransformation {
             edgeAttrStatement.setType(AttributeType.EDGE);
             List<Attribute> edgeAttrs = edgeAttrStatement.getAttributes();
             edgeAttrs.add(createAttribute(Attributes.EDGELEN, spacingVal));
-            graph.getStatements().add(edgeAttrStatement);
-        }
-        // set offset to border
-        offset = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
-        if (offset < 0) {
-            offset = DEF_SPACING_SMALL / 2;
+            statements.add(edgeAttrStatement);
         }
         // set layout direction
         if (command == Command.DOT) {
@@ -358,7 +424,11 @@ public class KGraphDotTransformation {
             }
             graphAttrs.add(createAttribute(Attributes.START, "random" + seed));
         }
-        graph.getStatements().add(graphAttrStatement);
+        // enable compound mode
+        if (parentLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY) && command == Command.DOT) {
+            graphAttrs.add(createAttribute(Attributes.COMPOUND, Boolean.TRUE.toString()));
+        }
+        statements.add(graphAttrStatement);
     }
 
     /**
@@ -393,10 +463,10 @@ public class KGraphDotTransformation {
     private static void setEdgeLabels(final KEdge kedge, final List<Attribute> attributes,
             final boolean isVertical) {
         KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-        // as Graphviz only supports positioning of one label per label
-        // placement, all labels
+        // as Graphviz only supports positioning of one label per label placement, all labels
         // are stacked to one big label as workaround
-        StringBuilder midLabel = new StringBuilder(), headLabel = new StringBuilder(), tailLabel = new StringBuilder();
+        StringBuilder midLabel = new StringBuilder(), headLabel = new StringBuilder(),
+                tailLabel = new StringBuilder();
         String fontName = null;
         int fontSize = 0;
         boolean isCenterFontName = false, isCenterFontSize = false;
@@ -485,7 +555,7 @@ public class KGraphDotTransformation {
     private static final char MAX_OUT_CHAR = 126;
 
     /**
-     * Creates a properly parsable string by adding the escape character '\\' wherever needed and
+     * Creates a properly parseable string by adding the escape character '\\' wherever needed and
      * replacing illegal characters.
      * 
      * @param label
@@ -511,15 +581,30 @@ public class KGraphDotTransformation {
         return escapeBuffer.toString();
     }
 
+    /** node types used for identifier generation. */
+    private enum NodeType {
+        NODE, CLUSTER, DUMMY;
+    }
+    
     /**
      * Creates a unique identifier for the given node.
      * 
      * @param node
      *            node for which an identifier shall be created
+     * @param cluster
+     *            whether a cluster id should be created
      * @return a unique string used to identify the node
      */
-    private String getNodeID(final KNode node) {
-        return "node" + node.hashCode();
+    private String getNodeID(final KNode node, final NodeType type) {
+        switch (type) {
+        case NODE:
+            return "node" + node.hashCode();
+        case CLUSTER:
+            return "cluster" + node.hashCode();
+        case DUMMY:
+            return "dummy" + node.hashCode();
+        }
+        return null;
     }
 
     /**
@@ -535,136 +620,24 @@ public class KGraphDotTransformation {
 
     /**
      * Applies layout information from a Graphviz model to the original graph.
-     * <p>
-     * GraphViz uses cubic B-Splines, some generalization of Bezier curves. The B-Splines are
-     * converted here to a polyline that is understood by Eclipse. See Eclipse bugs 234808 and
-     * 168307 on addressing Bezier curves in Eclipse.
+     * Note that GraphViz uses cubic B-Splines for edge routing, some generalization of Bezier curves.
+     * Edge offsets are given separately, since on some platforms edges seem to have a different
+     * reference point than nodes.
      * 
      * @param parentNode
      *            parent node of the original graph
-     * @param graphvizModel
-     *            graphviz model with layout information
-     * @param monitor
-     *            progress monitor
+     * @param statements
+     *            list of statements to process
+     * @param nodeOffset
+     *            offset to be added to node coordinates
+     * @return offset to be added to edge coordinates (besides transforming them to their source)
      */
-    private void retrieveLayoutResult(final KNode parentNode, final GraphvizModel graphvizModel,
-            final IKielerProgressMonitor monitor) {
-        monitor.begin("Transfer layout result", 1);
-        Graph graph = graphvizModel.getGraphs().get(0);
-        KVector boundingBox = null;
-        float edgeOffsetx = offset, edgeOffsety = offset;
-        for (Statement statement : graph.getStatements()) {
-
-            if (statement instanceof NodeStatement) {
-                // process a node
-                NodeStatement nodeStatement = (NodeStatement) statement;
-                KNode knode = (KNode) graphElementMap.get(nodeStatement.getNode().getName());
-                if (knode == null) {
-                    continue;
-                }
-                KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-                float xpos = 0.0f, ypos = 0.0f, width = 0.0f, height = 0.0f;
-                for (Attribute attribute : nodeStatement.getAttributes()) {
-                    try {
-                        if (attribute.getName().equals(Attributes.POS)) {
-                            KVector pos = parsePoint(attribute.getValue());
-                            xpos = (float) pos.x + offset;
-                            ypos = (float) pos.y + offset;
-                        } else if (attribute.getName().equals(Attributes.WIDTH)) {
-                            StringTokenizer tokenizer = new StringTokenizer(attribute.getValue(),
-                                    ATTRIBUTE_DELIM);
-                            width = Float.parseFloat(tokenizer.nextToken()) * DPI;
-                        } else if (attribute.getName().equals(Attributes.HEIGHT)) {
-                            StringTokenizer tokenizer = new StringTokenizer(attribute.getValue(),
-                                    ATTRIBUTE_DELIM);
-                            height = Float.parseFloat(tokenizer.nextToken()) * DPI;
-                        }
-                    } catch (NumberFormatException exception) {
-                        // ignore exception
-                    }
-                }
-                nodeLayout.setXpos(xpos - width / 2);
-                nodeLayout.setYpos(ypos - height / 2);
-
-            } else if (statement instanceof EdgeStatement) {
-                // process an edge
-                EdgeStatement edgeStatement = (EdgeStatement) statement;
-                Map<String, String> attributeMap = createAttributeMap(edgeStatement.getAttributes());
-                KEdge kedge = (KEdge) graphElementMap.get(attributeMap.get(Attributes.COMMENT));
-                if (kedge == null) {
-                    continue;
-                }
-                KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-                List<KPoint> edgePoints = edgeLayout.getBendPoints();
-                edgePoints.clear();
-                String posString = attributeMap.get(Attributes.POS);
-
-                // parse the list of spline control coordinates
-                List<List<KVector>> splines = new LinkedList<List<KVector>>();
-                Pair<KPoint, KPoint> endpoints = parseSplinePoints(posString, splines, edgeOffsetx,
-                        edgeOffsety);
-
-                KPoint sourcePoint = endpoints.getFirst();
-                KPoint targetPoint = endpoints.getSecond();
-                if (!splines.isEmpty()) {
-                    KLayoutDataFactory layoutDataFactory = KLayoutDataFactory.eINSTANCE;
-                    // the first point in the list is the start point, if no arrowhead is given
-                    if (sourcePoint == null) {
-                        sourcePoint = layoutDataFactory.createKPoint();
-                        List<KVector> points = splines.get(0);
-                        if (!points.isEmpty()) {
-                            sourcePoint.applyVector(points.remove(0));
-                        } else {
-                            KShapeLayout sourceLayout = kedge.getSource().getData(KShapeLayout.class);
-                            sourcePoint.setX(sourceLayout.getXpos() + sourceLayout.getWidth() / 2);
-                            sourcePoint.setY(sourceLayout.getYpos() + sourceLayout.getHeight() / 2);
-                        }
-                    }
-                    // the last point in the list is the end point, if no arrowhead is given
-                    if (targetPoint == null) {
-                        targetPoint = layoutDataFactory.createKPoint();
-                        List<KVector> points = splines.get(splines.size() - 1);
-                        if (!points.isEmpty()) {
-                            targetPoint.applyVector(points.remove(points.size() - 1));
-                        } else {
-                            KShapeLayout targetLayout = kedge.getTarget().getData(KShapeLayout.class);
-                            targetPoint.setX(targetLayout.getXpos() + targetLayout.getWidth() / 2);
-                            targetPoint.setY(targetLayout.getYpos() + targetLayout.getHeight() / 2);
-                        }
-                    }
-                    // add all other control points to the edge
-                    for (List<KVector> points : splines) {
-                        for (KVector point : points) {
-                            KPoint controlPoint = layoutDataFactory.createKPoint();
-                            controlPoint.applyVector(point);
-                            edgePoints.add(controlPoint);
-                        }
-                    }
-                }
-                edgeLayout.setSourcePoint(sourcePoint);
-                edgeLayout.setTargetPoint(targetPoint);
-                if (useSplines) {
-                    edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
-                }
-
-                // process the edge labels
-                String labelPos = attributeMap.get(Attributes.LABELPOS);
-                if (labelPos != null) {
-                    applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.CENTER, edgeOffsetx,
-                            edgeOffsety);
-                }
-                labelPos = attributeMap.get(Attributes.HEADLP);
-                if (labelPos != null) {
-                    applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.HEAD, edgeOffsetx,
-                            edgeOffsety);
-                }
-                labelPos = attributeMap.get(Attributes.TAILLP);
-                if (labelPos != null) {
-                    applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.TAIL, offset, offset);
-                }
-
-            } else if (statement instanceof AttributeStatement) {
-                // process an attribute
+    private KVector applyLayout(final KNode parentNode, final List<Statement> statements,
+            final KVector nodeOffset) {
+        KVector edgeOffset = null;
+        // process attributes: determine bounding box of the parent node
+        attr_loop: for (Statement statement : statements) {
+            if (statement instanceof AttributeStatement) {
                 AttributeStatement attributeStatement = (AttributeStatement) statement;
                 if (attributeStatement.getType() == AttributeType.GRAPH) {
                     for (Attribute attribute : attributeStatement.getAttributes()) {
@@ -672,15 +645,38 @@ public class KGraphDotTransformation {
                             try {
                                 StringTokenizer tokenizer = new StringTokenizer(attribute.getValue(),
                                         ATTRIBUTE_DELIM);
-                                float leftx = Float.parseFloat(tokenizer.nextToken());
-                                float bottomy = Float.parseFloat(tokenizer.nextToken());
-                                float rightx = Float.parseFloat(tokenizer.nextToken());
-                                float topy = Float.parseFloat(tokenizer.nextToken());
-                                boundingBox = new KVector(rightx - leftx, bottomy - topy);
-                                // on some platforms the edges have an offset, but the nodes don't
-                                // -- maybe a Graphviz bug?
-                                edgeOffsetx -= leftx;
-                                edgeOffsety -= topy;
+                                double leftx = Double.parseDouble(tokenizer.nextToken());
+                                double bottomy = Double.parseDouble(tokenizer.nextToken());
+                                double rightx = Double.parseDouble(tokenizer.nextToken());
+                                double topy = Double.parseDouble(tokenizer.nextToken());
+                                // set parent node attributes
+                                KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
+                                KInsets insets = parentLayout.getInsets();
+                                float width = (float) (rightx - leftx) + insets.getLeft()
+                                        + insets.getRight();
+                                float height = (float) (bottomy - topy) + insets.getTop()
+                                        + insets.getBottom();
+                                if (parentNode == kgraph) {
+                                    float borderSpacing = parentNode.getData(KShapeLayout.class)
+                                            .getProperty(LayoutOptions.BORDER_SPACING);
+                                    if (borderSpacing < 0) {
+                                        borderSpacing = DEF_SPACING_SMALL / 2;
+                                    }
+                                    width += 2 * borderSpacing;
+                                    height += 2 * borderSpacing;
+                                    // on some platforms the edges have an offset, but the nodes don't
+                                    // -- maybe a Graphviz bug?
+                                    edgeOffset = new KVector(nodeOffset).translate(-leftx, -topy);
+                                } else {
+                                    parentLayout.setXpos((float) (leftx - insets.getLeft()
+                                            + nodeOffset.x));
+                                    parentLayout.setYpos((float) (topy - insets.getTop()
+                                            + nodeOffset.y));
+                                    nodeOffset.translate(-leftx, -topy);
+                                }
+                                KimlUtil.resizeNode(parentNode, width, height, false);
+                                parentLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
+                                break attr_loop;
                             } catch (NumberFormatException exception) {
                                 // ignore exception
                             }
@@ -689,17 +685,145 @@ public class KGraphDotTransformation {
                 }
             }
         }
-
-        // set parent node attributes
-        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-        if (boundingBox != null) {
-            KInsets insets = parentLayout.getInsets();
-            float width = (float) boundingBox.x + insets.getLeft() + insets.getRight() + 2 * offset;
-            float height = (float) boundingBox.y + insets.getTop() + insets.getBottom() + 2 * offset;
-            KimlUtil.resizeNode(parentNode, width, height, false);
-            parentLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
+        
+        // process nodes and subgraphs to collect all offset data
+        for (Statement statement : statements) {
+            if (statement instanceof NodeStatement) {
+                applyNodeLayout((NodeStatement) statement, nodeOffset);
+            } else if (statement instanceof Subgraph) {
+                Subgraph subgraph = (Subgraph) statement;
+                KNode knode = (KNode) graphElementMap.get(subgraph.getName());
+                applyLayout(knode, subgraph.getStatements(), new KVector(nodeOffset));
+            }
         }
-        monitor.done();
+        
+        return edgeOffset;
+    }
+    
+    /**
+     * Set the position of a node.
+     * 
+     * @param nodeStatement a node statement
+     * @param offset the offset to be added to node coordinates
+     */
+    private void applyNodeLayout(final NodeStatement nodeStatement, final KVector offset) {
+        KNode knode = (KNode) graphElementMap.get(nodeStatement.getNode().getName());
+        if (knode == null) {
+            return;
+        }
+        KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
+        float xpos = 0.0f, ypos = 0.0f, width = 0.0f, height = 0.0f;
+        for (Attribute attribute : nodeStatement.getAttributes()) {
+            try {
+                if (attribute.getName().equals(Attributes.POS)) {
+                    KVector pos = new KVector();
+                    pos.parse((attribute.getValue()));
+                    xpos = (float) (pos.x + offset.x);
+                    ypos = (float) (pos.y + offset.y);
+                } else if (attribute.getName().equals(Attributes.WIDTH)) {
+                    StringTokenizer tokenizer = new StringTokenizer(attribute.getValue(),
+                            ATTRIBUTE_DELIM);
+                    width = Float.parseFloat(tokenizer.nextToken()) * DPI;
+                } else if (attribute.getName().equals(Attributes.HEIGHT)) {
+                    StringTokenizer tokenizer = new StringTokenizer(attribute.getValue(),
+                            ATTRIBUTE_DELIM);
+                    height = Float.parseFloat(tokenizer.nextToken()) * DPI;
+                }
+            } catch (NumberFormatException exception) {
+                // ignore exception
+            } catch (IllegalArgumentException exception) {
+                // ignore exception
+            }
+        }
+        nodeLayout.setXpos(xpos - width / 2);
+        nodeLayout.setYpos(ypos - height / 2);
+    }
+    
+    private void applyEdgeLayout(final EdgeStatement edgeStatement, final KVector baseOffset,
+            final KVector edgeOffset) {
+        Map<String, String> attributeMap = createAttributeMap(edgeStatement.getAttributes());
+        KEdge kedge = (KEdge) graphElementMap.get(attributeMap.get(Attributes.COMMENT));
+        if (kedge == null) {
+            return;
+        }
+        KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+        List<KPoint> edgePoints = edgeLayout.getBendPoints();
+        edgePoints.clear();
+        String posString = attributeMap.get(Attributes.POS);
+        
+        KNode referenceNode = kedge.getSource();
+        if (!KimlUtil.isDescendant(kedge.getTarget(), referenceNode)) {
+            referenceNode = referenceNode.getParent();
+        }
+        KVector reference = new KVector();
+        while (referenceNode != null && referenceNode != kgraph) {
+            KShapeLayout nodeLayout = referenceNode.getData(KShapeLayout.class);
+            reference.x += nodeLayout.getXpos() + nodeLayout.getInsets().getLeft();
+            reference.y += nodeLayout.getYpos() + nodeLayout.getInsets().getTop();
+        }
+        KVector offset = edgeOffset.differenceCreate(reference);
+
+        // parse the list of spline control coordinates
+        List<KVectorChain> splines = new LinkedList<KVectorChain>();
+        Pair<KVector, KVector> endpoints = parseSplinePoints(posString, splines, offset);
+
+        KVector sourcePoint = endpoints.getFirst();
+        KVector targetPoint = endpoints.getSecond();
+        if (!splines.isEmpty()) {
+            KLayoutDataFactory layoutDataFactory = KLayoutDataFactory.eINSTANCE;
+            // the first point in the list is the start point, if no arrowhead is given
+            if (sourcePoint == null) {
+                List<KVector> points = splines.get(0);
+                if (!points.isEmpty()) {
+                    sourcePoint = points.remove(0);
+                } else {
+                    KShapeLayout sourceLayout = kedge.getSource().getData(KShapeLayout.class);
+                    sourcePoint = new KVector();
+                    sourcePoint.x = sourceLayout.getXpos() + sourceLayout.getWidth() / 2;
+                    sourcePoint.y = sourceLayout.getYpos() + sourceLayout.getHeight() / 2;
+                }
+            }
+            // the last point in the list is the end point, if no arrowhead is given
+            if (targetPoint == null) {
+                List<KVector> points = splines.get(splines.size() - 1);
+                if (!points.isEmpty()) {
+                    targetPoint = points.remove(points.size() - 1);
+                } else {
+                    KShapeLayout targetLayout = kedge.getTarget().getData(KShapeLayout.class);
+                    targetPoint = new KVector();
+                    targetPoint.x = targetLayout.getXpos() + targetLayout.getWidth() / 2;
+                    targetPoint.y = targetLayout.getYpos() + targetLayout.getHeight() / 2;
+                }
+            }
+            // add all other control points to the edge
+            for (KVectorChain points : splines) {
+                for (KVector point : points) {
+                    KPoint controlPoint = layoutDataFactory.createKPoint();
+                    controlPoint.applyVector(point);
+                    edgePoints.add(controlPoint);
+                }
+            }
+        }
+        edgeLayout.getSourcePoint().applyVector(sourcePoint);
+        edgeLayout.getTargetPoint().applyVector(targetPoint);
+        if (useSplines) {
+            edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
+        }
+
+        // process the edge labels
+        String labelPos = attributeMap.get(Attributes.LABELPOS);
+        if (labelPos != null) {
+            applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.CENTER, offset);
+        }
+        labelPos = attributeMap.get(Attributes.HEADLP);
+        if (labelPos != null) {
+            applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.HEAD, offset);
+        }
+        labelPos = attributeMap.get(Attributes.TAILLP);
+        if (labelPos != null) {
+            applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.TAIL,
+                    baseOffset.differenceCreate(reference));
+        }
     }
 
     /**
@@ -717,7 +841,7 @@ public class KGraphDotTransformation {
      *            y offset added to positions
      */
     private void applyEdgeLabelPos(final KEdge kedge, final String posString,
-            final EdgeLabelPlacement placement, final float offsetx, final float offsety) {
+            final EdgeLabelPlacement placement, final KVector offset) {
         float combinedWidth = 0.0f, combinedHeight = 0.0f;
         for (KLabel label : kedge.getLabels()) {
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
@@ -726,18 +850,23 @@ public class KGraphDotTransformation {
                 combinedHeight += labelLayout.getHeight();
             }
         }
-        KVector pos = parsePoint(posString);
-        float xpos = (float) pos.x - combinedWidth / 2 + offsetx;
-        float ypos = (float) pos.y - combinedHeight / 2 + offsety;
-        for (KLabel label : kedge.getLabels()) {
-            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-            if (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT) == placement) {
-                float xoffset = (combinedWidth - labelLayout.getWidth()) / 2;
-                labelLayout.setXpos(xpos + xoffset);
-                labelLayout.setYpos(ypos);
-                labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
-                ypos += labelLayout.getHeight();
+        try {
+            KVector pos = new KVector();
+            pos.parse(posString);
+            float xpos = (float) (pos.x - combinedWidth / 2 + offset.x);
+            float ypos = (float) (pos.y - combinedHeight / 2 + offset.y);
+            for (KLabel label : kedge.getLabels()) {
+                KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                if (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT) == placement) {
+                    float xoffset = (combinedWidth - labelLayout.getWidth()) / 2;
+                    labelLayout.setXpos(xpos + xoffset);
+                    labelLayout.setYpos(ypos);
+                    labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
+                    ypos += labelLayout.getHeight();
+                }
             }
+        } catch (IllegalArgumentException exception) {
+            // ignore exception
         }
     }
 
@@ -763,88 +892,46 @@ public class KGraphDotTransformation {
      *            string with spline points
      * @param splines
      *            list of splines
-     * @param offsetx
-     *            offset in x coordinate
-     * @param offsety
-     *            offset in y coordinate
+     * @param offset
+     *            offset to add to coordinates
      * @return the source and the target point, if specified by the position string
      */
-    private static Pair<KPoint, KPoint> parseSplinePoints(final String posString,
-            final List<List<KVector>> splines, final float offsetx, final float offsety) {
-        KPoint sourcePoint = null, targetPoint = null;
+    private static Pair<KVector, KVector> parseSplinePoints(final String posString,
+            final List<KVectorChain> splines, final KVector offset) {
+        KVector sourcePoint = null, targetPoint = null;
         StringTokenizer splinesTokenizer = new StringTokenizer(posString, "\";");
         while (splinesTokenizer.hasMoreTokens()) {
-            ArrayList<KVector> pointList = new ArrayList<KVector>();
-            StringTokenizer posTokenizer = new StringTokenizer(splinesTokenizer.nextToken(), " ");
+            KVectorChain pointList = new KVectorChain();
+            StringTokenizer posTokenizer = new StringTokenizer(splinesTokenizer.nextToken(), " \t");
             while (posTokenizer.hasMoreTokens()) {
                 String token = posTokenizer.nextToken();
-                if (token.startsWith("s")) {
-                    if (sourcePoint == null) {
-                        sourcePoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                        int commaIndex = token.indexOf(',');
-                        KVector point = parsePoint(token.substring(commaIndex + 1));
-                        sourcePoint.applyVector(point.translate(offsetx, offsety));
+                try {
+                    if (token.startsWith("s")) {
+                        if (sourcePoint == null) {
+                            sourcePoint = new KVector();
+                            int commaIndex = token.indexOf(',');
+                            sourcePoint.parse(token.substring(commaIndex + 1));
+                            sourcePoint.add(offset);
+                        }
+                    } else if (token.startsWith("e")) {
+                        if (targetPoint == null) {
+                            targetPoint = new KVector();
+                            int commaIndex = token.indexOf(',');
+                            targetPoint.parse(token.substring(commaIndex + 1));
+                            targetPoint.add(offset);
+                        }
+                    } else {
+                        KVector point = new KVector();
+                        point.parse(token);
+                        pointList.add(point.add(offset));
                     }
-                } else if (token.startsWith("e")) {
-                    if (targetPoint == null) {
-                        targetPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                        int commaIndex = token.indexOf(',');
-                        KVector point = parsePoint(token.substring(commaIndex + 1));
-                        targetPoint.applyVector(point.translate(offsetx, offsety));
-                    }
-                } else {
-                    KVector point = parsePoint(token);
-                    point.x += offsetx;
-                    point.y += offsety;
-                    pointList.add(point);
+                } catch (IllegalArgumentException exception) {
+                    // ignore exception
                 }
             }
             splines.add(pointList);
         }
-        return new Pair<KPoint, KPoint>(sourcePoint, targetPoint);
+        return new Pair<KVector, KVector>(sourcePoint, targetPoint);
     }
-
-    /** default number of characters in new string builders. */
-    private static final int DEF_BUILDER_SIZE = 8;
-
-    /**
-     * Parses a point from a Graphviz string.
-     * 
-     * @param string
-     *            string from which the point is parsed
-     * @return a point with x and y coordinates
-     */
-    public static KVector parsePoint(final String string) {
-        double x = 0.0f, y = 0.0f;
-        StringBuilder xbuilder = null, ybuilder = null;
-        boolean commaRead = false;
-        for (int i = 0; i < string.length(); i++) {
-            char c = string.charAt(i);
-            if (c >= '0' && c <= '9' || c == '.' || c == '-') {
-                if (commaRead) {
-                    if (ybuilder == null) {
-                        ybuilder = new StringBuilder(DEF_BUILDER_SIZE);
-                    }
-                    ybuilder.append(c);
-                } else {
-                    if (xbuilder == null) {
-                        xbuilder = new StringBuilder(DEF_BUILDER_SIZE);
-                    }
-                    xbuilder.append(c);
-                }
-            } else if (c == ',') {
-                if (commaRead) {
-                    break;
-                }
-                commaRead = true;
-            }
-        }
-        if (xbuilder != null) {
-            x = Double.valueOf(xbuilder.toString());
-        }
-        if (ybuilder != null) {
-            y = Double.valueOf(ybuilder.toString());
-        }
-        return new KVector(x, y);
-    }
+    
 }

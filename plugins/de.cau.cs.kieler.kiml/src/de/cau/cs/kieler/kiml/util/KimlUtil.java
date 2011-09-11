@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.kiml.util;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -754,80 +753,6 @@ public final class KimlUtil {
     public static void translate(final KPoint point, final float xoffset, final float yoffset) {
         point.setX(point.getX() + xoffset);
         point.setY(point.getY() + yoffset);
-    }
-    
-    /**
-     * Recursively search parents of the source and target node to find the most common parent. Then
-     * add a dummy edge between the corresponding children within this common parent. Also consider
-     * that hierarchy levels of parent and target might be asymmetric.
-     * TODO this currently only works for graphs without ports... extend to work with ports
-     * 
-     * @author haf
-     * @param parentNode the parent node
-     */
-    public static void addDummyEdgesForInterlevelConnections(final KNode parentNode) {
-        for (KNode child : parentNode.getChildren()) {
-            List<KEdge> edges = new ArrayList<KEdge>(child.getOutgoingEdges());
-            for (KEdge edge : edges) {
-                KNode source = edge.getSource();
-                KNode target = edge.getTarget();
-                // look for inter-level connections
-                if (source.getParent() != target.getParent()
-                        && edge.getSourcePort() == null && edge.getTargetPort() == null) {
-                    KNode sourceParent = source;
-                    KNode targetParent = target;
-                    // successively create list of ancestors for target and source
-                    // whenever a new ancestor is contained by the other list, we found a common
-                    // ancestor
-                    List<KNode> sourceAncestors = new ArrayList<KNode>();
-                    List<KNode> targetAncestors = new ArrayList<KNode>();
-                    sourceAncestors.add(source);
-                    targetAncestors.add(target);
-                    KNode newSource = null;
-                    KNode newTarget = null;
-
-                    do {
-                        if (sourceParent != null) {
-                            newSource = sourceParent;
-                            sourceParent = sourceParent.getParent();
-                        }
-                        if (targetParent != null) {
-                            newTarget = targetParent;
-                            targetParent = targetParent.getParent();
-                        }
-                        if (sourceParent != null) {
-                            sourceAncestors.add(sourceParent);
-                        }
-                        if (targetParent != null) {
-                            targetAncestors.add(targetParent);
-                        }
-                        if (sourceAncestors.contains(targetParent)) {
-                            // the list was build in order of hierarchy levels
-                            // hence, the index denotes this level
-                            int index = sourceAncestors.indexOf(targetParent);
-                            // the new source is the corresponding child of the common parent,
-                            // i.e. one less index
-                            newSource = sourceAncestors.get(index - 1);
-                            break;
-                        }
-                        if (targetAncestors.contains(sourceParent)) {
-                            // the list was build in order of hierarchy levels
-                            // hence, the index denotes this level
-                            int index = targetAncestors.indexOf(sourceParent);
-                            // the new source is the corresponding child of the common parent,
-                            // i.e. one less index
-                            newTarget = targetAncestors.get(index - 1);
-                            break;
-                        }
-                    } while (!(sourceParent == null && targetParent == null));
-
-                    KEdge dummyEdge = KimlUtil.createInitializedEdge();
-                    dummyEdge.setSource(newSource);
-                    dummyEdge.setTarget(newTarget);
-                }
-            }
-            addDummyEdgesForInterlevelConnections(child);
-        }
     }
     
     /**

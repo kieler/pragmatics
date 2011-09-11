@@ -17,7 +17,8 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation.Command;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * Layout provider for the Graphviz layout tool. The actual interface to
@@ -69,12 +70,8 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public boolean supportsHierarchy(final KNode layoutNode) {
-        // add dummy inter-level edges for a better hierarchy support
-        // TODO implement proper support for nested graphs
-        if (layoutNode.getParent() == null) {
-//            KimlUtil.addDummyEdgesForInterlevelConnections(layoutNode);
-        }
-        return false;
+        return layoutNode.getData(KShapeLayout.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)
+                && (command == Command.DOT || command == Command.FDP);
     }
 
 }

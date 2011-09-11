@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.core.math;
 
-import java.io.Serializable;
 import java.util.Random;
 import java.util.StringTokenizer;
 
@@ -442,7 +441,7 @@ public class KVector implements IDataObject, Cloneable {
      * {@inheritDoc}
      */
     public void parse(final String string) {
-        StringTokenizer tokenizer = new StringTokenizer(string, ",;()[]{} \t\n");
+        StringTokenizer tokenizer = new StringTokenizer(string, ",;()[]{}\"' \t\n");
         x = 0;
         y = 0;
         try {
