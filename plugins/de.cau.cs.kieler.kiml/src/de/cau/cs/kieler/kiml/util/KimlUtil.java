@@ -452,8 +452,6 @@ public final class KimlUtil {
 
     /** minimal size of a node. */
     private static final float MIN_NODE_SIZE = 16.0f;
-    /** minimal distance of two ports on each side of a node. */
-    private static final float MIN_PORT_DISTANCE = 8.0f;
 
     /**
      * Sets the size of a given node, depending on the minimal size, the number of ports
@@ -465,8 +463,7 @@ public final class KimlUtil {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
 
         PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
-        float minNorth = MIN_PORT_DISTANCE, minEast = MIN_PORT_DISTANCE,
-                minSouth = MIN_PORT_DISTANCE, minWest = MIN_PORT_DISTANCE;
+        float minNorth = 2, minEast = 2, minSouth = 2, minWest = 2;
         Direction direction = node.getParent() == null
                 ? nodeLayout.getProperty(LayoutOptions.DIRECTION)
                 : node.getParent().getData(KShapeLayout.class).getProperty(LayoutOptions.DIRECTION);
@@ -499,24 +496,20 @@ public final class KimlUtil {
             } else {
                 switch (portSide) {
                 case NORTH:
-                    minNorth += MIN_PORT_DISTANCE + portLayout.getWidth();
+                    minNorth += portLayout.getWidth() + 2;
                     break;
                 case EAST:
-                    minEast += MIN_PORT_DISTANCE + portLayout.getHeight();
+                    minEast += portLayout.getHeight() + 2;
                     break;
                 case SOUTH:
-                    minSouth += MIN_PORT_DISTANCE + portLayout.getWidth();
+                    minSouth += portLayout.getWidth() + 2;
                     break;
                 case WEST:
-                    minWest += MIN_PORT_DISTANCE + portLayout.getHeight();
+                    minWest += portLayout.getHeight() + 2;
                     break;
                 }
             }
         }
-        minNorth += MIN_PORT_DISTANCE;
-        minEast += MIN_PORT_DISTANCE;
-        minSouth += MIN_PORT_DISTANCE;
-        minWest += MIN_PORT_DISTANCE;
 
         float newWidth = KielerMath.maxf(MIN_NODE_SIZE, minNorth, minSouth);
         float newHeight = KielerMath.maxf(MIN_NODE_SIZE, minEast, minWest);
