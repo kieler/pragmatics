@@ -139,7 +139,7 @@ public class OgmlTransformer extends AbstractEmfTransformer<DocumentRoot> {
      */
     public void applyLayout(final TransformationData<DocumentRoot> transData) {
         for (KNode layoutNode : transData.getLayoutGraphs()) {
-            applyLayout(layoutNode, new KVector(), transData.getSourceGraph().getGraph());
+            applyLayout(layoutNode, new KVector(), transData.getSourceGraph().getOgml().getGraph());
         }
     }
 
