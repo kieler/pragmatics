@@ -202,7 +202,8 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
                     if (Attributes.LABEL.equals(attr.getName())) {
                         knode.getLabel().setText(attr.getValue());
                     } else if (Attributes.POS.equals(attr.getName())) {
-                        KVector pos = KGraphDotTransformation.parsePoint(attr.getValue());
+                        KVector pos = new KVector();
+                        pos.parse(attr.getValue());
                         pos.scale(KGraphDotTransformation.DPI);
                         nodeLayout.applyVector(pos);
                     } else if (Attributes.WIDTH.equals(attr.getName())) {
@@ -213,6 +214,10 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
                                 * KGraphDotTransformation.DPI);
                     }
                 } catch (NumberFormatException exception) {
+                    Logger.log("Discarding attribute \"" + attr.getName()
+                            + "\" for node \"" + statement.getNode().getName()
+                            + "\" since its value could not be parsed correctly.");
+                } catch (IllegalArgumentException exception) {
                     Logger.log("Discarding attribute \"" + attr.getName()
                             + "\" for node \"" + statement.getNode().getName()
                             + "\" since its value could not be parsed correctly.");
