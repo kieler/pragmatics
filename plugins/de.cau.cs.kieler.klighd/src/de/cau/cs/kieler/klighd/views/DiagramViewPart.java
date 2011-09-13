@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klighd.views;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
@@ -22,10 +23,13 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 
+import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.ui.views.SelectionInfoAction;
 import de.cau.cs.kieler.klighd.triggers.KlighdResourceDropTrigger;
 import de.cau.cs.kieler.klighd.triggers.KlighdResourceDropTrigger.KlighdResourceDropState;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
@@ -145,11 +149,10 @@ public class DiagramViewPart extends ViewPart {
         });
     }
 
-    // TODO just for testing purposes
     private void addLayoutButton() {
-        IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
+        IMenuManager menuManager = getViewSite().getActionBars().getMenuManager();
         final DiagramViewPart view = this;
-        Action layout = new Action("Layout") {
+        menuManager.add(new Action("Layout",KimlUiPlugin.getImageDescriptor("icons/menu16/kieler-arrange.gif")) {
             public void run() {
                 try {
                     DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
@@ -158,8 +161,7 @@ public class DiagramViewPart extends ViewPart {
                     // do nothing (empty view)
                 }
             }
-        };
-        mgr.add(layout);
+        });
     }
 
 }
