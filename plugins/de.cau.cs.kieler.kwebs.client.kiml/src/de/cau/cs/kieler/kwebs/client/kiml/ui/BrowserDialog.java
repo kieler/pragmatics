@@ -76,6 +76,7 @@ public class BrowserDialog extends Dialog {
     protected void configureShell(final Shell shell) {
         super.configureShell(shell);
         shell.setText(title);
+        shell.setSize(size.width, size.height);
      }
 
     /**
@@ -90,8 +91,6 @@ public class BrowserDialog extends Dialog {
             browser.setText(html);
             
             GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-            gd.minimumWidth = size.width;
-            gd.minimumHeight = size.height;
             browser.setLayoutData(gd);
         } catch (Exception e) {
             StatusManager.getManager().handle(
