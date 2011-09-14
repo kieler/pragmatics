@@ -32,7 +32,7 @@ import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer.Region;
 
 /**
- * Container for priority definitions.
+ * Container for property definitions.
  * 
  * @author msp
  * @author cds
@@ -136,6 +136,9 @@ public final class Properties {
      * this property is set on. Nodes in this list are expected to be in the same layer as the
      * node the property is set on. This is primarily used when edges are rerouted from a node
      * to dummy nodes.
+     * <p>
+     * This property is currently not declared as one of the layout options offered by KLay
+     * Layered and should be considered highly experimental.
      */
     public static final IProperty<List<LNode>> BARYCENTER_ASSOCIATES = new Property<List<LNode>>(
             "barycenterAssociates", null);

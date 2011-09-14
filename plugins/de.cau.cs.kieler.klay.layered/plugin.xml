@@ -27,9 +27,6 @@
                option="de.cau.cs.kieler.klay.layered.edgeSpacingFactor">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.barycenterAssociateFactor">
-         </knownOption>
-         <knownOption
                default="20"
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
@@ -147,15 +144,6 @@
             description="Factor by which the object spacing is multiplied to arrive at the minimal spacing between edges"
             id="de.cau.cs.kieler.klay.layered.edgeSpacingFactor"
             name="Edge Spacing Factor"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            advanced="true"
-            appliesTo="parents"
-            default="1.0"
-            description="Factor with which barycenter associates are included in barycenter calculations."
-            id="de.cau.cs.kieler.klay.layered.barycenterAssociateFactor"
-            name="Barycenter Associate Factor"
             type="float">
       </layoutOption>
       <layoutOption
