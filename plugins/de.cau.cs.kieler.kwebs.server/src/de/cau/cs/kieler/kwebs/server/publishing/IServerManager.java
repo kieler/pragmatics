@@ -14,6 +14,8 @@
 
 package de.cau.cs.kieler.kwebs.server.publishing;
 
+import java.net.URI;
+
 /**
  * Interface declaration for the different server managers.
  * 
@@ -47,5 +49,13 @@ interface IServerManager {
      * @return whether the managed server currently is publishing
      */
     boolean isPublished();
+    
+    /**
+     * Sets the address this manager publishes the service object on.
+     *     
+     * @param theaddress 
+     *            the address this manager publishes the service object on
+     */
+    void setAddress(URI theaddress);
 
 }

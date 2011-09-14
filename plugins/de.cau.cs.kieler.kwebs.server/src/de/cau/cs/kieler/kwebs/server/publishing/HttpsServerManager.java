@@ -17,7 +17,6 @@ package de.cau.cs.kieler.kwebs.server.publishing;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -111,7 +110,7 @@ final class HttpsServerManager extends HttpServerManager {
         );
         HttpsConfigurator httpsConfigurator
             = new HttpsConfigurator(sslContext);
-        URI address = new URI(config.getConfigProperty(Configuration.HTTPS_ADDRESS));
+        //URI address = new URI(config.getConfigProperty(Configuration.HTTPS_ADDRESS));
         String host = address.getHost();
         if (host == null) {
             Logger.log(Severity.WARNING, 

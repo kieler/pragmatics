@@ -15,6 +15,7 @@
 package de.cau.cs.kieler.kwebs.server.layout;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
+import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.service.ProgrammaticLayoutDataService;
@@ -69,6 +71,10 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
     private Hashtable<String, IGraphTransformer<?>> transformers 
         = new Hashtable<String, IGraphTransformer<?>>();
 
+    /** Mapping of layout option identifiers to layout option instances. */
+    private Map<String, LayoutOptionData<?>> layoutOptions
+        = new HashMap<String, LayoutOptionData<?>>();
+    
     /**
      * Private constructor.
      */
@@ -87,9 +93,40 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
             LayoutDataService.addService(lds);
             lds.loadLayoutProviderExtensions();
             lds.registerProgrammaticOptions();
+            lds.registerLayoutOptions();
         }
     }
 
+    /** 
+     * Creates the mapping from layout option identifiers to layout options.
+     */
+    private void registerLayoutOptions() {
+        Collection<LayoutOptionData<?>> optionDataList = getOptionData();
+        for (LayoutOptionData<?> optionData : optionDataList) {
+            layoutOptions.put(optionData.getId(), optionData);
+        }
+    }
+
+    /**
+     * Returns the first registered option data instance where the identifier ends 
+     * with the given suffix. The suffix is case sensitive.
+     * 
+     * @param idSuffix
+     *            the suffix of the identifier of the layout option
+     * @return the first registered option data instance where the identifier ends with the given suffix
+     *         or {@code null} if no matching option data is registered in the data services. 
+     */
+    public LayoutOptionData<?> getMatchingOptionData(final String idSuffix) {
+        LayoutOptionData<?> optionData = null;
+        for (String id : layoutOptions.keySet()) {
+            if (id.endsWith(idSuffix)) {
+                optionData = layoutOptions.get(id);
+                break;
+            }
+        }
+        return optionData;
+    }
+    
     /**
      * Returns the singleton instance of {@code ServerLayoutDataService}.
      *

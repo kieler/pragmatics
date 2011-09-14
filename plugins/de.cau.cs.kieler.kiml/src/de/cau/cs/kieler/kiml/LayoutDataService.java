@@ -204,10 +204,15 @@ public class LayoutDataService {
     }
 
     /**
-     *
+     * Returns the instance of a layout data service specified by it's fully qualified
+     * class name.
+     *  
      * @param <T>
+     *        type of the returned instance
      * @param type
-     * @return
+     *            fully qualified class name of the data service instance
+     * @return the data service instance or {@code null} if no such instance has been registered
+     *         or the given type is not valid specifier.
      */
     @SuppressWarnings("unchecked")
     public static <T extends LayoutDataService> T getInstanceOf(final String type) {

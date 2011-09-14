@@ -67,13 +67,13 @@ public final class JaxWsService extends AbstractService implements LayoutService
      *             if an error occurs
      */
     public String graphLayout(final String serializedGraph, final String format, 
-        final List<GraphLayoutOption> options) throws ServiceFault_Exception { 
+        final List<GraphLayoutOption> options) throws ServiceFault_Exception {
         Logger.log(Severity.DEBUG, "Handling layout request");
         try {
             String result = layout(serializedGraph, format, options);
             Logger.log(Severity.DEBUG, "Handling layout request succeeded");
             return result;
-        } catch (Exception e) {
+        } catch (Exception e) { e.printStackTrace();
             Logger.log(Severity.WARNING, 
                 "Handling layout request failed: " + e.getMessage(), e
             );

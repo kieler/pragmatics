@@ -31,7 +31,7 @@ public class ServiceDataFactoryImpl extends EFactoryImpl implements ServiceDataF
      */
     public static ServiceDataFactory init() {
         try {
-            ServiceDataFactory theServiceDataFactory = (ServiceDataFactory)EPackage.Registry.INSTANCE.getEFactory("http://de.cau.cs.kieler.kwebs.service.data/2011-07-25/ServiceData/1.0"); 
+            ServiceDataFactory theServiceDataFactory = (ServiceDataFactory)EPackage.Registry.INSTANCE.getEFactory("http://kieler.cs.cau.de/2011-07-25/ServiceData/1.0"); 
             if (theServiceDataFactory != null) {
                 return theServiceDataFactory;
             }

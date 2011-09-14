@@ -14,11 +14,14 @@
 
 package de.cau.cs.kieler.kwebs.server.publishing;
 
+import java.net.URI;
+
 import de.cau.cs.kieler.kwebs.jaxws.LayoutServicePort;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.service.JaxWsService;
+//import de.cau.cs.kieler.kwebs.server.service.RestService;
 
 //FIXME If service is published via HTTP AND HTTPS, both
 //      servers are created with the full pool size. They should share.
@@ -38,13 +41,25 @@ public final class ServicePublisher {
     private static final ServicePublisher INSTANCE
         = new ServicePublisher();
 
-    /** Manager for publishing via HTTP. */
-    private IServerManager httpManager
+    /** The server wide configuration instance. */
+    private Configuration config
+        = Configuration.getInstance();
+
+    /** Manager for publishing JAXWS service via HTTP. */
+    private IServerManager jaxwsHttpManager
         = new HttpServerManager();
 
-    /** Manager for publishing via HTTPS. */
-    private IServerManager httpsManager
+    /** Manager for publishing JAXWS service via HTTPS. */
+    private IServerManager jaxwsHttpsManager
         = new HttpsServerManager();
+
+    /** Manager for publishing REST service via HTTP. */
+    //private IServerManager restHttpManager
+    //    = new HttpServerManager();
+
+    /** Manager for publishing REST service via HTTPS. */
+    //private IServerManager restHttpsManager
+    //    = new HttpsServerManager();
 
     /** Manager for publishing via jETI. */
     private IServerManager jetiManager
@@ -55,9 +70,13 @@ public final class ServicePublisher {
         = new SupportingServerManager();
 
     /** Instance of the layout web service to be published. */
-    private LayoutServicePort service
+    private LayoutServicePort jaxwsService
         = new JaxWsService();
 
+    /** Instance of the RESTful web service implementation. */
+    //private RestService restService 
+    //    = new RestService();
+    
     /**
      * Private constructor.
      */
@@ -82,18 +101,51 @@ public final class ServicePublisher {
             throw new AlreadyPublishedException();
         }
         try {
-            if (Configuration.getInstance().getConfigProperty(Configuration.PUBLISH_HTTP).
-                    equalsIgnoreCase("true")
-               ) {
-                Logger.log("Publishing layout service via HTTP");
-                httpManager.publish(service);
+            URI address = null;            
+            if (Configuration.getInstance().getConfigProperty(Configuration.JAXWS_PUBLISH_HTTP).
+                equalsIgnoreCase("true")
+            ) {
+                address = new URI(config.getConfigProperty(Configuration.JAXWS_HTTP_ADDRESS));
+                Logger.log(
+                    "Publishing jaxws layout service via HTTP on "
+                    + address.toString()
+                );                
+                jaxwsHttpManager.setAddress(address);
+                jaxwsHttpManager.publish(jaxwsService);
             }
-            if (Configuration.getInstance().getConfigProperty(Configuration.PUBLISH_HTTPS).
-                    equalsIgnoreCase("true")
-               ) {
-                Logger.log("Publishing layout service via HTTPS");
-                httpsManager.publish(service);
+            if (Configuration.getInstance().getConfigProperty(Configuration.JAXWS_PUBLISH_HTTPS).
+                equalsIgnoreCase("true")
+            ) {
+                address = new URI(config.getConfigProperty(Configuration.JAXWS_HTTPS_ADDRESS));
+                Logger.log(
+                    "Publishing jaxws layout service via HTTPS on "
+                    + address.toString()
+                );                
+                jaxwsHttpsManager.setAddress(address);
+                jaxwsHttpsManager.publish(jaxwsService);
+            }/*        
+            if (Configuration.getInstance().getConfigProperty(Configuration.REST_PUBLISH_HTTP).
+                equalsIgnoreCase("true")
+            ) {
+                address = new URI(config.getConfigProperty(Configuration.REST_HTTP_ADDRESS));
+                Logger.log(
+                    "Publishing rest layout service via HTTP on "
+                    + address.toString()
+                );                
+                restHttpManager.setAddress(address);
+                restHttpManager.publish(restService);
             }
+            if (Configuration.getInstance().getConfigProperty(Configuration.REST_PUBLISH_HTTPS).
+                equalsIgnoreCase("true")
+            ) {
+                address = new URI(config.getConfigProperty(Configuration.REST_HTTPS_ADDRESS));
+                Logger.log(
+                    "Publishing rest layout service via HTTPS on "
+                    + address.toString()
+                );                
+                restHttpsManager.setAddress(address);
+                restHttpsManager.publish(restService);
+            }*/
             if (Configuration.getInstance().getConfigProperty(Configuration.PUBLISH_JETI).
                     equalsIgnoreCase("true")
                ) {
@@ -101,8 +153,8 @@ public final class ServicePublisher {
                 jetiManager.publish(null);
             }
             if (Configuration.getInstance().getConfigProperty(Configuration.PUBLISH_SUPPORTSERVER).
-                    equalsIgnoreCase("true")
-               ) {
+                equalsIgnoreCase("true")
+            ) {
                 Logger.log("Publishing support server");
                 supportManager.publish(null);
             }
@@ -118,8 +170,10 @@ public final class ServicePublisher {
      *
      */
     public synchronized void unpublish() {
-        httpManager.unpublish();
-        httpsManager.unpublish();
+        jaxwsHttpManager.unpublish();
+        jaxwsHttpsManager.unpublish();
+        //restHttpManager.unpublish();
+        //restHttpsManager.unpublish();
         jetiManager.unpublish();
         supportManager.unpublish();
     }
@@ -130,7 +184,8 @@ public final class ServicePublisher {
      * @return whether service is published or not
      */
     public synchronized boolean isPublished() {
-        return (httpManager.isPublished() || httpsManager.isPublished() 
+        return (jaxwsHttpManager.isPublished() || jaxwsHttpsManager.isPublished()
+                //|| restHttpManager.isPublished() || restHttpsManager.isPublished()
                 || jetiManager.isPublished() || supportManager.isPublished());
     }
 

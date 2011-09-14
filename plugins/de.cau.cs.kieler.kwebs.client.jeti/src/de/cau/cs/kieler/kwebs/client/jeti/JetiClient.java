@@ -141,6 +141,7 @@ public final class JetiClient extends AbstractLayoutServiceClient {
             etiParams.put(
                 "INPUT_GRAPH",
                 "graph.in"
+                //serializedGraph
             );
             etiParams.put(
                 "OUTPUT_GRAPH",
@@ -150,9 +151,9 @@ public final class JetiClient extends AbstractLayoutServiceClient {
                 "INPUT_FORMAT",
                 format
             );
-/* Just for testing purposes
-            GraphLayouterOption[] options2 = new GraphLayouterOption[] {
-                new GraphLayouterOption(
+//* Just for testing purposes
+            GraphLayoutOption[] options2 = new GraphLayoutOption[] {
+                new GraphLayoutOption(
                     "de.cau.cs.kieler.algorithm", 
                     "de.cau.cs.kieler.kiml.ogdf.DavidsonHarel"
                 )
@@ -160,22 +161,24 @@ public final class JetiClient extends AbstractLayoutServiceClient {
             if (options2 != null && options2.length > 0) {
                 etiParams.put(
                     "INPUT_OPTIONS",
-                    GraphLayouterOption.arrayToString(options2)
+                    GraphLayoutOption.arrayToString(options2)
                 );
             }
-*/
+//*/
             if (options != null && options.size() > 0) {
                 etiParams.put(
                     "INPUT_OPTIONS",
                     GraphLayoutOption.listToString(options)
                 );
             }
+//* File upload operations are unstable on windows platforms            
             byte[] byteGraph = serializedGraph.getBytes("UTF-8");
             ByteArrayVirtualFile vfOut = new ByteArrayVirtualFile(
                 new ByteArrayInputStream(byteGraph),
                 "graph.in"
             );
             etiCon.store(vfOut);
+//*/            
             etiCon.exec("graphLayout", etiParams);
             VirtualFile vfIn = etiCon.retrieve("graph.out");
             StringBuffer sb = new StringBuffer();

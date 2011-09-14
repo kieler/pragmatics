@@ -24,16 +24,22 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 
+import de.cau.cs.kieler.kwebs.client.kiml.Statistics;
+import de.cau.cs.kieler.kwebs.client.kiml.StatisticsPage;
 import de.cau.cs.kieler.kwebs.client.kiml.activator.Activator;
 import de.cau.cs.kieler.kwebs.client.kiml.layout.SwitchLayoutMode;
 import de.cau.cs.kieler.kwebs.client.kiml.preferences.Preferences;
@@ -153,6 +159,36 @@ public class KWebSStatusBar extends WorkbenchWindowControlContribution
                 }
             }
         );
+        final MenuItem statistics = new MenuItem(trayPopup, SWT.PUSH);
+        statistics.setText("Show Statistics");
+        statistics.setImage(statisticsImage);
+        statistics.addSelectionListener(
+            new SelectionAdapter() {
+                @Override
+                public void widgetSelected(final SelectionEvent e) {
+                    if (e.getSource() == statistics) {
+                        Shell shell = Display.getCurrent().getActiveShell();
+                        if (Statistics.getInstance().getStatistics().size() > 0) {
+                            BrowserDialog dialog = new BrowserDialog(
+                                shell, 
+                                StatisticsPage.generateHtml(), 
+                                "Remote Layout Statistics",
+                                new Rectangle(0, 0, 600, 350)
+                            );
+                            dialog.open();
+                        } else {
+                            MessageBox box = new MessageBox(shell, SWT.ABORT);
+                            box.setText("No Statistical Data");
+                            box.setMessage(
+                                "You have not done any remote layout yet so no"
+                                + " statistical data has been gathered."
+                            );
+                            box.open();
+                        }
+                    }
+                }
+            }
+        );
         return composite;        
         //CHECKSTYLEON MagicNumber
     }
@@ -177,11 +213,18 @@ public class KWebSStatusBar extends WorkbenchWindowControlContribution
     private static final String REMOTE_IMAGEPATH
         = "icons/remote.gif";
 
+    /** Path to the resource for the image for showing layout statistics. */
+    private static final String STATISTICS_IMAGEPATH
+        = "icons/statistics.gif";
+
     /** Image for doing local layout. */
     private static Image localImage;
 
     /** Image for doing remote layout. */
     private static Image remoteImage;
+
+    /** Image for showing layout statistics. */
+    private static Image statisticsImage;
 
     /** Initialize the images. */
     static {
@@ -192,6 +235,10 @@ public class KWebSStatusBar extends WorkbenchWindowControlContribution
         descriptor = Activator.getImageDescriptor(REMOTE_IMAGEPATH);
         if (descriptor != null) {
             remoteImage = descriptor.createImage();
+        }
+        descriptor = Activator.getImageDescriptor(STATISTICS_IMAGEPATH);
+        if (descriptor != null) {
+            statisticsImage = descriptor.createImage();
         }
     }
     

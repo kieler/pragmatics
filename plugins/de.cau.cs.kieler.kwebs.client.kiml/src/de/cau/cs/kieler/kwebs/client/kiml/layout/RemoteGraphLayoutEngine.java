@@ -17,6 +17,9 @@ package de.cau.cs.kieler.kwebs.client.kiml.layout;
 //import java.io.File;
 //import java.io.FileOutputStream;
 
+//import java.net.URI;
+//import java.text.NumberFormat;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -41,17 +44,22 @@ import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kwebs.LocalServiceException;
 import de.cau.cs.kieler.kwebs.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.client.ILayoutServiceClient;
+//import de.cau.cs.kieler.kwebs.client.RestClient;
 import de.cau.cs.kieler.kwebs.client.ServerConfig;
 import de.cau.cs.kieler.kwebs.client.kiml.LayoutServiceClients;
 import de.cau.cs.kieler.kwebs.client.kiml.ServerConfigs;
+import de.cau.cs.kieler.kwebs.client.kiml.Statistics;
 import de.cau.cs.kieler.kwebs.client.kiml.activator.Activator;
 import de.cau.cs.kieler.kwebs.client.kiml.preferences.Preferences;
 import de.cau.cs.kieler.kwebs.formats.Formats;
+import de.cau.cs.kieler.kwebs.kstatistics.KStatistics;
+import de.cau.cs.kieler.kwebs.transformation.IGraphTransformer;
+//import de.cau.cs.kieler.kwebs.transformation.KGraphXmiCompressedTransformer;
 import de.cau.cs.kieler.kwebs.transformation.KGraphXmiTransformer;
 import de.cau.cs.kieler.kwebs.util.Graphs;
 
 /**
- * .
+ * This class is used to calculate the layout of a graph using a remote layout service.
  *
  * @kieler.rating 2011-08-02 proposed yellow
  *     reviewed by ckru, mri, msp
@@ -66,13 +74,17 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
     /** the preference store. */
     private IPreferenceStore preferenceStore;
 
-    /** The chached instance of the ServerConfigs singleton. */
+    /** The cached instance of the ServerConfigs singleton. */
     private ServerConfigs serverConfigs 
         = ServerConfigs.getInstance();
     
-    /** The transformer used for serialization and deserialization of the KGraph instances. */
-    private KGraphXmiTransformer transformer
+    /** The transformer used for normal serialization and deserialization of the KGraph instances. */
+    private KGraphXmiTransformer normalTransformer
         = new KGraphXmiTransformer();
+    
+    /** The transformer used for compressed serialization and deserialization of the KGraph instances. */
+    //private KGraphXmiTransformer compressedTransformer
+    //    = new KGraphXmiCompressedTransformer(); // !!! EXPERIMENTAL !!!
 
     /**
      * Creates a layout engine for remote layout.
@@ -168,6 +180,17 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         return false;
     }
 
+    /**
+     * Displays a message dialog.
+     * 
+     * @param title
+     *            the title of the dialog
+     * @param message
+     *            the message to be displayed
+     * @param style
+     *            the style, e.g. visible buttons
+     * @return the constant defining which button the user clicked on
+     */
     private int displayMessage(final String title, final String message, final int style) {
         final Maybe<Integer> result = new Maybe<Integer>(SWT.ERROR);
         final Display display = PlatformUI.getWorkbench().getDisplay();
@@ -203,6 +226,9 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         }
         return result.get();
     }
+
+    /** Constant for converting nano seconds to seconds. */
+    //private static final double FACTOR_NANOTOSECONDS = 1e-9;
     
     /**
      * Performs remote layout on the given layout graph.
@@ -212,6 +238,7 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
      */
     public final void layout(final KNode layoutGraph, final IKielerProgressMonitor progressMonitor) {
         boolean remoteLayout = preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE);
+        //boolean compressedLayout = preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_COMPRESSION);
         if (remoteLayout && client == null) {
             if (!initialize()) {
                 return;
@@ -223,20 +250,57 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         if (graphLabel != null && graphLabel.length() > 0) {
             label += " (" + graphLabel + ")";
         }
+        double networkStart = 0;
+        double networkTotal = 0;
+        double timeStart = 0;
+        double timeTotal = 0;
+        KNode resultGraph = null;
+        KStatistics statistics = null;
+        IGraphTransformer<KNode> transformer = null;
+        String format = null;
+        String sourceXMI = null;
+        String resultXMI = null;
+        timeStart = System.nanoTime();
         progressMonitor.begin(label, nodeCount);
         Graphs.annotateGraphWithUniqueID(layoutGraph);
-        String sourceXMI = transformer.serialize(layoutGraph);
-        String resultXMI = null;
+        /*if (compressedLayout) {
+            transformer = compressedTransformer;
+            format = Formats.FORMAT_KGRAPH_XMI_COMPRESSED;
+        } else {*/
+            transformer = normalTransformer;
+            format = Formats.FORMAT_KGRAPH_XMI;
+        //}
+        sourceXMI = transformer.serialize(layoutGraph);
         //storeXmi(sourceXMI, false);
-        try {
-            resultXMI = client.graphLayout(sourceXMI, Formats.FORMAT_KGRAPH_XMI, null);
+        try {          
+/*            
+            ILayoutServiceClient testClient = new RestClient();
+            testClient.setServerConfig(
+                ServerConfigs.getInstance().createServerConfig(
+                    "RESTTEST", 
+                    URI.create("http://localhost:8542")
+                )
+            );
+*/            
+            networkStart = System.nanoTime();
+            resultXMI = client.graphLayout(sourceXMI, format, null);
+            //resultXMI = testClient.graphLayout(sourceXMI, format, null);
+            networkTotal = (System.nanoTime() - networkStart);
             //storeXmi(resultXMI, true);
-            KNode tempGraph = (KNode) transformer.deserialize(resultXMI);
-            Graphs.duplicateGraphLayoutByUniqueID(tempGraph, layoutGraph);
+            resultGraph = transformer.deserialize(resultXMI);
+            Graphs.duplicateGraphLayoutByUniqueID(resultGraph, layoutGraph);
         } catch (Exception e) {
             throw new RemoteServiceException("Error occurred while doing remote layout", e);
-        }
+        }        
         progressMonitor.done();
+        timeTotal = (System.nanoTime() - timeStart);
+        statistics = resultGraph.getData(KStatistics.class);
+        if (statistics != null) {
+            statistics.setTimeTotal(timeTotal);
+            statistics.setTimeNetwork(networkTotal);
+            statistics.setTimeLocalSupplemental(timeTotal - networkTotal);
+            Statistics.getInstance().addStatistic(statistics);
+        }
     }
 
     /**

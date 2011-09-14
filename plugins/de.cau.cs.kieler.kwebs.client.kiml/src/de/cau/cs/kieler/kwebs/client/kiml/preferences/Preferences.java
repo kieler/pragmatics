@@ -36,9 +36,13 @@ public final class Preferences {
     public static final String PREFID_LAYOUT_SETTINGS_CHANGED
         = PREFIX + "layout.settings.changed";
 
-    /** */
+    /** Whether to use remote layout or not. */
     public static final String PREFID_LAYOUT_USE_REMOTE
         = PREFIX + "layout.use.remote";
+
+    /** Whether to use compression when using remote layout or not. */
+    //public static final String PREFID_LAYOUT_USE_COMPRESSION
+    //    = PREFIX + "layout.use.compression";
 
     /** */
     public static final String PREFID_LAYOUT_SERVERCONFIG_COUNT

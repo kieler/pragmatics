@@ -73,6 +73,9 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
     /** Radio button for using remote layout. */
     private Button serverConfigRadio2;
 
+    /** Check box button for using compression. */
+    //private Button compressionCheckbox;
+
     /** Button for creating a new server configuration. */
     private Button scEditButton1;
     
@@ -162,7 +165,9 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         Composite composite = new Composite(parent, SWT.NONE);
         Group layoutGroup1 = createLayoutGroup1(composite);
         layoutGroup1.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-        Group layoutGroup3 = createLayoutGroup2(composite);
+        //Group layoutGroup2 = createLayoutGroup2(composite);
+        //layoutGroup2.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+        Group layoutGroup3 = createLayoutGroup3(composite);
         layoutGroup3.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
         initRemoteLayoutOptionsView();
         composite.setLayout(new GridLayout(1, false));
@@ -182,6 +187,8 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         // Defaults fall back to local layout
         serverConfigRadio1.setSelection(true);
         serverConfigRadio2.setSelection(false);       
+        // Defaults fall back to not use compression
+        //compressionCheckbox.setSelection(false);
         // Update the UI
         refreshServerConfigViewer();
         updateRemoteLayoutOptionsView();
@@ -213,6 +220,11 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         boolean remoteLayout = serverConfigRadio2.getSelection();
         isDirty |= (store.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE) != remoteLayout);
         store.setValue(Preferences.PREFID_LAYOUT_USE_REMOTE, remoteLayout);
+        // Check whether the compression selection has been changed.
+        // If it has been changed, store it.
+        //boolean compressionLayout = compressionCheckbox.getSelection();
+        //isDirty |= (store.getBoolean(Preferences.PREFID_LAYOUT_USE_COMPRESSION) != compressionLayout);
+        //store.setValue(Preferences.PREFID_LAYOUT_USE_COMPRESSION, compressionLayout);
         // Fire property change event so that the RemoteGraphLayoutEngine can
         // initialize itself on the new conditions.
         if (isDirty) { 
@@ -238,7 +250,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         = 300;
 
     /**
-     * Creates the group for server configuration options.
+     * Creates the group for selecting local or remote layout options.
      *
      * @param parent
      *           the parent control
@@ -278,14 +290,46 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         );
 
         FillLayout layout = new FillLayout();
-
         layout.marginWidth = MARGIN_WIDTH;
-
         generalGroup.setLayout(layout);
 
         return generalGroup;
 
     }
+
+    /**
+     * Creates the group for compression option.
+     *
+     * @param parent
+     *           the parent control
+     * @return a group with general options
+     *//*
+    private Group createLayoutGroup2(final Composite parent) {
+        
+        Group generalGroup = new Group(parent, SWT.NONE);
+        
+        generalGroup.setText("Do you want to use compression?");
+    
+        // add check box for compression option
+        compressionCheckbox = new Button(generalGroup, SWT.CHECK);
+        compressionCheckbox.setText("Use compression");
+    
+        compressionCheckbox.addSelectionListener(
+            new SelectionAdapter() {
+                public void widgetSelected(final SelectionEvent e) {
+                    if (e.widget == compressionCheckbox) {
+                    }
+                }
+            }
+        );
+        
+        FillLayout layout = new FillLayout();
+        layout.marginWidth = MARGIN_WIDTH;
+        generalGroup.setLayout(layout);
+        
+        return generalGroup;
+
+    }*/
 
     /** Width of the server configuration fixed property column. */
     private static final int SERVERCONFIGACTIVE_WIDTH
@@ -306,7 +350,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
      *            the parent control
      * @return a group with the server configuration table
      */
-    private Group createLayoutGroup2(final Composite parent) {
+    private Group createLayoutGroup3(final Composite parent) {
 
         Group generalGroup = new Group(parent, SWT.NONE);
 
@@ -709,6 +753,8 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         } else {
             serverConfigRadio1.setSelection(true);
         }
+        //boolean compressionLayout = store.getBoolean(Preferences.PREFID_LAYOUT_USE_COMPRESSION);
+        //compressionCheckbox.setSelection(compressionLayout);
         updateRemoteLayoutOptionsView();
     }
 
@@ -733,12 +779,14 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             fixed = serverConfig.isFixed();
             active = serverConfig.isActive();
         }
+        //compressionCheckbox.setEnabled(remoteLayout);
         serverConfigTable.setEnabled(remoteLayout);
         scEditButton1.setEnabled(remoteLayout);
         scEditButton2.setEnabled(remoteLayout && !empty && !fixed);
         scEditButton3.setEnabled(remoteLayout && !empty && !fixed && !active);
         scEditButton4.setEnabled(remoteLayout && !empty);
-        scEditButton5.setEnabled(remoteLayout && !empty && !active);        
+        scEditButton5.setEnabled(remoteLayout && !empty && !active);
+        scEditButton6.setEnabled(remoteLayout && !empty);
     }
 
 }

@@ -15,17 +15,21 @@
 package de.cau.cs.kieler.kwebs.server.publishing;
 
 import com.sun.net.httpserver.HttpContext;
+import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.net.InetSocketAddress;
-import java.net.URI;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.xml.ws.Endpoint;
+import javax.xml.ws.http.HTTPBinding;
 
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
+import de.cau.cs.kieler.kwebs.server.service.JaxWsService;
+//import de.cau.cs.kieler.kwebs.server.service.RestService;
 
 /**
  * Manager for publishing a service object over HTTP.
@@ -79,14 +83,22 @@ class HttpServerManager extends AbstractServerManager {
         try {
             createServer();
             createContext();
-            server.start();
-            endpoint = Endpoint.create(serviceObject);
-            // Sets the executor of the end point. The newly created thread pool
-            // makes the end point handle the incoming requests concurrently.
-            endpoint.setExecutor(Executors.newFixedThreadPool(
+            ExecutorService executor = Executors.newFixedThreadPool(
                 Integer.parseInt(config.getConfigProperty(Configuration.SERVER_POOLSIZE))
-            ));
-            endpoint.publish(context);
+            );
+            //FIXME instance check just workaround
+            if (serviceObject instanceof JaxWsService) {
+                endpoint = Endpoint.create(serviceObject);
+                // Sets the executor of the end point. The newly created thread pool
+                // makes the end point handle the incoming requests concurrently.
+                endpoint.setExecutor(executor);
+                endpoint.publish(context);
+            } else if (serviceObject instanceof HttpHandler) {
+                //endpoint = Endpoint.create(HTTPBinding.HTTP_BINDING, serviceObject);
+                context.setHandler((HttpHandler) serviceObject);
+                server.setExecutor(executor);
+            }
+            server.start();
         } catch (Exception e) {
             Logger.log(Severity.CRITICAL, "HTTP server could not be published", e);
             if (server != null) {
@@ -140,7 +152,7 @@ class HttpServerManager extends AbstractServerManager {
         if (server != null) {
             throw new IllegalStateException("Server has already been created");
         }
-        URI address = new URI(config.getConfigProperty(Configuration.HTTP_ADDRESS));
+        //URI address = new URI(config.getConfigProperty(Configuration.HTTP_ADDRESS));
         String host = address.getHost();
         if (host == null) {
             Logger.log(Severity.WARNING, 
@@ -181,7 +193,7 @@ class HttpServerManager extends AbstractServerManager {
         if (context != null) {
             throw new IllegalStateException("Context has already been created");
         }
-        URI address = new URI(config.getConfigProperty(Configuration.HTTP_ADDRESS));
+        //URI address = new URI(config.getConfigProperty(Configuration.HTTP_ADDRESS));
         String path = address.getPath();
         if (path == null) {
             Logger.log(Severity.FAILURE, 

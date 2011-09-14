@@ -29,12 +29,26 @@ import java.util.TreeSet;
 public final class Debug {
 
     /**
-     * Displays contents of a map.
+     * Displays the contents of a map.
      * 
      * @param map
      *            the map from which the key/value pairs are to be displayed
      */
     public static void printMap(final Map<?, ?> map) {
+        dumpMapContents(map, true);
+    }
+    
+    /**
+     * Creates a string representation of the contents of a map.
+     * 
+     * @param map
+     *            the map from which the key/value pairs are to be displayed
+     * @param toScreen
+     *            whether to display on {@code System.out}
+     * @return a string representation of the contents of a map
+     */
+    public static String dumpMapContents(final Map<?, ?> map, final boolean toScreen) {
+        String result = null;
         if (map != null) {
             StackTraceElement element = Thread.currentThread().getStackTrace()[2];
             String caller = element.getClassName() 
@@ -59,13 +73,15 @@ public final class Debug {
             } else {
                 content.append("Map is empty.");
             }
-            System.out.println(
-                "CALLER: " + caller 
-                + "\nCLASS OF MAP: " + clas 
-                + "\nCONTENT OF MAP:\n" + content.toString() 
-                + "\n"
-            );
+            result = "CALLER: " + caller 
+                     + "\nCLASS OF MAP: " + clas 
+                     + "\nCONTENT OF MAP:\n" + content.toString() 
+                     + "\n";
+            if (toScreen) {
+                System.out.println(result);
+            }
         }
+        return result;
     }
 
     /**

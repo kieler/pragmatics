@@ -32,6 +32,7 @@
    <extension
          point="de.cau.cs.kieler.kwebs.server.configuration">
       <transformer
+            description="This transformer supports the models based on the KIELER KGraph and KLayoutData meta models that are serialized using the Xml Metadata Interchange (XMI) format."
             implementation="de.cau.cs.kieler.kwebs.transformation.KGraphXmiTransformer"
             name="FORMAT_KGRAPH_XMI"
             supportedFormat="de.cau.cs.kieler.format.kgraph.xmi">

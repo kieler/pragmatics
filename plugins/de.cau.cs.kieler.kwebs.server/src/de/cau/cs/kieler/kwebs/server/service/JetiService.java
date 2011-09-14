@@ -56,8 +56,10 @@ public class JetiService extends AbstractService {
      *             if an error occurs
      */
     public final void graphLayout(final InputFileReference inRef, final OutputFileReference outRef, 
+    //public final void graphLayout(final String serializedGraph, final OutputFileReference outRef,
         final String format) throws Exception {
         graphLayout(inRef, outRef, format, null);
+        //graphLayout(serializedGraph, outRef, format, null);
     }
 
     /**
@@ -75,12 +77,15 @@ public class JetiService extends AbstractService {
      *            if an exception occurs while processing the request
      * @throws Exception
      *             if an error occurs
-     */
+     */    
     public final void graphLayout(final InputFileReference inRef, final OutputFileReference outRef,
+    //public final void graphLayout(final String serializedGraph, final OutputFileReference outRef,
         final String format, final String serializedOptions) throws Exception {
         try {
+//*            
             byte[] data = Resources.readFileAsByteArray(inRef.toString());
             String serializedGraph = new String(data, "UTF-8");
+//*/            
             List<GraphLayoutOption> options = null;
             if (serializedOptions != null) {
                 options = GraphLayoutOption.stringToList(serializedOptions);

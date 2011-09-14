@@ -169,15 +169,15 @@ public abstract class AbstractServerBasedJob extends Job {
      */
     protected void processMessage(final String title, final String message) {
         Display.getDefault().syncExec(
-                new Runnable() {
-                    public void run() {
-                        MessageBox box = new MessageBox(getShell(), SWT.OK);
-                        box.setText(title);
-                        box.setMessage(message);
-                        box.open();
-                    }
+            new Runnable() {
+                public void run() {
+                    MessageBox box = new MessageBox(getShell(), SWT.OK);
+                    box.setText(title);
+                    box.setMessage(message);
+                    box.open();
                 }
-            );        
+            }
+        );        
     }
     
     /**

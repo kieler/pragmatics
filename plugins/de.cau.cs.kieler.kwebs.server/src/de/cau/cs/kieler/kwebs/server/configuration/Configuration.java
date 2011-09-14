@@ -44,26 +44,49 @@ public final class Configuration extends Properties {
     private static final String PREFIX
         = "de.cau.cs.kieler.kwebs.";
 
-    // Properties for HTTP based publishing
+    // Properties for HTTP based publishing of the JAXWS service
 
-    /** Shall service be published via HTTP? */
-    public static final String PUBLISH_HTTP
-        = PREFIX + "publishHttp";
+    /** Shall JAXWS service be published via HTTP? */
+    public static final String JAXWS_PUBLISH_HTTP
+        = PREFIX + "jaxws.publishHttp";
 
-    /** http service address. */
-    public static final String HTTP_ADDRESS
-        = PREFIX + "httpAddress";
+    /** JAXWS HTTP service address. */
+    public static final String JAXWS_HTTP_ADDRESS
+        = PREFIX + "jaxws.httpAddress";
 
-    // Preferences for HTTPS based publishing
+    // Preferences for HTTPS based publishing of the JAXWS service
 
-    /** Shall service be published via HTTPS? */
-    public static final String PUBLISH_HTTPS
-        = PREFIX + "publishHttps";
+    /** Shall JAXWS service be published via HTTPS? */
+    public static final String JAXWS_PUBLISH_HTTPS
+        = PREFIX + "jaxws.publishHttps";
 
-    /** HTTPS service address. */
-    public static final String HTTPS_ADDRESS
-        = PREFIX + "httpsAddress";
+    /** JAXWS HTTPS service address. */
+    public static final String JAXWS_HTTPS_ADDRESS
+        = PREFIX + "jaxws.httpsAddress";
 
+    // Properties for HTTP based publishing of the REST service
+
+    /** Shall REST service be published via HTTP? */
+    public static final String REST_PUBLISH_HTTP
+        = PREFIX + "rest.publishHttp";
+
+    /** REST HTTP service address. */
+    public static final String REST_HTTP_ADDRESS
+        = PREFIX + "rest.httpAddress";
+
+    // Preferences for HTTPS based publishing of the REST service
+
+    /** Shall REST service be published via HTTPS? */
+    public static final String REST_PUBLISH_HTTPS
+        = PREFIX + "rest.publishHttps";
+
+    /** REST HTTPS service address. */
+    public static final String REST_HTTPS_ADDRESS
+        = PREFIX + "rest.httpsAddress";
+    
+    // Preferences for the HTTPS configuration, the 
+    // HTTPS configuration is used for both JAXWS and REST service
+    
     /** Fully qualified path to the JKS formatted key store file. */
     public static final String HTTPSKEYSTORE_JKS_PATH
         = PREFIX + "httpsKeystore.jks.path";

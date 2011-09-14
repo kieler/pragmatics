@@ -75,7 +75,21 @@ public final class Resources {
      */
     public static void writeFile(final String path, final String data)
         throws IOException { 
-        writeFile(path, new ByteArrayInputStream(data.getBytes()));    
+        writeFile(path, data.getBytes());    
+    }
+
+    /**
+     * Writes a file from a string.
+     * 
+     * @param path
+     *            path to the file
+     * @param data
+     *            byte array file contents
+     * @throws IOException 
+     */
+    public static void writeFile(final String path, final byte[] data)
+        throws IOException { 
+        writeFile(path, new ByteArrayInputStream(data));    
     }
 
     /**

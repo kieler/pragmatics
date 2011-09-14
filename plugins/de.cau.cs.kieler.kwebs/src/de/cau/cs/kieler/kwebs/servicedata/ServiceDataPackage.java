@@ -41,7 +41,7 @@ public interface ServiceDataPackage extends EPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    String eNS_URI = "http://de.cau.cs.kieler.kwebs.service.data/2011-07-25/ServiceData/1.0";
+    String eNS_URI = "http://kieler.cs.cau.de/2011-07-25/ServiceData/1.0";
 
     /**
      * The package namespace name.

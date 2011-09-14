@@ -14,9 +14,12 @@
 
 package de.cau.cs.kieler.kwebs.transformation;
 
+import java.util.Map;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -31,6 +34,7 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
+import de.cau.cs.kieler.kwebs.kstatistics.KStatisticsPackage;
 import de.cau.cs.kieler.kwebs.util.Graphs;
 
 /**
@@ -64,28 +68,27 @@ public class KGraphXmiTransformer extends AbstractEmfTransformer<KNode> {
     /**
      * {@inheritDoc}
      */
-    @Override
     protected ResourceSet createResourceSet() {
-        ResourceSet resourceset = new ResourceSetImpl();
-        resourceset.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
-            Resource.Factory.Registry.DEFAULT_EXTENSION,
-            new XMIResourceFactoryImpl()
-        );
-        resourceset.getPackageRegistry().put(
-            KGraphPackage.eNS_URI,
-            KGraphPackage.eINSTANCE
-        );
-        resourceset.getPackageRegistry().put(
-            KLayoutDataPackage.eNS_URI,
-            KLayoutDataPackage.eINSTANCE
-        );
-        return resourceset;
+        Map<String, Object> extensionMap = Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap();
+        if (!extensionMap.containsKey(getFileExtension())) {
+            extensionMap.put(getFileExtension(), new XMIResourceFactoryImpl());
+        }
+        EPackage.Registry registry = EPackage.Registry.INSTANCE;
+        if (!registry.containsKey(KGraphPackage.eNS_URI)) {
+            registry.put(KGraphPackage.eNS_URI, KGraphPackage.eINSTANCE);
+        }
+        if (!registry.containsKey(KLayoutDataPackage.eNS_URI)) {
+            registry.put(KLayoutDataPackage.eNS_URI, KLayoutDataPackage.eINSTANCE);
+        }
+        if (!registry.containsKey(KStatisticsPackage.eNS_URI)) {
+            registry.put(KStatisticsPackage.eNS_URI, KStatisticsPackage.eINSTANCE);
+        }
+        return new ResourceSetImpl();
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     protected String getFileExtension() {
         return "kgraph";
     }
@@ -94,8 +97,7 @@ public class KGraphXmiTransformer extends AbstractEmfTransformer<KNode> {
      * {@inheritDoc}
      */
     public void deriveLayout(final TransformationData<KNode> transData) {
-        KNode graph = transData.getSourceGraph();
-        
+        KNode graph = transData.getSourceGraph();        
         // Make sure all graph elements are configured according to specs
         Graphs.validateAllElements(graph);
         // Forward the validated graph as layout graph
@@ -151,8 +153,27 @@ public class KGraphXmiTransformer extends AbstractEmfTransformer<KNode> {
                     for (PersistentEntry persistentEntry : persistentEntries) {
                         String key = persistentEntry.getKey();
                         String value = persistentEntry.getValue();
-                        if (key != null && value != null) {     
-                            if (services != null) { // For use in KIELER
+                        if (key != null && value != null) {
+                            LayoutOptionData<?> layoutOptionData = null;
+                            // If we run inside of KIELER we try to get the layout option
+                            // from the data service
+                            if (services != null) { 
+                                layoutOptionData = services.getOptionData(key);
+                            }
+                            // If we have a valid layout option, parse it's value and
+                            // annotate graph
+                            if (layoutOptionData != null) {
+                                Object layoutOptionValue = layoutOptionData.
+                                    parseValue(persistentEntry.getValue());
+                                if (layoutOptionValue != null) {
+                                    kgraphData.setProperty(layoutOptionData, layoutOptionValue);
+                                }
+                            // Unknown options are wrapped by a dynamically instantiated one
+                            } else { 
+                                IProperty<String> property = new Property<String>(key);
+                                kgraphData.setProperty(property, value);
+                            }
+                            /*if (services != null) { // For use in KIELER
                                 LayoutOptionData<?> layoutOptionData = services.getOptionData(key);
                                 if (layoutOptionData != null) {
                                     Object layoutOptionValue = layoutOptionData.
@@ -164,7 +185,7 @@ public class KGraphXmiTransformer extends AbstractEmfTransformer<KNode> {
                             } else { // For use outside of KIELER
                                 IProperty<String> property = new Property<String>(key);
                                 kgraphData.setProperty(property, value);
-                            }
+                            }*/
                         }
                     }
                 }

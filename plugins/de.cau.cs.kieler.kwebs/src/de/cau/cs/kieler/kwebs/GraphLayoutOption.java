@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import de.cau.cs.kieler.core.properties.IProperty;
-
 /**
  * Utility class for transferring layout options to the layout server.
  *
@@ -53,10 +51,10 @@ public class GraphLayoutOption {
      *            the property
      * @param thevalue
      *            the value
-     */
+     *//*
     public GraphLayoutOption(final IProperty<?> theproperty, final Object thevalue) {
         this(theproperty.getId(), thevalue.toString());
-    }
+    }*/
     
     /**
      * Constructs a new instance with the given id and value.

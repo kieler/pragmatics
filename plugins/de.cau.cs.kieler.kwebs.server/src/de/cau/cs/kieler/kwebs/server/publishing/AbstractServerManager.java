@@ -14,6 +14,8 @@
 
 package de.cau.cs.kieler.kwebs.server.publishing;
 
+import java.net.URI;
+
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 
 /**
@@ -25,9 +27,21 @@ import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 abstract class AbstractServerManager implements IServerManager {
 
     //CHECKSTYLEOFF VisibilityModifier
+    
     /** The server wide configuration instance. */
     protected Configuration config
         = Configuration.getInstance();
+
+    /** The address this manager exposes the serviced object on. */
+    protected URI address;
+    
     //CHECKSTYLEON VisibilityModifier
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void setAddress(final URI theaddress) {
+        address = theaddress;
+    }
     
 }

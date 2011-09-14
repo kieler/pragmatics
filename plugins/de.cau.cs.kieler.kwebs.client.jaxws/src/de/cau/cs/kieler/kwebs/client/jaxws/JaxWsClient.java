@@ -14,22 +14,15 @@
 
 package de.cau.cs.kieler.kwebs.client.jaxws;
 
-import java.io.FileInputStream;
 import java.net.URL;
-import java.security.KeyStore;
-import java.security.SecureRandom;
 import java.util.List;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManagerFactory;
 import javax.xml.namespace.QName;
 
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.LocalServiceException;
 import de.cau.cs.kieler.kwebs.RemoteServiceException;
-import de.cau.cs.kieler.kwebs.client.AbstractLayoutServiceClient;
+import de.cau.cs.kieler.kwebs.client.HttpBasedLayoutServiceClient;
 import de.cau.cs.kieler.kwebs.client.ServerConfig;
 import de.cau.cs.kieler.kwebs.jaxws.LayoutService;
 import de.cau.cs.kieler.kwebs.jaxws.LayoutServicePort;
@@ -41,7 +34,7 @@ import de.cau.cs.kieler.kwebs.jaxws.LayoutServicePort;
  *
  * @author swe
  */
-public class JaxWsClient extends AbstractLayoutServiceClient {
+public class JaxWsClient extends HttpBasedLayoutServiceClient {
 
     /** The service object. */
     private LayoutService layoutService;
@@ -186,63 +179,6 @@ public class JaxWsClient extends AbstractLayoutServiceClient {
             layoutService = null;
             layoutPort = null;
             super.setServerConfig(theserverConfig);
-        }
-    }
-    
-    /** Remember the default SSL socket factory. */
-    private SSLSocketFactory sslSocketFactory;
-
-    /**
-     * Initializes the SSL context needed for communication with a HTTPS based layout provider.
-     * 
-     * @param truststore
-     *            path to the trust store file
-     * @param truststorePass
-     *            password for the trust store file
-     * @throws Exception
-     */
-    private synchronized void initSSL(final String truststore, final String truststorePass) 
-        throws Exception {
-        if (sslSocketFactory != null) {
-            throw new IllegalAccessException("SSL already initialized, call releaseSSL first");
-        }
-        // Create a trust manager factory
-        TrustManagerFactory trustManagerFactory
-            = TrustManagerFactory.getInstance(
-                  TrustManagerFactory.getDefaultAlgorithm()
-              );
-        // Load the clients trust store
-        KeyStore keyStore
-            = KeyStore.getInstance("JKS");
-        keyStore.load(
-            new FileInputStream(truststore),
-            truststorePass.toCharArray()
-        );
-        // Initialize the trust manager factory with the loaded trust store.
-        // Here the trusted certificate from the trust store is imported. 
-        trustManagerFactory.init(keyStore);
-        // Initialize a SSL context with a trust manager which trusts the
-        // imported certificate
-        SSLContext sslContext = SSLContext.getInstance("TLS");            
-        sslContext.init(
-            null,
-                trustManagerFactory.getTrustManagers(),
-                    new SecureRandom()
-        );
-        // Exchange the default SSL socket factory with our own and
-        // remember system default factory
-        sslSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
-        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
-    }
-    
-    /**
-     * Sets the SSL configuration to system defaults.
-     */
-    private synchronized void releaseSSL() {
-        if (sslSocketFactory != null) {
-            // Set system SSL socket factory back to default
-            HttpsURLConnection.setDefaultSSLSocketFactory(sslSocketFactory);
-            sslSocketFactory = null;
         }
     }
     
