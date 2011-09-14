@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.klighd.xtext;
 
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.xtext.resource.XtextResource;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
@@ -37,11 +40,21 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
      *            information.
      */
     public void execute(final XtextModelChangeState state) {
-        XtextResource resource = state.getResource();
-        String id = resource.getURI().toPlatformString(false);
+        // FIXME not final, because if a project has the same name like 
+        //       a folder in the path it fails
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        IPath path = state.getEditorInputPath();
+        String id = state.getEditorInputPath().toPortableString();
+        for (String segment : path.segments()) {
+            if (root.getProject(segment).exists()) {
+                id = id.substring(id.indexOf(segment));
+                break;
+            }
+        }
         if (state.getEventType().equals(EventType.CLOSED)) {
             this.schedule(new KlighdCloseDiagramEffect(id));
         } else {
+            XtextResource resource = state.getResource();
             if (resource == null || resource.getContents() == null
                     || resource.getContents().isEmpty()) {
                 return;
@@ -49,8 +62,8 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
             if (!LightDiagramServices.getInstance().maybeSupports(resource.getContents().get(0))) {
                 return;
             }
-            this.schedule(new KlighdDiagramEffect(id, state.getEditorInputPath().lastSegment(), resource
-                    .getContents().get(0)));
+            this.schedule(new KlighdDiagramEffect(id, state.getEditorInputPath().lastSegment(),
+                    resource.getContents().get(0)));
         }
     }
 }
