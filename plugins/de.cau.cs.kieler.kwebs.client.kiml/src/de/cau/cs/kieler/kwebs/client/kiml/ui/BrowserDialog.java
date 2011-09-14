@@ -19,14 +19,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -88,22 +84,21 @@ public class BrowserDialog extends Dialog {
     @Override
     protected Control createDialogArea(final Composite parent) {
         final Composite composite = (Composite) super.createDialogArea(parent);
+        
         try {
             browser = new Browser(composite, SWT.BORDER);                
-            browser.setSize(size.width, size.height);                
             browser.setText(html);
-            browser.pack();
+            
+            GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+            gd.minimumWidth = size.width;
+            gd.minimumHeight = size.height;
+            browser.setLayoutData(gd);
         } catch (Exception e) {
             StatusManager.getManager().handle(
                 new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Could not create browser widget", e)
             );
         }
-        composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
-        composite.addControlListener(new ControlAdapter() { 
-            public void controlResized(final ControlEvent e) { 
-                Rectangle rect = composite.getClientArea();
-            }
-        });
+        
         return composite;
     }
     
