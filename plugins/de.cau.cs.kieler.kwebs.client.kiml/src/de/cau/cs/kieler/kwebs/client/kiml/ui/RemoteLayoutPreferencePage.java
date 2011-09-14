@@ -259,8 +259,9 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
     private Group createLayoutGroup1(final Composite parent) {
 
         Group generalGroup = new Group(parent, SWT.NONE);
-
-        generalGroup.setText("Which Layout do you want to use?");
+        generalGroup.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
+        generalGroup.setLayout(new GridLayout(1, true));
+        generalGroup.setText("Layout type");
 
         // add radio buttons for selection of local or remote layout
         serverConfigRadio1 = new Button(generalGroup, SWT.RADIO | SWT.LEFT);
@@ -288,10 +289,6 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
                 }
             }
         );
-
-        FillLayout layout = new FillLayout();
-        layout.marginWidth = MARGIN_WIDTH;
-        generalGroup.setLayout(layout);
 
         return generalGroup;
 
@@ -353,13 +350,15 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
     private Group createLayoutGroup3(final Composite parent) {
 
         Group generalGroup = new Group(parent, SWT.NONE);
-
-        generalGroup.setText("Available Layout Web Services:");
+        generalGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        
+        generalGroup.setText("Available Layout Web Services");
 
         // Add table with list of available server configuration
         serverConfigViewer = new TableViewer(generalGroup,
             SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL
         );
+        serverConfigViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         TableViewerColumn col = null;
 
@@ -462,8 +461,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         serverConfigViewer.setInput(ServerConfigs.getInstance());
 
         GridData tableLayoutData = new GridData(
-            SWT.FILL, SWT.TOP, true, false, 1, 1
-        );
+            SWT.FILL, SWT.FILL, true, true);
 
         tableLayoutData.heightHint = OPTIONS_TABLE_HEIGHT;
         tableLayoutData.widthHint = OPTIONS_TABLE_WIDTH;
@@ -585,7 +583,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         );
 
         comp.setLayout(new FillLayout(SWT.VERTICAL));
-        comp.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
+        comp.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
 
         generalGroup.setLayout(new GridLayout(2, false));
 
