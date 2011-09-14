@@ -1,5 +1,5 @@
 /*
- * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+333333333333333333333333 * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
@@ -32,7 +32,7 @@ import de.cau.cs.kieler.kwebs.servicedata.transformation.ServiceDataXmiTransform
  * @kieler.rating 2011-05-17 red
  * @author swe
  */
-public abstract class ServiceDataLayoutDataService extends /*ProgrammaticLayoutDataService*/ExtensionLayoutDataService {
+public abstract class ServiceDataLayoutDataService extends ProgrammaticLayoutDataService/*ExtensionLayoutDataService*/ {
 
     /** 
      *  The extension elements created from the layout meta data received
@@ -75,7 +75,7 @@ public abstract class ServiceDataLayoutDataService extends /*ProgrammaticLayoutD
             }
             extensions = vectorElements.toArray(new IConfigurationElement[0]);
             loadLayoutProviderExtensions();
-            //registerProgrammaticOptions();
+            registerProgrammaticOptions();
         } catch (Exception e) {
             reportError("Error while parsing layout server meta data", e);
         }
