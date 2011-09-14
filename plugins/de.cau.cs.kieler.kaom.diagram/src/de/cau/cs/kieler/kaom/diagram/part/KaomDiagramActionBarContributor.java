@@ -1,5 +1,6 @@
 package de.cau.cs.kieler.kaom.diagram.part;
 
+import org.eclipse.gmf.runtime.common.ui.action.global.GlobalActionId;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramActionBarContributor;
 import org.eclipse.gmf.runtime.diagram.ui.printing.render.actions.EnhancedPrintActionHelper;
 import org.eclipse.gmf.runtime.diagram.ui.printing.render.actions.RenderedPrintPreviewAction;
@@ -39,5 +40,8 @@ public class KaomDiagramActionBarContributor extends DiagramActionBarContributor
         assert fileMenu != null;
         IAction printPreviewAction = new RenderedPrintPreviewAction(new EnhancedPrintActionHelper());
         fileMenu.insertBefore("print", printPreviewAction); //$NON-NLS-1$
+        
+        //ckru: bugfix for save button disabled while an object is selected 
+        bars.setGlobalActionHandler(GlobalActionId.SAVE, null);
     }
 }
