@@ -195,10 +195,9 @@ public class GraphvizTool {
                 }
                 endProcess();
                 if (error.length() > 0) {
-                    // FIXME throw a more specific exception
-                    throw new RuntimeException("Graphviz error: " + error.toString());
+                    throw new GraphvizException("Graphviz error: " + error.toString());
                 } else {
-                    throw new RuntimeException(
+                    throw new GraphvizException(
                             "Timeout exceeded while waiting for Graphviz output. "
                                     + "Try increasing the timeout value in the preferences.");
                 }

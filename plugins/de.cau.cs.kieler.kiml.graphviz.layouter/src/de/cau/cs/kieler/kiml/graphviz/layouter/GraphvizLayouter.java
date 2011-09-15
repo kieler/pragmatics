@@ -24,7 +24,6 @@ import java.util.LinkedList;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
@@ -38,7 +37,6 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.ForkedOutputStream;
 import de.cau.cs.kieler.core.util.ForwardingInputStream;
-import de.cau.cs.kieler.core.util.NonBlockingInputStream;
 import de.cau.cs.kieler.core.util.Pair;
 
 /**
@@ -98,7 +96,6 @@ public class GraphvizLayouter {
         // create an Xtext resource set for parsing and serialization
         KGraphDotTransformation transformation = new KGraphDotTransformation(parentNode);
         XtextResourceSet resourceSet = transformation.createResourceSet();
-        resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
 
         // translate the KGraph to Graphviz and write to the process
         GraphvizModel graphvizInput = transformation.transform(command,
@@ -203,7 +200,7 @@ public class GraphvizLayouter {
             final IKielerProgressMonitor monitor, final boolean debugMode,
             final GraphvizTool graphvizTool, final XtextResourceSet resourceSet) {
         monitor.begin("Parse output", 1);
-        InputStream inputStream = new NonBlockingInputStream(processStream);
+        InputStream inputStream = processStream;
         // enable debug output if needed
         FileOutputStream debugStream = null;
         if (debugMode) {
@@ -229,7 +226,6 @@ public class GraphvizLayouter {
                 .createURI("process.graphviz_dot"));
         try {
             resource.load(getFilteredStream(inputStream), null);
-            EcoreUtil.resolveAll(resource);
         } catch (IOException exception) {
             graphvizTool.endProcess();
             throw new WrappedException(exception, "Failed to read Graphviz output.");
@@ -250,14 +246,12 @@ public class GraphvizLayouter {
                 errorString.append("\n" + diagnostic.getLine() + ": " + diagnostic.getMessage());
             }
             graphvizTool.endProcess();
-            // FIXME throw a more specific exception
-            throw new RuntimeException(errorString.toString());
+            throw new GraphvizException(errorString.toString());
         }
         GraphvizModel graphvizModel = (GraphvizModel) resource.getParseResult().getRootASTElement();
         if (graphvizModel.getGraphs().isEmpty()) {
             graphvizTool.endProcess();
-            // FIXME throw a more specific exception
-            throw new RuntimeException("No output from the Graphviz process.");
+            throw new GraphvizException("No output from the Graphviz process.");
         }
 
         monitor.done();
@@ -278,7 +272,8 @@ public class GraphvizLayouter {
         final LinkedList<Pair<byte[], Integer>> buffer = new LinkedList<Pair<byte[], Integer>>();
         while (inputStream.available() > 0) {
             byte[] bs = new byte[BUFFER_SIZE];
-            int n = inputStream.read(bs);
+            int max = Math.min(bs.length, inputStream.available());
+            int n = inputStream.read(bs, 0, max);
             buffer.add(new Pair<byte[], Integer>(bs, n));
         }
         return new InputStream() {
@@ -326,6 +321,9 @@ public class GraphvizLayouter {
                                 }
                             }
                             c = internalRead();
+                            if (c >= 0) {
+                                internalAdvance();
+                            }
                         }
                     }
                 }

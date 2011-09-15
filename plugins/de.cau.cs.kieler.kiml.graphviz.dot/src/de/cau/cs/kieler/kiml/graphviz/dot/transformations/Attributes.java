@@ -71,6 +71,11 @@ public final class Attributes {
     public static final String LTAIL = "ltail";
     /** Determines if and how node overlaps should be removed (not dot). */
     public static final String OVERLAP = "overlap";
+    /**
+     * The pad attribute specifies how much, in inches, to extend the drawing area around
+     * the minimal area needed to draw the graph.
+     */
+    public static final String PAD = "pad";
     /** Position of node, or spline control points. */
     public static final String POS = "pos";
     /** Specifies the minimum separation between all nodes (circo only). */

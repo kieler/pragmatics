@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 import org.eclipse.xtext.resource.XtextResourceSet;
@@ -138,8 +139,7 @@ public class KGraphDotTransformation {
     /**
      * Constructs a KGraphDotTransformation for a given KGraph instance.
      * 
-     * @param parent
-     *            the KGraph instance
+     * @param parent the KGraph instance
      */
     public KGraphDotTransformation(final KNode parent) {
         kgraph = parent;
@@ -148,10 +148,8 @@ public class KGraphDotTransformation {
     /**
      * Transforms the KGraph instance to a Dot instance using the given command.
      * 
-     * @param command
-     *            the command
-     * @param monitor
-     *            the progress monitor
+     * @param command the command
+     * @param monitor the progress monitor
      * @return the Dot instance
      */
     public GraphvizModel transform(final Command command, final IKielerProgressMonitor monitor) {
@@ -163,7 +161,8 @@ public class KGraphDotTransformation {
         boolean layoutHierarchy = kgraph.getData(KShapeLayout.class)
                 .getProperty(LayoutOptions.LAYOUT_HIERARCHY)
                 && (command == Command.DOT || command == Command.FDP);
-        transform(kgraph, graph.getStatements(), command, layoutHierarchy, new KVector());
+        transformNodes(kgraph, graph.getStatements(), command, layoutHierarchy, new KVector());
+        transformEdges(kgraph, graph.getStatements(), layoutHierarchy);
         monitor.done();
         return graphvizModel;
     }
@@ -173,10 +172,8 @@ public class KGraphDotTransformation {
      * using the mapping created by a previous call to {@code transform}. Has to be called after a
      * call to {@code transform}.
      * 
-     * @param model
-     *            the Dot instance
-     * @param monitor
-     *            the progress monitor
+     * @param model the Dot instance
+     * @param monitor the progress monitor
      */
     public void applyLayout(final GraphvizModel model, final IKielerProgressMonitor monitor) {
         monitor.begin("Transfer layout result", 1);
@@ -188,15 +185,16 @@ public class KGraphDotTransformation {
         Graph graph = model.getGraphs().get(0);
         
         // process nodes and subgraphs
-        KVector baseOffset = new KVector(borderSpacing, borderSpacing);
-        KVector edgeOffset = applyLayout(kgraph, graph.getStatements(), baseOffset);
+        KVector baseOffset = new KVector();
+        applyLayout(kgraph, graph.getStatements(), baseOffset, borderSpacing);
         
         // finally process the edges
         LinkedList<Statement> statements = new LinkedList<Statement>(graph.getStatements());
+        KVector edgeOffset = baseOffset.translate(borderSpacing, borderSpacing);
         while (!statements.isEmpty()) {
             Statement statement = statements.removeFirst();
             if (statement instanceof EdgeStatement) {
-                applyEdgeLayout((EdgeStatement) statement, baseOffset, edgeOffset);
+                applyEdgeLayout((EdgeStatement) statement, edgeOffset, borderSpacing);
             } else if (statement instanceof Subgraph) {
                 statements.addAll(((Subgraph) statement).getStatements());
             }
@@ -206,7 +204,7 @@ public class KGraphDotTransformation {
     }
 
     /**
-     * Transform the content of the given parent node.
+     * Transform the child nodes of the given parent node.
      * 
      * @param parent a parent node
      * @param statements the list to which new statements are added
@@ -214,7 +212,7 @@ public class KGraphDotTransformation {
      * @param hierarchy whether hierarchy mode is active
      * @param offset offset of the parent node in the whole graph
      */
-    private void transform(final KNode parent, final List<Statement> statements,
+    private void transformNodes(final KNode parent, final List<Statement> statements,
             final Command command, final boolean hierarchy, final KVector offset) {
         // set attributes for the whole graph
         KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
@@ -239,13 +237,14 @@ public class KGraphDotTransformation {
                 // transform child nodes recursively
                 double subgraphx = nodeLayout.getXpos() + nodeLayout.getInsets().getLeft();
                 double subgraphy = nodeLayout.getYpos() + nodeLayout.getInsets().getTop();
-                transform(childNode, subgraph.getStatements(), command, true,
+                transformNodes(childNode, subgraph.getStatements(), command, true,
                         new KVector(offset).translate(subgraphx, subgraphy));
                 // create a dummy node for compound edges
                 nodeID = getNodeID(childNode, NodeType.DUMMY);
                 attributes.add(createAttribute(Attributes.STYLE, "invis"));
                 attributes.add(createAttribute(Attributes.WIDTH, "0"));
                 attributes.add(createAttribute(Attributes.HEIGHT, "0"));
+                subgraph.getStatements().add(nodeStatement);
             } else {
                 nodeID = getNodeID(childNode, NodeType.NODE);
                 graphElementMap.put(nodeID, childNode);
@@ -267,18 +266,30 @@ public class KGraphDotTransformation {
                 }
                 // set node shape
                 attributes.add(createAttribute(Attributes.SHAPE, "box"));
+                statements.add(nodeStatement);
             }
             attributes.add(createAttribute(Attributes.FIXEDSIZE, "true"));
             Node node = DotFactory.eINSTANCE.createNode();
             node.setName(nodeID);
             nodeStatement.setNode(node);
-            statements.add(nodeStatement);
         }
+    }
 
-        // create edges
+    /**
+     * Transform the edges of the given parent node.
+     * 
+     * @param parent a parent node
+     * @param statements the list to which new statements are added
+     * @param hierarchy whether hierarchy mode is active
+     */
+    private void transformEdges(final KNode parent, final List<Statement> statements,
+            final boolean hierarchy) {
+        KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
         Direction layoutDirection = parentLayout.getProperty(LayoutOptions.DIRECTION);
         boolean vertical = layoutDirection == Direction.DOWN || layoutDirection == Direction.UP;
-        for (KNode source : parent.getChildren()) {
+        LinkedList<KNode> nodes = new LinkedList<KNode>(parent.getChildren());
+        while (!nodes.isEmpty()) {
+            KNode source = nodes.removeFirst();
             for (KEdge edge : source.getOutgoingEdges()) {
                 KNode target = edge.getTarget();
                 // cross-hierarchy edges are considered only if hierarchy mode is active
@@ -323,6 +334,9 @@ public class KGraphDotTransformation {
                     edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 }
             }
+            if (hierarchy) {
+                nodes.addAll(source.getChildren());
+            }
         }
     }
     
@@ -346,12 +360,9 @@ public class KGraphDotTransformation {
     /**
      * Sets attributes for the whole graph.
      * 
-     * @param statements
-     *            the statement list for adding attributes
-     * @param command
-     *            a layouter command
-     * @param parentLayout
-     *            the layout data for the parent node
+     * @param statements the statement list for adding attributes
+     * @param command a layouter command
+     * @param parentLayout the layout data for the parent node
      */
     private void setGraphAttributes(final List<Statement> statements, final Command command,
             final KGraphData parentLayout) {
@@ -434,10 +445,8 @@ public class KGraphDotTransformation {
     /**
      * Creates an attribute with given name and value for the Dot graph.
      * 
-     * @param name
-     *            name of the attribute
-     * @param value
-     *            value of the attribute
+     * @param name name of the attribute
+     * @param value value of the attribute
      * @return instance of a Dot attribute
      */
     public static Attribute createAttribute(final String name, final String value) {
@@ -453,12 +462,9 @@ public class KGraphDotTransformation {
     /**
      * Set edge labels for the given edge.
      * 
-     * @param kedge
-     *            edge whose labels shall be set
-     * @param attributes
-     *            edge attribute list to which the labels are added
-     * @param isVertical
-     *            indicates whether vertical layout direction is active
+     * @param kedge edge whose labels shall be set
+     * @param attributes edge attribute list to which the labels are added
+     * @param isVertical indicates whether vertical layout direction is active
      */
     private static void setEdgeLabels(final KEdge kedge, final List<Attribute> attributes,
             final boolean isVertical) {
@@ -558,8 +564,7 @@ public class KGraphDotTransformation {
      * Creates a properly parseable string by adding the escape character '\\' wherever needed and
      * replacing illegal characters.
      * 
-     * @param label
-     *            a label string from the KGraph structure
+     * @param label a label string from the KGraph structure
      * @return string to be used in the Graphviz model
      */
     private static String createString(final String label) {
@@ -589,10 +594,8 @@ public class KGraphDotTransformation {
     /**
      * Creates a unique identifier for the given node.
      * 
-     * @param node
-     *            node for which an identifier shall be created
-     * @param cluster
-     *            whether a cluster id should be created
+     * @param node node for which an identifier shall be created
+     * @param cluster whether a cluster id should be created
      * @return a unique string used to identify the node
      */
     private String getNodeID(final KNode node, final NodeType type) {
@@ -610,8 +613,7 @@ public class KGraphDotTransformation {
     /**
      * Creates a unique identifier for the given edge.
      * 
-     * @param edge
-     *            edge for which an identifier shall be created
+     * @param edge edge for which an identifier shall be created
      * @return a unique string used to identify the edge
      */
     private String getEdgeID(final KEdge edge) {
@@ -624,18 +626,16 @@ public class KGraphDotTransformation {
      * Edge offsets are given separately, since on some platforms edges seem to have a different
      * reference point than nodes.
      * 
-     * @param parentNode
-     *            parent node of the original graph
-     * @param statements
-     *            list of statements to process
-     * @param nodeOffset
-     *            offset to be added to node coordinates
-     * @return offset to be added to edge coordinates (besides transforming them to their source)
+     * @param parentNode parent node of the original graph
+     * @param statements list of statements to process
+     * @param baseOffset offset to be added to edge and subgraph coordinates
+     * @param borderSpacing additional border spacing
      */
-    private KVector applyLayout(final KNode parentNode, final List<Statement> statements,
-            final KVector nodeOffset) {
-        KVector edgeOffset = null;
+    private void applyLayout(final KNode parentNode, final List<Statement> statements,
+            final KVector baseOffset, final float borderSpacing) {
         // process attributes: determine bounding box of the parent node
+        float spacing = borderSpacing;
+        KVector nodeOffset = new KVector();
         attr_loop: for (Statement statement : statements) {
             if (statement instanceof AttributeStatement) {
                 AttributeStatement attributeStatement = (AttributeStatement) statement;
@@ -657,27 +657,24 @@ public class KGraphDotTransformation {
                                 float height = (float) (bottomy - topy) + insets.getTop()
                                         + insets.getBottom();
                                 if (parentNode == kgraph) {
-                                    float borderSpacing = parentNode.getData(KShapeLayout.class)
-                                            .getProperty(LayoutOptions.BORDER_SPACING);
-                                    if (borderSpacing < 0) {
-                                        borderSpacing = DEF_SPACING_SMALL / 2;
-                                    }
-                                    width += 2 * borderSpacing;
-                                    height += 2 * borderSpacing;
-                                    // on some platforms the edges have an offset, but the nodes don't
-                                    // -- maybe a Graphviz bug?
-                                    edgeOffset = new KVector(nodeOffset).translate(-leftx, -topy);
+                                    width += 2 * spacing;
+                                    height += 2 * spacing;
+                                    baseOffset.translate(-leftx, -topy);
                                 } else {
-                                    parentLayout.setXpos((float) (leftx - insets.getLeft()
-                                            + nodeOffset.x));
-                                    parentLayout.setYpos((float) (topy - insets.getTop()
-                                            + nodeOffset.y));
-                                    nodeOffset.translate(-leftx, -topy);
+                                    parentLayout.setXpos((float) (baseOffset.x + leftx
+                                            - insets.getLeft() + spacing));
+                                    parentLayout.setYpos((float) (baseOffset.y + topy
+                                            - insets.getTop() + spacing));
+                                    spacing = 0;
+                                    nodeOffset.x = -(baseOffset.x + leftx);
+                                    nodeOffset.y = -(baseOffset.y + topy);
                                 }
                                 KimlUtil.resizeNode(parentNode, width, height, false);
                                 parentLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
                                 break attr_loop;
                             } catch (NumberFormatException exception) {
+                                // ignore exception
+                            } catch (NoSuchElementException exception) {
                                 // ignore exception
                             }
                         }
@@ -689,15 +686,16 @@ public class KGraphDotTransformation {
         // process nodes and subgraphs to collect all offset data
         for (Statement statement : statements) {
             if (statement instanceof NodeStatement) {
-                applyNodeLayout((NodeStatement) statement, nodeOffset);
+                applyNodeLayout((NodeStatement) statement, nodeOffset, spacing);
             } else if (statement instanceof Subgraph) {
                 Subgraph subgraph = (Subgraph) statement;
                 KNode knode = (KNode) graphElementMap.get(subgraph.getName());
-                applyLayout(knode, subgraph.getStatements(), new KVector(nodeOffset));
+                applyLayout(knode, subgraph.getStatements(), baseOffset, spacing);
+                KShapeLayout subGraphLayout = knode.getData(KShapeLayout.class);
+                subGraphLayout.setXpos(subGraphLayout.getXpos() + (float) nodeOffset.x);
+                subGraphLayout.setYpos(subGraphLayout.getYpos() + (float) nodeOffset.y);
             }
         }
-        
-        return edgeOffset;
     }
     
     /**
@@ -705,8 +703,10 @@ public class KGraphDotTransformation {
      * 
      * @param nodeStatement a node statement
      * @param offset the offset to be added to node coordinates
+     * @param spacing additional border spacing
      */
-    private void applyNodeLayout(final NodeStatement nodeStatement, final KVector offset) {
+    private void applyNodeLayout(final NodeStatement nodeStatement, final KVector offset,
+            final float spacing) {
         KNode knode = (KNode) graphElementMap.get(nodeStatement.getNode().getName());
         if (knode == null) {
             return;
@@ -718,8 +718,8 @@ public class KGraphDotTransformation {
                 if (attribute.getName().equals(Attributes.POS)) {
                     KVector pos = new KVector();
                     pos.parse((attribute.getValue()));
-                    xpos = (float) (pos.x + offset.x);
-                    ypos = (float) (pos.y + offset.y);
+                    xpos = (float) (pos.x + offset.x + spacing);
+                    ypos = (float) (pos.y + offset.y + spacing);
                 } else if (attribute.getName().equals(Attributes.WIDTH)) {
                     StringTokenizer tokenizer = new StringTokenizer(attribute.getValue(),
                             ATTRIBUTE_DELIM);
@@ -733,14 +733,23 @@ public class KGraphDotTransformation {
                 // ignore exception
             } catch (IllegalArgumentException exception) {
                 // ignore exception
+            } catch (NoSuchElementException exception) {
+                // ignore exception
             }
         }
         nodeLayout.setXpos(xpos - width / 2);
         nodeLayout.setYpos(ypos - height / 2);
     }
     
-    private void applyEdgeLayout(final EdgeStatement edgeStatement, final KVector baseOffset,
-            final KVector edgeOffset) {
+    /**
+     * Sets the bend points of an edge.
+     * 
+     * @param edgeStatement an edge statement
+     * @param edgeOffset offset to be added to edge coordinates
+     * @param spacing additional border spacing
+     */
+    private void applyEdgeLayout(final EdgeStatement edgeStatement, final KVector edgeOffset,
+            final float spacing) {
         Map<String, String> attributeMap = createAttributeMap(edgeStatement.getAttributes());
         KEdge kedge = (KEdge) graphElementMap.get(attributeMap.get(Attributes.COMMENT));
         if (kedge == null) {
@@ -760,6 +769,7 @@ public class KGraphDotTransformation {
             KShapeLayout nodeLayout = referenceNode.getData(KShapeLayout.class);
             reference.x += nodeLayout.getXpos() + nodeLayout.getInsets().getLeft();
             reference.y += nodeLayout.getYpos() + nodeLayout.getInsets().getTop();
+            referenceNode = referenceNode.getParent();
         }
         KVector offset = edgeOffset.differenceCreate(reference);
 
@@ -821,24 +831,18 @@ public class KGraphDotTransformation {
         }
         labelPos = attributeMap.get(Attributes.TAILLP);
         if (labelPos != null) {
-            applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.TAIL,
-                    baseOffset.differenceCreate(reference));
+            applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.TAIL, offset);
         }
     }
 
     /**
      * Applies the edge label positions for the given edge.
      * 
-     * @param kedge
-     *            edge for which labels are processed
-     * @param posString
-     *            string with label position
-     * @param placement
-     *            label placement to choose
-     * @param offsetx
-     *            x offset added to positions
-     * @param offsety
-     *            y offset added to positions
+     * @param kedge edge for which labels are processed
+     * @param posString string with label position
+     * @param placement label placement to choose
+     * @param offsetx x offset added to positions
+     * @param offsety y offset added to positions
      */
     private void applyEdgeLabelPos(final KEdge kedge, final String posString,
             final EdgeLabelPlacement placement, final KVector offset) {
@@ -873,8 +877,7 @@ public class KGraphDotTransformation {
     /**
      * Converts a list of attributes to a map of attribute names to their values.
      * 
-     * @param attributes
-     *            attribute list
+     * @param attributes attribute list
      * @return a hash map that contains all given attributes
      */
     private static Map<String, String> createAttributeMap(final List<Attribute> attributes) {
@@ -888,12 +891,9 @@ public class KGraphDotTransformation {
     /**
      * Puts the points of a position string into a list of splines.
      * 
-     * @param posString
-     *            string with spline points
-     * @param splines
-     *            list of splines
-     * @param offset
-     *            offset to add to coordinates
+     * @param posString string with spline points
+     * @param splines list of splines
+     * @param offset offset to add to coordinates
      * @return the source and the target point, if specified by the position string
      */
     private static Pair<KVector, KVector> parseSplinePoints(final String posString,
