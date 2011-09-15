@@ -18,6 +18,7 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -102,6 +103,7 @@ public class GraphTransformer extends AbstractAlgorithm implements ILayoutProces
             KVector nodeSize = node.getSize();
             for (LPort port : node.getPorts()) {
                 mirror(port.getPosition(), nodeSize.x);
+                mirrorPortSide(port);
                 for (LEdge edge : port.getOutgoingEdges()) {
                     for (KVector bendPoint : edge.getBendPoints()) {
                         mirror(bendPoint, maxx);
@@ -128,6 +130,31 @@ public class GraphTransformer extends AbstractAlgorithm implements ILayoutProces
     }
     
     /**
+     * Mirror the side of the given port. Undefined port sides are left untouched.
+     * 
+     * @param port the port.
+     */
+    private void mirrorPortSide(final LPort port) {
+        switch (port.getSide()) {
+        case NORTH:
+            port.setSide(PortSide.SOUTH);
+            break;
+        
+        case SOUTH:
+            port.setSide(PortSide.NORTH);
+            break;
+        
+        case EAST:
+            port.setSide(PortSide.WEST);
+            break;
+        
+        case WEST:
+            port.setSide(PortSide.EAST);
+            break;
+        }
+    }
+    
+    /**
      * Transpose the x and y coordinates of the given graph.
      * 
      * @param nodes the nodes of the graph to transpose
@@ -139,6 +166,7 @@ public class GraphTransformer extends AbstractAlgorithm implements ILayoutProces
             for (LPort port : node.getPorts()) {
                 transpose(port.getPosition());
                 transpose(port.getSize());
+                transposePortSide(port);
                 for (LEdge edge : port.getOutgoingEdges()) {
                     for (KVector bendPoint : edge.getBendPoints()) {
                         transpose(bendPoint);
@@ -171,6 +199,31 @@ public class GraphTransformer extends AbstractAlgorithm implements ILayoutProces
         double temp = v.x;
         v.x = v.y;
         v.y = temp;
+    }
+    
+    /**
+     * Transpose the side of the given port. Undefined port sides are left untouched.
+     * 
+     * @param p the port.
+     */
+    private void transposePortSide(final LPort p) {
+        switch (p.getSide()) {
+        case NORTH:
+            p.setSide(PortSide.WEST);
+            break;
+        
+        case WEST:
+            p.setSide(PortSide.NORTH);
+            break;
+        
+        case SOUTH:
+            p.setSide(PortSide.EAST);
+            break;
+        
+        case EAST:
+            p.setSide(PortSide.SOUTH);
+            break;
+        }
     }
 
 }
