@@ -203,8 +203,6 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     private Map<LNode, Vertex>[] singleNodeVertices;
     /** the random number generator. */
     private Random random;
-    /** barycenter associate factor. */
-    private float barycenterAssociateFactor = 1.0f;
     
     /**
      * {@inheritDoc}
@@ -281,7 +279,6 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         // Fetch the graph's randomizer and determine the requested number of runs
         random = layeredGraph.getProperty(Properties.RANDOM);
         int runCount = layeredGraph.getProperty(Properties.THOROUGHNESS);
-        barycenterAssociateFactor = layeredGraph.getProperty(Properties.BARYCENTER_ASSOCIATE_FACTOR);
         
         // Perform the requested number of runs, each consisting of several sweeps
         // (alternating between forward and backward sweeps)
@@ -549,8 +546,8 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 calculateBarycenter(associateVertex, layerVertices, forward, workingSet);
                 
                 // Update this vertex's values
-                vertex.degree += barycenterAssociateFactor * Math.max(0, associateVertex.degree);
-                vertex.summedWeight += barycenterAssociateFactor * associateVertex.summedWeight;
+                vertex.degree += Math.max(0, associateVertex.degree);
+                vertex.summedWeight += associateVertex.summedWeight;
             }
         }
         

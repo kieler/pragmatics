@@ -51,9 +51,6 @@ public final class Properties {
     public static final IProperty<EdgeType> EDGE_TYPE = 
                                             new Property<EdgeType>("edgeType", EdgeType.NORMAL);
 
-    /** offset for nodes in linear segments. */
-    public static final IProperty<Integer> LINSEG_OFFSET = new Property<Integer>("linsegOffset", 0);
-
     /** owning region for node. */
     public static final IProperty<Region> REGION = new Property<Region>("region", null);
 
@@ -200,18 +197,8 @@ public final class Properties {
     public static final Property<Float> EDGE_SPACING_FACTOR = new Property<Float>(
             EDGE_SPACING_FACTOR_ID, DEF_EDGE_SPACING_FACTOR);
 
-    /** option identifier for barycenter associate factor. */
-    public static final String BARYCENTER_ASSOCIATE_FACTOR_ID = 
-        "de.cau.cs.kieler.klay.layered.barycenterAssociateFactor";
-    /** default value for barycenter associate factor. */
-    public static final float DEF_BARYCENTER_ASSOCIATE_FACTOR = 1.0f;
-    /** factor for barycenter associates going into a barycenter calculation. */
-    public static final Property<Float> BARYCENTER_ASSOCIATE_FACTOR = new Property<Float>(
-            BARYCENTER_ASSOCIATE_FACTOR_ID, DEF_BARYCENTER_ASSOCIATE_FACTOR);
-
-    /** priority of elements. */
-    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY,
-            0);
+    /** priority of elements. controls how much single edges are emphasized. */
+    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
 
     /** default value for aspect ratio. */
     public static final float DEF_ASPECT_RATIO = 1.6f;
@@ -224,12 +211,6 @@ public final class Properties {
     /** defines the minimal angle a short edge may have. */
     public static final IProperty<Integer> MIN_EDGE_ANGLE = new Property<Integer>(
             MIN_EDGE_ANGLE_ID, 0);
-
-    /** option identifier for straight edges. */
-    public static final String STRAIGHT_EDGES_ID = "de.cau.cs.kieler.klay.layered.straightEdges";
-    /** whether edges shall be straightened as much as possible. */
-    public static final IProperty<Boolean> STRAIGHT_EDGES = new Property<Boolean>(
-            STRAIGHT_EDGES_ID, false);
 
     /** option identifier for distribute nodes. */
     public static final String DISTRIBUTE_NODES_ID = "de.cau.cs.kieler.klay.layered.distributeNodes";

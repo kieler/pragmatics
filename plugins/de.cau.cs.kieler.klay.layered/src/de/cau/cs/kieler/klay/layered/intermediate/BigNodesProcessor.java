@@ -139,9 +139,7 @@ public class BigNodesProcessor extends AbstractAlgorithm implements ILayoutProce
         // determine width in layers of each node
         double threshold;
         for (LNode node : nodes) {
-            // CHECKSTYLEOFF MagicNumber
             threshold = ((2 * minWidth) + minSpacing);
-            // CHECKSTYLEON MagicNumber
             while (threshold <= node.getSize().x) {
                 width[node.id]++;
                 threshold += (minWidth + minSpacing);
@@ -193,8 +191,6 @@ public class BigNodesProcessor extends AbstractAlgorithm implements ILayoutProce
         for (LNode node : nodes) {
             nodeIDs.put(node, new Integer(node.id));
         }
-        // fixation edges should be handled as straight lines
-        layeredGraph.setProperty(Properties.STRAIGHT_EDGES, true);
     }
 
     /**

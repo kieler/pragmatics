@@ -44,9 +44,6 @@
                option="de.cau.cs.kieler.portConstraints">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.straightEdges">
-         </knownOption>
-         <knownOption
                option="de.cau.cs.kieler.klay.layered.minimalAngle">
          </knownOption>
          <knownOption
@@ -83,15 +80,6 @@
                option="de.cau.cs.kieler.direction">
          </knownOption>
       </layoutAlgorithm>
-      <layoutOption
-            advanced="true"
-            appliesTo="parents"
-            default="false"
-            description="If enabled, edges with priority &gt; 0 are drawn straight instead of keeping the connected nodes in line."
-            id="de.cau.cs.kieler.klay.layered.straightEdges"
-            name="Straight Edges"
-            type="boolean">
-      </layoutOption>
       <layoutOption
             advanced="true"
             appliesTo="parents"
