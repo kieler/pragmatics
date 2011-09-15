@@ -42,17 +42,12 @@ public abstract class AbstractEmfTransformer<T extends EObject> implements IGrap
     public T deserialize(final String serializedGraph) {
         try {
             ByteArrayInputStream inStream = new ByteArrayInputStream(
-                serializedGraph.getBytes("UTF-8")
-            );
-            URI uri = URI.createURI("inputstream://temp." + getFileExtension());
+                    serializedGraph.getBytes("UTF-8"));
+            URI uri = URI.createURI("temp." + getFileExtension());
             ResourceSet resourceSet = createResourceSet();
             Resource resource = resourceSet.createResource(uri);
-            Map<String, String> options = new HashMap<String, String>();
-            options.put(XMLResource.OPTION_ENCODING, "UTF-8");
-            resource.load(inStream, options);
-            EObject eObject = resource.getContents().get(0);
-            inStream.close();
-            return (T) eObject;
+            resource.load(inStream, null);
+            return (T) resource.getContents().get(0);
         } catch (UnsupportedEncodingException e) {
             throw new TransformationException(e);
         } catch (IOException e) {
@@ -67,7 +62,7 @@ public abstract class AbstractEmfTransformer<T extends EObject> implements IGrap
         String xmi = null;
         try {
             EcoreUtil.resolveAll(graph);
-            URI uri = URI.createURI("outputstream://temp." + getFileExtension());
+            URI uri = URI.createURI("temp." + getFileExtension());
             ResourceSet resourceSet = createResourceSet();
             Resource resource = resourceSet.createResource(uri);
             resource.getContents().add(graph);            
@@ -75,9 +70,7 @@ public abstract class AbstractEmfTransformer<T extends EObject> implements IGrap
             Map<String, String> options = new HashMap<String, String>();
             options.put(XMLResource.OPTION_ENCODING, "UTF-8");
             resource.save(outStream, options);
-            outStream.flush();
             xmi = new String(outStream.toByteArray(), "UTF-8");
-            outStream.close();
         } catch (IOException e) {
             throw new TransformationException(e);
         }
