@@ -264,7 +264,8 @@ public final class KimlUtil {
     }
     
     /**
-     * Returns a sorted list of the ports of the given node.
+     * Returns a sorted list of the ports of the given node. This requires port
+     * sides to be already calculated.
      * 
      * @param node a node
      * @return sorted list of ports

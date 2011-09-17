@@ -253,10 +253,18 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         elemMap.put(node, newNode);
 
-        // port constraints cannot be undefined
+        // port constraints and sides cannot be undefined
         PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         if (portConstraints == PortConstraints.UNDEFINED) {
             portConstraints = PortConstraints.FREE;
+        }
+        for (KPort port : node.getPorts()) {
+            KShapeLayout portLayout = port.getData(KShapeLayout.class);
+            PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
+            if (portSide == PortSide.UNDEFINED) {
+                portSide = KimlUtil.calcPortSide(port, direction);
+                portLayout.setProperty(LayoutOptions.PORT_SIDE, portSide);
+            }
         }
 
         // get a sorted list of the node's ports; if there are any with non-free port
@@ -311,13 +319,12 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 newPort.setLabel(newLabel);
             }
 
-            // calculate port side
-            PortSide newPortSide = KimlUtil.calcPortSide(kport, direction);
-            float offset = KimlUtil.calcPortOffset(kport, newPortSide);
-            newPort.setSide(newPortSide);
+            PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
+            float offset = KimlUtil.calcPortOffset(kport, portSide);
+            newPort.setSide(portSide);
             newPort.setProperty(LayoutOptions.OFFSET, offset);
 
-            if (newPortSide == PortSide.NORTH || newPortSide == PortSide.SOUTH) {
+            if (portSide == PortSide.NORTH || portSide == PortSide.SOUTH) {
                 graphProperties.add(GraphProperties.NORTH_SOUTH_PORTS);
             }
         }
