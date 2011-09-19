@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klighd.transformations;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,8 +34,10 @@ import org.eclipse.xtend.XtendFacade;
 import org.eclipse.xtend.XtendResourceParser;
 import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
 
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klighd.IModelTransformation;
 import de.cau.cs.kieler.klighd.KLighDPlugin;
+import de.cau.cs.kieler.klighd.ViewContext;
 
 /**
  * An implementation of {@link IModelTransformation} enabling Xtend-based model transformations.
@@ -46,10 +49,21 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
     private static final String TRANSFORMATION_EXTENSION_NAME = "transform";
     private static final String DEFAULT_TRANSFORMATION_EXTENSION_NAME = "onError";
 
+    /**
+     * viewElements consists of a map which key is a viewId and value a list of source element and
+     * graphical element pairs. This represents the mapping between the diagram and source elements.
+     */
+    private static Map<String, List<Pair<EObject, EObject>>> viewElements;
+
+    private ViewContext viewContext;
     private URL extfile;
     private String extension;
     private Map<String, EPackage> metamodels;
     private int countParams = 1;
+
+    static {
+        viewElements = new HashMap<String, List<Pair<EObject, EObject>>>();
+    }
 
     /**
      * The constructor.
@@ -88,9 +102,8 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
         try {
 
             /* load the Xtend file */
-            XtendFile ext =
-                    (XtendFile) new XtendResourceParser().parse(
-                            new InputStreamReader(extfile.openStream()), extfile.getFile());
+            XtendFile ext = (XtendFile) new XtendResourceParser().parse(new InputStreamReader(
+                    extfile.openStream()), extfile.getFile());
 
             /* search the fitting extension */
             for (Extension e : ext.getExtensions()) {
@@ -102,8 +115,8 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
 
                     // construe its name
                     int pos = firstParamType.lastIndexOf("::");
-                    String className =
-                            (pos == -1 ? firstParamType : firstParamType.substring(pos + 2));
+                    String className = (pos == -1 ? firstParamType : firstParamType
+                            .substring(pos + 2));
                     String packageName = (pos == -1 ? "" : firstParamType.substring(0, pos));
                     EClassifier clazz = null;
                     EPackage ePackage = null;
@@ -153,9 +166,11 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
      * 
      * @param model
      *            the model to be transformed.
+     * @param params
+     *            , special parameters for the transformation
      * @return the transformation result.
      */
-    public EObject transform(final Object model) {
+    public EObject transform(final Object model, Object... params) {
         String url = this.extfile.getFile();
         if (url.endsWith(".ext")) {
             url = url.substring(0, url.length() - ENDING_OFFSET);
@@ -167,24 +182,28 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
             facade.registerMetaModel(new EmfMetaModel(mm));
         }
 
-        Object[] params = new Object[this.countParams];
-        params[0] = model;
-
+        Object[] transformationParams = new Object[this.countParams];
+        transformationParams[0] = model;
+        // hack
+        if (this.countParams == 3) {
+            // view id
+            transformationParams[2] = (String) params[0];
+        }
         EObject result = null;
 
         // the following allows to handle erroneous transformations while developing those
-        //  transformations; by this a valid model is returned anyway;
-        //  due to the performance optimization the light diagram service
-        //  will most likely mark the initial input model to be not supported
-        //  if "null" is returned by the transformation
+        // transformations; by this a valid model is returned anyway;
+        // due to the performance optimization the light diagram service
+        // will most likely mark the initial input model to be not supported
+        // if "null" is returned by the transformation
         try {
             result = (EObject) facade.call(DEFAULT_TRANSFORMATION_EXTENSION_NAME, new Object[0]);
         } catch (Exception e) {
             /* nothing */
-        }        
-        
+        }
+
         try {
-            result = (EObject) facade.call(this.extension, params);
+            result = (EObject) facade.call(this.extension, transformationParams);
         } catch (Exception e) {
             StatusManager.getManager().handle(
                     new Status(IStatus.ERROR, KLighDPlugin.PLUGIN_ID,
@@ -196,18 +215,76 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
 
     /**
      * {@inheritDoc}
+     * 
+     * @param object
+     *            , graphical element
      */
     public Object getSourceElement(final Object object) {
-        // TODO implement this
+        if (this.viewContext != null) {
+            List<Pair<EObject, EObject>> pairs = XtendBasedTransformation.viewElements
+                    .get(viewContext.getFileId());
+            if (pairs != null) {
+                for (Pair<EObject, EObject> pair : pairs) {
+                    if (pair.getSecond().equals(object)) {
+                        return pair.getFirst();
+                    }
+                }
+            }
+        }
         return null;
     }
 
     /**
      * {@inheritDoc}
+     * 
+     * @param object
+     *            , source element
      */
     public Object getTargetElement(final Object object) {
-        // TODO implement this
+        if (this.viewContext != null) {
+            List<Pair<EObject, EObject>> pairs = XtendBasedTransformation.viewElements
+                    .get(viewContext.getFileId());
+            if (pairs != null) {
+                for (Pair<EObject, EObject> pair : pairs) {
+                    if (pair.getFirst().equals(object)) {
+                        return pair.getSecond();
+                    }
+                }
+            }
+        }
         return null;
+    }
+
+    /**
+     * adds a element to the source model and graphical target mapping.
+     * 
+     * @param viewId
+     *            , id of the view
+     * @param source
+     *            , the source model element
+     * @param target
+     *            , the graphical element
+     */
+    public static void addViewElement(String viewId, EObject source, EObject target) {
+        List<Pair<EObject, EObject>> pairs = XtendBasedTransformation.viewElements.get(viewId);
+        if (pairs == null) {
+            pairs = new ArrayList<Pair<EObject, EObject>>();
+            XtendBasedTransformation.viewElements.put(viewId, pairs);
+        }
+        Pair<EObject, EObject> deletable = null;
+        for (Pair<EObject, EObject> pair : pairs) {
+            if (pair.getFirst().equals(source) || pair.getSecond().equals(target)) {
+                deletable = pair;
+            }
+        }
+        if (deletable != null) {
+            pairs.remove(deletable);
+        }
+        pairs.add(new Pair<EObject, EObject>(source, target));
+    }
+
+    public void setViewContext(ViewContext viewContext) {
+        this.viewContext = viewContext;
     }
 
 }

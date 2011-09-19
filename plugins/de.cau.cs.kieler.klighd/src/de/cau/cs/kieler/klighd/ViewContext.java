@@ -32,6 +32,8 @@ public class ViewContext {
     private List<IModelTransformation<?, ?>> transformations;
     /** the reveresed list of model transformations invoked to obtain the model. */
     private List<IModelTransformation<?, ?>> transformationsRev;
+    /** id of the source file. */
+    private String fileId;
 
     /**
      * Constructs a view context.
@@ -48,6 +50,9 @@ public class ViewContext {
         this.viewerProvider = viewerProvider;
         this.model = model;
         this.transformations = transformations;
+        for (IModelTransformation<?, ?> trans : transformations) {
+            trans.setViewContext(this);
+        }
         this.transformationsRev = new LinkedList<IModelTransformation<?, ?>>(transformations);
         Collections.reverse(transformationsRev);
     }
@@ -108,4 +113,11 @@ public class ViewContext {
         return target;
     }
 
+    public void setFileId(String fileId) {
+        this.fileId = fileId;
+    }
+
+    public String getFileId() {
+        return this.fileId;
+    }
 }

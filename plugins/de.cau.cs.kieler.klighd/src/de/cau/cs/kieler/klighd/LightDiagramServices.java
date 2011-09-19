@@ -307,13 +307,15 @@ public final class LightDiagramServices {
      * 
      * @param model
      *            the model
+     * @param params, 
+     *            special environment parameters for the transformation
      * @return the view context or null if the model and all possible transformations are
      *         unsupported by all viewer providers
      */
-    public ViewContext getValidViewContext(final Object model) {
+    public ViewContext createValidViewContext(final Object model, Object... params) {
         currentDepth = 0;
-        ViewContext context = getValidViewContextRec(model,
-                new LinkedList<IModelTransformation<?, ?>>());
+        ViewContext context = createValidViewContextRec(model,
+                new LinkedList<IModelTransformation<?, ?>>(),params);
         if (context == null) {
             synchronized (this.knownNotSupportedModels) {
                 this.knownNotSupportedModels.add(model.getClass());
@@ -322,8 +324,8 @@ public final class LightDiagramServices {
         return context;
     }
 
-    private ViewContext getValidViewContextRec(final Object model,
-            final List<IModelTransformation<?, ?>> transformations) {
+    private ViewContext createValidViewContextRec(final Object model,
+            final List<IModelTransformation<?, ?>> transformations, Object... params) {
         // enforce maximum recursion depth to prevent infinite recursion
         if (currentDepth++ > MAX_DEPTH) {
             return null;
@@ -336,9 +338,9 @@ public final class LightDiagramServices {
         // transform the model and proceed recursively
         for (IModelTransformation<Object, ?> transformation : idModelTransformationMapping.values()) {
             if (transformation.supports(model)) {
-                Object newModel = transformation.transform(model);
+                Object newModel = transformation.transform(model, params);
                 transformations.add(transformation);
-                ViewContext viewContext = getValidViewContextRec(newModel, transformations);
+                ViewContext viewContext = createValidViewContextRec(newModel, transformations, params);
                 if (viewContext != null) {
                     return viewContext;
                 }
