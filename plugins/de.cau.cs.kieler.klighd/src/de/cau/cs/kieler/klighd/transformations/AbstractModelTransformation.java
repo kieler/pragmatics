@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klighd.transformations;
 import java.lang.reflect.Method;
 
 import de.cau.cs.kieler.klighd.IModelTransformation;
+import de.cau.cs.kieler.klighd.ViewContext;
 
 /**
  * The abstract base class for KLighD model transformations.<br>
@@ -38,6 +39,25 @@ public abstract class AbstractModelTransformation<S, T> implements IModelTransfo
     /** the cached class of the first parameter to the transform method. */
     private Class<?> firstParamClass = null;
     
+    /**
+     * {@inheritDoc}
+     */
+    public T transform(final S model, final Object... params) {
+        return transform(model);
+    }
+    
+    /**
+     * Performs the actual transformation from an object of type {@code S} to a model of type
+     * {@code T} without any special environment parameters.
+     * 
+     * @param model
+     *            the source model
+     * @return the target model
+     */
+    public T transform(final S model) {
+        return null;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -71,6 +91,13 @@ public abstract class AbstractModelTransformation<S, T> implements IModelTransfo
             return firstParamClass.isInstance(model);
         }
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setViewContext(final ViewContext viewContext) {
+        // do nothing   
     }
 
 }
