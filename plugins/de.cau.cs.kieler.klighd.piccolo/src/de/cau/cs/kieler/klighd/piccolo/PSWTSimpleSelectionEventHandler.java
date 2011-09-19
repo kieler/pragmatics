@@ -45,11 +45,6 @@ import edu.umd.cs.piccolo.util.PNodeFilter;
  */
 public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
 
-    /** the key for the selection highlighting effect. */
-    private static final Object SELECTION_HIGHLIGHT_KEY = new Object();
-    /** the line width factor for the selection highlighting effect. */
-    private static final float SELECTION_LINE_WIDTH_FACTOR = 2.0f;
-
     /** the camera this handler references. */
     private PCamera camera;
     /** the marquee parent. */
@@ -109,10 +104,7 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
             return false;
         }
         if (selectedNodes.add(node)) {
-            Color foreground = HighlightUtil.darker(HighlightUtil.getForegroundColor(node));
-            Color background = HighlightUtil.darker(HighlightUtil.getBackgroundColor(node));
-            HighlightUtil.setHighlight(SELECTION_HIGHLIGHT_KEY, node, foreground, background,
-                    SELECTION_LINE_WIDTH_FACTOR);
+            HighlightUtil.setSelectionHighlight(node);
             return true;
         }
         return false;
@@ -153,7 +145,7 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
 
     private boolean internalUnselect(final PNode node) {
         if (selectedNodes.remove(node)) {
-            HighlightUtil.removeHighlight(SELECTION_HIGHLIGHT_KEY, node);
+            HighlightUtil.removeSelectionHighlight(node);
             return true;
         }
         return false;
@@ -182,7 +174,7 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
      */
     public void unselectAll() {
         for (PNode node : selectedNodes) {
-            HighlightUtil.removeHighlight(SELECTION_HIGHLIGHT_KEY, node);
+            HighlightUtil.removeSelectionHighlight(node);
         }
         boolean unselected = selectedNodes.size() > 0;
         selectedNodes.clear();

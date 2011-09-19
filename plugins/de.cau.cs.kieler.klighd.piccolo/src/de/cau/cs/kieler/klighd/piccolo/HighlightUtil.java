@@ -21,6 +21,7 @@ import java.util.List;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PChildRepresentedNode;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath;
+import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath.LineStyle;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolox.swt.PSWTPath;
 import edu.umd.cs.piccolox.swt.PSWTText;
@@ -41,11 +42,36 @@ public final class HighlightUtil {
     /** the attribute for the mapping of keys on the undo data. */
     private static final Object ATTRIBUTE_KEY_TO_UNDO = new Object();
 
+    /** the key for the selection highlighting effect. */
+    private static final Object SELECTION_HIGHLIGHT_KEY = new Object();
+
     /**
      * A private constructor to prevent instantiation.
      */
     private HighlightUtil() {
         // do nothing
+    }
+
+    /**
+     * Adds a special highlighting effect to the given node to mark a selection.
+     * 
+     * @param node
+     *            the node
+     */
+    public static void setSelectionHighlight(final PNode node) {
+        Color foreground = HighlightUtil.darker(HighlightUtil.getForegroundColor(node));
+        Color background = HighlightUtil.darker(HighlightUtil.getBackgroundColor(node));
+        setHighlight(SELECTION_HIGHLIGHT_KEY, node, foreground, background, 1.0f, LineStyle.DASH);
+    }
+
+    /**
+     * Removes the selection highlighting effect from the given node.
+     * 
+     * @param node
+     *            the node
+     */
+    public static void removeSelectionHighlight(final PNode node) {
+        removeHighlight(SELECTION_HIGHLIGHT_KEY, node);
     }
 
     /**
@@ -62,9 +88,11 @@ public final class HighlightUtil {
      *            the background color or null for no change
      * @param lineWidthFactor
      *            the factor for the line width
+     * @param lineStyle
+     *            the line style
      */
     public static void setHighlight(final Object key, final PNode node, final Color foreground,
-            final Color background, final float lineWidthFactor) {
+            final Color background, final float lineWidthFactor, final LineStyle lineStyle) {
         if (key == null) {
             return;
         }
@@ -79,7 +107,7 @@ public final class HighlightUtil {
         HighlightUndo original = getOriginalUndo(node);
         applyEffect(node, foreground != null ? foreground : original.foreground,
                 background != null ? background : original.background, original.lineWidth
-                        * lineWidthFactor);
+                        * lineWidthFactor, lineStyle != null ? lineStyle : original.lineStyle);
         node.addAttribute(ATTRIBUTE_CURRENT_HIGHLIGHT, key);
     }
 
@@ -235,6 +263,7 @@ public final class HighlightUtil {
             undo.foreground = (Color) path.getStrokePaint();
             undo.background = (Color) path.getPaint();
             undo.lineWidth = path.getLineWidth();
+            undo.lineStyle = path.getLineStyle();
         } else if (repNode instanceof PSWTPath) {
             PSWTPath path = (PSWTPath) repNode;
             undo.foreground = (Color) path.getStrokePaint();
@@ -250,11 +279,11 @@ public final class HighlightUtil {
     }
 
     private static void applyUndo(final PNode node, final HighlightUndo undo) {
-        applyEffect(node, undo.foreground, undo.background, undo.lineWidth);
+        applyEffect(node, undo.foreground, undo.background, undo.lineWidth, undo.lineStyle);
     }
 
     private static void applyEffect(final PNode node, final Color foreground,
-            final Color background, final double lineWidth) {
+            final Color background, final double lineWidth, final LineStyle lineStyle) {
         PNode repNode;
         if (node instanceof PChildRepresentedNode) {
             PChildRepresentedNode childRepNode = (PChildRepresentedNode) node;
@@ -267,6 +296,7 @@ public final class HighlightUtil {
             path.setStrokeColor(foreground);
             path.setPaint(background);
             path.setLineWidth(lineWidth);
+            path.setLineStyle(lineStyle);
         } else if (repNode instanceof PSWTPath) {
             PSWTPath path = (PSWTPath) repNode;
             path.setStrokeColor(foreground);
@@ -317,6 +347,8 @@ public final class HighlightUtil {
         private Color background = null;
         /** the original line width. */
         private double lineWidth = 1.0;
+        /** the original line style. */
+        private LineStyle lineStyle = LineStyle.SOLID;
 
     }
 

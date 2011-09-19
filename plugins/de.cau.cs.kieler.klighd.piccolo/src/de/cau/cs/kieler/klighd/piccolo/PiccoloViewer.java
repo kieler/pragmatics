@@ -167,9 +167,10 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
                     backgroundColor =
                             new Color(background.getR(), background.getG(), background.getB());
                 }
+                // TODO enable line styles for highlighting effects through this interface
                 // apply the highlighting effect
                 HighlightUtil.setHighlight(highlightKey, node, foregroundColor, backgroundColor,
-                        lineWidthFactor);
+                        lineWidthFactor, null);
             }
         }
     }
