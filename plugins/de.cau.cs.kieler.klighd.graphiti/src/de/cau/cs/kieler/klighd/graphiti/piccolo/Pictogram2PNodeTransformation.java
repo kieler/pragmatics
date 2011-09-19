@@ -46,6 +46,7 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.mm.pictograms.util.PictogramsSwitch;
 
+import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.piccolo.IChildRepresentedNode;
 import de.cau.cs.kieler.klighd.piccolo.PChildClip;
 import de.cau.cs.kieler.klighd.piccolo.PSWTAdvancedPath;
@@ -93,9 +94,11 @@ public class Pictogram2PNodeTransformation extends
      * 
      * @param diagram
      *            the Pictogram diagram
+     * @param params, 
+     *            special environment parameters for the transformation.
      * @return the list of Piccolo nodes which represents the layers of the actual diagram
      */
-    public PiccoloDiagramContext transform(final Diagram diagram) {
+    public PiccoloDiagramContext transform(final Diagram diagram, Object... params) {
         anchorMap.clear();
         gaMap.clear();
         // create the diagram context with a model resolver
@@ -635,6 +638,10 @@ public class Pictogram2PNodeTransformation extends
     @Override
     public boolean supports(final Object model) {
         return model instanceof Diagram;
+    }
+
+    public void setViewContext(ViewContext viewContext) {
+        
     }
 
 }

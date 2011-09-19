@@ -19,6 +19,7 @@ import org.eclipse.gmf.runtime.diagram.core.services.ViewService;
 import org.eclipse.gmf.runtime.notation.Diagram;
 
 import de.cau.cs.kieler.klighd.IModelTransformation;
+import de.cau.cs.kieler.klighd.ViewContext;
 
 /**
  * A transformation from an EMF domain model to a compatible GMF notation model.
@@ -32,10 +33,11 @@ public class GmfDomainModelTransformation implements IModelTransformation<EObjec
     /** the last diagram model requested for a domain model. */
     private Diagram lastDiagramModel = null;
 
+
     /**
      * {@inheritDoc}
      */
-    public Diagram transform(final EObject model) {
+    public Diagram transform(final EObject model, Object... params) {
         return createDiagram(model);
     }
     
@@ -75,6 +77,10 @@ public class GmfDomainModelTransformation implements IModelTransformation<EObjec
             lastDiagramModel = diagram;
         }
         return diagram;
+    }
+
+    public void setViewContext(ViewContext viewContext) {
+        //dummy
     }
     
 }
