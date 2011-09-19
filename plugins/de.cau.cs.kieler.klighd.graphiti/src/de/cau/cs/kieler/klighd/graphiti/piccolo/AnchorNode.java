@@ -27,10 +27,9 @@ import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.util.PictogramsSwitch;
 
-import de.cau.cs.kieler.klighd.piccolo.IChildRepresentedNode;
-import de.cau.cs.kieler.klighd.piccolo.PEmptyNode;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphEdge;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphPort;
+import de.cau.cs.kieler.klighd.piccolo.nodes.PChildRepresentedNode;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolo.util.PBounds;
@@ -40,8 +39,8 @@ import edu.umd.cs.piccolo.util.PBounds;
  * 
  * @author mri
  */
-public class AnchorNode extends PEmptyNode implements IChildRepresentedNode, IPictogramNode,
-        IGraphPort, PropertyChangeListener {
+public class AnchorNode extends PChildRepresentedNode implements IPictogramNode, IGraphPort,
+        PropertyChangeListener {
 
     private static final long serialVersionUID = 1406179264277421131L;
 
@@ -52,8 +51,6 @@ public class AnchorNode extends PEmptyNode implements IChildRepresentedNode, IPi
     private Anchor anchor;
     /** the Piccolo node this anchor references. */
     private PNode reference;
-    /** the Piccolo node which represents this anchor. */
-    private PNode repNode = null;
 
     /** the anchors outgoing connections. */
     private List<IGraphEdge> outgoingConnections = new LinkedList<IGraphEdge>();
@@ -78,20 +75,6 @@ public class AnchorNode extends PEmptyNode implements IChildRepresentedNode, IPi
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public void setRepresentationNode(final PNode representationNode) {
-        repNode = representationNode;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PNode getRepresentationNode() {
-        return repNode;
-    }
-
-    /**
      * Returns the node that is referenced by this anchor.
      * 
      * @return the node referenced by this anchor
@@ -106,7 +89,7 @@ public class AnchorNode extends PEmptyNode implements IChildRepresentedNode, IPi
      * @return true if this anchor is a port; false else
      */
     public boolean isPort() {
-        return repNode != null && getPickable();
+        return getRepresentationNode() != null && getPickable();
     }
 
     /**
@@ -126,10 +109,10 @@ public class AnchorNode extends PEmptyNode implements IChildRepresentedNode, IPi
      * @return the anchor point or null if no anchor point could be determined
      */
     public Point2D getAnchorPoint(final Point2D referencePoint) {
-        if (repNode != null) {
+        if (getRepresentationNode() != null) {
             updateAnchorPosition(referencePoint);
             // chopbox anchor point from representing child node
-            PBounds bounds = repNode.getGlobalBounds();
+            PBounds bounds = getRepresentationNode().getGlobalBounds();
             Point2D intersection =
                     getIntersectionWithBounds(bounds.getX() + bounds.getWidth() / 2, bounds.getY()
                             + bounds.getHeight() / 2, referencePoint.getX(), referencePoint.getY(),
@@ -331,7 +314,8 @@ public class AnchorNode extends PEmptyNode implements IChildRepresentedNode, IPi
      */
     public PBounds getRelativeBounds() {
         PAffineTransform transform = getTransformReference(true);
-        PBounds bounds = repNode != null ? repNode.getBounds() : getBounds();
+        PBounds bounds =
+                getRepresentationNode() != null ? getRepresentationNode().getBounds() : getBounds();
         PBounds relativeBounds = new PBounds();
         relativeBounds.setRect(transform.getTranslateX(), transform.getTranslateY(),
                 bounds.getWidth(), bounds.getHeight());

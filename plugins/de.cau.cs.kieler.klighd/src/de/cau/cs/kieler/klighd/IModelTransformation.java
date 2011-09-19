@@ -31,15 +31,15 @@ public interface IModelTransformation<S, T> {
      * 
      * @param model
      *            the source model
-     * @param params,
+     * @param params
      *            special parameter for the transformation
      * @return the target model
      */
     T transform(final S model, Object... params);
 
     /**
-     * Returns the element in the source model which is represented by the given element in the target
-     * model.
+     * Returns the element in the source model which is represented by the given element in the
+     * target model.
      * 
      * @param object
      *            the element in the target model
@@ -48,7 +48,8 @@ public interface IModelTransformation<S, T> {
     Object getSourceElement(final Object object);
 
     /**
-     * Returns the element in the target model which represents the given element in the source model.
+     * Returns the element in the target model which represents the given element in the source
+     * model.
      * 
      * @param object
      *            the element in the source model
@@ -67,8 +68,10 @@ public interface IModelTransformation<S, T> {
 
     /**
      * Can be used to set the dependency between transformation and viewContext.
+     * 
      * @param viewContext
+     *            the view context
      */
-    void setViewContext(ViewContext viewContext);
+    void setViewContext(final ViewContext viewContext);
 
 }

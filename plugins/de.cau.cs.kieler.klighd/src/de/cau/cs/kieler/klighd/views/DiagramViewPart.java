@@ -149,7 +149,8 @@ public class DiagramViewPart extends ViewPart {
     private void addLayoutButton() {
         IMenuManager menuManager = getViewSite().getActionBars().getMenuManager();
         final DiagramViewPart view = this;
-        menuManager.add(new Action("Layout",KimlUiPlugin.getImageDescriptor("icons/menu16/kieler-arrange.gif")) {
+        menuManager.add(new Action("Layout", KimlUiPlugin
+                .getImageDescriptor("icons/menu16/kieler-arrange.gif")) {
             public void run() {
                 try {
                     DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;

@@ -26,11 +26,10 @@ import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.FreeFormConnection;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
-import de.cau.cs.kieler.klighd.piccolo.IChildRepresentedNode;
-import de.cau.cs.kieler.klighd.piccolo.PEmptyNode;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphEdge;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphNode;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphPort;
+import de.cau.cs.kieler.klighd.piccolo.nodes.PChildRepresentedNode;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolox.swt.PSWTPath;
 
@@ -39,8 +38,8 @@ import edu.umd.cs.piccolox.swt.PSWTPath;
  * 
  * @author mri
  */
-public class ConnectionNode extends PEmptyNode implements IChildRepresentedNode, IPictogramNode,
-        IGraphEdge, PropertyChangeListener {
+public class ConnectionNode extends PChildRepresentedNode implements IPictogramNode, IGraphEdge,
+        PropertyChangeListener {
 
     private static final long serialVersionUID = -8752895610400744167L;
 
@@ -81,20 +80,6 @@ public class ConnectionNode extends PEmptyNode implements IChildRepresentedNode,
      */
     public PictogramElement getPictogramElement() {
         return connection;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public void setRepresentationNode(final PNode representationNode) {
-        // set otherwise
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PNode getRepresentationNode() {
-        return polyline;
     }
 
     /**
@@ -144,7 +129,9 @@ public class ConnectionNode extends PEmptyNode implements IChildRepresentedNode,
      *            the polyline
      */
     public void setPolyline(final PSWTPath p) {
+        // add as child node and set as representation
         addChild(p);
+        setRepresentationNode(p);
         polyline = p;
         // prepare path for polyline
         if (connection instanceof FreeFormConnection) {

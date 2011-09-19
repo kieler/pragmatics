@@ -11,13 +11,13 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighd.piccolo;
+package de.cau.cs.kieler.klighd.piccolo.nodes;
 
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PPaintContext;
 
 /**
- * A Piccolo node that clips a given node at it's boundary.
+ * A Piccolo node that clips a given node at the boundary of the first child node.
  * 
  * @author mri
  */

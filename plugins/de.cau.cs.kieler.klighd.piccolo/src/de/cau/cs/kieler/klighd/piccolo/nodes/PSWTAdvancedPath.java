@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighd.piccolo;
+package de.cau.cs.kieler.klighd.piccolo.nodes;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -147,8 +147,6 @@ public class PSWTAdvancedPath extends PSWTPath {
         result.setPaint(Color.white);
         return result;
     }
-
-    // TODO Auto-generated constructor stub
 
     /**
      * Creates a path for the poly-line for the given points.

@@ -16,20 +16,20 @@ package de.cau.cs.kieler.klighd.graphiti.piccolo;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.cau.cs.kieler.klighd.piccolo.PEmptyNode;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphNode;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphParent;
 import de.cau.cs.kieler.klighd.piccolo.graph.Insets;
+import de.cau.cs.kieler.klighd.piccolo.nodes.PChildRepresentedNode;
 
 /**
  * An abstract Piccolo node which serves as a base for graph parents.
  * 
  * @author mri
  */
-public abstract class AbstractParentNode extends PEmptyNode implements IGraphParent {
-    
+public abstract class AbstractParentNode extends PChildRepresentedNode implements IGraphParent {
+
     private static final long serialVersionUID = 7602115961857794444L;
-    
+
     /** the list of child nodes. */
     private List<IGraphNode> childNodes = new ArrayList<IGraphNode>();
 

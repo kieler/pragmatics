@@ -17,6 +17,8 @@ import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath;
+
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PBounds;
 

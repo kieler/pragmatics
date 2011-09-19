@@ -17,7 +17,7 @@ import java.awt.geom.Point2D;
 
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 
-import de.cau.cs.kieler.klighd.piccolo.PEmptyNode;
+import de.cau.cs.kieler.klighd.piccolo.nodes.PEmptyNode;
 
 /**
  * A Piccolo node representing a connection decorator.

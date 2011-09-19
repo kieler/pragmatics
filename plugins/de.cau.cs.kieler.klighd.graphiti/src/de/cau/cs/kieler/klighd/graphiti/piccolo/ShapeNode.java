@@ -23,11 +23,9 @@ import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 
-import de.cau.cs.kieler.klighd.piccolo.IChildRepresentedNode;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphEdge;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphNode;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphPort;
-import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolo.util.PBounds;
 
@@ -36,8 +34,7 @@ import edu.umd.cs.piccolo.util.PBounds;
  * 
  * @author mri
  */
-public class ShapeNode extends AbstractParentNode implements IChildRepresentedNode, IPictogramNode,
-        IGraphNode {
+public class ShapeNode extends AbstractParentNode implements IPictogramNode, IGraphNode {
 
     private static final long serialVersionUID = 6280554909111287283L;
 
@@ -48,8 +45,6 @@ public class ShapeNode extends AbstractParentNode implements IChildRepresentedNo
             new LinkedHashMap<PictogramElement, AnchorNode>();
     /** the list of ports. */
     private List<IGraphPort> ports = new ArrayList<IGraphPort>();
-    /** the Piccolo node which represents this shape. */
-    private PNode repNode = null;
 
     /**
      * Constructs a ShapeNode.
@@ -66,20 +61,6 @@ public class ShapeNode extends AbstractParentNode implements IChildRepresentedNo
      */
     public PictogramElement getPictogramElement() {
         return shape;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setRepresentationNode(final PNode representationNode) {
-        repNode = representationNode;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PNode getRepresentationNode() {
-        return repNode;
     }
 
     /**
@@ -142,7 +123,8 @@ public class ShapeNode extends AbstractParentNode implements IChildRepresentedNo
      */
     public PBounds getRelativeBounds() {
         PAffineTransform transform = getTransformReference(true);
-        PBounds bounds = repNode != null ? repNode.getBounds() : getBounds();
+        PBounds bounds =
+                getRepresentationNode() != null ? getRepresentationNode().getBounds() : getBounds();
         PBounds relativeBounds = new PBounds();
         relativeBounds.setRect(transform.getTranslateX(), transform.getTranslateY(),
                 bounds.getWidth(), bounds.getHeight());

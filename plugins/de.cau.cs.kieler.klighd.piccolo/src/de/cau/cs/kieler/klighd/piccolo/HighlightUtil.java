@@ -19,13 +19,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.klighd.piccolo.nodes.PChildRepresentedNode;
+import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolox.swt.PSWTPath;
 import edu.umd.cs.piccolox.swt.PSWTText;
 
 /**
- * A utility class for setting highlighting effects on nodes. Supports the interface
- * {@code IChildRepresentedNode} by applying the highlighting effect to the representation node
+ * A utility class for setting highlighting effects on nodes. Supports the node
+ * {@code PChildRepresentedNode} by applying the highlighting effect to the representation node
  * instead.
  * 
  * @author mri
@@ -125,8 +127,8 @@ public final class HighlightUtil {
      */
     public static Color getForegroundColor(final PNode node) {
         PNode repNode;
-        if (node instanceof IChildRepresentedNode) {
-            IChildRepresentedNode childRepNode = (IChildRepresentedNode) node;
+        if (node instanceof PChildRepresentedNode) {
+            PChildRepresentedNode childRepNode = (PChildRepresentedNode) node;
             repNode = childRepNode.getRepresentationNode();
         } else {
             repNode = node;
@@ -140,9 +142,10 @@ public final class HighlightUtil {
         } else if (repNode instanceof PSWTText) {
             PSWTText text = (PSWTText) repNode;
             return text.getPenColor();
-        } else {
+        } else if (repNode != null) {
             return (Color) repNode.getPaint();
         }
+        return null;
     }
 
     /**
@@ -154,8 +157,8 @@ public final class HighlightUtil {
      */
     public static Color getBackgroundColor(final PNode node) {
         PNode repNode;
-        if (node instanceof IChildRepresentedNode) {
-            IChildRepresentedNode childRepNode = (IChildRepresentedNode) node;
+        if (node instanceof PChildRepresentedNode) {
+            PChildRepresentedNode childRepNode = (PChildRepresentedNode) node;
             repNode = childRepNode.getRepresentationNode();
         } else {
             repNode = node;
@@ -169,9 +172,10 @@ public final class HighlightUtil {
         } else if (repNode instanceof PSWTText) {
             PSWTText text = (PSWTText) repNode;
             return text.getBackgroundColor();
-        } else {
+        } else if (repNode != null) {
             return (Color) repNode.getPaint();
         }
+        return null;
     }
 
     /**
@@ -183,7 +187,10 @@ public final class HighlightUtil {
      */
     public static Color brighter(final Color color) {
         // TODO evaluate the use of the HSB color model here
-        return color.brighter();
+        if (color != null) {
+            return color.brighter();
+        }
+        return null;
     }
 
     /**
@@ -195,7 +202,10 @@ public final class HighlightUtil {
      */
     public static Color darker(final Color color) {
         // TODO evaluate the use of the HSB color model here
-        return color.darker();
+        if (color != null) {
+            return color.darker();
+        }
+        return null;
     }
 
     // helper methods
@@ -214,8 +224,8 @@ public final class HighlightUtil {
     private static HighlightUndo createUndo(final PNode node) {
         HighlightUndo undo = new HighlightUndo();
         PNode repNode;
-        if (node instanceof IChildRepresentedNode) {
-            IChildRepresentedNode childRepNode = (IChildRepresentedNode) node;
+        if (node instanceof PChildRepresentedNode) {
+            PChildRepresentedNode childRepNode = (PChildRepresentedNode) node;
             repNode = childRepNode.getRepresentationNode();
         } else {
             repNode = node;
@@ -233,7 +243,7 @@ public final class HighlightUtil {
             PSWTText text = (PSWTText) repNode;
             undo.foreground = text.getPenColor();
             undo.background = text.getBackgroundColor();
-        } else {
+        } else if (repNode != null) {
             undo.foreground = (Color) repNode.getPaint();
         }
         return undo;
@@ -246,8 +256,8 @@ public final class HighlightUtil {
     private static void applyEffect(final PNode node, final Color foreground,
             final Color background, final double lineWidth) {
         PNode repNode;
-        if (node instanceof IChildRepresentedNode) {
-            IChildRepresentedNode childRepNode = (IChildRepresentedNode) node;
+        if (node instanceof PChildRepresentedNode) {
+            PChildRepresentedNode childRepNode = (PChildRepresentedNode) node;
             repNode = childRepNode.getRepresentationNode();
         } else {
             repNode = node;
@@ -265,7 +275,7 @@ public final class HighlightUtil {
             PSWTText text = (PSWTText) repNode;
             text.setPenColor(foreground);
             text.setBackgroundColor(background);
-        } else {
+        } else if (repNode != null) {
             repNode.setPaint(foreground);
         }
     }
