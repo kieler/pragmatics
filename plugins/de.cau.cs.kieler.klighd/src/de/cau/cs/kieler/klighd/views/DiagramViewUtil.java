@@ -127,7 +127,7 @@ public final class DiagramViewUtil {
                     }
                     if (model != null) {
                         ViewContext viewContext =
-                                LightDiagramServices.getInstance().createValidViewContext(model,id);
+                                LightDiagramServices.getInstance().createValidViewContext(model, id);
                         if (viewContext != null) {
                             viewContext.setFileId(id);
                             diagramView.getViewer().setModel(viewContext);

@@ -113,6 +113,7 @@ public class ViewContext {
         return target;
     }
 
+    // FIXME the view context should not know anything about files
     public void setFileId(String fileId) {
         this.fileId = fileId;
     }

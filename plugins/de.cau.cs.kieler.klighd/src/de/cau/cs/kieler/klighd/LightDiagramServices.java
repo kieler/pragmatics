@@ -123,9 +123,10 @@ public final class LightDiagramServices {
      */
     private static void reportError(final String extensionPoint,
             final IConfigurationElement element, final String attribute, final Exception exception) {
-        String message = "Extension point " + extensionPoint + ": Invalid entry in attribute '"
-                + attribute + "' of element " + element.getName() + ", contributed by "
-                + element.getContributor().getName();
+        String message =
+                "Extension point " + extensionPoint + ": Invalid entry in attribute '" + attribute
+                        + "' of element " + element.getName() + ", contributed by "
+                        + element.getContributor().getName();
         IStatus status = new Status(IStatus.WARNING, KLighDPlugin.PLUGIN_ID, 0, message, exception);
         StatusManager.getManager().handle(status);
     }
@@ -134,14 +135,15 @@ public final class LightDiagramServices {
      * Loads and registers all viewer provider from the extension point.
      */
     private void loadViewerProviderExtension() {
-        IConfigurationElement[] extensions = Platform.getExtensionRegistry()
-                .getConfigurationElementsFor(EXTP_ID_VIEWER_PROVIDERS);
+        IConfigurationElement[] extensions =
+                Platform.getExtensionRegistry().getConfigurationElementsFor(
+                        EXTP_ID_VIEWER_PROVIDERS);
         for (IConfigurationElement element : extensions) {
             try {
                 if (ELEMENT_VIEWER.equals(element.getName())) {
                     // initialize viewer provider from the extension point
-                    IViewerProvider viewerProvider = (IViewerProvider) element
-                            .createExecutableExtension(ATTRIBUTE_CLASS);
+                    IViewerProvider viewerProvider =
+                            (IViewerProvider) element.createExecutableExtension(ATTRIBUTE_CLASS);
                     if (viewerProvider != null) {
                         String id = element.getAttribute(ATTRIBUTE_ID);
                         if (id == null || id.length() == 0) {
@@ -163,16 +165,17 @@ public final class LightDiagramServices {
      * Loads and registers all model transformations from the extension point.
      */
     private void loadModelTransformationsExtension() {
-        IConfigurationElement[] extensions = Platform.getExtensionRegistry()
-                .getConfigurationElementsFor(EXTP_ID_MODEL_TRANSFORMATIONS);
+        IConfigurationElement[] extensions =
+                Platform.getExtensionRegistry().getConfigurationElementsFor(
+                        EXTP_ID_MODEL_TRANSFORMATIONS);
         for (IConfigurationElement element : extensions) {
             try {
                 if (ELEMENT_TRANSFORMATION.equals(element.getName())) {
                     // initialize model transformation from the extension point
                     @SuppressWarnings("unchecked")
-                    IModelTransformation<Object, ?> modelTransformation = 
+                    IModelTransformation<Object, ?> modelTransformation =
                             (IModelTransformation<Object, ?>) element
-                            .createExecutableExtension(ATTRIBUTE_CLASS);
+                                    .createExecutableExtension(ATTRIBUTE_CLASS);
                     if (modelTransformation != null) {
                         String id = element.getAttribute(ATTRIBUTE_ID);
                         if (id == null || id.length() == 0) {
@@ -188,10 +191,10 @@ public final class LightDiagramServices {
                     String id = element.getAttribute(ATTRIBUTE_ID);
                     String extFile = element.getAttribute(ATTRIBUTE_EXTENSION_FILE);
                     String extension = element.getAttribute(ATTRIBUTE_EXTENSION);
-                    Bundle contributingBundle = Platform.getBundle(element.getContributor()
-                            .getName());
-                    String coContributingBundlesName = element
-                            .getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE);
+                    Bundle contributingBundle =
+                            Platform.getBundle(element.getContributor().getName());
+                    String coContributingBundlesName =
+                            element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE);
 
                     // "normalize" the Xtend file path
                     extFile = extFile.replaceAll("::", "/");
@@ -213,15 +216,15 @@ public final class LightDiagramServices {
                         }
 
                         // in case a the Xtend file is located in a bundle different from
-                        //  'contributingBundle' try to reveal that bundle and the Xtend file by
-                        //   means of the 'contributingBundle' entry in the extension (refered to as
-                        //   coContributingBundlesName)
+                        // 'contributingBundle' try to reveal that bundle and the Xtend file by
+                        // means of the 'contributingBundle' entry in the extension (refered to as
+                        // coContributingBundlesName)
                         // this, however, should not be used extensively but is helpful during the
-                        //   prototyping state
+                        // prototyping state
                         if (extFileURL == null && coContributingBundlesName != null
                                 && !coContributingBundlesName.equals("")) {
-                            Bundle coContributingBundle = Platform
-                                    .getBundle(coContributingBundlesName);
+                            Bundle coContributingBundle =
+                                    Platform.getBundle(coContributingBundlesName);
                             extFileURL = coContributingBundle.getEntry(extFile);
 
                             if (extFileURL == null) {
@@ -229,8 +232,8 @@ public final class LightDiagramServices {
                             }
 
                             if (extFileURL == null) {
-                                extFileURL = coContributingBundle.getEntry("transformations/"
-                                        + extFile);
+                                extFileURL =
+                                        coContributingBundle.getEntry("transformations/" + extFile);
                             }
                         }
                     }
@@ -251,8 +254,8 @@ public final class LightDiagramServices {
                             try {
 
                                 Class<?> ePackage = contributingBundle.loadClass(ePackageId);
-                                ePackageInstance = (EPackage) ePackage.getField("eINSTANCE").get(
-                                        null);
+                                ePackageInstance =
+                                        (EPackage) ePackage.getField("eINSTANCE").get(null);
                                 this.ePackages.put(ePackageId, ePackageInstance);
                             } catch (Exception e) {
                                 String msg = "EPackage " + ePackageId + " could not be loaded";
@@ -268,8 +271,8 @@ public final class LightDiagramServices {
 
                     }
 
-                    IModelTransformation<Object, ?> modelTransformation = new XtendBasedTransformation(
-                            extFileURL, extension, metamodels);
+                    IModelTransformation<Object, ?> modelTransformation =
+                            new XtendBasedTransformation(extFileURL, extension, metamodels);
                     idModelTransformationMapping.put(id, modelTransformation);
 
                 }
@@ -307,15 +310,16 @@ public final class LightDiagramServices {
      * 
      * @param model
      *            the model
-     * @param params, 
+     * @param params
      *            special environment parameters for the transformation
      * @return the view context or null if the model and all possible transformations are
      *         unsupported by all viewer providers
      */
-    public ViewContext createValidViewContext(final Object model, Object... params) {
+    public ViewContext createValidViewContext(final Object model, final Object... params) {
         currentDepth = 0;
-        ViewContext context = createValidViewContextRec(model,
-                new LinkedList<IModelTransformation<?, ?>>(),params);
+        ViewContext context =
+                createValidViewContextRec(model, new LinkedList<IModelTransformation<?, ?>>(),
+                        params);
         if (context == null) {
             synchronized (this.knownNotSupportedModels) {
                 this.knownNotSupportedModels.add(model.getClass());
@@ -325,7 +329,7 @@ public final class LightDiagramServices {
     }
 
     private ViewContext createValidViewContextRec(final Object model,
-            final List<IModelTransformation<?, ?>> transformations, Object... params) {
+            final List<IModelTransformation<?, ?>> transformations, final Object... params) {
         // enforce maximum recursion depth to prevent infinite recursion
         if (currentDepth++ > MAX_DEPTH) {
             return null;
@@ -340,7 +344,8 @@ public final class LightDiagramServices {
             if (transformation.supports(model)) {
                 Object newModel = transformation.transform(model, params);
                 transformations.add(transformation);
-                ViewContext viewContext = createValidViewContextRec(newModel, transformations, params);
+                ViewContext viewContext =
+                        createValidViewContextRec(newModel, transformations, params);
                 if (viewContext != null) {
                     return viewContext;
                 }

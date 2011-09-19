@@ -102,8 +102,9 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
         try {
 
             /* load the Xtend file */
-            XtendFile ext = (XtendFile) new XtendResourceParser().parse(new InputStreamReader(
-                    extfile.openStream()), extfile.getFile());
+            XtendFile ext =
+                    (XtendFile) new XtendResourceParser().parse(
+                            new InputStreamReader(extfile.openStream()), extfile.getFile());
 
             /* search the fitting extension */
             for (Extension e : ext.getExtensions()) {
@@ -115,8 +116,8 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
 
                     // construe its name
                     int pos = firstParamType.lastIndexOf("::");
-                    String className = (pos == -1 ? firstParamType : firstParamType
-                            .substring(pos + 2));
+                    String className =
+                            (pos == -1 ? firstParamType : firstParamType.substring(pos + 2));
                     String packageName = (pos == -1 ? "" : firstParamType.substring(0, pos));
                     EClassifier clazz = null;
                     EPackage ePackage = null;
@@ -167,10 +168,10 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
      * @param model
      *            the model to be transformed.
      * @param params
-     *            , special parameters for the transformation
+     *            special parameters for the transformation
      * @return the transformation result.
      */
-    public EObject transform(final Object model, Object... params) {
+    public EObject transform(final Object model, final Object... params) {
         String url = this.extfile.getFile();
         if (url.endsWith(".ext")) {
             url = url.substring(0, url.length() - ENDING_OFFSET);
@@ -185,10 +186,12 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
         Object[] transformationParams = new Object[this.countParams];
         transformationParams[0] = model;
         // hack
+        // CHECKSTYLEOFF MagicNumber
         if (this.countParams == 3) {
             // view id
             transformationParams[2] = (String) params[0];
         }
+        // CHECKSTYLEON MagicNumber
         EObject result = null;
 
         // the following allows to handle erroneous transformations while developing those
@@ -216,13 +219,12 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
     /**
      * {@inheritDoc}
      * 
-     * @param object
-     *            , graphical element
+     * @param object the graphical element
      */
     public Object getSourceElement(final Object object) {
         if (this.viewContext != null) {
-            List<Pair<EObject, EObject>> pairs = XtendBasedTransformation.viewElements
-                    .get(viewContext.getFileId());
+            List<Pair<EObject, EObject>> pairs =
+                    XtendBasedTransformation.viewElements.get(viewContext.getFileId());
             if (pairs != null) {
                 for (Pair<EObject, EObject> pair : pairs) {
                     if (pair.getSecond().equals(object)) {
@@ -237,13 +239,12 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
     /**
      * {@inheritDoc}
      * 
-     * @param object
-     *            , source element
+     * @param object the source element
      */
     public Object getTargetElement(final Object object) {
         if (this.viewContext != null) {
-            List<Pair<EObject, EObject>> pairs = XtendBasedTransformation.viewElements
-                    .get(viewContext.getFileId());
+            List<Pair<EObject, EObject>> pairs =
+                    XtendBasedTransformation.viewElements.get(viewContext.getFileId());
             if (pairs != null) {
                 for (Pair<EObject, EObject> pair : pairs) {
                     if (pair.getFirst().equals(object)) {
@@ -265,7 +266,7 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
      * @param target
      *            , the graphical element
      */
-    public static void addViewElement(String viewId, EObject source, EObject target) {
+    public static void addViewElement(final String viewId, final EObject source, final EObject target) {
         List<Pair<EObject, EObject>> pairs = XtendBasedTransformation.viewElements.get(viewId);
         if (pairs == null) {
             pairs = new ArrayList<Pair<EObject, EObject>>();
@@ -283,7 +284,10 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
         pairs.add(new Pair<EObject, EObject>(source, target));
     }
 
-    public void setViewContext(ViewContext viewContext) {
+    /**
+     * {@inheritDoc}
+     */
+    public void setViewContext(final ViewContext viewContext) {
         this.viewContext = viewContext;
     }
 
