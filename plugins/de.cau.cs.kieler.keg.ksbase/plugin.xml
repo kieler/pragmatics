@@ -9,7 +9,12 @@
 				<transformation
           icon="icons/obj16/addSuc.gif"
           keyboardShortcut="M1+R S"
+          menu="true"
           name="Add Successor"
+          popup="true"
+          popupbar="true"
+          separated="false"
+          toolbar="true"
           transformation="addSuccessor"
           transformationId="de.cau.cs.kieler.keg.ksbase.addSuc"
           validation="isNoRootNode">
@@ -17,7 +22,12 @@
 				<transformation
           icon="icons/obj16/addPred.gif"
           keyboardShortcut="M1+R P"
+          menu="true"
           name="Add Predecessor"
+          popup="true"
+          popupbar="true"
+          separated="false"
+          toolbar="true"
           transformation="addPredecessor"
           transformationId="de.cau.cs.kieler.keg.ksbase.addPred"
           validation="isNoRootNode">
@@ -25,7 +35,12 @@
 				<transformation
           icon="icons/obj16/addNeigh.gif"
           keyboardShortcut="M1+R N"
+          menu="true"
           name="Add Neighbour"
+          popup="true"
+          popupbar="true"
+          separated="false"
+          toolbar="true"
           transformation="addNeighbour"
           transformationId="de.cau.cs.kieler.keg.ksbase.addNeigh"
           validation="isNoRootNode">
@@ -33,21 +48,36 @@
 				<transformation
           icon="icons/obj16/connectDir.gif"
           keyboardShortcut="M1+R D"
+          menu="true"
           name="Connect (Directed)"
+          popup="true"
+          popupbar="true"
+          separated="false"
+          toolbar="true"
           transformation="connectDirected"
           transformationId="de.cau.cs.kieler.keg.ksbase.connectDir">
 				</transformation>
 				<transformation
           icon="icons/obj16/connectUndir.gif"
           keyboardShortcut="M1+R U"
+          menu="true"
           name="Connect (Undirected)"
+          popup="true"
+          popupbar="true"
+          separated="false"
+          toolbar="true"
           transformation="connectUndirected"
           transformationId="de.cau.cs.kieler.keg.ksbase.connectUndir">
 				</transformation>
 				<transformation
           icon="icons/obj16/connectHyper.gif"
           keyboardShortcut="M1+R H"
+          menu="true"
           name="Connect (Hyperedge)"
+          popup="true"
+          popupbar="true"
+          separated="false"
+          toolbar="true"
           transformation="connectHyper"
           transformationId="de.cau.cs.kieler.keg.ksbase.connectHyper"
           validation="isNotEmptySelection">
@@ -55,21 +85,36 @@
 				<transformation
           icon="icons/obj16/flipEdge.gif"
           keyboardShortcut="M1+R F"
+          menu="true"
           name="Flip"
+          popup="true"
+          popupbar="true"
+          separated="false"
+          toolbar="true"
           transformation="flip"
           transformationId="de.cau.cs.kieler.keg.ksbase.flip">
 				</transformation>
 				<transformation
           icon="icons/obj16/toggleDirUndir.gif"
           keyboardShortcut="M1+R T"
+          menu="true"
           name="Toggle Directed/Undirected"
+          popup="true"
+          popupbar="true"
+          separated="false"
+          toolbar="true"
           transformation="toggleDirectedUndirected"
           transformationId="de.cau.cs.kieler.keg.ksbase.toggleDirUndir">
 				</transformation>
 				<transformation
           icon="icons/obj16/toggleHyper.gif"
           keyboardShortcut="M1+R Q"
+          menu="true"
           name="Toggle Node/Hypernode"
+          popup="true"
+          popupbar="true"
+          separated="false"
+          toolbar="true"
           transformation="toggleNodeHyper"
           transformationId="de.cau.cs.kieler.keg.ksbase.toggleNodeHyper"
           validation="isNoRootNode">
@@ -77,7 +122,12 @@
 				<transformation
           icon="icons/obj16/encapsulate.gif"
           keyboardShortcut="M1+R E"
+          menu="true"
           name="Encapsulate"
+          popup="true"
+          popupbar="true"
+          separated="false"
+          toolbar="true"
           transformation="encapsulate"
           transformationId="de.cau.cs.kieler.keg.ksbase.encapsulate"
           validation="isNotEmptySelection">
@@ -85,200 +135,45 @@
     <transformation
           icon="icons/obj16/clique.gif"
           keyboardShortcut="M1+R C"
+          menu="true"
           name="Add Clique"
+          popup="true"
+          popupbar="true"
+          separated="true"
+          toolbar="true"
           transformation="addClique"
           transformationId="de.cau.cs.kieler.keg.ksbase.addClique">
     </transformation>
     <transformation
           icon="icons/obj16/tree.gif"
           keyboardShortcut="M1+R V"
+          menu="true"
           name="Add Tree"
+          popup="true"
+          popupbar="true"
+          separated="false"
+          toolbar="true"
           transformation="addTree"
           transformationId="de.cau.cs.kieler.keg.ksbase.addTree">
     </transformation>
     <transformation
           icon="icons/obj16/circle.gif"
           keyboardShortcut="M1+R X"
+          menu="true"
           name="Add Circle"
+          popup="true"
+          popupbar="true"
+          separated="false"
+          toolbar="true"
           transformation="addCircle"
           transformationId="de.cau.cs.kieler.keg.ksbase.addCircle">
     </transformation>
 			</transformations>
-			<menus>
-				<menuContribution locationURI="menu:de.cau.cs.kieler">
-					<transformationCommand
-						transformationId="de.cau.cs.kieler.keg.ksbase.addSuc">
-					</transformationCommand>
-					<transformationCommand
-						transformationId="de.cau.cs.kieler.keg.ksbase.addPred">
-					</transformationCommand>
-					<transformationCommand
-						transformationId="de.cau.cs.kieler.keg.ksbase.addNeigh">
-					</transformationCommand>
-					<transformationCommand
-						transformationId="de.cau.cs.kieler.keg.ksbase.connectDir">
-					</transformationCommand>
-					<transformationCommand
-						transformationId="de.cau.cs.kieler.keg.ksbase.connectUndir">
-					</transformationCommand>
-					<transformationCommand
-						transformationId="de.cau.cs.kieler.keg.ksbase.connectHyper">
-					</transformationCommand>		
-					<transformationCommand
-						transformationId="de.cau.cs.kieler.keg.ksbase.flip">
-					</transformationCommand>
-					<transformationCommand
-						transformationId="de.cau.cs.kieler.keg.ksbase.toggleDirUndir">
-					</transformationCommand>
-					<transformationCommand
-						transformationId="de.cau.cs.kieler.keg.ksbase.toggleNodeHyper">
-					</transformationCommand>
-     <transformationCommand
-           transformationId="de.cau.cs.kieler.keg.ksbase.encapsulate">
-     </transformationCommand>
-     <separator
-           id="de.cau.cs.kieler.keg.ksbase.separator2">
-     </separator>
-     <transformationCommand
-           transformationId="de.cau.cs.kieler.keg.ksbase.addClique">
-     </transformationCommand>
-     <transformationCommand
-           transformationId="de.cau.cs.kieler.keg.ksbase.addTree">
-     </transformationCommand>
-     <transformationCommand
-           transformationId="de.cau.cs.kieler.keg.ksbase.addCircle">
-     </transformationCommand>
-				</menuContribution>
-    <menuContribution
-          locationURI="toolbar:de.cau.cs.kieler">
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.addSuc">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.addPred">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.addNeigh">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.connectDir">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.connectUndir"></transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.connectHyper">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.flip">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.toggleDirUndir"></transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.toggleNodeHyper">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.encapsulate">
-       </transformationCommand>
-       <separator
-             id="de.cau.cs.kieler.keg.ksbase.separator1">
-       </separator>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.addCircle">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.addClique">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.addTree">
-       </transformationCommand>
-    </menuContribution>
-    <menuContribution
-          locationURI="popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu?after=addGroup">
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.addSuc">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.addPred">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.addNeigh">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.connectDir">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.connectUndir">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.connectHyper">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.flip">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.toggleDirUndir">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.toggleNodeHyper">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.encapsulate">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.addCircle">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.addClique">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.addTree">
-       </transformationCommand>
-    </menuContribution>
-    <menuContribution
-          locationURI="popupBar:any">
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.addSuc">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.addPred">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.addNeigh">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.connectDir">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.connectUndir">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.connectHyper">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.flip">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.toggleDirUndir">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.toggleNodeHyper">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.encapsulate">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.addCircle">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.addClique">
-       </transformationCommand>
-       <transformationCommand
-             transformationId="de.cau.cs.kieler.keg.ksbase.addTree">
-       </transformationCommand>
-    </menuContribution>
-			</menus>
 			<package class="de.cau.cs.kieler.keg.KEGPackage">
 			</package>
+   <XtendTransformationFile
+         TransformationFile="transformations/feature.ext">
+   </XtendTransformationFile>
 		</configuration>
 	</extension>
  <extension

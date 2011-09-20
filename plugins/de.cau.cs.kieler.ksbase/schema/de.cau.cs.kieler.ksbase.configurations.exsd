@@ -55,11 +55,12 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="menus"/>
             <element ref="transformations"/>
             <element ref="commandHandler" minOccurs="0" maxOccurs="1"/>
             <element ref="transformationFactory" minOccurs="0" maxOccurs="1"/>
             <element ref="package" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="XtendTransformationFile" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="Xtend2TransformationClass" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="editorId" type="string">
             <annotation>
@@ -68,16 +69,6 @@
                </documentation>
                <appinfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors/editor/@id"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="TransformationFile" type="string">
-            <annotation>
-               <documentation>
-                  The transformation file.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="resource"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -98,17 +89,6 @@
                </documentation>
                <appinfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="XtendFile" type="string">
-            <annotation>
-               <documentation>
-                  Please use the &apos;TransformationFile&apos; Attribute.
-The Attribute &apos;XtendFile&apos; will be removed in future versions.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="resource" deprecated="true"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -182,19 +162,31 @@ Make sure that the transformation is short and fast, it is not recommended to ca
                </documentation>
             </annotation>
          </attribute>
-      </complexType>
-   </element>
-
-   <element name="menuContribution">
-      <complexType>
-         <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="transformationCommand" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="separator" minOccurs="0" maxOccurs="unbounded"/>
-         </sequence>
-         <attribute name="locationURI" type="string" use="required">
+         <attribute name="separated" type="boolean">
             <annotation>
                <documentation>
-                  The locationURI of this contribution
+                  If this is set to true there will be a separator set to the menu before this element.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="menu" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  Chose whether transformation should have a menu button (default: true)
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="toolbar" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  Chose whether transformation should have a menubar entry (default: false)
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="popup" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  Chose whether transformation should have a popup menu button (default: false)
                </documentation>
             </annotation>
          </attribute>
@@ -218,36 +210,6 @@ Make sure that the transformation is short and fast, it is not recommended to ca
                </appinfo>
             </annotation>
          </attribute>
-      </complexType>
-   </element>
-
-   <element name="menu">
-      <complexType>
-         <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="transformationCommand" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The id of this menu
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="label" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="menus">
-      <complexType>
-         <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="menuContribution" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
       </complexType>
    </element>
 
@@ -314,13 +276,31 @@ Make sure that the transformation is short and fast, it is not recommended to ca
       </complexType>
    </element>
 
-   <element name="separator">
+   <element name="XtendTransformationFile">
       <complexType>
-         <attribute name="id" type="string" use="required">
+         <attribute name="TransformationFile" type="string">
             <annotation>
                <documentation>
-                  
+                  An xtend1 transformation file
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="Xtend2TransformationClass">
+      <complexType>
+         <attribute name="TransformationClass" type="string">
+            <annotation>
+               <documentation>
+                  An Xtend2 transformation claas
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>

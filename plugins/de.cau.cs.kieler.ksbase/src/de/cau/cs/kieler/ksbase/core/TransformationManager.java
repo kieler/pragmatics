@@ -39,8 +39,8 @@ import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
- * The main storage and management class. Contains a list of currently
- * registered editors. Handles import and export.
+ * The main storage and management class. Contains a list of currently registered editors. Handles
+ * import and export.
  * 
  * @author mim
  * 
@@ -49,8 +49,7 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 public final class TransformationManager {
 
     /**
-     * The currently active editors that have been registered by using the
-     * extension point.
+     * The currently active editors that have been registered by using the extension point.
      **/
     private HashMap<String, EditorTransformationSettings> activeEditors;
     /** The editors that have been added by the user using the preference pages. **/
@@ -65,8 +64,8 @@ public final class TransformationManager {
     private static final String KSBASE_LOADER_EXTENSIONPOINT = "de.cau.cs.kieler.ksbase.activator";
 
     /**
-     * FileNameFilter to check a file for a valid settings file. The extension
-     * has to be '.sbase' to be valid.
+     * FileNameFilter to check a file for a valid settings file. The extension has to be '.sbase' to
+     * be valid.
      * 
      * @author Michael Matzen - mim AT informatik.uni-kiel.de
      * 
@@ -108,8 +107,8 @@ public final class TransformationManager {
     }
 
     /**
-     * Gets the list of user defined editors. This is done by checking if the
-     * contributor is 'null' and is used by the preference page.
+     * Gets the list of user defined editors. This is done by checking if the contributor is 'null'
+     * and is used by the preference page.
      * 
      * @return A list of EditorTransformationSettings
      */
@@ -122,11 +121,9 @@ public final class TransformationManager {
      * 
      * @param editorId
      *            The editor's id.
-     * @return The first editor in the list of registered editors which has the
-     *         given name
+     * @return The first editor in the list of registered editors which has the given name
      */
-    public EditorTransformationSettings getEditorSettingsById(
-            final String editorId) {
+    public EditorTransformationSettings getEditorSettingsById(final String editorId) {
         if (activeEditors.containsKey(editorId)) {
             return activeEditors.get(editorId);
         } else if (activeUserEditors.containsKey(editorId)) {
@@ -141,11 +138,9 @@ public final class TransformationManager {
      * 
      * @param editorId
      *            The editor's id.
-     * @return The first editor in the list of registered editors which has the
-     *         given name
+     * @return The first editor in the list of registered editors which has the given name
      */
-    public EditorTransformationSettings getUserDefinedEditorById(
-            final String editorId) {
+    public EditorTransformationSettings getUserDefinedEditorById(final String editorId) {
         return activeUserEditors.get(editorId);
     }
 
@@ -159,8 +154,7 @@ public final class TransformationManager {
         if (editor != null) {
 
             if (activeUserEditors.containsKey(editor.getEditorId())) {
-                KSBasEPlugin.getDefault().logInfo(
-                        "Unable to add the same editor twice.");
+                KSBasEPlugin.getDefault().logInfo("Unable to add the same editor twice.");
 
             } else {
                 // We are using the default framework here
@@ -172,18 +166,16 @@ public final class TransformationManager {
     }
 
     /**
-     * Adds a new editor to the list of user defined editors. This class creates
-     * an empty EditorTransformationSetting with the given editorId.
+     * Adds a new editor to the list of user defined editors. This class creates an empty
+     * EditorTransformationSetting with the given editorId.
      * 
      * @param editorId
      *            The name of the new editor
      * @return The newly created EditorTransformationSettings
      */
     public EditorTransformationSettings addEditor(final String editorId) {
-        if (editorId != null && editorId.length() > 0
-                && !activeEditors.containsKey(editorId)) {
-            EditorTransformationSettings editor = new EditorTransformationSettings(
-                    editorId);
+        if (editorId != null && editorId.length() > 0 && !activeEditors.containsKey(editorId)) {
+            EditorTransformationSettings editor = new EditorTransformationSettings(editorId);
             activeUserEditors.put(editorId, editor);
             return editor;
         }
@@ -198,30 +190,23 @@ public final class TransformationManager {
      */
     public void removeEditor(final String editorId) {
         if (editorId != null && editorId.length() > 0) {
-            EditorTransformationSettings editor = activeUserEditors
-                    .get(editorId);
+            EditorTransformationSettings editor = activeUserEditors.get(editorId);
             if (editor != null) {
                 activeUserEditors.remove(editorId);
                 // Remove exsiting .sbase file settings for editor:
                 try {
-                    IPath metaPath = KSBasEPlugin.getDefault()
-                            .getStateLocation();
-                    File storedSettings = metaPath.append(editorId + ".sbase")
-                            .toFile();
+                    IPath metaPath = KSBasEPlugin.getDefault().getStateLocation();
+                    File storedSettings = metaPath.append(editorId + ".sbase").toFile();
                     if (storedSettings.exists()) {
                         if (!storedSettings.delete()) {
-                            KSBasEPlugin
-                                    .getDefault()
-                                    .logWarning(
-                                            "Error while deleting settings: not allowed to delete file.");
+                            KSBasEPlugin.getDefault().logWarning(
+                                    "Error while deleting settings: not allowed to delete file.");
                         }
                     }
                 } catch (IllegalStateException e) {
-                    KSBasEPlugin
-                            .getDefault()
-                            .logWarning(
-                                    "Error while deleting settings: "
-                                            + "could not find KSBasE plug-in state location.");
+                    KSBasEPlugin.getDefault().logWarning(
+                            "Error while deleting settings: "
+                                    + "could not find KSBasE plug-in state location.");
                 }
             }
         }
@@ -234,27 +219,23 @@ public final class TransformationManager {
 
         if (activeUserEditors.size() > 0) {
             IPath metaPath = KSBasEPlugin.getDefault().getStateLocation();
-            for (EditorTransformationSettings editor : activeUserEditors
-                    .values()) {
+            for (EditorTransformationSettings editor : activeUserEditors.values()) {
                 ObjectOutputStream oos = null;
                 try {
-                    File f = metaPath.append(editor.getEditorId() + ".sbase")
-                            .toFile();
+                    File f = metaPath.append(editor.getEditorId() + ".sbase").toFile();
                     if (f.exists()) {
                         f.delete();
                     }
-                    oos = new ObjectOutputStream(new FileOutputStream(metaPath
-                            .append(editor.getEditorId() + ".sbase").toFile()));
+                    oos = new ObjectOutputStream(new FileOutputStream(metaPath.append(
+                            editor.getEditorId() + ".sbase").toFile()));
                     oos.writeObject(editor);
 
                 } catch (FileNotFoundException e) {
                     KSBasEPlugin.getDefault().logError(
                             "Error while storing settings: file not found.");
                 } catch (IOException e) {
-                    KSBasEPlugin
-                            .getDefault()
-                            .logError(
-                                    "Error while parsing settings: file could not be read.");
+                    KSBasEPlugin.getDefault().logError(
+                            "Error while parsing settings: file could not be read.");
                 } finally {
                     if (oos != null) {
                         try {
@@ -271,8 +252,8 @@ public final class TransformationManager {
     }
 
     /**
-     * Reads settings from KSBasE storage files and initializes user defined
-     * editors and transformations.
+     * Reads settings from KSBasE storage files and initializes user defined editors and
+     * transformations.
      */
     private void initalizeUserSettings() {
 
@@ -291,23 +272,18 @@ public final class TransformationManager {
                         Object content = ois.readObject();
                         if (content instanceof EditorTransformationSettings) {
                             activeUserEditors.put(
-                                    ((EditorTransformationSettings) content)
-                                            .getEditorId(),
+                                    ((EditorTransformationSettings) content).getEditorId(),
                                     ((EditorTransformationSettings) content));
                         }
                     } catch (FileNotFoundException e) {
-                        KSBasEPlugin
-                                .getDefault()
-                                .logError(
-                                        "Error while parsing user defined settings file not found.");
+                        KSBasEPlugin.getDefault().logError(
+                                "Error while parsing user defined settings file not found.");
                     } catch (IOException e) {
                         KSBasEPlugin.getDefault().logError(
                                 "Error while parsing user defined settings, file "
-                                        + file.getAbsolutePath()
-                                        + " seems to be corrupted.");
+                                        + file.getAbsolutePath() + " seems to be corrupted.");
                     } catch (ClassNotFoundException e) {
-                        KSBasEPlugin.getDefault().logError(
-                                "Error while parsing settings.");
+                        KSBasEPlugin.getDefault().logError("Error while parsing settings.");
                     } finally {
                         if (ois != null) {
                             try {
@@ -323,23 +299,21 @@ public final class TransformationManager {
     }
 
     /**
-     * Reads all existing extensions of the KSBasE extension point and
-     * initializes the editors and transformations.
+     * Reads all existing extensions of the KSBasE extension point and initializes the editors and
+     * transformations.
      */
     private void initializeExtensionPoints() {
         activeEditors = new HashMap<String, EditorTransformationSettings>();
 
         // From extension points first:
-        IConfigurationElement[] configurations = Platform
-                .getExtensionRegistry().getConfigurationElementsFor(
-                        KSBASE_EXTENSIONPOINT);
+        IConfigurationElement[] configurations = Platform.getExtensionRegistry()
+                .getConfigurationElementsFor(KSBASE_EXTENSIONPOINT);
         for (IConfigurationElement settings : configurations) {
 
             // Check for valid Configuration:
             if (!settings.getName().equals("configuration")
                     || settings.getAttribute("editorId") == null) {
-                KSBasEPlugin.getDefault().logWarning(
-                        "Invalid KSBasE extension point found.");
+                KSBasEPlugin.getDefault().logWarning("Invalid KSBasE extension point found.");
                 continue;
             }
 
@@ -355,6 +329,13 @@ public final class TransformationManager {
                 editor.setCheckVisibility(true);
             }
 
+            // setup some containers for menubar contributions
+            KSBasEMenuContribution menuContrib = new KSBasEMenuContribution("menu:de.cau.cs.kieler");
+            KSBasEMenuContribution toolbarContrib = new KSBasEMenuContribution(
+                    "toolbar:de.cau.cs.kieler");
+            KSBasEMenuContribution popupContrib = new KSBasEMenuContribution(
+                    "popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu?after=addGroup");
+
             // get all package declarations
             IConfigurationElement[] packages = settings.getChildren("package");
             for (IConfigurationElement elem : packages) {
@@ -362,35 +343,28 @@ public final class TransformationManager {
                 if (packageClass == null) {
                     KSBasEPlugin.getDefault().logWarning(
                             "Invalid KSBasE configuration found. Please check "
-                                    + "transformations defined for "
-                                    + editor.getEditorId());
+                                    + "transformations defined for " + editor.getEditorId());
                 }
                 editor.getModelPackages().add(packageClass);
             }
 
-            IConfigurationElement[] transformations = settings
-                    .getChildren("transformations");
+            IConfigurationElement[] transformations = settings.getChildren("transformations");
             if (transformations != null && transformations.length > 0) {
                 // since we only allowed one single <transformations> child, we
                 // are using it w/o iteration
-                for (IConfigurationElement t : transformations[0]
-                        .getChildren("transformation")) {
+                for (IConfigurationElement t : transformations[0].getChildren("transformation")) {
                     // Check for valid Configuration:
                     if (t == null || t.getAttribute("name") == null
                             || t.getAttribute("transformation") == null
                             || t.getAttribute("transformationId") == null) {
                         KSBasEPlugin.getDefault().logWarning(
                                 "Invalid KSBasE configuration found. Please check "
-                                        + "transformations defined for "
-                                        + editor.getEditorId());
+                                        + "transformations defined for " + editor.getEditorId());
                     }
                     KSBasETransformation transformation = new KSBasETransformation(
-                            t.getAttribute("name"),
-                            t.getAttribute("transformation"));
-                    transformation.setKeyboardShortcut(t
-                            .getAttribute("keyboardShortcut"));
-                    transformation.setTransformationId(t
-                            .getAttribute("transformationId"));
+                            t.getAttribute("name"), t.getAttribute("transformation"));
+                    transformation.setKeyboardShortcut(t.getAttribute("keyboardShortcut"));
+                    transformation.setTransformationId(t.getAttribute("transformationId"));
                     transformation.setIcon(t.getAttribute("icon"));
                     String s = t.getAttribute("tooltip");
                     if (s != null) {
@@ -400,21 +374,49 @@ public final class TransformationManager {
                     }
                     transformation.setValidation(t.getAttribute("validation"));
                     editor.addTransformation(transformation);
+                    
+                    // fill the desired menus
+                    String attr = t.getAttribute("menu");
+                    if (attr == null || ((attr != null) && attr.equals("true"))) {
+                        String separator = t.getAttribute("separated");
+                        String transformationID = t.getAttribute("transformationId");
+                        if ((separator != null) && separator.equals("true")) {
+                            menuContrib.addCommand(transformationID + "_SEPARATOR");
+                        }
+                        menuContrib.addCommand(transformationID);
+                    }
+                    attr = t.getAttribute("toolbar");
+                    if ((attr != null) && attr.equals("true")) {      
+                        String separator = t.getAttribute("separated");
+                        if ((separator != null) && separator.equals("true")) {
+                            toolbarContrib.addCommand(t.getAttribute("transformationId") + "_SEPARATOR");
+                        }
+                        toolbarContrib.addCommand(t.getAttribute("transformationId"));
+                    }
+                    attr = t.getAttribute("popup");
+                    if ((attr != null) && attr.equals("true")) {
+                        String separator = t.getAttribute("separated");
+                        if ((separator != null) && separator.equals("true")) {
+                            popupContrib.addCommand(t.getAttribute("transformationId") + "_SEPARATOR");
+                        }
+                        popupContrib.addCommand(t.getAttribute("transformationId"));
+                    }
+
                 }
+                editor.addMenuContribution(menuContrib);
+                editor.addMenuContribution(toolbarContrib);
+                editor.addMenuContribution(popupContrib);
             }
             // read alternate command handler
-            IConfigurationElement[] commandHandler = settings
-                    .getChildren("commandHandler");
+            IConfigurationElement[] commandHandler = settings.getChildren("commandHandler");
             if (commandHandler != null && commandHandler.length == 1) {
-                String commandHandlerClass = commandHandler[0]
-                        .getAttribute("class");
+                String commandHandlerClass = commandHandler[0].getAttribute("class");
                 editor.setCommandHandler(commandHandlerClass);
             } else {
                 // set empty value, so the default handler will be used
                 editor.setCommandHandler("");
             }
-            IConfigurationElement[] tFactory = settings
-                    .getChildren("transformationFactory");
+            IConfigurationElement[] tFactory = settings.getChildren("transformationFactory");
             if (tFactory != null && tFactory.length == 1
                     && tFactory[0].getAttribute("class") != null) {
                 try {
@@ -433,136 +435,109 @@ public final class TransformationManager {
             }
             // Read menu contributions
             IConfigurationElement[] menus = settings.getChildren("menus");
-
-            if (menus != null && menus.length > 0) {
-                // since we only allowed one single <menuContribution> child, we
-                // are using it w/o iteration
-                for (IConfigurationElement c : menus[0]
-                        .getChildren("menuContribution")) {
-                    KSBasEMenuContribution contrib = new KSBasEMenuContribution(
-                            c.getAttribute("locationURI"));
-                    for (IConfigurationElement m : c.getChildren("menu")) {
-                        KSBasEMenuContribution menu = new KSBasEMenuContribution(
-                                m.getAttribute("id"));
-                        menu.setLabel(m.getAttribute("label"));
-                        for (IConfigurationElement com : m.getChildren()) {
-                            menu.addCommand(com
-                                    .getAttribute("transformationId"));
-                        }
-                        contrib.addSubMenu(menu);
-                    }
-                    for (IConfigurationElement com : c.getChildren()) {
-                        if (com.getName().equals("transformationCommand")) {
-                            contrib.addCommand(com
-                                    .getAttribute("transformationId"));
-                        }
-                        if (com.getName().equals("separator")) {
-                            contrib.addCommand("_SEPARATOR");
-                        }
-                    }
-                    // for (IConfigurationElement com : c
-                    // .getChildren("transformationCommand")) {
-                    // System.out.println(com.getName());
-                    // contrib.addCommand(com.getAttribute("transformationId"));
-                    // }
-                    editor.addMenuContribution(contrib);
-                }
-            }
+            /*
+             * if (menus != null && menus.length > 0) { // since we only allowed one single
+             * <menuContribution> child, we // are using it w/o iteration for (IConfigurationElement
+             * c : menus[0] .getChildren("menuContribution")) { KSBasEMenuContribution contrib = new
+             * KSBasEMenuContribution( c.getAttribute("locationURI")); for (IConfigurationElement m
+             * : c.getChildren("menu")) { KSBasEMenuContribution menu = new KSBasEMenuContribution(
+             * m.getAttribute("id")); menu.setLabel(m.getAttribute("label")); for
+             * (IConfigurationElement com : m.getChildren()) { menu.addCommand(com
+             * .getAttribute("transformationId")); } contrib.addSubMenu(menu); } for
+             * (IConfigurationElement com : c.getChildren()) { if
+             * (com.getName().equals("transformationCommand")) { contrib.addCommand(com
+             * .getAttribute("transformationId")); } if (com.getName().equals("separator")) {
+             * contrib.addCommand("_SEPARATOR"); } } // for (IConfigurationElement com : c //
+             * .getChildren("transformationCommand")) { // System.out.println(com.getName()); //
+             * contrib.addCommand(com.getAttribute("transformationId")); // }
+             * editor.addMenuContribution(contrib); }
+             * 
+             * }
+             */
 
             // Read file from extension point configuration
-            InputStream inStream;
-            StringBuffer contentBuffer = new StringBuffer();
-            try {
-                if (settings.getContributor() != null) {
-                    String transformationFile = null;
-                    if (settings.getAttribute("TransformationFile") != null) {
-                        transformationFile = settings
-                                .getAttribute("TransformationFile");
-                    } else if (settings.getAttribute("XtendFile") != null) {
-                        transformationFile = settings.getAttribute("XtendFile");
-                        KSBasEPlugin
-                                .getDefault()
-                                .logWarning(
-                                        "The KSBasE configuration for the editor : "
-                                                + editor.getEditorId()
-                                                + " uses the deprecated configuration attribute"
-                                                + " 'XtendFile' please use the new "
-                                                + "'TransformationFile' attribute ");
-                    }
-                    if (transformationFile == null) {
-                        KSBasEPlugin.getDefault().logError(
-                                "Missing attribute 'TransformationFile' the extension point"
-                                        + " configuration for "
-                                        + editor.getEditorId());
-                        continue;
-                    }
-                    Bundle bundle = Platform.getBundle(settings
-                            .getContributor().getName());
-                    if (bundle != null) {
-                        URL urlPath = bundle.getEntry("/" + transformationFile);
-                        // Parse transformation file to read transformations and
-                        // parameters now:
-                        editor.parseTransformations(false, urlPath);
-                        if (urlPath != null) {
-                            inStream = urlPath.openStream();
-                            while (inStream.available() > 0) {
-                                contentBuffer.append((char) inStream.read());
-
+            IConfigurationElement[] xtend1transformations = 
+                    settings.getChildren("XtendTransformationFile");
+            if (xtend1transformations != null && xtend1transformations.length > 0) {
+                for (IConfigurationElement tf : xtend1transformations) {
+                    InputStream inStream;
+                    StringBuffer contentBuffer = new StringBuffer();
+                    try {
+                        if (tf.getContributor() != null) {
+                            String transformationFile = null;
+                            if (tf.getAttribute("TransformationFile") != null) {
+                                transformationFile = tf.getAttribute("TransformationFile");
                             }
-                        }
-                    }
-                    // Write transformation file to .metadata
-                    IPath path = ResourcesPlugin.getPlugin().getStateLocation();
-                    // Transformation file name:
-                    path = path.append(editor.getEditorId());
-                    // Add extension:
-                    path = path.addFileExtension(editor.getFramework()
-                            .getFileExtension());
-
-                    File file = new File(path.toOSString());
-                    if (file != null) {
-                        FileOutputStream out = null;
-                        try {
-                            out = new FileOutputStream(file);
-                            if (out != null) {
-                                if (!file.exists()) {
-                                    if (!file.createNewFile()) {
-                                        KSBasEPlugin.getDefault().logError(
-                                                "Error while storing transformation file for editor: "
-                                                        + editor.getEditorId());
+                            if (transformationFile == null) {
+                                KSBasEPlugin.getDefault().logError(
+                                        "Missing attribute 'TransformationFile' the extension point"
+                                                + " configuration for " + editor.getEditorId());
+                                continue;
+                            }
+                            Bundle bundle = Platform.getBundle(tf.getContributor().getName());
+                            if (bundle != null) {
+                                URL urlPath = bundle.getEntry("/" + transformationFile);
+                                // Parse transformation file to read transformations and
+                                // parameters now:
+                                editor.parseTransformations(false, urlPath);
+                                if (urlPath != null) {
+                                    inStream = urlPath.openStream();
+                                    while (inStream.available() > 0) {
+                                        contentBuffer.append((char) inStream.read());
+        
                                     }
                                 }
-
-                                out.write(contentBuffer.toString().getBytes());
-                                out.flush();
-                                out.close();
                             }
-                        } catch (FileNotFoundException fne) {
-                            KSBasEPlugin.getDefault().logError(
-                                    "Could not find transformation file:"
-                                            + path.toOSString());
-                        } catch (SecurityException sece) {
-                            KSBasEPlugin.getDefault().logError(
-                                    "Not allowed to open transformation file:"
-                                            + path.toOSString());
-                        } finally {
-                            if (out != null) {
-                                out.close();
+                            // Write transformation file to .metadata
+                            IPath path = ResourcesPlugin.getPlugin().getStateLocation();
+                            // Transformation file name:
+                            path = path.append(editor.getEditorId());
+                            // Add extension:
+                            path = path.addFileExtension(editor.getFramework().getFileExtension());
+        
+                            File file = new File(path.toOSString());
+                            if (file != null) {
+                                FileOutputStream out = null;
+                                try {
+                                    out = new FileOutputStream(file);
+                                    if (out != null) {
+                                        if (!file.exists()) {
+                                            if (!file.createNewFile()) {
+                                                KSBasEPlugin.getDefault().logError(
+                                                        "Error while storing transformation file for editor: "
+                                                                + editor.getEditorId());
+                                            }
+                                        }
+        
+                                        out.write(contentBuffer.toString().getBytes());
+                                        out.flush();
+                                        out.close();
+                                    }
+                                } catch (FileNotFoundException fne) {
+                                    KSBasEPlugin.getDefault().logError(
+                                            "Could not find transformation file:" + path.toOSString());
+                                } catch (SecurityException sece) {
+                                    KSBasEPlugin.getDefault().logError(
+                                            "Not allowed to open transformation file:" + path.toOSString());
+                                } finally {
+                                    if (out != null) {
+                                        out.close();
+                                    }
+                                }
+                                // Set delete on exit flag, so the files will be cleaned
+                                // when exiting
+                                // eclipse
+                                file.deleteOnExit();
+                                editor.setTransformationFile(file.getAbsolutePath());
                             }
                         }
-                        // Set delete on exit flag, so the files will be cleaned
-                        // when exiting
-                        // eclipse
-                        file.deleteOnExit();
-                        editor.setTransformationFile(file.getAbsolutePath());
+                    } catch (IOException e) {
+                        KSBasEPlugin.getDefault().logWarning(
+                                "KSBasE configuration exception: Can't read transformation file for editor :"
+                                        + editor.getEditorId());
                     }
                 }
-            } catch (IOException e) {
-                KSBasEPlugin.getDefault().logWarning(
-                        "KSBasE configuration exception: Can't read transformation file for editor :"
-                                + editor.getEditorId());
             }
-
             activeEditors.put(editor.getEditorId(), editor);
         }
     }
@@ -572,9 +547,8 @@ public final class TransformationManager {
      */
     private void activateProjects() {
         // From extension points first:
-        IConfigurationElement[] configurations = Platform
-                .getExtensionRegistry().getConfigurationElementsFor(
-                        KSBASE_LOADER_EXTENSIONPOINT);
+        IConfigurationElement[] configurations = Platform.getExtensionRegistry()
+                .getConfigurationElementsFor(KSBASE_LOADER_EXTENSIONPOINT);
         if (configurations != null) {
             for (IConfigurationElement config : configurations) {
                 if (config != null && config.getAttribute("class") != null) {
@@ -591,8 +565,8 @@ public final class TransformationManager {
     }
 
     /**
-     * Initializes the transformation manager by reading the extension points
-     * and the user defined settings.
+     * Initializes the transformation manager by reading the extension points and the user defined
+     * settings.
      */
     public void initializeTransformations() {
         initializeExtensionPoints();
