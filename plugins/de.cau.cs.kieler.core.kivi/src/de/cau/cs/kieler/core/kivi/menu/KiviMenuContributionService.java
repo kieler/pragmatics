@@ -95,10 +95,35 @@ public class KiviMenuContributionService {
             final String... activeEditors) {
         assert locationSchemeExpression != null;
         addButtonConfiguration(new ButtonConfiguration(responsibleCombination, id, label, tooltip,
-                icon, style, locationSchemeExpression, visibilityExpression, activeEditors));
+                icon, style, locationSchemeExpression, visibilityExpression, activeEditors, false));
     }
     // CHECKSTYLEON ParameterNumber
 
+    // CHECKSTYLEOFF ParameterNumber
+    /**
+     * Add a separator button configuration.
+     * 
+     * @param id
+     *            the ID that the separator should get. Need to identify the button lateron with this
+     *            ID
+     * @param locationSchemeExpression
+     *            a {@link LocationScheme} enumeration value indicating the locations the button is
+     *            to be attached to
+     * @param visibilityExpression
+     *            an eclipse core Expression that gets registered as visibility expression, may be
+     *            null          
+     * @param activeEditors
+     *            Strings of editor IDs for which this button should be made visible only, parameter
+     *            to avoid using the visibilityExpression, may be left
+     */
+    public void addSeparator(final String id, final LocationScheme locationSchemeExpression, final Expression visibilityExpression,
+            final String... activeEditors) {
+        assert locationSchemeExpression != null;
+        addButtonConfiguration(new ButtonConfiguration(null, id, null, null,
+                null, 0, locationSchemeExpression, visibilityExpression, activeEditors, true));
+    }
+    // CHECKSTYLEON ParameterNumber
+    
     /**
      * Add a button configuration with only a few parameters.
      * 
@@ -121,7 +146,7 @@ public class KiviMenuContributionService {
     public void addToolbarButton(final ICombination responsibleCombination, final String id,
             final String tooltip, final ImageDescriptor icon, final String... activeEditors) {
         addButtonConfiguration(new ButtonConfiguration(responsibleCombination, id, "KiviButton",
-                tooltip, icon, SWT.PUSH, LocationScheme.MENU_POPUP_TOOLBAR, null, activeEditors));
+                tooltip, icon, SWT.PUSH, LocationScheme.MENU_POPUP_TOOLBAR, null, activeEditors, false));
     }
 
     /**
@@ -140,7 +165,7 @@ public class KiviMenuContributionService {
     public void addToolbarButton(final ICombination responsibleCombination, final String id,
             final String label) {
         addButtonConfiguration(new ButtonConfiguration(responsibleCombination, id, label, null,
-                null, SWT.PUSH, LocationScheme.MENU_POPUP_TOOLBAR, null, null));
+                null, SWT.PUSH, LocationScheme.MENU_POPUP_TOOLBAR, null, null, false));
     }
 
     /**
@@ -190,6 +215,7 @@ public class KiviMenuContributionService {
         private String id;
         private String label;
         private String tooltip;
+        private boolean separator = false;
 
         private ImageDescriptor icon;
         private int style;
@@ -204,7 +230,7 @@ public class KiviMenuContributionService {
         ButtonConfiguration(final ICombination responsiveCombination, final String id,
                 final String label, final String tooltip, final ImageDescriptor icon,
                 final int style, final LocationScheme locationSchemeExpression,
-                final Expression visibilityExpression, final String[] activeEditors) {
+                final Expression visibilityExpression, final String[] activeEditors, final boolean separator) {
             this.responsiveCombination = responsiveCombination;
             this.id = id;
             this.label = label;
@@ -214,6 +240,7 @@ public class KiviMenuContributionService {
             this.locationSchemeExpression = locationSchemeExpression;
             this.visibilityExpression = visibilityExpression;
             this.activeEditors = activeEditors;
+            this.separator = separator;
         }
         // CHECKSTYLEOFF ParameterNumber
 
@@ -288,6 +315,10 @@ public class KiviMenuContributionService {
             return "B:" + this.id;
         }
 
+        public boolean isSeparator() {
+            return this.separator;
+        }
+        
     }
 
 }

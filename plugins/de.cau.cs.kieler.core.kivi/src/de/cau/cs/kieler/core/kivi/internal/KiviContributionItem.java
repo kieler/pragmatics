@@ -28,6 +28,7 @@ import org.eclipse.core.internal.expressions.EqualsExpression;
 import org.eclipse.core.internal.expressions.OrExpression;
 import org.eclipse.core.internal.expressions.WithExpression;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.actions.CompoundContributionItem;
 import org.eclipse.ui.commands.ICommandService;
@@ -192,9 +193,51 @@ public class KiviContributionItem extends CompoundContributionItem implements
         for (ButtonConfiguration config : buttonConfigurations) {
 
             // only create a button if the corresponding combination is active
+            if (config.isSeparator()) {
+                if (this.location.isContainedIn(config.getLocationSchemeExpression())) {
+                    //unload(config.getId());
+                    Separator separator = new Separator();
+                    
+                    separator.setId(config.getId());
+                    idButtonMap.put(config.getId(), separator);
+                    buttonsHandlerMap.put(separator, new ButtonHandler());
+                    buttons.add(separator);
+                    
+                    Expression visibilityExpression = null;
+                    // specify visibility for active editors
+                    if (config.getActiveEditors() != null && config.getActiveEditors().length > 0) {
+                        CompositeExpression or = new OrExpression();
+                        visibilityExpression = or;
+                        for (String editorId : config.getActiveEditors()) {
+                            CompositeExpression with = new WithExpression("activeEditorId");
+                            Expression equals = new EqualsExpression(editorId);
+                            with.add(equals);
+                            or.add(with);
+                        }
+                    }
+                    // specify visibility for a given core expression
+                    if (config.getVisibilityExpression() != null) {
+                        if (visibilityExpression == null) {
+                            visibilityExpression = config.getVisibilityExpression();
+                        } else {
+                            // there are some active editor specifications already
+                            CompositeExpression and = new AndExpression();
+                            and.add(visibilityExpression);
+                            and.add(config.getVisibilityExpression());
+                            visibilityExpression = and;
+                        }
+                    }
+                    if (visibilityExpression != null) {
+                        //menuService.registerVisibleWhen(separator, visibilityExpression, null, null);
+                    }
+                    
+                }
+            } else {
+                
             if (config.getResponsiveCombination().isActive()
                     && this.location.isContainedIn(config.getLocationSchemeExpression())) {
-
+                
+                
                 // get a command and register the Kivi ButtonHandler for it
                 Command cmd = commandService.getCommand(config.getId());
                 Category category = commandService.getCategory("de.cau.cs.kieler");
@@ -251,12 +294,14 @@ public class KiviContributionItem extends CompoundContributionItem implements
                 if (visibilityExpression != null) {
                     menuService.registerVisibleWhen(item, visibilityExpression, null, null);
                 }
+                
                 // if (!config.getResponsiveCombination().isActive()) {
                 // item.setVisible(false);
                 // } else {
                 // item.setVisible(true);
                 // }
             }
+        }
         }
         // request evaluation of all visibility expressions registered for a certain
         // variable. This must be done to show buttons also from the beginning,
@@ -278,7 +323,7 @@ public class KiviContributionItem extends CompoundContributionItem implements
      * @param buttonID
      *            the id associated in KiVi with the menu item
      * @param enabled
-     *            true iff the handler is enabled.
+     *            true if the handler is enabled.
      */
     public static void setEnabledState(final String buttonID, final boolean enabled) {
         IContributionItem item = idButtonMap.get(buttonID);
