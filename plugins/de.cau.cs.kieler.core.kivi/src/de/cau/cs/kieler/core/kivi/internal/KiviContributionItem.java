@@ -228,7 +228,7 @@ public class KiviContributionItem extends CompoundContributionItem implements
                         }
                     }
                     if (visibilityExpression != null) {
-                        //menuService.registerVisibleWhen(separator, visibilityExpression, null, null);
+                        menuService.registerVisibleWhen(separator, visibilityExpression, null, null);
                     }
                     
                 }
