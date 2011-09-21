@@ -21,10 +21,12 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Determines the actual positions of ports for nodes whose port positions are
- * left to be determined. (whose port contsraints are not
+ * left to be determined. (whose port constraints are not
  * {@link de.cau.cs.kieler.kiml.options.PortConstraints#FIXED_POS})
  * 
  * <dl>
@@ -50,67 +52,110 @@ public class PortPositionProcessor extends AbstractAlgorithm implements ILayoutP
             for (LNode node : layer.getNodes()) {
                 if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isRatioFixed()) {
                     // The ports are not fixed to their positions, so arrange them
-                    
-                    // Count the ports on different sides
-                    int northCount = 1, eastCount = 1, southCount = 1, westCount = 1;
-                    for (LPort port : node.getPorts()) {
-                        switch (port.getSide()) {
-                        case NORTH:
-                            northCount++;
-                            break;
-                        case EAST:
-                            eastCount++;
-                            break;
-                        case SOUTH:
-                            southCount++;
-                            break;
-                        default:
-                            westCount++;
-                        }
-                    }
-                    
-                    // Compute the space to be left between the ports
-                    KVector nodeSize = node.getSize();
-                    double northDelta = nodeSize.x / northCount;
-                    double northX = northDelta;
-                    double eastDelta = nodeSize.y / eastCount;
-                    double eastY = eastDelta;
-                    double southDelta = nodeSize.x / southCount;
-                    double southX = nodeSize.x - southDelta;
-                    double westDelta = nodeSize.y / westCount;
-                    double westY = nodeSize.y - westDelta;
-                    
-                    // Arrange the ports
-                    for (LPort port : node.getPorts()) {
-                        float portOffset = port.getProperty(LayoutOptions.OFFSET);
-                        switch (port.getSide()) {
-                        case NORTH:
-                            port.getPosition().x = northX;
-                            port.getPosition().y = -port.getSize().y / 2 - portOffset;
-                            northX += northDelta;
-                            break;
-                        case EAST:
-                            port.getPosition().x = nodeSize.x + port.getSize().x / 2 + portOffset;
-                            port.getPosition().y = eastY;
-                            eastY += eastDelta;
-                            break;
-                        case SOUTH:
-                            port.getPosition().x = southX;
-                            port.getPosition().y = nodeSize.y + port.getSize().y / 2 + portOffset;
-                            southX -= southDelta;
-                            break;
-                        case WEST:
-                            port.getPosition().x = -port.getSize().x / 2 - portOffset;
-                            port.getPosition().y = westY;
-                            westY -= westDelta;
-                            break;
-                        }
+                    if (node.getProperty(LayoutOptions.HYPERNODE)
+                            || node.getProperty(Properties.NODE_TYPE) != NodeType.NORMAL) {
+                        placeHypernodePorts(node);
+                    } else {
+                        placeNodePorts(node);
                     }
                 }
             }
         }
         
         getMonitor().done();
+    }
+    
+    /**
+     * Arrange the ports of a normal node. Ports are placed with equal distances
+     * along each side.
+     * 
+     * @param node a node
+     */
+    private void placeNodePorts(final LNode node) {
+        // Count the ports on different sides
+        int northCount = 1, eastCount = 1, southCount = 1, westCount = 1;
+        for (LPort port : node.getPorts()) {
+            switch (port.getSide()) {
+            case NORTH:
+                northCount++;
+                break;
+            case EAST:
+                eastCount++;
+                break;
+            case SOUTH:
+                southCount++;
+                break;
+            default:
+                westCount++;
+            }
+        }
+        
+        // Compute the space to be left between the ports
+        KVector nodeSize = node.getSize();
+        double northDelta = nodeSize.x / northCount;
+        double northX = northDelta;
+        double eastDelta = nodeSize.y / eastCount;
+        double eastY = eastDelta;
+        double southDelta = nodeSize.x / southCount;
+        double southX = nodeSize.x - southDelta;
+        double westDelta = nodeSize.y / westCount;
+        double westY = nodeSize.y - westDelta;
+        
+        // Arrange the ports
+        for (LPort port : node.getPorts()) {
+            float portOffset = port.getProperty(LayoutOptions.OFFSET);
+            switch (port.getSide()) {
+            case NORTH:
+                port.getPosition().x = northX;
+                port.getPosition().y = -port.getSize().y / 2 - portOffset;
+                northX += northDelta;
+                break;
+            case EAST:
+                port.getPosition().x = nodeSize.x + port.getSize().x / 2 + portOffset;
+                port.getPosition().y = eastY;
+                eastY += eastDelta;
+                break;
+            case SOUTH:
+                port.getPosition().x = southX;
+                port.getPosition().y = nodeSize.y + port.getSize().y / 2 + portOffset;
+                southX -= southDelta;
+                break;
+            case WEST:
+                port.getPosition().x = -port.getSize().x / 2 - portOffset;
+                port.getPosition().y = westY;
+                westY -= westDelta;
+                break;
+            }
+        }
+    }
+    
+    /**
+     * Place the ports of a hypernode or dummy node. Ports are placed in the middle
+     * of their side
+     * 
+     * @param node a hypernode or dummy node
+     */
+    private void placeHypernodePorts(final LNode node) {
+        for (LPort port : node.getPorts()) {
+            switch (port.getSide()) {
+            case NORTH:
+                port.getPosition().x = node.getSize().x / 2;
+                port.getPosition().y = 0;
+                break;
+            case EAST:
+                port.getPosition().x = node.getSize().x;
+                port.getPosition().y = node.getSize().y / 2;
+                break;
+            case SOUTH:
+                port.getPosition().x = node.getSize().x / 2;
+                port.getPosition().y = node.getSize().y;
+                break;
+            case WEST:
+                port.getPosition().x = 0;
+                port.getPosition().y = node.getSize().y / 2;
+                break;
+            }
+        }
     }
 
 }

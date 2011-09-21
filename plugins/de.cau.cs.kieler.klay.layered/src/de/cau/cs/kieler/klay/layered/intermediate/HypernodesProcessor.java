@@ -51,12 +51,27 @@ public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutPro
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 if (node.getProperty(LayoutOptions.HYPERNODE) && node.getPorts().size() <= 2) {
-                    int outEdges = 0, inEdges = 0;
+                    int topEdges = 0, rightEdges = 0, bottomEdges = 0, leftEdges = 0;
                     for (LPort port : node.getPorts()) {
-                        outEdges += port.getOutgoingEdges().size();
-                        inEdges += port.getIncomingEdges().size();
+                        switch (port.getSide()) {
+                        case NORTH:
+                            topEdges++;
+                            break;
+                        case EAST:
+                            rightEdges++;
+                            break;
+                        case SOUTH:
+                            bottomEdges++;
+                            break;
+                        case WEST:
+                            leftEdges++;
+                            break;
+                        }
                     }
-                    moveHypernode(layeredGraph, node, inEdges <= outEdges);
+                    // don't move the node if there are any edges to the top or bottom
+                    if (topEdges == 0 && bottomEdges == 0) {
+                        moveHypernode(layeredGraph, node, leftEdges <= rightEdges);
+                    }
                 }
             }
         }
@@ -76,7 +91,7 @@ public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutPro
             final boolean right) {
         // find edges that constitute the first join point of the hyperedge
         List<LEdge> bendEdges = new LinkedList<LEdge>();
-        double bendx = 0;
+        double bendx = Integer.MAX_VALUE, diffx = Integer.MAX_VALUE, diffy = Integer.MAX_VALUE;
         if (right) {
             bendx = layeredGraph.getSize().x;
             for (LPort port : hypernode.getPorts()) {
@@ -84,11 +99,17 @@ public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutPro
                     if (!edge.getBendPoints().isEmpty()) {
                         KVector firstPoint = edge.getBendPoints().getFirst();
                         if (firstPoint.x < bendx) {
+                            diffx = bendx - firstPoint.x;
+                            diffy = Integer.MAX_VALUE;
                             bendEdges.clear();
-                            bendEdges.add(edge);
                             bendx = firstPoint.x;
-                        } else if (firstPoint.x == bendx) {
+                        }
+                        if (firstPoint.x <= bendx) {
                             bendEdges.add(edge);
+                            if (edge.getBendPoints().size() > 1) {
+                                diffy = Math.min(diffy, Math.abs(edge.getBendPoints().get(1).y
+                                        - firstPoint.y));
+                            }
                         }
                     }
                 }
@@ -99,18 +120,25 @@ public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutPro
                     if (!edge.getBendPoints().isEmpty()) {
                         KVector lastPoint = edge.getBendPoints().getLast();
                         if (lastPoint.x > bendx) {
+                            diffx = lastPoint.x - bendx;
+                            diffy = Integer.MAX_VALUE;
                             bendEdges.clear();
-                            bendEdges.add(edge);
                             bendx = lastPoint.x;
-                        } else if (lastPoint.x == bendx) {
+                        }
+                        if (lastPoint.x >= bendx) {
                             bendEdges.add(edge);
+                            if (edge.getBendPoints().size() > 1) {
+                                diffy = Math.min(diffy, Math.abs(edge.getBendPoints().get(
+                                        edge.getBendPoints().size() - 2).y - lastPoint.y));
+                            }
                         }
                     }
                 }
             }
         }
         
-        if (!bendEdges.isEmpty()) {
+        if (!bendEdges.isEmpty() && diffx > hypernode.getSize().x / 2
+                && diffy > hypernode.getSize().y / 2) {
             // create new ports for the edges
             LPort northPort = new LPort();
             northPort.setNode(hypernode);

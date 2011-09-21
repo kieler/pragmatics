@@ -568,10 +568,14 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      * {@inheritDoc}
      */
     public void applyLayout(final LayeredGraph layeredGraph) {
-        KNode target = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
+        Object target = layeredGraph.getProperty(Properties.ORIGIN);
+        if (!(target instanceof KNode)) {
+            return;
+        }
+        KNode parentNode = (KNode) target;
 
         // determine the border spacing, which influences the offset
-        KShapeLayout parentLayout = target.getData(KShapeLayout.class);
+        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         float borderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
 
         // calculate the offset
@@ -674,10 +678,10 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             
             // ports have been positioned using dummy nodes
             parentLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-            KimlUtil.resizeNode(target, width, height, false);
+            KimlUtil.resizeNode(parentNode, width, height, false);
         } else {
             // ports have not been positioned yet - leave this for next layouter
-            KimlUtil.resizeNode(target, width, height, true);
+            KimlUtil.resizeNode(parentNode, width, height, true);
         }
     }
 
