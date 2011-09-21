@@ -422,17 +422,25 @@ public class DebugWindow extends Window {
     
     /**
      * Loads the given image and shows it.
+     * 
+     * @param modelFile the selected model file or {@code null}.
      */
     private void updateImage(final File modelFile) {
-        String path = modelFile.getPath();
-        File imageFile = new File(path.substring(0, path.length() - 3) + "png"); //$NON-NLS-1$
+        File imageFile = null;
         
-        // Check if the image file already exists
-        if (!imageFile.exists()) {
-            if (!createImage(modelFile, imageFile)) {
-                // If this doesn't work, set image file to null
-                openErrorDialog(Messages.DebugWindow_Error_ImageCreationFailed);
-                imageFile = null;
+        // If there is a model file, try to create and load the associated image
+        // (the model file can be null if the user just deleted all files)
+        if (modelFile != null) {
+            String path = modelFile.getPath();
+            imageFile = new File(path.substring(0, path.length() - 3) + "png"); //$NON-NLS-1$
+            
+            // Check if the image file already exists
+            if (!imageFile.exists()) {
+                if (!createImage(modelFile, imageFile)) {
+                    // If this doesn't work, set image file to null
+                    openErrorDialog(Messages.DebugWindow_Error_ImageCreationFailed);
+                    imageFile = null;
+                }
             }
         }
         
