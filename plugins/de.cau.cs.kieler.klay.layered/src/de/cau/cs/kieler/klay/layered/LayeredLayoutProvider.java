@@ -118,6 +118,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
             // Before Phase 3
 
+            //EnumSet.of(IntermediateLayoutProcessor.COMPOUND_DUMMY_EDGE_REMOVER),
             null,
 
             // Before Phase 4
