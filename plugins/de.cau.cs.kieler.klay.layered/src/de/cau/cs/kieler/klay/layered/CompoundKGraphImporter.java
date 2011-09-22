@@ -112,6 +112,22 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         // set the graph properties property
         layeredGraph.setProperty(Properties.GRAPH_PROPERTIES, graphProperties);
 
+//        // remove unused ports
+//        for (int i = 0; i < layeredNodes.size(); i++) {
+//            LNode lnode = layeredNodes.get(i);
+//            List<LPort> ports = lnode.getPorts();
+//            List<LPort> removables = new LinkedList<LPort>();
+//            for (int j = 0; j < ports.size(); j++) {
+//                LPort port = ports.get(j);
+//                if (port.getIncomingEdges().isEmpty() && port.getOutgoingEdges().isEmpty()) {
+//                    removables.add(port);
+//                }
+//            }
+//            for (int k = 0; k < removables.size(); k++) {
+//                ports.remove(removables.get(k));
+//            }
+//        }
+
         return layeredGraph;
     }
 
@@ -935,11 +951,10 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         // get position of the source port (LPort)
         LPort sourcePort = ledge.getSource();
         KVector sourcePortPosition = sourcePort.getPosition();
-       
 
         // get position of the target port (LPort)
         LPort targetPort = ledge.getTarget();
-        KVector targetPortPosition = targetPort.getPosition();        
+        KVector targetPortPosition = targetPort.getPosition();
 
         // adjust bendpoint-positions
         // respect graph's border spacing
