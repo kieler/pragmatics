@@ -1019,11 +1019,12 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
             edgeEnd.y -= kTargetNodeLayout.getInsets().getTop();
         }
 
-        // if there are bendpoints, adjust endpoint of edge to last bendpoint
+        // if there are bendpoints, adjust endpoint of edge and last bendpoint
         if (!bendPoints.isEmpty()) {
             KVector last = bendPoints.getLast();
             if (last.x < edgeEnd.x) {
-                edgeEnd.y = last.y;
+                //edgeEnd.y = last.y;
+                last.y = edgeEnd.y;
             }
         }
 
