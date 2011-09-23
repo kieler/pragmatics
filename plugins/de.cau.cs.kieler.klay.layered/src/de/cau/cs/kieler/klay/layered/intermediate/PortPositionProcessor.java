@@ -53,7 +53,7 @@ public class PortPositionProcessor extends AbstractAlgorithm implements ILayoutP
                 if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isRatioFixed()) {
                     // The ports are not fixed to their positions, so arrange them
                     if (node.getProperty(LayoutOptions.HYPERNODE)
-                            || node.getProperty(Properties.NODE_TYPE) != NodeType.NORMAL) {
+                            || node.getSize().x == 0 && node.getSize().y == 0) {
                         placeHypernodePorts(node);
                     } else {
                         placeNodePorts(node);
