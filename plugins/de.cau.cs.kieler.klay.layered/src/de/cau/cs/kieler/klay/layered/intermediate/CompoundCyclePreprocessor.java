@@ -54,7 +54,8 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
 
         // Initialize a hashmap in which edgeLists for a pair of KNodes can be stored. Pairs
         // expressed as LinkedLists to allow expressing edge directions.
-        HashMap<LinkedList<KNode>, LinkedList<LEdge>> hierarchyCrossingEdges = new HashMap<LinkedList<KNode>, LinkedList<LEdge>>();
+        HashMap<LinkedList<KNode>, LinkedList<LEdge>> hierarchyCrossingEdges 
+                = new HashMap<LinkedList<KNode>, LinkedList<LEdge>>();
 
         // For each edge crossing the borders of a compound node, make an insertion into the
         // corresponding List in the Hashmap. To find the Pair of KNodes that is the correct key,
