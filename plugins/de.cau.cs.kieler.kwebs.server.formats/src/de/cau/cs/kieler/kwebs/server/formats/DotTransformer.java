@@ -510,6 +510,9 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
                 AttributeStatement attrStatement = (AttributeStatement) stm;
                 if (attrStatement.getType() == AttributeType.GRAPH) {
                     removeAttributes(attrStatement.getAttributes(), key);
+                    if (attrStatement.getAttributes().isEmpty()) {
+                        stmIter.remove();
+                    }
                 }
             }
         }

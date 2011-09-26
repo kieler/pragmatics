@@ -139,14 +139,36 @@ public class MatrixTransformer implements IGraphTransformer<Matrix> {
         StringBuilder builder = new StringBuilder();
         for (KVectorChain chain : graph.getLayout()) {
             for (KVector vector : chain) {
-                builder.append(vector.x);
+                builder.append(toString(vector.x));
                 builder.append(' ');
-                builder.append(vector.y);
+                builder.append(toString(vector.y));
                 builder.append(' ');
             }
             builder.append('\n');
         }
         return builder.toString();
+    }
+    
+    /**
+     * Creates a string representation of the given double value. The resulting
+     * string will omit the period character if is is followed only by zeros, so
+     * that integer values are really shown as such.
+     * 
+     * @param d a double value
+     * @return a string representation that writes integers without period
+     */
+    private static String toString(final double d) {
+        String s = Double.toString(d);
+        int dotIndex = s.indexOf('.');
+        if (dotIndex > 0) {
+            for (int i = dotIndex + 1; i < s.length(); i++) {
+                if (s.charAt(i) != '0') {
+                    return s;
+                }
+            }
+            return s.substring(0, dotIndex - 1);
+        }
+        return s;
     }
     
     /**
