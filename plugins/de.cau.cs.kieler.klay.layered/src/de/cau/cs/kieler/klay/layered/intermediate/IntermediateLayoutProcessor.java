@@ -31,6 +31,8 @@ public enum IntermediateLayoutProcessor {
     
     // Before Phase 1
     
+    /** Handles cyclic dependencies of compound nodes. */
+    COMPOUND_CYCLE_PREPROCESSOR,
     /** Mirrors the graph to perform a right-to-left drawing. */
     LEFT_DIR_PREPROCESSOR,
     /** Transposes the graph to perform a top-bottom drawing. */
@@ -130,6 +132,9 @@ public enum IntermediateLayoutProcessor {
         switch (this) {
         case BIG_NODES_PROCESSOR:
             return new BigNodesProcessor();
+            
+        case COMPOUND_CYCLE_PREPROCESSOR:
+            return new CompoundCyclePreprocessor();
             
         case COMPOUND_DUMMY_EDGE_REMOVER:
             return new CompoundDummyEdgeRemover();
