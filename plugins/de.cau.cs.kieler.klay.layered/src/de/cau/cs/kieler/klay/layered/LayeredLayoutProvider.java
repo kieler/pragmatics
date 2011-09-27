@@ -111,7 +111,8 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     private static final IntermediateProcessingStrategy FLATTENED_HIERARCHY_PROCESSING_ADDITIONS 
                                                                 = new IntermediateProcessingStrategy(
             // Before Phase 1
-            null,
+            EnumSet.of(IntermediateLayoutProcessor.COMPOUND_CYCLE_PREPROCESSOR),
+                                                                        
 
             // Before Phase 2
             null,
