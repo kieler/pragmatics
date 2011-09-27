@@ -24,6 +24,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.properties.EdgeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -54,10 +55,10 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Revert edges to remove cyclic dependencies between compound nodes", 1);
 
-        // Initialize a hashmap in which edgeLists for a pair of KNodes can be stored. Pairs
-        // expressed as LinkedLists to allow expressing edge directions.
+        // Initialize a hashmap in which edgeLists for a pair of KNodes can be stored. Pairs are
+        // represented as LinkedLists to allow expressing edge directions.
         HashMap<LinkedList<KNode>, LinkedList<LEdge>> hierarchyCrossingEdges 
-                            = new HashMap<LinkedList<KNode>, LinkedList<LEdge>>();
+                = new HashMap<LinkedList<KNode>, LinkedList<LEdge>>();
         // Initialize a hashset in which the pairs of KNodes with adjacency relations can be stored.
         HashSet<LinkedList<KNode>> nodePairs = new HashSet<LinkedList<KNode>>();
 
@@ -66,47 +67,67 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
         // walk up the nesting tree of the compound graph until a pair of ancestors is found that
         // shares the same parent.
         for (LNode lnode : layeredGraph.getLayerlessNodes()) {
-            for (LEdge edge : lnode.getConnectedEdges()) {
-                KNode sourceOriginal = (KNode) edge.getSource().getNode()
-                        .getProperty(Properties.ORIGIN);
-                KNode targetOriginal = (KNode) edge.getTarget().getNode()
-                        .getProperty(Properties.ORIGIN);
-                KNode sourceOriginalParent = sourceOriginal.getParent();
-                KNode targetOriginalParent = targetOriginal.getParent();
-                KNode currentSourceAncestor = sourceOriginalParent;
-                KNode currentTargetAncestor = targetOriginalParent;
+            for (LEdge edge : lnode.getOutgoingEdges()) {
 
-                if (currentSourceAncestor != currentTargetAncestor) {
-                    KNode layoutNode = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
-                    int depthSourceAncestor = getDepth(currentSourceAncestor, layoutNode);
-                    int depthTargetAncestor = getDepth(currentTargetAncestor, layoutNode);
-                    if (currentSourceAncestor != currentTargetAncestor) {
-                        // crawl up the nesting tree on the deep side to reach even depth level
-                        for (int i = depthSourceAncestor; i > depthTargetAncestor; i--) {
-                            currentSourceAncestor = currentSourceAncestor.getParent();
+                // only normal edges need to be regarded
+                EdgeType edgeType = edge.getProperty(Properties.EDGE_TYPE);
+                if (edgeType == EdgeType.NORMAL) {
+
+                    KNode sourceOriginal = (KNode) edge.getSource().getNode()
+                            .getProperty(Properties.ORIGIN);
+                    KNode targetOriginal = (KNode) edge.getTarget().getNode()
+                            .getProperty(Properties.ORIGIN);
+                    KNode sourceOriginalParent = sourceOriginal.getParent();
+                    KNode targetOriginalParent = targetOriginal.getParent();
+                    KNode currentSourceAncestor = sourceOriginalParent;
+                    KNode currentTargetAncestor = targetOriginalParent;
+                    KNode currentSource = sourceOriginal;
+                    KNode currentTarget = targetOriginal;
+
+                    // Establishes the edge an adjacency of two compound nodes (source and target
+                    // are one of the compound nodes or any of it's descendants)?
+                    if ((currentSourceAncestor != currentTargetAncestor)
+                            || ((!sourceOriginal.getChildren().isEmpty()) && (!targetOriginal
+                                    .getChildren().isEmpty()))) {
+
+                        KNode layoutNode = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
+                        int depthSource = getDepth(currentSource, layoutNode);
+                        int depthTarget = getDepth(currentTarget, layoutNode);
+
+                        // If source and target differ in depth in the nesting tree, crawl up the
+                        // nesting tree on the deep side to reach even depth level
+                        if (depthSource != depthTarget) {
+                            for (int i = depthSource; i > depthTarget; i--) {
+                                currentSource = currentSource.getParent();
+                            }
+                            for (int j = depthTarget; j > depthSource; j--) {
+                                currentTarget = currentTarget.getParent();
+                            }
                         }
-                        for (int j = depthTargetAncestor; j > depthSourceAncestor; j--) {
-                            currentTargetAncestor = currentTargetAncestor.getParent();
+                        
+                        // Walk up the nesting tree from both sides, until nodes have the same
+                        // parent.
+                        currentSourceAncestor = currentSource.getParent();
+                        currentTargetAncestor = currentTarget.getParent();
+                        while (currentSourceAncestor != currentTargetAncestor) {
+                            currentSource = currentSource.getParent();
+                            currentTarget = currentTarget.getParent();
+                            currentSourceAncestor = currentSource.getParent();
+                            currentTargetAncestor = currentTarget.getParent();
                         }
-                        // find two Ancestors with the same Parent
-                        KNode nextSourceAncestor = currentSourceAncestor.getParent();
-                        KNode nextTargetAncestor = currentTargetAncestor.getParent();
-                        while (nextSourceAncestor != nextTargetAncestor) {
-                            currentSourceAncestor = currentSourceAncestor.getParent();
-                            currentTargetAncestor = currentTargetAncestor.getParent();
-                            nextSourceAncestor = currentSourceAncestor.getParent();
-                            nextTargetAncestor = currentTargetAncestor.getParent();
-                        }
-                        // Make the entrys to the HashMap and HashSet. Create the tuple that is to
+
+                        // Make the entrys to the HashMap and HashSet. Create the tuple that is
+                        // to
                         // be the key and
-                        // find the corresponding List. If no list is stored yet, create one. Store
+                        // find the corresponding List. If no list is stored yet, create one.
+                        // Store
                         // the pair of nodes in the HashSet for later iteration.
                         LinkedList<KNode> keyTuple = new LinkedList<KNode>();
-                        keyTuple.add(currentSourceAncestor);
-                        keyTuple.add(currentTargetAncestor);
+                        keyTuple.add(currentSource);
+                        keyTuple.add(currentTarget);
                         LinkedList<KNode> reverseTuple = new LinkedList<KNode>();
-                        reverseTuple.add(currentTargetAncestor);
-                        reverseTuple.add(currentSourceAncestor);
+                        reverseTuple.add(currentTarget);
+                        reverseTuple.add(currentSource);
                         if (hierarchyCrossingEdges.containsKey(keyTuple)) {
                             hierarchyCrossingEdges.get(keyTuple).add(edge);
                         } else {
@@ -125,12 +146,11 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
                     }
                 }
             }
-
-            HashSet<LEdge> revertedEdges = revertCyclicEdges(hierarchyCrossingEdges, nodePairs);
-            layeredGraph.setProperty(Properties.REVERTED_COMPOUND_EDGES, revertedEdges);
-
-            getMonitor().done();
         }
+        HashSet<LEdge> revertedEdges = revertCyclicEdges(hierarchyCrossingEdges, nodePairs);
+        layeredGraph.setProperty(Properties.REVERTED_COMPOUND_EDGES, revertedEdges);
+
+        getMonitor().done();
     }
 
     /**
@@ -141,8 +161,7 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
      *            compound nodes. The pairs of nodes serve as keys. They are represented by
      *            LinkedLists with two KNode-Elements.
      * @param nodePairs
-     * @return 
-     *       Returns a set that contains the reverted edges.
+     * @return Returns a set that contains the reverted edges.
      */
     private HashSet<LEdge> revertCyclicEdges(
             final HashMap<LinkedList<KNode>, LinkedList<LEdge>> hierarchyCrossingEdges,
@@ -158,14 +177,14 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
             reverseTuple.add(nodePair.getFirst());
             LinkedList<LEdge> froEdges = hierarchyCrossingEdges.get(reverseTuple);
 
-           
             // Check, if there is a cyclic dependency.
             if (!(toEdges == null || froEdges == null)) {
-                // If yes: revert all edges of the smaller list, if the lists are equally sized, revert
+                // If yes: revert all edges of the smaller list, if the lists are equally sized,
+                // revert
                 // edges of froEdges. If not: nothing to be done.
                 int difference = toEdges.size() - froEdges.size();
                 if (difference < 0) {
-                    revertedEdges = revertEdges(toEdges);    
+                    revertedEdges = revertEdges(toEdges);
                 } else {
                     revertedEdges = revertEdges(froEdges);
                 }
@@ -178,8 +197,8 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
      * Reverts edges of a given list of edges.
      * 
      * @param edgeList
-     *       The list of edges to be reverted.
-     * @return 
+     *            The list of edges to be reverted.
+     * @return
      */
     private HashSet<LEdge> revertEdges(final LinkedList<LEdge> edgeList) {
         HashSet<LEdge> revertedEdges = new HashSet<LEdge>();
@@ -189,7 +208,7 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
             edge.setSource(edge.getTarget());
             edge.setTarget(source);
             revertedEdges.add(edge);
-        }        
+        }
         return revertedEdges;
     }
 
