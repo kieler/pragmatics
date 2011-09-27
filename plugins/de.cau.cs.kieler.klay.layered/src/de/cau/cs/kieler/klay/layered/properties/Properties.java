@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered.properties;
 
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -26,6 +27,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
+import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
@@ -174,6 +176,12 @@ public final class Properties {
      */
     public static final IProperty<KVector> ORIGINAL_DUMMY_POSITION =
             new Property<KVector>("OriginalDummyPosition", null);
+    
+    /**
+     * Set of edges reverted by the CompoundCyclePreprocessor. Property of the layeredGraph.
+     */
+    public static final IProperty<HashSet<LEdge>> REVERTED_COMPOUND_EDGES =
+            new Property<HashSet<LEdge>>("RevertedCompoundEdges");
     
 
     // /////////////////////////////////////////////////////////////////////////////
