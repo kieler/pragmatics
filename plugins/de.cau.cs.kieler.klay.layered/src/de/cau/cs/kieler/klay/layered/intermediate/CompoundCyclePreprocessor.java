@@ -21,6 +21,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -56,7 +57,7 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
         // Initialize a hashmap in which edgeLists for a pair of KNodes can be stored. Pairs
         // expressed as LinkedLists to allow expressing edge directions.
         HashMap<LinkedList<KNode>, LinkedList<LEdge>> hierarchyCrossingEdges 
-                = new HashMap<LinkedList<KNode>, LinkedList<LEdge>>();
+                            = new HashMap<LinkedList<KNode>, LinkedList<LEdge>>();
         // Initialize a hashset in which the pairs of KNodes with adjacency relations can be stored.
         HashSet<LinkedList<KNode>> nodePairs = new HashSet<LinkedList<KNode>>();
 
@@ -125,7 +126,8 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
                 }
             }
 
-            revertCyclicEdges(hierarchyCrossingEdges);
+            HashSet<LEdge> revertedEdges = revertCyclicEdges(hierarchyCrossingEdges, nodePairs);
+            layeredGraph.setProperty(Properties.REVERTED_COMPOUND_EDGES, revertedEdges);
 
             getMonitor().done();
         }
@@ -138,12 +140,57 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
      *            HashMap that contains lists of edges that constitute a dependency between two
      *            compound nodes. The pairs of nodes serve as keys. They are represented by
      *            LinkedLists with two KNode-Elements.
+     * @param nodePairs
+     * @return 
+     *       Returns a set that contains the reverted edges.
      */
-    private void revertCyclicEdges(
-            final HashMap<LinkedList<KNode>, LinkedList<LEdge>> hierarchyCrossingEdges) {
+    private HashSet<LEdge> revertCyclicEdges(
+            final HashMap<LinkedList<KNode>, LinkedList<LEdge>> hierarchyCrossingEdges,
+            final HashSet<LinkedList<KNode>> nodePairs) {
+        HashSet<LEdge> revertedEdges = null;
+        for (LinkedList<KNode> nodePair : nodePairs) {
+            // Get the edge list of one direction.
+            LinkedList<LEdge> toEdges = hierarchyCrossingEdges.get(nodePair);
 
-        // TODO Auto-generated method stub
+            // Get the edge list of the other direction.
+            LinkedList<KNode> reverseTuple = new LinkedList<KNode>();
+            reverseTuple.add(nodePair.getLast());
+            reverseTuple.add(nodePair.getFirst());
+            LinkedList<LEdge> froEdges = hierarchyCrossingEdges.get(reverseTuple);
 
+           
+            // Check, if there is a cyclic dependency.
+            if (!(toEdges == null || froEdges == null)) {
+                // If yes: revert all edges of the smaller list, if the lists are equally sized, revert
+                // edges of froEdges. If not: nothing to be done.
+                int difference = toEdges.size() - froEdges.size();
+                if (difference < 0) {
+                    revertedEdges = revertEdges(toEdges);    
+                } else {
+                    revertedEdges = revertEdges(froEdges);
+                }
+            }
+        }
+        return revertedEdges;
+    }
+
+    /**
+     * Reverts edges of a given list of edges.
+     * 
+     * @param edgeList
+     *       The list of edges to be reverted.
+     * @return 
+     */
+    private HashSet<LEdge> revertEdges(final LinkedList<LEdge> edgeList) {
+        HashSet<LEdge> revertedEdges = new HashSet<LEdge>();
+        for (int i = 0; i < edgeList.size(); i++) {
+            LEdge edge = edgeList.get(i);
+            LPort source = edge.getSource();
+            edge.setSource(edge.getTarget());
+            edge.setTarget(source);
+            revertedEdges.add(edge);
+        }        
+        return revertedEdges;
     }
 
     /**
