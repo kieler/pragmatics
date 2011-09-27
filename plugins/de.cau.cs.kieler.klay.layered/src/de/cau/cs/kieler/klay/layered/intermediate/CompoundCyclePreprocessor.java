@@ -55,7 +55,7 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
         // Initialize a hashmap in which edgeLists for a pair of KNodes can be stored. Pairs
         // expressed as LinkedLists to allow expressing edge directions.
         HashMap<LinkedList<KNode>, LinkedList<LEdge>> hierarchyCrossingEdges 
-                = new HashMap<LinkedList<KNode>, LinkedList<LEdge>>();
+                                = new HashMap<LinkedList<KNode>, LinkedList<LEdge>>();
 
         // For each edge crossing the borders of a compound node, make an insertion into the
         // corresponding List in the Hashmap. To find the Pair of KNodes that is the correct key,
@@ -73,8 +73,9 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
                 KNode currentTargetAncestor = targetOriginalParent;
 
                 if (currentSourceAncestor != currentTargetAncestor) {
-                    int depthSourceAncestor = getDepth(currentSourceAncestor);
-                    int depthTargetAncestor = getDepth(currentTargetAncestor);
+                    KNode layoutNode = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
+                    int depthSourceAncestor = getDepth(currentSourceAncestor, layoutNode);
+                    int depthTargetAncestor = getDepth(currentTargetAncestor, layoutNode);
                     if (currentSourceAncestor != currentTargetAncestor) {
                         // crawl up the nesting tree on the deep side to reach even depth level
                         for (int i = depthSourceAncestor; i > depthTargetAncestor; i--) {
@@ -134,10 +135,20 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
      * 
      * @param knode
      *            The KNode, whose depth is to be calculated.
+     * @param layoutNode
+     *            The layoutNode of the original graph.
      * @return The depth of the KNode. The layoutNode is regarded to have depth 0.
      */
-    private int getDepth(final KNode knode) {
-        // TODO Auto-generated method stub
-        return 0;
+    private int getDepth(final KNode knode, final KNode layoutNode) {
+        int ret = 0;
+        if (knode != layoutNode) {
+            ret = 1;
+            KNode currentAncestor = knode.getParent();
+            while (currentAncestor != layoutNode) {
+                ret += 1;
+                currentAncestor = currentAncestor.getParent();
+            }
+        }
+        return ret;
     }
 }
