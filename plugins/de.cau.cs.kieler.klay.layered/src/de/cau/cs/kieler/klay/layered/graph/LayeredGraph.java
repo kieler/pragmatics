@@ -29,9 +29,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * required to layout the graph from left to right. If another layout direction
  * is desired, it can be obtained by pre-processing and post-processing the graph.
  * 
- * <p>TODO add methods to rotate / mirror the graph for alternative layout
- * directions</p>
- *
  * @author msp
  */
 public class LayeredGraph extends LGraphElement {
@@ -52,7 +49,12 @@ public class LayeredGraph extends LGraphElement {
      */
     @Override
     public String toString() {
-        return "G[" + layerlessNodes.toString() + ", " + layers.toString() + "]";
+        if (layers.isEmpty()) {
+            return "G-unlayered" + layerlessNodes.toString();
+        } else if (layerlessNodes.isEmpty()) {
+            return "G-layered" + layers.toString();
+        }
+        return "G[layerless" + layerlessNodes.toString() + ", layers" + layers.toString() + "]";
     }
 
     /**

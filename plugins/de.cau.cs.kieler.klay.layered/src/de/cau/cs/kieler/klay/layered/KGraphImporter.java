@@ -478,14 +478,18 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 } else {        
                     sourcePort = new LPort();
                     sourcePort.setNode(sourceNode);
+                    sourcePort.getPosition().x = sourceNode.getSize().x;
+                    sourcePort.getPosition().y = sourceNode.getSize().y / 2;
                     sourcePort.setSide(PortSide.EAST);
                 }
             } else {
                 sourcePort = new LPort();
                 sourcePort.setNode(sourceNode);
                 KPoint sourcePoint = edgeLayout.getSourcePoint();
-                sourcePort.getPosition().x = sourcePoint.getX() - sourceNode.getPosition().x;
-                sourcePort.getPosition().y = sourcePoint.getY() - sourceNode.getPosition().y;
+                KVector pos = sourcePort.getPosition();
+                pos.x = sourcePoint.getX() - sourceNode.getPosition().x;
+                pos.y = sourcePoint.getY() - sourceNode.getPosition().y;
+                pos.applyBounds(0, 0, sourceNode.getSize().x, sourceNode.getSize().y);
                 sourcePort.setSide(calcPortSide(sourceNode, sourcePort));
             }
         }
@@ -500,14 +504,17 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 } else {
                     targetPort = new LPort();
                     targetPort.setNode(targetNode);
+                    targetPort.getPosition().y = targetNode.getSize().y / 2;
                     targetPort.setSide(PortSide.WEST);
                 }
             } else {
                 targetPort = new LPort();
                 targetPort.setNode(targetNode);
                 KPoint targetPoint = edgeLayout.getTargetPoint();
-                targetPort.getPosition().x = targetPoint.getX() - targetNode.getPosition().x;
-                targetPort.getPosition().y = targetPoint.getY() - targetNode.getPosition().y;
+                KVector pos = targetPort.getPosition();
+                pos.x = targetPoint.getX() - targetNode.getPosition().x;
+                pos.y = targetPoint.getY() - targetNode.getPosition().y;
+                pos.applyBounds(0, 0, targetNode.getSize().x, targetNode.getSize().y);
                 targetPort.setSide(calcPortSide(targetNode, targetPort));
             }
         }
