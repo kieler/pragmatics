@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -55,7 +56,9 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
         // Initialize a hashmap in which edgeLists for a pair of KNodes can be stored. Pairs
         // expressed as LinkedLists to allow expressing edge directions.
         HashMap<LinkedList<KNode>, LinkedList<LEdge>> hierarchyCrossingEdges 
-                                = new HashMap<LinkedList<KNode>, LinkedList<LEdge>>();
+                = new HashMap<LinkedList<KNode>, LinkedList<LEdge>>();
+        // Initialize a hashset in which the pairs of KNodes with adjacency relations can be stored.
+        HashSet<LinkedList<KNode>> nodePairs = new HashSet<LinkedList<KNode>>();
 
         // For each edge crossing the borders of a compound node, make an insertion into the
         // corresponding List in the Hashmap. To find the Pair of KNodes that is the correct key,
@@ -93,17 +96,29 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
                             nextSourceAncestor = currentSourceAncestor.getParent();
                             nextTargetAncestor = currentTargetAncestor.getParent();
                         }
-                        // Make the entry to the HashMap. Create the tupel that is to be the key and
-                        // find the corresponding List. If no list is stored yet, create one.
-                        LinkedList<KNode> keyTupel = new LinkedList<KNode>();
-                        keyTupel.add(currentSourceAncestor);
-                        keyTupel.add(currentTargetAncestor);
-                        if (hierarchyCrossingEdges.containsKey(keyTupel)) {
-                            hierarchyCrossingEdges.get(keyTupel).add(edge);
+                        // Make the entrys to the HashMap and HashSet. Create the tuple that is to
+                        // be the key and
+                        // find the corresponding List. If no list is stored yet, create one. Store
+                        // the pair of nodes in the HashSet for later iteration.
+                        LinkedList<KNode> keyTuple = new LinkedList<KNode>();
+                        keyTuple.add(currentSourceAncestor);
+                        keyTuple.add(currentTargetAncestor);
+                        LinkedList<KNode> reverseTuple = new LinkedList<KNode>();
+                        reverseTuple.add(currentTargetAncestor);
+                        reverseTuple.add(currentSourceAncestor);
+                        if (hierarchyCrossingEdges.containsKey(keyTuple)) {
+                            hierarchyCrossingEdges.get(keyTuple).add(edge);
                         } else {
                             LinkedList<LEdge> newList = new LinkedList<LEdge>();
                             newList.add(edge);
-                            hierarchyCrossingEdges.put(keyTupel, newList);
+                            hierarchyCrossingEdges.put(keyTuple, newList);
+                        }
+                        // An entry to the HashSet is needed only, when the pair of Nodes is not
+                        // entered in any order.
+                        if (!nodePairs.contains(keyTuple)) {
+                            if (!nodePairs.contains(reverseTuple)) {
+                                nodePairs.add(keyTuple);
+                            }
                         }
 
                     }
@@ -126,6 +141,7 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
      */
     private void revertCyclicEdges(
             final HashMap<LinkedList<KNode>, LinkedList<LEdge>> hierarchyCrossingEdges) {
+
         // TODO Auto-generated method stub
 
     }
