@@ -362,6 +362,10 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // set properties of the new node
         newNode.copyProperties(nodeLayout);
+        
+        if (newNode.getProperty(LayoutOptions.COMMENT_BOX)) {
+            graphProperties.add(GraphProperties.COMMENTS);
+        }
 
         // if we have a hypernode without ports, create a default input and output port
         if (newNode.getProperty(LayoutOptions.HYPERNODE)) {

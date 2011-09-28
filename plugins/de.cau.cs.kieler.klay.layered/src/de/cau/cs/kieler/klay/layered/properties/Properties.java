@@ -143,17 +143,17 @@ public final class Properties {
      * Layered and should be considered highly experimental.
      */
     public static final IProperty<List<LNode>> BARYCENTER_ASSOCIATES = new Property<List<LNode>>(
-            "barycenterAssociates", null);
+            "barycenterAssociates");
 
     /**
      * KNode that contained the origin of this node in the KGraph.
      */
-    public static final IProperty<KNode> PARENT = new Property<KNode>("parent", null);
+    public static final IProperty<KNode> PARENT = new Property<KNode>("parent");
     
     /**
      * LNode that is the left border node for the compound node the side dummy guards the side of.
      */
-    public static final IProperty<LNode> SIDE_OWNER = new Property<LNode>("sideOwner", null); 
+    public static final IProperty<LNode> SIDE_OWNER = new Property<LNode>("sideOwner"); 
 
     /**
      * Flag indicating whether an LPort is set to a leave node in the inclusion tree to enable
@@ -166,25 +166,43 @@ public final class Properties {
      * UPPER_BORDER_DUMMY node determining the compound node this dummy node belongs to.
      */
     public static final IProperty<LNode> COMPOUND_NODE = new Property<LNode>(
-            "CompoundNode", null);
+            "CompoundNode");
     
     /**
      * KInsets of the KNode a upper border dummy node is representing.
      */
     public static final IProperty<KInsets> ORIGINAL_INSETS = 
-            new Property<KInsets>("OriginalInsets", null);
+            new Property<KInsets>("OriginalInsets");
     
     /**
      * Position of UPPER_BORDER_DUMMY-Node before repositioning in the CompoundGraphRestorer.
      */
     public static final IProperty<KVector> ORIGINAL_DUMMY_POSITION =
-            new Property<KVector>("OriginalDummyPosition", null);
+            new Property<KVector>("OriginalDummyPosition");
     
     /**
      * Set of edges reverted by the CompoundCyclePreprocessor. Property of the layeredGraph.
      */
     public static final IProperty<HashSet<LEdge>> REVERTED_COMPOUND_EDGES =
             new Property<HashSet<LEdge>>("RevertedCompoundEdges");
+    
+    /**
+     * List of comment boxes that are placed on top of a node.
+     */
+    public static final IProperty<List<LNode>> TOP_COMMENTS =
+            new Property<List<LNode>>("TopSideComments");
+    
+    /**
+     * List of comment boxes that are placed in the bottom of of a node.
+     */
+    public static final IProperty<List<LNode>> BOTTOM_COMMENTS =
+            new Property<List<LNode>>("BottomSideComments");
+    
+    /**
+     * The port of a node that originally connected a comment box with that node.
+     */
+    public static final IProperty<LPort> COMMENT_CONN_PORT =
+            new Property<LPort>("CommentConnectionPort");
     
 
     // /////////////////////////////////////////////////////////////////////////////

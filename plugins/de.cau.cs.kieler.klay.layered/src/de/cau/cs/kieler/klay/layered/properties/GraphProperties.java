@@ -25,6 +25,9 @@ package de.cau.cs.kieler.klay.layered.properties;
  * @author cds
  */
 public enum GraphProperties {
+    
+    /** The graph contains comment boxes. */
+    COMMENTS,
     /** The graph contains dummy nodes representing external ports. */
     EXTERNAL_PORTS,
     /** The graph is a flattened hierarchical graph. */ 
@@ -39,4 +42,5 @@ public enum GraphProperties {
     NORTH_SOUTH_PORTS,
     /** The graph contains self-loops. */
     SELF_LOOPS;
+    
 }

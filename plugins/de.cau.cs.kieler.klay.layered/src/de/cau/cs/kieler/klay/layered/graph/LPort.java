@@ -138,7 +138,9 @@ public class LPort extends LShape {
             owner.getPorts().remove(this);
         }
         this.owner = node;
-        owner.getPorts().add(this);
+        if (owner != null) {
+            owner.getPorts().add(this);
+        }
     }
 
     /**

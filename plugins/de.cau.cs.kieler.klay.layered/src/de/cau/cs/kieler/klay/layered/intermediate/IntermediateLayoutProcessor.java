@@ -39,6 +39,8 @@ public enum IntermediateLayoutProcessor {
     DOWN_DIR_PREPROCESSOR,
     /** Mirrors and transposes the graph to perform a bottom-up drawing. */
     UP_DIR_PREPROCESSOR,
+    /** Removes some comment boxes to place them separately in a post-processor. */
+    COMMENT_PREPROCESSOR,
     /** Makes sure nodes with layer constraints have only incoming or only outgoing edges. */
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
     
@@ -91,6 +93,8 @@ public enum IntermediateLayoutProcessor {
     
     // After Phase 5
     
+    /** Reinserts and places comment boxes that have been removed before. */
+    COMMENT_POSTPROCESSOR,
     /** Moves hypernodes horizontally for better placement. */
     HYPERNODE_PROCESSOR,
     /** Routes edges incident to hierarchical ports orthogonally. */
@@ -132,6 +136,12 @@ public enum IntermediateLayoutProcessor {
         switch (this) {
         case BIG_NODES_PROCESSOR:
             return new BigNodesProcessor();
+            
+        case COMMENT_POSTPROCESSOR:
+            return new CommentPostprocessor();
+            
+        case COMMENT_PREPROCESSOR:
+            return new CommentPreprocessor();
             
         case COMPOUND_CYCLE_PREPROCESSOR:
             return new CompoundCyclePreprocessor();

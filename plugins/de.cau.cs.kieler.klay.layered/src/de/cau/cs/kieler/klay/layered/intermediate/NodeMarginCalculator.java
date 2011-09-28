@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 
 
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
@@ -24,10 +25,12 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Sets the node margins. Node margins are influenced by both port positions and sizes
- * and label positions and sizes.
+ * and label positions and sizes. Furthermore, comment boxes that are put directly
+ * above or below a node also increase the margin.
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph; nodes have fixed port positions; labels
@@ -48,7 +51,8 @@ public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutPr
      */
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Node margin calculation", 1);
-        
+        double spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+
         // Iterate through the layers
         for (Layer layer : layeredGraph.getLayers()) {
             // Iterate through the layer's nodes
@@ -107,10 +111,57 @@ public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutPr
                 margin.bottom = boundingBox.getMaxY() - (node.getPosition().y + node.getSize().y);
                 margin.left = node.getPosition().x - boundingBox.x;
                 margin.right = boundingBox.getMaxX() - (node.getPosition().x + node.getSize().x);
+                
+                // Process comments that are placed near the node
+                processComments(node, spacing);
             }
         }
         
         getMonitor().done();
+    }
+    
+    /**
+     * Make some extra space for comment boxes that are placed near a node.
+     * 
+     * @param node a node
+     * @param spacing the overall spacing value
+     */
+    private void processComments(final LNode node, final double spacing) {
+        LInsets.Double margin = node.getMargin();
+
+        // Consider comment boxes that are put on top of the node
+        List<LNode> topBoxes = node.getProperty(Properties.TOP_COMMENTS);
+        double topWidth = 0;
+        if (topBoxes != null) {
+            double maxHeight = 0;
+            for (LNode commentBox : topBoxes) {
+                maxHeight = Math.max(maxHeight, commentBox.getSize().y);
+                topWidth += commentBox.getSize().x;
+            }
+            topWidth += spacing / 2 * (topBoxes.size() - 1);
+            margin.top += maxHeight + spacing;
+        }
+        
+        // Consider comment boxes that are put in the bottom of the node
+        List<LNode> bottomBoxes = node.getProperty(Properties.BOTTOM_COMMENTS);
+        double bottomWidth = 0;
+        if (bottomBoxes != null) {
+            double maxHeight = 0;
+            for (LNode commentBox : bottomBoxes) {
+                maxHeight = Math.max(maxHeight, commentBox.getSize().y);
+                bottomWidth += commentBox.getSize().x;
+            }
+            bottomWidth += spacing / 2 * (bottomBoxes.size() - 1);
+            margin.bottom += maxHeight + spacing;
+        }
+        
+        double maxCommentWidth = Math.max(topWidth, bottomWidth);
+        double totalWidth = node.getSize().x + margin.left + margin.right;
+        if (maxCommentWidth > totalWidth) {
+            double extra = (maxCommentWidth - totalWidth) / 2;
+            margin.left += extra;
+            margin.right += extra;
+        }
     }
     
 }

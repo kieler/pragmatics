@@ -82,56 +82,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
     // /////////////////////////////////////////////////////////////////////////////
-    // Processing Strategy Constants
-
-    /** intermediate processing strategy for basic graphs. */
-    private static final IntermediateProcessingStrategy BASELINE_PROCESSING_STRATEGY 
-                                                        = new IntermediateProcessingStrategy(
-            // Before Phase 1
-            null,
-
-            // Before Phase 2
-            null,
-
-            // Before Phase 3
-            EnumSet.of(IntermediateLayoutProcessor.PORT_LIST_SORTER,
-                    IntermediateLayoutProcessor.PORT_SIDE_PROCESSOR),
-
-            // Before Phase 4
-            EnumSet.of(IntermediateLayoutProcessor.NODE_MARGIN_CALCULATOR,
-                    IntermediateLayoutProcessor.PORT_POSITION_PROCESSOR),
-
-            // Before Phase 5
-            null,
-
-            // After Phase 5
-            null);
-
-    /** additional processor dependencies for flattened hierarchical graphs. */
-    private static final IntermediateProcessingStrategy FLATTENED_HIERARCHY_PROCESSING_ADDITIONS 
-                                                                = new IntermediateProcessingStrategy(
-            // Before Phase 1
-            EnumSet.of(IntermediateLayoutProcessor.COMPOUND_CYCLE_PREPROCESSOR),
-                                                                        
-
-            // Before Phase 2
-            null,
-
-            // Before Phase 3
-
-            //EnumSet.of(IntermediateLayoutProcessor.COMPOUND_DUMMY_EDGE_REMOVER),
-            null,
-
-            // Before Phase 4
-            EnumSet.of(IntermediateLayoutProcessor.COMPOUND_SIDE_PROCESSOR),
-
-            // Before Phase 5
-            null,
-
-            // After Phase 5
-            EnumSet.of(IntermediateLayoutProcessor.COMPOUND_GRAPH_RESTORER));
-
-    // /////////////////////////////////////////////////////////////////////////////
     // Variables
 
     /** phase 1: cycle breaking module. */
@@ -291,23 +241,23 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
         // construct the list of processors that make up the algorithm
         algorithm.clear();
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_1));
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_1));
         algorithm.add(cycleBreaker);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_2));
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_2));
         algorithm.add(layerer);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_3));
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_3));
         algorithm.add(crossingMinimizer);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_4));
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_4));
         algorithm.add(nodePlacer);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_5));
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_5));
         algorithm.add(edgeRouter);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.AFTER_PHASE_5));
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingStrategy.AFTER_PHASE_5));
     }
 
     /**
@@ -384,6 +334,12 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // Additional dependencies
         if (graphProperties.contains(GraphProperties.FLAT_HIERARCHICAL)) {
             strategy.addAll(FLATTENED_HIERARCHY_PROCESSING_ADDITIONS);
+        }
+        if (graphProperties.contains(GraphProperties.COMMENTS)) {
+            strategy.addLayoutProcessor(IntermediateProcessingStrategy.BEFORE_PHASE_1,
+                    IntermediateLayoutProcessor.COMMENT_PREPROCESSOR);
+            strategy.addLayoutProcessor(IntermediateProcessingStrategy.AFTER_PHASE_5,
+                    IntermediateLayoutProcessor.COMMENT_POSTPROCESSOR);
         }
 
         return strategy;
@@ -499,5 +455,39 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // accordingly
         return sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
     }
+    
+    // /////////////////////////////////////////////////////////////////////////////
+    // Processing Strategy Constants
+
+    /** intermediate processing strategy for basic graphs. */
+    private static final IntermediateProcessingStrategy BASELINE_PROCESSING_STRATEGY 
+            = new IntermediateProcessingStrategy(null, null,
+            
+            // Before Phase 3
+            EnumSet.of(IntermediateLayoutProcessor.PORT_LIST_SORTER,
+                    IntermediateLayoutProcessor.PORT_SIDE_PROCESSOR),
+            
+            // Before Phase 4
+            EnumSet.of(IntermediateLayoutProcessor.NODE_MARGIN_CALCULATOR,
+                    IntermediateLayoutProcessor.PORT_POSITION_PROCESSOR),
+            
+            null, null);
+
+    /** additional processor dependencies for flattened hierarchical graphs. */
+    private static final IntermediateProcessingStrategy FLATTENED_HIERARCHY_PROCESSING_ADDITIONS 
+            = new IntermediateProcessingStrategy(
+            
+            // Before Phase 1
+            EnumSet.of(IntermediateLayoutProcessor.COMPOUND_CYCLE_PREPROCESSOR),
+            
+            null, null,
+            
+            // Before Phase 4
+            EnumSet.of(IntermediateLayoutProcessor.COMPOUND_SIDE_PROCESSOR),
+            
+            null,
+            
+            // After Phase 5
+            EnumSet.of(IntermediateLayoutProcessor.COMPOUND_GRAPH_RESTORER));
 
 }
