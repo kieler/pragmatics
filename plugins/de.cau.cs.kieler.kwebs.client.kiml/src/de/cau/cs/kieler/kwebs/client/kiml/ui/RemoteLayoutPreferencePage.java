@@ -237,10 +237,6 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
 
     // **********
 
-    /** margin width for layouts. */
-    private static final int MARGIN_WIDTH
-        = 10;
-
     /** fixed height of the options table. */
     private static final int OPTIONS_TABLE_HEIGHT
         = 300;
