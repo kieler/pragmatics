@@ -262,7 +262,7 @@ public class LayeredGraph extends LGraphElement {
                     writer.write("    " + node.hashCode() + " -> "
                             + edge.getTarget().getNode().hashCode());
                     
-                    // Check if this is a compound dummy edge (connecting acestors and descendants)
+                    // Check if this is a compound dummy edge (connecting ancestors and descendants)
                     if (edge.getProperty(Properties.EDGE_TYPE) == EdgeType.COMPOUND_DUMMY) {
                         writer.write(" [style=\"dashed\"]");
                     }
