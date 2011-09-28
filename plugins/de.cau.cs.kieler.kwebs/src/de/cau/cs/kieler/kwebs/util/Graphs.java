@@ -194,7 +194,6 @@ public final class Graphs {
                if (node.getLabel() == null) {
                    KLabel label = elementFactory.createKLabel();
                    label.getData().add(layoutFactory.createKShapeLayout());
-                   label.setParent(node);
                    label.setText("");
                    node.setLabel(label);
                }        
@@ -207,7 +206,6 @@ public final class Graphs {
                if (port.getLabel() == null) {
                    KLabel label = elementFactory.createKLabel();
                    label.getData().add(layoutFactory.createKShapeLayout());
-                   label.setParent(port);
                    label.setText("");
                    port.setLabel(label);
                }                       

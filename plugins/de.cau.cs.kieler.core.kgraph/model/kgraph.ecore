@@ -133,12 +133,6 @@
       <details key="documentation" value="Each label must be assigned a parent graph element and a text string."/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="text" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" lowerBound="1"
-        eType="#//KGraphElement">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Each label is related to a specific graph element, such as a node,&#xA;an edge, or a port."/>
-      </eAnnotations>
-    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EMapPropertyHolder" abstract="true"
       eSuperTypes="#//IPropertyHolder">

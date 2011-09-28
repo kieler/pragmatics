@@ -431,22 +431,13 @@ public interface KGraphPackage extends EPackage {
     int KLABEL__TEXT = KGRAPH_ELEMENT_FEATURE_COUNT + 0;
 
     /**
-     * The feature id for the '<em><b>Parent</b></em>' reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KLABEL__PARENT = KGRAPH_ELEMENT_FEATURE_COUNT + 1;
-
-    /**
      * The number of structural features of the '<em>KLabel</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KLABEL_FEATURE_COUNT = KGRAPH_ELEMENT_FEATURE_COUNT + 2;
+    int KLABEL_FEATURE_COUNT = KGRAPH_ELEMENT_FEATURE_COUNT + 1;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.kgraph.impl.IPropertyToObjectMapImpl <em>IProperty To Object Map</em>}' class.
@@ -767,17 +758,6 @@ public interface KGraphPackage extends EPackage {
      * @generated
      */
     EAttribute getKLabel_Text();
-
-    /**
-     * Returns the meta object for the reference '{@link de.cau.cs.kieler.core.kgraph.KLabel#getParent <em>Parent</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the reference '<em>Parent</em>'.
-     * @see de.cau.cs.kieler.core.kgraph.KLabel#getParent()
-     * @see #getKLabel()
-     * @generated
-     */
-    EReference getKLabel_Parent();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.kgraph.EMapPropertyHolder <em>EMap Property Holder</em>}'.
@@ -1108,14 +1088,6 @@ public interface KGraphPackage extends EPackage {
          * @generated
          */
         EAttribute KLABEL__TEXT = eINSTANCE.getKLabel_Text();
-
-        /**
-         * The meta object literal for the '<em><b>Parent</b></em>' reference feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference KLABEL__PARENT = eINSTANCE.getKLabel_Parent();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.kgraph.impl.EMapPropertyHolderImpl <em>EMap Property Holder</em>}' class.

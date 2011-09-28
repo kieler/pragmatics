@@ -333,19 +333,19 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
             // evaluate attributes for the new edge
             for (Attribute attr : statement.getAttributes()) {
                 if (Attributes.LABEL.equals(attr.getName())) {
-                    KLabel label = KimlUtil.createInitializedLabel(kedge);
+                    KLabel label = KimlUtil.createInitializedLabel();
                     label.setText(attr.getValue());
                     label.getData(KShapeLayout.class).setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
                             EdgeLabelPlacement.CENTER);
                     kedge.getLabels().add(label);
                 } else if (Attributes.HEADLABEL.equals(attr.getName())) {
-                    KLabel label = KimlUtil.createInitializedLabel(kedge);
+                    KLabel label = KimlUtil.createInitializedLabel();
                     label.setText(attr.getValue());
                     label.getData(KShapeLayout.class).setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
                             EdgeLabelPlacement.HEAD);
                     kedge.getLabels().add(label);
                 } else if (Attributes.TAILLABEL.equals(attr.getName())) {
-                    KLabel label = KimlUtil.createInitializedLabel(kedge);
+                    KLabel label = KimlUtil.createInitializedLabel();
                     label.setText(attr.getValue());
                     label.getData(KShapeLayout.class).setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
                             EdgeLabelPlacement.TAIL);

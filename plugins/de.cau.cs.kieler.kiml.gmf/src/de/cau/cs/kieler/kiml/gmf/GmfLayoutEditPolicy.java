@@ -333,11 +333,11 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      */
     private void addLabelLayout(final GmfLayoutCommand command, final KLabel klabel,
             final GraphicalEditPart labelEditPart, final float xbound, final float ybound) {
-        KGraphElement parent = klabel.getParent();
+        EObject parent = klabel.eContainer();
         KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
         // node and port labels are processed separately
         if (parent instanceof KNode || parent instanceof KPort) {
-            Point location = new Point(labelLayout.getXpos(), labelLayout.getYpos());
+            Point location = new Point((int) labelLayout.getXpos(), (int) labelLayout.getYpos());
             command.addShapeLayout((View) labelEditPart.getModel(), location, null);
             return;
         }

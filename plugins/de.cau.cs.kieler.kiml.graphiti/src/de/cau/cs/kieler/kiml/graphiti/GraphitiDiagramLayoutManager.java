@@ -478,7 +478,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             if (ga instanceof AbstractText) {
                 AbstractText text = (AbstractText) ga;
                 String labelText = text.getValue();
-                KLabel label = KimlUtil.createInitializedLabel(edge);
+                KLabel label = KimlUtil.createInitializedLabel();
                 label.setText(labelText);
                 edge.getLabels().add(label);
                 graphMap.put(label, decorator);

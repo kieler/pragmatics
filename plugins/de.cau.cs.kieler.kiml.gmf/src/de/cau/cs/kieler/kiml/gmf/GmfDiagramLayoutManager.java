@@ -720,7 +720,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                     }
                 }
                 if (labelText != null && labelText.length() > 0) {
-                    KLabel label = KimlUtil.createInitializedLabel(edge);
+                    KLabel label = KimlUtil.createInitializedLabel();
                     KShapeLayout labelLayout = label.getData(KShapeLayout.class);
                     if (placement == EdgeLabelPlacement.UNDEFINED) {
                         switch (labelEditPart.getKeyPoint()) {
@@ -763,7 +763,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                     labelLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 } else {
                     // add the label to the mapping anyway so it is reset to its reference location
-                    mapping.getGraphMap().put(KimlUtil.createInitializedLabel(null), labelEditPart);
+                    mapping.getGraphMap().put(KimlUtil.createInitializedLabel(), labelEditPart);
                 }
             }
         }

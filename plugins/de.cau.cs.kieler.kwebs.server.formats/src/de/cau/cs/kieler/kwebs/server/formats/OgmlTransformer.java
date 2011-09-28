@@ -194,7 +194,7 @@ public class OgmlTransformer extends AbstractEmfTransformer<DocumentRoot> {
                 kedge.setSource(source);
                 kedge.setTarget(target);
                 for (LabelType label : edge.getLabel()) {
-                    KLabel klabel = KimlUtil.createInitializedLabel(kedge);
+                    KLabel klabel = KimlUtil.createInitializedLabel();
                     labelIdMap.put(label.getId(), klabel);
                     klabel.getData(KShapeLayout.class).setProperty(PROP_LABEL, label);
                     klabel.setText(label.getContent());

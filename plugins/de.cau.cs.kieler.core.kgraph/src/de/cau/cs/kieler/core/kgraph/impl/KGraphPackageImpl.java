@@ -392,15 +392,6 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getKLabel_Parent() {
-        return (EReference)kLabelEClass.getEStructuralFeatures().get(1);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EClass getEMapPropertyHolder() {
         return eMapPropertyHolderEClass;
     }
@@ -550,7 +541,6 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
 
         kLabelEClass = createEClass(KLABEL);
         createEAttribute(kLabelEClass, KLABEL__TEXT);
-        createEReference(kLabelEClass, KLABEL__PARENT);
 
         eMapPropertyHolderEClass = createEClass(EMAP_PROPERTY_HOLDER);
         createEReference(eMapPropertyHolderEClass, EMAP_PROPERTY_HOLDER__PROPERTIES);
@@ -648,7 +638,6 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
 
         initEClass(kLabelEClass, KLabel.class, "KLabel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getKLabel_Text(), ecorePackage.getEString(), "text", null, 1, 1, KLabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getKLabel_Parent(), this.getKGraphElement(), null, "parent", null, 1, 1, KLabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(eMapPropertyHolderEClass, EMapPropertyHolder.class, "EMapPropertyHolder", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getEMapPropertyHolder_Properties(), this.getIPropertyToObjectMap(), null, "properties", null, 0, -1, EMapPropertyHolder.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -71,7 +71,6 @@ public class KLabelItemProvider
             super.getPropertyDescriptors(object);
 
             addTextPropertyDescriptor(object);
-            addParentPropertyDescriptor(object);
         }
         return itemPropertyDescriptors;
     }
@@ -94,28 +93,6 @@ public class KLabelItemProvider
                  false,
                  false,
                  ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-                 null,
-                 null));
-    }
-
-    /**
-     * This adds a property descriptor for the Parent feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected void addParentPropertyDescriptor(Object object) {
-        itemPropertyDescriptors.add
-            (createItemPropertyDescriptor
-                (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-                 getResourceLocator(),
-                 getString("_UI_KLabel_parent_feature"),
-                 getString("_UI_KLabel_parent_description"),
-                 KGraphPackage.Literals.KLABEL__PARENT,
-                 true,
-                 false,
-                 true,
-                 null,
                  null,
                  null));
     }

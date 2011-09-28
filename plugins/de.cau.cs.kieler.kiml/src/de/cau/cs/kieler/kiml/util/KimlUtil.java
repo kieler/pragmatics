@@ -120,8 +120,7 @@ public final class KimlUtil {
      */
     public static KNode createInitializedNode() {
         KNode layoutNode = KGraphFactory.eINSTANCE.createKNode();
-        KLabel nodeLabel = createInitializedLabel(layoutNode);
-        layoutNode.setLabel(nodeLabel);
+        layoutNode.setLabel(createInitializedLabel());
         KShapeLayout layout = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
         layout.setInsets(KLayoutDataFactory.eINSTANCE.createKInsets());
         layoutNode.getData().add(layout);
@@ -149,8 +148,7 @@ public final class KimlUtil {
      */
     public static KPort createInitializedPort() {
         KPort port = KGraphFactory.eINSTANCE.createKPort();
-        KLabel portLabel = createInitializedLabel(port);
-        port.setLabel(portLabel);
+        port.setLabel(createInitializedLabel());
         KShapeLayout labelLayout = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
         port.getData().add(labelLayout);
         return port;
@@ -159,20 +157,20 @@ public final class KimlUtil {
     /**
      * Creates a KLabel, initializes some attributes, and returns it.
      * 
-     * @param parent the parent graph element
      * @return an initialized KLabel
      */
-    public static KLabel createInitializedLabel(final KGraphElement parent) {
+    public static KLabel createInitializedLabel() {
         KLabel label = KGraphFactory.eINSTANCE.createKLabel();
         KShapeLayout labelLayout = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
         label.getData().add(labelLayout);
         label.setText("");
-        label.setParent(parent);
         return label;
     }
     
     /**
-     * Create a unique identifier for the given graph element.
+     * Create a unique identifier for the given graph element. Note that this identifier
+     * is not necessarily universally unique, since it uses the hash code, which
+     * usually covers only the range of heap space addresses.
      * 
      * @param element a graph element
      */

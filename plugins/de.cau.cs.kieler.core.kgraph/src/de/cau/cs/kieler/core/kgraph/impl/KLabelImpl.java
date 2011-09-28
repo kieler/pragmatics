@@ -34,7 +34,6 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.core.kgraph.impl.KLabelImpl#getText <em>Text</em>}</li>
- *   <li>{@link de.cau.cs.kieler.core.kgraph.impl.KLabelImpl#getParent <em>Parent</em>}</li>
  * </ul>
  * </p>
  *
@@ -62,16 +61,6 @@ public class KLabelImpl extends KGraphElementImpl implements KLabel {
      * @ordered
      */
     protected String text = TEXT_EDEFAULT;
-
-    /**
-     * The cached value of the '{@link #getParent() <em>Parent</em>}' reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getParent()
-     * @generated
-     * @ordered
-     */
-    protected KGraphElement parent;
 
     /**
      * <!-- begin-user-doc -->
@@ -118,52 +107,11 @@ public class KLabelImpl extends KGraphElementImpl implements KLabel {
      * <!-- end-user-doc -->
      * @generated
      */
-    public KGraphElement getParent() {
-        if (parent != null && parent.eIsProxy()) {
-            InternalEObject oldParent = (InternalEObject)parent;
-            parent = (KGraphElement)eResolveProxy(oldParent);
-            if (parent != oldParent) {
-                if (eNotificationRequired())
-                    eNotify(new ENotificationImpl(this, Notification.RESOLVE, KGraphPackage.KLABEL__PARENT, oldParent, parent));
-            }
-        }
-        return parent;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public KGraphElement basicGetParent() {
-        return parent;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void setParent(KGraphElement newParent) {
-        KGraphElement oldParent = parent;
-        parent = newParent;
-        if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KGraphPackage.KLABEL__PARENT, oldParent, parent));
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
             case KGraphPackage.KLABEL__TEXT:
                 return getText();
-            case KGraphPackage.KLABEL__PARENT:
-                if (resolve) return getParent();
-                return basicGetParent();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -178,9 +126,6 @@ public class KLabelImpl extends KGraphElementImpl implements KLabel {
         switch (featureID) {
             case KGraphPackage.KLABEL__TEXT:
                 setText((String)newValue);
-                return;
-            case KGraphPackage.KLABEL__PARENT:
-                setParent((KGraphElement)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -197,9 +142,6 @@ public class KLabelImpl extends KGraphElementImpl implements KLabel {
             case KGraphPackage.KLABEL__TEXT:
                 setText(TEXT_EDEFAULT);
                 return;
-            case KGraphPackage.KLABEL__PARENT:
-                setParent((KGraphElement)null);
-                return;
         }
         super.eUnset(featureID);
     }
@@ -214,8 +156,6 @@ public class KLabelImpl extends KGraphElementImpl implements KLabel {
         switch (featureID) {
             case KGraphPackage.KLABEL__TEXT:
                 return TEXT_EDEFAULT == null ? text != null : !TEXT_EDEFAULT.equals(text);
-            case KGraphPackage.KLABEL__PARENT:
-                return parent != null;
         }
         return super.eIsSet(featureID);
     }

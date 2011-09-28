@@ -118,7 +118,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             } else if (element instanceof KEdge) {
                 applyEdgeLayout((KEdge) element, entry.getSecond());
             } else if (element instanceof KLabel
-                    && ((KLabel) element).getParent() instanceof KEdge) {
+                    && ((KLabel) element).eContainer() instanceof KEdge) {
                 applyEdgeLabelLayout((KLabel) element, entry.getSecond());
             }
         }
@@ -341,7 +341,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             final PictogramElement pelem) {
         GraphicsAlgorithm ga = pelem.getGraphicsAlgorithm();
         ConnectionDecorator decorator = (ConnectionDecorator) pelem;
-        KEdge kedge = (KEdge) klabel.getParent();
+        KEdge kedge = (KEdge) klabel.eContainer();
 
         // get vector chain for the bend points of the edge
         KVectorChain bendPoints = new KVectorChain(getBendPoints(kedge));
