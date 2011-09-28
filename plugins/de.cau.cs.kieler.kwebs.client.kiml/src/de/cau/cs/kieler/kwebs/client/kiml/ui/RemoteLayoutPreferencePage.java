@@ -168,7 +168,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         //Group layoutGroup2 = createLayoutGroup2(composite);
         //layoutGroup2.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
         Group layoutGroup3 = createLayoutGroup3(composite);
-        layoutGroup3.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+        layoutGroup3.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         initRemoteLayoutOptionsView();
         composite.setLayout(new GridLayout(1, false));
         return composite;
@@ -350,7 +350,6 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
     private Group createLayoutGroup3(final Composite parent) {
 
         Group generalGroup = new Group(parent, SWT.NONE);
-        generalGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         
         generalGroup.setText("Available Layout Web Services");
 

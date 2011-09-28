@@ -83,7 +83,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         Group generalGroup = createGeneralGroup(composite);
         generalGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
         Group optionsGroup = createOptionsGroup(composite);
-        optionsGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+        optionsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         GridLayout compositeLayout = new GridLayout(1, false);
         composite.setLayout(compositeLayout);
         return composite;
@@ -91,6 +91,8 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     
     /** margin width for layouts. */
     private static final int MARGIN_WIDTH = 10;
+    /** margin height for layouts. */
+    private static final int MARGIN_HEIGHT = 5;
     
     /**
      * Creates the group for general options.
@@ -110,6 +112,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         
         FillLayout layout = new FillLayout();
         layout.marginWidth = MARGIN_WIDTH;
+        layout.marginHeight = MARGIN_HEIGHT;
         generalGroup.setLayout(layout);
         return generalGroup;
     }
@@ -207,7 +210,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         column2.pack();
         column3.pack();
         column4.pack();
-        GridData tableLayoutData = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
+        GridData tableLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
         table.setLayoutData(tableLayoutData);
         table.pack();
         tableLayoutData.heightHint = OPTIONS_TABLE_HEIGHT;
