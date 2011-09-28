@@ -189,7 +189,7 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
                 }
             }
         }
-        // remove the now dispensable dummy nodes
+        // remove the now expendable dummy nodes
         for (LNode removable : removables) {
             List<LNode> layerNodes = removable.getLayer().getNodes();
             layerNodes.remove(removable);
