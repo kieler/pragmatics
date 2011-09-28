@@ -27,7 +27,6 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
-import java.util.List;
 
 import java.util.Map;
 import org.eclipse.emf.ecore.EObject;
