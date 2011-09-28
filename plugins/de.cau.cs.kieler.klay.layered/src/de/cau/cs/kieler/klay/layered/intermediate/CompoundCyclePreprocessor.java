@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -56,6 +57,9 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
      */
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Revert edges to remove cyclic dependencies between compound nodes", 1);
+
+        // float edgeSpacing = layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR)
+        // * layeredGraph.getProperty(Properties.OBJ_SPACING);
 
         // Initialize a hashmap in which edgeLists for a pair of KNodes can be stored. Pairs are
         // represented as LinkedLists to allow expressing edge directions.
@@ -107,44 +111,46 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
                             }
                         }
 
-                        // Walk up the nesting tree from both sides, until nodes have the same
-                        // parent.
-                        currentSourceAncestor = currentSource.getParent();
-                        currentTargetAncestor = currentTarget.getParent();
-                        while (currentSourceAncestor != currentTargetAncestor) {
-                            currentSource = currentSource.getParent();
-                            currentTarget = currentTarget.getParent();
+                        if (currentSource != currentTarget) {
+                            // Walk up the nesting tree from both sides, until nodes have the same
+                            // parent.
                             currentSourceAncestor = currentSource.getParent();
                             currentTargetAncestor = currentTarget.getParent();
-                        }
-
-                        // Make the entrys to the HashMap and HashSet. Create the tuple that is
-                        // to
-                        // be the key and
-                        // find the corresponding List. If no list is stored yet, create one.
-                        // Store
-                        // the pair of nodes in the HashSet for later iteration.
-                        LinkedList<KNode> keyTuple = new LinkedList<KNode>();
-                        keyTuple.add(currentSource);
-                        keyTuple.add(currentTarget);
-                        LinkedList<KNode> reverseTuple = new LinkedList<KNode>();
-                        reverseTuple.add(currentTarget);
-                        reverseTuple.add(currentSource);
-                        if (hierarchyCrossingEdges.containsKey(keyTuple)) {
-                            hierarchyCrossingEdges.get(keyTuple).add(edge);
-                        } else {
-                            LinkedList<LEdge> newList = new LinkedList<LEdge>();
-                            newList.add(edge);
-                            hierarchyCrossingEdges.put(keyTuple, newList);
-                        }
-                        // An entry to the HashSet is needed only, when the pair of Nodes is not
-                        // entered in any order.
-                        if (!nodePairs.contains(keyTuple)) {
-                            if (!nodePairs.contains(reverseTuple)) {
-                                nodePairs.add(keyTuple);
+                            while (currentSourceAncestor != currentTargetAncestor) {
+                                currentSource = currentSource.getParent();
+                                currentTarget = currentTarget.getParent();
+                                currentSourceAncestor = currentSource.getParent();
+                                currentTargetAncestor = currentTarget.getParent();
                             }
-                        }
 
+                            // Make the entrys to the HashMap and HashSet. Create the tuple that is
+                            // to
+                            // be the key and
+                            // find the corresponding List. If no list is stored yet, create one.
+                            // Store
+                            // the pair of nodes in the HashSet for later iteration.
+                            LinkedList<KNode> keyTuple = new LinkedList<KNode>();
+                            keyTuple.add(currentSource);
+                            keyTuple.add(currentTarget);
+                            LinkedList<KNode> reverseTuple = new LinkedList<KNode>();
+                            reverseTuple.add(currentTarget);
+                            reverseTuple.add(currentSource);
+                            if (hierarchyCrossingEdges.containsKey(keyTuple)) {
+                                hierarchyCrossingEdges.get(keyTuple).add(edge);
+                            } else {
+                                LinkedList<LEdge> newList = new LinkedList<LEdge>();
+                                newList.add(edge);
+                                hierarchyCrossingEdges.put(keyTuple, newList);
+                            }
+                            // An entry to the HashSet is needed only, when the pair of Nodes is not
+                            // already entered in any order.
+                            if (!nodePairs.contains(keyTuple)) {
+                                if (!nodePairs.contains(reverseTuple)) {
+                                    nodePairs.add(keyTuple);
+                                }
+                            }
+
+                        }
                     }
                 }
             }
@@ -152,6 +158,27 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
         HashSet<LEdge> revertedEdges = revertCyclicEdges(hierarchyCrossingEdges, nodePairs,
                 layeredGraph);
         layeredGraph.setProperty(Properties.REVERTED_COMPOUND_EDGES, revertedEdges);
+
+        // // remove unused ports
+        // List<LNode> nodes = layeredGraph.getLayerlessNodes();
+        // for (int i = 0; i < nodes.size(); i++) {
+        // LNode lnode = nodes.get(i);
+        // List<LPort> ports = lnode.getPorts();
+        // List<LPort> removables = new LinkedList<LPort>();
+        // for (int j = 0; j < ports.size(); j++) {
+        // LPort port = ports.get(j);
+        // if (port.getIncomingEdges().isEmpty() && port.getOutgoingEdges().isEmpty()) {
+        // removables.add(port);
+        // }
+        // }
+        // for (int k = 0; k < removables.size(); k++) {
+        // if (lnode.getSize().y >= edgeSpacing) {
+        // lnode.getSize().y -= edgeSpacing;
+        // }
+        // ports.remove(removables.get(k));
+        //
+        // }
+        // }
 
         getMonitor().done();
     }
