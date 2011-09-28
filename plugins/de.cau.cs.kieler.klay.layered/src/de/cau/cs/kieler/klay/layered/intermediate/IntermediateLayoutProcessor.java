@@ -144,7 +144,7 @@ public enum IntermediateLayoutProcessor {
             return new CommentPreprocessor();
             
         case COMPOUND_CYCLE_PREPROCESSOR:
-            return new CompoundCyclePreprocessor();
+            return new CompoundCycleProcessor();
             
         case COMPOUND_DUMMY_EDGE_REMOVER:
             return new CompoundDummyEdgeRemover();

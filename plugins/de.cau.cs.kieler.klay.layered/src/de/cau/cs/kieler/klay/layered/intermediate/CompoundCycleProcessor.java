@@ -50,7 +50,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author ima
  */
-public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
