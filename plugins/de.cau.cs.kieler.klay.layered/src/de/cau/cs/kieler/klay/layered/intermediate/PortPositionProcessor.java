@@ -21,8 +21,6 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Determines the actual positions of ports for nodes whose port positions are
@@ -45,7 +43,7 @@ public class PortPositionProcessor extends AbstractAlgorithm implements ILayoutP
      * {@inheritDoc}
      */
     public void process(final LayeredGraph layeredGraph) {
-        getMonitor().begin("Edge joining", 1);
+        getMonitor().begin("Port position processor", 1);
         
         // Iterate through all nodes
         for (Layer layer : layeredGraph.getLayers()) {

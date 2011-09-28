@@ -211,7 +211,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         // post-process the placement for small corrections
         postProcess(layeredGraph);
 
-        // set the proper height for the whole graph
+        // set the proper offset and height for the whole graph
         double minY = 0, maxY = 0;
         for (Layer layer : layeredGraph.getLayers()) {
             KVector layerSize = layer.getSize();
@@ -225,6 +225,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             maxY = Math.max(maxY, bottom);
         }
         layeredGraph.getSize().y = maxY - minY;
+        layeredGraph.getOffset().y = -minY;
 
         // release the created resources
         this.linearSegments = null;
@@ -611,7 +612,6 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         boolean ready = false;
         int finalIterations = 0;
         int iterations = 0;
-        KVector graphOffset = layeredGraph.getOffset();
 
         while (!ready || finalIterations > 0) {
             finalIterations--;
@@ -631,9 +631,6 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 for (LNode node : region.getNodes()) {
                     KVector nodePos = node.getPosition();
                     nodePos.y += region.deflection;
-                    if (-nodePos.y > graphOffset.y) {
-                        graphOffset.y = -nodePos.y;
-                    }
                 }
             }
 

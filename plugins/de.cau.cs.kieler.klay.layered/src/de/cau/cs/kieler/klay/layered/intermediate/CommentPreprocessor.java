@@ -109,22 +109,51 @@ public class CommentPreprocessor extends AbstractAlgorithm implements ILayoutPro
      */
     private void processBox(final LNode box, final LEdge edge, final LPort oppositePort,
             final LNode realNode) {
+        boolean topFirst = true;
+        if (realNode.getLabel() != null && realNode.getLabel().getText() != null) {
+            double labelPos = realNode.getLabel().getPosition().y
+                    + realNode.getLabel().getSize().y / 2;
+            topFirst = labelPos >= realNode.getSize().y / 2;
+        }
+        
         List<LNode> boxList;
-        List<LNode> topBoxes = realNode.getProperty(Properties.TOP_COMMENTS);
-        if (topBoxes == null) {
-            boxList = new LinkedList<LNode>();
-            realNode.setProperty(Properties.TOP_COMMENTS, boxList);
+        if (topFirst) {
+            // determine the position to use, favoring the top position
+            List<LNode> topBoxes = realNode.getProperty(Properties.TOP_COMMENTS);
+            if (topBoxes == null) {
+                boxList = new LinkedList<LNode>();
+                realNode.setProperty(Properties.TOP_COMMENTS, boxList);
+            } else {
+                List<LNode> bottomBoxes = realNode.getProperty(
+                        Properties.BOTTOM_COMMENTS);
+                if (bottomBoxes == null) {
+                    boxList = new LinkedList<LNode>();
+                    realNode.setProperty(Properties.BOTTOM_COMMENTS, boxList);
+                } else {
+                    if (topBoxes.size() <= bottomBoxes.size()) {
+                        boxList = topBoxes;
+                    } else {
+                        boxList = bottomBoxes;
+                    }
+                }
+            }
         } else {
-            List<LNode> bottomBoxes = realNode.getProperty(
-                    Properties.BOTTOM_COMMENTS);
+            // determine the position to use, favoring the bottom position
+            List<LNode> bottomBoxes = realNode.getProperty(Properties.BOTTOM_COMMENTS);
             if (bottomBoxes == null) {
                 boxList = new LinkedList<LNode>();
                 realNode.setProperty(Properties.BOTTOM_COMMENTS, boxList);
             } else {
-                if (topBoxes.size() <= bottomBoxes.size()) {
-                    boxList = topBoxes;
+                List<LNode> topBoxes = realNode.getProperty(Properties.TOP_COMMENTS);
+                if (topBoxes == null) {
+                    boxList = new LinkedList<LNode>();
+                    realNode.setProperty(Properties.TOP_COMMENTS, boxList);
                 } else {
-                    boxList = bottomBoxes;
+                    if (bottomBoxes.size() <= topBoxes.size()) {
+                        boxList = bottomBoxes;
+                    } else {
+                        boxList = topBoxes;
+                    }
                 }
             }
         }
