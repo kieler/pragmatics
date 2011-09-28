@@ -459,8 +459,9 @@ public final class KimlUtil {
      * on each side, the insets, and the label.
      * 
      * @param node the node that shall be resized
+     * @return a vector holding the width and height resizing ratio
      */
-    public static void resizeNode(final KNode node) {
+    public static KVector resizeNode(final KNode node) {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
 
         PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
@@ -515,7 +516,7 @@ public final class KimlUtil {
         float newWidth = KielerMath.maxf(MIN_NODE_SIZE, minNorth, minSouth);
         float newHeight = KielerMath.maxf(MIN_NODE_SIZE, minEast, minWest);
         
-        resizeNode(node, newWidth, newHeight, true);
+        return resizeNode(node, newWidth, newHeight, true);
     }
     
     /**
@@ -525,13 +526,14 @@ public final class KimlUtil {
      * @param newWidth the new width to set
      * @param newHeight the new height to set
      * @param movePorts whether port positions shall be adjusted
+     * @return a vector holding the width and height resizing ratio
      */
-    public static void resizeNode(final KNode node, final float newWidth, final float newHeight,
+    public static KVector resizeNode(final KNode node, final float newWidth, final float newHeight,
             final boolean movePorts) {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         if (nodeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
             // don't resize nodes that aren't laid out
-            return;
+            return null;
         }
         KVector oldSize = new KVector(nodeLayout.getWidth(), nodeLayout.getHeight());
         KVector newSize = new KVector(
@@ -611,6 +613,8 @@ public final class KimlUtil {
         
         // set fixed size option for the node: now the size is assumed to stay as determined here
         nodeLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
+        
+        return new KVector(widthRatio, heightRatio);
     }
 
     /**

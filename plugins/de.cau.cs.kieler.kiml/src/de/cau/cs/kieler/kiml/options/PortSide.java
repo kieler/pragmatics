@@ -103,4 +103,25 @@ public enum PortSide {
         }
     }
     
+    /**
+     * Get the port side that corresponds to the given direction.
+     * 
+     * @param direction a direction
+     * @return the corresponding port side
+     */
+    public static PortSide fromDirection(final Direction direction) {
+        switch (direction) {
+        case UP:
+            return NORTH;
+        case RIGHT:
+            return EAST;
+        case DOWN:
+            return SOUTH;
+        case LEFT:
+            return WEST;
+        default:
+            return UNDEFINED;
+        }
+    }
+    
 }

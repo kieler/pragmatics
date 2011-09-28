@@ -15,6 +15,8 @@ package de.cau.cs.kieler.klay.layered;
 
 import java.io.File;
 
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 
@@ -31,7 +33,38 @@ public final class Util {
     private Util() {
         // This space intentionally left blank
     }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // General Utility
     
+    /**
+     * Center the given point on one side of a boundary.
+     * 
+     * @param point a point to change
+     * @param boundary the boundary to use for centering
+     * @param side the side of the boundary
+     */
+    public static void centerPoint(final KVector point, final KVector boundary,
+            final PortSide side) {
+        switch (side) {
+        case NORTH:
+            point.x = boundary.x / 2;
+            point.y = 0;
+            break;
+        case EAST:
+            point.x = boundary.x;
+            point.y = boundary.y / 2;
+            break;
+        case SOUTH:
+            point.x = boundary.x / 2;
+            point.y = boundary.y;
+            break;
+        case WEST:
+            point.x = 0;
+            point.y = boundary.y / 2;
+            break;
+        }
+    }
     
     ///////////////////////////////////////////////////////////////////////////////
     // Debug Files

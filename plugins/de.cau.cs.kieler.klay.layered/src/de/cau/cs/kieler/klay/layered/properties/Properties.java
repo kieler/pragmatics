@@ -65,6 +65,9 @@ public final class Properties {
 
     /** random number generator for the algorithm. */
     public static final IProperty<Random> RANDOM = new Property<Random>("random");
+    
+    /** width and height ratio by which a node was resized prior to importing. */
+    public static final IProperty<KVector> RESIZE_RATIO = new Property<KVector>("resizeRatio");
 
     /** the source port of a long edge before it was broken into multiple segments. */
     public static final IProperty<LPort> LONG_EDGE_SOURCE = new Property<LPort>("longEdgeSource",
