@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
@@ -60,8 +59,7 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
 
         // Initialize a hashmap in which edgeLists for a pair of KNodes can be stored. Pairs are
         // represented as LinkedLists to allow expressing edge directions.
-        HashMap<LinkedList<KNode>, LinkedList<LEdge>> hierarchyCrossingEdges 
-                = new HashMap<LinkedList<KNode>, LinkedList<LEdge>>();
+        HashMap<LinkedList<KNode>, LinkedList<LEdge>> hierarchyCrossingEdges = new HashMap<LinkedList<KNode>, LinkedList<LEdge>>();
         // Initialize a hashset in which the pairs of KNodes with adjacency relations can be stored.
         HashSet<LinkedList<KNode>> nodePairs = new HashSet<LinkedList<KNode>>();
 
@@ -202,7 +200,7 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
      * Reverts edges of a given list of edges.
      * 
      * @param edgeList
-     *            The list of edges to be reverted.
+     *            The list of edges to be reversed.
      * @param layeredGraph
      * @return
      */
@@ -213,21 +211,51 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
             LEdge edge = edgeList.get(i);
             LPort source = edge.getSource();
             LPort target = edge.getTarget();
+            LNode sourceNode = source.getNode();
+            LNode targetNode = target.getNode();
+            NodeType sourceNodeType = sourceNode.getProperty(Properties.NODE_TYPE);
+            NodeType targetNodeType = targetNode.getProperty(Properties.NODE_TYPE);
+
             LPort newSource = edge.getTarget();
             LPort newTarget = edge.getSource();
 
-            if (source.getNode().getProperty(Properties.NODE_TYPE) != NodeType.NORMAL) {
-                newSource = getOppositeNode(target, layeredGraph);
+            if (sourceNodeType != NodeType.NORMAL) {
+                newSource = getOppositePort(target, layeredGraph);
             }
 
-            if (target.getNode().getProperty(Properties.NODE_TYPE) != NodeType.NORMAL) {
-                newTarget = getOppositeNode(source, layeredGraph);
+            if (targetNodeType != NodeType.NORMAL) {
+                newTarget = getOppositePort(source, layeredGraph);
             }
 
             edge.setSource(newSource);
             edge.setTarget(newTarget);
             revertedEdges.add(edge);
             edge.setProperty(Properties.REVERSED, true);
+
+            // Original port dummy nodes are not needed any more. Remove them. Prepare removing them
+            // by removing all connected edges (which will be only dummy edges). removableEdges-List
+            // is used to avoid concurrent modification exeption.
+            LinkedList<LEdge> removableEdges = new LinkedList<LEdge>();
+            if (sourceNodeType == NodeType.LOWER_COMPOUND_PORT) {
+                for (LEdge ledge : sourceNode.getConnectedEdges()) {
+                    removableEdges.add(ledge);
+                }
+                for (LEdge ledge : removableEdges) {
+                    ledge.getTarget().getIncomingEdges().remove(ledge);
+                    ledge.getSource().getOutgoingEdges().remove(ledge);
+                }
+                layeredGraph.getLayerlessNodes().remove(sourceNode);
+            }
+            if (targetNodeType == NodeType.UPPER_COMPOUND_PORT) {
+                for (LEdge ledge : targetNode.getConnectedEdges()) {
+                    removableEdges.add(ledge);
+                }
+                for (LEdge ledge : removableEdges) {
+                    ledge.getTarget().getIncomingEdges().remove(ledge);
+                    ledge.getSource().getOutgoingEdges().remove(ledge);
+                }
+                layeredGraph.getLayerlessNodes().remove(targetNode);
+            }
         }
         return revertedEdges;
     }
@@ -242,10 +270,10 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
      *            The layered graph.
      * @return Returns the port to replace port in edge reversion.
      */
-    private LPort getOppositeNode(final LPort port, final LayeredGraph layeredGraph) {
+    private LPort getOppositePort(final LPort port, final LayeredGraph layeredGraph) {
         float edgeSpacing = layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR)
                 * layeredGraph.getProperty(Properties.OBJ_SPACING);
-        
+
         // Determine the new portside as the opposite of the current one.
         PortSide portSide = port.getSide();
         PortSide newSide;
@@ -280,20 +308,21 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
             break;
         case UPPER_COMPOUND_PORT:
             // Create new LOWER_COMPOUND_PORT
-            LNode lowerPort = new LNode();
-            lowerPort.copyProperties(node);
-            lowerPort.setProperty(Properties.COMPOUND_NODE,
+            LNode newLowerCompoundPort = new LNode();
+            newLowerCompoundPort.copyProperties(node);
+            newLowerCompoundPort.setProperty(Properties.NODE_TYPE, NodeType.LOWER_COMPOUND_PORT);
+            newLowerCompoundPort.setProperty(Properties.COMPOUND_NODE,
                     node.getProperty(Properties.COMPOUND_NODE));
             LPort dummyConnectionPort = new LPort();
             dummyConnectionPort.setSide(PortSide.WEST);
-            dummyConnectionPort.setNode(lowerPort);
-            // Connect it with compound dummy edges to the direct childrin of the compound node
-            for (KNode knode : ((KPort) node.getProperty(Properties.COMPOUND_NODE).getProperty(
-                    Properties.ORIGIN)).getNode().getChildren()) {
+            dummyConnectionPort.setNode(newLowerCompoundPort);
+            // Connect it with compound dummy edges to the direct children of the compound node
+            for (KNode knode : ((KNode) node.getProperty(Properties.COMPOUND_NODE).getProperty(
+                    Properties.ORIGIN)).getChildren()) {
                 LNode representative = null;
                 for (LNode lnode : layeredGraph.getLayerlessNodes()) {
                     if ((KNode) lnode.getProperty(Properties.ORIGIN) == knode) {
-                        representative = node;
+                        representative = lnode;
                         break;
                     }
                 }
@@ -303,7 +332,8 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
                 dummyEdge.setSource(startPort);
                 dummyEdge.setTarget(dummyConnectionPort);
             }
-            newPort.setNode(lowerPort);
+            newPort.setNode(newLowerCompoundPort);
+            layeredGraph.getLayerlessNodes().add(newLowerCompoundPort);
             break;
         case LOWER_COMPOUND_BORDER:
             LNode upperBorder = node.getProperty(Properties.COMPOUND_NODE);
@@ -312,20 +342,21 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
             break;
         case LOWER_COMPOUND_PORT:
             // Create new UPPER_COMPOUND_PORT
-            LNode upperPort = new LNode();
-            upperPort.copyProperties(node);
-            upperPort.setProperty(Properties.COMPOUND_NODE,
+            LNode newUpperCompoundPort = new LNode();
+            newUpperCompoundPort.copyProperties(node);
+            newUpperCompoundPort.setProperty(Properties.NODE_TYPE, NodeType.UPPER_COMPOUND_PORT);
+            newUpperCompoundPort.setProperty(Properties.COMPOUND_NODE,
                     node.getProperty(Properties.COMPOUND_NODE));
             LPort dummyConnector = new LPort();
             dummyConnector.setSide(PortSide.EAST);
-            dummyConnector.setNode(upperPort);
+            dummyConnector.setNode(newUpperCompoundPort);
             // Connect it with compound dummy edges to the direct children of the compound node
-            for (KNode knode : ((KPort) node.getProperty(Properties.COMPOUND_NODE).getProperty(
-                    Properties.ORIGIN)).getNode().getChildren()) {
+            for (KNode knode : ((KNode) node.getProperty(Properties.COMPOUND_NODE).getProperty(
+                    Properties.ORIGIN)).getChildren()) {
                 LNode representative = null;
                 for (LNode lnode : layeredGraph.getLayerlessNodes()) {
                     if ((KNode) lnode.getProperty(Properties.ORIGIN) == knode) {
-                        representative = node;
+                        representative = lnode;
                         break;
                     }
                 }
@@ -335,8 +366,9 @@ public class CompoundCyclePreprocessor extends AbstractAlgorithm implements ILay
                 dummyEdge.setSource(dummyConnector);
                 dummyEdge.setTarget(endPort);
             }
-            newPort.setNode(upperPort);
-
+            newPort.setNode(newUpperCompoundPort);
+            layeredGraph.getLayerlessNodes().add(newUpperCompoundPort);
+            layeredGraph.getLayerlessNodes().remove(node);
             break;
         default:
             break;
