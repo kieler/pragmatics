@@ -112,22 +112,6 @@ public class CompoundKGraphImporter extends AbstractGraphImporter<KNode> {
         // set the graph properties property
         layeredGraph.setProperty(Properties.GRAPH_PROPERTIES, graphProperties);
 
-//        // remove unused ports
-//        for (int i = 0; i < layeredNodes.size(); i++) {
-//            LNode lnode = layeredNodes.get(i);
-//            List<LPort> ports = lnode.getPorts();
-//            List<LPort> removables = new LinkedList<LPort>();
-//            for (int j = 0; j < ports.size(); j++) {
-//                LPort port = ports.get(j);
-//                if (port.getIncomingEdges().isEmpty() && port.getOutgoingEdges().isEmpty()) {
-//                    removables.add(port);
-//                }
-//            }
-//            for (int k = 0; k < removables.size(); k++) {
-//                ports.remove(removables.get(k));
-//            }
-//        }
-
         return layeredGraph;
     }
 
