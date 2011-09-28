@@ -14,11 +14,13 @@
 package de.cau.cs.kieler.klay.layered.properties;
 
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -28,6 +30,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
@@ -185,6 +188,12 @@ public final class Properties {
      */
     public static final IProperty<HashSet<LEdge>> REVERTED_COMPOUND_EDGES =
             new Property<HashSet<LEdge>>("RevertedCompoundEdges");
+    
+    /**
+     * Map between KGraph nodes/ports/edges and LGraph nodes/ports/edges.
+     */
+    public static final IProperty<HashMap<KGraphElement, LGraphElement>> ELEMENT_MAP =
+            new Property<HashMap<KGraphElement, LGraphElement>>("ElementMap");
     
     /**
      * List of comment boxes that are placed on top of a node.
