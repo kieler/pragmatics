@@ -155,7 +155,7 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                 }
             }
         }
-        HashSet<LEdge> reversedEdges = revertCyclicEdges(hierarchyCrossingEdges, nodePairs,
+        HashSet<LEdge> reversedEdges = reverseCyclicEdges(hierarchyCrossingEdges, nodePairs,
                 layeredGraph);
         layeredGraph.setProperty(Properties.REVERSED_COMPOUND_EDGES, reversedEdges);
 
@@ -194,7 +194,7 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
      * @param layeredGraph
      * @return Returns a set that contains the reversed edges.
      */
-    private HashSet<LEdge> revertCyclicEdges(
+    private HashSet<LEdge> reverseCyclicEdges(
             final HashMap<LinkedList<KNode>, LinkedList<LEdge>> hierarchyCrossingEdges,
             final HashSet<LinkedList<KNode>> nodePairs, final LayeredGraph layeredGraph) {
         HashSet<LEdge> reversedEdges = null;
