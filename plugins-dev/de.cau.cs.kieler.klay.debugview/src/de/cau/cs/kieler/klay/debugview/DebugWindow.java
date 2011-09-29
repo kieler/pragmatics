@@ -37,7 +37,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -261,9 +260,14 @@ public class DebugWindow extends Window {
     private static final String SETT_BOUNDS = "debugWindow.bounds"; //$NON-NLS-1$
     
     /**
-     * How much the zoom factor is changed when zooming in or out.
+     * Setting for the zoom level.
      */
-    private static final float ZOOM_DELTA = 0.1f;
+    private static final String SETT_ZOOM = "debugWindow.zoom"; //$NON-NLS-1$
+    
+    /**
+     * The default zoom level. (100%)
+     */
+    private static final int ZOOM_DEFAULT = 100;
     
     /**
      * Default locations of Graphviz dot.
@@ -279,10 +283,6 @@ public class DebugWindow extends Window {
     private ToolItem folderRefreshButton = null;
     private Image folderRemoveAllImage = null;
     private ToolItem folderRemoveAllButton = null;
-    private Image zoomInImage = null;
-    private ToolItem zoomInButton = null;
-    private Image zoomOutImage = null;
-    private ToolItem zoomOutButton = null;
     private Table fileTable = null;
     private TableViewer fileTableViewer = null;
     private Canvas imageCanvas = null;
@@ -315,7 +315,7 @@ public class DebugWindow extends Window {
     /**
      * The current zoom factor.
      */
-    private float zoom = 1.0f;
+    private float zoomLevel = 1.0f;
     
 
     /**
@@ -468,23 +468,7 @@ public class DebugWindow extends Window {
 
         origin.x = 0;
         origin.y = 0;
-        zoom = 1.0f;
-        
-        updateCanvas();
-    }
-    
-    /**
-     * Zooms the image.
-     * 
-     * @param in {@code true} if we should zoom in, {@code false} if we should zoom
-     *           out.
-     */
-    private void zoom(final boolean in) {
-        if (in) {
-            zoom += ZOOM_DELTA;
-        } else {
-            zoom = Math.max(0.0f, zoom - ZOOM_DELTA);
-        }
+        zoomLevel = 1.0f;
         
         updateCanvas();
     }
@@ -553,6 +537,24 @@ public class DebugWindow extends Window {
             imageCanvas.scroll(0, destY, 0, 0, rect.width, rect.height, false);
             origin.y = -newVerticalValue;
         }
+    }
+    
+    /**
+     * Handles a zoom level change.
+     * 
+     * @param percentage the new zoom level, given as a percentage. 100% displays the image in
+     *                   its original size.
+     */
+    private void handleZoomLevelChange(final int percentage) {
+        // TODO: Implement
+        zoomLevel = percentage / 100.0f;
+        
+        // Update the zoom label and the zoom scale to show the new value
+        statusBarZoomScale.setSelection(percentage);
+        statusBarZoomLabel.setText(percentage + "%");
+        statusBar.layout();
+        
+        updateCanvas();
     }
     
     /**
@@ -667,6 +669,8 @@ public class DebugWindow extends Window {
         dialogSettings.put(SETT_BOUNDS + ".y", size.y); //$NON-NLS-1$
         
         dialogSettings.put(SETT_PATH, currentPath);
+        
+        dialogSettings.put(SETT_ZOOM, (int) (zoomLevel * 100));
     }
     
     /**
@@ -676,8 +680,13 @@ public class DebugWindow extends Window {
         IDialogSettings dialogSettings = KlayDebugViewPlugin.getDefault().getDialogSettings();
         
         setPath(dialogSettings.get(SETT_PATH));
+        
+        try {
+            handleZoomLevelChange(dialogSettings.getInt(SETT_ZOOM));
+        } catch (NumberFormatException e) {
+            handleZoomLevelChange(ZOOM_DEFAULT);
+        }
     }
-    
     
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -704,14 +713,6 @@ public class DebugWindow extends Window {
             if (folderRemoveAllImage != null) {
                 folderRemoveAllImage.dispose();
             }
-            
-//            if (zoomInImage != null) {
-//                zoomInImage.dispose();
-//            }
-//            
-//            if (zoomOutImage != null) {
-//                zoomOutImage.dispose();
-//            }
         }
         
         return closed;
@@ -852,22 +853,6 @@ public class DebugWindow extends Window {
         folderRemoveAllImage = KlayDebugViewPlugin.loadImage("remall.gif"); //$NON-NLS-1$
         folderRemoveAllButton.setImage(folderRemoveAllImage);
         
-//        // Separator
-//        new ToolItem(toolBar, SWT.SEPARATOR);
-//        
-//        // Zoom Buttons
-//        zoomInButton = new ToolItem(toolBar, SWT.NULL);
-//        zoomInButton.setEnabled(false);
-//        zoomInButton.setToolTipText(Messages.DebugWindow_Toolbar_ZoomIn_ToolTip);
-//        zoomInImage = KlayDebugViewPlugin.loadImage("zoomin.gif"); //$NON-NLS-1$
-//        zoomInButton.setImage(zoomInImage);
-//
-//        zoomOutButton = new ToolItem(toolBar, SWT.NULL);
-//        zoomOutButton.setEnabled(false);
-//        zoomOutButton.setToolTipText(Messages.DebugWindow_Toolbar_ZoomOut_ToolTip);
-//        zoomOutImage = KlayDebugViewPlugin.loadImage("zoomout.gif"); //$NON-NLS-1$
-//        zoomOutButton.setImage(zoomOutImage);
-        
         // Event listeners
         folderBrowseButton.addSelectionListener(new SelectionAdapter() {
             /**
@@ -898,26 +883,6 @@ public class DebugWindow extends Window {
                 removeFiles();
             }
         });
-
-//        zoomInButton.addSelectionListener(new SelectionAdapter() {
-//            /**
-//             * {@inheritDoc}
-//             */
-//            @Override
-//            public void widgetSelected(final SelectionEvent e) {
-//                zoom(true);
-//            }
-//        });
-//
-//        zoomOutButton.addSelectionListener(new SelectionAdapter() {
-//            /**
-//             * {@inheritDoc}
-//             */
-//            @Override
-//            public void widgetSelected(final SelectionEvent e) {
-//                zoom(false);
-//            }
-//        });
     }
     
     /**
@@ -946,7 +911,6 @@ public class DebugWindow extends Window {
         
         // Status Bar Zoom Label
         statusBarZoomLabel = new Label(statusBar, SWT.NULL);
-//        statusBarZoomLabel.setText("100%");
         
         gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         statusBarZoomLabel.setLayoutData(gd);
@@ -957,7 +921,6 @@ public class DebugWindow extends Window {
         statusBarZoomScale.setMaximum(200);
         statusBarZoomScale.setMinimum(10);
         statusBarZoomScale.setPageIncrement(25);
-        statusBarZoomScale.setSelection(100);
         
         gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         gd.widthHint = 100;
@@ -966,8 +929,7 @@ public class DebugWindow extends Window {
         // Event Listeners
         statusBarZoomScale.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent e) {
-                statusBarZoomLabel.setText(statusBarZoomScale.getSelection() + "%");
-                statusBar.layout();
+                handleZoomLevelChange(statusBarZoomScale.getSelection());
             }
         });
         
