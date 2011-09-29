@@ -186,7 +186,7 @@ public final class Properties {
     /**
      * Set of edges reverted by the CompoundCyclePreprocessor. Property of the layeredGraph.
      */
-    public static final IProperty<HashSet<LEdge>> REVERTED_COMPOUND_EDGES =
+    public static final IProperty<HashSet<LEdge>> REVERSED_COMPOUND_EDGES =
             new Property<HashSet<LEdge>>("RevertedCompoundEdges");
     
     /**
