@@ -39,10 +39,10 @@ import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
  */
 public class VisualizeSelectedModelElementCombination extends AbstractCombination {
 
-    static String rbClassId = "de.menges.logic.logic.Ruleblock";
+    static String condClassId = "de.menges.logic.logic.Conditional";
     static String smClassId = "de.menges.logic.logic.StateMachine";
 
-    static String rbButtonId = "de.cau.cs.kieler.visualizeModelElementRB";
+    static String condButtonId = "de.cau.cs.kieler.visualizeModelElementC";
     static String smButtonId = "de.cau.cs.kieler.visualizeModelElementSM";
 
     String editorId;
@@ -54,10 +54,10 @@ public class VisualizeSelectedModelElementCombination extends AbstractCombinatio
     public VisualizeSelectedModelElementCombination() {
         Expression visibilityExpression;
         try {
-            visibilityExpression = new TestModelElementExpression(Class.forName(rbClassId));
+            visibilityExpression = new TestModelElementExpression(Class.forName(condClassId));
 
-            KiviMenuContributionService.INSTANCE.addToolbarButton(this, rbButtonId,
-                    "Draw Ruleblock", "Test", null, SWT.PUSH, LocationScheme.POPUP,
+            KiviMenuContributionService.INSTANCE.addToolbarButton(this, condButtonId,
+                    "Draw Conditional", "Test", null, SWT.PUSH, LocationScheme.POPUP,
                     visibilityExpression, "de.menges.logic.Logic");
 
             visibilityExpression = new TestModelElementExpression(Class.forName(smClassId));
