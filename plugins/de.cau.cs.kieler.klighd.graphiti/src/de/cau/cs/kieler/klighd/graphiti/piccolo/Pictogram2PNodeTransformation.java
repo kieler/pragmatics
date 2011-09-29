@@ -631,7 +631,11 @@ public class Pictogram2PNodeTransformation extends
      * {@inheritDoc}
      */
     public void setViewContext(final ViewContext viewContext) {
-        // do nothing
+        //TODO do implement, temporarily dummy
+    }
+
+    public void setFileId(String fileId) {
+        //TODO implement, temporarily dummy
     }
 
 }

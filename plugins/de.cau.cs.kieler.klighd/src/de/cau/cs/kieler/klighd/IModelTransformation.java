@@ -74,4 +74,10 @@ public interface IModelTransformation<S, T> {
      */
     void setViewContext(final ViewContext viewContext);
 
+    /**
+     * the file id helps to identify a source-, graphical model mapping for a special file. 
+     * @param fileId
+     */
+    void setFileId(String fileId);
+
 }

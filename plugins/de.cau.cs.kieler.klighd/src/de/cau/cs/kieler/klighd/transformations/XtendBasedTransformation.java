@@ -227,6 +227,13 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
      * {@inheritDoc}
      */
     public void setViewContext(final ViewContext viewContext) {
-        //dummy
+        //TODO implement, temporarily dummy
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setFileId(String fileId) {
+      //TODO implement, temporarily dummy
     }
 }

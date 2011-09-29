@@ -32,8 +32,13 @@ public class GmfDomainModelTransformation implements IModelTransformation<EObjec
     private EObject lastDomainModel = null;
     /** the last diagram model requested for a domain model. */
     private Diagram lastDiagramModel = null;
-
-
+    
+    @SuppressWarnings("unused")
+    private ViewContext vc = null;
+    
+    @SuppressWarnings("unused")
+    private String fileId = null;
+    
     /**
      * {@inheritDoc}
      */
@@ -79,8 +84,19 @@ public class GmfDomainModelTransformation implements IModelTransformation<EObjec
         return diagram;
     }
 
+    /**
+     * setter for viewContext.
+     */
     public void setViewContext(ViewContext viewContext) {
-        //dummy
+        this.vc = viewContext;
     }
+    
+    /**
+     * setter for fileId.
+     */
+    public void setFileId(String fileId){
+        this.fileId = fileId;
+    }
+    
     
 }
