@@ -17,6 +17,7 @@
             locationURI="menu:de.cau.cs.kieler">
          <command
                commandId="de.cau.cs.kieler.klay.debugview.open"
+               icon="images/debug.gif"
                label="%commands.openDebugView.label"
                style="push"
                tooltip="%commands.openDebugView.description">
