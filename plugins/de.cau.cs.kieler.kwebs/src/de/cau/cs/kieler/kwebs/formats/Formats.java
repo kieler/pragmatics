@@ -31,10 +31,10 @@ public final class Formats {
 
     /** The KGraph model in XMI serialization. */
     public static final String FORMAT_KGRAPH_XMI
-        = "de.cau.cs.kieler.format.kgraph.xmi";
+        = "de.cau.cs.kieler.kgraph";
     /** The KGraph model in compressed XMI serialization. */
-    /*public static final String FORMAT_KGRAPH_XMI_COMPRESSED
-        = "de.cau.cs.kieler.format.kgraph.xmi.compressed";*/
+    public static final String FORMAT_KGRAPH_XMI_COMPRESSED
+        = "de.cau.cs.kieler.kgraph.gz";
     /** The OGML format. */
     public static final String FORMAT_OGML
         = "net.ogdf.ogml";
@@ -51,7 +51,7 @@ public final class Formats {
     /** The list of supported formats. */
     private static final List<String> SUPPORTED_FORMATS
         = Lists.newArrayList(
-            FORMAT_KGRAPH_XMI, /*FORMAT_KGRAPH_XMI_COMPRESSED,*/ FORMAT_OGML, FORMAT_GRAPHML, FORMAT_DOT,
+            FORMAT_KGRAPH_XMI, FORMAT_KGRAPH_XMI_COMPRESSED, FORMAT_OGML, FORMAT_GRAPHML, FORMAT_DOT,
             FORMAT_MATRIX
         );
     

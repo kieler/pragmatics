@@ -14,6 +14,8 @@
 
 package de.cau.cs.kieler.kwebs.client.kiml.ui;
 
+import java.net.URI;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -23,9 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import de.cau.cs.kieler.kwebs.client.ILayoutServiceClient;
 import de.cau.cs.kieler.kwebs.client.ServerConfig;
-import de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm;
 import de.cau.cs.kieler.kwebs.servicedata.ServiceData;
-import de.cau.cs.kieler.kwebs.servicedata.SupportedFormat;
 import de.cau.cs.kieler.kwebs.servicedata.transformation.ServiceDataXmiTransformer;
 
 /**
@@ -67,6 +67,7 @@ public class ServerDetailsJob extends AbstractServerBasedJob {
      * {@inheritDoc}
      */
     protected void available(final ILayoutServiceClient client, final String message) {
+/*
         String serviceDataXMI = null;
         ServiceData serviceData = null;
         try {
@@ -75,14 +76,16 @@ public class ServerDetailsJob extends AbstractServerBasedJob {
         } catch (Exception e) {
             super.processError(e);
             return;
-        }
-                
+        }                
         final String html = ServerDetailsPage.generateHtml(serviceData, client);
+*/
+        final URI uri = client.getServerConfig().getAddress();
         Display.getDefault().syncExec(
             new Runnable() { public void run() { 
                 new BrowserDialog(
                     getShell(), 
-                    html, 
+                    null,
+                    uri.getScheme() + "://" + uri.getAuthority() + "/ServiceData.html",
                     "Server Details",
                     new Rectangle(0, 0, 500, 450)
                 ).open(); 

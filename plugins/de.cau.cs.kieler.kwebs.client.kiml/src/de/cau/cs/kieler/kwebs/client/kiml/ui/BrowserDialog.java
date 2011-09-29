@@ -42,7 +42,10 @@ public class BrowserDialog extends Dialog {
     
     /** The HTML to display in the browser widget. */
     private String html;
-
+    
+    /** The URL to display in the browser widget. */
+    private String url;
+    
     /** The title of the dialog. */
     private String title;
     
@@ -51,20 +54,24 @@ public class BrowserDialog extends Dialog {
         = new Rectangle(0, 0, 500, 400);
     
     /**
-     * Creates the browser dialog instance.
+     * Creates the browser dialog instance. Either concrete HTML content or a web page referenced by an URL
+     * can be displayed. An URL takes precedence over HTML.
      * 
      * @param parentShell
      *            the parent shell for this dialog instance
      * @param thehtml
      *            the HTML to display in the browser widget
+     * @param theurl
+     *            the URL to display in the browser widget
      * @param thetitle
      *            the title of the dialog
      */
-    public BrowserDialog(final Shell parentShell, final String thehtml, final String thetitle,
-        final Rectangle thesize) {
+    public BrowserDialog(final Shell parentShell, final String thehtml, final String theurl, 
+        final String thetitle, final Rectangle thesize) {
         super(parentShell);
         setShellStyle(getShellStyle() | SWT.RESIZE);
         html = thehtml;
+        url = theurl;
         title = thetitle;
         size = thesize;        
     }
@@ -84,20 +91,20 @@ public class BrowserDialog extends Dialog {
      */
     @Override
     protected Control createDialogArea(final Composite parent) {
-        final Composite composite = (Composite) super.createDialogArea(parent);
-        
+        final Composite composite = (Composite) super.createDialogArea(parent);        
         try {
-            browser = new Browser(composite, SWT.BORDER);                
-            browser.setText(html);
-            
-            GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-            browser.setLayoutData(gd);
+            browser = new Browser(composite, SWT.BORDER);   
+            if (url != null) {
+                browser.setUrl(url);
+            } else {
+                browser.setText(html);
+            }
+            browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         } catch (Exception e) {
             StatusManager.getManager().handle(
                 new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Could not create browser widget", e)
             );
-        }
-        
+        }        
         return composite;
     }
     

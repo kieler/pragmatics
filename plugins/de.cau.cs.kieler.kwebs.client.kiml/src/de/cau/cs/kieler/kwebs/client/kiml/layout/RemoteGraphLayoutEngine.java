@@ -41,20 +41,22 @@ import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kwebs.LocalServiceException;
 import de.cau.cs.kieler.kwebs.RemoteServiceException;
+import de.cau.cs.kieler.kwebs.Statistics;
 import de.cau.cs.kieler.kwebs.client.ILayoutServiceClient;
 //import de.cau.cs.kieler.kwebs.client.RestClient;
 import de.cau.cs.kieler.kwebs.client.ServerConfig;
 import de.cau.cs.kieler.kwebs.client.kiml.LayoutServiceClients;
 import de.cau.cs.kieler.kwebs.client.kiml.ServerConfigs;
-import de.cau.cs.kieler.kwebs.client.kiml.Statistics;
+import de.cau.cs.kieler.kwebs.client.kiml.LayoutHistory;
 import de.cau.cs.kieler.kwebs.client.kiml.activator.Activator;
 import de.cau.cs.kieler.kwebs.client.kiml.preferences.Preferences;
 import de.cau.cs.kieler.kwebs.formats.Formats;
-import de.cau.cs.kieler.kwebs.kstatistics.KStatistics;
+//import de.cau.cs.kieler.kwebs.kstatistics.KStatistics;
 import de.cau.cs.kieler.kwebs.transformation.IGraphTransformer;
-//import de.cau.cs.kieler.kwebs.transformation.KGraphXmiCompressedTransformer;
+import de.cau.cs.kieler.kwebs.transformation.KGraphXmiCompressedTransformer;
 import de.cau.cs.kieler.kwebs.transformation.KGraphXmiTransformer;
 import de.cau.cs.kieler.kwebs.util.Graphs;
 
@@ -83,8 +85,8 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         = new KGraphXmiTransformer();
     
     /** The transformer used for compressed serialization and deserialization of the KGraph instances. */
-    //private KGraphXmiTransformer compressedTransformer
-    //    = new KGraphXmiCompressedTransformer(); // !!! EXPERIMENTAL !!!
+    private KGraphXmiTransformer compressedTransformer
+        = new KGraphXmiCompressedTransformer(); // !!! EXPERIMENTAL !!!
 
     /**
      * Creates a layout engine for remote layout.
@@ -238,7 +240,7 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
      */
     public final void layout(final KNode layoutGraph, final IKielerProgressMonitor progressMonitor) {
         boolean remoteLayout = preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE);
-        //boolean compressedLayout = preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_COMPRESSION);
+        boolean compressedLayout = preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_COMPRESSION);
         if (remoteLayout && client == null) {
             if (!initialize()) {
                 return;
@@ -255,7 +257,7 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         double timeStart = 0;
         double timeTotal = 0;
         KNode resultGraph = null;
-        KStatistics statistics = null;
+        //KStatistics statistics = null;
         IGraphTransformer<KNode> transformer = null;
         String format = null;
         String sourceXMI = null;
@@ -263,13 +265,13 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         timeStart = System.nanoTime();
         progressMonitor.begin(label, nodeCount);
         Graphs.annotateGraphWithUniqueID(layoutGraph);
-        /*if (compressedLayout) {
+        if (compressedLayout) {
             transformer = compressedTransformer;
             format = Formats.FORMAT_KGRAPH_XMI_COMPRESSED;
-        } else {*/
+        } else {
             transformer = normalTransformer;
             format = Formats.FORMAT_KGRAPH_XMI;
-        //}
+        }
         sourceXMI = transformer.serialize(layoutGraph);
         //storeXmi(sourceXMI, false);
         try {          
@@ -294,12 +296,14 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         }        
         progressMonitor.done();
         timeTotal = (System.nanoTime() - timeStart);
-        statistics = resultGraph.getData(KStatistics.class);
-        if (statistics != null) {
+        KIdentifier identifier = resultGraph.getData(KIdentifier.class);
+        if (identifier != null) {
+            Statistics statistics = new Statistics();
+            statistics.fromString(identifier.getProperty(Statistics.STATISTICS));
             statistics.setTimeTotal(timeTotal);
             statistics.setTimeNetwork(networkTotal);
             statistics.setTimeLocalSupplemental(timeTotal - networkTotal);
-            Statistics.getInstance().addStatistic(statistics);
+            LayoutHistory.getInstance().addStatistic(statistics);
         }
     }
 

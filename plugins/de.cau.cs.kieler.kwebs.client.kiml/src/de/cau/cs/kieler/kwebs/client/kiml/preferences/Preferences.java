@@ -41,8 +41,8 @@ public final class Preferences {
         = PREFIX + "layout.use.remote";
 
     /** Whether to use compression when using remote layout or not. */
-    //public static final String PREFID_LAYOUT_USE_COMPRESSION
-    //    = PREFIX + "layout.use.compression";
+    public static final String PREFID_LAYOUT_USE_COMPRESSION
+        = PREFIX + "layout.use.compression";
 
     /** */
     public static final String PREFID_LAYOUT_SERVERCONFIG_COUNT

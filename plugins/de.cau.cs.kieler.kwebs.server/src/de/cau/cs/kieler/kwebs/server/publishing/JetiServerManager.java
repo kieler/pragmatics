@@ -39,7 +39,7 @@ import de.unido.ls5.eti.toolserver.SessionTimeouter;
  * @author swe
  *
  */
-final class JetiManager extends AbstractServerManager {
+final class JetiServerManager extends AbstractServerManager {
 
     /** The published jETI connector. */
     private EtiConnector etiConnector;
@@ -101,7 +101,6 @@ final class JetiManager extends AbstractServerManager {
         java.util.Properties jetiProps = createJetiProperties();
         EtiConfig.setProperties(jetiProps);
         EtiConfig.setExecutor(new EtiExecutorImpl());
-        //FIXME simple long?
         long checkInterval
             = new Long(jetiProps.getProperty(JETICONFIG_SCI)).longValue();
         Timer sessionTimeout

@@ -16,7 +16,7 @@ package de.cau.cs.kieler.kwebs.client.kiml;
 
 import java.text.NumberFormat;
 
-import de.cau.cs.kieler.kwebs.kstatistics.KStatistics;
+import de.cau.cs.kieler.kwebs.Statistics;
 
 /**
  * Utility class for generating HTML representation of the collected statistics.
@@ -25,8 +25,9 @@ import de.cau.cs.kieler.kwebs.kstatistics.KStatistics;
  * 
  * @author swe
  */
-public final class StatisticsPage {
+public final class LayoutHistoryPage {
     
+    /** */
     private static final String HTML_PREFIX
         = "<html>"
         + "<head>"
@@ -50,6 +51,7 @@ public final class StatisticsPage {
         + "<body>"
         + "<table class='chart' cellspacing='0' cellpadding='0' height='230px'>";
 
+    /** */
     private static final String HTML_POSTFIX
         = "</table>"
         + "<p class='lefttext'>"
@@ -75,17 +77,23 @@ public final class StatisticsPage {
         + "</body>"
         + "</html>";
     
+    /**
+     * 
+     * @return
+     */
     public static String generateHtml() {
         StringBuffer html = new StringBuffer();
         StringBuffer time = new StringBuffer();
         StringBuffer elements = new StringBuffer();
+        StringBuffer optional = new StringBuffer();
         StringBuffer bars = new StringBuffer();
         
         html.append(HTML_PREFIX);
         
-        for (KStatistics statistics : Statistics.getInstance().getStatistics()) {
+        for (Statistics statistics : LayoutHistory.getInstance().getStatistics()) {
             createTimeEntry(statistics, time);
             createElementEntry(statistics, elements);
+            createOptionalEntry(statistics, optional);
             createBarEntry(statistics, bars);
         }
         
@@ -98,6 +106,12 @@ public final class StatisticsPage {
         html.append("<tr height='10px'>");
         html.append("<td class='text'></td>");
         html.append(elements);
+        html.append("<td class='text'></td>");
+        html.append("</tr>");
+
+        html.append("<tr height='10px'>");
+        html.append("<td class='text'></td>");
+        html.append(optional);
         html.append("<td class='text'></td>");
         html.append("</tr>");
         
@@ -120,7 +134,12 @@ public final class StatisticsPage {
     private static final NumberFormat numberFormat
         = NumberFormat.getInstance();
     
-    private static void createTimeEntry(final KStatistics statistics, final StringBuffer time) {
+    /**
+     * 
+     * @param statistics
+     * @param time
+     */
+    private static void createTimeEntry(final Statistics statistics, final StringBuffer time) {
         time.append(
             "<td class='centeredtext' colspan='3' align='middle'>"
             + numberFormat.format(statistics.getTimeTotal() * FACTOR_NANOTOSECONDS) + " sec"
@@ -128,7 +147,12 @@ public final class StatisticsPage {
         );
     }
 
-    private static void createElementEntry(final KStatistics statistics, final StringBuffer elements) {
+    /**
+     * 
+     * @param statistics
+     * @param elements
+     */
+    private static void createElementEntry(final Statistics statistics, final StringBuffer elements) {
         elements.append(
             "<td class='centeredtext' colspan='3' align='middle'>"
             + statistics.getElementCount() + " elements"
@@ -136,7 +160,26 @@ public final class StatisticsPage {
         );        
     }
 
-    private static void createBarEntry(final KStatistics statistics, final StringBuffer bars) {
+    /**
+     * 
+     * @param statistics
+     * @param optional
+     */
+    private static void createOptionalEntry(final Statistics statistics, final StringBuffer optional) {
+        optional.append(
+            "<td class='centeredtext' colspan='3' align='middle'>"
+            + statistics.getBytes() + " bytes"
+            + (statistics.isCompression() ? " (C)" : "")
+            + "</td>"
+        );        
+    }
+
+    /**
+     * 
+     * @param statistics
+     * @param bars
+     */
+    private static void createBarEntry(final Statistics statistics, final StringBuffer bars) {
         double localPart = statistics.getLocalSupplementalPart();
         double remotePart = statistics.getRemoteSupplementalPart();
         double layoutPart = statistics.getLayoutPart();
@@ -159,7 +202,7 @@ public final class StatisticsPage {
     /**
      * Private constructor.
      */
-    private StatisticsPage() {        
+    private LayoutHistoryPage() {        
     }
     
 }

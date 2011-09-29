@@ -23,7 +23,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.xml.ws.Endpoint;
-import javax.xml.ws.http.HTTPBinding;
 
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
@@ -152,7 +151,6 @@ class HttpServerManager extends AbstractServerManager {
         if (server != null) {
             throw new IllegalStateException("Server has already been created");
         }
-        //URI address = new URI(config.getConfigProperty(Configuration.HTTP_ADDRESS));
         String host = address.getHost();
         if (host == null) {
             Logger.log(Severity.WARNING, 

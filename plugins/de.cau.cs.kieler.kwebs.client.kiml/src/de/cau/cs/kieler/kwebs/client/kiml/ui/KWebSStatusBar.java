@@ -38,8 +38,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 
-import de.cau.cs.kieler.kwebs.client.kiml.Statistics;
-import de.cau.cs.kieler.kwebs.client.kiml.StatisticsPage;
+import de.cau.cs.kieler.kwebs.client.kiml.LayoutHistory;
+import de.cau.cs.kieler.kwebs.client.kiml.LayoutHistoryPage;
 import de.cau.cs.kieler.kwebs.client.kiml.activator.Activator;
 import de.cau.cs.kieler.kwebs.client.kiml.layout.SwitchLayoutMode;
 import de.cau.cs.kieler.kwebs.client.kiml.preferences.Preferences;
@@ -168,10 +168,11 @@ public class KWebSStatusBar extends WorkbenchWindowControlContribution
                 public void widgetSelected(final SelectionEvent e) {
                     if (e.getSource() == statistics) {
                         Shell shell = Display.getCurrent().getActiveShell();
-                        if (Statistics.getInstance().getStatistics().size() > 0) {
+                        if (LayoutHistory.getInstance().getStatistics().size() > 0) {
                             BrowserDialog dialog = new BrowserDialog(
                                 shell, 
-                                StatisticsPage.generateHtml(), 
+                                LayoutHistoryPage.generateHtml(), 
+                                null,
                                 "Remote Layout Statistics",
                                 new Rectangle(0, 0, 600, 350)
                             );

@@ -239,14 +239,29 @@ public class SupportingServerManager extends AbstractServerManager {
         if (contexts != null) {
             throw new IllegalStateException("Contexts have already been created");
         }
-        contexts = new Vector<HttpContext>();
-        try {
-            for (String path : handlers.keySet()) {
-                contexts.add(server.createContext(path, handlers.get(path)));
+        contexts = new Vector<HttpContext>();        
+        HttpHandler httpHandler = null;
+        for (String path : handlers.keySet()) {
+            try {
+                httpHandler = handlers.get(path); 
+                Logger.log(
+                    Severity.INFO, 
+                    "Adding support context " 
+                    + path 
+                    + " for implementation " 
+                    + httpHandler.getClass().getSimpleName()
+                );
+                contexts.add(server.createContext(path, httpHandler));
+            } catch (Exception e) {
+                Logger.log(
+                    Severity.FAILURE, 
+                    "Error while adding support handler " 
+                    + httpHandler.getClass().getName()
+                    + ":" + e.getMessage(),
+                    e
+                );
             }
-        } finally {
-            clearContexts();
-        }
+        }        
     }
 
     /**

@@ -14,16 +14,10 @@
 
 package de.cau.cs.kieler.kwebs.client.kiml.layout;
 
-//import java.io.ByteArrayInputStream;
-//import java.net.HttpURLConnection;
-//import java.net.URL;
-//import java.net.URLConnection;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
-//import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
@@ -31,7 +25,6 @@ import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.service.ServiceDataLayoutDataService;
 import de.cau.cs.kieler.kwebs.client.ILayoutServiceClient;
 import de.cau.cs.kieler.kwebs.client.kiml.activator.Activator;
-//import de.cau.cs.kieler.kwebs.util.Resources;
 
 /**
  * This class is designed for retrieving the layout capabilities of a
@@ -119,10 +112,8 @@ public final class RemoteLayoutDataService extends ServiceDataLayoutDataService 
         }
         try {
             previewImageClient = client;
-            previewImageHostAvailable = true;
-            //previewImageHost = client.getServerConfig().getAddress().getHost();  
-            String capabilities = client.getServiceData();     
-            super.initializeFromString(capabilities);
+            previewImageHostAvailable = true;       
+            super.initializeFromServiceData(client.getServiceData());
         } catch (Exception e) {
             StatusManager.getManager().handle(
                 new Status(
@@ -142,10 +133,6 @@ public final class RemoteLayoutDataService extends ServiceDataLayoutDataService 
     public static final String ATTRIBUTE_PREVIEWIMAGEPATH 
         = "previewImagePath";
 
-    /** name of the 'previewImagePath' attribute layout algorithms meta data. */
-    //public static final String ATTRIBUTE_PREVIEWIMAGEPORT 
-    //    = "previewImagePort";
-
     /** The layout service client used to retrieve the preview images. */
     private ILayoutServiceClient previewImageClient;
     
@@ -157,19 +144,9 @@ public final class RemoteLayoutDataService extends ServiceDataLayoutDataService 
     private boolean previewImageHostAvailable
         = true;
     
-    /** Needed for getting the preview images. Necessary value is set by initializeWithClient(). */
-    //private String previewImageHost;
-    
     /** The image displayed if the preview images from the host are not available. */
     private ImageDescriptor unavailable
         = Activator.getImageDescriptor("images/unavailable.png");
-    
-    /** 
-     *  The timeout for reading the preview image via HTTP connection. Do not set it to high
-     *  since reading the preview images causes the UI to block. 
-     */
-    //private static final int PREVIEWIMAGE_CONNECTTIMEOUT
-    //    = 2000;
     
     /**
      * {@inheritDoc}
@@ -178,48 +155,16 @@ public final class RemoteLayoutDataService extends ServiceDataLayoutDataService 
     protected LayoutAlgorithmData createLayoutAlgorithmData(final IConfigurationElement element) {
         RemoteLayoutAlgorithmData algoData = new RemoteLayoutAlgorithmData();
         String previewImagePath = element.getAttribute(ATTRIBUTE_PREVIEWIMAGEPATH);
-        //String previewImagePort = element.getAttribute(ATTRIBUTE_PREVIEWIMAGEPORT);
         if (previewImageHostAvailable) {
             if (previewImagePath != null) {
                 try {
                     algoData.setPreviewImage(new LayoutServiceImageDescriptor(
                         previewImageClient, previewImagePath
                     ));
-                    /*
-                    algoData.setPreviewImage(ImageDescriptor.createFromImageData(
-                        new ImageData(new ByteArrayInputStream(
-                            previewImageClient.getPreviewImage(previewImagePath)
-                        ))
-                    ));
-                    */
                 } catch (Exception e) {
                     previewImageHostAvailable = false;
                     reportError("Could not load preview image: " + previewImagePath, e);
                 }
-/*
-                String address = "http://" + previewImageHost 
-                                 + ":" + previewImagePort 
-                                 + "/" + previewImagePath;
-                // We try to preload the images instead of doing lazy loading when they are required
-                // since then we have no chance of globally disable the download if the image host 
-                // is not available. Unavailable preview images make the UI unresponsive 
-                // for the time of the network timeout.
-                try {                    
-                    URL url = new URL(address);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setConnectTimeout(PREVIEWIMAGE_CONNECTTIMEOUT);
-                    connection.setDoOutput(true);
-                    connection.setDoInput(true);
-                    connection.connect();                
-                    //algoData.setPreviewImage(ImageDescriptor.createFromURL(new URL(address)));
-                    algoData.setPreviewImage(ImageDescriptor.createFromImageData(
-                        new ImageData(connection.getInputStream()))
-                    );
-                } catch (Exception e) {
-                    previewImageHostAvailable = false;
-                    reportError("Could not load preview image: " + address, e);
-                }
-*/
             }
         } else {
             algoData.setPreviewImage(unavailable);

@@ -95,7 +95,6 @@ final class HttpsServerManager extends HttpServerManager {
             Application.PLUGIN_ID, keystoreFile
         );  
         keyStore.load(
-            //new FileInputStream(keystoreFile),
             new ByteArrayInputStream(keystoreData),
             keystorePass.toCharArray()
         );
@@ -110,7 +109,6 @@ final class HttpsServerManager extends HttpServerManager {
         );
         HttpsConfigurator httpsConfigurator
             = new HttpsConfigurator(sslContext);
-        //URI address = new URI(config.getConfigProperty(Configuration.HTTPS_ADDRESS));
         String host = address.getHost();
         if (host == null) {
             Logger.log(Severity.WARNING, 

@@ -99,6 +99,12 @@ public class JaxWsClient extends HttpBasedLayoutServiceClient {
                     new QName(QNAME_NS, QNAME_SERVICE)
                 );
                 layoutPort = layoutService.getLayoutServicePort();
+/* Adding support for gzip encoding                
+                Map<String, List<String>> httpHeaders = new HashMap<String, List<String>>();  
+                httpHeaders.put("Accept-Encoding", Collections.singletonList("gzip"));  
+                Map<String, Object> context = ((BindingProvider) layoutPort).getRequestContext();  
+                context.put(MessageContext.HTTP_REQUEST_HEADERS, httpHeaders);
+*/                 
             } catch (Exception e) {
                 layoutService = null;
                 layoutPort = null;

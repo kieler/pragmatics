@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "LayoutService", targetNamespace = "http://rtsys.informatik.uni-kiel.de/layout", wsdlLocation = "file:/D:/Daten%20von%20Benutzern/Stephan/Desktop/wsdl/test/layout.wsdl")
+@WebServiceClient(name = "LayoutService", targetNamespace = "http://rtsys.informatik.uni-kiel.de/layout")
 public class LayoutService
     extends Service
 {
@@ -30,7 +30,11 @@ public class LayoutService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("file:/D:/Daten%20von%20Benutzern/Stephan/Desktop/wsdl/test/layout.wsdl");
+            // Default to our own HTTP server if default constructor is used. 
+            // Preferred way to instantiate this class is by using the 
+            //     public LayoutService(URL wsdlLocation, QName serviceName);
+            // constructor and specifying the real server address.
+            url = new URL("http://rtsys.informatik.uni-kiel.de:9442/layout?wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

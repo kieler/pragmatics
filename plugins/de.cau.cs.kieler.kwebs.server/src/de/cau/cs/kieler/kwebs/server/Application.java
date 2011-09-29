@@ -217,7 +217,7 @@ public class Application implements IApplication {
         // exists.
         createConfigurationFolder();
 
-        // Start the management servive
+        // Start the management service
         if (config.hasConfigProperty(Configuration.MANAGEMENT_PORT)) {
             try {
                 managementPort = Integer.parseInt(
@@ -252,7 +252,6 @@ public class Application implements IApplication {
             Logger.log(Severity.DEBUG, "Registering logging adapter for jax-ws");
             JavaLoggingAdapter.register();
             ServicePublisher.getInstance().publish();
-            //FIXME synchronized/wait/notify
             synchronized (termSync) {
                 while (!termRequested) {
                     termSync.wait();

@@ -47,19 +47,19 @@ public abstract class ServiceDataLayoutDataService extends ProgrammaticLayoutDat
     }
     
     /**
-     * Initializes the layout meta data from a string retrieved from the layout service.
-     * The host part is needed for retrieving the preview images.
+     * Initializes the layout meta data from the XMI representation of the service data model
+     * retrieved from the layout service.
      * 
-     * @param serializedData
-     *            the data which contains layout meta data
+     * @param serviceDataXMI
+     *             the XMI representation of the service data model retrieved from the layout service
      */
-    protected void initializeFromString(final String serializedData) {        
+    protected void initializeFromServiceData(final String serviceDataXMI) {        
         try {
-            if (serializedData == null) {
-                throw new IllegalArgumentException("Server data can not be null");
+            if (serviceDataXMI == null) {
+                throw new IllegalArgumentException("Services data can not be null");
             }
             ServiceDataXmiTransformer transformer = new ServiceDataXmiTransformer();
-            ServiceData serviceData = transformer.deserialize(serializedData);
+            ServiceData serviceData = transformer.deserialize(serviceDataXMI);
             Vector<IConfigurationElement> vectorElements = new Vector<IConfigurationElement>();
             for (Category category : serviceData.getCategories()) {   
                 vectorElements.add(ServiceDataConfigurationElement.getCategoryElementFromModel(category));

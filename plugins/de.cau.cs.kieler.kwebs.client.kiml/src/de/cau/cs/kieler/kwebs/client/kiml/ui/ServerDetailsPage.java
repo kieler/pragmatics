@@ -14,19 +14,10 @@
 
 package de.cau.cs.kieler.kwebs.client.kiml.ui;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import de.cau.cs.kieler.kwebs.client.ILayoutServiceClient;
-import de.cau.cs.kieler.kwebs.client.ServerConfig;
 import de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm;
 import de.cau.cs.kieler.kwebs.servicedata.ServiceData;
 import de.cau.cs.kieler.kwebs.servicedata.SupportedFormat;
-import de.cau.cs.kieler.kwebs.servicedata.transformation.ServiceDataXmiTransformer;
 
 /**
  * Utility class for generating HTML content for the server details dialog.

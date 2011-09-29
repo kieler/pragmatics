@@ -63,7 +63,7 @@ public final class ServicePublisher {
 
     /** Manager for publishing via jETI. */
     private IServerManager jetiManager
-        = new JetiManager();
+        = new JetiServerManager();
 
     /** Manager for publishing diverse support handlers. */
     private IServerManager supportManager
@@ -123,7 +123,8 @@ public final class ServicePublisher {
                 );                
                 jaxwsHttpsManager.setAddress(address);
                 jaxwsHttpsManager.publish(jaxwsService);
-            }/*        
+            }
+/*
             if (Configuration.getInstance().getConfigProperty(Configuration.REST_PUBLISH_HTTP).
                 equalsIgnoreCase("true")
             ) {
@@ -145,7 +146,8 @@ public final class ServicePublisher {
                 );                
                 restHttpsManager.setAddress(address);
                 restHttpsManager.publish(restService);
-            }*/
+            }
+*/
             if (Configuration.getInstance().getConfigProperty(Configuration.PUBLISH_JETI).
                     equalsIgnoreCase("true")
                ) {

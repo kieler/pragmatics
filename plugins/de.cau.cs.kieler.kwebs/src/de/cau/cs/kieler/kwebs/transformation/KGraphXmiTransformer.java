@@ -34,7 +34,6 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
-import de.cau.cs.kieler.kwebs.kstatistics.KStatisticsPackage;
 import de.cau.cs.kieler.kwebs.util.Graphs;
 
 /**
@@ -50,19 +49,19 @@ public class KGraphXmiTransformer extends AbstractEmfTransformer<KNode> {
      * {@inheritDoc}
      */
     @Override
-    public KNode deserialize(final String serializedGraph) {
-        KNode graph = super.deserialize(serializedGraph);
-        unpersistDataElements(graph);
-        return graph;
+    public String serialize(final KNode graph) {
+        persistDataElements(graph);
+        return super.serialize(graph);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String serialize(final KNode graph) {
-        persistDataElements(graph);
-        return super.serialize(graph);
+    public KNode deserialize(final String serializedGraph) {
+        KNode graph = super.deserialize(serializedGraph);
+        unpersistDataElements(graph);
+        return graph;
     }
 
     /**
@@ -79,9 +78,6 @@ public class KGraphXmiTransformer extends AbstractEmfTransformer<KNode> {
         }
         if (!registry.containsKey(KLayoutDataPackage.eNS_URI)) {
             registry.put(KLayoutDataPackage.eNS_URI, KLayoutDataPackage.eINSTANCE);
-        }
-        if (!registry.containsKey(KStatisticsPackage.eNS_URI)) {
-            registry.put(KStatisticsPackage.eNS_URI, KStatisticsPackage.eINSTANCE);
         }
         return new ResourceSetImpl();
     }
@@ -119,7 +115,7 @@ public class KGraphXmiTransformer extends AbstractEmfTransformer<KNode> {
      * @param graph
      *            the root element of the graph to persist elements of.
      */
-    private void persistDataElements(final KNode graph) {
+    protected final void persistDataElements(final KNode graph) {
         if (graph != null) {
             TreeIterator<EObject> iterator = graph.eAllContents();
             EObject eObject = null;
@@ -138,7 +134,7 @@ public class KGraphXmiTransformer extends AbstractEmfTransformer<KNode> {
      * @param graph 
      *            the root element of the graph to unpersist elements of.
      */
-    private void unpersistDataElements(final KNode graph) {
+    protected final void unpersistDataElements(final KNode graph) {
         if (graph != null) {
             TreeIterator<EObject> iterator = graph.eAllContents();
             EObject eObject  = null;
@@ -169,7 +165,7 @@ public class KGraphXmiTransformer extends AbstractEmfTransformer<KNode> {
                                     kgraphData.setProperty(layoutOptionData, layoutOptionValue);
                                 }
                             // Unknown options are wrapped by a dynamically instantiated one
-                            } else { 
+                            } else {
                                 IProperty<String> property = new Property<String>(key);
                                 kgraphData.setProperty(property, value);
                             }

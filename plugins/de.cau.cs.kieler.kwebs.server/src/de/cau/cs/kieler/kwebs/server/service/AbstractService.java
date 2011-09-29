@@ -30,19 +30,17 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Target;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataFactoryImpl;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl;
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
+import de.cau.cs.kieler.kwebs.Statistics;
 import de.cau.cs.kieler.kwebs.formats.Formats;
-import de.cau.cs.kieler.kwebs.kstatistics.KStatistics;
-import de.cau.cs.kieler.kwebs.kstatistics.KStatisticsFactory;
-import de.cau.cs.kieler.kwebs.kstatistics.LayoutType;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.transformation.IGraphTransformer;
+import de.cau.cs.kieler.kwebs.transformation.KGraphXmiCompressedTransformer;
 import de.cau.cs.kieler.kwebs.transformation.TransformationData;
 import de.cau.cs.kieler.kwebs.util.Graphs;
 
@@ -62,19 +60,11 @@ public abstract class AbstractService {
     private static RecursiveGraphLayoutEngine layoutEngine
         = new RecursiveGraphLayoutEngine(null);
 
-    /** Cached instance of server side layout data service. */
-    private static ServerLayoutDataService dataService;
-
-    /** Cached instance of the factory for layout statistics instances. */
-    private KStatisticsFactory statisticsFactory
-        = KStatisticsFactory.eINSTANCE;
-    
     /**
      * Protected constructor. Initialized the layout data services.
      */
     protected AbstractService() {
         ServerLayoutDataService.create();
-        dataService = ServerLayoutDataService.getInstance();
     }
     
     /**
@@ -98,7 +88,7 @@ public abstract class AbstractService {
             throw new IllegalArgumentException("Format not supported");
         }
         Logger.log(Severity.DEBUG, "Starting layout");
-        IGraphTransformer<?> transformer = dataService.getTransformer(format);
+        IGraphTransformer<?> transformer = ServerLayoutDataService.getInstance().getTransformer(format);
         if (transformer == null) {
             throw new IllegalStateException("Transformer could not be acquired");
         }
@@ -121,8 +111,7 @@ public abstract class AbstractService {
     private <T> String layout(final String serializedGraph, final IGraphTransformer<T> transformer, 
         final List<GraphLayoutOption> options) { 
         double operationStarted = System.nanoTime();
-        KStatistics statistics = statisticsFactory.createKStatistics();
-        statistics.setType(LayoutType.REMOTE_LAYOUT);
+        Statistics statistics = new Statistics();
         // Get the graph instances of which the layout is to be calculated
         T graph = transformer.deserialize(serializedGraph);
         // Derive the layout structures of the graph instances
@@ -167,6 +156,7 @@ public abstract class AbstractService {
                 } 
             }
             statistics.setBytes(serializedGraph.length());
+            statistics.setCompression(transformer instanceof KGraphXmiCompressedTransformer);
             statistics.setNodes(nodes);
             statistics.setPorts(ports);
             statistics.setLabels(labels);
@@ -175,7 +165,13 @@ public abstract class AbstractService {
             double layoutTime = layoutFinished - layoutStarted;
             statistics.setTimeLayout(layoutTime);
             statistics.setTimeRemoteSupplemental(operationFinished - operationStarted - layoutTime);
-            ((KNode) graph).getData().add(statistics);
+            KNode top = ((KNode) graph);
+            KIdentifier identifier = top.getData(KIdentifier.class);
+            if (identifier == null) {
+                identifier = KLayoutDataFactoryImpl.eINSTANCE.createKIdentifier();
+                top.getData().add(identifier);
+            }    
+            identifier.setProperty(Statistics.STATISTICS, statistics);
         }
         // Create and return the resulting graph in serialized form
         String serializedResult = transformer.serialize(transData.getSourceGraph());
@@ -191,10 +187,11 @@ public abstract class AbstractService {
     private void annotateGraph(final KNode layout, final List<GraphLayoutOption> options) {
         LayoutOptionData<?> layoutOption = null;        
         for (GraphLayoutOption option : options) {
-            layoutOption = dataService.getOptionData(option.getId());
+            layoutOption = ServerLayoutDataService.getInstance().getOptionData(option.getId());
             // Is the option identified only by it's suffix?
             if (layoutOption == null) {
-                layoutOption = dataService.getMatchingOptionData(option.getId());
+                layoutOption = ServerLayoutDataService.getInstance().
+                    getMatchingOptionData(option.getId());
             }
             // Fail silent on invalid option declarations
             if (layoutOption != null) {

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import de.cau.cs.kieler.kwebs.kstatistics.KStatistics;
+import de.cau.cs.kieler.kwebs.Statistics;
 
 /**
  * Container class for holding statistical data about layout operations.
@@ -27,15 +27,15 @@ import de.cau.cs.kieler.kwebs.kstatistics.KStatistics;
  * 
  * @author swe
  */
-public class Statistics {
+public class LayoutHistory {
     
     /** Singleton instance. */
-    private static final Statistics INSTANCE 
-        = new Statistics();
+    private static final LayoutHistory INSTANCE 
+        = new LayoutHistory();
     
     /** The list of statistics ordered by time. */
-    private List<KStatistics> statistics
-        = new ArrayList<KStatistics>();
+    private List<Statistics> statistics
+        = new ArrayList<Statistics>();
     
     /** How many statistics to remember. */
     private int history
@@ -46,7 +46,7 @@ public class Statistics {
      * 
      * @return the singleton instance
      */
-    public static Statistics getInstance() {
+    public static LayoutHistory getInstance() {
         return INSTANCE;
     }
     
@@ -54,7 +54,7 @@ public class Statistics {
      * 
      * @return
      */
-    public List<KStatistics> getStatistics() {
+    public List<Statistics> getStatistics() {
         return Collections.unmodifiableList(statistics);
     }
     
@@ -62,7 +62,7 @@ public class Statistics {
      * 
      * @param statistic
      */
-    public synchronized void addStatistic(final KStatistics statistic) { 
+    public synchronized void addStatistic(final Statistics statistic) { 
         if (statistic == null) {
             throw new IllegalArgumentException("Statistics can not be null");
         }
@@ -75,7 +75,7 @@ public class Statistics {
     /**
      * Private constructor.
      */
-    private Statistics() {        
+    private LayoutHistory() {        
     }
     
 }

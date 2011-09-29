@@ -6,9 +6,6 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: de.cau.cs.kieler.kwebs,
  de.cau.cs.kieler.kwebs.formats,
- de.cau.cs.kieler.kwebs.kstatistics,
- de.cau.cs.kieler.kwebs.kstatistics.impl,
- de.cau.cs.kieler.kwebs.kstatistics.util,
  de.cau.cs.kieler.kwebs.servicedata,
  de.cau.cs.kieler.kwebs.servicedata.impl,
  de.cau.cs.kieler.kwebs.servicedata.transformation,

@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
-import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.service.ProgrammaticLayoutDataService;
@@ -59,6 +58,9 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
 
     /** Caching the layout service meta data. */
     private static String serviceDataXMI;
+    
+    /** Caching the model instance of the service meta data. */
+    private static ServiceData serviceData;
 
     /** 
      *  The cached preview images of the layout algorithms. The index is derived from the plug-in
@@ -79,7 +81,7 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
      * Private constructor.
      */
     private ServerLayoutDataService() {
-        createServiceDataXMI();
+        createServiceData();
     }
 
     /**
@@ -140,13 +142,23 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
     }
 
     /**
-     * Returns the layout meta data in XMI.
+     * Returns the services meta data in XMI.
      *
      * @return String
      *             the meta data
      */
     public String getServiceData() {
         return serviceDataXMI;
+    }
+
+    /**
+     * Returns the services meta data model.
+     *
+     * @return ServiceData
+     *             the meta data model
+     */
+    public ServiceData getServiceDataModel() {
+        return serviceData;
     }
 
     /**
@@ -184,36 +196,34 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
         = "de.cau.cs.kieler.kwebs.server.configuration";
 
     /**
-     * Creates the XML representation of the layout capabilities of this
-     * server.
+     * Creates the model instance and the XMI representation of the services meta data.
      */
-    private void createServiceDataXMI() {
+    private void createServiceData() {
+        ServiceDataFactory factory = ServiceDataFactoryImpl.init();
+        serviceData = factory.createServiceData();      
+        serviceData.setVersion(Application.getVersion());
         IConfigurationElement[] extensions = null;
         extensions =
             Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(EXTP_ID_LAYOUT_PROVIDERS);        
-        ServiceDataFactory factory = ServiceDataFactoryImpl.init();
-        ServiceData serviceData = factory.createServiceData();      
-        serviceData.setVersion(Application.getVersion());
-        readExtensionCategories(factory, serviceData, extensions);
-        readExtensionLayoutTypes(factory, serviceData, extensions);
-        readExtensionLayoutOptions(factory, serviceData, extensions);
-        readExtensionLayoutAlgorithms(factory, serviceData, extensions);
+        readExtensionCategories(factory, extensions);
+        readExtensionLayoutTypes(factory, extensions);
+        readExtensionLayoutOptions(factory, extensions);
+        readExtensionLayoutAlgorithms(factory, extensions);
         extensions =
             Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(EXTP_ID_TRANSFORMERS);
-        readExtensionTransformers(factory, serviceData, extensions);
+        readExtensionTransformers(factory, extensions);
         serviceDataXMI = new ServiceDataXmiTransformer().serialize(serviceData);
     }
         
     /**
      * 
      * @param factory
-     * @param serviceData
      * @param extensions
      */
     private void readExtensionCategories(final ServiceDataFactory factory, 
-        final ServiceData serviceData, final IConfigurationElement[] extensions) {
+        final IConfigurationElement[] extensions) {
         for (IConfigurationElement element : extensions) {
             if (element.getName().equals(ELEMENT_CATEGORY)) {
                 Category category = factory.createCategory();
@@ -227,11 +237,10 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
     /**
      * 
      * @param factory
-     * @param serviceData
      * @param extensions
      */
     private void readExtensionLayoutTypes(final ServiceDataFactory factory, 
-        final ServiceData serviceData, final IConfigurationElement[] extensions) {
+        final IConfigurationElement[] extensions) {
         for (IConfigurationElement element : extensions) {
             if (element.getName().equals(ELEMENT_LAYOUT_TYPE)) {
                 LayoutType type = factory.createLayoutType();
@@ -246,11 +255,10 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
     /**
      * 
      * @param factory
-     * @param serviceData
      * @param extensions
      */
     private void readExtensionLayoutOptions(final ServiceDataFactory factory, 
-        final ServiceData serviceData, final IConfigurationElement[] extensions) {
+        final IConfigurationElement[] extensions) {
         for (IConfigurationElement element : extensions) {
             if (element.getName().equals(ELEMENT_LAYOUT_OPTION)) {
                 LayoutOption option = factory.createLayoutOption();
@@ -296,11 +304,10 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
     /**
      * 
      * @param factory
-     * @param serviceData
      * @param extensions
      */
     private void readExtensionLayoutAlgorithms(final ServiceDataFactory factory, 
-        final ServiceData serviceData, final IConfigurationElement[] extensions) {
+        final IConfigurationElement[] extensions) {
         for (IConfigurationElement element : extensions) {
             if (element.getName().equals(ELEMENT_LAYOUT_ALGORITHM)) {
                 LayoutAlgorithm algorithm = factory.createLayoutAlgorithm();
@@ -335,11 +342,11 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
                 }
                 algorithm.setId(element.getAttribute(ATTRIBUTE_ID));
                 algorithm.setName(element.getAttribute(ATTRIBUTE_NAME));
-                Category category = getCategory(serviceData, element.getAttribute(ATTRIBUTE_CATEGORY));
+                Category category = getCategory(element.getAttribute(ATTRIBUTE_CATEGORY));
                 if (category != null) {
                     algorithm.setCategory(category);
                 }
-                LayoutType type = getLayoutType(serviceData, element.getAttribute(ATTRIBUTE_TYPE));
+                LayoutType type = getLayoutType(element.getAttribute(ATTRIBUTE_TYPE));
                 if (type != null) {
                     algorithm.setType(type);
                 }
@@ -349,7 +356,7 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
                     if (child.getName().equals(ELEMENT_KNOWN_OPTION)) {
                         KnownOption option = factory.createKnownOption();
                         LayoutOption tmpOption = getLayoutOption(
-                            serviceData, child.getAttribute(ATTRIBUTE_OPTION)
+                            child.getAttribute(ATTRIBUTE_OPTION)
                         );
                         if (tmpOption == null) {
                             throw new IllegalStateException(
@@ -391,11 +398,10 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
     /**
      * 
      * @param factory
-     * @param serviceData
      * @param extensions
      */
     private void readExtensionTransformers(final ServiceDataFactory factory, 
-        final ServiceData serviceData, final IConfigurationElement[] extensions) {
+        final IConfigurationElement[] extensions) {
         for (IConfigurationElement element : extensions) {
             if (element.getName().equals(ELEMENT_TRANSFORMER)) {
                 String id = element.getAttribute(ATTRIBUTE_SUPPORTEDFORMAT);
@@ -430,11 +436,10 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
 
     /**
      * 
-     * @param serviceData
      * @param id
      * @return
      */
-    private Category getCategory(final ServiceData serviceData, final String id) {
+    private Category getCategory(final String id) {
         for (Category category : serviceData.getCategories()) {
             if (category.getId().equals(id)) {
                 return category;
@@ -445,11 +450,10 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
 
     /**
      * 
-     * @param serviceData
      * @param type
      * @return
      */
-    private LayoutType getLayoutType(final ServiceData serviceData, final String type) {
+    private LayoutType getLayoutType(final String type) {
         for (LayoutType tmpType : serviceData.getLayoutTypes()) {
             if (tmpType.getId().equals(type)) {
                 return tmpType;
@@ -460,11 +464,10 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
 
     /**
      * 
-     * @param serviceData
      * @param option
      * @return
      */
-    private LayoutOption getLayoutOption(final ServiceData serviceData, final String option) {
+    private LayoutOption getLayoutOption(final String option) {
         for (LayoutOption tmpOption : serviceData.getLayoutOptions()) {
             if (tmpOption.getId().equals(option)) {
                 return tmpOption;

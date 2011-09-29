@@ -32,9 +32,10 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * instance of the subclass, but only one instance per subclass is allowed. Registering another
  * instance will overwrite the prior instance. The different instances are identified by class name
  * and the currently used instance can be determined by calling {@link getMode()}. You can switch
- * between the different instances by calling {@link setMode(final Class<? extends
- * LayoutDataService> clas)} or {@link setMode(final Object object)}, where {@code object} has to be
- * an instance of a subclass of {@code LayoutDataService}.
+ * between the different instances by calling {@link setMode(final String mode)} where {@code mode} is
+ * one of the predefined Strings ECLIPSEDATASERVICE, REMOTEDATASERVICE or SERVICEDATASERVICE. The 
+ * SERVICEDATASERVICE mode is intended to be used only by the KWebS server so using it inside the 
+ * KIELER modeling environment will introduce undefined behavior.
  *
  * @kieler.rating 2011-03-14 yellow reviewed by cmot, cds
  * @author msp
