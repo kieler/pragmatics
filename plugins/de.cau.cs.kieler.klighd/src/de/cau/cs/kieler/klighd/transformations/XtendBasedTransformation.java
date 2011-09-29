@@ -33,7 +33,6 @@ import org.eclipse.xtend.XtendFacade;
 import org.eclipse.xtend.XtendResourceParser;
 import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
 
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klighd.IModelTransformation;
 import de.cau.cs.kieler.klighd.KLighDPlugin;
 import de.cau.cs.kieler.klighd.ViewContext;
