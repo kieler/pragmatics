@@ -37,6 +37,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -941,7 +942,14 @@ public class DebugWindow extends Window {
         
         // Status Bar Label
         statusBarLabel = new Label(statusBar, SWT.NULL);
-        statusBarLabel.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false));
+        statusBarLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        
+        // Status Bar Zoom Label
+        statusBarZoomLabel = new Label(statusBar, SWT.NULL);
+//        statusBarZoomLabel.setText("100%");
+        
+        gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+        statusBarZoomLabel.setLayoutData(gd);
         
         // Status Bar Zoom Scale
         statusBarZoomScale = new Scale(statusBar, SWT.HORIZONTAL);
@@ -951,17 +959,17 @@ public class DebugWindow extends Window {
         statusBarZoomScale.setPageIncrement(25);
         statusBarZoomScale.setSelection(100);
         
-        gd = new GridData(SWT.BEGINNING, SWT.END, false, false);
+        gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         gd.widthHint = 100;
         statusBarZoomScale.setLayoutData(gd);
         
-        // Status Bar Zoom Label
-        statusBarZoomLabel = new Label(statusBar, SWT.NULL);
-        statusBarZoomLabel.setText("100%");
-        
-        gd = new GridData(SWT.BEGINNING, SWT.END, false, false);
-        gd.widthHint = 50;
-        statusBarZoomLabel.setLayoutData(gd);
+        // Event Listeners
+        statusBarZoomScale.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(final SelectionEvent e) {
+                statusBarZoomLabel.setText(statusBarZoomScale.getSelection() + "%");
+                statusBar.layout();
+            }
+        });
         
         // CHECKSTYLEON MagicNumber
     }
