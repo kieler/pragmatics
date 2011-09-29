@@ -51,6 +51,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Shell;
@@ -284,7 +285,10 @@ public class DebugWindow extends Window {
     private Table fileTable = null;
     private TableViewer fileTableViewer = null;
     private Canvas imageCanvas = null;
-    private Label statusBar = null;
+    private Composite statusBar = null;
+    private Label statusBarLabel = null;
+    private Scale statusBarZoomScale = null;
+    private Label statusBarZoomLabel = null;
     
     // VARIABLES
     /**
@@ -382,7 +386,7 @@ public class DebugWindow extends Window {
         currentPath = thePath;
         folderRefreshButton.setEnabled(fileTableInput != null);
         folderRemoveAllButton.setEnabled(fileTableInput != null);
-        statusBar.setText(currentPath);
+        statusBarLabel.setText(currentPath);
     }
     
 
@@ -453,12 +457,12 @@ public class DebugWindow extends Window {
             // Reset
             currentImageFile = null;
             currentImage = null;
-            statusBar.setText(currentPath);
+            statusBarLabel.setText(currentPath);
         } else {
             // Load new image
             currentImage = new Image(getShell().getDisplay(), imageFile.getPath());
             currentImageFile = modelFile;
-            statusBar.setText(currentImageFile.getPath());
+            statusBarLabel.setText(currentImageFile.getPath());
         }
 
         origin.x = 0;
@@ -700,13 +704,13 @@ public class DebugWindow extends Window {
                 folderRemoveAllImage.dispose();
             }
             
-            if (zoomInImage != null) {
-                zoomInImage.dispose();
-            }
-            
-            if (zoomOutImage != null) {
-                zoomOutImage.dispose();
-            }
+//            if (zoomInImage != null) {
+//                zoomInImage.dispose();
+//            }
+//            
+//            if (zoomOutImage != null) {
+//                zoomOutImage.dispose();
+//            }
         }
         
         return closed;
@@ -847,21 +851,21 @@ public class DebugWindow extends Window {
         folderRemoveAllImage = KlayDebugViewPlugin.loadImage("remall.gif"); //$NON-NLS-1$
         folderRemoveAllButton.setImage(folderRemoveAllImage);
         
-        // Separator
-        new ToolItem(toolBar, SWT.SEPARATOR);
-        
-        // Zoom Buttons
-        zoomInButton = new ToolItem(toolBar, SWT.NULL);
-        zoomInButton.setEnabled(false);
-        zoomInButton.setToolTipText(Messages.DebugWindow_Toolbar_ZoomIn_ToolTip);
-        zoomInImage = KlayDebugViewPlugin.loadImage("zoomin.gif"); //$NON-NLS-1$
-        zoomInButton.setImage(zoomInImage);
-
-        zoomOutButton = new ToolItem(toolBar, SWT.NULL);
-        zoomOutButton.setEnabled(false);
-        zoomOutButton.setToolTipText(Messages.DebugWindow_Toolbar_ZoomOut_ToolTip);
-        zoomOutImage = KlayDebugViewPlugin.loadImage("zoomout.gif"); //$NON-NLS-1$
-        zoomOutButton.setImage(zoomOutImage);
+//        // Separator
+//        new ToolItem(toolBar, SWT.SEPARATOR);
+//        
+//        // Zoom Buttons
+//        zoomInButton = new ToolItem(toolBar, SWT.NULL);
+//        zoomInButton.setEnabled(false);
+//        zoomInButton.setToolTipText(Messages.DebugWindow_Toolbar_ZoomIn_ToolTip);
+//        zoomInImage = KlayDebugViewPlugin.loadImage("zoomin.gif"); //$NON-NLS-1$
+//        zoomInButton.setImage(zoomInImage);
+//
+//        zoomOutButton = new ToolItem(toolBar, SWT.NULL);
+//        zoomOutButton.setEnabled(false);
+//        zoomOutButton.setToolTipText(Messages.DebugWindow_Toolbar_ZoomOut_ToolTip);
+//        zoomOutImage = KlayDebugViewPlugin.loadImage("zoomout.gif"); //$NON-NLS-1$
+//        zoomOutButton.setImage(zoomOutImage);
         
         // Event listeners
         folderBrowseButton.addSelectionListener(new SelectionAdapter() {
@@ -894,25 +898,25 @@ public class DebugWindow extends Window {
             }
         });
 
-        zoomInButton.addSelectionListener(new SelectionAdapter() {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                zoom(true);
-            }
-        });
-
-        zoomOutButton.addSelectionListener(new SelectionAdapter() {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                zoom(false);
-            }
-        });
+//        zoomInButton.addSelectionListener(new SelectionAdapter() {
+//            /**
+//             * {@inheritDoc}
+//             */
+//            @Override
+//            public void widgetSelected(final SelectionEvent e) {
+//                zoom(true);
+//            }
+//        });
+//
+//        zoomOutButton.addSelectionListener(new SelectionAdapter() {
+//            /**
+//             * {@inheritDoc}
+//             */
+//            @Override
+//            public void widgetSelected(final SelectionEvent e) {
+//                zoom(false);
+//            }
+//        });
     }
     
     /**
@@ -921,8 +925,45 @@ public class DebugWindow extends Window {
      * @param parent the parent composite.
      */
     private void createStatusBar(final Composite parent) {
-        statusBar = new Label(parent, SWT.NULL);
+        // GUI code needs magic numbers
+        // CHECKSTYLEOFF MagicNumber
+        
+        GridData gd;
+        
+        // Status Bar
+        statusBar = new Composite(parent, SWT.NULL);
         statusBar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        GridLayout gl = new GridLayout(3, false);
+        gl.marginHeight = 0;
+        gl.marginWidth = 0;
+        statusBar.setLayout(gl);
+        
+        // Status Bar Label
+        statusBarLabel = new Label(statusBar, SWT.NULL);
+        statusBarLabel.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false));
+        
+        // Status Bar Zoom Scale
+        statusBarZoomScale = new Scale(statusBar, SWT.HORIZONTAL);
+        statusBarZoomScale.setIncrement(5);
+        statusBarZoomScale.setMaximum(200);
+        statusBarZoomScale.setMinimum(10);
+        statusBarZoomScale.setPageIncrement(25);
+        statusBarZoomScale.setSelection(100);
+        
+        gd = new GridData(SWT.BEGINNING, SWT.END, false, false);
+        gd.widthHint = 100;
+        statusBarZoomScale.setLayoutData(gd);
+        
+        // Status Bar Zoom Label
+        statusBarZoomLabel = new Label(statusBar, SWT.NULL);
+        statusBarZoomLabel.setText("100%");
+        
+        gd = new GridData(SWT.BEGINNING, SWT.END, false, false);
+        gd.widthHint = 50;
+        statusBarZoomLabel.setLayoutData(gd);
+        
+        // CHECKSTYLEON MagicNumber
     }
 
     /**
