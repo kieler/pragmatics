@@ -70,7 +70,7 @@ public final class LightDiagramServices {
     public static final String ATTRIBUTE_CO_CONTRIBUTING_BUNDLE = "contributingBundle";
 
     /** the singleton instance. */
-    private static LightDiagramServices instance;
+    private static LightDiagramServices instance = new LightDiagramServices();
     /** a mapping between viewer provider id's and the instances. */
     private Map<String, IViewerProvider> idViewerProviderMapping =
             new LinkedHashMap<String, IViewerProvider>();
@@ -91,10 +91,9 @@ public final class LightDiagramServices {
     }
 
     /**
-     * Creates the singleton and initializes it with the data from the extension point.
+     * Initializes it with the data from the extension point.
      */
     static {
-        instance = new LightDiagramServices();
         // load the data from the extension points
         instance.loadViewerProviderExtension();
         instance.loadModelTransformationsExtension();

@@ -16,7 +16,6 @@ package de.cau.cs.kieler.klighd.transformations;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,21 +48,10 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
     private static final String TRANSFORMATION_EXTENSION_NAME = "transform";
     private static final String DEFAULT_TRANSFORMATION_EXTENSION_NAME = "onError";
 
-    /**
-     * viewElements consists of a map which key is a viewId and value a list of source element and
-     * graphical element pairs. This represents the mapping between the diagram and source elements.
-     */
-    private static Map<String, List<Pair<EObject, EObject>>> viewElements;
-
-    private ViewContext viewContext;
     private URL extfile;
     private String extension;
     private Map<String, EPackage> metamodels;
     private int countParams = 1;
-
-    static {
-        viewElements = new HashMap<String, List<Pair<EObject, EObject>>>();
-    }
 
     /**
      * The constructor.
@@ -222,17 +210,7 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
      * @param object the graphical element
      */
     public Object getSourceElement(final Object object) {
-        if (this.viewContext != null) {
-            List<Pair<EObject, EObject>> pairs =
-                    XtendBasedTransformation.viewElements.get(viewContext.getFileId());
-            if (pairs != null) {
-                for (Pair<EObject, EObject> pair : pairs) {
-                    if (pair.getSecond().equals(object)) {
-                        return pair.getFirst();
-                    }
-                }
-            }
-        }
+        //TODO implement
         return null;
     }
 
@@ -242,53 +220,14 @@ public class XtendBasedTransformation implements IModelTransformation<Object, Ob
      * @param object the source element
      */
     public Object getTargetElement(final Object object) {
-        if (this.viewContext != null) {
-            List<Pair<EObject, EObject>> pairs =
-                    XtendBasedTransformation.viewElements.get(viewContext.getFileId());
-            if (pairs != null) {
-                for (Pair<EObject, EObject> pair : pairs) {
-                    if (pair.getFirst().equals(object)) {
-                        return pair.getSecond();
-                    }
-                }
-            }
-        }
+        //TODO implement
         return null;
-    }
-
-    /**
-     * adds a element to the source model and graphical target mapping.
-     * 
-     * @param viewId
-     *            , id of the view
-     * @param source
-     *            , the source model element
-     * @param target
-     *            , the graphical element
-     */
-    public static void addViewElement(final String viewId, final EObject source, final EObject target) {
-        List<Pair<EObject, EObject>> pairs = XtendBasedTransformation.viewElements.get(viewId);
-        if (pairs == null) {
-            pairs = new ArrayList<Pair<EObject, EObject>>();
-            XtendBasedTransformation.viewElements.put(viewId, pairs);
-        }
-        Pair<EObject, EObject> deletable = null;
-        for (Pair<EObject, EObject> pair : pairs) {
-            if (pair.getFirst().equals(source) || pair.getSecond().equals(target)) {
-                deletable = pair;
-            }
-        }
-        if (deletable != null) {
-            pairs.remove(deletable);
-        }
-        pairs.add(new Pair<EObject, EObject>(source, target));
     }
 
     /**
      * {@inheritDoc}
      */
     public void setViewContext(final ViewContext viewContext) {
-        this.viewContext = viewContext;
+        //dummy
     }
-
 }
