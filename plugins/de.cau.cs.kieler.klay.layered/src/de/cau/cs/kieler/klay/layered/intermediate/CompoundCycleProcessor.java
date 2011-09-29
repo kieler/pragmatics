@@ -155,9 +155,9 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                 }
             }
         }
-        HashSet<LEdge> revertedEdges = revertCyclicEdges(hierarchyCrossingEdges, nodePairs,
+        HashSet<LEdge> reversedEdges = revertCyclicEdges(hierarchyCrossingEdges, nodePairs,
                 layeredGraph);
-        layeredGraph.setProperty(Properties.REVERTED_COMPOUND_EDGES, revertedEdges);
+        layeredGraph.setProperty(Properties.REVERSED_COMPOUND_EDGES, reversedEdges);
 
         // // remove unused ports
         // List<LNode> nodes = layeredGraph.getLayerlessNodes();
@@ -192,12 +192,12 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
      *            LinkedLists with two KNode-Elements.
      * @param nodePairs
      * @param layeredGraph
-     * @return Returns a set that contains the reverted edges.
+     * @return Returns a set that contains the reversed edges.
      */
     private HashSet<LEdge> revertCyclicEdges(
             final HashMap<LinkedList<KNode>, LinkedList<LEdge>> hierarchyCrossingEdges,
             final HashSet<LinkedList<KNode>> nodePairs, final LayeredGraph layeredGraph) {
-        HashSet<LEdge> revertedEdges = null;
+        HashSet<LEdge> reversedEdges = null;
         for (LinkedList<KNode> nodePair : nodePairs) {
             // Get the edge list of one direction.
             LinkedList<LEdge> toEdges = hierarchyCrossingEdges.get(nodePair);
@@ -215,13 +215,13 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                 // edges of froEdges. If not: nothing to be done.
                 int difference = toEdges.size() - froEdges.size();
                 if (difference < 0) {
-                    revertedEdges = revertEdges(toEdges, layeredGraph);
+                    reversedEdges = reverseEdges(toEdges, layeredGraph);
                 } else {
-                    revertedEdges = revertEdges(froEdges, layeredGraph);
+                    reversedEdges = reverseEdges(froEdges, layeredGraph);
                 }
             }
         }
-        return revertedEdges;
+        return reversedEdges;
     }
 
     /**
@@ -232,9 +232,9 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
      * @param layeredGraph
      * @return
      */
-    private HashSet<LEdge> revertEdges(final LinkedList<LEdge> edgeList,
+    private HashSet<LEdge> reverseEdges(final LinkedList<LEdge> edgeList,
             final LayeredGraph layeredGraph) {
-        HashSet<LEdge> revertedEdges = new HashSet<LEdge>();
+        HashSet<LEdge> reversedEdges = new HashSet<LEdge>();
         for (int i = 0; i < edgeList.size(); i++) {
             LEdge edge = edgeList.get(i);
             LPort source = edge.getSource();
@@ -257,7 +257,7 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
 
             edge.setSource(newSource);
             edge.setTarget(newTarget);
-            revertedEdges.add(edge);
+            reversedEdges.add(edge);
             edge.setProperty(Properties.REVERSED, true);
 
             // Original port dummy nodes are not needed any more. Remove them. Prepare removing them
@@ -285,12 +285,12 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                 layeredGraph.getLayerlessNodes().remove(targetNode);
             }
         }
-        return revertedEdges;
+        return reversedEdges;
     }
 
     /**
      * Returns the port an edge ending or starting at a compound dummy node is to be connected to if
-     * to be reverted.
+     * to be reversed.
      * 
      * @param port
      *            The original edge port.
@@ -313,6 +313,8 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
 
         // In any case, the new portside will be the opposite of the old one.
         LPort newPort = new LPort();
+        newPort.getSize().x = port.getSize().x;
+        newPort.getSize().y = port.getSize().y;
         newPort.copyProperties(port);
         newPort.setSide(newSide);
 
