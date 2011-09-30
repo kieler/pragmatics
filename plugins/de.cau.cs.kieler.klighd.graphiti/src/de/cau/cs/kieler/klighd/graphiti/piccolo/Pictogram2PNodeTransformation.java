@@ -632,8 +632,7 @@ public class Pictogram2PNodeTransformation extends
      * {@inheritDoc}
      */
     public Object getTargetElement(final Object object) {
-        getTransformationContext().getAllProperties();
-        return elementMap.get(object);
+        return getTransformationContext().getProperty(MAPPING_PROPERTY).get(object);
     }
 
 }
