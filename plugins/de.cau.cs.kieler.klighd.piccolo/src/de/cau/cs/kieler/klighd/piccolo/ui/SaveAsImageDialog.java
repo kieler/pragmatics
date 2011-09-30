@@ -72,7 +72,7 @@ public class SaveAsImageDialog extends Dialog {
 
     /** the available image formats. */
     private static final String[] IMAGE_FORMATS
-        = { "BMP", "JPG", "PNG" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        = { "BMP", "JPG", "PNG" }; //$NON-NLS-1$
 
     /** the preference store. */
     private IPreferenceStore preferenceStore = null;
