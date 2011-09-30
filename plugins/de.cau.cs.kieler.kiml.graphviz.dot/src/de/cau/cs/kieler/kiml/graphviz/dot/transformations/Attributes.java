@@ -22,7 +22,7 @@ import de.cau.cs.kieler.core.properties.Property;
  * @author msp
  */
 public final class Attributes {
-
+    
     /**
      * Hidden default constructor to avoid instantiation.
      */
@@ -49,6 +49,15 @@ public final class Attributes {
     /** edge concentration property. */
     public static final IProperty<Boolean> CONCENTRATE_PROP = new Property<Boolean>(
             CONCENTRATE_ID, false);
+    
+    /** Multiplicative scale factor used to alter the MinQuit (default = 8) and MaxIter
+     *  (default = 24) parameters used during crossing minimization. */
+    public static final String CROSSMIN_LIMIT = "mclimit";
+    /** layout option identifier for iterations limit. */
+    public static final String ITER_LIMIT_ID = "de.cau.cs.kieler.graphviz.iterationsLimit";
+    /** iterations limit property (includes {@link #CROSSMIN_LIMIT} and {@link #SIMPLEX_LIMIT}). */
+    public static final IProperty<Float> ITER_LIMIT_PROP = new Property<Float>(
+            ITER_LIMIT_ID, -1.0f);
     
     /** Factor damping force motions. On each iteration, a nodes movement is limited to this
      *  factor of its potential motion. */
@@ -122,6 +131,15 @@ public final class Attributes {
     
     /** Determines if and how node overlaps should be removed (not dot). */
     public static final String OVERLAP = "overlap";
+    /** layout option identifier for node overlap removal. */
+    public static final String OVERLAP_ID = "de.cau.cs.kieler.graphviz.overlapMode";
+    /** node overlap removal property. */
+    public static final IProperty<OverlapMode> OVERLAP_PROP = new Property<OverlapMode>(
+            OVERLAP_ID, OverlapMode.NONE);
+    
+    /** If true, each connected component of the graph is laid out separately, and then
+     *  the graphs are packed together. */
+    public static final String PACK = "pack";
     
     /** The pad attribute specifies how much, in inches, to extend the drawing area around
      *  the minimal area needed to draw the graph. */
@@ -144,12 +162,29 @@ public final class Attributes {
     /** Specifies the minimum separation between all nodes (circo only). */
     public static final String MINDIST = "mindist";
     
+    /** Specifies how the distance matrix is computed for the input graph. */
+    public static final String NEATO_MODEL = "model";
+    /** layout option identifier for Neato distance model. */
+    public static final String NEATO_MODEL_ID = "de.cau.cs.kieler.graphviz.neatoModel";
+    /** Neato distance model property. */
+    public static final IProperty<NeatoModel> NEATO_MODEL_PROP = new Property<NeatoModel>(
+            NEATO_MODEL_ID, NeatoModel.SHORTPATH);
+    
+    /** Minimum space between two adjacent nodes in the same rank, in inches. */
+    public static final String NODESEP = "nodesep";
+    
+    /** Used to set number of iterations in network simplex applications. */
+    public static final String SIMPLEX_LIMIT = "nslimit";
+    
     /** Sets direction of graph layout (dot only). */
     public static final String RANKDIR = "rankdir";
     
     /** In dot, this gives the desired rank separation, in inches. In twopi,
      *  specifies radial separation of concentric circles. (twopi, dot only) */
     public static final String RANKSEP = "ranksep";
+    
+    /** Specifies margin to leave around nodes when removing node overlap. */
+    public static final String SEP = "sep";
     
     /** Set the shape of a node. */
     public static final String SHAPE = "shape";
@@ -172,6 +207,10 @@ public final class Attributes {
     
     /** Tail label position, in points. */
     public static final String TAILLP = "tail_lp";
+    
+    /** Weight of edge. In dot, the heavier the weight, the shorter, straighter
+     *  and more vertical the edge is.  */
+    public static final String WEIGHT = "weight";
 
     /** Width of node, in inches. */
     public static final String WIDTH = "width";

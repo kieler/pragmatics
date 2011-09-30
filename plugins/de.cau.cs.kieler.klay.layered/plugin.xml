@@ -66,7 +66,8 @@
                option="de.cau.cs.kieler.layoutHierarchy">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.separateConnComp">
+               default="true"
+               option="de.cau.cs.kieler.separateConnComp">
          </knownOption>
          <knownOption
                default="1.6"
@@ -133,14 +134,6 @@
             id="de.cau.cs.kieler.klay.layered.edgeSpacingFactor"
             name="Edge Spacing Factor"
             type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="true"
-            description="Whether each connected component should be processed separately"
-            id="de.cau.cs.kieler.klay.layered.separateConnComp"
-            name="Separate Connected Components"
-            type="boolean">
       </layoutOption>
    </extension>
 

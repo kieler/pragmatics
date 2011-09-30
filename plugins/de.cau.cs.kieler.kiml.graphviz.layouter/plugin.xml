@@ -76,6 +76,10 @@
          <knownOption
                option="de.cau.cs.kieler.graphviz.concentrate">
          </knownOption>
+         <knownOption
+               default="1.0"
+               option="de.cau.cs.kieler.graphviz.crossminLimit">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -142,6 +146,16 @@
                default="200"
                option="de.cau.cs.kieler.graphviz.maxiter">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.neatoModel">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.overlapMode">
+         </knownOption>
+         <knownOption
+               default="false"
+               option="de.cau.cs.kieler.separateConnComp">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -195,6 +209,13 @@
                default="600"
                option="de.cau.cs.kieler.graphviz.maxiter">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.overlapMode">
+         </knownOption>
+         <knownOption
+               default="false"
+               option="de.cau.cs.kieler.separateConnComp">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -234,6 +255,9 @@
          <knownOption
                option="de.cau.cs.kieler.graphviz.concentrate">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.overlapMode">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -272,6 +296,13 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.graphviz.concentrate">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.overlapMode">
+         </knownOption>
+         <knownOption
+               default="false"
+               option="de.cau.cs.kieler.separateConnComp">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -313,6 +344,34 @@
             id="de.cau.cs.kieler.graphviz.maxiter"
             name="Max. Iterations"
             type="int">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="-1.0"
+            description="Multiplicative scale factor for the maximal number of iterations used during crossing minimization, node ranking, and node positioning."
+            id="de.cau.cs.kieler.graphviz.iterationsLimit"
+            name="Iterations Factor"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.graphviz.dot.transformations.NeatoModel"
+            default="SHORTPATH"
+            description="Specifies how the distance matrix is computed for the input graph."
+            id="de.cau.cs.kieler.graphviz.neatoModel"
+            name="Distance Model"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.graphviz.dot.transformations.OverlapMode"
+            default="NONE"
+            description="Determines if and how node overlaps should be removed."
+            id="de.cau.cs.kieler.graphviz.overlapMode"
+            name="Overlap Removal"
+            type="enum">
       </layoutOption>
    </extension>
 

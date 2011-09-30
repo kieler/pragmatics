@@ -98,11 +98,6 @@ public final class Properties {
     public static final Property<Float> REPULSION = new Property<Float>(REPULSION_ID,
             DEF_REPULSION, 0.0f);
     
-    /** option identifier for separation of connected components. */
-    public static final String SEPARATE_CC_ID = "de.cau.cs.kieler.klay.force.separateConnComp";
-    /** property for choosing whether connected components are processed separately. */
-    public static final IProperty<Boolean> SEPARATE_CC = new Property<Boolean>(SEPARATE_CC_ID, true);
-
     ///////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
     

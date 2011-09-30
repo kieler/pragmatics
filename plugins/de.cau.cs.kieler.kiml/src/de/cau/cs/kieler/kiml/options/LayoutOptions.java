@@ -290,6 +290,13 @@ public final class LayoutOptions {
      */
     public static final IProperty<Integer> RANDOM_SEED = new Property<Integer>(RANDOM_SEED_ID);
     
+    /** layout option key: separation of connected components (boolean). */
+    public static final String SEPARATE_CC_ID = "de.cau.cs.kieler.klay.layered.separateConnComp";
+    /**
+     * Property for choosing whether connected components are processed separately.
+     */
+    public static final IProperty<Boolean> SEPARATE_CC = new Property<Boolean>(SEPARATE_CC_ID);
+
     /** layout option key: minimal distance between elements (float). */
     public static final String SPACING_ID = "de.cau.cs.kieler.spacing";    
     /**

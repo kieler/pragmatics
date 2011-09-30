@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.graphviz.dot.transformations;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
@@ -83,46 +82,7 @@ public class KGraphDotTransformation {
         return injector.getInstance(XtextResourceSet.class);
     }
 
-    /** definition of Graphviz commands. */
-    public enum Command {
-        /** invalid command. */
-        INVALID,
-        /** command for Dot layout. */
-        DOT,
-        /** command for Neato layout. */
-        NEATO,
-        /** command for Twopi layout. */
-        TWOPI,
-        /** command for Fdp layout. */
-        FDP,
-        /** command for Circo layout. */
-        CIRCO;
-
-        /**
-         * Parse the given string into a command, ignoring case.
-         * 
-         * @param string a string
-         * @return the corresponding command, or {@code INVALID} if the string
-         *     does not hold a valid command
-         */
-        public static Command parse(final String string) {
-            try {
-                return valueOf(string.toUpperCase());
-            } catch (IllegalArgumentException exception) {
-                return INVALID;
-            }
-        }
-        
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase(Locale.ENGLISH);
-        }
-    }
-
-    /** small default value for minimal spacing. */
+  /** small default value for minimal spacing. */
     public static final float DEF_SPACING_SMALL = 16.0f;
     /** large default value for minimal spacing. */
     public static final float DEF_SPACING_LARGE = 40.0f;
@@ -364,6 +324,9 @@ public class KGraphDotTransformation {
         } while (n != null);
         return false;
     }
+    
+    /** base factor for setting {@link Attributes#SIMPLEX_LIMIT} from the iterations limit. */
+    private static final float NSLIMIT_BASE = 100.0f;
 
     /**
      * Sets attributes for the whole graph.
@@ -394,29 +357,23 @@ public class KGraphDotTransformation {
                 minSpacing = DEF_SPACING_SMALL;
             }
         }
-        String spacingVal = Float.toString(minSpacing / DPI);
-        if (command == Command.DOT || command == Command.TWOPI) {
-            graphAttrs.add(createAttribute(Attributes.RANKSEP, spacingVal));
-        } else if (command == Command.CIRCO) {
-            graphAttrs.add(createAttribute(Attributes.MINDIST, spacingVal));
-        } else if (command == Command.NEATO || command == Command.FDP) {
+        if (command == Command.NEATO || command == Command.FDP) {
             AttributeStatement edgeAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
             edgeAttrStatement.setType(AttributeType.EDGE);
             List<Attribute> edgeAttrs = edgeAttrStatement.getAttributes();
-            edgeAttrs.add(createAttribute(Attributes.EDGELEN, spacingVal));
+            edgeAttrs.add(createAttribute(Attributes.EDGELEN, minSpacing / DPI));
             statements.add(edgeAttrStatement);
             // set maximum number of iterations
             int maxiter = parentLayout.getProperty(Attributes.MAXITER_PROP);
             if (maxiter > 0) {
-                graphAttrs.add(createAttribute(Attributes.MAXITER, Integer.toString(maxiter)));
+                graphAttrs.add(createAttribute(Attributes.MAXITER, maxiter));
             }
         }
-        if (command == Command.FDP) {
-            // FIXME does the spring constant parameter have any effect on the layout?
-//            graphAttrs.add(createAttribute(Attributes.SPRING_CONSTANT, "10.0"));
-        }
         
-        if (command == Command.DOT) {
+        switch (command) {
+        case DOT:
+            graphAttrs.add(createAttribute(Attributes.RANKSEP, minSpacing / DPI));
+            graphAttrs.add(createAttribute(Attributes.NODESEP, minSpacing / DPI));
             // set layout direction
             switch (parentLayout.getProperty(LayoutOptions.DIRECTION)) {
             case DOWN:
@@ -437,19 +394,30 @@ public class KGraphDotTransformation {
             if (aspectRatio > 0) {
                 graphAttrs.add(createAttribute(Attributes.ASPECT, "\"" + aspectRatio + ",1\""));
             }
-        }
-        
-        // enable node overlap avoidance
-        if (command != Command.DOT) {
-            graphAttrs.add(createAttribute(Attributes.OVERLAP, "false"));
-        }
-        
-        // enable or disable drawing of splines
-        EdgeRouting edgeRouting = parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
-        useSplines = (edgeRouting != EdgeRouting.POLYLINE && edgeRouting != EdgeRouting.ORTHOGONAL);
-        graphAttrs.add(createAttribute(Attributes.SPLINES, Boolean.toString(useSplines)));
-        
-        if (command == Command.NEATO) {
+            // set iterations limit
+            float iterationsLimit = parentLayout.getProperty(Attributes.ITER_LIMIT_PROP);
+            if (iterationsLimit > 0) {
+                graphAttrs.add(createAttribute(Attributes.CROSSMIN_LIMIT, iterationsLimit));
+                if (iterationsLimit < 1) {
+                    float simplexLimit = iterationsLimit * NSLIMIT_BASE;
+                    graphAttrs.add(createAttribute(Attributes.SIMPLEX_LIMIT, simplexLimit));
+                }
+            }
+            // enable compound mode
+            if (parentLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
+                graphAttrs.add(createAttribute(Attributes.COMPOUND, Boolean.TRUE.toString()));
+            }
+            break;
+            
+        case TWOPI:
+            graphAttrs.add(createAttribute(Attributes.RANKSEP, minSpacing / DPI));
+            break;
+            
+        case CIRCO:
+            graphAttrs.add(createAttribute(Attributes.MINDIST, minSpacing / DPI));
+            break;
+            
+        case NEATO:
             // configure initial placement of nodes
             Integer seed = parentLayout.getProperty(LayoutOptions.RANDOM_SEED);
             if (seed == null) {
@@ -463,19 +431,54 @@ public class KGraphDotTransformation {
             // set damping value
             float damping = parentLayout.getProperty(Attributes.DAMPING_PROP);
             if (damping > 0) {
-                graphAttrs.add(createAttribute(Attributes.DAMPING, Float.toString(damping)));
+                graphAttrs.add(createAttribute(Attributes.DAMPING, damping));
             }
             // set epsilon value
             float epsilon = parentLayout.getProperty(Attributes.EPSILON_PROP);
             if (epsilon > 0) {
-                graphAttrs.add(createAttribute(Attributes.EPSILON, Float.toString(epsilon)));
+                graphAttrs.add(createAttribute(Attributes.EPSILON, epsilon));
+            }
+            // set distance model
+            NeatoModel model = parentLayout.getProperty(Attributes.NEATO_MODEL_PROP);
+            if (model != NeatoModel.SHORTPATH) {
+                graphAttrs.add(createAttribute(Attributes.NEATO_MODEL, model.literal()));
+            }
+            break;
+            
+        case FDP:
+            // FIXME does the spring constant parameter have any effect on the layout?
+//          graphAttrs.add(createAttribute(Attributes.SPRING_CONSTANT, "10.0"));
+            break;
+        }
+        
+        if (command != Command.DOT) {
+            // enable or disable node overlap avoidance
+            OverlapMode mode = parentLayout.getProperty(Attributes.OVERLAP_PROP);
+            if (mode != OverlapMode.NONE) {
+                graphAttrs.add(createAttribute(Attributes.OVERLAP, mode.literal()));
+                graphAttrs.add(createAttribute(Attributes.SEP, minSpacing / 2));
+            }
+            // enable or disable connected component packing
+            Boolean pack = parentLayout.getProperty(LayoutOptions.SEPARATE_CC);
+            if (command == Command.TWOPI || pack != null && pack.booleanValue()) {
+                graphAttrs.add(createAttribute(Attributes.PACK, (int) minSpacing));
             }
         }
         
-        // enable compound mode
-        if (parentLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY) && command == Command.DOT) {
-            graphAttrs.add(createAttribute(Attributes.COMPOUND, Boolean.TRUE.toString()));
+        // configure edge routing
+        EdgeRouting edgeRouting = parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
+        String splineMode;
+        switch (edgeRouting) {
+        case POLYLINE:
+            splineMode = "polyline";
+            break;
+        case ORTHOGONAL:
+            splineMode = "ortho";
+            break;
+        default:
+            splineMode = "spline";
         }
+        graphAttrs.add(createAttribute(Attributes.SPLINES, splineMode));
         
         // enable edge concentration
         if (parentLayout.getProperty(Attributes.CONCENTRATE_PROP)) {
@@ -486,7 +489,7 @@ public class KGraphDotTransformation {
     }
 
     /**
-     * Creates an attribute with given name and value for the Dot graph.
+     * Create an attribute with given name and value for the Dot graph.
      * 
      * @param name name of the attribute
      * @param value value of the attribute
@@ -496,6 +499,34 @@ public class KGraphDotTransformation {
         Attribute attribute = DotFactory.eINSTANCE.createAttribute();
         attribute.setName(name);
         attribute.setValue(value);
+        return attribute;
+    }
+    
+    /**
+     * Create an attribute with given name and integer value for the Dot graph.
+     * 
+     * @param name name of the attribute
+     * @param value value of the attribute
+     * @return instance of a Dot attribute
+     */
+    public static Attribute createAttribute(final String name, final int value) {
+        Attribute attribute = DotFactory.eINSTANCE.createAttribute();
+        attribute.setName(name);
+        attribute.setValue("\"" + value + "\"");
+        return attribute;
+    }
+
+    /**
+     * Create an attribute with given name and float value for the Dot graph.
+     * 
+     * @param name name of the attribute
+     * @param value value of the attribute
+     * @return instance of a Dot attribute
+     */
+    public static Attribute createAttribute(final String name, final float value) {
+        Attribute attribute = DotFactory.eINSTANCE.createAttribute();
+        attribute.setName(name);
+        attribute.setValue("\"" + value + "\"");
         return attribute;
     }
 
@@ -585,15 +616,15 @@ public class KGraphDotTransformation {
         }
         // set font size
         if (fontSize > 0) {
-            attributes.add(createAttribute(Attributes.FONTSIZE, Integer.toString(fontSize)));
+            attributes.add(createAttribute(Attributes.FONTSIZE, fontSize));
         }
         // set label distance
         float distance = edgeLayout.getProperty(Attributes.LABEL_DISTANCE_PROP);
         if (distance >= 0.0f) {
-            attributes.add(createAttribute(Attributes.LABELDISTANCE, Float.toString(distance)));
+            attributes.add(createAttribute(Attributes.LABELDISTANCE, distance));
             if (distance > 1.0f) {
                 float labelAngle = DEF_LABEL_ANGLE / distance;
-                attributes.add(createAttribute(Attributes.LABELANGLE, Float.toString(labelAngle)));
+                attributes.add(createAttribute(Attributes.LABELANGLE, labelAngle));
             }
         }
     }

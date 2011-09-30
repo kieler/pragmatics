@@ -87,7 +87,8 @@ public class ComponentsProcessor extends AbstractAlgorithm {
      * @return a list of components that can be processed one by one
      */
     public List<FGraph> split(final FGraph graph) {
-        if (graph.getProperty(Properties.SEPARATE_CC)) {
+        Boolean separate = graph.getProperty(LayoutOptions.SEPARATE_CC);
+        if (separate == null || separate.booleanValue()) {
             initialize(graph);
             
             // perform DFS starting on each node, collecting connected components

@@ -274,11 +274,6 @@ public final class Properties {
     public static final IProperty<LayerConstraint> LAYER_CONSTRAINT = new Property<LayerConstraint>(
             LAYER_CONSTRAINT_ID, LayerConstraint.NONE);
 
-    /** option identifier for separation of connected components. */
-    public static final String SEPARATE_CC_ID = "de.cau.cs.kieler.klay.layered.separateConnComp";
-    /** property for choosing whether connected components are processed separately. */
-    public static final IProperty<Boolean> SEPARATE_CC = new Property<Boolean>(SEPARATE_CC_ID, true);
-
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
 

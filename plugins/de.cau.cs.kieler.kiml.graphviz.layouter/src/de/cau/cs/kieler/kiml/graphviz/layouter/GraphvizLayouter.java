@@ -28,8 +28,8 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
+import de.cau.cs.kieler.kiml.graphviz.dot.transformations.Command;
 import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation;
-import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation.Command;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.core.WrappedException;

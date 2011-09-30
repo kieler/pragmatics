@@ -50,12 +50,16 @@ import de.cau.cs.kieler.kiml.graphviz.dot.dot.Statement;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.Subgraph;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.util.DotSwitch;
 import de.cau.cs.kieler.kiml.graphviz.dot.transformations.Attributes;
+import de.cau.cs.kieler.kiml.graphviz.dot.transformations.Command;
 import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation;
-import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation.Command;
+import de.cau.cs.kieler.kiml.graphviz.dot.transformations.NeatoModel;
+import de.cau.cs.kieler.kiml.graphviz.dot.transformations.OverlapMode;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
@@ -198,12 +202,12 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
                     break;
                 case NODE:
                     for (Attribute attr : statement.getAttributes()) {
-                        applyProperty(nodeProps, attr);
+                        transformAttribute(nodeProps, attr);
                     }
                     break;
                 case EDGE:
                     for (Attribute attr : statement.getAttributes()) {
-                        applyProperty(edgeProps, attr);
+                        transformAttribute(edgeProps, attr);
                     }
                     break;
                 }
@@ -238,7 +242,7 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
                         }
                     }
                 } else {
-                    applyProperty(parentLayout, attribute);
+                    transformAttribute(parentLayout, attribute);
                 }
                 return null;
             }
@@ -255,7 +259,7 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
      * @param target the property holder that receives the new property
      * @param attribute a Graphviz attribute that contains the property
      */
-    private void applyProperty(final IPropertyHolder target, final Attribute attribute) {
+    private void transformAttribute(final IPropertyHolder target, final Attribute attribute) {
         String name = attribute.getName();
         String value = trimValue(attribute);
         try {
@@ -291,10 +295,66 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
                 target.setProperty(Attributes.LABEL_DISTANCE_PROP, Float.valueOf(value));
             } else if (Attributes.MAXITER.equals(name)) {
                 target.setProperty(Attributes.MAXITER_PROP, Integer.valueOf(value));
+            } else if (Attributes.CROSSMIN_LIMIT.equals(name)) {
+                target.setProperty(Attributes.ITER_LIMIT_PROP, Float.valueOf(value));
+            } else if (Attributes.NEATO_MODEL.equals(name)) {
+                target.setProperty(Attributes.NEATO_MODEL_PROP, NeatoModel.parse(value));
+            } else if (Attributes.NODESEP.equals(name)) {
+                target.setProperty(LayoutOptions.SPACING, Float.valueOf(value));
+            } else if (Attributes.OVERLAP.equals(name)) {
+                target.setProperty(Attributes.OVERLAP_PROP, OverlapMode.parse(value));
+            } else if (Attributes.PACK.equals(name)) {
+                target.setProperty(LayoutOptions.SEPARATE_CC, Boolean.valueOf(value));
+            } else if (Attributes.PAD.equals(name)) {
+                if (value.indexOf(',') >= 0) {
+                    KVector pad = new KVector();
+                    pad.parse(value);
+                    target.setProperty(LayoutOptions.BORDER_SPACING, (float) (pad.x + pad.y) / 2);
+                } else {
+                    target.setProperty(LayoutOptions.BORDER_SPACING, Float.valueOf(value));
+                }
+            } else if (Attributes.RANKDIR.equals(name)) {
+                if (value.equals("TB")) {
+                    target.setProperty(LayoutOptions.DIRECTION, Direction.DOWN);
+                } else if (value.equals("BT")) {
+                    target.setProperty(LayoutOptions.DIRECTION, Direction.UP);
+                } else if (value.equals("LR")) {
+                    target.setProperty(LayoutOptions.DIRECTION, Direction.RIGHT);
+                } else if (value.equals("RL")) {
+                    target.setProperty(LayoutOptions.DIRECTION, Direction.LEFT);
+                }
+            } else if (Attributes.RANKSEP.equals(name)) {
+                if (target.getProperty(LayoutOptions.SPACING) <= 0) {
+                    target.setProperty(LayoutOptions.SPACING, Float.valueOf(value));
+                }
+            } else if (Attributes.SPLINES.equals(name)) {
+                if (value.equals("spline") || value.equals("true")) {
+                    target.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
+                } else if (value.equals("polyline") || value.equals("line")
+                        || value.equals("false")) {
+                    target.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
+                } else if (value.equals("ortho")) {
+                    target.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
+                }
+            } else if (Attributes.START.equals(name)) {
+                if (value.startsWith("random")) {
+                    int random = 0;
+                    try {
+                        random = Integer.parseInt(value.substring("random".length()));
+                    } catch (NumberFormatException e) {
+                        // ignore exception
+                    }
+                    target.setProperty(LayoutOptions.RANDOM_SEED, random);
+                }
+            } else if (Attributes.WEIGHT.equals(name)) {
+                target.setProperty(LayoutOptions.PRIORITY, (int) Float.parseFloat(value));
             }
         } catch (NumberFormatException exception) {
-            Logger.log("Discarding attribute \"" + attribute.getName()
-                    + "\" since its value could not be parsed correctly.");
+            Logger.log("Discarding attribute " + attribute.getName() + "="
+                    + attribute.getValue() + " since its value could not be parsed correctly.");
+        } catch (IllegalArgumentException exception) {
+            Logger.log("Discarding attribute " + attribute.getName() + "="
+                    + attribute.getValue() + " since its value could not be parsed correctly.");
         }
     }
     
@@ -343,7 +403,7 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
                         nodeLayout.setHeight(Float.parseFloat(value)
                                 * KGraphDotTransformation.DPI);
                     } else {
-                        applyProperty(nodeLayout, attr);
+                        transformAttribute(nodeLayout, attr);
                     }
                 } catch (NumberFormatException exception) {
                     Logger.log("Discarding attribute \"" + attr.getName()
@@ -486,7 +546,7 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
                             EdgeLabelPlacement.TAIL);
                     kedge.getLabels().add(label);
                 } else {
-                    applyProperty(edgeLayout, attr);
+                    transformAttribute(edgeLayout, attr);
                 }
             }
             
@@ -533,10 +593,10 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
                 // transfer node size
                 removeAttributes(attributes, Attributes.WIDTH);
                 attributes.add(KGraphDotTransformation.createAttribute(Attributes.WIDTH,
-                        Float.toString(nodeLayout.getWidth() / KGraphDotTransformation.DPI)));
+                        nodeLayout.getWidth() / KGraphDotTransformation.DPI));
                 removeAttributes(attributes, Attributes.HEIGHT);
                 attributes.add(KGraphDotTransformation.createAttribute(Attributes.HEIGHT,
-                        Float.toString(nodeLayout.getHeight() / KGraphDotTransformation.DPI)));
+                        nodeLayout.getHeight() / KGraphDotTransformation.DPI));
             } else if (statement instanceof Subgraph) {
                 applyLayout(knode, new KVector(offset).translate(nodeLayout.getXpos(),
                         nodeLayout.getYpos()), graph);

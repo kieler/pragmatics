@@ -107,15 +107,6 @@
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            default="true"
-            description="If set to true connected components are laid out separately and the resulting layouts are arranged afterwards using the packer module"
-            id="de.cau.cs.kieler.kiml.ogdf.option.arrangeCCs"
-            name="Arrange Connected Components"
-            type="boolean">
-      </layoutOption>
-      <layoutOption
-            advanced="true"
-            appliesTo="parents"
             default="20.0"
             description="The spacing between connected components"
             id="de.cau.cs.kieler.kiml.ogdf.option.minDistCC"
@@ -334,7 +325,8 @@
                option="de.cau.cs.kieler.kiml.ogdf.option.transpose">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.arrangeCCs">
+               default="false"
+               option="de.cau.cs.kieler.separateConnComp">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.minDistCC">

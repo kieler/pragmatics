@@ -50,11 +50,6 @@ public class SugiyamaLayouter extends OgdfLayouter {
     private static final String TRANSPOSE_ID = "de.cau.cs.kieler.kiml.ogdf.option.transpose";
     /** 'transpose' property. */
     private static final IProperty<Boolean> TRANSPOSE = new Property<Boolean>(TRANSPOSE_ID, true);
-    /** the 'arrangeCCs' option identifier. */
-    private static final String ARRANGE_CCS_ID = "de.cau.cs.kieler.kiml.ogdf.option.arrangeCCs";
-    /** 'arrangeCCs' property. */
-    private static final IProperty<Boolean> ARRANGE_CCS = new Property<Boolean>(ARRANGE_CCS_ID,
-            true);
     /** the 'minDistCC' option identifier. */
     private static final String MIN_DIST_CC_ID = "de.cau.cs.kieler.kiml.ogdf.option.minDistCC";
     /** 'minDistCC' property. */
@@ -97,8 +92,8 @@ public class SugiyamaLayouter extends OgdfLayouter {
         boolean transpose = parentLayout.getProperty(TRANSPOSE);
         addOption(OgdfServer.OPTION_TRANSPOSE, transpose);
         // arrangeCCs
-        boolean arrangeCCs = parentLayout.getProperty(ARRANGE_CCS);
-        addOption(OgdfServer.OPTION_ARRANGE_CC, arrangeCCs);
+        Boolean arrangeCCs = parentLayout.getProperty(LayoutOptions.SEPARATE_CC);
+        addOption(OgdfServer.OPTION_ARRANGE_CC, arrangeCCs != null && arrangeCCs.booleanValue());
         // minDistCC
         float minDistCC = parentLayout.getProperty(MIN_DIST_CC);
         addOption(OgdfServer.OPTION_MIN_DIST_CC, minDistCC);

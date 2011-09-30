@@ -162,6 +162,7 @@
             type="boolean">
       </layoutOption>
       <layoutOption
+            advanced="true"
             appliesTo="parents"
             default="false"
             description="Whether additional debug information shall be displayed"
@@ -264,6 +265,13 @@
             description="Indicates that no layout should be done for the diagram part"
             id="de.cau.cs.kieler.noLayout"
             name="No Layout"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="Whether each connected component should be processed separately"
+            id="de.cau.cs.kieler.separateConnComp"
+            name="Separate Connected Components"
             type="boolean">
       </layoutOption>
       <layoutOption

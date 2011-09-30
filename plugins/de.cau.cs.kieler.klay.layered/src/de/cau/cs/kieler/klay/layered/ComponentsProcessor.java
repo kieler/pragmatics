@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -60,7 +61,8 @@ public class ComponentsProcessor extends AbstractAlgorithm {
      * @return a list of components that can be processed one by one
      */
     public List<LayeredGraph> split(final LayeredGraph graph) {
-        if (graph.getProperty(Properties.SEPARATE_CC)) {
+        Boolean separate = graph.getProperty(LayoutOptions.SEPARATE_CC);
+        if (separate == null || separate.booleanValue()) {
             // set id of all nodes to 0
             for (LNode node : graph.getLayerlessNodes()) {
                 node.id = 0;
