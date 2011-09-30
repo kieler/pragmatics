@@ -16,6 +16,8 @@ package de.cau.cs.kieler.kwebs.server.web;
 
 import java.util.Map;
 
+import javax.activation.MimeType;
+
 import com.sun.net.httpserver.HttpExchange;
 
 /**
@@ -25,35 +27,35 @@ import com.sun.net.httpserver.HttpExchange;
  * @kieler.rating  2011-05-04 red
  * @author  swe
  */
-public class RequestData {
+public class RequestData extends CacheData {
 
     /** . */
     private HttpExchange exchange;
     
     /** . */
-    private String reference;
-        
-    /** . */
-    private String mimetype;
-    
+    private String resource;
+
     /** . */
     private Map<String, String> params;
     
     /** . */
-    private byte[] content;
-
+    private boolean cacheable
+        = true;
+    
     /**
      * 
      * @param theexchange
-     * @param thereference
+     * @param theresource
+     * @param thename
      * @param themimetype
      * @param theparams
      */
-    public RequestData(final HttpExchange theexchange, final String thereference, final String themimetype,
-        final Map<String, String> theparams) {
+    public RequestData(final HttpExchange theexchange, final String theresource, final String thename, 
+        final String themimetype, final Map<String, String> theparams) {
+        super(thename, themimetype, null);
         exchange = theexchange;
-        reference = thereference;
-        mimetype = themimetype;
+        resource = theresource;
+        setMimetype(themimetype);
         params = theparams;
     }
     
@@ -69,7 +71,7 @@ public class RequestData {
      * 
      * @param exchange
      */
-    public void setExchange(HttpExchange exchange) {
+    public void setExchange(final HttpExchange exchange) {
         this.exchange = exchange;
     }
 
@@ -77,32 +79,16 @@ public class RequestData {
      * 
      * @return
      */
-    public String getReference() {
-        return reference;
+    public String getResource() {
+        return resource;
     }
 
     /**
      * 
-     * @param reference
+     * @param resource
      */
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public String getMimetype() {
-        return mimetype;
-    }
-
-    /**
-     * 
-     * @param mimetype
-     */
-    public void setMimetype(String mimetype) {
-        this.mimetype = mimetype;
+    public void setResource(final String resource) {
+        this.resource = resource;
     }
 
     /**
@@ -117,24 +103,31 @@ public class RequestData {
      * 
      * @param params
      */
-    public void setParams(Map<String, String> params) {
+    public void setParams(final Map<String, String> params) {
         this.params = params;
     }
 
+
+    /**
+     * @return the cacheable
+     */
+    public boolean getCacheable() {
+        return cacheable;
+    }
+
+    /**
+     * @param cacheable the cacheable to set
+     */
+    public void setCacheable(final boolean cacheable) {
+        this.cacheable = cacheable;
+    }
+        
     /**
      * 
      * @return
      */
-    public byte[] getContent() {
-        return content;
+    public CacheData toCacheData() {
+        return new CacheData(getName(), getMimetype(), getContent());
     }
-
-    /**
-     * 
-     * @param content
-     */
-    public void setContent(byte[] content) {
-        this.content = content;
-    }
-        
+    
 }

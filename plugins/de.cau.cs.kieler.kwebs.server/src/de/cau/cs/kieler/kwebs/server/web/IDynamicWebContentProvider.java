@@ -30,5 +30,6 @@ public interface IDynamicWebContentProvider {
      * @throws Exception
      *            when an error occurs during execution
      */
-    void handleRequest(final RequestData requestData) throws Exception;
+    void handleRequest(final RequestData requestData);
+    
 }

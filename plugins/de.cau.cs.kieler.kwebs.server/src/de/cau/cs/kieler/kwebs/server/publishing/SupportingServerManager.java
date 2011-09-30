@@ -246,18 +246,19 @@ public class SupportingServerManager extends AbstractServerManager {
                 httpHandler = handlers.get(path); 
                 Logger.log(
                     Severity.INFO, 
-                    "Adding support context " 
+                    "Adding support context '" 
                     + path 
-                    + " for implementation " 
+                    + "' for implementation '" 
                     + httpHandler.getClass().getSimpleName()
+                    + "'"
                 );
                 contexts.add(server.createContext(path, httpHandler));
             } catch (Exception e) {
                 Logger.log(
                     Severity.FAILURE, 
-                    "Error while adding support handler " 
+                    "Error while adding support handler '" 
                     + httpHandler.getClass().getName()
-                    + ":" + e.getMessage(),
+                    + "': " + e.getMessage(),
                     e
                 );
             }
