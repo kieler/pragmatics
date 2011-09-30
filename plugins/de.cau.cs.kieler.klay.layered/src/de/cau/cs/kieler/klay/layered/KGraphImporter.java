@@ -30,6 +30,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -106,11 +107,11 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         if (!isCompound) {
             // transform everything
             transformNodesAndPorts(kgraph, layeredGraph, elemMap, graphProperties);
-            transformEdges(kgraph, elemMap, graphProperties, direction);
+            transformEdges(kgraph, elemMap, graphProperties, direction, layeredGraph);
         }
         // set the graph properties property
         layeredGraph.setProperty(Properties.GRAPH_PROPERTIES, graphProperties);
-        
+
         layeredGraph.setProperty(Properties.ELEMENT_MAP, elemMap);
         return layeredGraph;
     }
@@ -392,15 +393,17 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      *            graph properties updated during the transformation.
      * @param direction
      *            the overall layout direction
+     * @param layeredGraph
      */
     private void transformEdges(final KNode graph, final Map<KGraphElement, LGraphElement> elemMap,
-            final EnumSet<GraphProperties> graphProperties, final Direction direction) {
+            final EnumSet<GraphProperties> graphProperties, final Direction direction,
+            final MapPropertyHolder layeredGraph) {
 
         // Transform external port edges
         transformExternalPortEdges(graph, graph.getIncomingEdges(), elemMap, graphProperties,
-                direction);
+                direction, layeredGraph);
         transformExternalPortEdges(graph, graph.getOutgoingEdges(), elemMap, graphProperties,
-                direction);
+                direction, layeredGraph);
 
         // Transform edges originating in the layout node's children
         for (KNode child : graph.getChildren()) {
@@ -409,7 +412,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 // going into an
                 // external port)
                 if (kedge.getTarget().getParent() == child.getParent()) {
-                    transformEdge(kedge, graph, elemMap, graphProperties, direction);
+                    transformEdge(kedge, graph, elemMap, graphProperties, direction, layeredGraph);
                 } else if (kedge.getTarget().getParent() != kedge.getSource()
                         && kedge.getTarget() != kedge.getSource().getParent()) {
 
@@ -437,17 +440,19 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      *            graph properties updated during the transformation.
      * @param direction
      *            the overall layout direction
+     * @param layeredGraph
      */
     private void transformExternalPortEdges(final KNode graph, final List<KEdge> edges,
             final Map<KGraphElement, LGraphElement> elemMap,
-            final EnumSet<GraphProperties> graphProperties, final Direction direction) {
+            final EnumSet<GraphProperties> graphProperties, final Direction direction,
+            final MapPropertyHolder layeredGraph) {
 
         for (KEdge kedge : edges) {
             // Only transform edges going into the layout node's direct children
             // (self-loops of the layout node will be processed on level higher)
             if (kedge.getSource().getParent() == graph || kedge.getTarget().getParent() == graph) {
 
-                transformEdge(kedge, graph, elemMap, graphProperties, direction);
+                transformEdge(kedge, graph, elemMap, graphProperties, direction, layeredGraph);
             }
         }
     }
@@ -466,57 +471,68 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      *            graph properties updated during the transformation.
      * @param direction
      *            the overall layout direction
+     * @param layeredGraph
+     *            the layeredGraph.
      */
-    private void transformEdge(final KEdge kedge, final KNode graph,
+    protected void transformEdge(final KEdge kedge, final KNode graph,
             final Map<KGraphElement, LGraphElement> elemMap,
-            final EnumSet<GraphProperties> graphProperties, final Direction direction) {
+            final EnumSet<GraphProperties> graphProperties, final Direction direction,
+            final MapPropertyHolder layeredGraph) {
 
         KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-
-        // retrieve source and target
-        LNode sourceNode = null;
-        LPort sourcePort = null;
-        LNode targetNode = null;
-        LPort targetPort = null;
-
-        // check if the edge source is an external port
-        if (kedge.getSource() == graph) {
-            sourceNode = (LNode) elemMap.get(kedge.getSourcePort());
-            sourcePort = sourceNode.getPorts().get(0);
-        } else {
-            sourceNode = (LNode) elemMap.get(kedge.getSource());
-            sourcePort = (LPort) elemMap.get(kedge.getSourcePort());
-        }
-
-        // check if the edge target is an external port
-        if (kedge.getTarget() == graph) {
-            targetNode = (LNode) elemMap.get(kedge.getTargetPort());
-            targetPort = targetNode.getPorts().get(0);
-        } else {
-            targetNode = (LNode) elemMap.get(kedge.getTarget());
-            targetPort = (LPort) elemMap.get(kedge.getTargetPort());
-        }
-
-        // if we have a self-loop, set the appropriate graph property
-        if (sourceNode != null && sourceNode != graph && sourceNode == targetNode) {
-            graphProperties.add(GraphProperties.SELF_LOOPS);
-        }
-
-        // create source and target ports if they do not exist yet
-        if (sourcePort == null) {
-            sourcePort = createPort(sourceNode, edgeLayout.getSourcePoint(),
-                    PortSide.fromDirection(direction));
-        }
-        if (targetPort == null) {
-            targetPort = createPort(targetNode, edgeLayout.getTargetPoint(), PortSide
-                    .fromDirection(direction).opposed());
-        }
+        KNode kgraph = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
+        KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
+        boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
 
         // create a layered edge
         LEdge newEdge = new LEdge();
         newEdge.setProperty(Properties.ORIGIN, kedge);
-        newEdge.setSource(sourcePort);
-        newEdge.setTarget(targetPort);
+
+        // the following is not needed in case of compound graph handling, as source and target will
+        // be set by calling function.
+
+        if (!isCompound) {
+            // retrieve source and target
+            LNode sourceNode = null;
+            LPort sourcePort = null;
+            LNode targetNode = null;
+            LPort targetPort = null;
+
+            // check if the edge source is an external port
+            if (kedge.getSource() == graph) {
+                sourceNode = (LNode) elemMap.get(kedge.getSourcePort());
+                sourcePort = sourceNode.getPorts().get(0);
+            } else {
+                sourceNode = (LNode) elemMap.get(kedge.getSource());
+                sourcePort = (LPort) elemMap.get(kedge.getSourcePort());
+            }
+
+            // check if the edge target is an external port
+            if (kedge.getTarget() == graph) {
+                targetNode = (LNode) elemMap.get(kedge.getTargetPort());
+                targetPort = targetNode.getPorts().get(0);
+            } else {
+                targetNode = (LNode) elemMap.get(kedge.getTarget());
+                targetPort = (LPort) elemMap.get(kedge.getTargetPort());
+            }
+
+            // if we have a self-loop, set the appropriate graph property
+            if (sourceNode != null && sourceNode != graph && sourceNode == targetNode) {
+                graphProperties.add(GraphProperties.SELF_LOOPS);
+            }
+
+            // create source and target ports if they do not exist yet
+            if (sourcePort == null) {
+                sourcePort = createPort(sourceNode, edgeLayout.getSourcePoint(),
+                        PortSide.fromDirection(direction));
+            }
+            if (targetPort == null) {
+                targetPort = createPort(targetNode, edgeLayout.getTargetPoint(), PortSide
+                        .fromDirection(direction).opposed());
+            }
+            newEdge.setSource(sourcePort);
+            newEdge.setTarget(targetPort);
+        }
 
         // transform the edge's labels
         for (KLabel klabel : kedge.getLabels()) {
@@ -532,6 +548,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // set properties of the new edge
         newEdge.copyProperties(edgeLayout);
+        // method will be called from the subclass CompoundKGraphImporter. The following part is
+        // to be executed in this case.
+
+        if (isCompound) {
+            // put edge to elementMap
+            elemMap.put(kedge, newEdge);
+        }
     }
 
     /**
