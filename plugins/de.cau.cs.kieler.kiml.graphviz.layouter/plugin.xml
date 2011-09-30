@@ -73,6 +73,9 @@
          <knownOption
                option="de.cau.cs.kieler.layoutHierarchy">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.concentrate">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -124,6 +127,21 @@
          <knownOption
                option="de.cau.cs.kieler.debugMode">
          </knownOption>
+         <knownOption
+               default="0.99"
+               option="de.cau.cs.kieler.graphviz.damping">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.concentrate">
+         </knownOption>
+         <knownOption
+               default="0.0001"
+               option="de.cau.cs.kieler.graphviz.epsilon">
+         </knownOption>
+         <knownOption
+               default="200"
+               option="de.cau.cs.kieler.graphviz.maxiter">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -170,6 +188,13 @@
          <knownOption
                option="de.cau.cs.kieler.layoutHierarchy">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.concentrate">
+         </knownOption>
+         <knownOption
+               default="600"
+               option="de.cau.cs.kieler.graphviz.maxiter">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -205,6 +230,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.debugMode">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.concentrate">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -242,6 +270,9 @@
          <knownOption
                option="de.cau.cs.kieler.debugMode">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.concentrate">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="edges"
@@ -250,6 +281,38 @@
             id="de.cau.cs.kieler.graphviz.labelDistance"
             name="Label Distance"
             type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="-1.0"
+            description="Factor damping force motions. On each iteration, a nodes movement is limited to this factor of its potential motion."
+            id="de.cau.cs.kieler.graphviz.damping"
+            name="Damping"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="false"
+            description="Merges multiedges into a single edge and causes partially parallel edges to share part of their paths."
+            id="de.cau.cs.kieler.graphviz.concentrate"
+            name="Concentrate Edges"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="-1"
+            description="Terminating condition. If the length squared of all energy gradients are &lt; epsilon, the algorithm stops."
+            id="de.cau.cs.kieler.graphviz.epsilon"
+            name="Epsilon"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            description="The maximum number of iterations."
+            id="de.cau.cs.kieler.graphviz.maxiter"
+            name="Max. Iterations"
+            type="int">
       </layoutOption>
    </extension>
 

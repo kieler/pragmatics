@@ -62,6 +62,9 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void doLayout(final KNode layoutNode,
             final IKielerProgressMonitor progressMonitor) {
+        if (command == Command.INVALID) {
+            throw new IllegalStateException("The Graphviz layout provider is not initialized.");
+        }
         graphvizLayouter.layout(layoutNode, progressMonitor, command, graphvizTool);
     }
 

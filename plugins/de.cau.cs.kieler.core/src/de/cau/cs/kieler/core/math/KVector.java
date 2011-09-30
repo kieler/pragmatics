@@ -441,20 +441,46 @@ public class KVector implements IDataObject, Cloneable {
      * {@inheritDoc}
      */
     public void parse(final String string) {
-        StringTokenizer tokenizer = new StringTokenizer(string, ",;()[]{}\"' \t\n");
-        x = 0;
-        y = 0;
+        int start = 0;
+        while (start < string.length() && isdelim(string.charAt(start), "([{\"' \t\r\n")) {
+            start++;
+        }
+        int end = string.length();
+        while (end > 0 && isdelim(string.charAt(end - 1), ")]}\"' \t\r\n")) {
+            end--;
+        }
+        if (start >= end) {
+            throw new IllegalArgumentException("The given string does not contain any numbers.");
+        }
+        StringTokenizer tokenizer = new StringTokenizer(string.substring(start, end),
+                ",; \t\r\n");
+        if (tokenizer.countTokens() != 2) {
+            throw new IllegalArgumentException("Exactly two numbers are expected, "
+                    + tokenizer.countTokens() + " were found.");
+        }
         try {
-            if (tokenizer.hasMoreTokens()) {
-                x = Double.parseDouble(tokenizer.nextToken());
-            }
-            if (tokenizer.hasMoreTokens()) {
-                y = Double.parseDouble(tokenizer.nextToken());
-            }
+            x = Double.parseDouble(tokenizer.nextToken());
+            y = Double.parseDouble(tokenizer.nextToken());
         } catch (NumberFormatException exception) {
             throw new IllegalArgumentException(
-                    "The given string does not match the expected format for vectors." + exception);
+                    "The given string contains parts that cannot be parsed as numbers." + exception);
         }
+    }
+    
+    /**
+     * Determine whether the given character is a delimiter.
+     * 
+     * @param c a character
+     * @param delims a string of possible delimiters
+     * @return true if {@code c} is one of the characters in {@code delims}
+     */
+    private static boolean isdelim(final char c, final String delims) {
+        for (int i = 0; i < delims.length(); i++) {
+            if (c == delims.charAt(i)) {
+                return true;
+            }
+        }
+        return false;
     }
     
 }

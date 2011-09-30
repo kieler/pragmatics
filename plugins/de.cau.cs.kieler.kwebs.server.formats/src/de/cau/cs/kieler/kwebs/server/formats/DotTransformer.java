@@ -31,6 +31,8 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotStandaloneSetup;
@@ -49,7 +51,9 @@ import de.cau.cs.kieler.kiml.graphviz.dot.dot.Subgraph;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.util.DotSwitch;
 import de.cau.cs.kieler.kiml.graphviz.dot.transformations.Attributes;
 import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation;
+import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation.Command;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -78,6 +82,12 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
     private static final IProperty<String> PROP_ID = new Property<String>("dotTransformer.name");
     /** original Graphviz graph attached to parent nodes. */
     private static final IProperty<Graph> PROP_GRAPH = new Property<Graph>("dotTransformer.graph");
+    /** default node width to apply for all nodes. */
+    private static final IProperty<Float> PROP_DEF_WIDTH = new Property<Float>(
+            "dotTransformer.defWidth");
+    /** default node height to apply for all nodes. */
+    private static final IProperty<Float> PROP_DEF_HEIGHT = new Property<Float>(
+            "dotTransformer.defHeight");
     
     /** the injector for creation of resources. */
     private static Injector injector;
@@ -111,7 +121,8 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
             transData.setProperty(NODE_ID_MAP, nodeIdMap);
             Map<Pair<KNode, String>, KPort> portIdMap = Maps.newHashMap();
             transData.setProperty(PORT_ID_MAP, portIdMap);
-            transform(graph.getStatements(), parent, transData);
+            transform(graph.getStatements(), parent, transData, new MapPropertyHolder(),
+                    new MapPropertyHolder());
             transData.getLayoutGraphs().add(parent);
             parent.getData(KShapeLayout.class).setProperty(PROP_GRAPH, graph);
         }
@@ -135,41 +146,100 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
      * 
      * @param statements a list of Dot statements
      * @param parent a KNode
+     * @param transData transformation data instance
+     * @param nodeProps properties that are applied to all nodes
+     * @param edgeProps properties that are applied to all edges
      */
     private void transform(final List<Statement> statements, final KNode parent,
-            final TransformationData<GraphvizModel> transData) {
+            final TransformationData<GraphvizModel> transData, final IPropertyHolder nodeProps,
+            final IPropertyHolder edgeProps) {
+        final KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
         DotSwitch<Object> statementSwitch = new DotSwitch<Object>() {
             
             public Object caseNodeStatement(final NodeStatement statement) {
-                transformNode(statement, parent, transData);
+                transformNode(statement, parent, transData, nodeProps);
                 return null;
             }
             
             public Object caseEdgeStatement(final EdgeStatement statement) {
-                transformEdge(statement, parent, transData);
+                transformEdge(statement, parent, transData, edgeProps);
                 return null;
             }
 
             public Object caseSubgraph(final Subgraph subgraph) {
-                KNode subKNode = transformNode(subgraph.getName(), parent, transData);
-                KShapeLayout nodeLayout = subKNode.getData(KShapeLayout.class);
-                if (nodeLayout.getProperty(PROP_STATEMENT) != null) {
-                    Logger.log("Discarding subgraph \"" + subgraph.getName()
-                            + "\" since its id is already used.");
-                } else {
-                    nodeLayout.setProperty(PROP_STATEMENT, subgraph);
-                    transform(subgraph.getStatements(), subKNode, transData);
+                KNode subKNode = parent;
+                if (subgraph.getName() != null && subgraph.getName().startsWith("cluster")) {
+                    subKNode = transformNode(subgraph.getName(), parent, transData);
+                    KShapeLayout nodeLayout = subKNode.getData(KShapeLayout.class);
+                    if (nodeLayout.getProperty(PROP_STATEMENT) != null) {
+                        Logger.log("Discarding cluster subgraph \"" + subgraph.getName()
+                                + "\" since its id is already used.");
+                        return null;
+                    } else {
+                        // the subgraph inherits all settings of its parent
+                        nodeLayout.copyProperties(parentLayout);
+                        nodeLayout.setProperty(PROP_STATEMENT, subgraph);
+                    }
                 }
+                MapPropertyHolder subNodeProps = new MapPropertyHolder();
+                subNodeProps.copyProperties(nodeProps);
+                MapPropertyHolder subEdgeProps = new MapPropertyHolder();
+                subEdgeProps.copyProperties(edgeProps);
+                transform(subgraph.getStatements(), subKNode, transData, subNodeProps, subEdgeProps);
                 return null;
             }
 
             public Object caseAttributeStatement(final AttributeStatement statement) {
-                // TODO evaluate global node and edge attributes
+                switch (statement.getType()) {
+                case GRAPH:
+                    for (Attribute attr : statement.getAttributes()) {
+                        caseAttribute(attr);
+                    }
+                    break;
+                case NODE:
+                    for (Attribute attr : statement.getAttributes()) {
+                        applyProperty(nodeProps, attr);
+                    }
+                    break;
+                case EDGE:
+                    for (Attribute attr : statement.getAttributes()) {
+                        applyProperty(edgeProps, attr);
+                    }
+                    break;
+                }
                 return null;
             }
 
             public Object caseAttribute(final Attribute attribute) {
-                // TODO evaluate graph attributes
+                if (Attributes.MARGIN.equals(attribute.getName())) {
+                    KInsets insets = parentLayout.getInsets();
+                    if (attribute.getValue().indexOf(',') >= 0) {
+                        KVector value = new KVector();
+                        try {
+                            value.parse(attribute.getValue());
+                            insets.setLeft((float) value.x);
+                            insets.setRight((float) value.x);
+                            insets.setTop((float) value.y);
+                            insets.setBottom((float) value.y);
+                        } catch (IllegalArgumentException exception) {
+                            Logger.log("Discarding attribute \"" + attribute.getName()
+                                    + "\" since its value could not be parsed correctly.");
+                        }
+                    } else {
+                        try {
+                            float value = Float.parseFloat(trimValue(attribute));
+                            insets.setLeft(value);
+                            insets.setRight(value);
+                            insets.setTop(value);
+                            insets.setBottom(value);
+                        } catch (NumberFormatException exception) {
+                            Logger.log("Discarding attribute \"" + attribute.getName()
+                                    + "\" since its value could not be parsed correctly.");
+                        }
+                    }
+                } else {
+                    applyProperty(parentLayout, attribute);
+                }
                 return null;
             }
 
@@ -180,38 +250,100 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
     }
     
     /**
+     * Apply the property given in the attribute to a property holder.
+     * 
+     * @param target the property holder that receives the new property
+     * @param attribute a Graphviz attribute that contains the property
+     */
+    private void applyProperty(final IPropertyHolder target, final Attribute attribute) {
+        String name = attribute.getName();
+        String value = trimValue(attribute);
+        try {
+            if (Attributes.LAYOUT.equals(name)) {
+                Command command = Command.parse(value);
+                if (command != Command.INVALID) {
+                    target.setProperty(LayoutOptions.ALGORITHM,
+                            "de.cau.cs.kieler.graphviz." + command);
+                } else {
+                    target.setProperty(LayoutOptions.ALGORITHM, value);
+                }
+            } else if (Attributes.WIDTH.equals(name)) {
+                target.setProperty(PROP_DEF_WIDTH, Float.valueOf(value)
+                        * KGraphDotTransformation.DPI);
+            } else if (Attributes.HEIGHT.equals(name)) {
+                target.setProperty(PROP_DEF_HEIGHT, Float.valueOf(value)
+                        * KGraphDotTransformation.DPI);
+            } else if (Attributes.ASPECT.equals(name)) {
+                int commaIndex = value.indexOf(',');
+                if (commaIndex >= 0) {
+                    value = value.substring(0, commaIndex);
+                }
+                target.setProperty(LayoutOptions.ASPECT_RATIO, Float.valueOf(value));
+            } else if (Attributes.FIXEDSIZE.equals(name)) {
+                target.setProperty(LayoutOptions.FIXED_SIZE, Boolean.valueOf(value));
+            } else if (Attributes.CONCENTRATE.equals(name)) {
+                target.setProperty(Attributes.CONCENTRATE_PROP, Boolean.valueOf(value));
+            } else if (Attributes.DAMPING.equals(name)) {
+                target.setProperty(Attributes.DAMPING_PROP, Float.valueOf(value));
+            } else if (Attributes.EPSILON.equals(name)) {
+                target.setProperty(Attributes.EPSILON_PROP, Float.valueOf(value));
+            } else if (Attributes.LABELDISTANCE.equals(name)) {
+                target.setProperty(Attributes.LABEL_DISTANCE_PROP, Float.valueOf(value));
+            } else if (Attributes.MAXITER.equals(name)) {
+                target.setProperty(Attributes.MAXITER_PROP, Integer.valueOf(value));
+            }
+        } catch (NumberFormatException exception) {
+            Logger.log("Discarding attribute \"" + attribute.getName()
+                    + "\" since its value could not be parsed correctly.");
+        }
+    }
+    
+    /**
      * Transforms a node.
      * 
      * @param statement a node statement
      * @param parent the parent node
      * @param transData the transformation data instance
+     * @param defaultProps default values for node options
      */
     private void transformNode(final NodeStatement statement, final KNode parent,
-            final TransformationData<GraphvizModel> transData) {
+            final TransformationData<GraphvizModel> transData, final IPropertyHolder defaultProps) {
         KNode knode = transformNode(statement.getNode().getName(), parent, transData);
         KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
         if (nodeLayout.getProperty(PROP_STATEMENT) != null) {
             Logger.log("Discarding node \"" + statement.getNode().getName()
                     + "\" since its id is already used.");
         } else {
+            nodeLayout.copyProperties(defaultProps);
             nodeLayout.setProperty(PROP_STATEMENT, statement);
+            Float defWidth = defaultProps.getProperty(PROP_DEF_WIDTH);
+            if (defWidth != null) {
+                nodeLayout.setWidth(defWidth);
+            }
+            Float defHeight = defaultProps.getProperty(PROP_DEF_HEIGHT);
+            if (defHeight != null) {
+                nodeLayout.setHeight(defHeight);
+            }
             
             // evaluate attributes for the new node
             for (Attribute attr : statement.getAttributes()) {
+                String value = trimValue(attr);
                 try {
                     if (Attributes.LABEL.equals(attr.getName())) {
-                        knode.getLabel().setText(attr.getValue());
+                        knode.getLabel().setText(value);
                     } else if (Attributes.POS.equals(attr.getName())) {
                         KVector pos = new KVector();
-                        pos.parse(attr.getValue());
+                        pos.parse(value);
                         pos.scale(KGraphDotTransformation.DPI);
                         nodeLayout.applyVector(pos);
                     } else if (Attributes.WIDTH.equals(attr.getName())) {
-                        nodeLayout.setWidth(Float.parseFloat(attr.getValue())
+                        nodeLayout.setWidth(Float.parseFloat(value)
                                 * KGraphDotTransformation.DPI);
                     } else if (Attributes.HEIGHT.equals(attr.getName())) {
-                        nodeLayout.setHeight(Float.parseFloat(attr.getValue())
+                        nodeLayout.setHeight(Float.parseFloat(value)
                                 * KGraphDotTransformation.DPI);
+                    } else {
+                        applyProperty(nodeLayout, attr);
                     }
                 } catch (NumberFormatException exception) {
                     Logger.log("Discarding attribute \"" + attr.getName()
@@ -278,9 +410,10 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
      * @param statement an edge statement
      * @param parent the parent node
      * @param transData the transformation data instance
+     * @param defaultProps default values for edge options
      */
     private void transformEdge(final EdgeStatement statement, final KNode parent,
-            final TransformationData<GraphvizModel> transData) {
+            final TransformationData<GraphvizModel> transData, final IPropertyHolder defaultProps) {
         String sourceName = statement.getSourceNode().getName();
         KNode source = transformNode(sourceName, parent, transData);
         KPort sourcePort = null;
@@ -313,6 +446,7 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
             kedge.setTargetPort(targetPort);
             
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+            edgeLayout.copyProperties(defaultProps);
             if (targetIter.previousIndex() == 0) {
                 // this is the first target - just store the edge statement
                 edgeLayout.setProperty(PROP_STATEMENT, statement);
@@ -332,24 +466,27 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
             
             // evaluate attributes for the new edge
             for (Attribute attr : statement.getAttributes()) {
+                String value = trimValue(attr);
                 if (Attributes.LABEL.equals(attr.getName())) {
                     KLabel label = KimlUtil.createInitializedLabel();
-                    label.setText(attr.getValue());
+                    label.setText(value);
                     label.getData(KShapeLayout.class).setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
                             EdgeLabelPlacement.CENTER);
                     kedge.getLabels().add(label);
                 } else if (Attributes.HEADLABEL.equals(attr.getName())) {
                     KLabel label = KimlUtil.createInitializedLabel();
-                    label.setText(attr.getValue());
+                    label.setText(value);
                     label.getData(KShapeLayout.class).setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
                             EdgeLabelPlacement.HEAD);
                     kedge.getLabels().add(label);
                 } else if (Attributes.TAILLABEL.equals(attr.getName())) {
                     KLabel label = KimlUtil.createInitializedLabel();
-                    label.setText(attr.getValue());
+                    label.setText(value);
                     label.getData(KShapeLayout.class).setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
                             EdgeLabelPlacement.TAIL);
                     kedge.getLabels().add(label);
+                } else {
+                    applyProperty(edgeLayout, attr);
                 }
             }
             
@@ -532,6 +669,20 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
                 attrIter.remove();
             }
         }
+    }
+    
+    /**
+     * Remove the quote characters leading and trailing the attribute value.
+     * 
+     * @param attribute an attribute
+     * @return a trimmed value of the attribute
+     */
+    private String trimValue(final Attribute attribute) {
+        String value = attribute.getValue();
+        if (value.startsWith("\"") && value.endsWith("\"")) {
+            return value.substring(1, value.length() - 1).trim();
+        }
+        return value;
     }
     
 }
