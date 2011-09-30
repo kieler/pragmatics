@@ -207,7 +207,7 @@ public final class DiagramViewManager implements IPartListener {
      * {@inheritDoc}
      */
     public void partClosed(final IWorkbenchPart part) {
-
+        // TODO implement this
     }
 
     /**
