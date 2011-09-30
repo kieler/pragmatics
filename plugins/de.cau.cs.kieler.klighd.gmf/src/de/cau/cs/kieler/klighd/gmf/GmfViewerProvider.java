@@ -54,8 +54,8 @@ public class GmfViewerProvider implements IViewerProvider {
     /**
      * {@inheritDoc}
      */
-    public boolean supports(final Object model) {
-        return model instanceof Diagram;
+    public Class<?> getModelClass() {
+        return Diagram.class;
     }
 
 }

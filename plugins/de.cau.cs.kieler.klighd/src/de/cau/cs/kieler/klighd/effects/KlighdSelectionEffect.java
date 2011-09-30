@@ -17,7 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.klighd.views.DiagramViewPart;
-import de.cau.cs.kieler.klighd.views.DiagramViewUtil;
+import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 
 /**
  * A view management effect to select a number of diagram elements in a view.
@@ -72,7 +72,7 @@ public class KlighdSelectionEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        DiagramViewPart view = DiagramViewUtil.getView(viewId);
+        DiagramViewPart view = DiagramViewManager.getInstance().getView(viewId);
         if (view != null) {
             // get the diagram elements
             Object[] theElements;

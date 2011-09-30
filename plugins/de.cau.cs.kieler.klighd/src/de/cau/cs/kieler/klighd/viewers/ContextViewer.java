@@ -82,6 +82,7 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
     public ContextViewer(final Composite parent, final String viewId) {
         this.parent = parent;
         this.viewId = viewId;
+        showMessage("");
     }
 
     /**
@@ -117,7 +118,7 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
             // reset the current selection
             resetSelection();
         } else if (currentViewContext != null
-                && currentViewContext.getViewerProvider().supports(model)) {
+                && currentViewContext.getViewerProvider().getModelClass().isInstance(model)) {
             // if the current viewer supports the given model set it as new input model
             currentViewer.setModel(model);
             // reset the current selection

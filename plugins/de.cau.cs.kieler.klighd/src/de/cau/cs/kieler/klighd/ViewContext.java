@@ -17,44 +17,41 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
+
 /**
  * A view context contains a viewer provider and a model that is accepted by the viewer provider.
  * 
  * @author mri
  */
-public class ViewContext {
+public final class ViewContext extends MapPropertyHolder {
 
     /** the viewer provider. */
     private IViewerProvider viewerProvider;
-    /** the model. */
-    private Object model;
-    /** the list of model transformations invoked to obtain the model. */
-    private List<IModelTransformation<?, ?>> transformations;
-    /** the reveresed list of model transformations invoked to obtain the model. */
-    private List<IModelTransformation<?, ?>> transformationsRev;
-    /** id of the source file. */
-    private String fileId;
+    /** the list of transformation contexts in this view context. */
+    private List<TransformationContext<?, ?>> transformationContexts;
+    /** the reveresed list of transformation contexts. */
+    private List<TransformationContext<?, ?>> transformationContextsRev;
 
     /**
      * Constructs a view context.
      * 
      * @param viewerProvider
      *            the viewer provider for this context
-     * @param model
-     *            the model for this context
-     * @param transformations
-     *            the transformations invoked to obtain the model
+     * @param transformationContexts
+     *            the transformation contexts involved
      */
-    public ViewContext(final IViewerProvider viewerProvider, final Object model,
-            final List<IModelTransformation<?, ?>> transformations) {
+    public ViewContext(final IViewerProvider viewerProvider,
+            final List<TransformationContext<?, ?>> transformationContexts) {
         this.viewerProvider = viewerProvider;
-        this.model = model;
-        this.transformations = transformations;
-        for (IModelTransformation<?, ?> trans : transformations) {
-            trans.setViewContext(this);
+        this.transformationContexts = transformationContexts;
+        this.transformationContextsRev =
+                new LinkedList<TransformationContext<?, ?>>(transformationContexts);
+        Collections.reverse(transformationContextsRev);
+        // set view context in the transformation contexts
+        for (TransformationContext<?, ?> transformationContext : transformationContexts) {
+            transformationContext.setViewContext(this);
         }
-        this.transformationsRev = new LinkedList<IModelTransformation<?, ?>>(transformations);
-        Collections.reverse(transformationsRev);
     }
 
     /**
@@ -67,29 +64,29 @@ public class ViewContext {
     }
 
     /**
-     * Returns the context's model.
+     * Returns the context's target model.
      * 
-     * @return the model
+     * @return the target model
      */
     public Object getModel() {
-        return model;
+        return transformationContextsRev.get(0).getTargetModel();
     }
 
     /**
      * Returns the element in the source model that translates to the given object in the context's
      * model by using the transformations invoked to obtain that model.
      * 
-     * @param object
+     * @param element
      *            the object in the context's model
      * @return the element in the source model or null if the link could not be made
      */
-    public Object getSourceElement(final Object object) {
-        Object source = object;
-        for (IModelTransformation<?, ?> transformation : transformationsRev) {
+    public Object getSourceElement(final Object element) {
+        Object source = element;
+        for (TransformationContext<?, ?> transformationContext : transformationContexts) {
             if (source == null) {
                 return null;
             }
-            source = transformation.getSourceElement(source);
+            source = transformationContext.getSourceElement(element);
         }
         return source;
     }
@@ -98,27 +95,19 @@ public class ViewContext {
      * Returns the element in the context's model that derives from the given element in the source
      * model by using the transformations invoked to obtain the context's model.
      * 
-     * @param object
+     * @param element
      *            the element in the source model
      * @return the element in the context's model or null if the link could not be made
      */
-    public Object getTargetElement(final Object object) {
-        Object target = object;
-        for (IModelTransformation<?, ?> transformation : transformations) {
+    public Object getTargetElement(final Object element) {
+        Object target = element;
+        for (TransformationContext<?, ?> transformationContext : transformationContexts) {
             if (target == null) {
                 return null;
             }
-            target = transformation.getTargetElement(target);
+            target = transformationContext.getTargetElement(element);
         }
         return target;
     }
 
-    // FIXME the view context should not know anything about files
-    public void setFileId(String fileId) {
-        this.fileId = fileId;
-    }
-
-    public String getFileId() {
-        return this.fileId;
-    }
 }

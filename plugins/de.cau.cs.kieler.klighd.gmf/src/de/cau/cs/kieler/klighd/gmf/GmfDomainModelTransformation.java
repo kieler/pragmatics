@@ -18,31 +18,25 @@ import org.eclipse.gmf.runtime.diagram.core.preferences.PreferencesHint;
 import org.eclipse.gmf.runtime.diagram.core.services.ViewService;
 import org.eclipse.gmf.runtime.notation.Diagram;
 
-import de.cau.cs.kieler.klighd.IModelTransformation;
-import de.cau.cs.kieler.klighd.ViewContext;
+import de.cau.cs.kieler.klighd.transformations.AbstractModelTransformation;
 
 /**
  * A transformation from an EMF domain model to a compatible GMF notation model.
  * 
  * @author mri
  */
-public class GmfDomainModelTransformation implements IModelTransformation<EObject, Diagram> {
+public class GmfDomainModelTransformation extends AbstractModelTransformation<EObject, Diagram> {
 
     /** the last domain model a diagram was requested for. */
     private EObject lastDomainModel = null;
     /** the last diagram model requested for a domain model. */
     private Diagram lastDiagramModel = null;
-    
-    @SuppressWarnings("unused")
-    private ViewContext vc = null;
-    
-    @SuppressWarnings("unused")
-    private String fileId = null;
-    
+
+
     /**
      * {@inheritDoc}
      */
-    public Diagram transform(final EObject model, Object... params) {
+    public Diagram transform(final EObject model) {
         return createDiagram(model);
     }
     
@@ -60,17 +54,6 @@ public class GmfDomainModelTransformation implements IModelTransformation<EObjec
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean supports(final Object model) {
-        if (model instanceof EObject) {
-            Diagram diagram = createDiagram((EObject) model);
-            return diagram != null;
-        }
-        return false;
-    }
-
     private Diagram createDiagram(final EObject model) {
         if (model == lastDomainModel) {
             return lastDiagramModel;
@@ -83,20 +66,5 @@ public class GmfDomainModelTransformation implements IModelTransformation<EObjec
         }
         return diagram;
     }
-
-    /**
-     * setter for viewContext.
-     */
-    public void setViewContext(ViewContext viewContext) {
-        this.vc = viewContext;
-    }
-    
-    /**
-     * setter for fileId.
-     */
-    public void setFileId(String fileId){
-        this.fileId = fileId;
-    }
-    
     
 }

@@ -16,10 +16,9 @@ package de.cau.cs.kieler.klighd.effects;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.klighd.IViewer;
-import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.views.DiagramViewPart;
-import de.cau.cs.kieler.klighd.views.DiagramViewUtil;
+import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 
 /**
  * A view management effect for showing models in a KLighD view.
@@ -121,21 +120,19 @@ public class KlighdDiagramEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        if (LightDiagramServices.getInstance().maybeSupports(model)) {
-            MonitoredOperation.runInUI(new Runnable() {
-                public void run() {
-                    if (!DiagramViewUtil.updateView(id, name, model)) {
-                        view = DiagramViewUtil.createView(id, name, model);
-                    } else {
-                        view = DiagramViewUtil.getView(id);
-                    }
-                    if (view != null) {
-                        viewContext = view.getViewer().getCurrentViewContext();
-                        viewer = view.getViewer().getActiveViewer();
-                    }
+        MonitoredOperation.runInUI(new Runnable() {
+            public void run() {
+                if (!DiagramViewManager.getInstance().updateView(id, name, model)) {
+                    view = DiagramViewManager.getInstance().createView(id, name, model);
+                } else {
+                    view = DiagramViewManager.getInstance().getView(id);
                 }
-            }, true);
-        }
+                if (view != null) {
+                    viewContext = view.getViewer().getCurrentViewContext();
+                    viewer = view.getViewer().getActiveViewer();
+                }
+            }
+        }, true);
     }
 
     /**

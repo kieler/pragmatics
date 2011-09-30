@@ -11,21 +11,8 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighd;
 
 /**
- * The interface for listeners on the events of a viewer.
- * 
- * @author mri
+ * UI contributions for the KLighD Piccolo binding.
  */
-public interface IViewerEventListener {
-
-    /**
-     * Handles the given event.
-     * 
-     * @param event
-     *            the viewer event
-     */
-    void handleEvent(IViewerEvent event);
-
-}
+package de.cau.cs.kieler.klighd.piccolo.ui;

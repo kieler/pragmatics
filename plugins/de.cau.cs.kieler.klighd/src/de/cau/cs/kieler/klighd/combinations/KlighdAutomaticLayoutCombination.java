@@ -24,7 +24,7 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutCombination;
 import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdLayoutEffect;
 import de.cau.cs.kieler.klighd.views.DiagramViewPart;
-import de.cau.cs.kieler.klighd.views.DiagramViewUtil;
+import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 
 /**
  * A combination for applying automatic layout on a KLighD view after a {@code KlighdDiagramEffect}.
@@ -47,7 +47,7 @@ public class KlighdAutomaticLayoutCombination extends AbstractCombination {
             final Maybe<DiagramViewPart> view = Maybe.create();
             MonitoredOperation.runInUI(new Runnable() {
                 public void run() {
-                    view.set(DiagramViewUtil.getView(diagramEffect.getId()));
+                    view.set(DiagramViewManager.getInstance().getView(diagramEffect.getId()));
                 }
             }, true);
             // schedule the layout effect if the view could be found

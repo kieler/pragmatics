@@ -38,7 +38,7 @@ public interface IViewer<T> {
      * @param model
      *            the input model
      */
-    void setModel(final T model);
+    void setModel(T model);
 
     /**
      * Sets a highlighting effect on the given diagram elements using the specified foreground and
@@ -53,8 +53,8 @@ public interface IViewer<T> {
      * @param lineWidthFactor
      *            the factor the line width is increased by (1.0f for no change)
      */
-    void setHighlight(final Object[] diagramElements, final KlighdColor foreground,
-            final KlighdColor background, final float lineWidthFactor);
+    void setHighlight(Object[] diagramElements, KlighdColor foreground, KlighdColor background,
+            float lineWidthFactor);
 
     /**
      * Removes the highlighting effect from the given diagram elements if any.
@@ -62,7 +62,7 @@ public interface IViewer<T> {
      * @param diagramElements
      *            the diagram elements
      */
-    void removeHighlight(final Object[] diagramElements);
+    void removeHighlight(Object[] diagramElements);
 
     /**
      * Sets the given selection of diagram elements as current selection.
@@ -70,7 +70,7 @@ public interface IViewer<T> {
      * @param diagramElements
      *            the diagram elements
      */
-    void setSelection(final Object[] diagramElements);
+    void setSelection(Object[] diagramElements);
 
     /**
      * Clears the current selection.
@@ -83,7 +83,7 @@ public interface IViewer<T> {
      * @param diagramElements
      *            the diagram elements
      */
-    void select(final Object[] diagramElements);
+    void select(Object[] diagramElements);
 
     /**
      * Removes the given diagram elements from the current selection if possible.
@@ -91,7 +91,7 @@ public interface IViewer<T> {
      * @param diagramElements
      *            the diagram elements
      */
-    void unselect(final Object[] diagramElements);
+    void unselect(Object[] diagramElements);
 
     /**
      * Reveals the given diagram element over the specified duration.
@@ -101,7 +101,7 @@ public interface IViewer<T> {
      * @param duration
      *            the duration
      */
-    void reveal(final Object diagramElement, final int duration);
+    void reveal(Object diagramElement, int duration);
 
     /**
      * Centers on the given diagram element over the specified duration.
@@ -111,7 +111,7 @@ public interface IViewer<T> {
      * @param duration
      *            the duration
      */
-    void centerOn(final Object diagramElement, final int duration);
+    void centerOn(Object diagramElement, int duration);
 
     /**
      * Zooms to the given zoom level over the specified duration.
@@ -121,7 +121,7 @@ public interface IViewer<T> {
      * @param duration
      *            the duration
      */
-    void zoom(final float zoomLevel, final int duration);
+    void zoom(float zoomLevel, int duration);
 
     /**
      * Peforms a zoom-to-fit over the specified duration.
@@ -129,7 +129,7 @@ public interface IViewer<T> {
      * @param duration
      *            the duration
      */
-    void zoomToFit(final int duration);
+    void zoomToFit(int duration);
 
     /**
      * Adds an event listener to the viewer.
@@ -137,7 +137,7 @@ public interface IViewer<T> {
      * @param listener
      *            the event listener
      */
-    void addEventListener(final IViewerEventListener listener);
+    void addEventListener(IViewerEventListener listener);
 
     /**
      * Removes an event listener from the viewer.
@@ -145,6 +145,6 @@ public interface IViewer<T> {
      * @param listener
      *            the event listener
      */
-    void removeEventListener(final IViewerEventListener listener);
+    void removeEventListener(IViewerEventListener listener);
 
 }

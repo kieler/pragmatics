@@ -35,8 +35,8 @@ public class PiccoloViewerProvider implements IViewerProvider {
     /**
      * {@inheritDoc}
      */
-    public boolean supports(final Object model) {
-        return model instanceof PiccoloDiagramContext;
+    public Class<?> getModelClass() {
+        return PiccoloDiagramContext.class;
     }
 
 }

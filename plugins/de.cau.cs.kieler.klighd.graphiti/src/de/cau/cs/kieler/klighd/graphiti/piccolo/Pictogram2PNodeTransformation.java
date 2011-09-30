@@ -46,10 +46,12 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.mm.pictograms.util.PictogramsSwitch;
 
-import de.cau.cs.kieler.klighd.ViewContext;
+import com.google.common.collect.Maps;
+
+import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.klighd.piccolo.PiccoloDiagramContext;
-import de.cau.cs.kieler.klighd.piccolo.nodes.PChildRepresentedNode;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PChildClip;
+import de.cau.cs.kieler.klighd.piccolo.nodes.PChildRepresentedNode;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAlignedText;
 import de.cau.cs.kieler.klighd.transformations.AbstractModelTransformation;
@@ -65,17 +67,22 @@ import edu.umd.cs.piccolox.swt.PSWTText;
 public class Pictogram2PNodeTransformation extends
         AbstractModelTransformation<Diagram, PiccoloDiagramContext> {
 
+    /** the property for the element mapping. */
+    private static final IProperty<Map<PictogramElement, PNode>> MAPPING_PROPERTY =
+            new de.cau.cs.kieler.core.properties.Property<Map<PictogramElement, PNode>>(
+                    "klighd.graphiti.mapping", new HashMap<PictogramElement, PNode>());
+
     /** the Pictogram color for white. */
     private static final Color WHITE = StylesFactory.eINSTANCE.createColor();
     /** the Pictogram color for black. */
     private static final Color BLACK = StylesFactory.eINSTANCE.createColor();
 
     /** a mapping between Pictogram anchors and Piccolo anchor nodes. */
-    private Map<Anchor, AnchorNode> anchorMap = new HashMap<Anchor, AnchorNode>();
+    private Map<Anchor, AnchorNode> anchorMap;
     /** a mapping between Pictogram graphics algorithms and Piccolo nodes. */
-    private Map<GraphicsAlgorithm, PNode> gaMap = new HashMap<GraphicsAlgorithm, PNode>();
+    private Map<GraphicsAlgorithm, PNode> gaMap;
     /** a mapping between Pictogram elements and Piccolo nodes. */
-    private Map<PictogramElement, PNode> elementMap = new HashMap<PictogramElement, PNode>();
+    private Map<PictogramElement, PNode> elementMap;
 
     // CHECKSTYLEOFF MagicNumber
     static {
@@ -92,10 +99,12 @@ public class Pictogram2PNodeTransformation extends
     /**
      * {@inheritDoc}
      */
-    public PiccoloDiagramContext transform(final Diagram diagram, final Object... params) {
-        anchorMap.clear();
-        gaMap.clear();
-        // create the diagram context with a model resolver
+    public PiccoloDiagramContext transform(final Diagram diagram) {
+        // create mappings
+        anchorMap = Maps.newHashMap();
+        gaMap = Maps.newHashMap();
+        elementMap = Maps.newHashMap();
+        // create the diagram context
         PiccoloDiagramContext diagramContext = new PiccoloDiagramContext();
         // use two layers, one for nodes and one for edges
         DiagramNode root = new DiagramNode(diagram);
@@ -122,6 +131,13 @@ public class Pictogram2PNodeTransformation extends
         for (Connection connection : diagram.getConnections()) {
             transformConnection(edges, connection, BLACK, WHITE);
         }
+        // remember the mapping
+        getTransformationContext().setProperty(MAPPING_PROPERTY, elementMap);
+        // reset mappings
+        anchorMap = null;
+        gaMap = null;
+        elementMap = null;
+        
         return diagramContext;
     }
 
@@ -616,26 +632,8 @@ public class Pictogram2PNodeTransformation extends
      * {@inheritDoc}
      */
     public Object getTargetElement(final Object object) {
+        getTransformationContext().getAllProperties();
         return elementMap.get(object);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean supports(final Object model) {
-        return model instanceof Diagram;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setViewContext(final ViewContext viewContext) {
-        //TODO do implement, temporarily dummy
-    }
-
-    public void setFileId(String fileId) {
-        //TODO implement, temporarily dummy
     }
 
 }

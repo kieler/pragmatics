@@ -16,12 +16,10 @@ package de.cau.cs.kieler.klighd;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -32,6 +30,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 
+import de.cau.cs.kieler.klighd.transformations.IdentityTransformation;
 import de.cau.cs.kieler.klighd.transformations.XtendBasedTransformation;
 
 /**
@@ -44,7 +43,8 @@ public final class LightDiagramServices {
     /** identifier of the extension point for viewer providers. */
     public static final String EXTP_ID_VIEWER_PROVIDERS = "de.cau.cs.kieler.klighd.viewerProviders";
     /** identifier of the extension point for model transformations. */
-    public static final String EXTP_ID_MODEL_TRANSFORMATIONS = "de.cau.cs.kieler.klighd.modelTransformations";
+    public static final String EXTP_ID_MODEL_TRANSFORMATIONS =
+            "de.cau.cs.kieler.klighd.modelTransformations";
     /** name of the 'viewer' element. */
     public static final String ELEMENT_VIEWER = "viewer";
 
@@ -69,16 +69,13 @@ public final class LightDiagramServices {
     public static final String ATTRIBUTE_CO_CONTRIBUTING_BUNDLE = "contributingBundle";
 
     /** the singleton instance. */
-    private static LightDiagramServices instance = new LightDiagramServices();
+    private static LightDiagramServices instance;
     /** a mapping between viewer provider id's and the instances. */
-    private Map<String, IViewerProvider> idViewerProviderMapping = new LinkedHashMap<String, IViewerProvider>();
+    private Map<String, IViewerProvider> idViewerProviderMapping =
+            new LinkedHashMap<String, IViewerProvider>();
     /** a mapping between transformation id's and the instances. */
-    private Map<String, IModelTransformation<Object, ?>> idModelTransformationMapping = new LinkedHashMap<String, IModelTransformation<Object, ?>>();
-    /**
-     * a collection of classes of models that are definitely not supported by the available
-     * viewers/transformations, maintained in order to improve the performance.
-     */
-    private Set<Class<?>> knownNotSupportedModels = new HashSet<Class<?>>();
+    private Map<String, IModelTransformation<Object, ?>> idModelTransformationMapping =
+            new LinkedHashMap<String, IModelTransformation<Object, ?>>();
 
     /**
      * A private constructor to prevent instantiation.
@@ -88,9 +85,10 @@ public final class LightDiagramServices {
     }
 
     /**
-     * Initializes it with the data from the extension point.
+     * Creates the singleton and initializes it with the data from the extension point.
      */
     static {
+        instance = new LightDiagramServices();
         // load the data from the extension points
         instance.loadViewerProviderExtension();
         instance.loadModelTransformationsExtension();
@@ -119,10 +117,11 @@ public final class LightDiagramServices {
      */
     private static void reportError(final String extensionPoint,
             final IConfigurationElement element, final String attribute, final Exception exception) {
-        String message = "Extension point " + extensionPoint + ": Invalid entry in attribute '"
-                + attribute + "' of element " + element.getName() + ", contributed by "
-                + element.getContributor().getName();
-        IStatus status = new Status(IStatus.WARNING, KLighDPlugin.PLUGIN_ID, 0, message, exception);
+        String message =
+                "Extension point " + extensionPoint + ": Invalid entry in attribute '" + attribute
+                        + "' of element " + element.getName() + ", contributed by "
+                        + element.getContributor().getName();
+        IStatus status = new Status(IStatus.WARNING, KlighdPlugin.PLUGIN_ID, 0, message, exception);
         StatusManager.getManager().handle(status);
     }
 
@@ -130,14 +129,15 @@ public final class LightDiagramServices {
      * Loads and registers all viewer provider from the extension point.
      */
     private void loadViewerProviderExtension() {
-        IConfigurationElement[] extensions = Platform.getExtensionRegistry()
-                .getConfigurationElementsFor(EXTP_ID_VIEWER_PROVIDERS);
+        IConfigurationElement[] extensions =
+                Platform.getExtensionRegistry().getConfigurationElementsFor(
+                        EXTP_ID_VIEWER_PROVIDERS);
         for (IConfigurationElement element : extensions) {
             try {
                 if (ELEMENT_VIEWER.equals(element.getName())) {
                     // initialize viewer provider from the extension point
-                    IViewerProvider viewerProvider = (IViewerProvider) element
-                            .createExecutableExtension(ATTRIBUTE_CLASS);
+                    IViewerProvider viewerProvider =
+                            (IViewerProvider) element.createExecutableExtension(ATTRIBUTE_CLASS);
                     if (viewerProvider != null) {
                         String id = element.getAttribute(ATTRIBUTE_ID);
                         if (id == null || id.length() == 0) {
@@ -148,7 +148,7 @@ public final class LightDiagramServices {
                     }
                 }
             } catch (CoreException exception) {
-                StatusManager.getManager().handle(exception, KLighDPlugin.PLUGIN_ID);
+                StatusManager.getManager().handle(exception, KlighdPlugin.PLUGIN_ID);
             }
         }
     }
@@ -159,15 +159,17 @@ public final class LightDiagramServices {
      * Loads and registers all model transformations from the extension point.
      */
     private void loadModelTransformationsExtension() {
-        IConfigurationElement[] extensions = Platform.getExtensionRegistry()
-                .getConfigurationElementsFor(EXTP_ID_MODEL_TRANSFORMATIONS);
+        IConfigurationElement[] extensions =
+                Platform.getExtensionRegistry().getConfigurationElementsFor(
+                        EXTP_ID_MODEL_TRANSFORMATIONS);
         for (IConfigurationElement element : extensions) {
             try {
                 if (ELEMENT_TRANSFORMATION.equals(element.getName())) {
                     // initialize model transformation from the extension point
                     @SuppressWarnings("unchecked")
-                    IModelTransformation<Object, ?> modelTransformation = (IModelTransformation<Object, ?>) element
-                            .createExecutableExtension(ATTRIBUTE_CLASS);
+                    IModelTransformation<Object, ?> modelTransformation =
+                            (IModelTransformation<Object, ?>) element
+                                    .createExecutableExtension(ATTRIBUTE_CLASS);
                     if (modelTransformation != null) {
                         String id = element.getAttribute(ATTRIBUTE_ID);
                         if (id == null || id.length() == 0) {
@@ -183,10 +185,10 @@ public final class LightDiagramServices {
                     String id = element.getAttribute(ATTRIBUTE_ID);
                     String extFile = element.getAttribute(ATTRIBUTE_EXTENSION_FILE);
                     String extension = element.getAttribute(ATTRIBUTE_EXTENSION);
-                    Bundle contributingBundle = Platform.getBundle(element.getContributor()
-                            .getName());
-                    String coContributingBundlesName = element
-                            .getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE);
+                    Bundle contributingBundle =
+                            Platform.getBundle(element.getContributor().getName());
+                    String coContributingBundlesName =
+                            element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE);
 
                     // "normalize" the Xtend file path
                     extFile = extFile.replaceAll("::", "/");
@@ -215,8 +217,8 @@ public final class LightDiagramServices {
                         // prototyping state
                         if (extFileURL == null && coContributingBundlesName != null
                                 && !coContributingBundlesName.equals("")) {
-                            Bundle coContributingBundle = Platform
-                                    .getBundle(coContributingBundlesName);
+                            Bundle coContributingBundle =
+                                    Platform.getBundle(coContributingBundlesName);
                             extFileURL = coContributingBundle.getEntry(extFile);
 
                             if (extFileURL == null) {
@@ -224,8 +226,8 @@ public final class LightDiagramServices {
                             }
 
                             if (extFileURL == null) {
-                                extFileURL = coContributingBundle.getEntry("transformations/"
-                                        + extFile);
+                                extFileURL =
+                                        coContributingBundle.getEntry("transformations/" + extFile);
                             }
                         }
                     }
@@ -246,13 +248,13 @@ public final class LightDiagramServices {
                             try {
 
                                 Class<?> ePackage = contributingBundle.loadClass(ePackageId);
-                                ePackageInstance = (EPackage) ePackage.getField("eINSTANCE").get(
-                                        null);
+                                ePackageInstance =
+                                        (EPackage) ePackage.getField("eINSTANCE").get(null);
                                 this.ePackages.put(ePackageId, ePackageInstance);
                             } catch (Exception e) {
                                 String msg = "EPackage " + ePackageId + " could not be loaded";
                                 StatusManager.getManager().addLoggedStatus(
-                                        new Status(IStatus.ERROR, KLighDPlugin.PLUGIN_ID, msg, e));
+                                        new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg, e));
                                 continue;
                             }
                         }
@@ -263,16 +265,22 @@ public final class LightDiagramServices {
 
                     }
 
-                    IModelTransformation<Object, ?> modelTransformation = new XtendBasedTransformation(
-                            extFileURL, extension, metamodels);
+                    // hack (abuse of runtime type erasure)
+                    IModelTransformation<?, ?> modelTransformationTmp =
+                            new XtendBasedTransformation(extFileURL, extension, metamodels);
+                    @SuppressWarnings("unchecked")
+                    IModelTransformation<Object, ?> modelTransformation =
+                            (IModelTransformation<Object, ?>) modelTransformationTmp;
                     idModelTransformationMapping.put(id, modelTransformation);
 
                 }
             } catch (CoreException exception) {
-                StatusManager.getManager().handle(exception, KLighDPlugin.PLUGIN_ID);
+                StatusManager.getManager().handle(exception, KlighdPlugin.PLUGIN_ID);
             }
         }
     }
+
+    // TODO implement this using the new infrastructure (also this is really hacky)
 
     /**
      * Returns a viewer provider which is supporting the given model.
@@ -283,7 +291,7 @@ public final class LightDiagramServices {
      */
     public IViewerProvider getViewerProviderForModel(final Object model) {
         for (IViewerProvider viewerProvider : idViewerProviderMapping.values()) {
-            if (viewerProvider.supports(model)) {
+            if (viewerProvider.getModelClass().isInstance(model)) {
                 return viewerProvider;
             }
         }
@@ -302,25 +310,25 @@ public final class LightDiagramServices {
      * 
      * @param model
      *            the model
-     * @param params
-     *            special environment parameters for the transformation
      * @return the view context or null if the model and all possible transformations are
      *         unsupported by all viewer providers
      */
-    public ViewContext createValidViewContext(final Object model, final Object... params) {
+    public ViewContext createViewContext(final Object model) {
         currentDepth = 0;
-        ViewContext context = createValidViewContextRec(model,
-                new LinkedList<IModelTransformation<?, ?>>(), params);
-        if (context == null) {
-            synchronized (this.knownNotSupportedModels) {
-                this.knownNotSupportedModels.add(model.getClass());
-            }
-        }
-        return context;
+        List<TransformationContext<?, ?>> transformationContexts =
+                new LinkedList<TransformationContext<?, ?>>();
+        // add the identity transformation
+        TransformationContext<Object, Object> identityContext =
+                TransformationContext.create(new IdentityTransformation());
+        identityContext.setSourceModel(model);
+        identityContext.transform();
+        transformationContexts.add(identityContext);
+        // create the view context recursively
+        return createViewContextRec(model, transformationContexts);
     }
 
-    private ViewContext createValidViewContextRec(final Object model,
-            final List<IModelTransformation<?, ?>> transformations, final Object... params) {
+    private ViewContext createViewContextRec(final Object model,
+            final List<TransformationContext<?, ?>> transformationContexts) {
         // enforce maximum recursion depth to prevent infinite recursion
         if (currentDepth++ > MAX_DEPTH) {
             return null;
@@ -328,40 +336,27 @@ public final class LightDiagramServices {
         IViewerProvider viewerProvider = getViewerProviderForModel(model);
         // if the model is supported by a viewer provider create a new view context and return it
         if (viewerProvider != null) {
-            return new ViewContext(viewerProvider, model, transformations);
+            return new ViewContext(viewerProvider, transformationContexts);
         }
         // transform the model and proceed recursively
         for (IModelTransformation<Object, ?> transformation : idModelTransformationMapping.values()) {
-            if (transformation.supports(model)) {
-                if (params[0] instanceof String) {
-                    transformation.setFileId((String) params[0]);
-                }
-                Object newModel = transformation.transform(model, params);
-                transformations.add(transformation);
-                ViewContext viewContext = createValidViewContextRec(newModel, transformations,
-                        params);
+            if (transformation.getSourceClass().isInstance(model)) {
+                // create the transformation context
+                TransformationContext<Object, ?> transformationContext =
+                        TransformationContext.create(transformation);
+                transformationContext.setSourceModel(model);
+                transformationContext.transform();
+                transformationContexts.add(transformationContext);
+                ViewContext viewContext =
+                        createViewContextRec(transformationContext.getTargetModel(),
+                                transformationContexts);
                 if (viewContext != null) {
                     return viewContext;
                 }
-                transformations.remove(transformations.size() - 1);
+                transformationContexts.remove(transformationContexts.size() - 1);
             }
         }
         return null;
-    }
-
-    /**
-     * Provides a cheap test whether a model may be visualized with the available
-     * viewers/transformations.
-     * 
-     * @param model
-     *            The model to be tested.
-     * @return <code>false</code> if the model type is determined to be not supported by the
-     *         available viewers/transformations, true otherwise.
-     */
-    public boolean maybeSupports(final Object model) {
-        synchronized (this.knownNotSupportedModels) {
-            return !this.knownNotSupportedModels.contains(model.getClass());
-        }
     }
 
 }

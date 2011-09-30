@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighd;
+package de.cau.cs.kieler.klighd.piccolo;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -22,18 +22,18 @@ import org.osgi.framework.BundleContext;
  * 
  * @author mri
  */
-public class KLighDPlugin extends AbstractUIPlugin {
+public class KlighdPiccoloPlugin extends AbstractUIPlugin {
 
     /** the plug-in ID. */
-    public static final String PLUGIN_ID = "de.cau.cs.kieler.klighd";
+    public static final String PLUGIN_ID = "de.cau.cs.kieler.klighd.piccolo";
 
     /** the shared instance. */
-    private static KLighDPlugin plugin;
+    private static KlighdPiccoloPlugin plugin;
 
     /**
      * The constructor.
      */
-    public KLighDPlugin() {
+    public KlighdPiccoloPlugin() {
     }
 
     /**
@@ -59,7 +59,7 @@ public class KLighDPlugin extends AbstractUIPlugin {
      * 
      * @return the shared instance
      */
-    public static KLighDPlugin getDefault() {
+    public static KlighdPiccoloPlugin getDefault() {
         return plugin;
     }
 

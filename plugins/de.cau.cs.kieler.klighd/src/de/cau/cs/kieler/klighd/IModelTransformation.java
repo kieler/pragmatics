@@ -27,15 +27,15 @@ public interface IModelTransformation<S, T> {
 
     /**
      * Performs the actual transformation from an object of type {@code S} to a model of type
-     * {@code T}.
+     * {@code T} in a given transformation context.
      * 
      * @param model
      *            the source model
-     * @param params
-     *            special parameter for the transformation
+     * @param transformationContext
+     *            the transformation context
      * @return the target model
      */
-    T transform(final S model, Object... params);
+    T transform(S model, TransformationContext<S, T> transformationContext);
 
     /**
      * Returns the element in the source model which is represented by the given element in the
@@ -43,41 +43,36 @@ public interface IModelTransformation<S, T> {
      * 
      * @param object
      *            the element in the target model
+     * @param transformationContext
+     *            the transformation context
      * @return the element in the source model or null if the element could not be found
      */
-    Object getSourceElement(final Object object);
+    Object getSourceElement(Object object, TransformationContext<S, T> transformationContext);
 
     /**
      * Returns the element in the target model which represents the given element in the source
      * model.
      * 
-     * @param object
+     * @param element
      *            the element in the source model
+     * @param transformationContext
+     *            the transformation context
      * @return the element in the target model or null if the element could not be found
      */
-    Object getTargetElement(final Object object);
+    Object getTargetElement(Object element, TransformationContext<S, T> transformationContext);
 
     /**
-     * Returns whether the given model is a valid source for the transformation.
+     * Returns the class of the source model.
      * 
-     * @param model
-     *            the model
-     * @return true if this transformation supports the given model as a source; false else
+     * @return the class of the source model
      */
-    boolean supports(final Object model);
+    Class<?> getSourceClass();
 
     /**
-     * Can be used to set the dependency between transformation and viewContext.
+     * Returns the class of the target model.
      * 
-     * @param viewContext
-     *            the view context
+     * @return the class of the target model
      */
-    void setViewContext(final ViewContext viewContext);
-
-    /**
-     * the file id helps to identify a source-, graphical model mapping for a special file. 
-     * @param fileId
-     */
-    void setFileId(String fileId);
+    Class<?> getTargetClass();
 
 }

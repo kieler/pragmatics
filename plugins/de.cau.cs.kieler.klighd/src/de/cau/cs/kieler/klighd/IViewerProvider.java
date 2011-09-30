@@ -16,29 +16,26 @@ package de.cau.cs.kieler.klighd;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * Classes implementing this interface provide a viewer for one or more types of models.
+ * Classes implementing this interface provide a viewer for a model class.
  * 
  * @author mri
  */
 public interface IViewerProvider {
 
     /**
-     * Returns a viewer for the model types supported by this provider attached to the given
-     * composite.
+     * Returns a viewer for models of the provided model class attached to the given composite.
      * 
      * @param parent
      *            the parent composite
      * @return a viewer for the supported model types
      */
-    IViewer<?> createViewer(final Composite parent);
+    IViewer<?> createViewer(Composite parent);
 
     /**
-     * Returns whether the given model is supported by this provider.
+     * Returns the class of the models supported by the viewer provided by this viewer provider.
      * 
-     * @param model
-     *            the model
-     * @return true if the given model is supported by this provider; false else
+     * @return the class of the supported models
      */
-    boolean supports(final Object model);
+    Class<?> getModelClass();
 
 }

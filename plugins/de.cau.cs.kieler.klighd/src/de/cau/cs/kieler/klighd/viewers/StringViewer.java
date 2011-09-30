@@ -20,9 +20,9 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import de.cau.cs.kieler.klighd.KlighdColor;
-import de.cau.cs.kieler.klighd.IViewerEventListener;
 import de.cau.cs.kieler.klighd.IViewer;
+import de.cau.cs.kieler.klighd.IViewerEventListener;
+import de.cau.cs.kieler.klighd.KlighdColor;
 
 /**
  * A viewer for string messages.

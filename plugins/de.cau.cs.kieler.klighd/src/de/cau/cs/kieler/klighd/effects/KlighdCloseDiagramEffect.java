@@ -15,7 +15,7 @@ package de.cau.cs.kieler.klighd.effects;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
-import de.cau.cs.kieler.klighd.views.DiagramViewUtil;
+import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 
 /**
  * A view management effect for closing KLighD views.
@@ -43,7 +43,7 @@ public class KlighdCloseDiagramEffect extends AbstractEffect {
     public void execute() {
         MonitoredOperation.runInUI(new Runnable() {
             public void run() {
-                DiagramViewUtil.closeView(viewId);
+                DiagramViewManager.getInstance().closeView(viewId);
             }
         }, true);
     }

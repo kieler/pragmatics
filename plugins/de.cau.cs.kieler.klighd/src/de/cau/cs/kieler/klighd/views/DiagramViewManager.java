@@ -15,33 +15,47 @@ package de.cau.cs.kieler.klighd.views;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.klighd.KLighDPlugin;
+import de.cau.cs.kieler.klighd.KlighdPlugin;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.ViewContext;
 
 /**
- * A utility class for creating and updating diagram views. All methods in this utility class have
- * to be called in the UI thread.
+ * A singleton manager for creating, updating and closing diagram views. All methods in this class
+ * have to be called in the UI thread.
  * 
  * @author mri
  */
-public final class DiagramViewUtil {
+public final class DiagramViewManager implements IPartListener {
 
     /** the primary identifier for the diagram view as specified in the view extension. */
     private static final String PRIMARY_VIEW_ID = "de.cau.cs.kieler.klighd.lightDiagramView";
 
+    /** the singleton instance. */
+    private static DiagramViewManager instance = new DiagramViewManager();
+
+    /**
+     * Returns the singleton instance.
+     * 
+     * @return the singleton instance
+     */
+    public static DiagramViewManager getInstance() {
+        return instance;
+    }
+
     /**
      * A private constructor to prevent instantiation.
      */
-    private DiagramViewUtil() {
+    private DiagramViewManager() {
         // do nothing
     }
 
@@ -52,7 +66,7 @@ public final class DiagramViewUtil {
      *            the diagram view identifier (can be null for the default view)
      * @return the diagram view or null if no view with the given identifier exists
      */
-    public static DiagramViewPart getView(final String id) {
+    public DiagramViewPart getView(final String id) {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         IViewReference viewRef = window.getActivePage().findViewReference(PRIMARY_VIEW_ID, id);
         if (viewRef != null) {
@@ -75,7 +89,7 @@ public final class DiagramViewUtil {
      *            the model (can be null if the displayed model should remain unchanged)
      * @return whether a view with the given identifier has been updated
      */
-    public static boolean updateView(final String id, final String name, final Object model) {
+    public boolean updateView(final String id, final String name, final Object model) {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         IWorkbenchPage page = window.getActivePage();
         IViewReference viewRef = page.findViewReference(PRIMARY_VIEW_ID, id);
@@ -88,7 +102,7 @@ public final class DiagramViewUtil {
                 }
                 if (model != null) {
                     ViewContext viewContext =
-                            LightDiagramServices.getInstance().createValidViewContext(model, id);
+                            LightDiagramServices.getInstance().createViewContext(model);
                     diagramView.getViewer().setModel(viewContext);
                 }
                 // chsch:
@@ -111,7 +125,7 @@ public final class DiagramViewUtil {
      * @return the created view or null if a view with the given identifier exists already or if
      *         creating the view failed
      */
-    public static DiagramViewPart createView(final String id, final String name, final Object model) {
+    public DiagramViewPart createView(final String id, final String name, final Object model) {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         IWorkbenchPage page = window.getActivePage();
         IViewReference viewRef = page.findViewReference(PRIMARY_VIEW_ID, id);
@@ -127,11 +141,10 @@ public final class DiagramViewUtil {
                     }
                     if (model != null) {
                         ViewContext viewContext =
-                                LightDiagramServices.getInstance().createValidViewContext(model, id);
+                                LightDiagramServices.getInstance().createViewContext(model);
                         if (viewContext != null) {
-                            viewContext.setFileId(id);
                             diagramView.getViewer().setModel(viewContext);
-                            
+
                         } else {
                             // if the newly created view could not be initialized with a diagram,
                             // hide it and return nothing.
@@ -144,11 +157,11 @@ public final class DiagramViewUtil {
                 }
             } catch (PartInitException e) {
                 StatusManager.getManager().handle(
-                        new Status(IStatus.ERROR, KLighDPlugin.PLUGIN_ID, e.getMessage(), e));
+                        new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, e.getMessage(), e));
             } catch (IllegalArgumentException e) {
                 StatusManager
                         .getManager()
-                        .handle(new Status(IStatus.ERROR, KLighDPlugin.PLUGIN_ID,
+                        .handle(new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID,
                                 "Invalid KLighD view id: must not be empty or contain any colons."));
                 return null;
             }
@@ -166,7 +179,7 @@ public final class DiagramViewUtil {
      * 
      * @author chsch
      */
-    public static boolean closeView(final String id) {
+    public boolean closeView(final String id) {
         if (id.equals("")) {
             return false;
         }
@@ -178,6 +191,51 @@ public final class DiagramViewUtil {
             return true;
         }
         return false;
+    }
+
+    private void registerPartListener() {
+        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        window.getActivePage().addPartListener(this);
+    }
+    
+    private void unregisterPartListener() {
+        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        window.getActivePage().removePartListener(this);        
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void partClosed(final IWorkbenchPart part) {
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void partOpened(final IWorkbenchPart part) {
+        // do nothing
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void partActivated(final IWorkbenchPart part) {
+        // do nothing
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void partDeactivated(final IWorkbenchPart part) {
+        // do nothing
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void partBroughtToTop(final IWorkbenchPart part) {
+        // do nothing
     }
 
 }

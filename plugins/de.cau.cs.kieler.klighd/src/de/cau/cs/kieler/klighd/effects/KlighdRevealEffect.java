@@ -15,7 +15,7 @@ package de.cau.cs.kieler.klighd.effects;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.klighd.views.DiagramViewPart;
-import de.cau.cs.kieler.klighd.views.DiagramViewUtil;
+import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 
 /**
  * A view management effect for revealing a diagram element in a view.
@@ -57,7 +57,7 @@ public class KlighdRevealEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        DiagramViewPart view = DiagramViewUtil.getView(viewId);
+        DiagramViewPart view = DiagramViewManager.getInstance().getView(viewId);
         if (view != null) {
             // get the diagram element
             Object theElement;

@@ -18,14 +18,18 @@ import java.awt.event.InputEvent;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 
 import de.cau.cs.kieler.klighd.KlighdColor;
 import de.cau.cs.kieler.klighd.events.SelectionEvent;
 import de.cau.cs.kieler.klighd.piccolo.activities.ZoomActivity;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PEmptyNode;
+import de.cau.cs.kieler.klighd.piccolo.ui.SaveAsImageAction;
 import de.cau.cs.kieler.klighd.viewers.AbstractViewer;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
@@ -79,6 +83,25 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
         // exchange the zoom event handler
         canvas.removeInputEventListener(canvas.getZoomEventHandler());
         canvas.addInputEventListener(new PMouseWheelZoomEventHandler());
+        // add a context menu
+        addContextMenu(canvas);
+    }
+
+    /**
+     * Creates the context menu and adds the actions.
+     * 
+     * @param composite
+     *            the composite to add the context menu to
+     */
+    private void addContextMenu(final Composite composite) {
+        MenuManager menuManager = new MenuManager();
+        // add the 'save-as-image' action
+        Action saveAsImageAction =
+                new SaveAsImageAction(this, Messages.PiccoloViewer_save_as_image_text);
+        menuManager.add(saveAsImageAction);
+        // create the context menu
+        Menu menu = menuManager.createContextMenu(composite);
+        composite.setMenu(menu);
     }
 
     /**
@@ -305,6 +328,15 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
      */
     public PiccoloDiagramContext getDiagramContext() {
         return diagramContext;
+    }
+
+    /**
+     * Returns the canvas used to render the scene graph.
+     * 
+     * @return the canvas
+     */
+    public PSWTCanvas getCanvas() {
+        return canvas;
     }
 
     /**
