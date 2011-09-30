@@ -285,4 +285,11 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public boolean supports(final Object model) {
+        return true;
+    }
+
 }

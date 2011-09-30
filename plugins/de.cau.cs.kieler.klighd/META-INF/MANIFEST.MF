@@ -27,6 +27,7 @@ Export-Package: de.cau.cs.kieler.klighd,
  de.cau.cs.kieler.klighd.events,
  de.cau.cs.kieler.klighd.transformations,
  de.cau.cs.kieler.klighd.triggers,
+ de.cau.cs.kieler.klighd.util,
  de.cau.cs.kieler.klighd.viewers,
  de.cau.cs.kieler.klighd.views
 Import-Package: org.eclipse.ui.part

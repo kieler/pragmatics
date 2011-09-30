@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighd;
+package de.cau.cs.kieler.klighd.util;
 
 /**
  * A data holding class to store color information.
@@ -19,7 +19,7 @@ package de.cau.cs.kieler.klighd;
  * @author mri
  */
 public class KlighdColor {
-
+    
     /** the red component. */
     private int r = 0;
     /** the green component. */

@@ -15,6 +15,8 @@ package de.cau.cs.kieler.klighd;
 
 import org.eclipse.swt.widgets.Control;
 
+import de.cau.cs.kieler.klighd.util.KlighdColor;
+
 /**
  * The interface for viewers on unrestricted models.
  * 

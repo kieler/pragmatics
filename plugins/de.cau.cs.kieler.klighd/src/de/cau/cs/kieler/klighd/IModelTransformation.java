@@ -74,5 +74,14 @@ public interface IModelTransformation<S, T> {
      * @return the class of the target model
      */
     Class<?> getTargetClass();
+    
+    /**
+     * Returns whether the given model is a valid source for the transformation.
+     * 
+     * @param model
+     *            the model, an instance of the class returned by {@code getSourceClass}
+     * @return true if this transformation supports the given model as a source; false else
+     */
+    boolean supports(final Object model);
 
 }

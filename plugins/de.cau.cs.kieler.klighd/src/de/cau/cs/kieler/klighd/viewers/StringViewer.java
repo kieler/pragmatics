@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Control;
 
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.IViewerEventListener;
-import de.cau.cs.kieler.klighd.KlighdColor;
+import de.cau.cs.kieler.klighd.util.KlighdColor;
 
 /**
  * A viewer for string messages.

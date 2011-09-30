@@ -19,7 +19,7 @@ import java.util.Set;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.IViewerEvent;
 import de.cau.cs.kieler.klighd.IViewerEventListener;
-import de.cau.cs.kieler.klighd.KlighdColor;
+import de.cau.cs.kieler.klighd.util.KlighdColor;
 
 /**
  * An abstract base class for viewers which provides an implementation for the handling of listeners

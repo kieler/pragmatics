@@ -61,4 +61,11 @@ public class IdentityTransformation implements IModelTransformation<Object, Obje
         return Object.class;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public boolean supports(final Object model) {
+        return true;
+    }
+
 }

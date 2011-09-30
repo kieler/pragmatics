@@ -138,6 +138,13 @@ public abstract class AbstractModelTransformation<S, T> implements IModelTransfo
         }
         return targetModelClass;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean supports(final Object model) {
+        return true;
+    }
 
     /**
      * Tries to infer the class of the source and target model by analyzing the transform method.
