@@ -28,8 +28,8 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
-import de.cau.cs.kieler.kiml.graphviz.dot.transformations.Command;
-import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation;
+import de.cau.cs.kieler.kiml.graphviz.dot.transform.Command;
+import de.cau.cs.kieler.kiml.graphviz.dot.transform.KGraphDotTransformation;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.core.WrappedException;
@@ -54,13 +54,16 @@ import de.cau.cs.kieler.core.util.Pair;
  */
 public class GraphvizLayouter {
 
-    /** base file name for debug output. */
-    private String debugFileName;
+    /** the serial call number for usage in debug mode. */
+    private static int serialCallNo = 0;
 
     /** amount of work for small tasks. */
     private static final int SMALL_TASK = 5;
     /** amount of work for large tasks. */
     private static final int LARGE_TASK = 10;
+    
+    /** the call number for the current execution. */
+    private int myCallNo;
 
     /**
      * Performs the actual work of the layout process. Translates the KNode into a structure
@@ -81,9 +84,7 @@ public class GraphvizLayouter {
         progressMonitor.begin("Graphviz layout (" + command + ")", SMALL_TASK + LARGE_TASK + LARGE_TASK
                 + LARGE_TASK + SMALL_TASK);
         boolean debugMode = parentNode.getData(KShapeLayout.class).getProperty(LayoutOptions.DEBUG_MODE);
-        if (debugMode) {
-            debugFileName = Integer.toString(parentNode.hashCode());
-        }
+        myCallNo = ++serialCallNo;
         // return if there is nothing in this node
         if (parentNode.getChildren().isEmpty()) {
             progressMonitor.done();
@@ -150,8 +151,8 @@ public class GraphvizLayouter {
                     path += File.separator + "tmp" + File.separator + "graphviz";
                 }
                 new File(path).mkdirs();
-                debugStream = new FileOutputStream(new File(path + File.separator + debugFileName
-                        + "-in.dot"));
+                debugStream = new FileOutputStream(new File(path + File.separator
+                        + debugFileBase() + "-in.dot"));
                 outputStream = new ForkedOutputStream(processStream, debugStream);
             } catch (Exception exception) {
                 System.out.println("GraphvizLayouter: Could not initialize debug output: "
@@ -212,8 +213,8 @@ public class GraphvizLayouter {
                     path += File.separator + "tmp" + File.separator + "graphviz";
                 }
                 new File(path).mkdirs();
-                debugStream = new FileOutputStream(new File(path + File.separator + debugFileName
-                        + "-out.dot"));
+                debugStream = new FileOutputStream(new File(path + File.separator
+                        + debugFileBase() + "-out.dot"));
                 inputStream = new ForwardingInputStream(inputStream, debugStream);
             } catch (Exception exception) {
                 System.out.println("GraphvizLayouter: Could not initialize debug output: "
@@ -308,7 +309,11 @@ public class GraphvizLayouter {
             @Override
             public int read() throws IOException {
                 int c = internalRead();
-                if (c >= 0) {
+                if (c < 0) {
+                    if (inputStream.available() > 0) {
+                        return inputStream.read();
+                    }
+                } else {
                     internalAdvance();
                     if (c == '\\') {
                         int c2 = internalRead();
@@ -334,13 +339,30 @@ public class GraphvizLayouter {
              * {@inheritDoc}
              */
             @Override
-            public int available() {
+            public int available() throws IOException {
                 if (buffer.isEmpty()) {
-                    return 0;
+                    return inputStream.available();
                 }
                 return buffer.getFirst().getSecond() - p;
             }
         };
+    }
+    
+    /**
+     * Return the base name for debug files.
+     * 
+     * @return the base name for debug files
+     */
+    private String debugFileBase() {
+        String no = Integer.toString(myCallNo);
+        switch (no.length()) {
+        case 1:
+            return "debug00" + no;
+        case 2:
+            return "debug0" + no;
+        default:
+            return "debug" + no;
+        }
     }
     
 }

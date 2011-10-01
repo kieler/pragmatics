@@ -29,7 +29,9 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.kiml.export.AbstractExporter;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
-import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation;
+import de.cau.cs.kieler.kiml.graphviz.dot.transform.Attributes;
+import de.cau.cs.kieler.kiml.graphviz.dot.transform.Command;
+import de.cau.cs.kieler.kiml.graphviz.dot.transform.KGraphDotTransformation;
 
 /**
  * A graph exporter for the Dot format.
@@ -74,8 +76,7 @@ public class DotExporter extends AbstractExporter {
         try {
             // transform the graph
             KGraphDotTransformation transformation = new KGraphDotTransformation(graph);
-            GraphvizModel dotGraph = transformation.transform(KGraphDotTransformation.Command.DOT,
-                    monitor.subTask(1));
+            GraphvizModel dotGraph = transformation.transform(Command.DOT, monitor.subTask(1));
             // write to file
             XtextResourceSet resourceSet = transformation.createResourceSet();
             XtextResource resource = (XtextResource) resourceSet.createResource(URI

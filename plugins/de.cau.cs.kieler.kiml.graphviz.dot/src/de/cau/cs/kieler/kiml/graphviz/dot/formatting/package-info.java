@@ -11,17 +11,8 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.graphviz.dot;
 
 /**
- * Initialization support for running Xtext languages without equinox extension registry.
- * 
- * @author msp
+ * Formatting support for the Graphviz Dot language.
  */
-public class GraphvizDotStandaloneSetup extends GraphvizDotStandaloneSetupGenerated {
-
-	public static void doSetup() {
-		new GraphvizDotStandaloneSetup().createInjectorAndDoEMFRegistration();
-	}
-}
-
+package de.cau.cs.kieler.kiml.graphviz.dot.formatting;

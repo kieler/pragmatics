@@ -79,4 +79,9 @@ public abstract class AbstractGraphvizDotRuntimeModule extends DefaultRuntimeMod
 		return org.eclipse.xtext.parser.antlr.AntlrTokenDefProvider.class;
 	}
 
+	// contributed by org.eclipse.xtext.generator.formatting.FormatterFragment
+	public Class<? extends org.eclipse.xtext.formatting.IFormatter> bindIFormatter() {
+		return de.cau.cs.kieler.kiml.graphviz.dot.formatting.GraphvizDotFormatter.class;
+	}
+
 }

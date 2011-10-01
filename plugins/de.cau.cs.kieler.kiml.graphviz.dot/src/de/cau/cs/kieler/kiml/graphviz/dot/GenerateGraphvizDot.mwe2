@@ -30,9 +30,7 @@ Workflow {
 			fragment = grammarAccess.GrammarAccessFragment {}
 			
 			// generates Java API for the generated EPackages 
-			fragment = ecore.EcoreGeneratorFragment {
-			// referencedGenModels = "uri to genmodel, uri to next genmodel"
-			}
+			fragment = ecore.EcoreGeneratorFragment {}
 			
 			// the serialization component
 			fragment = parseTreeConstructor.ParseTreeConstructorFragment {}
@@ -43,7 +41,10 @@ Workflow {
 			}
 				
 			// the following fragment tries to use the Antlr Generator fragment
-			fragment = parser.antlr.XtextAntlrGeneratorFragment{}
+			fragment = parser.antlr.XtextAntlrGeneratorFragment {}
+			
+			// formatter API 
+			fragment = ecore2xtext.FormatterFragment {}
 
 		}
 	}

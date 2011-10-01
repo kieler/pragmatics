@@ -29,4 +29,4 @@ Export-Package: de.cau.cs.kieler.kiml.graphviz.dot,
  de.cau.cs.kieler.kiml.graphviz.dot.parser.antlr,
  de.cau.cs.kieler.kiml.graphviz.dot.parser.antlr.internal,
  de.cau.cs.kieler.kiml.graphviz.dot.services,
- de.cau.cs.kieler.kiml.graphviz.dot.transformations
+ de.cau.cs.kieler.kiml.graphviz.dot.transform

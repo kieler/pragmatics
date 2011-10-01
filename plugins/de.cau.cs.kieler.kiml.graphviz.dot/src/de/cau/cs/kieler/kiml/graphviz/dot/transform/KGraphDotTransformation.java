@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.graphviz.dot.transformations;
+package de.cau.cs.kieler.kiml.graphviz.dot.transform;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -210,8 +210,8 @@ public class KGraphDotTransformation {
                 // create a dummy node for compound edges
                 nodeID = getNodeID(childNode, NodeType.DUMMY);
                 attributes.add(createAttribute(Attributes.STYLE, "invis"));
-                attributes.add(createAttribute(Attributes.WIDTH, "0"));
-                attributes.add(createAttribute(Attributes.HEIGHT, "0"));
+                attributes.add(createAttribute(Attributes.WIDTH, 0));
+                attributes.add(createAttribute(Attributes.HEIGHT, 0));
                 subgraph.getStatements().add(nodeStatement);
             } else {
                 nodeID = getNodeID(childNode, NodeType.NODE);
@@ -220,10 +220,8 @@ public class KGraphDotTransformation {
                 if (!nodeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
                     KimlUtil.resizeNode(childNode);
                 }
-                String width = Float.toString(nodeLayout.getWidth() / DPI);
-                String height = Float.toString(nodeLayout.getHeight() / DPI);
-                attributes.add(createAttribute(Attributes.WIDTH, width));
-                attributes.add(createAttribute(Attributes.HEIGHT, height));
+                attributes.add(createAttribute(Attributes.WIDTH, nodeLayout.getWidth() / DPI));
+                attributes.add(createAttribute(Attributes.HEIGHT, nodeLayout.getHeight() / DPI));
                 // add node position if interactive layout is chosen
                 if (interactive) {
                     double xpos = (nodeLayout.getXpos() - offset.x) / DPI;
@@ -542,6 +540,9 @@ public class KGraphDotTransformation {
      */
     private static void setEdgeLabels(final KEdge kedge, final List<Attribute> attributes,
             final boolean isVertical) {
+        if (kedge.getLabels().isEmpty()) {
+            return;
+        }
         KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
         // as Graphviz only supports positioning of one label per label placement, all labels
         // are stacked to one big label as workaround
@@ -592,16 +593,14 @@ public class KGraphDotTransformation {
 
         // set mid label: if empty, it is filled with a dummy string to avoid
         // edge overlapping
-        if (midLabel.length() == 0) {
-            midLabel.append(' ');
-        } else {
+        if (midLabel.length() > 0) {
             float labelSpacing = edgeLayout.getProperty(LayoutOptions.LABEL_SPACING);
             int charsToAdd = (labelSpacing < 1 ? 1 : (int) labelSpacing) - 1;
             for (int i = 0; i < charsToAdd; i++) {
                 midLabel.append(isVertical ? "O" : "\nO");
             }
+            attributes.add(createAttribute(Attributes.LABEL, createString(midLabel.toString())));
         }
-        attributes.add(createAttribute(Attributes.LABEL, createString(midLabel.toString())));
         // set head label
         if (headLabel.length() > 0) {
             attributes.add(createAttribute(Attributes.HEADLABEL, createString(headLabel.toString())));
@@ -833,6 +832,9 @@ public class KGraphDotTransformation {
         List<KPoint> edgePoints = edgeLayout.getBendPoints();
         edgePoints.clear();
         String posString = attributeMap.get(Attributes.POS);
+        if (posString == null) {
+            posString = "";
+        }
         
         KNode referenceNode = kedge.getSource();
         if (!KimlUtil.isDescendant(kedge.getTarget(), referenceNode)) {
@@ -887,9 +889,9 @@ public class KGraphDotTransformation {
                     edgePoints.add(controlPoint);
                 }
             }
+            edgeLayout.getSourcePoint().applyVector(sourcePoint);
+            edgeLayout.getTargetPoint().applyVector(targetPoint);
         }
-        edgeLayout.getSourcePoint().applyVector(sourcePoint);
-        edgeLayout.getTargetPoint().applyVector(targetPoint);
         if (useSplines) {
             edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
         }

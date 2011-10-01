@@ -15,5 +15,5 @@
 /**
  * The package which contains the functionality to transform a KGraph instance to a Dot instance.
  */
-package de.cau.cs.kieler.kiml.graphviz.dot.transformations;
+package de.cau.cs.kieler.kiml.graphviz.dot.transform;
 
