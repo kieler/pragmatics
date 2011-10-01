@@ -291,7 +291,7 @@ public final class LayoutOptions {
     public static final IProperty<Integer> RANDOM_SEED = new Property<Integer>(RANDOM_SEED_ID);
     
     /** layout option key: separation of connected components (boolean). */
-    public static final String SEPARATE_CC_ID = "de.cau.cs.kieler.klay.layered.separateConnComp";
+    public static final String SEPARATE_CC_ID = "de.cau.cs.kieler.separateConnComp";
     /**
      * Property for choosing whether connected components are processed separately.
      */

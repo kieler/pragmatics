@@ -13,9 +13,11 @@
  */
 package de.cau.cs.kieler.kiml.graphviz.layouter;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -24,7 +26,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import de.cau.cs.kieler.core.WrappedException;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.Command;
 import de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePage;
 
@@ -35,6 +36,18 @@ import de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePag
  * @author msp
  */
 public class GraphvizTool {
+    
+    /**
+     * Available cleanup modes.
+     */
+    public static enum Cleanup {
+        /** normal cleanup. */
+        NORMAL,
+        /** read error output and stop the Graphviz process. */
+        ERROR,
+        /** stop the Graphviz process and the watcher thread. */
+        STOP;
+    }
 
     /** preference constant for Graphviz executable. */
     public static final String PREF_GRAPHVIZ_EXECUTABLE = "graphviz.executable";
@@ -54,32 +67,45 @@ public class GraphvizTool {
     /** default locations of the dot executable. */
     private static final String[] DEFAULT_LOCS = { "/opt/local/bin/",
             "/usr/local/bin/", "/usr/bin/", "/bin/" };
-    /** starting wait time for polling input from the Graphviz process. */
-    private static final int MIN_INPUT_WAIT = 4;
-    /** maximal wait time for polling input from the Graphviz process. */
-    private static final int MAX_INPUT_WAIT = 500;
-    /** maximal number of characters that is read from the Graphviz error output. */
-    private static final int MAX_ERROR_OUTPUT = 512;
 
     /** the process instance that is used for multiple layout runs. */
     private Process process;
-    /** the command that was used to create the process. */
-    private Command command = Command.INVALID;
+    /** the command that is used to create the process. */
+    private Command command;
+    /** the watcher thread used to cancel a blocked read operation. */
+    private Watchdog watchdog;
+    /** the input stream given by the Graphviz process. */
+    private GraphvizStream graphvizStream;
+    
+    /**
+     * Create a Graphviz tool instance for the given command.
+     * 
+     * @param thecommand a Graphviz command
+     */
+    public GraphvizTool(final Command thecommand) {
+        if (thecommand == Command.INVALID) {
+            throw new IllegalArgumentException("Invalid Graphviz command.");
+        }
+        this.command = thecommand;
+    }
 
     /**
-     * Starts a new Graphviz process with the given command. If a process
-     * instance was already created, that instance is returned.
-     * 
-     * @param thecommand
-     *            the graphviz command to use
-     * @return an instance of the graphviz process
+     * Initialize the Graphviz tool instance by starting the dot process and the
+     * watcher thread as necessary.
      */
-    public Process startProcess(final Command thecommand) {
-        if (process == null || this.command != thecommand) {
+    public void initialize() {
+        if (watchdog == null) {
+            // start the watcher thread for timeout checking
+            watchdog = new Watchdog();
+            watchdog.setName("Graphviz Watchdog");
+            watchdog.start();
+        }
+
+        if (process == null) {
+            // get a string to the dot executable
             IPreferenceStore preferenceStore =
                     GraphvizLayouterPlugin.getDefault().getPreferenceStore();
-            String dotExecutable =
-                    preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
+            String dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
             if (!new File(dotExecutable).exists()) {
                 boolean foundExec = false;
                 for (String location : DEFAULT_LOCS) {
@@ -97,7 +123,6 @@ public class GraphvizTool {
             }
 
             try {
-                this.command = thecommand;
                 process = Runtime.getRuntime().exec(new String[] { dotExecutable,
                                         ARG_NOWARNINGS, ARG_INVERTYAXIS,
                                         ARG_COMMAND + command });
@@ -106,7 +131,6 @@ public class GraphvizTool {
                         + " Please check your Graphviz installation.");
             }
         }
-        return process;
     }
 
     /**
@@ -119,105 +143,252 @@ public class GraphvizTool {
         display.syncExec(new Runnable() {
             public void run() {
                 PreferenceDialog preferenceDialog =
-                        PreferencesUtil.createPreferenceDialogOn(
-                                display.getActiveShell(),
-                                GraphvizPreferencePage.ID, new String[] {},
-                                null);
+                        PreferencesUtil.createPreferenceDialogOn(display.getActiveShell(),
+                                GraphvizPreferencePage.ID, new String[] {}, null);
                 preferenceDialog.open();
             }
         });
     }
 
     /**
-     * Closes the currently cached process instance so a new one is created for
-     * the next layout run.
+     * Return the stream that is used to give input to Graphviz.
+     * 
+     * @return an output stream for writing to the tool
      */
-    public void endProcess() {
+    public OutputStream input() {
         if (process != null) {
+            return new BufferedOutputStream(process.getOutputStream());
+        }
+        throw new IllegalStateException("Graphviz tool has not been initialized.");
+    }
+    
+    /**
+     * Return the stream for reading the output of the Graphviz process.
+     * 
+     * @return an input stream for reading from the tool
+     */
+    public InputStream output() {
+        if (process != null) {
+            synchronized (nextJob) {
+                // create an input stream and make it visible to the watcher thread
+                graphvizStream = new GraphvizStream(process.getInputStream());
+                // wake the watcher, which will then sleep until a timeout occurs
+                nextJob.notify();
+            }
+            return graphvizStream;
+        }
+        throw new IllegalStateException("Graphviz tool has not been initialized.");
+    }
+    
+    /** maximal number of characters to read from error stream. */
+    private static final int MAX_ERROR_OUTPUT = 512;
+    /** time to wait before checking process errors. */
+    private static final int PROC_ERROR_TIME = 500;
+    
+    /**
+     * Clean up, optionally preparing the tool for the next use.
+     * 
+     * @param c the cleanup option
+     */
+    public void cleanup(final Cleanup c) {
+        StringBuilder error = null;
+        if (process != null) {
+            InputStream errorStream = process.getErrorStream();
             try {
-                process.getOutputStream().close();
-                process.getInputStream().close();
-            } catch (IOException exception) {
+                if (c == Cleanup.ERROR) {
+                    // wait a bit so the process can either terminate or generate error
+                    Thread.sleep(PROC_ERROR_TIME);
+                    // read the error stream to display a meaningful error message
+                    error = new StringBuilder();
+                    int ch;
+                    do {
+                        ch = errorStream.read();
+                        if (ch >= 0) {
+                            error.append((char) ch);
+                        }
+                    } while (error.length() < MAX_ERROR_OUTPUT && ch >= 0);
+                    if (error.length() == 0) {
+                        // no error message -- check for exit value
+                        int exitValue = process.exitValue();
+                        if (exitValue != 0) {
+                            error.append("Process terminated with exit value " + exitValue + ".");
+                        }
+                    }
+                }
+                // if error stream is not empty, the process may not terminate
+                while (errorStream.available() > 0) {
+                    errorStream.read();
+                }
+            } catch (Exception ex) {
                 // ignore exception
             }
-            process.destroy();
-            process = null;
+            // terminate the Graphviz process if requested
+            if (c == Cleanup.ERROR || c == Cleanup.STOP) {
+                try {
+                    process.getOutputStream().close();
+                    process.getInputStream().close();
+                } catch (IOException exception) {
+                    // ignore exception
+                }
+                process.destroy();
+                process = null;
+            }
+        }
+        
+        if (error == null) {
+            synchronized (nextJob) {
+                // reset the stream to indicate that the job is done
+                graphvizStream = null;
+                if (watchdog != null) {
+                    // wake the watcher if it is still waiting for timeout
+                    watchdog.interrupt();
+                    // if requested, reset the watcher to indicate that it should terminate
+                    if (c == Cleanup.STOP) {
+                        watchdog = null;
+                    }
+                }
+            }
+        } else if (error.length() > 0) {
+            // an error output could be read from Graphviz, so display that to the user
+            throw new GraphvizException("Graphviz error: " + error.toString());
         }
     }
 
     /**
-     * Waits until there is some input from the given input stream, with a
-     * customizable timeout.
-     * 
-     * @param inputStream
-     *            input stream from which input is expected
-     * @param errorStream
-     *            error stream that is queried if there is no input
-     * @param monitor
-     *            monitor to which progress is reported
-     * @param debugMode
-     *            whether debug mode is active
+     * A specialized input stream for reading data from the Graphviz process.
      */
-    public void waitForInput(final InputStream inputStream,
-            final InputStream errorStream,
-            final IKielerProgressMonitor monitor, final boolean debugMode) {
-        monitor.begin("Wait for Graphviz", 1);
-        IPreferenceStore preferenceStore =
-                GraphvizLayouterPlugin.getDefault().getPreferenceStore();
-        int timeout = preferenceStore.getInt(PREF_TIMEOUT);
-        if (timeout < PROCESS_MIN_TIMEOUT) {
-            timeout = PROCESS_DEF_TIMEOUT;
+    private class GraphvizStream extends InputStream {
+        
+        /** the stream of process data output. */
+        private InputStream stream;
+        /** how many opening curly braces have been read that haven't closed yet. */
+        private int depth = 0;
+        /** how many graphs have been completely processed. */
+        private int finished = 0;
+        /** buffered character to return on the next read. */
+        private int buf = -1;
+        
+        /**
+         * Create a Graphviz input stream.
+         * 
+         * @param thestream the process stream to read from
+         */
+        GraphvizStream(final InputStream thestream) {
+            this.stream = thestream;
         }
-        try {
-            // wait until there is input from Graphviz
-            long startTime = System.currentTimeMillis();
-            try {
-                long sleepTime = MIN_INPUT_WAIT;
-                while (inputStream.available() == 0
-                        && System.currentTimeMillis() - startTime < timeout
-                        && !monitor.isCanceled()) {
-                    Thread.sleep(sleepTime);
-                    // increase sleep time after each step
-                    if (sleepTime < MAX_INPUT_WAIT) {
-                        sleepTime += MIN_INPUT_WAIT;
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int read() throws IOException {
+            if (buf >= 0) {
+                int c = buf;
+                buf = -1;
+                return c;
+            }
+            // don't block if we already finished reading a graph
+            if (finished > 0 && stream.available() == 0) {
+                return -1;
+            }
+            
+            // track the opening and closing braces while reading the stream
+            int c = stream.read();
+            if (c == '{') {
+                depth++;
+            } else if (c == '}') {
+                depth--;
+                if (depth == 0) {
+                    finished++;
+                }
+            } else if (c == '\\') {
+                // discard any line breaks that have been escaped
+                buf = stream.read();
+                if (buf == '\n' || buf == '\r') {
+                    c = stream.read();
+                    if (buf == '\r' && c == '\n') {
+                        c = stream.read();
+                    }
+                    buf = -1;
+                }
+            }
+            return c;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int available() throws IOException {
+            return stream.available();
+        }
+            
+    }
+    
+    /** synchronization object between the main thread and the watcher thread. */
+    private Object nextJob = new Object();
+    
+    /**
+     * A watcher thread that takes action when a timeout occurs.
+     */
+    private class Watchdog extends Thread {
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void run() {
+            do {
+                synchronized (nextJob) {
+                    // the watcher starts working as soon as a stream is made visible
+                    while (graphvizStream == null) {
+                        try {
+                            // wait for notification by the main thread
+                            nextJob.wait();
+                        } catch (InterruptedException ex) {
+                            // an interrupt can happen when a shutdown is requested
+                            if (watchdog == null) {
+                                return;
+                            }
+                        }
                     }
                 }
-            } catch (InterruptedException exception) {
-                // ignore exception
-            }
-            // read and check error stream if there is still no input from
-            // Graphviz
-            if (inputStream.available() == 0 && !monitor.isCanceled()) {
-                StringBuilder error = new StringBuilder();
-                while (error.length() < MAX_ERROR_OUTPUT
-                        && errorStream.available() > 0) {
-                    error.append((char) errorStream.read());
+                
+                // retrieve the current timeout value
+                IPreferenceStore preferenceStore =
+                        GraphvizLayouterPlugin.getDefault().getPreferenceStore();
+                int timeout = preferenceStore.getInt(PREF_TIMEOUT);
+                if (timeout < PROCESS_MIN_TIMEOUT) {
+                    timeout = PROCESS_DEF_TIMEOUT;
                 }
-                endProcess();
-                if (error.length() > 0) {
-                    throw new GraphvizException("Graphviz error: " + error.toString());
-                } else {
-                    throw new GraphvizException(
-                            "Timeout exceeded while waiting for Graphviz output. "
-                                    + "Try increasing the timeout value in the preferences.");
+                
+                boolean interrupted = false;
+                try {
+                    Thread.sleep(timeout);
+                }  catch (InterruptedException ex) {
+                    // this means the main thread has done a cleanup before the timeout occurred
+                    interrupted = true;
                 }
-            } else {
-                // read the error stream anyway - if error stream is not empty,
-                // process may not terminate
-                while (errorStream.available() > 0) {
-                    if (debugMode) {
-                        System.err.print(errorStream.read());
-                    } else {
-                        errorStream.read();
+                
+                if (!interrupted) {
+                    synchronized (nextJob) {
+                        // timeout has occurred! close the stream so the main thread will wake
+                        Process myProcess = process;
+                        if (myProcess != null) {
+                            try {
+                                myProcess.getInputStream().close();
+                                myProcess.getErrorStream().close();
+                                graphvizStream = null;
+                            } catch (IOException ex) {
+                                // ignore exception
+                            }
+                        }
                     }
                 }
-            }
-        } catch (IOException exception) {
-            endProcess();
-            throw new WrappedException(exception, "Unable to read Graphviz output.");
-        } finally {
-            monitor.done();
+                
+            } while (watchdog != null);
         }
+        
     }
 
 }

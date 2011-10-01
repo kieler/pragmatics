@@ -231,10 +231,8 @@ public class KGraphDotTransformation {
                     attributes.add(createAttribute(Attributes.POS, posString));
                 }
                 // set node shape
-                attributes.add(createAttribute(Attributes.SHAPE, "box"));
                 statements.add(nodeStatement);
             }
-            attributes.add(createAttribute(Attributes.FIXEDSIZE, "true"));
             Node node = DotFactory.eINSTANCE.createNode();
             node.setName(nodeID);
             nodeStatement.setNode(node);
@@ -286,8 +284,6 @@ public class KGraphDotTransformation {
                     edgeTarget.setTargetnode(targetNode);
                     edgeStatement.getEdgeTargets().add(edgeTarget);
 
-                    // disable drawing arrows for the edges
-                    attributes.add(createAttribute(Attributes.EDGEDIR, "none"));
                     // add edge labels at head, tail, and middle position
                     setEdgeLabels(edge, attributes, vertical);
                     // add comment with edge identifier
@@ -338,6 +334,22 @@ public class KGraphDotTransformation {
         AttributeStatement graphAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
         graphAttrStatement.setType(AttributeType.GRAPH);
         List<Attribute> graphAttrs = graphAttrStatement.getAttributes();
+        statements.add(graphAttrStatement);
+        
+        // set general node attributes
+        AttributeStatement nodeAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
+        nodeAttrStatement.setType(AttributeType.NODE);
+        List<Attribute> nodeAttrs = nodeAttrStatement.getAttributes();
+        statements.add(nodeAttrStatement);
+        nodeAttrs.add(createAttribute(Attributes.SHAPE, "box"));
+        nodeAttrs.add(createAttribute(Attributes.FIXEDSIZE, "true"));
+        
+        // set general edge attributes
+        AttributeStatement edgeAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
+        edgeAttrStatement.setType(AttributeType.EDGE);
+        List<Attribute> edgeAttrs = edgeAttrStatement.getAttributes();
+        statements.add(edgeAttrStatement);
+        edgeAttrs.add(createAttribute(Attributes.EDGEDIR, "none"));
         
         // set minimal spacing
         float minSpacing = parentLayout.getProperty(LayoutOptions.SPACING);
@@ -353,18 +365,6 @@ public class KGraphDotTransformation {
                 break;
             default:
                 minSpacing = DEF_SPACING_SMALL;
-            }
-        }
-        if (command == Command.NEATO || command == Command.FDP) {
-            AttributeStatement edgeAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
-            edgeAttrStatement.setType(AttributeType.EDGE);
-            List<Attribute> edgeAttrs = edgeAttrStatement.getAttributes();
-            edgeAttrs.add(createAttribute(Attributes.EDGELEN, minSpacing / DPI));
-            statements.add(edgeAttrStatement);
-            // set maximum number of iterations
-            int maxiter = parentLayout.getProperty(Attributes.MAXITER_PROP);
-            if (maxiter > 0) {
-                graphAttrs.add(createAttribute(Attributes.MAXITER, maxiter));
             }
         }
         
@@ -403,7 +403,7 @@ public class KGraphDotTransformation {
             }
             // enable compound mode
             if (parentLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
-                graphAttrs.add(createAttribute(Attributes.COMPOUND, Boolean.TRUE.toString()));
+                graphAttrs.add(createAttribute(Attributes.COMPOUND, "true"));
             }
             break;
             
@@ -416,6 +416,7 @@ public class KGraphDotTransformation {
             break;
             
         case NEATO:
+            edgeAttrs.add(createAttribute(Attributes.EDGELEN, minSpacing / DPI));
             // configure initial placement of nodes
             Integer seed = parentLayout.getProperty(LayoutOptions.RANDOM_SEED);
             if (seed == null) {
@@ -426,11 +427,6 @@ public class KGraphDotTransformation {
                 seed = -seed;
             }
             graphAttrs.add(createAttribute(Attributes.START, "random" + seed));
-            // set damping value
-            float damping = parentLayout.getProperty(Attributes.DAMPING_PROP);
-            if (damping > 0) {
-                graphAttrs.add(createAttribute(Attributes.DAMPING, damping));
-            }
             // set epsilon value
             float epsilon = parentLayout.getProperty(Attributes.EPSILON_PROP);
             if (epsilon > 0) {
@@ -444,11 +440,18 @@ public class KGraphDotTransformation {
             break;
             
         case FDP:
-            // FIXME does the spring constant parameter have any effect on the layout?
-//          graphAttrs.add(createAttribute(Attributes.SPRING_CONSTANT, "10.0"));
+            graphAttrs.add(createAttribute(Attributes.SPRING_CONSTANT, minSpacing / DPI));
             break;
         }
         
+        if (command == Command.NEATO || command == Command.FDP) {
+            // set maximum number of iterations
+            int maxiter = parentLayout.getProperty(Attributes.MAXITER_PROP);
+            if (maxiter > 0) {
+                graphAttrs.add(createAttribute(Attributes.MAXITER, maxiter));
+            }
+        }
+
         if (command != Command.DOT) {
             // enable or disable node overlap avoidance
             OverlapMode mode = parentLayout.getProperty(Attributes.OVERLAP_PROP);
@@ -475,15 +478,14 @@ public class KGraphDotTransformation {
             break;
         default:
             splineMode = "spline";
+            useSplines = true;
         }
         graphAttrs.add(createAttribute(Attributes.SPLINES, splineMode));
         
         // enable edge concentration
         if (parentLayout.getProperty(Attributes.CONCENTRATE_PROP)) {
-            graphAttrs.add(createAttribute(Attributes.CONCENTRATE, Boolean.TRUE.toString()));
+            graphAttrs.add(createAttribute(Attributes.CONCENTRATE, "true"));
         }
-        
-        statements.add(graphAttrStatement);
     }
 
     /**

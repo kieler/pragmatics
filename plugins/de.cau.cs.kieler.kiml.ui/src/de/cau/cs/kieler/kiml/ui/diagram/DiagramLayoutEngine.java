@@ -111,7 +111,7 @@ public class DiagramLayoutEngine {
     }
 
     /** maximal number of recursion levels for which progress is displayed. */
-    private static final int MAX_PROGRESS_LEVELS = 2;
+    private static final int MAX_PROGRESS_LEVELS = 3;
 
     /**
      * Perform layout on the given workbench part using the given layout manager.
@@ -160,8 +160,10 @@ public class DiagramLayoutEngine {
                 } else {
                     kielerMonitor = new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS);
                 }
-                return layout(layoutMapping.get(), diagramPart, kielerMonitor,
+                IStatus status = layout(layoutMapping.get(), diagramPart, kielerMonitor,
                         extraLayoutConfig, layoutAncestors);
+                kielerMonitor.done();
+                return status;
             }
 
             // third phase: apply layout with animation
