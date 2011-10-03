@@ -78,7 +78,7 @@
          </knownOption>
          <knownOption
                default="1.0"
-               option="de.cau.cs.kieler.graphviz.crossminLimit">
+               option="de.cau.cs.kieler.graphviz.iterationsLimit">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
