@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -143,7 +145,9 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             lastLayer = layer;
         }
         
-        // Assign the restored dummies to the graph's last layer
+        // Assign the restored dummies to the graph's last layer (this has nothing to do anymore
+        // with where they'll be placed; we just need some layer to assign them to, and we simply
+        // choose the last one)
         for (LNode dummy : restoredDummies) {
             dummy.setLayer(lastLayer);
         }
@@ -205,6 +209,12 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
     ///////////////////////////////////////////////////////////////////////////////
     // Setting North / South Hierarchical Port Dummy Coordinates
     
+    /**
+     * Set coordinates for northern and southern external port dummy nodes.
+     * 
+     * @param layeredGraph the layered graph.
+     * @param northSouthDummies set of dummy nodes whose position to set.
+     */
     private void setNorthSouthDummyCoordinates(final LayeredGraph layeredGraph,
             final Set<LNode> northSouthDummies) {
         
@@ -212,19 +222,30 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
         KVector graphSize = layeredGraph.getSize();
         LInsets.Double graphInsets = layeredGraph.getInsets();
         float borderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
-        double nodeWidth = graphSize.x + graphInsets.left + graphInsets.right + 2 * borderSpacing;
+        double graphWidth = graphSize.x + graphInsets.left + graphInsets.right + 2 * borderSpacing;
+        double northY = 0 - graphInsets.top - borderSpacing - layeredGraph.getOffset().y;
+        double southY = graphSize.y + graphInsets.top + graphInsets.bottom + 2 * borderSpacing
+                + layeredGraph.getOffset().y;
+        
+        // Lists of northern and southern external port dummies; these are later used to detect
+        // ordering conflicts in the FIXED_ORDER case.
+        List<LNode> northernDummies = new LinkedList<LNode>();
+        List<LNode> southernDummies = new LinkedList<LNode>();
         
         for (LNode dummy : northSouthDummies) {
             // Set x coordinate
             switch (constraints) {
             case FREE:
             case FIXED_SIDE:
+                calculateNorthSouthDummyPositions(dummy);
+                break;
+                
             case FIXED_ORDER:
                 calculateNorthSouthDummyPositions(dummy);
                 break;
-            
+                
             case FIXED_RATIO:
-                applyNorthSouthDummyRatio(dummy, nodeWidth);
+                applyNorthSouthDummyRatio(dummy, graphWidth);
                 dummy.borderToContentAreaCoordinates(true, false);
                 break;
             
@@ -233,15 +254,50 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                 dummy.borderToContentAreaCoordinates(true, false);
                 break;
             }
+            
+            // Set y coordinats and add the dummy to its respective list
+            switch (dummy.getProperty(Properties.EXT_PORT_SIDE)) {
+            case NORTH:
+                dummy.getPosition().y = northY;
+                northernDummies.add((dummy));
+                break;
+            
+            case SOUTH:
+                dummy.getPosition().y = southY;
+                southernDummies.add(dummy);
+                break;
+            }
         }
         
-        // If we have a fixed order, we calculated the position using a heuristic. This
-        // may have broken the ordering, so we need to check that
-        // TODO: Implement.
+        // Check for correct ordering of nodes in the FIXED_ORDER case
+        if (constraints == PortConstraints.FIXED_ORDER) {
+            fixDummyOrder(northernDummies);
+            fixDummyOrder(southernDummies);
+        }
     }
-    
+
+    /**
+     * Calculates the positions of northern and southern dummy nodes. The position is based
+     * on the nodes the dummy nodes are connected to.
+     * 
+     * @param dummy the northern or southern external port dummy node to calculate the position for. 
+     */
     private void calculateNorthSouthDummyPositions(final LNode dummy) {
+        // We use a simple algorithm that simply adds the horizontal positions of all
+        // connected ports and divides the sum by the number of connected ports
         
+        // First, get the dummy's port (it has only one)
+        LPort dummyInPort = dummy.getPorts().get(0);
+        
+        // Now, iterate over all connected ports, adding their horizontal position
+        double posSum = 0.0;
+        
+        for (LPort connectedPort : dummyInPort.getConnectedPorts()) {
+            posSum += connectedPort.getPosition().x + connectedPort.getNode().getPosition().x;
+        }
+        
+        // Assign the dummy's x coordinate
+        dummy.getPosition().x = posSum / dummyInPort.getDegree();
     }
     
     /**
@@ -262,6 +318,37 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      */
     private void applyNorthSouthDummyPosition(final LNode dummy) {
         dummy.getPosition().x = dummy.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
+    }
+
+    /**
+     * Checks if the automatically calculated node coordinates violate their fixed order and fixes
+     * the coordinates. Calling this method only makes sense if port constraints are set to
+     * {@code FIXED_ORDER}.
+     * 
+     * @param dummies list of dummy nodes.
+     */
+    private void fixDummyOrder(final List<LNode> dummies) {
+        // Turn the list into an array of dummy nodes and sort that by their original x coordinate
+        LNode[] dummyArray = dummies.toArray(new LNode[dummies.size()]);
+        
+        Arrays.sort(dummyArray, new Comparator<LNode>() {
+            public int compare(final LNode a, final LNode b) {
+                double diff = a.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION)
+                        - b.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
+                
+                // We cannot simply return diff cast to an int: if diff == 0.4, the returned value
+                // would be 0, which is wrong
+                if (diff < 0.0) {
+                    return -1;
+                } else if (diff > 0.0) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+        
+        // TODO: Find and fix violated constraints.
     }
     
     
