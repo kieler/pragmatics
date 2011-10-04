@@ -22,21 +22,25 @@ package de.cau.cs.kieler.kwebs.server.web;
  */
 public class CacheData {
 
-    /** . */
+    /** Name of the cached resource. Needed for sending content as downloadable attachment. */
     private String name;
     
-    /** . */
+    /** The MIME type of the resource. */
     private String mimetype;
     
-    /** . */
+    /** The content of the resource. */
     private byte[] content;
     
     /**
+     * Constructs a data container intended for caching of at runtime of the layout service
+     * generated web content.
      * 
-     * @param theexchange
-     * @param thereference
+     * @param thename
+     *            the name of the resource
      * @param themimetype
-     * @param theparams
+     *            the MIME type of the resource
+     * @param thecontent
+     *            the content of the resource
      */
     public CacheData(final String thename, final String themimetype, final byte[] thecontent) {
         name = thename;
@@ -45,48 +49,56 @@ public class CacheData {
     }
 
     /**
+     * Returns the name of the cached resource.
      * 
-     * @return
+     * @return the name of the cached resource
      */
     public String getName() {
         return name;
     }
 
     /**
+     * Sets the name of the cached resource.
      * 
      * @param resource
+     *            the name of the cached resource.
      */
     public void setName(final String name) {
         this.name = name;
     }
 
     /**
+     * Returns the MIME type of the cached resource.
      * 
-     * @return
+     * @return the name of the cached resource
      */
     public String getMimetype() {
         return mimetype;
     }
 
     /**
+     * Sets the MIME type of the cached resource.
      * 
      * @param mimetype
+     *            the MIME type of the cached resource
      */
     public void setMimetype(final String mimetype) {
         this.mimetype = mimetype;
     }
 
     /**
+     * Returns the content of the cached resource.
      * 
-     * @return
+     * @return the content of the cached resource.
      */
     public byte[] getContent() {
         return content;
     }
 
     /**
-     * 
+     * Sets the content of the cached resource.
      * @param content
+     *            the content of the cached resource.
      */
     public void setContent(final byte[] content) {
         this.content = content;
