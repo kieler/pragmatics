@@ -200,6 +200,8 @@ class HttpServerManager extends AbstractServerManager {
             throw new ContextNotCreatedException();
         }
         context = server.createContext(path);
+        // Add support for HTTP compression
+        context.getFilters().add(new CompressionHttpFilter());
     }
 
 }

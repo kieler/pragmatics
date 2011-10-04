@@ -40,8 +40,8 @@ abstract class AbstractServerManager implements IServerManager {
     /**
      * {@inheritDoc}
      */
-    public void setAddress(final URI theaddress) {
-        address = theaddress;
+    public void setAddress(final URI serviceAddress) {
+        address = serviceAddress;
     }
     
 }
