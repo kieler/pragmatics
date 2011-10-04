@@ -151,20 +151,6 @@ public final class JetiClient extends AbstractLayoutServiceClient {
                 "INPUT_FORMAT",
                 format
             );
-//* Just for testing purposes
-            GraphLayoutOption[] options2 = new GraphLayoutOption[] {
-                new GraphLayoutOption(
-                    "de.cau.cs.kieler.algorithm", 
-                    "de.cau.cs.kieler.kiml.ogdf.DavidsonHarel"
-                )
-            };
-            if (options2 != null && options2.length > 0) {
-                etiParams.put(
-                    "INPUT_OPTIONS",
-                    GraphLayoutOption.arrayToString(options2)
-                );
-            }
-//*/
             if (options != null && options.size() > 0) {
                 etiParams.put(
                     "INPUT_OPTIONS",

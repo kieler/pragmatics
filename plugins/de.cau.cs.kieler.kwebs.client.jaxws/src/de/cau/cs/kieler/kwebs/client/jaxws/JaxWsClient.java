@@ -15,9 +15,14 @@
 package de.cau.cs.kieler.kwebs.client.jaxws;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.handler.MessageContext;
 
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.LocalServiceException;
@@ -99,12 +104,18 @@ public class JaxWsClient extends HttpBasedLayoutServiceClient {
                     new QName(QNAME_NS, QNAME_SERVICE)
                 );
                 layoutPort = layoutService.getLayoutServicePort();
-/* Adding support for gzip encoding                
-                Map<String, List<String>> httpHeaders = new HashMap<String, List<String>>();  
-                httpHeaders.put("Accept-Encoding", Collections.singletonList("gzip"));  
+//* Adding support for GZip and Deflate encoding                
+                Map<String, List<String>> httpHeaders = new HashMap<String, List<String>>();
+                List<String> acceptList = new ArrayList<String>();
+                acceptList.add("gzip");
+                acceptList.add("deflate");
+                httpHeaders.put("Accept-Encoding", acceptList);
+                List<String> contentList = new ArrayList<String>();
+                contentList.add("gzip");
+                httpHeaders.put("Content-Encoding", contentList);
                 Map<String, Object> context = ((BindingProvider) layoutPort).getRequestContext();  
                 context.put(MessageContext.HTTP_REQUEST_HEADERS, httpHeaders);
-*/                 
+//*/                 
             } catch (Exception e) {
                 layoutService = null;
                 layoutPort = null;

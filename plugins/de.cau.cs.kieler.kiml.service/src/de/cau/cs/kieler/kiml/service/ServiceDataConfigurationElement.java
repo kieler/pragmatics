@@ -35,28 +35,32 @@ import de.cau.cs.kieler.kwebs.servicedata.RemoteEnum;
 import de.cau.cs.kieler.kwebs.servicedata.SupportedDiagram;
 
 /**
- * .
+ * This class realizes the {@code IConfigurationElement} interface of the eclipse platform in order to
+ * provide the meta data of a layout service in a form processable by {@code ExtensionLayoutDataService}.
  *
  * @kieler.rating 2011-05-17 red
  * @author swe
  */
 public class ServiceDataConfigurationElement implements IConfigurationElement {
    
-    /** */
+    /** The name of the configuration element. */
     private String name;
     
-    /** */
+    /** The value of the configuration element. */
     private String value;
     
-    /** */
+    /** The map containing the attributes of the configuration element. */
     private Map<String, String> attributes
         = new HashMap<String, String>();
     
-    /** */
+    /** The child elements of the configuration element. */
     private List<IConfigurationElement> children
         = new ArrayList<IConfigurationElement>();
     
-    /** */
+    /** 
+     *  The element containing this configuration parent. 
+     *  Not necessarily an {@code IConfigurationElement}. 
+     */
     private Object parent;
 
     /**
@@ -93,8 +97,10 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
     }
     
     /**
+     * Adds a child to this configuration element.
      * 
      * @param child
+     *            the child element
      */
     public void addChild(final IConfigurationElement child) {
         if (child != null && !children.contains(child)) {
@@ -103,18 +109,24 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
     }
     
     /**
+     * Adds an attribute to this configuration element.
      * 
      * @param name
+     *            the name of the attribute
      * @param value
+     *            the value of the attribute
      */
     public void addAttribute(final String name, final String value) {
         attributes.put(name, value);
     }
     
     /**
+     * Returns a configuration element representing a category.
      * 
      * @param category
-     * @return
+     *            the service data model element of type {@code Category}
+     *            
+     * @return a configuration element representing a category
      */
     public static ServiceDataConfigurationElement getCategoryElementFromModel(final Category category) {
         ServiceDataConfigurationElement element = new ServiceDataConfigurationElement(
@@ -126,9 +138,12 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
     }
     
     /**
+     * Returns a configuration element representing a layout type.
      * 
      * @param type
-     * @return
+     *            the service data model element of type {@code LayoutType}
+     *            
+     * @return a configuration element representing a layout type
      */
     public static ServiceDataConfigurationElement getLayoutTypeElementFromModel(final LayoutType type) {
         ServiceDataConfigurationElement element = new ServiceDataConfigurationElement(
@@ -141,9 +156,12 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
     }
 
     /**
+     * Returns a configuration element representing a layout option.
      * 
      * @param option
-     * @return
+     *            the service data model element of type {@code LayoutOption}
+     * 
+     * @return a configuration element representing a layout option
      */
     public static ServiceDataConfigurationElement getLayoutOptionElementFromModel(final LayoutOption option) {
         ServiceDataConfigurationElement element = new ServiceDataConfigurationElement(
@@ -177,14 +195,13 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
     private static final String ATTRIBUTE_PREVIEWIMAGEPATH
         = "previewImagePath";
 
-    /** Name of the previewImagePort attribute. */
-    //private static final String ATTRIBUTE_PREVIEWIMAGEPORT
-    //    = "previewImagePort";
-    
     /**
+     * Returns a configuration element representing a layout algorithm.
      * 
      * @param algorithm
-     * @return
+     *            the service data model element of type {@code LayoutAlgorithm}
+     * 
+     * @return a configuration element representing a layout algorithm
      */
     public static ServiceDataConfigurationElement getLayoutAlgorithmElementFromModel(final LayoutAlgorithm algorithm) {
         ServiceDataConfigurationElement element = new ServiceDataConfigurationElement(
@@ -196,10 +213,6 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
         if (previewImagePath != null) {
             element.addAttribute(ATTRIBUTE_PREVIEWIMAGEPATH, previewImagePath);
         }
-/*        
-        int previewImagePort = algorithm.getPreviewImagePort();
-        element.addAttribute(ATTRIBUTE_PREVIEWIMAGEPORT, new Integer(previewImagePort).toString());
-*/        
         LayoutType tmpType = algorithm.getType();
         if (tmpType != null) {
             element.addAttribute(

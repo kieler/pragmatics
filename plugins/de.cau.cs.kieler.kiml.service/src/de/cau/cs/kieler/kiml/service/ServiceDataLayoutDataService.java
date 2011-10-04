@@ -27,7 +27,10 @@ import de.cau.cs.kieler.kwebs.servicedata.ServiceData;
 import de.cau.cs.kieler.kwebs.servicedata.transformation.ServiceDataXmiTransformer;
 
 /**
- * .
+ * This class provides the ability to initialize the local layout meta data of KIELER from the
+ * serial notation in XMI of a layout services meta data model. An array of 
+ * {@code ServiceDataConfigurationElement} instances is derived from the model which is provided to 
+ * {@code ExtensionLayoutDataService} by overriding its {@link getProviderExtensions()} method. 
  *
  * @kieler.rating 2011-05-17 red
  * @author swe
@@ -41,7 +44,7 @@ public abstract class ServiceDataLayoutDataService extends ProgrammaticLayoutDat
     private IConfigurationElement[] extensions;
     
     /**
-     * 
+     * Protected constructor, since class shall only be instantiated by deriving classes.
      */
     protected ServiceDataLayoutDataService() {
     }
