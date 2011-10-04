@@ -85,7 +85,7 @@ public abstract class AbstractService {
             throw new IllegalArgumentException("No graph given");
         }
         if (!Formats.isSupportedFormat(format)) {
-            throw new IllegalArgumentException("Format not supported");
+            throw new IllegalArgumentException("Format not supported: " + format);
         }
         Logger.log(Severity.DEBUG, "Starting layout");
         IGraphTransformer<?> transformer = ServerLayoutDataService.getInstance().getTransformer(format);
