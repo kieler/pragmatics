@@ -434,7 +434,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
             }
     
             StringValueStyle style = NotationFactory.eINSTANCE.createStringValueStyle();
-            style.setName(prefix + optionData.getId());
+            style.setName(optionKey);
             style.setStringValue(value.toString());
             view.getStyles().add(style);
         }

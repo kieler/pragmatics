@@ -13,12 +13,11 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -51,27 +50,19 @@ import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
-import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.ui.views.properties.IPropertySourceProvider;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
-import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
-import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
-import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
-import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
-import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
 
 /**
  * A view that displays layout options for selected objects.
@@ -90,14 +81,14 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     /** preference identifier for the title font. */
     private static final String TITLE_FONT = "de.cau.cs.kieler.kiml.ui.views.LayoutViewPart.TITLE_FONT";
     
-    /** the form toolkit used to create the form container. */
+    /** the form toolkit used to create forms. */
     private FormToolkit toolkit;
     /** the form container for the property sheet page. */
     private Form form;
     /** the page that is displayed in this view part. */
     private PropertySheetPage page;
-    /** the current layout context for the selected element. */
-    private LayoutContext currentContext;
+    /** the property source provider that keeps track of created property sources. */
+    private LayoutPropertySourceProvider propSourceProvider = new LayoutPropertySourceProvider();
     
     /**
      * Finds the active layout view, if it exists.
@@ -133,39 +124,6 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
             }
         }
         return null;
-    }
-    
-    /**
-     * Property source provider for the layout view part.
-     */
-    private class PropertySourceProvider implements IPropertySourceProvider {
-        /** {@inheritDoc} */
-        public IPropertySource getPropertySource(final Object object) {
-            try {
-                IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance()
-                        .getBridge(object);
-                IWorkbenchPart part = currentContext.getProperty(EclipseLayoutConfig.WORKBENCH_PART);
-                DiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
-                        part, object);
-                if (manager != null) {
-                    EObject domainElement = bridge.getElement(object);
-                    LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
-                    IMutableLayoutConfig layoutConfig = optionManager.createConfig(domainElement,
-                            manager.getLayoutConfig());
-                    EditingDomain editingDomain = bridge.getEditingDomain(object);
-                    if (editingDomain instanceof TransactionalEditingDomain) {
-                        currentContext.setProperty(LayoutContext.DOMAIN_MODEL, domainElement);
-                        currentContext.setProperty(LayoutContext.DIAGRAM_PART,
-                                bridge.getEditPart(object));
-                        return new LayoutPropertySource(layoutConfig, currentContext,
-                                (TransactionalEditingDomain) editingDomain);
-                    }
-                }
-            } catch (UnsupportedPartException exception) {
-                // ignore exception
-            }
-            return null;
-        }
     }
     
     /** margin width for the form layout. */
@@ -220,7 +178,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         formData.top = new FormAttachment(FORM_TOP, 5);
         formData.bottom = new FormAttachment(FORM_BOTTOM, 0);
         page.getControl().setLayoutData(formData);
-        page.setPropertySourceProvider(new PropertySourceProvider());
+        page.setPropertySourceProvider(propSourceProvider);
         IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
         
         // add actions to the toolbar, view menu, and context menu
@@ -232,6 +190,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         IToolBarManager toolBarManager = actionBars.getToolBarManager();
         toolBarManager.add(new SelectionInfoAction(this, Messages.getString("kiml.ui.37")));
         
+        // CHECKSTYLEON MagicNumber
         // set the stored value of the categories button
         ActionContributionItem categoriesItem = (ActionContributionItem) actionBars
                 .getToolBarManager().find("categories");
@@ -263,8 +222,6 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
             }
         }
         workbenchWindow.getSelectionService().addSelectionListener(this);
-
-        // CHECKSTYLEON MagicNumber
     }
 
     /**
@@ -305,7 +262,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         }
         // dispose the view part
         getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
-        currentContext = null;
+        propSourceProvider.resetContext(null);
         toolkit.dispose();
         super.dispose();
     }
@@ -316,6 +273,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     public void refresh() {
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {
+                propSourceProvider.resetContext();
                 page.refresh();
             }
         });
@@ -327,8 +285,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
         DiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(part, null);
         if (manager != null) {
-            currentContext = new LayoutContext();
-            currentContext.setProperty(EclipseLayoutConfig.WORKBENCH_PART, part);
+            propSourceProvider.resetContext(part);
             page.selectionChanged(part, selection);
             setPartText();
         }
@@ -398,7 +355,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                     contributionItem.setId(DiagramDefaultAction.ACTION_ID);
                     contributionItem.fill(menu, -1);
                 }
-                if (currentContext == null) {
+                if (!propSourceProvider.hasContent()) {
                     if (editPartDefaultItem != null) {
                         editPartDefaultItem.setEnabled(false);
                     }
@@ -434,9 +391,10 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                     }
                 }
                 // add the "set as default for diagram type" action
+                LayoutContext context = propSourceProvider.getContext();
                 String diagramType = (String) EclipseLayoutConfig.getOption(
-                        currentContext.getProperty(LayoutContext.DIAGRAM_PART),
-                        currentContext.getProperty(LayoutContext.DOMAIN_MODEL),
+                        context.getProperty(LayoutContext.DIAGRAM_PART),
+                        context.getProperty(LayoutContext.DOMAIN_MODEL),
                         LayoutOptions.DIAGRAM_TYPE);
                 if (diagramType == null) {
                     if (diagramTypeDefaultItem != null) {
@@ -474,12 +432,13 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
      *     cannot be handled in this context
      */
     private String getReadableName(final boolean forDomainModel, final boolean plural) {
-        if (currentContext == null) {
+        if (!propSourceProvider.hasContent()) {
             return "";
         }
         
-        EObject model = currentContext.getProperty(LayoutContext.DOMAIN_MODEL);
-        Object diagramPart = currentContext.getProperty(LayoutContext.DIAGRAM_PART);
+        LayoutContext context = propSourceProvider.getContext();
+        EObject model = context.getProperty(LayoutContext.DOMAIN_MODEL);
+        Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
         String clazzName = model == null ? null : model.eClass().getInstanceTypeName();
         if (clazzName == null) {
             if (plural || diagramPart == null) {
@@ -524,8 +483,8 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
      * @return the selected edit part, or {@code null} if there is none
      */
     public Object getCurrentEditPart() {
-        if (currentContext != null) {
-            return currentContext.getProperty(LayoutContext.DIAGRAM_PART);
+        if (propSourceProvider.hasContent()) {
+            return propSourceProvider.getContext().getProperty(LayoutContext.DIAGRAM_PART);
         }
         return null;
     }
@@ -535,11 +494,8 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
      * 
      * @return the current workbench part, or {@code null} if there is none
      */
-    public IWorkbenchPart getCurrentEditor() {
-        if (currentContext != null) {
-            return currentContext.getProperty(EclipseLayoutConfig.WORKBENCH_PART);
-        }
-        return null;
+    public IWorkbenchPart getCurrentPart() {
+        return propSourceProvider.getWorkbenchPart();
     }
 
     /**
@@ -548,35 +504,31 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
      * @return the current layout algorithm data
      */
     public LayoutAlgorithmData[] getCurrentLayouterData() {
-        if (currentContext == null) {
-            return new LayoutAlgorithmData[0];
+        // SUPPRESS CHECKSTYLE NEXT MagicNumber
+        HashSet<LayoutAlgorithmData> data = new HashSet<LayoutAlgorithmData>(4);
+        LayoutContext context = propSourceProvider.getContext();
+        LayoutAlgorithmData lad = context.getProperty(DefaultLayoutConfig.CONTENT_ALGO);
+        if (lad != null) {
+            data.add(lad);
         }
-        LayoutAlgorithmData contentLayouter = currentContext.getProperty(
-                DefaultLayoutConfig.CONTENT_ALGO);
-        LayoutAlgorithmData containerLayouter = currentContext.getProperty(
-                DefaultLayoutConfig.CONTAINER_ALGO);
-        if (contentLayouter == null && containerLayouter == null) {
-            return new LayoutAlgorithmData[] { };
-        } else if (contentLayouter == null || contentLayouter.equals(containerLayouter)) {
-            return new LayoutAlgorithmData[] { containerLayouter };
-        } else if (containerLayouter == null) {
-            return new LayoutAlgorithmData[] { contentLayouter };
-        } else {
-            return new LayoutAlgorithmData[] { contentLayouter, containerLayouter };
+        lad = context.getProperty(DefaultLayoutConfig.CONTAINER_ALGO);
+        if (lad != null) {
+            data.add(lad);
         }
+        return data.toArray(new LayoutAlgorithmData[data.size()]);
     }
 
     /**
      * Sets a text line for the view part.
      */
     private void setPartText() {
-        if (currentContext != null) {
+        if (propSourceProvider.hasContent()) {
             StringBuilder textBuffer = new StringBuilder();
             String name = getReadableName(true, false);
             if (name != null) {
                 textBuffer.append(name);
             }
-            EObject model = currentContext.getProperty(LayoutContext.DOMAIN_MODEL);
+            EObject model = propSourceProvider.getContext().getProperty(LayoutContext.DOMAIN_MODEL);
             if (model != null) {
                 String modelName = getProperty(model, "Name");
                 if (modelName == null) {

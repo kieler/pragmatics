@@ -67,7 +67,7 @@ public class DiagramDefaultAction extends Action {
      */
     @Override
     public void run() {
-        IWorkbenchPart workbenchPart = layoutView.getCurrentEditor();
+        IWorkbenchPart workbenchPart = layoutView.getCurrentPart();
         IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(
                 workbenchPart);
         if (bridge != null) {

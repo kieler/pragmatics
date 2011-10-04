@@ -52,5 +52,28 @@ public class LayoutContext extends MapPropertyHolder {
     /** the types of targets for layout options. */
     public static final IProperty<Set<LayoutOptionData.Target>> OPT_TARGETS
             = new Property<Set<LayoutOptionData.Target>>("context.optionTargets");
+
+    /**
+     * Create an empty layout context.
+     */
+    public LayoutContext() {
+    }
+    
+    /**
+     * Copy the content of the given layout context into a new one.
+     * 
+     * @param other another layout context
+     */
+    public LayoutContext(final LayoutContext other) {
+        this.copyProperties(other);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return super.getAllProperties().toString();
+    }
     
 }

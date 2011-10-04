@@ -163,7 +163,7 @@ public class SelectionInfoAction extends Action {
         StringBuilder builder = new StringBuilder();
         
         // display editor part
-        IWorkbenchPart workbenchPart = layoutView.getCurrentEditor();
+        IWorkbenchPart workbenchPart = layoutView.getCurrentPart();
         if (workbenchPart != null) {
             builder.append("<b>Workbench part class</b><ul><li>"
                     + workbenchPart.getClass().getName() + "</li></ul>");

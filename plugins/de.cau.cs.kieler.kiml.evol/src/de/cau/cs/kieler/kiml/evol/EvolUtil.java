@@ -821,7 +821,7 @@ public final class EvolUtil {
         // UI thread).
         LayoutViewPart layoutViewPart = LayoutViewPart.findView();
         if (layoutViewPart != null) {
-            IWorkbenchPart editor = layoutViewPart.getCurrentEditor();
+            IWorkbenchPart editor = layoutViewPart.getCurrentPart();
             if (editor instanceof IEditorPart) {
                 return (IEditorPart) editor;
             }

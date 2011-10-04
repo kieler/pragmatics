@@ -61,6 +61,15 @@ public class LayoutPropertySource implements IPropertySource {
         this.layoutContext = context;
         this.editingDomain = theeditingDomain;
     }
+    
+    /**
+     * Return the layout context used for this property source.
+     * 
+     * @return the layout context
+     */
+    public LayoutContext getContext() {
+        return layoutContext;
+    }
 
     /**
      * {@inheritDoc}
@@ -164,15 +173,17 @@ public class LayoutPropertySource implements IPropertySource {
                     value = optionData.parseValue((String) value);
                 }
                 layoutConfig.setValue(optionData, layoutContext, value);
-                if (LayoutOptions.ALGORITHM_ID.equals(optionData.getId())) {
-                    LayoutViewPart layoutView = LayoutViewPart.findView();
-                    if (layoutView != null) {
-                        layoutView.refresh();
-                    }
-                }
             }
         };
         KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.11"));
+
+        // if the choice of layout algorithm is affected, refresh the whole layout view
+        if (LayoutOptions.ALGORITHM_ID.equals(id)) {
+            LayoutViewPart layoutView = LayoutViewPart.findView();
+            if (layoutView != null) {
+                layoutView.refresh();
+            }
+        }
     }
     
     /**
@@ -202,9 +213,13 @@ public class LayoutPropertySource implements IPropertySource {
             }
         };
         KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.12"));
-        LayoutViewPart layoutView = LayoutViewPart.findView();
-        if (layoutView != null) {
-            layoutView.refresh();
+        
+        // if the choice of layout algorithm is affected, refresh the whole layout view
+        if (LayoutOptions.ALGORITHM_ID.equals(optionData.getId())) {
+            LayoutViewPart layoutView = LayoutViewPart.findView();
+            if (layoutView != null) {
+                layoutView.refresh();
+            }
         }
     }
     

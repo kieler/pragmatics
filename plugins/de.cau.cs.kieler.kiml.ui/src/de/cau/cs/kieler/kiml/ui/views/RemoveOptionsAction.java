@@ -56,7 +56,7 @@ public class RemoveOptionsAction extends Action {
      */
     @Override
     public void run() {
-        IWorkbenchPart workbenchPart = layoutView.getCurrentEditor();
+        IWorkbenchPart workbenchPart = layoutView.getCurrentPart();
         IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(
                 workbenchPart);
         if (bridge != null) {
@@ -99,12 +99,17 @@ public class RemoveOptionsAction extends Action {
             Runnable runnable = new Runnable() {
                 public void run() {
                     layoutConfig.clearValues(context);
-                    LayoutViewPart.findView().refresh();
                 }
             };
             KimlUiUtil.runModelChange(runnable,
                     (TransactionalEditingDomain) editingDomain,
                     Messages.getString("kiml.ui.30"));
+            
+            // refresh the layout view after these changes
+            LayoutViewPart viewPart = LayoutViewPart.findView();
+            if (viewPart != null) {
+                viewPart.refresh();
+            }
         }
     }
     
