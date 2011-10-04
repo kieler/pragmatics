@@ -257,12 +257,19 @@ public class KWebSStatusBar extends WorkbenchWindowControlContribution
             icon = localImage;
             tooltip = "You are using local layout.";
         }          
-        tooltip += " You can double click on this item to change layout settings"
-                   + " or switch between local and remote layout by using the right mouse button.";
-        image.setToolTipText(tooltip);
-        if (icon != null) {
-            image.setImage(icon);
-        }
+        final Image tempIcon = icon;
+        final String tempTooltip = tooltip
+                                   +" You can double click on this item to change layout settings"
+                                   + " or switch between local and remote layout by using the"
+                                   + " right mouse button.";
+        Display.getDefault().syncExec(new Runnable() {            
+            public void run() {
+                image.setToolTipText(tempTooltip);
+                if (tempIcon != null) {
+                    image.setImage(tempIcon);
+                }                            
+            }
+        });
     }    
 
 }
