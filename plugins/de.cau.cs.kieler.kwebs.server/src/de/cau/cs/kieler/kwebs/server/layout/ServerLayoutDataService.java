@@ -359,11 +359,20 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
                             child.getAttribute(ATTRIBUTE_OPTION)
                         );
                         if (tmpOption == null) {
+/*                            
                             throw new IllegalStateException(
                                 "Option for layout algorithm not found"
                                 + " (algorithm=" + algorithm.getId() 
                                 + ", option=" + child.getAttribute("option") + ")"
                             );
+*/
+                            Logger.log(
+                                Severity.FAILURE,
+                                "Option for layout algorithm not found, "
+                                + " algorithm=" + algorithm.getId() 
+                                + ", option=" + child.getAttribute("option")                                
+                            );
+                            continue;
                         }
                         option.setOption(tmpOption);
                         option.setDefault(child.getAttribute(ATTRIBUTE_DEFAULT));
