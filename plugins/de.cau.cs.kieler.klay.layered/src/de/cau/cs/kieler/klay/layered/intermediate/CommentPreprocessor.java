@@ -19,6 +19,7 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -31,7 +32,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * to a normal node and removes them from the graph. Such comments are put either into
  * the {@link Properties#TOP_COMMENTS} or the {@link Properties#BOTTOM_COMMENTS} list
  * of the connected node and processed later by the {@link CommentPostprocessor}.
- * Other comments are processed normally, but their incident edges may be reversed.
+ * Other comments are processed normally, i.e. they are treated as regular nodes, but
+ * their incident edges may be reversed.
  *
  * <dl>
  *   <dt>Precondition:</dt><dd>none</dd>
@@ -109,11 +111,33 @@ public class CommentPreprocessor extends AbstractAlgorithm implements ILayoutPro
      */
     private void processBox(final LNode box, final LEdge edge, final LPort oppositePort,
             final LNode realNode) {
-        boolean topFirst = true;
-        if (realNode.getLabel() != null && realNode.getLabel().getText() != null) {
+        boolean topFirst, onlyTop = false, onlyBottom = false;
+        if (realNode.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
+            boolean hasNorth = false, hasSouth = false;
+            portLoop: for (LPort port1 : realNode.getPorts()) {
+                for (LPort port2 : port1.getConnectedPorts()) {
+                    if (!port2.getNode().getProperty(LayoutOptions.COMMENT_BOX)) {
+                        if (port1.getSide() == PortSide.NORTH) {
+                            hasNorth = true;
+                            break portLoop;
+                        }
+                        if (port1.getSide() == PortSide.SOUTH) {
+                            hasSouth = true;
+                            break portLoop;
+                        }
+                    }
+                }
+            }
+            onlyTop = hasSouth && !hasNorth;
+            onlyBottom = hasNorth && !hasSouth;
+        }
+        if (!onlyTop && !onlyBottom && realNode.getLabel() != null
+                && realNode.getLabel().getText() != null) {
             double labelPos = realNode.getLabel().getPosition().y
                     + realNode.getLabel().getSize().y / 2;
             topFirst = labelPos >= realNode.getSize().y / 2;
+        } else {
+            topFirst = !onlyBottom;
         }
         
         List<LNode> boxList;
@@ -123,6 +147,8 @@ public class CommentPreprocessor extends AbstractAlgorithm implements ILayoutPro
             if (topBoxes == null) {
                 boxList = new LinkedList<LNode>();
                 realNode.setProperty(Properties.TOP_COMMENTS, boxList);
+            } else if (onlyTop) {
+                boxList = topBoxes;
             } else {
                 List<LNode> bottomBoxes = realNode.getProperty(
                         Properties.BOTTOM_COMMENTS);
@@ -143,6 +169,8 @@ public class CommentPreprocessor extends AbstractAlgorithm implements ILayoutPro
             if (bottomBoxes == null) {
                 boxList = new LinkedList<LNode>();
                 realNode.setProperty(Properties.BOTTOM_COMMENTS, boxList);
+            } else if (onlyBottom) {
+                boxList = bottomBoxes;
             } else {
                 List<LNode> topBoxes = realNode.getProperty(Properties.TOP_COMMENTS);
                 if (topBoxes == null) {
