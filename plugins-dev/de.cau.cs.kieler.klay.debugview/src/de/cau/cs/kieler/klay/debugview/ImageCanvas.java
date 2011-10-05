@@ -253,7 +253,7 @@ public class ImageCanvas extends Canvas {
                 ((float) clientArea.height) / ((float) imageBounds.height));
         
         // Make sure we don't exceed the allowed zoom boundaries
-        setZoom(Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoomToFitLevel)));
+        setZoom(Math.max(MIN_ZOOM, Math.min(1.0f, zoomToFitLevel)));
     }
     
     /**
