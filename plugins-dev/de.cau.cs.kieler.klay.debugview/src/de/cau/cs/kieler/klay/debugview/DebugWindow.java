@@ -34,26 +34,24 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Scale;
-import org.eclipse.swt.widgets.ScrollBar;
-import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -221,32 +219,6 @@ public class DebugWindow extends Window {
         }
     }
     
-    /**
-     * A customized version of the drag drop scroll handler that handles value
-     * change notifications more efficiently.
-     * 
-     * @author cds
-     */
-    private class CustomScrollHandler extends DragDropScrollHandler {
-        
-        /**
-         * Constructs a new instance for the given control.
-         * 
-         * @param control the control.
-         */
-        public CustomScrollHandler(final Scrollable control) {
-            super(control, true);
-        }
-
-        @Override
-        protected void notifiyOfValueChange() {
-            handleScrollBarChange(
-                    getHorizontalBar().getSelection(),
-                    getVerticalBar().getSelection());
-        }
-        
-    }
-    
     
     // CONSTANTS
     /**
@@ -270,6 +242,11 @@ public class DebugWindow extends Window {
     private static final int ZOOM_DEFAULT = 100;
     
     /**
+     * A hundred percent.
+     */
+    private static final float HUNDRED_PERCENT = 100.0f;
+    
+    /**
      * Default locations of Graphviz dot.
      */
     private static final String[] DEFAULT_DOT_LOCS = {
@@ -285,11 +262,15 @@ public class DebugWindow extends Window {
     private ToolItem folderRemoveAllButton = null;
     private Table fileTable = null;
     private TableViewer fileTableViewer = null;
-    private Canvas imageCanvas = null;
+    private ImageCanvas imageCanvas = null;
     private Composite statusBar = null;
     private Label statusBarLabel = null;
     private Scale statusBarZoomScale = null;
-    private Label statusBarZoomLabel = null;
+    private Image statusBarZoomLabelContextImage = null;
+    private CLabel statusBarZoomLabel = null;
+    private Menu statusBarZoomMenu = null;
+    private MenuItem statusBarZoomOriginalItem = null;
+    private MenuItem statusBarZoomToFitItem = null;
     
     // VARIABLES
     /**
@@ -298,24 +279,9 @@ public class DebugWindow extends Window {
     private String currentPath = null;
     
     /**
-     * The currently displayed image file.
-     */
-    private File currentImageFile = null;
-    
-    /**
-     * The currently displayed image.
-     */
-    private Image currentImage = null;
-    
-    /**
-     * The image point that will land in the top left corner.
-     */
-    private Point origin = new Point(0, 0);
-    
-    /**
      * The current zoom factor.
      */
-    private float zoomLevel = 1.0f;
+    private int zoomPercentage = ZOOM_DEFAULT;
     
 
     /**
@@ -349,7 +315,7 @@ public class DebugWindow extends Window {
     /**
      * Refreshes the file table.
      */
-    private void refresh() {
+    private void refreshFileList() {
         setPath(currentPath);
     }
     
@@ -418,7 +384,7 @@ public class DebugWindow extends Window {
             }
         }
         
-        refresh();
+        refreshFileList();
     }
     
 
@@ -449,143 +415,36 @@ public class DebugWindow extends Window {
             }
         }
         
-        // Dispose the current image, if any
-        if (currentImage != null) {
-            currentImage.dispose();
-        }
-        
+        // Check if the image file exists
         if (imageFile == null) {
             // Reset
-            currentImageFile = null;
-            currentImage = null;
+            imageCanvas.clear();
             statusBarLabel.setText(currentPath);
         } else {
             // Load new image
-            currentImage = new Image(getShell().getDisplay(), imageFile.getPath());
-            currentImageFile = modelFile;
-            statusBarLabel.setText(currentImageFile.getPath());
-        }
-
-        origin.x = 0;
-        origin.y = 0;
-        zoomLevel = 1.0f;
-        
-        updateCanvas();
-    }
-    
-    /**
-     * Redraws the canvas and sets properties on its scroll bars.
-     */
-    private void updateCanvas() {
-        Rectangle rect = currentImage == null ? new Rectangle(0, 0, 0, 0) : currentImage.getBounds();
-        Rectangle client = imageCanvas.getClientArea();
-        ScrollBar hBar = imageCanvas.getHorizontalBar();
-        ScrollBar vBar = imageCanvas.getVerticalBar();
-        
-        hBar.setMaximum(rect.width);
-        vBar.setMaximum(rect.height);
-        hBar.setThumb(Math.min(rect.width, client.width));
-        vBar.setThumb(Math.min(rect.height, client.height));
-        
-        int hPage = rect.width - client.width;
-        int vPage = rect.height - client.height;
-        int hSelection = hBar.getSelection();
-        int vSelection = vBar.getSelection();
-        
-        if (hSelection >= hPage) {
-                if (hPage <= 0) {
-                    hSelection = 0;
-                }
-                origin.x = -hSelection;
-        }
-        
-        if (vSelection >= vPage) {
-                if (vPage <= 0) {
-                    vSelection = 0;
-                }
-                origin.y = -vSelection;
-        }
-        
-        imageCanvas.redraw();
-    }
-    
-    /**
-     * Handles a change in scroll bar values.
-     * 
-     * @param newHorizontalValue the horizontal scroll bar's new value, or {@code -1} if
-     *                           no change occurred.
-     * @param newVerticalValue the vertical scroll bar's new value, or {@code -1} if
-     *                         no change occurred.
-     */
-    private void handleScrollBarChange(final int newHorizontalValue, final int newVerticalValue) {
-        
-        if (currentImage == null) {
-            // Ignore
-            return;
-        }
-        
-        if (newHorizontalValue >= 0) {
-            int destX = -newHorizontalValue - origin.x;
-            Rectangle rect = currentImage.getBounds();
-            imageCanvas.scroll(destX, 0, 0, 0, rect.width, rect.height, false);
-            origin.x = -newHorizontalValue;
-        }
-        
-        if (newVerticalValue >= 0) {
-            int destY = -newVerticalValue - origin.y;
-            Rectangle rect = currentImage.getBounds();
-            imageCanvas.scroll(0, destY, 0, 0, rect.width, rect.height, false);
-            origin.y = -newVerticalValue;
+            imageCanvas.loadImage(imageFile);
+            statusBarLabel.setText(modelFile.getPath());
         }
     }
     
     /**
-     * Handles a zoom level change.
+     * Changes the zoom.
      * 
      * @param percentage the new zoom level, given as a percentage. 100% displays the image in
      *                   its original size.
      */
-    private void handleZoomLevelChange(final int percentage) {
-        // TODO: Implement
-        zoomLevel = percentage / 100.0f;
+    private void changeZoom(final int percentage) {
+        zoomPercentage = percentage;
+        
+        imageCanvas.setZoom(zoomPercentage / HUNDRED_PERCENT);
         
         // Update the zoom label and the zoom scale to show the new value
-        statusBarZoomScale.setSelection(percentage);
-        statusBarZoomLabel.setText(percentage + "%");
+        statusBarZoomScale.setSelection(zoomPercentage);
+        statusBarZoomLabel.setText(zoomPercentage + "% ");
         statusBar.layout();
-        
-        updateCanvas();
     }
     
-    /**
-     * Paints the canvas.
-     * 
-     * @param gc graphics context.
-     */
-    private void handlePaintCanvas(final GC gc) {
-        Rectangle imageRect = new Rectangle(0, 0, 0, 0);
-        
-        if (currentImage != null) {
-            // Draw image
-            gc.drawImage(currentImage, origin.x, origin.y);
-            imageRect = currentImage.getBounds();
-        }
-        
-        // Draw background
-        Rectangle client = imageCanvas.getClientArea();
-        
-        int marginWidth = client.width - imageRect.width;
-        if (marginWidth > 0) {
-                gc.fillRectangle(imageRect.width, 0, marginWidth, client.height);
-        }
-        
-        int marginHeight = client.height - imageRect.height;
-        if (marginHeight > 0) {
-                gc.fillRectangle(0, imageRect.height, client.width, marginHeight);
-        }
-    }
     
-
     ///////////////////////////////////////////////////////////////////////////////
     // Miscellaneous
     
@@ -670,7 +529,7 @@ public class DebugWindow extends Window {
         
         dialogSettings.put(SETT_PATH, currentPath);
         
-        dialogSettings.put(SETT_ZOOM, (int) (zoomLevel * 100));
+        dialogSettings.put(SETT_ZOOM, zoomPercentage);
     }
     
     /**
@@ -682,9 +541,9 @@ public class DebugWindow extends Window {
         setPath(dialogSettings.get(SETT_PATH));
         
         try {
-            handleZoomLevelChange(dialogSettings.getInt(SETT_ZOOM));
+            changeZoom(dialogSettings.getInt(SETT_ZOOM));
         } catch (NumberFormatException e) {
-            handleZoomLevelChange(ZOOM_DEFAULT);
+            changeZoom(ZOOM_DEFAULT);
         }
     }
     
@@ -713,11 +572,15 @@ public class DebugWindow extends Window {
             if (folderRemoveAllImage != null) {
                 folderRemoveAllImage.dispose();
             }
+            
+            if (statusBarZoomLabelContextImage != null) {
+                statusBarZoomLabelContextImage.dispose();
+            }
         }
         
         return closed;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -777,13 +640,8 @@ public class DebugWindow extends Window {
                 FileTableLabelProvider.COL_CREATED));
         
         // Image Canvas
-        imageCanvas = new Canvas(sashForm,
-                SWT.BORDER | SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE | SWT.V_SCROLL | SWT.H_SCROLL);
-        imageCanvas.getHorizontalBar().setMaximum(1);
-        imageCanvas.getHorizontalBar().setThumb(1);
-        imageCanvas.getVerticalBar().setMaximum(1);
-        imageCanvas.getVerticalBar().setThumb(1);
-        new CustomScrollHandler(imageCanvas);
+        imageCanvas = new ImageCanvas(sashForm);
+        new DragDropScrollHandler(imageCanvas, true);
         
         // Set sash form weights
         sashForm.setWeights(new int[] {30, 70});
@@ -793,30 +651,6 @@ public class DebugWindow extends Window {
             public void selectionChanged(final SelectionChangedEvent event) {
                 IStructuredSelection selection = (IStructuredSelection) event.getSelection();
                 updateImage((File) selection.getFirstElement());
-            }
-        });
-        
-        imageCanvas.addListener(SWT.Paint, new Listener() {
-            public void handleEvent(final Event event) {
-                handlePaintCanvas(event.gc);
-            }
-        });
-        
-        imageCanvas.addListener(SWT.Resize, new Listener() {
-            public void handleEvent(final Event event) {
-                updateCanvas();
-            }
-        });
-        
-        imageCanvas.getHorizontalBar().addListener(SWT.Selection, new Listener() {
-            public void handleEvent(final Event event) {
-                handleScrollBarChange(imageCanvas.getHorizontalBar().getSelection(), -1);
-            }
-        });
-        
-        imageCanvas.getVerticalBar().addListener(SWT.Selection, new Listener() {
-            public void handleEvent(final Event event) {
-                handleScrollBarChange(-1, imageCanvas.getVerticalBar().getSelection());
             }
         });
         
@@ -870,7 +704,7 @@ public class DebugWindow extends Window {
              */
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                refresh();
+                refreshFileList();
             }
         });
 
@@ -900,7 +734,7 @@ public class DebugWindow extends Window {
         statusBar = new Composite(parent, SWT.NULL);
         statusBar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        GridLayout gl = new GridLayout(3, false);
+        GridLayout gl = new GridLayout(4, false);
         gl.marginHeight = 0;
         gl.marginWidth = 0;
         statusBar.setLayout(gl);
@@ -910,16 +744,29 @@ public class DebugWindow extends Window {
         statusBarLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         
         // Status Bar Zoom Label
-        statusBarZoomLabel = new Label(statusBar, SWT.NULL);
+        statusBarZoomLabel = new CLabel(statusBar, SWT.NULL);
+        statusBarZoomLabelContextImage = KlayDebugViewPlugin.loadImage("contextMenu.gif"); //$NON-NLS-1$
+        statusBarZoomLabel.setImage(statusBarZoomLabelContextImage);
         
         gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         statusBarZoomLabel.setLayoutData(gd);
         
+        // Status Bar Zoom Menu
+        statusBarZoomMenu = new Menu(statusBarZoomLabel);
+        
+        // Status Bar Zoom Original Item
+        statusBarZoomOriginalItem = new MenuItem(statusBarZoomMenu, SWT.PUSH);
+        statusBarZoomOriginalItem.setText("Original Size");
+        
+        // Status Bar Zoom To Fit Item
+        statusBarZoomToFitItem = new MenuItem(statusBarZoomMenu, SWT.PUSH);
+        statusBarZoomToFitItem.setText("Zoom to Fit");
+        
         // Status Bar Zoom Scale
         statusBarZoomScale = new Scale(statusBar, SWT.HORIZONTAL);
         statusBarZoomScale.setIncrement(5);
-        statusBarZoomScale.setMaximum(200);
-        statusBarZoomScale.setMinimum(10);
+        statusBarZoomScale.setMaximum((int) (ImageCanvas.MAX_ZOOM * HUNDRED_PERCENT));
+        statusBarZoomScale.setMinimum((int) (ImageCanvas.MIN_ZOOM * HUNDRED_PERCENT));
         statusBarZoomScale.setPageIncrement(25);
         
         gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
@@ -927,9 +774,30 @@ public class DebugWindow extends Window {
         statusBarZoomScale.setLayoutData(gd);
         
         // Event Listeners
+        statusBarZoomLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseDown(final MouseEvent e) {
+                statusBarZoomMenu.setLocation(statusBarZoomLabel.toDisplay(e.x, e.y));
+                statusBarZoomMenu.setVisible(true);
+            }
+        });
+        
+        statusBarZoomOriginalItem.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(final SelectionEvent e) {
+                changeZoom(100);
+            }
+        });
+        
+        statusBarZoomToFitItem.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(final SelectionEvent e) {
+                imageCanvas.zoomToFit();
+                changeZoom((int) (imageCanvas.getZoom() * HUNDRED_PERCENT));
+            }
+        });
+        
         statusBarZoomScale.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent e) {
-                handleZoomLevelChange(statusBarZoomScale.getSelection());
+                changeZoom(statusBarZoomScale.getSelection());
             }
         });
         
