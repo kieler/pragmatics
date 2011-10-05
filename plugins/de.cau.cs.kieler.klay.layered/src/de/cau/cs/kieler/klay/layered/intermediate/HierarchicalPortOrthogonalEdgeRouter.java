@@ -227,8 +227,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
         double southY = graphSize.y + graphInsets.top + graphInsets.bottom + 2 * borderSpacing
                 + layeredGraph.getOffset().y;
         
-        // Lists of northern and southern external port dummies; these are later used to detect
-        // ordering conflicts in the FIXED_ORDER case.
+        // Lists of northern and southern external port dummies
         List<LNode> northernDummies = new LinkedList<LNode>();
         List<LNode> southernDummies = new LinkedList<LNode>();
         
@@ -269,10 +268,19 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             }
         }
         
-        // Check for correct ordering of nodes in the FIXED_ORDER case
-        if (constraints == PortConstraints.FIXED_ORDER) {
-            fixDummyOrder(northernDummies);
-            fixDummyOrder(southernDummies);
+        // Check for correct ordering of nodes in the FIXED_ORDER case and for dummy nodes that
+        // have been put on top of one another
+        switch (constraints) {
+        case FREE:
+        case FIXED_SIDE:
+            ensureUniquePositions(northernDummies, layeredGraph);
+            ensureUniquePositions(southernDummies, layeredGraph);
+            break;
+            
+        case FIXED_ORDER:
+            restoreProperOrder(northernDummies, layeredGraph);
+            restoreProperOrder(southernDummies, layeredGraph);
+            break;
         }
     }
 
@@ -319,6 +327,41 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
     private void applyNorthSouthDummyPosition(final LNode dummy) {
         dummy.getPosition().x = dummy.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
     }
+    
+    /**
+     * Ensures that no two dummy nodes in the given list are assigned the same x coordinate. This
+     * method must only be called if port constraints are set to {@code FREE} or {@code FIXED_SIDE}
+     * as it may not preserve the original order of dummy nodes.
+     * 
+     * @param dummies list of dummy nodes.
+     * @param graph the layered graph.
+     */
+    private void ensureUniquePositions(final List<LNode> dummies, final LayeredGraph graph) {
+        if (dummies.isEmpty()) {
+            return;
+        }
+        
+        // Turn the list into an array of dummy nodes and sort that by their x coordinate
+        LNode[] dummyArray = dummies.toArray(new LNode[dummies.size()]);
+        
+        Arrays.sort(dummyArray, new Comparator<LNode>() {
+            public int compare(final LNode a, final LNode b) {
+                double diff = a.getPosition().x - b.getPosition().x;
+                
+                // We cannot simply return diff cast to an int: if diff == 0.4, the returned value
+                // would be 0, which is wrong
+                if (diff < 0.0) {
+                    return -1;
+                } else if (diff > 0.0) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+        
+        assignAscendingCoordinates(dummyArray, graph);
+    }
 
     /**
      * Checks if the automatically calculated node coordinates violate their fixed order and fixes
@@ -326,8 +369,9 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * {@code FIXED_ORDER}.
      * 
      * @param dummies list of dummy nodes.
+     * @param graph the layered graph.
      */
-    private void fixDummyOrder(final List<LNode> dummies) {
+    private void restoreProperOrder(final List<LNode> dummies, final LayeredGraph graph) {
         // Turn the list into an array of dummy nodes and sort that by their original x coordinate
         LNode[] dummyArray = dummies.toArray(new LNode[dummies.size()]);
         
@@ -348,7 +392,36 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             }
         });
         
-        // TODO: Find and fix violated constraints.
+        assignAscendingCoordinates(dummyArray, graph);
+    }
+    
+    /**
+     * Iterates over the given array of dummy nodes, making sure that their x coordinates
+     * are strictly ascending. Dummy nodes whose coordinates are in violation of this rule
+     * are moved to the right. Once this method is finished, the coordinates of the dummy
+     * nodes reflect their order in the array.
+     * 
+     * @param dummies array of dummy nodes.
+     * @param graph the layered graph.
+     */
+    private void assignAscendingCoordinates(final LNode[] dummies, final LayeredGraph graph) {
+        // Find the edge distance
+        float edgeSpacing = graph.getProperty(Properties.OBJ_SPACING)
+                * graph.getProperty(Properties.EDGE_SPACING_FACTOR);
+        
+        // Now, iterate over the array, remembering the last assigned position. If we find a
+        // position that is less than or equal to the last position, assign a new position of
+        // "lastPosition + edgeSpacing"
+        double lastCoordinate = dummies[0].getPosition().x;
+        for (int index = 1; index < dummies.length; index++) {
+            KVector currentPosition = dummies[index].getPosition();
+            
+            if (currentPosition.x <= lastCoordinate) {
+                currentPosition.x = lastCoordinate + edgeSpacing;
+            }
+            
+            lastCoordinate = currentPosition.x;
+        }
     }
     
     
