@@ -97,18 +97,10 @@ public abstract class AbstractServerConfigDialog extends Dialog {
 
     // **********
 
-    /** Standard width of labels. */
-    private static final int LABEL_WIDTHHINT
-        = 400;
-
     /** Standard width of text fields. */
     private static final int TEXT_WIDTHHINT
-        = 400;
-
-    /** Standard width of buttons. */
-    private static final int BUTTON_WIDTHHINT
-        = 80;
-
+        = 350;
+    
     /** Prefix of a HTTPS URI. */
     private static final String HTTPS_PREFIX
         = "https";
@@ -118,39 +110,28 @@ public abstract class AbstractServerConfigDialog extends Dialog {
      * @param parent
      */
     private void createServerConfigGroup(final Composite parent) {
-
-        Group group = new Group(parent, SWT.NONE);
-
-        group.setText("Data of the layout server configuration");
-        group.setLayout(new GridLayout(2, false));
-
-        Label label;
-
-        GridData layoutLabel = new GridData(
-            SWT.LEFT, SWT.BOTTOM, true, false, 2, 1
-        );
-        GridData layoutText = new GridData(SWT.FILL, SWT.TOP,  true, false);
-        GridData layoutButton = new GridData(SWT.FILL, SWT.TOP,  true, false);
-
-        layoutLabel.widthHint = LABEL_WIDTHHINT;
-        layoutText.widthHint = TEXT_WIDTHHINT;
-        layoutButton.widthHint = BUTTON_WIDTHHINT;
-
-        label = new Label(group, SWT.WRAP);
-
-        label.setText("Server Configuration name:");
-        label.setLayoutData(layoutLabel);
-
-        serverConfigName = new Text(group, SWT.SINGLE | SWT.BORDER);
-        serverConfigName.setLayoutData(layoutText);
-
-        label = new Label(group, SWT.WRAP);
-
-        label.setText("Service address:");
-        label.setLayoutData(layoutLabel);
-
-        serverConfigAddress = new Text(group, SWT.SINGLE | SWT.BORDER);
-        serverConfigAddress.setLayoutData(layoutText);
+        
+        GridData gd;
+        
+        GridLayout parentLayout = (GridLayout) parent.getLayout();
+        parentLayout.numColumns = 2;
+        parentLayout.makeColumnsEqualWidth = false;
+        
+        Label label = new Label(parent, SWT.NULL);
+        label.setText("Configuration name:");
+        label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+        
+        serverConfigName = new Text(parent, SWT.SINGLE | SWT.BORDER);
+        gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+        gd.minimumWidth = TEXT_WIDTHHINT;
+        serverConfigName.setLayoutData(gd);
+        
+        label = new Label(parent, SWT.NULL);
+        label.setText("Address:");
+        label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+        
+        serverConfigAddress = new Text(parent, SWT.SINGLE | SWT.BORDER);
+        serverConfigAddress.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         serverConfigAddress.addModifyListener(
             new ModifyListener() {
                 public void modifyText(final ModifyEvent e) {
@@ -164,21 +145,27 @@ public abstract class AbstractServerConfigDialog extends Dialog {
                 }
             }
         );
-
-        label = new Label(group, SWT.WRAP);
-
-        label.setText("Path to trust store:");
-        label.setLayoutData(layoutLabel);
-
-        truststore = new Text(group, SWT.SINGLE | SWT.BORDER);
-        truststore.setLayoutData(layoutText);
+        
+        Group trustStoreGroup = new Group(parent, SWT.NULL);
+        trustStoreGroup.setText("HTTPS Authentication");
+        trustStoreGroup.setLayout(new GridLayout(3, false));
+        gd = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
+        gd.verticalIndent = 10;
+        trustStoreGroup.setLayoutData(gd);
+        
+        label = new Label(trustStoreGroup, SWT.NULL);
+        label.setText("Trust Store:");
+        label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+        
+        truststore = new Text(trustStoreGroup, SWT.SINGLE | SWT.BORDER);
+        truststore.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         // Only enabled on HTTPS connections
         truststore.setEnabled(false);
 
-        truststoreButton = new Button(group, SWT.NONE);        
-        truststoreButton.setText("Select");
-        truststoreButton.setLayoutData(layoutButton);
+        truststoreButton = new Button(trustStoreGroup, SWT.NONE);        
+        truststoreButton.setText("...");
+        truststoreButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
         truststoreButton.addSelectionListener(
             new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent e) {
@@ -196,25 +183,22 @@ public abstract class AbstractServerConfigDialog extends Dialog {
 
         // Only enabled on HTTPS connections
         truststoreButton.setEnabled(false);
+        
+        label = new Label(trustStoreGroup, SWT.NULL);
+        label.setText("Password:");
+        label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
-        label = new Label(group, SWT.WRAP);
-
-        label.setText("Password for trust store:");
-        label.setLayoutData(layoutLabel);
-
-        truststorePass = new Text(group, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
-        truststorePass.setLayoutData(layoutText);
+        truststorePass = new Text(trustStoreGroup, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
+        truststorePass.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
         // Only enabled on HTTPS connections
         truststorePass.setEnabled(false);
         
-        // Dummy button for sorting the UI
-        Button dummy = new Button(group, SWT.NONE);
-        dummy.setVisible(false);
-        
-        checkButton = new Button(group, SWT.NONE);
-        checkButton.setText("Check...");
-        checkButton.setLayoutData(layoutButton);
+        checkButton = new Button(parent, SWT.NONE);
+        checkButton.setText("Check Connection");
+        gd = new GridData(SWT.RIGHT, SWT.BEGINNING, true, false, 2, 1);
+        gd.verticalIndent = 10;
+        checkButton.setLayoutData(gd);
 
         checkButton.addSelectionListener(
             new SelectionAdapter() {
@@ -226,21 +210,19 @@ public abstract class AbstractServerConfigDialog extends Dialog {
             }
         );
 
-        detailButton = new Button(group, SWT.NONE);
-        detailButton.setText("Details...");
-        detailButton.setLayoutData(layoutButton);
-
-        detailButton.addSelectionListener(
-            new SelectionAdapter() {
-                public void widgetSelected(final SelectionEvent e) {
-                    if (e.widget == detailButton) {
-                        displayDetails();
-                    }
-                }
-            }
-        );
-
-        group.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+//        detailButton = new Button(group, SWT.NONE);
+//        detailButton.setText("Details...");
+//        detailButton.setLayoutData(layoutButton);
+//
+//        detailButton.addSelectionListener(
+//            new SelectionAdapter() {
+//                public void widgetSelected(final SelectionEvent e) {
+//                    if (e.widget == detailButton) {
+//                        displayDetails();
+//                    }
+//                }
+//            }
+//        );
 
     }
 
