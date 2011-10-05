@@ -34,6 +34,7 @@ import org.eclipse.xtend.XtendFacade;
 import org.eclipse.xtend.XtendResourceParser;
 import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
@@ -257,8 +258,10 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
         // search a class with the revealed type name in the registered meta models
         for (EPackage mm : this.metamodels.values()) {
             clazz = mm.getEClassifier(className);
-
-            if (clazz != null/* && clazz.isInstance(model) */) {
+            
+            // chsch: hotfixed this part!! TODO whole loop shall be refactored!! 
+            if ((Strings.isNullOrEmpty(packageName) || mm.getName().equals(packageName))
+                    && clazz != null/* && clazz.isInstance(model) */) {
                 ePackage = clazz.getEPackage();
                 boolean isDeclared = false;
 
