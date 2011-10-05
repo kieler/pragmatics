@@ -82,6 +82,34 @@
                </customCondition>
             </compoundCondition>
             <compoundCondition
+                  figureParam="inputPort">
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     figureParam="inputPort"
+                     key="type"
+                     value="inputPort">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="language"
+                     value="ptolemy">
+               </customCondition>
+            </compoundCondition>
+            <compoundCondition
+                  figureParam="outputPort">
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     figureParam="outputPort"
+                     key="type"
+                     value="outputPort">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="language"
+                     value="ptolemy">
+               </customCondition>
+            </compoundCondition>
+            <compoundCondition
                   borderItemParam="valueDisplay//value"
                   figureParam="valueDisplay//value"
                   layoutParam="valueDisplay//value">

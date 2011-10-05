@@ -27,8 +27,10 @@ import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.PolygonShape;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.draw2d.ui.internal.figures.ImageFigureEx;
@@ -97,6 +99,46 @@ public class FigureProvider {
         return fig;
     }
 
+    /**
+     * Create a figure for an entity representing an ptolemy input port.
+     * @return the input port figure
+     */
+    public IFigure createInputPort() {
+        PointList pointList = new PointList();
+        pointList.addPoint(0, 4);
+        pointList.addPoint(0, 14);
+        pointList.addPoint(10, 14);
+        pointList.addPoint(10, 18);
+        pointList.addPoint(18, 9);
+        pointList.addPoint(10, 0);
+        pointList.addPoint(10, 4);
+        pointList.addPoint(0, 4);
+        PolygonShape figure = new PolygonShape();
+        figure.setPoints(pointList);
+        figure.setBackgroundColor(ColorConstants.black);
+        return figure;      
+    }
+    
+    /**
+     * Create a figure for an entity representing an ptolemy output port.
+     * @return the output port figure
+     */
+    public IFigure createOutputPort() {
+        PointList pointList = new PointList();
+        pointList.addPoint(0, 0);
+        pointList.addPoint(0, 18);
+        pointList.addPoint(4, 14);
+        pointList.addPoint(18, 14);
+        pointList.addPoint(18, 4);
+        pointList.addPoint(4, 4);
+        pointList.addPoint(0, 0);
+        PolygonShape figure = new PolygonShape();
+        figure.setPoints(pointList);
+        figure.setBackgroundColor(ColorConstants.black);
+        return figure;      
+    }
+    
+    
     /**
      * Create a draw2d figure out of an svg Document. FigureParser.createFigure does the actual
      * work.
