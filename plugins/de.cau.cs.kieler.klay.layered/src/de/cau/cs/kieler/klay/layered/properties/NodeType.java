@@ -47,16 +47,6 @@ public enum NodeType {
      * a dummy node created to be part of a linear segment used to draw the sides of a compound
      * node.
      */
-    COMPOUND_SIDE,
-    /**
-     * a dummy node created to allow for constraints of the node ordering phase for compound graphs.
-     * Starts the compound graph's section in the layer.
-     */
-    UPPER_COMPOUND_SIDE,
-    /**
-     * a dummy node created to allow for constraints of the node ordering phase for compound graphs.
-     * Ends the compound graph's section in the layer.
-     */
-    LOWER_COMPOUND_SIDE;
+    COMPOUND_SIDE;
 
 }
