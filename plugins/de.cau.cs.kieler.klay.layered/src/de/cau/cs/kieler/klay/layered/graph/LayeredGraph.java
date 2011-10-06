@@ -43,8 +43,10 @@ public class LayeredGraph extends LGraphElement {
     public static final Map<NodeType, String> NODE_TYPE_COLORS = new EnumMap<NodeType, String>(
             NodeType.class);
     
+    // Initialize the node-type-to-color-map
     static {
         NODE_TYPE_COLORS.put(NodeType.COMPOUND_SIDE, "#808080");
+        NODE_TYPE_COLORS.put(NodeType.EXTERNAL_PORT, "#cc99cc");
         NODE_TYPE_COLORS.put(NodeType.LONG_EDGE, "#eaed00");
         NODE_TYPE_COLORS.put(NodeType.NORTH_SOUTH_PORT, "#0034de");
         NODE_TYPE_COLORS.put(NodeType.LOWER_COMPOUND_BORDER, "#18e748");
