@@ -86,6 +86,10 @@ public class InLayerConstraintProcessor extends AbstractAlgorithm implements ILa
                     }
                 }
                 
+                // Put BOTTOM-constrained nodes into the corresponding list
+                if (constraint == InLayerConstraint.BOTTOM) {
+                    bottomConstrainedNodes.add(nodes[i]);
+                }
             }
             
             // Append the bottom-constrained nodes
