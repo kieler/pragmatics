@@ -24,6 +24,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -55,24 +56,38 @@ public class CompoundEdgeCrossingConstraintProcessor extends AbstractAlgorithm i
         getMonitor().begin("Revert edges to remove cyclic dependencies between compound nodes", 1);
         HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
                 .getProperty(Properties.ELEMENT_MAP);
+        // Insert Side Dummies for each layer and set up node order constraints for them.
         for (Layer layer : layeredGraph.getLayers()) {
+            // Set up a list of compound nodes represented in the layer by leave nodes, and relate a
+            // list of the leave nodes to each.
             HashMap<LNode, LinkedList<LNode>> compoundNodes = new HashMap<LNode, LinkedList<LNode>>();
             for (LNode lnode : layer.getNodes()) {
-                KNode parent = lnode.getProperty(Properties.PARENT);
-                if (parent != null) {
-                    LNode parentRep = (LNode) elemMap.get(parent);
-                    if (compoundNodes.containsKey(parentRep)) {
-                        compoundNodes.get(parentRep).add(lnode);
-                    } else {
-                        LinkedList<LNode> newList = new LinkedList<LNode>();
-                        newList.add(lnode);
-                        compoundNodes.put(parentRep, newList);
+                if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL) {
+                    KNode parent = lnode.getProperty(Properties.PARENT);
+                    if (parent != null) {
+                        LNode parentRep = (LNode) elemMap.get(parent);
+                        if (compoundNodes.containsKey(parentRep)) {
+                            compoundNodes.get(parentRep).add(lnode);
+                        } else {
+                            LinkedList<LNode> newList = new LinkedList<LNode>();
+                            newList.add(lnode);
+                            compoundNodes.put(parentRep, newList);
+                        }
                     }
                 }
+            }
+            // For each of the compound nodes relevant to the layer, insert a upper and lower border
+            // side node and constrain them to keep in correct order.
+            for (LNode compoundNode : compoundNodes.keySet()) {
+                LNode upperSideDummy = new LNode();
+                upperSideDummy.setProperty(Properties.ORIGIN, compoundNode);
+                upperSideDummy.setProperty(Properties.COMPOUND_NODE, compoundNode);
+                //LNode lowerSideDummy = new LNode();
+                // LinkedList<LNode> successorList
+                // upperSideDummy.setProperty(Properties.IN_LAYER_SUCCESSORS_CONSTRAINT, value)
             }
         }
 
         getMonitor().done();
     }
-
 }
