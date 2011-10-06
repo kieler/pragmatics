@@ -209,6 +209,18 @@ public final class Properties {
      */
     public static final IProperty<LPort> COMMENT_CONN_PORT = new Property<LPort>(
             "CommentConnectionPort");
+    
+    /**
+     * The maximum depth of a leave node in the original graph a layered graph is representing.
+     */
+    public static final IProperty<Integer> MAX_DEPTH = new Property<Integer>(
+            "MaxDepth", 0);
+    
+    /**
+     * The depth of a node in the nesting tree of a compound graph.
+     */
+    public static final IProperty<Integer> DEPTH = new Property<Integer>(
+            "Depth", 0);
 
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS
