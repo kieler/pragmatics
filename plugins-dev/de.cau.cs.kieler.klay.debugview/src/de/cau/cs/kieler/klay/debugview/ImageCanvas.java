@@ -94,7 +94,6 @@ public class ImageCanvas extends Canvas {
         
         // Add required event listeners
         this.addPaintListener(new PaintListener() {
-            @Override
             public void paintControl(final PaintEvent e) {
                 paint(e.gc);
             }
