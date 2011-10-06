@@ -1,25 +1,43 @@
 # User configuration file for the KWebS server
 
+#
+# Services to be published
+#
+
 # Use this option to configure whether the JAXWS layout will be published HTTP based 
 #de.cau.cs.kieler.kwebs.jaxws.publishHttp=true
+
 # Use this option to configure whether the JAXWS layout will be published HTTPS based 
 #de.cau.cs.kieler.kwebs.jaxws.publishHttps=false
+
 # Use this option to configure whether the layout will be published jETI based 
 #de.cau.cs.kieler.kwebs.publishJeti=false
+
 # Use this option to configure whether the support server will be published
 #de.cau.cs.kieler.kwebs.publishSupportServer=true
 
+#
+# Publishing related settings
+#
+
 # Use this option to configure the address, port and context under which the JAXWS and HTTP based layout will be published 
 #de.cau.cs.kieler.kwebs.jaxws.httpAddress=http://0.0.0.0:8442/layout
+
 # Use this option to configure the address, port and context under which the JAXWS and HTTPS based layout will be published 
 #de.cau.cs.kieler.kwebs.jaxws.httpsAddress=https://0.0.0.0:8443/layout
+
 # Use this option to configure the address and port under which the support server will be published
 #de.cau.cs.kieler.kwebs.supportServerAddress=http://0.0.0.0:8444
 
 # Use this option to configure the address under which the jETI server will be published
-#de.cau.cs.kieler.kwebs.jeti.server.hostname=localhost
+#de.cau.cs.kieler.kwebs.jeti.server.hostname=0.0.0.0
+
 # Use this option to configure the port under which the jETI server will be published
 #de.cau.cs.kieler.kwebs.jeti.connector.sepp.port=9867
+
+#
+# HTTPS related settings
+#
 
 # Use this option to configure the path to your servers key store
 #de.cau.cs.kieler.kwebs.httpsKeystore.jks.path=
@@ -27,12 +45,15 @@
 # Use this option to configure the password for your servers key store
 #de.cau.cs.kieler.kwebs.httpsKeystore.jks.pass=
 
-# Use this option to configure the hostname of the jeti tool server
-#de.cau.cs.kieler.kwebs.jeti.server.hostname=localhost
+#
+# Layout related settings
+#
 
 # Use this option to configure the path to the graphviz dot executable 
 #de.cau.cs.kieler.kwebs.graphviz.path=
+
 # Use this option to configure the timeout for the graphviz process
 #de.cau.cs.kieler.kwebs.graphviz.timeout=
+
 # Use this option to configure the timeout for the ogdf process
 #de.cau.cs.kieler.kwebs.ogdf.timeout=

@@ -74,7 +74,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
     private Button serverConfigRadio2;
 
     /** Check box button for using compression. */
-    private Button compressionCheckbox;
+    //private Button compressionCheckbox;
 
     /** Button for creating a new server configuration. */
     private Button scEditButton1;
@@ -165,8 +165,8 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         Composite composite = new Composite(parent, SWT.NONE);
         Group layoutGroup1 = createLayoutGroup1(composite);
         layoutGroup1.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-        Group layoutGroup2 = createLayoutGroup2(composite);
-        layoutGroup2.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+        //Group layoutGroup2 = createLayoutGroup2(composite);
+        //layoutGroup2.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
         Group layoutGroup3 = createLayoutGroup3(composite);
         layoutGroup3.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         initRemoteLayoutOptionsView();
@@ -188,7 +188,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         serverConfigRadio1.setSelection(true);
         serverConfigRadio2.setSelection(false);       
         // Defaults fall back to not use compression
-        compressionCheckbox.setSelection(false);
+        //compressionCheckbox.setSelection(false);
         // Update the UI
         refreshServerConfigViewer();
         updateRemoteLayoutOptionsView();
@@ -222,9 +222,9 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         store.setValue(Preferences.PREFID_LAYOUT_USE_REMOTE, remoteLayout);
         // Check whether the compression selection has been changed.
         // If it has been changed, store it.
-        boolean compressionLayout = compressionCheckbox.getSelection();
-        isDirty |= (store.getBoolean(Preferences.PREFID_LAYOUT_USE_COMPRESSION) != compressionLayout);
-        store.setValue(Preferences.PREFID_LAYOUT_USE_COMPRESSION, compressionLayout);
+        //boolean compressionLayout = compressionCheckbox.getSelection();
+        //isDirty |= (store.getBoolean(Preferences.PREFID_LAYOUT_USE_COMPRESSION) != compressionLayout);
+        //store.setValue(Preferences.PREFID_LAYOUT_USE_COMPRESSION, compressionLayout);
         // Fire property change event so that the RemoteGraphLayoutEngine can
         // initialize itself on the new conditions.
         if (isDirty) { 
@@ -297,6 +297,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
      *           the parent control
      * @return a group with general options
      */
+    /*
     private Group createLayoutGroup2(final Composite parent) {
         
         Group generalGroup = new Group(parent, SWT.NONE);
@@ -320,7 +321,8 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         return generalGroup;
 
     }
-
+    */
+    
     /** Width of the server configuration fixed property column. */
     private static final int SERVERCONFIGACTIVE_WIDTH
         = 50;
@@ -744,7 +746,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             serverConfigRadio1.setSelection(true);
         }
         boolean compressionLayout = store.getBoolean(Preferences.PREFID_LAYOUT_USE_COMPRESSION);
-        compressionCheckbox.setSelection(compressionLayout);
+        //compressionCheckbox.setSelection(compressionLayout);
         updateRemoteLayoutOptionsView();
     }
 
@@ -769,7 +771,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             fixed = serverConfig.isFixed();
             active = serverConfig.isActive();
         }
-        compressionCheckbox.setEnabled(remoteLayout);
+        //compressionCheckbox.setEnabled(remoteLayout);
         serverConfigTable.setEnabled(remoteLayout);
         scEditButton1.setEnabled(remoteLayout);
         scEditButton2.setEnabled(remoteLayout && !empty && !fixed);

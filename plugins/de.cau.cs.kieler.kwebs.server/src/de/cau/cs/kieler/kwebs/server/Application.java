@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kwebs.server;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
@@ -242,7 +243,7 @@ public class Application implements IApplication {
         // Set necessary plug-in preferences of the used layout plug-ins
         try {
             setPluginPreferencesFromConfiguration();
-        } catch (Exception e) {
+        } catch (Exception e) {e.printStackTrace();
             Logger.log(Severity.CRITICAL, "Error while initializing layouter preferences", e);
             return IApplication.EXIT_OK;
         }
@@ -343,16 +344,24 @@ public class Application implements IApplication {
             );
         }
         value = config.getConfigProperty(Configuration.GRAPHVIZ_PATH);
-        file = new File(value);
-        if (!file.exists() || !file.canExecute()) {
+        if (value != null) {
+            file = new File(value.replaceAll("\\\\", "/"));
+            if (!file.exists() || !file.canExecute()) {
+                Logger.log(Severity.WARNING, 
+                    "The specified graphviz executable does not exist or is not executable."
+                    + " Graphviz based layout will not work."
+                    + " Please check your config file (normally kwebs.user in server root path)."
+                );
+            } else {
+                Logger.log(Severity.ALWAYS, "Setting graphviz executable: " + value);
+                setPluginPreference(GRAPHVIZ_PLUGINID, GRAPHVIZ_EXECPREF, value);
+            }
+        } else {
             Logger.log(Severity.WARNING, 
-                "The specified graphviz executable does not exist or is not executable."
+                "The graphviz executable is not configured."
                 + " Graphviz based layout will not work."
                 + " Please check your config file (normally kwebs.user in server root path)."
             );
-        } else {
-            Logger.log(Severity.ALWAYS, "Setting graphviz executable: " + value);
-            setPluginPreference(GRAPHVIZ_PLUGINID, GRAPHVIZ_EXECPREF, value);
         }
         value = config.getConfigProperty(Configuration.GRAPHVIZ_TIMEOUT);
         Logger.log(Severity.ALWAYS, "Setting graphviz timeout: " + value);
@@ -415,5 +424,5 @@ public class Application implements IApplication {
         }
         return version;
     }
-
+    
 }

@@ -14,11 +14,8 @@
 
 package de.cau.cs.kieler.kwebs.client.kiml.layout;
 
-//import java.io.File;
-//import java.io.FileOutputStream;
-
-//import java.net.URI;
-//import java.text.NumberFormat;
+import java.io.File;
+import java.io.FileOutputStream;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -29,9 +26,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-//import org.eclipse.ui.IWorkbenchPage;
-//import org.eclipse.ui.IWorkbenchPart;
-//import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -46,7 +43,6 @@ import de.cau.cs.kieler.kwebs.LocalServiceException;
 import de.cau.cs.kieler.kwebs.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.Statistics;
 import de.cau.cs.kieler.kwebs.client.ILayoutServiceClient;
-//import de.cau.cs.kieler.kwebs.client.RestClient;
 import de.cau.cs.kieler.kwebs.client.ServerConfig;
 import de.cau.cs.kieler.kwebs.client.kiml.LayoutServiceClients;
 import de.cau.cs.kieler.kwebs.client.kiml.ServerConfigs;
@@ -54,7 +50,6 @@ import de.cau.cs.kieler.kwebs.client.kiml.LayoutHistory;
 import de.cau.cs.kieler.kwebs.client.kiml.activator.Activator;
 import de.cau.cs.kieler.kwebs.client.kiml.preferences.Preferences;
 import de.cau.cs.kieler.kwebs.formats.Formats;
-//import de.cau.cs.kieler.kwebs.kstatistics.KStatistics;
 import de.cau.cs.kieler.kwebs.transformation.IGraphTransformer;
 import de.cau.cs.kieler.kwebs.transformation.KGraphXmiCompressedTransformer;
 import de.cau.cs.kieler.kwebs.transformation.KGraphXmiTransformer;
@@ -228,9 +223,6 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         }
         return result.get();
     }
-
-    /** Constant for converting nano seconds to seconds. */
-    //private static final double FACTOR_NANOTOSECONDS = 1e-9;
     
     /**
      * Performs remote layout on the given layout graph.
@@ -257,7 +249,6 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         double timeStart = 0;
         double timeTotal = 0;
         KNode resultGraph = null;
-        //KStatistics statistics = null;
         IGraphTransformer<KNode> transformer = null;
         String format = null;
         String sourceXMI = null;
@@ -274,19 +265,9 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         }
         sourceXMI = transformer.serialize(layoutGraph);
         //storeXmi(sourceXMI, false);
-        try {          
-/*            
-            ILayoutServiceClient testClient = new RestClient();
-            testClient.setServerConfig(
-                ServerConfigs.getInstance().createServerConfig(
-                    "RESTTEST", 
-                    URI.create("http://localhost:8542")
-                )
-            );
-*/            
+        try { 
             networkStart = System.nanoTime();
             resultXMI = client.graphLayout(sourceXMI, format, null);
-            //resultXMI = testClient.graphLayout(sourceXMI, format, null);
             networkTotal = (System.nanoTime() - networkStart);
             //storeXmi(resultXMI, true);
             resultGraph = transformer.deserialize(resultXMI);
@@ -328,11 +309,28 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
     public final AbstractLayoutProvider getLastLayoutProvider() {
         return null;
     }
-/*
+
+    // Utility methods and definitions
+    
+    /** Root directory for KGraph dumps. */
     private static final String ROOT
         = "/home/layout/kwebs/examples";
     
+    /** 
+     *  Number of the dumped KGraph. Used for not overwriting existing dump
+     *  if a dump already exists of the same model. 
+     */
     private int count = 0;
+    
+    /**
+     * Dumps a KGraph to the file system.
+     * 
+     * @param xmi
+     *            the KGraph's XMI representation
+     * @param isResult
+     *            whether the XMI represents the source graph or the layouted graph
+     */
+    @SuppressWarnings("unused")
     private void storeXmi(final String xmi, final boolean isResult) {
         final Display display = PlatformUI.getWorkbench().getDisplay();
         final Maybe<String> title = new Maybe<String>();
@@ -369,7 +367,7 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
                                         : filename.length())
                            )
                            + (isResult ? "_result" : "")
-                           + count++ + ".xmi";
+                           + count++ + ".kgraph";
                 File file = new File(filename);
                 if (!file.exists()) {
                     FileOutputStream outstream = new FileOutputStream(file);
@@ -383,5 +381,5 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
             //CHECKSTYLEON EmptyBlock
         }
     }
-*/
+
 }

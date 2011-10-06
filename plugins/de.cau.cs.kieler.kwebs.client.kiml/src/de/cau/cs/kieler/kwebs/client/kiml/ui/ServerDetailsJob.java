@@ -67,7 +67,6 @@ public class ServerDetailsJob extends AbstractServerBasedJob {
      * {@inheritDoc}
      */
     protected void available(final ILayoutServiceClient client, final String message) {
-/*
         String serviceDataXMI = null;
         ServiceData serviceData = null;
         try {
@@ -78,14 +77,13 @@ public class ServerDetailsJob extends AbstractServerBasedJob {
             return;
         }                
         final String html = ServerDetailsPage.generateHtml(serviceData, client);
-*/
-        final URI uri = client.getServerConfig().getAddress();
+        //final URI uri = client.getServerConfig().getAddress();
         Display.getDefault().syncExec(
             new Runnable() { public void run() { 
                 new BrowserDialog(
                     getShell(), 
-                    null,
-                    uri.getScheme() + "://" + uri.getAuthority() + "/ServiceData.html",
+                    html,
+                    null,//uri.getScheme() + "://" + uri.getAuthority() + "/ServiceData.html",
                     "Server Details",
                     new Rectangle(0, 0, 500, 450)
                 ).open(); 

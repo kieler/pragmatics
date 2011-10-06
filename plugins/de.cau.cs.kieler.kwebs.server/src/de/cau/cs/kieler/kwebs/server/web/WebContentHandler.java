@@ -99,12 +99,16 @@ public class WebContentHandler implements HttpHandler {
         // Build the response
         byte[] content = cacheData.getContent();
         String mimetype = cacheData.getMimetype(); 
+        String charset = cacheData.getCharset();
         Headers headers = exchange.getResponseHeaders();
         int responseLength = 0;
         int responseCode = HttpURLConnection.HTTP_OK;
-        System.out.println(content.length + " " + mimetype);
         if (content != null && mimetype != null) {    
-            headers.add("Content-type", mimetype);
+            headers.add(
+                "Content-type", 
+                mimetype
+                + (charset != null ? ";charset=" + charset : "")
+            );
             if (mimetype == "application/octet-stream") {
                 headers.add("Content-Disposition", "attachment; filename=" + cacheData.getName());
                 headers.add("Content-Transfer-Encoding", "binary");
@@ -191,39 +195,60 @@ public class WebContentHandler implements HttpHandler {
      * @param requestData
      * @return
      */
-    private boolean handleDynamic(final RequestData requestData) {            
-        String providerName = (DYNAMIC_BASEPACKAGE + "." + requestData.getResource()).replace("/", ".");
-        if (providerName.toLowerCase().endsWith(".html")) {
-            //CHECKSTYLEOFF MagicNumber
-            providerName = providerName.substring(0, providerName.length() - 5) + "Provider";
-            //CHECKSTYLEON MagicNumber
-            if (!dynamicWebContentProviders.containsKey(providerName)) {
-                try {
-                    Bundle contributor 
-                        = Platform.getBundle(Application.PLUGIN_ID);
-                    IDynamicWebContentProvider contentProvider = (IDynamicWebContentProvider)
-                          (contributor.loadClass(providerName).newInstance());
-                    dynamicWebContentProviders.put(providerName, contentProvider);
-                } catch (Exception e) {
-                    return false;
-                }
+    private boolean handleDynamic(final RequestData requestData) {
+        if (requestData.getResource() == null) {
+            return false;
+        }
+        String pkg = requestData.getResource();
+        String cls = requestData.getResource();
+        String ext = "";
+        int lastIndex = pkg.lastIndexOf("/"); 
+        if (lastIndex > -1 && lastIndex < pkg.length() - 1) {
+            cls = pkg.substring(lastIndex + 1);
+            pkg = pkg.substring(0, lastIndex); 
+        } else {
+            pkg = "";
+        }
+        int extIndex = cls.lastIndexOf(".");
+        if (extIndex > -1 && extIndex < cls.length() - 1) {
+            ext = cls.substring(extIndex + 1).toLowerCase();
+            cls = cls.substring(0, extIndex);
+        }
+        if (!ext.equalsIgnoreCase("htm") && !ext.equalsIgnoreCase("html")) {
+            return false;
+        }
+        pkg = (DYNAMIC_BASEPACKAGE + (pkg.length() > 0 ? "." : "") + pkg).replace("/", ".");
+        cls = cls.substring(0, 1).toUpperCase() + cls.substring(1).toLowerCase() + "Provider";
+//System.out.println("P " + pkg);
+//System.out.println("C " + cls);
+//System.out.println("E " + ext);       
+        String providerName = pkg + "." + cls;        
+        if (!dynamicWebContentProviders.containsKey(providerName)) {
+            try {
+                Bundle contributor 
+                    = Platform.getBundle(Application.PLUGIN_ID);
+                IDynamicWebContentProvider contentProvider = (IDynamicWebContentProvider)
+                      (contributor.loadClass(providerName).newInstance());
+                dynamicWebContentProviders.put(providerName, contentProvider);
+            } catch (Exception e) {
+                return false;
             }
-            IDynamicWebContentProvider contentProvider = 
-                dynamicWebContentProviders.get(providerName);
-            if (contentProvider != null) {
-                try {
-                    contentProvider.handleRequest(requestData);
-                    return true;
-                } catch (Exception e) {
-                    Logger.log(
-                        Severity.FAILURE,
-                        "Error occured in web content handler "
-                        + contentProvider.getClass().getSimpleName()
-                        + ": " + e.getMessage(),
-                        e
-                    );
-                    return false;
-                }
+        }
+        IDynamicWebContentProvider contentProvider = 
+            dynamicWebContentProviders.get(providerName);
+        if (contentProvider != null) {
+            try {
+                contentProvider.handleRequest(requestData);
+                return true;
+            } catch (Exception e) {
+                Logger.log(
+                    Severity.FAILURE,
+                    "Error occured in web content handler "
+                    + contentProvider.getClass().getSimpleName()
+                    + ": " + e.getMessage(),
+                    e
+                );
+                return false;
             }
         }
         return false;
@@ -303,6 +328,7 @@ public class WebContentHandler implements HttpHandler {
     /** Initializing additional MIME types. */
     static {
         mimeTypes.put("css", "text/css");
+        mimeTypes.put("svg", "image/svg+xml");
     }
 
     /**

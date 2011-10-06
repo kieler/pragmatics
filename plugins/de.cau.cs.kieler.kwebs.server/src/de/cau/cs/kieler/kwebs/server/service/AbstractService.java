@@ -56,6 +56,13 @@ import de.cau.cs.kieler.kwebs.util.Graphs;
  */
 public abstract class AbstractService {
 
+    /** 
+     *  The statistics mode provides more accurate measurement of the time needed
+     *  for supplementary operations. In production, it has to be disabled.
+     */
+    private static final boolean STATISTICS_MODE
+        = true;
+    
     /** The layout engine used. */
     private static RecursiveGraphLayoutEngine layoutEngine
         = new RecursiveGraphLayoutEngine(null);
@@ -110,8 +117,8 @@ public abstract class AbstractService {
      */
     private <T> String layout(final String serializedGraph, final IGraphTransformer<T> transformer, 
         final List<GraphLayoutOption> options) { 
+        // Start measuring the total time of the operation
         double operationStarted = System.nanoTime();
-        Statistics statistics = new Statistics();
         // Get the graph instances of which the layout is to be calculated
         T graph = transformer.deserialize(serializedGraph);
         // Derive the layout structures of the graph instances
@@ -133,8 +140,7 @@ public abstract class AbstractService {
         // Apply the calculated layout back to the graph instance
         transformer.applyLayout(transData);
         // Calculate statistical values and annotate graph if it is a KGraph instance.
-        // The serialization process can not be included.
-        double operationFinished = System.nanoTime();
+        // The serialization process can not be included.        
         if (graph instanceof KNode) {
             // Graph related statistics
             int nodes = 0;
@@ -155,6 +161,7 @@ public abstract class AbstractService {
                     }
                 } 
             }
+            Statistics statistics = new Statistics();
             statistics.setBytes(serializedGraph.length());
             statistics.setCompression(transformer instanceof KGraphXmiCompressedTransformer);
             statistics.setNodes(nodes);
@@ -162,9 +169,14 @@ public abstract class AbstractService {
             statistics.setLabels(labels);
             statistics.setEdges(edges);
             // Execution time related statistics
-            double layoutTime = layoutFinished - layoutStarted;
-            statistics.setTimeLayout(layoutTime);
-            statistics.setTimeRemoteSupplemental(operationFinished - operationStarted - layoutTime);
+            statistics.setTimeLayout(layoutFinished - layoutStarted);
+            // Come as close to measuring the supplementary operations as possible.
+            // If STATISTICS_MODE is not used, serializing is not be measured.
+            if (!STATISTICS_MODE) {
+                statistics.setTimeRemoteSupplemental(
+                    System.nanoTime() - operationStarted - layoutFinished + layoutStarted
+                );
+            }
             KNode top = ((KNode) graph);
             KIdentifier identifier = top.getData(KIdentifier.class);
             if (identifier == null) {
@@ -175,9 +187,34 @@ public abstract class AbstractService {
         }
         // Create and return the resulting graph in serialized form
         String serializedResult = transformer.serialize(transData.getSourceGraph());
+        // Include serialization in statistical data. Only if in STATISTICS_MODE
+        if (STATISTICS_MODE && graph instanceof KNode) {
+            return resetSupplementaryTimeOnResult(
+                serializedResult, 
+                System.nanoTime() - operationStarted - layoutFinished + layoutStarted
+            );
+        }
         return serializedResult;
     }
     
+    /**
+     * Helper method for textual replacement of needed time for supplementary operations. Only for
+     * statistical measurements, not used in production.
+     *  
+     * @param serializedResult
+     *            the serialized result
+     * @param supplementalTime
+     *            the needed time for supplementary operations
+     * @return the textually updated serial result
+     */
+    private String resetSupplementaryTimeOnResult(final String serializedResult, 
+        final double supplementalTime) {
+        return serializedResult.replaceFirst(
+            "timeRemoteSupplemental=0\\.0", 
+            "timeRemoteSupplemental=" + supplementalTime
+        );
+    }
+
     /**
      * Annotate the graph with the given layout options.
      * 

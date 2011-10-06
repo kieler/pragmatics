@@ -72,7 +72,7 @@ public class CompressionHttpFilter extends Filter {
      */
     @Override
     public void doFilter(final HttpExchange exchange, final Chain chain) throws IOException {    
-        dumpHeaders(exchange.getRequestHeaders());
+        //dumpHeaders(exchange.getRequestHeaders());
         try { 
             InputStream inStream = exchange.getRequestBody();
             Headers requestHeaders = exchange.getRequestHeaders();
@@ -104,7 +104,7 @@ public class CompressionHttpFilter extends Filter {
      * @param headers
      *            the headers
      */
-    //@SuppressWarnings("unused") // Debug method may be used temporarily
+    @SuppressWarnings("unused") // Debug method may be used temporarily
     private void dumpHeaders(final Headers headers) {
         System.out.println("\nHTTP Headers:");        
         for (Entry<String, List<String>> entry : headers.entrySet()) {
