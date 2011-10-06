@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.MouseAdapter;
@@ -237,6 +238,11 @@ public class DebugWindow extends Window {
     private static final String SETT_ZOOM = "debugWindow.zoom"; //$NON-NLS-1$
     
     /**
+     * Setting for the visibility of the color key browser.
+     */
+    private static final String SETT_COLOR_KEY = "debugWindow.colorKey"; //$NON-NLS-1$
+    
+    /**
      * The default zoom level. (100%)
      */
     private static final int ZOOM_DEFAULT = 100;
@@ -250,7 +256,11 @@ public class DebugWindow extends Window {
      * Default locations of Graphviz dot.
      */
     private static final String[] DEFAULT_DOT_LOCS = {
-        "/opt/local/bin/", "/usr/local/bin/", "/usr/bin/", "/bin/" };
+        "/opt/local/bin/", //$NON-NLS-1$
+        "/usr/local/bin/", //$NON-NLS-1$
+        "/usr/bin/", //$NON-NLS-1$
+        "/bin/" //$NON-NLS-1$
+    };
     
     // UI CONTROLS
     private ToolBar toolBar = null;
@@ -260,9 +270,13 @@ public class DebugWindow extends Window {
     private ToolItem folderRefreshButton = null;
     private Image folderRemoveAllImage = null;
     private ToolItem folderRemoveAllButton = null;
+    private Image showColorKeyImage = null;
+    private ToolItem showColorKeyButton = null;
+    private SashForm sashForm = null;
     private Table fileTable = null;
     private TableViewer fileTableViewer = null;
     private ImageCanvas imageCanvas = null;
+    private Browser colorKeyBrowser = null;
     private Composite statusBar = null;
     private Label statusBarLabel = null;
     private Scale statusBarZoomScale = null;
@@ -379,7 +393,7 @@ public class DebugWindow extends Window {
             
             // We're only removing .dot and .png files
             String fileName = file.getName();
-            if (fileName.endsWith(".dot") || fileName.endsWith(".png")) { //$NON-NLS-1$
+            if (fileName.endsWith(".dot") || fileName.endsWith(".png")) { //$NON-NLS-1$ //$NON-NLS-2$
                 file.delete();
             }
         }
@@ -440,7 +454,7 @@ public class DebugWindow extends Window {
         
         // Update the zoom label and the zoom scale to show the new value
         statusBarZoomScale.setSelection(zoomPercentage);
-        statusBarZoomLabel.setText(zoomPercentage + "% ");
+        statusBarZoomLabel.setText(zoomPercentage + "% "); //$NON-NLS-1$
         statusBar.layout();
     }
     
@@ -459,12 +473,12 @@ public class DebugWindow extends Window {
         // Find the dot executable. This could at some point be bound to the preference store
         // and use the functionality provided by kieler.kiml.graphviz.layouter, but then again
         // this is only a debug tool used by local developers, so what the hell...
-        String dotExecutable = "dot";
+        String dotExecutable = "dot"; //$NON-NLS-1$
         
         if (!new File(dotExecutable).exists()) {
             boolean foundExec = false;
             for (String location : DEFAULT_DOT_LOCS) {
-                dotExecutable = location + "dot";
+                dotExecutable = location + "dot"; //$NON-NLS-1$
                 if (new File(dotExecutable).exists()) {
                     foundExec = true;
                     break;
@@ -530,6 +544,8 @@ public class DebugWindow extends Window {
         dialogSettings.put(SETT_PATH, currentPath);
         
         dialogSettings.put(SETT_ZOOM, zoomPercentage);
+        
+        dialogSettings.put(SETT_COLOR_KEY, colorKeyBrowser.isVisible());
     }
     
     /**
@@ -545,6 +561,8 @@ public class DebugWindow extends Window {
         } catch (NumberFormatException e) {
             changeZoom(ZOOM_DEFAULT);
         }
+        
+        setColorKeyVisible(dialogSettings.getBoolean(SETT_COLOR_KEY));
     }
     
 
@@ -561,19 +579,23 @@ public class DebugWindow extends Window {
         boolean closed = super.close();
         
         if (closed) {
-            if (folderBrowseImage != null) {
+            if (folderBrowseImage != null && !folderBrowseImage.isDisposed()) {
                 folderBrowseImage.dispose();
             }
             
-            if (folderRefreshImage != null) {
+            if (folderRefreshImage != null && !folderRefreshImage.isDisposed()) {
                 folderRefreshImage.dispose();
             }
             
-            if (folderRemoveAllImage != null) {
+            if (folderRemoveAllImage != null && !folderRemoveAllImage.isDisposed()) {
                 folderRemoveAllImage.dispose();
             }
             
-            if (statusBarZoomLabelContextImage != null) {
+            if (showColorKeyImage != null && !showColorKeyImage.isDisposed()) {
+                showColorKeyImage.dispose();
+            }
+            
+            if (statusBarZoomLabelContextImage != null && !statusBarZoomLabelContextImage.isDisposed()) {
                 statusBarZoomLabelContextImage.dispose();
             }
         }
@@ -609,7 +631,7 @@ public class DebugWindow extends Window {
         // CHECKSTYLEOFF MagicNumber
         
         // Sash Form
-        SashForm sashForm = new SashForm(parent, SWT.HORIZONTAL | SWT.SMOOTH);
+        sashForm = new SashForm(parent, SWT.HORIZONTAL | SWT.SMOOTH);
         sashForm.setLayout(new FillLayout());
         sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
         
@@ -643,8 +665,12 @@ public class DebugWindow extends Window {
         imageCanvas = new ImageCanvas(sashForm);
         new DragDropScrollHandler(imageCanvas, true);
         
+        // Browser
+        colorKeyBrowser = new Browser(sashForm, SWT.BORDER);
+        colorKeyBrowser.setText(ColorKeyPage.getColorKeyText(colorKeyBrowser));
+        
         // Set sash form weights
-        sashForm.setWeights(new int[] {30, 70});
+        sashForm.setWeights(new int[] {30, 50, 30});
         
         // Event listeners
         fileTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -687,6 +713,16 @@ public class DebugWindow extends Window {
         folderRemoveAllImage = KlayDebugViewPlugin.loadImage("remall.gif"); //$NON-NLS-1$
         folderRemoveAllButton.setImage(folderRemoveAllImage);
         
+        // Separator
+        new ToolItem(toolBar, SWT.SEPARATOR);
+        
+        // Show Color Key
+        showColorKeyButton = new ToolItem(toolBar, SWT.CHECK);
+        showColorKeyButton.setText(Messages.DebugWindow_Toolbar_ShowColorKey_Text);
+        showColorKeyButton.setToolTipText(Messages.DebugWindow_Toolbar_ShowColorKey_ToolTip);
+        showColorKeyImage = KlayDebugViewPlugin.loadImage("colorKeys.gif"); //$NON-NLS-1$
+        showColorKeyButton.setImage(showColorKeyImage);
+        
         // Event listeners
         folderBrowseButton.addSelectionListener(new SelectionAdapter() {
             /**
@@ -715,6 +751,16 @@ public class DebugWindow extends Window {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 removeFiles();
+            }
+        });
+        
+        showColorKeyButton.addSelectionListener(new SelectionAdapter() {
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                setColorKeyVisible(showColorKeyButton.getSelection());
             }
         });
     }
@@ -756,11 +802,11 @@ public class DebugWindow extends Window {
         
         // Status Bar Zoom Original Item
         statusBarZoomOriginalItem = new MenuItem(statusBarZoomMenu, SWT.PUSH);
-        statusBarZoomOriginalItem.setText("Original Size");
+        statusBarZoomOriginalItem.setText(Messages.DebugWindow_ZoomMenu_OriginalSize);
         
         // Status Bar Zoom To Fit Item
         statusBarZoomToFitItem = new MenuItem(statusBarZoomMenu, SWT.PUSH);
-        statusBarZoomToFitItem.setText("Zoom to Fit");
+        statusBarZoomToFitItem.setText(Messages.DebugWindow_ZoomMenu_ZoomToFit);
         
         // Status Bar Zoom Scale
         statusBarZoomScale = new Scale(statusBar, SWT.HORIZONTAL);
@@ -828,5 +874,22 @@ public class DebugWindow extends Window {
         } catch (NumberFormatException e) {
             return super.getInitialSize();
         }
+    }
+    
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // Color Key Panel
+    
+    /**
+     * Sets the color key panel's visibility.
+     * 
+     * @param visible {@code true} if the color key panel should be visible, {@code false}
+     *                otherwise.
+     */
+    private void setColorKeyVisible(final boolean visible) {
+        System.out.println(visible);
+        showColorKeyButton.setSelection(visible);
+        colorKeyBrowser.setVisible(visible);
+        sashForm.layout(true);
     }
 }

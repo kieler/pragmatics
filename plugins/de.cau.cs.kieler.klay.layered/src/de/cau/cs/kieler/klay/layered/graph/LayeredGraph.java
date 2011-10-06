@@ -15,8 +15,10 @@ package de.cau.cs.kieler.klay.layered.graph;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.layered.properties.EdgeType;
@@ -32,6 +34,25 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author msp
  */
 public class LayeredGraph extends LGraphElement {
+    
+    /**
+     * Map mapping node types to the colors used to represent those types when
+     * writing debug output graphs. The colors are given as strings of the form
+     * "#RGB", where each component is given as a two-digit hexadecimal value.
+     */
+    public static final Map<NodeType, String> NODE_TYPE_COLORS = new EnumMap<NodeType, String>(
+            NodeType.class);
+    
+    static {
+        NODE_TYPE_COLORS.put(NodeType.COMPOUND_SIDE, "#808080");
+        NODE_TYPE_COLORS.put(NodeType.LONG_EDGE, "#eaed00");
+        NODE_TYPE_COLORS.put(NodeType.NORTH_SOUTH_PORT, "#0034de");
+        NODE_TYPE_COLORS.put(NodeType.LOWER_COMPOUND_BORDER, "#18e748");
+        NODE_TYPE_COLORS.put(NodeType.LOWER_COMPOUND_PORT, "#2f6d3e");
+        NODE_TYPE_COLORS.put(NodeType.UPPER_COMPOUND_BORDER, "#fb0838");
+        NODE_TYPE_COLORS.put(NodeType.UPPER_COMPOUND_PORT, "#b01d38");
+    }
+    
 
     /** the total size of the drawing, without offset. */
     private KVector size = new KVector();
@@ -206,36 +227,9 @@ public class LayeredGraph extends LGraphElement {
             } else {
                 options.append("shape=circle,style=filled,");
                 
-                // Add colouring
-                switch (node.getProperty(Properties.NODE_TYPE)) {
-                
-                case COMPOUND_SIDE:
-                    options.append("color=\"#808080\",");
-                    break;
-                
-                case LONG_EDGE:
-                    options.append("color=\"#eaed00\",");
-                    break;
-                    
-                case NORTH_SOUTH_PORT:
-                    options.append("color=\"#0034de\",");
-                    break;
-                
-                case LOWER_COMPOUND_BORDER:
-                    options.append("color=\"#18e748\",");
-                    break;
-                
-                case LOWER_COMPOUND_PORT:
-                    options.append("color=\"#2f6d3e\",");
-                    break;
-                    
-                case UPPER_COMPOUND_BORDER:
-                    options.append("color=\"#fb0838\",");
-                    break;
-                    
-                case UPPER_COMPOUND_PORT:
-                    options.append("color=\"#b01d38\",");
-                    break;
+                String color = NODE_TYPE_COLORS.get(node.getProperty(Properties.NODE_TYPE));
+                if (color != null) {
+                    options.append("color=\"" + color + "\",");
                 }
             }
             
