@@ -11,20 +11,18 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.p2layers;
+package de.cau.cs.kieler.klay.layered.p1cycles;
 
 /**
- * Definition of available node layering strategies for the layered layouter.
+ * Definition of available cycle breaking strategies for the layered layouter.
  * 
- * @author pdo
+ * @author msp
  */
-public enum LayeringStrategy {
+public enum CycleBreakingStrategy {
 
-    /** All nodes will be layered with minimal edge length by using the network-simplex-algorithm. */
-    NETWORK_SIMPLEX,
-    /** All nodes will be layered according to the longest path. */
-    LONGEST_PATH,
-    /** Nodes are put into layers according to their relative position. */
+    /** Applies a greedy heuristic to minimize the number of reversed edges. */
+    GREEDY,
+    /** Reacts on user interaction by respecting initial node positions. */
     INTERACTIVE;
     
     /**
@@ -34,7 +32,7 @@ public enum LayeringStrategy {
      *            ordinal value
      * @return the related enumeration value
      */
-    public static LayeringStrategy valueOf(final int i) {
+    public static CycleBreakingStrategy valueOf(final int i) {
         return values()[i];
     }
 

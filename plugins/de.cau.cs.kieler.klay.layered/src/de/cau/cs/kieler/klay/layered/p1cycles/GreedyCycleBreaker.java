@@ -83,16 +83,6 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void reset() {
-        super.reset();
-        sources.clear();
-        sinks.clear();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Greedy cycle removal", 1);
         
@@ -200,6 +190,8 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
         this.indeg = null;
         this.outdeg = null;
         this.mark = null;
+        sources.clear();
+        sinks.clear();
     }
 
     /**

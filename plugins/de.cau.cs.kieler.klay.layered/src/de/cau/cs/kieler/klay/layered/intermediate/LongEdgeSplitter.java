@@ -77,8 +77,7 @@ public class LongEdgeSplitter extends AbstractAlgorithm implements ILayoutProces
                             // Create dummy node
                             LNode dummyNode = new LNode();
                             dummyNode.setProperty(Properties.ORIGIN, edge);
-                            dummyNode.setProperty(Properties.NODE_TYPE,
-                                    NodeType.LONG_EDGE);
+                            dummyNode.setProperty(Properties.NODE_TYPE, NodeType.LONG_EDGE);
                             dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS,
                                     PortConstraints.FIXED_POS);
                             dummyNode.setLayer(nextLayer);

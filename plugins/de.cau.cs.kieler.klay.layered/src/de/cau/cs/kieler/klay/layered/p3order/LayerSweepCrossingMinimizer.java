@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.layered.p3order;
 
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,20 +27,15 @@ import java.util.Set;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
-import de.cau.cs.kieler.klay.layered.ILayoutPhase;
-import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -50,16 +44,19 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * while applying a two-layer crossing minimization heuristic on each pair of layers.
  * Inspired by
  * <ul>
- *   <li>Michael Forster. A Fast and Simple Heuristic for Constrained Two-Level
- *     Crossing Reduction. In <i>Graph Drawing</i>, volume 3383 of LNCS,
+ *   <li>Kozo Sugiyama, Shojiro Tagawa, and Mitsuhiko Toda. Methods for visual
+ *     understanding of hierarchical system structures. IEEE Transactions on Systems,
+ *     Man and Cybernetics, 11(2):109–125, February 1981.
+ *   <li>Michael Forster. A fast and simple heuristic for constrained two-level
+ *     crossing reduction. In <i>Graph Drawing</i>, volume 3383 of LNCS,
  *     pp. 206-216. Springer, 2005.</li>
  * </ul>
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>the graph has a proper layering, i.e. all
+ *   <dt>Precondition:</dt><dd>The graph has a proper layering, i.e. all
  *     long edges have been splitted; all nodes have at least fixed port
  *     sides.</dd>
- *   <dt>Postcondition:</dt><dd>the order of nodes in each layer and the order
+ *   <dt>Postcondition:</dt><dd>The order of nodes in each layer and the order
  *     of ports in each node are optimized to yield as few edge crossings
  *     as possible</dd>
  * </dl>
@@ -67,7 +64,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author msp
  * @author cds
  */
-public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements ILayoutPhase {
+public class LayerSweepCrossingMinimizer extends AbstractCrossingMinimizer {
     
     /**
      * A vertex contains one or more nodes. Vertices are used to model sets of nodes that
@@ -174,26 +171,6 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         }
     }
     
-    /** intermediate processing strategy. */
-    private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
-        new IntermediateProcessingStrategy(
-                // Before Phase 1
-                null,
-                // Before Phase 2
-                null,
-                // Before Phase 3
-                EnumSet.of(IntermediateLayoutProcessor.LONG_EDGE_SPLITTER),
-                // Before Phase 4
-                EnumSet.of(IntermediateLayoutProcessor.IN_LAYER_CONSTRAINT_PROCESSOR),
-                // Before Phase 5
-                null,
-                // After Phase 5
-                EnumSet.of(IntermediateLayoutProcessor.LONG_EDGE_JOINER));
-    
-    /** barycenter values for ports. */
-    private float[] portBarycenter;
-    /** port position array. */
-    private float[] portPos;
     /** A map associating layout units with their respective members. */
     private Multimap<LNode, LNode> layoutUnits;
     /**
@@ -203,13 +180,6 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     private Map<LNode, Vertex>[] singleNodeVertices;
     /** the random number generator. */
     private Random random;
-    
-    /**
-     * {@inheritDoc}
-     */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
-        return INTERMEDIATE_PROCESSING_STRATEGY;
-    }
     
     /**
      * {@inheritDoc}
@@ -1140,208 +1110,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         
         return maxCrossings;
     }
-    
 
-    ///////////////////////////////////////////////////////////////////////////////
-    // Port Position Assignment
-    
-    /**
-     * Determine positions for all ports in the given layer. Input and output ports are processed
-     * separately.
-     * 
-     * @param layer a layer
-     */
-    private void assignPortPos(final LNode[] layer) {
-        int nodeIx = 0;
-        for (LNode node : layer) {
-            // count the input and output ports
-            int inputPorts = 0, outputPorts = 0;
-            for (LPort port : node.getPorts()) {
-                if (port.getNetFlow() < 0) {
-                    outputPorts++;
-                } else {
-                    inputPorts++;
-                }
-            }
-            
-            // set positions for the input ports
-            if (inputPorts > 0) {
-                assignPortPos(node, nodeIx, PortType.INPUT, inputPorts);
-            }
-            
-            // set positions for the output ports
-            if (outputPorts > 0) {
-                assignPortPos(node, nodeIx, PortType.OUTPUT, outputPorts);
-            }
-            
-            nodeIx++;
-        }
-    }
-    
-    /**
-     * Assign port positions for the input or output ports of the given node.
-     * 
-     * @param node a node
-     * @param nodeIx the node's index in its layer
-     * @param type the type of ports to process
-     * @param count the number of ports of that type
-     */
-    private void assignPortPos(final LNode node, final int nodeIx,
-            final PortType type, final int count) {
-        
-        if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-            float incr = 1.0f / count;
-            
-            if (type == PortType.INPUT) {
-                // Start at the top right port, going counter-clockwise
-                List<LPort> portList = getSortedInputPorts(node);
-                float pos = nodeIx + 1 - incr;
-                
-                for (LPort port : portList) {
-                    portPos[port.id] = pos;
-                    pos -= incr;
-                }
-                
-            } else {
-                // Start at the top left port, going clockwise
-                float pos = nodeIx;
-                
-                for (LPort port : node.getPorts(type)) {
-                    portPos[port.id] = pos;
-                    pos += incr;
-                }
-            }
-        } else {
-            for (LPort port : node.getPorts(type)) {
-                portPos[port.id] = nodeIx + getPortIncr(type, port.getSide());
-            }
-        }
-    }
-
-    /**
-     * Returns a list of input ports, beginning at the top right port of the eastern
-     * side, going clockwise.
-     * 
-     * @param node the node whose input ports to return.
-     * @return list of input ports.
-     */
-    private List<LPort> getSortedInputPorts(final LNode node) {
-        List<LPort> northPorts = new LinkedList<LPort>();
-        List<LPort> portList = new LinkedList<LPort>();
-        
-        for (LPort port : node.getPorts(PortType.INPUT)) {
-            if (port.getSide() == PortSide.NORTH) {
-                northPorts.add(port);
-            } else {
-                portList.add(port);
-            }
-        }
-        
-        // Append the list of northern ports to the other ports
-        portList.addAll(northPorts);
-        return portList;
-    }
-    
-    private static final float INCR_ONE = 0.3f;
-    private static final float INCR_TWO = 0.5f;
-    private static final float INCR_THREE = 0.7f;
-    private static final float INCR_FOUR = 0.9f;
-    
-    /**
-     * Return an increment value for the position of a port with given type and side.
-     * 
-     * @param type the port type
-     * @param side the port side
-     * @return a position increment for the port
-     */
-    private static float getPortIncr(final PortType type, final PortSide side) {
-        switch (type) {
-        case INPUT:
-            switch (side) {
-            case NORTH:
-                return INCR_ONE;
-            case WEST:
-                return INCR_TWO;
-            case SOUTH:
-                return INCR_THREE;
-            case EAST:
-                return INCR_FOUR;
-            }
-            break;
-        case OUTPUT:
-            switch (side) {
-            case NORTH:
-                return INCR_ONE;
-            case EAST:
-                return INCR_TWO;
-            case SOUTH:
-                return INCR_THREE;
-            case WEST:
-                return INCR_FOUR;
-            }
-            break;
-        }
-        return 0;
-    }
-    
-    
-    ///////////////////////////////////////////////////////////////////////////////
-    // Port Distribution
-    
-    /**
-     * Distribute the ports of the layered graph depending on the port constraints.
-     * 
-     * @param layeredGraph a layered graph
-     */
-    private void distributePorts(final LNode[][] layeredGraph) {
-        for (int l = 0; l < layeredGraph.length; l++) {
-            if (l + 1 < layeredGraph.length) {
-                assignPortPos(layeredGraph[l + 1]);
-            }
-            LNode[] layer = layeredGraph[l];
-            for (int i = 0; i < layer.length; i++) {
-                LNode node = layer[i];
-                if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-                    // the order of ports on each side is variable, so distribute the ports
-                    distributePorts(node);
-                    node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
-                    int outputPortCount = 0;
-                    for (LPort port : node.getPorts()) {
-                        if (port.getNetFlow() < 0) {
-                            outputPortCount++;
-                        }
-                    }
-                    if (outputPortCount > 0) {
-                        assignPortPos(node, i, PortType.OUTPUT, outputPortCount);
-                    }
-                }
-            }
-        }
-    }
-    
-    /**
-     * Distribute the ports of the given node by their sides, connected ports, and input
-     * or output type.
-     * 
-     * @param node node whose ports shall be sorted
-     */
-    private void distributePorts(final LNode node) {
-        // calculate barycenter values for the ports of the node
-        for (LPort port : node.getPorts()) {
-            float sum = 0;
-            for (LPort connectedPort : port.getConnectedPorts()) {
-                sum += portPos[connectedPort.id];
-            }
-            if (port.getDegree() == 0) {
-                portBarycenter[port.id] = -1;
-            } else {
-                portBarycenter[port.id] = sum / port.getDegree();
-            }
-        }
-        // sort the ports by considering the side, type, and barycenter values
-        node.sortPorts(portBarycenter);
-    }
-    
     
     ///////////////////////////////////////////////////////////////////////////////
     // Utility Methods

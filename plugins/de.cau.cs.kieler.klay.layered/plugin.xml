@@ -80,6 +80,12 @@
                default="RIGHT"
                option="de.cau.cs.kieler.direction">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.cycleBreaking">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.crossMin">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
@@ -100,11 +106,29 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy"
+            default="GREEDY"
+            description="Strategy for cycle breaking"
+            id="de.cau.cs.kieler.klay.layered.cycleBreaking"
+            name="Cycle Breaking"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy"
             default="NETWORK_SIMPLEX"
             description="Strategy for node layering"
             id="de.cau.cs.kieler.klay.layered.nodeLayering"
             name="Node Layering"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+      		appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy"
+            default="LAYER_SWEEP"
+            description="Strategy for crossing minimization"
+            id="de.cau.cs.kieler.klay.layered.crossMin"
+            name="Crossing Minimization"
             type="enum">
       </layoutOption>
       <layoutOption

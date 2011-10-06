@@ -48,6 +48,7 @@ import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 //import de.cau.cs.kieler.klay.layered.properties.NodeType;
 //import de.cau.cs.kieler.klay.layered.properties.NodeType;
@@ -544,6 +545,17 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             newLabel.getSize().y = labelLayout.getHeight();
             newLabel.setProperty(Properties.ORIGIN, klabel);
             newEdge.getLabels().add(newLabel);
+        }
+        
+        // copy the bend points of the edge if they are needed by anyone
+        if (layeredGraph.getProperty(Properties.CROSSMIN)
+                == CrossingMinimizationStrategy.INTERACTIVE
+                && !edgeLayout.getBendPoints().isEmpty()) {
+            KVectorChain bendpoints = new KVectorChain();
+            for (KPoint point : edgeLayout.getBendPoints()) {
+                bendpoints.add(point.createVector());
+            }
+            newEdge.setProperty(Properties.ORIGINAL_BENDPOINTS, bendpoints);
         }
 
         // set properties of the new edge

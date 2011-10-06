@@ -69,7 +69,7 @@ public class LongEdgeJoiner extends AbstractAlgorithm implements ILayoutProcesso
                     
                     // The following code assumes that edges with the same indices in the two
                     // lists originate from the same long edge, which is true for the current
-                    // implementation of LongEdgeSplitter and HyperedgeDummyJoiner
+                    // implementation of LongEdgeSplitter and HyperedgeDummyMerger
                     while (edgeCount-- > 0) {
                         // Get the two edges
                         LEdge survivingEdge = inputPortEdges.get(0);

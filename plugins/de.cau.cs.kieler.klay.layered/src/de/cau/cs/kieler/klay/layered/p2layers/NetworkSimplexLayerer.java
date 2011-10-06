@@ -48,8 +48,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *     edges connect only nodes from layers with increasing indices</dd>
  * </dl>
  * 
- * @see de.cau.cs.kieler.klay.layered.p2layers.ILayerer ILayerer
- * 
  * @author pdo
  */
 public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutPhase {
@@ -95,8 +93,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
      * A {@code LinkedList} containing all nodes of the currently identified connected component by
      * {@code connectedComponents()}.
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#connectedComponents(Collection)
-     *      connectedComponents()
+     * @see #connectedComponents(Collection)
      */
     private List<LNode> componentNodes;
 
@@ -139,7 +136,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
      * A flag indicating whether a specified node is part of the spanning tree determined by
      * {@code tightTree()}.
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#tightTreeDFS() tightTreeDFS()
+     * @see #tightTreeDFS()
      */
     private boolean[] treeNode;
 
@@ -147,8 +144,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
      * A flag indicating whether a specified edge is part of the spanning tree determined by
      * {@code tightTree()}.
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#tightTreeDFS(LNode)
-     *      tightTreeDFS()
+     * @see #tightTreeDFS(LNode)
      */
     private boolean[] treeEdge;
 
@@ -168,16 +164,14 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
      * The current postorder traversal number used by {@code postorderTraversal()} to assign an
      * unique traversal ID to each node.
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#postorderTraversal(LNode)
-     *      postorderTraversal()
+     * @see #postorderTraversal(LNode)
      */
     private int postOrder;
 
     /**
      * The postorder traversal ID of each node determined by {@code postorderTraversal()}.
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#postorderTraversal(LNode)
-     *      postorderTraversal()
+     * @see #postorderTraversal(LNode)
      */
     private int[] poID;
 
@@ -185,8 +179,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
      * The lowest postorder traversal ID of each nodes reachable through a node lower in the
      * traversal tree determined by {@code postorderTraversal}.
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#postorderTraversal(LNode)
-     *      postorderTraversal()
+     * @see #postorderTraversal(LNode)
      */
     private int[] lowestPoID;
 
@@ -198,7 +191,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
      * including the tree edge, minus the sum of the weights of all edges from the head to the tail
      * component.
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#cutvalues() cutvalues()
+     * @see #cutvalues()
      */
     private int[] cutvalue;
     

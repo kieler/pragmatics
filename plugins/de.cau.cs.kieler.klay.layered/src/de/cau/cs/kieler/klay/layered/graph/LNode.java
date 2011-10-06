@@ -14,8 +14,6 @@
 package de.cau.cs.kieler.klay.layered.graph;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -262,43 +260,6 @@ public class LNode extends LShape {
         } else {
             return owner.getNodes().indexOf(this);
         }
-    }
-    
-    /**
-     * Sort the ports of this node using relative position values.
-     * 
-     * @param position an array of position values; the identifier of each port of this node must be
-     *     inside the range of the {@code position} array, since it is used as index
-     */
-    public void sortPorts(final float[] position) {
-        Collections.sort(ports, new Comparator<LPort>() {
-            public int compare(final LPort port1, final LPort port2) {
-                PortSide side1 = port1.getSide();
-                PortType type1 = port1.getNetFlow() >= 0 ? PortType.INPUT : PortType.OUTPUT;
-                PortSide side2 = port2.getSide();
-                PortType type2 = port2.getNetFlow() >= 0 ? PortType.INPUT : PortType.OUTPUT;
-                
-                if (side1 != side2) {
-                    // sort according to the node side 
-                    return side1.ordinal() - side2.ordinal();
-                } else if (type1 != type2) {
-                    // north side: first inputs, then outputs; other sides: reverse
-                    if (side1 == PortSide.NORTH) {
-                        return type1.ordinal() - type2.ordinal();
-                    } else {
-                        return type2.ordinal() - type1.ordinal();
-                    }
-                } else {
-                    float pos1 = position[port1.id], pos2 = position[port2.id];
-                    // input ports are counter-clockwise, output ports are clockwise
-                    if (type1 == PortType.INPUT) {
-                        return Float.compare(pos2, pos1);
-                    } else {
-                        return Float.compare(pos1, pos2);
-                    }
-                }
-            }
-        });
     }
     
     /**

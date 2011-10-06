@@ -21,12 +21,12 @@ package de.cau.cs.kieler.klay.layered.properties;
  * @author ima
  */
 public enum NodeType {
-    /** a node representing an external port. */
-    EXTERNAL_PORT,
     /** a normal node is created from a node of the original graph. */
     NORMAL,
     /** a dummy node created to split a long edge. */
     LONG_EDGE,
+    /** a node representing an external port. */
+    EXTERNAL_PORT,
     /** a dummy node created to cope with ports at the northern or southern side. */
     NORTH_SOUTH_PORT,
     /** a dummy node created as upper border node to represent a subgraph node. */

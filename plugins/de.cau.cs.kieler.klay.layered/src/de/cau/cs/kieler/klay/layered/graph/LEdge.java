@@ -47,7 +47,7 @@ public class LEdge extends LGraphElement {
     }
     
     /**
-     * Reverses the edge, its bendpoints and properly negates the {@code REVERSED} property. (an
+     * Reverses the edge, including its bend points. Negates the {@code REVERSED} property. (an
      * edge that was marked as being reversed is then unmarked, and the other way around) This
      * does not change any properties on the connected ports.
      */

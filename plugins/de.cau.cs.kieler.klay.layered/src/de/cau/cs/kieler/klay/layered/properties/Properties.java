@@ -23,6 +23,7 @@ import java.util.Set;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -33,7 +34,9 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
+import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer.Region;
 
 /**
@@ -51,6 +54,10 @@ public final class Properties {
     /** node type. */
     public static final IProperty<NodeType> NODE_TYPE = new Property<NodeType>("nodeType",
             NodeType.NORMAL);
+    
+    /** the original bend points. */
+    public static final IProperty<KVectorChain> ORIGINAL_BENDPOINTS = new Property<KVectorChain>(
+            "originalBendpoints");
 
     /** edge type. */
     public static final IProperty<EdgeType> EDGE_TYPE = new Property<EdgeType>("edgeType",
@@ -265,11 +272,24 @@ public final class Properties {
     public static final IProperty<Boolean> DISTRIBUTE_NODES = new Property<Boolean>(
             DISTRIBUTE_NODES_ID, false);
 
+    /** option identifier for cycle breaking. */
+    public static final String CYCLE_BREAKING_ID = "de.cau.cs.kieler.klay.layered.cycleBreaking";
+    /** property to choose a cycle breaking strategy. */
+    public static final IProperty<CycleBreakingStrategy> CYCLE_BREAKING
+            = new Property<CycleBreakingStrategy>(CYCLE_BREAKING_ID, CycleBreakingStrategy.GREEDY);
+    
     /** option identifier for node layering. */
     public static final String NODE_LAYERING_ID = "de.cau.cs.kieler.klay.layered.nodeLayering";
     /** property to choose a node layering strategy. */
     public static final IProperty<LayeringStrategy> NODE_LAYERING = new Property<LayeringStrategy>(
             NODE_LAYERING_ID, LayeringStrategy.NETWORK_SIMPLEX);
+
+    /** option identifier for crossing minimization. */
+    public static final String CROSSMIN_ID = "de.cau.cs.kieler.klay.layered.crossMin";
+    /** property to choose a crossing minimization strategy. */
+    public static final IProperty<CrossingMinimizationStrategy> CROSSMIN
+            = new Property<CrossingMinimizationStrategy>(CROSSMIN_ID,
+                    CrossingMinimizationStrategy.LAYER_SWEEP);
 
     /** option identifier for thoroughness. */
     public static final String THOROUGHNESS_ID = "de.cau.cs.kieler.klay.layered.thoroughness";

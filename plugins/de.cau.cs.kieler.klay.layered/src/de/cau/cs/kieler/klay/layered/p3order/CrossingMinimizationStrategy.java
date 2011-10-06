@@ -20,8 +20,10 @@ package de.cau.cs.kieler.klay.layered.p3order;
  */
 public enum CrossingMinimizationStrategy {
 
-    /** a heuristic that sweeps through the layers trying to minimize the crossings locally. */
-    LAYER_SWEEP;
+    /** A heuristic that sweeps through the layers trying to minimize the crossings locally. */
+    LAYER_SWEEP,
+    /** Allow user interaction by considering the previous node positioning. */
+    INTERACTIVE;
     
     /**
      * Returns the enumeration value related to the given ordinal.

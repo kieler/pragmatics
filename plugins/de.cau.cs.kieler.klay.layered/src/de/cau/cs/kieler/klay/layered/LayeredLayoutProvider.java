@@ -36,10 +36,15 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
+import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
+import de.cau.cs.kieler.klay.layered.p1cycles.InteractiveCycleBreaker;
+import de.cau.cs.kieler.klay.layered.p2layers.InteractiveLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
+import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
+import de.cau.cs.kieler.klay.layered.p3order.InteractiveCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
@@ -85,11 +90,11 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     // Variables
 
     /** phase 1: cycle breaking module. */
-    private ILayoutPhase cycleBreaker = new GreedyCycleBreaker();
+    private ILayoutPhase cycleBreaker;
     /** phase 2: layering module. */
     private ILayoutPhase layerer;
     /** phase 3: crossing minimization module. */
-    private ILayoutPhase crossingMinimizer = new LayerSweepCrossingMinimizer();
+    private ILayoutPhase crossingMinimizer;
     /** phase 4: node placement module. */
     private ILayoutPhase nodePlacer = new LinearSegmentsNodePlacer();
     /** phase 5: Edge routing module. */
@@ -196,17 +201,49 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      *            the parent layout data
      */
     private void updateModules(final LayeredGraph graph, final KShapeLayout parentLayout) {
+        // check which cycle breaking strategy to use
+        CycleBreakingStrategy cycleBreaking = parentLayout.getProperty(Properties.CYCLE_BREAKING);
+        switch (cycleBreaking) {
+        case INTERACTIVE:
+            if (!(cycleBreaker instanceof InteractiveCycleBreaker)) {
+                cycleBreaker = new InteractiveCycleBreaker();
+            }
+            break;
+        default:
+            if (!(cycleBreaker instanceof GreedyCycleBreaker)) {
+                cycleBreaker = new GreedyCycleBreaker();
+            }
+        }
+        
         // check which layering strategy to use
-        LayeringStrategy placing = parentLayout.getProperty(Properties.NODE_LAYERING);
-        switch (placing) {
+        LayeringStrategy layering = parentLayout.getProperty(Properties.NODE_LAYERING);
+        switch (layering) {
         case LONGEST_PATH:
             if (!(layerer instanceof LongestPathLayerer)) {
                 layerer = new LongestPathLayerer();
             }
             break;
+        case INTERACTIVE:
+            if (!(layerer instanceof InteractiveLayerer)) {
+                layerer = new InteractiveLayerer();
+            }
+            break;
         default:
             if (!(layerer instanceof NetworkSimplexLayerer)) {
                 layerer = new NetworkSimplexLayerer();
+            }
+        }
+        
+        CrossingMinimizationStrategy crossminStrategy = parentLayout.getProperty(Properties.CROSSMIN);
+        switch (crossminStrategy) {
+        case INTERACTIVE:
+            if (!(crossingMinimizer instanceof InteractiveCrossingMinimizer)) {
+                crossingMinimizer = new InteractiveCrossingMinimizer();
+            }
+            break;
+        default:
+            if (!(crossingMinimizer instanceof LayerSweepCrossingMinimizer)) {
+                crossingMinimizer = new LayerSweepCrossingMinimizer();
             }
         }
 
