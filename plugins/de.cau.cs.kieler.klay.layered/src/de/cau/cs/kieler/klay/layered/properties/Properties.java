@@ -51,10 +51,10 @@ public final class Properties {
     /** node type. */
     public static final IProperty<NodeType> NODE_TYPE = new Property<NodeType>("nodeType",
             NodeType.NORMAL);
-    
-   /** edge type.*/
-    public static final IProperty<EdgeType> EDGE_TYPE = 
-                                            new Property<EdgeType>("edgeType", EdgeType.NORMAL);
+
+    /** edge type. */
+    public static final IProperty<EdgeType> EDGE_TYPE = new Property<EdgeType>("edgeType",
+            EdgeType.NORMAL);
 
     /** owning region for node. */
     public static final IProperty<Region> REGION = new Property<Region>("region", null);
@@ -68,7 +68,7 @@ public final class Properties {
 
     /** random number generator for the algorithm. */
     public static final IProperty<Random> RANDOM = new Property<Random>("random");
-    
+
     /** width and height ratio by which a node was resized prior to importing. */
     public static final IProperty<KVector> RESIZE_RATIO = new Property<KVector>("resizeRatio");
 
@@ -99,8 +99,8 @@ public final class Properties {
      * constraint. If they don't, however, they must include a dependency on
      * {@link de.cau.cs.kieler.klay.layered.intermediate.InLayerConstraintProcessor}.
      */
-    public static final IProperty<InLayerConstraint> IN_LAYER_CONSTRAINT = 
-        new Property<InLayerConstraint>("inLayerConstraint", InLayerConstraint.NONE);
+    public static final IProperty<InLayerConstraint> IN_LAYER_CONSTRAINT 
+    = new Property<InLayerConstraint>("inLayerConstraint", InLayerConstraint.NONE);
 
     /**
      * Indicates that a node {@code x} may only appear inside a layer before the node {@code y} the
@@ -109,16 +109,23 @@ public final class Properties {
      */
     public static final IProperty<LNode> IN_LAYER_SUCCESSOR_CONSTRAINT = new Property<LNode>(
             "inLayerSuccessorConstraint", null);
-    
+
+    /**
+     * Indicates that a node {@code x} may only appear inside a layer before the nodes from the list
+     * the property is set to. That is, having {@code x} appear after any node from the list woud
+     * violate this constraint. This property makes sense for nodes.
+     */
+    public static final IProperty<List<LNode>> IN_LAYER_SUCCESSORS_CONSTRAINT 
+        = new Property<List<LNode>>("inLayerSuccessorsConstraint", null);
+
     /**
      * Crossing hint used for in-layer cross counting with northern and southern port dummies.
      */
-    public static final IProperty<Integer> CROSSING_HINT = new Property<Integer>(
-            "crossingHint", 0);
+    public static final IProperty<Integer> CROSSING_HINT = new Property<Integer>("crossingHint", 0);
 
     /** Flags indicating the properties of a graph. */
-    public static final IProperty<Set<GraphProperties>> GRAPH_PROPERTIES = 
-        new Property<Set<GraphProperties>>("graphProperties", EnumSet.allOf(GraphProperties.class));
+    public static final IProperty<Set<GraphProperties>> GRAPH_PROPERTIES 
+    = new Property<Set<GraphProperties>>("graphProperties", EnumSet.allOf(GraphProperties.class));
 
     /**
      * The side of an external port a dummy node was created for.
@@ -135,15 +142,15 @@ public final class Properties {
      */
     public static final IProperty<Double> EXT_PORT_RATIO_OR_POSITION = new Property<Double>(
             "externalPortRatioOrPosition", 0.0);
-    
+
     /**
-     * A list of nodes whose barycenters should go into the barycenter calculation of the node
-     * this property is set on. Nodes in this list are expected to be in the same layer as the
-     * node the property is set on. This is primarily used when edges are rerouted from a node
-     * to dummy nodes.
+     * A list of nodes whose barycenters should go into the barycenter calculation of the node this
+     * property is set on. Nodes in this list are expected to be in the same layer as the node the
+     * property is set on. This is primarily used when edges are rerouted from a node to dummy
+     * nodes.
      * <p>
-     * This property is currently not declared as one of the layout options offered by KLay
-     * Layered and should be considered highly experimental.
+     * This property is currently not declared as one of the layout options offered by KLay Layered
+     * and should be considered highly experimental.
      */
     public static final IProperty<List<LNode>> BARYCENTER_ASSOCIATES = new Property<List<LNode>>(
             "barycenterAssociates");
@@ -152,11 +159,11 @@ public final class Properties {
      * KNode that contained the origin of this node in the KGraph.
      */
     public static final IProperty<KNode> PARENT = new Property<KNode>("parent");
-    
+
     /**
      * LNode that is the left border node for the compound node the side dummy guards the side of.
      */
-    public static final IProperty<LNode> SIDE_OWNER = new Property<LNode>("sideOwner"); 
+    public static final IProperty<LNode> SIDE_OWNER = new Property<LNode>("sideOwner");
 
     /**
      * Flag indicating whether an LPort is set to a leave node in the inclusion tree to enable
@@ -164,55 +171,52 @@ public final class Properties {
      */
     public static final IProperty<Boolean> LEAVE_DUMMY_PORT = new Property<Boolean>(
             "leaveDummyPort", false);
-    
+
     /**
      * UPPER_BORDER_DUMMY node determining the compound node this dummy node belongs to.
      */
-    public static final IProperty<LNode> COMPOUND_NODE = new Property<LNode>(
-            "CompoundNode");
-    
+    public static final IProperty<LNode> COMPOUND_NODE = new Property<LNode>("CompoundNode");
+
     /**
      * KInsets of the KNode a upper border dummy node is representing.
      */
-    public static final IProperty<KInsets> ORIGINAL_INSETS = 
-            new Property<KInsets>("OriginalInsets");
-    
+    public static final IProperty<KInsets> ORIGINAL_INSETS = new Property<KInsets>("OriginalInsets");
+
     /**
      * Position of UPPER_BORDER_DUMMY-Node before repositioning in the CompoundGraphRestorer.
      */
-    public static final IProperty<KVector> ORIGINAL_DUMMY_POSITION =
-            new Property<KVector>("OriginalDummyPosition");
-    
+    public static final IProperty<KVector> ORIGINAL_DUMMY_POSITION = new Property<KVector>(
+            "OriginalDummyPosition");
+
     /**
      * Set of edges reverted by the CompoundCyclePreprocessor. Property of the layeredGraph.
      */
-    public static final IProperty<HashSet<LEdge>> REVERSED_COMPOUND_EDGES =
-            new Property<HashSet<LEdge>>("RevertedCompoundEdges");
-    
+    public static final IProperty<HashSet<LEdge>> REVERSED_COMPOUND_EDGES = new Property<HashSet<LEdge>>(
+            "RevertedCompoundEdges");
+
     /**
      * Map between KGraph nodes/ports/edges and LGraph nodes/ports/edges.
      */
-    public static final IProperty<HashMap<KGraphElement, LGraphElement>> ELEMENT_MAP =
-            new Property<HashMap<KGraphElement, LGraphElement>>("ElementMap");
-    
+    public static final IProperty<HashMap<KGraphElement, LGraphElement>> ELEMENT_MAP 
+        = new Property<HashMap<KGraphElement, LGraphElement>>("ElementMap");
+
     /**
      * List of comment boxes that are placed on top of a node.
      */
-    public static final IProperty<List<LNode>> TOP_COMMENTS =
-            new Property<List<LNode>>("TopSideComments");
-    
+    public static final IProperty<List<LNode>> TOP_COMMENTS = new Property<List<LNode>>(
+            "TopSideComments");
+
     /**
      * List of comment boxes that are placed in the bottom of of a node.
      */
-    public static final IProperty<List<LNode>> BOTTOM_COMMENTS =
-            new Property<List<LNode>>("BottomSideComments");
-    
+    public static final IProperty<List<LNode>> BOTTOM_COMMENTS = new Property<List<LNode>>(
+            "BottomSideComments");
+
     /**
      * The port of a node that originally connected a comment box with that node.
      */
-    public static final IProperty<LPort> COMMENT_CONN_PORT =
-            new Property<LPort>("CommentConnectionPort");
-    
+    public static final IProperty<LPort> COMMENT_CONN_PORT = new Property<LPort>(
+            "CommentConnectionPort");
 
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS
@@ -227,8 +231,8 @@ public final class Properties {
             LayoutOptions.BORDER_SPACING, DEF_SPACING, 0.0f);
 
     /** option identifier for edge spacing factor. */
-    public static final String EDGE_SPACING_FACTOR_ID = 
-        "de.cau.cs.kieler.klay.layered.edgeSpacingFactor";
+    public static final String EDGE_SPACING_FACTOR_ID 
+        = "de.cau.cs.kieler.klay.layered.edgeSpacingFactor";
     /** default value for edge spacing factor. */
     public static final float DEF_EDGE_SPACING_FACTOR = 0.5f;
     /** factor for minimal spacing between edges. */
@@ -236,7 +240,8 @@ public final class Properties {
             EDGE_SPACING_FACTOR_ID, DEF_EDGE_SPACING_FACTOR);
 
     /** priority of elements. controls how much single edges are emphasized. */
-    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
+    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY,
+            0);
 
     /** default value for aspect ratio. */
     public static final float DEF_ASPECT_RATIO = 1.6f;
