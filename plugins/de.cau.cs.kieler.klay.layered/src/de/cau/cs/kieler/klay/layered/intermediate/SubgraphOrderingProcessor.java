@@ -13,9 +13,15 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Postprocesses the node ordering phase to ensure that subgraphs are not intertwined across the
@@ -46,6 +52,24 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin(
                 "Order subgraphs so that the relative position is the same on all layers", 1);
+        // A subgraph ordering graph is used to find the correct subgraph ordering. The subgraph
+        // ordering graph is disconnected - it consists of connected partial graphs for each depth
+        // level of the nesting tree. Represent them as a list of layered graphs.
+        LinkedList<LayeredGraph> levelOrderingGraphs = new LinkedList<LayeredGraph>();
+        for (int j = 1; j <= layeredGraph.getProperty(Properties.MAX_DEPTH); j++) {
+            LayeredGraph partialSubgraphOrderingGraph = new LayeredGraph();
+            partialSubgraphOrderingGraph.setProperty(Properties.ORIGIN, j);
+            levelOrderingGraphs.add(partialSubgraphOrderingGraph);
+        }
+        // Insert nodes and edges representing the relationship "is left of" into the subgraph
+        // ordering graph parts.
+        for (Layer layer : layeredGraph.getLayers()) {
+            List<LNode> layerNodes = layer.getNodes();
+            for (int i = 0; i < layerNodes.size(); i++) {
+                LNode currentNode = layerNodes.get(i);
+                LNode neighbour = layerNodes.get(i + 1);
+            }
+        }
 
         getMonitor().done();
     }
