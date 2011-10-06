@@ -111,14 +111,6 @@ public final class Properties {
             "inLayerSuccessorConstraint", null);
 
     /**
-     * Indicates that a node {@code x} may only appear inside a layer before the nodes from the list
-     * the property is set to. That is, having {@code x} appear after any node from the list woud
-     * violate this constraint. This property makes sense for nodes.
-     */
-    public static final IProperty<List<LNode>> IN_LAYER_SUCCESSORS_CONSTRAINT 
-        = new Property<List<LNode>>("inLayerSuccessorsConstraint", null);
-
-    /**
      * Crossing hint used for in-layer cross counting with northern and southern port dummies.
      */
     public static final IProperty<Integer> CROSSING_HINT = new Property<Integer>("crossingHint", 0);
