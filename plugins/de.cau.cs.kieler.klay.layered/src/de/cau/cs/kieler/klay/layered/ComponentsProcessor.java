@@ -29,6 +29,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -62,7 +63,12 @@ public class ComponentsProcessor extends AbstractAlgorithm {
      */
     public List<LayeredGraph> split(final LayeredGraph graph) {
         Boolean separate = graph.getProperty(LayoutOptions.SEPARATE_CC);
-        if (separate == null || separate.booleanValue()) {
+        
+        // the graph may only be separated if this feature was requested and if it does not
+        // contain any edges connected to external ports
+        if (!graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)
+                && (separate == null || separate.booleanValue())) {
+            
             // set id of all nodes to 0
             for (LNode node : graph.getLayerlessNodes()) {
                 node.id = 0;
