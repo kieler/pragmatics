@@ -31,7 +31,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * The nodes of one subgraph on one layer are still placed next to each other without other nodes
  * between them.</dd>
  * <dt>Slots:</dt>
- * <dd>Before phase 1.</dd>
+ * <dd>After phase 3.</dd>
  * <dt>Same-slot dependencies:</dt>
  * <dd>none.</dd>
  * </dl>
