@@ -138,10 +138,28 @@ public class InteractiveCrossingMinimizer extends AbstractCrossingMinimizer {
                 point2 = pointIter.next();
             }
             return (point1.y + point2.y) / 2;
-            // FIXME What about the other node types?
+            
+        case NORTH_SOUTH_PORT:
+            // Get one of the ports the dummy node was created for, and its original node
+            LPort originPort = (LPort) node.getPorts().get(0).getProperty(Properties.ORIGIN);
+            LNode originNode = originPort.getNode();
+            
+            switch (originPort.getSide()) {
+            case NORTH:
+                // Use the position of the node's northern side
+                return originNode.getPosition().y;
+            
+            case SOUTH:
+                // Use the position of the node's southern side
+                return originNode.getPosition().y + originNode.getSize().y;
+            }
+            
+            break;
+
+        // FIXME What about the other node types?
         }
-        // the fallback solution is to take the previous position of the node
-        return node.getPosition().y;
+        // the fallback solution is to take the previous position of the node's mid point
+        return node.getPosition().y + node.getSize().y / 2.0;
     }
 
 }
