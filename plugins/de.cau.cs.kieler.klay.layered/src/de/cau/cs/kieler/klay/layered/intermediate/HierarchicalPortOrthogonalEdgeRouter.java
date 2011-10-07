@@ -372,6 +372,10 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * @param graph the layered graph.
      */
     private void restoreProperOrder(final List<LNode> dummies, final LayeredGraph graph) {
+        if (dummies.isEmpty()) {
+            return;
+        }
+        
         // Turn the list into an array of dummy nodes and sort that by their original x coordinate
         LNode[] dummyArray = dummies.toArray(new LNode[dummies.size()]);
         
