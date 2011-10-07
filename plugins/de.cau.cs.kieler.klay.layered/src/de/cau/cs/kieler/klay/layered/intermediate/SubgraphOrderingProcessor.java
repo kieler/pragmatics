@@ -13,14 +13,19 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -67,10 +72,61 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             List<LNode> layerNodes = layer.getNodes();
             for (int i = 0; i < layerNodes.size(); i++) {
                 LNode currentNode = layerNodes.get(i);
-                LNode neighbour = layerNodes.get(i + 1);
+                LNode relatedCompoundCurrent = getRelatedCompoundNode(currentNode, layeredGraph);
+                LNode nextNode = layerNodes.get(i + 1);
+                LNode relatedCompoundNext = getRelatedCompoundNode(nextNode, layeredGraph);
+                // There is only something to be done, if nodes that are neighbours in a layer are
+                // of different compound nodes.
+                if ((currentNode.getProperty(Properties.PARENT) != nextNode
+                        .getProperty(Properties.PARENT))
+                        || (currentNode.getProperty(Properties.COMPOUND_NODE) != nextNode
+                                .getProperty(Properties.COMPOUND_NODE))) {
+                    int depthCurrent = currentNode.getProperty(Properties.DEPTH);
+                    int depthNext = nextNode.getProperty(Properties.DEPTH);
+                    int maxDepth = Math.max(depthCurrent, depthNext);
+                    HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
+                            .getProperty(Properties.ELEMENT_MAP);
+                    // Insert nodes resp. their ancestors of the relevant level into the
+                    // level-ordering-Graph, if not already done.
+                    LayeredGraph orderingSubgraph = levelOrderingGraphs.get(maxDepth);
+                    while (depthCurrent != maxDepth) {
+                        currentNode = (LNode) elemMap.get(currentNode
+                                .getProperty(Properties.PARENT));
+                        depthCurrent = currentNode.getProperty(Properties.DEPTH);
+                    }
+                    LNode currentCopy = getNodeCopy(orderingSubgraph.getLayerlessNodes());
+                    if (currentCopy == null) {
+                        currentCopy = new LNode();
+                        currentCopy.setProperty(Properties.ORIGIN, currentNode);
+                        orderingSubgraph.getLayerlessNodes().add(currentCopy);
+                    }
+
+                    
+                    // write method for insertion of a node into a Subgraph ordering graph.
+                    
+                    
+                    
+                }
             }
         }
 
         getMonitor().done();
+    }
+
+    private LNode getNodeCopy(List<LNode> layerlessNodes) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    private LNode getRelatedCompoundNode(final LNode currentNode, final LayeredGraph layeredGraph) {
+        LNode retNode;
+        HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
+                .getProperty(Properties.ELEMENT_MAP);
+        if (currentNode.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL) {
+            retNode = (LNode) elemMap.get(currentNode.getProperty(Properties.PARENT));
+        } else {
+            retNode = currentNode.getProperty(Properties.COMPOUND_NODE);
+        }
+        return retNode;
     }
 }
