@@ -216,7 +216,13 @@ public class DebugWindow extends Window {
             File file1 = (File) e1;
             File file2 = (File) e2;
             
-            return file1.getName().compareTo(file2.getName());
+            if (file1.lastModified() < file2.lastModified()) {
+                return -1;
+            } else if (file1.lastModified() > file2.lastModified()) {
+                return 1;
+            } else {
+                return file1.getName().compareTo(file2.getName());
+            }
         }
     }
     
@@ -660,6 +666,9 @@ public class DebugWindow extends Window {
         createdColumn.getColumn().pack();
         createdColumn.setLabelProvider(new FileTableLabelProvider(
                 FileTableLabelProvider.COL_CREATED));
+        
+        fileTable.setSortColumn(createdColumn.getColumn());
+        fileTable.setSortDirection(SWT.UP);
         
         // Image Canvas
         imageCanvas = new ImageCanvas(sashForm);
