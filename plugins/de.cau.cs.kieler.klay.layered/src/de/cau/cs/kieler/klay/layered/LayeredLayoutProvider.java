@@ -515,7 +515,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             = new IntermediateProcessingStrategy(
             
             // Before Phase 1
-            EnumSet.of(IntermediateLayoutProcessor.COMPOUND_CYCLE_PREPROCESSOR),
+            EnumSet.of(IntermediateLayoutProcessor.COMPOUND_CYCLE_PROCESSOR),
             
             null, null,
             
