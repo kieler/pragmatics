@@ -32,7 +32,7 @@ public enum IntermediateLayoutProcessor {
     // Before Phase 1
     
     /** Handles cyclic dependencies of compound nodes. */
-    COMPOUND_CYCLE_PREPROCESSOR,
+    COMPOUND_CYCLE_PROCESSOR,
     /** Mirrors the graph to perform a right-to-left drawing. */
     LEFT_DIR_PREPROCESSOR,
     /** Transposes the graph to perform a top-bottom drawing. */
@@ -73,6 +73,8 @@ public enum IntermediateLayoutProcessor {
     
     // Before Phase 4
     
+    /** Makes sure that subgraphs are in same relative order on all levels.*/
+    SUBGRAPH_ORDERING_PROCESSOR,
     /** Makes sure that in-layer constraints are handled. */
     IN_LAYER_CONSTRAINT_PROCESSOR,
     /** Merges long edge dummy nodes belonging to the same hyperedge. */
@@ -143,7 +145,7 @@ public enum IntermediateLayoutProcessor {
         case COMMENT_PREPROCESSOR:
             return new CommentPreprocessor();
             
-        case COMPOUND_CYCLE_PREPROCESSOR:
+        case COMPOUND_CYCLE_PROCESSOR:
             return new CompoundCycleProcessor();
             
         case COMPOUND_DUMMY_EDGE_REMOVER:
@@ -222,6 +224,9 @@ public enum IntermediateLayoutProcessor {
         
         case SELF_LOOP_PROCESSOR:
             return new SelfLoopProcessor();
+            
+        case SUBGRAPH_ORDERING_PROCESSOR:
+            return new SubgraphOrderingProcessor();
             
         case UP_DIR_POSTPROCESSOR:
         case UP_DIR_PREPROCESSOR:
