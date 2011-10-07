@@ -887,7 +887,6 @@ public class DebugWindow extends Window {
      *                otherwise.
      */
     private void setColorKeyVisible(final boolean visible) {
-        System.out.println(visible);
         showColorKeyButton.setSelection(visible);
         colorKeyBrowser.setVisible(visible);
         sashForm.layout(true);
