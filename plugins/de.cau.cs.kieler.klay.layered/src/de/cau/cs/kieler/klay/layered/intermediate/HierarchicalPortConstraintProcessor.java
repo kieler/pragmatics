@@ -155,6 +155,12 @@ public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm imple
                 break;
             }
             
+            // Only process dummies created for eastern or western external ports
+            PortSide externalPortSide = node.getProperty(Properties.EXT_PORT_SIDE);
+            if (externalPortSide != PortSide.WEST && externalPortSide != PortSide.EAST) {
+                continue;
+            }
+            
             if (lastHierarchicalDummy != null) {
                 lastHierarchicalDummy.setProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINT, node);
             }
