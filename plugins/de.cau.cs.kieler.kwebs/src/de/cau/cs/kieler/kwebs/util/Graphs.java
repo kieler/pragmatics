@@ -57,14 +57,8 @@ public final class Graphs {
         if (sourceGraph != null && targetGraph != null) {
             HashMap<String, KGraphElement> sourceMap = createHashmapByUniqueID(sourceGraph);
             HashMap<String, KGraphElement> targetMap = createHashmapByUniqueID(targetGraph);
-            KGraphElement kgeSource = null;
-            KGraphElement kgeTarget = null;
-            for (String srcId : sourceMap.keySet()) {
-                if (targetMap.containsKey(srcId)) {
-                    kgeSource = sourceMap.get(srcId);
-                    kgeTarget = targetMap.get(srcId);
-                    duplicateGraphElementLayout(kgeSource, kgeTarget);
-                }
+            for (String srcId : sourceMap.keySet()) {                
+                duplicateGraphElementLayout(sourceMap.get(srcId), targetMap.get(srcId));
             }
         }
     }
@@ -118,7 +112,7 @@ public final class Graphs {
             while (iterator.hasNext()) {
                 eObject = iterator.next();
                 if (eObject instanceof KGraphElement) {
-                    kgraphElement = ((KGraphElement) eObject);
+                    kgraphElement = (KGraphElement) eObject;
                     kidentifier = (KIdentifier) kgraphElement.getData(KIdentifier.class);
                     if (kidentifier != null) {
                         map.put(kidentifier.getId(), kgraphElement);
