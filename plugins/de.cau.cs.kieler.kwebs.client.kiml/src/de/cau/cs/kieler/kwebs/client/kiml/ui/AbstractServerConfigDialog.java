@@ -118,7 +118,7 @@ public abstract class AbstractServerConfigDialog extends Dialog {
         parentLayout.makeColumnsEqualWidth = false;
         
         Label label = new Label(parent, SWT.NULL);
-        label.setText("Configuration name:");
+        label.setText("Configuration Name:");
         label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
         
         serverConfigName = new Text(parent, SWT.SINGLE | SWT.BORDER);
