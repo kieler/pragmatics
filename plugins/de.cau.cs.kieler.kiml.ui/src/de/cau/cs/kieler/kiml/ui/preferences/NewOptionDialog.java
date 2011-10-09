@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.ui.preferences;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -315,12 +316,15 @@ public class NewOptionDialog extends Dialog {
         });
         Collection<LayoutOptionData<?>> data = EclipseLayoutDataService
                 .getInstance().getOptionData();
-        SelectionData[] input = new SelectionData[data.size()];
-        int i = 0;
+        Vector<SelectionData> inputVec = new Vector<SelectionData>();      
         for (LayoutOptionData<?> optionData : data) {
-            SelectionData seld = new SelectionData(optionData);
-            input[i++] = seld;
+            // Only display user visible options. For example, programmatically defined options
+            // are not to be displayed.
+            if (optionData.isVisible()) {
+                inputVec.add(new SelectionData(optionData));
+            }
         }
+        SelectionData[] input = inputVec.toArray(new SelectionData[0]);
         Arrays.sort(input);
         dialog.setInput(input);
         if (dialog.open() == ListDialog.OK) {

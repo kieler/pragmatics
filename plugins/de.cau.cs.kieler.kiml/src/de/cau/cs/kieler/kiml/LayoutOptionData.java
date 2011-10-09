@@ -139,7 +139,10 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     private String[] choices;
     /** whether the option should be shown in advanced mode only. */
     private boolean advanced;
-
+    /** Whether this layout option is visible to the user. Options are visible by default. */
+    private boolean visible 
+        = true;
+    
     /**
      * Checks whether the enumeration class is set correctly. This method must
      * not be called for options other than of type 'enum'.
@@ -645,6 +648,24 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      */
     public void setAdvanced(final boolean theadvanced) {
         this.advanced = theadvanced;
+    }
+
+    /**
+     * Returns whether this option is visible to users, e.g. should be displayed in GUI elements..
+     * 
+     * @return true if the option is visible
+     */
+    public boolean isVisible() {
+        return visible;
+    }
+
+    /**
+     * Sets whether this option is visible to users, e.g. should be displayed in GUI elements.
+     * 
+     * @param thevisible whether this option is visible to users, e.g. should be displayed in GUI elements
+     */
+    public void setVisible(final boolean thevisible) {
+        this.visible = thevisible;
     }
 
 }

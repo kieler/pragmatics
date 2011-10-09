@@ -15,6 +15,7 @@
 package de.cau.cs.kieler.kiml.service;
 
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeType;
@@ -62,7 +63,14 @@ public abstract class ProgrammaticLayoutDataService extends ExtensionLayoutDataS
      *            the class of the property
      */
     private void addProgramaticOption(final IProperty<?> property, final Class<?> optionClass) {
+        // If option already registered in data service, the registration is not necessary
+        if (getOptionData(property.getId()) != null) {
+            return;
+        }
+        // Create and register new option data instance
         LayoutOptionData<Object> optionData = new LayoutOptionData<Object>();
+        // Programmatic options are not visible to users
+        optionData.setVisible(false);
         String id = property.getId();
         String type = null;
         if (optionClass.equals(Boolean.class)) {
