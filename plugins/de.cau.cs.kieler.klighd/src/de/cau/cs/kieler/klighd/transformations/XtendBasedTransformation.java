@@ -23,6 +23,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcorePackage;
@@ -34,9 +35,13 @@ import org.eclipse.xtend.XtendFacade;
 import org.eclipse.xtend.XtendResourceParser;
 import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableList;
 
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.klighd.IModelTransformation;
@@ -53,14 +58,20 @@ import de.cau.cs.kieler.klighd.TransformationContext;
  */
 public class XtendBasedTransformation implements IModelTransformation<EObject, EObject> {
 
+    private static final String TRANSFORMATION_EXTENSION_NAME = "transform";
+    private static final String DEFAULT_TRANSFORMATION_EXTENSION_NAME = "onError";
+
+    private static final HashMap<String, ENamedElement> NAME_ELEMENT_LOOK_UP
+                         = new HashMap<String, ENamedElement>();
+    
+    // chsch: the sense of these both declarations is not obvious to me!
+    //  TODO please clarify this and comment it.
+    
     /** the property for the element mapping. */
     private static final Property<BiMap<EObject, EObject>> ELEMENT_MAPPING =
             new Property<BiMap<EObject, EObject>>("klighd.elementMapping",
                     HashBiMap.<EObject, EObject>create());
-
-    private static final String TRANSFORMATION_EXTENSION_NAME = "transform";
-    private static final String DEFAULT_TRANSFORMATION_EXTENSION_NAME = "onError";
-
+    
     private static BiMap<Object, Object> elementMapping = null;
 
     /**
@@ -165,10 +176,19 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
         } catch (Exception e) {
             StatusManager.getManager().handle(
                     new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID,
-                            "Xtend-based transformation execution failed", e));
+                            "Xtend-based transformation execution failed"));
         }
         elementMapping = null;
         return result;
+    }
+
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean supports(final Object model) {
+        /* chsch: do we still need this dummy? */
+        return true;
     }
 
     /**
@@ -207,6 +227,11 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
         return targetModelClass;
     }
 
+    /**
+     * Infers concrete information about the interface classes of a transformation specified in Xtend.
+     * 
+     * @author chsch, mri
+     */
     private void inferSourceAndTargetModelClass() {
 
         triedToInferClasses = true;
@@ -245,54 +270,126 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
         }
     }
 
+    /**
+     * Infers a class denoted by an Ecore-based FQN or by means of the imported Ecore packages.
+     *  
+     * @author chsch, mri
+     * @param identifier
+     * @param ext
+     * @return
+     */
     private Class<?> inferClassFromIdentifier(final Identifier identifier, final XtendFile ext) {
 
-        // construe its name
         String type = identifier.getValue();
+        EClassifier clazz = (EClassifier) NAME_ELEMENT_LOOK_UP.get(type);
+        
+        if (clazz != null) {
+            return clazz.getInstanceClass();
+        }
+        
         int pos = type.lastIndexOf("::");
         String className = (pos == -1 ? type : type.substring(pos + 2));
         String packageName = (pos == -1 ? "" : type.substring(0, pos));
-        EClassifier clazz = null;
         EPackage ePackage = null;
-
-        // search a class with the revealed type name in the registered meta models
-        for (EPackage mm : this.metamodels.values()) {
-            clazz = mm.getEClassifier(className);
+        
+        if (!Strings.isNullOrEmpty(packageName)) {
+            ePackage = (EPackage) NAME_ELEMENT_LOOK_UP.get(packageName);
+            if (ePackage == null) {
+                ePackage = inferEPackage(packageName);
+                // here, I assume that we will find the denoted package
+                cacheENamedElement(packageName, ePackage);                
+            }            
+            clazz = ePackage.getEClassifier(className);
+            cacheENamedElement(type, clazz);
             
-            // chsch: hotfixed this part!! TODO whole loop shall be refactored!! 
-            if ((Strings.isNullOrEmpty(packageName) || mm.getName().equals(packageName))
-                    && clazz != null/* && clazz.isInstance(model) */) {
-                ePackage = clazz.getEPackage();
-                boolean isDeclared = false;
-
-                // check whether the xtend file imports the package containing this
-                // class
-                // this check tests only the last subpackage name (is sufficient right
-                // now)
-                for (String name : ext.getImportedNamespaces()) {
-                    isDeclared |= name.endsWith(ePackage.getNsPrefix());
-                }
-
-                // in case the type was specified by a FQCN, check the identity of the
-                // package names; check the presence of the class' package import
-                // otherwise
-                if (!packageName.equals("") && packageName.equals(ePackage.getName())
-                        || packageName.equals("") && isDeclared) {
+        } else {
+            for (String importedPackageName : ext.getImportedNamespaces()) {
+                ePackage = (EPackage) NAME_ELEMENT_LOOK_UP.get(importedPackageName);
+                if (ePackage == null) {
+                    ePackage = inferEPackage(importedPackageName);
+                    // here, I assume that we will find the denoted package
+                    cacheENamedElement(importedPackageName, ePackage);                
+                }            
+                clazz = ePackage.getEClassifier(className);
+                if (clazz != null) {
+                    cacheENamedElement(type, clazz);
                     break;
                 }
             }
         }
+        
         if (clazz != null) {
             return clazz.getInstanceClass();
         }
         return null;
     }
-
+    
+    
     /**
-     * {@inheritDoc}
+     * Wrapper managing the conversion of Collection<Object> to List<EPackage>.
+     * Implementation sucks. Does anybody know something better??<br>
+     *   Don't come up with {@link Arrays#copyOf(original, newLength, newType)}
+     * 
+     * @author chsch
+     * @param packageName concatenation of ecore package names separated by "::", NO java package name 
+     * @return {@link EPackage} denoted by packageName
      */
-    public boolean supports(final Object model) {
-        return true;
+    private EPackage inferEPackage(final String packageName) {
+        ImmutableList<EPackage> ePackages = ImmutableList.copyOf(
+            Collections2.filter(
+                Collections2.transform(
+                    EPackage.Registry.INSTANCE.values(),               
+                    new Function<Object, EPackage>() {
+                        public EPackage apply(final Object input) {
+                            if (EcorePackage.eINSTANCE.getEPackage().isInstance(input)) {
+                                return (EPackage) input;
+                            } else {
+                                return null;
+                            }
+                        }
+                    }),
+                Predicates.notNull()
+            )
+        );      
+        return inferEPackage(packageName, ePackages);        
     }
+    
+    /** the length of the string "::". */
+    private static final int SEP_OFFSET = 2;
 
+    /** 
+     * @author chsch
+     * @param packageName concatenation of ecore package names separated by "::", NO java package name 
+     * @param ePackages collection of ecore packages to look into
+     * @return {@link EPackage} denoted by packageName
+     */
+    private EPackage inferEPackage(final String packageName, final List<EPackage> ePackages) {
+        int firstSepPos = packageName.indexOf("::");
+        String firstSegment = (firstSepPos == -1 ? packageName : packageName.substring(0, firstSepPos));
+        String remainder = (firstSepPos == -1 ? null : packageName.substring(firstSepPos + SEP_OFFSET));
+        
+        if (ePackages.isEmpty()) {
+            throw new IllegalArgumentException("(sub)package list is empty");
+        }
+        
+        for (EPackage ePackage : ePackages) {
+            if (ePackage.getName().equals(firstSegment)) {
+                if (Strings.isNullOrEmpty(remainder)) {
+                    return ePackage;
+                } else {                    
+                    return inferEPackage(remainder, ePackage.getESubpackages());
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * @author chsch
+     * @param name the elements name
+     * @param namedElement the element to be kept in mind
+     */    
+    private synchronized void cacheENamedElement(final String name, final ENamedElement namedElement) {
+        NAME_ELEMENT_LOOK_UP.put(name, namedElement);
+    }
 }
