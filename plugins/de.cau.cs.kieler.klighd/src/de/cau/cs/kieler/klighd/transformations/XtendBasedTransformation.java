@@ -227,8 +227,16 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
         return targetModelClass;
     }
 
+    
+    /******************************************
+     *                                        *
+     *          internal part                 *
+     *                                        *
+     ******************************************/
+    
     /**
      * Infers concrete information about the interface classes of a transformation specified in Xtend.
+     * This implementation assumes that the Xtend file is correct and all referenced types are available.
      * 
      * @author chsch, mri
      */
@@ -269,7 +277,12 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
             e.printStackTrace();
         }
     }
+    
+    
+    /** the length of the string "::". */
+    private static final int SEP_OFFSET = 2;
 
+    
     /**
      * Infers a class denoted by an Ecore-based FQN or by means of the imported Ecore packages.
      *  
@@ -284,34 +297,46 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
         EClassifier clazz = (EClassifier) NAME_ELEMENT_LOOK_UP.get(type);
         
         if (clazz != null) {
+            // if the class is already known we're fine :-)
             return clazz.getInstanceClass();
         }
         
+        // split the type id in package and class, if possible 
         int pos = type.lastIndexOf("::");
-        String className = (pos == -1 ? type : type.substring(pos + 2));
+        String className = (pos == -1 ? type : type.substring(pos + SEP_OFFSET));
         String packageName = (pos == -1 ? "" : type.substring(0, pos));
         EPackage ePackage = null;
-        
+                
         if (!Strings.isNullOrEmpty(packageName)) {
+            // in this case a full qualified class name is provided
+            // fetch the package from the cache...  
             ePackage = (EPackage) NAME_ELEMENT_LOOK_UP.get(packageName);
             if (ePackage == null) {
+                // ... or infer it if it is unknown
                 ePackage = inferEPackage(packageName);
                 // here, I assume that we will find the denoted package
                 cacheENamedElement(packageName, ePackage);                
             }            
+            // get the class ...
             clazz = ePackage.getEClassifier(className);
+            // ... and keep it in mind
             cacheENamedElement(type, clazz);
             
         } else {
+            // inspect the imported packages at the top of the Xtend file
             for (String importedPackageName : ext.getImportedNamespaces()) {
+                // try to get the EPackage from the cache ...
                 ePackage = (EPackage) NAME_ELEMENT_LOOK_UP.get(importedPackageName);
                 if (ePackage == null) {
+                    // ... of infer it if necessary
                     ePackage = inferEPackage(importedPackageName);
                     // here, I assume that we will find the denoted package
                     cacheENamedElement(importedPackageName, ePackage);                
-                }            
+                }
+                // try to get the class ...
                 clazz = ePackage.getEClassifier(className);
                 if (clazz != null) {
+                    // ... and keep it in mind if found
                     cacheENamedElement(type, clazz);
                     break;
                 }
@@ -354,8 +379,6 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
         return inferEPackage(packageName, ePackages);        
     }
     
-    /** the length of the string "::". */
-    private static final int SEP_OFFSET = 2;
 
     /** 
      * @author chsch
@@ -369,7 +392,7 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
         String remainder = (firstSepPos == -1 ? null : packageName.substring(firstSepPos + SEP_OFFSET));
         
         if (ePackages.isEmpty()) {
-            throw new IllegalArgumentException("(sub)package list is empty");
+            throw new IllegalArgumentException("(sub)package list is empty and should not be");
         }
         
         for (EPackage ePackage : ePackages) {
@@ -383,6 +406,7 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
         }
         return null;
     }
+    
     
     /**
      * @author chsch
