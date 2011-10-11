@@ -88,6 +88,9 @@ public class KiviMenuContributionService {
      *            null
      * @param keySequence
      *            a keySequence for binding a key combination to the command of this button, may be null
+     * @param shortCutContext
+     *            the context in which the shortcut defined by the keySequence should be active, may be null
+     *            and will default to org.eclipse.ui.contexts.window
      * @param activeEditors
      *            Strings of editor IDs for which this button should be made visible only, parameter
      *            to avoid using the visibilityExpression, may be left
@@ -95,11 +98,11 @@ public class KiviMenuContributionService {
     public void addToolbarButton(final ICombination responsibleCombination, final String id,
             final String label, final String tooltip, final ImageDescriptor icon, final int style,
             final LocationScheme locationSchemeExpression, final Expression visibilityExpression, 
-            final KeySequence keySequence, final String... activeEditors) {
+            final KeySequence keySequence, final String shortcutContext, final String... activeEditors) {
         assert locationSchemeExpression != null;
         addButtonConfiguration(new ButtonConfiguration(responsibleCombination, id, label, tooltip,
                 icon, style, locationSchemeExpression, visibilityExpression, activeEditors, 
-                false, keySequence));
+                false, keySequence, shortcutContext));
     }
     // CHECKSTYLEON ParameterNumber
 
@@ -124,7 +127,7 @@ public class KiviMenuContributionService {
             final Expression visibilityExpression, final String... activeEditors) {
         assert locationSchemeExpression != null;
         addButtonConfiguration(new ButtonConfiguration(null, id, null, null,
-                null, 0, locationSchemeExpression, visibilityExpression, activeEditors, true, null));
+                null, 0, locationSchemeExpression, visibilityExpression, activeEditors, true, null, null));
     }
     // CHECKSTYLEON ParameterNumber
     
@@ -151,7 +154,7 @@ public class KiviMenuContributionService {
             final String tooltip, final ImageDescriptor icon, final String... activeEditors) {
         addButtonConfiguration(new ButtonConfiguration(responsibleCombination, id, "KiviButton",
                 tooltip, icon, SWT.PUSH, LocationScheme.MENU_POPUP_TOOLBAR, null, activeEditors, 
-                false, null));
+                false, null, null));
     }
 
     /**
@@ -170,7 +173,7 @@ public class KiviMenuContributionService {
     public void addToolbarButton(final ICombination responsibleCombination, final String id,
             final String label) {
         addButtonConfiguration(new ButtonConfiguration(responsibleCombination, id, label, null,
-                null, SWT.PUSH, LocationScheme.MENU_POPUP_TOOLBAR, null, null, false, null));
+                null, SWT.PUSH, LocationScheme.MENU_POPUP_TOOLBAR, null, null, false, null, null));
     }
 
     /**
@@ -232,13 +235,15 @@ public class KiviMenuContributionService {
         private ICombination responsiveCombination;
         
         private KeySequence keySequence;
+        
+        private String shortcutContext;
 
         // CHECKSTYLEOFF ParameterNumber
         ButtonConfiguration(final ICombination responsiveCombination, final String id,
                 final String label, final String tooltip, final ImageDescriptor icon,
                 final int style, final LocationScheme locationSchemeExpression,
                 final Expression visibilityExpression, final String[] activeEditors, 
-                final boolean separator, final KeySequence keySequence) {
+                final boolean separator, final KeySequence keySequence, final String shortcutContext) {
             this.responsiveCombination = responsiveCombination;
             this.id = id;
             this.label = label;
@@ -250,6 +255,7 @@ public class KiviMenuContributionService {
             this.activeEditors = activeEditors;
             this.separator = separator;
             this.keySequence = keySequence;
+            this.shortcutContext = shortcutContext;
         }
         // CHECKSTYLEOFF ParameterNumber
 
@@ -336,6 +342,13 @@ public class KiviMenuContributionService {
          */
         public KeySequence getKeySequence() {
             return this.keySequence;
+        }
+        
+        /**
+         * @return the shortcutContext
+         */
+        public String getShortcutContext() {
+            return this.shortcutContext;
         }
         
     }

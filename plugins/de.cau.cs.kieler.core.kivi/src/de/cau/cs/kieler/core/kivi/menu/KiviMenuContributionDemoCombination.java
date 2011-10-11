@@ -50,7 +50,7 @@ public class KiviMenuContributionDemoCombination extends AbstractCombination {
         // here we register this button only for the standard text editor
         String visibleIn = "org.eclipse.ui.DefaultTextEditor";
         KiviMenuContributionService.INSTANCE.addToolbarButton(this, buttonIds[1], "Demo Button 2",
-                tooltip, icon, SWT.PUSH, LocationScheme.MENU_POPUP_TOOLBAR, null, null, visibleIn);
+                tooltip, icon, SWT.PUSH, LocationScheme.MENU_POPUP_TOOLBAR, null, null, null, visibleIn);
     }
 
     /**

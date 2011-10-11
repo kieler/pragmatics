@@ -62,7 +62,7 @@ public class RandomLayoutCombination extends AbstractCombination {
         KiviMenuContributionService.INSTANCE.addToolbarButton(this, RANDOM_BUTTON, "Random Layout",
                 "Do a random layout on the current diagram. "
                         + "Invalidates all positions but keeps the original layout options.",
-                iconRandom, SWT.PUSH, LocationScheme.MENU_POPUP_TOOLBAR, null, null,
+                iconRandom, SWT.PUSH, LocationScheme.MENU_POPUP_TOOLBAR, null, null, null,
                 EDITOR_IDS.toArray(new String[2]));
     }
 

@@ -232,20 +232,20 @@ public final class DynamicMenuContributions {
                         KiviMenuContributionService.INSTANCE.addToolbarButton(combination, command
                                 + ".menu", transformation.getName(), transformation.getToolTip(),
                                 icon, SWT.PUSH, KiviMenuContributionService.LocationScheme.MENU,
-                                visibility, keySequence, editorSettings.getEditorId());
+                                visibility, keySequence, editorSettings.getContext(), editorSettings.getEditorId());
                         combination.addTransformation(command + ".menu", transformation);
                     } else if (contrib.getData().startsWith("toolbar:")) {
                         KiviMenuContributionService.INSTANCE.addToolbarButton(combination, command
                                 + ".toolbar", transformation.getName(),
                                 transformation.getToolTip(), icon, SWT.PUSH,
-                                KiviMenuContributionService.LocationScheme.TOOLBAR, visibility, null,
+                                KiviMenuContributionService.LocationScheme.TOOLBAR, visibility, null, null,
                                 editorSettings.getEditorId());
                         combination.addTransformation(command + ".toolbar", transformation);
                     } else if (contrib.getData().startsWith("popup:")) {
                         KiviMenuContributionService.INSTANCE.addToolbarButton(combination, command
                                 + ".popup", transformation.getName(), transformation.getToolTip(),
                                 icon, SWT.PUSH, KiviMenuContributionService.LocationScheme.POPUP,
-                                visibility, null, editorSettings.getEditorId());
+                                visibility, null, null, editorSettings.getEditorId());
                         combination.addTransformation(command + ".popup", transformation);
                     }
                     
