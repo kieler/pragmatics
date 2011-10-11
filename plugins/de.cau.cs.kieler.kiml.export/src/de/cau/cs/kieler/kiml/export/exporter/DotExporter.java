@@ -29,7 +29,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.kiml.export.AbstractExporter;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
-import de.cau.cs.kieler.kiml.graphviz.dot.transform.Attributes;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.Command;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.KGraphDotTransformation;
 
