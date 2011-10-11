@@ -233,7 +233,7 @@ public final class LightDiagramServices {
                         continue;
                     }
 
-// chsch: deactivated this since I try to infer this from the transformation
+// chsch: deactivated this since I try to infer the meta models from the transformation
 //                    List<EPackage> metamodels = new ArrayList<EPackage>();
 //
 //                    for (IConfigurationElement epackageDecl : element
