@@ -38,7 +38,23 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * TODO: Document.
+ * This processor does the job of routing edges connected to hierarchical ports.
+ * 
+ * <p>Without going too much into the details, it does so in six distinct steps:</p>
+ * <ol>
+ *   <li>Dummy nodes created for northern and southern hierarchical ports are restored and
+ *     connected to the nodes formerly created in their stead.</li>
+ *   <li>The coordinates of these dummy nodes - and thus of the hierarchical ports they
+ *     represent - are calculated and applied.</li>
+ *   <li>The edges connected to northern and southern hierarchical ports are routed.</li>
+ *   <li>The temporary dummy nodes are removed, thereby restoring the original bijective
+ *     relationship between external ports and the dummy nodes created to represent them.</li>
+ *   <li>Due to the necessity of having to route these edges, additional height may be
+ *     required, which in turn may invalidate the y coordinates of eastern and western
+ *     hierarchical port dummy nodes. Those are corrected in this step.</li>
+ *   </li>That may in turn have produced slanted edge segments, which are corrected in the
+ *     final step.</li>
+ * </ol>
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>A layered graph, with edge routing finished for edges not incident
