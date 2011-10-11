@@ -88,7 +88,7 @@ public class KiviMenuContributionService {
      *            null
      * @param keySequence
      *            a keySequence for binding a key combination to the command of this button, may be null
-     * @param shortCutContext
+     * @param shortcutContext
      *            the context in which the shortcut defined by the keySequence should be active, may be null
      *            and will default to org.eclipse.ui.contexts.window
      * @param activeEditors
