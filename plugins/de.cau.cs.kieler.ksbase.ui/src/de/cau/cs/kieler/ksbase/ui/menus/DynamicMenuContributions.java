@@ -32,9 +32,19 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditDomain;
 import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramEditDomain;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
+import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.keys.KeyBinding;
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.keys.BindingService;
+import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
+import org.eclipse.ui.keys.IBindingService;
 
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
@@ -205,27 +215,45 @@ public final class DynamicMenuContributions {
                     ImageDescriptor icon = null;
                     icon = KSBasEUIPlugin.imageDescriptorFromPlugin(editorSettings.getContributor()
                             .getName(), transformation.getIcon());
-
+                    KeySequence keySequence = null;
+                    
+                    try {
+                        String shortcut = transformation.getKeyboardShortcut();
+                        keySequence = KeySequence.getInstance(shortcut);
+                        if (keySequence.isEmpty()) {
+                            keySequence = null;
+                        }
+                    } catch (ParseException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    
                     if (contrib.getData().startsWith("menu:")) {
                         KiviMenuContributionService.INSTANCE.addToolbarButton(combination, command
                                 + ".menu", transformation.getName(), transformation.getToolTip(),
                                 icon, SWT.PUSH, KiviMenuContributionService.LocationScheme.MENU,
-                                visibility, editorSettings.getEditorId());
+                                visibility, keySequence, editorSettings.getEditorId());
                         combination.addTransformation(command + ".menu", transformation);
                     } else if (contrib.getData().startsWith("toolbar:")) {
                         KiviMenuContributionService.INSTANCE.addToolbarButton(combination, command
                                 + ".toolbar", transformation.getName(),
                                 transformation.getToolTip(), icon, SWT.PUSH,
-                                KiviMenuContributionService.LocationScheme.TOOLBAR, visibility,
+                                KiviMenuContributionService.LocationScheme.TOOLBAR, visibility, null,
                                 editorSettings.getEditorId());
                         combination.addTransformation(command + ".toolbar", transformation);
                     } else if (contrib.getData().startsWith("popup:")) {
                         KiviMenuContributionService.INSTANCE.addToolbarButton(combination, command
                                 + ".popup", transformation.getName(), transformation.getToolTip(),
                                 icon, SWT.PUSH, KiviMenuContributionService.LocationScheme.POPUP,
-                                visibility, editorSettings.getEditorId());
+                                visibility, null, editorSettings.getEditorId());
                         combination.addTransformation(command + ".popup", transformation);
                     }
+                    
+                    /*
+                    BindingService bindingService = (BindingService) Workbench.getInstance().getService(IBindingService.class);
+                    bindingService.addBinding(new KeyBinding(KeySequence.getInstance("a+c"), command, schemeId, contextId, locale, platform, windowManager, type))
+                    */
+                    
                 } else {
                     if (!(contrib.getCommands().indexOf(command) == 0)) {
                         

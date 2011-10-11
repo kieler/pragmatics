@@ -21,6 +21,7 @@ import java.util.Map;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IParameter;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.internal.expressions.AndExpression;
 import org.eclipse.core.internal.expressions.CompositeExpression;
@@ -29,10 +30,15 @@ import org.eclipse.core.internal.expressions.OrExpression;
 import org.eclipse.core.internal.expressions.WithExpression;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.actions.CompoundContributionItem;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.menus.InternalMenuService;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.menus.IMenuService;
@@ -257,7 +263,15 @@ public class KiviContributionItem extends CompoundContributionItem implements
                 // this is the button
                 IContributionItem item;
                 item = new CommandContributionItem(parameter);
-
+                
+                //bind keysequence to command
+                if (config.getKeySequence() != null) {
+                    BindingService bindingService = 
+                            (BindingService) Workbench.getInstance().getService(IBindingService.class);
+                    ParameterizedCommand pc = ((CommandContributionItem) item).getCommand();
+                    bindingService.addBinding(new KeyBinding(config.getKeySequence(), pc, bindingService.getActiveScheme().getId(), Workbench.getInstance().getContextSupport().CONTEXT_ID_WINDOW, null, null, null, Binding.USER));
+                }
+                
                 //deactivate the old button if it exists
                 unload(config.getId());
                 // remember some relations between button, its handler and the
