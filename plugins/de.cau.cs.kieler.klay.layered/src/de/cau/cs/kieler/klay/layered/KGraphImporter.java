@@ -253,7 +253,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         if (!nodeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
             KVector ratio = KimlUtil.resizeNode(node);
-            if (ratio != null && ratio.x != 1 || ratio.y != 1) {
+            if (ratio != null && (ratio.x != 1 || ratio.y != 1)) {
                 newNode.setProperty(Properties.RESIZE_RATIO, ratio);
             }
         }
