@@ -15,17 +15,21 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
-
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.properties.EdgeType;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -58,15 +62,18 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Revert edges to remove cyclic dependencies between compound nodes", 1);
 
+        HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
+                .getProperty(Properties.ELEMENT_MAP);
+
         // float edgeSpacing = layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR)
         // * layeredGraph.getProperty(Properties.OBJ_SPACING);
 
-        // Initialize a hashmap in which edgeLists for a pair of KNodes can be stored. Pairs are
+        // Initialize a hashmap in which edgeLists for a pair of LNodes can be stored. Pairs are
         // represented as LinkedLists to allow expressing edge directions.
-        HashMap<LinkedList<KNode>, LinkedList<LEdge>> hierarchyCrossingEdges 
-                = new HashMap<LinkedList<KNode>, LinkedList<LEdge>>();
+        HashMap<LinkedList<LNode>, LinkedList<LEdge>> hierarchyCrossingEdges 
+                = new HashMap<LinkedList<LNode>, LinkedList<LEdge>>();
         // Initialize a hashset in which the pairs of KNodes with adjacency relations can be stored.
-        HashSet<LinkedList<KNode>> nodePairs = new HashSet<LinkedList<KNode>>();
+        HashSet<LinkedList<LNode>> nodePairs = new HashSet<LinkedList<LNode>>();
 
         // For each edge crossing the borders of a compound node, make an insertion into the
         // corresponding List in the Hashmap. To find the Pair of KNodes that is the correct key,
@@ -129,9 +136,9 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                             // find the corresponding List. If no list is stored yet, create one.
                             // Store
                             // the pair of nodes in the HashSet for later iteration.
-                            LinkedList<KNode> keyTuple = new LinkedList<KNode>();
-                            keyTuple.add(currentSource);
-                            keyTuple.add(currentTarget);
+                            LinkedList<LNode> keyTuple = new LinkedList<LNode>();
+                            keyTuple.add((LNode) (elemMap.get(currentSource)));
+                            keyTuple.add((LNode) (elemMap.get(currentTarget)));
                             LinkedList<KNode> reverseTuple = new LinkedList<KNode>();
                             reverseTuple.add(currentTarget);
                             reverseTuple.add(currentSource);
@@ -195,32 +202,60 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
      * @return Returns a set that contains the reversed edges.
      */
     private HashSet<LEdge> reverseCyclicEdges(
-            final HashMap<LinkedList<KNode>, LinkedList<LEdge>> hierarchyCrossingEdges,
-            final HashSet<LinkedList<KNode>> nodePairs, final LayeredGraph layeredGraph) {
+            final HashMap<LinkedList<LNode>, LinkedList<LEdge>> hierarchyCrossingEdges,
+            final HashSet<LinkedList<LNode>> nodePairs, final LayeredGraph layeredGraph) {
         HashSet<LEdge> reversedEdges = null;
-        for (LinkedList<KNode> nodePair : nodePairs) {
-            // Get the edge list of one direction.
-            LinkedList<LEdge> toEdges = hierarchyCrossingEdges.get(nodePair);
 
-            // Get the edge list of the other direction.
-            LinkedList<KNode> reverseTuple = new LinkedList<KNode>();
-            reverseTuple.add(nodePair.getLast());
-            reverseTuple.add(nodePair.getFirst());
-            LinkedList<LEdge> froEdges = hierarchyCrossingEdges.get(reverseTuple);
+        LinkedList<LEdge> edgesToReverse = new LinkedList<LEdge>();
 
-            // Check, if there is a cyclic dependency.
-            if (!(toEdges == null || froEdges == null)) {
-                // If yes: revert all edges of the smaller list, if the lists are equally sized,
-                // revert
-                // edges of froEdges. If not: nothing to be done.
-                int difference = toEdges.size() - froEdges.size();
-                if (difference < 0) {
-                    reversedEdges = reverseEdges(toEdges, layeredGraph);
-                } else {
-                    reversedEdges = reverseEdges(froEdges, layeredGraph);
+        // Create a graph representing the compound node dependencies
+        LayeredGraph cycleGraph = new LayeredGraph();
+        cycleGraph.copyProperties(layeredGraph);
+        List<LNode> cycleLayerlessNodes = cycleGraph.getLayerlessNodes();
+        HashMap<LNode, LNode> insertedNodes = new HashMap<LNode, LNode>();
+        Iterator<LinkedList<LNode>> nodePairIterator = hierarchyCrossingEdges.keySet().iterator();
+        while (nodePairIterator.hasNext()) {
+            LinkedList<LNode> currentNodePair = nodePairIterator.next();
+            LNode firstNode = currentNodePair.getFirst();
+            LNode lastNode = currentNodePair.getLast();
+            // Insert an LNode into the cycle Graph for each compound node that has a dependency to
+            // some other compound node (an adjacency of the two or any of their descendants)
+            for (LNode node : currentNodePair) {
+                if ((node != null) && (!insertedNodes.containsKey(node))) {
+                    LNode cycleGraphNode = new LNode();
+                    cycleGraphNode.setProperty(Properties.ORIGIN, node);
+                    insertedNodes.put(node, cycleGraphNode);
+                    cycleLayerlessNodes.add(cycleGraphNode);
+                }
+            }
+            // Insert each edge from the list for this node pair into the cycle graph
+            for (LEdge edge : hierarchyCrossingEdges.get(currentNodePair)) {
+                LEdge cycleGraphEdge = new LEdge();
+                cycleGraphEdge.setProperty(Properties.ORIGIN, edge);
+                LPort cycleSourcePort = new LPort();
+                LPort cycleTargetPort = new LPort();
+                cycleGraphEdge.setSource(cycleSourcePort);
+                cycleGraphEdge.setTarget(cycleTargetPort);
+                cycleSourcePort.setNode(insertedNodes.get(firstNode));
+                cycleTargetPort.setNode(insertedNodes.get(lastNode));
+            }
+        }
+
+        // At this point, a cycle breaking algorithm is needed. At the moment, the greedy cycle
+        // breaker is used.
+        GreedyCycleBreaker cycleBreaker = new GreedyCycleBreaker();
+        cycleBreaker.process(cycleGraph);
+
+        for (LNode lnode : cycleLayerlessNodes) {
+            for (LEdge ledge : lnode.getOutgoingEdges()) {
+                if (ledge.getProperty(Properties.REVERSED)) {
+                    edgesToReverse.add((LEdge) ledge.getProperty(Properties.ORIGIN));
                 }
             }
         }
+
+        reversedEdges = reverseEdges(edgesToReverse, layeredGraph);
+
         return reversedEdges;
     }
 
@@ -262,7 +297,7 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
 
             // Original port dummy nodes are not needed any more. Remove them. Prepare removing them
             // by removing all connected edges (which will be only dummy edges). removableEdges-List
-            // is used to avoid concurrent modification exeption.
+            // is used to avoid concurrent modification exception.
             LinkedList<LEdge> removableEdges = new LinkedList<LEdge>();
             if (sourceNodeType == NodeType.LOWER_COMPOUND_PORT) {
                 for (LEdge ledge : sourceNode.getConnectedEdges()) {

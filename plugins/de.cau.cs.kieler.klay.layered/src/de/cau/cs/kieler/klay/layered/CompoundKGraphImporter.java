@@ -285,7 +285,8 @@ public class CompoundKGraphImporter extends KGraphImporter {
 
         if (incoming) {
             // Create upper border dummy node to represent the compound node.
-            upperBorder = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_BORDER, dummyNodes);
+            upperBorder = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_BORDER, dummyNodes,
+                    elemMap);
             upperBorder.setProperty(Properties.ORIGINAL_INSETS, insets);
             upperBorder.setProperty(Properties.BORDER_SPACING, borderSpacing);
             upperBorder.getSize().x = insets.getLeft() + borderSpacing;
@@ -341,7 +342,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
             if (port == null) {
                 if (fromInside) {
                     representative = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_BORDER,
-                            dummyNodes);
+                            dummyNodes, elemMap);
                     representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
                     representative.getSize().x = insets.getRight() + borderSpacing;
                 } else {
@@ -352,12 +353,12 @@ public class CompoundKGraphImporter extends KGraphImporter {
             } else {
                 if (fromInside) {
                     representative = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_PORT,
-                            dummyNodes);
+                            dummyNodes, elemMap);
                     representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
                     representative.getSize().x = insets.getRight() + borderSpacing;
                 } else {
                     representative = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_PORT,
-                            dummyNodes);
+                            dummyNodes, elemMap);
                     representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
                     representative.getSize().x = insets.getLeft() + borderSpacing;
                 }
@@ -412,7 +413,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
             }
         } else {
             nodeType = NodeType.LOWER_COMPOUND_BORDER;
-            LNode dummyNode = createBorderDummyNode(node, nodeType, dummyNodes);
+            LNode dummyNode = createBorderDummyNode(node, nodeType, dummyNodes, elemMap);
             dummyNode.setProperty(Properties.COMPOUND_NODE, upperBorder);
             dummyNode.getSize().x = insets.getRight() + borderSpacing;
             if (!(layeredNodes.contains(dummyNode))) {
@@ -540,12 +541,13 @@ public class CompoundKGraphImporter extends KGraphImporter {
      * 
      * @param node
      *            The node to be represented.
+     * @param elemMap
      * @param upperBorder
      *            Denotes, if an upper border node is to be created, if not, a lower border node
      *            will be created.
      */
     private LNode createBorderDummyNode(final KNode node, final NodeType nodeType,
-            final List<LNode> dummyList) {
+            final List<LNode> dummyList, final Map<KGraphElement, LGraphElement> elemMap) {
         LNode dummyNode = null;
         if ((nodeType == NodeType.LOWER_COMPOUND_BORDER)
         /* || (nodeType == NodeType.UPPER_COMPOUND_BORDER) */) {
@@ -577,6 +579,10 @@ public class CompoundKGraphImporter extends KGraphImporter {
             }
             dummyList.add(dummyNode);
         }
+        if (nodeType == NodeType.UPPER_COMPOUND_BORDER) {
+            elemMap.put(node, dummyNode);
+        }
+
         return dummyNode;
     }
 
