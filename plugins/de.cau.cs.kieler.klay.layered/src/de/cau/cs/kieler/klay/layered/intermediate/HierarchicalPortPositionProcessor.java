@@ -25,7 +25,23 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * TODO: Document.
+ * Sets the y coordinate of external node dummies representing eastern or western
+ * hierarchical ports. Note that due to additional space required to route edges connected
+ * to northern external ports, the y coordinate set here may become invalid and may need
+ * to be fixed later. That fixing is part of what {@link HierarchicalPortOrthogonalEdgeRouter}
+ * does.
+ * 
+ * <p>This processor is only necessary for node placers that do not respect the
+ * {@link de.cau.cs.kieler.klay.layered.properties.Properties#EXT_PORT_RATIO_OR_POSITION}
+ * property themselves.</p>
+ * 
+ * <dl>
+ *   <dt>Precondition:</dt><dd>A layered graph with finished node placement.</dd>
+ *   <dt>Postcondition:</dt><dd>External node dummies representing western or eastern ports
+ *     have a correct y coordinate.</dd>
+ *   <dt>Slots:</dt><dd>Before phase 5.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
+ * </dl>
  * 
  * @see HierarchicalPortConstraintProcessor
  * @see HierarchicalPortDummySizeProcessor
@@ -60,7 +76,7 @@ public class HierarchicalPortPositionProcessor extends AbstractAlgorithm impleme
      */
     private void fixCoordinates(final Layer layer, final LayeredGraph layeredGraph) {
         PortConstraints portConstraints = layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS);
-        if (!portConstraints.isRatioFixed()) {
+        if (!(portConstraints.isRatioFixed() || portConstraints.isPosFixed())) {
             // If coordinates are free to be set, we're done
             return;
         }

@@ -94,7 +94,8 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
          * Finally, the coordinates of east / west hierarchical port dummies have to be corrected
          * and set. The x coordinate must be set, and if north / south port routing resulted
          * in a change of offset or graph size, the y coordinates have to be adjusted if port
-         * constraints are at FIXED_RATIO.
+         * constraints are at FIXED_RATIO or FIXED_POS. The graph's width may also have to be
+         * adjusted.
          */
         fixCoordinates(layeredGraph);
         
@@ -651,10 +652,13 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             switch (extPortSide) {
             case EAST:
             case WEST:
-                if (constraints == PortConstraints.FIXED_RATIO) {
+                if (constraints.isRatioFixed()) {
                     double ratio = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
                     nodePosition.y = graphActualSize.y * ratio;
                     node.borderToContentAreaCoordinates(false, true);
+//                } else if (constraints.isPosFixed()) {
+//                    nodePosition.y = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
+//                    node.borderToContentAreaCoordinates(false, true);
                 }
                 break;
             

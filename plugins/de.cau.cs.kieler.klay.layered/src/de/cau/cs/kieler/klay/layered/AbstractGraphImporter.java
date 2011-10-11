@@ -132,7 +132,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
             case WEST:
             case EAST:
                 positionOrRatio = portPosition.y;
-                if (portConstraints.isRatioFixed() && !portConstraints.isPosFixed()) {
+                if (portConstraints.isRatioFixed()) {
                     positionOrRatio /= portNodeSize.y;
                 }
                 
@@ -141,7 +141,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
             case NORTH:
             case SOUTH:
                 positionOrRatio = portPosition.x;
-                if (portConstraints.isRatioFixed() && !portConstraints.isPosFixed()) {
+                if (portConstraints.isRatioFixed()) {
                     positionOrRatio /= portNodeSize.x;
                 }
                 
