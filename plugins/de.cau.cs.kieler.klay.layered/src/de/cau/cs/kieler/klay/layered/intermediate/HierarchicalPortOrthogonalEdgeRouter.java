@@ -99,12 +99,18 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
          */
         fixCoordinates(layeredGraph);
         
+        /* Step 6
+         * Fixing the dummy coordinates can easily lead to slanted edge segments, which needs
+         * to be corrected.
+         */
+        correctSlantedEdgeSegments(layeredGraph);
+        
         getMonitor().done();
     }
     
     
     ///////////////////////////////////////////////////////////////////////////////
-    // Restoring North / South External Port Dummies
+    // STEP 1: RESTORE NORTH / SOUTH DUMMIES
     
     /**
      * Iterates through all layers, restoring hierarchical port dummy nodes along the way. The
@@ -208,7 +214,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
     
     
     ///////////////////////////////////////////////////////////////////////////////
-    // Setting North / South Hierarchical Port Dummy Coordinates
+    // STEP 2: SET NORTH / SOUTH DUMMY COORDINATES
     
     /**
      * Set coordinates for northern and southern external port dummy nodes.
@@ -431,7 +437,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
     
     
     ///////////////////////////////////////////////////////////////////////////////
-    // Edge Routing
+    // STEP 3: EDGE ROUTING
     
     /**
      * Routes nothern and southern hierarchical port edges and ajusts the graph's height and
@@ -518,7 +524,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
     
     
     ///////////////////////////////////////////////////////////////////////////////
-    // Temporary North / South Hierarchical Port Dummy Removal
+    // STEP 4: REMOVE TEMPORARY DUMMIES
     
     /**
      * Removes the temporary hierarchical port dummies, reconnecting their incoming
@@ -587,7 +593,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
     
     
     ///////////////////////////////////////////////////////////////////////////////
-    // Setting East / West Hierarchical Port Dummy Coordinates
+    // STEP 5: FIX DUMMY COORDINATES
     
     /**
      * Fixes all hierarchical port dummy coordinates. For east / west external port dummies, this
@@ -656,9 +662,9 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                     double ratio = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
                     nodePosition.y = graphActualSize.y * ratio;
                     node.borderToContentAreaCoordinates(false, true);
-//                } else if (constraints.isPosFixed()) {
-//                    nodePosition.y = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
-//                    node.borderToContentAreaCoordinates(false, true);
+                } else if (constraints.isPosFixed()) {
+                    nodePosition.y = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
+                    node.borderToContentAreaCoordinates(false, true);
                 }
                 break;
             
@@ -669,6 +675,68 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             case SOUTH:
                 nodePosition.y = graph.getSize().y + borderSpacing + insets.bottom - offset.y;
                 break;
+            }
+        }
+    }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // STEP 6: SLANTED EDGE SEGMENT CORRECTION
+    
+    /**
+     * Goes over the eastern and western hierarchical dummy nodes and checks whether their
+     * incident edges have slanted segments.
+     * 
+     * @param layeredGraph the layered graph.
+     */
+    private void correctSlantedEdgeSegments(final LayeredGraph layeredGraph) {
+        // East port dummies are in the first layer; all other dummies are in the last layer
+        List<Layer> layers = layeredGraph.getLayers();
+        correctSlantedEdgeSegments(layers.get(0));
+        correctSlantedEdgeSegments(layers.get(layers.size() - 1));
+    }
+    
+    /**
+     * Goes over the eastern and western hierarchical dummy nodes in the given layer and checks
+     * whether their incident edges have slanted segments. Note that only the first and last
+     * segment needs to be checked.
+     * 
+     * @param layer the layer.
+     */
+    private void correctSlantedEdgeSegments(final Layer layer) {
+        for (LNode node : layer.getNodes()) {
+            if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
+                // We're only looking for hierarchical port dummies
+                continue;
+            }
+            
+            PortSide extPortSide = node.getProperty(Properties.EXT_PORT_SIDE);
+            
+            if (extPortSide == PortSide.EAST || extPortSide == PortSide.WEST) {
+                for (LEdge edge : node.getConnectedEdges()) {
+                    KVectorChain bendPoints = edge.getBendPoints();
+                    
+                    if (bendPoints.isEmpty()) {
+                        // TODO: The edge has no bend points yet, but may still be slanted. Handle that!
+                        continue;
+                    }
+                    
+                    // Correct a slanted segment connected to the source port if it belongs to our node
+                    LPort sourcePort = edge.getSource();
+                    KVector firstBendPoint = bendPoints.getFirst();
+                    
+                    if (sourcePort.getNode() == node) {
+                        firstBendPoint.y = node.getPosition().y + sourcePort.getPosition().y;
+                    }
+                    
+                    // Correct a slanted segment connected to the target port if it belongs to our node
+                    LPort targetPort = edge.getTarget();
+                    KVector lastBendPoint = bendPoints.getLast();
+                    
+                    if (targetPort.getNode() == node) {
+                        lastBendPoint.y = node.getPosition().y + targetPort.getPosition().y;
+                    }
+                }
             }
         }
     }
