@@ -66,7 +66,7 @@ public enum PortConstraints {
      * @return true if the ratio is fixed
      */
     public boolean isRatioFixed() {
-        return this == FIXED_RATIO || this == FIXED_POS;
+        return this == FIXED_RATIO;
     }
     
     /**
