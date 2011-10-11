@@ -47,7 +47,7 @@ public class ImageExportAction extends Action {
     /** relative path to the icon to use for this action. */
     private static final String ICON_PATH = "icons/pngfile.gif";
     /** preference identifier for the last used file name. */
-    private static final String LAST_FILE_NAME_PREF = "kiml.viewer.lastFileName";
+    private static final String LAST_FILE_NAME_PREF = "klay.info.lastImageFile";
 
     /** the layout graph view associated with this action. */
     private LayoutGraphView view;

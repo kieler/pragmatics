@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 import de.cau.cs.kieler.klay.info.actions.ImageExportAction;
+import de.cau.cs.kieler.klay.info.actions.LoadGraphAction;
 
 /**
  * A viewer for layout graphs.
@@ -50,6 +51,7 @@ public class LayoutGraphView extends ViewPart {
         // create actions in the view toolbar
         IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
         toolBarManager.add(new ImageExportAction(this));
+        toolBarManager.add(new LoadGraphAction());
 
         // create canvas for layout graphs
         scrolledComposite = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
