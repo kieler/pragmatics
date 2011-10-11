@@ -32,19 +32,11 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditDomain;
 import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramEditDomain;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
-import org.eclipse.jface.bindings.Binding;
-import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeySequence;
-import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.keys.BindingService;
-import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
-import org.eclipse.ui.keys.IBindingService;
 
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
@@ -61,7 +53,7 @@ import de.cau.cs.kieler.ksbase.ui.kivi.KSBasECombination;
  * Creates menus for all registered editor transformation settings and
  * contributes them when starting an eclipse instance.
  * 
- * @author mim
+ * @author mim, ckru
  * 
  * @kieler.rating 2009-12-15 proposed yellow
  */
@@ -74,7 +66,7 @@ public final class DynamicMenuContributions {
      * Default constructor.
      */
     private DynamicMenuContributions() {
-        
+
     }
 
     /**
@@ -108,9 +100,6 @@ public final class DynamicMenuContributions {
                         editorSettings.getTransformationFile(), editorSettings.getModelPackages()
                                 .toArray(new String[editorSettings.getModelPackages().size()]),
                         null, transDomain);
-                // XtendTransformationEffect effect = new XtendTransformationEffect(context,
-                // descriptor);
-                // effect.schedule();
                 context.execute(descriptor);
 
                 Object result = descriptor.getResult();
@@ -216,7 +205,7 @@ public final class DynamicMenuContributions {
                     icon = KSBasEUIPlugin.imageDescriptorFromPlugin(editorSettings.getContributor()
                             .getName(), transformation.getIcon());
                     KeySequence keySequence = null;
-                    
+
                     try {
                         String shortcut = transformation.getKeyboardShortcut();
                         keySequence = KeySequence.getInstance(shortcut);
@@ -224,22 +213,22 @@ public final class DynamicMenuContributions {
                             keySequence = null;
                         }
                     } catch (ParseException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    
+
                     if (contrib.getData().startsWith("menu:")) {
                         KiviMenuContributionService.INSTANCE.addToolbarButton(combination, command
                                 + ".menu", transformation.getName(), transformation.getToolTip(),
                                 icon, SWT.PUSH, KiviMenuContributionService.LocationScheme.MENU,
-                                visibility, keySequence, editorSettings.getContext(), editorSettings.getEditorId());
+                                visibility, keySequence, editorSettings.getContext(),
+                                editorSettings.getEditorId());
                         combination.addTransformation(command + ".menu", transformation);
                     } else if (contrib.getData().startsWith("toolbar:")) {
                         KiviMenuContributionService.INSTANCE.addToolbarButton(combination, command
                                 + ".toolbar", transformation.getName(),
                                 transformation.getToolTip(), icon, SWT.PUSH,
-                                KiviMenuContributionService.LocationScheme.TOOLBAR, visibility, null, null,
-                                editorSettings.getEditorId());
+                                KiviMenuContributionService.LocationScheme.TOOLBAR, visibility,
+                                null, null, editorSettings.getEditorId());
                         combination.addTransformation(command + ".toolbar", transformation);
                     } else if (contrib.getData().startsWith("popup:")) {
                         KiviMenuContributionService.INSTANCE.addToolbarButton(combination, command
@@ -248,15 +237,10 @@ public final class DynamicMenuContributions {
                                 visibility, null, null, editorSettings.getEditorId());
                         combination.addTransformation(command + ".popup", transformation);
                     }
-                    
-                    /*
-                    BindingService bindingService = (BindingService) Workbench.getInstance().getService(IBindingService.class);
-                    bindingService.addBinding(new KeyBinding(KeySequence.getInstance("a+c"), command, schemeId, contextId, locale, platform, windowManager, type))
-                    */
-                    
+
                 } else {
                     if (!(contrib.getCommands().indexOf(command) == 0)) {
-                        
+
                         String separatedCommand = contrib.getCommands().get(
                                 contrib.getCommands().indexOf(command) + 1);
                         KSBasETransformation separatedTransformation = editorSettings
