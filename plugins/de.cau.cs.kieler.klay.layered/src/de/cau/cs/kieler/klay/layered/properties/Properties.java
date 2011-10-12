@@ -37,7 +37,6 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
-import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer.Region;
 
 /**
  * Container for property definitions.
@@ -62,9 +61,6 @@ public final class Properties {
     /** edge type. */
     public static final IProperty<EdgeType> EDGE_TYPE = new Property<EdgeType>("edgeType",
             EdgeType.NORMAL);
-
-    /** owning region for node. */
-    public static final IProperty<Region> REGION = new Property<Region>("region", null);
 
     /** flag for reversed edges. */
     public static final IProperty<Boolean> REVERSED = new Property<Boolean>("reversed", false);
@@ -294,8 +290,7 @@ public final class Properties {
     /** option identifier for thoroughness. */
     public static final String THOROUGHNESS_ID = "de.cau.cs.kieler.klay.layered.thoroughness";
     /** property that determines how much effort should be spent. */
-    public static final IProperty<Integer> THOROUGHNESS = new Property<Integer>(THOROUGHNESS_ID, 5,
-            0);
+    public static final IProperty<Integer> THOROUGHNESS = new Property<Integer>(THOROUGHNESS_ID, 5, 1);
 
     /** option identifier for layer constraint. */
     public static final String LAYER_CONSTRAINT_ID = "de.cau.cs.kieler.klay.layered.layerConstraint";

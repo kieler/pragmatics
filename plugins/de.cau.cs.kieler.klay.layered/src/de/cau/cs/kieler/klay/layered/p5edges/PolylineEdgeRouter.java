@@ -97,6 +97,7 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements ILayoutPhas
      * @return true if the node is an end-node
      */
     private boolean isEndnode(final LNode node, final boolean first) {
+        double bendPos = node.getPosition().y;
         for (LPort port : node.getPorts()) {
             Iterable<LPort> connectedPorts = first
                 ? port.getPredecessorPorts()
@@ -104,14 +105,13 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements ILayoutPhas
             
             for (LPort connectedPort : connectedPorts) {
                 LNode otherNode = connectedPort.getNode();
-                if (otherNode.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
-                        && node.getPosition().y == otherNode.getPosition().y) {
-                    
-                    return false;
+                double otherPos = otherNode.getPosition().y + connectedPort.getPosition().y;
+                if (Math.abs(otherPos - bendPos) > 1) {
+                    return true;
                 }
             }
         }
-        return true;
+        return false;
     }
 
 }
