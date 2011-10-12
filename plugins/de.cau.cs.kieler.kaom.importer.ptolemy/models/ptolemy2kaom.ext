@@ -359,10 +359,19 @@ Void addChildPorts(Entity entity) :
     // Find entity's ports using KIELER's Ptolemy library and any ports
     // explicitly declared in the model
     let javaPorts = getPorts(entityList) :
+    let nonNullJavaPorts = switch {
+        case javaPorts == null : (
+            reportWarning("Couldn't instantiate actor: " + entity.name) ->
+            {}
+        )
+        
+        default :
+            javaPorts
+    } :
     let explicitPorts = ptolemyEntity.port.transform() :
     
     // Merge both port lists and annotate them with the language annotation
-    let mergedPorts = mergePortAttributes(javaPorts, explicitPorts) :
+    let mergedPorts = mergePortAttributes(nonNullJavaPorts, explicitPorts) :
     let annotatedPorts = addLanguageToPort(mergedPorts) :
     
     // Add all annotated ports to the KAOM entity

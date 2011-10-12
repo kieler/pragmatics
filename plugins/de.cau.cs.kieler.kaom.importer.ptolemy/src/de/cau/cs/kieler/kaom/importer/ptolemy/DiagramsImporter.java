@@ -315,7 +315,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
                 return;
             }
             
-            // Import (automatically advances the monitor)
+            // Import
             try {
                 doImportModelFile(
                         sourceFile,

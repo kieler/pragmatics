@@ -73,17 +73,15 @@ public class PtolemyHelper implements IExecutionContextAware {
                 try {
                     actor = instantiatePtolemyEntity((EntityType) o);
                 } catch (Exception e) {
-                    throw new ClassNotFoundException(
-                            "Couldn't find actor '" + ((EntityType) o).getName() + "'.",
-                            e);
+                    // Unable to instantiate the actor
+                    return null;
                 }
             } else if (o instanceof ClassType) {
                 try {
                     actor = instantiatePtolemyEntity((ClassType) o);
                 } catch (Exception e) {
-                    throw new ClassNotFoundException(
-                            "Couldn't find actor '" + ((ClassType) o).getName() + "'.",
-                            e);
+                    // Unable to instantiate the actor
+                    return null;
                 }
             }
             
@@ -140,10 +138,8 @@ public class PtolemyHelper implements IExecutionContextAware {
                 }
             }
         } catch (Exception e) {
-            // Throw a proper exception
-            throw new ClassNotFoundException(
-                    "Couldn't find actor '" + actor.getClassName() + "'.",
-                    e);
+            // Unable to instantiate the actor
+            return null;
         }
         
         return kaomPorts;
@@ -299,6 +295,7 @@ public class PtolemyHelper implements IExecutionContextAware {
      * @param context the execution context.
      */
     public void setExecutionContext(final ExecutionContext context) {
+        // We don't currently make use of the execution context.
     }
 
 }
