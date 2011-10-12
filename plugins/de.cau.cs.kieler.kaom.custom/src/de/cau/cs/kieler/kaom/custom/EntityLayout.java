@@ -29,9 +29,9 @@ import org.eclipse.draw2d.geometry.Rectangle;
 public class EntityLayout extends AbstractHintLayout {
 
     /** the minimal width for entities. */
-    public static final int MIN_WIDTH = 5;
+    public static final int MIN_WIDTH = 1;
     /** the minimal height for entities. */
-    public static final int MIN_HEIGHT = 5;
+    public static final int MIN_HEIGHT = 1;
     
     /**
      * user given min height.
