@@ -78,7 +78,7 @@
             class="de.cau.cs.kieler.keg.importer.wizards.ImportGraphWizard"
             icon="icons/menu16/importdiagram.gif"
             id="de.cau.cs.kieler.keg.importer.graphImportWizard"
-            name="Import Graph">
+            name="Graphs to KEG Graphs">
          <description>
             Import from common graph formats into the KEG file format.
          </description>
