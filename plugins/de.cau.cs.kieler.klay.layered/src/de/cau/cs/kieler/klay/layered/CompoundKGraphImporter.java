@@ -846,12 +846,13 @@ public class CompoundKGraphImporter extends KGraphImporter {
 
         // calculate starting point of edge
         KVector edgeStart = new KVector(0, 0);
-        if ((!kSourceNode.getChildren().isEmpty()) && (descendantEdge)
+        if ((sourcePort.getNode().getProperty(Properties.NODE_TYPE) == NodeType.UPPER_COMPOUND_BORDER)
+                && (sourcePort.getSide() == PortSide.WEST)
                 && !(sourcePort.getProperty(Properties.ORIGIN) instanceof KPort)) {
-            // edges starting at an UPPER_COMPOUND_BORDER node need special treatment, because
-            // their source node has been repositioned after edge routing.
+            // edges starting at an UPPER_COMPOUND_BORDER node (in the original import) need special
+            // treatment, because their source node has been repositioned after edge routing.
             edgeStart.add(sourcePortPosition);
-            edgeStart.y += (kSourceNodeLayout.getHeight() / 2);
+            edgeStart.y += sourcePort.getNode().getProperty(Properties.POSITION_DIFFERENCE).y;
         } else {
             edgeStart.add(sourcePortPosition);
         }
@@ -866,17 +867,14 @@ public class CompoundKGraphImporter extends KGraphImporter {
 
         // calculate end point of edge
         KVector edgeEnd = new KVector(0, 0);
-        boolean needBalancing = false;
-        if ((!kTargetNode.getChildren().isEmpty())
-                && (!KimlUtil.isDescendant(kSourceNode, kTargetNode) && !(targetPort
-                        .getProperty(Properties.ORIGIN) instanceof KPort))) {
-            // edges ending at an UPPER_COMPOUND_BORDER node need special treatment, because
-            // their target node has been repositioned after edge routing.
+
+        if ((targetPort.getNode().getProperty(Properties.NODE_TYPE) == NodeType.UPPER_COMPOUND_BORDER)
+                && (targetPort.getSide() == PortSide.WEST)
+                && !(targetPort.getProperty(Properties.ORIGIN) instanceof KPort)) {
+            // edges ending at an UPPER_COMPOUND_BORDER (in the original import) node need special
+            // treatment, because their target node has been repositioned after edge routing.
             edgeEnd.add(targetPortPosition);
-            edgeEnd.y += (kTargetNodeLayout.getHeight() / 2);
-            if ((edgeStart.y != edgeEnd.y) && bendPoints.isEmpty()) {
-                needBalancing = true;
-            }
+            edgeEnd.y += targetPort.getNode().getProperty(Properties.POSITION_DIFFERENCE).y;
         } else {
             edgeEnd.add(targetPortPosition);
         }
@@ -888,20 +886,6 @@ public class CompoundKGraphImporter extends KGraphImporter {
             // mind the fact, that getAbsolute calculates absolute coordinates plus insets.
             edgeEnd.x -= kTargetNodeLayout.getInsets().getLeft();
             edgeEnd.y -= kTargetNodeLayout.getInsets().getTop();
-        }
-
-        // if there are bendpoints, adjust endpoint of edge and last bendpoint
-        if (!bendPoints.isEmpty()) {
-            KVector last = bendPoints.getLast();
-            if (last.x < edgeEnd.x) {
-                // edgeEnd.y = last.y;
-                last.y = edgeEnd.y;
-            }
-        }
-
-        // adjust start and endpoints that are unnessessarily not the same y-coordinate
-        if (needBalancing) {
-            edgeEnd.y = edgeStart.y;
         }
 
         // add starting- and endpoint of edge to bendpoints
