@@ -224,6 +224,12 @@ public final class Properties {
      */
     public static final IProperty<Integer> DEPTH = new Property<Integer>(
             "Depth", 0);
+    
+    /**
+     * Difference of Positions for an UPPER_BORDER_DUMMY_NODE before and after the CompoundGraphRestorer.
+     */
+    public static final IProperty<KVector> POSITION_DIFFERENCE = new Property<KVector>(
+            "PositionDifference", null);
 
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS
