@@ -102,6 +102,12 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
             KVector posLeftLower = findSideNodePos(compoundNode, true, true, layeredGraph);
 
             // set position of compound node (upper left corner), save old position first
+            KVector positionDifference = new KVector(0, 0);
+            KVector compoundPosition = compoundNode.getPosition();
+            positionDifference.x += compoundPosition.x;
+            positionDifference.y += compoundPosition.y;
+            positionDifference.sub(posLeftUpper);
+            compoundNode.setProperty(Properties.POSITION_DIFFERENCE, positionDifference);
             compoundNode.setProperty(Properties.ORIGINAL_DUMMY_POSITION, compoundNode.getPosition());
             compoundNode.getPosition().x = posLeftUpper.x;
             compoundNode.getPosition().y = posLeftUpper.y;
