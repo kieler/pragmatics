@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered.properties;
 
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -30,7 +29,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
-import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -176,18 +174,6 @@ public final class Properties {
      * KInsets of the KNode a upper border dummy node is representing.
      */
     public static final IProperty<KInsets> ORIGINAL_INSETS = new Property<KInsets>("OriginalInsets");
-
-    /**
-     * Position of UPPER_BORDER_DUMMY-Node before repositioning in the CompoundGraphRestorer.
-     */
-    public static final IProperty<KVector> ORIGINAL_DUMMY_POSITION = new Property<KVector>(
-            "OriginalDummyPosition");
-
-    /**
-     * Set of edges reverted by the CompoundCyclePreprocessor. Property of the layeredGraph.
-     */
-    public static final IProperty<HashSet<LEdge>> REVERSED_COMPOUND_EDGES = new Property<HashSet<LEdge>>(
-            "RevertedCompoundEdges");
 
     /**
      * Map between KGraph nodes/ports/edges and LGraph nodes/ports/edges.

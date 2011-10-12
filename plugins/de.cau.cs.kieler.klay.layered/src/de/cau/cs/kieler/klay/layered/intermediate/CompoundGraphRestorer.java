@@ -108,7 +108,6 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
             positionDifference.y += compoundPosition.y;
             positionDifference.sub(posLeftUpper);
             compoundNode.setProperty(Properties.POSITION_DIFFERENCE, positionDifference);
-            compoundNode.setProperty(Properties.ORIGINAL_DUMMY_POSITION, compoundNode.getPosition());
             compoundNode.getPosition().x = posLeftUpper.x;
             compoundNode.getPosition().y = posLeftUpper.y;
 
