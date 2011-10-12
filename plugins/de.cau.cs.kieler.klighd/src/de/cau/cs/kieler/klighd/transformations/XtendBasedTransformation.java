@@ -82,8 +82,7 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
     
     /** the property for the element mapping. */
     private static final Property<BiMap<EObject, EObject>> ELEMENT_MAPPING =
-            new Property<BiMap<EObject, EObject>>("klighd.elementMapping",
-                    HashBiMap.<EObject, EObject>create());
+            new Property<BiMap<EObject, EObject>>("klighd.elementMapping");
     
     private static BiMap<Object, Object> elementMapping = null;
 
@@ -96,7 +95,7 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
      *            the source model element
      * @param target
      *            the graphical element
-     * @deprecated
+     * @deprecated used in pkl's xtend1 tr
      */
     public static void addViewElement(final String viewId, final EObject source,
             final EObject target) {
