@@ -186,7 +186,10 @@ public class KiVi {
                     // search the corresponding trigger
                     ITriggerState state = triggerStates.get(stateClass);
                     ITrigger trigger = triggers.get(state);
-                    trigger.setActive(true);
+                    // cmot: fix null pointer exception when trying to activate KIVi
+                    if (trigger != null) {
+                        trigger.setActive(true);
+                    }
                 }
             }
             active = a;
