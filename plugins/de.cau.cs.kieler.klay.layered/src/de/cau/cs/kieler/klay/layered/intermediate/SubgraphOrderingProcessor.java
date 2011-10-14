@@ -22,11 +22,13 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -64,15 +66,20 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         // node. Represent it as a HashMap of layered Graphs. The compound nodes serve as keys.
         HashMap<LNode, LayeredGraph> subgraphOrderingGraph = new HashMap<LNode, LayeredGraph>();
 
+        // Document the insertion of nodes for reference.
+        HashMap<LNode, LNode> insertedNodes = new HashMap<LNode, LNode>();
+
         // Get the layeredGraph's element map.
         HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
                 .getProperty(Properties.ELEMENT_MAP);
-        
-        // Make up an LNode that is to represent the layeredGraph as a key in the subgraphOrderingGraph
+
+        // Make up an LNode that is to represent the layeredGraph as a key in the
+        // subgraphOrderingGraph
         LNode graphKey = new LNode();
         graphKey.copyProperties(layeredGraph);
         graphKey.setProperty(Properties.ORIGIN, layeredGraph);
 
+        // Build the subgraphOrderingGraph:
         // Insert nodes and edges representing the relationship "is left of" into the subgraph
         // ordering graph parts.
         for (Layer layer : layeredGraph.getLayers()) {
@@ -92,39 +99,86 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                     propagatePair(leftRightList, elemMap);
                     LNode propCompoundCurrent = leftRightList.getFirst();
                     LNode propCompoundNext = leftRightList.getLast();
-
+                    LNode key;
+                    LGraphElement parentRep = elemMap.get(propCompoundCurrent
+                            .getProperty(Properties.PARENT));
+                    if (parentRep == layeredGraph) {
+                        key = graphKey;
+                    } else {
+                        key = (LNode) parentRep;
+                    }
+                    LayeredGraph partGraph;
+                    // Get the corresponding component of the subgraphOrderingGraph or create it.
+                    if (subgraphOrderingGraph.containsKey(key)) {
+                        partGraph = subgraphOrderingGraph.get(key);
+                    } else {
+                        partGraph = new LayeredGraph();
+                    }
+                    // Add representatives for the compound nodes to the ordering graph's component
+                    // if not already present. Add an "is-left-of" edge between them.
+                    List<LNode> nodeList = partGraph.getLayerlessNodes();
+                    LNode currentRep = getNodeCopy(propCompoundCurrent, nodeList, insertedNodes);
+                    LNode nextRep = getNodeCopy(propCompoundNext, nodeList, insertedNodes);
+                    LEdge leftOfEdge = new LEdge();
+                    LPort sourcePort = new LPort();
+                    LPort targetPort = new LPort();
+                    leftOfEdge.setSource(sourcePort);
+                    leftOfEdge.setTarget(targetPort);
+                    sourcePort.setNode(currentRep);
+                    targetPort.setNode(nextRep);
                 }
-                // int depthCurrent = currentNode.getProperty(Properties.DEPTH);
-                // int depthNext = nextNode.getProperty(Properties.DEPTH);
-                // int maxDepth = Math.max(depthCurrent, depthNext);
-                // HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
-                // .getProperty(Properties.ELEMENT_MAP);
-                // // Insert nodes resp. their ancestors of the relevant level into the
-                // // level-ordering-Graph, if not already done.
-                // LayeredGraph orderingSubgraph = levelOrderingGraphs.get(maxDepth);
-                // while (depthCurrent != maxDepth) {
-                // currentNode = (LNode) elemMap.get(currentNode
-                // .getProperty(Properties.PARENT));
-                // depthCurrent = currentNode.getProperty(Properties.DEPTH);
-                // }
-                // LNode currentCopy = getNodeCopy(orderingSubgraph.getLayerlessNodes());
-                // if (currentCopy == null) {
-                // currentCopy = new LNode();
-                // currentCopy.setProperty(Properties.ORIGIN, currentNode);
-                // orderingSubgraph.getLayerlessNodes().add(currentCopy);
-                // }
-                //
-                // // write method for insertion of a node into a Subgraph ordering graph.
-                //
-                // }
-                // }
-                // }
             }
         }
+        // Break the cycles in the subgraphOrderingGraph. Any cycle-breaking heuristic can be used
+        // here - but with different results with respect to the number of introduced edge
+        // crossings.
+        // Sander's approach is to break a cycle at the node with the smallest complete
+        // average position. At the time, we use the GreedyCycleBreaker here. This may be changed
+        // for a heuristic using Sander's approach in the future.
+        GreedyCycleBreaker cycleBreaker = new GreedyCycleBreaker();
+        for (LNode key : subgraphOrderingGraph.keySet()) {
+            LayeredGraph graphComponent = subgraphOrderingGraph.get(key);
+            cycleBreaker.process(graphComponent);
+        }
+        
+        applyOrder(layeredGraph, subgraphOrderingGraph);
+
         getMonitor().done();
     }
 
-    private LNode getNodeCopy(List<LNode> layerlessNodes) {
+    /**
+     * Applies the order given by the subgraphOrderingGraph to the nodes of the layeredGraph.
+     * 
+     * @param layeredGraph
+     *      Graph, to which the node ordering is to be applied.
+     * @param subgraphOrderingGraph
+     *      The subgraphOrderingGraph. Every LayeredGraph in the HashMap is expected to be acyclic.
+     */
+    private void applyOrder(final LayeredGraph layeredGraph,
+            final HashMap<LNode, LayeredGraph> subgraphOrderingGraph) {
+        
+        
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * Checks, if a representative for the LNode currentRep is already inserted into the component
+     * graph of the subgraph-ordering-graph that is given by the LNode key. Makes the insertion, if
+     * not.
+     * 
+     * @param currentRep
+     *            The LNode to be represented.
+     * @param layerlessNodes
+     *            The list of layerless nodes of the corresponding component graph.
+     * @param insertedNodes
+     *            The Hashmap, in which the insertion of Nodes into the subGraphOrderingGraph is
+     *            documented.
+     * @return Returns the representative of the currentNode in the component graph. It may be
+     *         freshly created by this method.
+     */
+    private LNode getNodeCopy(final LNode currentRep, final List<LNode> layerlessNodes,
+            final HashMap<LNode, LNode> insertedNodes) {
         // TODO Auto-generated method stub
         return null;
     }
