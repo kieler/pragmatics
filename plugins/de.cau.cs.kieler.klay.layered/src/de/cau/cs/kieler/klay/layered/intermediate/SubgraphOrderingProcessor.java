@@ -64,55 +64,63 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         // node. Represent it as a HashMap of layered Graphs. The compound nodes serve as keys.
         HashMap<LNode, LayeredGraph> subgraphOrderingGraph = new HashMap<LNode, LayeredGraph>();
 
-        // // A subgraph ordering graph is used to find the correct subgraph ordering. The subgraph
-        // // ordering graph is disconnected - it consists of connected partial graphs for each
-        // depth
-        // // level of the nesting tree. Represent them as a list of layered graphs.
-        // LinkedList<LayeredGraph> levelOrderingGraphs = new LinkedList<LayeredGraph>();
-        // for (int j = 1; j <= layeredGraph.getProperty(Properties.MAX_DEPTH); j++) {
-        // LayeredGraph partialSubgraphOrderingGraph = new LayeredGraph();
-        // partialSubgraphOrderingGraph.setProperty(Properties.ORIGIN, j);
-        // levelOrderingGraphs.add(partialSubgraphOrderingGraph);
-        // }
+        // Get the layeredGraph's element map.
+        HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
+                .getProperty(Properties.ELEMENT_MAP);
+        
+        // Make up an LNode that is to represent the layeredGraph as a key in the subgraphOrderingGraph
+        LNode graphKey = new LNode();
+        graphKey.copyProperties(layeredGraph);
+        graphKey.setProperty(Properties.ORIGIN, layeredGraph);
 
         // Insert nodes and edges representing the relationship "is left of" into the subgraph
         // ordering graph parts.
-        // for (Layer layer : layeredGraph.getLayers()) {
-        // List<LNode> layerNodes = layer.getNodes();
-        // for (int i = 0; i < layerNodes.size(); i++) {
-        // LNode currentNode = layerNodes.get(i);
-        // LNode relatedCompoundCurrent = getRelatedCompoundNode(currentNode, layeredGraph);
-        // LNode nextNode = layerNodes.get(i + 1);
-        // LNode relatedCompoundNext = getRelatedCompoundNode(nextNode, layeredGraph);
-        // // There is only something to be done, if nodes that are neighbors in a layer are
-        // // of different compound nodes.
-        // if (relatedCompoundCurrent != relatedCompoundNext) {
-        // int depthCurrent = currentNode.getProperty(Properties.DEPTH);
-        // int depthNext = nextNode.getProperty(Properties.DEPTH);
-        // int maxDepth = Math.max(depthCurrent, depthNext);
-        // HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
-        // .getProperty(Properties.ELEMENT_MAP);
-        // // Insert nodes resp. their ancestors of the relevant level into the
-        // // level-ordering-Graph, if not already done.
-        // LayeredGraph orderingSubgraph = levelOrderingGraphs.get(maxDepth);
-        // while (depthCurrent != maxDepth) {
-        // currentNode = (LNode) elemMap.get(currentNode
-        // .getProperty(Properties.PARENT));
-        // depthCurrent = currentNode.getProperty(Properties.DEPTH);
-        // }
-        // LNode currentCopy = getNodeCopy(orderingSubgraph.getLayerlessNodes());
-        // if (currentCopy == null) {
-        // currentCopy = new LNode();
-        // currentCopy.setProperty(Properties.ORIGIN, currentNode);
-        // orderingSubgraph.getLayerlessNodes().add(currentCopy);
-        // }
-        //
-        // // write method for insertion of a node into a Subgraph ordering graph.
-        //
-        // }
-        // }
-        // }
+        for (Layer layer : layeredGraph.getLayers()) {
+            List<LNode> layerNodes = layer.getNodes();
+            for (int i = 0; i < layerNodes.size(); i++) {
+                LNode currentNode = layerNodes.get(i);
+                LNode relatedCompoundCurrent = getRelatedCompoundNode(currentNode, layeredGraph);
+                LNode nextNode = layerNodes.get(i + 1);
+                LNode relatedCompoundNext = getRelatedCompoundNode(nextNode, layeredGraph);
+                // There is only something to be done, if nodes that are neighbors in a layer are
+                // of different compound nodes.
+                if (relatedCompoundCurrent != relatedCompoundNext) {
+                    // Find the correct partial graph to insert the "is left of"-relationship by
+                    // propagating the dependency up the inclusion tree till two compound nodes with
+                    // the same parent are reached.
+                    LinkedList<LNode> leftRightList = new LinkedList<LNode>();
+                    propagatePair(leftRightList, elemMap);
+                    LNode propCompoundCurrent = leftRightList.getFirst();
+                    LNode propCompoundNext = leftRightList.getLast();
 
+                }
+                // int depthCurrent = currentNode.getProperty(Properties.DEPTH);
+                // int depthNext = nextNode.getProperty(Properties.DEPTH);
+                // int maxDepth = Math.max(depthCurrent, depthNext);
+                // HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
+                // .getProperty(Properties.ELEMENT_MAP);
+                // // Insert nodes resp. their ancestors of the relevant level into the
+                // // level-ordering-Graph, if not already done.
+                // LayeredGraph orderingSubgraph = levelOrderingGraphs.get(maxDepth);
+                // while (depthCurrent != maxDepth) {
+                // currentNode = (LNode) elemMap.get(currentNode
+                // .getProperty(Properties.PARENT));
+                // depthCurrent = currentNode.getProperty(Properties.DEPTH);
+                // }
+                // LNode currentCopy = getNodeCopy(orderingSubgraph.getLayerlessNodes());
+                // if (currentCopy == null) {
+                // currentCopy = new LNode();
+                // currentCopy.setProperty(Properties.ORIGIN, currentNode);
+                // orderingSubgraph.getLayerlessNodes().add(currentCopy);
+                // }
+                //
+                // // write method for insertion of a node into a Subgraph ordering graph.
+                //
+                // }
+                // }
+                // }
+            }
+        }
         getMonitor().done();
     }
 
@@ -162,38 +170,13 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             LPort targetPort = node.getProperty(Properties.LONG_EDGE_TARGET);
             LNode sourceNode = sourcePort.getNode();
             LNode targetNode = targetPort.getNode();
-            KNode currentSource = (KNode) sourceNode.getProperty(Properties.ORIGIN);
-            KNode currentTarget = (KNode) targetNode.getProperty(Properties.ORIGIN);
-            int depthSource = sourceNode.getProperty(Properties.DEPTH);
-            int depthTarget = targetNode.getProperty(Properties.DEPTH);
-            KNode currentSourceAncestor = currentSource.getParent();
-            KNode currentTargetAncestor = currentSource.getParent();
-
-            // If source and target differ in depth in the nesting tree, crawl up the
-            // nesting tree on the deep side to reach even depth level
-            if (depthSource != depthTarget) {
-                for (int i = depthSource; i > depthTarget; i--) {
-                    currentSource = currentSource.getParent();
-                }
-                for (int j = depthTarget; j > depthSource; j--) {
-                    currentTarget = currentTarget.getParent();
-                }
-            }
-
-            if (currentSource != currentTarget) {
-                // Walk up the nesting tree from both sides, until nodes have the same
-                // parent.
-                currentSourceAncestor = currentSource.getParent();
-                currentTargetAncestor = currentTarget.getParent();
-                while (currentSourceAncestor != currentTargetAncestor) {
-                    currentSource = currentSource.getParent();
-                    currentTarget = currentTarget.getParent();
-                    currentSourceAncestor = currentSource.getParent();
-                    currentTargetAncestor = currentTarget.getParent();
-                }
-            }
-
-            LGraphElement container = elemMap.get(currentSourceAncestor);
+            LinkedList<LNode> sourceTargetList = new LinkedList<LNode>();
+            sourceTargetList.add(sourceNode);
+            sourceTargetList.add(targetNode);
+            propagatePair(sourceTargetList, elemMap);
+            LNode newSource = sourceTargetList.getFirst();
+            KNode newSourceParent = newSource.getProperty(Properties.PARENT);
+            LGraphElement container = elemMap.get(newSourceParent);
             if (!(container == layeredGraph)) {
                 retNode = (LNode) container;
             }
@@ -204,7 +187,13 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                 retNode = (LNode) nodeParentRep;
             }
         case NORTH_SOUTH_PORT:
-           
+            LNode portNode = node.getProperty(Properties.IN_LAYER_LAYOUT_UNIT);
+            KNode portNodeParent = portNode.getProperty(Properties.PARENT);
+            LGraphElement portNodeParentRepresentative = elemMap.get(portNodeParent);
+            if (!(elemMap.get(portNodeParent) == layeredGraph)) {
+                retNode = (LNode) portNodeParentRepresentative;
+            }
+
         default:
             break;
         }
@@ -215,5 +204,57 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             retNode = node.getProperty(Properties.COMPOUND_NODE);
         }
         return retNode;
+    }
+
+    /**
+     * Finds for a pair of LNodes the pair of ancestors with a common parent that is highest in
+     * depth in the inclusion tree. Each of the ancestors may be the given node itself.
+     * 
+     * @param sourceTargetList
+     *            The pair of nodes is handed over as a List. The pair of ancestors will be stored
+     *            in the same list.
+     * @param elemMap
+     *            The element map that maps the original KGraphElements to the LGraphElements.
+     */
+    private void propagatePair(final LinkedList<LNode> sourceTargetList,
+            final HashMap<KGraphElement, LGraphElement> elemMap) {
+        LNode sourceNode = sourceTargetList.getFirst();
+        LNode targetNode = sourceTargetList.getLast();
+        int depthSource = sourceNode.getProperty(Properties.DEPTH);
+        int depthTarget = targetNode.getProperty(Properties.DEPTH);
+
+        KNode currentSource = (KNode) sourceNode.getProperty(Properties.ORIGIN);
+        KNode currentTarget = (KNode) targetNode.getProperty(Properties.ORIGIN);
+
+        KNode currentSourceAncestor = currentSource.getParent();
+        KNode currentTargetAncestor = currentSource.getParent();
+
+        // If source and target differ in depth in the nesting tree, crawl up the
+        // nesting tree on the deep side to reach even depth level
+        if (depthSource != depthTarget) {
+            for (int i = depthSource; i > depthTarget; i--) {
+                currentSource = currentSource.getParent();
+            }
+            for (int j = depthTarget; j > depthSource; j--) {
+                currentTarget = currentTarget.getParent();
+            }
+        }
+
+        if (currentSource != currentTarget) {
+            // Walk up the nesting tree from both sides, until nodes have the same
+            // parent.
+            currentSourceAncestor = currentSource.getParent();
+            currentTargetAncestor = currentTarget.getParent();
+            while (currentSourceAncestor != currentTargetAncestor) {
+                currentSource = currentSource.getParent();
+                currentTarget = currentTarget.getParent();
+                currentSourceAncestor = currentSource.getParent();
+                currentTargetAncestor = currentTarget.getParent();
+            }
+        }
+        LNode newSource = (LNode) elemMap.get(currentSource);
+        LNode newTarget = (LNode) elemMap.get(currentTarget);
+        sourceTargetList.addFirst(newSource);
+        sourceTargetList.addLast(newTarget);
     }
 }
