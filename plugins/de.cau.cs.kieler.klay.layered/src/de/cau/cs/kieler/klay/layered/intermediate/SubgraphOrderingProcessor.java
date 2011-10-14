@@ -14,6 +14,8 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -77,7 +79,6 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         // subgraphOrderingGraph
         LNode graphKey = new LNode();
         graphKey.copyProperties(layeredGraph);
-        graphKey.setProperty(Properties.ORIGIN, layeredGraph);
 
         // Build the subgraphOrderingGraph:
         // Insert nodes and edges representing the relationship "is left of" into the subgraph
@@ -140,26 +141,101 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             LayeredGraph graphComponent = subgraphOrderingGraph.get(key);
             cycleBreaker.process(graphComponent);
         }
-        
-        applyOrder(layeredGraph, subgraphOrderingGraph);
+
+        applyOrder(layeredGraph, subgraphOrderingGraph, graphKey);
 
         getMonitor().done();
     }
 
     /**
-     * Applies the order given by the subgraphOrderingGraph to the nodes of the layeredGraph.
+     * Applies the order given by the acyclic subgraphOrderingGraph to the nodes of the
+     * layeredGraph.
      * 
      * @param layeredGraph
-     *      Graph, to which the node ordering is to be applied.
+     *            Graph, to which the node ordering is to be applied.
      * @param subgraphOrderingGraph
-     *      The subgraphOrderingGraph. Every LayeredGraph in the HashMap is expected to be acyclic.
+     *            The subgraphOrderingGraph. Every LayeredGraph in the HashMap must be acyclic.
+     * @param graphKey
+     *            The LNode serving as key representing the layeredGraph in the
+     *            subgraphOrderingGraph.
      */
     private void applyOrder(final LayeredGraph layeredGraph,
-            final HashMap<LNode, LayeredGraph> subgraphOrderingGraph) {
-        
-        
+            final HashMap<LNode, LayeredGraph> subgraphOrderingGraph, final LNode graphKey) {
+
+        for (Layer layer : layeredGraph.getLayers()) {
+            LinkedList<LNode> layerOrder = new LinkedList<LNode>();
+            recursiveApplyLayerOrder(layer, graphKey, layeredGraph, subgraphOrderingGraph,
+                    layerOrder);
+        }
+    }
+
+    /**
+     * Applies the node order given by the subgraphOrderingGraph to one given layer. The
+     * subgraphOrderingGraph passed to this method has to be acyclic and non-layered.
+     * 
+     * @param layer
+     *            The layer to be ordered.
+     * @param key
+     *            The key-LNode designating the actual orderingGraph-component processed.
+     * @param layeredGraph
+     *            The layeredGraph to be laid out.
+     * @param subgraphOrderingGraph
+     *            A subgraph ordering graph without cycles.
+     * @param layerOrder
+     *            The list, in which the node order for the layer is stored.
+     */
+    private void recursiveApplyLayerOrder(final Layer layer, final LNode key,
+            final LayeredGraph layeredGraph,
+            final HashMap<LNode, LayeredGraph> subgraphOrderingGraph,
+            final LinkedList<LNode> layerOrder) {
+        LayeredGraph keyGraphComponent = subgraphOrderingGraph.get(key);
+        LinkedList<LNode> componentOrder = graphToList(keyGraphComponent);
+        Iterator<LNode> orderIterator = componentOrder.iterator();
+        while (orderIterator.hasNext()) {
+            LNode currentNode = orderIterator.next();
+            if (subgraphOrderingGraph.containsKey(currentNode)) {
+                recursiveApplyLayerOrder(layer, currentNode, layeredGraph, subgraphOrderingGraph,
+                        layerOrder);
+            }
+        }
+        for (LNode layerNode : layer.getNodes()) {
+            if (layerNode.getProperty(Properties.PARENT) == key.getProperty(Properties.ORIGIN)) {
+                layerOrder.add(layerNode);
+            }
+        }
+    }
+
+    /**
+     * Creates a node list representing an topological sorting of the nodes for a layered graph. The
+     * graph passed to this method has to be acyclic and non-layered.
+     * 
+     * @param graph
+     *            Acyclic layeredGraph.
+     * @return List containing all nodes of the layered graph in an topological order.
+     */
+
+    private LinkedList<LNode> graphToList(final LayeredGraph graph) {
+        LinkedList<LNode> retList = new LinkedList<LNode>();
+        List<LNode> nodes = graph.getLayerlessNodes();
+       LinkedList<LNode> sources = new LinkedList<LNode>();
+       LinkedList<LNode> currentTargets;
+        for (LNode node : nodes) {
+            // if node has no incoming edges
+            if (!node.getIncomingEdges().iterator().hasNext()) {
+                sources.add(node);
+            }
+        }
+        while (!sources.isEmpty()){
+            LNode currentSource = sources.getFirst();
+            sources.removeFirst();
+            retList.add(currentSource);
+            
+            
+            
+        }
+
         // TODO Auto-generated method stub
-        
+        return retList;
     }
 
     /**
