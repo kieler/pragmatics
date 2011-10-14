@@ -14,6 +14,8 @@
 package de.cau.cs.kieler.klighd;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +26,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 
@@ -150,7 +153,7 @@ public final class LightDiagramServices {
         }
     }
 
-//    private HashMap<String, EPackage> ePackages = new HashMap<String, EPackage>();
+    private HashMap<String, EPackage> ePackages = new HashMap<String, EPackage>();
 
     /**
      * Loads and registers all model transformations from the extension point.
@@ -233,39 +236,43 @@ public final class LightDiagramServices {
                         continue;
                     }
 
-// chsch: deactivated this since I try to infer the meta models from the transformation
-//                    List<EPackage> metamodels = new ArrayList<EPackage>();
-//
-//                    for (IConfigurationElement epackageDecl : element
-//                            .getChildren(ATTRIBUTE_EPACKAGE)) {
-//
-//                        String ePackageId = epackageDecl.getAttribute(ATTRIBUTE_EPACKAGE_CLASS);
-//                        EPackage ePackageInstance = ePackages.get(ePackageId);
-//
-//                        if (ePackageInstance == null) {
-//                            try {
-//
-//                                Class<?> ePackage = contributingBundle.loadClass(ePackageId);
-//                                ePackageInstance =
-//                                        (EPackage) ePackage.getField("eINSTANCE").get(null);
-//                                this.ePackages.put(ePackageId, ePackageInstance);
-//                            } catch (Exception e) {
-//                                String msg = "EPackage " + ePackageId + " could not be loaded";
-//                                StatusManager.getManager().addLoggedStatus(
-//                                        new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg, e));
-//                                continue;
-//                            }
-//                        }
-//
-//                        if (ePackageInstance != null) {
-//                            metamodels.add(ePackageInstance);
-//                        }
-//
-//                    }
+                    // chsch: tried to avoid this and infer the meta models (EPackages) from the EMF
+                    // registry. Doesn't works since the EPackages are registered lazily. Non-used
+                    // EPackages are represented by a proxy that is addressed by means of the NSURI
+                    // (which in turn is not inferable based on the short name mentioned in Xtend
+                    // transformations).
+                    List<EPackage> metamodels = new ArrayList<EPackage>();
+
+                    for (IConfigurationElement epackageDecl : element
+                            .getChildren(ATTRIBUTE_EPACKAGE)) {
+
+                        String ePackageClassName = epackageDecl.getAttribute(ATTRIBUTE_EPACKAGE_CLASS);
+                        EPackage ePackageInstance = ePackages.get(ePackageClassName);
+
+                        if (ePackageInstance == null) {
+                            try {
+
+                                Class<?> ePackage = contributingBundle.loadClass(ePackageClassName);
+                                ePackageInstance =
+                                        (EPackage) ePackage.getField("eINSTANCE").get(null);
+                                this.ePackages.put(ePackageClassName, ePackageInstance);
+                            } catch (Exception e) {
+                                String msg = "EPackage " + ePackageClassName + " could not be loaded";
+                                StatusManager.getManager().addLoggedStatus(
+                                        new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg, e));
+                                continue;
+                            }
+                        }
+
+                        if (ePackageInstance != null) {
+                            metamodels.add(ePackageInstance);
+                        }
+
+                    }
 
                     // hack (abuse of runtime type erasure)
                     IModelTransformation<?, ?> modelTransformationTmp =
-                            new XtendBasedTransformation(extFileURL, extension /*, metamodels */);
+                            new XtendBasedTransformation(extFileURL, extension, metamodels);
                     @SuppressWarnings("unchecked")
                     IModelTransformation<Object, ?> modelTransformation =
                             (IModelTransformation<Object, ?>) modelTransformationTmp;

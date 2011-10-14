@@ -119,12 +119,13 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
      *            the extend file
      * @param theExtension
      *            the root extend function
-     */ // @param theMetamodels
-//     *            the involved meta models
-//     */
-    public XtendBasedTransformation(final URL extFileURL, final String theExtension
-            /* final List<EPackage> theMetamodels */) {
+     * @param theMetamodels
+     *            the involved meta models
+     */
+    public XtendBasedTransformation(final URL extFileURL, final String theExtension,
+            final List<EPackage> theMetamodels) {
         this.extfile = extFileURL;
+        this.metamodels.addAll(theMetamodels);
 //        this.metamodels = new HashMap<String, EPackage>();
 //
 //        for (EPackage mm : theMetamodels) {
@@ -162,12 +163,10 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
             url = url.substring(0, url.length() - ENDING_OFFSET);
         }
 
-//        System.out.println("Tranformation " + url);
         XtendFacade facade = XtendFacade.create(url);
         facade.registerMetaModel(new EmfMetaModel(EcorePackage.eINSTANCE));
         for (EPackage mm : this.metamodels/*.values() */) {
             facade.registerMetaModel(new EmfMetaModel(mm));
-//            System.out.println("MM " + mm.getName() + " loaded.");
         }
 
         Object[] transformationParams = new Object[this.countParams];
@@ -398,8 +397,9 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
     
     
     /**
-     * Infer {@link EPackage} denoted by the packageName. The inference is based on the EMF package
-     * registry. Implementation sucks. Does anybody know something better??<br>
+     * Infer {@link EPackage} denoted by the packageName. The inference is based on the registered
+     * meta models and the EMF package registry. Implementation sucks. Does anybody know something
+     * better??<br>
      * Don't come up with {@link Arrays#copyOf(original, newLength, newType)}
      * 
      * @author chsch
@@ -410,31 +410,33 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
      *             if the denoted {@link EPackage} cannot be inferred.
      */
     private EPackage inferEPackage(final String packageName) throws PackageNotFoundException {
-        /* Collection of Elements of the EMF Package Registry is transformed
-         * s.t. the EPackages are forwarded, other elements are masked with null.
-         * The resulting projective collection is filtered s.t. null-elements are skipped. 
-         * Subsequently, a defensive copy in shape of an ImmutableList is created.
-         * Finally, the EPackage inference based on the revealed list is invoked. 
+        /*
+         * Collection of Elements of the EMF Package Registry is transformed s.t. the EPackages are
+         * forwarded, other elements are masked with null. The resulting projective collection is
+         * filtered s.t. null-elements are skipped. Subsequently, a defensive copy in shape of an
+         * ImmutableList based on the registered meta models revealed EPackages is created. Finally,
+         * the EPackage inference based on the revealed list is invoked.
          */
-        ImmutableList<EPackage> ePackages = ImmutableList.copyOf(
-            Collections2.filter(
-                Collections2.transform(
-                    // take EPackate registry values
-                    EPackage.Registry.INSTANCE.values(),
-                    // apply the cast and mask function
-                    new Function<Object, EPackage>() {
-                        public EPackage apply(final Object input) {
-                            if (EcorePackage.eINSTANCE.getEPackage().isInstance(input)) {
-                                return (EPackage) input;
-                            } else {
-                                return null;
+        ImmutableList<EPackage> ePackages = ImmutableList.<EPackage>builder()
+                .addAll(this.metamodels)
+                .addAll(
+                    Collections2.filter(
+                        Collections2.transform(
+                            // take EPackate registry values
+                            EPackage.Registry.INSTANCE.values(),
+                            // apply the cast and mask function
+                            new Function<Object, EPackage>() {
+                                public EPackage apply(final Object input) {
+                                    if (EcorePackage.eINSTANCE.getEPackage().isInstance(input)) {
+                                    return (EPackage) input;
+                                } else {
+                                    return null;
+                                }
                             }
-                        }
-                    }),
-                // apply the null element filter
-                Predicates.notNull()
-            )
-        );
+                        }),
+                        // apply the null element filter
+                        Predicates.notNull()))
+                .build();
         try {
             return inferEPackage(packageName, ePackages);
         } catch (IllegalArgumentException e) {
