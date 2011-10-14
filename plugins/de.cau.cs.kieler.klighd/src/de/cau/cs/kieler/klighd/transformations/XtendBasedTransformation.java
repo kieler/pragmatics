@@ -104,7 +104,6 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
 
     private URL extfile;
     private String extension;
-//    private Map<String, EPackage> metamodels;
     private Set<EPackage> metamodels = Sets.newHashSet();
     private int countParams = 1;
 
@@ -126,11 +125,6 @@ public class XtendBasedTransformation implements IModelTransformation<EObject, E
             final List<EPackage> theMetamodels) {
         this.extfile = extFileURL;
         this.metamodels.addAll(theMetamodels);
-//        this.metamodels = new HashMap<String, EPackage>();
-//
-//        for (EPackage mm : theMetamodels) {
-//            this.metamodels.put(mm.getNsPrefix(), mm);
-//        }
 
         if (theExtension != null && !theExtension.equals("")) {
             this.extension = theExtension;

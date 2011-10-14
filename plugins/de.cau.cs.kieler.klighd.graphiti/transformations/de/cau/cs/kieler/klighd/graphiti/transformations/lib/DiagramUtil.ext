@@ -1,0 +1,165 @@
+import mm;
+import mm::pictograms;
+import mm::algorithms;
+import mm::algorithms::styles;
+
+/**
+ * Creation and caching of the Diagram root element,
+ *  used a cached extension in order to reduce parameters
+ *  in the extension signatures
+ */
+create Diagram getDiagram():
+ this.setDiagramTypeId("compodiag") ->
+ 
+ //this.
+ // this is needed to synthesize valid diagrams to be displayed by a graphiti editor
+ this.setGraphicsAlgorithm(
+   let rect = new Rectangle:
+   rect.setHeight(1000) ->
+   rect.setWidth(1000) ->   
+   rect
+  )
+    
+;
+
+
+Shape createShape():
+  let shape = new Shape:
+  shape.setActive(true) ->
+  shape.setVisible(true) ->
+  getDiagram().children.add(shape) ->
+  shape
+;
+
+
+/**
+  *
+  */
+Rectangle createRectangle(int x, int y, int width, int height, int lineWidth, Color fg, Color bg):
+ let rect = new Rectangle:
+ rect.setX(x) ->
+ rect.setY(y) ->
+ rect.setHeight(height) ->
+ rect.setWidth(width) ->
+ rect.setFilled(true) ->
+ rect.setLineVisible(true) ->
+ rect.setLineWidth(lineWidth) ->
+ rect.setBackground(bg) ->
+ rect.setForeground(fg) ->
+ rect
+;
+
+
+/**
+  *
+  */
+Rectangle createRectangle(int x, int y, int width, int height, Style style):
+ let rect = new Rectangle:
+ rect.setX(x) ->
+ rect.setY(y) ->
+ rect.setHeight(height) ->
+ rect.setWidth(width) ->
+ rect.setFilled(true) ->
+ rect.setLineVisible(true) ->
+ rect.setStyle(style) ->
+ rect
+;
+
+
+
+
+/**
+ * Creation of the color elements
+ *  allows to refer to colors by name
+ *  adds them to the diagram on demand
+ */
+create Color getColor(String name):
+ switch (name) {
+   case "black" : (
+    this.setRed(0) ->
+    this.setGreen(0) ->
+    this.setBlue(0) ->
+    this)
+   case "blue" : (
+    this.setRed(51) ->
+    this.setGreen(51) ->
+    this.setBlue(153) ->
+    this)
+   case "darkGray" : (
+    this.setRed(105) ->
+    this.setGreen(105) ->
+    this.setBlue(105) ->
+    this)
+   case "darkOrange" : (
+    this.setRed(248) ->
+    this.setGreen(179) ->
+    this.setBlue(0) ->
+    this)
+   case "error" : (
+    this.setRed(255) ->
+    this.setGreen(0) ->
+    this.setBlue(0) ->
+    this)
+   case "gray" : (
+    this.setRed(190) ->
+    this.setGreen(190) ->
+    this.setBlue(190) ->
+    this)
+   case "red" : (
+    this.setRed(255) ->
+    this.setGreen(0) ->
+    this.setBlue(0) ->
+    this)
+   case "white" : (
+    this.setRed(255) ->
+    this.setGreen(255) ->
+    this.setBlue(255) ->
+    this)
+   case "yellow" : (
+    this.setRed(255) ->
+    this.setGreen(255) ->
+    this.setBlue(0) ->
+    this)
+   default :
+    null
+ } ->
+ getDiagram().colors.add(this)
+;
+
+
+/**
+ * Creation of the available style collection
+ *  allows to refer to colors by name
+ *  adds them to the diagram on demand
+ */
+create Style getStyle(String name):
+ switch(name) {
+   case "black_white" : (
+    this.setId("black_white") ->
+    this.setForeground(getColor("black")) ->
+    this.setBackground(getColor("white")) ->
+    this.setLineWidth(4) ->
+    this)
+   case "black_black" : (
+    this.setId("black_black") ->
+    this.setForeground(getColor("black")) ->
+    this.setBackground(getColor("black")) ->
+    this.setLineWidth(4) ->
+    this)
+   case "black_gray" : (
+    this.setId("black_gray") ->
+    this.setForeground(getColor("black")) ->
+    this.setBackground(getColor("gray")) ->
+    this.setLineWidth(4) ->
+    this)
+   case "black_darkGray" : (
+    this.setId("black_darkGray") ->
+    this.setForeground(getColor("black")) ->
+    this.setBackground(getColor("darkGray")) ->
+    this.setLineWidth(4) ->
+    this)
+   default :
+    null
+ } ->
+ getDiagram().styles.add(this)
+;
