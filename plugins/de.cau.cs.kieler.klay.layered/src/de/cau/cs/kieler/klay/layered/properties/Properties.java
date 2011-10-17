@@ -135,6 +135,14 @@ public final class Properties {
      */
     public static final IProperty<Double> EXT_PORT_RATIO_OR_POSITION = new Property<Double>(
             "externalPortRatioOrPosition", 0.0);
+    
+    /**
+     * External port dummies that represent northern or southern external ports are replaced by
+     * new dummy nodes during layout. In these cases, this property is set to the original dummy
+     * node.
+     */
+    public static final IProperty<LNode> EXT_PORT_REPLACED_DUMMY = new Property<LNode>(
+            "externalPortReplacedDummy", null);
 
     /**
      * A list of nodes whose barycenters should go into the barycenter calculation of the node this

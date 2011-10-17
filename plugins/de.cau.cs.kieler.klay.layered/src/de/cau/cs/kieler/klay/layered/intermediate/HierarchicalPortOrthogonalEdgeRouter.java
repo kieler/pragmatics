@@ -141,7 +141,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
         Set<LNode> restoredDummies = new HashSet<LNode>();
         Layer lastLayer = null;
         
-        // Iterate through all nodes, looking for hierarchical port dummies whose origin is
+        // Iterate through all nodes, looking for hierarchical port dummies that replace
         // another hierarchical port dummy
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
@@ -151,17 +151,17 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                     continue;
                 }
                 
-                if (node.getProperty(Properties.ORIGIN) instanceof LNode) {
-                    LNode origin = (LNode) node.getProperty(Properties.ORIGIN);
+                if (node.getProperty(Properties.EXT_PORT_REPLACED_DUMMY) != null) {
+                    LNode replacedDummy = (LNode) node.getProperty(Properties.EXT_PORT_REPLACED_DUMMY);
                     
                     // The origin should be a hierarchical port dummy. Better check that
-                    if (origin.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
+                    if (replacedDummy.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
                         continue;
                     }
                     
                     // Restore the origin and connect the node to it
-                    restoreDummy(origin, restoredDummies);
-                    connectNodeToDummy(node, origin);
+                    restoreDummy(replacedDummy, restoredDummies);
+                    connectNodeToDummy(node, replacedDummy);
                 }
             }
             
@@ -559,7 +559,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                     continue;
                 }
                 
-                if (!(node.getProperty(Properties.ORIGIN) instanceof LNode)) {
+                if (node.getProperty(Properties.EXT_PORT_REPLACED_DUMMY) == null) {
                     // We're only looking for temporary north / south dummies
                     continue;
                 }
@@ -581,14 +581,14 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                 bendPoints.addAll(nodeToOriginEdge.getBendPoints());
                 
                 // Retrieve the original hierarchical port dummy
-                LNode origin = (LNode) node.getProperty(Properties.ORIGIN);
-                LPort originPort = origin.getPorts().get(0);
+                LNode replacedDummy = (LNode) node.getProperty(Properties.EXT_PORT_REPLACED_DUMMY);
+                LPort replacedDummyPort = replacedDummy.getPorts().get(0);
                 
                 // Reroute all the input port's edges
                 LEdge[] edges = nodeInPort.getIncomingEdges().toArray(new LEdge[0]);
                 
                 for (LEdge edge : edges) {
-                    edge.setTarget(originPort);
+                    edge.setTarget(replacedDummyPort);
                     edge.getBendPoints().addAll(bendPoints);
                 }
                 

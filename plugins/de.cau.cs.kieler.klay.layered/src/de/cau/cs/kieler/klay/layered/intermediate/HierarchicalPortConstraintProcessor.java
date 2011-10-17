@@ -116,12 +116,12 @@ public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm imple
     // East / West Hierarchical Port Dummies
     
     /**
-     * Process eastern and southern hierarchical port dummies.
+     * Process eastern and western hierarchical port dummies.
      * 
      * @param layeredGraph the layered graph
      */
     private void processEasternAndWesternPortDummies(final LayeredGraph layeredGraph) {
-        // If the port constraints are not at least FIXED_ORDER, there's nothing to do here
+        // If the port constraints are not at least FIXED_ORDER, there's nothing to be done here
         if (!layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
             return;
         }
@@ -307,7 +307,7 @@ public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm imple
     private LNode createDummy(final LNode originalDummy) {
         LNode newDummy = new LNode();
         newDummy.copyProperties(originalDummy);
-        newDummy.setProperty(Properties.ORIGIN, originalDummy);
+        newDummy.setProperty(Properties.EXT_PORT_REPLACED_DUMMY, originalDummy);
         newDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         newDummy.setProperty(LayoutOptions.ALIGNMENT, Alignment.CENTER);
         
