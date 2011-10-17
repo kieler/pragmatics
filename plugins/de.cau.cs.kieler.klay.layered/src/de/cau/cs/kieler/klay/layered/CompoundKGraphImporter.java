@@ -66,6 +66,8 @@ public class CompoundKGraphImporter extends KGraphImporter {
     public LayeredGraph importGraph(final KNode kgraph) {
 
         LayeredGraph layeredGraph = super.importGraph(kgraph);
+        
+        layeredGraph.getProperty(Properties.ELEMENT_MAP).put(kgraph, layeredGraph);
 
         Set<GraphProperties> graphProperties = layeredGraph
                 .getProperty(Properties.GRAPH_PROPERTIES);
@@ -130,7 +132,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
                 transformCompoundNodeWithEdges(currentNode, layeredNodes, layeredGraph, elemMap,
                         direction, depth);
                 setCompoundDummyEdges(layeredNodes, parentChildMap);
-            }
+            } 
         }
     }
 
