@@ -161,7 +161,6 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
      */
     private void applyOrder(final LayeredGraph layeredGraph,
             final HashMap<LNode, LayeredGraph> subgraphOrderingGraph, final LNode graphKey) {
-
         for (Layer layer : layeredGraph.getLayers()) {
             LinkedList<LNode> layerOrder = new LinkedList<LNode>();
             recursiveApplyLayerOrder(layer, graphKey, layeredGraph, subgraphOrderingGraph,
@@ -189,6 +188,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             final HashMap<LNode, LayeredGraph> subgraphOrderingGraph,
             final LinkedList<LNode> layerOrder) {
         LayeredGraph keyGraphComponent = subgraphOrderingGraph.get(key);
+        // Recursive traversal of the ordering graph components's orders.
         LinkedList<LNode> componentOrder = graphToList(keyGraphComponent);
         Iterator<LNode> orderIterator = componentOrder.iterator();
         while (orderIterator.hasNext()) {
@@ -198,6 +198,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                         layerOrder);
             }
         }
+        // Add direct children of the current key node to the order.
         for (LNode layerNode : layer.getNodes()) {
             if (layerNode.getProperty(Properties.PARENT) == key.getProperty(Properties.ORIGIN)) {
                 layerOrder.add(layerNode);
@@ -210,40 +211,80 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
      * graph passed to this method has to be acyclic and non-layered.
      * 
      * @param graph
-     *            Acyclic layeredGraph.
+     *            Acyclic layeredGraph - all nodes in the layerlessNodes-list.
      * @return List containing all nodes of the layered graph in an topological order.
      */
 
     private LinkedList<LNode> graphToList(final LayeredGraph graph) {
+        boolean acyclic = true;
         LinkedList<LNode> retList = new LinkedList<LNode>();
         List<LNode> nodes = graph.getLayerlessNodes();
-       LinkedList<LNode> sources = new LinkedList<LNode>();
-       LinkedList<LNode> currentTargets;
+        LinkedList<LNode> sources = new LinkedList<LNode>();
+        // Collect the graph's sources.
         for (LNode node : nodes) {
             // if node has no incoming edges
             if (!node.getIncomingEdges().iterator().hasNext()) {
                 sources.add(node);
             }
         }
-        while (!sources.isEmpty()){
+        // Iterate over the sources.
+        while (!sources.isEmpty()) {
             LNode currentSource = sources.getFirst();
             sources.removeFirst();
+            // Add source to sorting.
             retList.add(currentSource);
-            
-            
-            
+            Iterator<LEdge> outEdgesIterator = currentSource.getOutgoingEdges().iterator();
+            // Collect the source's targets.
+            HashSet<LNode> targets = new HashSet<LNode>();
+            while (outEdgesIterator.hasNext()) {
+                LEdge edge = outEdgesIterator.next();
+                targets.add(edge.getTarget().getNode());
+            }
+            // Iterate the targets.
+            for (LNode target : targets) {
+                boolean isNewSource = true;
+                Iterator<LEdge> inEdgesIterator = target.getIncomingEdges().iterator();
+                LinkedList<LEdge> removableEdges = new LinkedList<LEdge>();
+                // If they have no further incoming edges, add them to the source list.
+                while (inEdgesIterator.hasNext()) {
+                    LEdge edge = inEdgesIterator.next();
+                    LNode source = edge.getSource().getNode();
+                    if (source == currentSource) {
+                        removableEdges.add(edge);
+                    } else {
+                        isNewSource = false;
+                    }
+                }
+                // Remove edges already visited.
+                for (int i = 0; i < removableEdges.size(); i++) {
+                    LEdge edge = removableEdges.removeFirst();
+                    edge.getSource().getNode().getPorts().remove(edge.getSource());
+                    edge.getTarget().getNode().getPorts().remove(edge.getTarget());
+                }
+                if (isNewSource) {
+                    sources.add(target);
+                }
+            }
         }
-
-        // TODO Auto-generated method stub
+        // There should be no more edges left. If otherwise, there is at least one cycle in the
+        // graph passed as parameter.
+        for (LNode node : nodes) {
+            for (LPort port : node.getPorts()) {
+                if (port.getConnectedEdges().iterator().hasNext()) {
+                    acyclic = false;
+                }
+            }
+        }
+        // This method will not work, if the graph is cyclic.
+        assert acyclic;
         return retList;
     }
 
     /**
-     * Checks, if a representative for the LNode currentRep is already inserted into the component
-     * graph of the subgraph-ordering-graph that is given by the LNode key. Makes the insertion, if
-     * not.
+     * Checks, if a representative for the LNode currentRep is already inserted into the
+     * corresponding component graph of the subgraph-ordering-graph. Makes the insertion, if not.
      * 
-     * @param currentRep
+     * @param node
      *            The LNode to be represented.
      * @param layerlessNodes
      *            The list of layerless nodes of the corresponding component graph.
@@ -253,10 +294,20 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
      * @return Returns the representative of the currentNode in the component graph. It may be
      *         freshly created by this method.
      */
-    private LNode getNodeCopy(final LNode currentRep, final List<LNode> layerlessNodes,
+    private LNode getNodeCopy(final LNode node, final List<LNode> layerlessNodes,
             final HashMap<LNode, LNode> insertedNodes) {
-        // TODO Auto-generated method stub
-        return null;
+        LNode retNode;
+        if (insertedNodes.containsKey(node)) {
+            // Node already has a representative.
+            retNode = insertedNodes.get(node);
+        } else {
+            // A representative has to be created.
+            retNode = new LNode();
+            retNode.copyProperties(node);
+            insertedNodes.put(node, retNode);
+            layerlessNodes.add(retNode);
+        }
+        return retNode;
     }
 
     /**
