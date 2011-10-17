@@ -91,19 +91,22 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                 LNode nextNode = layerNodes.get(i + 1);
                 LNode relatedCompoundNext = getRelatedCompoundNode(nextNode, layeredGraph);
                 // There is only something to be done, if nodes that are neighbors in a layer are
-                // of different compound nodes.
-                if (relatedCompoundCurrent != relatedCompoundNext) {
+                // of different compound nodes and no leave nodes of highest level.
+                if ((relatedCompoundCurrent != null) && (relatedCompoundNext != null)
+                        && (relatedCompoundCurrent != relatedCompoundNext)) {
                     // Find the correct partial graph to insert the "is left of"-relationship by
                     // propagating the dependency up the inclusion tree till two compound nodes with
                     // the same parent are reached.
                     LinkedList<LNode> leftRightList = new LinkedList<LNode>();
+                    leftRightList.add(currentNode);
+                    leftRightList.add(nextNode);
                     propagatePair(leftRightList, elemMap);
                     LNode propCompoundCurrent = leftRightList.getFirst();
                     LNode propCompoundNext = leftRightList.getLast();
                     LNode key;
                     LGraphElement parentRep = elemMap.get(propCompoundCurrent
                             .getProperty(Properties.PARENT));
-                    if (parentRep == layeredGraph) {
+                    if (parentRep instanceof LayeredGraph) {
                         key = graphKey;
                     } else {
                         key = (LNode) parentRep;
@@ -114,6 +117,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                         partGraph = subgraphOrderingGraph.get(key);
                     } else {
                         partGraph = new LayeredGraph();
+                        subgraphOrderingGraph.put(key, partGraph);
                     }
                     // Add representatives for the compound nodes to the ordering graph's component
                     // if not already present. Add an "is-left-of" edge between them.
@@ -142,7 +146,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             cycleBreaker.process(graphComponent);
         }
 
-        applyOrder(layeredGraph, subgraphOrderingGraph, graphKey);
+        applyOrder(layeredGraph, subgraphOrderingGraph, graphKey, elemMap);
 
         getMonitor().done();
     }
@@ -158,13 +162,27 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
      * @param graphKey
      *            The LNode serving as key representing the layeredGraph in the
      *            subgraphOrderingGraph.
+     * @param elemMap
+     *            The element-map mapping the original KGraph elements to LGraph elements.
      */
     private void applyOrder(final LayeredGraph layeredGraph,
-            final HashMap<LNode, LayeredGraph> subgraphOrderingGraph, final LNode graphKey) {
+            final HashMap<LNode, LayeredGraph> subgraphOrderingGraph, final LNode graphKey,
+            final HashMap<KGraphElement, LGraphElement> elemMap) {
+        HashMap<Layer, LinkedList<LNode>> layerOrders = new HashMap<Layer, LinkedList<LNode>>();
         for (Layer layer : layeredGraph.getLayers()) {
             LinkedList<LNode> layerOrder = new LinkedList<LNode>();
             recursiveApplyLayerOrder(layer, graphKey, layeredGraph, subgraphOrderingGraph,
-                    layerOrder);
+                    layerOrder, elemMap);
+            layerOrders.put(layer, layerOrder);
+        }
+        // Resort the layer.
+        for (Layer layer : layerOrders.keySet()) {
+            List<LNode> nodes = layer.getNodes();
+            int sizeNodes = nodes.size();
+            LinkedList<LNode> orderNodes = layerOrders.get(layer);
+            int sizeOrderNodes = orderNodes.size();
+            assert (sizeNodes == sizeOrderNodes);
+            //TODO: Check, why assertion does not always hold. Write layer assorting then.
         }
     }
 
@@ -182,28 +200,45 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
      *            A subgraph ordering graph without cycles.
      * @param layerOrder
      *            The list, in which the node order for the layer is stored.
+     * @param elemMap
+     *            The element map mapping original KGraph elements to LGraph elements.
      */
     private void recursiveApplyLayerOrder(final Layer layer, final LNode key,
             final LayeredGraph layeredGraph,
             final HashMap<LNode, LayeredGraph> subgraphOrderingGraph,
-            final LinkedList<LNode> layerOrder) {
+            final LinkedList<LNode> layerOrder, final HashMap<KGraphElement, LGraphElement> elemMap) {
         LayeredGraph keyGraphComponent = subgraphOrderingGraph.get(key);
-        // Recursive traversal of the ordering graph components's orders.
-        LinkedList<LNode> componentOrder = graphToList(keyGraphComponent);
-        Iterator<LNode> orderIterator = componentOrder.iterator();
-        while (orderIterator.hasNext()) {
-            LNode currentNode = orderIterator.next();
-            if (subgraphOrderingGraph.containsKey(currentNode)) {
-                recursiveApplyLayerOrder(layer, currentNode, layeredGraph, subgraphOrderingGraph,
-                        layerOrder);
+        // There may be no component for the key, if there is no or only one compound child. Handle
+        // this case.
+        if (keyGraphComponent == null) {
+            KNode kKey = (KNode) key.getProperty(Properties.ORIGIN);
+            for (KNode child : kKey.getChildren()) {
+                LNode childRep = (LNode) elemMap.get(child);
+                if (subgraphOrderingGraph.containsKey(childRep)) {
+                    recursiveApplyLayerOrder(layer, childRep, layeredGraph, subgraphOrderingGraph,
+                            layerOrder, elemMap);
+                }
+            }
+        } else {
+            // Recursive traversal of the ordering graph components's orders.
+            LinkedList<LNode> componentOrder = graphToList(keyGraphComponent);
+            Iterator<LNode> orderIterator = componentOrder.iterator();
+            while (orderIterator.hasNext()) {
+                LNode currentNode = orderIterator.next();
+                if (subgraphOrderingGraph.containsKey(currentNode)) {
+                    recursiveApplyLayerOrder(layer, currentNode, layeredGraph,
+                            subgraphOrderingGraph, layerOrder, elemMap);
+                }
             }
         }
+
         // Add direct children of the current key node to the order.
         for (LNode layerNode : layer.getNodes()) {
             if (layerNode.getProperty(Properties.PARENT) == key.getProperty(Properties.ORIGIN)) {
                 layerOrder.add(layerNode);
             }
         }
+
     }
 
     /**
@@ -318,14 +353,13 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
      * @param layeredGraph
      *            The layered Graph, which is to be laid out.
      * @return Returns: A. The parent node for a leave node, if it is not a node of the uppermost
-     *         hierarchy level- in that case, the node itself will be returned. B. The compound node
-     *         of which's representation the node is part of for compound dummies. C. The node
-     *         enclosing the represented LGraphElement for dummies of another kind. D. The node
-     *         itself in default case.
+     *         hierarchy level- in that case, null will be returned. B. The compound node of which's
+     *         representation the node is part of for compound dummies. C. The node enclosing the
+     *         represented LGraphElement for dummies of another kind. D. null in default case.
      */
     private LNode getRelatedCompoundNode(final LNode node, final LayeredGraph layeredGraph) {
         // method is to return the node itself in the default case
-        LNode retNode = node;
+        LNode retNode = null;
         HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
                 .getProperty(Properties.ELEMENT_MAP);
         NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
@@ -340,7 +374,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         case NORMAL:
             KNode parent = node.getProperty(Properties.PARENT);
             parentRepresentative = elemMap.get(parent);
-            if (!(elemMap.get(parent) == layeredGraph)) {
+            if (!(parentRepresentative instanceof LayeredGraph)) {
                 retNode = (LNode) parentRepresentative;
             }
             break;
@@ -358,32 +392,29 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             LNode newSource = sourceTargetList.getFirst();
             KNode newSourceParent = newSource.getProperty(Properties.PARENT);
             LGraphElement container = elemMap.get(newSourceParent);
-            if (!(container == layeredGraph)) {
+            if (!(container instanceof LayeredGraph)) {
                 retNode = (LNode) container;
             }
+            break;
         case EXTERNAL_PORT:
             LGraphElement nodeParentRep = elemMap
                     .get(((KPort) (node.getProperty(Properties.ORIGIN))).getNode().getParent());
             if (!(nodeParentRep == layeredGraph)) {
                 retNode = (LNode) nodeParentRep;
             }
+            break;
         case NORTH_SOUTH_PORT:
             LNode portNode = node.getProperty(Properties.IN_LAYER_LAYOUT_UNIT);
             KNode portNodeParent = portNode.getProperty(Properties.PARENT);
             LGraphElement portNodeParentRepresentative = elemMap.get(portNodeParent);
-            if (!(elemMap.get(portNodeParent) == layeredGraph)) {
+            if (!(elemMap.get(portNodeParent) instanceof LayeredGraph)) {
                 retNode = (LNode) portNodeParentRepresentative;
             }
-
+            break;
         default:
             break;
         }
 
-        if (node.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL) {
-            retNode = (LNode) elemMap.get(node.getProperty(Properties.PARENT));
-        } else {
-            retNode = node.getProperty(Properties.COMPOUND_NODE);
-        }
         return retNode;
     }
 
