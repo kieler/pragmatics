@@ -517,10 +517,15 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             // Before Phase 1
             EnumSet.of(IntermediateLayoutProcessor.COMPOUND_CYCLE_PROCESSOR),
             
-            null, null,
+            // Before Phase 2
+            null, 
+            
+            // Before Phase 3
+            null,
             
             // Before Phase 4
-            EnumSet.of(IntermediateLayoutProcessor.COMPOUND_SIDE_PROCESSOR),
+            EnumSet.of(IntermediateLayoutProcessor.SUBGRAPH_ORDERING_PROCESSOR, 
+                    IntermediateLayoutProcessor.COMPOUND_SIDE_PROCESSOR),
             
             null,
             
