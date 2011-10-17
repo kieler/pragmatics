@@ -85,7 +85,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         // ordering graph parts.
         for (Layer layer : layeredGraph.getLayers()) {
             List<LNode> layerNodes = layer.getNodes();
-            for (int i = 0; i < layerNodes.size(); i++) {
+            for (int i = 0; i < (layerNodes.size() - 1); i++) {
                 LNode currentNode = layerNodes.get(i);
                 LNode relatedCompoundCurrent = getRelatedCompoundNode(currentNode, layeredGraph);
                 LNode nextNode = layerNodes.get(i + 1);

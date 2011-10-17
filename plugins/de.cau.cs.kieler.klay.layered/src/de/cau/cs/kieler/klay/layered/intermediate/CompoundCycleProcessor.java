@@ -143,27 +143,6 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
         }
         reverseCyclicEdges(layeredGraph, cycleRemovalGraph);
 
-        // // remove unused ports
-        // List<LNode> nodes = layeredGraph.getLayerlessNodes();
-        // for (int i = 0; i < nodes.size(); i++) {
-        // LNode lnode = nodes.get(i);
-        // List<LPort> ports = lnode.getPorts();
-        // List<LPort> removables = new LinkedList<LPort>();
-        // for (int j = 0; j < ports.size(); j++) {
-        // LPort port = ports.get(j);
-        // if (port.getIncomingEdges().isEmpty() && port.getOutgoingEdges().isEmpty()) {
-        // removables.add(port);
-        // }
-        // }
-        // for (int k = 0; k < removables.size(); k++) {
-        // if (lnode.getSize().y >= edgeSpacing) {
-        // lnode.getSize().y -= edgeSpacing;
-        // }
-        // ports.remove(removables.get(k));
-        //
-        // }
-        // }
-
         getMonitor().done();
     }
 
