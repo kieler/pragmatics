@@ -739,7 +739,9 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
      */
     private String trimValue(final Attribute attribute) {
         String value = attribute.getValue();
-        if (value.startsWith("\"") && value.endsWith("\"")) {
+        if (value == null) {
+            value = "true";
+        } else if (value.startsWith("\"") && value.endsWith("\"")) {
             return value.substring(1, value.length() - 1).trim();
         }
         return value;
