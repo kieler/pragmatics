@@ -65,13 +65,13 @@ public class OgmlTransformer extends AbstractEmfTransformer<DocumentRoot> {
 
     /** map of OGML node identifiers to KNodes. */
     private static final IProperty<Map<String, KNode>> NODE_ID_MAP
-            = new Property<Map<String, KNode>>("nodeIdMap");
+            = new Property<Map<String, KNode>>("ogmlTransformer.nodeIdMap");
     /** map of OGML edge identifiers to KEdges. */
     private static final IProperty<Map<String, KEdge>> EDGE_ID_MAP
-            = new Property<Map<String, KEdge>>("edgeIdMap");
+            = new Property<Map<String, KEdge>>("ogmlTransformer.edgeIdMap");
     /** map of OGML label identifiers to KLabels. */
     private static final IProperty<Map<String, KLabel>> LABEL_ID_MAP
-            = new Property<Map<String, KLabel>>("labelIdMap");
+            = new Property<Map<String, KLabel>>("ogmlTransformer.labelIdMap");
     /** OGML node attached to each new KNode. */
     private static final IProperty<NodeType> PROP_NODE
             = new Property<NodeType>("ogmlTransformer.node");

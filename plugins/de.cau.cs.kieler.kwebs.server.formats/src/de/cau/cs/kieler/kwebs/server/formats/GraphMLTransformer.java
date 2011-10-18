@@ -15,16 +15,23 @@ package de.cau.cs.kieler.kwebs.server.formats;
 
 import java.util.Map;
 
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xml.type.XMLTypePackage;
+import org.graphdrawing.graphml.DataType;
 import org.graphdrawing.graphml.DocumentRoot;
 import org.graphdrawing.graphml.EdgeType;
 import org.graphdrawing.graphml.EndpointType;
+import org.graphdrawing.graphml.GraphMLFactory;
 import org.graphdrawing.graphml.GraphMLPackage;
 import org.graphdrawing.graphml.GraphType;
 import org.graphdrawing.graphml.GraphmlType;
 import org.graphdrawing.graphml.HyperedgeType;
+import org.graphdrawing.graphml.KeyForType;
+import org.graphdrawing.graphml.KeyType;
+import org.graphdrawing.graphml.KeyTypeType;
 import org.graphdrawing.graphml.NodeType;
 import org.graphdrawing.graphml.PortType;
 import org.graphdrawing.graphml.util.GraphMLResourceFactoryImpl;
@@ -37,8 +44,11 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kwebs.transformation.AbstractEmfTransformer;
 import de.cau.cs.kieler.kwebs.transformation.TransformationData;
@@ -50,12 +60,24 @@ import de.cau.cs.kieler.kwebs.transformation.TransformationData;
  */
 public class GraphMLTransformer extends AbstractEmfTransformer<DocumentRoot> {
     
+    /** the data key used for GraphML positions. */
+    public static final String POSITION_KEY = "position";
+    /** the data key used for GraphML edge routing. */
+    public static final String ROUTING_KEY = "points";
+    
     /** map of GraphML node identifiers to KNodes. */
     private static final IProperty<Map<String, KNode>> NODE_ID_MAP
-            = new Property<Map<String, KNode>>("nodeIdMap");
+            = new Property<Map<String, KNode>>("graphmlTransformer.nodeIdMap");
     /** map of GraphML port identifiers to KPorts. */
     private static final IProperty<Map<Pair<KNode, String>, KPort>> PORT_ID_MAP
-            = new Property<Map<Pair<KNode, String>, KPort>>("portIdMap");
+            = new Property<Map<Pair<KNode, String>, KPort>>("graphmlTransformer.portIdMap");
+    /** GraphML node attached to each new KNode. */
+    private static final IProperty<NodeType> PROP_NODE
+            = new Property<NodeType>("graphmlTransformer.node");
+    /** GraphML edge attached to each new KEdge. */
+    private static final IProperty<EdgeType> PROP_EDGE
+            = new Property<EdgeType>("graphmlTransformer.edge");
+    
     /**
      * {@inheritDoc}
      */
@@ -102,8 +124,38 @@ public class GraphMLTransformer extends AbstractEmfTransformer<DocumentRoot> {
      * {@inheritDoc}
      */
     public void applyLayout(final TransformationData<DocumentRoot> transData) {
-        // TODO Auto-generated method stub
+        GraphmlType graphml = transData.getSourceGraph().getGraphml();
+        // make sure there is a data key definition for position and routing
+        KeyType positionKey = null, routingKey = null;
+        for (KeyType key : graphml.getKey()) {
+            if (POSITION_KEY.equals(key.getId())) {
+                positionKey = key;
+            } else if (ROUTING_KEY.equals(key.getId())) {
+                routingKey = key;
+            }
+        }
         
+        if (positionKey == null) {
+            positionKey = GraphMLFactory.eINSTANCE.createKeyType();
+            positionKey.setId(POSITION_KEY);
+            graphml.getKey().add(positionKey);
+        }
+        positionKey.setAttrName(POSITION_KEY);
+        positionKey.setAttrType(KeyTypeType.STRING);
+        positionKey.setFor(KeyForType.NODE);
+        
+        if (routingKey == null) {
+            routingKey = GraphMLFactory.eINSTANCE.createKeyType();
+            routingKey.setId(ROUTING_KEY);
+            graphml.getKey().add(routingKey);
+        }
+        routingKey.setAttrName(ROUTING_KEY);
+        routingKey.setAttrType(KeyTypeType.STRING);
+        routingKey.setFor(KeyForType.EDGE);
+        
+        for (KNode layoutNode : transData.getLayoutGraphs()) {
+            applyLayout(layoutNode);
+        }
     }
     
     //---------- Transformation GraphML to KGraph ----------//  
@@ -116,12 +168,31 @@ public class GraphMLTransformer extends AbstractEmfTransformer<DocumentRoot> {
      */
     private void transformGraph(final GraphType graph, final KNode parent,
             final TransformationData<DocumentRoot> transData) {
+        EStructuralFeature textFeature = XMLTypePackage.eINSTANCE.getXMLTypeDocumentRoot_Text();
+        
+        // transform layout options
+        for (DataType data : graph.getData()) {
+            Object obj = data.getMixed().get(textFeature, false);
+            setOption(parent.getData(KShapeLayout.class), data.getKey(), (String) obj);
+        }
+        
         // transform nodes
         for (NodeType node : graph.getNode()) {
             KNode knode = transformNode(node.getId(), parent, transData);
+            KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
+            nodeLayout.setProperty(PROP_NODE, node);
+            for (DataType data : node.getData()) {
+                Object obj = data.getMixed().get(textFeature, false);
+                setOption(nodeLayout, data.getKey(), (String) obj);
+            }
             // transform ports
             for (PortType port : node.getPort()) {
-                transformPort(port.getName(), knode, transData);
+                KPort kport = transformPort(port.getName(), knode, transData);
+                KShapeLayout portLayout = kport.getData(KShapeLayout.class);
+                for (DataType data : port.getData()) {
+                    Object obj = data.getMixed().get(textFeature, false);
+                    setOption(portLayout, data.getKey(), (String) obj);
+                }
             }
             // transform subgraph
             if (node.getGraph() != null) {
@@ -134,6 +205,8 @@ public class GraphMLTransformer extends AbstractEmfTransformer<DocumentRoot> {
             KNode source = transformNode(edge.getSource(), parent, transData);
             KNode target = transformNode(edge.getTarget(), parent, transData);
             KEdge kedge = KimlUtil.createInitializedEdge();
+            KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+            edgeLayout.setProperty(PROP_EDGE, edge);
             kedge.setSource(source);
             kedge.setTarget(target);
             if (edge.getSourceport() != null) {
@@ -143,6 +216,10 @@ public class GraphMLTransformer extends AbstractEmfTransformer<DocumentRoot> {
             if (edge.getTargetport() != null) {
                 KPort port = transformPort(edge.getTargetport(), target, transData);
                 kedge.setTargetPort(port);
+            }
+            for (DataType data : edge.getData()) {
+                Object obj = data.getMixed().get(textFeature, false);
+                setOption(edgeLayout, data.getKey(), (String) obj);
             }
         }
         
@@ -177,6 +254,8 @@ public class GraphMLTransformer extends AbstractEmfTransformer<DocumentRoot> {
         KNode knode = nodeIdMap.get(nodeId);
         if (knode == null) {
             knode = KimlUtil.createInitializedNode();
+            KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
+            nodeLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
             knode.setParent(parent);
             if (nodeId != null) {
                 nodeIdMap.put(nodeId, knode);
@@ -205,6 +284,74 @@ public class GraphMLTransformer extends AbstractEmfTransformer<DocumentRoot> {
             }
         }
         return kport;
+    }
+    
+    
+    /*---------- Layout Transfer KGraph to GraphML ----------*/
+    
+    /**
+     * Apply layout for the given parent node and all contained subgraphs.
+     * 
+     * @param parentNode a parent node
+     */
+    private void applyLayout(final KNode parentNode) {
+        EStructuralFeature textFeature = XMLTypePackage.eINSTANCE.getXMLTypeDocumentRoot_Text();
+        
+        for (KNode knode : parentNode.getChildren()) {
+            KShapeLayout knodeLayout = knode.getData(KShapeLayout.class);
+            NodeType graphmlNode = knodeLayout.getProperty(PROP_NODE);
+            if (graphmlNode != null) {
+                // apply node layout
+                DataType posData = null;
+                for (DataType data : graphmlNode.getData()) {
+                    if (POSITION_KEY.equals(data.getKey())) {
+                        posData = data;
+                        break;
+                    }
+                }
+                if (posData == null) {
+                    posData = GraphMLFactory.eINSTANCE.createDataType();
+                    posData.setKey(POSITION_KEY);
+                    graphmlNode.getData().add(posData);
+                }
+                posData.getMixed().set(textFeature, knodeLayout.getXpos()
+                        + "," + knodeLayout.getYpos());
+            }
+            
+            for (KEdge kedge : knode.getOutgoingEdges()) {
+                KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
+                EdgeType graphmlEdge = kedgeLayout.getProperty(PROP_EDGE);
+                if (graphmlEdge != null) {
+                    // apply edge layout
+                    DataType routeData = null;
+                    for (DataType data : graphmlEdge.getData()) {
+                        if (ROUTING_KEY.equals(data.getKey())) {
+                            routeData = data;
+                            break;
+                        }
+                    }
+                    if (routeData == null) {
+                        routeData = GraphMLFactory.eINSTANCE.createDataType();
+                        routeData.setKey(ROUTING_KEY);
+                        graphmlEdge.getData().add(routeData);
+                    }
+                    StringBuilder routeBuilder = new StringBuilder();
+                    routeBuilder.append(kedgeLayout.getSourcePoint().getX()
+                            + "," + kedgeLayout.getSourcePoint().getY());
+                    for (KPoint point : kedgeLayout.getBendPoints()) {
+                        routeBuilder.append(" " + point.getX() + "," + point.getY());
+                    }
+                    routeBuilder.append(" " + kedgeLayout.getTargetPoint().getX()
+                            + "," + kedgeLayout.getTargetPoint().getY());
+                    routeData.getMixed().set(textFeature, routeBuilder.toString());
+                }
+            }
+            
+            // apply layout for child nodes
+            if (!knode.getChildren().isEmpty()) {
+                applyLayout(knode);
+            }
+        }
     }
 
 }
