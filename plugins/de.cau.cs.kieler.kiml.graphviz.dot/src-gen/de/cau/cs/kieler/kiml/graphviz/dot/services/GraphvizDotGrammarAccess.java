@@ -134,19 +134,20 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cEdgeTargetsEdgeTargetParserRuleCall_1_0 = (RuleCall)cEdgeTargetsAssignment_1.eContents().get(0);
 		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
 		private final Keyword cLeftSquareBracketKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
-		private final Assignment cAttributesAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
-		private final RuleCall cAttributesListAttributeParserRuleCall_2_1_0 = (RuleCall)cAttributesAssignment_2_1.eContents().get(0);
-		private final Group cGroup_2_2 = (Group)cGroup_2.eContents().get(2);
-		private final Keyword cCommaKeyword_2_2_0 = (Keyword)cGroup_2_2.eContents().get(0);
-		private final Assignment cAttributesAssignment_2_2_1 = (Assignment)cGroup_2_2.eContents().get(1);
-		private final RuleCall cAttributesListAttributeParserRuleCall_2_2_1_0 = (RuleCall)cAttributesAssignment_2_2_1.eContents().get(0);
-		private final Keyword cRightSquareBracketKeyword_2_3 = (Keyword)cGroup_2.eContents().get(3);
+		private final Group cGroup_2_1 = (Group)cGroup_2.eContents().get(1);
+		private final Assignment cAttributesAssignment_2_1_0 = (Assignment)cGroup_2_1.eContents().get(0);
+		private final RuleCall cAttributesListAttributeParserRuleCall_2_1_0_0 = (RuleCall)cAttributesAssignment_2_1_0.eContents().get(0);
+		private final Group cGroup_2_1_1 = (Group)cGroup_2_1.eContents().get(1);
+		private final Keyword cCommaKeyword_2_1_1_0 = (Keyword)cGroup_2_1_1.eContents().get(0);
+		private final Assignment cAttributesAssignment_2_1_1_1 = (Assignment)cGroup_2_1_1.eContents().get(1);
+		private final RuleCall cAttributesListAttributeParserRuleCall_2_1_1_1_0 = (RuleCall)cAttributesAssignment_2_1_1_1.eContents().get(0);
+		private final Keyword cRightSquareBracketKeyword_2_2 = (Keyword)cGroup_2.eContents().get(2);
 		
 		//EdgeStatement:
-		//	sourceNode=Node edgeTargets+=EdgeTarget+ ("[" attributes+=ListAttribute (","? attributes+=ListAttribute)* "]")?;
+		//	sourceNode=Node edgeTargets+=EdgeTarget+ ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
 		public ParserRule getRule() { return rule; }
 
-		//sourceNode=Node edgeTargets+=EdgeTarget+ ("[" attributes+=ListAttribute (","? attributes+=ListAttribute)* "]")?
+		//sourceNode=Node edgeTargets+=EdgeTarget+ ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?
 		public Group getGroup() { return cGroup; }
 
 		//sourceNode=Node
@@ -161,32 +162,35 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		//EdgeTarget
 		public RuleCall getEdgeTargetsEdgeTargetParserRuleCall_1_0() { return cEdgeTargetsEdgeTargetParserRuleCall_1_0; }
 
-		//("[" attributes+=ListAttribute (","? attributes+=ListAttribute)* "]")?
+		//("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?
 		public Group getGroup_2() { return cGroup_2; }
 
 		//"["
 		public Keyword getLeftSquareBracketKeyword_2_0() { return cLeftSquareBracketKeyword_2_0; }
 
+		//(attributes+=ListAttribute (","? attributes+=ListAttribute)*)?
+		public Group getGroup_2_1() { return cGroup_2_1; }
+
 		//attributes+=ListAttribute
-		public Assignment getAttributesAssignment_2_1() { return cAttributesAssignment_2_1; }
+		public Assignment getAttributesAssignment_2_1_0() { return cAttributesAssignment_2_1_0; }
 
 		//ListAttribute
-		public RuleCall getAttributesListAttributeParserRuleCall_2_1_0() { return cAttributesListAttributeParserRuleCall_2_1_0; }
+		public RuleCall getAttributesListAttributeParserRuleCall_2_1_0_0() { return cAttributesListAttributeParserRuleCall_2_1_0_0; }
 
 		//(","? attributes+=ListAttribute)*
-		public Group getGroup_2_2() { return cGroup_2_2; }
+		public Group getGroup_2_1_1() { return cGroup_2_1_1; }
 
 		//","?
-		public Keyword getCommaKeyword_2_2_0() { return cCommaKeyword_2_2_0; }
+		public Keyword getCommaKeyword_2_1_1_0() { return cCommaKeyword_2_1_1_0; }
 
 		//attributes+=ListAttribute
-		public Assignment getAttributesAssignment_2_2_1() { return cAttributesAssignment_2_2_1; }
+		public Assignment getAttributesAssignment_2_1_1_1() { return cAttributesAssignment_2_1_1_1; }
 
 		//ListAttribute
-		public RuleCall getAttributesListAttributeParserRuleCall_2_2_1_0() { return cAttributesListAttributeParserRuleCall_2_2_1_0; }
+		public RuleCall getAttributesListAttributeParserRuleCall_2_1_1_1_0() { return cAttributesListAttributeParserRuleCall_2_1_1_1_0; }
 
 		//"]"
-		public Keyword getRightSquareBracketKeyword_2_3() { return cRightSquareBracketKeyword_2_3; }
+		public Keyword getRightSquareBracketKeyword_2_2() { return cRightSquareBracketKeyword_2_2; }
 	}
 
 	public class EdgeTargetElements extends AbstractParserRuleElementFinder {
@@ -236,19 +240,20 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cNodeNodeParserRuleCall_0_0 = (RuleCall)cNodeAssignment_0.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
 		private final Keyword cLeftSquareBracketKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final Assignment cAttributesAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cAttributesListAttributeParserRuleCall_1_1_0 = (RuleCall)cAttributesAssignment_1_1.eContents().get(0);
-		private final Group cGroup_1_2 = (Group)cGroup_1.eContents().get(2);
-		private final Keyword cCommaKeyword_1_2_0 = (Keyword)cGroup_1_2.eContents().get(0);
-		private final Assignment cAttributesAssignment_1_2_1 = (Assignment)cGroup_1_2.eContents().get(1);
-		private final RuleCall cAttributesListAttributeParserRuleCall_1_2_1_0 = (RuleCall)cAttributesAssignment_1_2_1.eContents().get(0);
-		private final Keyword cRightSquareBracketKeyword_1_3 = (Keyword)cGroup_1.eContents().get(3);
+		private final Group cGroup_1_1 = (Group)cGroup_1.eContents().get(1);
+		private final Assignment cAttributesAssignment_1_1_0 = (Assignment)cGroup_1_1.eContents().get(0);
+		private final RuleCall cAttributesListAttributeParserRuleCall_1_1_0_0 = (RuleCall)cAttributesAssignment_1_1_0.eContents().get(0);
+		private final Group cGroup_1_1_1 = (Group)cGroup_1_1.eContents().get(1);
+		private final Keyword cCommaKeyword_1_1_1_0 = (Keyword)cGroup_1_1_1.eContents().get(0);
+		private final Assignment cAttributesAssignment_1_1_1_1 = (Assignment)cGroup_1_1_1.eContents().get(1);
+		private final RuleCall cAttributesListAttributeParserRuleCall_1_1_1_1_0 = (RuleCall)cAttributesAssignment_1_1_1_1.eContents().get(0);
+		private final Keyword cRightSquareBracketKeyword_1_2 = (Keyword)cGroup_1.eContents().get(2);
 		
 		//NodeStatement:
-		//	node=Node ("[" attributes+=ListAttribute (","? attributes+=ListAttribute)* "]")?;
+		//	node=Node ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
 		public ParserRule getRule() { return rule; }
 
-		//node=Node ("[" attributes+=ListAttribute (","? attributes+=ListAttribute)* "]")?
+		//node=Node ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?
 		public Group getGroup() { return cGroup; }
 
 		//node=Node
@@ -257,32 +262,35 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		//Node
 		public RuleCall getNodeNodeParserRuleCall_0_0() { return cNodeNodeParserRuleCall_0_0; }
 
-		//("[" attributes+=ListAttribute (","? attributes+=ListAttribute)* "]")?
+		//("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?
 		public Group getGroup_1() { return cGroup_1; }
 
 		//"["
 		public Keyword getLeftSquareBracketKeyword_1_0() { return cLeftSquareBracketKeyword_1_0; }
 
+		//(attributes+=ListAttribute (","? attributes+=ListAttribute)*)?
+		public Group getGroup_1_1() { return cGroup_1_1; }
+
 		//attributes+=ListAttribute
-		public Assignment getAttributesAssignment_1_1() { return cAttributesAssignment_1_1; }
+		public Assignment getAttributesAssignment_1_1_0() { return cAttributesAssignment_1_1_0; }
 
 		//ListAttribute
-		public RuleCall getAttributesListAttributeParserRuleCall_1_1_0() { return cAttributesListAttributeParserRuleCall_1_1_0; }
+		public RuleCall getAttributesListAttributeParserRuleCall_1_1_0_0() { return cAttributesListAttributeParserRuleCall_1_1_0_0; }
 
 		//(","? attributes+=ListAttribute)*
-		public Group getGroup_1_2() { return cGroup_1_2; }
+		public Group getGroup_1_1_1() { return cGroup_1_1_1; }
 
 		//","?
-		public Keyword getCommaKeyword_1_2_0() { return cCommaKeyword_1_2_0; }
+		public Keyword getCommaKeyword_1_1_1_0() { return cCommaKeyword_1_1_1_0; }
 
 		//attributes+=ListAttribute
-		public Assignment getAttributesAssignment_1_2_1() { return cAttributesAssignment_1_2_1; }
+		public Assignment getAttributesAssignment_1_1_1_1() { return cAttributesAssignment_1_1_1_1; }
 
 		//ListAttribute
-		public RuleCall getAttributesListAttributeParserRuleCall_1_2_1_0() { return cAttributesListAttributeParserRuleCall_1_2_1_0; }
+		public RuleCall getAttributesListAttributeParserRuleCall_1_1_1_1_0() { return cAttributesListAttributeParserRuleCall_1_1_1_1_0; }
 
 		//"]"
-		public Keyword getRightSquareBracketKeyword_1_3() { return cRightSquareBracketKeyword_1_3; }
+		public Keyword getRightSquareBracketKeyword_1_2() { return cRightSquareBracketKeyword_1_2; }
 	}
 
 	public class AttributeStatementElements extends AbstractParserRuleElementFinder {
@@ -291,19 +299,20 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cTypeAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final RuleCall cTypeAttributeTypeEnumRuleCall_0_0 = (RuleCall)cTypeAssignment_0.eContents().get(0);
 		private final Keyword cLeftSquareBracketKeyword_1 = (Keyword)cGroup.eContents().get(1);
-		private final Assignment cAttributesAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cAttributesListAttributeParserRuleCall_2_0 = (RuleCall)cAttributesAssignment_2.eContents().get(0);
-		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
-		private final Keyword cCommaKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
-		private final Assignment cAttributesAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
-		private final RuleCall cAttributesListAttributeParserRuleCall_3_1_0 = (RuleCall)cAttributesAssignment_3_1.eContents().get(0);
-		private final Keyword cRightSquareBracketKeyword_4 = (Keyword)cGroup.eContents().get(4);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Assignment cAttributesAssignment_2_0 = (Assignment)cGroup_2.eContents().get(0);
+		private final RuleCall cAttributesListAttributeParserRuleCall_2_0_0 = (RuleCall)cAttributesAssignment_2_0.eContents().get(0);
+		private final Group cGroup_2_1 = (Group)cGroup_2.eContents().get(1);
+		private final Keyword cCommaKeyword_2_1_0 = (Keyword)cGroup_2_1.eContents().get(0);
+		private final Assignment cAttributesAssignment_2_1_1 = (Assignment)cGroup_2_1.eContents().get(1);
+		private final RuleCall cAttributesListAttributeParserRuleCall_2_1_1_0 = (RuleCall)cAttributesAssignment_2_1_1.eContents().get(0);
+		private final Keyword cRightSquareBracketKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
 		//AttributeStatement:
-		//	type=AttributeType "[" attributes+=ListAttribute (","? attributes+=ListAttribute)* "]";
+		//	type=AttributeType "[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]";
 		public ParserRule getRule() { return rule; }
 
-		//type=AttributeType "[" attributes+=ListAttribute (","? attributes+=ListAttribute)* "]"
+		//type=AttributeType "[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]"
 		public Group getGroup() { return cGroup; }
 
 		//type=AttributeType
@@ -315,26 +324,29 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		//"["
 		public Keyword getLeftSquareBracketKeyword_1() { return cLeftSquareBracketKeyword_1; }
 
+		//(attributes+=ListAttribute (","? attributes+=ListAttribute)*)?
+		public Group getGroup_2() { return cGroup_2; }
+
 		//attributes+=ListAttribute
-		public Assignment getAttributesAssignment_2() { return cAttributesAssignment_2; }
+		public Assignment getAttributesAssignment_2_0() { return cAttributesAssignment_2_0; }
 
 		//ListAttribute
-		public RuleCall getAttributesListAttributeParserRuleCall_2_0() { return cAttributesListAttributeParserRuleCall_2_0; }
+		public RuleCall getAttributesListAttributeParserRuleCall_2_0_0() { return cAttributesListAttributeParserRuleCall_2_0_0; }
 
 		//(","? attributes+=ListAttribute)*
-		public Group getGroup_3() { return cGroup_3; }
+		public Group getGroup_2_1() { return cGroup_2_1; }
 
 		//","?
-		public Keyword getCommaKeyword_3_0() { return cCommaKeyword_3_0; }
+		public Keyword getCommaKeyword_2_1_0() { return cCommaKeyword_2_1_0; }
 
 		//attributes+=ListAttribute
-		public Assignment getAttributesAssignment_3_1() { return cAttributesAssignment_3_1; }
+		public Assignment getAttributesAssignment_2_1_1() { return cAttributesAssignment_2_1_1; }
 
 		//ListAttribute
-		public RuleCall getAttributesListAttributeParserRuleCall_3_1_0() { return cAttributesListAttributeParserRuleCall_3_1_0; }
+		public RuleCall getAttributesListAttributeParserRuleCall_2_1_1_0() { return cAttributesListAttributeParserRuleCall_2_1_1_0; }
 
 		//"]"
-		public Keyword getRightSquareBracketKeyword_4() { return cRightSquareBracketKeyword_4; }
+		public Keyword getRightSquareBracketKeyword_3() { return cRightSquareBracketKeyword_3; }
 	}
 
 	public class SubgraphElements extends AbstractParserRuleElementFinder {
@@ -823,7 +835,7 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//EdgeStatement:
-	//	sourceNode=Node edgeTargets+=EdgeTarget+ ("[" attributes+=ListAttribute (","? attributes+=ListAttribute)* "]")?;
+	//	sourceNode=Node edgeTargets+=EdgeTarget+ ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
 	public EdgeStatementElements getEdgeStatementAccess() {
 		return (pEdgeStatement != null) ? pEdgeStatement : (pEdgeStatement = new EdgeStatementElements());
 	}
@@ -843,7 +855,7 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//NodeStatement:
-	//	node=Node ("[" attributes+=ListAttribute (","? attributes+=ListAttribute)* "]")?;
+	//	node=Node ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
 	public NodeStatementElements getNodeStatementAccess() {
 		return (pNodeStatement != null) ? pNodeStatement : (pNodeStatement = new NodeStatementElements());
 	}
@@ -853,7 +865,7 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//AttributeStatement:
-	//	type=AttributeType "[" attributes+=ListAttribute (","? attributes+=ListAttribute)* "]";
+	//	type=AttributeType "[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]";
 	public AttributeStatementElements getAttributeStatementAccess() {
 		return (pAttributeStatement != null) ? pAttributeStatement : (pAttributeStatement = new AttributeStatementElements());
 	}
