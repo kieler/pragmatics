@@ -112,6 +112,7 @@ public class SwitchableFigure extends Shape {
             DefaultSizeNodeFigure defaultSizeNodeFigure = (DefaultSizeNodeFigure) this.getParent();
                 defaultSizeNodeFigure.setDefaultSize(currentFigure.getBounds().width + 2, currentFigure.getBounds().height + 2);
         }
+        this.prefSize = currentFigure.getPreferredSize();
         
     }
 
