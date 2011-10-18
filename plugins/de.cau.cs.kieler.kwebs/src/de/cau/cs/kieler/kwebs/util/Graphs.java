@@ -141,6 +141,17 @@ public final class Graphs {
         }
     }
 
+    /**
+     * Determines the total number of elements in the given graph.
+     *
+     * @param graph 
+     *            parent layout node to examine
+     * @return total number of elements
+     */
+    public static int countElements(final KNode graph) {
+        return getAllElementsOfType(graph, KGraphElement.class, true).size();       
+    }
+
    /**
     * Determines the total number of nodes in the given graph.
     *
@@ -149,13 +160,40 @@ public final class Graphs {
     * @return total number of child nodes
     */
    public static int countNodes(final KNode graph) {
-       int count = graph.getChildren().size();
-       for (KNode child : graph.getChildren()) {
-           if (!child.getChildren().isEmpty()) {
-               count += countNodes(child);
-           }
-       }
-       return count;
+       return getAllElementsOfType(graph, KNode.class, false).size();       
+   }
+
+   /**
+    * Determines the total number of edges in the given graph.
+    *
+    * @param graph 
+    *            parent layout node to examine
+    * @return total number of edges
+    */
+   public static int countEdges(final KNode graph) {
+       return getAllElementsOfType(graph, KEdge.class, false).size();       
+   }
+
+   /**
+    * Determines the total number of ports in the given graph.
+    *
+    * @param graph 
+    *            parent layout node to examine
+    * @return total number of ports
+    */
+   public static int countPorts(final KNode graph) {
+       return getAllElementsOfType(graph, KPort.class, false).size();       
+   }
+
+   /**
+    * Determines the total number of labels in the given graph.
+    *
+    * @param graph 
+    *            parent layout node to examine
+    * @return total number of labels
+    */
+   public static int countLabels(final KNode graph) {
+       return getAllElementsOfType(graph, KLabel.class, false).size();       
    }
 
    /**
