@@ -166,7 +166,7 @@ public class MatrixTransformer implements IGraphTransformer<Matrix> {
                     return s;
                 }
             }
-            return s.substring(0, dotIndex - 1);
+            return s.substring(0, dotIndex);
         }
         return s;
     }

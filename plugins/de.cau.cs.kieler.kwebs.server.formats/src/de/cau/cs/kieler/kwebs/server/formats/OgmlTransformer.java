@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 import com.google.common.collect.Maps;
 
+import net.ogdf.ogml.DataType;
 import net.ogdf.ogml.DocumentRoot;
 import net.ogdf.ogml.EdgeLayoutType;
 import net.ogdf.ogml.EdgeType;
@@ -161,6 +162,10 @@ public class OgmlTransformer extends AbstractEmfTransformer<DocumentRoot> {
             if (!node.getLabel().isEmpty()) {
                 knode.getLabel().setText(node.getLabel().get(0).getContent());
             }
+            // transform layout options
+            for (DataType data : node.getData()) {
+                setOption(nodeLayout, data.getIdRef(), data.getValue());
+            }
             // transform subgraph
             transform(node.getNode(), knode, transData);
         }
@@ -176,6 +181,10 @@ public class OgmlTransformer extends AbstractEmfTransformer<DocumentRoot> {
     private void transformGraph(final GraphType graph,
             final TransformationData<DocumentRoot> transData) {
         KNode parent = KimlUtil.createInitializedNode();
+        // transform layout options
+        for (DataType data : graph.getData()) {
+            setOption(parent.getData(KShapeLayout.class), data.getIdRef(), data.getValue());
+        }
 
         // transform nodes
         transform(graph.getStructure().getNode(), parent, transData);
@@ -193,11 +202,21 @@ public class OgmlTransformer extends AbstractEmfTransformer<DocumentRoot> {
                 edgeLayout.setProperty(PROP_EDGE, edge);
                 kedge.setSource(source);
                 kedge.setTarget(target);
+                // transform layout options
+                for (DataType data : edge.getData()) {
+                    setOption(edgeLayout, data.getIdRef(), data.getValue());
+                }
+                // transform edge labels
                 for (LabelType label : edge.getLabel()) {
                     KLabel klabel = KimlUtil.createInitializedLabel();
+                    KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
                     labelIdMap.put(label.getId(), klabel);
-                    klabel.getData(KShapeLayout.class).setProperty(PROP_LABEL, label);
+                    labelLayout.setProperty(PROP_LABEL, label);
                     klabel.setText(label.getContent());
+                    // transform layout options
+                    for (DataType data : label.getData()) {
+                        setOption(labelLayout, data.getIdRef(), data.getValue());
+                    }
                 }
                 
             // transform hyperedges
@@ -226,9 +245,16 @@ public class OgmlTransformer extends AbstractEmfTransformer<DocumentRoot> {
         transData.getLayoutGraphs().add(parent);
         
         if (graph.getLayout() != null && graph.getLayout().getStyles() != null) {
+            // transform layout options
+            for (DataType data : graph.getLayout().getData()) {
+                setOption(parent.getData(KShapeLayout.class), data.getIdRef(), data.getValue());
+            }
             transformLayout(graph.getLayout(), transData);
         }
     }
+    
+    /** default width and height value for nodes. */
+    private static final float DEF_WIDTH = 10.0f;
     
     /**
      * Transforms a single node, if not already done before.
@@ -244,10 +270,13 @@ public class OgmlTransformer extends AbstractEmfTransformer<DocumentRoot> {
         KNode knode = nodeIdMap.get(nodeId);
         if (knode == null) {
             knode = KimlUtil.createInitializedNode();
+            KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
+            nodeLayout.setWidth(DEF_WIDTH);
+            nodeLayout.setHeight(DEF_WIDTH);
             knode.setParent(parent);
             if (nodeId != null) {
                 nodeIdMap.put(nodeId, knode);
-                knode.getData(KShapeLayout.class).setProperty(PROP_ID, nodeId);
+                nodeLayout.setProperty(PROP_ID, nodeId);
             }
         }
         return knode;
@@ -278,6 +307,10 @@ public class OgmlTransformer extends AbstractEmfTransformer<DocumentRoot> {
                     knodeLayout.setXpos((float) location.getX() - knodeLayout.getWidth() / 2);
                     knodeLayout.setYpos((float) location.getY() - knodeLayout.getHeight() / 2);
                 }
+                // transform layout options
+                for (DataType data : ogmlNodeLayout.getData()) {
+                    setOption(knodeLayout, data.getIdRef(), data.getValue());
+                }
             }
         }
         
@@ -288,6 +321,10 @@ public class OgmlTransformer extends AbstractEmfTransformer<DocumentRoot> {
             if (kedge != null) {
                 KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
                 kedgeLayout.setProperty(PROP_EDGE_LAYOUT, ogmlEdgeLayout);
+                // transform layout options
+                for (DataType data : ogmlEdgeLayout.getData()) {
+                    setOption(kedgeLayout, data.getIdRef(), data.getValue());
+                }
             }
         }
         
@@ -298,6 +335,10 @@ public class OgmlTransformer extends AbstractEmfTransformer<DocumentRoot> {
             if (klabel != null) {
                 KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
                 klabelLayout.setProperty(PROP_LABEL_LAYOUT, ogmlLabelLayout);
+                // transform layout options
+                for (DataType data : ogmlLabelLayout.getData()) {
+                    setOption(klabelLayout, data.getIdRef(), data.getValue());
+                }
             }
         }
     }
@@ -346,8 +387,8 @@ public class OgmlTransformer extends AbstractEmfTransformer<DocumentRoot> {
                     location = OgmlFactory.eINSTANCE.createLocationType();
                     ogmlNodeLayout.setLocation(location);
                 }
-                location.setX(knodeLayout.getXpos() - knodeLayout.getWidth() / 2 + offset.x);
-                location.setY(knodeLayout.getYpos() - knodeLayout.getHeight() / 2 + offset.y);
+                location.setX(knodeLayout.getXpos() + knodeLayout.getWidth() / 2 + offset.x);
+                location.setY(knodeLayout.getYpos() + knodeLayout.getHeight() / 2 + offset.y);
                 ShapeType1 shape = ogmlNodeLayout.getShape();
                 if (shape == null) {
                     shape = OgmlFactory.eINSTANCE.createShapeType1();
@@ -395,13 +436,17 @@ public class OgmlTransformer extends AbstractEmfTransformer<DocumentRoot> {
                         location = OgmlFactory.eINSTANCE.createLocationType();
                         ogmlLabelLayout.setLocation(location);
                     }
-                    location.setX(klabelLayout.getXpos() - klabelLayout.getWidth() / 2 + offset.x);
-                    location.setY(klabelLayout.getYpos() - klabelLayout.getHeight() / 2 + offset.y);
+                    location.setX(klabelLayout.getXpos() + klabelLayout.getWidth() / 2 + offset.x);
+                    location.setY(klabelLayout.getYpos() + klabelLayout.getHeight() / 2 + offset.y);
                 }
             }
             
             // apply layout for child nodes
-            applyLayout(knode, offset.translate(knodeLayout.getXpos(), knodeLayout.getYpos()), graph);
+            if (!knode.getChildren().isEmpty()) {
+                KVector childOffset = new KVector(offset).translate(knodeLayout.getXpos(),
+                        knodeLayout.getYpos());
+                applyLayout(knode, childOffset, graph);
+            }
         }
     }
     

@@ -30,6 +30,10 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 
+import de.cau.cs.kieler.core.kgraph.KGraphData;
+import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
+
 /**
  * An abstract superclass for EMF-based transformers.
  *
@@ -140,5 +144,23 @@ public abstract class AbstractEmfTransformer<T extends EObject> implements IGrap
      * @return a resource set
      */
     protected abstract ResourceSet createResourceSet();
+    
+    /**
+     * Set a layout option using a key / value pair read from a graph.
+     * 
+     * @param graphData the graph data instance to modify
+     * @param id the layout option identifier
+     * @param value the value for the layout option
+     */
+    protected void setOption(final KGraphData graphData, final String id, final String value) {
+        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutOptionData<?> optionData = dataService.getOptionData(id);
+        if (optionData != null) {
+            Object obj = optionData.parseValue(value);
+            if (obj != null) {
+                graphData.setProperty(optionData, obj);
+            }
+        }
+    }
 
 }
