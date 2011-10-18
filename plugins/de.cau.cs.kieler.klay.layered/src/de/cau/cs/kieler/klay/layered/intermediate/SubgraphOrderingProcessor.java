@@ -79,12 +79,16 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         // subgraphOrderingGraph
         LNode graphKey = new LNode();
         graphKey.copyProperties(layeredGraph);
+        
+        // Document the layers, that are resorted.
+        HashSet<Layer> reorderedLayers = new HashSet<Layer>();
 
         // Build the subgraphOrderingGraph:
         // Insert nodes and edges representing the relationship "is left of" into the subgraph
         // ordering graph parts.
         for (Layer layer : layeredGraph.getLayers()) {
             List<LNode> layerNodes = layer.getNodes();
+            boolean resorted = false;
             for (int i = 0; i < (layerNodes.size() - 1); i++) {
                 LNode currentNode = layerNodes.get(i);
                 LNode relatedCompoundCurrent = getRelatedCompoundNode(currentNode, layeredGraph);
@@ -94,6 +98,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                 // of different compound nodes and no leave nodes of highest level.
                 if ((relatedCompoundCurrent != null) && (relatedCompoundNext != null)
                         && (relatedCompoundCurrent != relatedCompoundNext)) {
+                    resorted = true;
                     // Find the correct partial graph to insert the "is left of"-relationship by
                     // propagating the dependency up the inclusion tree till two compound nodes with
                     // the same parent are reached.
@@ -133,6 +138,9 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                     targetPort.setNode(nextRep);
                 }
             }
+                if (resorted) {
+                    reorderedLayers.add(layer);
+                } 
         }
         // Break the cycles in the subgraphOrderingGraph. Any cycle-breaking heuristic can be used
         // here - but with different results with respect to the number of introduced edge
@@ -146,7 +154,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             cycleBreaker.process(graphComponent);
         }
 
-        applyOrder(layeredGraph, subgraphOrderingGraph, graphKey, elemMap);
+        applyOrder(layeredGraph, subgraphOrderingGraph, graphKey, elemMap, reorderedLayers);
 
         getMonitor().done();
     }
@@ -164,12 +172,14 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
      *            subgraphOrderingGraph.
      * @param elemMap
      *            The element-map mapping the original KGraph elements to LGraph elements.
+     * @param reorderedLayers
+     *            The set of layers that have been reordered. 
      */
     private void applyOrder(final LayeredGraph layeredGraph,
             final HashMap<LNode, LayeredGraph> subgraphOrderingGraph, final LNode graphKey,
-            final HashMap<KGraphElement, LGraphElement> elemMap) {
+            final HashMap<KGraphElement, LGraphElement> elemMap, final HashSet<Layer> reorderedLayers) {
         HashMap<Layer, LinkedList<LNode>> layerOrders = new HashMap<Layer, LinkedList<LNode>>();
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : reorderedLayers) {
             LinkedList<LNode> layerOrder = new LinkedList<LNode>();
             recursiveApplyLayerOrder(layer, graphKey, layeredGraph, subgraphOrderingGraph,
                     layerOrder, elemMap);
@@ -273,7 +283,10 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             HashSet<LNode> targets = new HashSet<LNode>();
             while (outEdgesIterator.hasNext()) {
                 LEdge edge = outEdgesIterator.next();
-                targets.add(edge.getTarget().getNode());
+                LNode edgeTarget = edge.getTarget().getNode();
+                if (!(targets.contains(edgeTarget))) {
+                targets.add(edgeTarget);
+                }
             }
             // Iterate the targets.
             for (LNode target : targets) {
@@ -291,7 +304,8 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                     }
                 }
                 // Remove edges already visited.
-                for (int i = 0; i < removableEdges.size(); i++) {
+                int edgesSize = removableEdges.size();
+                for (int i = 0; i < edgesSize; i++) {
                     LEdge edge = removableEdges.removeFirst();
                     edge.getSource().getNode().getPorts().remove(edge.getSource());
                     edge.getTarget().getNode().getPorts().remove(edge.getTarget());
