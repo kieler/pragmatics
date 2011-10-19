@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-package de.cau.cs.kieler.core.model.gmf.policies;
+package de.cau.cs.kieler.ksbase.ui.handler;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -33,6 +33,8 @@ import org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.IEditPolicyProvide
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.model.gmf.ModelGmfPlugin;
+import de.cau.cs.kieler.core.model.gmf.policies.IBalloonContribution;
+import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
 
 /**
  * Provides an edit policy to create popup balloons.
@@ -94,6 +96,7 @@ public class BalloonPopupEditPolicyProvider extends AbstractProvider implements
      * @return the list of contributions
      */
     private List<IBalloonContribution> getContributions() {
+        /*
         if (contributions == null) {
             IConfigurationElement[] contributors = Platform
                     .getExtensionRegistry()
@@ -135,6 +138,10 @@ public class BalloonPopupEditPolicyProvider extends AbstractProvider implements
                     }
                 }
             }
+        }
+        */
+        if (contributions == null) {
+            contributions = DynamicMenuContributions.INSTANCE.getBalloonContributions();
         }
         return contributions;
     }

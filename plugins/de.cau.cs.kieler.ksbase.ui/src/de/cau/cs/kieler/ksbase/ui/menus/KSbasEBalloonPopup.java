@@ -117,7 +117,7 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
     public void init(final Map<String, String> map) {
         String editorId = null;
         String tId = null;
-
+ 
         // FIXME: avoid loop, use hashmap!
         for (Entry<String, String> val : map.entrySet()) {
             if (val.getKey().equals("editorId")) {

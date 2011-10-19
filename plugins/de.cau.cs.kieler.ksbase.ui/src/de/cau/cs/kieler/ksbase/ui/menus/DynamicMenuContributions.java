@@ -16,7 +16,10 @@ package de.cau.cs.kieler.ksbase.ui.menus;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
@@ -39,6 +42,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
+import de.cau.cs.kieler.core.model.gmf.policies.IBalloonContribution;
 import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
 import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationContext;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
@@ -62,6 +66,13 @@ public final class DynamicMenuContributions {
     /** DynamicMenuContribution instance. **/
     public static final DynamicMenuContributions INSTANCE = new DynamicMenuContributions();
 
+    private List<IBalloonContribution> balloonContributions = new LinkedList<IBalloonContribution>();
+    
+    public List<IBalloonContribution> getBalloonContributions() {
+        return this.balloonContributions;
+    }
+    
+    
     /**
      * Default constructor.
      */
@@ -71,7 +82,7 @@ public final class DynamicMenuContributions {
 
     /**
      * Expression to determine whether a ksbase transformation is visible or not.
-     * To do this we try to map the seleciton to the parameters of the transformation, if that
+     * To do this we try to map the selection to the parameters of the transformation, if that
      * fails the transformation is not visible.
      * 
      * @author ckru
@@ -154,11 +165,11 @@ public final class DynamicMenuContributions {
                         return selectionList;
                     }
                 }
-
             }
             return null;
         }
 
+        
         @Override
         public EvaluationResult evaluate(final IEvaluationContext context) throws CoreException {
 
@@ -215,7 +226,7 @@ public final class DynamicMenuContributions {
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-
+                    String con = contrib.getData();
                     if (contrib.getData().startsWith("menu:")) {
                         KiviMenuContributionService.INSTANCE.addToolbarButton(combination, command
                                 + ".menu", transformation.getName(), transformation.getToolTip(),
@@ -236,8 +247,15 @@ public final class DynamicMenuContributions {
                                 icon, SWT.PUSH, KiviMenuContributionService.LocationScheme.POPUP,
                                 visibility, null, null, editorSettings.getEditorId());
                         combination.addTransformation(command + ".popup", transformation);
+                    } else if (contrib.getData().startsWith("popupbar:")) {
+                        KSbasEBalloonPopup contribution = new KSbasEBalloonPopup();
+                        HashMap<String, String> params = new HashMap<String, String>();
+                        params.put("editorId", editorSettings.getEditorId());
+                        params.put("transformationId", transformation.getTransformationId());
+                        
+                        contribution.init(params);
+                        this.balloonContributions.add(contribution);
                     }
-
                 } else {
                     if (!(contrib.getCommands().indexOf(command) == 0)) {
 
@@ -265,7 +283,6 @@ public final class DynamicMenuContributions {
                                     new KsbaseVisibilityExpression(separatedTransformation,
                                             editorSettings), editorSettings.getEditorId());
                         }
-
                     }
                 }
             }

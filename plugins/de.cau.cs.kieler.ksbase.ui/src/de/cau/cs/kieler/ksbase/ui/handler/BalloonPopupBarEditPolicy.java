@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.model.gmf.policies;
+package de.cau.cs.kieler.ksbase.ui.handler;
 
 import java.net.URL;
 import java.util.List;
@@ -25,6 +25,10 @@ import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.emf.type.core.edithelper.IEditHelper;
 import org.eclipse.gmf.runtime.emf.type.core.requests.IEditCommandRequest;
 import org.eclipse.swt.graphics.Image;
+
+import de.cau.cs.kieler.core.model.gmf.policies.BalloonMouseListener;
+import de.cau.cs.kieler.core.model.gmf.policies.DiagramPopupBarPolicy;
+import de.cau.cs.kieler.core.model.gmf.policies.IBalloonContribution;
 
 /**
  * Policy for displaying balloons.

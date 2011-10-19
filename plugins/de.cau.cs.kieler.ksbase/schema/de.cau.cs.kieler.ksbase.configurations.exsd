@@ -190,6 +190,13 @@ Make sure that the transformation is short and fast, it is not recommended to ca
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="popupbar" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

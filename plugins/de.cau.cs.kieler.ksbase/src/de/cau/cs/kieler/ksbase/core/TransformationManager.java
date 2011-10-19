@@ -335,6 +335,7 @@ public final class TransformationManager {
                     "toolbar:de.cau.cs.kieler");
             KSBasEMenuContribution popupContrib = new KSBasEMenuContribution(
                     "popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu?after=addGroup");
+            KSBasEMenuContribution popupbarContrib = new KSBasEMenuContribution("popupbar:de.cau.cs.kieler");
 
             // get all package declarations
             IConfigurationElement[] packages = settings.getChildren("package");
@@ -401,11 +402,21 @@ public final class TransformationManager {
                         }
                         popupContrib.addCommand(t.getAttribute("transformationId"));
                     }
+                    attr = t.getAttribute("popupbar");
+                    if ((attr != null) && attr.equals("true")) {
+                        String separator = t.getAttribute("separated");
+                        if ((separator != null) && separator.equals("true")) {
+                            popupbarContrib.addCommand(t.getAttribute("transformationId") + "_SEPARATOR");
+                        } 
+                        popupbarContrib.addCommand(t.getAttribute("transformationId"));
+                    }
+                    
 
                 }
                 editor.addMenuContribution(menuContrib);
                 editor.addMenuContribution(toolbarContrib);
                 editor.addMenuContribution(popupContrib);
+                editor.addMenuContribution(popupbarContrib);
             }
             // read alternate command handler
             IConfigurationElement[] commandHandler = settings.getChildren("commandHandler");
