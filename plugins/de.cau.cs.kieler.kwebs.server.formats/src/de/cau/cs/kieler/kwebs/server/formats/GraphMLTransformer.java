@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kwebs.server.formats;
 
 import java.util.Map;
 
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -168,12 +167,9 @@ public class GraphMLTransformer extends AbstractEmfTransformer<DocumentRoot> {
      */
     private void transformGraph(final GraphType graph, final KNode parent,
             final TransformationData<DocumentRoot> transData) {
-        EStructuralFeature textFeature = XMLTypePackage.eINSTANCE.getXMLTypeDocumentRoot_Text();
-        
         // transform layout options
         for (DataType data : graph.getData()) {
-            Object obj = data.getMixed().get(textFeature, false);
-            setOption(parent.getData(KShapeLayout.class), data.getKey(), (String) obj);
+            setOption(parent.getData(KShapeLayout.class), data.getKey(), getValue(data));
         }
         
         // transform nodes
@@ -182,16 +178,14 @@ public class GraphMLTransformer extends AbstractEmfTransformer<DocumentRoot> {
             KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
             nodeLayout.setProperty(PROP_NODE, node);
             for (DataType data : node.getData()) {
-                Object obj = data.getMixed().get(textFeature, false);
-                setOption(nodeLayout, data.getKey(), (String) obj);
+                setOption(nodeLayout, data.getKey(), getValue(data));
             }
             // transform ports
             for (PortType port : node.getPort()) {
                 KPort kport = transformPort(port.getName(), knode, transData);
                 KShapeLayout portLayout = kport.getData(KShapeLayout.class);
                 for (DataType data : port.getData()) {
-                    Object obj = data.getMixed().get(textFeature, false);
-                    setOption(portLayout, data.getKey(), (String) obj);
+                    setOption(portLayout, data.getKey(), getValue(data));
                 }
             }
             // transform subgraph
@@ -218,8 +212,7 @@ public class GraphMLTransformer extends AbstractEmfTransformer<DocumentRoot> {
                 kedge.setTargetPort(port);
             }
             for (DataType data : edge.getData()) {
-                Object obj = data.getMixed().get(textFeature, false);
-                setOption(edgeLayout, data.getKey(), (String) obj);
+                setOption(edgeLayout, data.getKey(), getValue(data));
             }
         }
         
@@ -295,8 +288,6 @@ public class GraphMLTransformer extends AbstractEmfTransformer<DocumentRoot> {
      * @param parentNode a parent node
      */
     private void applyLayout(final KNode parentNode) {
-        EStructuralFeature textFeature = XMLTypePackage.eINSTANCE.getXMLTypeDocumentRoot_Text();
-        
         for (KNode knode : parentNode.getChildren()) {
             KShapeLayout knodeLayout = knode.getData(KShapeLayout.class);
             NodeType graphmlNode = knodeLayout.getProperty(PROP_NODE);
@@ -314,8 +305,7 @@ public class GraphMLTransformer extends AbstractEmfTransformer<DocumentRoot> {
                     posData.setKey(POSITION_KEY);
                     graphmlNode.getData().add(posData);
                 }
-                posData.getMixed().set(textFeature, knodeLayout.getXpos()
-                        + "," + knodeLayout.getYpos());
+                setValue(posData, knodeLayout.getXpos() + "," + knodeLayout.getYpos());
             }
             
             for (KEdge kedge : knode.getOutgoingEdges()) {
@@ -343,7 +333,7 @@ public class GraphMLTransformer extends AbstractEmfTransformer<DocumentRoot> {
                     }
                     routeBuilder.append(" " + kedgeLayout.getTargetPoint().getX()
                             + "," + kedgeLayout.getTargetPoint().getY());
-                    routeData.getMixed().set(textFeature, routeBuilder.toString());
+                    setValue(routeData, routeBuilder.toString());
                 }
             }
             
@@ -352,6 +342,27 @@ public class GraphMLTransformer extends AbstractEmfTransformer<DocumentRoot> {
                 applyLayout(knode);
             }
         }
+    }
+    
+    /**
+     * Retrieve the text value of a data instance.
+     * 
+     * @param data a data object
+     * @return the contained text
+     */
+    private static String getValue(final DataType data) {
+        return (String) data.getMixed().get(
+                XMLTypePackage.Literals.XML_TYPE_DOCUMENT_ROOT__TEXT, false);
+    }
+    
+    /**
+     * Set the text value of a data instance.
+     * 
+     * @param data a data object
+     * @param value the new text
+     */
+    private static void setValue(final DataType data, final String value) {
+        data.getMixed().add(XMLTypePackage.Literals.XML_TYPE_DOCUMENT_ROOT__TEXT, value);
     }
 
 }

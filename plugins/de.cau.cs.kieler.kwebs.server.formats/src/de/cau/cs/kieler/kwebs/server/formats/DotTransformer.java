@@ -418,6 +418,9 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
         }
     }
     
+    /** the default width and height value for nodes. */
+    private static final float DEF_WIDTH = 10.0f;
+    
     /**
      * Transforms a single node, if not already done before.
      * 
@@ -432,10 +435,13 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
         KNode knode = nodeIdMap.get(nodeId);
         if (knode == null) {
             knode = KimlUtil.createInitializedNode();
+            KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
+            nodeLayout.setWidth(DEF_WIDTH);
+            nodeLayout.setHeight(DEF_WIDTH);
             knode.setParent(parent);
             if (nodeId != null) {
                 nodeIdMap.put(nodeId, knode);
-                knode.getData(KShapeLayout.class).setProperty(PROP_ID, nodeId);
+                nodeLayout.setProperty(PROP_ID, nodeId);
             }
         }
         return knode;
