@@ -105,12 +105,12 @@ public class SwitchableFigure extends Shape {
                 && figure instanceof ImageFigureEx) {
             DefaultSizeNodeFigure defaultSizeNodeFigure = (DefaultSizeNodeFigure) this.getParent();
             Image image = ((ImageFigureEx) figure).getImage();
-            if (image != null ) {
-                    defaultSizeNodeFigure.setDefaultSize(image.getBounds().width + 2, image.getBounds().height + 2);
+            if (image != null) {
+                defaultSizeNodeFigure.setDefaultSize(image.getBounds().width + 2, image.getBounds().height + 2);
             }
         } else if (this.getParent() instanceof DefaultSizeNodeFigure) {
             DefaultSizeNodeFigure defaultSizeNodeFigure = (DefaultSizeNodeFigure) this.getParent();
-                defaultSizeNodeFigure.setDefaultSize(currentFigure.getBounds().width + 2, currentFigure.getBounds().height + 2);
+            defaultSizeNodeFigure.setDefaultSize(currentFigure.getBounds().width + 2, currentFigure.getBounds().height + 2);
         }
         this.prefSize = currentFigure.getPreferredSize();
         
