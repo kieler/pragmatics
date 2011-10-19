@@ -596,10 +596,8 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
                 List<Attribute> attributes = ((NodeStatement) statement).getAttributes();
                 // transfer node position
                 removeAttributes(attributes, Attributes.POS);
-                double xpos = (nodeLayout.getXpos() + nodeLayout.getWidth() / 2 + offset.x)
-                        / KGraphDotTransformation.DPI;
-                double ypos = (nodeLayout.getYpos() + nodeLayout.getHeight() / 2 + offset.y)
-                        / KGraphDotTransformation.DPI;
+                double xpos = nodeLayout.getXpos() + nodeLayout.getWidth() / 2 + offset.x;
+                double ypos = nodeLayout.getYpos() + nodeLayout.getHeight() / 2 + offset.y;
                 String posString = "\"" + Double.toString(xpos) + "," + Double.toString(ypos) + "\"";
                 attributes.add(KGraphDotTransformation.createAttribute(Attributes.POS, posString));
                 // transfer node size
@@ -629,10 +627,8 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
             statements = graph.getStatements();
         }
         removeGraphAttributes(statements, Attributes.BOUNDINGBOX);
-        float width = parentLayout.getWidth() / KGraphDotTransformation.DPI;
-        float height = parentLayout.getHeight() / KGraphDotTransformation.DPI;
-        String bbString = "\"0,0," + Float.toString(width)
-                + "," + Float.toString(height) + "\"";
+        String bbString = "\"0,0," + Float.toString(parentLayout.getWidth())
+                + "," + Float.toString(parentLayout.getHeight()) + "\"";
         statements.add(KGraphDotTransformation.createAttribute(
                 Attributes.BOUNDINGBOX, bbString));
     }
@@ -659,7 +655,7 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
         KVectorChain vectorChain = edgeLayout.createVectorChain();
         ListIterator<KVector> chainIter = vectorChain.listIterator();
         while (chainIter.hasNext()) {
-            KVector point = chainIter.next().add(offset).scale(1.0 / KGraphDotTransformation.DPI);
+            KVector point = chainIter.next().add(offset);
             bendpointString.append(point.x);
             bendpointString.append(',');
             bendpointString.append(point.y);
@@ -689,10 +685,8 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
                 }
                 if (attrKey != null) {
                     removeAttributes(attributes, attrKey);
-                    double xpos = (labelLayout.getXpos() + labelLayout.getWidth() / 2 + offset.x)
-                            / KGraphDotTransformation.DPI;
-                    double ypos = (labelLayout.getYpos() + labelLayout.getHeight() / 2 + offset.y)
-                            / KGraphDotTransformation.DPI;
+                    double xpos = labelLayout.getXpos() + labelLayout.getWidth() / 2 + offset.x;
+                    double ypos = labelLayout.getYpos() + labelLayout.getHeight() / 2 + offset.y;
                     String posString = "\"" + Double.toString(xpos)
                             + "," + Double.toString(ypos) + "\"";
                     attributes.add(KGraphDotTransformation.createAttribute(attrKey, posString));
