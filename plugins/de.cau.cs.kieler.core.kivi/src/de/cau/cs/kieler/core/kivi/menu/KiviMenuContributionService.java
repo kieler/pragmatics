@@ -89,8 +89,8 @@ public class KiviMenuContributionService {
      * @param keySequence
      *            a keySequence for binding a key combination to the command of this button, may be null
      * @param shortcutContext
-     *            the context in which the shortcut defined by the keySequence should be active, may be null
-     *            and will default to org.eclipse.ui.contexts.window
+     *            the context in which the shortcut defined by the keySequence should be active, may be
+     *            null and will default to org.eclipse.ui.contexts.window
      * @param activeEditors
      *            Strings of editor IDs for which this button should be made visible only, parameter
      *            to avoid using the visibilityExpression, may be left
@@ -127,7 +127,8 @@ public class KiviMenuContributionService {
             final Expression visibilityExpression, final String... activeEditors) {
         assert locationSchemeExpression != null;
         addButtonConfiguration(new ButtonConfiguration(null, id, null, null,
-                null, 0, locationSchemeExpression, visibilityExpression, activeEditors, true, null, null));
+                null, 0, locationSchemeExpression, visibilityExpression, activeEditors, true, null,
+                null));
     }
     // CHECKSTYLEON ParameterNumber
     

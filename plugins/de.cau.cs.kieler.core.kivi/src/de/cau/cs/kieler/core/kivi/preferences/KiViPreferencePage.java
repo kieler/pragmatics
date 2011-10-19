@@ -118,6 +118,8 @@ public class KiViPreferencePage extends PreferencePage implements IWorkbenchPref
 
     @Override
     protected Control createContents(final Composite parent) {
+        // GUI code may use magic numbers.
+        // CHECKSTYLEOFF MagicNumber
 
         Font font = parent.getFont();
 
@@ -232,6 +234,8 @@ public class KiViPreferencePage extends PreferencePage implements IWorkbenchPref
         enableComposites(KiVi.getInstance().isActive());
 
         return null;
+        
+        // CHECKSTYLEON MagicNumber
     }
 
     private void enableComposites(final boolean b) {

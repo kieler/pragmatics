@@ -139,9 +139,12 @@ public abstract class AbstractCombination implements ICombination {
             if (undoEffects.size() > MAX_RECORD_LENGTH) {
                 String message = "The View Management Combination "
                         + this.getClass().getName()
-                        + " records all effects it is scheduling. However, the recorded list has already size "
+                        + " records all effects it is scheduling. "
+                        + "However, the recorded list has already size "
                         + undoEffects.size()
-                        + ". This looks like a potential memory leak. You should either diable recording for this combination or explicitly undoRecordedEffects from time to time!";
+                        + ". This looks like a potential memory leak. "
+                        + "You should either diable recording for this combination "
+                        + "or explicitly undoRecordedEffects from time to time!";
                 IStatus status = new Status(IStatus.WARNING, KiViPlugin.PLUGIN_ID, message);
                 StatusManager.getManager().handle(status);
             }
@@ -308,7 +311,8 @@ public abstract class AbstractCombination implements ICombination {
         if (!existsExecute) {
             throw new IllegalArgumentException(
                     this.getClass().getName()
-                            + " contains no execute methods with valid trigger parameters of either types ITriggerState or IEffect!");
+                            + " contains no execute methods with valid trigger parameters "
+                            + "of either types ITriggerState or IEffect!");
         }
         Object result = Array.newInstance(Class.class, types.size());
         for (int i = 0; i < ((Class<? extends ITriggerState>[]) result).length; i++) {

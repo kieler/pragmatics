@@ -270,9 +270,25 @@ public class KiviContributionItem extends CompoundContributionItem implements
                             (BindingService) Workbench.getInstance().getService(IBindingService.class);
                     ParameterizedCommand pc = ((CommandContributionItem) item).getCommand();
                     if (config.getShortcutContext() == null) {
-                        bindingService.addBinding(new KeyBinding(config.getKeySequence(), pc, bindingService.getActiveScheme().getId(), Workbench.getInstance().getContextSupport().CONTEXT_ID_WINDOW, null, null, null, Binding.USER));
+                        bindingService.addBinding(new KeyBinding(
+                                config.getKeySequence(),
+                                pc,
+                                bindingService.getActiveScheme().getId(),
+                                Workbench.getInstance().getContextSupport().CONTEXT_ID_WINDOW,
+                                null,
+                                null,
+                                null,
+                                Binding.USER));
                     } else {
-                        bindingService.addBinding(new KeyBinding(config.getKeySequence(), pc, bindingService.getActiveScheme().getId(), config.getShortcutContext() , null, null, null, Binding.USER));
+                        bindingService.addBinding(new KeyBinding(
+                                config.getKeySequence(),
+                                pc,
+                                bindingService.getActiveScheme().getId(),
+                                config.getShortcutContext(),
+                                null,
+                                null,
+                                null,
+                                Binding.USER));
                     }
                 }
                 
