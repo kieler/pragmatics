@@ -28,41 +28,91 @@ generate dot "http://kieler.cs.cau.de/GraphvizDot"
 
 GraphvizModel: (graphs+=Graph)*;
 
-Graph: (strict?="strict")? type=GraphType (name=ID)?
+
+/*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *  graph:      [ 'strict' ] ('graph' | 'digraph') [ ID ] '{' stmt_list '}'
+ */
+Graph: (strict?="strict")? type=GraphType (name=DotID)?
     "{" (statements+=Statement)* "}";
 
-Statement: (EdgeStatement | NodeStatement | Attribute
-    | AttributeStatement | Subgraph) ";"?;
 
-EdgeStatement: sourceNode=Node (edgeTargets+=EdgeTarget)+
-    ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
-
-EdgeTarget: operator=EdgeOperator (targetSubgraph=Subgraph | targetnode=Node);
-
-NodeStatement: node=Node
-    ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
-
-AttributeStatement: type=AttributeType
-    "[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]";
-
-Subgraph: {Subgraph} "subgraph" (name=ID)? "{" (statements+=Statement)* "}";
+/*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *  stmt_list:  [ stmt [ ';' ] [ stmt_list ] ]
+ *  stmt:       node_stmt | edge_stmt | attr_stmt | ID '=' ID | subgraph
+ */
+Statement: (NodeStatement | EdgeStatement | AttributeStatement | Attribute
+    | Subgraph) ";"?;
 
 Attribute: name=DotID "=" value=DotID;
 
-ListAttribute returns Attribute: name=DotID ("=" value=DotID)?;
 
+/*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *  node_stmt:  node_id [ attr_list ]
+ */
+NodeStatement: node=Node
+    ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
+
+
+/*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *  node_id:    ID [ port ]
+ */
 Node: name=DotID (":" port=Port)?;
 
-Port: name=DotID (":" compass_pt=CompassPoint)? | compass_pt=CompassPoint;
 
+/*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *  edge_stmt:  (node_id | subgraph) edgeRHS [ attr_list ]
+ */
+EdgeStatement: sourceNode=Node (edgeTargets+=EdgeTarget)+
+    ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
+
+
+/*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *  edgeRHS:    edgeop (node_id | subgraph) [ edgeRHS ]
+ */
+EdgeTarget: operator=EdgeOperator (targetSubgraph=Subgraph | targetnode=Node);
+
+
+/*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *  attr_stmt:  ('graph' | 'node' | 'edge') attr_list
+ */
+AttributeStatement: type=AttributeType
+    "[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]";
+
+
+/*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *  subgraph:   [ 'subgraph' [ ID ] ] '{' stmt_list '}'
+ */
+Subgraph: {Subgraph} "subgraph" (name=ID)? "{" (statements+=Statement)* "}";
+
+
+/*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *  attr_list:  '[' [ a_list ] ']' [ attr_list ]
+ *  a_list:     ID [ '=' ID ] [ ',' ] [ a_list ]
+ */
+ListAttribute returns Attribute: name=DotID ("=" value=DotID)?;
+
+
+/*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *  port:       ':' ID [ ':' compass_pt ] | ':' compass_pt
+ *  compass_pt: (n | ne | e | se | s | sw | w | nw | c | _)
+ */
+Port: name=DotID (":" compass_pt=ID)?;
+
+
+/*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *  An ID is one of the following:
+ *    - Any string of alphabetic ([a-zA-Z'200-'377]) characters, underscores
+ *      ('_') or digits ([0-9]), not beginning with a digit;
+ *    - a numeral [-]?(.[0-9]+ | [0-9]+(.[0-9]*)? );
+ *    - any double-quoted string ("...") possibly containing escaped quotes ('");
+ *    - an HTML string (<...>). 
+ */
 DotID: ID | INT | FLOAT | STRING;
+
 
 enum EdgeOperator: directed="->" | undirected="--";
 enum GraphType: graph | digraph;
 enum AttributeType: graph | node | edge;
-enum CompassPoint: north="n" | northEast="ne" | east="e" | southEast="se"
-    | south="s" | southWest="sw" | west="w" | northWest="nw" | center="c"
-    | blank="_";
 
 terminal INT returns ecore::EInt: ('-')?('0'..'9')+;
 terminal ID: ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;

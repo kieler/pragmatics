@@ -26,6 +26,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMLResource;
@@ -94,11 +95,23 @@ public abstract class AbstractEmfTransformer<T extends EObject> implements IGrap
         Map<Object, Object> options = new HashMap<Object, Object>();
         if (settings != null) {
             options.putAll(settings);
-        }        
+        }
         resource.load(source, options);
         EList<EObject> eObjects = resource.getContents();
         if (eObjects.size() == 0) {
-            throw new IllegalStateException("Model not derived");
+            throw new TransformationException("The given input is empty.");
+        }
+        if (!resource.getErrors().isEmpty()) {
+            StringBuilder errorBuilder = new StringBuilder();
+            for (Diagnostic diagnostic : resource.getErrors()) {
+                if (diagnostic.getLine() > 0) {
+                    errorBuilder.append(diagnostic.getLine());
+                    errorBuilder.append(": ");
+                }
+                errorBuilder.append(diagnostic.getMessage());
+                errorBuilder.append("\n");
+            }
+            throw new TransformationException("Errors while reading input:\n" + errorBuilder.toString());
         }
         return (T) eObjects.get(0);
     }

@@ -484,8 +484,11 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
         KNode source = transformNode(sourceName, parent, transData);
         KPort sourcePort = null;
         if (statement.getSourceNode().getPort() != null) {
-            sourcePort = transformPort(statement.getSourceNode().getPort()
-                    .getCompass_pt().getName(), source, transData);
+            String portName = statement.getSourceNode().getPort().getCompass_pt();
+            if (portName == null) {
+                portName = statement.getSourceNode().getPort().getName();
+            }
+            sourcePort = transformPort(portName, source, transData);
         }
         ListIterator<EdgeTarget> targetIter = statement.getEdgeTargets().listIterator();
         while (targetIter.hasNext()) {
@@ -504,8 +507,11 @@ public class DotTransformer extends AbstractEmfTransformer<GraphvizModel> {
                 targetName = edgeTargetNode.getName();
                 target = transformNode(targetName, parent, transData);
                 if (edgeTargetNode.getPort() != null) {
-                    targetPort = transformPort(edgeTargetNode.getPort()
-                            .getCompass_pt().getName(), target, transData);
+                    String portName = edgeTargetNode.getPort().getCompass_pt();
+                    if (portName == null) {
+                        portName = edgeTargetNode.getPort().getName();
+                    }
+                    targetPort = transformPort(portName, target, transData);
                 }
             }
             kedge.setTarget(target);

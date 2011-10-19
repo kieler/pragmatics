@@ -71,13 +71,13 @@ public class DotFactoryImpl extends EFactoryImpl implements DotFactory
       case DotPackage.GRAPHVIZ_MODEL: return createGraphvizModel();
       case DotPackage.GRAPH: return createGraph();
       case DotPackage.STATEMENT: return createStatement();
+      case DotPackage.ATTRIBUTE: return createAttribute();
+      case DotPackage.NODE_STATEMENT: return createNodeStatement();
+      case DotPackage.NODE: return createNode();
       case DotPackage.EDGE_STATEMENT: return createEdgeStatement();
       case DotPackage.EDGE_TARGET: return createEdgeTarget();
-      case DotPackage.NODE_STATEMENT: return createNodeStatement();
       case DotPackage.ATTRIBUTE_STATEMENT: return createAttributeStatement();
       case DotPackage.SUBGRAPH: return createSubgraph();
-      case DotPackage.ATTRIBUTE: return createAttribute();
-      case DotPackage.NODE: return createNode();
       case DotPackage.PORT: return createPort();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
@@ -100,8 +100,6 @@ public class DotFactoryImpl extends EFactoryImpl implements DotFactory
         return createGraphTypeFromString(eDataType, initialValue);
       case DotPackage.ATTRIBUTE_TYPE:
         return createAttributeTypeFromString(eDataType, initialValue);
-      case DotPackage.COMPASS_POINT:
-        return createCompassPointFromString(eDataType, initialValue);
       default:
         throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
@@ -123,8 +121,6 @@ public class DotFactoryImpl extends EFactoryImpl implements DotFactory
         return convertGraphTypeToString(eDataType, instanceValue);
       case DotPackage.ATTRIBUTE_TYPE:
         return convertAttributeTypeToString(eDataType, instanceValue);
-      case DotPackage.COMPASS_POINT:
-        return convertCompassPointToString(eDataType, instanceValue);
       default:
         throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
@@ -168,6 +164,39 @@ public class DotFactoryImpl extends EFactoryImpl implements DotFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public Attribute createAttribute()
+  {
+    AttributeImpl attribute = new AttributeImpl();
+    return attribute;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NodeStatement createNodeStatement()
+  {
+    NodeStatementImpl nodeStatement = new NodeStatementImpl();
+    return nodeStatement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Node createNode()
+  {
+    NodeImpl node = new NodeImpl();
+    return node;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EdgeStatement createEdgeStatement()
   {
     EdgeStatementImpl edgeStatement = new EdgeStatementImpl();
@@ -190,17 +219,6 @@ public class DotFactoryImpl extends EFactoryImpl implements DotFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public NodeStatement createNodeStatement()
-  {
-    NodeStatementImpl nodeStatement = new NodeStatementImpl();
-    return nodeStatement;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public AttributeStatement createAttributeStatement()
   {
     AttributeStatementImpl attributeStatement = new AttributeStatementImpl();
@@ -216,28 +234,6 @@ public class DotFactoryImpl extends EFactoryImpl implements DotFactory
   {
     SubgraphImpl subgraph = new SubgraphImpl();
     return subgraph;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Attribute createAttribute()
-  {
-    AttributeImpl attribute = new AttributeImpl();
-    return attribute;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Node createNode()
-  {
-    NodeImpl node = new NodeImpl();
-    return node;
   }
 
   /**
@@ -313,28 +309,6 @@ public class DotFactoryImpl extends EFactoryImpl implements DotFactory
    * @generated
    */
   public String convertAttributeTypeToString(EDataType eDataType, Object instanceValue)
-  {
-    return instanceValue == null ? null : instanceValue.toString();
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public CompassPoint createCompassPointFromString(EDataType eDataType, String initialValue)
-  {
-    CompassPoint result = CompassPoint.get(initialValue);
-    if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-    return result;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String convertCompassPointToString(EDataType eDataType, Object instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }

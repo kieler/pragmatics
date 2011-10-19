@@ -93,6 +93,21 @@ public class DotAdapterFactory extends AdapterFactoryImpl
         return createStatementAdapter();
       }
       @Override
+      public Adapter caseAttribute(Attribute object)
+      {
+        return createAttributeAdapter();
+      }
+      @Override
+      public Adapter caseNodeStatement(NodeStatement object)
+      {
+        return createNodeStatementAdapter();
+      }
+      @Override
+      public Adapter caseNode(Node object)
+      {
+        return createNodeAdapter();
+      }
+      @Override
       public Adapter caseEdgeStatement(EdgeStatement object)
       {
         return createEdgeStatementAdapter();
@@ -103,11 +118,6 @@ public class DotAdapterFactory extends AdapterFactoryImpl
         return createEdgeTargetAdapter();
       }
       @Override
-      public Adapter caseNodeStatement(NodeStatement object)
-      {
-        return createNodeStatementAdapter();
-      }
-      @Override
       public Adapter caseAttributeStatement(AttributeStatement object)
       {
         return createAttributeStatementAdapter();
@@ -116,16 +126,6 @@ public class DotAdapterFactory extends AdapterFactoryImpl
       public Adapter caseSubgraph(Subgraph object)
       {
         return createSubgraphAdapter();
-      }
-      @Override
-      public Adapter caseAttribute(Attribute object)
-      {
-        return createAttributeAdapter();
-      }
-      @Override
-      public Adapter caseNode(Node object)
-      {
-        return createNodeAdapter();
       }
       @Override
       public Adapter casePort(Port object)
@@ -200,6 +200,51 @@ public class DotAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute <em>Attribute</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute
+   * @generated
+   */
+  public Adapter createAttributeAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement <em>Node Statement</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement
+   * @generated
+   */
+  public Adapter createNodeStatementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.Node <em>Node</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.Node
+   * @generated
+   */
+  public Adapter createNodeAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.EdgeStatement <em>Edge Statement</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -230,21 +275,6 @@ public class DotAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement <em>Node Statement</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement
-   * @generated
-   */
-  public Adapter createNodeStatementAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.AttributeStatement <em>Attribute Statement</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -270,36 +300,6 @@ public class DotAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createSubgraphAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute <em>Attribute</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute
-   * @generated
-   */
-  public Adapter createAttributeAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.Node <em>Node</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.Node
-   * @generated
-   */
-  public Adapter createNodeAdapter()
   {
     return null;
   }

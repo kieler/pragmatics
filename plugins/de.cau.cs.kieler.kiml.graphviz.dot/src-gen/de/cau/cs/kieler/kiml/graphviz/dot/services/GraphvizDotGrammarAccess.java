@@ -41,17 +41,19 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cTypeAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cTypeGraphTypeEnumRuleCall_1_0 = (RuleCall)cTypeAssignment_1.eContents().get(0);
 		private final Assignment cNameAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cNameIDTerminalRuleCall_2_0 = (RuleCall)cNameAssignment_2.eContents().get(0);
+		private final RuleCall cNameDotIDParserRuleCall_2_0 = (RuleCall)cNameAssignment_2.eContents().get(0);
 		private final Keyword cLeftCurlyBracketKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		private final Assignment cStatementsAssignment_4 = (Assignment)cGroup.eContents().get(4);
 		private final RuleCall cStatementsStatementParserRuleCall_4_0 = (RuleCall)cStatementsAssignment_4.eContents().get(0);
 		private final Keyword cRightCurlyBracketKeyword_5 = (Keyword)cGroup.eContents().get(5);
 		
-		//Graph:
-		//	strict?="strict"? type=GraphType name=ID? "{" statements+=Statement* "}";
+		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// *  graph:      [ 'strict' ] ('graph' | 'digraph') [ ID ] '{' stmt_list '}'
+		// * / Graph:
+		//	strict?="strict"? type=GraphType name=DotID? "{" statements+=Statement* "}";
 		public ParserRule getRule() { return rule; }
 
-		//strict?="strict"? type=GraphType name=ID? "{" statements+=Statement* "}"
+		//strict?="strict"? type=GraphType name=DotID? "{" statements+=Statement* "}"
 		public Group getGroup() { return cGroup; }
 
 		//strict?="strict"?
@@ -66,11 +68,11 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		//GraphType
 		public RuleCall getTypeGraphTypeEnumRuleCall_1_0() { return cTypeGraphTypeEnumRuleCall_1_0; }
 
-		//name=ID?
+		//name=DotID?
 		public Assignment getNameAssignment_2() { return cNameAssignment_2; }
 
-		//ID
-		public RuleCall getNameIDTerminalRuleCall_2_0() { return cNameIDTerminalRuleCall_2_0; }
+		//DotID
+		public RuleCall getNameDotIDParserRuleCall_2_0() { return cNameDotIDParserRuleCall_2_0; }
 
 		//"{"
 		public Keyword getLeftCurlyBracketKeyword_3() { return cLeftCurlyBracketKeyword_3; }
@@ -89,40 +91,175 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Statement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
-		private final RuleCall cEdgeStatementParserRuleCall_0_0 = (RuleCall)cAlternatives_0.eContents().get(0);
-		private final RuleCall cNodeStatementParserRuleCall_0_1 = (RuleCall)cAlternatives_0.eContents().get(1);
-		private final RuleCall cAttributeParserRuleCall_0_2 = (RuleCall)cAlternatives_0.eContents().get(2);
-		private final RuleCall cAttributeStatementParserRuleCall_0_3 = (RuleCall)cAlternatives_0.eContents().get(3);
+		private final RuleCall cNodeStatementParserRuleCall_0_0 = (RuleCall)cAlternatives_0.eContents().get(0);
+		private final RuleCall cEdgeStatementParserRuleCall_0_1 = (RuleCall)cAlternatives_0.eContents().get(1);
+		private final RuleCall cAttributeStatementParserRuleCall_0_2 = (RuleCall)cAlternatives_0.eContents().get(2);
+		private final RuleCall cAttributeParserRuleCall_0_3 = (RuleCall)cAlternatives_0.eContents().get(3);
 		private final RuleCall cSubgraphParserRuleCall_0_4 = (RuleCall)cAlternatives_0.eContents().get(4);
 		private final Keyword cSemicolonKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		
-		//Statement:
-		//	(EdgeStatement | NodeStatement | Attribute | AttributeStatement | Subgraph) ";"?;
+		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// *  stmt_list:  [ stmt [ ';' ] [ stmt_list ] ]
+		// *  stmt:       node_stmt | edge_stmt | attr_stmt | ID '=' ID | subgraph
+		// * / Statement:
+		//	(NodeStatement | EdgeStatement | AttributeStatement | Attribute | Subgraph) ";"?;
 		public ParserRule getRule() { return rule; }
 
-		//(EdgeStatement | NodeStatement | Attribute | AttributeStatement | Subgraph) ";"?
+		//(NodeStatement | EdgeStatement | AttributeStatement | Attribute | Subgraph) ";"?
 		public Group getGroup() { return cGroup; }
 
-		//EdgeStatement | NodeStatement | Attribute | AttributeStatement | Subgraph
+		//NodeStatement | EdgeStatement | AttributeStatement | Attribute | Subgraph
 		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 
-		//EdgeStatement
-		public RuleCall getEdgeStatementParserRuleCall_0_0() { return cEdgeStatementParserRuleCall_0_0; }
-
 		//NodeStatement
-		public RuleCall getNodeStatementParserRuleCall_0_1() { return cNodeStatementParserRuleCall_0_1; }
+		public RuleCall getNodeStatementParserRuleCall_0_0() { return cNodeStatementParserRuleCall_0_0; }
 
-		//Attribute
-		public RuleCall getAttributeParserRuleCall_0_2() { return cAttributeParserRuleCall_0_2; }
+		//EdgeStatement
+		public RuleCall getEdgeStatementParserRuleCall_0_1() { return cEdgeStatementParserRuleCall_0_1; }
 
 		//AttributeStatement
-		public RuleCall getAttributeStatementParserRuleCall_0_3() { return cAttributeStatementParserRuleCall_0_3; }
+		public RuleCall getAttributeStatementParserRuleCall_0_2() { return cAttributeStatementParserRuleCall_0_2; }
+
+		//Attribute
+		public RuleCall getAttributeParserRuleCall_0_3() { return cAttributeParserRuleCall_0_3; }
 
 		//Subgraph
 		public RuleCall getSubgraphParserRuleCall_0_4() { return cSubgraphParserRuleCall_0_4; }
 
 		//";"?
 		public Keyword getSemicolonKeyword_1() { return cSemicolonKeyword_1; }
+	}
+
+	public class AttributeElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Attribute");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cNameDotIDParserRuleCall_0_0 = (RuleCall)cNameAssignment_0.eContents().get(0);
+		private final Keyword cEqualsSignKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Assignment cValueAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cValueDotIDParserRuleCall_2_0 = (RuleCall)cValueAssignment_2.eContents().get(0);
+		
+		//Attribute:
+		//	name=DotID "=" value=DotID;
+		public ParserRule getRule() { return rule; }
+
+		//name=DotID "=" value=DotID
+		public Group getGroup() { return cGroup; }
+
+		//name=DotID
+		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
+
+		//DotID
+		public RuleCall getNameDotIDParserRuleCall_0_0() { return cNameDotIDParserRuleCall_0_0; }
+
+		//"="
+		public Keyword getEqualsSignKeyword_1() { return cEqualsSignKeyword_1; }
+
+		//value=DotID
+		public Assignment getValueAssignment_2() { return cValueAssignment_2; }
+
+		//DotID
+		public RuleCall getValueDotIDParserRuleCall_2_0() { return cValueDotIDParserRuleCall_2_0; }
+	}
+
+	public class NodeStatementElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "NodeStatement");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cNodeAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cNodeNodeParserRuleCall_0_0 = (RuleCall)cNodeAssignment_0.eContents().get(0);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Keyword cLeftSquareBracketKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Group cGroup_1_1 = (Group)cGroup_1.eContents().get(1);
+		private final Assignment cAttributesAssignment_1_1_0 = (Assignment)cGroup_1_1.eContents().get(0);
+		private final RuleCall cAttributesListAttributeParserRuleCall_1_1_0_0 = (RuleCall)cAttributesAssignment_1_1_0.eContents().get(0);
+		private final Group cGroup_1_1_1 = (Group)cGroup_1_1.eContents().get(1);
+		private final Keyword cCommaKeyword_1_1_1_0 = (Keyword)cGroup_1_1_1.eContents().get(0);
+		private final Assignment cAttributesAssignment_1_1_1_1 = (Assignment)cGroup_1_1_1.eContents().get(1);
+		private final RuleCall cAttributesListAttributeParserRuleCall_1_1_1_1_0 = (RuleCall)cAttributesAssignment_1_1_1_1.eContents().get(0);
+		private final Keyword cRightSquareBracketKeyword_1_2 = (Keyword)cGroup_1.eContents().get(2);
+		
+		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// *  node_stmt:  node_id [ attr_list ]
+		// * / NodeStatement:
+		//	node=Node ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
+		public ParserRule getRule() { return rule; }
+
+		//node=Node ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?
+		public Group getGroup() { return cGroup; }
+
+		//node=Node
+		public Assignment getNodeAssignment_0() { return cNodeAssignment_0; }
+
+		//Node
+		public RuleCall getNodeNodeParserRuleCall_0_0() { return cNodeNodeParserRuleCall_0_0; }
+
+		//("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?
+		public Group getGroup_1() { return cGroup_1; }
+
+		//"["
+		public Keyword getLeftSquareBracketKeyword_1_0() { return cLeftSquareBracketKeyword_1_0; }
+
+		//(attributes+=ListAttribute (","? attributes+=ListAttribute)*)?
+		public Group getGroup_1_1() { return cGroup_1_1; }
+
+		//attributes+=ListAttribute
+		public Assignment getAttributesAssignment_1_1_0() { return cAttributesAssignment_1_1_0; }
+
+		//ListAttribute
+		public RuleCall getAttributesListAttributeParserRuleCall_1_1_0_0() { return cAttributesListAttributeParserRuleCall_1_1_0_0; }
+
+		//(","? attributes+=ListAttribute)*
+		public Group getGroup_1_1_1() { return cGroup_1_1_1; }
+
+		//","?
+		public Keyword getCommaKeyword_1_1_1_0() { return cCommaKeyword_1_1_1_0; }
+
+		//attributes+=ListAttribute
+		public Assignment getAttributesAssignment_1_1_1_1() { return cAttributesAssignment_1_1_1_1; }
+
+		//ListAttribute
+		public RuleCall getAttributesListAttributeParserRuleCall_1_1_1_1_0() { return cAttributesListAttributeParserRuleCall_1_1_1_1_0; }
+
+		//"]"
+		public Keyword getRightSquareBracketKeyword_1_2() { return cRightSquareBracketKeyword_1_2; }
+	}
+
+	public class NodeElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Node");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cNameDotIDParserRuleCall_0_0 = (RuleCall)cNameAssignment_0.eContents().get(0);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Keyword cColonKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cPortAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cPortPortParserRuleCall_1_1_0 = (RuleCall)cPortAssignment_1_1.eContents().get(0);
+		
+		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// *  node_id:    ID [ port ]
+		// * / Node:
+		//	name=DotID (":" port=Port)?;
+		public ParserRule getRule() { return rule; }
+
+		//name=DotID (":" port=Port)?
+		public Group getGroup() { return cGroup; }
+
+		//name=DotID
+		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
+
+		//DotID
+		public RuleCall getNameDotIDParserRuleCall_0_0() { return cNameDotIDParserRuleCall_0_0; }
+
+		//(":" port=Port)?
+		public Group getGroup_1() { return cGroup_1; }
+
+		//":"
+		public Keyword getColonKeyword_1_0() { return cColonKeyword_1_0; }
+
+		//port=Port
+		public Assignment getPortAssignment_1_1() { return cPortAssignment_1_1; }
+
+		//Port
+		public RuleCall getPortPortParserRuleCall_1_1_0() { return cPortPortParserRuleCall_1_1_0; }
 	}
 
 	public class EdgeStatementElements extends AbstractParserRuleElementFinder {
@@ -143,7 +280,9 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cAttributesListAttributeParserRuleCall_2_1_1_1_0 = (RuleCall)cAttributesAssignment_2_1_1_1.eContents().get(0);
 		private final Keyword cRightSquareBracketKeyword_2_2 = (Keyword)cGroup_2.eContents().get(2);
 		
-		//EdgeStatement:
+		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// *  edge_stmt:  (node_id | subgraph) edgeRHS [ attr_list ]
+		// * / EdgeStatement:
 		//	sourceNode=Node edgeTargets+=EdgeTarget+ ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
 		public ParserRule getRule() { return rule; }
 
@@ -204,7 +343,9 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cTargetnodeAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
 		private final RuleCall cTargetnodeNodeParserRuleCall_1_1_0 = (RuleCall)cTargetnodeAssignment_1_1.eContents().get(0);
 		
-		//EdgeTarget:
+		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// *  edgeRHS:    edgeop (node_id | subgraph) [ edgeRHS ]
+		// * / EdgeTarget:
 		//	operator=EdgeOperator (targetSubgraph=Subgraph | targetnode=Node);
 		public ParserRule getRule() { return rule; }
 
@@ -233,66 +374,6 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getTargetnodeNodeParserRuleCall_1_1_0() { return cTargetnodeNodeParserRuleCall_1_1_0; }
 	}
 
-	public class NodeStatementElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "NodeStatement");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cNodeAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cNodeNodeParserRuleCall_0_0 = (RuleCall)cNodeAssignment_0.eContents().get(0);
-		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Keyword cLeftSquareBracketKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final Group cGroup_1_1 = (Group)cGroup_1.eContents().get(1);
-		private final Assignment cAttributesAssignment_1_1_0 = (Assignment)cGroup_1_1.eContents().get(0);
-		private final RuleCall cAttributesListAttributeParserRuleCall_1_1_0_0 = (RuleCall)cAttributesAssignment_1_1_0.eContents().get(0);
-		private final Group cGroup_1_1_1 = (Group)cGroup_1_1.eContents().get(1);
-		private final Keyword cCommaKeyword_1_1_1_0 = (Keyword)cGroup_1_1_1.eContents().get(0);
-		private final Assignment cAttributesAssignment_1_1_1_1 = (Assignment)cGroup_1_1_1.eContents().get(1);
-		private final RuleCall cAttributesListAttributeParserRuleCall_1_1_1_1_0 = (RuleCall)cAttributesAssignment_1_1_1_1.eContents().get(0);
-		private final Keyword cRightSquareBracketKeyword_1_2 = (Keyword)cGroup_1.eContents().get(2);
-		
-		//NodeStatement:
-		//	node=Node ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
-		public ParserRule getRule() { return rule; }
-
-		//node=Node ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?
-		public Group getGroup() { return cGroup; }
-
-		//node=Node
-		public Assignment getNodeAssignment_0() { return cNodeAssignment_0; }
-
-		//Node
-		public RuleCall getNodeNodeParserRuleCall_0_0() { return cNodeNodeParserRuleCall_0_0; }
-
-		//("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?
-		public Group getGroup_1() { return cGroup_1; }
-
-		//"["
-		public Keyword getLeftSquareBracketKeyword_1_0() { return cLeftSquareBracketKeyword_1_0; }
-
-		//(attributes+=ListAttribute (","? attributes+=ListAttribute)*)?
-		public Group getGroup_1_1() { return cGroup_1_1; }
-
-		//attributes+=ListAttribute
-		public Assignment getAttributesAssignment_1_1_0() { return cAttributesAssignment_1_1_0; }
-
-		//ListAttribute
-		public RuleCall getAttributesListAttributeParserRuleCall_1_1_0_0() { return cAttributesListAttributeParserRuleCall_1_1_0_0; }
-
-		//(","? attributes+=ListAttribute)*
-		public Group getGroup_1_1_1() { return cGroup_1_1_1; }
-
-		//","?
-		public Keyword getCommaKeyword_1_1_1_0() { return cCommaKeyword_1_1_1_0; }
-
-		//attributes+=ListAttribute
-		public Assignment getAttributesAssignment_1_1_1_1() { return cAttributesAssignment_1_1_1_1; }
-
-		//ListAttribute
-		public RuleCall getAttributesListAttributeParserRuleCall_1_1_1_1_0() { return cAttributesListAttributeParserRuleCall_1_1_1_1_0; }
-
-		//"]"
-		public Keyword getRightSquareBracketKeyword_1_2() { return cRightSquareBracketKeyword_1_2; }
-	}
-
 	public class AttributeStatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "AttributeStatement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -308,7 +389,9 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cAttributesListAttributeParserRuleCall_2_1_1_0 = (RuleCall)cAttributesAssignment_2_1_1.eContents().get(0);
 		private final Keyword cRightSquareBracketKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
-		//AttributeStatement:
+		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// *  attr_stmt:  ('graph' | 'node' | 'edge') attr_list
+		// * / AttributeStatement:
 		//	type=AttributeType "[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]";
 		public ParserRule getRule() { return rule; }
 
@@ -361,7 +444,9 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cStatementsStatementParserRuleCall_4_0 = (RuleCall)cStatementsAssignment_4.eContents().get(0);
 		private final Keyword cRightCurlyBracketKeyword_5 = (Keyword)cGroup.eContents().get(5);
 		
-		//Subgraph:
+		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// *  subgraph:   [ 'subgraph' [ ID ] ] '{' stmt_list '}'
+		// * / Subgraph:
 		//	{Subgraph} "subgraph" name=ID? "{" statements+=Statement* "}";
 		public ParserRule getRule() { return rule; }
 
@@ -393,38 +478,6 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getRightCurlyBracketKeyword_5() { return cRightCurlyBracketKeyword_5; }
 	}
 
-	public class AttributeElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Attribute");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cNameDotIDParserRuleCall_0_0 = (RuleCall)cNameAssignment_0.eContents().get(0);
-		private final Keyword cEqualsSignKeyword_1 = (Keyword)cGroup.eContents().get(1);
-		private final Assignment cValueAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cValueDotIDParserRuleCall_2_0 = (RuleCall)cValueAssignment_2.eContents().get(0);
-		
-		//Attribute:
-		//	name=DotID "=" value=DotID;
-		public ParserRule getRule() { return rule; }
-
-		//name=DotID "=" value=DotID
-		public Group getGroup() { return cGroup; }
-
-		//name=DotID
-		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
-
-		//DotID
-		public RuleCall getNameDotIDParserRuleCall_0_0() { return cNameDotIDParserRuleCall_0_0; }
-
-		//"="
-		public Keyword getEqualsSignKeyword_1() { return cEqualsSignKeyword_1; }
-
-		//value=DotID
-		public Assignment getValueAssignment_2() { return cValueAssignment_2; }
-
-		//DotID
-		public RuleCall getValueDotIDParserRuleCall_2_0() { return cValueDotIDParserRuleCall_2_0; }
-	}
-
 	public class ListAttributeElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ListAttribute");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -435,7 +488,10 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cValueAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cValueDotIDParserRuleCall_1_1_0 = (RuleCall)cValueAssignment_1_1.eContents().get(0);
 		
-		//ListAttribute returns Attribute:
+		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// *  attr_list:  '[' [ a_list ] ']' [ attr_list ]
+		// *  a_list:     ID [ '=' ID ] [ ',' ] [ a_list ]
+		// * / ListAttribute returns Attribute:
 		//	name=DotID ("=" value=DotID)?;
 		public ParserRule getRule() { return rule; }
 
@@ -461,21 +517,24 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getValueDotIDParserRuleCall_1_1_0() { return cValueDotIDParserRuleCall_1_1_0; }
 	}
 
-	public class NodeElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Node");
+	public class PortElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Port");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final RuleCall cNameDotIDParserRuleCall_0_0 = (RuleCall)cNameAssignment_0.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
 		private final Keyword cColonKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final Assignment cPortAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cPortPortParserRuleCall_1_1_0 = (RuleCall)cPortAssignment_1_1.eContents().get(0);
+		private final Assignment cCompass_ptAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cCompass_ptIDTerminalRuleCall_1_1_0 = (RuleCall)cCompass_ptAssignment_1_1.eContents().get(0);
 		
-		//Node:
-		//	name=DotID (":" port=Port)?;
+		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// *  port:       ':' ID [ ':' compass_pt ] | ':' compass_pt
+		// *  compass_pt: (n | ne | e | se | s | sw | w | nw | c | _)
+		// * / Port:
+		//	name=DotID (":" compass_pt=ID)?;
 		public ParserRule getRule() { return rule; }
 
-		//name=DotID (":" port=Port)?
+		//name=DotID (":" compass_pt=ID)?
 		public Group getGroup() { return cGroup; }
 
 		//name=DotID
@@ -484,65 +543,17 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		//DotID
 		public RuleCall getNameDotIDParserRuleCall_0_0() { return cNameDotIDParserRuleCall_0_0; }
 
-		//(":" port=Port)?
+		//(":" compass_pt=ID)?
 		public Group getGroup_1() { return cGroup_1; }
 
 		//":"
 		public Keyword getColonKeyword_1_0() { return cColonKeyword_1_0; }
 
-		//port=Port
-		public Assignment getPortAssignment_1_1() { return cPortAssignment_1_1; }
+		//compass_pt=ID
+		public Assignment getCompass_ptAssignment_1_1() { return cCompass_ptAssignment_1_1; }
 
-		//Port
-		public RuleCall getPortPortParserRuleCall_1_1_0() { return cPortPortParserRuleCall_1_1_0; }
-	}
-
-	public class PortElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Port");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
-		private final Assignment cNameAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
-		private final RuleCall cNameDotIDParserRuleCall_0_0_0 = (RuleCall)cNameAssignment_0_0.eContents().get(0);
-		private final Group cGroup_0_1 = (Group)cGroup_0.eContents().get(1);
-		private final Keyword cColonKeyword_0_1_0 = (Keyword)cGroup_0_1.eContents().get(0);
-		private final Assignment cCompass_ptAssignment_0_1_1 = (Assignment)cGroup_0_1.eContents().get(1);
-		private final RuleCall cCompass_ptCompassPointEnumRuleCall_0_1_1_0 = (RuleCall)cCompass_ptAssignment_0_1_1.eContents().get(0);
-		private final Assignment cCompass_ptAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
-		private final RuleCall cCompass_ptCompassPointEnumRuleCall_1_0 = (RuleCall)cCompass_ptAssignment_1.eContents().get(0);
-		
-		//Port:
-		//	name=DotID (":" compass_pt=CompassPoint)? | compass_pt=CompassPoint;
-		public ParserRule getRule() { return rule; }
-
-		//name=DotID (":" compass_pt=CompassPoint)? | compass_pt=CompassPoint
-		public Alternatives getAlternatives() { return cAlternatives; }
-
-		//name=DotID (":" compass_pt=CompassPoint)?
-		public Group getGroup_0() { return cGroup_0; }
-
-		//name=DotID
-		public Assignment getNameAssignment_0_0() { return cNameAssignment_0_0; }
-
-		//DotID
-		public RuleCall getNameDotIDParserRuleCall_0_0_0() { return cNameDotIDParserRuleCall_0_0_0; }
-
-		//(":" compass_pt=CompassPoint)?
-		public Group getGroup_0_1() { return cGroup_0_1; }
-
-		//":"
-		public Keyword getColonKeyword_0_1_0() { return cColonKeyword_0_1_0; }
-
-		//compass_pt=CompassPoint
-		public Assignment getCompass_ptAssignment_0_1_1() { return cCompass_ptAssignment_0_1_1; }
-
-		//CompassPoint
-		public RuleCall getCompass_ptCompassPointEnumRuleCall_0_1_1_0() { return cCompass_ptCompassPointEnumRuleCall_0_1_1_0; }
-
-		//compass_pt=CompassPoint
-		public Assignment getCompass_ptAssignment_1() { return cCompass_ptAssignment_1; }
-
-		//CompassPoint
-		public RuleCall getCompass_ptCompassPointEnumRuleCall_1_0() { return cCompass_ptCompassPointEnumRuleCall_1_0; }
+		//ID
+		public RuleCall getCompass_ptIDTerminalRuleCall_1_1_0() { return cCompass_ptIDTerminalRuleCall_1_1_0; }
 	}
 
 	public class DotIDElements extends AbstractParserRuleElementFinder {
@@ -553,7 +564,14 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cFLOATTerminalRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		private final RuleCall cSTRINGTerminalRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
 		
-		//DotID:
+		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// *  An ID is one of the following:
+		// *    - Any string of alphabetic ([a-zA-Z'200-'377]) characters, underscores
+		// *      ('_') or digits ([0-9]), not beginning with a digit;
+		// *    - a numeral [-]?(.[0-9]+ | [0-9]+(.[0-9]*)? );
+		// *    - any double-quoted string ("...") possibly containing escaped quotes ('");
+		// *    - an HTML string (<...>). 
+		// * / DotID:
 		//	ID | INT | FLOAT | STRING;
 		public ParserRule getRule() { return rule; }
 
@@ -665,118 +683,23 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		//"edge"
 		public Keyword getEdgeEdgeKeyword_2_0() { return cEdgeEdgeKeyword_2_0; }
 	}
-
-	public class CompassPointElements extends AbstractEnumRuleElementFinder {
-		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "CompassPoint");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final EnumLiteralDeclaration cNorthEnumLiteralDeclaration_0 = (EnumLiteralDeclaration)cAlternatives.eContents().get(0);
-		private final Keyword cNorthNKeyword_0_0 = (Keyword)cNorthEnumLiteralDeclaration_0.eContents().get(0);
-		private final EnumLiteralDeclaration cNorthEastEnumLiteralDeclaration_1 = (EnumLiteralDeclaration)cAlternatives.eContents().get(1);
-		private final Keyword cNorthEastNeKeyword_1_0 = (Keyword)cNorthEastEnumLiteralDeclaration_1.eContents().get(0);
-		private final EnumLiteralDeclaration cEastEnumLiteralDeclaration_2 = (EnumLiteralDeclaration)cAlternatives.eContents().get(2);
-		private final Keyword cEastEKeyword_2_0 = (Keyword)cEastEnumLiteralDeclaration_2.eContents().get(0);
-		private final EnumLiteralDeclaration cSouthEastEnumLiteralDeclaration_3 = (EnumLiteralDeclaration)cAlternatives.eContents().get(3);
-		private final Keyword cSouthEastSeKeyword_3_0 = (Keyword)cSouthEastEnumLiteralDeclaration_3.eContents().get(0);
-		private final EnumLiteralDeclaration cSouthEnumLiteralDeclaration_4 = (EnumLiteralDeclaration)cAlternatives.eContents().get(4);
-		private final Keyword cSouthSKeyword_4_0 = (Keyword)cSouthEnumLiteralDeclaration_4.eContents().get(0);
-		private final EnumLiteralDeclaration cSouthWestEnumLiteralDeclaration_5 = (EnumLiteralDeclaration)cAlternatives.eContents().get(5);
-		private final Keyword cSouthWestSwKeyword_5_0 = (Keyword)cSouthWestEnumLiteralDeclaration_5.eContents().get(0);
-		private final EnumLiteralDeclaration cWestEnumLiteralDeclaration_6 = (EnumLiteralDeclaration)cAlternatives.eContents().get(6);
-		private final Keyword cWestWKeyword_6_0 = (Keyword)cWestEnumLiteralDeclaration_6.eContents().get(0);
-		private final EnumLiteralDeclaration cNorthWestEnumLiteralDeclaration_7 = (EnumLiteralDeclaration)cAlternatives.eContents().get(7);
-		private final Keyword cNorthWestNwKeyword_7_0 = (Keyword)cNorthWestEnumLiteralDeclaration_7.eContents().get(0);
-		private final EnumLiteralDeclaration cCenterEnumLiteralDeclaration_8 = (EnumLiteralDeclaration)cAlternatives.eContents().get(8);
-		private final Keyword cCenterCKeyword_8_0 = (Keyword)cCenterEnumLiteralDeclaration_8.eContents().get(0);
-		private final EnumLiteralDeclaration cBlankEnumLiteralDeclaration_9 = (EnumLiteralDeclaration)cAlternatives.eContents().get(9);
-		private final Keyword cBlank_Keyword_9_0 = (Keyword)cBlankEnumLiteralDeclaration_9.eContents().get(0);
-		
-		//enum CompassPoint:
-		//	north="n" | northEast="ne" | east="e" | southEast="se" | south="s" | southWest="sw" | west="w" | northWest="nw" |
-		//	center="c" | blank="_";
-		public EnumRule getRule() { return rule; }
-
-		//north="n" | northEast="ne" | east="e" | southEast="se" | south="s" | southWest="sw" | west="w" | northWest="nw" |
-		//center="c" | blank="_"
-		public Alternatives getAlternatives() { return cAlternatives; }
-
-		//north="n"
-		public EnumLiteralDeclaration getNorthEnumLiteralDeclaration_0() { return cNorthEnumLiteralDeclaration_0; }
-
-		//"n"
-		public Keyword getNorthNKeyword_0_0() { return cNorthNKeyword_0_0; }
-
-		//northEast="ne"
-		public EnumLiteralDeclaration getNorthEastEnumLiteralDeclaration_1() { return cNorthEastEnumLiteralDeclaration_1; }
-
-		//"ne"
-		public Keyword getNorthEastNeKeyword_1_0() { return cNorthEastNeKeyword_1_0; }
-
-		//east="e"
-		public EnumLiteralDeclaration getEastEnumLiteralDeclaration_2() { return cEastEnumLiteralDeclaration_2; }
-
-		//"e"
-		public Keyword getEastEKeyword_2_0() { return cEastEKeyword_2_0; }
-
-		//southEast="se"
-		public EnumLiteralDeclaration getSouthEastEnumLiteralDeclaration_3() { return cSouthEastEnumLiteralDeclaration_3; }
-
-		//"se"
-		public Keyword getSouthEastSeKeyword_3_0() { return cSouthEastSeKeyword_3_0; }
-
-		//south="s"
-		public EnumLiteralDeclaration getSouthEnumLiteralDeclaration_4() { return cSouthEnumLiteralDeclaration_4; }
-
-		//"s"
-		public Keyword getSouthSKeyword_4_0() { return cSouthSKeyword_4_0; }
-
-		//southWest="sw"
-		public EnumLiteralDeclaration getSouthWestEnumLiteralDeclaration_5() { return cSouthWestEnumLiteralDeclaration_5; }
-
-		//"sw"
-		public Keyword getSouthWestSwKeyword_5_0() { return cSouthWestSwKeyword_5_0; }
-
-		//west="w"
-		public EnumLiteralDeclaration getWestEnumLiteralDeclaration_6() { return cWestEnumLiteralDeclaration_6; }
-
-		//"w"
-		public Keyword getWestWKeyword_6_0() { return cWestWKeyword_6_0; }
-
-		//northWest="nw"
-		public EnumLiteralDeclaration getNorthWestEnumLiteralDeclaration_7() { return cNorthWestEnumLiteralDeclaration_7; }
-
-		//"nw"
-		public Keyword getNorthWestNwKeyword_7_0() { return cNorthWestNwKeyword_7_0; }
-
-		//center="c"
-		public EnumLiteralDeclaration getCenterEnumLiteralDeclaration_8() { return cCenterEnumLiteralDeclaration_8; }
-
-		//"c"
-		public Keyword getCenterCKeyword_8_0() { return cCenterCKeyword_8_0; }
-
-		//blank="_"
-		public EnumLiteralDeclaration getBlankEnumLiteralDeclaration_9() { return cBlankEnumLiteralDeclaration_9; }
-
-		//"_"
-		public Keyword getBlank_Keyword_9_0() { return cBlank_Keyword_9_0; }
-	}
 	
 	private GraphvizModelElements pGraphvizModel;
 	private GraphElements pGraph;
 	private StatementElements pStatement;
+	private AttributeElements pAttribute;
+	private NodeStatementElements pNodeStatement;
+	private NodeElements pNode;
 	private EdgeStatementElements pEdgeStatement;
 	private EdgeTargetElements pEdgeTarget;
-	private NodeStatementElements pNodeStatement;
 	private AttributeStatementElements pAttributeStatement;
 	private SubgraphElements pSubgraph;
-	private AttributeElements pAttribute;
 	private ListAttributeElements pListAttribute;
-	private NodeElements pNode;
 	private PortElements pPort;
 	private DotIDElements pDotID;
 	private EdgeOperatorElements unknownRuleEdgeOperator;
 	private GraphTypeElements unknownRuleGraphType;
 	private AttributeTypeElements unknownRuleAttributeType;
-	private CompassPointElements unknownRuleCompassPoint;
 	private TerminalRule tINT;
 	private TerminalRule tID;
 	private TerminalRule tFLOAT;
@@ -814,8 +737,10 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		return getGraphvizModelAccess().getRule();
 	}
 
-	//Graph:
-	//	strict?="strict"? type=GraphType name=ID? "{" statements+=Statement* "}";
+	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// *  graph:      [ 'strict' ] ('graph' | 'digraph') [ ID ] '{' stmt_list '}'
+	// * / Graph:
+	//	strict?="strict"? type=GraphType name=DotID? "{" statements+=Statement* "}";
 	public GraphElements getGraphAccess() {
 		return (pGraph != null) ? pGraph : (pGraph = new GraphElements());
 	}
@@ -824,64 +749,17 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		return getGraphAccess().getRule();
 	}
 
-	//Statement:
-	//	(EdgeStatement | NodeStatement | Attribute | AttributeStatement | Subgraph) ";"?;
+	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// *  stmt_list:  [ stmt [ ';' ] [ stmt_list ] ]
+	// *  stmt:       node_stmt | edge_stmt | attr_stmt | ID '=' ID | subgraph
+	// * / Statement:
+	//	(NodeStatement | EdgeStatement | AttributeStatement | Attribute | Subgraph) ";"?;
 	public StatementElements getStatementAccess() {
 		return (pStatement != null) ? pStatement : (pStatement = new StatementElements());
 	}
 	
 	public ParserRule getStatementRule() {
 		return getStatementAccess().getRule();
-	}
-
-	//EdgeStatement:
-	//	sourceNode=Node edgeTargets+=EdgeTarget+ ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
-	public EdgeStatementElements getEdgeStatementAccess() {
-		return (pEdgeStatement != null) ? pEdgeStatement : (pEdgeStatement = new EdgeStatementElements());
-	}
-	
-	public ParserRule getEdgeStatementRule() {
-		return getEdgeStatementAccess().getRule();
-	}
-
-	//EdgeTarget:
-	//	operator=EdgeOperator (targetSubgraph=Subgraph | targetnode=Node);
-	public EdgeTargetElements getEdgeTargetAccess() {
-		return (pEdgeTarget != null) ? pEdgeTarget : (pEdgeTarget = new EdgeTargetElements());
-	}
-	
-	public ParserRule getEdgeTargetRule() {
-		return getEdgeTargetAccess().getRule();
-	}
-
-	//NodeStatement:
-	//	node=Node ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
-	public NodeStatementElements getNodeStatementAccess() {
-		return (pNodeStatement != null) ? pNodeStatement : (pNodeStatement = new NodeStatementElements());
-	}
-	
-	public ParserRule getNodeStatementRule() {
-		return getNodeStatementAccess().getRule();
-	}
-
-	//AttributeStatement:
-	//	type=AttributeType "[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]";
-	public AttributeStatementElements getAttributeStatementAccess() {
-		return (pAttributeStatement != null) ? pAttributeStatement : (pAttributeStatement = new AttributeStatementElements());
-	}
-	
-	public ParserRule getAttributeStatementRule() {
-		return getAttributeStatementAccess().getRule();
-	}
-
-	//Subgraph:
-	//	{Subgraph} "subgraph" name=ID? "{" statements+=Statement* "}";
-	public SubgraphElements getSubgraphAccess() {
-		return (pSubgraph != null) ? pSubgraph : (pSubgraph = new SubgraphElements());
-	}
-	
-	public ParserRule getSubgraphRule() {
-		return getSubgraphAccess().getRule();
 	}
 
 	//Attribute:
@@ -894,17 +772,21 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		return getAttributeAccess().getRule();
 	}
 
-	//ListAttribute returns Attribute:
-	//	name=DotID ("=" value=DotID)?;
-	public ListAttributeElements getListAttributeAccess() {
-		return (pListAttribute != null) ? pListAttribute : (pListAttribute = new ListAttributeElements());
+	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// *  node_stmt:  node_id [ attr_list ]
+	// * / NodeStatement:
+	//	node=Node ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
+	public NodeStatementElements getNodeStatementAccess() {
+		return (pNodeStatement != null) ? pNodeStatement : (pNodeStatement = new NodeStatementElements());
 	}
 	
-	public ParserRule getListAttributeRule() {
-		return getListAttributeAccess().getRule();
+	public ParserRule getNodeStatementRule() {
+		return getNodeStatementAccess().getRule();
 	}
 
-	//Node:
+	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// *  node_id:    ID [ port ]
+	// * / Node:
 	//	name=DotID (":" port=Port)?;
 	public NodeElements getNodeAccess() {
 		return (pNode != null) ? pNode : (pNode = new NodeElements());
@@ -914,8 +796,72 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		return getNodeAccess().getRule();
 	}
 
-	//Port:
-	//	name=DotID (":" compass_pt=CompassPoint)? | compass_pt=CompassPoint;
+	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// *  edge_stmt:  (node_id | subgraph) edgeRHS [ attr_list ]
+	// * / EdgeStatement:
+	//	sourceNode=Node edgeTargets+=EdgeTarget+ ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
+	public EdgeStatementElements getEdgeStatementAccess() {
+		return (pEdgeStatement != null) ? pEdgeStatement : (pEdgeStatement = new EdgeStatementElements());
+	}
+	
+	public ParserRule getEdgeStatementRule() {
+		return getEdgeStatementAccess().getRule();
+	}
+
+	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// *  edgeRHS:    edgeop (node_id | subgraph) [ edgeRHS ]
+	// * / EdgeTarget:
+	//	operator=EdgeOperator (targetSubgraph=Subgraph | targetnode=Node);
+	public EdgeTargetElements getEdgeTargetAccess() {
+		return (pEdgeTarget != null) ? pEdgeTarget : (pEdgeTarget = new EdgeTargetElements());
+	}
+	
+	public ParserRule getEdgeTargetRule() {
+		return getEdgeTargetAccess().getRule();
+	}
+
+	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// *  attr_stmt:  ('graph' | 'node' | 'edge') attr_list
+	// * / AttributeStatement:
+	//	type=AttributeType "[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]";
+	public AttributeStatementElements getAttributeStatementAccess() {
+		return (pAttributeStatement != null) ? pAttributeStatement : (pAttributeStatement = new AttributeStatementElements());
+	}
+	
+	public ParserRule getAttributeStatementRule() {
+		return getAttributeStatementAccess().getRule();
+	}
+
+	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// *  subgraph:   [ 'subgraph' [ ID ] ] '{' stmt_list '}'
+	// * / Subgraph:
+	//	{Subgraph} "subgraph" name=ID? "{" statements+=Statement* "}";
+	public SubgraphElements getSubgraphAccess() {
+		return (pSubgraph != null) ? pSubgraph : (pSubgraph = new SubgraphElements());
+	}
+	
+	public ParserRule getSubgraphRule() {
+		return getSubgraphAccess().getRule();
+	}
+
+	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// *  attr_list:  '[' [ a_list ] ']' [ attr_list ]
+	// *  a_list:     ID [ '=' ID ] [ ',' ] [ a_list ]
+	// * / ListAttribute returns Attribute:
+	//	name=DotID ("=" value=DotID)?;
+	public ListAttributeElements getListAttributeAccess() {
+		return (pListAttribute != null) ? pListAttribute : (pListAttribute = new ListAttributeElements());
+	}
+	
+	public ParserRule getListAttributeRule() {
+		return getListAttributeAccess().getRule();
+	}
+
+	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// *  port:       ':' ID [ ':' compass_pt ] | ':' compass_pt
+	// *  compass_pt: (n | ne | e | se | s | sw | w | nw | c | _)
+	// * / Port:
+	//	name=DotID (":" compass_pt=ID)?;
 	public PortElements getPortAccess() {
 		return (pPort != null) ? pPort : (pPort = new PortElements());
 	}
@@ -924,7 +870,14 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		return getPortAccess().getRule();
 	}
 
-	//DotID:
+	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// *  An ID is one of the following:
+	// *    - Any string of alphabetic ([a-zA-Z'200-'377]) characters, underscores
+	// *      ('_') or digits ([0-9]), not beginning with a digit;
+	// *    - a numeral [-]?(.[0-9]+ | [0-9]+(.[0-9]*)? );
+	// *    - any double-quoted string ("...") possibly containing escaped quotes ('");
+	// *    - an HTML string (<...>). 
+	// * / DotID:
 	//	ID | INT | FLOAT | STRING;
 	public DotIDElements getDotIDAccess() {
 		return (pDotID != null) ? pDotID : (pDotID = new DotIDElements());
@@ -962,17 +915,6 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public EnumRule getAttributeTypeRule() {
 		return getAttributeTypeAccess().getRule();
-	}
-
-	//enum CompassPoint:
-	//	north="n" | northEast="ne" | east="e" | southEast="se" | south="s" | southWest="sw" | west="w" | northWest="nw" |
-	//	center="c" | blank="_";
-	public CompassPointElements getCompassPointAccess() {
-		return (unknownRuleCompassPoint != null) ? unknownRuleCompassPoint : (unknownRuleCompassPoint = new CompassPointElements());
-	}
-	
-	public EnumRule getCompassPointRule() {
-		return getCompassPointAccess().getRule();
 	}
 
 	//terminal INT returns ecore::EInt:

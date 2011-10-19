@@ -96,6 +96,29 @@ public class DotSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case DotPackage.ATTRIBUTE:
+      {
+        Attribute attribute = (Attribute)theEObject;
+        T result = caseAttribute(attribute);
+        if (result == null) result = caseStatement(attribute);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case DotPackage.NODE_STATEMENT:
+      {
+        NodeStatement nodeStatement = (NodeStatement)theEObject;
+        T result = caseNodeStatement(nodeStatement);
+        if (result == null) result = caseStatement(nodeStatement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case DotPackage.NODE:
+      {
+        Node node = (Node)theEObject;
+        T result = caseNode(node);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case DotPackage.EDGE_STATEMENT:
       {
         EdgeStatement edgeStatement = (EdgeStatement)theEObject;
@@ -108,14 +131,6 @@ public class DotSwitch<T> extends Switch<T>
       {
         EdgeTarget edgeTarget = (EdgeTarget)theEObject;
         T result = caseEdgeTarget(edgeTarget);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case DotPackage.NODE_STATEMENT:
-      {
-        NodeStatement nodeStatement = (NodeStatement)theEObject;
-        T result = caseNodeStatement(nodeStatement);
-        if (result == null) result = caseStatement(nodeStatement);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -132,21 +147,6 @@ public class DotSwitch<T> extends Switch<T>
         Subgraph subgraph = (Subgraph)theEObject;
         T result = caseSubgraph(subgraph);
         if (result == null) result = caseStatement(subgraph);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case DotPackage.ATTRIBUTE:
-      {
-        Attribute attribute = (Attribute)theEObject;
-        T result = caseAttribute(attribute);
-        if (result == null) result = caseStatement(attribute);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case DotPackage.NODE:
-      {
-        Node node = (Node)theEObject;
-        T result = caseNode(node);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -210,6 +210,54 @@ public class DotSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Attribute</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Attribute</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseAttribute(Attribute object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Node Statement</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Node Statement</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseNodeStatement(NodeStatement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Node</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Node</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseNode(Node object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Edge Statement</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -242,22 +290,6 @@ public class DotSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Node Statement</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Node Statement</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseNodeStatement(NodeStatement object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>Attribute Statement</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -285,38 +317,6 @@ public class DotSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseSubgraph(Subgraph object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Attribute</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Attribute</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseAttribute(Attribute object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Node</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Node</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseNode(Node object)
   {
     return null;
   }

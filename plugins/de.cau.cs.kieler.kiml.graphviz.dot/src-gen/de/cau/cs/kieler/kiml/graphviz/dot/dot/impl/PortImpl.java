@@ -5,7 +5,6 @@
  */
 package de.cau.cs.kieler.kiml.graphviz.dot.dot.impl;
 
-import de.cau.cs.kieler.kiml.graphviz.dot.dot.CompassPoint;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.DotPackage;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.Port;
 
@@ -60,7 +59,7 @@ public class PortImpl extends MinimalEObjectImpl.Container implements Port
    * @generated
    * @ordered
    */
-  protected static final CompassPoint COMPASS_PT_EDEFAULT = CompassPoint.NORTH;
+  protected static final String COMPASS_PT_EDEFAULT = null;
 
   /**
    * The cached value of the '{@link #getCompass_pt() <em>Compass pt</em>}' attribute.
@@ -70,7 +69,7 @@ public class PortImpl extends MinimalEObjectImpl.Container implements Port
    * @generated
    * @ordered
    */
-  protected CompassPoint compass_pt = COMPASS_PT_EDEFAULT;
+  protected String compass_pt = COMPASS_PT_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -121,7 +120,7 @@ public class PortImpl extends MinimalEObjectImpl.Container implements Port
    * <!-- end-user-doc -->
    * @generated
    */
-  public CompassPoint getCompass_pt()
+  public String getCompass_pt()
   {
     return compass_pt;
   }
@@ -131,10 +130,10 @@ public class PortImpl extends MinimalEObjectImpl.Container implements Port
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setCompass_pt(CompassPoint newCompass_pt)
+  public void setCompass_pt(String newCompass_pt)
   {
-    CompassPoint oldCompass_pt = compass_pt;
-    compass_pt = newCompass_pt == null ? COMPASS_PT_EDEFAULT : newCompass_pt;
+    String oldCompass_pt = compass_pt;
+    compass_pt = newCompass_pt;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, DotPackage.PORT__COMPASS_PT, oldCompass_pt, compass_pt));
   }
@@ -171,7 +170,7 @@ public class PortImpl extends MinimalEObjectImpl.Container implements Port
         setName((String)newValue);
         return;
       case DotPackage.PORT__COMPASS_PT:
-        setCompass_pt((CompassPoint)newValue);
+        setCompass_pt((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -210,7 +209,7 @@ public class PortImpl extends MinimalEObjectImpl.Container implements Port
       case DotPackage.PORT__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case DotPackage.PORT__COMPASS_PT:
-        return compass_pt != COMPASS_PT_EDEFAULT;
+        return COMPASS_PT_EDEFAULT == null ? compass_pt != null : !COMPASS_PT_EDEFAULT.equals(compass_pt);
     }
     return super.eIsSet(featureID);
   }

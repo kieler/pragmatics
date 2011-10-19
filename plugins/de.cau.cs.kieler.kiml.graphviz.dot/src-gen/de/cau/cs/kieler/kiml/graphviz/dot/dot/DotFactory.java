@@ -53,6 +53,33 @@ public interface DotFactory extends EFactory
   Statement createStatement();
 
   /**
+   * Returns a new object of class '<em>Attribute</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Attribute</em>'.
+   * @generated
+   */
+  Attribute createAttribute();
+
+  /**
+   * Returns a new object of class '<em>Node Statement</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Node Statement</em>'.
+   * @generated
+   */
+  NodeStatement createNodeStatement();
+
+  /**
+   * Returns a new object of class '<em>Node</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Node</em>'.
+   * @generated
+   */
+  Node createNode();
+
+  /**
    * Returns a new object of class '<em>Edge Statement</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -71,15 +98,6 @@ public interface DotFactory extends EFactory
   EdgeTarget createEdgeTarget();
 
   /**
-   * Returns a new object of class '<em>Node Statement</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Node Statement</em>'.
-   * @generated
-   */
-  NodeStatement createNodeStatement();
-
-  /**
    * Returns a new object of class '<em>Attribute Statement</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -96,24 +114,6 @@ public interface DotFactory extends EFactory
    * @generated
    */
   Subgraph createSubgraph();
-
-  /**
-   * Returns a new object of class '<em>Attribute</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Attribute</em>'.
-   * @generated
-   */
-  Attribute createAttribute();
-
-  /**
-   * Returns a new object of class '<em>Node</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Node</em>'.
-   * @generated
-   */
-  Node createNode();
 
   /**
    * Returns a new object of class '<em>Port</em>'.

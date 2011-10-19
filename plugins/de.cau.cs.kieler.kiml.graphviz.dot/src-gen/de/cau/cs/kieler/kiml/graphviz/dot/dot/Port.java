@@ -54,7 +54,6 @@ public interface Port extends EObject
 
   /**
    * Returns the value of the '<em><b>Compass pt</b></em>' attribute.
-   * The literals are from the enumeration {@link de.cau.cs.kieler.kiml.graphviz.dot.dot.CompassPoint}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Compass pt</em>' attribute isn't clear,
@@ -62,23 +61,21 @@ public interface Port extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Compass pt</em>' attribute.
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.CompassPoint
-   * @see #setCompass_pt(CompassPoint)
+   * @see #setCompass_pt(String)
    * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.DotPackage#getPort_Compass_pt()
    * @model
    * @generated
    */
-  CompassPoint getCompass_pt();
+  String getCompass_pt();
 
   /**
    * Sets the value of the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.Port#getCompass_pt <em>Compass pt</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Compass pt</em>' attribute.
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.CompassPoint
    * @see #getCompass_pt()
    * @generated
    */
-  void setCompass_pt(CompassPoint value);
+  void setCompass_pt(String value);
 
 } // Port

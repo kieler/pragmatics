@@ -163,6 +163,117 @@ public interface DotPackage extends EPackage
   int STATEMENT_FEATURE_COUNT = 0;
 
   /**
+   * The meta object id for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.AttributeImpl <em>Attribute</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.AttributeImpl
+   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.DotPackageImpl#getAttribute()
+   * @generated
+   */
+  int ATTRIBUTE = 3;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ATTRIBUTE__NAME = STATEMENT_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ATTRIBUTE__VALUE = STATEMENT_FEATURE_COUNT + 1;
+
+  /**
+   * The number of structural features of the '<em>Attribute</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ATTRIBUTE_FEATURE_COUNT = STATEMENT_FEATURE_COUNT + 2;
+
+  /**
+   * The meta object id for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.NodeStatementImpl <em>Node Statement</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.NodeStatementImpl
+   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.DotPackageImpl#getNodeStatement()
+   * @generated
+   */
+  int NODE_STATEMENT = 4;
+
+  /**
+   * The feature id for the '<em><b>Node</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NODE_STATEMENT__NODE = STATEMENT_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Attributes</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NODE_STATEMENT__ATTRIBUTES = STATEMENT_FEATURE_COUNT + 1;
+
+  /**
+   * The number of structural features of the '<em>Node Statement</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NODE_STATEMENT_FEATURE_COUNT = STATEMENT_FEATURE_COUNT + 2;
+
+  /**
+   * The meta object id for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.NodeImpl <em>Node</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.NodeImpl
+   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.DotPackageImpl#getNode()
+   * @generated
+   */
+  int NODE = 5;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NODE__NAME = 0;
+
+  /**
+   * The feature id for the '<em><b>Port</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NODE__PORT = 1;
+
+  /**
+   * The number of structural features of the '<em>Node</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NODE_FEATURE_COUNT = 2;
+
+  /**
    * The meta object id for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.EdgeStatementImpl <em>Edge Statement</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -170,7 +281,7 @@ public interface DotPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.DotPackageImpl#getEdgeStatement()
    * @generated
    */
-  int EDGE_STATEMENT = 3;
+  int EDGE_STATEMENT = 6;
 
   /**
    * The feature id for the '<em><b>Source Node</b></em>' containment reference.
@@ -216,7 +327,7 @@ public interface DotPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.DotPackageImpl#getEdgeTarget()
    * @generated
    */
-  int EDGE_TARGET = 4;
+  int EDGE_TARGET = 7;
 
   /**
    * The feature id for the '<em><b>Operator</b></em>' attribute.
@@ -255,43 +366,6 @@ public interface DotPackage extends EPackage
   int EDGE_TARGET_FEATURE_COUNT = 3;
 
   /**
-   * The meta object id for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.NodeStatementImpl <em>Node Statement</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.NodeStatementImpl
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.DotPackageImpl#getNodeStatement()
-   * @generated
-   */
-  int NODE_STATEMENT = 5;
-
-  /**
-   * The feature id for the '<em><b>Node</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int NODE_STATEMENT__NODE = STATEMENT_FEATURE_COUNT + 0;
-
-  /**
-   * The feature id for the '<em><b>Attributes</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int NODE_STATEMENT__ATTRIBUTES = STATEMENT_FEATURE_COUNT + 1;
-
-  /**
-   * The number of structural features of the '<em>Node Statement</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int NODE_STATEMENT_FEATURE_COUNT = STATEMENT_FEATURE_COUNT + 2;
-
-  /**
    * The meta object id for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.AttributeStatementImpl <em>Attribute Statement</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -299,7 +373,7 @@ public interface DotPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.DotPackageImpl#getAttributeStatement()
    * @generated
    */
-  int ATTRIBUTE_STATEMENT = 6;
+  int ATTRIBUTE_STATEMENT = 8;
 
   /**
    * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -336,7 +410,7 @@ public interface DotPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.DotPackageImpl#getSubgraph()
    * @generated
    */
-  int SUBGRAPH = 7;
+  int SUBGRAPH = 9;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -364,80 +438,6 @@ public interface DotPackage extends EPackage
    * @ordered
    */
   int SUBGRAPH_FEATURE_COUNT = STATEMENT_FEATURE_COUNT + 2;
-
-  /**
-   * The meta object id for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.AttributeImpl <em>Attribute</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.AttributeImpl
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.DotPackageImpl#getAttribute()
-   * @generated
-   */
-  int ATTRIBUTE = 8;
-
-  /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ATTRIBUTE__NAME = STATEMENT_FEATURE_COUNT + 0;
-
-  /**
-   * The feature id for the '<em><b>Value</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ATTRIBUTE__VALUE = STATEMENT_FEATURE_COUNT + 1;
-
-  /**
-   * The number of structural features of the '<em>Attribute</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ATTRIBUTE_FEATURE_COUNT = STATEMENT_FEATURE_COUNT + 2;
-
-  /**
-   * The meta object id for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.NodeImpl <em>Node</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.NodeImpl
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.DotPackageImpl#getNode()
-   * @generated
-   */
-  int NODE = 9;
-
-  /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int NODE__NAME = 0;
-
-  /**
-   * The feature id for the '<em><b>Port</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int NODE__PORT = 1;
-
-  /**
-   * The number of structural features of the '<em>Node</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int NODE_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.PortImpl <em>Port</em>}' class.
@@ -505,16 +505,6 @@ public interface DotPackage extends EPackage
    * @generated
    */
   int ATTRIBUTE_TYPE = 13;
-
-  /**
-   * The meta object id for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.CompassPoint <em>Compass Point</em>}' enum.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.CompassPoint
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.DotPackageImpl#getCompassPoint()
-   * @generated
-   */
-  int COMPASS_POINT = 14;
 
 
   /**
@@ -603,6 +593,102 @@ public interface DotPackage extends EPackage
   EClass getStatement();
 
   /**
+   * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute <em>Attribute</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Attribute</em>'.
+   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute
+   * @generated
+   */
+  EClass getAttribute();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute#getName()
+   * @see #getAttribute()
+   * @generated
+   */
+  EAttribute getAttribute_Name();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Value</em>'.
+   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute#getValue()
+   * @see #getAttribute()
+   * @generated
+   */
+  EAttribute getAttribute_Value();
+
+  /**
+   * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement <em>Node Statement</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Node Statement</em>'.
+   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement
+   * @generated
+   */
+  EClass getNodeStatement();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement#getNode <em>Node</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Node</em>'.
+   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement#getNode()
+   * @see #getNodeStatement()
+   * @generated
+   */
+  EReference getNodeStatement_Node();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement#getAttributes <em>Attributes</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Attributes</em>'.
+   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement#getAttributes()
+   * @see #getNodeStatement()
+   * @generated
+   */
+  EReference getNodeStatement_Attributes();
+
+  /**
+   * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.Node <em>Node</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Node</em>'.
+   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.Node
+   * @generated
+   */
+  EClass getNode();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.Node#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.Node#getName()
+   * @see #getNode()
+   * @generated
+   */
+  EAttribute getNode_Name();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.Node#getPort <em>Port</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Port</em>'.
+   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.Node#getPort()
+   * @see #getNode()
+   * @generated
+   */
+  EReference getNode_Port();
+
+  /**
    * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.EdgeStatement <em>Edge Statement</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -689,38 +775,6 @@ public interface DotPackage extends EPackage
   EReference getEdgeTarget_Targetnode();
 
   /**
-   * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement <em>Node Statement</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Node Statement</em>'.
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement
-   * @generated
-   */
-  EClass getNodeStatement();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement#getNode <em>Node</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Node</em>'.
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement#getNode()
-   * @see #getNodeStatement()
-   * @generated
-   */
-  EReference getNodeStatement_Node();
-
-  /**
-   * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement#getAttributes <em>Attributes</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Attributes</em>'.
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement#getAttributes()
-   * @see #getNodeStatement()
-   * @generated
-   */
-  EReference getNodeStatement_Attributes();
-
-  /**
    * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.AttributeStatement <em>Attribute Statement</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -785,70 +839,6 @@ public interface DotPackage extends EPackage
   EReference getSubgraph_Statements();
 
   /**
-   * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute <em>Attribute</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Attribute</em>'.
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute
-   * @generated
-   */
-  EClass getAttribute();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute#getName()
-   * @see #getAttribute()
-   * @generated
-   */
-  EAttribute getAttribute_Name();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute#getValue <em>Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Value</em>'.
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute#getValue()
-   * @see #getAttribute()
-   * @generated
-   */
-  EAttribute getAttribute_Value();
-
-  /**
-   * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.Node <em>Node</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Node</em>'.
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.Node
-   * @generated
-   */
-  EClass getNode();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.Node#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.Node#getName()
-   * @see #getNode()
-   * @generated
-   */
-  EAttribute getNode_Name();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.Node#getPort <em>Port</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Port</em>'.
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.Node#getPort()
-   * @see #getNode()
-   * @generated
-   */
-  EReference getNode_Port();
-
-  /**
    * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.Port <em>Port</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -909,16 +899,6 @@ public interface DotPackage extends EPackage
    * @generated
    */
   EEnum getAttributeType();
-
-  /**
-   * Returns the meta object for enum '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.CompassPoint <em>Compass Point</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for enum '<em>Compass Point</em>'.
-   * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.CompassPoint
-   * @generated
-   */
-  EEnum getCompassPoint();
 
   /**
    * Returns the factory that creates the instances of the model.
@@ -1014,6 +994,84 @@ public interface DotPackage extends EPackage
     EClass STATEMENT = eINSTANCE.getStatement();
 
     /**
+     * The meta object literal for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.AttributeImpl <em>Attribute</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.AttributeImpl
+     * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.DotPackageImpl#getAttribute()
+     * @generated
+     */
+    EClass ATTRIBUTE = eINSTANCE.getAttribute();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ATTRIBUTE__NAME = eINSTANCE.getAttribute_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ATTRIBUTE__VALUE = eINSTANCE.getAttribute_Value();
+
+    /**
+     * The meta object literal for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.NodeStatementImpl <em>Node Statement</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.NodeStatementImpl
+     * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.DotPackageImpl#getNodeStatement()
+     * @generated
+     */
+    EClass NODE_STATEMENT = eINSTANCE.getNodeStatement();
+
+    /**
+     * The meta object literal for the '<em><b>Node</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference NODE_STATEMENT__NODE = eINSTANCE.getNodeStatement_Node();
+
+    /**
+     * The meta object literal for the '<em><b>Attributes</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference NODE_STATEMENT__ATTRIBUTES = eINSTANCE.getNodeStatement_Attributes();
+
+    /**
+     * The meta object literal for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.NodeImpl <em>Node</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.NodeImpl
+     * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.DotPackageImpl#getNode()
+     * @generated
+     */
+    EClass NODE = eINSTANCE.getNode();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute NODE__NAME = eINSTANCE.getNode_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Port</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference NODE__PORT = eINSTANCE.getNode_Port();
+
+    /**
      * The meta object literal for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.EdgeStatementImpl <em>Edge Statement</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1082,32 +1140,6 @@ public interface DotPackage extends EPackage
     EReference EDGE_TARGET__TARGETNODE = eINSTANCE.getEdgeTarget_Targetnode();
 
     /**
-     * The meta object literal for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.NodeStatementImpl <em>Node Statement</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.NodeStatementImpl
-     * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.DotPackageImpl#getNodeStatement()
-     * @generated
-     */
-    EClass NODE_STATEMENT = eINSTANCE.getNodeStatement();
-
-    /**
-     * The meta object literal for the '<em><b>Node</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference NODE_STATEMENT__NODE = eINSTANCE.getNodeStatement_Node();
-
-    /**
-     * The meta object literal for the '<em><b>Attributes</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference NODE_STATEMENT__ATTRIBUTES = eINSTANCE.getNodeStatement_Attributes();
-
-    /**
      * The meta object literal for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.AttributeStatementImpl <em>Attribute Statement</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1158,58 +1190,6 @@ public interface DotPackage extends EPackage
      * @generated
      */
     EReference SUBGRAPH__STATEMENTS = eINSTANCE.getSubgraph_Statements();
-
-    /**
-     * The meta object literal for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.AttributeImpl <em>Attribute</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.AttributeImpl
-     * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.DotPackageImpl#getAttribute()
-     * @generated
-     */
-    EClass ATTRIBUTE = eINSTANCE.getAttribute();
-
-    /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute ATTRIBUTE__NAME = eINSTANCE.getAttribute_Name();
-
-    /**
-     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute ATTRIBUTE__VALUE = eINSTANCE.getAttribute_Value();
-
-    /**
-     * The meta object literal for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.NodeImpl <em>Node</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.NodeImpl
-     * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.DotPackageImpl#getNode()
-     * @generated
-     */
-    EClass NODE = eINSTANCE.getNode();
-
-    /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute NODE__NAME = eINSTANCE.getNode_Name();
-
-    /**
-     * The meta object literal for the '<em><b>Port</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference NODE__PORT = eINSTANCE.getNode_Port();
 
     /**
      * The meta object literal for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.PortImpl <em>Port</em>}' class.
@@ -1266,16 +1246,6 @@ public interface DotPackage extends EPackage
      * @generated
      */
     EEnum ATTRIBUTE_TYPE = eINSTANCE.getAttributeType();
-
-    /**
-     * The meta object literal for the '{@link de.cau.cs.kieler.kiml.graphviz.dot.dot.CompassPoint <em>Compass Point</em>}' enum.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.CompassPoint
-     * @see de.cau.cs.kieler.kiml.graphviz.dot.dot.impl.DotPackageImpl#getCompassPoint()
-     * @generated
-     */
-    EEnum COMPASS_POINT = eINSTANCE.getCompassPoint();
 
   }
 

@@ -8,7 +8,6 @@ package de.cau.cs.kieler.kiml.graphviz.dot.dot.impl;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.AttributeStatement;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.AttributeType;
-import de.cau.cs.kieler.kiml.graphviz.dot.dot.CompassPoint;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.DotFactory;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.DotPackage;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.EdgeOperator;
@@ -65,6 +64,27 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  private EClass attributeEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass nodeStatementEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass nodeEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   private EClass edgeStatementEClass = null;
 
   /**
@@ -79,13 +99,6 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass nodeStatementEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   private EClass attributeStatementEClass = null;
 
   /**
@@ -94,20 +107,6 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
    * @generated
    */
   private EClass subgraphEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass attributeEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass nodeEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -136,13 +135,6 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
    * @generated
    */
   private EEnum attributeTypeEEnum = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EEnum compassPointEEnum = null;
 
   /**
    * Creates an instance of the model <b>Package</b>, registered with
@@ -292,6 +284,96 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EClass getAttribute()
+  {
+    return attributeEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getAttribute_Name()
+  {
+    return (EAttribute)attributeEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getAttribute_Value()
+  {
+    return (EAttribute)attributeEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getNodeStatement()
+  {
+    return nodeStatementEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getNodeStatement_Node()
+  {
+    return (EReference)nodeStatementEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getNodeStatement_Attributes()
+  {
+    return (EReference)nodeStatementEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getNode()
+  {
+    return nodeEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getNode_Name()
+  {
+    return (EAttribute)nodeEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getNode_Port()
+  {
+    return (EReference)nodeEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getEdgeStatement()
   {
     return edgeStatementEClass;
@@ -372,36 +454,6 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getNodeStatement()
-  {
-    return nodeStatementEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getNodeStatement_Node()
-  {
-    return (EReference)nodeStatementEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getNodeStatement_Attributes()
-  {
-    return (EReference)nodeStatementEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EClass getAttributeStatement()
   {
     return attributeStatementEClass;
@@ -455,66 +507,6 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
   public EReference getSubgraph_Statements()
   {
     return (EReference)subgraphEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getAttribute()
-  {
-    return attributeEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getAttribute_Name()
-  {
-    return (EAttribute)attributeEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getAttribute_Value()
-  {
-    return (EAttribute)attributeEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getNode()
-  {
-    return nodeEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getNode_Name()
-  {
-    return (EAttribute)nodeEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getNode_Port()
-  {
-    return (EReference)nodeEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -582,16 +574,6 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EEnum getCompassPoint()
-  {
-    return compassPointEEnum;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public DotFactory getDotFactory()
   {
     return (DotFactory)getEFactoryInstance();
@@ -628,6 +610,18 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
 
     statementEClass = createEClass(STATEMENT);
 
+    attributeEClass = createEClass(ATTRIBUTE);
+    createEAttribute(attributeEClass, ATTRIBUTE__NAME);
+    createEAttribute(attributeEClass, ATTRIBUTE__VALUE);
+
+    nodeStatementEClass = createEClass(NODE_STATEMENT);
+    createEReference(nodeStatementEClass, NODE_STATEMENT__NODE);
+    createEReference(nodeStatementEClass, NODE_STATEMENT__ATTRIBUTES);
+
+    nodeEClass = createEClass(NODE);
+    createEAttribute(nodeEClass, NODE__NAME);
+    createEReference(nodeEClass, NODE__PORT);
+
     edgeStatementEClass = createEClass(EDGE_STATEMENT);
     createEReference(edgeStatementEClass, EDGE_STATEMENT__SOURCE_NODE);
     createEReference(edgeStatementEClass, EDGE_STATEMENT__EDGE_TARGETS);
@@ -638,10 +632,6 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
     createEReference(edgeTargetEClass, EDGE_TARGET__TARGET_SUBGRAPH);
     createEReference(edgeTargetEClass, EDGE_TARGET__TARGETNODE);
 
-    nodeStatementEClass = createEClass(NODE_STATEMENT);
-    createEReference(nodeStatementEClass, NODE_STATEMENT__NODE);
-    createEReference(nodeStatementEClass, NODE_STATEMENT__ATTRIBUTES);
-
     attributeStatementEClass = createEClass(ATTRIBUTE_STATEMENT);
     createEAttribute(attributeStatementEClass, ATTRIBUTE_STATEMENT__TYPE);
     createEReference(attributeStatementEClass, ATTRIBUTE_STATEMENT__ATTRIBUTES);
@@ -649,14 +639,6 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
     subgraphEClass = createEClass(SUBGRAPH);
     createEAttribute(subgraphEClass, SUBGRAPH__NAME);
     createEReference(subgraphEClass, SUBGRAPH__STATEMENTS);
-
-    attributeEClass = createEClass(ATTRIBUTE);
-    createEAttribute(attributeEClass, ATTRIBUTE__NAME);
-    createEAttribute(attributeEClass, ATTRIBUTE__VALUE);
-
-    nodeEClass = createEClass(NODE);
-    createEAttribute(nodeEClass, NODE__NAME);
-    createEReference(nodeEClass, NODE__PORT);
 
     portEClass = createEClass(PORT);
     createEAttribute(portEClass, PORT__NAME);
@@ -666,7 +648,6 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
     edgeOperatorEEnum = createEEnum(EDGE_OPERATOR);
     graphTypeEEnum = createEEnum(GRAPH_TYPE);
     attributeTypeEEnum = createEEnum(ATTRIBUTE_TYPE);
-    compassPointEEnum = createEEnum(COMPASS_POINT);
   }
 
   /**
@@ -698,11 +679,11 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
     // Set bounds for type parameters
 
     // Add supertypes to classes
-    edgeStatementEClass.getESuperTypes().add(this.getStatement());
+    attributeEClass.getESuperTypes().add(this.getStatement());
     nodeStatementEClass.getESuperTypes().add(this.getStatement());
+    edgeStatementEClass.getESuperTypes().add(this.getStatement());
     attributeStatementEClass.getESuperTypes().add(this.getStatement());
     subgraphEClass.getESuperTypes().add(this.getStatement());
-    attributeEClass.getESuperTypes().add(this.getStatement());
 
     // Initialize classes and features; add operations and parameters
     initEClass(graphvizModelEClass, GraphvizModel.class, "GraphvizModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -716,6 +697,18 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
 
     initEClass(statementEClass, Statement.class, "Statement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
+    initEClass(attributeEClass, Attribute.class, "Attribute", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getAttribute_Name(), ecorePackage.getEString(), "name", null, 0, 1, Attribute.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getAttribute_Value(), ecorePackage.getEString(), "value", null, 0, 1, Attribute.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(nodeStatementEClass, NodeStatement.class, "NodeStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getNodeStatement_Node(), this.getNode(), null, "node", null, 0, 1, NodeStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getNodeStatement_Attributes(), this.getAttribute(), null, "attributes", null, 0, -1, NodeStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(nodeEClass, Node.class, "Node", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getNode_Name(), ecorePackage.getEString(), "name", null, 0, 1, Node.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getNode_Port(), this.getPort(), null, "port", null, 0, 1, Node.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
     initEClass(edgeStatementEClass, EdgeStatement.class, "EdgeStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getEdgeStatement_SourceNode(), this.getNode(), null, "sourceNode", null, 0, 1, EdgeStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getEdgeStatement_EdgeTargets(), this.getEdgeTarget(), null, "edgeTargets", null, 0, -1, EdgeStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -726,10 +719,6 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
     initEReference(getEdgeTarget_TargetSubgraph(), this.getSubgraph(), null, "targetSubgraph", null, 0, 1, EdgeTarget.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getEdgeTarget_Targetnode(), this.getNode(), null, "targetnode", null, 0, 1, EdgeTarget.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(nodeStatementEClass, NodeStatement.class, "NodeStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getNodeStatement_Node(), this.getNode(), null, "node", null, 0, 1, NodeStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getNodeStatement_Attributes(), this.getAttribute(), null, "attributes", null, 0, -1, NodeStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
     initEClass(attributeStatementEClass, AttributeStatement.class, "AttributeStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getAttributeStatement_Type(), this.getAttributeType(), "type", null, 0, 1, AttributeStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getAttributeStatement_Attributes(), this.getAttribute(), null, "attributes", null, 0, -1, AttributeStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -738,17 +727,9 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
     initEAttribute(getSubgraph_Name(), ecorePackage.getEString(), "name", null, 0, 1, Subgraph.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSubgraph_Statements(), this.getStatement(), null, "statements", null, 0, -1, Subgraph.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(attributeEClass, Attribute.class, "Attribute", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getAttribute_Name(), ecorePackage.getEString(), "name", null, 0, 1, Attribute.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAttribute_Value(), ecorePackage.getEString(), "value", null, 0, 1, Attribute.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(nodeEClass, Node.class, "Node", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getNode_Name(), ecorePackage.getEString(), "name", null, 0, 1, Node.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getNode_Port(), this.getPort(), null, "port", null, 0, 1, Node.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
     initEClass(portEClass, Port.class, "Port", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getPort_Name(), ecorePackage.getEString(), "name", null, 0, 1, Port.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getPort_Compass_pt(), this.getCompassPoint(), "compass_pt", null, 0, 1, Port.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPort_Compass_pt(), ecorePackage.getEString(), "compass_pt", null, 0, 1, Port.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     // Initialize enums and add enum literals
     initEEnum(edgeOperatorEEnum, EdgeOperator.class, "EdgeOperator");
@@ -763,18 +744,6 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
     addEEnumLiteral(attributeTypeEEnum, AttributeType.GRAPH);
     addEEnumLiteral(attributeTypeEEnum, AttributeType.NODE);
     addEEnumLiteral(attributeTypeEEnum, AttributeType.EDGE);
-
-    initEEnum(compassPointEEnum, CompassPoint.class, "CompassPoint");
-    addEEnumLiteral(compassPointEEnum, CompassPoint.NORTH);
-    addEEnumLiteral(compassPointEEnum, CompassPoint.NORTH_EAST);
-    addEEnumLiteral(compassPointEEnum, CompassPoint.EAST);
-    addEEnumLiteral(compassPointEEnum, CompassPoint.SOUTH_EAST);
-    addEEnumLiteral(compassPointEEnum, CompassPoint.SOUTH);
-    addEEnumLiteral(compassPointEEnum, CompassPoint.SOUTH_WEST);
-    addEEnumLiteral(compassPointEEnum, CompassPoint.WEST);
-    addEEnumLiteral(compassPointEEnum, CompassPoint.NORTH_WEST);
-    addEEnumLiteral(compassPointEEnum, CompassPoint.CENTER);
-    addEEnumLiteral(compassPointEEnum, CompassPoint.BLANK);
 
     // Create resource
     createResource(eNS_URI);
