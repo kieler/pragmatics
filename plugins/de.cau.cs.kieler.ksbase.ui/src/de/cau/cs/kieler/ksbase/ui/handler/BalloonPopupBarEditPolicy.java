@@ -16,15 +16,23 @@ package de.cau.cs.kieler.ksbase.ui.handler;
 import java.net.URL;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.gef.DragTracker;
+import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.common.core.command.ICommand;
+import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditDomain;
+import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramEditDomain;
+import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.emf.type.core.edithelper.IEditHelper;
 import org.eclipse.gmf.runtime.emf.type.core.requests.IEditCommandRequest;
+import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.model.gmf.policies.BalloonMouseListener;
 import de.cau.cs.kieler.core.model.gmf.policies.DiagramPopupBarPolicy;
@@ -56,8 +64,7 @@ public class BalloonPopupBarEditPolicy extends DiagramPopupBarPolicy {
      * @param part
      *            the edit part
      */
-    public BalloonPopupBarEditPolicy(final List<IBalloonContribution> contrib,
-            final EditPart part) {
+    public BalloonPopupBarEditPolicy(final List<IBalloonContribution> contrib, final EditPart part) {
         editPart = part;
         contributions = contrib;
     }
@@ -85,15 +92,29 @@ public class BalloonPopupBarEditPolicy extends DiagramPopupBarPolicy {
     @Override
     protected void fillPopupBarDescriptors() {
         super.fillPopupBarDescriptors();
-        if (contributions != null) {
-            for (IBalloonContribution item : contributions) {
-                item.init(editPart);
-                if (item.isValid()) {
-                    String tip = item.getTooltip();
-                    Image image = item.getImage();
-                    DragTracker tracker = new BalloonMouseListener(item);
-                    IElementType type = generateType();
-                    super.addPopupBarDescriptor(type, image, tracker, tip);
+
+        IDiagramEditDomain domain = null;
+        EditDomain editDomain = editPart.getRoot().getViewer().getEditDomain();
+        if (editDomain instanceof IDiagramEditDomain) {
+            domain = (IDiagramEditDomain) editDomain;
+        }
+
+        if (domain != null && domain instanceof DiagramEditDomain) {
+            IEditorPart editor = ((DiagramEditDomain) domain).getEditorPart();
+            final DiagramDocumentEditor diagramEditor = (DiagramDocumentEditor) editor;
+            String id = diagramEditor.getEditorSite().getPluginId();
+            boolean showPopupBars = Platform.getPreferencesService().getBoolean(id,
+                    "Global.showPopupBars", false, null);
+            if (contributions != null && showPopupBars) {
+                for (IBalloonContribution item : contributions) {
+                    item.init(editPart);
+                    if (item.isValid()) {
+                        String tip = item.getTooltip();
+                        Image image = item.getImage();
+                        DragTracker tracker = new BalloonMouseListener(item);
+                        IElementType type = generateType();
+                        super.addPopupBarDescriptor(type, image, tracker, tip);
+                    }
                 }
             }
         }
