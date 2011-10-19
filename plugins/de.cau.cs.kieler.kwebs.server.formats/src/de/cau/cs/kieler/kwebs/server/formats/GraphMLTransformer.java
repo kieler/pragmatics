@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kwebs.server.formats;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.resource.Resource;
@@ -35,6 +36,7 @@ import org.graphdrawing.graphml.NodeType;
 import org.graphdrawing.graphml.PortType;
 import org.graphdrawing.graphml.util.GraphMLResourceFactoryImpl;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
@@ -351,8 +353,12 @@ public class GraphMLTransformer extends AbstractEmfTransformer<DocumentRoot> {
      * @return the contained text
      */
     private static String getValue(final DataType data) {
-        return (String) data.getMixed().get(
+        List<?> list = (List<?>) data.getMixed().get(
                 XMLTypePackage.Literals.XML_TYPE_DOCUMENT_ROOT__TEXT, false);
+        if (list.size() > 0) {
+            return (String) list.get(0);
+        }
+        return null;
     }
     
     /**
@@ -362,7 +368,8 @@ public class GraphMLTransformer extends AbstractEmfTransformer<DocumentRoot> {
      * @param value the new text
      */
     private static void setValue(final DataType data, final String value) {
-        data.getMixed().add(XMLTypePackage.Literals.XML_TYPE_DOCUMENT_ROOT__TEXT, value);
+        data.getMixed().set(XMLTypePackage.Literals.XML_TYPE_DOCUMENT_ROOT__TEXT,
+                Lists.newArrayList(value));
     }
 
 }
