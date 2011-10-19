@@ -94,28 +94,31 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             // Keep a list of associated Nodes for every compound node relevant for this layer for
             // later order application.
             HashMap<LNode, LinkedList<LNode>> layerCompoundContents 
-               = new HashMap<LNode, LinkedList<LNode>>();
+                    = new HashMap<LNode, LinkedList<LNode>>();
 
             List<LNode> layerNodes = layer.getNodes();
-            boolean resorted = false;
+            boolean reordered = false;
             for (int i = 0; i < (layerNodes.size() - 1); i++) {
+
                 LNode currentNode = layerNodes.get(i);
                 LNode relatedCompoundCurrent = getRelatedCompoundNode(currentNode, layeredGraph);
                 // Store the currentNode in layerCompoundContents under the key of
                 // relatedCompoundCurrent.
                 insertRelatedCompound(layerCompoundContents, currentNode, relatedCompoundCurrent,
                         graphKey);
+
                 LNode nextNode = layerNodes.get(i + 1);
                 // Store the currentNode in layerCompoundContents under the key of
                 // relatedCompoundCurrent.
                 LNode relatedCompoundNext = getRelatedCompoundNode(nextNode, layeredGraph);
-                insertRelatedCompound(layerCompoundContents, currentNode, relatedCompoundCurrent,
+                insertRelatedCompound(layerCompoundContents, nextNode, relatedCompoundNext,
                         graphKey);
-                // There is only something to be done, if nodes that are neighbors in a layer are
-                // of different compound nodes and no leave nodes of highest level.
+
+                // The subgraphOrderingGraph has to be updated, if nodes that are neighbors in a
+                // layer are of different compound nodes and no leave nodes of highest level.
                 if ((relatedCompoundCurrent != null) && (relatedCompoundNext != null)
                         && (relatedCompoundCurrent != relatedCompoundNext)) {
-                    resorted = true;
+                    reordered = true;
                     // Find the correct partial graph to insert the "is left of"-relationship by
                     // propagating the dependency up the inclusion tree till two compound nodes with
                     // the same parent are reached.
@@ -155,7 +158,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                     targetPort.setNode(nextRep);
                 }
             }
-            if (resorted) {
+            if (reordered) {
                 reorderedLayers.put(layer, layerCompoundContents);
             }
         }
@@ -206,7 +209,9 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             nodeList = new LinkedList<LNode>();
             layerCompoundContents.put(key, nodeList);
         }
-        nodeList.addLast(node);
+        if (!(nodeList.contains(node))) {
+            nodeList.addLast(node);
+        }
     }
 
     /**
@@ -241,7 +246,14 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             LinkedList<LNode> orderNodes = layerOrders.get(layer);
             int sizeOrderNodes = orderNodes.size();
             assert (sizeNodes == sizeOrderNodes);
-            // TODO: Check, why assertion does not always hold. Write layer assorting then.
+            for (int i = 0; i < sizeNodes; i++) {
+                nodes.remove(0);
+            }
+            assert (nodes.isEmpty());
+            for (LNode node : orderNodes) {
+                nodes.add(node);
+            }
+            assert (nodes.size() == sizeOrderNodes);
         }
     }
 
@@ -266,28 +278,29 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             final LayeredGraph layeredGraph,
             final HashMap<LNode, LayeredGraph> subgraphOrderingGraph,
             final LinkedList<LNode> layerOrder, final HashMap<KGraphElement, LGraphElement> elemMap) {
+
         LayeredGraph keyGraphComponent = subgraphOrderingGraph.get(key);
-        // There may be no component for the key, if there is no or only one compound child. Handle
-        // this case.
+
+        // There may be no component for the key in the subgraphOrderingGraph. A child compound node
+        // of this node has to be handled nevertheless.
         if (keyGraphComponent == null) {
             KNode kKey = (KNode) key.getProperty(Properties.ORIGIN);
             for (KNode child : kKey.getChildren()) {
                 LNode childRep = (LNode) elemMap.get(child);
-                if (subgraphOrderingGraph.containsKey(childRep)) {
+                if (reorderedLayers.get(layer).containsKey(childRep)) {
                     recursiveApplyLayerOrder(layer, childRep, layeredGraph, subgraphOrderingGraph,
                             layerOrder, elemMap);
                 }
             }
         } else {
-            // Recursive traversal of the ordering graph components's orders.
+            // If there is a component in the subgraphOrderingGraph for this key, stick to the
+            // topological order of the children in the component in handling them.
             LinkedList<LNode> componentOrder = graphToList(keyGraphComponent);
             Iterator<LNode> orderIterator = componentOrder.iterator();
             while (orderIterator.hasNext()) {
-                LNode currentNode = orderIterator.next();
-                if (subgraphOrderingGraph.containsKey(currentNode)) {
-                    recursiveApplyLayerOrder(layer, currentNode, layeredGraph,
-                            subgraphOrderingGraph, layerOrder, elemMap);
-                }
+                LNode currentNode = (LNode) orderIterator.next().getProperty(Properties.ORIGIN);
+                recursiveApplyLayerOrder(layer, currentNode, layeredGraph, subgraphOrderingGraph,
+                        layerOrder, elemMap);
             }
         }
 
@@ -401,7 +414,8 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         } else {
             // A representative has to be created.
             retNode = new LNode();
-            retNode.copyProperties(node);
+            retNode.setProperty(Properties.ORIGIN, node);
+            // retNode.copyProperties(node);
             insertedNodes.put(node, retNode);
             layerlessNodes.add(retNode);
         }
