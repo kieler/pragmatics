@@ -23,6 +23,7 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
@@ -246,7 +247,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                     layerOrder, elemMap);
             layerOrders.put(layer, layerOrder);
         }
-        // Resort the layer.
+        // Resort the layers.
         for (Layer layer : layerOrders.keySet()) {
             List<LNode> nodes = layer.getNodes();
             int sizeNodes = nodes.size();
@@ -318,8 +319,8 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         LinkedList<LNode> assignedNodes = reorderedLayers.get(layer).get(key);
         if (assignedNodes != null) {
             for (LNode assignedNode : assignedNodes) {
-                    //assert (!layerOrder.contains(assignedNode));
-                    layerOrder.add(assignedNode);
+                // assert (!layerOrder.contains(assignedNode));
+                layerOrder.add(assignedNode);
             }
         }
     }
@@ -524,15 +525,28 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             LPort targetPort = node.getProperty(Properties.LONG_EDGE_TARGET);
             LNode sourceNode = sourcePort.getNode();
             LNode targetNode = targetPort.getNode();
-            LinkedList<LNode> sourceTargetList = new LinkedList<LNode>();
-            sourceTargetList.add(sourceNode);
-            sourceTargetList.add(targetNode);
-            propagatePair(sourceTargetList, elemMap);
-            LNode newSource = sourceTargetList.getFirst();
-            KNode newSourceParent = newSource.getProperty(Properties.PARENT);
-            LGraphElement container = elemMap.get(newSourceParent);
-            if (!(container instanceof LayeredGraph)) {
-                retNode = (LNode) container;
+            KNode sourceNodeOrigin = (KNode) sourceNode.getProperty(Properties.ORIGIN);
+            KNode targetNodeOrigin = (KNode) targetNode.getProperty(Properties.ORIGIN);
+            if (KimlUtil.isDescendant(sourceNodeOrigin, targetNodeOrigin)
+                    || KimlUtil.isDescendant(targetNodeOrigin, sourceNodeOrigin)) {
+                LinkedList<LNode> sourceTargetList = new LinkedList<LNode>();
+                sourceTargetList.add(sourceNode);
+                sourceTargetList.add(targetNode);
+                propagatePair(sourceTargetList, elemMap);
+                LNode newSource = sourceTargetList.getFirst();
+                KNode newSourceParent = newSource.getProperty(Properties.PARENT);
+                LGraphElement container = elemMap.get(newSourceParent);
+                if (!(container instanceof LayeredGraph)) {
+                    retNode = (LNode) container;
+                }
+            } else {
+                LNode sourceNodeCompound = getRelatedCompoundNode(sourceNode, layeredGraph);
+                LNode targetNodeCompound = getRelatedCompoundNode(targetNode, layeredGraph);
+                if (sourceNodeCompound == targetNodeCompound) {
+                    retNode = sourceNodeCompound;
+                } else {
+                    retNode = targetNodeCompound;
+                }
             }
             break;
         case EXTERNAL_PORT:
@@ -571,9 +585,9 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             final HashMap<KGraphElement, LGraphElement> elemMap) {
         LNode sourceNode = sourceTargetList.getFirst();
         LNode targetNode = sourceTargetList.getLast();
-        
+
         KNode currentSource = getRelatedKNode(sourceNode);
-        KNode currentTarget = getRelatedKNode(targetNode);        
+        KNode currentTarget = getRelatedKNode(targetNode);
 
         int depthSource = elemMap.get(currentSource).getProperty(Properties.DEPTH);
         int depthTarget = elemMap.get(currentTarget).getProperty(Properties.DEPTH);
