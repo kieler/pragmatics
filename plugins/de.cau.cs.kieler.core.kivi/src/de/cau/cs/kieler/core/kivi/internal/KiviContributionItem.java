@@ -35,6 +35,7 @@ import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.actions.CompoundContributionItem;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.menus.InternalMenuService;
@@ -274,7 +275,7 @@ public class KiviContributionItem extends CompoundContributionItem implements
                                 config.getKeySequence(),
                                 pc,
                                 bindingService.getActiveScheme().getId(),
-                                Workbench.getInstance().getContextSupport().CONTEXT_ID_WINDOW,
+                                IContextService.CONTEXT_ID_WINDOW,
                                 null,
                                 null,
                                 null,
