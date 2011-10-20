@@ -107,15 +107,9 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         // to be executed in this case.
         boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
         if (!isCompound) {
-            // see if merged ports are enabled
-            Map<LNode, Pair<LPort, LPort>> mergePortsMap = null;
-            if (layeredGraph.getProperty(Properties.MERGE_PORTS)) {
-                mergePortsMap = new HashMap<LNode, Pair<LPort, LPort>>();
-            }
-            
             // transform everything
             transformNodesAndPorts(kgraph, layeredGraph, elemMap, graphProperties);
-            transformEdges(kgraph, elemMap, mergePortsMap, graphProperties, direction, layeredGraph);
+            transformEdges(kgraph, elemMap, graphProperties, direction, layeredGraph);
         }
         // set the graph properties property
         layeredGraph.setProperty(Properties.GRAPH_PROPERTIES, graphProperties);
@@ -398,9 +392,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      * @param elemMap
      *            the element map that maps the original {@code KGraph} elements to the transformed
      *            {@code LGraph} elements.
-     * @param mergePortsMap
-     *            mapping of nodes to pairs of input and output ports created for them if merged ports
-     *            are enabled. {@code null} if they are not enabled.
      * @param graphProperties
      *            graph properties updated during the transformation.
      * @param direction
@@ -408,10 +399,15 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      * @param layeredGraph
      */
     private void transformEdges(final KNode graph, final Map<KGraphElement, LGraphElement> elemMap,
-            final Map<LNode, Pair<LPort, LPort>> mergePortsMap,
             final EnumSet<GraphProperties> graphProperties, final Direction direction,
             final MapPropertyHolder layeredGraph) {
 
+        // See if merged ports are enabled
+        Map<LNode, Pair<LPort, LPort>> mergePortsMap = null;
+        if (layeredGraph.getProperty(Properties.MERGE_PORTS)) {
+            mergePortsMap = new HashMap<LNode, Pair<LPort, LPort>>();
+        }
+        
         // Transform external port edges
         transformExternalPortEdges(graph, graph.getIncomingEdges(), elemMap, mergePortsMap,
                 graphProperties, direction, layeredGraph);
