@@ -29,7 +29,7 @@ import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
@@ -73,7 +73,7 @@ public class DiagramDefaultAction extends Action {
         if (bridge != null) {
             EditPart diagram = bridge.getEditPart(workbenchPart);
             if (diagram != null) {
-                DiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
+                IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
                         .getManager(workbenchPart, diagram);
                 if (manager != null) {
                     final IMutableLayoutConfig layoutConfig = manager.getLayoutConfig();

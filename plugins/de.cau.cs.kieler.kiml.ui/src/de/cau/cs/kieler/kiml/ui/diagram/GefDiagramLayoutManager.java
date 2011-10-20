@@ -30,12 +30,11 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
  * @param <T> the type of diagram part that is handled by this diagram layout manager
  * @author msp
  */
-public abstract class GefDiagramLayoutManager<T> extends DiagramLayoutManager<T> {
+public abstract class GefDiagramLayoutManager<T> implements IDiagramLayoutManager<T> {
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public void applyLayout(final LayoutMapping<T> mapping, final boolean zoomToFit,
             final int animationTime) {
         Object layoutGraphObj = mapping.getParentElement();

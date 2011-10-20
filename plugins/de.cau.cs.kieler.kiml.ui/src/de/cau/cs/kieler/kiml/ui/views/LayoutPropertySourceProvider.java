@@ -31,7 +31,7 @@ import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
@@ -76,7 +76,7 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
         try {
             IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance()
                     .getBridge(object);
-            DiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
+            IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
                     workbenchPart, object);
             if (manager != null) {
                 EObject domainElement = bridge.getElement(object);

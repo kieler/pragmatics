@@ -60,7 +60,7 @@ import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
@@ -283,7 +283,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
      * {@inheritDoc}
      */
     public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
-        DiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(part, null);
+        IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(part, null);
         if (manager != null) {
             propSourceProvider.resetContext(part);
             page.selectionChanged(part, selection);

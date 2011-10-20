@@ -21,7 +21,6 @@ import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutDataService;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
-import de.cau.cs.kieler.kwebs.client.kiml.layout.RemoteLayoutDataService;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -161,9 +160,7 @@ public class KimlUiPlugin extends AbstractUIPlugin {
         images = new Images();
         EclipseLayoutDataService.create();
         EclipseLayoutInfoService.create();
-        //create and register layout data for remote layout.
-        RemoteLayoutDataService.create();
-        //start with local layouter initially.
+        // start with local layouter initially.
         LayoutDataService.setMode(LayoutDataService.ECLIPSEDATASERVICE);
     }
 

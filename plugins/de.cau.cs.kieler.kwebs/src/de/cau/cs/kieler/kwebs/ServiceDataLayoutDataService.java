@@ -1,5 +1,5 @@
 /*
-333333333333333333333333 * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
@@ -12,13 +12,14 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.kiml.service;
+package de.cau.cs.kieler.kwebs;
 
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
+import de.cau.cs.kieler.kiml.service.ProgrammaticLayoutDataService;
 import de.cau.cs.kieler.kwebs.servicedata.Category;
 import de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm;
 import de.cau.cs.kieler.kwebs.servicedata.LayoutOption;

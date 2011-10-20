@@ -61,6 +61,8 @@ public class LayoutAlgorithmData implements ILayoutData {
     private String category = "";
     /** detail description. */
     private String description = "";
+    /** an object holding preview image data. */
+    private Object imageData;
     
     /** Map of known layout options. Keys are option data, values are the default values. */
     private Map<LayoutOptionData<?>, Object> knownOptions = Maps.newHashMap();
@@ -306,6 +308,24 @@ public class LayoutAlgorithmData implements ILayoutData {
      */
     public String getCategory() {
         return category;
+    }
+
+    /**
+     * Returns the preview image data.
+     * 
+     * @return the preview image
+     */
+    public Object getPreviewImage() {
+        return imageData;
+    }
+
+    /**
+     * Sets the preview image data.
+     * 
+     * @param thepreviewImage the preview image to set
+     */
+    public void setPreviewImage(final Object thepreviewImage) {
+        this.imageData = thepreviewImage;
     }
     
 }

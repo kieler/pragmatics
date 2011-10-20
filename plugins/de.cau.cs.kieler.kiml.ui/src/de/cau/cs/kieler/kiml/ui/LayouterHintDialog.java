@@ -45,7 +45,6 @@ import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.ILayoutData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
-import de.cau.cs.kieler.kwebs.client.kiml.layout.RemoteLayoutAlgorithmData;
 
 /**
  * A dialog to browse and select layout algorithms or layout types.
@@ -146,13 +145,11 @@ public class LayouterHintDialog extends Dialog {
         descriptionLabel.setText(description);
         Image newImage = null;
         ImageDescriptor descriptor = null;
-        if (layoutData instanceof EclipseLayoutAlgorithmData) {
-            descriptor = ((EclipseLayoutAlgorithmData) layoutData).getPreviewImage();            
-        } else if (layoutData instanceof RemoteLayoutAlgorithmData) {
-            descriptor = ((RemoteLayoutAlgorithmData) layoutData).getPreviewImage();            
-        }
-        if (descriptor != null) {
-            newImage = descriptor.createImage();
+        if (layoutData instanceof LayoutAlgorithmData) {
+            descriptor = (ImageDescriptor) ((LayoutAlgorithmData) layoutData).getPreviewImage();       
+            if (descriptor != null) {
+                newImage = descriptor.createImage();
+            }
         }
         if (imageLabel.getImage() != null) {
             imageLabel.getImage().dispose();

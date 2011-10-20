@@ -68,7 +68,7 @@ import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.util.DiagramAnalyzer;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
@@ -99,7 +99,7 @@ public final class EvolUtil {
          *            the editor in which the layout shall be applied
          * @return the layout manager used to apply the layout
          */
-        private static <T> DiagramLayoutManager<T> adoptAndApplyLayout(
+        private static <T> IDiagramLayoutManager<T> adoptAndApplyLayout(
                 final Genome individual, final IEditorPart editor) {
 
             AdoptingRecursiveGraphLayoutEngine engine = new AdoptingRecursiveGraphLayoutEngine();
@@ -111,7 +111,7 @@ public final class EvolUtil {
                     engine.calculateLayout(individual, (DiagramEditor) editor, monitor, false /* shouldCopyGraph */);
             // we could do something with the layout result ...
 
-            DiagramLayoutManager<T> manager = (DiagramLayoutManager<T>) engine.getManager();
+            IDiagramLayoutManager<T> manager = (IDiagramLayoutManager<T>) engine.getManager();
 
             assert manager != null : "Could not get a layout manager for " + editor.getTitle();
 
@@ -185,7 +185,7 @@ public final class EvolUtil {
                 }
                 assert expectedLayoutTypeId.equalsIgnoreCase(layoutTypeId) || useDifferentType;
 
-                DiagramLayoutManager manager = adoptAndApplyLayout(individual, editor);
+                IDiagramLayoutManager manager = adoptAndApplyLayout(individual, editor);
                 // so now we have a manager ...
             }
         }
@@ -914,7 +914,7 @@ public final class EvolUtil {
      */
     public static LayoutAlgorithmData getLayoutAlgorithmData(
             final IEditorPart editor, final EditPart editPart) {
-        DiagramLayoutManager<?> manager =
+        IDiagramLayoutManager<?> manager =
                 EclipseLayoutInfoService.getInstance().getManager(editor, editPart);
         IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(editor);
         if (manager != null && bridge != null) {
@@ -1100,7 +1100,7 @@ public final class EvolUtil {
      * @return layout context for the given editor
      */
     private static LayoutContext getContext(final IWorkbenchPart editor) {
-        DiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
+        IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
                 .getManager(editor, null);
         IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(editor);
         if (manager != null && bridge != null) {

@@ -35,11 +35,12 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.service.LayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 
 /**
  * An extension of the layout info service for diagram layout managers and preference handling.
@@ -52,6 +53,8 @@ public final class EclipseLayoutInfoService extends LayoutInfoService {
     public static final String EXTP_ID_LAYOUT_MANAGERS = "de.cau.cs.kieler.kiml.ui.layoutManagers";
     /** name of the 'manager' element in the 'layout managers' extension point. */
     public static final String ELEMENT_MANAGER = "manager";
+    /** name of the 'engine' element in the 'layout managers' extension point. */
+    public static final String ELEMENT_ENGINE = "engine";
     /** name of the 'priority' attribute in the extension points. */
     public static final String ATTRIBUTE_PRIORITY = "priority";
 
@@ -61,7 +64,11 @@ public final class EclipseLayoutInfoService extends LayoutInfoService {
     public static final String PREF_OBLIQUE_ROUTE = "kiml.oblique.route";
     
     /** list of registered diagram layout managers. */
-    private final List<DiagramLayoutManager<?>> managers = new LinkedList<DiagramLayoutManager<?>>();
+    private final List<Pair<Integer, IDiagramLayoutManager<?>>> managers
+            = new LinkedList<Pair<Integer, IDiagramLayoutManager<?>>>();
+    /** list of registered graph layout engines. */
+    private final List<Pair<Integer, IGraphLayoutEngine>> layoutEngines
+            = new LinkedList<Pair<Integer, IGraphLayoutEngine>>();
     /** set of registered diagram elements. */
     private Set<String> registeredElements = new HashSet<String>();
     
@@ -129,12 +136,28 @@ public final class EclipseLayoutInfoService extends LayoutInfoService {
      *     fetched, or {@code null}
      * @return the most suitable diagram layout manager
      */
-    public DiagramLayoutManager<?> getManager(final IWorkbenchPart workbenchPart,
+    public IDiagramLayoutManager<?> getManager(final IWorkbenchPart workbenchPart,
             final Object diagramPart) {
-        for (DiagramLayoutManager<?> manager : managers) {
+        for (Pair<Integer, IDiagramLayoutManager<?>> entry : managers) {
+            IDiagramLayoutManager<?> manager = entry.getSecond();
             if (manager.supports(workbenchPart)
                     && (diagramPart == null || manager.supports(diagramPart))) {
                 return manager;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Returns the active graph layout engine with highest priority.
+     * 
+     * @return the active graph layout engine with highest priority
+     */
+    public IGraphLayoutEngine getLayoutEngine() {
+        for (Pair<Integer, IGraphLayoutEngine> entry : layoutEngines) {
+            IGraphLayoutEngine engine = entry.getSecond();
+            if (engine.isActive()) {
+                return engine;
             }
         }
         return null;
@@ -207,46 +230,63 @@ public final class EclipseLayoutInfoService extends LayoutInfoService {
                 .getConfigurationElementsFor(EXTP_ID_LAYOUT_MANAGERS);
         
         for (IConfigurationElement element : extensions) {
-            if (ELEMENT_MANAGER.equals(element.getName())) {
-                try {
-                    DiagramLayoutManager<?> manager = (DiagramLayoutManager<?>)
+            try {
+                if (ELEMENT_MANAGER.equals(element.getName())) {
+                    IDiagramLayoutManager<?> manager = (IDiagramLayoutManager<?>)
                             element.createExecutableExtension(ATTRIBUTE_CLASS);
-                    int priority = 0;
-                    String prioEntry = element.getAttribute(ATTRIBUTE_PRIORITY);
-                    if (prioEntry != null) {
-                        try {
-                            priority = Integer.parseInt(prioEntry);
-                        } catch (NumberFormatException exception) {
-                            // ignore exception
-                        }
-                    }
                     if (manager != null) {
-                        insertManager(manager, priority);
+                        int priority = 0;
+                        String prioEntry = element.getAttribute(ATTRIBUTE_PRIORITY);
+                        if (prioEntry != null) {
+                            try {
+                                priority = Integer.parseInt(prioEntry);
+                            } catch (NumberFormatException exception) {
+                                // ignore exception
+                            }
+                        }
+                        insertSorted(manager, priority, managers);
                     }
-                } catch (CoreException exception) {
-                    StatusManager.getManager().handle(exception, KimlUiPlugin.PLUGIN_ID);
+                    
+                } else if (ELEMENT_ENGINE.equals(element.getName())) {
+                    IGraphLayoutEngine engine = (IGraphLayoutEngine)
+                            element.createExecutableExtension(ATTRIBUTE_CLASS);
+                    if (engine != null) {
+                        int priority = 0;
+                        String prioEntry = element.getAttribute(ATTRIBUTE_PRIORITY);
+                        if (prioEntry != null) {
+                            try {
+                                priority = Integer.parseInt(prioEntry);
+                            } catch (NumberFormatException exception) {
+                                // ignore exception
+                            }
+                        }
+                        insertSorted(engine, priority, layoutEngines);
+                    }
                 }
+            } catch (CoreException exception) {
+                StatusManager.getManager().handle(exception, KimlUiPlugin.PLUGIN_ID);
             }
         }
     }
     
     /**
-     * Insert the given diagram layout manager with a specific priority.
+     * Insert the given object into a sorted list.
      * 
-     * @param manager a diagram layout manager
-     * @param priority priority at which the manager is inserted
+     * @param object the object to insert
+     * @param priority priority at which the object is inserted
+     * @param list list of sorted objects
      */
-    private void insertManager(final DiagramLayoutManager<?> manager, final int priority) {
-        ListIterator<DiagramLayoutManager<?>> iter = managers.listIterator();
+    private static <T> void insertSorted(final T object, final int priority,
+            final List<Pair<Integer, T>> list) {
+        ListIterator<Pair<Integer, T>> iter = list.listIterator();
         while (iter.hasNext()) {
-            DiagramLayoutManager<?> next = iter.next();
-            if (next.getPriority() <= priority) {
+            Pair<Integer, T> next = iter.next();
+            if (next.getFirst() <= priority) {
                 iter.previous();
                 break;
             }
         }
-        iter.add(manager);
-        manager.setPriority(priority);
+        iter.add(new Pair<Integer, T>(priority, object));
     }
 
     /**

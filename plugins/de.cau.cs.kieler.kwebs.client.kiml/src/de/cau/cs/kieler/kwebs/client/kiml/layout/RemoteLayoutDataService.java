@@ -22,7 +22,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
-import de.cau.cs.kieler.kiml.service.ServiceDataLayoutDataService;
+import de.cau.cs.kieler.kwebs.ServiceDataLayoutDataService;
 import de.cau.cs.kieler.kwebs.client.ILayoutServiceClient;
 import de.cau.cs.kieler.kwebs.client.kiml.activator.Activator;
 
@@ -52,10 +52,8 @@ public final class RemoteLayoutDataService extends ServiceDataLayoutDataService 
      * by calling {@link initializeWithClient} with the client as parameter.
      */
     public static synchronized void create() {
-        RemoteLayoutDataService lds =
-            LayoutDataService.getInstanceOf(
-                LayoutDataService.REMOTEDATASERVICE
-        );
+        RemoteLayoutDataService lds = LayoutDataService.getInstanceOf(
+                LayoutDataService.REMOTEDATASERVICE);
         if (lds == null) {
             lds = new RemoteLayoutDataService();
             LayoutDataService.addService(lds);
@@ -153,7 +151,7 @@ public final class RemoteLayoutDataService extends ServiceDataLayoutDataService 
      */
     @Override
     protected LayoutAlgorithmData createLayoutAlgorithmData(final IConfigurationElement element) {
-        RemoteLayoutAlgorithmData algoData = new RemoteLayoutAlgorithmData();
+        LayoutAlgorithmData algoData = new LayoutAlgorithmData();
         String previewImagePath = element.getAttribute(ATTRIBUTE_PREVIEWIMAGEPATH);
         if (previewImageHostAvailable) {
             if (previewImagePath != null) {

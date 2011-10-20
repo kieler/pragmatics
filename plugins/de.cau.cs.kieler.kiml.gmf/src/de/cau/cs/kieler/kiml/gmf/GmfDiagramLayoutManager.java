@@ -111,7 +111,6 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
     /**
      * {@inheritDoc}
      */
-    @Override
     public boolean supports(final Object object) {
         return object instanceof DiagramEditor || object instanceof IGraphicalEditPart;
     }
@@ -119,7 +118,6 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
     /**
      * {@inheritDoc}
      */
-    @Override
     public LayoutMapping<IGraphicalEditPart> buildLayoutGraph(final IWorkbenchPart workbenchPart,
             final Object diagramPart) {
         DiagramEditor diagramEditor = null;
@@ -261,7 +259,6 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
     /**
      * {@inheritDoc}
      */
-    @Override
     public IMutableLayoutConfig getLayoutConfig() {
         return layoutConfig;
     }

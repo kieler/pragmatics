@@ -31,14 +31,12 @@ public interface IGraphLayoutEngine {
      * @param progressMonitor monitor to which progress of the layout algorithms is reported
      */
     void layout(KNode layoutGraph, IKielerProgressMonitor progressMonitor);
-
+    
     /**
-     * Returns the last layout provider that was used by the layouter engine.
-     * This can be used to check the source of error if an exception is caught
-     * during layout.
+     * Determine whether the layout engine is active.
      * 
-     * @return the last used layout provider, or {@code null} if there is none
+     * @return true if the engine is active
      */
-    AbstractLayoutProvider getLastLayoutProvider();
+    boolean isActive();
 
 }

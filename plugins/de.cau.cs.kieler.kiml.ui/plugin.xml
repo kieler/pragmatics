@@ -253,5 +253,11 @@ point="org.eclipse.ui.menus">
           name="Layout After Diagram Reinitialization">
     </combination>
  </extension>
+ <extension
+       point="de.cau.cs.kieler.kiml.ui.layoutManagers">
+    <engine
+          class="de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine">
+    </engine>
+ </extension>
    
 </plugin>

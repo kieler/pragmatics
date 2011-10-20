@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.kiml.service;
+package de.cau.cs.kieler.kwebs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.emf.common.util.EList;
 
+import de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService;
 import de.cau.cs.kieler.kwebs.servicedata.Category;
 import de.cau.cs.kieler.kwebs.servicedata.KnownOption;
 import de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm;

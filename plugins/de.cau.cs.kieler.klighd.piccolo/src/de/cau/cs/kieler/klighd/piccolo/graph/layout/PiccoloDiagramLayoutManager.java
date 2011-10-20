@@ -32,7 +32,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -59,7 +59,7 @@ import edu.umd.cs.piccolo.util.PBounds;
  * 
  * @author mri
  */
-public class PiccoloDiagramLayoutManager extends DiagramLayoutManager<IGraphObject> {
+public class PiccoloDiagramLayoutManager implements IDiagramLayoutManager<IGraphObject> {
 
     /** the list of edges found in the graph. */
     public static final IProperty<List<IGraphEdge>> EDGES = new Property<List<IGraphEdge>>(
@@ -71,7 +71,6 @@ public class PiccoloDiagramLayoutManager extends DiagramLayoutManager<IGraphObje
     /**
      * {@inheritDoc}
      */
-    @Override
     public boolean supports(final Object object) {
         if (object instanceof DiagramViewPart) {
             DiagramViewPart view = (DiagramViewPart) object;
@@ -87,7 +86,6 @@ public class PiccoloDiagramLayoutManager extends DiagramLayoutManager<IGraphObje
     /**
      * {@inheritDoc}
      */
-    @Override
     public LayoutMapping<IGraphObject> buildLayoutGraph(final IWorkbenchPart workbenchPart,
             final Object diagramPart) {
         // choose the layout root object
@@ -292,7 +290,6 @@ public class PiccoloDiagramLayoutManager extends DiagramLayoutManager<IGraphObje
     /**
      * {@inheritDoc}
      */
-    @Override
     public void applyLayout(final LayoutMapping<IGraphObject> mapping, final boolean zoomToFit,
             final int animationTime) {
         // apply the layout using a Piccolo activity
@@ -363,7 +360,6 @@ public class PiccoloDiagramLayoutManager extends DiagramLayoutManager<IGraphObje
     /**
      * {@inheritDoc}
      */
-    @Override
     public IMutableLayoutConfig getLayoutConfig() {
         return null;
     }

@@ -18,35 +18,13 @@ import org.eclipse.ui.IWorkbenchPart;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 
 /**
- * Abstract superclass for managers of diagram layout.
+ * Interface for managers of diagram layout.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @param <T> the type of diagram part that is handled by this diagram layout manager
  * @author msp
  */
-public abstract class DiagramLayoutManager<T> {
-
-    /** the configured priority of the layout manager. */
-    private int priority;
-
-    /**
-     * Return the manager priority.
-     * 
-     * @return the priority
-     */
-    public final int getPriority() {
-        return priority;
-    }
-
-    /**
-     * Set the manager priority.
-     * 
-     * @param thepriority
-     *            the priority to set
-     */
-    public final void setPriority(final int thepriority) {
-        this.priority = thepriority;
-    }
+public interface IDiagramLayoutManager<T> {
 
     /**
      * Determine whether this layout manager is able to perform layout for the given object.
@@ -54,7 +32,7 @@ public abstract class DiagramLayoutManager<T> {
      * @param object a workbench part or edit part
      * @return true if this layout manager supports the object
      */
-    public abstract boolean supports(Object object);
+    boolean supports(Object object);
 
     /**
      * Build a KGraph instance for the given diagram. The resulting layout graph should reflect
@@ -67,7 +45,7 @@ public abstract class DiagramLayoutManager<T> {
      *            {@code null} if the whole diagram shall be layouted
      * @return a layout graph mapping
      */
-    public abstract LayoutMapping<T> buildLayoutGraph(IWorkbenchPart workbenchPart,
+    LayoutMapping<T> buildLayoutGraph(IWorkbenchPart workbenchPart,
             Object diagramPart);
 
     /**
@@ -77,7 +55,7 @@ public abstract class DiagramLayoutManager<T> {
      * @param zoomToFit whether the diagram should zoom to fit
      * @param animationTime the animation time in milliseconds, or 0 for no animation
      */
-    public abstract void applyLayout(LayoutMapping<T> mapping, boolean zoomToFit,
+    void applyLayout(LayoutMapping<T> mapping, boolean zoomToFit,
             int animationTime);
     
     /**
@@ -85,6 +63,6 @@ public abstract class DiagramLayoutManager<T> {
      * 
      * @return a layout configuration for this diagram layout manager
      */
-    public abstract IMutableLayoutConfig getLayoutConfig();
+    IMutableLayoutConfig getLayoutConfig();
 
 }

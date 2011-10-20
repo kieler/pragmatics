@@ -139,7 +139,7 @@ public class KGraphXmiTransformer extends AbstractEmfTransformer<KNode> {
             TreeIterator<EObject> iterator = graph.eAllContents();
             EObject eObject  = null;
             EList<PersistentEntry> persistentEntries = null;
-            LayoutDataService services = LayoutDataService.getInstance();
+            LayoutDataService dataService = LayoutDataService.getInstance();
             KGraphData kgraphData = null;
             while (iterator.hasNext()) {
                 eObject = iterator.next();
@@ -153,14 +153,14 @@ public class KGraphXmiTransformer extends AbstractEmfTransformer<KNode> {
                             LayoutOptionData<?> layoutOptionData = null;
                             // If we run inside of KIELER we try to get the layout option
                             // from the data service
-                            if (services != null) { 
-                                layoutOptionData = services.getOptionData(key);
+                            if (dataService != null) { 
+                                layoutOptionData = dataService.getOptionData(key);
                             }
-                            // If we have a valid layout option, parse it's value and
+                            // If we have a valid layout option, parse its value and
                             // annotate graph
                             if (layoutOptionData != null) {
-                                Object layoutOptionValue = layoutOptionData.
-                                    parseValue(persistentEntry.getValue());
+                                Object layoutOptionValue = layoutOptionData
+                                    .parseValue(persistentEntry.getValue());
                                 if (layoutOptionValue != null) {
                                     kgraphData.setProperty(layoutOptionData, layoutOptionValue);
                                 }

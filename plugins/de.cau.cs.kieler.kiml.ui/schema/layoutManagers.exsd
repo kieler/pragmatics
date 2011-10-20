@@ -17,8 +17,9 @@
          </appinfo>
       </annotation>
       <complexType>
-         <sequence>
-            <element ref="manager" minOccurs="0" maxOccurs="unbounded"/>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="manager"/>
+            <element ref="engine"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -60,7 +61,7 @@
                   Qualified name of a diagram layout manager class.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager:"/>
+                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -68,6 +69,33 @@
             <annotation>
                <documentation>
                   An optional priority (default is 0); layout managers with higher priority are checked first when a suitable manager class is searched.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="engine">
+      <annotation>
+         <documentation>
+            Use this element to register a graph layout engine class for use in KIML. Graph layout engines are responsible to process a KGraph and perform layout on it, usually delegating to layout providers.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Qualified name of a graph layout engine class.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.IGraphLayoutEngine"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="string">
+            <annotation>
+               <documentation>
+                  An optional priority (default is 0); layout engines with higher priority are checked first when a suitable engine class is searched.
                </documentation>
             </annotation>
          </attribute>

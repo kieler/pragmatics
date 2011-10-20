@@ -33,7 +33,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.IGene;
 import de.cau.cs.kieler.kiml.evol.genetic.UniversalNumberGene;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
@@ -45,21 +45,14 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
  *
  */
 class AdoptingRecursiveGraphLayoutEngine extends RecursiveGraphLayoutEngine {
-    /**
-     * Creates a new {@link AdoptingRecursiveGraphLayoutEngine} instance.
-     *
-     */
-    public AdoptingRecursiveGraphLayoutEngine() {
-        super(null);
-    }
 
     /** Cached layout manager. */
-    private DiagramLayoutManager<?> manager;
+    private IDiagramLayoutManager<?> manager;
 
     /**
      * @return the layout manager most recently used by this engine.
      */
-    public DiagramLayoutManager<?> getManager() {
+    public IDiagramLayoutManager<?> getManager() {
         return this.manager;
     }
 
@@ -382,4 +375,5 @@ class AdoptingRecursiveGraphLayoutEngine extends RecursiveGraphLayoutEngine {
             targetGraphData.setProperty(data, gene.toString());
         }
     }
+    
 }

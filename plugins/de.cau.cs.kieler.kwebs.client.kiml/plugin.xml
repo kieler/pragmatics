@@ -26,5 +26,12 @@
          </toolbar>
       </menuContribution>
    </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.ui.layoutManagers">
+      <engine
+            class="de.cau.cs.kieler.kwebs.client.kiml.layout.RemoteGraphLayoutEngine"
+            priority="5">
+      </engine>
+   </extension>
 
 </plugin>

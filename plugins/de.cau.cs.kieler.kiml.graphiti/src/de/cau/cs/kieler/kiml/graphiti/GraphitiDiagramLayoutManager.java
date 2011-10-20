@@ -89,7 +89,6 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     /**
      * {@inheritDoc}
      */
-    @Override
     public boolean supports(final Object object) {
         return object instanceof DiagramEditor || object instanceof IPictogramElementEditPart;
     }
@@ -97,7 +96,6 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     /**
      * {@inheritDoc}
      */
-    @Override
     public LayoutMapping<PictogramElement> buildLayoutGraph(final IWorkbenchPart workbenchPart,
             final Object diagramPart) {
         LayoutMapping<PictogramElement> mapping = new LayoutMapping<PictogramElement>();
@@ -177,7 +175,6 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     /**
      * {@inheritDoc}
      */
-    @Override
     public IMutableLayoutConfig getLayoutConfig() {
         return layoutConfig;
     }

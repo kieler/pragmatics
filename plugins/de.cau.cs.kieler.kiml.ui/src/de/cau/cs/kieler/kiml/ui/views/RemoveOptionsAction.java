@@ -25,7 +25,7 @@ import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
@@ -62,7 +62,7 @@ public class RemoveOptionsAction extends Action {
         if (bridge != null) {
             EditPart diagram = bridge.getEditPart(workbenchPart);
             if (diagram != null) {
-                DiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
+                IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
                         .getManager(workbenchPart, diagram);
                 if (manager != null) {
                     final IMutableLayoutConfig layoutConfig = manager.getLayoutConfig();

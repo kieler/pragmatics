@@ -83,7 +83,7 @@ public class SetOptionsEffect extends AbstractEffect {
                 .getBridge(workbenchPart);
         if (bridge != null) {
             EditPart editPart = bridge.getEditPart(modelElement);
-            DiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
+            IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
                     .getManager(workbenchPart, editPart);
             if (manager != null) {
                 final IMutableLayoutConfig layoutConfig = manager.getLayoutConfig();

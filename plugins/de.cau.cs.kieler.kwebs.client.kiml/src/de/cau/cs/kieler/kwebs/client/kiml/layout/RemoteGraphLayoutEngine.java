@@ -35,7 +35,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
@@ -81,7 +80,7 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
     
     /** The transformer used for compressed serialization and deserialization of the KGraph instances. */
     private KGraphXmiTransformer compressedTransformer
-        = new KGraphXmiCompressedTransformer(); // !!! EXPERIMENTAL !!!
+        = new KGraphXmiCompressedTransformer(); // !!! XXX EXPERIMENTAL !!!
 
     /**
      * Creates a layout engine for remote layout.
@@ -231,19 +230,16 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
      * @param progressMonitor monitor to which progress of the layout algorithms is reported
      */
     public final void layout(final KNode layoutGraph, final IKielerProgressMonitor progressMonitor) {
-        boolean remoteLayout = preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE);
         boolean compressedLayout = preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_COMPRESSION);
-        if (remoteLayout && client == null) {
+        if (client == null) {
             if (!initialize()) {
                 return;
             }
+        } else {
+            // make sure the remote layout data is active, since it's needed for deserialization
+            LayoutDataService.setMode(LayoutDataService.REMOTEDATASERVICE);
         }
-        int nodeCount = Graphs.countNodes(layoutGraph);
-        String label = "Doing remote layout " + client.getServerConfig().getAddress();
-        String graphLabel = layoutGraph.getLabel().getText();
-        if (graphLabel != null && graphLabel.length() > 0) {
-            label += " (" + graphLabel + ")";
-        }
+        String label = "Remote Graph Layout (" + client.getServerConfig().getAddress() + ")";
         double networkStart = 0;
         double networkTotal = 0;
         double timeStart = 0;
@@ -254,7 +250,7 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         String sourceXMI = null;
         String resultXMI = null;
         timeStart = System.nanoTime();
-        progressMonitor.begin(label, nodeCount);
+        progressMonitor.begin(label, 1);
         Graphs.annotateGraphWithUniqueID(layoutGraph);
         if (compressedLayout) {
             transformer = compressedTransformer;
@@ -302,12 +298,11 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
     }
 
     /**
-     * Returns always {@code} null since the layout is performed remotely.
-     *
-     * @return {@code null}
+     * {@inheritDoc}
      */
-    public final AbstractLayoutProvider getLastLayoutProvider() {
-        return null;
+    public boolean isActive() {
+        IPreferenceStore preferenceStore = Preferences.getPreferenceStore();
+        return preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE);
     }
 
     // Utility methods and definitions

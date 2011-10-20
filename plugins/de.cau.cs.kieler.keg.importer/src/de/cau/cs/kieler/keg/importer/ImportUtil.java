@@ -50,7 +50,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
@@ -218,7 +218,7 @@ public final class ImportUtil {
                 }
                 // get the layout manager for the editor
                 @SuppressWarnings("unchecked")
-                DiagramLayoutManager<T> layoutManager = (DiagramLayoutManager<T>)
+                IDiagramLayoutManager<T> layoutManager = (IDiagramLayoutManager<T>)
                         EclipseLayoutInfoService.getInstance().getManager(editorPart, null);
                 if (layoutManager == null) {
                     // FIXME throw a more specific exception

@@ -27,7 +27,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService;
-import de.cau.cs.kieler.kiml.ui.EclipseLayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 
 /**
@@ -82,7 +81,7 @@ public class EclipseLayoutDataService extends ExtensionLayoutDataService {
      */
     @Override
     protected LayoutAlgorithmData createLayoutAlgorithmData(final IConfigurationElement element) {
-        EclipseLayoutAlgorithmData algoData = new EclipseLayoutAlgorithmData();
+        LayoutAlgorithmData algoData = new LayoutAlgorithmData();
         String previewPath = element.getAttribute(ATTRIBUTE_PREVIEW);
         if (previewPath != null) {
             algoData.setPreviewImage(AbstractUIPlugin.imageDescriptorFromPlugin(

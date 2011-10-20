@@ -34,7 +34,7 @@ import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
@@ -153,7 +153,7 @@ public final class DiagramAnalyzer {
         final List<AbstractInfoAnalysis> analysesSequence = AnalysisServices.getInstance()
                 .getExecutionOrder(analyses);
         lastResult = null;
-        final DiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
+        final IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
                 editorPart, editPart);
         if (manager == null) {
             return Collections.emptyMap();

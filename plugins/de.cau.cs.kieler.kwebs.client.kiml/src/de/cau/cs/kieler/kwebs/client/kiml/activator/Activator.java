@@ -28,6 +28,7 @@ import org.osgi.framework.BundleContext;
 
 import de.cau.cs.kieler.kwebs.client.kiml.EclipseServerConfigsStorageManager;
 import de.cau.cs.kieler.kwebs.client.kiml.ServerConfigs;
+import de.cau.cs.kieler.kwebs.client.kiml.layout.RemoteLayoutDataService;
 
 /**
  * Activator for the client plug-in. It provides storage management for the user defined provider list.
@@ -64,6 +65,9 @@ public class Activator extends Plugin {
         ServerConfigs.getInstance().registerStorageManager(new EclipseServerConfigsStorageManager());
         // Initialize providers from preference store
         ServerConfigs.getInstance().read();
+        // Create and register layout data for remote layout.
+        // FIXME make sure the right service instance is activated on startup
+        RemoteLayoutDataService.create();
     }
         
     /**

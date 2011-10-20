@@ -18,7 +18,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 
 /**
  * Performs layout in a graph with hierarchy by executing a layout algorithm on
@@ -35,20 +34,6 @@ import de.cau.cs.kieler.kiml.util.IDebugCanvas;
  */
 public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
 
-    /** the last used layout provider. */
-    private AbstractLayoutProvider lastLayoutProvider;
-    /** the debug canvas to use. */
-    private IDebugCanvas debugCanvas;
-
-    /**
-     * Creates a recursive layouter engine with the given debug canvas.
-     * 
-     * @param thedebugCanvas the debug canvas to use
-     */
-    public RecursiveGraphLayoutEngine(final IDebugCanvas thedebugCanvas) {
-        this.debugCanvas = thedebugCanvas;
-    }
-    
     /**
      * Performs recursive layout on the given layout graph. Layout is not only performed
      * for the selected node, but also for its ancestors, if there are any.
@@ -57,7 +42,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * @param progressMonitor monitor to which progress of the layout algorithms is reported
      */
     public void layout(final KNode layoutGraph, final IKielerProgressMonitor progressMonitor) {
-        lastLayoutProvider = null;
         int nodeCount = countNodes(layoutGraph, true);
         progressMonitor.begin("Recursive Graph Layout", nodeCount);
         
@@ -95,8 +79,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             }
 
             // perform layout on the current hierarchy level
-            lastLayoutProvider = layoutProvider;
-            layoutProvider.setDebugCanvas(debugCanvas);
             layoutProvider.doLayout(layoutNode, progressMonitor.subTask(nodeCount));
             algorithmData.getProviderPool().release(layoutProvider);
         }
@@ -147,14 +129,10 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     }
 
     /**
-     * Returns the last layout provider that was used by the layouter engine.
-     * This can be used to check the source of error if an exception is caught
-     * during layout.
-     * 
-     * @return the last used layout provider, or {@code null} if there is none
+     * {@inheritDoc}
      */
-    public AbstractLayoutProvider getLastLayoutProvider() {
-        return lastLayoutProvider;
+    public boolean isActive() {
+        return true;
     }
 
 }

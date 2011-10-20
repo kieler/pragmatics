@@ -17,6 +17,7 @@ package de.cau.cs.kieler.kwebs.util;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
@@ -38,7 +39,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
- * Utility class for duplicating layout information between structually identical
+ * Utility class for duplicating layout information between structurally identical
  * graphs. Every graph element gets annotated with an unique identifier.
  * This is used to duplicate the calculated layout information from a 
  * graph which was layout done on back to the original graph.
@@ -61,8 +62,8 @@ public final class Graphs {
         if (sourceGraph != null && targetGraph != null) {
             HashMap<String, KGraphElement> sourceMap = createHashmapByUniqueID(sourceGraph);
             HashMap<String, KGraphElement> targetMap = createHashmapByUniqueID(targetGraph);
-            for (String srcId : sourceMap.keySet()) {                
-                duplicateGraphElementLayout(sourceMap.get(srcId), targetMap.get(srcId));
+            for (Map.Entry<String, KGraphElement> entry : sourceMap.entrySet()) {
+                duplicateGraphElementLayout(entry.getValue(), targetMap.get(entry.getKey()));
             }
         }
     }

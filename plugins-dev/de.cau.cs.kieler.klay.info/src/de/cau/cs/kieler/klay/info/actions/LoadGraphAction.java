@@ -127,7 +127,7 @@ public class LoadGraphAction extends Action {
         KShapeLayout graphLayout = graph.getData(KShapeLayout.class);
         IKielerProgressMonitor monitor = new BasicProgressMonitor();
         if (graphLayout != null && !graphLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
-            IGraphLayoutEngine layoutEngine = new RecursiveGraphLayoutEngine(null);
+            IGraphLayoutEngine layoutEngine = new RecursiveGraphLayoutEngine();
             layoutEngine.layout(graph, monitor);
         }
         
