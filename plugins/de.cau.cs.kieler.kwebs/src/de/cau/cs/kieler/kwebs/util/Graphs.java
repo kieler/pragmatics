@@ -27,6 +27,10 @@ import de.cau.cs.kieler.core.kgraph.KGraphFactory;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.kgraph.impl.KEdgeImpl;
+import de.cau.cs.kieler.core.kgraph.impl.KLabelImpl;
+import de.cau.cs.kieler.core.kgraph.impl.KNodeImpl;
+import de.cau.cs.kieler.core.kgraph.impl.KPortImpl;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
@@ -160,7 +164,7 @@ public final class Graphs {
     * @return total number of child nodes
     */
    public static int countNodes(final KNode graph) {
-       return getAllElementsOfType(graph, KNode.class, false).size();       
+       return getAllElementsOfType(graph, KNodeImpl.class, false).size();       
    }
 
    /**
@@ -171,7 +175,7 @@ public final class Graphs {
     * @return total number of edges
     */
    public static int countEdges(final KNode graph) {
-       return getAllElementsOfType(graph, KEdge.class, false).size();       
+       return getAllElementsOfType(graph, KEdgeImpl.class, false).size();       
    }
 
    /**
@@ -182,7 +186,7 @@ public final class Graphs {
     * @return total number of ports
     */
    public static int countPorts(final KNode graph) {
-       return getAllElementsOfType(graph, KPort.class, false).size();       
+       return getAllElementsOfType(graph, KPortImpl.class, false).size();       
    }
 
    /**
@@ -193,7 +197,7 @@ public final class Graphs {
     * @return total number of labels
     */
    public static int countLabels(final KNode graph) {
-       return getAllElementsOfType(graph, KLabel.class, false).size();       
+       return getAllElementsOfType(graph, KLabelImpl.class, false).size();       
    }
 
    /**
