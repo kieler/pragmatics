@@ -128,34 +128,41 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                     propagatePair(leftRightList, elemMap);
                     LNode propCompoundCurrent = leftRightList.getFirst();
                     LNode propCompoundNext = leftRightList.getLast();
-                    LNode key;
-                    LGraphElement parentRep = elemMap.get(propCompoundCurrent
-                            .getProperty(Properties.PARENT));
-                    if (parentRep instanceof LayeredGraph) {
-                        key = graphKey;
-                    } else {
-                        key = (LNode) parentRep;
+                    // Do not insert self-loops into the subgraph-ordering-graph.
+                    if (propCompoundCurrent != propCompoundNext) {
+                        LNode key;
+                        LGraphElement parentRep = elemMap.get(propCompoundCurrent
+                                .getProperty(Properties.PARENT));
+                        if (parentRep instanceof LayeredGraph) {
+                            key = graphKey;
+                        } else {
+                            key = (LNode) parentRep;
+                        }
+                        LayeredGraph partGraph;
+                        // Get the corresponding component of the subgraphOrderingGraph or create
+                        // it.
+                        if (subgraphOrderingGraph.containsKey(key)) {
+                            partGraph = subgraphOrderingGraph.get(key);
+                        } else {
+                            partGraph = new LayeredGraph();
+                            partGraph.setProperty(Properties.RANDOM,
+                                    layeredGraph.getProperty(Properties.RANDOM));
+                            subgraphOrderingGraph.put(key, partGraph);
+                        }
+                        // Add representatives for the compound nodes to the ordering graph's
+                        // component
+                        // if not already present. Add an "is-left-of" edge between them.
+                        List<LNode> nodeList = partGraph.getLayerlessNodes();
+                        LNode currentRep = getNodeCopy(propCompoundCurrent, nodeList, insertedNodes);
+                        LNode nextRep = getNodeCopy(propCompoundNext, nodeList, insertedNodes);
+                        LEdge leftOfEdge = new LEdge();
+                        LPort sourcePort = new LPort();
+                        LPort targetPort = new LPort();
+                        leftOfEdge.setSource(sourcePort);
+                        leftOfEdge.setTarget(targetPort);
+                        sourcePort.setNode(currentRep);
+                        targetPort.setNode(nextRep);
                     }
-                    LayeredGraph partGraph;
-                    // Get the corresponding component of the subgraphOrderingGraph or create it.
-                    if (subgraphOrderingGraph.containsKey(key)) {
-                        partGraph = subgraphOrderingGraph.get(key);
-                    } else {
-                        partGraph = new LayeredGraph();
-                        subgraphOrderingGraph.put(key, partGraph);
-                    }
-                    // Add representatives for the compound nodes to the ordering graph's component
-                    // if not already present. Add an "is-left-of" edge between them.
-                    List<LNode> nodeList = partGraph.getLayerlessNodes();
-                    LNode currentRep = getNodeCopy(propCompoundCurrent, nodeList, insertedNodes);
-                    LNode nextRep = getNodeCopy(propCompoundNext, nodeList, insertedNodes);
-                    LEdge leftOfEdge = new LEdge();
-                    LPort sourcePort = new LPort();
-                    LPort targetPort = new LPort();
-                    leftOfEdge.setSource(sourcePort);
-                    leftOfEdge.setTarget(targetPort);
-                    sourcePort.setNode(currentRep);
-                    targetPort.setNode(nextRep);
                 }
             }
             if (reordered) {
@@ -288,6 +295,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             for (KNode child : kKey.getChildren()) {
                 LNode childRep = (LNode) elemMap.get(child);
                 if (reorderedLayers.get(layer).containsKey(childRep)) {
+                    assert (childRep != key);
                     recursiveApplyLayerOrder(layer, childRep, layeredGraph, subgraphOrderingGraph,
                             layerOrder, elemMap);
                 }
@@ -299,16 +307,19 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             Iterator<LNode> orderIterator = componentOrder.iterator();
             while (orderIterator.hasNext()) {
                 LNode currentNode = (LNode) orderIterator.next().getProperty(Properties.ORIGIN);
+                assert (currentNode != key);
                 recursiveApplyLayerOrder(layer, currentNode, layeredGraph, subgraphOrderingGraph,
                         layerOrder, elemMap);
+
             }
         }
 
         // Add assigned nodes for the current key to the order.
         LinkedList<LNode> assignedNodes = reorderedLayers.get(layer).get(key);
         if (assignedNodes != null) {
-            for (LNode assignedNode : reorderedLayers.get(layer).get(key)) {
-                layerOrder.add(assignedNode);
+            for (LNode assignedNode : assignedNodes) {
+                    //assert (!layerOrder.contains(assignedNode));
+                    layerOrder.add(assignedNode);
             }
         }
     }
@@ -457,6 +468,56 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             }
             break;
         case LONG_EDGE:
+            // LPort sourcePort = node.getProperty(Properties.LONG_EDGE_SOURCE);
+            // LPort targetPort = node.getProperty(Properties.LONG_EDGE_TARGET);
+            // LNode sourceNode = sourcePort.getNode();
+            // LNode targetNode = targetPort.getNode();
+            // LNode relatedCompoundSource = getRelatedCompoundNode(sourceNode, layeredGraph);
+            // LNode relatedCompoundTarget = getRelatedCompoundNode(targetNode, layeredGraph);
+            // if (relatedCompoundSource == relatedCompoundTarget) {
+            // retNode = relatedCompoundSource;
+            // } else {
+            // LinkedList<LNode> sourceTargetList = new LinkedList<LNode>();
+            // sourceTargetList.add(relatedCompoundSource);
+            // sourceTargetList.add(relatedCompoundTarget);
+            // propagatePair(sourceTargetList, elemMap);
+            // LNode newSource = sourceTargetList.getFirst();
+            // KNode newSourceParent = newSource.getProperty(Properties.PARENT);
+            // LGraphElement container = elemMap.get(newSourceParent);
+            // if (!(container instanceof LayeredGraph)) {
+            // retNode = (LNode) container;
+            // }
+            //
+            // // int depthSource = relatedCompoundSource.getProperty(Properties.DEPTH);
+            // // int depthTarget = relatedCompoundTarget.getProperty(Properties.DEPTH);
+            // // if (depthSource != depthTarget) {
+            // // for (int i = depthSource; i > depthTarget; i--) {
+            // // relatedCompoundSource = getRelatedCompoundNode(relatedCompoundSource,
+            // // layeredGraph);
+            // // }
+            // // for (int j = depthTarget; j > depthSource; j--) {
+            // // relatedCompoundTarget = getRelatedCompoundNode(relatedCompoundTarget,
+            // // layeredGraph);
+            // // }
+            // // }
+            // // depthSource = relatedCompoundSource.getProperty(Properties.DEPTH);
+            // // depthTarget = relatedCompoundTarget.getProperty(Properties.DEPTH);
+            // // assert (depthSource == depthTarget);
+            // //
+            // // while (relatedCompoundSource != relatedCompoundTarget) {
+            // // relatedCompoundSource = getRelatedCompoundNode(relatedCompoundSource,
+            // // layeredGraph);
+            // // relatedCompoundTarget = getRelatedCompoundNode(relatedCompoundTarget,
+            // // layeredGraph);
+            // // }
+            // // retNode = relatedCompoundSource;
+            // }
+
+            // // An edge is regarded contained by the compound node of it's target.
+            // LPort targetPort = node.getProperty(Properties.LONG_EDGE_TARGET);
+            // LNode targetNode = targetPort.getNode();
+            // retNode = getRelatedCompoundNode(targetNode, layeredGraph);
+
             // An edge is regarded contained by the compound node which contains both source and
             // target (directly or indirectly). If this is the layeredGraph, return null.
             LPort sourcePort = node.getProperty(Properties.LONG_EDGE_SOURCE);
@@ -510,14 +571,17 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             final HashMap<KGraphElement, LGraphElement> elemMap) {
         LNode sourceNode = sourceTargetList.getFirst();
         LNode targetNode = sourceTargetList.getLast();
-        int depthSource = sourceNode.getProperty(Properties.DEPTH);
-        int depthTarget = targetNode.getProperty(Properties.DEPTH);
+        
+        KNode currentSource = getRelatedKNode(sourceNode);
+        KNode currentTarget = getRelatedKNode(targetNode);        
 
-        KNode currentSource = (KNode) sourceNode.getProperty(Properties.ORIGIN);
-        KNode currentTarget = (KNode) targetNode.getProperty(Properties.ORIGIN);
+        int depthSource = elemMap.get(currentSource).getProperty(Properties.DEPTH);
+        int depthTarget = elemMap.get(currentTarget).getProperty(Properties.DEPTH);
+        assert (depthSource > 0);
+        assert (depthTarget > 0);
 
         KNode currentSourceAncestor = currentSource.getParent();
-        KNode currentTargetAncestor = currentSource.getParent();
+        KNode currentTargetAncestor = currentTarget.getParent();
 
         // If source and target differ in depth in the nesting tree, crawl up the
         // nesting tree on the deep side to reach even depth level
@@ -530,7 +594,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             }
         }
 
-        if (currentSource != currentTarget) {
+        if (currentSourceAncestor != currentTargetAncestor) {
             // Walk up the nesting tree from both sides, until nodes have the same
             // parent.
             currentSourceAncestor = currentSource.getParent();
@@ -546,5 +610,43 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         LNode newTarget = (LNode) elemMap.get(currentTarget);
         sourceTargetList.addFirst(newSource);
         sourceTargetList.addLast(newTarget);
+    }
+
+    /**
+     * Returns the KNode the given node is representing (in case of normal or compound dummy nodes)
+     * or directly related to - port node in case of Port dummies, target node origin in case of
+     * long edge dummies.
+     * 
+     * @param node
+     *            The node for which to find the related KNode.
+     * @return The KNode represented by the given node or directly related to it.
+     */
+    private KNode getRelatedKNode(final LNode node) {
+        KNode retNode;
+        Object origin = node.getProperty(Properties.ORIGIN);
+        NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
+        switch (nodeType) {
+        case EXTERNAL_PORT:
+            KNode portNode = ((KPort) (node.getProperty(Properties.ORIGIN))).getNode();
+            retNode = portNode;
+            break;
+        case LONG_EDGE:
+            LNode edgeTarget = node.getProperty(Properties.LONG_EDGE_TARGET).getNode();
+            Object edgeTargetOrigin = edgeTarget.getProperty(Properties.ORIGIN);
+            assert (edgeTargetOrigin instanceof KNode);
+            retNode = (KNode) edgeTargetOrigin;
+            break;
+        case NORTH_SOUTH_PORT:
+            LNode lnode = node.getProperty(Properties.IN_LAYER_LAYOUT_UNIT);
+            Object nodeOrigin = lnode.getProperty(Properties.ORIGIN);
+            assert (nodeOrigin instanceof KNode);
+            retNode = (KNode) nodeOrigin;
+            break;
+        default:
+            assert (origin instanceof KNode);
+            retNode = (KNode) origin;
+            break;
+        }
+        return retNode;
     }
 }
