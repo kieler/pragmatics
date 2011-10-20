@@ -86,6 +86,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.crossMin">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.mergePorts">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
