@@ -309,7 +309,8 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
 
     /**
      * Calculates the positions of northern and southern dummy nodes. The position is based
-     * on the nodes the dummy nodes are connected to.
+     * on the nodes the dummy nodes are connected to, which is taken as the position of the
+     * port's center.
      * 
      * @param dummy the northern or southern external port dummy node to calculate the position for. 
      */
@@ -338,8 +339,8 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * @param width the graph width.
      */
     private void applyNorthSouthDummyRatio(final LNode dummy, final double width) {
-        dummy.getPosition().x = width * dummy.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
-        
+        dummy.getPosition().x = width * dummy.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION)
+                - dummy.getSize().x / 2.0;
     }
     
     /**
@@ -348,7 +349,8 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * @param dummy the dummy.
      */
     private void applyNorthSouthDummyPosition(final LNode dummy) {
-        dummy.getPosition().x = dummy.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
+        dummy.getPosition().x = dummy.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION)
+                - dummy.getSize().x / 2.0;
     }
     
     /**
@@ -439,15 +441,16 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
         // Now, iterate over the array, remembering the last assigned position. If we find a
         // position that is less than or equal to the last position, assign a new position of
         // "lastPosition + edgeSpacing"
-        double lastCoordinate = dummies[0].getPosition().x;
+        double lastCoordinate = dummies[0].getPosition().x + dummies[0].getSize().x;
         for (int index = 1; index < dummies.length; index++) {
             KVector currentPosition = dummies[index].getPosition();
+            KVector currentSize = dummies[index].getSize();
             
-            if (currentPosition.x <= lastCoordinate) {
+            if (currentPosition.x <= lastCoordinate + edgeSpacing) {
                 currentPosition.x = lastCoordinate + edgeSpacing;
             }
             
-            lastCoordinate = currentPosition.x;
+            lastCoordinate = currentPosition.x + currentSize.x;
         }
     }
     

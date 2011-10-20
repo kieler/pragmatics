@@ -228,7 +228,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         PortSide portSide = KimlUtil.calcPortSide(kport, direction);
         LNode dummy = createExternalPortDummy(kport,
                 graphLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS), portSide, inEdges
-                        - outEdges, layoutNodeSize, kportPosition);
+                        - outEdges, layoutNodeSize, kportPosition,
+                        new KVector(kportLayout.getWidth(), kportLayout.getHeight()));
         dummy.setProperty(LayoutOptions.OFFSET, KimlUtil.calcPortOffset(kport, portSide));
         layeredNodes.add(dummy);
         elemMap.put(kport, dummy);

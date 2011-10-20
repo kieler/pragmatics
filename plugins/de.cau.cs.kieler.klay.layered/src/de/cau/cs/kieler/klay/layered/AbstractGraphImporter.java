@@ -73,11 +73,14 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
      *                     constraints are {@code FIXED_RATIO}.
      * @param portPosition the current port position. Only relevant if the port constraints are
      *                     {@code FIXED_ORDER}, {@code FIXED_RATIO} or {@code FIXED_POSITION}.
+     * @param portSize size of the port. Depending on the port's side, the created dummy will
+     *                 have the same width or height as the port, with the other dimension set
+     *                 to zero.
      * @return a dummy node representing the external port.
      */
     protected LNode createExternalPortDummy(final Object port, final PortConstraints portConstraints,
             final PortSide portSide, final int netFlow, final KVector portNodeSize,
-            final KVector portPosition) {
+            final KVector portPosition, final KVector portSize) {
         
         PortSide finalExternalPortSide = portSide;
         
@@ -88,7 +91,6 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         
         LPort dummyPort = new LPort();
-        dummyPort.setSide(PortSide.WEST);
         dummyPort.setNode(dummy);
         
         // If the port constraints are free, we need to determine where to put the dummy (and its port)
@@ -100,28 +102,44 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
             }
         }
         
-        // With the port side at hand, set the necessary properties
+        // With the port side at hand, set the necessary properties and place the dummy's port
+        // at the dummy's center
         switch (finalExternalPortSide) {
         case WEST:
             dummy.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.FIRST_SEPARATE);
             dummy.setProperty(Properties.EDGE_CONSTRAINT, EdgeConstraint.OUTGOING_ONLY);
+            dummy.getSize().y = portSize.y;
             dummyPort.setSide(PortSide.EAST);
+            dummyPort.getPosition().y = portSize.y / 2.0;
             break;
         
         case EAST:
             dummy.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.LAST_SEPARATE);
             dummy.setProperty(Properties.EDGE_CONSTRAINT, EdgeConstraint.INCOMING_ONLY);
+            dummy.getSize().y = portSize.y;
+            dummyPort.setSide(PortSide.WEST);
+            dummyPort.getPosition().y = portSize.y / 2.0;
             break;
         
         case NORTH:
             dummy.setProperty(Properties.IN_LAYER_CONSTRAINT, InLayerConstraint.TOP);
             dummy.setProperty(Properties.EDGE_CONSTRAINT, EdgeConstraint.INCOMING_ONLY);
+            dummy.getSize().x = portSize.x;
+            dummyPort.setSide(PortSide.SOUTH);
+            dummyPort.getPosition().x = portSize.x / 2.0;
             break;
         
         case SOUTH:
             dummy.setProperty(Properties.IN_LAYER_CONSTRAINT, InLayerConstraint.BOTTOM);
             dummy.setProperty(Properties.EDGE_CONSTRAINT, EdgeConstraint.INCOMING_ONLY);
+            dummy.getSize().x = portSize.x;
+            dummyPort.setSide(PortSide.NORTH);
+            dummyPort.getPosition().x = portSize.x / 2.0;
             break;
+        
+        default:
+            // Should never happen!
+            assert false : finalExternalPortSide;
         }
         
         // From FIXED_ORDER onwards, we need to save the port position or ratio
@@ -172,6 +190,8 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
             final double portWidth, final double portHeight) {
         
         KVector portPosition = new KVector(portDummy.getPosition());
+        portPosition.x += portDummy.getSize().x / 2.0;
+        portPosition.y += portDummy.getSize().y / 2.0;
         float portOffset = portDummy.getProperty(LayoutOptions.OFFSET);
         
         // Get some properties of the graph
