@@ -297,6 +297,17 @@ public final class Properties {
     /** property to set constraints on the node layering. */
     public static final IProperty<LayerConstraint> LAYER_CONSTRAINT = new Property<LayerConstraint>(
             LAYER_CONSTRAINT_ID, LayerConstraint.NONE);
+    
+    /** option identifier for port merging. */
+    public static final String MERGE_PORTS_ID = "de.cau.cs.kieler.klay.layered.mergePorts";
+    /**
+     * Property to enable or disable port merging. Merging ports is only interesting for edges
+     * directly connected to nodes instead of ports. When this option is disabled, one port is
+     * created for each edge directly connected to a node. When it is enabled, all such incoming
+     * edges share an input port, and all outgoing edges share an output port.
+     */
+    public static final IProperty<Boolean> MERGE_PORTS = new Property<Boolean>(
+            MERGE_PORTS_ID, false);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

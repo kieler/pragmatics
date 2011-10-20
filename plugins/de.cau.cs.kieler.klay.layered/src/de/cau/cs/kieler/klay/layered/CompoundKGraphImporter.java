@@ -547,7 +547,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
     private LEdge createLEdgeFromKEdge(final KEdge kedge,
             final Map<KGraphElement, LGraphElement> elemMap, final LayeredGraph layeredGraph,
             final Direction direction) {
-        super.transformEdge(kedge, (KNode) layeredGraph.getProperty(Properties.ORIGIN), elemMap,
+        super.transformEdge(kedge, (KNode) layeredGraph.getProperty(Properties.ORIGIN), elemMap, null,
                 (EnumSet<GraphProperties>) layeredGraph.getProperty(Properties.GRAPH_PROPERTIES),
                 direction, layeredGraph);
 

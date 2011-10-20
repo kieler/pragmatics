@@ -159,6 +159,15 @@
             name="Edge Spacing Factor"
             type="float">
       </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="false"
+            description="If enabled, only one input and one output port is created for edges connected directly to a node."
+            id="de.cau.cs.kieler.klay.layered.mergePorts"
+            name="Merge Temporary Ports"
+            type="boolean">
+      </layoutOption>
    </extension>
 
 </plugin>
