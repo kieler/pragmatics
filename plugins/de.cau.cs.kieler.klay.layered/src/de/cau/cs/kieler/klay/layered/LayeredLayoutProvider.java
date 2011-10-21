@@ -180,16 +180,6 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         } else {
             layeredGraph.setProperty(Properties.RANDOM, new Random(1));
         }
-
-        // set the debug canvas based on the debug mode option
-        Boolean debugMode = layeredGraph.getProperty(LayoutOptions.DEBUG_MODE);
-        if (debugMode) {
-            IDebugCanvas debugCanvas = getDebugCanvas();
-            layeredGraph.setProperty(Properties.DEBUG_CANVAS, debugCanvas);
-            float borderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
-            debugCanvas.setOffset(parent, borderSpacing, borderSpacing);
-            debugCanvas.setBuffered(true);
-        }
     }
 
     /**
