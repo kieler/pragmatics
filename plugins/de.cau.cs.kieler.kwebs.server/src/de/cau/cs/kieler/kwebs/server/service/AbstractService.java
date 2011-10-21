@@ -65,7 +65,7 @@ public abstract class AbstractService {
     
     /** The layout engine used. */
     private static RecursiveGraphLayoutEngine layoutEngine
-        = new RecursiveGraphLayoutEngine(null);
+        = new RecursiveGraphLayoutEngine();
 
     /**
      * Protected constructor. Initialized the layout data services.
