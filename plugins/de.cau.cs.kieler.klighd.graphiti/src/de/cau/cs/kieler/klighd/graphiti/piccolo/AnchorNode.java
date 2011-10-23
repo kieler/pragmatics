@@ -264,8 +264,21 @@ public class AnchorNode extends PChildRepresentedNode implements IPictogramNode,
                                 bounds.getMaxX(), bounds.getMaxY());
                 return s;
             } else {
-                // TODO find a better point here
-                return new Point2D.Double(xIn, yIn);
+                if (xIn != xOut || yIn != yOut) {
+                    // shift the 'outer point' out of the bounds and call this method again
+                    double d = Math.max(bounds.width, bounds.height);
+                    // determine the normalized direction for the shift
+                    double dX = xOut - xIn;
+                    double dY = yOut - yIn;
+                    double l = Math.sqrt(dX * dX + dY * dY);
+                    // normalize
+                    dX /= l;
+                    dY /= l;
+                    // shift and repeat method
+                    return getIntersectionWithBounds(xIn, yIn, xOut + d * dX, yOut + d * dY, bounds);
+                } else {
+                    return new Point2D.Double(xIn, yIn);
+                }
             }
         }
     }
