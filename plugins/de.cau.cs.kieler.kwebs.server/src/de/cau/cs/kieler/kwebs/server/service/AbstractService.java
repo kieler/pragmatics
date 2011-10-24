@@ -14,6 +14,7 @@
 
 package de.cau.cs.kieler.kwebs.server.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EMap;
@@ -41,8 +42,10 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.transformation.IGraphTransformer;
 import de.cau.cs.kieler.kwebs.transformation.KGraphXmiCompressedTransformer;
+import de.cau.cs.kieler.kwebs.transformation.KGraphXmiTransformer;
 import de.cau.cs.kieler.kwebs.transformation.TransformationData;
 import de.cau.cs.kieler.kwebs.util.Graphs;
+import de.cau.cs.kieler.kwebs.util.Resources;
 
 /**
  * This abstract base class provides the implementation of the layout functionality. Web service 
@@ -62,6 +65,16 @@ public abstract class AbstractService {
      */
     private static final boolean STATISTICS_MODE
         = true;
+    
+    /** 
+     *  Enables or disables debug mode. In debug mode, the serial notations of the models are
+     *  persisted for analysis.
+     */
+    private static final boolean DEBUG_MODE
+        = false;
+    
+    private int debugIndex
+        = 0;
     
     /** The layout engine used. */
     private static RecursiveGraphLayoutEngine layoutEngine
@@ -125,12 +138,28 @@ public abstract class AbstractService {
         TransformationData<T> transData = new TransformationData<T>();
         transData.setSourceGraph(graph);
         transformer.deriveLayout(transData);
+        // Do debug output
+        if (DEBUG_MODE) {
+            try {
+                Resources.writeFile("C:\\kwebs\\in" + debugIndex + ".ser", serializedGraph);
+                KGraphXmiTransformer t = new KGraphXmiTransformer();
+                int i = 0;
+                for (KNode layout : transData.getLayoutGraphs()) {
+                    Resources.writeFile(
+                        "C:\\kwebs\\in" + debugIndex + "_" + i + ".kgraph", t.serialize(layout)
+                    );
+                    i++;
+                }         
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         // Parse the transmitted layout options and annotate the layout structure
         if (options != null) {
             for (KNode layout : transData.getLayoutGraphs()) {
                 annotateGraph(layout, options);
             }
-        }    
+        }
         // Actually do the layout on the structure
         double layoutStarted = System.nanoTime();
         for (KNode layout : transData.getLayoutGraphs()) {
@@ -193,6 +222,22 @@ public abstract class AbstractService {
                 serializedResult, 
                 System.nanoTime() - operationStarted - layoutFinished + layoutStarted
             );
+        }
+        // Do debug output
+        if (DEBUG_MODE) {
+            try {
+                Resources.writeFile("C:\\kwebs\\out" + debugIndex + ".ser", serializedResult);
+                KGraphXmiTransformer t = new KGraphXmiTransformer();
+                int i = 0;
+                for (KNode layout : transData.getLayoutGraphs()) {
+                    Resources.writeFile(
+                        "C:\\kwebs\\out" + debugIndex + "_" + i + ".kgraph", t.serialize(layout)
+                    );
+                    i++;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return serializedResult;
     }

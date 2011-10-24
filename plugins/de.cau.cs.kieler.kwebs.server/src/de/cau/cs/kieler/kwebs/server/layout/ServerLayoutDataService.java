@@ -494,10 +494,10 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
         Logger.log(
             Severity.FAILURE, 
             "Error while parsing extension point", 
-            (extensionPoint != null ? "\n\nExtension point: " + extensionPoint.toString() : "") 
-            + (element != null ? "\n\nElement: " + element.toString() : "")
-            + (attribute != null ? "\n\nAttribute: " + attribute : ""),
-            exception
+            "\n\nExtension point: " + (extensionPoint != null ? extensionPoint : "<unknown>") 
+            + "\n\nElement: " + (element != null ? element.toString() : "<unknown>")
+            + "\n\nAttribute: " + (attribute != null ? attribute : "<unknown>")
+            + "\n\nException: " + (exception != null ? exception.getMessage(): "<unknown>")
         );
     }
 

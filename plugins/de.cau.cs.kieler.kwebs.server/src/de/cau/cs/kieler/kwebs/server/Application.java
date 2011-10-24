@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kwebs.server;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
@@ -243,7 +242,7 @@ public class Application implements IApplication {
         // Set necessary plug-in preferences of the used layout plug-ins
         try {
             setPluginPreferencesFromConfiguration();
-        } catch (Exception e) {e.printStackTrace();
+        } catch (Exception e) {
             Logger.log(Severity.CRITICAL, "Error while initializing layouter preferences", e);
             return IApplication.EXIT_OK;
         }

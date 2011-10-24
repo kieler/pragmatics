@@ -33,13 +33,28 @@ public class ObjectFactory {
     private final static QName _GraphLayoutResponse_QNAME = new QName("http://rtsys.informatik.uni-kiel.de/layout", "graphLayoutResponse");
     private final static QName _GraphLayout_QNAME = new QName("http://rtsys.informatik.uni-kiel.de/layout", "graphLayout");
     private final static QName _GetPreviewImageResponse_QNAME = new QName("http://rtsys.informatik.uni-kiel.de/layout", "getPreviewImageResponse");
-    private final static QName _GetPreviewImageResponseReturn_QNAME = new QName("", "return");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: de.cau.cs.kieler.kwebs.jaxws
      * 
      */
     public ObjectFactory() {
+    }
+
+    /**
+     * Create an instance of {@link GetServiceDataResponse }
+     * 
+     */
+    public GetServiceDataResponse createGetServiceDataResponse() {
+        return new GetServiceDataResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetServiceData }
+     * 
+     */
+    public GetServiceData createGetServiceData() {
+        return new GetServiceData();
     }
 
     /**
@@ -51,11 +66,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GraphLayoutResponse }
+     * Create an instance of {@link GraphLayoutOption }
      * 
      */
-    public GraphLayoutResponse createGraphLayoutResponse() {
-        return new GraphLayoutResponse();
+    public GraphLayoutOption createGraphLayoutOption() {
+        return new GraphLayoutOption();
     }
 
     /**
@@ -64,6 +79,14 @@ public class ObjectFactory {
      */
     public GetPreviewImageResponse createGetPreviewImageResponse() {
         return new GetPreviewImageResponse();
+    }
+
+    /**
+     * Create an instance of {@link GraphLayoutResponse }
+     * 
+     */
+    public GraphLayoutResponse createGraphLayoutResponse() {
+        return new GraphLayoutResponse();
     }
 
     /**
@@ -80,30 +103,6 @@ public class ObjectFactory {
      */
     public ServiceFault createServiceFault() {
         return new ServiceFault();
-    }
-
-    /**
-     * Create an instance of {@link GetServiceData }
-     * 
-     */
-    public GetServiceData createGetServiceData() {
-        return new GetServiceData();
-    }
-
-    /**
-     * Create an instance of {@link GetServiceDataResponse }
-     * 
-     */
-    public GetServiceDataResponse createGetServiceDataResponse() {
-        return new GetServiceDataResponse();
-    }
-
-    /**
-     * Create an instance of {@link GraphLayoutOption }
-     * 
-     */
-    public GraphLayoutOption createGraphLayoutOption() {
-        return new GraphLayoutOption();
     }
 
     /**
@@ -167,15 +166,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://rtsys.informatik.uni-kiel.de/layout", name = "getPreviewImageResponse")
     public JAXBElement<GetPreviewImageResponse> createGetPreviewImageResponse(GetPreviewImageResponse value) {
         return new JAXBElement<GetPreviewImageResponse>(_GetPreviewImageResponse_QNAME, GetPreviewImageResponse.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "return", scope = GetPreviewImageResponse.class)
-    public JAXBElement<byte[]> createGetPreviewImageResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_GetPreviewImageResponseReturn_QNAME, byte[].class, GetPreviewImageResponse.class, ((byte[]) value));
     }
 
 }

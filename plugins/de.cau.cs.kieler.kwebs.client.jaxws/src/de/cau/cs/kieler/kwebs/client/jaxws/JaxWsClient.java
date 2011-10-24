@@ -148,7 +148,7 @@ public class JaxWsClient extends HttpBasedLayoutServiceClient {
             connect();
         }
         try {
-            return layoutPort.graphLayout(serializedGraph, format, options);
+            return layoutPort.graphLayout(serializedGraph, format, null, options);
         } catch (Exception e) {
             disconnect();
             setLastError(e);
