@@ -274,6 +274,11 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             case FIXED_POS:
                 applyNorthSouthDummyPosition(dummy);
                 dummy.borderToContentAreaCoordinates(true, false);
+                
+                // Ensure that the graph is wide enough to hold the port
+                graphSize.x = Math.max(
+                        graphSize.x,
+                        dummy.getPosition().x + dummy.getSize().x / 2.0);
                 break;
             }
             
