@@ -8,6 +8,12 @@
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   targetNamespace="http://rtsys.informatik.uni-kiel.de/layout">
 
+  <documentation>
+    This document contains the interface description for the KIELER Web Service for Layout (KWebS). More details
+    on how to use this service and how to set up your own server can be found at the project page at
+    http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/Projects/KWebS.
+  </documentation>
+
   <!-- Abstract part of the web service definition -->
 
   <!-- Define the abstract data types of this web service -->
@@ -33,7 +39,7 @@
 
       <xs:complexType name="graphLayoutResponse">
         <xs:sequence>
-        <xs:element name="return" type="xs:string"/>
+          <xs:element name="return" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
 
@@ -122,23 +128,41 @@
 
     <operation name="graphLayout">
 
+      <documentation>
+        This operation does automatic layout on a graph model which is transmitted in serial representation. The different representations
+        which the service can handle can be determined by using it's getServiceData() operation.
+      </documentation>
+
       <input wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/graphLayoutRequest" message="tns:graphLayout"/>
       <output wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/graphLayoutResponse" message="tns:graphLayoutResponse"/>
       <fault wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/ServiceFault" name="ServiceFault" message="tns:ServiceFault"/>
+
     </operation>
 
     <operation name="getServiceData">
 
+      <documentation>
+        This operation delivers the services meta data which describe the supported algorithms and their options and the supported serial
+        representations understood by the service.
+      </documentation>
+
       <input wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/getServiceDataRequest" message="tns:getServiceData"/>
       <output wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/getServiceDataResponse" message="tns:getServiceDataResponse"/>
       <fault wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/ServiceFault" name="ServiceFault" message="tns:ServiceFault"/>
+
     </operation>
 
     <operation name="getPreviewImage">
 
+      <documentation>
+        This operation delivers a static preview image for a supported layout algorithm which visually describes the way it calculates the layout.
+        The preview image is identified by it's unique identifier which can be determined from the services meta data.
+      </documentation>
+
       <input wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/getPreviewImageRequest" message="tns:getPreviewImage"/>
       <output wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/getPreviewImageResponse" message="tns:getPreviewImageResponse"/>
       <fault wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/ServiceFault" name="ServiceFault" message="tns:ServiceFault"/>
+
     </operation>
 
   </portType>
