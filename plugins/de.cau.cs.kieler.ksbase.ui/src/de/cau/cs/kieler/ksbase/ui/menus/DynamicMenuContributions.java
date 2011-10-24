@@ -95,6 +95,8 @@ public final class DynamicMenuContributions {
         private EditorTransformationSettings editorSettings;
 
         private TransactionalEditingDomain transDomain = null;
+        
+        private HashMap<String, HashMap<List<Object>, Boolean>> validationCache = new HashMap<String, HashMap<List<Object>, Boolean>>(); 
 
         public KsbaseVisibilityExpression(final KSBasETransformation transformation,
                 final EditorTransformationSettings editorSettings) {
@@ -103,7 +105,17 @@ public final class DynamicMenuContributions {
         }
 
         private boolean evaluateValidation(final List<Object> selectionMapping) {
-            String val = transformation.getValidation();
+            final String val = transformation.getValidation();
+            HashMap<List<Object>, Boolean> cache = validationCache.get(val);
+            if (cache != null) {
+                Boolean cachedResult = cache.get(selectionMapping);
+                if (cachedResult != null) {
+                    return cachedResult;
+                }                
+            } else {
+                validationCache.put(val, new HashMap<List<Object>, Boolean>());
+            }
+            
             if ((val != null) && (!val.isEmpty()) && (transDomain != null)) {
                 TransformationDescriptor descriptor = new TransformationDescriptor(
                         transformation.getValidation(), selectionMapping.toArray());
@@ -115,6 +127,8 @@ public final class DynamicMenuContributions {
 
                 Object result = descriptor.getResult();
                 if (result instanceof Boolean) {
+                    cache = validationCache.get(val);
+                    cache.put(selectionMapping, (Boolean) result);
                     return (Boolean) result;
                 } else {
                     return false;
