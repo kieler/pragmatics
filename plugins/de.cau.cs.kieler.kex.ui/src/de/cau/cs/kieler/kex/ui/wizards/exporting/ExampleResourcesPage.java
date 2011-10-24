@@ -57,6 +57,7 @@ public class ExampleResourcesPage extends WizardPage {
 
     private static final int MIN_WIDTH = 540;
     private static final int MIN_HEIGHT = 600;
+    private static final int VERTICAL_INDENT = 10;
 
     // preferred height
     private static final int HEIGHT_HINT = 80;
@@ -96,7 +97,7 @@ public class ExampleResourcesPage extends WizardPage {
      *            , {@link Composite}
      */
     public void createControl(final Composite parent) {
-        Composite composite = new Composite(parent, SWT.BORDER);
+        Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
         composite.setFont(parent.getFont());
@@ -107,13 +108,13 @@ public class ExampleResourcesPage extends WizardPage {
     }
 
     private void createDirectOpenComposite(final Composite composite) {
-        Composite childComp = new Composite(composite, SWT.BORDER);
-        childComp.setLayout(new GridLayout());
-        childComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        Label directOpenDesc = new Label(childComp, SWT.NONE);
+        Label directOpenDesc = new Label(composite, SWT.NONE);
+        GridData directOpenDescLayoutData = new GridData();
+        directOpenDescLayoutData.verticalIndent = VERTICAL_INDENT;
+        directOpenDesc.setLayoutData(directOpenDescLayoutData);
         directOpenDesc.setText("Select files, that should "
                 + "open directly when importing that example.");
-        this.directOpenTree = new Tree(childComp, SWT.CHECK | SWT.BORDER | SWT.H_SCROLL
+        this.directOpenTree = new Tree(composite, SWT.CHECK | SWT.BORDER | SWT.H_SCROLL
                 | SWT.V_SCROLL);
         GridData gridData = new GridData(GridData.FILL_BOTH);
         gridData.heightHint = HEIGHT_HINT;
@@ -157,7 +158,7 @@ public class ExampleResourcesPage extends WizardPage {
                 getResourceProvider(IResource.FOLDER),
                 WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
                 getResourceProvider(IResource.FILE),
-                WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), SWT.BORDER,
+                WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), SWT.NONE,
                 DialogUtil.inRegularFontMode(parent));
         this.resourceGroup.addCheckStateListener(new ICheckStateListener() {
 

@@ -63,7 +63,8 @@ public class ExampleExportPage extends WizardResourceImportPage {
     private Text previewPic;
 
     private static final int THREE_COLUMNS = 3;
-    private static final int CATEGORY_MINLENGTH = 4;
+    private static final int VERTICAL_INDENT = 10;
+    private static final int MARGIN = 10;
 
     private static final int PAGE_MIN_WIDTH = 540;
     private static final int PAGE_MIN_HEIGHT = 600;
@@ -99,7 +100,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
     @Override
     public void createControl(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayout(new GridLayout());
+        composite.setLayout(new GridLayout(THREE_COLUMNS, false));
         setControl(composite);
         createTopGroup(composite);
         createMiddleGroup(composite);
@@ -133,18 +134,11 @@ public class ExampleExportPage extends WizardResourceImportPage {
     }
 
     private void createTopGroup(final Composite composite) {
-
-        Group topGroup = new Group(composite, SWT.NONE);
-        GridLayout topLayout = new GridLayout();
-        topLayout.numColumns = THREE_COLUMNS;
-        topGroup.setLayout(topLayout);
-        topGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        topGroup.setText("Set Example Destination");
-        Label destLabel = new Label(topGroup, SWT.NONE);
-        destLabel.setText("To Directory:");
-        this.destPath = new Text(topGroup, SWT.BORDER);
+        Label destLabel = new Label(composite, SWT.NONE);
+        destLabel.setText("Destination Directory:");
+        this.destPath = new Text(composite, SWT.BORDER);
         this.destPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        Button addDestPath = new Button(topGroup, SWT.NONE);
+        Button addDestPath = new Button(composite, SWT.NONE);
         addDestPath.setText("Browse...");
         addDestPath.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -165,18 +159,11 @@ public class ExampleExportPage extends WizardResourceImportPage {
     }
 
     private void createMiddleGroup(final Composite composite) {
-        Group bottomGroup = new Group(composite, SWT.NONE);
-        GridLayout bottomLayout = new GridLayout();
-        bottomLayout.numColumns = THREE_COLUMNS;
-        bottomGroup.setText("Set Preview Picture");
-        bottomGroup.setToolTipText("Enter a picture like a screenshot of example diagram.");
-        bottomGroup.setLayout(bottomLayout);
-        bottomGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        Label label = new Label(bottomGroup, SWT.NONE);
+        Label label = new Label(composite, SWT.NONE);
         label.setText("Set Picture:");
-        this.previewPic = new Text(bottomGroup, SWT.BORDER);
+        this.previewPic = new Text(composite, SWT.BORDER);
         previewPic.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        Button browse = new Button(bottomGroup, SWT.NONE);
+        Button browse = new Button(composite, SWT.NONE);
         browse.setText("Browse...");
         browse.addSelectionListener(new SelectionAdapter() {
 
@@ -193,7 +180,8 @@ public class ExampleExportPage extends WizardResourceImportPage {
                     picDialog.setFilterPath(WORKSPACE_DIR);
                 } else {
                     String portableString = path.removeLastSegments(1).toPortableString();
-                    picDialog.setFilterPath(choosenPath == null || choosenPath.length() < 2 ? WORKSPACE_DIR
+                    picDialog.setFilterPath(choosenPath == null || choosenPath.length() < 2
+                            ? WORKSPACE_DIR
                             : portableString);
                 }
                 String pic = picDialog.open();
@@ -208,10 +196,12 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
     private void createButtonComposite(final Group middleGroup) {
         Composite buttonCompo = new Composite(middleGroup, SWT.NONE);
-        GridLayout buttonCompoLayout = new GridLayout();
-        buttonCompoLayout.numColumns = THREE_COLUMNS;
+        GridLayout buttonCompoLayout = new GridLayout(2, true);
+        buttonCompoLayout.marginHeight = 0;
+        buttonCompoLayout.marginWidth = 0;
         buttonCompo.setLayout(buttonCompoLayout);
-        buttonCompo.setLayoutData(new GridData(GridData.FILL_BOTH));
+        buttonCompo.setLayoutData(new GridData(SWT.END, SWT.BEGINNING, false, false));
+        
         Button addCategory = new Button(buttonCompo, SWT.NONE);
         addCategory.setToolTipText("Create a new Example Category");
         addCategory.setText("New...");
@@ -375,21 +365,29 @@ public class ExampleExportPage extends WizardResourceImportPage {
     }
 
     private void createBottomGroup(final Composite composite) {
-        Group middleGroup = new Group(composite, SWT.NONE);
-        GridLayout middleLayout = new GridLayout();
-        middleGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        middleLayout.numColumns = 1;
-        middleGroup.setText("Add a category");
-        middleGroup.setToolTipText("Please select a category.");
-        middleGroup.setLayout(middleLayout);
-        createCheckedTree(middleGroup);
-        createButtonComposite(middleGroup);
+        Group bottomGroup = new Group(composite, SWT.NONE);
+        
+        GridData bottomLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+        bottomLayoutData.horizontalSpan = THREE_COLUMNS;
+        bottomLayoutData.verticalIndent = VERTICAL_INDENT;
+        bottomGroup.setLayoutData(bottomLayoutData);
 
+        GridLayout bottomLayout = new GridLayout();
+        bottomLayout.marginHeight = MARGIN;
+        bottomLayout.marginWidth = MARGIN;
+        bottomLayout.numColumns = 1;
+        bottomGroup.setLayout(bottomLayout);
+        
+        bottomGroup.setText("Example Categories");
+        bottomGroup.setToolTipText("Please select a category.");
+        
+        createCheckedTree(bottomGroup);
+        createButtonComposite(bottomGroup);
     }
 
     private void createCheckedTree(final Composite parent) {
         this.categoryTree = new Tree(parent, SWT.CHECK | SWT.BORDER);
-        GridData data = new GridData(GridData.FILL_BOTH);
+        GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
         data.heightHint = HEIGHT_HINT;
         categoryTree.setLayoutData(data);
 
@@ -413,7 +411,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
                 }
             }
 
-            private void checkDuplicateRec(final TreeItem catElem, TreeItem selected) {
+            private void checkDuplicateRec(final TreeItem catElem, final TreeItem selected) {
                 for (TreeItem item : catElem.getItems()) {
                     if (item.getItemCount() > 0) {
                         checkDuplicateRec(item, selected);
@@ -474,8 +472,11 @@ public class ExampleExportPage extends WizardResourceImportPage {
         }
     }
 
-    private void addCategory(final List<TreeItem> items, int itemCount,
+    private void addCategory(final List<TreeItem> items, final int itemCount,
             final List<Category> placeAbleCategories, final List<Category> allCategories) {
+        
+        int newItemCount = itemCount;
+        
         // TODO not really worksome and test and tree has to be sprayed at default.
         List<Category> removable = new ArrayList<Category>();
         List<TreeItem> newItems = new ArrayList<TreeItem>(items);
@@ -488,15 +489,15 @@ public class ExampleExportPage extends WizardResourceImportPage {
                     treeItem.setText(placeable.getTitle());
                     treeItem.setData(placeable);
                     newItems.add(treeItem);
-                    itemCount++;
+                    newItemCount++;
                     removable.add(placeable);
                     break;
                 }
             }
         }
-        if (itemCount < allCategories.size()) {
+        if (newItemCount < allCategories.size()) {
             placeAbleCategories.removeAll(removable);
-            addCategory(newItems, itemCount, placeAbleCategories, allCategories);
+            addCategory(newItems, newItemCount, placeAbleCategories, allCategories);
         }
     }
 

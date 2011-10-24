@@ -20,12 +20,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -58,6 +55,7 @@ public class ImportDestPage extends WizardResourceImportPage {
      */
     protected ImportDestPage(final String name, final IStructuredSelection selection) {
         super(name, selection);
+        setTitle("Options");
         super.setDescription(Messages.getString("importDestPageDescription"));
     }
 
@@ -105,11 +103,9 @@ public class ImportDestPage extends WizardResourceImportPage {
      */
     @Override
     public void createControl(final Composite parent) {
-        Group topGroup = new Group(parent, SWT.NONE);
-        topGroup.setLayout(new GridLayout());
-        topGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        topGroup.setText(Messages.getString("topGroupDescription"));
-        super.createControl(topGroup);
+        super.createControl(parent);
+        
+        // Make sure that there's a default project to import to
         if (super.getContainerFullPath() == null) {
             super.setContainerFieldValue(INIT_PROJECT);
             super.setPageComplete(true);
@@ -203,7 +199,7 @@ public class ImportDestPage extends WizardResourceImportPage {
     /**
      * Checks if the autoLayout field is selected.
      * 
-     * @return
+     * @return {@code true} if auto layout should be performed after the import.
      */
     public boolean autoLayout() {
         return openImports() && autoLayout.getSelection();

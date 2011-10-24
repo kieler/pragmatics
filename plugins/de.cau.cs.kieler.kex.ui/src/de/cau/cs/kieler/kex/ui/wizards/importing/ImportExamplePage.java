@@ -61,7 +61,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.WizardResourceImportPage;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.ui.util.TreeViewerCheckStateHandler;
@@ -94,8 +93,9 @@ public class ImportExamplePage extends WizardPage {
     private static final int WIZARD_MIN_WIDTH = 540;
     private static final int WIZARD_MIN_HEIGHT = 720;
 
-    private static final int IMAGE_LABEL_DESC_HEIGHT = 25;
     private static final int TREE_MIN_WIDTH = 200;
+    private static final int HORIZONTAL_INDENT = 10;
+    private static final int VERTICAL_INDENT = 10;
 
     private Text exampleDescField;
 
@@ -111,7 +111,8 @@ public class ImportExamplePage extends WizardPage {
 
     private boolean isPreviewAvailable;
 
-    List<Pair<Category, ArrayList<Object>>> allCategoryPairs = new ArrayList<Pair<Category, ArrayList<Object>>>();
+    private List<Pair<Category, ArrayList<Object>>> allCategoryPairs =
+            new ArrayList<Pair<Category, ArrayList<Object>>>();
 
     /**
      * The constructor will be called with following parameters.
@@ -124,6 +125,7 @@ public class ImportExamplePage extends WizardPage {
 
     public ImportExamplePage(final String name, final IStructuredSelection selection) {
         super(name);
+        setTitle("Select Examples");
         setDescription(Messages.getString("importExamplePageDescription"));
     }
 
@@ -181,7 +183,8 @@ public class ImportExamplePage extends WizardPage {
                 TreeSelection treeEvent = (TreeSelection) event.getSelection();
                 Object firstElement = treeEvent.getFirstElement();
                 if (firstElement instanceof Pair) {
-                    Pair<Category, ArrayList<Object>> pair = (Pair<Category, ArrayList<Object>>) firstElement;
+                    Pair<Category, ArrayList<Object>> pair =
+                            (Pair<Category, ArrayList<Object>>) firstElement;
                     String desc = pair.getFirst().getDescription();
                     getExampleDescField().setText(desc != null ? desc : "");
                     updateImageLabel(initPreviewImage());
@@ -343,8 +346,10 @@ public class ImportExamplePage extends WizardPage {
     private void fillTreeViewer() {
         List<Category> categories = ExampleManager.get().getCategories();
         Collection<Example> values = ExampleManager.get().getExamples().values();
-        List<Pair<Category, ArrayList<Object>>> viewElement = new ArrayList<Pair<Category, ArrayList<Object>>>();
-        List<Pair<Category, ArrayList<Object>>> categoryPairList = new ArrayList<Pair<Category, ArrayList<Object>>>();
+        List<Pair<Category, ArrayList<Object>>> viewElement =
+                new ArrayList<Pair<Category, ArrayList<Object>>>();
+        List<Pair<Category, ArrayList<Object>>> categoryPairList =
+                new ArrayList<Pair<Category, ArrayList<Object>>>();
 
         // create categories
         for (Category category : categories) {
@@ -483,7 +488,8 @@ public class ImportExamplePage extends WizardPage {
             if (result == null) {
                 if (filterValue != null && filterValue.length() > 0) {
                     if (element instanceof Pair) {
-                        Pair<Category, ArrayList<Object>> pair = (Pair<Category, ArrayList<Object>>) element;
+                        Pair<Category, ArrayList<Object>> pair =
+                                (Pair<Category, ArrayList<Object>>) element;
                         Category category = ((Pair<Category, ArrayList<Object>>) element)
                                 .getFirst();
                         result = category.getTitle().toLowerCase().contains(filterValue);
@@ -575,19 +581,27 @@ public class ImportExamplePage extends WizardPage {
      * @param controlComp
      */
     private void createPreviewComp(final Composite composite) {
-        previewComp = composite;
         previewDesc = new Label(composite, SWT.NONE);
         previewDesc.setText(Messages.getString("previewLabel"));
         GridData previewDescData = new GridData(GridData.FILL_HORIZONTAL);
         previewDesc.setLayoutData(previewDescData);
-        imageLabel = new Label(composite, SWT.BORDER | SWT.CENTER);
+        
+        previewComp = new Composite(composite, SWT.BORDER);
+        previewComp.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+        GridLayout imageCompositeLayout = new GridLayout(1, false);
+        imageCompositeLayout.marginHeight = 0;
+        imageCompositeLayout.marginWidth = 0;
+        previewComp.setLayout(imageCompositeLayout);
+        GridData imageCompositeGridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+        imageCompositeGridData.heightHint = IMAGE_PRE_HEIGHT;
+        imageCompositeGridData.minimumHeight = DESC_MIN_HEIGHT;
+        imageCompositeGridData.horizontalIndent = HORIZONTAL_INDENT;
+        previewComp.setLayoutData(imageCompositeGridData);
+        
+        imageLabel = new Label(previewComp, SWT.CENTER);
+        imageLabel.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_WHITE));
         imageLabel.setImage(initPreviewImage());
-        GridData imgLabelData = new GridData(GridData.FILL_HORIZONTAL, GridData.FILL_VERTICAL,
-                true, true);
-        // 16 : 9
-        imgLabelData.heightHint = IMAGE_PRE_HEIGHT;
-        imgLabelData.minimumHeight = DESC_MIN_HEIGHT;
-        imageLabel.setLayoutData(imgLabelData);
+        imageLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         imageLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDown(final MouseEvent e) {
@@ -617,7 +631,10 @@ public class ImportExamplePage extends WizardPage {
                         // scrolling
                         Composite composite = (Composite) super.createDialogArea(parent);
                         Composite innerComp = new Composite(composite, SWT.CENTER | SWT.BORDER);
-                        innerComp.setLayout(new GridLayout());
+                        GridLayout layout = new GridLayout(1, false);
+                        layout.marginHeight = 0;
+                        layout.marginWidth = 0;
+                        innerComp.setLayout(layout);
                         Label imgLabel = new Label(innerComp, SWT.BORDER | SWT.V_SCROLL
                                 | SWT.H_SCROLL);
                         imgLabel.setLayoutData(new GridData(GridData.CENTER | SWT.V_SCROLL
@@ -678,11 +695,16 @@ public class ImportExamplePage extends WizardPage {
     private void createDescriptionComp(final Composite composite) {
         Label descriptionLabel = new Label(composite, SWT.NONE);
         descriptionLabel.setText(Messages.getString("descriptionLabel"));
+        GridData descriptionLabelData = new GridData();
+        descriptionLabelData.verticalIndent = VERTICAL_INDENT;
+        descriptionLabel.setLayoutData(descriptionLabelData);
+        
         this.exampleDescField = new Text(composite, SWT.WRAP | SWT.MULTI | SWT.V_SCROLL
                 | SWT.H_SCROLL | SWT.BORDER);
         GridData descData = new GridData(GridData.FILL_HORIZONTAL);
         descData.heightHint = DESC_HEIGHT_HINT;
         descData.minimumHeight = DESC_MIN_HEIGHT;
+        descData.horizontalIndent = HORIZONTAL_INDENT;
         this.exampleDescField.setLayoutData(descData);
         this.exampleDescField.setEditable(false);
     }
@@ -699,14 +721,6 @@ public class ImportExamplePage extends WizardPage {
             oldImg.dispose();
         }
         imageLabel.setImage(image);
-        Rectangle bounds = image.getBounds();
-        int left = IMAGE_PRE_WIDTH - bounds.width;
-        int top = IMAGE_PRE_HEIGHT - bounds.height;
-        // center the image.
-        imageLabel.setBounds(left > 0 ? left / 2 : 0, IMAGE_LABEL_DESC_HEIGHT
-                + (top > 0 ? top / 2 : 0), bounds.width + IMG_PADDINGS_WIDTH, bounds.height
-                + IMG_PADDINGS_HEIGHT);
-        imageLabel.pack();
     }
 
     private void updateDescriptionLabel(final Example example) {

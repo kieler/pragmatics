@@ -70,6 +70,7 @@ public class ExampleAttributesPage extends WizardPage {
     public void createControl(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         setControl(composite);
         addAttributeFields(composite);
         getShell().setMinimumSize(MIN_WIDTH, MIN_HEIGHT);
@@ -83,15 +84,13 @@ public class ExampleAttributesPage extends WizardPage {
      *            , Composite
      */
     private void addAttributeFields(final Composite parent) {
-        Composite composite = new Composite(parent, SWT.BORDER);
         GridLayout layout = new GridLayout();
         layout.numColumns = 2;
-        composite.setLayout(layout);
-        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        Label titleLab = new Label(composite, SWT.NONE);
+        parent.setLayout(layout);
+        Label titleLab = new Label(parent, SWT.NONE);
         titleLab.setText("Title:");
         titleLab.setToolTipText("Think about a meaningful title of the new example.");
-        exampleTitle = new Text(composite, SWT.BORDER);
+        exampleTitle = new Text(parent, SWT.BORDER);
         exampleTitle.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         exampleTitle.setText("ExportedExample1");
         exampleTitle.setToolTipText("Think about a meaningful title of the new example.");
@@ -105,10 +104,10 @@ public class ExampleAttributesPage extends WizardPage {
             }
         });
 
-        Label authorLab = new Label(composite, SWT.NONE);
+        Label authorLab = new Label(parent, SWT.NONE);
         authorLab.setText("Author:");
         authorLab.setToolTipText("The person or organisation who created that example.");
-        author = new Text(composite, SWT.BORDER);
+        author = new Text(parent, SWT.BORDER);
         author.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         String user = System.getProperty("user.name");
         author.setText(System.getProperty("user.name"));
@@ -122,11 +121,11 @@ public class ExampleAttributesPage extends WizardPage {
             }
         });
 
-        Label contactLab = new Label(composite, SWT.NONE);
+        Label contactLab = new Label(parent, SWT.NONE);
         contactLab.setText("Contact:");
         contactLab.setToolTipText("Here you usually give an emailaddress or a url "
                 + "of a homepage for support and additional informations.");
-        contact = new Text(composite, SWT.BORDER);
+        contact = new Text(parent, SWT.BORDER);
         contact.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         contact.setText((user != null && user.length() > 1 ? user + "@informatik.uni-kiel.de" : ""));
         contact.setToolTipText("Here you usually give an emailaddress or a "
@@ -140,13 +139,14 @@ public class ExampleAttributesPage extends WizardPage {
             }
         });
 
-        Label descLab = new Label(composite, SWT.NONE);
+        Label descLab = new Label(parent, SWT.NONE);
+        descLab.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
         descLab.setText("Description:");
         descLab.setToolTipText("The description gives an overview about the "
                 + "created example. This should help users at finding the desired example.");
-        exampleDescription = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL
+        exampleDescription = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL
                 | SWT.H_SCROLL);
-        GridData descData = new GridData(GridData.FILL_HORIZONTAL);
+        GridData descData = new GridData(SWT.FILL, SWT.FILL, true, true);
         descData.heightHint = EX_DESC_HEIGHT;
         descData.minimumHeight = EX_DESC_MINHEIGHT;
         exampleDescription.setLayoutData(descData);
