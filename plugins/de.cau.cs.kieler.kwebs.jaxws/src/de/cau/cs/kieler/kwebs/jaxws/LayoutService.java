@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.1
  * 
  */
-@WebServiceClient(name = "LayoutService", targetNamespace = "http://rtsys.informatik.uni-kiel.de/layout", wsdlLocation = "file:/D:/Daten%20von%20Benutzern/Stephan/Desktop/test/layoutService.wsdl")
+@WebServiceClient(name = "LayoutService", targetNamespace = "http://rtsys.informatik.uni-kiel.de/layout")
 public class LayoutService
     extends Service
 {
@@ -30,9 +30,9 @@ public class LayoutService
         try {
             URL baseUrl;
             baseUrl = de.cau.cs.kieler.kwebs.jaxws.LayoutService.class.getResource(".");
-            url = new URL(baseUrl, "file:/D:/Daten%20von%20Benutzern/Stephan/Desktop/test/layoutService.wsdl");
+            url = new URL(baseUrl, "http://rtsys.informatik.uni-kiel.de:9442/layout?wsdl");
         } catch (MalformedURLException e) {
-            logger.warning("Failed to create URL for the wsdl Location: 'file:/D:/Daten%20von%20Benutzern/Stephan/Desktop/test/layoutService.wsdl', retrying as a local file");
+            logger.warning("Failed to create URL for the wsdl Location: 'http://rtsys.informatik.uni-kiel.de:9442/layout?wsdl', retrying as a local file");
             logger.warning(e.getMessage());
         }
         LAYOUTSERVICE_WSDL_LOCATION = url;
