@@ -120,25 +120,52 @@ public class NodeGroup implements Comparable<NodeGroup> {
             barycenter = summedWeight / degree;
         }
     }
-    
+
     /**
      * Gets the incomingConstraintsCount of the NodeGroup.
      * 
-     * @return
-     *    Returns the incomingConstraintsCount.
+     * @return Returns the incomingConstraintsCount.
      */
     public int getIncomingConstraintsCount() {
         return incomingConstraintsCount;
     }
-    
+
     /**
      * Sets the incomingConstraintsCount to the given value.
      * 
      * @param value
-     *      The value the incomingConstraintsCount is set to.
+     *            The value the incomingConstraintsCount is set to.
      */
     public void setIncomingConstraintsCount(final int value) {
         incomingConstraintsCount = value;
+    }
+
+    /**
+     * Gets the list of outgoing constraints.
+     * 
+     * @return Returns the outgoingConstraints-list of the NodeGroup.
+     */
+    public List<NodeGroup> getOutgoingConstraints() {
+        return outgoingConstraints;
+    }
+    
+    /**
+     * Gets the nodes-list.
+     * 
+     * @return
+     *    Returns the nodes-list of the NodeGroup.
+     */
+    public List<LNode> getNodes() {
+        return nodes;
+    }
+    
+    /**
+     * Gets the barycenter value of the NodeGroup.
+     * 
+     * @return
+     */
+    public float getBarycenter() {
+        return barycenter;
     }
 
     /**
