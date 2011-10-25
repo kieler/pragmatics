@@ -334,7 +334,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
         }
         
         // Assign the dummy's x coordinate
-        dummy.getPosition().x = posSum / dummyInPort.getDegree();
+        dummy.getPosition().x = posSum / dummyInPort.getDegree() - dummy.getSize().x / 2.0;
     }
     
     /**
