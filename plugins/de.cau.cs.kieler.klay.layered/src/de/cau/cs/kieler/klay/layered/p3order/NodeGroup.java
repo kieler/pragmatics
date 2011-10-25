@@ -168,6 +168,56 @@ public class NodeGroup implements Comparable<NodeGroup> {
     public float getBarycenter() {
         return barycenter;
     }
+    
+    /**
+     * Sets barycenter to the given value.
+     * 
+     * @param value
+     *      value the barycenter is to be set to.
+     */
+    public void setBarycenter(final float value) {
+        barycenter = value;
+    }
+    
+    /**
+     * Gets the summedWeight of the NodeGroup.
+     * 
+     * @return
+     *    Returns the summedWeight of the NodeGroup.
+     */
+    public float getSummedWeight() {
+        return summedWeight;
+    }
+    
+    /**
+     * Sets the summedWeight to the given value.
+     * 
+     * @param value
+     *    The value summedWeight is to be set to.
+     */
+    public void setSummedWeight(final float value) {
+        summedWeight = value;
+    }
+    
+    /**
+     * Gets the degree of the NodeGroup.
+     * 
+     * @return
+     *    Returns the degree of the NodeGroup.
+     */
+    public int getDegree() {
+        return degree;
+    }
+    
+    /**
+     * Sets the degree of the NodeGroup to the given value.
+     * 
+     * @param value
+     *      The value the degree is to be set to.
+     */
+    public void setDegree(final int value) {
+        degree = value;
+    }
 
     /**
      * {@inheritDoc}
