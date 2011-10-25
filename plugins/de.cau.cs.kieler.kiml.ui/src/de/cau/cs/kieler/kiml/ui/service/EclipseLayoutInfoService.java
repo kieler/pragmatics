@@ -72,32 +72,30 @@ public final class EclipseLayoutInfoService extends LayoutInfoService {
     /** set of registered diagram elements. */
     private Set<String> registeredElements = new HashSet<String>();
     
-    /** the singleton instance of the layout info service. */
-    private static EclipseLayoutInfoService instance;
-    
     /**
      * Returns the singleton instance of the layout info service.
      * 
      * @return the singleton instance
      */
     public static EclipseLayoutInfoService getInstance() {
-        return instance;
+        return (EclipseLayoutInfoService) LayoutInfoService.getInstance();
     }
 
     /**
      * Hidden default constructor to prevent instantiation from outside this class.
      */
     private EclipseLayoutInfoService() {
+        super();
     }
     
     /**
      * Create the layout info service and load extension points.
      */
     public static synchronized void create() {
-        instance = new EclipseLayoutInfoService();
+        // creating an instance stores this instance as the singleton instance
+        EclipseLayoutInfoService instance = new EclipseLayoutInfoService();
         instance.loadLayoutInfoExtensions();
         instance.loadLayoutManagerExtensions();
-        // load preferences for KIML
         instance.loadPreferences();
     }
 

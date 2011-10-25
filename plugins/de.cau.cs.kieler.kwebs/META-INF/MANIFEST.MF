@@ -10,7 +10,6 @@ Export-Package: de.cau.cs.kieler.kwebs,
  de.cau.cs.kieler.kwebs.servicedata.impl,
  de.cau.cs.kieler.kwebs.servicedata.transformation,
  de.cau.cs.kieler.kwebs.servicedata.util,
- de.cau.cs.kieler.kwebs.transformation,
  de.cau.cs.kieler.kwebs.util
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
  org.eclipse.emf.ecore.xmi;bundle-version="2.5.0",

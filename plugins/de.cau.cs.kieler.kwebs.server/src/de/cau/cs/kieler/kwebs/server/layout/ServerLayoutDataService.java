@@ -17,18 +17,15 @@ package de.cau.cs.kieler.kwebs.server.layout;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.service.ProgrammaticLayoutDataService;
-import de.cau.cs.kieler.kwebs.formats.Formats;
 import de.cau.cs.kieler.kwebs.server.Application;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
@@ -41,10 +38,8 @@ import de.cau.cs.kieler.kwebs.servicedata.RemoteEnum;
 import de.cau.cs.kieler.kwebs.servicedata.ServiceData;
 import de.cau.cs.kieler.kwebs.servicedata.ServiceDataFactory;
 import de.cau.cs.kieler.kwebs.servicedata.SupportedDiagram;
-import de.cau.cs.kieler.kwebs.servicedata.SupportedFormat;
 import de.cau.cs.kieler.kwebs.servicedata.impl.ServiceDataFactoryImpl;
 import de.cau.cs.kieler.kwebs.servicedata.transformation.ServiceDataXmiTransformer;
-import de.cau.cs.kieler.kwebs.transformation.IGraphTransformer;
 import de.cau.cs.kieler.kwebs.util.Resources;
 
 /**
@@ -69,10 +64,6 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
     private Map<String, byte[]> previewImages
         = new HashMap<String, byte[]>();
 
-    /** Mapping of format identifiers {@see Formats} to transformer instances. */
-    private Hashtable<String, IGraphTransformer<?>> transformers 
-        = new Hashtable<String, IGraphTransformer<?>>();
-
     /** Mapping of layout option identifiers to layout option instances. */
     private Map<String, LayoutOptionData<?>> layoutOptions
         = new HashMap<String, LayoutOptionData<?>>();
@@ -85,8 +76,7 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
     }
 
     /**
-     * Initializes singleton instance of {@code ServerLayoutServiceService}
-     * from the extension points.
+     * Initialize the singleton instance from the extension points.
      */
     public static void create() {
         if (LayoutDataService.getInstance() == null
@@ -173,20 +163,6 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
         return previewImages.get(previewImage);
     }
     
-    /**
-     * Returns an instance of {@link IGraphTransformer} supporting the format defined
-     * by {@code format}.
-     * 
-     * @param format
-     *            format identifier to which a compatible transformer instance
-     *            is to be returned
-     * @return a compatible transformer instance or {@code null} if the format identifier
-     *         does not belong to a supported format. 
-     */
-    public IGraphTransformer<?> getTransformer(final String format) {
-       return transformers.get(format); 
-    }
-    
     /** Type attribute value for enumeration layout options. */
     private static final String TYPE_ENUM
         = "enum";
@@ -213,7 +189,6 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
         extensions =
             Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(EXTP_ID_TRANSFORMERS);
-        readExtensionTransformers(factory, extensions);
         serviceDataXMI = new ServiceDataXmiTransformer().serialize(serviceData);
     }
         
@@ -389,59 +364,8 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
     }
 
     /** */
-    private static final String ELEMENT_TRANSFORMER
-        = "transformer";
-
-    /** */
-    private static final String ATTRIBUTE_SUPPORTEDFORMAT
-        = "supportedFormat";
-
-    /** */
-    private static final String ATTRIBUTE_IMPLEMENTATION
-        = "implementation";
-
-    /** */
     private static final String ATTRIBUTE_DESCRIPTION
         = "description";
-
-    /**
-     * 
-     * @param factory
-     * @param extensions
-     */
-    private void readExtensionTransformers(final ServiceDataFactory factory, 
-        final IConfigurationElement[] extensions) {
-        for (IConfigurationElement element : extensions) {
-            if (element.getName().equals(ELEMENT_TRANSFORMER)) {
-                String id = element.getAttribute(ATTRIBUTE_SUPPORTEDFORMAT);
-                String implementation = element.getAttribute(ATTRIBUTE_IMPLEMENTATION);
-                String description = element.getAttribute(ATTRIBUTE_DESCRIPTION);     
-                String name = element.getAttribute(ATTRIBUTE_NAME);
-                // Add transformation to the service meta data
-                SupportedFormat format = factory.createSupportedFormat();
-                format.setId(id);
-                format.setDescription(description);
-                format.setName(name);
-                serviceData.getSupportedFormats().add(format);
-                // Add transformation instance to hashed instances
-                if (Formats.isSupportedFormat(id)) {
-                    if (!transformers.containsKey(id)) {
-                        try {
-                            Bundle contributor 
-                                = Platform.getBundle(element.getContributor().getName());
-                            IGraphTransformer<?> transformer = (IGraphTransformer<?>)
-                                      (contributor.loadClass(implementation).newInstance());
-                            transformers.put(id, transformer);                                
-                        } catch (Exception e) {
-                            Logger.log(Severity.WARNING, 
-                                "Could not instantiate declared transformer: " + id, 
-                            e);
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * 
@@ -497,7 +421,7 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
             "\n\nExtension point: " + (extensionPoint != null ? extensionPoint : "<unknown>") 
             + "\n\nElement: " + (element != null ? element.toString() : "<unknown>")
             + "\n\nAttribute: " + (attribute != null ? attribute : "<unknown>")
-            + "\n\nException: " + (exception != null ? exception.getMessage(): "<unknown>")
+            + "\n\nException: " + (exception != null ? exception.getMessage() : "<unknown>")
         );
     }
 

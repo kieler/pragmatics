@@ -31,18 +31,6 @@
    </extension>
    <extension
          point="de.cau.cs.kieler.kwebs.server.configuration">
-      <transformer
-            description="This transformer supports the models based on the KIELER KGraph and KLayoutData meta models that are serialized using the Xml Metadata Interchange (XMI) format."
-            implementation="de.cau.cs.kieler.kwebs.transformation.KGraphXmiTransformer"
-            name="KGraph"
-            supportedFormat="de.cau.cs.kieler.kgraph">
-      </transformer>
-      <transformer
-            description="This transformer supports the models based on the KIELER KGraph and KLayoutData meta models that are serialized using the Xml Metadata Interchange (XMI) format and compression."
-            implementation="de.cau.cs.kieler.kwebs.transformation.KGraphXmiCompressedTransformer"
-            name="KGraph compressed"
-            supportedFormat="de.cau.cs.kieler.kgraph.gz">
-      </transformer>
       <supportHandler
             implementation="de.cau.cs.kieler.kwebs.server.web.WebContentHandler"
             path="/">

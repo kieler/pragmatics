@@ -18,7 +18,6 @@
       </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="transformer"/>
             <element ref="supportHandler"/>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -43,47 +42,6 @@
                <appinfo>
                   <meta.attribute translatable="true"/>
                </appinfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="transformer">
-      <annotation>
-         <documentation>
-            With this extension a transformer for the serializiation and deserialization of models for a specific meta model can be defined. This transformer will also be responsible for deriving a KGraph representation of the internal structure of the models and for applying the calculated layout back to the original model.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="supportedFormat" type="string" use="required">
-            <annotation>
-               <documentation>
-                  An unique identifier string describing the supported meta model and form of serialization supported by this transformer.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="implementation" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The fully qualified implementation class of the transformer.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kwebs.transformation.IGraphTransformer"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  A textual description of the supported format and form of serialization.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  A displayable name for the transformer.
-               </documentation>
             </annotation>
          </attribute>
       </complexType>

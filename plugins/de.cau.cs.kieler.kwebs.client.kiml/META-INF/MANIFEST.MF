@@ -6,10 +6,10 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: de.cau.cs.kieler.kwebs.client.kiml.activator.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui;bundle-version="3.6.2",
- de.cau.cs.kieler.core;bundle-version="0.6.0",
- de.cau.cs.kieler.kiml;bundle-version="0.9.0",
- de.cau.cs.kieler.kiml.service;bundle-version="0.1.0",
- de.cau.cs.kieler.kwebs.client;bundle-version="0.1.0";visibility:=reexport
+ de.cau.cs.kieler.core,
+ de.cau.cs.kieler.kiml,
+ de.cau.cs.kieler.kiml.service,
+ de.cau.cs.kieler.kwebs.client;visibility:=reexport
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel

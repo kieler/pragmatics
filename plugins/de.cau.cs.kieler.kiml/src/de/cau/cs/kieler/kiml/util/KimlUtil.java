@@ -27,6 +27,8 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KielerMath;
+import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -769,6 +771,25 @@ public final class KimlUtil {
                 }
             }
             excludeContent(child);
+        }
+    }
+    
+    /**
+     * Set a layout option using a serialized key / value pair.
+     * 
+     * @param graphData the graph data instance to modify
+     * @param id the layout option identifier
+     * @param value the value for the layout option
+     */
+    public static void setOption(final KGraphData graphData, final String id,
+            final String value) {
+        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutOptionData<?> optionData = dataService.getOptionData(id);
+        if (optionData != null) {
+            Object obj = optionData.parseValue(value);
+            if (obj != null) {
+                graphData.setProperty(optionData, obj);
+            }
         }
     }
 

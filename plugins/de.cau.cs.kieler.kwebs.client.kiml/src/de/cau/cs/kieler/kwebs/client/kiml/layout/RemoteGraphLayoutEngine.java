@@ -38,6 +38,7 @@ import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
+import de.cau.cs.kieler.kiml.service.KGraphHandler;
 import de.cau.cs.kieler.kwebs.LocalServiceException;
 import de.cau.cs.kieler.kwebs.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.Statistics;
@@ -49,9 +50,6 @@ import de.cau.cs.kieler.kwebs.client.kiml.LayoutHistory;
 import de.cau.cs.kieler.kwebs.client.kiml.activator.Activator;
 import de.cau.cs.kieler.kwebs.client.kiml.preferences.Preferences;
 import de.cau.cs.kieler.kwebs.formats.Formats;
-import de.cau.cs.kieler.kwebs.transformation.IGraphTransformer;
-import de.cau.cs.kieler.kwebs.transformation.KGraphXmiCompressedTransformer;
-import de.cau.cs.kieler.kwebs.transformation.KGraphXmiTransformer;
 import de.cau.cs.kieler.kwebs.util.Graphs;
 
 /**
@@ -75,13 +73,8 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         = ServerConfigs.getInstance();
     
     /** The transformer used for normal serialization and deserialization of the KGraph instances. */
-    private KGraphXmiTransformer normalTransformer
-        = new KGraphXmiTransformer();
+    private KGraphHandler kgraphHandler = new KGraphHandler();
     
-    /** The transformer used for compressed serialization and deserialization of the KGraph instances. */
-    private KGraphXmiTransformer compressedTransformer
-        = new KGraphXmiCompressedTransformer(); // !!! XXX EXPERIMENTAL !!!
-
     /**
      * Creates a layout engine for remote layout.
      *
@@ -230,7 +223,6 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
      * @param progressMonitor monitor to which progress of the layout algorithms is reported
      */
     public final void layout(final KNode layoutGraph, final IKielerProgressMonitor progressMonitor) {
-        boolean compressedLayout = preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_COMPRESSION);
         if (client == null) {
             if (!initialize()) {
                 return;
@@ -245,28 +237,19 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         double timeStart = 0;
         double timeTotal = 0;
         KNode resultGraph = null;
-        IGraphTransformer<KNode> transformer = null;
-        String format = null;
         String sourceXMI = null;
         String resultXMI = null;
         timeStart = System.nanoTime();
         progressMonitor.begin(label, 1);
         Graphs.annotateGraphWithUniqueID(layoutGraph);
-        if (compressedLayout) {
-            transformer = compressedTransformer;
-            format = Formats.FORMAT_KGRAPH_XMI_COMPRESSED;
-        } else {
-            transformer = normalTransformer;
-            format = Formats.FORMAT_KGRAPH_XMI;
-        }
-        sourceXMI = transformer.serialize(layoutGraph);
+        sourceXMI = kgraphHandler.serialize(layoutGraph);
         //storeXmi(sourceXMI, false);
         try { 
             networkStart = System.nanoTime();
-            resultXMI = client.graphLayout(sourceXMI, format, null);
+            resultXMI = client.graphLayout(sourceXMI, Formats.FORMAT_KGRAPH_XMI, null);
             networkTotal = (System.nanoTime() - networkStart);
             //storeXmi(resultXMI, true);
-            resultGraph = transformer.deserialize(resultXMI);
+            resultGraph = kgraphHandler.deserialize(resultXMI);
             Graphs.duplicateGraphLayoutByUniqueID(resultGraph, layoutGraph);
         } catch (Exception e) {
             throw new RemoteServiceException("Error occurred while doing remote layout", e);

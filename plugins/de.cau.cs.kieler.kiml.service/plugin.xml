@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="graphTransformers" name="Graph Transformers" schema="schema/graphTransformers.exsd"/>
+   <extension
+         point="de.cau.cs.kieler.kiml.service.graphTransformers">
+      <handler
+            class="de.cau.cs.kieler.kiml.service.KGraphHandler"
+            description="Internally used graph format of the KIELER project. See http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/KGraph"
+            id="de.cau.cs.kieler.kgraph"
+            name="KGraph">
+      </handler>
+   </extension>
+
+</plugin>

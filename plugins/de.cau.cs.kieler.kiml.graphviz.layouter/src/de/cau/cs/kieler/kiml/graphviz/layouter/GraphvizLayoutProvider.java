@@ -32,10 +32,11 @@ import de.cau.cs.kieler.core.util.ForwardingInputStream;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.Command;
-import de.cau.cs.kieler.kiml.graphviz.dot.transform.KGraphDotTransformation;
+import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotHandler;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool.Cleanup;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 
 /**
  * Layout provider for the Graphviz layout tool.
@@ -59,6 +60,8 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     private Command command = Command.INVALID;
     /** the Graphviz process pool. */
     private GraphvizTool graphvizTool;
+    /** the Graphviz Dot format handler. */
+    private DotHandler dotHandler = new DotHandler();
     /** the call number for the current execution. */
     private int myCallNo;
 
@@ -103,19 +106,22 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         graphvizTool.initialize();
 
         // create an Xtext resource set for parsing and serialization
-        KGraphDotTransformation transformation = new KGraphDotTransformation(parentNode);
-        XtextResourceSet resourceSet = transformation.createResourceSet();
+        XtextResourceSet resourceSet = (XtextResourceSet) dotHandler.createResourceSet();
 
         // translate the KGraph to Graphviz and write to the process
-        GraphvizModel graphvizInput = transformation.transform(command,
-                progressMonitor.subTask(SMALL_TASK));
+        TransformationData<KNode, GraphvizModel> transData
+                = new TransformationData<KNode, GraphvizModel>();
+        transData.setSourceGraph(parentNode);
+        dotHandler.getExporter().transform(transData);
+        GraphvizModel graphvizInput = transData.getTargetGraphs().get(0);
         writeDotGraph(graphvizInput, progressMonitor.subTask(LARGE_TASK), debugMode, resourceSet);
 
         try {
             // read Graphviz output and apply layout information to the KGraph
             GraphvizModel graphvizOutput = readDotGraph(progressMonitor.subTask(LARGE_TASK),
                     debugMode, resourceSet);
-            transformation.applyLayout(graphvizOutput, progressMonitor.subTask(SMALL_TASK));
+            transData.getTargetGraphs().set(0, graphvizOutput);
+            dotHandler.getExporter().transferLayout(transData);
         } finally {
             graphvizTool.cleanup(Cleanup.NORMAL);
             progressMonitor.done();

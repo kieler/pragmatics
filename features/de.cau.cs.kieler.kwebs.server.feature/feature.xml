@@ -481,13 +481,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.kwebs.server.formats"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.graphdrawing.graphml"
          download-size="0"
          install-size="0"
@@ -503,6 +496,13 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <plugin
          id="de.cau.cs.kieler.klay.force"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml.formats"
          download-size="0"
          install-size="0"
          version="0.0.0"

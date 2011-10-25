@@ -10,6 +10,15 @@
        genModel = "de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.genmodel" /> 
 	
   </extension>
+  <extension
+        point="de.cau.cs.kieler.kiml.service.graphTransformers">
+     <handler
+           class="de.cau.cs.kieler.kiml.graphviz.dot.transform.DotHandler"
+           description="The Graphviz Dot format. See http://www.graphviz.org/"
+           id="org.graphviz.dot"
+           name="Dot">
+     </handler>
+  </extension>
 
 
 

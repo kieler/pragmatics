@@ -34,16 +34,17 @@ import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataFactoryImpl;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl;
+import de.cau.cs.kieler.kiml.service.KGraphHandler;
+import de.cau.cs.kieler.kiml.service.TransformationService;
+import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
+import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
+import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.Statistics;
 import de.cau.cs.kieler.kwebs.formats.Formats;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
-import de.cau.cs.kieler.kwebs.transformation.IGraphTransformer;
-import de.cau.cs.kieler.kwebs.transformation.KGraphXmiCompressedTransformer;
-import de.cau.cs.kieler.kwebs.transformation.KGraphXmiTransformer;
-import de.cau.cs.kieler.kwebs.transformation.TransformationData;
 import de.cau.cs.kieler.kwebs.util.Graphs;
 import de.cau.cs.kieler.kwebs.util.Resources;
 
@@ -108,11 +109,12 @@ public abstract class AbstractService {
             throw new IllegalArgumentException("Format not supported: " + format);
         }
         Logger.log(Severity.DEBUG, "Starting layout");
-        IGraphTransformer<?> transformer = ServerLayoutDataService.getInstance().getTransformer(format);
-        if (transformer == null) {
+        GraphFormatData formatData = TransformationService.getInstance().getFormatData(format);
+        if (formatData == null) {
             throw new IllegalStateException("Transformer could not be acquired");
         }
-        String serializedResult = layout(serializedGraph, transformer, options);
+        ITransformationHandler<?> handler = formatData.getHandler();
+        String serializedResult = layout(serializedGraph, handler, options);
         Logger.log(Severity.DEBUG, "Finished layout");
         return serializedResult;
     }
@@ -122,29 +124,29 @@ public abstract class AbstractService {
      * 
      * @param serializedGraph
      *            the graph to do layout on in serial representation
-     * @param transformer
-     *            a graph transformer
+     * @param handler
+     *            a graph transformation handler
      * @param options
      *            the optional layout options
      * @return the graph on which the layout was done in the same format as used for the source graph 
      */
-    private <T> String layout(final String serializedGraph, final IGraphTransformer<T> transformer, 
+    private <T> String layout(final String serializedGraph, final ITransformationHandler<T> handler, 
         final List<GraphLayoutOption> options) { 
         // Start measuring the total time of the operation
         double operationStarted = System.nanoTime();
         // Get the graph instances of which the layout is to be calculated
-        T graph = transformer.deserialize(serializedGraph);
+        T graph = handler.deserialize(serializedGraph);
         // Derive the layout structures of the graph instances
-        TransformationData<T> transData = new TransformationData<T>();
+        TransformationData<T, KNode> transData = new TransformationData<T, KNode>();
         transData.setSourceGraph(graph);
-        transformer.deriveLayout(transData);
+        handler.getImporter().transform(transData);
         // Do debug output
         if (DEBUG_MODE) {
             try {
                 Resources.writeFile("C:\\kwebs\\in" + debugIndex + ".ser", serializedGraph);
-                KGraphXmiTransformer t = new KGraphXmiTransformer();
+                KGraphHandler t = new KGraphHandler();
                 int i = 0;
-                for (KNode layout : transData.getLayoutGraphs()) {
+                for (KNode layout : transData.getTargetGraphs()) {
                     Resources.writeFile(
                         "C:\\kwebs\\in" + debugIndex + "_" + i + ".kgraph", t.serialize(layout)
                     );
@@ -156,18 +158,18 @@ public abstract class AbstractService {
         }
         // Parse the transmitted layout options and annotate the layout structure
         if (options != null) {
-            for (KNode layout : transData.getLayoutGraphs()) {
+            for (KNode layout : transData.getTargetGraphs()) {
                 annotateGraph(layout, options);
             }
         }
         // Actually do the layout on the structure
         double layoutStarted = System.nanoTime();
-        for (KNode layout : transData.getLayoutGraphs()) {
+        for (KNode layout : transData.getTargetGraphs()) {
             layoutEngine.layout(layout, new BasicProgressMonitor());
         }
         double layoutFinished = System.nanoTime();
         // Apply the calculated layout back to the graph instance
-        transformer.applyLayout(transData);
+        handler.getImporter().transferLayout(transData);
         // Calculate statistical values and annotate graph if it is a KGraph instance.
         // The serialization process can not be included.        
         if (graph instanceof KNode) {
@@ -176,7 +178,7 @@ public abstract class AbstractService {
             int ports = 0;
             int labels = 0;
             int edges = 0;
-            for (KNode layout : transData.getLayoutGraphs()) {
+            for (KNode layout : transData.getTargetGraphs()) {
                 List<KGraphElement> elements = Graphs.getAllElementsOfType(layout, KGraphElement.class);
                 for (KGraphElement element : elements) {
                     if (element instanceof KNode) {
@@ -192,7 +194,6 @@ public abstract class AbstractService {
             }
             Statistics statistics = new Statistics();
             statistics.setBytes(serializedGraph.length());
-            statistics.setCompression(transformer instanceof KGraphXmiCompressedTransformer);
             statistics.setNodes(nodes);
             statistics.setPorts(ports);
             statistics.setLabels(labels);
@@ -215,7 +216,7 @@ public abstract class AbstractService {
             identifier.setProperty(Statistics.STATISTICS, statistics);
         }
         // Create and return the resulting graph in serialized form
-        String serializedResult = transformer.serialize(transData.getSourceGraph());
+        String serializedResult = handler.serialize(transData.getSourceGraph());
         // Include serialization in statistical data. Only if in STATISTICS_MODE
         if (STATISTICS_MODE && graph instanceof KNode) {
             return resetSupplementaryTimeOnResult(
@@ -227,9 +228,9 @@ public abstract class AbstractService {
         if (DEBUG_MODE) {
             try {
                 Resources.writeFile("C:\\kwebs\\out" + debugIndex + ".ser", serializedResult);
-                KGraphXmiTransformer t = new KGraphXmiTransformer();
+                KGraphHandler t = new KGraphHandler();
                 int i = 0;
-                for (KNode layout : transData.getLayoutGraphs()) {
+                for (KNode layout : transData.getTargetGraphs()) {
                     Resources.writeFile(
                         "C:\\kwebs\\out" + debugIndex + "_" + i + ".kgraph", t.serialize(layout)
                     );

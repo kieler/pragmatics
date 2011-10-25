@@ -61,7 +61,26 @@ public abstract class LayoutInfoService {
     public static final String ATTRIBUTE_OPTION = "option";
     /** name of the 'value' attribute in the extension points. */
     public static final String ATTRIBUTE_VALUE = "value";
+    
+    /** the singleton instance of the layout info service. */
+    private static LayoutInfoService instance;
+    
+    /**
+     * Returns the singleton instance of the layout info service.
+     * 
+     * @return the singleton instance
+     */
+    public static LayoutInfoService getInstance() {
+        return instance;
+    }
 
+    /**
+     * Protected constructor to enforce instantiation in subclasses.
+     */
+    protected LayoutInfoService() {
+        // the layout info service is supposed to exist exactly once
+        instance = this;
+    }
     
     /** mapping of diagram type identifiers to their names. */
     private Map<String, String> diagramTypeMap
@@ -72,7 +91,7 @@ public abstract class LayoutInfoService {
     /** mapping of domain class names to semantic layout configurations. */
     private Map<String, SemanticLayoutConfig> semanticConfigMap 
             = new HashMap<String, SemanticLayoutConfig>();
-
+    
     /**
      * Report an error that occurred while reading extensions.
      * 

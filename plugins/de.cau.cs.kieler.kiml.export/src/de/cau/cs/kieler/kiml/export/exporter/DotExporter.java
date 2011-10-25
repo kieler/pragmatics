@@ -23,14 +23,16 @@ import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
+import com.google.inject.Injector;
+
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.kiml.export.AbstractExporter;
+import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotStandaloneSetup;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
-import de.cau.cs.kieler.kiml.graphviz.dot.transform.Command;
-import de.cau.cs.kieler.kiml.graphviz.dot.transform.KGraphDotTransformation;
+import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 
 /**
  * A graph exporter for the Dot format.
@@ -74,10 +76,16 @@ public class DotExporter extends AbstractExporter {
         monitor.begin(Messages.DotExporter_export_kgraph_to_dot_task, 2);
         try {
             // transform the graph
-            KGraphDotTransformation transformation = new KGraphDotTransformation(graph);
-            GraphvizModel dotGraph = transformation.transform(Command.DOT, monitor.subTask(1));
+            de.cau.cs.kieler.kiml.graphviz.dot.transform.DotExporter transformation
+                = new de.cau.cs.kieler.kiml.graphviz.dot.transform.DotExporter();
+            TransformationData<KNode, GraphvizModel> data
+                = new TransformationData<KNode, GraphvizModel>();
+            data.setSourceGraph(graph);
+            transformation.transform(data);
+            GraphvizModel dotGraph = data.getTargetGraphs().get(0);
             // write to file
-            XtextResourceSet resourceSet = transformation.createResourceSet();
+            Injector injector = new GraphvizDotStandaloneSetup().createInjectorAndDoEMFRegistration();
+            XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
             XtextResource resource = (XtextResource) resourceSet.createResource(URI
                     .createURI("http:///My.graphviz_dot")); //$NON-NLS-1$
             resource.getContents().add(dotGraph);
