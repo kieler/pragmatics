@@ -107,7 +107,7 @@ public class NodeGroup implements Comparable<NodeGroup> {
                 continue;
             } else if (outgoingConstraints.contains(candidate)) {
                 // The candidate was in both vertice's successor list
-                candidate.incomingConstraintsCount--;
+                candidate.setIncomingConstraintsCount(candidate.getIncomingConstraintsCount() - 1);
             } else {
                 outgoingConstraints.add(candidate);
             }
@@ -119,6 +119,26 @@ public class NodeGroup implements Comparable<NodeGroup> {
         if (degree > 0) {
             barycenter = summedWeight / degree;
         }
+    }
+    
+    /**
+     * Gets the incomingConstraintsCount of the NodeGroup.
+     * 
+     * @return
+     *    Returns the incomingConstraintsCount.
+     */
+    public int getIncomingConstraintsCount() {
+        return incomingConstraintsCount;
+    }
+    
+    /**
+     * Sets the incomingConstraintsCount to the given value.
+     * 
+     * @param value
+     *      The value the incomingConstraintsCount is set to.
+     */
+    public void setIncomingConstraintsCount(final int value) {
+        incomingConstraintsCount = value;
     }
 
     /**
