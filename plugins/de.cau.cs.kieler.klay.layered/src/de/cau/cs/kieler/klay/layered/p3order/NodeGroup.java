@@ -163,6 +163,7 @@ public class NodeGroup implements Comparable<NodeGroup> {
      * Gets the barycenter value of the NodeGroup.
      * 
      * @return
+     *     Returns the barycenter value of the NodeGroup.
      */
     public float getBarycenter() {
         return barycenter;
