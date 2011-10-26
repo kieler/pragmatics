@@ -26,6 +26,10 @@ import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
  */
 abstract class AbstractServerManager implements IServerManager {
 
+    /** Default amount of maximum concurrently executed requests. */
+    public static final int DEFAULT_POOLSIZE
+        = 10;
+    
     //CHECKSTYLEOFF VisibilityModifier
     
     /** The server wide configuration instance. */
@@ -35,6 +39,10 @@ abstract class AbstractServerManager implements IServerManager {
     /** The address this manager exposes the serviced object on. */
     protected URI address;
     
+    /** The maximum amount of concurrently executed requests. */
+    protected int poolSize
+        = DEFAULT_POOLSIZE;
+    
     //CHECKSTYLEON VisibilityModifier
     
     /**
@@ -42,6 +50,13 @@ abstract class AbstractServerManager implements IServerManager {
      */
     public void setAddress(final URI serviceAddress) {
         address = serviceAddress;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */    
+    public void setPoolSize(final int thepoolSize) {
+        poolSize = thepoolSize;
     }
     
 }

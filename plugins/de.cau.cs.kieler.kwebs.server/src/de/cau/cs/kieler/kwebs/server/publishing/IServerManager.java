@@ -57,5 +57,13 @@ interface IServerManager {
      *            the address this manager publishes the service object on
      */
     void setAddress(URI theaddress);
-
+    
+    /**
+     * Sets the maximum amount of concurrently executed requests.
+     * 
+     * @param thepoolSize
+     *            the maximum amount of concurrently executed requests
+     */
+    void setPoolSize(int thepoolSize);
+    
 }

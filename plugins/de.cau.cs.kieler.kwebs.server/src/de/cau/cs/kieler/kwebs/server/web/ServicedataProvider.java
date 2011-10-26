@@ -19,12 +19,15 @@ import java.util.Map;
 import com.sun.net.httpserver.Headers;
 
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kwebs.server.Application;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 import de.cau.cs.kieler.kwebs.servicedata.KnownOption;
 import de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm;
 import de.cau.cs.kieler.kwebs.servicedata.LayoutOption;
 import de.cau.cs.kieler.kwebs.servicedata.ServiceData;
 import de.cau.cs.kieler.kwebs.servicedata.SupportedFormat;
+import de.cau.cs.kieler.kwebs.util.Resources;
 
 /**
  * This class implements a web content provider for displaying the service meta data in HTML format.
@@ -103,13 +106,14 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
      * Handles a HTTP request related to the layout services meta data.
      * 
      * @param requestData
+     *            the data of the request
      */
-    public void handleRequest(final RequestData requestData) {        
+    public void handleRequest(final RequestData requestData) {
         Map<String, String> params = requestData.getParams();
         if (params.containsKey(PARAM_ALGORITHM)) {
             generateForAlgorithm(requestData);
         } else if (params.containsKey(PARAM_OPTION)) {
-            generateForOption(requestData);
+            generateForOption(requestData, null, null, false);
         } else if (params.containsKey(PARAM_FORMAT)) {
             generateForFormat(requestData);
         } else if (params.containsKey(PARAM_PREVIEWIMAGE)) {
@@ -209,12 +213,23 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
      * 
      * @param requestData
      *            the data of the request
+     * @param algorithmId
+     *            the id of the algorithm or code {@null}
+     * @param appendTo
+     *            the buffer to append the generated HTML to if in raw mode
+     * @param rawAppend           
+     *            create full page or simply add the raw algorithm description
      */
-    private void generateForOption(final RequestData requestData) {
+    private void generateForOption(final RequestData requestData, 
+        final String algorithmId, final StringBuffer appendTo, final boolean rawAppend) {
         Map<String, String> params = requestData.getParams();
         String id = params.get(PARAM_OPTION);
         if (id == null) {
-            return;
+            if (algorithmId != null) {
+                id = algorithmId;
+            } else {
+                return;
+            }
         }
         LayoutOption option = null;
         for (LayoutOption o : serviceData.getLayoutOptions()) {
@@ -229,9 +244,13 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
         
         StringBuffer sb = new StringBuffer();
         
-        sb.append(HTML_PREFIX);
+        if (!rawAppend) {
+            
+            sb.append(HTML_PREFIX);
         
-        sb.append("<p class='title'>Layout Option Details</p>\n");
+            sb.append("<p class='title'>Layout Option Details</p>\n");
+            
+        }
         
         sb.append("<p>\n");
         sb.append("Name: " + option.getName() + "<br/>\n");
@@ -259,8 +278,12 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
             sb.append("</p>\n");            
         }
         
+        String defaultValue = option.getDefault();
+        if (defaultValue == null) {
+            defaultValue = "<NONE>";
+        }
         sb.append("<p>\n");
-        sb.append("Default Value: " + option.getDefault() + "<br/>\n");
+        sb.append("Default Value: " + defaultValue + "<br/>\n");
         sb.append("</p>\n");
 
         sb.append("<p class='title'>Description</p>\n");
@@ -269,11 +292,19 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
         sb.append(option.getDescription() + "\n");
         sb.append("</p>\n");
 
-        generateBackButton(requestData, sb);
+        if (rawAppend) {
+            
+            appendTo.append(sb);
+            
+        } else {
+         
+            generateBackButton(requestData, sb);
         
-        sb.append(HTML_POSTFIX);
+            sb.append(HTML_POSTFIX);
 
-        requestData.setContent(sb.toString().getBytes());
+            requestData.setContent(sb.toString().getBytes());
+            
+        }
         
     }
     
@@ -328,6 +359,10 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
         
     }
 
+    /** Path to the image which is shown when a preview image is not given by a plug in. */
+    private static final String PREVIEWIMAGE_UNAVAILABLE
+        = "server/kwebs/web/images/unavailable.png";
+    
     /**
      * Generates a preview image.
      * @param requestData
@@ -340,6 +375,9 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
             return;
         }
         byte[] data = ServerLayoutDataService.getInstance().getPreviewImage(id);
+        if (data == null) {
+            data = Resources.readFileOrPluginResourceAsByteArray(Application.PLUGIN_ID, PREVIEWIMAGE_UNAVAILABLE);
+        }
         if (data != null) {
             requestData.setContent(data);
             requestData.setMimetype(
@@ -365,6 +403,22 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
         
         sb.append("<p>\n");
         sb.append("Version: " + serviceData.getVersion() + "<br/>\n");
+        sb.append("</p>\n");
+
+        sb.append("<p class='title'>How do you select an algorithm ?</p>\n");
+        sb.append("<p>\n");
+        sb.append("In order to select a concrete layout algorithm when doing layout with the provided service, you can");
+        sb.append(" use the following layout option:\n");
+        sb.append("</p>\n");
+        
+        sb.append("<p>\n");
+        sb.append("<table class='lightgrey' border='1px;' style='border-style:solid;'>\n");
+        sb.append("<tr>\n");
+        sb.append("<td>\n");
+        generateForOption(requestData, LayoutOptions.ALGORITHM_ID, sb, true);
+        sb.append("</td>\n");
+        sb.append("</tr>\n");
+        sb.append("</table>\n");
         sb.append("</p>\n");
         
         sb.append("<p class='title'>Supported Algorithms</p>\n");

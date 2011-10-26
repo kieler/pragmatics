@@ -366,7 +366,6 @@ public final class ServerConfigData {
      */
     @Override
     public int hashCode() {
-        //FIXME correct hash code calculation
         return (name + address + truststore + truststorePass + isFixed + isStandard).hashCode();
     }
 

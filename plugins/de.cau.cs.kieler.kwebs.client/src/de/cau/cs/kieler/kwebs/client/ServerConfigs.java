@@ -101,7 +101,7 @@ public final class ServerConfigs {
      */
     public synchronized void store() {
         if (storageManager != null) {
-            storageManager.storeServerConfigs(serverConfigList); //FIXME clone it!
+            storageManager.storeServerConfigs(serverConfigList);
             setDirty(false);
         }
     }

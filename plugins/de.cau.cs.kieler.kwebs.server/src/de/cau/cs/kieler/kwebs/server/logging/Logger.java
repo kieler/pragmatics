@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.Platform;
  *     
  * @author  swe
  */
-//FIXME switch to status manager
 public final class Logger {
 
     /** The id of the extension point for logging configuration. */
@@ -122,6 +121,9 @@ public final class Logger {
      */
     private void initialize() {
         IExtensionRegistry registry = Platform.getExtensionRegistry();
+        if (registry == null) {
+            return;
+        }
         String name = null;
         String loglevel = null;
         Severity sLog = null;

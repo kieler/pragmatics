@@ -28,7 +28,6 @@ import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.service.JaxWsService;
-//import de.cau.cs.kieler.kwebs.server.service.RestService;
 
 /**
  * Manager for publishing a service object over HTTP.
@@ -82,10 +81,7 @@ class HttpServerManager extends AbstractServerManager {
         try {
             createServer();
             createContext();
-            ExecutorService executor = Executors.newFixedThreadPool(
-                Integer.parseInt(config.getConfigProperty(Configuration.SERVER_POOLSIZE))
-            );
-            //FIXME instance check just workaround
+            ExecutorService executor = Executors.newFixedThreadPool(poolSize);
             if (serviceObject instanceof JaxWsService) {
                 endpoint = Endpoint.create(serviceObject);
                 // Sets the executor of the end point. The newly created thread pool
@@ -93,13 +89,16 @@ class HttpServerManager extends AbstractServerManager {
                 endpoint.setExecutor(executor);
                 endpoint.publish(context);
             } else if (serviceObject instanceof HttpHandler) {
-                //endpoint = Endpoint.create(HTTPBinding.HTTP_BINDING, serviceObject);
                 context.setHandler((HttpHandler) serviceObject);
                 server.setExecutor(executor);
             }
             server.start();
         } catch (Exception e) {
-            Logger.log(Severity.CRITICAL, "HTTP server could not be published", e);
+            Logger.log(
+                Severity.CRITICAL, 
+                "HTTP server could not be published: '" + e.getMessage() + "'", 
+                e
+            );
             if (server != null) {
                 server.removeContext(context);
                 server.stop(1);

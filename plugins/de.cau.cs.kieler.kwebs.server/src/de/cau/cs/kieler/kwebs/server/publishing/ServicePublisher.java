@@ -21,10 +21,6 @@ import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.service.JaxWsService;
-//import de.cau.cs.kieler.kwebs.server.service.RestService;
-
-//FIXME If service is published via HTTP AND HTTPS, both
-//      servers are created with the full pool size. They should share.
 
 /**
  * The {@code ServicePublisher} is the central point for managing the
@@ -53,14 +49,6 @@ public final class ServicePublisher {
     private IServerManager jaxwsHttpsManager
         = new HttpsServerManager();
 
-    /** Manager for publishing REST service via HTTP. */
-    //private IServerManager restHttpManager
-    //    = new HttpServerManager();
-
-    /** Manager for publishing REST service via HTTPS. */
-    //private IServerManager restHttpsManager
-    //    = new HttpsServerManager();
-
     /** Manager for publishing via jETI. */
     private IServerManager jetiManager
         = new JetiServerManager();
@@ -72,10 +60,6 @@ public final class ServicePublisher {
     /** Instance of the layout web service to be published. */
     private LayoutServicePort jaxwsService
         = new JaxWsService();
-
-    /** Instance of the RESTful web service implementation. */
-    //private RestService restService 
-    //    = new RestService();
     
     /**
      * Private constructor.
@@ -101,62 +85,75 @@ public final class ServicePublisher {
             throw new AlreadyPublishedException();
         }
         try {
-            URI address = null;            
-            if (Configuration.getInstance().getConfigProperty(Configuration.JAXWS_PUBLISH_HTTP).
-                equalsIgnoreCase("true")
-            ) {
+            URI address = null;  
+            // Determine the maximum amount of concurrently executed requests
+            int poolSize = AbstractServerManager.DEFAULT_POOLSIZE;
+            try {
+                poolSize = Integer.parseInt(config.getConfigProperty(Configuration.SERVER_POOLSIZE));
+            } catch (NumberFormatException e) {
+                Logger.log(
+                    Severity.WARNING, 
+                    "Illegal pool size configured: " 
+                    + config.getConfigProperty(Configuration.SERVER_POOLSIZE)
+                    + ", using default value of " 
+                    + AbstractServerManager.DEFAULT_POOLSIZE
+                );
+            }   
+            // Check which variants are to be published
+            boolean publishHTTP = true;            
+            if (config.hasConfigProperty(Configuration.JAXWS_PUBLISH_HTTP)) {
+                publishHTTP = config.getConfigProperty(Configuration.JAXWS_PUBLISH_HTTP).
+                    equalsIgnoreCase("true"); 
+            }
+            boolean publishHTTPS = false;
+            if (config.hasConfigProperty(Configuration.JAXWS_PUBLISH_HTTPS)) {
+                publishHTTPS = config.getConfigProperty(Configuration.JAXWS_PUBLISH_HTTPS).
+                    equalsIgnoreCase("true"); 
+            }        
+            boolean publishJETI = false;
+            if (config.hasConfigProperty(Configuration.PUBLISH_JETI)) {
+                publishJETI = config.getConfigProperty(Configuration.PUBLISH_JETI).
+                    equalsIgnoreCase("true"); 
+            }        
+            boolean publishSUPP = true;
+            if (config.hasConfigProperty(Configuration.PUBLISH_SUPPORTSERVER)) {
+                publishSUPP = config.getConfigProperty(Configuration.PUBLISH_SUPPORTSERVER).
+                    equalsIgnoreCase("true"); 
+            }        
+            // When publishing the JAXWS as HTTP and HTTPS variant they have to share the maximum
+            // amount of concurrently executed requests
+            if (publishHTTP && publishHTTPS) {
+                if (poolSize > 1) {
+                    poolSize /= 2;
+                }
+            }   
+            // Publish the variants
+            if (publishHTTP) {
                 address = new URI(config.getConfigProperty(Configuration.JAXWS_HTTP_ADDRESS));
                 Logger.log(
                     "Publishing jaxws layout service via HTTP on "
                     + address.toString()
                 );                
+                jaxwsHttpManager.setPoolSize(poolSize);
                 jaxwsHttpManager.setAddress(address);
                 jaxwsHttpManager.publish(jaxwsService);
             }
-            if (Configuration.getInstance().getConfigProperty(Configuration.JAXWS_PUBLISH_HTTPS).
-                equalsIgnoreCase("true")
-            ) {
+            if (publishHTTPS) {
                 address = new URI(config.getConfigProperty(Configuration.JAXWS_HTTPS_ADDRESS));
                 Logger.log(
                     "Publishing jaxws layout service via HTTPS on "
                     + address.toString()
-                );                
+                );
+                jaxwsHttpsManager.setPoolSize(poolSize);
                 jaxwsHttpsManager.setAddress(address);
                 jaxwsHttpsManager.publish(jaxwsService);
             }
-/*
-            if (Configuration.getInstance().getConfigProperty(Configuration.REST_PUBLISH_HTTP).
-                equalsIgnoreCase("true")
-            ) {
-                address = new URI(config.getConfigProperty(Configuration.REST_HTTP_ADDRESS));
-                Logger.log(
-                    "Publishing rest layout service via HTTP on "
-                    + address.toString()
-                );                
-                restHttpManager.setAddress(address);
-                restHttpManager.publish(restService);
-            }
-            if (Configuration.getInstance().getConfigProperty(Configuration.REST_PUBLISH_HTTPS).
-                equalsIgnoreCase("true")
-            ) {
-                address = new URI(config.getConfigProperty(Configuration.REST_HTTPS_ADDRESS));
-                Logger.log(
-                    "Publishing rest layout service via HTTPS on "
-                    + address.toString()
-                );                
-                restHttpsManager.setAddress(address);
-                restHttpsManager.publish(restService);
-            }
-*/
-            if (Configuration.getInstance().getConfigProperty(Configuration.PUBLISH_JETI).
-                    equalsIgnoreCase("true")
-               ) {
+            if (publishJETI) {
                 Logger.log("Publishing layout service via jETI");
                 jetiManager.publish(null);
             }
-            if (Configuration.getInstance().getConfigProperty(Configuration.PUBLISH_SUPPORTSERVER).
-                equalsIgnoreCase("true")
-            ) {
+            // Publish the support server
+            if (publishSUPP) {
                 Logger.log("Publishing support server");
                 supportManager.publish(null);
             }
@@ -174,8 +171,6 @@ public final class ServicePublisher {
     public synchronized void unpublish() {
         jaxwsHttpManager.unpublish();
         jaxwsHttpsManager.unpublish();
-        //restHttpManager.unpublish();
-        //restHttpsManager.unpublish();
         jetiManager.unpublish();
         supportManager.unpublish();
     }
@@ -187,7 +182,6 @@ public final class ServicePublisher {
      */
     public synchronized boolean isPublished() {
         return (jaxwsHttpManager.isPublished() || jaxwsHttpsManager.isPublished()
-                //|| restHttpManager.isPublished() || restHttpsManager.isPublished()
                 || jetiManager.isPublished() || supportManager.isPublished());
     }
 

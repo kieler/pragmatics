@@ -14,7 +14,6 @@
 
 package de.cau.cs.kieler.kwebs.server.service;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EMap;
@@ -35,7 +34,6 @@ import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataFactoryImpl;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl;
-import de.cau.cs.kieler.kiml.service.KGraphHandler;
 import de.cau.cs.kieler.kiml.service.TransformationService;
 import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
 import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
@@ -44,11 +42,9 @@ import de.cau.cs.kieler.kwebs.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.Statistics;
 import de.cau.cs.kieler.kwebs.formats.Formats;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
-import de.cau.cs.kieler.kwebs.server.layout.ServerTransformationService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.util.Graphs;
-import de.cau.cs.kieler.kwebs.util.Resources;
 
 /**
  * This abstract base class provides the implementation of the layout functionality. Web service 
@@ -62,23 +58,6 @@ import de.cau.cs.kieler.kwebs.util.Resources;
  */
 public abstract class AbstractService {
 
-    /** 
-     *  The statistics mode provides more accurate measurement of the time needed
-     *  for supplementary operations. In production, it has to be disabled.
-     */
-    private static final boolean STATISTICS_MODE
-        = true;
-    
-    /** 
-     *  Enables or disables debug mode. In debug mode, the serial notations of the models are
-     *  persisted for analysis.
-     */
-    private static final boolean DEBUG_MODE
-        = false;
-    
-    private int debugIndex
-        = 0;
-    
     /** The layout engine used. */
     private static RecursiveGraphLayoutEngine layoutEngine
         = new RecursiveGraphLayoutEngine();
@@ -88,7 +67,6 @@ public abstract class AbstractService {
      */
     protected AbstractService() {
         ServerLayoutDataService.create();
-        ServerTransformationService.create();
     }
     
     /**
@@ -167,21 +145,6 @@ public abstract class AbstractService {
         inTransData.setSourceGraph(graph);
         inhandler.getImporter().transform(inTransData);
         
-        // Do debug output
-        if (DEBUG_MODE) {
-            try {
-                Resources.writeFile("C:\\kwebs\\in" + debugIndex + ".ser", serializedGraph);
-                KGraphHandler t = new KGraphHandler();
-                int i = 0;
-                for (KNode layout : inTransData.getTargetGraphs()) {
-                    Resources.writeFile("C:\\kwebs\\in" + debugIndex + "_" + (i++) + ".kgraph",
-                            t.serialize(layout));
-                }         
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        
         // Parse the transmitted layout options and annotate the layout structure
         if (options != null) {
             for (KNode layout : inTransData.getTargetGraphs()) {
@@ -224,28 +187,7 @@ public abstract class AbstractService {
                 }
             }
             serializedResult = outGraphBuilder.toString();
-        }
-        
-        // Include serialization in statistical data. Only if in STATISTICS_MODE
-        if (STATISTICS_MODE && graph instanceof KNode) {
-            return resetSupplementaryTimeOnResult(serializedResult, System.nanoTime()
-                    - operationStarted - layoutTime);
-        }
-        
-        // Do debug output
-        if (DEBUG_MODE) {
-            try {
-                Resources.writeFile("C:\\kwebs\\out" + debugIndex + ".ser", serializedResult);
-                KGraphHandler t = new KGraphHandler();
-                int i = 0;
-                for (KNode layout : inTransData.getTargetGraphs()) {
-                    Resources.writeFile("C:\\kwebs\\out" + debugIndex + "_" + (i++) + ".kgraph",
-                            t.serialize(layout));
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        }        
         return serializedResult;
     }
     
@@ -278,11 +220,6 @@ public abstract class AbstractService {
         statistics.setEdges(edges);
         // Execution time related statistics
         statistics.setTimeLayout(layoutTime);
-        // Come as close to measuring the supplementary operations as possible.
-        // If STATISTICS_MODE is not used, serializing is not be measured.
-        if (!STATISTICS_MODE) {
-            statistics.setTimeRemoteSupplemental(supplementalTime);
-        }
         KIdentifier identifier = sourceGraph.getData(KIdentifier.class);
         if (identifier == null) {
             identifier = KLayoutDataFactoryImpl.eINSTANCE.createKIdentifier();
@@ -291,24 +228,6 @@ public abstract class AbstractService {
         identifier.setProperty(Statistics.STATISTICS, statistics);
     }
     
-    /**
-     * Helper method for textual replacement of needed time for supplementary operations. Only for
-     * statistical measurements, not used in production.
-     *  
-     * @param serializedResult
-     *            the serialized result
-     * @param supplementalTime
-     *            the needed time for supplementary operations
-     * @return the textually updated serial result
-     */
-    private String resetSupplementaryTimeOnResult(final String serializedResult, 
-        final double supplementalTime) {
-        return serializedResult.replaceFirst(
-            "timeRemoteSupplemental=0\\.0", 
-            "timeRemoteSupplemental=" + supplementalTime
-        );
-    }
-
     /**
      * Annotate the graph with the given layout options.
      * 

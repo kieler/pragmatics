@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Platform;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.service.ProgrammaticLayoutDataService;
+import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
 import de.cau.cs.kieler.kwebs.server.Application;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
@@ -38,6 +39,7 @@ import de.cau.cs.kieler.kwebs.servicedata.RemoteEnum;
 import de.cau.cs.kieler.kwebs.servicedata.ServiceData;
 import de.cau.cs.kieler.kwebs.servicedata.ServiceDataFactory;
 import de.cau.cs.kieler.kwebs.servicedata.SupportedDiagram;
+import de.cau.cs.kieler.kwebs.servicedata.SupportedFormat;
 import de.cau.cs.kieler.kwebs.servicedata.impl.ServiceDataFactoryImpl;
 import de.cau.cs.kieler.kwebs.servicedata.transformation.ServiceDataXmiTransformer;
 import de.cau.cs.kieler.kwebs.util.Resources;
@@ -72,6 +74,9 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
      * Private constructor.
      */
     private ServerLayoutDataService() {
+        // Create the transformation service instance; needed for building the meta data model
+        ServerTransformationService.create();
+        // Build the meta data model
         createServiceData();
     }
 
@@ -167,10 +172,6 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
     private static final String TYPE_ENUM
         = "enum";
 
-    /** */
-    private static final String EXTP_ID_TRANSFORMERS
-        = "de.cau.cs.kieler.kwebs.server.configuration";
-
     /**
      * Creates the model instance and the XMI representation of the services meta data.
      */
@@ -186,9 +187,15 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
         readExtensionLayoutTypes(factory, extensions);
         readExtensionLayoutOptions(factory, extensions);
         readExtensionLayoutAlgorithms(factory, extensions);
-        extensions =
-            Platform.getExtensionRegistry()
-                .getConfigurationElementsFor(EXTP_ID_TRANSFORMERS);
+        // Add transformation to the service meta data
+        for (GraphFormatData data : ServerTransformationService.getInstance().getFormatData()) {
+            SupportedFormat format = factory.createSupportedFormat();
+            format.setId(data.getId());
+            format.setDescription(data.getDescription());
+            format.setName(data.getName());
+            serviceData.getSupportedFormats().add(format);    
+        }
+        // Create XMI notation of the service meta data
         serviceDataXMI = new ServiceDataXmiTransformer().serialize(serviceData);
     }
         
@@ -345,7 +352,7 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
                                 Severity.FAILURE,
                                 "Option for layout algorithm not found, "
                                 + " algorithm=" + algorithm.getId() 
-                                + ", option=" + child.getAttribute("option")                                
+                                + ", option=" + child.getAttribute("option")
                             );
                             continue;
                         }

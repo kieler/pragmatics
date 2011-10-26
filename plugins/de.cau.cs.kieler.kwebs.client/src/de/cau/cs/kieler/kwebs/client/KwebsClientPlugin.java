@@ -64,7 +64,6 @@ public class KwebsClientPlugin extends Plugin {
         // Initialize providers from preference store
         ServerConfigs.getInstance().read();
         // Create and register layout data for remote layout.
-        // FIXME make sure the right service instance is activated on startup
         RemoteLayoutDataService.create();
     }
         

@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kwebs.server.service;
 
 import java.util.List;
 
+//import javax.jws.HandlerChain;
 import javax.jws.WebService;
 
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
@@ -27,7 +28,7 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 
 /**
- * Main service class to be published as JAX-WS web service.
+ * Service endpoint to be published as JAX-WS web service.
  * 
  * @kieler.rating  2011-08-25 proposed yellow
  *      reviewed by ckru, msp, mri
@@ -44,6 +45,7 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
     targetNamespace = "http://rtsys.informatik.uni-kiel.de/layout",
     wsdlLocation = "server/kwebs/wsdl/layoutService.wsdl"
 )  
+//@HandlerChain(file = "handlerchain/handlerchain.xml")
 public final class JaxWsService extends AbstractService implements LayoutServicePort {
 
     /**
