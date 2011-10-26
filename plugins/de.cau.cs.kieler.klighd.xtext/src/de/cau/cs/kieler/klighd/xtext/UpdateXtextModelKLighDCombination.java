@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.xtext.resource.XtextResource;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState;
-import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState.EventType;
+import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState; // SUPPRESS CHECKSTYLE LineLength
+import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState.EventType;  // SUPPRESS CHECKSTYLE LineLength
 import de.cau.cs.kieler.klighd.effects.KlighdCloseDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
 
@@ -39,17 +39,21 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
      *            information.
      */
     public void execute(final XtextModelChangeState state) {
-        // FIXME not final, because if a project has the same name like 
-        //       a folder in the path it fails
-        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-        IPath path = state.getEditorInputPath();
-        String id = state.getEditorInputPath().toPortableString();
-        for (String segment : path.segments()) {
-            if (root.getProject(segment).exists()) {
-                id = id.substring(id.indexOf(segment));
-                break;
-            }
-        }
+        String id = state.getEditorInputPath().toPortableString().replace(":", "");
+          // the replacement is needed since the secondary view ids seem to be required
+          //  to be free of ':', which will be violated on windows determining them this way. 
+        
+// chsch: sucks!!        
+//        // not final, because if a project has the same name like 
+//        //       a folder in the path it fails
+//        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+//        IPath path = state.getEditorInputPath();
+//        for (String segment : path.segments()) {
+//            if (root.getProject(segment).exists()) {
+//                id = id.substring(id.indexOf(segment));
+//                break;
+//            }
+//        }
         if (state.getEventType().equals(EventType.CLOSED)) {
             this.schedule(new KlighdCloseDiagramEffect(id));
         } else {
