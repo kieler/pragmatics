@@ -122,7 +122,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
          version="0.0.0"/>
 
    <includes
-         id="de.unido.ls5.eti.toolserver.feature"
+         id="de.unido.ls5.eti.toolserver"
          version="0.0.0"/>
 
    <plugin
