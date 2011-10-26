@@ -24,7 +24,7 @@ import de.cau.cs.kieler.kwebs.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.LocalServiceException;
 import de.cau.cs.kieler.kwebs.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.client.AbstractLayoutServiceClient;
-import de.cau.cs.kieler.kwebs.client.ServerConfig;
+import de.cau.cs.kieler.kwebs.client.ServerConfigData;
 import de.cau.cs.kieler.kwebs.util.Resources;
 import de.unido.ls5.eti.client.ByteArrayVirtualFile;
 import de.unido.ls5.eti.client.EtiConnection;
@@ -55,9 +55,9 @@ public final class JetiClient extends AbstractLayoutServiceClient {
      * Constructs a jETI based web service client pointing to the address of the given provider.
      *
      * @param theserverConfig
-     *            the {@link ServerConfig} of the layout service to be used
+     *            the {@link ServerConfigData} of the layout service to be used
      */
-    public JetiClient(final ServerConfig theserverConfig) {
+    public JetiClient(final ServerConfigData theserverConfig) {
         super(theserverConfig);
     }
 
@@ -242,7 +242,7 @@ public final class JetiClient extends AbstractLayoutServiceClient {
     /**
      * {@inheritDoc}
      */
-    public synchronized void setServerConfig(final ServerConfig theserverConfig) {
+    public synchronized void setServerConfig(final ServerConfigData theserverConfig) {
         if (super.getServerConfig() == null || !super.getServerConfig().equals(theserverConfig)) {
             etiCon = null;
             super.setServerConfig(theserverConfig);

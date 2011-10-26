@@ -44,9 +44,9 @@ public abstract class HttpBasedLayoutServiceClient extends AbstractLayoutService
      * Creates a new instance. Only to be used by sub classes.
      * 
      * @param theserverConfig
-     *            the {@link ServerConfig} of the layout service to be used
+     *            the {@link ServerConfigData} of the layout service to be used
      */
-    protected HttpBasedLayoutServiceClient(final ServerConfig theserverConfig) {
+    protected HttpBasedLayoutServiceClient(final ServerConfigData theserverConfig) {
         super(theserverConfig);
     }
 

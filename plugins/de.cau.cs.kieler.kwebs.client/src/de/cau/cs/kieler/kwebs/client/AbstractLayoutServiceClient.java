@@ -31,7 +31,7 @@ import java.util.Vector;
 public abstract class AbstractLayoutServiceClient implements ILayoutServiceClient {
 
     /** The provider of the layout service. */
-    private ServerConfig serverConfig;
+    private ServerConfigData serverConfig;
 
     /** The last error occurred. */
     private Throwable lastError;
@@ -47,9 +47,9 @@ public abstract class AbstractLayoutServiceClient implements ILayoutServiceClien
      * Creates a new instance. Only to be used by sub classes.
      * 
      * @param theserverConfig
-     *            the {@link ServerConfig} of the layout service to be used
+     *            the {@link ServerConfigData} of the layout service to be used
      */
-    protected AbstractLayoutServiceClient(final ServerConfig theserverConfig) {
+    protected AbstractLayoutServiceClient(final ServerConfigData theserverConfig) {
         serverConfig = theserverConfig;
     }
 
@@ -69,14 +69,14 @@ public abstract class AbstractLayoutServiceClient implements ILayoutServiceClien
     /**
      * {@inheritDoc}
      */
-    public final synchronized ServerConfig getServerConfig() {
+    public final synchronized ServerConfigData getServerConfig() {
         return serverConfig;
     }
 
     /**
      * {@inheritDoc}
      */
-    public synchronized void setServerConfig(final ServerConfig theserverConfig) {
+    public synchronized void setServerConfig(final ServerConfigData theserverConfig) {
         if (serverConfig == null || !serverConfig.equals(theserverConfig)) {
             serverConfig = theserverConfig;
             disconnect();

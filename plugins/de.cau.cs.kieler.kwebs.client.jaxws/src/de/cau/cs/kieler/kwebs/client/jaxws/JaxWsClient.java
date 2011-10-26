@@ -28,7 +28,7 @@ import de.cau.cs.kieler.kwebs.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.LocalServiceException;
 import de.cau.cs.kieler.kwebs.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.client.HttpBasedLayoutServiceClient;
-import de.cau.cs.kieler.kwebs.client.ServerConfig;
+import de.cau.cs.kieler.kwebs.client.ServerConfigData;
 import de.cau.cs.kieler.kwebs.jaxws.LayoutService;
 import de.cau.cs.kieler.kwebs.jaxws.LayoutServicePort;
 
@@ -60,9 +60,9 @@ public class JaxWsClient extends HttpBasedLayoutServiceClient {
      * configuration.
      *
      * @param theserverConfig
-     *            the {@link ServerConfig} of the layout service to be used
+     *            the {@link ServerConfigData} of the layout service to be used
      */
-    public JaxWsClient(final ServerConfig theserverConfig) {
+    public JaxWsClient(final ServerConfigData theserverConfig) {
         super(theserverConfig);
     }
 
@@ -191,7 +191,7 @@ public class JaxWsClient extends HttpBasedLayoutServiceClient {
     /**
      * {@inheritDoc}
      */
-    public final synchronized void setServerConfig(final ServerConfig theserverConfig) {
+    public final synchronized void setServerConfig(final ServerConfigData theserverConfig) {
         if (super.getServerConfig() == null || !super.getServerConfig().equals(theserverConfig)) {
             layoutService = null;
             layoutPort = null;

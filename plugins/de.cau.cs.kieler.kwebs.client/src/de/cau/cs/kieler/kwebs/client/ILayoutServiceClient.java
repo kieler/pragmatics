@@ -86,20 +86,20 @@ public interface ILayoutServiceClient {
     void disconnect();
     
     /**
-     * Returns the {@link ServerConfig} this client currently points to.
+     * Returns the {@link ServerConfigData} this client currently points to.
      * 
      * @return the server configuration
      */
-    ServerConfig getServerConfig();
+    ServerConfigData getServerConfig();
 
     /**
-     * Sets a new {@link ServerConfig} this client points to.
+     * Sets a new {@link ServerConfigData} this client points to.
      * Resets the state of this client to disconnected.
      * 
      * @param theserverConfig
      *            the new server configuration
      */
-    void setServerConfig(ServerConfig theserverConfig);
+    void setServerConfig(ServerConfigData theserverConfig);
 
     /**
      * Returns a string array containing the messages of the the last exception occurred.

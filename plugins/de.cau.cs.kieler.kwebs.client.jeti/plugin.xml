@@ -2,14 +2,14 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="de.cau.cs.kieler.kwebs.client.kiml.protocol.support">
+         point="de.cau.cs.kieler.kwebs.client.protocols">
       <protocolSupport
             implementation="de.cau.cs.kieler.kwebs.client.jeti.JetiClient"
             protocols="eti">
       </protocolSupport>
    </extension>
    <extension
-         point="de.cau.cs.kieler.kwebs.client.kiml.configuration">
+         point="de.cau.cs.kieler.kwebs.client.configurations">
       <defaultServerConfig
             address="eti://rtsys.informatik.uni-kiel.de:9867"
             name="KIELER Demo Layout Service (jETI)">

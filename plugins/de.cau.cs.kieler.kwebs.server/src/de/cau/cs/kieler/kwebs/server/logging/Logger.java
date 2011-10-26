@@ -641,12 +641,12 @@ public final class Logger {
          */
         @Override
         public String toString() {
-            return "["
-                   + DATE_FORMATTER.format(date)
-                   + "] - "
-                   + severity.toString()
-                   + " : "
-                   + message;
+            if (severity == Severity.ALWAYS) {
+                return "[" + DATE_FORMATTER.format(date) + "] - " + message;
+            } else {
+                return "[" + DATE_FORMATTER.format(date) + "] - "
+                       + severity.toString() + " : " + message;
+            }
         }
 
     }
