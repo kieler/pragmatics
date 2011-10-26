@@ -21,6 +21,7 @@ import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -93,154 +94,199 @@ public abstract class AbstractService {
      * 
      * @param serializedGraph
      *            the graph to do layout on in serial representation
-     * @param format
-     *            the format of the serial graph {@see Formats}
+     * @param informat
+     *            the format of the serial input graph {@see Formats}
+     * @param outformat
+     *            the format of the serial output graph
      * @param options
      *            the optional layout options
      * @return the graph on which the layout was done in the same format as used for the source graph 
      */
-    protected final String layout(final String serializedGraph, final String format, 
-        final List<GraphLayoutOption> options) {
+    protected final String layout(final String serializedGraph, final String informat, 
+            final String outformat, final List<GraphLayoutOption> options) {
         // Parameter testing
         if (serializedGraph == null) {
             throw new IllegalArgumentException("No graph given");
         }
-        if (!Formats.isSupportedFormat(format)) {
-            throw new IllegalArgumentException("Format not supported: " + format);
+        if (!Formats.isSupportedFormat(informat)) {
+            throw new IllegalArgumentException("Format not supported: " + informat);
+        }
+        if (outformat != null && !Formats.isSupportedFormat(outformat)) {
+            throw new IllegalArgumentException("Format not supported: " + outformat);
         }
         Logger.log(Severity.DEBUG, "Starting layout");
-        GraphFormatData formatData = TransformationService.getInstance().getFormatData(format);
-        if (formatData == null) {
-            throw new IllegalStateException("Transformer could not be acquired");
+        GraphFormatData informatData = TransformationService.getInstance().getFormatData(informat);
+        if (informatData == null) {
+            throw new IllegalStateException("Transformer could not be acquired.");
         }
-        ITransformationHandler<?> handler = formatData.getHandler();
-        String serializedResult = layout(serializedGraph, handler, options);
+        String serializedResult;
+        if (outformat == null || outformat.equals(informat)) {
+            serializedResult = layout(serializedGraph, informatData.getHandler(), null, options);
+        } else {
+            GraphFormatData outformatData = TransformationService.getInstance().getFormatData(
+                    outformat);
+            if (outformatData == null) {
+                throw new IllegalStateException("Transformer could not be acquired.");
+            }
+            serializedResult = layout(serializedGraph, informatData.getHandler(),
+                    outformatData.getHandler(), options);
+        }
         Logger.log(Severity.DEBUG, "Finished layout");
         return serializedResult;
     }
+    
+    /** factor for nanoseconds. */
+    private static final double NANO_FACT = 1e9;
     
     /**
      * Perform layout using a given graph transformer.
      * 
      * @param serializedGraph
      *            the graph to do layout on in serial representation
-     * @param handler
-     *            a graph transformation handler
+     * @param inhandler
+     *            an input graph transformation handler
+     * @param outhandler
+     *            an output graph transformation handler, or {@code null}
      * @param options
      *            the optional layout options
      * @return the graph on which the layout was done in the same format as used for the source graph 
      */
-    private <T> String layout(final String serializedGraph, final ITransformationHandler<T> handler, 
-        final List<GraphLayoutOption> options) { 
+    private <I, O> String layout(final String serializedGraph,
+            final ITransformationHandler<I> inhandler, final ITransformationHandler<O> outhandler,
+            final List<GraphLayoutOption> options) {
         // Start measuring the total time of the operation
         double operationStarted = System.nanoTime();
+        
         // Get the graph instances of which the layout is to be calculated
-        T graph = handler.deserialize(serializedGraph);
+        I graph = inhandler.deserialize(serializedGraph);
+        
         // Derive the layout structures of the graph instances
-        TransformationData<T, KNode> transData = new TransformationData<T, KNode>();
-        transData.setSourceGraph(graph);
-        handler.getImporter().transform(transData);
+        TransformationData<I, KNode> inTransData = new TransformationData<I, KNode>();
+        inTransData.setSourceGraph(graph);
+        inhandler.getImporter().transform(inTransData);
+        
         // Do debug output
         if (DEBUG_MODE) {
             try {
                 Resources.writeFile("C:\\kwebs\\in" + debugIndex + ".ser", serializedGraph);
                 KGraphHandler t = new KGraphHandler();
                 int i = 0;
-                for (KNode layout : transData.getTargetGraphs()) {
-                    Resources.writeFile(
-                        "C:\\kwebs\\in" + debugIndex + "_" + i + ".kgraph", t.serialize(layout)
-                    );
-                    i++;
+                for (KNode layout : inTransData.getTargetGraphs()) {
+                    Resources.writeFile("C:\\kwebs\\in" + debugIndex + "_" + (i++) + ".kgraph",
+                            t.serialize(layout));
                 }         
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        
         // Parse the transmitted layout options and annotate the layout structure
         if (options != null) {
-            for (KNode layout : transData.getTargetGraphs()) {
+            for (KNode layout : inTransData.getTargetGraphs()) {
                 annotateGraph(layout, options);
             }
         }
+        
         // Actually do the layout on the structure
-        double layoutStarted = System.nanoTime();
-        for (KNode layout : transData.getTargetGraphs()) {
-            layoutEngine.layout(layout, new BasicProgressMonitor());
+        double layoutTime = 0;
+        for (KNode layout : inTransData.getTargetGraphs()) {
+            IKielerProgressMonitor layoutMonitor = new BasicProgressMonitor();
+            layoutEngine.layout(layout, layoutMonitor);
+            layoutTime += layoutMonitor.getExecutionTime() * NANO_FACT;
         }
-        double layoutFinished = System.nanoTime();
-        // Apply the calculated layout back to the graph instance
-        handler.getImporter().transferLayout(transData);
+
         // Calculate statistical values and annotate graph if it is a KGraph instance.
         // The serialization process can not be included.        
         if (graph instanceof KNode) {
-            // Graph related statistics
-            int nodes = 0;
-            int ports = 0;
-            int labels = 0;
-            int edges = 0;
-            for (KNode layout : transData.getTargetGraphs()) {
-                List<KGraphElement> elements = Graphs.getAllElementsOfType(layout, KGraphElement.class);
-                for (KGraphElement element : elements) {
-                    if (element instanceof KNode) {
-                        nodes++;
-                    } else if (element instanceof KPort) {
-                        ports++;
-                    } else if (element instanceof KLabel) {
-                        labels++;
-                    } else if (element instanceof KEdge) {
-                        edges++;
-                    }
-                } 
-            }
-            Statistics statistics = new Statistics();
-            statistics.setBytes(serializedGraph.length());
-            statistics.setNodes(nodes);
-            statistics.setPorts(ports);
-            statistics.setLabels(labels);
-            statistics.setEdges(edges);
-            // Execution time related statistics
-            statistics.setTimeLayout(layoutFinished - layoutStarted);
-            // Come as close to measuring the supplementary operations as possible.
-            // If STATISTICS_MODE is not used, serializing is not be measured.
-            if (!STATISTICS_MODE) {
-                statistics.setTimeRemoteSupplemental(
-                    System.nanoTime() - operationStarted - layoutFinished + layoutStarted
-                );
-            }
-            KNode top = ((KNode) graph);
-            KIdentifier identifier = top.getData(KIdentifier.class);
-            if (identifier == null) {
-                identifier = KLayoutDataFactoryImpl.eINSTANCE.createKIdentifier();
-                top.getData().add(identifier);
-            }    
-            identifier.setProperty(Statistics.STATISTICS, statistics);
+            double supplementalTime = System.nanoTime() - operationStarted - layoutTime;
+            annotateStatistics((KNode) graph, inTransData.getTargetGraphs(), serializedGraph.length(),
+                    layoutTime, supplementalTime);
         }
-        // Create and return the resulting graph in serialized form
-        String serializedResult = handler.serialize(transData.getSourceGraph());
+        
+        String serializedResult;
+        if (outhandler == null) {
+            // Apply the calculated layout back to the graph instance
+            inhandler.getImporter().transferLayout(inTransData);
+            // Serialize the resulting graph
+            serializedResult = inhandler.serialize(inTransData.getSourceGraph());
+        } else {
+            StringBuilder outGraphBuilder = new StringBuilder();
+            for (KNode layoutGraph : inTransData.getTargetGraphs()) {
+                // Transform the graph to the output format
+                TransformationData<KNode, O> outTransData = new TransformationData<KNode, O>();
+                outTransData.setSourceGraph(layoutGraph);
+                outhandler.getExporter().transform(outTransData);
+                // Serialize the resulting graphs
+                for (O outgraph : outTransData.getTargetGraphs()) {
+                    outGraphBuilder.append(outhandler.serialize(outgraph));
+                }
+            }
+            serializedResult = outGraphBuilder.toString();
+        }
+        
         // Include serialization in statistical data. Only if in STATISTICS_MODE
         if (STATISTICS_MODE && graph instanceof KNode) {
-            return resetSupplementaryTimeOnResult(
-                serializedResult, 
-                System.nanoTime() - operationStarted - layoutFinished + layoutStarted
-            );
+            return resetSupplementaryTimeOnResult(serializedResult, System.nanoTime()
+                    - operationStarted - layoutTime);
         }
+        
         // Do debug output
         if (DEBUG_MODE) {
             try {
                 Resources.writeFile("C:\\kwebs\\out" + debugIndex + ".ser", serializedResult);
                 KGraphHandler t = new KGraphHandler();
                 int i = 0;
-                for (KNode layout : transData.getTargetGraphs()) {
-                    Resources.writeFile(
-                        "C:\\kwebs\\out" + debugIndex + "_" + i + ".kgraph", t.serialize(layout)
-                    );
-                    i++;
+                for (KNode layout : inTransData.getTargetGraphs()) {
+                    Resources.writeFile("C:\\kwebs\\out" + debugIndex + "_" + (i++) + ".kgraph",
+                            t.serialize(layout));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         return serializedResult;
+    }
+    
+    private void annotateStatistics(final KNode sourceGraph, final List<KNode> layoutGraphs,
+            final int serializedSize, final double layoutTime, final double supplementalTime) {
+        // Graph related statistics
+        int nodes = 0;
+        int ports = 0;
+        int labels = 0;
+        int edges = 0;
+        for (KNode layout : layoutGraphs) {
+            List<KGraphElement> elements = Graphs.getAllElementsOfType(layout, KGraphElement.class);
+            for (KGraphElement element : elements) {
+                if (element instanceof KNode) {
+                    nodes++;
+                } else if (element instanceof KPort) {
+                    ports++;
+                } else if (element instanceof KLabel) {
+                    labels++;
+                } else if (element instanceof KEdge) {
+                    edges++;
+                }
+            } 
+        }
+        Statistics statistics = new Statistics();
+        statistics.setBytes(serializedSize);
+        statistics.setNodes(nodes);
+        statistics.setPorts(ports);
+        statistics.setLabels(labels);
+        statistics.setEdges(edges);
+        // Execution time related statistics
+        statistics.setTimeLayout(layoutTime);
+        // Come as close to measuring the supplementary operations as possible.
+        // If STATISTICS_MODE is not used, serializing is not be measured.
+        if (!STATISTICS_MODE) {
+            statistics.setTimeRemoteSupplemental(supplementalTime);
+        }
+        KIdentifier identifier = sourceGraph.getData(KIdentifier.class);
+        if (identifier == null) {
+            identifier = KLayoutDataFactoryImpl.eINSTANCE.createKIdentifier();
+            sourceGraph.getData().add(identifier);
+        }    
+        identifier.setProperty(Statistics.STATISTICS, statistics);
     }
     
     /**

@@ -61,18 +61,19 @@ public final class JaxWsService extends AbstractService implements LayoutService
      * @param informat
      *            identifier for the input graphs meta model and form of serialization {@see Formats}
      * @param outformat
-     *            optional identifier for the output graphs meta model and form of serialization {@see Formats}
+     *            optional identifier for the output graphs meta model and form of serialization
      * @param options
      *            an optional list of layout options
      * @return the graph which was layout done on in the same serialization as the given graph
      * @throws ServiceFault_Exception
      *             if an error occurs
      */
-    public String graphLayout(final String serializedGraph, final String informat, final String outformat, 
-        final List<GraphLayoutOption> options) throws ServiceFault_Exception {
+    public String graphLayout(final String serializedGraph, final String informat,
+            final String outformat, final List<GraphLayoutOption> options)
+            throws ServiceFault_Exception {
         Logger.log(Severity.DEBUG, "Handling layout request");
         try {
-            String result = layout(serializedGraph, informat, options);
+            String result = layout(serializedGraph, informat, outformat, options);
             Logger.log(Severity.DEBUG, "Handling layout request succeeded");
             return result;
         } catch (Exception e) { e.printStackTrace();
