@@ -94,19 +94,21 @@ public final class DiagramViewManager implements IPartListener {
         IWorkbenchPage page = window.getActivePage();
         IViewReference viewRef = page.findViewReference(PRIMARY_VIEW_ID, id);
         if (viewRef != null) {
-            IViewPart view = viewRef.getView(false);
+            IViewPart view = viewRef.getView(true);
             if (view instanceof DiagramViewPart) {
                 DiagramViewPart diagramView = (DiagramViewPart) view;
                 if (name != null) {
                     diagramView.setName(name);
                 }
                 if (model != null) {
+                    // chsch:
+                    //  It is eminently important to do this before the attachment of the PSWTCanvas
+                    //  in case the PiccoloViewer has been selected !!!                     
+                    page.bringToTop(diagramView);
                     ViewContext viewContext =
                             LightDiagramServices.getInstance().createViewContext(model);
                     diagramView.getViewer().setModel(viewContext);
                 }
-                // chsch:
-                page.bringToTop(diagramView); // activate(diagramView);
                 return true;
             }
         }
@@ -193,6 +195,7 @@ public final class DiagramViewManager implements IPartListener {
         return false;
     }
 
+    /* chsch: what is this needed for? */
     private void registerPartListener() {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         window.getActivePage().addPartListener(this);
@@ -203,6 +206,8 @@ public final class DiagramViewManager implements IPartListener {
         window.getActivePage().removePartListener(this);        
     }
 
+    
+    // chsch: Do we actually need this? Want to organize it be means of KIVi!
     /**
      * {@inheritDoc}
      */
