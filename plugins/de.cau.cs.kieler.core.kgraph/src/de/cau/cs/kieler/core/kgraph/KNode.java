@@ -152,7 +152,7 @@ public interface KNode extends KGraphElement {
      * @return the value of the '<em>Label</em>' containment reference.
      * @see #setLabel(KLabel)
      * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKNode_Label()
-     * @model containment="true" required="true"
+     * @model containment="true"
      * @generated
      */
     KLabel getLabel();
