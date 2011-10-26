@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.cau.cs.kieler.kwebs.client.jeti.feature"
+      id="de.cau.cs.kieler.kwebs.client.jeti"
       label="KIELER KWebS jETI Client"
       version="0.1.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
