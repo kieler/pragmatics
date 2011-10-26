@@ -11,15 +11,13 @@ import mm::algorithms::styles;
 create Diagram getDiagram():
  this.setDiagramTypeId("compodiag") ->
  
- //this.
  // this is needed to synthesize valid diagrams to be displayed by a graphiti editor
  this.setGraphicsAlgorithm(
    let rect = new Rectangle:
    rect.setHeight(1000) ->
    rect.setWidth(1000) ->   
    rect
-  )
-    
+  )  
 ;
 
 
@@ -29,6 +27,32 @@ Shape createShape():
   shape.setVisible(true) ->
   getDiagram().children.add(shape) ->
   shape
+;
+
+
+Anchor createVisibleFixPointAnchor(Shape shape, int x, int y):
+  let anchor = new FixPointAnchor:
+  anchor.setVisible(true) ->
+  anchor.setLocation(createPoint(x,y)) ->
+  shape.anchors.add(anchor) ->
+  anchor
+;
+
+
+Connection createConnection():
+  let connection = new Connection:
+  connection.setActive(false) ->
+  connection.setVisible(true) ->
+  getDiagram().connections.add(connection) ->
+  connection
+;
+
+
+Point createPoint(int x, int y):
+  let point = new Point:
+  point.setX(x) ->
+  point.setY(y) ->
+  point
 ;
 
 
@@ -50,6 +74,14 @@ Rectangle createRectangle(int x, int y, int width, int height, int lineWidth, Co
 ;
 
 
+
+Rectangle createRectangle(Shape shape, int x, int y, int width, int height, Style style):
+  let rectangle = createRectangle(x,y,width,height,style):
+  shape.setGraphicsAlgorithm(rectangle) ->
+  rectangle
+;
+
+
 /**
   *
   */
@@ -66,6 +98,27 @@ Rectangle createRectangle(int x, int y, int width, int height, Style style):
 ;
 
 
+Text createText(GraphicsAlgorithm ga, String value):
+  createText(ga, value, "default")
+;
+
+Text createText(GraphicsAlgorithm ga, String value, String style):
+  let text = new Text:
+  text.setFont(getLabelFont(style)) ->
+  text.setForeground(getColor("black")) ->
+  text.setWidth(ga.width) ->
+  text.setHorizontalAlignment(Orientation::ALIGNMENT_CENTER) ->
+  text.setValue(value) ->
+  ga.graphicsAlgorithmChildren.add(text) ->
+  text
+;
+
+Property createProperty(String key, String value):
+  let property = new Property:
+  property.setKey(key) ->
+  property.setValue(value) ->
+  property
+;
 
 
 /**
@@ -158,8 +211,38 @@ create Style getStyle(String name):
     this.setBackground(getColor("darkGray")) ->
     this.setLineWidth(4) ->
     this)
+   case "red" : (
+    this.setId("red") ->
+    this.setForeground(getColor("red")) ->
+    this.setBackground(getColor("white")) ->
+    this.setLineWidth(4) ->
+    this)
    default :
     null
  } ->
  getDiagram().styles.add(this)
+;
+
+
+/**
+ * Creation of the available font collection
+ *  here we will use the same font for all labels
+ *  adds it to the diagram on demand
+ */
+create Font getLabelFont(String name):
+  switch (name) {
+    case "bold" : (
+      this.setName("Arial") ->
+      this.setSize(8) ->
+      this.setBold(true) ->
+      this)
+    case "default" : (
+      this.setName("Arial") ->
+      this.setSize(8) ->
+      this.setBold(true) ->
+      this)
+    default :
+      null
+  } ->
+  getDiagram().fonts.add(this)
 ;
