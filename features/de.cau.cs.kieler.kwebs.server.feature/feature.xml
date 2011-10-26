@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.cau.cs.kieler.kwebs.server.feature"
-      label="KIELER Layout Web Server Feature"
+      id="de.cau.cs.kieler.kwebs.server"
+      label="KIELER Layout Web Server"
       version="0.1.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
@@ -112,6 +112,10 @@ Everyone is permitted to copy and distribute copies of this Agreement, but in or
 
 This Agreement is governed by the laws of the State of New York and the intellectual property laws of the United States of America. No party to this Agreement will bring a legal action under this Agreement more than one year after the cause of action arose. Each party waives its rights to a jury trial in any resulting litigation.
    </license>
+
+   <url>
+      <update label="KIELER Nightly Builds" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/"/>
+   </url>
 
    <includes
          id="org.eclipse.rcp"
