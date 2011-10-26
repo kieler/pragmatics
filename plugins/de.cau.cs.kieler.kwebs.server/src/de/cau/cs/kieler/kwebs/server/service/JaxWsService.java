@@ -76,7 +76,7 @@ public final class JaxWsService extends AbstractService implements LayoutService
             String result = layout(serializedGraph, informat, outformat, options);
             Logger.log(Severity.DEBUG, "Handling layout request succeeded");
             return result;
-        } catch (Exception e) { e.printStackTrace();
+        } catch (Exception e) {
             Logger.log(Severity.WARNING, 
                 "Handling layout request failed: " + e.getMessage(), e
             );

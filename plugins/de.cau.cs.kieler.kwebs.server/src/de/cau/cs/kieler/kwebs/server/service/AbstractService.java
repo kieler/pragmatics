@@ -44,6 +44,7 @@ import de.cau.cs.kieler.kwebs.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.Statistics;
 import de.cau.cs.kieler.kwebs.formats.Formats;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
+import de.cau.cs.kieler.kwebs.server.layout.ServerTransformationService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.util.Graphs;
@@ -87,6 +88,7 @@ public abstract class AbstractService {
      */
     protected AbstractService() {
         ServerLayoutDataService.create();
+        ServerTransformationService.create();
     }
     
     /**
