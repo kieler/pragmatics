@@ -12,6 +12,7 @@ import annotations;
  */
 create Diagram getDiagram():
  this.setDiagramTypeId("compodiag") ->
+ this.setLink(new PictogramLink) ->
  
  // this is needed to synthesize valid diagrams to be displayed by a graphiti editor
  this.setGraphicsAlgorithm(
@@ -23,12 +24,22 @@ create Diagram getDiagram():
 ;
 
 
-Shape createShape():
-  let shape = new Shape:
-  shape.setActive(true) ->
-  shape.setVisible(true) ->
-  getDiagram().children.add(shape) ->
-  shape
+/**
+ *
+ */
+create Shape createShape(Object o):
+  this.setActive(true) ->
+  this.setVisible(true) ->
+  this.setLink(new PictogramLink) ->
+  getDiagram().children.add(this)
+;
+
+/**
+ * Just a wrapper to be used to reveal the shape
+ *  indicating that it has been created already!
+ */
+Shape getShape(Object o):
+  o.createShape()
 ;
 
 
@@ -36,15 +47,21 @@ Anchor createVisibleFixPointAnchor(Shape shape, int x, int y):
   let anchor = new FixPointAnchor:
   anchor.setVisible(true) ->
   anchor.setLocation(createPoint(x,y)) ->
+  anchor.setLink(new PictogramLink) ->
   shape.anchors.add(anchor) ->
   anchor
 ;
 
 
 Connection createConnection():
-  let connection = new Connection:
+  let connection = new FreeFormConnection:
+  let polyline = new Polyline:
+  polyline.setLineWidth(1) ->
+  polyline.setForeground(getColor("black")) ->
   connection.setActive(false) ->
   connection.setVisible(true) ->
+  connection.setGraphicsAlgorithm(polyline) ->
+  connection.setLink(new PictogramLink) ->  
   getDiagram().connections.add(connection) ->
   connection
 ;
@@ -160,6 +177,11 @@ create Color getColor(String name):
     this.setGreen(190) ->
     this.setBlue(190) ->
     this)
+   case "lemon" : (
+    this.setRed(255) ->
+    this.setGreen(250) ->
+    this.setBlue(205) ->
+    this)
    case "red" : (
     this.setRed(255) ->
     this.setGreen(0) ->
@@ -189,6 +211,12 @@ create Color getColor(String name):
  */
 create Style getStyle(String name):
  switch(name) {
+   case "black_lemon" : (
+    this.setId("black_lemon") ->
+    this.setForeground(getColor("black")) ->
+    this.setBackground(getColor("lemon")) ->
+    this.setLineWidth(1) ->
+    this)
    case "black_white" : (
     this.setId("black_white") ->
     this.setForeground(getColor("black")) ->
@@ -262,4 +290,16 @@ int max(List[int] ints):
 create IntAnnotation getIntProperty(Shape shape, String name):
   this.setName(name) ->
   this.setValue(0)
+;
+
+
+IntAnnotation getAndAddIntProperty(Shape shape, String name):
+  let intAnno = shape.getIntProperty(name):
+  intAnno.setValue(intAnno.value + 1) ->
+  intAnno
+;
+
+
+Void debug(List l):
+  JAVA de.cau.cs.kieler.klighd.graphiti.transformations.DiagramUtil.debug(java.util.List)
 ;
