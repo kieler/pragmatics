@@ -14,8 +14,6 @@
 package de.cau.cs.kieler.klay.layered.p3order;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 import com.google.common.collect.Multimap;
 
@@ -39,8 +37,6 @@ public interface ICrossingMinimizationHeuristic {
      * 
      * @param layer
      *            the free layer whose nodes are reordered.
-     * @param random
-     *            the random number generator.
      * @param layoutUnits
      *            a map associating layout units with their respective members.
      * @param layerIndex
@@ -51,18 +47,14 @@ public interface ICrossingMinimizationHeuristic {
      *            {@code true} if this layer's node order should just be randomized. In that case,
      *            {@code preOrdered} is assumed to be {@code false} and the return value is
      *            {@code 0}.
-     * @param singleNodeNodeGroups
-     *            a map of single-node NodeGroups for each layer.
      * @param forward
      *            whether the free layer is after the fixed layer.
      * @param portPos
      *            position array.
-     * 
      * @return the total number of edges going either in or out of the given layer.
      */
-    int minimizeCrossings(final List<NodeGroup> layer, final Random random,
-            Multimap<LNode, LNode> layoutUnits, final int layerIndex, final boolean preOrdered,
-            final boolean randomize, final Map<LNode, NodeGroup>[] singleNodeNodeGroups,
+    int minimizeCrossings(final List<NodeGroup> layer, Multimap<LNode, LNode> layoutUnits,
+            final int layerIndex, final boolean preOrdered, final boolean randomize,
             boolean forward, final float[] portPos);
 
 }
