@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered.p3order;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Multimap;
 
@@ -51,10 +52,12 @@ public interface ICrossingMinimizationHeuristic {
      *            whether the free layer is after the fixed layer.
      * @param portPos
      *            position array.
+     * @param singleNodeNodeGroups
+     *            Map of single node vertices for each layer.
      * @return the total number of edges going either in or out of the given layer.
      */
     int minimizeCrossings(final List<NodeGroup> layer, Multimap<LNode, LNode> layoutUnits,
             final int layerIndex, final boolean preOrdered, final boolean randomize,
-            boolean forward, final float[] portPos);
+            boolean forward, final float[] portPos, final Map<LNode, NodeGroup>[] singleNodeNodeGroups);
 
 }
