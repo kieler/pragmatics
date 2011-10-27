@@ -224,20 +224,14 @@ litigation.
    </url>
 
    <requires>
-      <import feature="net.ogdf.bin" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.apache.commons.logging"/>
       <import plugin="org.antlr.runtime"/>
       <import plugin="org.apache.log4j"/>
       <import feature="com.google.guava.runtime.feature" version="8.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.common" version="2.6.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.ecore" version="2.6.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.mwe.core" version="1.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.transaction" version="1.4.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.gef" version="3.6.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.gmf" version="1.4.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.gmf.runtime.notation" version="1.4.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xtext.runtime" version="1.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -290,27 +284,6 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.kiml.graphviz.dot"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.graphviz.layouter"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.ogdf"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.kiml.ui"
          download-size="0"
          install-size="0"
@@ -319,20 +292,6 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.klay.layered"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.klodd.hierarchical"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.klodd.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -353,14 +312,7 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.kwebs"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kwebs.client"
+         id="de.cau.cs.kieler.klay.force"
          download-size="0"
          install-size="0"
          version="0.0.0"

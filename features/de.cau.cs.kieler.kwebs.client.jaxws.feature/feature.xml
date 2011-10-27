@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.cau.cs.kieler.kwebs.client.jaxws"
-      label="KIELER KWebS JAX-WS Client"
+      label="KIELER Layout Client over JAX-WS (optional)"
       version="0.1.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
    <description url="http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/Projects/KWebS">
-      This feature enables JAX-WS web service based layout in the KIELER
-modeling environment.
+      This feature enables JAX-WS web service based layout in KIELER. By using this service, no local installation of layout algorithms is required, since automatic diagram layout is calculated on a remote server.
    </description>
 
    <copyright>
@@ -108,6 +107,14 @@ This Agreement is governed by the laws of the State of New York and the intellec
    <url>
       <update label="KIELER Nightly Builds" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/"/>
    </url>
+
+   <requires>
+      <import plugin="de.cau.cs.kieler.core"/>
+      <import plugin="de.cau.cs.kieler.kiml"/>
+      <import plugin="de.cau.cs.kieler.kiml.service"/>
+      <import feature="com.google.guava.runtime.feature" version="9.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf" version="2.7.0" match="greaterOrEqual"/>
+   </requires>
 
    <plugin
          id="de.cau.cs.kieler.kwebs.client.jaxws"

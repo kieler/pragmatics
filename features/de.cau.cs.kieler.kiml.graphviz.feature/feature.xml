@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.cau.cs.kieler.keg"
-      label="KIELER Editor for Graphs"
-      version="0.3.0.qualifier"
+      id="de.cau.cs.kieler.kiml.graphviz"
+      label="KIELER Graphviz Layout (optional)"
+      version="0.5.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
-   <description>
-      A generic graph editor for graph algorithm engineering. The feature includes layout algorithms, graph analysis, and importing / exporting of different graph formats.
+   <description url="http://rtsys.informatik.uni-kiel.de/trac/kieler/">
+      Connector for Graphviz layouts; the Graphviz tool is not shipped with this feature and has to be installed separately from &lt;a href=&quot;http://www.graphviz.org/&quot;&gt;www.graphviz.org&lt;/a&gt;. For Windows platforms and non-standard Unix installations the path to the &quot;dot&quot; executable must be configured in the preferences.
    </description>
 
    <copyright>
@@ -218,153 +218,13 @@ litigation.
    </url>
 
    <requires>
-      <import plugin="org.antlr.runtime"/>
-      <import plugin="org.apache.log4j"/>
-      <import feature="com.google.guava.runtime.feature" version="8.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.draw2d" version="3.6.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.common" version="2.6.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.ecore" version="2.6.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.ecore.edit" version="2.6.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.edit" version="2.6.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.mwe.core" version="1.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.transaction" version="1.4.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.gef" version="3.6.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.gmf" version="1.4.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.gmf.runtime.notation" version="1.4.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xpand" version="1.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xtend" version="1.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xtend.typesystem.emf" version="1.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xtext.runtime" version="1.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xtext.ui" version="1.0.0" match="greaterOrEqual"/>
-      <import feature="net.ogdf.bin" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.cau.cs.kieler.core.kgraph"/>
+      <import plugin="de.cau.cs.kieler.core"/>
+      <import plugin="de.cau.cs.kieler.kiml"/>
+      <import plugin="de.cau.cs.kieler.kiml.service"/>
+      <import feature="org.eclipse.emf" version="2.7.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.xtext.runtime" version="2.0.0" match="greaterOrEqual"/>
    </requires>
-
-   <plugin
-         id="de.cau.cs.kieler.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.kgraph"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.kgraph.edit"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.kivi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.model"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.model.xtend"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.karma"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.keg"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.keg.diagram"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.keg.diagram.custom"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.keg.edit"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.keg.importer"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.keg.ksbase"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.export"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.gmf"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.grana"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="de.cau.cs.kieler.kiml.graphviz.dot"
@@ -375,111 +235,6 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.kiml.graphviz.layouter"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.ogdf"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.klay.layered"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.klodd.hierarchical"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.klodd.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.ksbase"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.ksbase.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.graphdrawing.graphml"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.model.gmf"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.annotations"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.annotations.edit"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.annotations.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.service"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kwebs"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kwebs.client"
          download-size="0"
          install-size="0"
          version="0.0.0"
