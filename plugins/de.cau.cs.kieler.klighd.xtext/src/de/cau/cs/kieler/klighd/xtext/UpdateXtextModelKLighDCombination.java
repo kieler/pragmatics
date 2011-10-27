@@ -13,9 +13,6 @@
  */
 package de.cau.cs.kieler.klighd.xtext;
 
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.xtext.resource.XtextResource;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;

@@ -3,6 +3,8 @@ import mm::pictograms;
 import mm::algorithms;
 import mm::algorithms::styles;
 
+import annotations;
+
 /**
  * Creation and caching of the Diagram root element,
  *  used a cached extension in order to reduce parameters
@@ -245,4 +247,19 @@ create Font getLabelFont(String name):
       null
   } ->
   getDiagram().fonts.add(this)
+;
+
+
+/**
+ * ints is assumed to contain at least 1 entry
+ */
+int max(List[int] ints):
+  let maxRemainder = (ints.size == 1?ints.first():ints.withoutFirst().max()):
+  (ints.first() >= maxRemainder?ints.first():maxRemainder)
+;
+
+
+create IntAnnotation getIntProperty(Shape shape, String name):
+  this.setName(name) ->
+  this.setValue(0)
 ;
