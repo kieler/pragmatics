@@ -41,7 +41,7 @@ public interface IConstraintResolver {
      * @param random
      *            the random number generator.
      * @param singleNodeNodeGroups
-     *            a map of single-node vertices for each layer.
+     *            a map of single-node NodeGroups for each layer.
      * @param layoutUnits
      *            a map associating layout units with their respective members.
      */
