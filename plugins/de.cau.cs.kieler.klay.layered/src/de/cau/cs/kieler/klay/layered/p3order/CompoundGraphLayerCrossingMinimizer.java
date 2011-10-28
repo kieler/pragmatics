@@ -129,19 +129,20 @@ public class CompoundGraphLayerCrossingMinimizer {
         } else {
             // sort the layer's nodes according to their related compound nodes. Find out the
             // maximal depth on the run.
-            HashMap<LNode, LinkedList<LNode>> compoundNodesMap = new HashMap<LNode, LinkedList<LNode>>();
+            HashMap<LNode, LinkedList<NodeGroup>> compoundNodesMap = new HashMap<LNode, LinkedList<NodeGroup>>();
             int maximalDepth = 0;
             for (LNode node : layer) {
                 // The correlation node/compoundNode is the same as in the SubGraphOrderingProcessor
                 LNode key = SubgraphOrderingProcessor.getRelatedCompoundNode(node, layeredGraph);
-                LinkedList<LNode> relatedList;
+                LinkedList<NodeGroup> relatedList;
                 if (compoundNodesMap.containsKey(key)) {
                     relatedList = compoundNodesMap.get(key);
                 } else {
-                    relatedList = new LinkedList<LNode>();
+                    relatedList = new LinkedList<NodeGroup>();
                     compoundNodesMap.put(key, relatedList);
                 }
-                relatedList.add(node);
+                NodeGroup thisNodesGroup = singleNodeNodeGroups[layerIndex].get(node);
+                relatedList.add(thisNodesGroup);
                 int keydepth = key.getProperty(Properties.DEPTH);
                 if (keydepth > maximalDepth) {
                     maximalDepth = keydepth;
@@ -163,6 +164,33 @@ public class CompoundGraphLayerCrossingMinimizer {
                 // Handle the compound nodes beginning from the highest depth level up to the
                 // lowest.
                 LinkedList<LNode> actualList = compoundNodesPerDepthLevel.removeLast();
+                // Process the compound nodes of the actual depth level.
+                for (LNode keyNode : actualList) {
+                    LinkedList<NodeGroup> compoundContent = compoundNodesMap.get(keyNode);
+                    // Calculate the nodeOrder for this compound node.
+                    totalEdges += minimizationHeuristic.minimizeCrossings(compoundContent,
+                            layoutUnits, layerIndex, preOrdered, randomize, forward, portPos,
+                            singleNodeNodeGroups);
+                    // Create a NodeGroup comprising all Nodes of this compound node, preserving the
+                    // order
+                    NodeGroup atomicUnit;
+                    if (compoundContent.size() == 1) {
+                        atomicUnit = compoundContent.getFirst();
+                    } else {
+                        atomicUnit = new NodeGroup(compoundContent.removeFirst(),
+                                compoundContent.removeLast(), random);
+                        while (!compoundContent.isEmpty()) {
+                            atomicUnit = new NodeGroup(atomicUnit, compoundContent.removeFirst(),
+                                    random);
+                        }
+                    }
+                    // Store the new nodeGroup representing the compound node in the
+                    // compoundNodesMap with the parent of the compoundNode as a key.
+
+                    // Store the parent of the compoundNode in the compoundNodesPerDepthLevel-list
+                    // if not already present
+
+                }
             }
 
             // TODO: Complete method body.
