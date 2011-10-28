@@ -21,6 +21,9 @@ import java.util.Random;
 
 import com.google.common.collect.Multimap;
 
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.SubgraphOrderingProcessor;
@@ -32,9 +35,11 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * it computes orderings for each compound node seperately, working its way from the innermost
  * compound node to the outermost, using calculated node orders as atomic sets of nodes for the next
  * calculations. This approach is inspired by Michael Forster: "Applying Crossing Reduction
- * Strategies to Layered Compound Graphs", University of Passau
+ * Strategies to Layered Compound Graphs", University of Passau.
  * 
  * @author ima
+ * @author cds
+ * @author msp
  */
 
 public class CompoundGraphLayerCrossingMinimizer {
@@ -106,7 +111,16 @@ public class CompoundGraphLayerCrossingMinimizer {
             final boolean forward, final boolean preOrdered, final boolean randomize,
             final LayeredGraph layeredGraph) {
 
+        // chose a crossing minimization heuristic
         minimizationHeuristic = new BarycenterHeuristic(portDistributor, random);
+
+        // get the map associating LGraph-elements and the original KGraph-Elements
+        HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
+                .getProperty(Properties.ELEMENT_MAP);
+
+        // prepare an LNode as key representing the layeredGraph in HashMaps
+        LNode graphKey = new LNode();
+        graphKey.setProperty(Properties.ORIGIN, layeredGraph);
 
         int totalEdges = 0;
 
@@ -129,7 +143,8 @@ public class CompoundGraphLayerCrossingMinimizer {
         } else {
             // sort the layer's nodes according to their related compound nodes. Find out the
             // maximal depth on the run.
-            HashMap<LNode, LinkedList<NodeGroup>> compoundNodesMap = new HashMap<LNode, LinkedList<NodeGroup>>();
+            HashMap<LNode, LinkedList<NodeGroup>> compoundNodesMap 
+                    = new HashMap<LNode, LinkedList<NodeGroup>>();
             int maximalDepth = 0;
             for (LNode node : layer) {
                 // The correlation node/compoundNode is the same as in the SubGraphOrderingProcessor
@@ -150,7 +165,8 @@ public class CompoundGraphLayerCrossingMinimizer {
             }
             // Sort the relevant compound nodes into lists sorted by depth. Index 0 means list of
             // nodes with depth 0.
-            LinkedList<LinkedList<LNode>> compoundNodesPerDepthLevel = new LinkedList<LinkedList<LNode>>();
+            LinkedList<LinkedList<LNode>> compoundNodesPerDepthLevel 
+                    = new LinkedList<LinkedList<LNode>>();
             for (int i = 0; i <= maximalDepth; i++) {
                 LinkedList<LNode> depthList = new LinkedList<LNode>();
                 compoundNodesPerDepthLevel.add(depthList);
@@ -171,32 +187,78 @@ public class CompoundGraphLayerCrossingMinimizer {
                     totalEdges += minimizationHeuristic.minimizeCrossings(compoundContent,
                             layoutUnits, layerIndex, preOrdered, randomize, forward, portPos,
                             singleNodeNodeGroups);
-                    // Create a NodeGroup comprising all Nodes of this compound node, preserving the
-                    // order
-                    NodeGroup atomicUnit;
-                    if (compoundContent.size() == 1) {
-                        atomicUnit = compoundContent.getFirst();
-                    } else {
-                        atomicUnit = new NodeGroup(compoundContent.removeFirst(),
-                                compoundContent.removeLast(), random);
-                        while (!compoundContent.isEmpty()) {
-                            atomicUnit = new NodeGroup(atomicUnit, compoundContent.removeFirst(),
-                                    random);
+                    // Is outermost level reached? If not, represent the compound node as one entity
+                    // for the higher levels. Update compoundNodesMap and
+                    // compoundNodesPerDepthLevel.
+                    if (keyNode != graphKey) {
+                        // Create a NodeGroup comprising all Nodes of this compound node, preserving
+                        // the
+                        // order
+                        NodeGroup aggregatedNodeGroup;
+                        if (compoundContent.size() == 1) {
+                            aggregatedNodeGroup = compoundContent.getFirst();
+                        } else {
+                            aggregatedNodeGroup = new NodeGroup(compoundContent.removeFirst(),
+                                    compoundContent.removeLast(), random);
+                            while (!compoundContent.isEmpty()) {
+                                aggregatedNodeGroup = new NodeGroup(aggregatedNodeGroup,
+                                        compoundContent.removeFirst(), random);
+                            }
                         }
+                        // Store the new nodeGroup representing the compound node in the
+                        // compoundNodesMap with the parent of the compoundNode as a key.
+                        KNode keyNodeParent = keyNode.getProperty(Properties.PARENT);
+                        LGraphElement parentRepresentative = elemMap.get(keyNodeParent);
+                        LNode parentKey;
+                        if (parentRepresentative instanceof LayeredGraph) {
+                            parentKey = graphKey;
+                        } else {
+                            assert (parentRepresentative instanceof LNode);
+                            parentKey = (LNode) parentRepresentative;
+                        }
+                        LinkedList<NodeGroup> parentContents;
+                        if (compoundNodesMap.containsKey(parentKey)) {
+                            parentContents = compoundNodesMap.get(parentKey);
+                        } else {
+                            parentContents = new LinkedList<NodeGroup>();
+                            compoundNodesMap.put(parentKey, parentContents);
+                        }
+                        parentContents.add(aggregatedNodeGroup);
+
+                        // Store the parent of the compoundNode in the
+                        // compoundNodesPerDepthLevel-list
+                        // if not already present
+                        LinkedList<LNode> parentList = compoundNodesPerDepthLevel.get(parentKey
+                                .getProperty(Properties.DEPTH));
+                        if (!parentList.contains(parentKey)) {
+                            parentList.add(parentKey);
+                        }
+                    } else {
+                        applyNodeGroupOrderingToNodeArray(compoundContent, layer);
                     }
-                    // Store the new nodeGroup representing the compound node in the
-                    // compoundNodesMap with the parent of the compoundNode as a key.
-
-                    // Store the parent of the compoundNode in the compoundNodesPerDepthLevel-list
-                    // if not already present
-
                 }
             }
-
-            // TODO: Complete method body.
-
         }
 
         return totalEdges;
+    }
+
+    /**
+     * Apply the node order as determined by the sorted list of vertices to the free layer array.
+     * 
+     * @param nodeGroups
+     *            sorted array of vertices.
+     * @param freeLayer
+     *            array of nodes to apply the ordering to.
+     */
+    private void applyNodeGroupOrderingToNodeArray(final List<NodeGroup> nodeGroups,
+            final LNode[] freeLayer) {
+        int index = 0;
+
+        for (NodeGroup nodeGroup : nodeGroups) {
+            for (LNode node : nodeGroup.getNodes()) {
+                freeLayer[index++] = node;
+            }
+        }
     }
 }
