@@ -15,13 +15,9 @@ package de.cau.cs.kieler.klay.layered;
 
 import java.util.EnumSet;
 import java.util.HashMap;
-//import java.util.Iterator;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-//import org.eclipse.emf.common.util.EList;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -31,7 +27,6 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -41,6 +36,7 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -51,8 +47,6 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
-//import de.cau.cs.kieler.klay.layered.properties.NodeType;
-//import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -109,7 +103,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         if (!isCompound) {
             // transform everything
             transformNodesAndPorts(kgraph, layeredGraph, elemMap, graphProperties);
-            transformEdges(kgraph, elemMap, graphProperties, direction, layeredGraph);
+            transformEdges(kgraph, elemMap, graphProperties, layeredGraph);
         }
         // set the graph properties property
         layeredGraph.setProperty(Properties.GRAPH_PROPERTIES, graphProperties);
@@ -394,25 +388,17 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      *            {@code LGraph} elements.
      * @param graphProperties
      *            graph properties updated during the transformation.
-     * @param direction
-     *            the overall layout direction
      * @param layeredGraph
+     *            the layered graph
      */
     private void transformEdges(final KNode graph, final Map<KGraphElement, LGraphElement> elemMap,
-            final EnumSet<GraphProperties> graphProperties, final Direction direction,
-            final MapPropertyHolder layeredGraph) {
+            final EnumSet<GraphProperties> graphProperties, final MapPropertyHolder layeredGraph) {
 
-        // See if merged ports are enabled
-        Map<LNode, Pair<LPort, LPort>> mergePortsMap = null;
-        if (layeredGraph.getProperty(Properties.MERGE_PORTS)) {
-            mergePortsMap = new HashMap<LNode, Pair<LPort, LPort>>();
-        }
-        
         // Transform external port edges
-        transformExternalPortEdges(graph, graph.getIncomingEdges(), elemMap, mergePortsMap,
-                graphProperties, direction, layeredGraph);
-        transformExternalPortEdges(graph, graph.getOutgoingEdges(), elemMap, mergePortsMap,
-                graphProperties, direction, layeredGraph);
+        transformExternalPortEdges(graph, graph.getIncomingEdges(), elemMap, graphProperties,
+                layeredGraph);
+        transformExternalPortEdges(graph, graph.getOutgoingEdges(), elemMap, graphProperties,
+                layeredGraph);
 
         // Transform edges originating in the layout node's children
         for (KNode child : graph.getChildren()) {
@@ -420,8 +406,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 // exclude edges that pass hierarchy bounds (except for those
                 // going into an external port)
                 if (kedge.getTarget().getParent() == child.getParent()) {
-                    transformEdge(kedge, graph, elemMap, mergePortsMap, graphProperties,
-                            direction, layeredGraph);
+                    transformEdge(kedge, graph, elemMap, graphProperties, layeredGraph);
                 } else if (kedge.getTarget().getParent() != kedge.getSource()
                         && kedge.getTarget() != kedge.getSource().getParent()) {
 
@@ -444,19 +429,14 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      * @param elemMap
      *            the element map that maps the original {@code KGraph} elements to the transformed
      *            {@code LGraph} elements.
-     * @param mergePortsMap
-     *            mapping of nodes to pairs of input and output ports created for them if merged ports
-     *            are enabled. {@code null} if they are not enabled.
      * @param graphProperties
      *            graph properties updated during the transformation.
-     * @param direction
-     *            the overall layout direction
      * @param layeredGraph
+     *            the layered graph
      */
     private void transformExternalPortEdges(final KNode graph, final List<KEdge> edges,
             final Map<KGraphElement, LGraphElement> elemMap,
-            final Map<LNode, Pair<LPort, LPort>> mergePortsMap,
-            final EnumSet<GraphProperties> graphProperties, final Direction direction,
+            final EnumSet<GraphProperties> graphProperties,
             final MapPropertyHolder layeredGraph) {
 
         for (KEdge kedge : edges) {
@@ -464,8 +444,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             // (self-loops of the layout node will be processed on level higher)
             if (kedge.getSource().getParent() == graph || kedge.getTarget().getParent() == graph) {
 
-                transformEdge(
-                        kedge, graph, elemMap, mergePortsMap, graphProperties, direction, layeredGraph);
+                transformEdge(kedge, graph, elemMap, graphProperties, layeredGraph);
             }
         }
     }
@@ -480,26 +459,22 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      * @param elemMap
      *            the element map that maps the original {@code KGraph} elements to the transformed
      *            {@code LGraph} elements.
-     * @param mergePortsMap
-     *            mapping of nodes to pairs of input and output ports created for them if merged ports
-     *            are enabled. {@code null} if they are not enabled.
      * @param graphProperties
      *            graph properties updated during the transformation.
-     * @param direction
-     *            the overall layout direction
      * @param layeredGraph
      *            the layeredGraph.
      */
     protected void transformEdge(final KEdge kedge, final KNode graph,
             final Map<KGraphElement, LGraphElement> elemMap,
-            final Map<LNode, Pair<LPort, LPort>> mergePortsMap,
-            final EnumSet<GraphProperties> graphProperties, final Direction direction,
+            final EnumSet<GraphProperties> graphProperties,
             final MapPropertyHolder layeredGraph) {
 
         KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
         KNode kgraph = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
         KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
+        Direction direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
         boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
+        boolean mergePorts = layeredGraph.getProperty(Properties.MERGE_PORTS);
 
         // create a layered edge
         LEdge newEdge = new LEdge();
@@ -540,21 +515,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
             // create source and target ports if they do not exist yet
             if (sourcePort == null) {
-                if (mergePortsMap != null) {
-                    sourcePort = getMergedPortsOfNode(sourceNode, mergePortsMap).getSecond();
-                } else {
-                    sourcePort = createPort(sourceNode, edgeLayout.getSourcePoint(),
-                            PortSide.fromDirection(direction));
-                }
+                sourcePort = createPort(sourceNode, edgeLayout.getSourcePoint(),
+                        PortSide.fromDirection(direction), PortType.OUTPUT, mergePorts);
             }
             
             if (targetPort == null) {
-                if (mergePortsMap != null) {
-                    targetPort = getMergedPortsOfNode(targetNode, mergePortsMap).getFirst();
-                } else {
-                    targetPort = createPort(targetNode, edgeLayout.getTargetPoint(), PortSide
-                            .fromDirection(direction).opposed());
-                }
+                targetPort = createPort(targetNode, edgeLayout.getTargetPoint(),
+                        PortSide.fromDirection(direction).opposed(), PortType.INPUT, mergePorts);
             }
             newEdge.setSource(sourcePort);
             newEdge.setTarget(targetPort);
@@ -593,33 +560,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             elemMap.put(kedge, newEdge);
         }
     }
-    
-    /**
-     * Returns the merge ports created for the given node. If none were created yet, creates some
-     * and returns those, adding them to the map.
-     * 
-     * @param node the node whose merge ports to return.
-     * @param mergedPorts map from nodes to their merge ports.
-     * @return the node's merge ports.
-     */
-    private Pair<LPort, LPort> getMergedPortsOfNode(final LNode node,
-            final Map<LNode, Pair<LPort, LPort>> mergedPorts) {
-        
-        Pair<LPort, LPort> mergedPortsOfNode = mergedPorts.get(node);
-        
-        if (mergedPortsOfNode == null) {
-            LPort inputPort = new LPort();
-            inputPort.setNode(node);
-            
-            LPort outputPort = new LPort();
-            outputPort.setNode(node);
-            
-            mergedPortsOfNode = new Pair<LPort, LPort>(inputPort, outputPort);
-            mergedPorts.put(node, mergedPortsOfNode);
-        }
-        
-        return mergedPortsOfNode;
-    }
 
     /**
      * Create a port for an edge that is not connected to a port. This is necessary because KLay
@@ -631,21 +571,19 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      *            the absolute point where the edge ends
      * @param defaultSide
      *            the default side for the new port
+     * @param type
+     *            the port type
+     * @param mergePorts
+     *            whether to always used port collectors instead of single ports for each edge
      * @return a new port
      */
-    private LPort createPort(final LNode node, final KPoint endPoint, final PortSide defaultSide) {
+    private LPort createPort(final LNode node, final KPoint endPoint, final PortSide defaultSide,
+            final PortType type, final boolean mergePorts) {
         LPort port;
-        if (node.getProperty(LayoutOptions.HYPERNODE)) {
+        if ((mergePorts || node.getProperty(LayoutOptions.HYPERNODE))
+                && !node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
             // Hypernodes have one output port and one input port
-            Iterator<LPort> portIter = node.getPorts(defaultSide).iterator();
-            if (portIter.hasNext()) {
-                port = portIter.next();
-            } else {
-                port = new LPort();
-                port.setNode(node);
-                Util.centerPoint(port.getPosition(), node.getSize(), defaultSide);
-                port.setSide(defaultSide);
-            }
+            port = Util.provideCollectorPort(node, type, defaultSide);
         } else {
             port = new LPort();
             port.setNode(node);

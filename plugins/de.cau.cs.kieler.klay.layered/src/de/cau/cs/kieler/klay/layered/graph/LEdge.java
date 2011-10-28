@@ -18,6 +18,9 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -50,15 +53,27 @@ public class LEdge extends LGraphElement {
      * Reverses the edge, including its bend points. Negates the {@code REVERSED} property. (an
      * edge that was marked as being reversed is then unmarked, and the other way around) This
      * does not change any properties on the connected ports.
+     * 
+     * @param adaptPorts
+     *         If true and a connected port is a collector port (a port used to merge edges),
+     *         the corresponding opposite port is used instead of the original one.
      */
-    public void reverse() {
+    public void reverse(final boolean adaptPorts) {
         LPort oldSource = getSource();
         LPort oldTarget = getTarget();
         
         setSource(null);
         setTarget(null);
-        setSource(oldTarget);
-        setTarget(oldSource);
+        if (adaptPorts && oldTarget.getProperty(Properties.INPUT_COLLECT)) {
+            setSource(Util.provideCollectorPort(oldTarget.getNode(), PortType.OUTPUT, PortSide.EAST));
+        } else {
+            setSource(oldTarget);
+        }
+        if (adaptPorts && oldSource.getProperty(Properties.OUTPUT_COLLECT)) {
+            setTarget(Util.provideCollectorPort(oldSource.getNode(), PortType.INPUT, PortSide.WEST));
+        } else {
+            setTarget(oldSource);
+        }
         
         boolean reversed = getProperty(Properties.REVERSED);
         setProperty(Properties.REVERSED, !reversed);

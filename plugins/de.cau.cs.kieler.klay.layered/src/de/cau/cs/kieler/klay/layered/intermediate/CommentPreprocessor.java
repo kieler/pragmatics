@@ -92,7 +92,7 @@ public class CommentPreprocessor extends AbstractAlgorithm implements ILayoutPro
                         }
                     }
                     for (LEdge re : revEdges) {
-                        re.reverse();
+                        re.reverse(true);
                     }
                 }
             }

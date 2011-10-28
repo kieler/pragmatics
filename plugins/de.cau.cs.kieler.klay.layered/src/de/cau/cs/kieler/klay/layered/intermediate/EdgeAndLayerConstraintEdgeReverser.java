@@ -107,14 +107,15 @@ public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implem
      */
     private void reverseEdges(final LNode node, final PortType type) {
         // Iterate through the node's edges and reverse them, if necessary
-        for (LPort port : node.getPorts()) {
+        LPort[] ports = node.getPorts().toArray(new LPort[node.getPorts().size()]);
+        for (LPort port : ports) {
             // Only incoming edges
             List<LEdge> outgoing = port.getOutgoingEdges();
             if (type != PortType.INPUT && !outgoing.isEmpty()) {
                 LEdge[] edges = outgoing.toArray(new LEdge[outgoing.size()]);
 
                 for (LEdge edge : edges) {
-                    edge.reverse();
+                    edge.reverse(true);
                 }
             }
             
@@ -124,7 +125,7 @@ public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implem
                 LEdge[] edges = incoming.toArray(new LEdge[incoming.size()]);
 
                 for (LEdge edge : edges) {
-                    edge.reverse();
+                    edge.reverse(true);
                 }
             }
         }

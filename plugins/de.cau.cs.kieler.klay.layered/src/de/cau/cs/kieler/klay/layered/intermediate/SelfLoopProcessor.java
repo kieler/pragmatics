@@ -110,15 +110,15 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
                         if ((sourcePortSide == PortSide.NORTH || sourcePortSide == PortSide.SOUTH)
                                 && targetPortSide == PortSide.WEST) {
                             
-                            reverseEdge(edge);
+                            edge.reverse(false);
                         } else if (sourcePortSide == PortSide.SOUTH
                                 && targetPortSide == PortSide.NORTH) {
                             
-                            reverseEdge(edge);
+                            edge.reverse(false);
                         } else if (sourcePortSide == PortSide.EAST
                                 && targetPortSide != PortSide.EAST) {
                             
-                            reverseEdge(edge);
+                            edge.reverse(false);
                         }
                         
                         // Now, let's see if a dummy has to be inserted
@@ -139,15 +139,6 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
         }
         
         getMonitor().done();
-    }
-    
-    /**
-     * Reverses the given edge, setting the port types of the connected ports properly.
-     * 
-     * @param edge the edge to be reversed.
-     */
-    private void reverseEdge(final LEdge edge) {
-        edge.reverse();
     }
     
     /**

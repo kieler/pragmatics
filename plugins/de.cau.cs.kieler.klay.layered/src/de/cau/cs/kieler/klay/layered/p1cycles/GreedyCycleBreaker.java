@@ -171,7 +171,12 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
                 for (LEdge edge : outgoingEdges) {
                     int targetIx = edge.getTarget().getNode().id;
                     if (mark[index] > mark[targetIx]) {
-                        edge.reverse();
+                        // In theory, this could create new collector ports, leading to a concurrent
+                        // modification exception due to the iteration over the list of ports.
+                        // However, this will not happen here, because edges are only reversed for
+                        // nodes that are part of a cycle and thus already have both an input and
+                        // an output collector port.
+                        edge.reverse(true);
                     }
                 }                
             }

@@ -219,6 +219,17 @@ public final class Properties {
      */
     public static final IProperty<KVector> POSITION_DIFFERENCE = new Property<KVector>(
             "PositionDifference", null);
+    
+    /**
+     * Whether a port is used to collect all incoming edges of a node.
+     */
+    public static final IProperty<Boolean> INPUT_COLLECT = new Property<Boolean>(
+            "inputCollect", false);
+    /**
+     * Whether a port is used to collect all outgoing edges of a node.
+     */
+    public static final IProperty<Boolean> OUTPUT_COLLECT = new Property<Boolean>(
+            "outputCollect", false);
 
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS

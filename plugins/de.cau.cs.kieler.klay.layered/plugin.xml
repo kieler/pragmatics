@@ -166,9 +166,9 @@
             advanced="true"
             appliesTo="parents"
             default="false"
-            description="If enabled, only one input and one output port is created for edges connected directly to a node."
+            description="Edges that have no ports are merged so they touch the connected nodes at the same points."
             id="de.cau.cs.kieler.klay.layered.mergePorts"
-            name="Merge Temporary Ports"
+            name="Merge Edges"
             type="boolean">
       </layoutOption>
    </extension>

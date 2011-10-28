@@ -196,7 +196,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
             if (elemMap.containsKey(edge)) {
                 newEdge = (LEdge) elemMap.get(edge);
             } else {
-                newEdge = createLEdgeFromKEdge(edge, elemMap, layeredGraph, direction);
+                newEdge = createLEdgeFromKEdge(edge, elemMap, layeredGraph);
             }
             LNode representative = (LNode) elemMap.get(knode);
             if (edge.getTargetPort() == null) {
@@ -216,7 +216,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
             if (elemMap.containsKey(edge)) {
                 newEdge = (LEdge) elemMap.get(edge);
             } else {
-                newEdge = createLEdgeFromKEdge(edge, elemMap, layeredGraph, direction);
+                newEdge = createLEdgeFromKEdge(edge, elemMap, layeredGraph);
             }
             LNode representative = (LNode) elemMap.get(knode);
             if (edge.getSourcePort() == null) {
@@ -331,7 +331,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
             // representative yet.
             LEdge lEdge = null;
             if (!elemMap.containsKey(kEdge)) {
-                lEdge = createLEdgeFromKEdge(kEdge, elemMap, layeredGraph, direction);
+                lEdge = createLEdgeFromKEdge(kEdge, elemMap, layeredGraph);
             } else {
                 lEdge = (LEdge) elemMap.get(kEdge);
             }
@@ -540,16 +540,13 @@ public class CompoundKGraphImporter extends KGraphImporter {
      *            {@code LGraph} elements.
      * @param layeredGraph
      *            The layered graph.
-     * @param direction
-     *            The layout direction.
      * @return returns created LEdge that represents the given KEdge.
      */
     private LEdge createLEdgeFromKEdge(final KEdge kedge,
-            final Map<KGraphElement, LGraphElement> elemMap, final LayeredGraph layeredGraph,
-            final Direction direction) {
-        super.transformEdge(kedge, (KNode) layeredGraph.getProperty(Properties.ORIGIN), elemMap, null,
+            final Map<KGraphElement, LGraphElement> elemMap, final LayeredGraph layeredGraph) {
+        super.transformEdge(kedge, (KNode) layeredGraph.getProperty(Properties.ORIGIN), elemMap,
                 (EnumSet<GraphProperties>) layeredGraph.getProperty(Properties.GRAPH_PROPERTIES),
-                direction, layeredGraph);
+                layeredGraph);
 
         LEdge newEdge = (LEdge) elemMap.get(kedge);
         elemMap.put(kedge, newEdge);
