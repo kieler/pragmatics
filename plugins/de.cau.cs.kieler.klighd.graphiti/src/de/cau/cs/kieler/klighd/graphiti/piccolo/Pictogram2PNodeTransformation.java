@@ -298,8 +298,16 @@ public class Pictogram2PNodeTransformation extends
             ConnectionNode connection = new ConnectionNode(ffc, source, target);
             transferProperties(ffc, connection);
             elementMap.put(ffc, connection);
+            
+            // chsch: was this actually missing?
+            GraphicsAlgorithm ga = ffc.getGraphicsAlgorithm();
+            Color gaFc = getForegroundColor(ga, fc);
+            Color gaBc = getBackgroundColor(ga, bc);
             PSWTAdvancedPath path =
-                    transformPolyline((Polyline) ffc.getGraphicsAlgorithm(), fc, bc);
+                    transformPolyline((Polyline) ffc.getGraphicsAlgorithm(), gaFc, gaBc);
+
+            // PSWTAdvancedPath path =
+            //         transformPolyline((Polyline) ffc.getGraphicsAlgorithm(), fc, bc);
             path.setPickable(false);
             connection.setPolyline(path);
             return connection;

@@ -57,7 +57,7 @@ Connection createConnection():
   let connection = new FreeFormConnection:
   let polyline = new Polyline:
   polyline.setLineWidth(1) ->
-  polyline.setForeground(getColor("black")) ->
+  polyline.setForeground(getColor("red")) ->
   connection.setActive(false) ->
   connection.setVisible(true) ->
   connection.setGraphicsAlgorithm(polyline) ->
