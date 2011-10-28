@@ -70,7 +70,7 @@ public class GraphMLHandler extends AbstractEmfHandler<DocumentRoot> {
      * {@inheritDoc}
      */
     public IGraphTransformer<KNode, DocumentRoot> getExporter() {
-        return null;
+        throw new UnsupportedOperationException("GraphML export is not supported yet.");
     }
 
 }

@@ -124,14 +124,34 @@ public class MatrixHandler implements ITransformationHandler<Matrix> {
      */
     public String serialize(final Matrix graph) {
         StringBuilder builder = new StringBuilder();
-        for (KVectorChain chain : graph.getLayout()) {
-            for (KVector vector : chain) {
-                builder.append(toString(vector.x));
-                builder.append(' ');
-                builder.append(toString(vector.y));
-                builder.append(' ');
+        builder.append(graph.getRows()).append(' ').append(graph.getColumns());
+        if (graph.getLayout() == null) {
+            if (graph.getList() != null) {
+                // serialize the graph in coordinate format
+                builder.append(' ').append(graph.getList().size()).append('\n');
+                for (Matrix.Entry entry : graph.getList()) {
+                    builder.append(entry.i).append(' ').append(entry.j).append(' ');
+                    builder.append(entry.value).append('\n');
+                }
+            } else if (graph.getMatrix() != null) {
+                // serialize the graph in array format
+                int[][] m = graph.getMatrix();
+                builder.append('\n');
+                for (int j = 0; j < graph.getColumns(); j++) {
+                    for (int i = 0; i < graph.getRows(); i++) {
+                        builder.append(m[i][j]).append('\n');
+                    }
+                }
             }
-            builder.append('\n');
+        } else {
+            // serialize the layout of the graph
+            for (KVectorChain chain : graph.getLayout()) {
+                for (KVector vector : chain) {
+                    builder.append(toString(vector.x)).append(' ');
+                    builder.append(toString(vector.y)).append(' ');
+                }
+                builder.append('\n');
+            }
         }
         return builder.toString();
     }
@@ -158,7 +178,7 @@ public class MatrixHandler implements ITransformationHandler<Matrix> {
         return s;
     }
 
-    MatrixImporter importer = new MatrixImporter();
+    private MatrixImporter importer = new MatrixImporter();
     
     /**
      * {@inheritDoc}
@@ -171,7 +191,7 @@ public class MatrixHandler implements ITransformationHandler<Matrix> {
      * {@inheritDoc}
      */
     public IGraphTransformer<KNode, Matrix> getExporter() {
-        return null;
+        throw new UnsupportedOperationException("Matrix export is not supported yet.");
     }
 
 }

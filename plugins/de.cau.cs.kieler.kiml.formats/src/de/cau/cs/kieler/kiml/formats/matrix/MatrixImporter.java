@@ -101,7 +101,7 @@ public class MatrixImporter implements IGraphTransformer<Matrix, KNode> {
      * {@inheritDoc}
      */
     public void transferLayout(final TransformationData<Matrix, KNode> transData) {
-        List<KVectorChain> layout = transData.getSourceGraph().getLayout();
+        List<KVectorChain> layout = transData.getSourceGraph().createLayout();
         // first lines: coordinates of node positions
         for (KNode node : transData.getProperty(NODES)) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);

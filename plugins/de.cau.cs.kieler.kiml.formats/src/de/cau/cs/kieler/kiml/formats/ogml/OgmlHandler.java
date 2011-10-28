@@ -71,7 +71,7 @@ public class OgmlHandler extends AbstractEmfHandler<DocumentRoot> {
      * {@inheritDoc}
      */
     public IGraphTransformer<KNode, DocumentRoot> getExporter() {
-        return null;
+        throw new UnsupportedOperationException("OGML export is not supported yet.");
     }
 
 }

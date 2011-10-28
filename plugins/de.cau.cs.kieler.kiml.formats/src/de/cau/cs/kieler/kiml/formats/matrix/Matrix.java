@@ -60,7 +60,7 @@ public class Matrix {
     /** the adjacency list, or {@code null}. */
     private List<Entry> list;
     /** the layout specification. */
-    private List<KVectorChain> layout = new LinkedList<KVectorChain>();
+    private List<KVectorChain> layout;
     
     /**
      * Creates a matrix of given size.
@@ -92,6 +92,16 @@ public class Matrix {
     public int[][] createMatrix() {
         matrix = new int[rows][columns];
         return matrix;
+    }
+    
+    /**
+     * Create the layout specification list.
+     * 
+     * @return the layout specification list
+     */
+    public List<KVectorChain> createLayout() {
+        layout = new LinkedList<KVectorChain>();
+        return layout;
     }
     
     /**
