@@ -48,6 +48,7 @@ Anchor createVisibleFixPointAnchor(Shape shape, int x, int y):
   anchor.setVisible(true) ->
   anchor.setLocation(createPoint(x,y)) ->
   anchor.setLink(new PictogramLink) ->
+  anchor.setReferencedGraphicsAlgorithm(shape.graphicsAlgorithm) ->
   shape.anchors.add(anchor) ->
   anchor
 ;
