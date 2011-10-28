@@ -13,7 +13,12 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.List;
+
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -28,7 +33,9 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * as appropriate. This is done even before cycle breaking because the result may
  * already break some cycles. This processor is required for
  * {@link LayerConstraintProcessor} to work correctly. If edge constraints are in conflict
- * with layer constraints, the latter take precedence.
+ * with layer constraints, the latter take precedence. Furthermore, this processor handles
+ * nodes with fixed port sides for which all ports are reversed, i.e. input ports are on the
+ * right and output ports are on the left. All incident edges are reversed in such cases.
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>an unlayered graph.</dd>
@@ -70,9 +77,22 @@ public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implem
             EdgeConstraint edgeConstraint = node.getProperty(Properties.EDGE_CONSTRAINT);
             
             if (edgeConstraint == EdgeConstraint.INCOMING_ONLY) {
-                reverseEdges(node, true);
+                reverseEdges(node, PortType.OUTPUT);
             } else if (edgeConstraint == EdgeConstraint.OUTGOING_ONLY) {
-                reverseEdges(node, false);
+                reverseEdges(node, PortType.INPUT);
+            } else if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
+                // Check whether the ports are reversed, in which case all edges are reversed
+                boolean allPortsReversed = true;
+                for (LPort port : node.getPorts()) {
+                    if (!(port.getSide() == PortSide.EAST && port.getNetFlow() > 0
+                            || port.getSide() == PortSide.WEST && port.getNetFlow() < 0)) {
+                        allPortsReversed = false;
+                        break;
+                    }
+                }
+                if (allPortsReversed) {
+                    reverseEdges(node, PortType.UNDEFINED);
+                }
             }
         }
         
@@ -83,15 +103,15 @@ public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implem
      * Reverses edges as appropriate.
      * 
      * @param node the node to place in the layer.
-     * @param onlyIncoming {@code true} if the node is only allowed to have incoming edges,
-     *                     {@code false} if it is only allowed to have outgoing edges.
+     * @param type type of edges that are reversed
      */
-    private void reverseEdges(final LNode node, final boolean onlyIncoming) {
+    private void reverseEdges(final LNode node, final PortType type) {
         // Iterate through the node's edges and reverse them, if necessary
         for (LPort port : node.getPorts()) {
             // Only incoming edges
-            if (onlyIncoming && !port.getOutgoingEdges().isEmpty()) {
-                LEdge[] edges = port.getOutgoingEdges().toArray(new LEdge[0]);
+            List<LEdge> outgoing = port.getOutgoingEdges();
+            if (type != PortType.INPUT && !outgoing.isEmpty()) {
+                LEdge[] edges = outgoing.toArray(new LEdge[outgoing.size()]);
 
                 for (LEdge edge : edges) {
                     edge.reverse();
@@ -99,8 +119,9 @@ public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implem
             }
             
             // Only outgoing edges
-            if (!onlyIncoming && !port.getIncomingEdges().isEmpty()) {
-                LEdge[] edges = port.getIncomingEdges().toArray(new LEdge[0]);
+            List<LEdge> incoming = port.getIncomingEdges();
+            if (type != PortType.OUTPUT && !incoming.isEmpty()) {
+                LEdge[] edges = incoming.toArray(new LEdge[incoming.size()]);
 
                 for (LEdge edge : edges) {
                     edge.reverse();
