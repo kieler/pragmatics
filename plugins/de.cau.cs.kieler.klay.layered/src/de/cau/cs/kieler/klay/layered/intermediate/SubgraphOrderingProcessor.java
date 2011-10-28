@@ -447,7 +447,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
      *         represented LGraphElement for dummies of another kind. Null, if represented
      *         LGraphElement is of depth 1. D. null in default case.
      */
-    private LNode getRelatedCompoundNode(final LNode node, final LayeredGraph layeredGraph) {
+    public static LNode getRelatedCompoundNode(final LNode node, final LayeredGraph layeredGraph) {
         // method is to return the node itself in the default case
         LNode retNode = null;
         HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
@@ -581,7 +581,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
      * @param elemMap
      *            The element map that maps the original KGraphElements to the LGraphElements.
      */
-    private void propagatePair(final LinkedList<LNode> sourceTargetList,
+    private static void propagatePair(final LinkedList<LNode> sourceTargetList,
             final HashMap<KGraphElement, LGraphElement> elemMap) {
         LNode sourceNode = sourceTargetList.getFirst();
         LNode targetNode = sourceTargetList.getLast();
@@ -635,7 +635,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
      *            The node for which to find the related KNode.
      * @return The KNode represented by the given node or directly related to it.
      */
-    private KNode getRelatedKNode(final LNode node) {
+    private static KNode getRelatedKNode(final LNode node) {
         KNode retNode;
         Object origin = node.getProperty(Properties.ORIGIN);
         NodeType nodeType = node.getProperty(Properties.NODE_TYPE);

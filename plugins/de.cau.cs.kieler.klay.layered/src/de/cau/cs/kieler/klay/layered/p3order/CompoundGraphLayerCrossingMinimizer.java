@@ -22,6 +22,8 @@ import java.util.Random;
 import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.SubgraphOrderingProcessor;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -96,10 +98,13 @@ public class CompoundGraphLayerCrossingMinimizer {
      *            whether the nodes have been ordered in a previous run.
      * @param randomize
      *            whether the layer's node order should just be randomized.
+     * @param layeredGraph
+     *            The layered graph that is to be laid out.
      * @return the total number of edges going either in or out of the given layer.
      */
     protected int compoundMinimizeCrossings(final LNode[] layer, final int layerIndex,
-            final boolean forward, final boolean preOrdered, final boolean randomize) {
+            final boolean forward, final boolean preOrdered, final boolean randomize,
+            final LayeredGraph layeredGraph) {
 
         minimizationHeuristic = new BarycenterHeuristic(portDistributor, random);
 
@@ -127,7 +132,8 @@ public class CompoundGraphLayerCrossingMinimizer {
             HashMap<LNode, LinkedList<LNode>> compoundNodesMap = new HashMap<LNode, LinkedList<LNode>>();
             int maximalDepth = 0;
             for (LNode node : layer) {
-                LNode key = getRelatedCompoundNode(node);
+                // The correlation node/compoundNode is the same as in the SubGraphOrderingProcessor
+                LNode key = SubgraphOrderingProcessor.getRelatedCompoundNode(node, layeredGraph);
                 LinkedList<LNode> relatedList;
                 if (compoundNodesMap.containsKey(key)) {
                     relatedList = compoundNodesMap.get(key);
@@ -143,8 +149,7 @@ public class CompoundGraphLayerCrossingMinimizer {
             }
             // Sort the relevant compound nodes into lists sorted by depth. Index 0 means list of
             // nodes with depth 0.
-            LinkedList<LinkedList<LNode>> compoundNodesPerDepthLevel 
-                    = new LinkedList<LinkedList<LNode>>();
+            LinkedList<LinkedList<LNode>> compoundNodesPerDepthLevel = new LinkedList<LinkedList<LNode>>();
             for (int i = 0; i <= maximalDepth; i++) {
                 LinkedList<LNode> depthList = new LinkedList<LNode>();
                 compoundNodesPerDepthLevel.add(depthList);
@@ -154,20 +159,16 @@ public class CompoundGraphLayerCrossingMinimizer {
                         compoundNode);
             }
 
+            while (!compoundNodesPerDepthLevel.isEmpty()) {
+                // Handle the compound nodes beginning from the highest depth level up to the
+                // lowest.
+                LinkedList<LNode> actualList = compoundNodesPerDepthLevel.removeLast();
+            }
+
             // TODO: Complete method body.
 
         }
 
         return totalEdges;
-    }
-
-    /**
-     * 
-     * @param node
-     * @return
-     */
-    private LNode getRelatedCompoundNode(final LNode node) {
-        // TODO Auto-generated method stub
-        return null;
     }
 }
