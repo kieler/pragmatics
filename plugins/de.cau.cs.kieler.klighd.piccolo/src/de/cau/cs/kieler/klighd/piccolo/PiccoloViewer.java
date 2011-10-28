@@ -25,9 +25,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 
+import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.klighd.events.SelectionEvent;
 import de.cau.cs.kieler.klighd.piccolo.activities.ZoomActivity;
+import de.cau.cs.kieler.klighd.piccolo.graph.layout.PiccoloDiagramLayoutManager;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PEmptyNode;
+import de.cau.cs.kieler.klighd.piccolo.ui.ExportKGraphAction;
 import de.cau.cs.kieler.klighd.piccolo.ui.SaveAsImageAction;
 import de.cau.cs.kieler.klighd.util.KlighdColor;
 import de.cau.cs.kieler.klighd.viewers.AbstractViewer;
@@ -99,6 +103,12 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
         Action saveAsImageAction =
                 new SaveAsImageAction(this, Messages.PiccoloViewer_save_as_image_text);
         menuManager.add(saveAsImageAction);
+        
+        // add the 'export-kgraph' action
+        Action exportKGraphAction =
+                new ExportKGraphAction(this, Messages.PiccoloViewer_export_kgraph_text);                
+        menuManager.add(exportKGraphAction);
+        
         // create the context menu
         Menu menu = menuManager.createContextMenu(composite);
         composite.setMenu(menu);

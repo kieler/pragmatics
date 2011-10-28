@@ -32,6 +32,19 @@ public class Messages extends NLS {
     public static String SaveAsImageDialog_save_as_caption;
     public static String SaveAsImageDialog_title;
     public static String SaveAsImageDialog_use_camera_viewport_caption;
+
+    public static String ExportKGraphAction_export_kgraph_error;
+    public static String ExportKGraphDialog_browse_file_system_caption;
+    public static String ExportKGraphDialog_browse_workspace_caption;
+    public static String ExportKGraphDialog_container_not_exist_error;
+    public static String ExportKGraphDialog_file_caption;
+    public static String ExportKGraphDialog_file_outside_project_error;
+    public static String ExportKGraphDialog_export_format_caption;
+    public static String ExportKGraphDialog_is_workspace_path_caption;
+    public static String ExportKGraphDialog_path_is_not_valid_error;
+    public static String ExportKGraphDialog_save_as_caption;
+    public static String ExportKGraphDialog_title;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

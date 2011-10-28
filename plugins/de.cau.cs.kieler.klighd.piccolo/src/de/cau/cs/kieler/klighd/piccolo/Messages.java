@@ -21,6 +21,7 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
     private static final String BUNDLE_NAME = "de.cau.cs.kieler.klighd.piccolo.messages"; //$NON-NLS-1$
     public static String PiccoloViewer_save_as_image_text;
+    public static String PiccoloViewer_export_kgraph_text;
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

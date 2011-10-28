@@ -57,7 +57,7 @@ Connection createConnection():
   let connection = new FreeFormConnection:
   let polyline = new Polyline:
   polyline.setLineWidth(1) ->
-  polyline.setForeground(getColor("red")) ->
+  polyline.setForeground(getColor("black")) ->
   connection.setActive(false) ->
   connection.setVisible(true) ->
   connection.setGraphicsAlgorithm(polyline) ->
@@ -261,15 +261,40 @@ create Style getStyle(String name):
  */
 create Font getLabelFont(String name):
   switch (name) {
+    case "10" : (
+      this.setName("Arial") ->
+      this.setSize(10) ->
+      this.setBold(false) ->
+      this)
+    case "11" : (
+      this.setName("Arial") ->
+      this.setSize(11) ->
+      this.setBold(false) ->
+      this)
+    case "12" : (
+      this.setName("Arial") ->
+      this.setSize(12) ->
+      this.setBold(false) ->
+      this)
     case "bold" : (
       this.setName("Arial") ->
       this.setSize(8) ->
       this.setBold(true) ->
       this)
+    case "bold10" : (
+      this.setName("Arial") ->
+      this.setSize(10) ->
+      this.setBold(true) ->
+      this)
+    case "bold12" : (
+      this.setName("Arial") ->
+      this.setSize(12) ->
+      this.setBold(true) ->
+      this)
     case "default" : (
       this.setName("Arial") ->
       this.setSize(8) ->
-      this.setBold(true) ->
+      this.setBold(false) ->
       this)
     default :
       null
