@@ -27,7 +27,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -753,6 +752,8 @@ public class CompoundKGraphImporter extends KGraphImporter {
         // determine the border spacing, which influences the offset
         KShapeLayout parentLayout = target.getData(KShapeLayout.class);
         float graphBorderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
+        
+        KVector graphOffset = layeredGraph.getOffset();
 
         // process nodes, collect edges while at it
         List<LEdge> edgeList = new LinkedList<LEdge>();
@@ -798,9 +799,9 @@ public class CompoundKGraphImporter extends KGraphImporter {
         // set up the layout node
         KInsets insets = parentLayout.getInsets();
         float width = (float) layeredGraph.getSize().x + 2 * graphBorderSpacing + insets.getLeft()
-                + insets.getRight();
+                + insets.getRight() + (float) graphOffset.x;
         float height = (float) layeredGraph.getSize().y + 2 * graphBorderSpacing + insets.getTop()
-                + insets.getBottom();
+                + insets.getBottom() + (float) graphOffset.y;
 
         if (layeredGraph.getProperty(Properties.GRAPH_PROPERTIES).contains(
                 GraphProperties.EXTERNAL_PORTS)) {
@@ -827,7 +828,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
      *            signifies if the edge routing uses splines.
      */
     private void applyEdgeLayout(final LEdge ledge, final double graphBorderSpacing,
-            final MapPropertyHolder layeredGraph, final boolean splinesActive) {
+            final LayeredGraph layeredGraph, final boolean splinesActive) {
         // get layout of corresponding KEdge
         KEdge kedge = (KEdge) ledge.getProperty(Properties.ORIGIN);
         KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
@@ -859,8 +860,13 @@ public class CompoundKGraphImporter extends KGraphImporter {
 
         // adjust bendpoint-positions
         // respect graph's border spacing
-        KVector borderSpacingVec = new KVector(graphBorderSpacing, graphBorderSpacing);
-        bendPoints.translate(borderSpacingVec);
+        KVector offsetBorderSpacingVec = new KVector(graphBorderSpacing, graphBorderSpacing);
+        
+        // and respect the graph's offset also
+        KVector graphOffset = layeredGraph.getOffset();
+        offsetBorderSpacingVec.add(graphOffset);
+        
+        bendPoints.translate(offsetBorderSpacingVec);
         if (!(kSourceNode.getParent() == (KNode) layeredGraph.getProperty(Properties.ORIGIN))
                 || descendantEdge) {
             // calculate relative positioning
@@ -1000,9 +1006,10 @@ public class CompoundKGraphImporter extends KGraphImporter {
         } else {
 
             // for nodes that are direct children of the layout node, only the border spacing of the
-            // drawing has to be respected
-            float newX = (float) (position.x + graphBorderSpacing);
-            float newY = (float) (position.y + graphBorderSpacing);
+            // drawing and the graph's offset have to be respected
+            KVector graphOffset = layeredGraph.getOffset();
+            float newX = (float) (position.x + graphBorderSpacing + graphOffset.x);
+            float newY = (float) (position.y + graphBorderSpacing + graphOffset.y);
             nodeLayout.setPos(newX, newY);
         }
 
