@@ -17,9 +17,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -112,10 +114,8 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
             compoundNode.getPosition().y = posLeftUpper.y;
 
             // set width and height of compound node
-            compoundNode.getSize().x = (posRightUpper.x - posLeftUpper.x 
-                    + insets.getRight() + ownBorderSpacing);
-            compoundNode.getSize().y = (posLeftLower.y - posLeftUpper.y 
-                    + insets.getBottom() + ownBorderSpacing);
+            compoundNode.getSize().x = (posRightUpper.x - posLeftUpper.x + insets.getRight() + ownBorderSpacing);
+            compoundNode.getSize().y = (posLeftLower.y - posLeftUpper.y + insets.getBottom() + ownBorderSpacing);
         }
 
         // iterate through all edges
@@ -137,6 +137,10 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
                 // determine nodeType of source
                 NodeType sourceNodeType = sourceNode.getProperty(Properties.NODE_TYPE);
                 LNode compoundNodeSource = sourceNode.getProperty(Properties.COMPOUND_NODE);
+                // determine target port
+                LPort targetPort = ledge.getTarget();
+                // determine source node
+                LNode targetNode = targetPort.getNode();
 
                 // process according to source node type. Translate ports of dummy nodes to ports of
                 // the
@@ -156,17 +160,22 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
                     ledge.setSource(newPort2);
                     break;
 
-                // Nothing to be done in case of UPPER_COMPOUND_BORDER or NORMAL
+                case UPPER_COMPOUND_BORDER:
+                    // Keep an eye on edges to descendant nodes: Their port coordinates have to be
+                    // updated.
+                    if (KimlUtil.isDescendant((KNode) targetNode.getProperty(Properties.ORIGIN),
+                            (KNode) sourceNode.getProperty(Properties.ORIGIN))) {
+                        LPort newPort3 = transferPort(sourcePort, compoundNodeSource);
+                        ledge.setSource(newPort3);
+                    }
+                    break;
+
+                // Nothing to be done in case of NORMAL
                 default:
                     break;
                 }
 
                 // process Target
-                // determine target port
-                LPort targetPort = ledge.getTarget();
-                // determine source node
-                LNode targetNode = targetPort.getNode();
-                // determine nodeType of source
                 NodeType targetNodeType = targetNode.getProperty(Properties.NODE_TYPE);
                 LNode compoundNodeTarget = targetNode.getProperty(Properties.COMPOUND_NODE);
 
