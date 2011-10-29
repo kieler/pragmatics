@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -58,9 +59,12 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
-    // Document the layers, that are resorted.
+    // Document the layers that are resorted.
     private HashMap<Layer, HashMap<LNode, LinkedList<LNode>>> reorderedLayers;
-
+    
+    // Store the node orderings for compound nodes.
+    private HashMap<LNode, LinkedList<LNode>> orderedLists;
+    
     /**
      * {@inheritDoc}
      */
@@ -95,7 +99,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             // Keep a list of associated Nodes for every compound node relevant for this layer for
             // later order application.
             HashMap<LNode, LinkedList<LNode>> layerCompoundContents 
-                    = new HashMap<LNode, LinkedList<LNode>>();
+                = new HashMap<LNode, LinkedList<LNode>>();
 
             List<LNode> layerNodes = layer.getNodes();
             boolean reordered = false;
@@ -176,10 +180,18 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         // Sander's approach is to break a cycle at the node with the smallest complete
         // average position. At the time, we use the GreedyCycleBreaker here. This may be changed
         // for a heuristic using Sander's approach in the future.
+        // Convert the subgraphOrderingGraph to Lists expressing topological sortings of the
+        // subgraphOrderingGraph's components.
+        Set<LNode> keys = subgraphOrderingGraph.keySet();
+        orderedLists = new HashMap<LNode, LinkedList<LNode>>();
         GreedyCycleBreaker cycleBreaker = new GreedyCycleBreaker();
-        for (LNode key : subgraphOrderingGraph.keySet()) {
+        for (LNode key : keys) {
             LayeredGraph graphComponent = subgraphOrderingGraph.get(key);
+            // Remove cycles from the graph component.
             cycleBreaker.process(graphComponent);
+            // Extract a topological sorting from the graph component and store it.
+            LinkedList<LNode> topologicalSorting = graphToList(graphComponent);
+            orderedLists.put(key, topologicalSorting);
         }
 
         applyOrder(layeredGraph, subgraphOrderingGraph, graphKey, elemMap);
@@ -304,7 +316,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         } else {
             // If there is a component in the subgraphOrderingGraph for this key, stick to the
             // topological order of the children in the component in handling them.
-            LinkedList<LNode> componentOrder = graphToList(keyGraphComponent);
+            LinkedList<LNode> componentOrder = orderedLists.get(key);
             Iterator<LNode> orderIterator = componentOrder.iterator();
             while (orderIterator.hasNext()) {
                 LNode currentNode = (LNode) orderIterator.next().getProperty(Properties.ORIGIN);
