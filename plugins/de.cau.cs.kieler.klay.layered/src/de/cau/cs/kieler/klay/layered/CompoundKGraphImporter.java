@@ -65,7 +65,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
     public LayeredGraph importGraph(final KNode kgraph) {
 
         LayeredGraph layeredGraph = super.importGraph(kgraph);
-        
+
         layeredGraph.getProperty(Properties.ELEMENT_MAP).put(kgraph, layeredGraph);
 
         Set<GraphProperties> graphProperties = layeredGraph
@@ -85,7 +85,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
 
         // set the graph properties property
         layeredGraph.setProperty(Properties.GRAPH_PROPERTIES, graphProperties);
-        
+
         // set the maximal depth property.
         layeredGraph.setProperty(Properties.MAX_DEPTH, maximalDepth);
 
@@ -131,7 +131,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
                 transformCompoundNodeWithEdges(currentNode, layeredNodes, layeredGraph, elemMap,
                         direction, depth);
                 setCompoundDummyEdges(layeredNodes, parentChildMap);
-            } 
+            }
         }
     }
 
@@ -752,7 +752,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
         // determine the border spacing, which influences the offset
         KShapeLayout parentLayout = target.getData(KShapeLayout.class);
         float graphBorderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
-        
+
         KVector graphOffset = layeredGraph.getOffset();
 
         // process nodes, collect edges while at it
@@ -765,8 +765,8 @@ public class CompoundKGraphImporter extends KGraphImporter {
                 // apply the layout to the KNode
                 applyNodeLayout(layeredGraph, lnode);
                 // apply the layout to the KNode's ports
-                boolean isCompound = (lnode.getProperty(Properties.NODE_TYPE) 
-                        == NodeType.UPPER_COMPOUND_BORDER);
+                boolean isCompound = (lnode.getProperty(Properties.NODE_TYPE)
+                            == NodeType.UPPER_COMPOUND_BORDER);
                 if (isCompound) {
                     compoundApplyPortLayout(kNode, layeredGraph, lnode);
                 } else {
@@ -861,11 +861,11 @@ public class CompoundKGraphImporter extends KGraphImporter {
         // adjust bendpoint-positions
         // respect graph's border spacing
         KVector offsetBorderSpacingVec = new KVector(graphBorderSpacing, graphBorderSpacing);
-        
+
         // and respect the graph's offset also
         KVector graphOffset = layeredGraph.getOffset();
         offsetBorderSpacingVec.add(graphOffset);
-        
+
         bendPoints.translate(offsetBorderSpacingVec);
         if (!(kSourceNode.getParent() == (KNode) layeredGraph.getProperty(Properties.ORIGIN))
                 || descendantEdge) {
@@ -917,7 +917,9 @@ public class CompoundKGraphImporter extends KGraphImporter {
         if (kSourceNode.getParent() == kTargetNode.getParent()) {
             edgeEnd.add(kTargetNodePosition);
         } else {
-            edgeEnd.add(kSourceNodePosition);
+            if (!descendantEdge) {
+                edgeEnd.add(kSourceNodePosition);
+            }
             edgeEnd.add(difference);
             // mind the fact, that getAbsolute calculates absolute coordinates plus insets.
             edgeEnd.x -= kTargetNodeLayout.getInsets().getLeft();
