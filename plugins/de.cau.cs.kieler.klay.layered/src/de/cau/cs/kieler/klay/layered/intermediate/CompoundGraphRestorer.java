@@ -114,8 +114,10 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
             compoundNode.getPosition().y = posLeftUpper.y;
 
             // set width and height of compound node
-            compoundNode.getSize().x = (posRightUpper.x - posLeftUpper.x + insets.getRight() + ownBorderSpacing);
-            compoundNode.getSize().y = (posLeftLower.y - posLeftUpper.y + insets.getBottom() + ownBorderSpacing);
+            compoundNode.getSize().x 
+                = (posRightUpper.x - posLeftUpper.x + insets.getRight() + ownBorderSpacing);
+            compoundNode.getSize().y 
+                = (posLeftLower.y - posLeftUpper.y + insets.getBottom() + ownBorderSpacing);
         }
 
         // iterate through all edges
