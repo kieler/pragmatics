@@ -144,11 +144,16 @@ public class CompoundGraphLayerCrossingMinimizer {
             // sort the layer's nodes according to their related compound nodes. Find out the
             // maximal depth on the run.
             HashMap<LNode, LinkedList<NodeGroup>> compoundNodesMap 
-                    = new HashMap<LNode, LinkedList<NodeGroup>>();
+                = new HashMap<LNode, LinkedList<NodeGroup>>();
             int maximalDepth = 0;
             for (LNode node : layer) {
                 // The correlation node/compoundNode is the same as in the SubGraphOrderingProcessor
                 LNode key = SubgraphOrderingProcessor.getRelatedCompoundNode(node, layeredGraph);
+                // If node is contained by the layeredGraph directly, getRelatedCompoundNode has
+                // returned null. Use the graphkey in this case.
+                if (key == null) {
+                    key = graphKey;
+                }
                 LinkedList<NodeGroup> relatedList;
                 if (compoundNodesMap.containsKey(key)) {
                     relatedList = compoundNodesMap.get(key);
@@ -166,7 +171,7 @@ public class CompoundGraphLayerCrossingMinimizer {
             // Sort the relevant compound nodes into lists sorted by depth. Index 0 means list of
             // nodes with depth 0.
             LinkedList<LinkedList<LNode>> compoundNodesPerDepthLevel 
-                    = new LinkedList<LinkedList<LNode>>();
+                = new LinkedList<LinkedList<LNode>>();
             for (int i = 0; i <= maximalDepth; i++) {
                 LinkedList<LNode> depthList = new LinkedList<LNode>();
                 compoundNodesPerDepthLevel.add(depthList);
