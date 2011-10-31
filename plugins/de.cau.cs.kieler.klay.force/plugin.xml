@@ -6,8 +6,10 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.klay.force.ForceLayoutProvider"
+            description="Force-based algorithm of the KIELER Layouters project. Implements methods that follow physical analogies by simulating forces that move the nodes into a balanced distribution. Currently the original Eades model and the Fruchterman - Reingold model are supported."
             id="de.cau.cs.kieler.klay.force"
             name="KLay Force"
+            preview="images/force.png"
             type="de.cau.cs.kieler.type.force">
          <knownOption
                default="1"
