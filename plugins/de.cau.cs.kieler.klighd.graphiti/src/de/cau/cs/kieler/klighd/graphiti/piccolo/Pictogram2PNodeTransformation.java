@@ -225,7 +225,9 @@ public class Pictogram2PNodeTransformation extends
         AnchorNode anchorNode = new AnchorNode(anchor, reference);
         transferProperties(anchor, anchorNode);
         elementMap.put(anchor, anchorNode);
-        parent.addAnchor(anchorNode);
+
+        // chsch: Label A:
+
         anchorNode.setPickable(anchor.isActive());
         // transform the graphics algorithm
         GraphicsAlgorithm ga = anchor.getGraphicsAlgorithm();
@@ -239,6 +241,9 @@ public class Pictogram2PNodeTransformation extends
                 repNode.translate(-transform.getTranslateX(), -transform.getTranslateY());
             }
         }
+        // chsch: moved this statement from position A!
+        parent.addAnchor(anchorNode);
+        
         anchorMap.put(anchor, anchorNode);
         anchorNode.setVisible(anchor.isVisible());
         // try to find the initial anchor position
