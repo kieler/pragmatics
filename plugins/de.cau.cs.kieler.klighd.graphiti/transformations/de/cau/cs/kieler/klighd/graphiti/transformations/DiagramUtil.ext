@@ -11,7 +11,6 @@ import annotations;
  *  in the extension signatures
  */
 create Diagram getDiagram():
- this.setDiagramTypeId("compodiag") ->
  this.setLink(new PictogramLink) ->
  
  // this is needed to synthesize valid diagrams to be displayed by a graphiti editor
@@ -45,6 +44,7 @@ Shape getShape(Object o):
 
 Anchor createVisibleFixPointAnchor(Shape shape, int x, int y):
   let anchor = new FixPointAnchor:
+  anchor.setActive(true) ->
   anchor.setVisible(true) ->
   anchor.setLocation(createPoint(x,y)) ->
   anchor.setLink(new PictogramLink) ->
@@ -94,7 +94,6 @@ Rectangle createRectangle(int x, int y, int width, int height, int lineWidth, Co
 ;
 
 
-
 Rectangle createRectangle(Shape shape, int x, int y, int width, int height, Style style):
   let rectangle = createRectangle(x,y,width,height,style):
   shape.setGraphicsAlgorithm(rectangle) ->
@@ -118,6 +117,60 @@ Rectangle createRectangle(int x, int y, int width, int height, Style style):
 ;
 
 
+/**
+  *
+  */
+Ellipse createEllipse(int x, int y, int width, int height, int lineWidth, Color fg, Color bg):
+ let ellipse = new Ellipse:
+ ellipse.setX(x) ->
+ ellipse.setY(y) ->
+ ellipse.setHeight(height) ->
+ ellipse.setWidth(width) ->
+ ellipse.setFilled(true) ->
+ ellipse.setLineVisible(true) ->
+ ellipse.setLineWidth(lineWidth) ->
+ ellipse.setBackground(bg) ->
+ ellipse.setForeground(fg) ->
+ ellipse
+;
+
+
+Ellipse createEllipse(Shape shape, int x, int y, int width, int height, Style style):
+  let ellipse = createEllipse(x,y,width,height,style):
+  shape.setGraphicsAlgorithm(ellipse) ->
+  ellipse
+;
+
+
+/**
+  *
+  */
+Ellipse createEllipse(int x, int y, int width, int height, Style style):
+ let ellipse = new Ellipse:
+ ellipse.setX(x) ->
+ ellipse.setY(y) ->
+ ellipse.setHeight(height) ->
+ ellipse.setWidth(width) ->
+ ellipse.setFilled(true) ->
+ ellipse.setLineVisible(true) ->
+ ellipse.setStyle(style) ->
+ ellipse
+;
+
+
+/**
+ *
+ */
+Ellipse createCircle(Shape shape, int x, int y, int radius, Style style):
+  let ellipse = createEllipse(x,y,radius,radius,style):
+  shape.setGraphicsAlgorithm(ellipse) ->
+  ellipse
+;
+
+
+/**
+ *
+ */
 Text createText(GraphicsAlgorithm ga, String value):
   createText(ga, value, "default")
 ;
