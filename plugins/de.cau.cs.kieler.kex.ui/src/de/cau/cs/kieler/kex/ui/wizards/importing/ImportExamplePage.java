@@ -43,6 +43,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -96,17 +97,13 @@ public class ImportExamplePage extends WizardPage {
     private static final int TREE_MIN_WIDTH = 200;
     private static final int HORIZONTAL_INDENT = 10;
     private static final int VERTICAL_INDENT = 10;
-
+    
+    private SashForm sashForm;
     private Text exampleDescField;
-
     private Label imageLabel;
-
     private Example selectedExample;
-
     private Composite previewComp;
-
     private Label previewDesc;
-
     private CheckboxTreeViewer treeViewer;
 
     private boolean isPreviewAvailable;
@@ -137,15 +134,12 @@ public class ImportExamplePage extends WizardPage {
      *            , Composite
      */
     public void createControl(final Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout gridLayout = new GridLayout();
-        gridLayout.numColumns = 2;
-        composite.setLayout(gridLayout);
-        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-        setControl(composite);
-        createLeft(composite);
-        createRight(composite);
-        getShell().setMinimumSize(WIZARD_MIN_WIDTH, WIZARD_MIN_HEIGHT);
+        sashForm = new SashForm(parent, SWT.HORIZONTAL | SWT.SMOOTH);
+        sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+        setControl(sashForm);
+        createLeft(sashForm);
+        createRight(sashForm);
+        sashForm.setWeights(new int[] {3, 7});
     }
 
     private void createLeft(final Composite parent) {
