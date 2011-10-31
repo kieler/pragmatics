@@ -510,7 +510,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             null, 
             
             // Before Phase 3
-            null,
+            EnumSet.of(IntermediateLayoutProcessor.COMPOUND_DUMMY_EDGE_REMOVER),
             
             // Before Phase 4
             EnumSet.of(IntermediateLayoutProcessor.SUBGRAPH_ORDERING_PROCESSOR, 
