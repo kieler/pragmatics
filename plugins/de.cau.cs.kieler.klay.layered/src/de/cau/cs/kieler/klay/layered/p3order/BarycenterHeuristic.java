@@ -92,7 +92,7 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
 
         IConstraintResolver constraintResolver = new ForsterConstraintResolver();
 
-        constraintResolver.processConstraints(layerNodeGroups, totalEdges, random,
+        constraintResolver.processConstraints(layerNodeGroups, layerIndex, random,
                 singleNodeNodeGroups, layoutUnits);
 
         // Prepare an array of the nodes of the single-node-NodeGroups for the port rank
