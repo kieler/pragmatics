@@ -23,6 +23,7 @@ import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 
 /**
+ * Exporter for matrices from the KGraph format.
  *
  * @author msp
  */

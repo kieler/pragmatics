@@ -29,8 +29,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
- * A transformer for matrices as defined by Matrix Market.
- * See {@link http://math.nist.gov/MatrixMarket/}.
+ * Importer for matrices into the KGraph format.
  *
  * @author msp
  */

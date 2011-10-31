@@ -186,12 +186,14 @@ public class MatrixHandler implements ITransformationHandler<Matrix> {
     public IGraphTransformer<Matrix, KNode> getImporter() {
         return importer;
     }
+    
+    private MatrixExporter exporter = new MatrixExporter();
 
     /**
      * {@inheritDoc}
      */
     public IGraphTransformer<KNode, Matrix> getExporter() {
-        throw new UnsupportedOperationException("Matrix export is not supported yet.");
+        return exporter;
     }
 
 }
