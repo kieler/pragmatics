@@ -43,6 +43,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -606,12 +607,8 @@ public class ImportExamplePage extends WizardPage {
                 }
                 Dialog dialog = new Dialog(imageLabel.getShell()) {
 
-                    private Rectangle bounds;
-
                     private static final int IMAGE_WIDTH = 800;
                     private static final int IMAGE_HEIGHT = 600;
-
-                    private Point point;
 
                     private Image image;
 
@@ -625,12 +622,14 @@ public class ImportExamplePage extends WizardPage {
                     protected Control createDialogArea(final Composite parent) {
                         // scrolling
                         Composite composite = (Composite) super.createDialogArea(parent);
-                        Composite innerComp = new Composite(composite, SWT.CENTER | SWT.BORDER);
+                        Composite innerComp = new Composite(composite, SWT.BORDER);
+                        innerComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
                         GridLayout layout = new GridLayout(1, false);
                         layout.marginHeight = 0;
                         layout.marginWidth = 0;
                         innerComp.setLayout(layout);
-                        Label imgLabel = new Label(innerComp, SWT.NULL);
+                        Label imgLabel = new Label(innerComp, SWT.CENTER);
+                        imgLabel.setText("BLA!");
                         imgLabel.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
                         GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
                         gridData.heightHint = IMAGE_HEIGHT;
@@ -639,7 +638,6 @@ public class ImportExamplePage extends WizardPage {
                         image = computeImage(selectedExample.getOverviewPic(),
                                 selectedExample.getNamespaceId(), IMAGE_WIDTH, IMAGE_HEIGHT,
                                 java.awt.Image.SCALE_SMOOTH);
-                        bounds = image.getBounds();
                         imgLabel.setImage(image);
                         imgLabel.pack();
                         return composite;
@@ -657,9 +655,7 @@ public class ImportExamplePage extends WizardPage {
                             image.dispose();
                         }
                         return super.close();
-
                     }
-
                 };
                 dialog.open();
             }
