@@ -453,6 +453,9 @@ public class SaveAsImageDialog extends Dialog {
     @Override
     protected void okPressed() {
         // remember the dialog results
+        // chsch: to make sure a valid extension is attached to the file name
+        //  in case the combo is untouched 
+        updateFileText();
         path = new Path(fileText.getText());
         workspacePath = workspacePathCheckbox.getSelection();
         swtImageFormat = swtImageFormatByIndex(imageFormatCombo.getSelectionIndex());
