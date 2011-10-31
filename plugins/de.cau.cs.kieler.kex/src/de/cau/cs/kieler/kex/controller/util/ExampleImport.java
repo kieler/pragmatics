@@ -60,39 +60,61 @@ public final class ExampleImport {
     }
 
     /**
-     * This method contains all functions to import an example.
+     * Imports a list of examples.
      * 
-     * @param selectedResource
+     * @param destination
      *            , destination resource of type {@link IPath}.
-     * @param selectedExamples
-     *            , {@link List} of {@link Example}s.
+     * @param examples
+     *            , {@link List} of {@link Example}s to import.
      * @param checkDuplicate
      *            , flag for checking example duplication in project.
      * @return directopens, {@link List} of {@link String}.
      * @throws Exception
      */
-    public static List<String> importExamples(final IPath selectedResource,
-            final List<Example> selectedExamples, final boolean checkDuplicate) throws Exception {
+    public static List<String> importExamples(final IPath destination,
+            final List<Example> examples, final boolean checkDuplicate) throws Exception {
+
+        List<String> directOpens = new ArrayList<String>();
+
+        for (Example example : examples) {
+            directOpens.addAll(importExample(destination, example, checkDuplicate));
+        }
+
+        return directOpens;
+    }
+
+    /**
+     * Imports an example.
+     * 
+     * @param destination
+     *            where to import the example to.
+     * @param example
+     *            the example to import.
+     * @param checkDuplicate
+     *            flag for checking example duplication in project.
+     * @return list of resources to open.
+     * @throws Exception
+     *             if anything goes wrong.
+     */
+    public static List<String> importExample(final IPath destination, final Example example,
+            final boolean checkDuplicate) throws Exception {
 
         List<String> directOpens = new ArrayList<String>();
         List<String> finishedResources = new ArrayList<String>();
 
         StringBuilder destFolder = new StringBuilder();
         destFolder.append(WORKSPACE_LOCATION).append("/")
-                .append((selectedResource != null ? selectedResource.toString() : "")).append("/");
-        try {
-            for (Example example : selectedExamples) {
+                .append((destination != null ? destination.toString() : "")).append("/");
 
-                List<ExampleResource> resources = example.getResources();
-                String rootDirectory = example.getRootDir();
-                int exampleBeginIndex = 0;
-                if (rootDirectory != null && rootDirectory.length() > 1) {
-                    exampleBeginIndex = rootDirectory.length();
-                }
-                handleResources(directOpens, resources, destFolder.toString(),
-                        example.getNamespaceId(), exampleBeginIndex, checkDuplicate,
-                        finishedResources);
+        try {
+            List<ExampleResource> resources = example.getResources();
+            String rootDirectory = example.getRootDir();
+            int exampleBeginIndex = 0;
+            if (rootDirectory != null && rootDirectory.length() > 1) {
+                exampleBeginIndex = rootDirectory.length();
             }
+            handleResources(directOpens, resources, destFolder.toString(),
+                    example.getNamespaceId(), exampleBeginIndex, checkDuplicate, finishedResources);
         } catch (Exception e) {
             deleteResources(finishedResources);
             throw e;

@@ -27,6 +27,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.kex.controller.util.ExampleExport;
 import de.cau.cs.kieler.kex.controller.util.ExampleImport;
 import de.cau.cs.kieler.kex.model.Category;
@@ -156,11 +158,33 @@ public final class ExampleManager {
      * @param checkDuplicate
      *            , boolean
      * @return {@link List} of {@link String}
+     * @throws Exception
+     *             if anything goes wrong.
      */
     public List<String> importExamples(final IPath selectedResource,
             final List<Example> selectedExamples, final boolean checkDuplicate) throws Exception {
         ExampleImport.validate(selectedResource, selectedExamples, checkDuplicate);
         return ExampleImport.importExamples(selectedResource, selectedExamples, checkDuplicate);
+    }
+
+    /**
+     * Validates the import and imports the given example.
+     * 
+     * @param destination
+     *            path to import the example to.
+     * @param example
+     *            the example to import.
+     * @param checkDuplicate
+     *            whether to check for import duplicates or not.
+     * @return list of resources to open.
+     * @throws Exception
+     *             if anything goes wrong.
+     */
+    public List<String> importExample(final IPath destination, final Example example,
+            final boolean checkDuplicate) throws Exception {
+
+        ExampleImport.validate(destination, Lists.newArrayList(example), checkDuplicate);
+        return ExampleImport.importExample(destination, example, checkDuplicate);
     }
 
     /**
