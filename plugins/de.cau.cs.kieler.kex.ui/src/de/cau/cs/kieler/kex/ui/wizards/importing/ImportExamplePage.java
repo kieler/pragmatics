@@ -187,8 +187,8 @@ public class ImportExamplePage extends WizardPage {
                     selectedExample = (Example) firstElement;
                     updateDescriptionLabel((Example) firstElement);
                     Image computeImage = computeImage(selectedExample.getOverviewPic(),
-                            selectedExample.getNamespaceId(), IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT,
-                            java.awt.Image.SCALE_SMOOTH);
+                            selectedExample.getNamespaceId(), imageLabel.getSize().x,
+                            imageLabel.getSize().y, java.awt.Image.SCALE_SMOOTH);
                     isPreviewAvailable = computeImage != null;
                     updateImageLabel(isPreviewAvailable ? computeImage : noPreviewPic());
                 }
@@ -306,7 +306,8 @@ public class ImportExamplePage extends WizardPage {
     }
 
     private Image computeImage(final String imagePath, final String nameSpaceId,
-            final int imageWidth, final int imageHeight, final int scaleType) {
+            final int displayWidth, final int displayHeight, final int scaleType) {
+        
         if (imagePath != null && imagePath.length() > 0) {
             Bundle bundle = Platform.getBundle(nameSpaceId);
             URL resource = bundle
@@ -315,15 +316,15 @@ public class ImportExamplePage extends WizardPage {
             if (resource != null) {
                 ImageDescriptor descriptor = ImageDescriptor.createFromURL(resource);
                 Image image = null;
-                if (!(imageWidth == -1 || imageHeight == -1)) {
+                if (!(displayWidth == -1 || displayHeight == -1)) {
                     ImageData imgData = descriptor.getImageData();
-                    double tempSize = Math.max((double) imgData.width / (double) imageWidth,
-                            (double) imgData.height / (double) imageHeight);
-                    if (tempSize == 0) {
-                        tempSize = 1;
+                    double resizeFactor = Math.max((double) imgData.width / (double) displayWidth,
+                            (double) imgData.height / (double) displayHeight);
+                    if (resizeFactor < 1) {
+                        resizeFactor = 1;
                     }
                     imgData = ImageConverter.scaleSWTImage(imgData,
-                            (int) (imgData.width / tempSize), (int) (imgData.height / tempSize),
+                            (int) (imgData.width / resizeFactor), (int) (imgData.height / resizeFactor),
                             scaleType);
                     image = new Image(this.getShell().getDisplay(), imgData);
                 } else {
@@ -607,8 +608,8 @@ public class ImportExamplePage extends WizardPage {
 
                     private Rectangle bounds;
 
-                    private static final int DIALOG_WIDTH = 800;
-                    private static final int DIALOG_HEIGHT = 600;
+                    private static final int IMAGE_WIDTH = 800;
+                    private static final int IMAGE_HEIGHT = 600;
 
                     private Point point;
 
@@ -629,34 +630,19 @@ public class ImportExamplePage extends WizardPage {
                         layout.marginHeight = 0;
                         layout.marginWidth = 0;
                         innerComp.setLayout(layout);
-                        Label imgLabel = new Label(innerComp, SWT.BORDER | SWT.V_SCROLL
-                                | SWT.H_SCROLL);
-                        imgLabel.setLayoutData(new GridData(GridData.CENTER | SWT.V_SCROLL
-                                | SWT.H_SCROLL));
+                        Label imgLabel = new Label(innerComp, SWT.NULL);
+                        imgLabel.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+                        GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+                        gridData.heightHint = IMAGE_HEIGHT;
+                        gridData.widthHint = IMAGE_WIDTH;
+                        imgLabel.setLayoutData(gridData);
                         image = computeImage(selectedExample.getOverviewPic(),
-                                selectedExample.getNamespaceId(), DIALOG_WIDTH, DIALOG_HEIGHT,
+                                selectedExample.getNamespaceId(), IMAGE_WIDTH, IMAGE_HEIGHT,
                                 java.awt.Image.SCALE_SMOOTH);
                         bounds = image.getBounds();
                         imgLabel.setImage(image);
                         imgLabel.pack();
                         return composite;
-                    }
-
-                    @Override
-                    protected Point getInitialSize() {
-                        int currentImageWidth = bounds.width;
-                        int currentImageHeight = bounds.height;
-
-                        if (DIALOG_WIDTH <= currentImageWidth) {
-                            currentImageWidth = DIALOG_WIDTH;
-                        }
-                        if (DIALOG_HEIGHT <= currentImageHeight) {
-                            currentImageHeight = DIALOG_HEIGHT;
-                        }
-                        this.point = new Point(currentImageWidth + IMG_PADDINGS_WIDTH,
-                                currentImageHeight + IMG_PADDINGS_HEIGHT);
-                        return point;
-
                     }
 
                     @Override
