@@ -194,13 +194,13 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
     }
 
-    private void createButtonComposite(final Group middleGroup) {
+    private void createButtonComposite(final Composite middleGroup) {
         Composite buttonCompo = new Composite(middleGroup, SWT.NONE);
         GridLayout buttonCompoLayout = new GridLayout(2, true);
         buttonCompoLayout.marginHeight = 0;
         buttonCompoLayout.marginWidth = 0;
         buttonCompo.setLayout(buttonCompoLayout);
-        buttonCompo.setLayoutData(new GridData(SWT.END, SWT.BEGINNING, false, false));
+        buttonCompo.setLayoutData(new GridData(SWT.END, SWT.BEGINNING, false, false, 3, 1));
         
         Button addCategory = new Button(buttonCompo, SWT.NONE);
         addCategory.setToolTipText("Create a new Example Category");
@@ -365,29 +365,20 @@ public class ExampleExportPage extends WizardResourceImportPage {
     }
 
     private void createBottomGroup(final Composite composite) {
-        Group bottomGroup = new Group(composite, SWT.NONE);
+        Label categoriesLabel = new Label(composite, SWT.NULL);
+        categoriesLabel.setText("Example Categories:");
         
-        GridData bottomLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-        bottomLayoutData.horizontalSpan = THREE_COLUMNS;
-        bottomLayoutData.verticalIndent = VERTICAL_INDENT;
-        bottomGroup.setLayoutData(bottomLayoutData);
-
-        GridLayout bottomLayout = new GridLayout();
-        bottomLayout.marginHeight = MARGIN;
-        bottomLayout.marginWidth = MARGIN;
-        bottomLayout.numColumns = 1;
-        bottomGroup.setLayout(bottomLayout);
+        GridData gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 3, 1);
+        gd.verticalIndent = 10;
+        categoriesLabel.setLayoutData(gd);
         
-        bottomGroup.setText("Example Categories");
-        bottomGroup.setToolTipText("Please select a category.");
-        
-        createCheckedTree(bottomGroup);
-        createButtonComposite(bottomGroup);
+        createCheckedTree(composite);
+        createButtonComposite(composite);
     }
 
     private void createCheckedTree(final Composite parent) {
         this.categoryTree = new Tree(parent, SWT.CHECK | SWT.BORDER);
-        GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+        GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
         data.heightHint = HEIGHT_HINT;
         categoryTree.setLayoutData(data);
 
