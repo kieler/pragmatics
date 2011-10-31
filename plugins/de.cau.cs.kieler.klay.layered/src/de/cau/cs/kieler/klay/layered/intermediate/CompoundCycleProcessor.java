@@ -60,7 +60,7 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
 
         // Represent the cyclic dependencies of compound nodes in a cycle-removal-graph
         LayeredGraph cycleRemovalGraph = new LayeredGraph();
-        cycleRemovalGraph.copyProperties(layeredGraph);
+        cycleRemovalGraph.setProperty(Properties.RANDOM, layeredGraph.getProperty(Properties.RANDOM));
         List<LNode> cycleRemovalNodes = cycleRemovalGraph.getLayerlessNodes();
         HashMap<LNode, LNode> insertedNodes = new HashMap<LNode, LNode>();
 
