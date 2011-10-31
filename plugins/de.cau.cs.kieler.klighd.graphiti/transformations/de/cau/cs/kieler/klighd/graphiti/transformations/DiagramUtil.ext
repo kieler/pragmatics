@@ -54,6 +54,9 @@ Anchor createVisibleFixPointAnchor(Shape shape, int x, int y):
 ;
 
 
+/**
+ *
+ */
 Connection createConnection():
   let connection = new FreeFormConnection:
   let polyline = new Polyline:
@@ -66,6 +69,26 @@ Connection createConnection():
   getDiagram().connections.add(connection) ->
   connection
 ;
+
+
+/**
+  *
+  */
+mm::pictograms::Connection addArrowHead(Connection connection):
+  let decorator = new ConnectionDecorator:
+  let figure = new Polygon:
+  figure.points.addAll({createPoint(-5,2), createPoint(-3,0), createPoint(-5,-2), createPoint(0,0)}) ->
+  figure.setForeground(connection.graphicsAlgorithm.foreground) ->
+  figure.setBackground(figure.foreground) ->
+  figure.setFilled(true) ->  
+  decorator.setVisible(true) ->
+  decorator.setLocation(1.0) ->
+  decorator.setLocationRelative(true) ->
+  decorator.setGraphicsAlgorithm(figure) ->
+  connection.connectionDecorators.add(decorator) ->
+  connection
+; 
+
 
 
 Point createPoint(int x, int y):
