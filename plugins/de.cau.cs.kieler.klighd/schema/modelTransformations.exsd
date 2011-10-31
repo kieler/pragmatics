@@ -92,7 +92,7 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="extension" type="string">
+         <attribute name="extension" type="string" use="required">
             <annotation>
                <documentation>
                   
