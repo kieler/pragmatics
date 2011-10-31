@@ -268,12 +268,11 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
 
         if (KimlUtil.isDescendant(sourceNode, targetNode)) {
             translateDescendantPoint(targetRel, targetLayout);
-        } else if (sourceNode.getParent() != targetNode.getParent()
-                && sourceNode != targetNode.getParent()) {
+        } else if (sourceNode.getParent() != targetNode.getParent()) {
             
             // the reference point of the target is different from the source
             KimlUtil.toAbsolute(targetRel, sourceNode.getParent());
-            KimlUtil.toRelative(targetRel, targetNode.getParent());
+            KimlUtil.toRelative(targetRel, targetNode);
         } else {
             targetRel.translate(-targetLayout.getXpos(), -targetLayout.getYpos());
         }
