@@ -31,13 +31,44 @@ public final class DiagramUtil {
     }
 
     
-    public static int calculatetextWidth(String text, Font font) {
-       return GraphitiUi.getUiLayoutService().calculateTextSize(text, font).getWidth();	
+    /**
+     * Utility method calculating the width of a given label text rendered with a given font.
+     * 
+     * @param text the label text
+     * @param font chosen font
+     * @return the estimated width of the label
+     */
+    public static int calculatetextWidth(final String text, final Font font) {
+       return GraphitiUi.getUiLayoutService().calculateTextSize(text, font).getWidth();
     }
     
-    public static int calculatetextHeight(String text, Font font) {
-        return GraphitiUi.getUiLayoutService().calculateTextSize(text, font).getHeight();	
+    
+    /**
+     * Utility method calculating the height of a given label text rendered with a given font.
+     * 
+     * @param text the label text
+     * @param font chosen font
+     * @return the estimated height of the label
+     */
+    public static int calculatetextHeight(final String text, final Font font) {
+        return GraphitiUi.getUiLayoutService().calculateTextSize(text, font).getHeight();
      }
+    
+    
+    ////////////////////////
+    //
+    //  auxiliary stuff   //
+    //                    //
+    ////////////////////////
+    
+    /**
+     * Generic debugging function for Xtend based transformations.
+     * 
+     * @param obj an {@link java.lang.Object} to be shown.
+     */
+    public static void debug(final java.lang.Object obj) {
+        System.out.println(obj);
+    }
     
     
     /**
@@ -47,7 +78,7 @@ public final class DiagramUtil {
      */
     public static void debug(final java.util.List<?> list) {
         for (Object o : list) {
-            System.out.println(o);
+            debug(o);
         }
     }
     

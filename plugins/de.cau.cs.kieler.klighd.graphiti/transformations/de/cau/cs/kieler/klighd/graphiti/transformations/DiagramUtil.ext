@@ -5,6 +5,8 @@ import mm::algorithms::styles;
 
 import annotations;
 
+extension org::eclipse::xtend::util::stdlib::io;
+
 /**
  * Creation and caching of the Diagram root element,
  *  used a cached extension in order to reduce parameters
@@ -42,18 +44,12 @@ Shape getShape(Object o):
 ;
 
 
-Anchor createVisibleFixPointAnchor(Shape shape, int x, int y):
-  let anchor = new FixPointAnchor:
-  anchor.setActive(true) ->
-  anchor.setVisible(true) ->
-  anchor.setLocation(createPoint(x,y)) ->
-  anchor.setLink(new PictogramLink) ->
-  anchor.setReferencedGraphicsAlgorithm(shape.graphicsAlgorithm) ->
-  shape.anchors.add(anchor) ->
-  anchor
-;
-
-
+/**
+ * Create and add an invisible anchor to 'shape'.
+ *  The anchor will be a ChopBoxAnchor resulting
+ *  in an edge rendering that one used to from typical
+ *  graph layouts (edge tip points to the center of shape's GA).
+ */
 Anchor createAnchor(Shape shape):
   let anchor = new ChopboxAnchor:
   anchor.setActive(false) ->
@@ -65,15 +61,30 @@ Anchor createAnchor(Shape shape):
 ;
 
 
-Connection createConnection():
-  createConnection(1)
+/**
+ * Create and add a visible anchor intended to serve
+ *  as port to 'shape' at position (x,y).
+ *  To this end an active and visible FixPointAnchor is created.  
+ */
+Anchor createPortAnchor(Shape shape, int x, int y):
+  let anchor = new FixPointAnchor:
+  anchor.setActive(true) ->
+  anchor.setVisible(true) ->
+  anchor.setLocation(createPoint(x,y)) ->
+  anchor.setLink(new PictogramLink) ->
+  anchor.setReferencedGraphicsAlgorithm(shape.graphicsAlgorithm) ->
+  shape.anchors.add(anchor) ->
+  anchor
 ;
 
 
-Connection createConnection(int with):
+/**
+ *
+ */
+Connection createConnection(int width):
   let connection = new FreeFormConnection:
   let polyline = new Polyline:
-  polyline.setLineWidth(with) ->
+  polyline.setLineWidth(width) ->
   polyline.setForeground(getColor("black")) ->
   connection.setActive(false) ->
   connection.setVisible(true) ->
@@ -83,18 +94,28 @@ Connection createConnection(int with):
   connection
 ;
 
+Connection createConnection():
+  createConnection(1)
+;
+
+
 /**
-  *
-  */
-mm::pictograms::Connection addArrowHead(Connection connection):
-   addArrowHead(connection,  1)
-; 
+ *
+ */
+Connection createArrowConnection(int width):
+  createConnection(width).addArrowHead()
+;
+
+
+Connection createArrowConnection():
+  createArrowConnection(1)
+;
 
 
 /**
   *
   */
-mm::pictograms::Connection addArrowHead(Connection connection, int scale):
+Connection addArrowHead(Connection connection, int scale):
   let decorator = new ConnectionDecorator:
   let figure = new Polygon:
   figure.points.addAll({createPoint(scale*-5,scale*2), createPoint(scale*-3,0), createPoint(scale*-5,scale*-2), createPoint(0,0)}) ->
@@ -109,14 +130,28 @@ mm::pictograms::Connection addArrowHead(Connection connection, int scale):
   connection
 ; 
 
+Connection addArrowHead(Connection connection):
+   addArrowHead(connection,  1)
+; 
 
 
+
+/**
+ *
+ */
 Point createPoint(int x, int y):
   let point = new Point:
   point.setX(x) ->
   point.setY(y) ->
   point
 ;
+
+
+/**********************/
+/*                    */
+/* GraphicsAlgorithms */
+/*                    */
+/**********************/
 
 
 /**
@@ -161,6 +196,38 @@ Rectangle createRectangle(int x, int y, int width, int height, Style style):
 
 
 /**
+  * RoundedRectangle
+  */ 
+RoundedRectangle createRoundedRectangle(int x, int y, int height, int width, int cornerHeight, int cornerWidth, Style style) :
+  let roundedRectangle = new RoundedRectangle:
+  roundedRectangle.setX(x) ->
+  roundedRectangle.setY(y) ->
+  roundedRectangle.setHeight(height) ->
+  roundedRectangle.setWidth(width) ->
+  roundedRectangle.setStyle(style) ->
+  roundedRectangle.setFilled(false) ->
+  roundedRectangle.setCornerWidth(cornerWidth) ->
+  roundedRectangle.setCornerHeight(cornerHeight) ->
+  roundedRectangle
+;   
+
+
+/**
+ *
+ */
+ RoundedRectangle createRoundedRectangleWithText(Shape shape, int x, int y, String text, Font font, Style style):
+  let roundedRectangle =  createRoundedRectangle(x,y, 30, 30, 30, 30, style):
+  let label = roundedRectangle.createText(text):
+  label.setFont(font) ->
+  label.setY(4) ->
+  roundedRectangle.setWidth(calculatetextWidth(text, font)) ->
+  shape.setGraphicsAlgorithm(roundedRectangle) ->
+  roundedRectangle
+;
+
+
+
+/**
   *
   */
 Ellipse createEllipse(int x, int y, int width, int height, int lineWidth, Color fg, Color bg):
@@ -175,13 +242,6 @@ Ellipse createEllipse(int x, int y, int width, int height, int lineWidth, Color 
  ellipse.setBackground(bg) ->
  ellipse.setForeground(fg) ->
  ellipse
-;
-
-
-Ellipse createEllipse(Shape shape, int x, int y, int width, int height, Style style):
-  let ellipse = createEllipse(x,y,width,height,style):
-  shape.setGraphicsAlgorithm(ellipse) ->
-  ellipse
 ;
 
 
@@ -200,6 +260,12 @@ Ellipse createEllipse(int x, int y, int width, int height, Style style):
  ellipse
 ;
 
+Ellipse createEllipse(Shape shape, int x, int y, int width, int height, Style style):
+  let ellipse = createEllipse(x,y,width,height,style):
+  shape.setGraphicsAlgorithm(ellipse) ->
+  ellipse
+;
+
 
 /**
  *
@@ -209,42 +275,6 @@ Ellipse createCircle(Shape shape, int x, int y, int radius, Style style):
   shape.setGraphicsAlgorithm(ellipse) ->
   ellipse
 ;
-
-
-
-
- RoundedRectangle createRoundedRectangle(int x, int y, int height, int width, int cornerHeight, int cornerWidth, Style style) :
-   let roundedRectangle = new RoundedRectangle:
-   roundedRectangle.setX(x) ->
-   roundedRectangle.setY(y) ->
-   roundedRectangle.setHeight(height) ->
-   roundedRectangle.setWidth(width) ->
-   roundedRectangle.setStyle(style) ->
-   roundedRectangle.setFilled(false) ->
-   roundedRectangle.setCornerWidth(cornerWidth) ->
-   roundedRectangle.setCornerHeight(cornerHeight) ->
-   roundedRectangle
-;   
-
-
-Void Blaa():
-  let label = new Text:
-  label.width
-;
-
-/**
- *
- */
- RoundedRectangle createRoundedRectangleText(Shape shape, int x, int y, String text, Font font, Style style):
-  let roundedRectangle =  createRoundedRectangle(x,y, 30, 30, 30, 30, style):
-  let label = roundedRectangle.createText(text):
-  label.setFont(font) ->
-  label.setY(4) ->
-  roundedRectangle.setWidth(calculatetextWidth(text, font)) ->
-  shape.setGraphicsAlgorithm(roundedRectangle) ->
-  roundedRectangle
-;
-
 
 
 /**
@@ -265,6 +295,11 @@ Text createText(GraphicsAlgorithm ga, String value, String style):
   text
 ;
 
+
+
+/**
+ * Shorthand wraper for property creation.
+ */
 Property createProperty(String key, String value):
   let property = new Property:
   property.setKey(key) ->
@@ -466,3 +501,21 @@ int calculatetextWidth(String text, Font font):
 int calculatetextHeight(String text, Font font):
   JAVA de.cau.cs.kieler.klighd.graphiti.transformations.DiagramUtil.calculatetextHeight(java.lang.String, org.eclipse.graphiti.mm.algorithms.styles.Font)
 ;
+
+
+/**
+  * cached wrapper suppressing multiple outputs of the same warning!
+  */
+cached showUniqueInfo(String string):
+  info(string)
+;
+
+
+Void debug(List l):
+  JAVA de.cau.cs.kieler.klighd.graphiti.transformations.DiagramUtil.debug(java.util.List)
+;
+
+//chsch: deactivated since given in io.ext
+//Void debug(Object o):
+//  JAVA de.cau.cs.kieler.klighd.graphiti.transformations.DiagramUtil.debug(java.lang.Object)
+//;
