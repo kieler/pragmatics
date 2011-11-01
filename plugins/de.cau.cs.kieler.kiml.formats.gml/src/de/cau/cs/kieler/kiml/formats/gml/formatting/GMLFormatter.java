@@ -13,8 +13,12 @@
  */
 package de.cau.cs.kieler.kiml.formats.gml.formatting;
 
+import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter;
 import org.eclipse.xtext.formatting.impl.FormattingConfig;
+import org.eclipse.xtext.util.Pair;
+
+import de.cau.cs.kieler.kiml.formats.gml.services.GMLGrammarAccess;
 
 /**
  * This class contains custom formatting description.
@@ -24,15 +28,19 @@ import org.eclipse.xtext.formatting.impl.FormattingConfig;
 public class GMLFormatter extends AbstractDeclarativeFormatter {
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
     protected void configureFormatting(final FormattingConfig c) {
-        // It's usually a good idea to activate the following three statements.
-        // They will add and preserve newlines around comments
-        // c.setLinewrap(0, 1, 2).before(getGrammarAccess().getSL_COMMENTRule());
-        // c.setLinewrap(0, 1, 2).before(getGrammarAccess().getML_COMMENTRule());
-        // c.setLinewrap(0, 1, 1).after(getGrammarAccess().getML_COMMENTRule());
+        GMLGrammarAccess f = (GMLGrammarAccess) getGrammarAccess();
+        
+        for (Pair<Keyword, Keyword> pair : f.findKeywordPairs("[", "]")) {
+            c.setIndentation(pair.getFirst(), pair.getSecond());
+            c.setLinewrap(1).after(pair.getFirst());
+            c.setLinewrap(1).before(pair.getSecond());
+            c.setLinewrap(1).after(pair.getSecond());
+        }
+        
+        c.setLinewrap(1).after(f.getValueRule());
     }
 }

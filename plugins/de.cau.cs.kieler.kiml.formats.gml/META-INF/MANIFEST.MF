@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: de.cau.cs.kieler.kiml.formats.gml
-Bundle-Vendor: My Company
-Bundle-Version: 1.0.0
+Bundle-Name: KIELER Support for GML Format
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-Version: 0.1.0
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.formats.gml; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0";visibility:=reexport,
@@ -15,7 +15,9 @@ Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0";visibility:=reexport,
  org.eclipse.xtext.util,
  org.eclipse.emf.ecore,
  org.eclipse.emf.common,
- org.antlr.runtime
+ org.antlr.runtime,
+ de.cau.cs.kieler.kiml.service,
+ de.cau.cs.kieler.kiml
 Import-Package: org.apache.log4j,
  org.apache.commons.logging
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

@@ -10,6 +10,15 @@
        genModel = "de/cau/cs/kieler/kiml/formats/gml/GML.genmodel" /> 
 	
   </extension>
+  <extension
+        point="de.cau.cs.kieler.kiml.service.graphTransformers">
+     <handler
+           class="de.cau.cs.kieler.kiml.formats.gml.GmlHandler"
+           description="The Graph Modelling Language. See http://www.fim.uni-passau.de/en/fim/faculty/chairs/theoretische-informatik/projects.html"
+           id="de.uni-passau.fim.gml"
+           name="GML">
+     </handler>
+  </extension>
 
 
 

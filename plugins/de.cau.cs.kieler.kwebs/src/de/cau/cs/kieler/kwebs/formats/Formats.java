@@ -47,6 +47,9 @@ public final class Formats {
     /** The Matrix Market format. */
     public static final String FORMAT_MATRIX
         = "gov.nist.math.matrix";
+    /** The GML format. */
+    public static final String FORMAT_GML
+        = "de.uni-passau.fim.gml";
 
     /** The list of supported formats. */
     private static final List<String> SUPPORTED_FORMATS
