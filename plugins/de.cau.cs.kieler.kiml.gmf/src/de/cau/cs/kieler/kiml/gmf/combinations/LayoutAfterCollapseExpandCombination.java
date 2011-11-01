@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.gmf.combinations;
 
+import java.util.List;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.NotificationFilter;
@@ -29,21 +31,20 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutEffect;
  * diagram has changed.
  * 
  * @author haf
- * 
  */
 public class LayoutAfterCollapseExpandCombination extends AbstractCombination {
 
-    private NotificationFilter diagramFilter = NotificationFilter
-            .createFeatureFilter(NotationPackage.eINSTANCE.getDrawerStyle_Collapsed());
-
-    
     /** parameter id for animation. */
     private static final String ANIMATE = "de.cau.cs.kieler.kiml.animate";
     /** parameter id for zoom to fit. */
     private static final String ZOOM_TO_FIT = "de.cau.cs.kieler.kiml.zoomToFit";
     /** parameter id for progress bar. */
     private static final String PROGRESS_BAR = "de.cau.cs.kieler.kiml.progressBar";
-    
+
+    /** filter for collapse / expand notifications. */
+    private NotificationFilter diagramFilter = NotificationFilter
+            .createFeatureFilter(NotationPackage.eINSTANCE.getDrawerStyle_Collapsed());
+
     /**
      * Apply automatic layout every time the model changed state is updated.
      * 
@@ -51,28 +52,21 @@ public class LayoutAfterCollapseExpandCombination extends AbstractCombination {
      *            diagram changed
      */
     public void execute(final DiagramChangeState diagramState) {
-        IPreferenceStore preferenceStore = getPreferenceStore();
+        IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
         boolean animate = preferenceStore.getBoolean(ANIMATE);
         boolean zoom = preferenceStore.getBoolean(ZOOM_TO_FIT);
         boolean progressBar = preferenceStore.getBoolean(PROGRESS_BAR);
-        //dontUndo();
-        // diagram changed
-        for (Notification notification : diagramState.getChange().getNotifications()) {
+        // Create a copy of the notifications list, since the transaction could still be active,
+        // which could lead to concurrent modification exceptions.
+        List<Notification> list = diagramState.getChange().getNotifications();
+        Notification[] notifications = list.toArray(new Notification[list.size()]);
+        for (Notification notification : notifications) {
             if (diagramFilter.matches(notification)
                     && notification.getNotifier() instanceof EObject) {
                 schedule(new LayoutEffect(diagramState.getWorkbenchPart(),
                         (EObject) notification.getNotifier(), zoom, progressBar, true, animate));
             }
         }
-    }
-    
-    /**
-     * Return the preference store for the KIML UI plugin.
-     * 
-     * @return the preference store
-     */
-    private static IPreferenceStore getPreferenceStore() {
-        return KimlUiPlugin.getDefault().getPreferenceStore();
     }
     
 }

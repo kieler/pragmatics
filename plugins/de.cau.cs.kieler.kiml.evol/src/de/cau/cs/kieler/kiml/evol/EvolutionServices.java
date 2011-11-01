@@ -61,8 +61,6 @@ public final class EvolutionServices {
         // build data for the extension points
         instance.loadEvolutionDataExtensions();
         instance.loadLayoutMetricsExtensions();
-
-        EvolPlugin.logStatus("Metrics loaded: " + instance.getLayoutMetricsIds());
     }
 
     /**

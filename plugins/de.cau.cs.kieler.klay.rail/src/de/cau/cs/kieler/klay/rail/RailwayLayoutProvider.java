@@ -381,7 +381,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                     // entry port has to be output since all edges
                     // are directed right bound coming from here
                     LEdge edge = entryPort.getIncomingEdges().get(0);
-                    edge.reverse();
+                    edge.reverse(false);
                     swappedEdges.add(edge);
                 }
             }
@@ -400,7 +400,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                 if (!visited.get(lPort)) {
                     if (lPort.getIncomingEdges().isEmpty()) {
                         LEdge edge = lPort.getIncomingEdges().get(0);
-                        edge.reverse();
+                        edge.reverse(false);
                         swappedEdges.add(edge);
                     }
                     queue.add(lPort);
@@ -421,7 +421,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         while (iter.hasNext()) {
             LEdge edge = iter.next();
             iter.remove();
-            edge.reverse();
+            edge.reverse(false);
         }
     }
 }

@@ -224,6 +224,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         KShapeLayout sourceLayout = sourceNode.getData(KShapeLayout.class);
         
         if (KimlUtil.isDescendant(targetNode, sourceNode)) {
+            // the target node is contained in the source node
             translateDescendantPoint(sourceRel, sourceLayout);
         } else {
             sourceRel.translate(-sourceLayout.getXpos(), -sourceLayout.getYpos());
@@ -267,13 +268,14 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         KShapeLayout targetLayout = targetNode.getData(KShapeLayout.class);
 
         if (KimlUtil.isDescendant(sourceNode, targetNode)) {
+            // the target node is contained in the source node
             translateDescendantPoint(targetRel, targetLayout);
         } else if (sourceNode.getParent() != targetNode.getParent()) {
-            
             // the reference point of the target is different from the source
             KimlUtil.toAbsolute(targetRel, sourceNode.getParent());
             KimlUtil.toRelative(targetRel, targetNode);
         } else {
+            // source and target have the same reference point
             targetRel.translate(-targetLayout.getXpos(), -targetLayout.getYpos());
         }
         
@@ -496,7 +498,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 Point p1 = parallelSeg.perpIntersect(refPoint.x, refPoint.y);
                 double dx = p1.getDistance(offsetRefPoint) * ((p1.x > offsetRefPoint.x) ? -1 : 1);
                 double dy = p1.getDistance(refPoint) * ((p1.y < refPoint.y) ? -1 : 1);
-                Point orth = new Point(dx, dy);
+                Point orth = new PrecisionPoint(dx, dy);
                 // reflection in the y axis
                 if (segment.getOrigin().x > segment.getTerminus().x) {
                     orth = orth.scale(-1, -1);
