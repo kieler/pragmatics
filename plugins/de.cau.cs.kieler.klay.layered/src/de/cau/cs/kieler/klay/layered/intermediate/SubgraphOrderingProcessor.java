@@ -20,6 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.emf.common.util.EList;
+
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KPort;
@@ -103,6 +105,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
 
             List<LNode> layerNodes = layer.getNodes();
             boolean reordered = false;
+           
             for (int i = 0; i < (layerNodes.size() - 1); i++) {
 
                 LNode currentNode = layerNodes.get(i);
@@ -299,13 +302,15 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             final HashMap<LNode, LayeredGraph> subgraphOrderingGraph,
             final LinkedList<LNode> layerOrder, final HashMap<KGraphElement, LGraphElement> elemMap) {
 
-        LayeredGraph keyGraphComponent = subgraphOrderingGraph.get(key);
-
+        LinkedList<LNode> componentOrder = orderedLists.get(key);
+       
         // There may be no component for the key in the subgraphOrderingGraph. A child compound node
         // of this node has to be handled nevertheless.
-        if (keyGraphComponent == null) {
+        if (componentOrder == null) {
             KNode kKey = (KNode) key.getProperty(Properties.ORIGIN);
-            for (KNode child : kKey.getChildren()) {
+            EList<KNode> childrenList = kKey.getChildren();
+            System.out.println("Test");
+            for (KNode child : childrenList) {
                 LNode childRep = (LNode) elemMap.get(child);
                 if (reorderedLayers.get(layer).containsKey(childRep)) {
                     assert (childRep != key);
@@ -316,14 +321,12 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         } else {
             // If there is a component in the subgraphOrderingGraph for this key, stick to the
             // topological order of the children in the component in handling them.
-            LinkedList<LNode> componentOrder = orderedLists.get(key);
             Iterator<LNode> orderIterator = componentOrder.iterator();
             while (orderIterator.hasNext()) {
                 LNode currentNode = (LNode) orderIterator.next().getProperty(Properties.ORIGIN);
                 assert (currentNode != key);
                 recursiveApplyLayerOrder(layer, currentNode, layeredGraph, subgraphOrderingGraph,
                         layerOrder, elemMap);
-
             }
         }
 
