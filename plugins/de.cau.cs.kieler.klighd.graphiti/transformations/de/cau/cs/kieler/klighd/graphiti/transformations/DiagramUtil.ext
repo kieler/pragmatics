@@ -54,13 +54,26 @@ Anchor createVisibleFixPointAnchor(Shape shape, int x, int y):
 ;
 
 
-/**
- *
- */
+Anchor createAnchor(Shape shape):
+  let anchor = new ChopboxAnchor:
+  anchor.setActive(false) ->
+  anchor.setVisible(true) ->
+  anchor.setLink(new PictogramLink) ->
+  anchor.setReferencedGraphicsAlgorithm(shape.graphicsAlgorithm) ->
+  shape.anchors.add(anchor) ->
+  anchor
+;
+
+
 Connection createConnection():
+  createConnection(1)
+;
+
+
+Connection createConnection(int with):
   let connection = new FreeFormConnection:
   let polyline = new Polyline:
-  polyline.setLineWidth(1) ->
+  polyline.setLineWidth(with) ->
   polyline.setForeground(getColor("black")) ->
   connection.setActive(false) ->
   connection.setVisible(true) ->
@@ -70,14 +83,21 @@ Connection createConnection():
   connection
 ;
 
-
 /**
   *
   */
 mm::pictograms::Connection addArrowHead(Connection connection):
+   addArrowHead(connection,  1)
+; 
+
+
+/**
+  *
+  */
+mm::pictograms::Connection addArrowHead(Connection connection, int scale):
   let decorator = new ConnectionDecorator:
   let figure = new Polygon:
-  figure.points.addAll({createPoint(-5,2), createPoint(-3,0), createPoint(-5,-2), createPoint(0,0)}) ->
+  figure.points.addAll({createPoint(scale*-5,scale*2), createPoint(scale*-3,0), createPoint(scale*-5,scale*-2), createPoint(0,0)}) ->
   figure.setForeground(connection.graphicsAlgorithm.foreground) ->
   figure.setBackground(figure.foreground) ->
   figure.setFilled(true) ->  
@@ -191,6 +211,42 @@ Ellipse createCircle(Shape shape, int x, int y, int radius, Style style):
 ;
 
 
+
+
+ RoundedRectangle createRoundedRectangle(int x, int y, int height, int width, int cornerHeight, int cornerWidth, Style style) :
+   let roundedRectangle = new RoundedRectangle:
+   roundedRectangle.setX(x) ->
+   roundedRectangle.setY(y) ->
+   roundedRectangle.setHeight(height) ->
+   roundedRectangle.setWidth(width) ->
+   roundedRectangle.setStyle(style) ->
+   roundedRectangle.setFilled(false) ->
+   roundedRectangle.setCornerWidth(cornerWidth) ->
+   roundedRectangle.setCornerHeight(cornerHeight) ->
+   roundedRectangle
+;   
+
+
+Void Blaa():
+  let label = new Text:
+  label.width
+;
+
+/**
+ *
+ */
+ RoundedRectangle createRoundedRectangleText(Shape shape, int x, int y, String text, Font font, Style style):
+  let roundedRectangle =  createRoundedRectangle(x,y, 30, 30, 30, 30, style):
+  let label = roundedRectangle.createText(text):
+  label.setFont(font) ->
+  label.setY(4) ->
+  roundedRectangle.setWidth(calculatetextWidth(text, font)) ->
+  shape.setGraphicsAlgorithm(roundedRectangle) ->
+  roundedRectangle
+;
+
+
+
 /**
  *
  */
@@ -200,7 +256,7 @@ Text createText(GraphicsAlgorithm ga, String value):
 
 Text createText(GraphicsAlgorithm ga, String value, String style):
   let text = new Text:
-  text.setFont(getLabelFont(style)) ->
+  text.setFont(getFont(style)) ->
   text.setForeground(getColor("black")) ->
   text.setWidth(ga.width) ->
   text.setHorizontalAlignment(Orientation::ALIGNMENT_CENTER) ->
@@ -336,7 +392,7 @@ create Style getStyle(String name):
  *  here we will use the same font for all labels
  *  adds it to the diagram on demand
  */
-create Font getLabelFont(String name):
+create Font getFont(String name):
   switch (name) {
     case "10" : (
       this.setName("Arial") ->
@@ -402,6 +458,11 @@ IntAnnotation getAndAddIntProperty(Shape shape, String name):
 ;
 
 
-Void debug(List l):
-  JAVA de.cau.cs.kieler.klighd.graphiti.transformations.DiagramUtil.debug(java.util.List)
+int calculatetextWidth(String text, Font font):
+  JAVA de.cau.cs.kieler.klighd.graphiti.transformations.DiagramUtil.calculatetextWidth(java.lang.String, org.eclipse.graphiti.mm.algorithms.styles.Font)
+;
+
+
+int calculatetextHeight(String text, Font font):
+  JAVA de.cau.cs.kieler.klighd.graphiti.transformations.DiagramUtil.calculatetextHeight(java.lang.String, org.eclipse.graphiti.mm.algorithms.styles.Font)
 ;

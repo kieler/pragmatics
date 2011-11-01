@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.klighd.graphiti.transformations;
 
+import org.eclipse.graphiti.mm.algorithms.styles.Font;
+import org.eclipse.graphiti.ui.services.GraphitiUi;
+
 /**
  * Utility class for diagram synthesis using Xtend based transformations.
  * This class is not intended to be instantiated.
@@ -27,6 +30,15 @@ public final class DiagramUtil {
     private DiagramUtil() {
     }
 
+    
+    public static int calculatetextWidth(String text, Font font) {
+       return GraphitiUi.getUiLayoutService().calculateTextSize(text, font).getWidth();	
+    }
+    
+    public static int calculatetextHeight(String text, Font font) {
+        return GraphitiUi.getUiLayoutService().calculateTextSize(text, font).getHeight();	
+     }
+    
     
     /**
      * Generic debugging function for Xtend based transformations.
