@@ -1,0 +1,25 @@
+grammar de.cau.cs.kieler.kiml.formats.gml.GML
+hidden(WS, PREC_LINE)
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+/**
+ * Grammar for the Graph Modelling Language.
+ * See http://www.fim.uni-passau.de/en/fim/faculty/chairs/theoretische-informatik.html
+ */
+generate gml "http://kieler.cs.cau.de/GML"
+
+GmlModel:
+	(elements += Element)*;
+
+Element:
+	key=ID (value=Value | ('[' (elements += Element)* ']'));
+
+Value: GML_INT | GML_FLOAT | STRING;
+
+terminal GML_INT: ('-' | '+')?('0'..'9')+;
+terminal GML_FLOAT: ('-' | '+')? ('0'..'9')* '.' ('0'..'9')* (('E' | 'e') ('-' | '+')? ('0'..'9')+)?;
+terminal STRING: '"' ('&' ('a'..'z'|'A'..'Z'|'0'..'9')+ ';' | !('&' | '\"'))* '"';
+terminal ID: ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
+terminal PREC_LINE: '#' !('\n'|'\r')* ('\r'? '\n')? ;
+terminal WS: (' '|'\t'|'\r'|'\n')+;

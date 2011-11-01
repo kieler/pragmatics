@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/de.cau.cs.kieler.kiml.formats.gml/src-gen"
+    editDirectory="/de.cau.cs.kieler.kiml.formats.gml.edit/src" editorDirectory="/de.cau.cs.kieler.kiml.formats.gml.editor/src"
+    modelPluginID="de.cau.cs.kieler.kiml.formats.gml" forceOverwrite="true" modelName="GML"
+    updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    complianceLevel="5.0" copyrightFields="false" editPluginID="de.cau.cs.kieler.kiml.formats.gml.edit"
+    editorPluginID="de.cau.cs.kieler.kiml.formats.gml.editor">
+  <genPackages prefix="Gml" basePackage="de.cau.cs.kieler.kiml.formats.gml" disposableProviderFactory="true"
+      ecorePackage="GML.ecore#/">
+    <genClasses ecoreClass="GML.ecore#//GmlModel">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GML.ecore#//GmlModel/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="GML.ecore#//Element">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GML.ecore#//Element/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GML.ecore#//Element/value"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GML.ecore#//Element/elements"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
