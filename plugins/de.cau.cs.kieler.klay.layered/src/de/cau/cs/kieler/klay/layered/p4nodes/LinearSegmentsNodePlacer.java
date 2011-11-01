@@ -554,6 +554,9 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         RUBBER;
     }
     
+    /** factor for threshold after which balancing is aborted. */
+    private static final double THRESHOLD_FACTOR = 10.0;
+    
     /**
      * Balance the initial placement by force-based movement of regions.
      * 
@@ -565,8 +568,10 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         float smallSpacing = spacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
 
         // Determine a suitable number of pendulum iterations
-        int pendulumIters = layeredGraph.getProperty(Properties.THOROUGHNESS);
-        int finalIters = pendulumIters;
+        int thoroughness = layeredGraph.getProperty(Properties.THOROUGHNESS);
+        int pendulumIters = thoroughness;
+        int finalIters = thoroughness - 1;
+        double threshold = THRESHOLD_FACTOR / thoroughness;
 
         // Iterate the balancing
         boolean ready = false;
@@ -604,7 +609,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             if (mode == Mode.FORW_PENDULUM || mode == Mode.BACKW_PENDULUM) {
                 pendulumIters--;
                 if (pendulumIters <= 0 && (totalDeflection < lastTotalDeflection
-                        || -pendulumIters > finalIters)) {
+                        || -pendulumIters > thoroughness)) {
                     mode = Mode.RUBBER;
                     lastTotalDeflection = Integer.MAX_VALUE;
                 } else if (mode == Mode.FORW_PENDULUM) {
@@ -616,7 +621,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 }
             } else {
                 ready = totalDeflection >= lastTotalDeflection
-                        || lastTotalDeflection - totalDeflection < 2;
+                        || lastTotalDeflection - totalDeflection < threshold;
                 lastTotalDeflection = totalDeflection;
                 if (ready) {
                     finalIters--;

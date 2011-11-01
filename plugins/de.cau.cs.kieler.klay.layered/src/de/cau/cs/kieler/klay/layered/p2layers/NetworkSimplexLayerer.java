@@ -422,6 +422,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
 
     // ============================== Network-Simplex Algorithm ===================================
 
+    /** factor by which the maximal number of iterations is multiplied. */
+    private static final int ITER_LIMIT_FACTOR = 4;
+    
     /**
      * The main method of the network simplex layerer. It determines an optimal layering of all
      * nodes in the graph concerning a minimal length of all edges by using the network simplex
@@ -437,12 +440,11 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
      */
     public void process(final LayeredGraph theLayeredGraph) {
         assert theLayeredGraph != null;
-        
         getMonitor().begin("Network-Simplex Layering", 1);
         
         layeredGraph = theLayeredGraph;
-
         removedSelfLoops = new HashMap<LEdge, Pair<LPort, LPort>>();
+        int thoroughness = theLayeredGraph.getProperty(Properties.THOROUGHNESS) * ITER_LIMIT_FACTOR;
 
         Collection<LNode> theNodes = layeredGraph.getLayerlessNodes();
         if (theNodes.size() < 1) {
@@ -452,14 +454,20 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
 
         // layer graph, each connected component separately
         for (List<LNode> connComp : connectedComponents(theNodes)) {
+            // determine a limit on the number of iterations
+            int iterLimit = thoroughness * (int) (Math.sqrt(connComp.size()) + 1);
 
             initialize(connComp);
-            // determine optimal layering
+            // determine an initial feasible layering
             feasibleTree();
-            LEdge e = null;
-            while ((e = leaveEdge()) != null) {
+            // improve the initial layering until it is optimal
+            LEdge e = leaveEdge();
+            int iter = 0;
+            while (e != null && iter < iterLimit) {
                 // current layering is not optimal
                 exchange(e, enterEdge(e));
+                e = leaveEdge();
+                iter++;
             }
 
             if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
