@@ -5,62 +5,53 @@
     nsURI="http://kieler.cs.cau.de/GraphvizDot" nsPrefix="dot">
   <eClassifiers xsi:type="ecore:EClass" name="GraphvizModel">
     <eStructuralFeatures xsi:type="ecore:EReference" name="graphs" upperBound="-1"
-        eType="ecore:EClass platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Graph"
-        containment="true"/>
+        eType="#//Graph" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Graph">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="strict" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EEnum platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//GraphType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//GraphType"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="statements" upperBound="-1"
-        eType="ecore:EClass platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Statement"
-        containment="true"/>
+        eType="#//Statement" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Statement"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Attribute" eSuperTypes="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Statement">
+  <eClassifiers xsi:type="ecore:EClass" name="Attribute" eSuperTypes="#//Statement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="NodeStatement" eSuperTypes="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Statement">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="node" eType="ecore:EClass platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Node"
-        containment="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="NodeStatement" eSuperTypes="#//Statement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="node" eType="#//Node" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" upperBound="-1"
-        eType="ecore:EClass platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Attribute"
-        containment="true"/>
+        eType="#//Attribute" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Node">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="port" eType="ecore:EClass platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Port"
-        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="port" eType="#//Port" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="EdgeStatement" eSuperTypes="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Statement">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="sourceNode" eType="ecore:EClass platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Node"
+  <eClassifiers xsi:type="ecore:EClass" name="EdgeStatement" eSuperTypes="#//Statement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sourceNode" eType="#//Node"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="edgeTargets" upperBound="-1"
-        eType="ecore:EClass platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//EdgeTarget"
-        containment="true"/>
+        eType="#//EdgeTarget" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" upperBound="-1"
-        eType="ecore:EClass platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Attribute"
-        containment="true"/>
+        eType="#//Attribute" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EdgeTarget">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="operator" eType="ecore:EEnum platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//EdgeOperator"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="targetSubgraph" eType="ecore:EClass platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Subgraph"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="operator" eType="#//EdgeOperator"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="targetSubgraph" eType="#//Subgraph"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="targetnode" eType="ecore:EClass platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Node"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="targetnode" eType="#//Node"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="AttributeStatement" eSuperTypes="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Statement">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EEnum platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//AttributeType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AttributeStatement" eSuperTypes="#//Statement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//AttributeType"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" upperBound="-1"
-        eType="ecore:EClass platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Attribute"
-        containment="true"/>
+        eType="#//Attribute" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Subgraph" eSuperTypes="platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Statement">
+  <eClassifiers xsi:type="ecore:EClass" name="Subgraph" eSuperTypes="#//Statement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="statements" upperBound="-1"
-        eType="ecore:EClass platform:/resource/de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.ecore#//Statement"
-        containment="true"/>
+        eType="#//Statement" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Port">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

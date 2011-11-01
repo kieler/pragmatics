@@ -39,11 +39,6 @@ public abstract class AbstractGraphvizDotRuntimeModule extends DefaultRuntimeMod
 		return de.cau.cs.kieler.kiml.graphviz.dot.services.GraphvizDotGrammarAccess.class;
 	}
 
-	// contributed by org.eclipse.xtext.generator.parseTreeConstructor.ParseTreeConstructorFragment
-	public Class<? extends org.eclipse.xtext.parsetree.reconstr.IParseTreeConstructor> bindIParseTreeConstructor() {
-		return de.cau.cs.kieler.kiml.graphviz.dot.parseTreeConstruction.GraphvizDotParsetreeConstructor.class;
-	}
-
 	// contributed by org.eclipse.xtext.generator.parser.antlr.XtextAntlrGeneratorFragment
 	public Class<? extends org.eclipse.xtext.parser.IParser> bindIParser() {
 		return de.cau.cs.kieler.kiml.graphviz.dot.parser.antlr.GraphvizDotParser.class;
@@ -82,6 +77,21 @@ public abstract class AbstractGraphvizDotRuntimeModule extends DefaultRuntimeMod
 	// contributed by org.eclipse.xtext.generator.formatting.FormatterFragment
 	public Class<? extends org.eclipse.xtext.formatting.IFormatter> bindIFormatter() {
 		return de.cau.cs.kieler.kiml.graphviz.dot.formatting.GraphvizDotFormatter.class;
+	}
+
+	// contributed by org.eclipse.xtext.generator.serializer.SerializerFragment
+	public Class<? extends org.eclipse.xtext.serializer.sequencer.ISemanticSequencer> bindISemanticSequencer() {
+		return de.cau.cs.kieler.kiml.graphviz.dot.serializer.GraphvizDotSemanticSequencer.class;
+	}
+
+	// contributed by org.eclipse.xtext.generator.serializer.SerializerFragment
+	public Class<? extends org.eclipse.xtext.serializer.sequencer.ISyntacticSequencer> bindISyntacticSequencer() {
+		return de.cau.cs.kieler.kiml.graphviz.dot.serializer.GraphvizDotSyntacticSequencer.class;
+	}
+
+	// contributed by org.eclipse.xtext.generator.serializer.SerializerFragment
+	public Class<? extends org.eclipse.xtext.serializer.ISerializer> bindISerializer() {
+		return org.eclipse.xtext.serializer.impl.Serializer.class;
 	}
 
 }

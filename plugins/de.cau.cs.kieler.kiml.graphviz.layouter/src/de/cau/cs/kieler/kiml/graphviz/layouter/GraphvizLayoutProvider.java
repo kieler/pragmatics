@@ -50,11 +50,6 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
 
     /** the serial call number for usage in debug mode. */
     private static int serialCallNo = 0;
-
-    /** amount of work for small tasks. */
-    private static final int SMALL_TASK = 5;
-    /** amount of work for large tasks. */
-    private static final int LARGE_TASK = 10;
     
     /** command passed to the layouter. */
     private Command command = Command.INVALID;
@@ -91,8 +86,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         if (command == Command.INVALID) {
             throw new IllegalStateException("The Graphviz layout provider is not initialized.");
         }
-        progressMonitor.begin("Graphviz layout (" + command + ")", SMALL_TASK + LARGE_TASK
-                + LARGE_TASK + SMALL_TASK);
+        progressMonitor.begin("Graphviz layout (" + command + ")", 2);
         if (parentNode.getChildren().isEmpty()) {
             // return if there is nothing in this node
             progressMonitor.done();
@@ -114,11 +108,11 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         transData.setSourceGraph(parentNode);
         dotHandler.getExporter().transform(transData);
         GraphvizModel graphvizInput = transData.getTargetGraphs().get(0);
-        writeDotGraph(graphvizInput, progressMonitor.subTask(LARGE_TASK), debugMode, resourceSet);
+        writeDotGraph(graphvizInput, progressMonitor.subTask(1), debugMode, resourceSet);
 
         try {
             // read Graphviz output and apply layout information to the KGraph
-            GraphvizModel graphvizOutput = readDotGraph(progressMonitor.subTask(LARGE_TASK),
+            GraphvizModel graphvizOutput = readDotGraph(progressMonitor.subTask(1),
                     debugMode, resourceSet);
             transData.getTargetGraphs().set(0, graphvizOutput);
             dotHandler.getExporter().transferLayout(transData);

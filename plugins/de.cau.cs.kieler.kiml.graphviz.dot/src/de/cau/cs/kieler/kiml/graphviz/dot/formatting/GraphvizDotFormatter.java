@@ -33,6 +33,8 @@ public class GraphvizDotFormatter extends AbstractDeclarativeFormatter {
     @Override
     protected void configureFormatting(final FormattingConfig c) {
         GraphvizDotGrammarAccess f = (GraphvizDotGrammarAccess) getGrammarAccess();
+        // SUPPRESS CHECKSTYLE NEXT MagicNumber
+        c.setAutoLinewrap(255);
         
         for (Pair<Keyword, Keyword> pair : f.findKeywordPairs("{", "}")) {
             c.setIndentation(pair.getFirst(), pair.getSecond());

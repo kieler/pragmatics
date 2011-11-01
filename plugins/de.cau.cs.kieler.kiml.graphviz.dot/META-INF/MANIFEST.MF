@@ -26,8 +26,8 @@ Export-Package: de.cau.cs.kieler.kiml.graphviz.dot,
  de.cau.cs.kieler.kiml.graphviz.dot.dot,
  de.cau.cs.kieler.kiml.graphviz.dot.dot.impl,
  de.cau.cs.kieler.kiml.graphviz.dot.dot.util,
- de.cau.cs.kieler.kiml.graphviz.dot.parseTreeConstruction,
  de.cau.cs.kieler.kiml.graphviz.dot.parser.antlr,
  de.cau.cs.kieler.kiml.graphviz.dot.parser.antlr.internal,
  de.cau.cs.kieler.kiml.graphviz.dot.services,
- de.cau.cs.kieler.kiml.graphviz.dot.transform
+ de.cau.cs.kieler.kiml.graphviz.dot.transform,
+ de.cau.cs.kieler.kiml.graphviz.dot.serializer

@@ -32,9 +32,6 @@ Workflow {
 			// generates Java API for the generated EPackages 
 			fragment = ecore.EcoreGeneratorFragment {}
 			
-			// the serialization component
-			fragment = parseTreeConstructor.ParseTreeConstructorFragment {}
-			
 			// a custom ResourceFactory for use with EMF 
 			fragment = resourceFactory.ResourceFactoryFragment {
 				fileExtensions = file.extensions
@@ -46,6 +43,8 @@ Workflow {
 			// formatter API 
 			fragment = ecore2xtext.FormatterFragment {}
 
+            // Serializer 2.0
+            fragment = serializer.SerializerFragment {}
 		}
 	}
 }
