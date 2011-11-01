@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klighd.graphiti.transformations;
 
-import org.eclipse.graphiti.mm.algorithms.styles.Font;
+import org.eclipse.graphiti.mm.algorithms.styles.Font; 
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 
 /**

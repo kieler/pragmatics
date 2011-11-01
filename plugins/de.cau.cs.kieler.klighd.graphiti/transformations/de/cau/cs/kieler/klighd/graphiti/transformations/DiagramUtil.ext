@@ -458,7 +458,7 @@ IntAnnotation getAndAddIntProperty(Shape shape, String name):
 ;
 
 
-int calculatetextWidth(String text, Font font):
+int calculatetextWidth(String text, Font font): 
   JAVA de.cau.cs.kieler.klighd.graphiti.transformations.DiagramUtil.calculatetextWidth(java.lang.String, org.eclipse.graphiti.mm.algorithms.styles.Font)
 ;
 
