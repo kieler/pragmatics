@@ -26,6 +26,6 @@ Export-Package: de.cau.cs.kieler.kiml.formats.gml,
  de.cau.cs.kieler.kiml.formats.gml.gml,
  de.cau.cs.kieler.kiml.formats.gml.gml.impl,
  de.cau.cs.kieler.kiml.formats.gml.gml.util,
- de.cau.cs.kieler.kiml.formats.gml.parseTreeConstruction,
  de.cau.cs.kieler.kiml.formats.gml.parser.antlr,
- de.cau.cs.kieler.kiml.formats.gml.parser.antlr.internal
+ de.cau.cs.kieler.kiml.formats.gml.parser.antlr.internal,
+ de.cau.cs.kieler.kiml.formats.gml.serializer
