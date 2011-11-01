@@ -128,13 +128,14 @@ public class MatrixHandler implements ITransformationHandler<Matrix> {
         if (graph.getLayout() == null) {
             if (graph.getList() != null) {
                 // serialize the graph in coordinate format
+                builder.append("%%MatrixMarket matrix coordinate pattern general\n");
                 builder.append(' ').append(graph.getList().size()).append('\n');
                 for (Matrix.Entry entry : graph.getList()) {
-                    builder.append(entry.i).append(' ').append(entry.j).append(' ');
-                    builder.append(entry.value).append('\n');
+                    builder.append(entry.i + 1).append(' ').append(entry.j + 1).append('\n');
                 }
             } else if (graph.getMatrix() != null) {
                 // serialize the graph in array format
+                builder.append("%%MatrixMarket matrix array integer general\n");
                 int[][] m = graph.getMatrix();
                 builder.append('\n');
                 for (int j = 0; j < graph.getColumns(); j++) {
