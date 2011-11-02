@@ -72,6 +72,16 @@ public class LayoutDataService {
     private Map<String, LayoutTypeData> layoutTypeMap = new LinkedHashMap<String, LayoutTypeData>();
     /** mapping of category identifiers to their names. */
     private Map<String, String> categoryMap = new HashMap<String, String>();
+    
+    /** additional map of layout algorithm suffixes to data instances. */
+    private Map<String, LayoutAlgorithmData> algorithmSuffixMap
+            = new HashMap<String, LayoutAlgorithmData>();
+    /** additional map of layout option suffixes to data instances. */
+    private Map<String, LayoutOptionData<?>> optionSuffixMap
+            = new HashMap<String, LayoutOptionData<?>>();
+    /** additional map of layout type suffixes to data instances. */
+    private Map<String, LayoutTypeData> typeSuffixMap
+            = new HashMap<String, LayoutTypeData>();
 
     /** The list of valid layout data service identifiers. */
     private static List<String> validDataServices = Lists.newArrayList(ECLIPSEDATASERVICE,
@@ -90,11 +100,12 @@ public class LayoutDataService {
     }
 
     /**
+     * Returns the service type.
      * 
-     * @param object
-     * @return
+     * @param object a data service
+     * @return the service type
      */
-    private static String getType(final Object object) {
+    private static String getType(final LayoutDataService object) {
         String type = null;
         if (object != null) {
             type = object.getClass().getCanonicalName();
@@ -305,6 +316,29 @@ public class LayoutDataService {
     public final Collection<LayoutAlgorithmData> getAlgorithmData() {
         return Collections.unmodifiableCollection(layoutAlgorithmMap.values());
     }
+    
+    /**
+     * Returns a layout algorithm data that has the given suffix in its identifier.
+     * 
+     * @param suffix
+     *            a layout algorithm identifier suffix
+     * @return the first layout algorithm data that has the given suffix
+     */
+    public final LayoutAlgorithmData getAlgorithmDataBySuffix(final String suffix) {
+        LayoutAlgorithmData data = layoutAlgorithmMap.get(suffix);
+        if (data == null) {
+            data = algorithmSuffixMap.get(suffix);
+            if (data == null) {
+                for (LayoutAlgorithmData d : layoutAlgorithmMap.values()) {
+                    if (d.getId().endsWith(suffix)) {
+                        algorithmSuffixMap.put(suffix, d);
+                        return d;
+                    }
+                }
+            }
+        }
+        return data;
+    }
 
     /**
      * Returns the layout option data associated with the given identifier.
@@ -325,6 +359,29 @@ public class LayoutDataService {
      */
     public final Collection<LayoutOptionData<?>> getOptionData() {
         return Collections.unmodifiableCollection(layoutOptionMap.values());
+    }
+    
+    /**
+     * Returns a layout option data that has the given suffix in its identifier.
+     * 
+     * @param suffix
+     *            a layout option identifier suffix
+     * @return the first layout option data that has the given suffix
+     */
+    public final LayoutOptionData<?> getOptionDataBySuffix(final String suffix) {
+        LayoutOptionData<?> data = layoutOptionMap.get(suffix);
+        if (data == null) {
+            data = optionSuffixMap.get(suffix);
+            if (data == null) {
+                for (LayoutOptionData<?> d : layoutOptionMap.values()) {
+                    if (d.getId().endsWith(suffix)) {
+                        optionSuffixMap.put(suffix, d);
+                        return d;
+                    }
+                }
+            }
+        }
+        return data;
     }
 
     /**
@@ -372,6 +429,29 @@ public class LayoutDataService {
      */
     public final Collection<LayoutTypeData> getTypeData() {
         return Collections.unmodifiableCollection(layoutTypeMap.values());
+    }
+    
+    /**
+     * Returns a layout type data that has the given suffix in its identifier.
+     * 
+     * @param suffix
+     *            a layout type identifier suffix
+     * @return the first layout type data that has the given suffix
+     */
+    public final LayoutTypeData getTypeDataBySuffix(final String suffix) {
+        LayoutTypeData data = layoutTypeMap.get(suffix);
+        if (data == null) {
+            data = typeSuffixMap.get(suffix);
+            if (data == null) {
+                for (LayoutTypeData d : layoutTypeMap.values()) {
+                    if (d.getId().endsWith(suffix)) {
+                        typeSuffixMap.put(suffix, d);
+                        return d;
+                    }
+                }
+            }
+        }
+        return data;
     }
 
     /**

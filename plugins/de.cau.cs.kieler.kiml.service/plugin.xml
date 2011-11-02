@@ -7,6 +7,7 @@
       <handler
             class="de.cau.cs.kieler.kiml.service.KGraphHandler"
             description="Internally used graph format of the KIELER project. See http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/KGraph"
+            extensions="kgraph,xmi"
             id="de.cau.cs.kieler.kgraph"
             name="KGraph">
       </handler>

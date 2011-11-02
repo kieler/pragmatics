@@ -124,20 +124,20 @@ public class MatrixHandler implements ITransformationHandler<Matrix> {
      */
     public String serialize(final Matrix graph) {
         StringBuilder builder = new StringBuilder();
-        builder.append(graph.getRows()).append(' ').append(graph.getColumns());
         if (graph.getLayout() == null) {
             if (graph.getList() != null) {
                 // serialize the graph in coordinate format
                 builder.append("%%MatrixMarket matrix coordinate pattern general\n");
-                builder.append(' ').append(graph.getList().size()).append('\n');
+                builder.append(graph.getRows()).append(' ').append(graph.getColumns()).append(' ');
+                builder.append(graph.getList().size()).append('\n');
                 for (Matrix.Entry entry : graph.getList()) {
                     builder.append(entry.i + 1).append(' ').append(entry.j + 1).append('\n');
                 }
             } else if (graph.getMatrix() != null) {
                 // serialize the graph in array format
                 builder.append("%%MatrixMarket matrix array integer general\n");
+                builder.append(graph.getRows()).append(' ').append(graph.getColumns()).append('\n');
                 int[][] m = graph.getMatrix();
-                builder.append('\n');
                 for (int j = 0; j < graph.getColumns(); j++) {
                     for (int i = 0; i < graph.getRows(); i++) {
                         builder.append(m[i][j]).append('\n');

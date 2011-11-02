@@ -14,6 +14,7 @@
 
 package de.cau.cs.kieler.kwebs.server.service;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EMap;
@@ -28,19 +29,22 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Target;
+import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataFactoryImpl;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.TransformationService;
 import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
 import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.Statistics;
-import de.cau.cs.kieler.kwebs.formats.Formats;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
@@ -75,7 +79,7 @@ public abstract class AbstractService {
      * @param serializedGraph
      *            the graph to do layout on in serial representation
      * @param informat
-     *            the format of the serial input graph {@see Formats}
+     *            the format of the serial input graph
      * @param outformat
      *            the format of the serial output graph
      * @param options
@@ -88,25 +92,20 @@ public abstract class AbstractService {
         if (serializedGraph == null) {
             throw new IllegalArgumentException("No graph given");
         }
-        if (!Formats.isSupportedFormat(informat)) {
-            throw new IllegalArgumentException("Format not supported: " + informat);
-        }
-        if (outformat != null && !Formats.isSupportedFormat(outformat)) {
-            throw new IllegalArgumentException("Format not supported: " + outformat);
-        }
         Logger.log(Severity.DEBUG, "Starting layout");
-        GraphFormatData informatData = TransformationService.getInstance().getFormatData(informat);
+        GraphFormatData informatData = TransformationService.getInstance()
+                .getFormatDataBySuffix(informat);
         if (informatData == null) {
-            throw new IllegalStateException("Transformer could not be acquired.");
+            throw new IllegalArgumentException("Graph format \"" + informat + "\" is unknown.");
         }
         String serializedResult;
         if (outformat == null || outformat.equals(informat)) {
             serializedResult = layout(serializedGraph, informatData.getHandler(), null, options);
         } else {
-            GraphFormatData outformatData = TransformationService.getInstance().getFormatData(
-                    outformat);
+            GraphFormatData outformatData = TransformationService.getInstance()
+                    .getFormatDataBySuffix(outformat);
             if (outformatData == null) {
-                throw new IllegalStateException("Transformer could not be acquired.");
+                throw new IllegalArgumentException("Graph format \"" + outformat + "\" is unknown.");
             }
             serializedResult = layout(serializedGraph, informatData.getHandler(),
                     outformatData.getHandler(), options);
@@ -121,6 +120,10 @@ public abstract class AbstractService {
     /**
      * Perform layout using a given graph transformer.
      * 
+     * @param <I>
+     *            object type for the input graph format
+     * @param <O>
+     *            object type for the output graph format
      * @param serializedGraph
      *            the graph to do layout on in serial representation
      * @param inhandler
@@ -144,6 +147,11 @@ public abstract class AbstractService {
         TransformationData<I, KNode> inTransData = new TransformationData<I, KNode>();
         inTransData.setSourceGraph(graph);
         inhandler.getImporter().transform(inTransData);
+        Iterator<String> messageIter = inTransData.getMessages().iterator();
+        while (messageIter.hasNext()) {
+            Logger.log(messageIter.next());
+            messageIter.remove();
+        }
         
         // Parse the transmitted layout options and annotate the layout structure
         if (options != null) {
@@ -172,8 +180,10 @@ public abstract class AbstractService {
         if (outhandler == null) {
             // Apply the calculated layout back to the graph instance
             inhandler.getImporter().transferLayout(inTransData);
+            
             // Serialize the resulting graph
             serializedResult = inhandler.serialize(inTransData.getSourceGraph());
+            
         } else {
             StringBuilder outGraphBuilder = new StringBuilder();
             for (KNode layoutGraph : inTransData.getTargetGraphs()) {
@@ -181,16 +191,32 @@ public abstract class AbstractService {
                 TransformationData<KNode, O> outTransData = new TransformationData<KNode, O>();
                 outTransData.setSourceGraph(layoutGraph);
                 outhandler.getExporter().transform(outTransData);
+                messageIter = outTransData.getMessages().iterator();
+                while (messageIter.hasNext()) {
+                    Logger.log(messageIter.next());
+                    messageIter.remove();
+                }
+                
                 // Serialize the resulting graphs
                 for (O outgraph : outTransData.getTargetGraphs()) {
                     outGraphBuilder.append(outhandler.serialize(outgraph));
                 }
+                
             }
             serializedResult = outGraphBuilder.toString();
         }        
         return serializedResult;
     }
     
+    /**
+     * Create statistics for the layout process and annotate the graph.
+     * 
+     * @param sourceGraph the source graph to annotate
+     * @param layoutGraphs the generated layout graphs
+     * @param serializedSize the size of the serialized graph
+     * @param layoutTime the time taken for layout
+     * @param supplementalTime the time taken for supplemental operations
+     */
     private void annotateStatistics(final KNode sourceGraph, final List<KNode> layoutGraphs,
             final int serializedSize, final double layoutTime, final double supplementalTime) {
         // Graph related statistics
@@ -235,62 +261,50 @@ public abstract class AbstractService {
      * @param options a list of layout options
      */
     private void annotateGraph(final KNode layout, final List<GraphLayoutOption> options) {
-        LayoutOptionData<?> layoutOption = null;        
+        LayoutDataService dataService = LayoutDataService.getInstance();
         for (GraphLayoutOption option : options) {
-            layoutOption = ServerLayoutDataService.getInstance().getOptionData(option.getId());
-            // Is the option identified only by it's suffix?
-            if (layoutOption == null) {
-                layoutOption = ServerLayoutDataService.getInstance().
-                    getMatchingOptionData(option.getId());
-            }
+            LayoutOptionData<?> optionData = dataService.getOptionDataBySuffix(option.getId());
             // Fail silent on invalid option declarations
-            if (layoutOption != null) {
-                Object layoutOptionValue = layoutOption.parseValue(option.getValue());
-                if (layoutOptionValue != null) {
-                    if (layoutOption.hasTarget(Target.PARENTS)) {
-                        Logger.log(
-                            Severity.DEBUG, 
-                            "Setting layout option (PARENTS, " 
-                            + layoutOptionValue.toString() 
-                            + ")"
-                        );
-                        annotateGraphParents(layout, layoutOption, layoutOptionValue);
-                    }                        
-                    if (layoutOption.hasTarget(Target.NODES)) {
-                        Logger.log(
-                            Severity.DEBUG, 
-                            "Setting layout option (NODES, " 
-                            + layoutOptionValue.toString() 
-                            + ")"
-                        );
-                        annotateGraphNodes(layout, layoutOption, layoutOptionValue);
+            if (optionData != null) {
+                Object optionValue = optionData.parseValue(option.getValue());
+                if (optionValue != null) {
+                    if (optionData.hasTarget(Target.PARENTS)) {
+                        if (optionData.equals(LayoutOptions.ALGORITHM)) {
+                            LayoutAlgorithmData algoData = dataService.getAlgorithmDataBySuffix(
+                                    (String) optionValue);
+                            if (algoData != null) {
+                                optionValue = algoData.getId();
+                            } else {
+                                LayoutTypeData typeData = dataService.getTypeDataBySuffix(
+                                        (String) optionValue);
+                                if (typeData != null) {
+                                    optionValue = typeData.getId();
+                                }
+                            }
+                        }
+                        Logger.log(Severity.DEBUG, "Setting layout option (PARENTS, " 
+                            + optionValue.toString() + ")");
+                        annotateGraphParents(layout, optionData, optionValue);
                     }
-                    if (layoutOption.hasTarget(Target.EDGES)) {
-                        Logger.log(
-                            Severity.DEBUG, 
-                            "Setting layout option (EDGES, " 
-                            + layoutOptionValue.toString() 
-                            + ")"
-                        );
-                        annotateGraphEdges(layout, layoutOption, layoutOptionValue);
+                    if (optionData.hasTarget(Target.NODES)) {
+                        Logger.log(Severity.DEBUG, "Setting layout option (NODES, " 
+                            + optionValue.toString() + ")");
+                        annotateGraphNodes(layout, optionData, optionValue);
                     }
-                    if (layoutOption.hasTarget(Target.PORTS)) {
-                        Logger.log(
-                            Severity.DEBUG, 
-                            "Setting layout option (PORTS, " 
-                            + layoutOptionValue.toString() 
-                            + ")"
-                        );
-                        annotateGraphPorts(layout, layoutOption, layoutOptionValue);
+                    if (optionData.hasTarget(Target.EDGES)) {
+                        Logger.log(Severity.DEBUG, "Setting layout option (EDGES, " 
+                            + optionValue.toString() + ")");
+                        annotateGraphEdges(layout, optionData, optionValue);
                     }
-                    if (layoutOption.hasTarget(Target.LABELS)) {
-                        Logger.log(
-                            Severity.DEBUG, 
-                            "Setting layout option (LABELS, " 
-                            + layoutOptionValue.toString() 
-                            + ")"
-                        );
-                        annotateGraphLabels(layout, layoutOption, layoutOptionValue);
+                    if (optionData.hasTarget(Target.PORTS)) {
+                        Logger.log(Severity.DEBUG, "Setting layout option (PORTS, " 
+                            + optionValue.toString() + ")");
+                        annotateGraphPorts(layout, optionData, optionValue);
+                    }
+                    if (optionData.hasTarget(Target.LABELS)) {
+                        Logger.log(Severity.DEBUG, "Setting layout option (LABELS, " 
+                            + optionValue.toString() + ")");
+                        annotateGraphLabels(layout, optionData, optionValue);
                     }
                 }
             }

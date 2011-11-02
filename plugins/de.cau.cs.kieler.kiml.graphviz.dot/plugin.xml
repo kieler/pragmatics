@@ -15,6 +15,7 @@
      <handler
            class="de.cau.cs.kieler.kiml.graphviz.dot.transform.DotHandler"
            description="The Graphviz Dot format. See http://www.graphviz.org/"
+           extensions="dot,graphviz"
            id="org.graphviz.dot"
            name="Dot">
      </handler>

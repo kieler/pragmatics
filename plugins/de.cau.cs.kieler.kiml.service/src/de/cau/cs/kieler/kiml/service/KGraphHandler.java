@@ -52,6 +52,9 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationData;
  * @author swe
  */
 public class KGraphHandler extends AbstractEmfHandler<KNode> {
+    
+    /** the KGraph format identifier. */
+    public static final String FORMAT = "de.cau.cs.kieler.kgraph";
 
     /**
      * {@inheritDoc}

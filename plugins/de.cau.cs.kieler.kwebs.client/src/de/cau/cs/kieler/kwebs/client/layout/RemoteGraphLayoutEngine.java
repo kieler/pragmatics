@@ -43,7 +43,6 @@ import de.cau.cs.kieler.kwebs.client.ServerConfigs;
 import de.cau.cs.kieler.kwebs.client.LayoutHistory;
 import de.cau.cs.kieler.kwebs.client.KwebsClientPlugin;
 import de.cau.cs.kieler.kwebs.client.Preferences;
-import de.cau.cs.kieler.kwebs.formats.Formats;
 import de.cau.cs.kieler.kwebs.util.Graphs;
 
 /**
@@ -236,7 +235,7 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         sourceXMI = kgraphHandler.serialize(layoutGraph);
         try { 
             networkStart = System.nanoTime();
-            resultXMI = client.graphLayout(sourceXMI, Formats.FORMAT_KGRAPH_XMI, null);
+            resultXMI = client.graphLayout(sourceXMI, KGraphHandler.FORMAT, null);
             networkTotal = (System.nanoTime() - networkStart);
             resultGraph = kgraphHandler.deserialize(resultXMI);
             Graphs.duplicateGraphLayoutByUniqueID(resultGraph, layoutGraph);

@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.service.formats;
 import de.cau.cs.kieler.kiml.ILayoutData;
 
 /**
+ * Data type used to store information for a graph format.
  *
  * @author msp
  */
@@ -29,6 +30,8 @@ public class GraphFormatData implements ILayoutData {
     private String description;
     /** the graph transformation handler used for this format. */
     private ITransformationHandler<?> handler;
+    /** the file extensions. */
+    private String[] extensions = new String[0];
     
     /**
      * {@inheritDoc}
@@ -88,6 +91,24 @@ public class GraphFormatData implements ILayoutData {
      */
     public void setHandler(final ITransformationHandler<?> thehandler) {
         this.handler = thehandler;
+    }
+    
+    /**
+     * Returns the file extensions for this graph format.
+     * 
+     * @return the file extensions
+     */
+    public String[] getExtensions() {
+        return extensions;
+    }
+    
+    /**
+     * Sets the file extensions.
+     * 
+     * @param theextensions the file extensions
+     */
+    public void setExtensions(final String[] theextensions) {
+        this.extensions = theextensions;
     }
 
 }

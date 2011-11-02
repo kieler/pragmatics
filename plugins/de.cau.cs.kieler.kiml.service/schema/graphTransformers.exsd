@@ -91,6 +91,13 @@
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="extensions" type="string">
+            <annotation>
+               <documentation>
+                  Comma-separated list of file extensions for this graph format.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

@@ -15,8 +15,10 @@ package de.cau.cs.kieler.kiml.service;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -40,6 +42,8 @@ public abstract class TransformationService {
     public static final String ATTRIBUTE_CLASS = "class";
     /** name of the 'description' attribute in the extension points. */
     public static final String ATTRIBUTE_DESCRIPTION = "description";
+    /** name of the 'extensions' attribute in the extension points. */
+    public static final String ATTRIBUTE_EXTENSIONS = "extensions";
     /** name of the 'id' attribute in the extension points. */
     public static final String ATTRIBUTE_ID = "id";
     /** name of the 'name' attribute in the extension points. */
@@ -68,6 +72,9 @@ public abstract class TransformationService {
     /** mapping of graph format identifiers to their meta-data instances. */
     private Map<String, GraphFormatData> graphFormatMap
             = new LinkedHashMap<String, GraphFormatData>();
+    /** additional map of graph format suffixes to data instances. */
+    private Map<String, GraphFormatData> formatSuffixMap
+            = new HashMap<String, GraphFormatData>();
 
     /**
      * Report an error that occurred while reading extensions.
@@ -114,6 +121,15 @@ public abstract class TransformationService {
                         formatData.setName(name);
                         formatData.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
                         formatData.setHandler(handler);
+                        String extElem = element.getAttribute(ATTRIBUTE_EXTENSIONS);
+                        if (extElem != null) {
+                            StringTokenizer tokenizer = new StringTokenizer(extElem, ",");
+                            String[] extArray = new String[tokenizer.countTokens()];
+                            for (int i = 0; i < extArray.length; i++) {
+                                extArray[i] = tokenizer.nextToken();
+                            }
+                            formatData.setExtensions(extArray);
+                        }
                         graphFormatMap.put(id, formatData);
                     }
                 } catch (CoreException exception) {
@@ -140,6 +156,37 @@ public abstract class TransformationService {
      */
     public Collection<GraphFormatData> getFormatData() {
         return Collections.unmodifiableCollection(graphFormatMap.values());
+    }
+    
+    /**
+     * Returns a graph format data that has the given suffix in its identifier.
+     * 
+     * @param suffix
+     *            a graph format identifier suffix
+     * @return the first graph format data that has the given suffix
+     */
+    public final GraphFormatData getFormatDataBySuffix(final String suffix) {
+        GraphFormatData data = graphFormatMap.get(suffix);
+        if (data == null) {
+            data = formatSuffixMap.get(suffix);
+            if (data == null) {
+                for (GraphFormatData d : graphFormatMap.values()) {
+                    // check format identifiers
+                    if (d.getId().endsWith(suffix)) {
+                        formatSuffixMap.put(suffix, d);
+                        return d;
+                    }
+                    // check file extensions
+                    for (String ext : d.getExtensions()) {
+                        if (ext.equals(suffix)) {
+                            formatSuffixMap.put(suffix, d);
+                            return d;
+                        }
+                    }
+                }
+            }
+        }
+        return data;
     }
 
 }

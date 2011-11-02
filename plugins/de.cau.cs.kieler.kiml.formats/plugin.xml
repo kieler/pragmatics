@@ -6,18 +6,21 @@
       <handler
             class="de.cau.cs.kieler.kiml.formats.graphml.GraphMLHandler"
             description="The Graph Markup Language. See http://graphml.graphdrawing.org/"
+            extensions="graphml"
             id="org.graphdrawing.graphml"
             name="GraphML">
       </handler>
       <handler
             class="de.cau.cs.kieler.kiml.formats.matrix.MatrixHandler"
             description="The Matrix Market format. See http://math.nist.gov/MatrixMarket/"
+            extensions="mtx,matrix"
             id="gov.nist.math.matrix"
             name="Matrix">
       </handler>
       <handler
             class="de.cau.cs.kieler.kiml.formats.ogml.OgmlHandler"
             description="The Open Graph Markup Language."
+            extensions="ogml"
             id="net.ogdf.ogml"
             name="OGML">
       </handler>
