@@ -100,7 +100,8 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
 
             // Keep a list of associated Nodes for every compound node relevant for this layer for
             // later order application.
-            HashMap<LNode, LinkedList<LNode>> layerCompoundContents = new HashMap<LNode, LinkedList<LNode>>();
+            HashMap<LNode, LinkedList<LNode>> layerCompoundContents 
+                = new HashMap<LNode, LinkedList<LNode>>();
 
             List<LNode> layerNodes = layer.getNodes();
             boolean reordered = false;
