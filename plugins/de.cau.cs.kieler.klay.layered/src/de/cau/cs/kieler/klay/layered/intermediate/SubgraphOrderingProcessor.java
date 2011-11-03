@@ -63,10 +63,10 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
 
     // Document the layers that are resorted.
     private HashMap<Layer, HashMap<LNode, LinkedList<LNode>>> reorderedLayers;
-    
+
     // Store the node orderings for compound nodes.
     private HashMap<LNode, LinkedList<LNode>> orderedLists;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -100,12 +100,11 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
 
             // Keep a list of associated Nodes for every compound node relevant for this layer for
             // later order application.
-            HashMap<LNode, LinkedList<LNode>> layerCompoundContents 
-                = new HashMap<LNode, LinkedList<LNode>>();
+            HashMap<LNode, LinkedList<LNode>> layerCompoundContents = new HashMap<LNode, LinkedList<LNode>>();
 
             List<LNode> layerNodes = layer.getNodes();
             boolean reordered = false;
-           
+
             for (int i = 0; i < (layerNodes.size() - 1); i++) {
 
                 LNode currentNode = layerNodes.get(i);
@@ -188,16 +187,26 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         Set<LNode> keys = subgraphOrderingGraph.keySet();
         orderedLists = new HashMap<LNode, LinkedList<LNode>>();
         GreedyCycleBreaker cycleBreaker = new GreedyCycleBreaker();
+
+        // Check, if there are intertwined subgraphs at all.
+        boolean noProblems = true;
+
         for (LNode key : keys) {
             LayeredGraph graphComponent = subgraphOrderingGraph.get(key);
             // Remove cycles from the graph component.
             cycleBreaker.process(graphComponent);
             // Extract a topological sorting from the graph component and store it.
+            if (graphComponent.getProperty(Properties.CYCLIC)) {
+                noProblems = false;
+            }
             LinkedList<LNode> topologicalSorting = graphToList(graphComponent);
             orderedLists.put(key, topologicalSorting);
         }
 
-        applyOrder(layeredGraph, subgraphOrderingGraph, graphKey, elemMap);
+        // New ordering is only necessary, if there are intertwined subgraphs.
+        if (!noProblems) {
+            applyOrder(layeredGraph, subgraphOrderingGraph, graphKey, elemMap);
+        }
 
         getMonitor().done();
     }
@@ -303,11 +312,12 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             final LinkedList<LNode> layerOrder, final HashMap<KGraphElement, LGraphElement> elemMap) {
 
         LinkedList<LNode> componentOrder = orderedLists.get(key);
-       
+
         // There may be no component for the key in the subgraphOrderingGraph. A child compound node
         // of this node has to be handled nevertheless.
         if (componentOrder == null) {
             KNode kKey = (KNode) key.getProperty(Properties.ORIGIN);
+
             EList<KNode> childrenList = kKey.getChildren();
             for (KNode child : childrenList) {
                 LNode childRep = (LNode) elemMap.get(child);

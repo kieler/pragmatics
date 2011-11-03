@@ -230,6 +230,13 @@ public final class Properties {
      */
     public static final IProperty<Boolean> OUTPUT_COLLECT = new Property<Boolean>(
             "outputCollect", false);
+    /**
+     * Whether the cycle breaker has detected cycles and reverted edges for a graph. 
+     * Makes sense as a property for a LayeredGraph.
+     */
+    public static final IProperty<Boolean> CYCLIC = new Property<Boolean>(
+            "cyclic", false);
+    
 
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS
