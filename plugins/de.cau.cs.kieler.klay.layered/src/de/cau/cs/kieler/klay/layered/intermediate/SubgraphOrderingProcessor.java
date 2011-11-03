@@ -309,7 +309,6 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         if (componentOrder == null) {
             KNode kKey = (KNode) key.getProperty(Properties.ORIGIN);
             EList<KNode> childrenList = kKey.getChildren();
-            System.out.println("Test");
             for (KNode child : childrenList) {
                 LNode childRep = (LNode) elemMap.get(child);
                 if (reorderedLayers.get(layer).containsKey(childRep)) {
