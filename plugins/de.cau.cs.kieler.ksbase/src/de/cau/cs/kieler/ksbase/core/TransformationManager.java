@@ -335,7 +335,8 @@ public final class TransformationManager {
                     "toolbar:de.cau.cs.kieler");
             KSBasEMenuContribution popupContrib = new KSBasEMenuContribution(
                     "popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu?after=addGroup");
-            KSBasEMenuContribution popupbarContrib = new KSBasEMenuContribution("popupbar:de.cau.cs.kieler");
+            KSBasEMenuContribution popupbarContrib = new KSBasEMenuContribution(
+                    "popupbar:de.cau.cs.kieler");
 
             // get all package declarations
             IConfigurationElement[] packages = settings.getChildren("package");
@@ -406,7 +407,8 @@ public final class TransformationManager {
                     if ((attr != null) && attr.equals("true")) {
                         String separator = t.getAttribute("separated");
                         if ((separator != null) && separator.equals("true")) {
-                            popupbarContrib.addCommand(t.getAttribute("transformationId") + "_SEPARATOR");
+                            popupbarContrib.addCommand(t.getAttribute("transformationId")
+                                    + "_SEPARATOR");
                         } 
                         popupbarContrib.addCommand(t.getAttribute("transformationId"));
                     }
@@ -487,12 +489,37 @@ public final class TransformationManager {
                             }
                             Bundle bundle = Platform.getBundle(tf.getContributor().getName());
                             if (bundle != null) {
-                                URL urlPath = bundle.getEntry("/" + transformationFile);
+
+                                // "normalize" the Xtend file path
+                                transformationFile = transformationFile.replaceAll("::", "/");
+                                if (!transformationFile.endsWith(".ext")) {
+                                    transformationFile = transformationFile + ".ext";
+                                }
+
+                                // chsch: transformation revealing improved
+                                URL extFileURL = null;
+                                if (bundle != null) {
+                                    // try to reveal the Xtend file in the bundle
+                                    extFileURL = bundle.getEntry(transformationFile);
+
+                                    if (extFileURL == null) {
+                                        extFileURL = bundle.getEntry("src/" + transformationFile);
+                                    }
+                                    if (extFileURL == null) {
+                                        extFileURL = bundle.getEntry("model/" + transformationFile);
+                                    }
+                                    if (extFileURL == null) {
+                                        extFileURL = bundle.getEntry("transformations/"
+                                                + transformationFile);
+                                    }
+                                }                                
+                                // chsch: end
+                                
                                 // Parse transformation file to read transformations and
                                 // parameters now:
-                                editor.parseTransformations(false, urlPath);
-                                if (urlPath != null) {
-                                    inStream = urlPath.openStream();
+                                editor.parseTransformations(false, extFileURL);
+                                if (extFileURL != null) {
+                                    inStream = extFileURL.openStream();
                                     while (inStream.available() > 0) {
                                         contentBuffer.append((char) inStream.read());
         
@@ -515,21 +542,24 @@ public final class TransformationManager {
                                         if (!file.exists()) {
                                             if (!file.createNewFile()) {
                                                 KSBasEPlugin.getDefault().logError(
-                                                        "Error while storing transformation file for editor: "
-                                                                + editor.getEditorId());
+                                                        "Error while storing transformation "
+                                                        + "file for editor: "
+                                                        + editor.getEditorId());
                                             }
                                         }
-        
+
                                         out.write(contentBuffer.toString().getBytes());
                                         out.flush();
                                         out.close();
                                     }
                                 } catch (FileNotFoundException fne) {
                                     KSBasEPlugin.getDefault().logError(
-                                            "Could not find transformation file:" + path.toOSString());
+                                            "Could not find transformation file:"
+                                                    + path.toOSString());
                                 } catch (SecurityException sece) {
                                     KSBasEPlugin.getDefault().logError(
-                                            "Not allowed to open transformation file:" + path.toOSString());
+                                            "Not allowed to open transformation file:"
+                                                    + path.toOSString());
                                 } finally {
                                     if (out != null) {
                                         out.close();
@@ -544,7 +574,8 @@ public final class TransformationManager {
                         }
                     } catch (IOException e) {
                         KSBasEPlugin.getDefault().logWarning(
-                                "KSBasE configuration exception: Can't read transformation file for editor :"
+                                "KSBasE configuration exception: "
+                                + "Can't read transformation file for editor :"
                                         + editor.getEditorId());
                     }
                 }
