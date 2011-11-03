@@ -145,7 +145,13 @@ public class CompoundGraphLayerCrossingMinimizer {
             // maximal depth on the run.
             HashMap<LNode, LinkedList<NodeGroup>> compoundNodesMap 
                 = new HashMap<LNode, LinkedList<NodeGroup>>();
+            // Remember the order of processing for the compound nodes. This list will contain the
+            // same nodes as the keySet of the compoundNodesMap. However, as order matters, the
+            // latter can not be used for iteration.
+            LinkedList<LNode> compoundNodesMapKeys = new LinkedList<LNode>();
+
             int maximalDepth = 0;
+
             for (LNode node : layer) {
                 // The correlation node/compoundNode is the same as in the SubGraphOrderingProcessor
                 LNode key = SubgraphOrderingProcessor.getRelatedCompoundNode(node, layeredGraph);
@@ -160,6 +166,7 @@ public class CompoundGraphLayerCrossingMinimizer {
                 } else {
                     relatedList = new LinkedList<NodeGroup>();
                     compoundNodesMap.put(key, relatedList);
+                    compoundNodesMapKeys.add(key);
                 }
                 NodeGroup thisNodesGroup = singleNodeNodeGroups[layerIndex].get(node);
                 relatedList.add(thisNodesGroup);
@@ -176,7 +183,7 @@ public class CompoundGraphLayerCrossingMinimizer {
                 LinkedList<LNode> depthList = new LinkedList<LNode>();
                 compoundNodesPerDepthLevel.add(depthList);
             }
-            for (LNode compoundNode : compoundNodesMap.keySet()) {
+            for (LNode compoundNode : compoundNodesMapKeys) {
                 compoundNodesPerDepthLevel.get(compoundNode.getProperty(Properties.DEPTH)).add(
                         compoundNode);
             }
@@ -227,6 +234,7 @@ public class CompoundGraphLayerCrossingMinimizer {
                         } else {
                             parentContents = new LinkedList<NodeGroup>();
                             compoundNodesMap.put(parentKey, parentContents);
+                            compoundNodesMapKeys.add(parentKey);
                         }
                         parentContents.add(aggregatedNodeGroup);
 
