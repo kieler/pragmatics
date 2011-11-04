@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klay.layered.properties;
 
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -154,7 +155,20 @@ public final class Properties {
     /**
      * KNode that contained the origin of this node in the KGraph.
      */
-    public static final IProperty<KNode> PARENT = new Property<KNode>("parent");
+    public static final IProperty<KNode> K_PARENT = new Property<KNode>("k_Parent");
+    
+    /**
+     * LNode that is representative of the node that contains the property holder.
+     * Property for an LNode.
+     */
+    public static final IProperty<LNode> PARENT = new Property<LNode>("parent");
+    
+    /**
+     * List of nodes that are children (direct descendants) of the node that is represented by
+     * the property holder. Property for an LNode.
+     */
+    public static final IProperty<LinkedList<LNode>> CHILDREN 
+                    = new Property<LinkedList<LNode>>("children");
 
     /**
      * LNode that is the left border node for the compound node the side dummy guards the side of.
@@ -231,8 +245,8 @@ public final class Properties {
     public static final IProperty<Boolean> OUTPUT_COLLECT = new Property<Boolean>(
             "outputCollect", false);
     /**
-     * Whether the cycle breaker has detected cycles and reverted edges for a graph. 
-     * Makes sense as a property for a LayeredGraph.
+     * Property of a LayeredGraph. Whether the graph has been processed by the cycle
+     * breaker and the cycle breaker has detected cycles and reverted edges. 
      */
     public static final IProperty<Boolean> CYCLIC = new Property<Boolean>(
             "cyclic", false);
