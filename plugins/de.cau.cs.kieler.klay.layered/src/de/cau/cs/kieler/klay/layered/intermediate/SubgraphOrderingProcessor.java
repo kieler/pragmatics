@@ -589,6 +589,9 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                 retNode = (LNode) portNodeParentRepresentative;
             }
             break;
+        case COMPOUND_SIDE:
+            retNode = node.getProperty(Properties.SIDE_OWNER);
+            break;
         default:
             break;
         }
@@ -680,6 +683,10 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             Object nodeOrigin = lnode.getProperty(Properties.ORIGIN);
             assert (nodeOrigin instanceof KNode);
             retNode = (KNode) nodeOrigin;
+            break;
+        case COMPOUND_SIDE:
+            LNode compoundNode = node.getProperty(Properties.SIDE_OWNER);
+            retNode = (KNode) compoundNode.getProperty(Properties.ORIGIN);
             break;
         default:
             assert (origin instanceof KNode);
