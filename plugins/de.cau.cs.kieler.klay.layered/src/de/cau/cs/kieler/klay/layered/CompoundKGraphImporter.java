@@ -160,7 +160,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
                 (EnumSet<GraphProperties>) graphProperties, direction);
 
         LNode newNode = (LNode) elemMap.get(node);
-        newNode.setProperty(Properties.PARENT, node.getParent());
+        newNode.setProperty(Properties.K_PARENT, node.getParent());
 
         // Add ports to connect dummy edges for the layering phase.
 
@@ -465,8 +465,8 @@ public class CompoundKGraphImporter extends KGraphImporter {
             case UPPER_COMPOUND_BORDER:
             case UPPER_COMPOUND_PORT:
                 for (LNode childCandidate : layeredNodes) {
-                    if ((childCandidate.getProperty(Properties.PARENT) != null)
-                            && (childCandidate.getProperty(Properties.PARENT) == (lNode
+                    if ((childCandidate.getProperty(Properties.K_PARENT) != null)
+                            && (childCandidate.getProperty(Properties.K_PARENT) == (lNode
                                     .getProperty(Properties.ORIGIN)))) {
                         if (!(parentChildMap.containsKey(lNode))
                                 || !(parentChildMap.get(lNode).contains(childCandidate))) {
@@ -495,8 +495,8 @@ public class CompoundKGraphImporter extends KGraphImporter {
             case LOWER_COMPOUND_BORDER:
             case LOWER_COMPOUND_PORT:
                 for (LNode childCandidate : layeredNodes) {
-                    if ((childCandidate.getProperty(Properties.PARENT) != null)
-                            && (childCandidate.getProperty(Properties.PARENT) == (lNode
+                    if ((childCandidate.getProperty(Properties.K_PARENT) != null)
+                            && (childCandidate.getProperty(Properties.K_PARENT) == (lNode
                                     .getProperty(Properties.ORIGIN)))) {
                         if (!(parentChildMap.containsKey(lNode))
                                 || !(parentChildMap.get(lNode).contains(childCandidate))) {
@@ -584,7 +584,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             dummyNode = new LNode();
             dummyNode.setProperty(Properties.ORIGIN, node);
-            dummyNode.setProperty(Properties.PARENT, node.getParent());
+            dummyNode.setProperty(Properties.K_PARENT, node.getParent());
             dummyNode.getPosition().x = nodeLayout.getXpos();
             dummyNode.setProperty(Properties.NODE_TYPE, nodeType);
             if (nodeType == NodeType.UPPER_COMPOUND_BORDER

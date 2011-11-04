@@ -140,7 +140,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                     if (propCompoundCurrent != propCompoundNext) {
                         LNode key;
                         LGraphElement parentRep = elemMap.get(propCompoundCurrent
-                                .getProperty(Properties.PARENT));
+                                .getProperty(Properties.K_PARENT));
                         if (parentRep instanceof LayeredGraph) {
                             key = graphKey;
                         } else {
@@ -487,7 +487,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             retNode = node.getProperty(Properties.COMPOUND_NODE);
             break;
         case NORMAL:
-            KNode parent = node.getProperty(Properties.PARENT);
+            KNode parent = node.getProperty(Properties.K_PARENT);
             parentRepresentative = elemMap.get(parent);
             if (!(parentRepresentative instanceof LayeredGraph)) {
                 retNode = (LNode) parentRepresentative;
@@ -559,7 +559,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                 sourceTargetList.add(targetNode);
                 propagatePair(sourceTargetList, elemMap);
                 LNode newSource = sourceTargetList.getFirst();
-                KNode newSourceParent = newSource.getProperty(Properties.PARENT);
+                KNode newSourceParent = newSource.getProperty(Properties.K_PARENT);
                 LGraphElement container = elemMap.get(newSourceParent);
                 if (!(container instanceof LayeredGraph)) {
                     retNode = (LNode) container;
@@ -583,7 +583,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             break;
         case NORTH_SOUTH_PORT:
             LNode portNode = node.getProperty(Properties.IN_LAYER_LAYOUT_UNIT);
-            KNode portNodeParent = portNode.getProperty(Properties.PARENT);
+            KNode portNodeParent = portNode.getProperty(Properties.K_PARENT);
             LGraphElement portNodeParentRepresentative = elemMap.get(portNodeParent);
             if (!(elemMap.get(portNodeParent) instanceof LayeredGraph)) {
                 retNode = (LNode) portNodeParentRepresentative;

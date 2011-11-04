@@ -219,7 +219,7 @@ public class CompoundGraphLayerCrossingMinimizer {
                         }
                         // Store the new nodeGroup representing the compound node in the
                         // compoundNodesMap with the parent of the compoundNode as a key.
-                        KNode keyNodeParent = keyNode.getProperty(Properties.PARENT);
+                        KNode keyNodeParent = keyNode.getProperty(Properties.K_PARENT);
                         LGraphElement parentRepresentative = elemMap.get(keyNodeParent);
                         LNode parentKey;
                         if (parentRepresentative instanceof LayeredGraph) {
