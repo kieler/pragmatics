@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.common.util.EList;
+
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -88,6 +90,9 @@ public class CompoundKGraphImporter extends KGraphImporter {
 
         // set the maximal depth property.
         layeredGraph.setProperty(Properties.MAX_DEPTH, maximalDepth);
+
+        // set up the inclusion tree.
+        createInclusionTree(layeredGraph, kgraph);
 
         return layeredGraph;
     }
@@ -765,8 +770,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
                 // apply the layout to the KNode
                 applyNodeLayout(layeredGraph, lnode);
                 // apply the layout to the KNode's ports
-                boolean isCompound = (lnode.getProperty(Properties.NODE_TYPE)
-                            == NodeType.UPPER_COMPOUND_BORDER);
+                boolean isCompound = (lnode.getProperty(Properties.NODE_TYPE) == NodeType.UPPER_COMPOUND_BORDER);
                 if (isCompound) {
                     compoundApplyPortLayout(kNode, layeredGraph, lnode);
                 } else {
@@ -1082,6 +1086,40 @@ public class CompoundKGraphImporter extends KGraphImporter {
             return position;
         } else {
             return getAbsolute(kNode.getParent()).add(position);
+        }
+    }
+
+    /**
+     * Rebuilds the inclusion tree of the KGraph with the help of Properties of the LGraphElements.
+     * Each node sets its parent-property and inserts itself into the children-list of its parent.
+     * Recursive method.
+     * 
+     * @param layeredGraph
+     *        The LayeredGraph representation of the graph to be laid out.
+     * @param knode
+     *        The current node.
+     */
+    private void createInclusionTree(final LayeredGraph layeredGraph, final KNode knode) {
+        // get the layeredGraph's element map
+        HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
+                .getProperty(Properties.ELEMENT_MAP);
+        // get the knode's representative in the layeredGraph
+        LGraphElement representative = elemMap.get(knode);
+        // set the children-property for the representative
+        LinkedList<LNode> children = new LinkedList<LNode>();
+        representative.setProperty(Properties.CHILDREN, children);
+        // get the knode's parent node
+        KNode parent = knode.getParent();
+        // if knode is not the layoutNode, insert the nodes representative in the children list of
+        // parent. Set own parent property.
+        if (parent != null) {
+            LGraphElement parentRep = elemMap.get(parent);
+            representative.setProperty(Properties.PARENT, parentRep);
+            parentRep.getProperty(Properties.CHILDREN).add((LNode) representative);
+        }
+        EList<KNode> ownChildren = knode.getChildren();
+        for (KNode child : ownChildren) {
+            createInclusionTree(layeredGraph, child);
         }
     }
 

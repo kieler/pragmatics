@@ -161,14 +161,14 @@ public final class Properties {
      * LNode that is representative of the node that contains the property holder.
      * Property for an LNode.
      */
-    public static final IProperty<LNode> PARENT = new Property<LNode>("parent");
+    public static final IProperty<LGraphElement> PARENT = new Property<LGraphElement>("parent");
     
     /**
      * List of nodes that are children (direct descendants) of the node that is represented by
      * the property holder. Property for an LNode.
      */
     public static final IProperty<LinkedList<LNode>> CHILDREN 
-                    = new Property<LinkedList<LNode>>("children");
+                    = new Property<LinkedList<LNode>>("children", null);
 
     /**
      * LNode that is the left border node for the compound node the side dummy guards the side of.
