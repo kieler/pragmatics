@@ -770,7 +770,8 @@ public class CompoundKGraphImporter extends KGraphImporter {
                 // apply the layout to the KNode
                 applyNodeLayout(layeredGraph, lnode);
                 // apply the layout to the KNode's ports
-                boolean isCompound = (lnode.getProperty(Properties.NODE_TYPE) == NodeType.UPPER_COMPOUND_BORDER);
+                boolean isCompound = (lnode.getProperty(Properties.NODE_TYPE) 
+                            == NodeType.UPPER_COMPOUND_BORDER);
                 if (isCompound) {
                     compoundApplyPortLayout(kNode, layeredGraph, lnode);
                 } else {
