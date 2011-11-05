@@ -51,12 +51,14 @@ public class GmlHandler extends AbstractEmfHandler<GmlModel> {
         }
         return injector.getInstance(XtextResourceSet.class);
     }
+    
+    private GmlImporter importer = new GmlImporter();
 
     /**
      * {@inheritDoc}
      */
     public IGraphTransformer<GmlModel, KNode> getImporter() {
-        throw new UnsupportedOperationException("GML import is not supported.");
+        return importer;
     }
 
     /**
