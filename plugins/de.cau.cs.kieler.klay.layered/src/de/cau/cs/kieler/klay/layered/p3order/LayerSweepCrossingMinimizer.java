@@ -157,7 +157,7 @@ public class LayerSweepCrossingMinimizer extends AbstractCrossingMinimizer {
 
         // Initialize CompoundGraphLayerCrossingMinimizer.
         compoundMinimizer = new CompoundGraphLayerCrossingMinimizer(portDistributor, random,
-                isCompound, portBarycenter, singleNodeNodeGroups, layoutUnits);
+                isCompound, portPos, singleNodeNodeGroups, layoutUnits);
 
         // Perform the requested number of runs, each consisting of several sweeps
         // (alternating between forward and backward sweeps)
