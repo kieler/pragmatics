@@ -96,12 +96,14 @@ public final class DynamicMenuContributions {
 
         private TransactionalEditingDomain transDomain = null;
         
-        private HashMap<String, HashMap<List<Object>, Boolean>> validationCache = new HashMap<String, HashMap<List<Object>, Boolean>>(); 
+        private HashMap<String, HashMap<List<Object>, Boolean>> validationCache = null; 
 
         public KsbaseVisibilityExpression(final KSBasETransformation transformation,
-                final EditorTransformationSettings editorSettings) {
+                final EditorTransformationSettings editorSettings, 
+                final HashMap<String, HashMap<List<Object>, Boolean>> validationCache) {
             this.transformation = transformation;
             this.editorSettings = editorSettings;
+            this.validationCache = validationCache;
         }
 
         private boolean evaluateValidation(final List<Object> selectionMapping) {
@@ -124,7 +126,6 @@ public final class DynamicMenuContributions {
                                 .toArray(new String[editorSettings.getModelPackages().size()]),
                         null, transDomain);
                 context.execute(descriptor);
-
                 Object result = descriptor.getResult();
                 if (result instanceof Boolean) {
                     cache = validationCache.get(val);
@@ -186,7 +187,6 @@ public final class DynamicMenuContributions {
         
         @Override
         public EvaluationResult evaluate(final IEvaluationContext context) throws CoreException {
-
             List<EObject> selection = getCurrentSelection(context);
             if (selection != null) {
                 List<Object> selectionMapping = null;
@@ -218,13 +218,14 @@ public final class DynamicMenuContributions {
      */
     public void createMenuForEditor(final EditorTransformationSettings editorSettings) {
         Assert.isNotNull(editorSettings);
+        HashMap<String, HashMap<List<Object>, Boolean>> validationCache = new HashMap<String, HashMap<List<Object>, Boolean>>();
         for (KSBasEMenuContribution contrib : editorSettings.getMenuContributions()) {
             for (String command : contrib.getCommands()) {
                 if (!command.endsWith("_SEPARATOR")) {
                     KSBasETransformation transformation = editorSettings
                             .getTransformationById(command);
                     Expression visibility = new KsbaseVisibilityExpression(transformation,
-                            editorSettings);
+                            editorSettings, validationCache);
                     KSBasECombination combination = new KSBasECombination(editorSettings);
                     ImageDescriptor icon = null;
                     icon = KSBasEUIPlugin.imageDescriptorFromPlugin(editorSettings.getContributor()
@@ -283,19 +284,19 @@ public final class DynamicMenuContributions {
                                     + ".menu" + ".separator",
                                     KiviMenuContributionService.LocationScheme.MENU,
                                     new KsbaseVisibilityExpression(separatedTransformation,
-                                            editorSettings), editorSettings.getEditorId());
+                                            editorSettings, validationCache), editorSettings.getEditorId());
                         } else if (contrib.getData().startsWith("toolbar:")) {
                             KiviMenuContributionService.INSTANCE.addSeparator(separatedCommand
                                     + ".toolbar" + ".separator",
                                     KiviMenuContributionService.LocationScheme.TOOLBAR,
                                     new KsbaseVisibilityExpression(separatedTransformation,
-                                            editorSettings), editorSettings.getEditorId());
+                                            editorSettings, validationCache), editorSettings.getEditorId());
                         } else if (contrib.getData().startsWith("popup:")) {
                             KiviMenuContributionService.INSTANCE.addSeparator(separatedCommand
                                     + ".popup" + ".separator",
                                     KiviMenuContributionService.LocationScheme.POPUP,
                                     new KsbaseVisibilityExpression(separatedTransformation,
-                                            editorSettings), editorSettings.getEditorId());
+                                            editorSettings, validationCache), editorSettings.getEditorId());
                         }
                     }
                 }
