@@ -234,3 +234,4 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
     }
 
 }
+

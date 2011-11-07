@@ -398,3 +398,4 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
     }
 
 }
+
