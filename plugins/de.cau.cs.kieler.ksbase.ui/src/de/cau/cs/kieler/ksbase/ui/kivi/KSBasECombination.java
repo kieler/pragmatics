@@ -13,10 +13,14 @@
  */
 package de.cau.cs.kieler.ksbase.ui.kivi;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
@@ -45,11 +49,11 @@ public class KSBasECombination extends AbstractCombination {
 
     private EditorTransformationSettings editorSettings;
 
-    private HashMap<String, KSBasETransformation> transformations = 
-            new HashMap<String, KSBasETransformation>();
+    private HashMap<String, KSBasETransformation> transformations = new HashMap<String, KSBasETransformation>();
 
     /**
-     * @param editorSettings the KSBasE editor settings used as a context for the transformation.
+     * @param editorSettings
+     *            the KSBasE editor settings used as a context for the transformation.
      */
     public KSBasECombination(final EditorTransformationSettings editorSettings) {
         this.editorSettings = editorSettings;
@@ -58,8 +62,11 @@ public class KSBasECombination extends AbstractCombination {
 
     /**
      * Add a transformation to the combination.
-     * @param buttonID the id to identify the transformation
-     * @param transformation the transformation to add
+     * 
+     * @param buttonID
+     *            the id to identify the transformation
+     * @param transformation
+     *            the transformation to add
      */
     public void addTransformation(final String buttonID, final KSBasETransformation transformation) {
         transformations.put(buttonID, transformation);
@@ -78,8 +85,8 @@ public class KSBasECombination extends AbstractCombination {
             EditPart root = diagramEditor.getDiagramGraphicalViewer().getRootEditPart();
             IGraphicalEditPart groot = (IGraphicalEditPart) root.getChildren().get(0);
             EObject rootObject = groot.getNotationView().getElement();
-            
-            //get the current selection
+
+            // get the current selection
             List<EObject> selectionList = new ArrayList<EObject>();
             for (EditPart part : selectedParts) {
                 if (part instanceof IGraphicalEditPart) {
@@ -87,55 +94,139 @@ public class KSBasECombination extends AbstractCombination {
                     selectionList.add(gpart.getNotationView().getElement());
                 }
             }
-            //if the selection is empty assume the root object as selected
+            // if the selection is empty assume the root object as selected
             if (selectionList.isEmpty()) {
                 selectionList.add(rootObject);
             }
-            
-            //map the selection to the parameters of this transformation
-            List<Object> selectionMapping = null;
-            for (List<String> parameters : transformation.getParameterList()) {
-                selectionMapping = TransformationFrameworkFactory
-                    .getDefaultTransformationFramework()
-                    .createParameterMapping(selectionList, parameters.toArray(new String[parameters.size()]));
-            }
-            
-            if (selectionMapping != null) {
-                TransformationDescriptor descriptor = new TransformationDescriptor(
-                        transformation.getTransformation(), selectionMapping.toArray());
-                XtendTransformationContext context = new XtendTransformationContext(
-                        editorSettings.getTransformationFile(), editorSettings.getModelPackages()
-                                .toArray(new String[editorSettings.getModelPackages().size()]), null,
-                        diagramEditor.getEditingDomain());
-                XtendTransformationEffect effect = new XtendTransformationEffect(context, descriptor);
-                effect.schedule();
-    
-                //refresh edit policy to display the new stuff
-                AbstractEffect refresh = new AbstractEffect() {
-                    public void execute() {
-                        CanonicalEditPolicy policy = (CanonicalEditPolicy) diagramEditor
-                                .getDiagramEditPart().getEditPolicy("Canonical");
-                        if (policy != null) {
-                            policy.refresh();
-                        }
-                    }
-                };
-                refresh.schedule();
-    
 
-                //in the end do some layout
-                LayoutEffect layout = null;
-                if (selectionList.get(0) == rootObject) {
-                    layout = new LayoutEffect(button.getEditor(),
-                            ((EObject) rootObject), false);
-                } else {
-                    layout = new LayoutEffect(button.getEditor(),
-                            selectionList.get(0).eContainer(), false);
+            // do xtend2 stuff
+            if (transformation.getTransformationClass() != null) {
+                evokeXtend2(transformation, selectionList);
+                refreshEditPolicy(diagramEditor);
+                evokeLayout(selectionList, rootObject, button);
+
+                // do xtend1 stuff
+            } else {
+                // map the selection to the parameters of this transformation
+                List<Object> selectionMapping = null;
+                for (List<String> parameters : transformation.getParameterList()) {
+                    selectionMapping = TransformationFrameworkFactory
+                            .getDefaultTransformationFramework().createParameterMapping(
+                                    selectionList,
+                                    parameters.toArray(new String[parameters.size()]));
                 }
-                layout.schedule();
-                
+                // execute xtend transformation
+                if (selectionMapping != null) {
+                    evokeXtend(transformation, selectionMapping, diagramEditor);
+                    refreshEditPolicy(diagramEditor);
+                    evokeLayout(selectionList, rootObject, button);
+                }
             }
         }
+    }
+
+    private HashMap<Class<?>, Object> getSelectionHash(final List<EObject> selection) {
+        HashMap<Class<?>, Object> selectionCache = new HashMap<Class<?>, Object>();
+        for (EObject obj : selection) {
+            Object cache = selectionCache.get(obj.getClass());
+            List listCache;
+            if (cache == null) {
+                listCache = new LinkedList();
+                selectionCache.put(obj.getClass(), listCache);
+                listCache.add(obj);
+            } else if (cache instanceof List<?>) {
+                listCache = (List<?>) cache;
+                listCache.add(obj);
+
+            }
+        }
+        for (Object obj : selectionCache.values()) {
+            if (obj instanceof List) {
+                if (((List) obj).size() == 1) {
+                    selectionCache.put(((List) obj).get(0).getClass(), ((List) obj).get(0));
+                }
+            }
+        }
+
+        return selectionCache;
+    }
+
+    private void evokeXtend2(final KSBasETransformation transformation,
+            final List<EObject> selection) {
+
+        Method method = null;
+        List params = new LinkedList();
+        for (Method m : transformation.getTransformationClass().getClass().getMethods()) {
+            if (m.getName().equals(transformation.getTransformation())) {
+                HashMap<Class<?>, Object> selectionCache = this.getSelectionHash(selection);
+                params = new LinkedList();
+                method = m;
+                for (Class<?> c : m.getParameterTypes()) {
+                    Object param = selectionCache.get(c);
+                    if (param != null) {
+                        params.add(param);
+                    } else {
+                        method = null;
+                    }
+                }
+                if (method != null) {
+                    break;
+                }
+
+            }
+        }
+        if (method != null) {
+            try {
+                method.invoke(transformation.getTransformationClass(), params.toArray());
+            } catch (IllegalArgumentException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
+    private void evokeXtend(final KSBasETransformation transformation,
+            final List<Object> selectionMapping, final DiagramDocumentEditor diagramEditor) {
+        TransformationDescriptor descriptor = new TransformationDescriptor(
+                transformation.getTransformation(), selectionMapping.toArray());
+        XtendTransformationContext context = new XtendTransformationContext(
+                editorSettings.getTransformationFile(), editorSettings.getModelPackages().toArray(
+                        new String[editorSettings.getModelPackages().size()]), null,
+                diagramEditor.getEditingDomain());
+        XtendTransformationEffect effect = new XtendTransformationEffect(context, descriptor);
+        effect.schedule();
+    }
+
+    private void refreshEditPolicy(final DiagramDocumentEditor diagramEditor) {
+        AbstractEffect refresh = new AbstractEffect() {
+            public void execute() {
+                CanonicalEditPolicy policy = (CanonicalEditPolicy) diagramEditor
+                        .getDiagramEditPart().getEditPolicy("Canonical");
+                if (policy != null) {
+                    policy.refresh();
+                }
+            }
+        };
+        refresh.schedule();
+    }
+
+    private void evokeLayout(final List<EObject> selectionList, final EObject rootObject,
+            final ButtonState button) {
+        LayoutEffect layout = null;
+        if (selectionList.get(0) == rootObject) {
+            layout = new LayoutEffect(button.getEditor(), ((EObject) rootObject), false);
+        } else {
+            layout = new LayoutEffect(button.getEditor(), selectionList.get(0).eContainer(), false);
+        }
+        layout.schedule();
     }
 
 }

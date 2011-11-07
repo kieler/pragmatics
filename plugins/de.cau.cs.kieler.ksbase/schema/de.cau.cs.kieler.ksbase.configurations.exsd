@@ -59,7 +59,7 @@
             <element ref="commandHandler" minOccurs="0" maxOccurs="1"/>
             <element ref="transformationFactory" minOccurs="0" maxOccurs="1"/>
             <element ref="package" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="XtendTransformationFile" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="XtendTransformationFile" minOccurs="0" maxOccurs="1"/>
             <element ref="Xtend2TransformationClass" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="editorId" type="string">
@@ -300,13 +300,13 @@ Make sure that the transformation is short and fast, it is not recommended to ca
 
    <element name="Xtend2TransformationClass">
       <complexType>
-         <attribute name="TransformationClass" type="string">
+         <attribute name="TransformationClass" type="string" use="required">
             <annotation>
                <documentation>
                   An Xtend2 transformation claas
                </documentation>
                <appinfo>
-                  <meta.attribute kind="resource"/>
+                  <meta.attribute kind="java" basedOn="java.lang.Object:"/>
                </appinfo>
             </annotation>
          </attribute>

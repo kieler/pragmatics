@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.dialogs.EditorSelectionDialog;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
@@ -468,6 +469,22 @@ public final class TransformationManager {
              * }
              */
 
+            //read xtend2 files from extensionpoint
+            
+            IConfigurationElement[] xtend2transformations = 
+                    settings.getChildren("Xtend2TransformationClass");
+            if (xtend2transformations != null && xtend2transformations.length > 0) {
+                for (IConfigurationElement tf : xtend2transformations) {
+                    try {
+                        editor.getTransformationClasses().add(tf.createExecutableExtension("TransformationClass"));
+                    } catch (CoreException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }         
+                }
+                
+            }
+            
             // Read file from extension point configuration
             IConfigurationElement[] xtend1transformations = 
                     settings.getChildren("XtendTransformationFile");

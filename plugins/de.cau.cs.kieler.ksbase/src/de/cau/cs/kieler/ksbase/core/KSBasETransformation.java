@@ -59,6 +59,8 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
     /** Additional validation transformation. **/
     private String validation;
 
+    private Object transformationClass;
+    
     /**
      * Creates a new Transformation.
      * 
@@ -95,6 +97,7 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
         this.toolTip = t.toolTip;
         this.validation = t.validation;
         this.parameters = new LinkedList<List<String>>(t.parameters);
+        this.transformationClass = t.transformationClass;
 
     }
 
@@ -292,6 +295,14 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
         return validation;
     }
 
+    public Object getTransformationClass() {
+        return this.transformationClass;
+    }
+    
+    public void setTransformationClass(Object transformationClass) {
+        this.transformationClass = transformationClass;
+    }
+    
     /**
      * Sets the transformation that is used for validation.
      * 

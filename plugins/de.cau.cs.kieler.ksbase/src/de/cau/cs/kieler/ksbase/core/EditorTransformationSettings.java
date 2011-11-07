@@ -15,6 +15,7 @@
 package de.cau.cs.kieler.ksbase.core;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -51,7 +52,7 @@ public class EditorTransformationSettings implements Serializable {
     /** Editor ID to which this setting is assigned. **/
     private String editorId;
     /**
-     * Transformatiopn file in which the transformations are defined. This is a String representing
+     * Transformation file in which the transformations are defined. This is a String representing
      * an absolute path.
      **/
     private String transformationFile;
@@ -78,6 +79,12 @@ public class EditorTransformationSettings implements Serializable {
      **/
     private transient IContributor contributor;
 
+    /**
+     * A list of transformation classes given by the extension point. This will likely be generated
+     * xtend2 transformation classes.
+     */
+    private LinkedList<Object> transformationClasses = new LinkedList<Object>();
+    
     /**
      * Creates a new transformation setting with the given fully qualified editor name.
      * 
@@ -448,7 +455,21 @@ public class EditorTransformationSettings implements Serializable {
                     cachedTransformations.add(transformation);
                 }
             }
-
+            
+            for (Object transformationClass : this.transformationClasses) {
+                for (KSBasETransformation t : inplaceTransformations.values()) {
+                    Method[] methods = transformationClass.getClass().getMethods();
+                    for (Method m : methods) {
+                        String methodName = m.getName();
+                        String transformationName = t.getTransformation();
+                        if (methodName.equals(transformationName)) {
+                            t.setTransformationClass(transformationClass);
+                            cachedTransformations.add(t);
+                        }
+                    }
+                }
+            }
+            
             // Adding all transformations. By clearing the
             // transformations first, we ensure that no illegal
             // transformations are included.
@@ -475,7 +496,7 @@ public class EditorTransformationSettings implements Serializable {
                             + "No TransformationFramework has been set."); //$NON-NLS-1$
         }
     }
-
+    
     /**
      * Two editor settings are the same if they have the same target editor and the same source
      * contributor. So we will have an implicit distinction between extension point and user defined
@@ -511,5 +532,19 @@ public class EditorTransformationSettings implements Serializable {
             hash += contributor.hashCode();
         }
         return hash;
+    }
+    
+    
+    public void addTransformationClass(Object classObject) {
+        
+    }
+    
+    /**
+     * 
+     * @return A list of transformation classes. This will likely be generated
+     * xtend2 transformation classes.
+     */
+    public List<Object> getTransformationClasses() {
+        return transformationClasses;
     }
 }
