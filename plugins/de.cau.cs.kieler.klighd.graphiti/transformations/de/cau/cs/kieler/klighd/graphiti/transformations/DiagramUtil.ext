@@ -103,7 +103,7 @@ Connection createConnection():
  *
  */
 Connection createArrowConnection(int width):
-  createConnection(width).addArrowHead()
+  createConnection(width).addArrowHead(width)
 ;
 
 
