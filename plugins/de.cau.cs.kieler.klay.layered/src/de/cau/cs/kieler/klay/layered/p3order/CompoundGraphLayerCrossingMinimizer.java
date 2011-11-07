@@ -140,6 +140,8 @@ public class CompoundGraphLayerCrossingMinimizer {
 
             totalEdges = minimizationHeuristic.minimizeCrossings(layerNodeGroups, layoutUnits,
                     layerIndex, preOrdered, randomize, forward, portPos, singleNodeNodeGroups);
+            applyNodeGroupOrderingToNodeArray(layerNodeGroups, layer);
+            
         } else {
             // sort the layer's nodes according to their related compound nodes. Find out the
             // maximal depth on the run.
