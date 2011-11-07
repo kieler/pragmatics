@@ -13,9 +13,9 @@
  */
 package de.cau.cs.kieler.klighd;
 
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
@@ -27,35 +27,25 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 public final class ViewContext extends MapPropertyHolder {
 
     /** the viewer provider. */
-    private IViewerProvider viewerProvider;
+    private IViewerProvider viewerProvider = null;
     /** the list of transformation contexts in this view context. */
-    private List<TransformationContext<?, ?>> transformationContexts;
+    private List<TransformationContext<?, ?>> transformationContexts = Lists.newLinkedList();
     /** the reveresed list of transformation contexts. */
-    private List<TransformationContext<?, ?>> transformationContextsRev;
+    private List<TransformationContext<?, ?>> transformationContextsRev = Lists
+            .reverse(transformationContexts);
 
     /**
-     * Constructs a view context.
+     * Serts the contexts viewer provider.
      * 
      * @param viewerProvider
-     *            the viewer provider for this context
-     * @param transformationContexts
-     *            the transformation contexts involved
+     *            the viewer provider
      */
-    public ViewContext(final IViewerProvider viewerProvider,
-            final List<TransformationContext<?, ?>> transformationContexts) {
+    public void setViewerProvider(final IViewerProvider viewerProvider) {
         this.viewerProvider = viewerProvider;
-        this.transformationContexts = transformationContexts;
-        this.transformationContextsRev =
-                new LinkedList<TransformationContext<?, ?>>(transformationContexts);
-        Collections.reverse(transformationContextsRev);
-        // set view context in the transformation contexts
-        for (TransformationContext<?, ?> transformationContext : transformationContexts) {
-            transformationContext.setViewContext(this);
-        }
     }
 
     /**
-     * Returns the context's viewer provider.
+     * Returns the contexts viewer provider.
      * 
      * @return the viewer provider
      */
@@ -64,11 +54,52 @@ public final class ViewContext extends MapPropertyHolder {
     }
 
     /**
-     * Returns the context's target model.
+     * Adds a transformation context to the view context.
+     * 
+     * @param transformationContext
+     *            the transformation context
+     */
+    public void addTransformationContext(final TransformationContext<?, ?> transformationContext) {
+        transformationContexts.add(transformationContext);
+        transformationContext.setViewContext(this);
+    }
+
+    /**
+     * Adds a list of transformation contexts to the view context.
+     * 
+     * @param contexts
+     *            the transformation contexts
+     */
+    public void addTransformationContexts(final List<TransformationContext<?, ?>> contexts) {
+        for (TransformationContext<?, ?> transformationContext : contexts) {
+            addTransformationContext(transformationContext);
+        }
+    }
+
+    /**
+     * Returns the list of transformation contexts.
+     * 
+     * @return the transformation contexts
+     */
+    public List<TransformationContext<?, ?>> getTransformationContexts() {
+        return transformationContexts;
+    }
+
+    /**
+     * Returns the contexts source model.
+     * 
+     * @return the source model
+     */
+    public Object getSourceModel() {
+        return transformationContexts.get(0).getSourceModel();
+    }
+
+    /**
+     * Returns the contexts target model.
      * 
      * @return the target model
      */
-    public Object getModel() {
+    public Object getTargetModel() {
         return transformationContextsRev.get(0).getTargetModel();
     }
 
@@ -108,6 +139,13 @@ public final class ViewContext extends MapPropertyHolder {
             target = transformationContext.getTargetElement(element);
         }
         return target;
+    }
+
+    /**
+     * Resets the view context.
+     */
+    protected void reset() {
+        transformationContexts.clear();
     }
 
 }

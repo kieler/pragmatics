@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klighd.viewers;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -28,11 +29,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import de.cau.cs.kieler.klighd.IViewer;
-import de.cau.cs.kieler.klighd.IViewerEvent;
 import de.cau.cs.kieler.klighd.IViewerEventListener;
-import de.cau.cs.kieler.klighd.IViewerProvider;
+import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.ViewContext;
-import de.cau.cs.kieler.klighd.events.SelectionEvent;
 import de.cau.cs.kieler.klighd.triggers.KlighdSelectionTrigger;
 import de.cau.cs.kieler.klighd.triggers.KlighdSelectionTrigger.KlighdSelectionState;
 import de.cau.cs.kieler.klighd.triggers.KlighdSelectionTrigger.KlighdSelectionState.SelectionElement;
@@ -95,32 +94,20 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public synchronized void setModel(final Object model) {
         // if the model is a view context adapt the viewer to the given context, else set it as
         // input model for the current viewer if possible or show it if it is a string
         if (model instanceof ViewContext) {
             ViewContext viewContext = (ViewContext) model;
-            if (currentViewContext == null
-                    || currentViewContext.getViewerProvider() != viewContext.getViewerProvider()) {
-                // remove the old viewer
-                removeViewer();
-                // create the new viewer from the view context
-                IViewerProvider viewerProvider = viewContext.getViewerProvider();
-                IViewer<Object> viewer = (IViewer<Object>) viewerProvider.createViewer(parent);
-                // add the new viewer
-                addViewer(viewer);
-            }
+            // remove the old viewer
+            removeViewer();
+            // create the new viewer
+            IViewer<?> viewer =
+                    LightDiagramServices.getInstance().createViewer(viewContext, parent);
+            // add the new viewer
+            addViewer(viewer);
             // set the new view context
             currentViewContext = viewContext;
-            // set the model
-            currentViewer.setModel(viewContext.getModel());
-            // reset the current selection
-            resetSelection();
-        } else if (currentViewContext != null
-                && currentViewContext.getViewerProvider().getModelClass().isInstance(model)) {
-            // if the current viewer supports the given model set it as new input model
-            currentViewer.setModel(model);
             // reset the current selection
             resetSelection();
         } else if (model instanceof String) {
@@ -164,16 +151,7 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
     /**
      * {@inheritDoc}
      */
-    public synchronized void handleEvent(final IViewerEvent event) {
-        // call method to handle the specific event
-        if (event instanceof SelectionEvent) {
-            handleSelectionEvent((SelectionEvent) event);
-        }
-        // propagate event to listeners on this viewer
-        notifyListeners(event);
-    }
-
-    private void handleSelectionEvent(final SelectionEvent selectionEvent) {
+    public void selected(final IViewer<?> viewer, final Collection<?> selectedElements) {
         KlighdSelectionTrigger trigger = KlighdSelectionTrigger.getInstance();
         if (trigger != null) {
             // create the selection objects
@@ -182,19 +160,21 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
             KlighdSelectionState state =
                     new KlighdSelectionState(viewId, currentViewContext, currentViewer, selections);
             // fill the selection
-            for (Object diagramObject : selectionEvent.getDiagramElements()) {
+            for (Object diagramObject : selectedElements) {
                 selections.add(state.new SelectionElement(diagramObject));
             }
             trigger.trigger(state);
         }
         // update the selection status for the ISelectionProvider interface
-        updateSelection(selectionEvent);
+        updateSelection(selectedElements);
+        // propagate event to listeners on this viewer
+        notifyListenersSelection(selectedElements);
     }
 
-    private void updateSelection(final SelectionEvent selectionEvent) {
+    private void updateSelection(final Collection<?> selectedElements) {
         synchronized (selection) {
             selection.selectedElements.clear();
-            selection.selectedElements.addAll(selectionEvent.getDiagramElements());
+            selection.selectedElements.addAll(selectedElements);
         }
         notifySelectionListeners();
     }
@@ -278,7 +258,7 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
             currentViewer.unselect(diagramElements);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */

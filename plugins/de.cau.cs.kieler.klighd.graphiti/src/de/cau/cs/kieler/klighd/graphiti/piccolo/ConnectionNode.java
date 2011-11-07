@@ -221,24 +221,24 @@ public class ConnectionNode extends PChildRepresentedNode implements IPictogramN
             decoration.updateDecoration(xps, yps);
         }
     }
-
-    private void updateSourceAnchor() {
-        Point2D anchorPoint = sourceAnchor.getAnchorPoint(new Point2D.Double(xps[1], yps[1]));
-        if (anchorPoint != null) {
-            xps[0] = (float) anchorPoint.getX();
-            yps[0] = (float) anchorPoint.getY();
-        }
-    }
-
-    private void updateTargetAnchor() {
-        Point2D anchorPoint =
-                targetAnchor.getAnchorPoint(new Point2D.Double(xps[xps.length - 2],
-                        yps[yps.length - 2]));
-        if (anchorPoint != null) {
-            xps[xps.length - 1] = (float) anchorPoint.getX();
-            yps[yps.length - 1] = (float) anchorPoint.getY();
-        }
-    }
+    
+//    private void correctSourceAnchor() {
+//        Point2D anchorPoint = sourceAnchor.getAnchorPoint(new Point2D.Double(xps[0], yps[0]));
+//        if (anchorPoint != null) {
+//            xps[0] = (float) anchorPoint.getX();
+//            yps[0] = (float) anchorPoint.getY();
+//        }
+//    }
+//
+//    private void correctTargetAnchor() {
+//        Point2D anchorPoint =
+//                targetAnchor.getAnchorPoint(new Point2D.Double(xps[xps.length - 1],
+//                        yps[yps.length - 1]));
+//        if (anchorPoint != null) {
+//            xps[xps.length - 1] = (float) anchorPoint.getX();
+//            yps[yps.length - 1] = (float) anchorPoint.getY();
+//        }
+//    }
 
     // Implementation of the ...kligh.piccolo.graph interfaces
 
@@ -301,9 +301,9 @@ public class ConnectionNode extends PChildRepresentedNode implements IPictogramN
             xps[i] = (float) bend.getX();
             yps[i] = (float) bend.getY();
         }
-        // update anchor points
-        updateSourceAnchor();
-        updateTargetAnchor();
+//        // update anchor points
+//        correctSourceAnchor();
+//        correctTargetAnchor();
         // update the polyline to reflect the changes
         updatePolyline();
     }

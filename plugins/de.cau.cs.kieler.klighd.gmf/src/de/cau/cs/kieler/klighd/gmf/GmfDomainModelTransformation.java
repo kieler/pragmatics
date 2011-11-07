@@ -18,14 +18,14 @@ import org.eclipse.gmf.runtime.diagram.core.preferences.PreferencesHint;
 import org.eclipse.gmf.runtime.diagram.core.services.ViewService;
 import org.eclipse.gmf.runtime.notation.Diagram;
 
-import de.cau.cs.kieler.klighd.transformations.AbstractModelTransformation;
+import de.cau.cs.kieler.klighd.transformations.AbstractTransformation;
 
 /**
  * A transformation from an EMF domain model to a compatible GMF notation model.
  * 
  * @author mri
  */
-public class GmfDomainModelTransformation extends AbstractModelTransformation<EObject, Diagram> {
+public class GmfDomainModelTransformation extends AbstractTransformation<EObject, Diagram> {
 
     /** the last domain model a diagram was requested for. */
     private EObject lastDomainModel = null;

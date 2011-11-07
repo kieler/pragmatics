@@ -25,11 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
-import de.cau.cs.kieler.klighd.events.SelectionEvent;
 import de.cau.cs.kieler.klighd.piccolo.activities.ZoomActivity;
-import de.cau.cs.kieler.klighd.piccolo.graph.layout.PiccoloDiagramLayoutManager;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PEmptyNode;
 import de.cau.cs.kieler.klighd.piccolo.ui.ExportKGraphAction;
 import de.cau.cs.kieler.klighd.piccolo.ui.SaveAsImageAction;
@@ -354,7 +350,7 @@ public class PiccoloViewer extends AbstractViewer<PiccoloDiagramContext> impleme
      */
     public void selected(final PSWTSimpleSelectionEventHandler handler,
             final Collection<PNode> nodes) {
-        notifyListeners(new SelectionEvent(this, nodes));
+        notifyListenersSelection(nodes);
     }
 
 }

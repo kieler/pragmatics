@@ -50,11 +50,13 @@ import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.klighd.piccolo.PiccoloDiagramContext;
+import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode;
+import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode.HAlignment;
+import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode.VAlignment;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PChildClip;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PChildRepresentedNode;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath;
-import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAlignedText;
-import de.cau.cs.kieler.klighd.transformations.AbstractModelTransformation;
+import de.cau.cs.kieler.klighd.transformations.AbstractTransformation;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolox.swt.PSWTText;
@@ -65,7 +67,10 @@ import edu.umd.cs.piccolox.swt.PSWTText;
  * @author mri
  */
 public class Pictogram2PNodeTransformation extends
-        AbstractModelTransformation<Diagram, PiccoloDiagramContext> {
+        AbstractTransformation<Diagram, PiccoloDiagramContext> {
+    
+    /** the identifier for this transformation as specified in the extension. */
+    public static final String ID = "de.cau.cs.kieler.klighd.graphiti.pictogram2PNodeTransformation";
 
     /** the property for the element mapping. */
     private static final IProperty<Map<PictogramElement, PNode>> MAPPING_PROPERTY =
@@ -507,26 +512,41 @@ public class Pictogram2PNodeTransformation extends
         }
         return line;
     }
+    
+    private static final int GREEK_THRESHOLD = 3;
 
-    private PSWTText transformText(final AbstractText t, final Color fc, final Color bc) {
-        PSWTAlignedText text = new PSWTAlignedText();
+    private PNode transformText(final AbstractText t, final Color fc, final Color bc) {
+        PAlignmentNode textBox = new PAlignmentNode();
+        textBox.setPickable(false);
+        textBox.setWidth(t.getWidth());
+        textBox.setHeight(t.getHeight());
+        PSWTText text = new PSWTText();
         text.setFont(transformFont(t.getFont()));
         text.setText(t.getValue() != null ? t.getValue() : "");
         text.setTransparent(true);
-        text.setWidth(t.getWidth());
-        text.setHeight(t.getHeight());
+        // determine horizontal alignment
+        HAlignment halignment = HAlignment.LEFT;
         switch (t.getHorizontalAlignment()) {
-        case ALIGNMENT_LEFT:
-            text.setAlignment(PSWTAlignedText.Alignment.LEFT);
-            break;
         case ALIGNMENT_MIDDLE:
         case ALIGNMENT_CENTER:
-            text.setAlignment(PSWTAlignedText.Alignment.CENTER);
+            halignment = HAlignment.CENTER;
             break;
         case ALIGNMENT_RIGHT:
-            text.setAlignment(PSWTAlignedText.Alignment.RIGHT);
+            halignment = HAlignment.RIGHT;
             break;
         }
+        // determine vertical alignment
+        VAlignment valignment = VAlignment.TOP;
+        switch (t.getHorizontalAlignment()) {
+        case ALIGNMENT_MIDDLE:
+        case ALIGNMENT_CENTER:
+            valignment = VAlignment.CENTER;
+            break;
+        case ALIGNMENT_BOTTOM:
+            valignment = VAlignment.BOTTOM;
+            break;
+        }
+        // determine colors and visibility
         if (t.getLineVisible()) {
             text.setPenColor(transformColor(fc));
         } else {
@@ -537,7 +557,9 @@ public class Pictogram2PNodeTransformation extends
         } else {
             text.setBackgroundColor(null);
         }
-        return text;
+        text.setGreekThreshold(GREEK_THRESHOLD);
+        textBox.addAlignedChild(text, halignment, valignment);
+        return textBox;
     }
 
     private PNode transformImage(final Image i) {

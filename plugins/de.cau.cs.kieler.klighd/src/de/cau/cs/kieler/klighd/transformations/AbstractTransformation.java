@@ -15,7 +15,7 @@ package de.cau.cs.kieler.klighd.transformations;
 
 import java.lang.reflect.Method;
 
-import de.cau.cs.kieler.klighd.IModelTransformation;
+import de.cau.cs.kieler.klighd.ITransformation;
 import de.cau.cs.kieler.klighd.TransformationContext;
 
 /**
@@ -29,7 +29,7 @@ import de.cau.cs.kieler.klighd.TransformationContext;
  * @param <T>
  *            the type of the target model
  */
-public abstract class AbstractModelTransformation<S, T> implements IModelTransformation<S, T> {
+public abstract class AbstractTransformation<S, T> implements ITransformation<S, T> {
 
     /** the current transformation context. */
     private TransformationContext<S, T> context = null;

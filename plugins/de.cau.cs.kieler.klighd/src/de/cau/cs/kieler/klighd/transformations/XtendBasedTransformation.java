@@ -47,12 +47,12 @@ import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.klighd.IModelTransformation;
+import de.cau.cs.kieler.klighd.ITransformation;
 import de.cau.cs.kieler.klighd.KlighdPlugin;
 import de.cau.cs.kieler.klighd.TransformationContext;
 
 /**
- * An implementation of {@link IModelTransformation} enabling Xtend-based model transformations.
+ * An implementation of {@link ITransformation} enabling Xtend-based model transformations.
  * 
  * This class realizes the integration of transformations that synthesize a certain view model
  * to be shown in the KLighD view part ({@link de.cau.cs.kieler.klighd.views.DiagramViewPart})
@@ -69,7 +69,7 @@ import de.cau.cs.kieler.klighd.TransformationContext;
  * TODO this should propably be reworked using the ITransformationContext from ...core.model
  *   chsch: what does this imply?
  */
-public class XtendBasedTransformation implements IModelTransformation<EObject, EObject> {
+public class XtendBasedTransformation implements ITransformation<EObject, EObject> {
 
     private static final String TRANSFORMATION_EXTENSION_NAME = "transform";
     private static final String DEFAULT_TRANSFORMATION_EXTENSION_NAME = "onError";

@@ -13,19 +13,21 @@
  */
 package de.cau.cs.kieler.klighd.effects;
 
-import de.cau.cs.kieler.core.kivi.AbstractEffect;
+import de.cau.cs.kieler.core.kivi.IEffect;
+import de.cau.cs.kieler.core.kivi.KiVi;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.klighd.IViewer;
-import de.cau.cs.kieler.klighd.ViewContext;
-import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
+import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 
 /**
  * A view management effect for showing models in a KLighD view.
  * 
  * @author mri
  */
-public class KlighdDiagramEffect extends AbstractEffect {
+public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
 
     /** the identifier for the diagram view. */
     private String id = null;
@@ -38,8 +40,6 @@ public class KlighdDiagramEffect extends AbstractEffect {
 
     /** the created/updated view. */
     private DiagramViewPart view = null;
-    /** the created view context. */
-    private ViewContext viewContext = null;
     /** the created viewer. */
     private IViewer<?> viewer = null;
 
@@ -75,8 +75,8 @@ public class KlighdDiagramEffect extends AbstractEffect {
     }
 
     /**
-     * Constructs an effect that opens the default diagram view with the given input model and
-     * identifier or changes the input model of the default view.
+     * Constructs an effect that opens the default diagram view with the given input model or
+     * changes the input model of the default view.
      * 
      * @param model
      *            the input model
@@ -120,15 +120,11 @@ public class KlighdDiagramEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
+        final IPropertyHolder propertyHolder = this;
         MonitoredOperation.runInUI(new Runnable() {
             public void run() {
-                if (!DiagramViewManager.getInstance().updateView(id, name, model)) {
-                    view = DiagramViewManager.getInstance().createView(id, name, model);
-                } else {
-                    view = DiagramViewManager.getInstance().getView(id);
-                }
+                view = DiagramViewManager.getInstance().createView(id, name, model, propertyHolder);
                 if (view != null) {
-                    viewContext = view.getViewer().getCurrentViewContext();
                     viewer = view.getViewer().getActiveViewer();
                 }
             }
@@ -173,16 +169,6 @@ public class KlighdDiagramEffect extends AbstractEffect {
     }
 
     /**
-     * Returns the view context created as part of the effect.
-     * 
-     * @return the view context or null when called before the effect executed, the execute failed
-     *         or was invalid
-     */
-    public ViewContext getViewContext() {
-        return viewContext;
-    }
-
-    /**
      * Returns the viewer created as part of the effect.
      * 
      * @return the viewer or null when called before the effect executed, the execute failed or was
@@ -190,6 +176,61 @@ public class KlighdDiagramEffect extends AbstractEffect {
      */
     public IViewer<?> getViewer() {
         return viewer;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void schedule() {
+        KiVi.getInstance().executeEffect(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void undo() {
+        // do nothing
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void scheduleUndo() {
+        KiVi.getInstance().undoEffect(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isMergeable() {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IEffect merge(final IEffect otherEffect) {
+        return null;
+    }
+
+    /**
+     * Sets the view created by the effect.
+     * 
+     * @param view
+     *            the view
+     */
+    protected void setView(final DiagramViewPart view) {
+        this.view = view;
+    }
+
+    /**
+     * Sets the viewer created by the effect.
+     * 
+     * @param viewer
+     *            the viewer
+     */
+    protected void setViewer(final IViewer<?> viewer) {
+        this.viewer = viewer;
     }
 
 }

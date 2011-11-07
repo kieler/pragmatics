@@ -23,7 +23,7 @@ package de.cau.cs.kieler.klighd;
  * @param <T>
  *            the type of the target model
  */
-public interface IModelTransformation<S, T> {
+public interface ITransformation<S, T> {
 
     /**
      * Performs the actual transformation from an object of type {@code S} to a model of type

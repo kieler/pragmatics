@@ -22,7 +22,7 @@ import edu.umd.cs.piccolox.swt.SWTGraphics2D;
  * 
  * @author mri
  */
-public class PSWTAlignedText extends PSWTText {
+public class PSWTAdvancedText extends PSWTText {
 
     private static final long serialVersionUID = 5166550763238006168L;
 
@@ -42,6 +42,14 @@ public class PSWTAlignedText extends PSWTText {
     private Alignment alignment = Alignment.LEFT;
     
     /**
+     * Constructs an aligned text.
+     */
+    public PSWTAdvancedText() {
+        super();
+        greekColor = null;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -56,18 +64,18 @@ public class PSWTAlignedText extends PSWTText {
         switch (alignment) {
         case CENTER:
             double d = getParent().getBounds().getWidth() - getWidth() - 2 * padding;
-            offset = d / 2;
+            offset = d / 2 - getTransformReference(true).getTranslateX();
             break;
         case RIGHT:
             d = getParent().getBounds().getWidth() - getWidth() - 2 * padding;
-            offset = d;
+            offset = d - getTransformReference(true).getTranslateX();
             break;
         }
         sg2.translate(offset, 0);
         super.paintAsText(ppc);
         sg2.translate(-offset, 0);
     }
-    
+
     /**
      * {@inheritDoc}
      */

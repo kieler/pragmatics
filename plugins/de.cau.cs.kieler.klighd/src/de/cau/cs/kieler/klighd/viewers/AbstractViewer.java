@@ -13,11 +13,11 @@
  */
 package de.cau.cs.kieler.klighd.viewers;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import de.cau.cs.kieler.klighd.IViewer;
-import de.cau.cs.kieler.klighd.IViewerEvent;
 import de.cau.cs.kieler.klighd.IViewerEventListener;
 import de.cau.cs.kieler.klighd.util.KlighdColor;
 
@@ -121,14 +121,14 @@ public abstract class AbstractViewer<T> implements IViewer<T> {
     }
 
     /**
-     * Notifies the registered listeners about the occurrence of an event.
+     * Notifies the registered listeners about the occurrence of a selection event.
      * 
-     * @param event
-     *            the viewer event
+     * @param selectedElements
+     *            the selected elements
      */
-    protected void notifyListeners(final IViewerEvent event) {
+    protected void notifyListenersSelection(final Collection<?> selectedElements) {
         for (IViewerEventListener listener : listeners) {
-            listener.handleEvent(event);
+            listener.selected(this, selectedElements);
         }
     }
 

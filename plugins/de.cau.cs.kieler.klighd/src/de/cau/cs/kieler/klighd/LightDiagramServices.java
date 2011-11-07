@@ -16,10 +16,8 @@ package de.cau.cs.kieler.klighd;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -27,10 +25,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 
-import de.cau.cs.kieler.klighd.transformations.IdentityTransformation;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.klighd.transformations.XtendBasedTransformation;
 
 /**
@@ -39,6 +40,15 @@ import de.cau.cs.kieler.klighd.transformations.XtendBasedTransformation;
  * @author mri
  */
 public final class LightDiagramServices {
+
+    /** the property for a viewer provider. */
+    public static final IProperty<String> VIEWER_PROVIDER = new Property<String>(
+            "klighd.viewerProvider");
+    /** the property for a path of transformations (can contain gaps). */
+    public static final IProperty<List<String>> TRANSFORMATIONS = new Property<List<String>>(
+            "klighd.transformations", new LinkedList<String>());
+    /** the property for a viewer associated with the view context. */
+    public static final IProperty<IViewer<?>> VIEWER = new Property<IViewer<?>>("klighd.viewer");
 
     /** identifier of the extension point for viewer providers. */
     public static final String EXTP_ID_VIEWER_PROVIDERS = "de.cau.cs.kieler.klighd.viewerProviders";
@@ -70,12 +80,11 @@ public final class LightDiagramServices {
 
     /** the singleton instance. */
     private static LightDiagramServices instance;
-    /** a mapping between viewer provider id's and the instances. */
-    private Map<String, IViewerProvider> idViewerProviderMapping =
-            new LinkedHashMap<String, IViewerProvider>();
-    /** a mapping between transformation id's and the instances. */
-    private Map<String, IModelTransformation<Object, ?>> idModelTransformationMapping =
-            new LinkedHashMap<String, IModelTransformation<Object, ?>>();
+
+    /** the transformations graph used to manage transformations and viewer providers. */
+    private TransformationsGraph transformationsGraph = new TransformationsGraph();
+    /** the transformation engine used to execute transformations. */
+    private ITransformationEngine transformationEngine = new DefaultTransformationEngine();
 
     /**
      * A private constructor to prevent instantiation.
@@ -143,7 +152,7 @@ public final class LightDiagramServices {
                         if (id == null || id.length() == 0) {
                             reportError(EXTP_ID_VIEWER_PROVIDERS, element, ATTRIBUTE_ID, null);
                         } else {
-                            idViewerProviderMapping.put(id, viewerProvider);
+                            transformationsGraph.addViewerProvider(id, viewerProvider);
                         }
                     }
                 }
@@ -167,15 +176,15 @@ public final class LightDiagramServices {
                 if (ELEMENT_TRANSFORMATION.equals(element.getName())) {
                     // initialize model transformation from the extension point
                     @SuppressWarnings("unchecked")
-                    IModelTransformation<Object, ?> modelTransformation =
-                            (IModelTransformation<Object, ?>) element
+                    ITransformation<Object, ?> modelTransformation =
+                            (ITransformation<Object, ?>) element
                                     .createExecutableExtension(ATTRIBUTE_CLASS);
                     if (modelTransformation != null) {
                         String id = element.getAttribute(ATTRIBUTE_ID);
                         if (id == null || id.length() == 0) {
                             reportError(EXTP_ID_MODEL_TRANSFORMATIONS, element, ATTRIBUTE_ID, null);
                         } else {
-                            idModelTransformationMapping.put(id, modelTransformation);
+                            transformationsGraph.addModelTransformation(id, modelTransformation);
                         }
                     }
                 } else if (ELEMENT_XTEND_BASED_TRANSFORMATION.equals(element.getName())) {
@@ -246,7 +255,8 @@ public final class LightDiagramServices {
                     for (IConfigurationElement epackageDecl : element
                             .getChildren(ATTRIBUTE_EPACKAGE)) {
 
-                        String ePackageClassName = epackageDecl.getAttribute(ATTRIBUTE_EPACKAGE_CLASS);
+                        String ePackageClassName =
+                                epackageDecl.getAttribute(ATTRIBUTE_EPACKAGE_CLASS);
                         EPackage ePackageInstance = ePackages.get(ePackageClassName);
 
                         if (ePackageInstance == null) {
@@ -257,7 +267,8 @@ public final class LightDiagramServices {
                                         (EPackage) ePackage.getField("eINSTANCE").get(null);
                                 this.ePackages.put(ePackageClassName, ePackageInstance);
                             } catch (Exception e) {
-                                String msg = "EPackage " + ePackageClassName + " could not be loaded";
+                                String msg =
+                                        "EPackage " + ePackageClassName + " could not be loaded";
                                 StatusManager.getManager().addLoggedStatus(
                                         new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg, e));
                                 continue;
@@ -271,12 +282,12 @@ public final class LightDiagramServices {
                     }
 
                     // hack (abuse of runtime type erasure)
-                    IModelTransformation<?, ?> modelTransformationTmp =
+                    ITransformation<?, ?> modelTransformationTmp =
                             new XtendBasedTransformation(extFileURL, extension, metamodels);
                     @SuppressWarnings("unchecked")
-                    IModelTransformation<Object, ?> modelTransformation =
-                            (IModelTransformation<Object, ?>) modelTransformationTmp;
-                    idModelTransformationMapping.put(id, modelTransformation);
+                    ITransformation<Object, ?> modelTransformation =
+                            (ITransformation<Object, ?>) modelTransformationTmp;
+                    transformationsGraph.addModelTransformation(id, modelTransformation);
 
                 }
             } catch (CoreException exception) {
@@ -285,33 +296,8 @@ public final class LightDiagramServices {
         }
     }
 
-    // TODO implement this using the new infrastructure (also this is really hacky)
-
     /**
-     * Returns a viewer provider which is supporting the given model.
-     * 
-     * @param model
-     *            the model
-     * @return the viewer provider or null if no viewer provider could be found
-     */
-    public IViewerProvider getViewerProviderForModel(final Object model) {
-        for (IViewerProvider viewerProvider : idViewerProviderMapping.values()) {
-            if (viewerProvider.getModelClass().isInstance(model)) {
-                return viewerProvider;
-            }
-        }
-        return null;
-    }
-
-    private static final int MAX_DEPTH = 10;
-    private int currentDepth;
-
-    /**
-     * Tries to find a viewer for the given model.<br>
-     * If no viewer provider is registered which directly supports the model, the registered
-     * transformations are used to transform the model until a supporting viewer provider is
-     * available. The finally transformed model and the viewer provider which supports that model
-     * are retured in a {@code ViewContext} if available.
+     * Creates a view context for the given model if possible.
      * 
      * @param model
      *            the model
@@ -319,49 +305,162 @@ public final class LightDiagramServices {
      *         unsupported by all viewer providers
      */
     public ViewContext createViewContext(final Object model) {
-        currentDepth = 0;
-        List<TransformationContext<?, ?>> transformationContexts =
-                new LinkedList<TransformationContext<?, ?>>();
-        // add the identity transformation
-        TransformationContext<Object, Object> identityContext =
-                TransformationContext.create(new IdentityTransformation());
-        identityContext.setSourceModel(model);
-        identityContext.transform();
-        transformationContexts.add(identityContext);
-        // create the view context recursively
-        return createViewContextRec(model, transformationContexts);
-    }
-
-    private ViewContext createViewContextRec(final Object model,
-            final List<TransformationContext<?, ?>> transformationContexts) {
-        // enforce maximum recursion depth to prevent infinite recursion
-        if (currentDepth++ > MAX_DEPTH) {
+        ViewContext viewContext = new ViewContext();
+        if (transformationsGraph.configureViewContext(transformationEngine, viewContext, model)) {
+            return viewContext;
+        } else {
             return null;
         }
-        IViewerProvider viewerProvider = getViewerProviderForModel(model);
-        // if the model is supported by a viewer provider create a new view context and return it
-        if (viewerProvider != null) {
-            return new ViewContext(viewerProvider, transformationContexts);
+    }
+
+    /**
+     * Creates a view context for the given model if possible. The properties from the given
+     * property holders are copied to the view context.
+     * 
+     * @param model
+     *            the model
+     * @param propertyHolders
+     *            the property holders
+     * @return the view context or null if the model and all possible transformations are
+     *         unsupported by all viewer providers
+     */
+    public ViewContext createViewContext(final Object model,
+            final IPropertyHolder... propertyHolders) {
+        ViewContext viewContext = new ViewContext();
+
+        // copy the properties to the view context
+        for (IPropertyHolder propertyHolder : propertyHolders) {
+            viewContext.copyProperties(propertyHolder);
         }
-        // transform the model and proceed recursively
-        for (IModelTransformation<Object, ?> transformation : idModelTransformationMapping.values()) {
-            if (transformation.getSourceClass().isInstance(model)) {
-                // create the transformation context
-                TransformationContext<Object, ?> transformationContext =
-                        TransformationContext.create(transformation);
-                transformationContext.setSourceModel(model);
-                transformationContext.transform();
-                transformationContexts.add(transformationContext);
-                ViewContext viewContext =
-                        createViewContextRec(transformationContext.getTargetModel(),
-                                transformationContexts);
-                if (viewContext != null) {
-                    return viewContext;
-                }
-                transformationContexts.remove(transformationContexts.size() - 1);
+
+        // get the viewer provider hint
+        String viewerProviderId = viewContext.getProperty(VIEWER_PROVIDER);
+        IViewerProvider viewerProvider =
+                transformationsGraph.getViewerProviderById(viewerProviderId);
+
+        // get the transformations hint
+        List<String> transformationIds = viewContext.getProperty(TRANSFORMATIONS);
+        ITransformation<?, ?>[] transformations = getTransformationsById(transformationIds);
+        if (transformations == null) {
+            return null;
+        }
+
+        // call the fitting configure method on the transformations graph
+        boolean success;
+        if (viewerProvider != null) {
+            if (transformations.length > 0) {
+                // viewer and transformations hint
+                success =
+                        transformationsGraph.configureViewContext(transformationEngine,
+                                viewContext, model, viewerProvider, transformations);
+            } else {
+                // viewer hint
+                success =
+                        transformationsGraph.configureViewContext(transformationEngine,
+                                viewContext, model, viewerProvider);
             }
+        } else if (viewerProviderId == null) {
+            if (transformations.length > 0) {
+                // transformations hint
+                success =
+                        transformationsGraph.configureViewContext(transformationEngine,
+                                viewContext, model, transformations);
+            } else {
+                // no hints
+                success =
+                        transformationsGraph.configureViewContext(transformationEngine,
+                                viewContext, model);
+            }
+        } else {
+            return null;
+        }
+
+        // on success return the view context, otherwise return null
+        if (success) {
+            return viewContext;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Updates the view context with the given model. The properties from the given property holders
+     * are copied to the view context.
+     * 
+     * @param viewContext
+     *            the view context
+     * @param model
+     *            the model
+     * @param propertyHolders
+     *            the property holders
+     * @return true if the view context has been updated successfully; false else
+     */
+    public boolean updateViewContext(final ViewContext viewContext, final Object model,
+            final IPropertyHolder... propertyHolders) {
+        // copy the properties to the view context
+        for (IPropertyHolder propertyHolder : propertyHolders) {
+            viewContext.copyProperties(propertyHolder);
+        }
+
+        // update the view context
+        try {
+            transformationEngine.transform(viewContext, model);
+            // TODO diff and merge
+            IViewer<?> viewer = viewContext.getProperty(VIEWER);
+            if (viewer != null) {
+                @SuppressWarnings("unchecked")
+                IViewer<Object> objViewer = (IViewer<Object>) viewer;
+                objViewer.setModel(viewContext.getTargetModel());
+            }
+            return true;
+        } catch (Exception e) {
+            StatusManager.getManager().addLoggedStatus(
+                    new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID,
+                            "Failed to update view context", e));
+        }
+        return false;
+    }
+
+    /**
+     * Creates a viewer instance with the viewer provider associated with the view context into the
+     * given parent composite and sets the target model of the view context into that viewer.
+     * 
+     * @param viewContext
+     *            the view context
+     * @param parent
+     *            the parent composite
+     * @return the created viewer or null on failure
+     */
+    public IViewer<?> createViewer(final ViewContext viewContext, final Composite parent) {
+        IViewerProvider viewerProvider = viewContext.getViewerProvider();
+        if (viewerProvider != null) {
+            // create a new viewer
+            IViewer<?> viewer = viewerProvider.createViewer(parent);
+            @SuppressWarnings("unchecked")
+            IViewer<Object> objViewer = (IViewer<Object>) viewer;
+            // set the input model
+            objViewer.setModel(viewContext.getTargetModel());
+            // remember the created viewer in a property
+            viewContext.setProperty(VIEWER, viewer);
+            return viewer;
         }
         return null;
+    }
+
+    private ITransformation<?, ?>[] getTransformationsById(final List<String> transformationIds) {
+        LinkedList<ITransformation<?, ?>> transformations = new LinkedList<ITransformation<?, ?>>();
+        if (transformationIds.size() > 0) {
+            for (String transformationId : transformationIds) {
+                ITransformation<?, ?> transformation =
+                        transformationsGraph.getTransformationById(transformationId);
+                if (transformation != null) {
+                    transformations.add(transformation);
+                } else {
+                    return null;
+                }
+            }
+        }
+        return transformations.toArray(new ITransformation<?, ?>[0]);
     }
 
 }

@@ -17,12 +17,11 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
+import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 
 /**
  * A layout effect for KlighD views. It is basically a stripped down version of the original layout
  * effect and works on other workbench parts then the KLighD view as well.
- * 
- * TODO only temporary until the real layout effect has been refactored
  * 
  * @author mri
  */
@@ -42,8 +41,113 @@ public class KlighdLayoutEffect extends AbstractEffect {
     private boolean layoutAncestors = false;
 
     /**
-     * Create a new layout effect for the given diagram editor and diagram part. If {@code null} is
-     * given as top-level object, layout is performed for the whole diagram.
+     * Create a new layout effect for the diagram of the visualization with the given identifier and
+     * diagram part. If {@code null} is given as top-level object, layout is performed for the whole
+     * diagram.
+     * 
+     * @param viewId
+     *            the view identifier for the diagram to layout
+     * @param diagramPart
+     *            the top-level diagram part to layout, or {@code null}
+     */
+    public KlighdLayoutEffect(final String viewId, final Object diagramPart) {
+        this.workbenchPart = DiagramViewManager.getInstance().getView(viewId);
+        this.diagramPart = diagramPart;
+    }
+
+    /**
+     * Create a new layout effect for the given diagram of the visualization with the given
+     * identifier and diagram part. If {@code null} is given as top-level object, layout is
+     * performed for the whole diagram.
+     * 
+     * @param viewId
+     *            the view identifier for the diagram to layout
+     * @param diagramPart
+     *            the top-level diagram part to layout, or {@code null}
+     * @param zoomToFit
+     *            whether zoom to fit shall be performed
+     */
+    public KlighdLayoutEffect(final String viewId, final Object diagramPart, final boolean zoomToFit) {
+        this(DiagramViewManager.getInstance().getView(viewId), diagramPart);
+        this.doZoom = zoomToFit;
+    }
+
+    /**
+     * Create a new layout effect for the given diagram of the visualization with the given
+     * identifier and diagram part. If {@code null} is given as top-level object, layout is
+     * performed for the whole diagram.
+     * 
+     * @param viewId
+     *            the view identifier for the diagram to layout
+     * @param diagramPart
+     *            the top-level diagram part to layout, or {@code null}
+     * @param zoomToFit
+     *            whether zoom to fit shall be performed
+     * @param progressBar
+     *            whether a progress bar shall be displayed
+     */
+    public KlighdLayoutEffect(final String viewId, final Object diagramPart,
+            final boolean zoomToFit, final boolean progressBar) {
+        this(DiagramViewManager.getInstance().getView(viewId), diagramPart);
+        this.doZoom = zoomToFit;
+        this.progressBar = progressBar;
+    }
+
+    /**
+     * Create a new layout effect for the given diagram of the visualization with the given
+     * identifier and diagram part. If {@code null} is given as top-level object, layout is
+     * performed for the whole diagram.
+     * 
+     * @param viewId
+     *            the view identifier for the diagram to layout
+     * @param diagramPart
+     *            the top-level diagram part to layout, or {@code null}
+     * @param zoomToFit
+     *            whether zoom to fit shall be performed
+     * @param progressBar
+     *            whether a progress bar shall be displayed
+     * @param ancestors
+     *            whether to include the ancestors in the layout process
+     */
+    public KlighdLayoutEffect(final String viewId, final Object diagramPart,
+            final boolean zoomToFit, final boolean progressBar, final boolean ancestors) {
+        this(viewId, diagramPart);
+        this.doZoom = zoomToFit;
+        this.progressBar = progressBar;
+        this.layoutAncestors = ancestors;
+    }
+
+    /**
+     * Create a new layout effect for the given diagram of the visualization with the given
+     * identifier and diagram part. If {@code null} is given as top-level object, layout is
+     * performed for the whole diagram.
+     * 
+     * @param viewId
+     *            the view identifier for the diagram to layout
+     * @param diagramPart
+     *            the top-level diagram part to layout, or {@code null}
+     * @param zoomToFit
+     *            whether zoom to fit shall be performed
+     * @param progressBar
+     *            whether a progress bar shall be displayed
+     * @param ancestors
+     *            whether to include the ancestors in the layout process
+     * @param animation
+     *            whether the layout shall be animated
+     */
+    public KlighdLayoutEffect(final String viewId, final Object diagramPart,
+            final boolean zoomToFit, final boolean progressBar, final boolean ancestors,
+            final boolean animation) {
+        this(viewId, diagramPart);
+        this.doZoom = zoomToFit;
+        this.progressBar = progressBar;
+        this.layoutAncestors = ancestors;
+        this.doAnimate = animation;
+    }
+
+    /**
+     * Create a new layout effect for the given diagram and diagram part. If {@code null} is given
+     * as top-level object, layout is performed for the whole diagram.
      * 
      * @param workbenchPart
      *            the workbench part containing the diagram to layout
@@ -56,8 +160,8 @@ public class KlighdLayoutEffect extends AbstractEffect {
     }
 
     /**
-     * Create a new layout effect for the given diagram editor and diagram part. If {@code null} is
-     * given as top-level object, layout is performed for the whole diagram.
+     * Create a new layout effect for the given diagram and diagram part. If {@code null} is given
+     * as top-level object, layout is performed for the whole diagram.
      * 
      * @param workbenchPart
      *            the workbench part containing the diagram to layout
@@ -73,8 +177,8 @@ public class KlighdLayoutEffect extends AbstractEffect {
     }
 
     /**
-     * Create a new layout effect for the given diagram editor and diagram part. If {@code null} is
-     * given as top-level object, layout is performed for the whole diagram.
+     * Create a new layout effect for the given diagram and diagram part. If {@code null} is given
+     * as top-level object, layout is performed for the whole diagram.
      * 
      * @param workbenchPart
      *            the workbench part containing the diagram to layout
@@ -93,8 +197,8 @@ public class KlighdLayoutEffect extends AbstractEffect {
     }
 
     /**
-     * Create a new layout effect for the given diagram editor and diagram part. If {@code null} is
-     * given as top-level object, layout is performed for the whole diagram.
+     * Create a new layout effect for the given diagram and diagram part. If {@code null} is given
+     * as top-level object, layout is performed for the whole diagram.
      * 
      * @param workbenchPart
      *            the workbench part containing the diagram to layout
@@ -116,8 +220,8 @@ public class KlighdLayoutEffect extends AbstractEffect {
     }
 
     /**
-     * Create a new layout effect for the given diagram editor and diagram part. If {@code null} is
-     * given as top-level object, layout is performed for the whole diagram.
+     * Create a new layout effect for the given diagram and diagram part. If {@code null} is given
+     * as top-level object, layout is performed for the whole diagram.
      * 
      * @param workbenchPart
      *            the workbench part containing the diagram to layout
@@ -146,9 +250,16 @@ public class KlighdLayoutEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
-        layoutEngine.layout(workbenchPart, diagramPart, doAnimate, progressBar, layoutAncestors,
-                doZoom, null);
+        if (workbenchPart == null && diagramPart == null) {
+            return;
+        }
+        try {
+            DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
+            layoutEngine.layout(workbenchPart, diagramPart, doAnimate, progressBar,
+                    layoutAncestors, doZoom, null);
+        } catch (UnsupportedOperationException e) {
+            // ignore
+        }
     }
 
 }

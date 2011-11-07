@@ -13,15 +13,15 @@
  */
 package de.cau.cs.kieler.klighd.transformations;
 
-import de.cau.cs.kieler.klighd.IModelTransformation;
+import de.cau.cs.kieler.klighd.ITransformation;
 import de.cau.cs.kieler.klighd.TransformationContext;
 
 /**
- * An implementation of {@code IModelTransformation} which represents the identity.
+ * An implementation of {@code ITransformation} which represents the identity.
  * 
  * @author mri
  */
-public class IdentityTransformation implements IModelTransformation<Object, Object> {
+public class IdentityTransformation implements ITransformation<Object, Object> {
 
     /**
      * {@inheritDoc}

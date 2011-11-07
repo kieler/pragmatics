@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klighd;
 
+import java.util.Collection;
+
 /**
  * The interface for listeners on the events of a viewer.
  * 
@@ -21,11 +23,13 @@ package de.cau.cs.kieler.klighd;
 public interface IViewerEventListener {
 
     /**
-     * Handles the given event.
+     * Handles a selection event.
      * 
-     * @param event
-     *            the viewer event
+     * @param viewer
+     *            the viewer where the event origined from
+     * @param selectedElements
+     *            the currently selected elements
      */
-    void handleEvent(IViewerEvent event);
+    void selected(final IViewer<?> viewer, final Collection<?> selectedElements);
 
 }

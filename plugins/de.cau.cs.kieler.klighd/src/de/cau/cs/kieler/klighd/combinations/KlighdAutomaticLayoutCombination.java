@@ -16,15 +16,11 @@ package de.cau.cs.kieler.klighd.combinations;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
-import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutCombination;
-import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdLayoutEffect;
-import de.cau.cs.kieler.klighd.views.DiagramViewPart;
-import de.cau.cs.kieler.klighd.views.DiagramViewManager;
+import de.cau.cs.kieler.klighd.triggers.KlighdStatusTrigger.KlighdStatusState;
+import de.cau.cs.kieler.klighd.triggers.KlighdStatusTrigger.KlighdStatusState.Status;
 
 /**
  * A combination for applying automatic layout on a KLighD view after a {@code KlighdDiagramEffect}.
@@ -34,31 +30,20 @@ import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 public class KlighdAutomaticLayoutCombination extends AbstractCombination {
 
     /**
-     * Applies automatic layout to a KLighD view after it has been created or updated using the
-     * {@code KlighdDiagramEffect}.
+     * Applies automatic layout to a KLighD view after it has been created or updated.
      * 
      * @param state
-     *            the effect trigger state for the {@code KlighdDiagramEffect}
+     *            the KLighD status state
      */
-    public void execute(final EffectTriggerState<KlighdDiagramEffect> state) {
-        final KlighdDiagramEffect diagramEffect = state.getEffect();
-        if (diagramEffect.getViewer() != null) {
-            // find the view the effect is referencing
-            final Maybe<DiagramViewPart> view = Maybe.create();
-            MonitoredOperation.runInUI(new Runnable() {
-                public void run() {
-                    view.set(DiagramViewManager.getInstance().getView(diagramEffect.getId()));
-                }
-            }, true);
-            // schedule the layout effect if the view could be found
-            if (view.get() != null) {
-                IPreferenceStore preferenceStore = getPreferenceStore();
-                boolean animate = preferenceStore.getBoolean(LayoutCombination.ANIMATE);
-                boolean zoom = preferenceStore.getBoolean(LayoutCombination.ZOOM_TO_FIT);
-                boolean progressBar = preferenceStore.getBoolean(LayoutCombination.PROGRESS_BAR);
-                schedule(new KlighdLayoutEffect(view.get(), diagramEffect.getViewer(), zoom,
-                        progressBar, false, animate));
-            }
+    public void execute(final KlighdStatusState state) {
+        if (state.getStatus() == Status.CREATE_SUCCESS) {
+            // schedule the layout effect
+            IPreferenceStore preferenceStore = getPreferenceStore();
+            boolean animate = preferenceStore.getBoolean(LayoutCombination.ANIMATE);
+            boolean zoom = preferenceStore.getBoolean(LayoutCombination.ZOOM_TO_FIT);
+            boolean progressBar = preferenceStore.getBoolean(LayoutCombination.PROGRESS_BAR);
+            schedule(new KlighdLayoutEffect(state.getViewId(), state.getViewer(), zoom,
+                    progressBar, false, animate));
         }
     }
 

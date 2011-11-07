@@ -25,6 +25,9 @@ import de.cau.cs.kieler.klighd.IViewerProvider;
  */
 public class PiccoloViewerProvider implements IViewerProvider {
 
+    /** the identifier for this viewer provider as specified in the extension point. */
+    public static final String ID = "de.cau.cs.kieler.klighd.piccolo.piccoloViewer";
+    
     /**
      * {@inheritDoc}
      */

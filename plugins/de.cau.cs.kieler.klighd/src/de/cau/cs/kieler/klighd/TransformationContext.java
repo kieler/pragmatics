@@ -38,15 +38,15 @@ public final class TransformationContext<S, T> extends MapPropertyHolder {
      *            the transformation
      * @return the transformation context
      */
-    public static <S, T> TransformationContext<S, T> create(
-            final IModelTransformation<S, T> transformation) {
+    protected static <S, T> TransformationContext<S, T> create(
+            final ITransformation<S, T> transformation) {
         TransformationContext<S, T> transformationContext = new TransformationContext<S, T>();
         transformationContext.transformation = transformation;
         return transformationContext;
     }
 
     /** the transformation in this context. */
-    private IModelTransformation<S, T> transformation;
+    private ITransformation<S, T> transformation;
 
     /** the source model used in this context. */
     private S sourceModel = null;
@@ -62,20 +62,13 @@ public final class TransformationContext<S, T> extends MapPropertyHolder {
     private TransformationContext() {
         // do nothing
     }
-    
-    /**
-     * Performs the transformation.
-     */
-    public void transform() {
-        targetModel = transformation.transform(sourceModel, this);
-    }
 
     /**
      * Returns the transformation for this transformation context.
      * 
      * @return the transformation
      */
-    public IModelTransformation<S, T> getTransformation() {
+    public ITransformation<S, T> getTransformation() {
         return transformation;
     }
 
@@ -94,7 +87,7 @@ public final class TransformationContext<S, T> extends MapPropertyHolder {
      * @param sourceModel
      *            the source model
      */
-    public void setSourceModel(final S sourceModel) {
+    protected void setSourceModel(final S sourceModel) {
         this.sourceModel = sourceModel;
     }
 
@@ -105,6 +98,16 @@ public final class TransformationContext<S, T> extends MapPropertyHolder {
      */
     public T getTargetModel() {
         return targetModel;
+    }
+
+    /**
+     * Sets the target model of this transformation context.
+     * 
+     * @param targetModel
+     *            the target model
+     */
+    protected void setTargetModel(final T targetModel) {
+        this.targetModel = targetModel;
     }
 
     /**
@@ -148,7 +151,7 @@ public final class TransformationContext<S, T> extends MapPropertyHolder {
      * @param viewContext
      *            the view context
      */
-    void setViewContext(final ViewContext viewContext) {
+    protected void setViewContext(final ViewContext viewContext) {
         this.viewContext = viewContext;
     }
 

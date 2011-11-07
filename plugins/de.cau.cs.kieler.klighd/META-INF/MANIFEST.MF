@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: KIELER Light Diagrams
+Bundle-Name: KIELER Light-weight Diagrams
 Bundle-SymbolicName: de.cau.cs.kieler.klighd;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
@@ -24,7 +24,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.cau.cs.kieler.klighd.KlighdPlugin
 Export-Package: de.cau.cs.kieler.klighd,
  de.cau.cs.kieler.klighd.effects,
- de.cau.cs.kieler.klighd.events,
  de.cau.cs.kieler.klighd.transformations,
  de.cau.cs.kieler.klighd.triggers,
  de.cau.cs.kieler.klighd.util,
