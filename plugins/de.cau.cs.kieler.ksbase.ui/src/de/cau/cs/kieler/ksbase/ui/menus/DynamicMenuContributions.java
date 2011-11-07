@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
@@ -52,6 +51,7 @@ import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 import de.cau.cs.kieler.ksbase.ui.kivi.KSBasECombination;
+import de.cau.cs.kieler.ksbase.ui.kivi.UpdateVisibilityCombination;
 
 /**
  * Creates menus for all registered editor transformation settings and
@@ -187,6 +187,7 @@ public final class DynamicMenuContributions {
         
         @Override
         public EvaluationResult evaluate(final IEvaluationContext context) throws CoreException {
+            
             List<EObject> selection = getCurrentSelection(context);
             if (selection != null) {
                 List<Object> selectionMapping = null;
@@ -218,6 +219,8 @@ public final class DynamicMenuContributions {
      */
     public void createMenuForEditor(final EditorTransformationSettings editorSettings) {
         Assert.isNotNull(editorSettings);
+        UpdateVisibilityCombination com = new UpdateVisibilityCombination();
+        com.setActive(true);
         HashMap<String, HashMap<List<Object>, Boolean>> validationCache = new HashMap<String, HashMap<List<Object>, Boolean>>();
         for (KSBasEMenuContribution contrib : editorSettings.getMenuContributions()) {
             for (String command : contrib.getCommands()) {
