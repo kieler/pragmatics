@@ -66,13 +66,19 @@ public final class DynamicMenuContributions {
     /** DynamicMenuContribution instance. **/
     public static final DynamicMenuContributions INSTANCE = new DynamicMenuContributions();
 
+    /**
+     * A list of balloon popup contributions.
+     */
     private List<IBalloonContribution> balloonContributions = new LinkedList<IBalloonContribution>();
-    
+
+    /**
+     * Getter method for elements that should show up in balloon popups.
+     * @return the list of balloon popup contributions.
+     */
     public List<IBalloonContribution> getBalloonContributions() {
         return this.balloonContributions;
     }
-    
-    
+
     /**
      * Default constructor.
      */
@@ -90,22 +96,49 @@ public final class DynamicMenuContributions {
      */
     private class KsbaseVisibilityExpression extends Expression {
 
+        /**
+         * The transformation this expression belongs to.
+         */
         private KSBasETransformation transformation;
 
+        /**
+         * The editor settings the transformation belongs to
+         */
         private EditorTransformationSettings editorSettings;
 
+        /**
+         * The transactional editing domain used to execute the validation.
+         */
         private TransactionalEditingDomain transDomain = null;
-        
-        private HashMap<String, HashMap<List<Object>, Boolean>> validationCache = null; 
 
+        /**
+         * A cache of already evaluated validations for better performance.
+         * All KsbaseVisibilityExpression share an instance of this.
+         */
+        private HashMap<String, HashMap<List<Object>, Boolean>> validationCache = null;
+
+        /**
+         * Constructs a new expression evaluating the visibility of an transformation by matching the
+         * current selection and evaluation a validation method.
+         * @param transformation the transformation this expression belongs to.
+         * @param editorSettings the editor settings the transformation belongs to
+         * @param validationCache a cache of evaluated evaluations for better performance.
+         */
         public KsbaseVisibilityExpression(final KSBasETransformation transformation,
-                final EditorTransformationSettings editorSettings, 
+                final EditorTransformationSettings editorSettings,
                 final HashMap<String, HashMap<List<Object>, Boolean>> validationCache) {
             this.transformation = transformation;
             this.editorSettings = editorSettings;
             this.validationCache = validationCache;
         }
 
+        /**
+         * This method will evaluate the validation method belonging to the transformation of this
+         * expression.
+         * @param selectionMapping a mapping of the current selection. Hopefully fits the 
+         *      parameters of the validation method.
+         * @return true if validation evaluated positive false if negative or an error occured.
+         */
         private boolean evaluateValidation(final List<Object> selectionMapping) {
             final String val = transformation.getValidation();
             HashMap<List<Object>, Boolean> cache = validationCache.get(val);
@@ -113,11 +146,11 @@ public final class DynamicMenuContributions {
                 Boolean cachedResult = cache.get(selectionMapping);
                 if (cachedResult != null) {
                     return cachedResult;
-                }                
+                }
             } else {
                 validationCache.put(val, new HashMap<List<Object>, Boolean>());
             }
-            
+
             if ((val != null) && (!val.isEmpty()) && (transDomain != null)) {
                 TransformationDescriptor descriptor = new TransformationDescriptor(
                         transformation.getValidation(), selectionMapping.toArray());
@@ -138,6 +171,11 @@ public final class DynamicMenuContributions {
             return true;
         }
 
+        /**
+         * This method tries to get the current selection.
+         * @param context the evaluation context in which this expression was executed.
+         * @return A list of the EObjects currently selected in the editor.
+         */
         private List<EObject> getCurrentSelection(final IEvaluationContext context) {
             Object defaultVar = context.getDefaultVariable();
             if (defaultVar instanceof List) {
@@ -184,10 +222,9 @@ public final class DynamicMenuContributions {
             return null;
         }
 
-        
         @Override
         public EvaluationResult evaluate(final IEvaluationContext context) throws CoreException {
-            
+
             List<EObject> selection = getCurrentSelection(context);
             if (selection != null) {
                 List<Object> selectionMapping = null;
@@ -221,7 +258,8 @@ public final class DynamicMenuContributions {
         Assert.isNotNull(editorSettings);
         UpdateVisibilityCombination com = new UpdateVisibilityCombination();
         com.setActive(true);
-        HashMap<String, HashMap<List<Object>, Boolean>> validationCache = new HashMap<String, HashMap<List<Object>, Boolean>>();
+        HashMap<String, HashMap<List<Object>, Boolean>> validationCache = 
+                new HashMap<String, HashMap<List<Object>, Boolean>>();
         for (KSBasEMenuContribution contrib : editorSettings.getMenuContributions()) {
             for (String command : contrib.getCommands()) {
                 if (!command.endsWith("_SEPARATOR")) {
@@ -270,12 +308,12 @@ public final class DynamicMenuContributions {
                         HashMap<String, String> params = new HashMap<String, String>();
                         params.put("editorId", editorSettings.getEditorId());
                         params.put("transformationId", transformation.getTransformationId());
-                        
+
                         contribution.init(params);
                         this.balloonContributions.add(contribution);
                     }
                 } else {
-                    if (!(contrib.getCommands().indexOf(command) == 0)) {
+                    if (/*!(contrib.getCommands().indexOf(command) == 0)*/true) {
 
                         String separatedCommand = contrib.getCommands().get(
                                 contrib.getCommands().indexOf(command) + 1);
@@ -287,19 +325,22 @@ public final class DynamicMenuContributions {
                                     + ".menu" + ".separator",
                                     KiviMenuContributionService.LocationScheme.MENU,
                                     new KsbaseVisibilityExpression(separatedTransformation,
-                                            editorSettings, validationCache), editorSettings.getEditorId());
+                                            editorSettings, validationCache), editorSettings
+                                            .getEditorId());
                         } else if (contrib.getData().startsWith("toolbar:")) {
                             KiviMenuContributionService.INSTANCE.addSeparator(separatedCommand
                                     + ".toolbar" + ".separator",
                                     KiviMenuContributionService.LocationScheme.TOOLBAR,
                                     new KsbaseVisibilityExpression(separatedTransformation,
-                                            editorSettings, validationCache), editorSettings.getEditorId());
+                                            editorSettings, validationCache), editorSettings
+                                            .getEditorId());
                         } else if (contrib.getData().startsWith("popup:")) {
                             KiviMenuContributionService.INSTANCE.addSeparator(separatedCommand
                                     + ".popup" + ".separator",
                                     KiviMenuContributionService.LocationScheme.POPUP,
                                     new KsbaseVisibilityExpression(separatedTransformation,
-                                            editorSettings, validationCache), editorSettings.getEditorId());
+                                            editorSettings, validationCache), editorSettings
+                                            .getEditorId());
                         }
                     }
                 }
