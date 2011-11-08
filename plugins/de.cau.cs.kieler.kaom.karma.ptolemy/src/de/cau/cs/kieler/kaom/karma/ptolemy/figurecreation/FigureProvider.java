@@ -116,7 +116,8 @@ public class FigureProvider {
         PolygonShape figure = new PolygonShape();
         figure.setPoints(pointList);
         figure.setBackgroundColor(ColorConstants.black);
-        return figure;      
+        return figure;
+        //return this.getDefaultFigure();
     }
     
     /**

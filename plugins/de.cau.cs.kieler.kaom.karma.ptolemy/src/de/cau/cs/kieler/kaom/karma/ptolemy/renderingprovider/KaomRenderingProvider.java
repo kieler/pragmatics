@@ -167,7 +167,10 @@ public class KaomRenderingProvider implements IRenderingProvider {
                 return null;
             }
         } else if (input.equals("inputPort")) {
-            return figureProvider.createInputPort();         
+            IFigure f = figureProvider.createInputPort();
+            f.setMinimumSize(new Dimension(30,30));
+            f.setPreferredSize(new Dimension(30,30));
+            return f;         
         } else if (input.equals("outputPort")) {
             return figureProvider.createOutputPort();
         } else {

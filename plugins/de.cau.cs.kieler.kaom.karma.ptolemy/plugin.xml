@@ -82,7 +82,8 @@
                </customCondition>
             </compoundCondition>
             <compoundCondition
-                  figureParam="inputPort">
+                  figureParam="inputPort"
+                  figureSize="19,19">
                <customCondition
                      condition="de.cau.cs.kieler.karma.AnnotationCondition"
                      figureParam="inputPort"
@@ -96,7 +97,8 @@
                </customCondition>
             </compoundCondition>
             <compoundCondition
-                  figureParam="outputPort">
+                  figureParam="outputPort"
+                  figureSize="19,19">
                <customCondition
                      condition="de.cau.cs.kieler.karma.AnnotationCondition"
                      figureParam="outputPort"
