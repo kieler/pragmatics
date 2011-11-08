@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+    <extension
+        point="de.cau.cs.kieler.kiml.layoutProviders">
+        
+        <layoutAlgorithm
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.kiml.portlayouter.PortLayoutProvider"
+            description="Changes port sides to work around some limitations when creating random graphs."
+            id="de.cau.cs.kiml.portlayouter"
+            name="Port Layouter">
+            
+            <knownOption
+                option="de.cau.cs.kieler.kiml.portlayouter.invertedPortSideProbability">
+            </knownOption>
+            <knownOption
+                option="de.cau.cs.kieler.kiml.portlayouter.northSouthPortSideProbability">
+            </knownOption>
+            <knownOption
+                option="de.cau.cs.kieler.randomSeed">
+            </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.debugMode">
+         </knownOption>
+        </layoutAlgorithm>
+        
+        <layoutOption
+            id="de.cau.cs.kieler.kiml.portlayouter.invertedPortSideProbability"
+            name="Inverted Port Side Probability"
+            description="Probability of ports being inverted. (input port on the right side, etc.)"
+            appliesTo="parents"
+            type="float"
+            default="0.05">
+        </layoutOption>
+        <layoutOption
+            id="de.cau.cs.kieler.kiml.portlayouter.northSouthPortSideProbability"
+            name="North/South Port Side Probability"
+            description="Probability of ports being placed on the northern or southern side."
+            appliesTo="parents"
+            type="float"
+            default="0.1">
+        </layoutOption>
+    </extension>
+</plugin>
