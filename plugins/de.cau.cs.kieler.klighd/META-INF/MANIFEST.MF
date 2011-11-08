@@ -19,7 +19,8 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="3.6.0",
  de.cau.cs.kieler.core.ui;bundle-version="0.5.0",
  de.cau.cs.kieler.kiml;bundle-version="0.9.0",
  de.cau.cs.kieler.kiml.ui;bundle-version="0.5.0",
- com.google.guava;bundle-version="9.0.0"
+ com.google.guava;bundle-version="9.0.0",
+ com.google.inject;bundle-version="2.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.cau.cs.kieler.klighd.KlighdPlugin
 Export-Package: de.cau.cs.kieler.klighd,
