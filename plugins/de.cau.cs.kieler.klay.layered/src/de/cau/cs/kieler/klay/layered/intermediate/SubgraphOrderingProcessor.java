@@ -20,8 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.emf.common.util.EList;
-
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KPort;
@@ -67,6 +65,10 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
     // Store the node orderings for compound nodes.
     private HashMap<LNode, LinkedList<LNode>> orderedLists;
 
+    // Keep a childrenlist for every compound node relevant for this layer. This is done to
+    // preserve the ordering of compound nodes as far as possible.
+    private HashMap<Layer, HashMap<LNode, LinkedList<LNode>>> compoundChildrenLists;
+
     /**
      * {@inheritDoc}
      */
@@ -81,12 +83,14 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         // node. Represent it as a HashMap of layered Graphs. The compound nodes serve as keys.
         HashMap<LNode, LayeredGraph> subgraphOrderingGraph = new HashMap<LNode, LayeredGraph>();
 
-        // Document the insertion of nodes for reference.
+        // Document the insertion of nodes into the subgraphOrderingGraph.
         HashMap<LNode, LNode> insertedNodes = new HashMap<LNode, LNode>();
 
         // Get the layeredGraph's element map.
         HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
                 .getProperty(Properties.ELEMENT_MAP);
+
+        compoundChildrenLists = new HashMap<Layer, HashMap<LNode, LinkedList<LNode>>>();
 
         // Make up an LNode that is to represent the layeredGraph as a key in the
         // subgraphOrderingGraph
@@ -98,10 +102,14 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         // ordering graph parts.
         for (Layer layer : layeredGraph.getLayers()) {
 
+            // Initialize the compoundChildrenLists-HashMap for this layer
+            HashMap<LNode, LinkedList<LNode>> layerCompoundChildrenLists 
+                    = new HashMap<LNode, LinkedList<LNode>>();
+
             // Keep a list of associated Nodes for every compound node relevant for this layer for
             // later order application.
             HashMap<LNode, LinkedList<LNode>> layerCompoundContents 
-                = new HashMap<LNode, LinkedList<LNode>>();
+                    = new HashMap<LNode, LinkedList<LNode>>();
 
             List<LNode> layerNodes = layer.getNodes();
             boolean reordered = false;
@@ -114,6 +122,9 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                 // relatedCompoundCurrent.
                 insertRelatedCompound(layerCompoundContents, currentNode, relatedCompoundCurrent,
                         graphKey);
+                // fill in the insertions in layerCompoundContents up the inclusion tree
+                recursiveInsert(layerCompoundChildrenLists, currentNode, relatedCompoundCurrent,
+                        graphKey);
 
                 LNode nextNode = layerNodes.get(i + 1);
                 // Store the currentNode in layerCompoundContents under the key of
@@ -121,6 +132,8 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                 LNode relatedCompoundNext = getRelatedCompoundNode(nextNode, layeredGraph);
                 insertRelatedCompound(layerCompoundContents, nextNode, relatedCompoundNext,
                         graphKey);
+                // fill in the insertions in the layerCompoundContents up the inclusion tree
+                recursiveInsert(layerCompoundChildrenLists, nextNode, relatedCompoundNext, graphKey);
 
                 // The subgraphOrderingGraph has to be updated, if nodes that are neighbors in a
                 // layer are of different compound nodes and no leave nodes of highest level.
@@ -175,6 +188,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             }
             if (reordered) {
                 reorderedLayers.put(layer, layerCompoundContents);
+                compoundChildrenLists.put(layer, layerCompoundChildrenLists);
             }
         }
         // Break the cycles in the subgraphOrderingGraph. Any cycle-breaking heuristic can be used
@@ -198,10 +212,10 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             cycleBreaker.process(graphComponent);
             // Extract a topological sorting from the graph component and store it.
             if (graphComponent.getProperty(Properties.CYCLIC)) {
-                noProblems = false;
-            }
+            noProblems = false;
             LinkedList<LNode> topologicalSorting = graphToList(graphComponent);
             orderedLists.put(key, topologicalSorting);
+            }
         }
 
         // New ordering is only necessary, if there are intertwined subgraphs.
@@ -210,6 +224,53 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         }
 
         getMonitor().done();
+    }
+
+    /**
+     * Makes insertions in the layerCompoundContents not only for nodes under the key of their
+     * parent, but also for the parent under the key of its parent and so on - recursively up the
+     * inclusion tree.
+     * 
+     * @param layerCompoundContents
+     *            The map, in which each compound node relevant to the layer is stored together with
+     *            a list of its children.
+     * @param currentChild
+     *            The currentNode to be stored.
+     * @param currentParent
+     *            The currentKey for which the node is to be stored.
+     * @param graphKey
+     *            The LNode-key representing the layeredGraph.
+     */
+    private void recursiveInsert(final HashMap<LNode, LinkedList<LNode>> layerCompoundContents,
+            final LNode currentChild, final LGraphElement currentParent, final LNode graphKey) {
+        LinkedList<LNode> currentAncestorNodesList;
+        // root of inclusion tree reached
+        if (currentParent instanceof LayeredGraph) {
+            currentAncestorNodesList = layerCompoundContents.get(graphKey);
+            if (currentAncestorNodesList == null) {
+                currentAncestorNodesList = new LinkedList<LNode>();
+                layerCompoundContents.put(graphKey, currentAncestorNodesList);
+            }
+            // register nodes when they first turn up
+            if (!currentAncestorNodesList.contains(currentChild)) {
+                currentAncestorNodesList.add(currentChild);
+            }
+        } else {
+            // root of inclusion tree not reached
+            if (currentParent instanceof LNode) {
+                LNode nodeKey = (LNode) currentParent;
+                currentAncestorNodesList = layerCompoundContents.get(nodeKey);
+                if (currentAncestorNodesList == null) {
+                    currentAncestorNodesList = new LinkedList<LNode>();
+                    layerCompoundContents.put(nodeKey, currentAncestorNodesList);
+                }
+                if (!currentAncestorNodesList.contains(currentChild)) {
+                    currentAncestorNodesList.add(currentChild);
+                }
+                recursiveInsert(layerCompoundContents, nodeKey,
+                        nodeKey.getProperty(Properties.PARENT), graphKey);
+            }
+        }
     }
 
     /**
@@ -317,15 +378,18 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         // There may be no component for the key in the subgraphOrderingGraph. A child compound node
         // of this node has to be handled nevertheless.
         if (componentOrder == null) {
-            KNode kKey = (KNode) key.getProperty(Properties.ORIGIN);
-
-            EList<KNode> childrenList = kKey.getChildren();
-            for (KNode child : childrenList) {
-                LNode childRep = (LNode) elemMap.get(child);
-                if (reorderedLayers.get(layer).containsKey(childRep)) {
-                    assert (childRep != key);
-                    recursiveApplyLayerOrder(layer, childRep, layeredGraph, subgraphOrderingGraph,
-                            layerOrder, elemMap);
+            LinkedList<LNode> childrenList = compoundChildrenLists.get(layer).get(key);
+            // childrenlist may be null, if the node is either a leave node or a compound node
+            // without relevance for this layer (not spanning this layer)
+            if ((childrenList != null)) {
+                for (LNode child : childrenList) {
+                    // leave out the self-referencing entries
+                    if (child != key) {
+                        if (reorderedLayers.get(layer).containsKey(child)) {
+                            recursiveApplyLayerOrder(layer, child, layeredGraph,
+                                    subgraphOrderingGraph, layerOrder, elemMap);
+                        }
+                    }
                 }
             }
         } else {
@@ -344,7 +408,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         LinkedList<LNode> assignedNodes = reorderedLayers.get(layer).get(key);
         if (assignedNodes != null) {
             for (LNode assignedNode : assignedNodes) {
-                // assert (!layerOrder.contains(assignedNode));
+                assert (!layerOrder.contains(assignedNode));
                 layerOrder.add(assignedNode);
             }
         }
@@ -473,7 +537,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
      *         LGraphElement is of depth 1. D. null in default case.
      */
     public static LNode getRelatedCompoundNode(final LNode node, final LayeredGraph layeredGraph) {
-        // method is to return the node itself in the default case
+        // method is to return null in the default case
         LNode retNode = null;
         HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
                 .getProperty(Properties.ELEMENT_MAP);
@@ -494,56 +558,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             }
             break;
         case LONG_EDGE:
-            // LPort sourcePort = node.getProperty(Properties.LONG_EDGE_SOURCE);
-            // LPort targetPort = node.getProperty(Properties.LONG_EDGE_TARGET);
-            // LNode sourceNode = sourcePort.getNode();
-            // LNode targetNode = targetPort.getNode();
-            // LNode relatedCompoundSource = getRelatedCompoundNode(sourceNode, layeredGraph);
-            // LNode relatedCompoundTarget = getRelatedCompoundNode(targetNode, layeredGraph);
-            // if (relatedCompoundSource == relatedCompoundTarget) {
-            // retNode = relatedCompoundSource;
-            // } else {
-            // LinkedList<LNode> sourceTargetList = new LinkedList<LNode>();
-            // sourceTargetList.add(relatedCompoundSource);
-            // sourceTargetList.add(relatedCompoundTarget);
-            // propagatePair(sourceTargetList, elemMap);
-            // LNode newSource = sourceTargetList.getFirst();
-            // KNode newSourceParent = newSource.getProperty(Properties.PARENT);
-            // LGraphElement container = elemMap.get(newSourceParent);
-            // if (!(container instanceof LayeredGraph)) {
-            // retNode = (LNode) container;
-            // }
-            //
-            // // int depthSource = relatedCompoundSource.getProperty(Properties.DEPTH);
-            // // int depthTarget = relatedCompoundTarget.getProperty(Properties.DEPTH);
-            // // if (depthSource != depthTarget) {
-            // // for (int i = depthSource; i > depthTarget; i--) {
-            // // relatedCompoundSource = getRelatedCompoundNode(relatedCompoundSource,
-            // // layeredGraph);
-            // // }
-            // // for (int j = depthTarget; j > depthSource; j--) {
-            // // relatedCompoundTarget = getRelatedCompoundNode(relatedCompoundTarget,
-            // // layeredGraph);
-            // // }
-            // // }
-            // // depthSource = relatedCompoundSource.getProperty(Properties.DEPTH);
-            // // depthTarget = relatedCompoundTarget.getProperty(Properties.DEPTH);
-            // // assert (depthSource == depthTarget);
-            // //
-            // // while (relatedCompoundSource != relatedCompoundTarget) {
-            // // relatedCompoundSource = getRelatedCompoundNode(relatedCompoundSource,
-            // // layeredGraph);
-            // // relatedCompoundTarget = getRelatedCompoundNode(relatedCompoundTarget,
-            // // layeredGraph);
-            // // }
-            // // retNode = relatedCompoundSource;
-            // }
-
-            // // An edge is regarded contained by the compound node of it's target.
-            // LPort targetPort = node.getProperty(Properties.LONG_EDGE_TARGET);
-            // LNode targetNode = targetPort.getNode();
-            // retNode = getRelatedCompoundNode(targetNode, layeredGraph);
-
+            // In case of a to-descendant or from-descendant edge:
             // An edge is regarded contained by the compound node which contains both source and
             // target (directly or indirectly). If this is the layeredGraph, return null.
             LPort sourcePort = node.getProperty(Properties.LONG_EDGE_SOURCE);
@@ -564,11 +579,15 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                 if (!(container instanceof LayeredGraph)) {
                     retNode = (LNode) container;
                 }
+                // In other cases, determine, if the edge is hierarchy-crossing.
             } else {
                 LNode sourceNodeCompound = getRelatedCompoundNode(sourceNode, layeredGraph);
                 LNode targetNodeCompound = getRelatedCompoundNode(targetNode, layeredGraph);
+                // if it is not hierarchy-crossing, return the compound node that is parent of both
+                // source and target
                 if (sourceNodeCompound == targetNodeCompound) {
                     retNode = sourceNodeCompound;
+                // if the edge is hierarchy-crossing, choose the compound node of the target
                 } else {
                     retNode = targetNodeCompound;
                 }
