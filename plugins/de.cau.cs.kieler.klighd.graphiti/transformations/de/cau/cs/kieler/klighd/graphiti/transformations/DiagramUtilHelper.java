@@ -22,12 +22,12 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
  * 
  * @author chsch
  */
-public final class DiagramUtil {
+public final class DiagramUtilHelper {
 
     /**
      * This class is not intended to be instantiated.
      */
-    private DiagramUtil() {
+    private DiagramUtilHelper() {
     }
 
     

@@ -494,12 +494,12 @@ IntAnnotation getAndAddIntProperty(Shape shape, String name):
 
 
 int calculatetextWidth(String text, Font font): 
-  JAVA de.cau.cs.kieler.klighd.graphiti.transformations.DiagramUtil.calculatetextWidth(java.lang.String, org.eclipse.graphiti.mm.algorithms.styles.Font)
+  JAVA de.cau.cs.kieler.klighd.graphiti.transformations.DiagramUtilHelper.calculatetextWidth(java.lang.String, org.eclipse.graphiti.mm.algorithms.styles.Font)
 ;
 
 
 int calculatetextHeight(String text, Font font):
-  JAVA de.cau.cs.kieler.klighd.graphiti.transformations.DiagramUtil.calculatetextHeight(java.lang.String, org.eclipse.graphiti.mm.algorithms.styles.Font)
+  JAVA de.cau.cs.kieler.klighd.graphiti.transformations.DiagramUtilHelper.calculatetextHeight(java.lang.String, org.eclipse.graphiti.mm.algorithms.styles.Font)
 ;
 
 
@@ -512,7 +512,7 @@ cached showUniqueInfo(String string):
 
 
 Void debug(List l):
-  JAVA de.cau.cs.kieler.klighd.graphiti.transformations.DiagramUtil.debug(java.util.List)
+  JAVA de.cau.cs.kieler.klighd.graphiti.transformations.DiagramUtilHelper.debug(java.util.List)
 ;
 
 //chsch: deactivated since given in io.ext
