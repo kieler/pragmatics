@@ -40,6 +40,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IResizableCompartmentEditPar
 import org.eclipse.gmf.runtime.diagram.ui.editparts.TopGraphicEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.ResizableCompartmentEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
+import org.eclipse.gmf.runtime.diagram.ui.figures.ShapeCompartmentFigure;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.gmf.runtime.notation.RoutingStyle;
 import org.eclipse.gmf.runtime.notation.Smoothness;
@@ -55,6 +56,7 @@ import de.cau.cs.kieler.kaom.custom.EntityLayout;
 import de.cau.cs.kieler.kaom.karma.ptolemy.Activator;
 import de.cau.cs.kieler.kaom.karma.ptolemy.figurecreation.FigureProvider;
 import de.cau.cs.kieler.kaom.karma.ptolemy.figurecreation.PtolemyFetcher;
+import de.cau.cs.kieler.karma.AdvancedRenderingBorderedShapeEditPart;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 
 /**
@@ -86,6 +88,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
      */
     public IFigure getFigureByString(final String input, final IFigure oldFigure,
             final EObject object, final EditPart part) {
+
         /*
         if (part instanceof TopGraphicEditPart) {
             TopGraphicEditPart ep = (TopGraphicEditPart) part;
@@ -101,20 +104,27 @@ public class KaomRenderingProvider implements IRenderingProvider {
         }
         */
         if (input.equals("_IconDescription")) {
+            this.hideCompartment(part, true);
             return createPtolemyFigure(PtolemyFetcher.getPtolemyInstance(object));
         } else if (input.equals("MonitorValue")) {
+            this.hideCompartment(part, true);
             return figureProvider.createMonitorValue(object);
         } else if (input.equals("compound")) {
+            //this.unhideCompartment(part);
             return figureProvider.getDefaultFigure();
         } else if (input.equals("compoundCollapsed")) {
+            //this.hideCompartment(part, false);
             IFigure figure = createPtolemyFigure(PtolemyFetcher.getPtolemyInstance(object));
             return figure;
         } else if (input.startsWith("valueDisplay")) {
+            this.hideCompartment(part, true);
             String[] parts = input.split("//");
             return figureProvider.createValueFigure(object, parts[1], part);
         } else if (input.equals("Director")) {
+            this.hideCompartment(part, true);
             return figureProvider.createDirector();
         } else if (input.equals("accumulator")) {
+            this.hideCompartment(part, true);
             return figureProvider.createAccumulator();
         } else if (input.equals("connection")) {
             if (oldFigure instanceof SplineConnection) {
@@ -178,6 +188,41 @@ public class KaomRenderingProvider implements IRenderingProvider {
         }
     }
 
+    private void unhideCompartment(EditPart part) {
+        if (part instanceof AdvancedRenderingBorderedShapeEditPart) {
+            AdvancedRenderingBorderedShapeEditPart arbsep = (AdvancedRenderingBorderedShapeEditPart) part;
+            List<EditPart> resizeableCompartments = arbsep.getResizableCompartments();
+            for (EditPart compartment : resizeableCompartments) {
+                if (compartment instanceof IResizableCompartmentEditPart) {
+                    IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+                    resizeComp.getFigure().setVisible(true);
+                }
+            }
+            
+            arbsep.setCollapseExpandSize(new Dimension(8,8));
+            
+        }
+    }
+    
+    private void hideCompartment(EditPart part, boolean hideExpandCollapse) {
+        if (part instanceof AdvancedRenderingBorderedShapeEditPart) {
+            AdvancedRenderingBorderedShapeEditPart arbsep = (AdvancedRenderingBorderedShapeEditPart) part;
+            List<EditPart> resizeableCompartments = arbsep.getResizableCompartments();
+            for (EditPart compartment : resizeableCompartments) {
+                if (compartment instanceof IResizableCompartmentEditPart) {
+                    IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+                    resizeComp.getFigure().setVisible(false);
+                }
+            }
+            if (hideExpandCollapse) {
+                arbsep.setCollapseExpandSize(new Dimension(0,0));
+            } else {
+                arbsep.setCollapseExpandSize(new Dimension(8,8));
+            }
+        }
+        
+    }
+    
     // minimum size for compound entites. Important if they are collapsed
     private static final int DEFAULT_SIZE_X = 63;
     private static final int DEFAULT_SIZE_Y = 43;
