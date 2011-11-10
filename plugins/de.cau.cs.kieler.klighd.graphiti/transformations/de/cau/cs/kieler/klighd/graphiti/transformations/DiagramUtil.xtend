@@ -24,6 +24,7 @@ import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation
 import de.cau.cs.kieler.core.annotations.IntAnnotation
 import de.cau.cs.kieler.core.annotations.AnnotationsFactory
+import org.eclipse.graphiti.mm.pictograms.FixPointAnchor
 
 class DiagramUtil {
 	
@@ -81,15 +82,19 @@ class DiagramUtil {
 
     /**
      * Create and add a visible anchor intended to serve
-     *  as port to 'shape' at position (x,y).
+     *  as port to 'shape'. // at position (x,y).
      *  To color end an active and visible FixPointAnchor is created.  
      */
-    def Anchor createPortAnchor(Shape shape, int x, int y) {
-        val anchor = PictogramsFactory::eINSTANCE.createFixPointAnchor;
-        anchor.setActive(true);
-        anchor.setVisible(true);
-        anchor.setLocation(createPoint(x,y));
+    def FixPointAnchor create anchor: PictogramsFactory::eINSTANCE.createFixPointAnchor getPortAnchor(EObject o) {
         anchor.setLink(PictogramsFactory::eINSTANCE.createPictogramLink);
+        anchor.link.businessObjects.add(o);
+    }
+
+    def Anchor createPortAnchor(Shape shape, EObject o,int x, int y) {
+    	val anchor = o.getPortAnchor();
+        anchor.setActive(true);
+        anchor.setVisible(true);        
+        anchor.setLocation(createPoint(x,y));
         anchor.setReferencedGraphicsAlgorithm(shape.graphicsAlgorithm);
         shape.anchors.add(anchor);
         return anchor
@@ -100,24 +105,24 @@ class DiagramUtil {
      * Creates a anchor and a related port figure as well as a port label
      *  onto the west side of a given shape with the port label text 'label'.
      */
-    def Anchor createLabeledEastPortAnchor(Shape shape, String label) {
+    def Anchor createLabeledEastPortAnchor(Shape shape, EObject o, String label) {
     	val x = shape.graphicsAlgorithm.width+1
     	val y = shape.getAndAddIntProperty("eastports") * 15 + 25;
-    	val anchor = shape.createPortAnchor(x,y);
+    	val anchor = shape.createPortAnchor(o, x,y);
     	val rect = anchor.createRectangle(0,0,7,7, "black_black".style);
     	val text = rect.createText(-10, -2, label, Orientation::ALIGNMENT_RIGHT, "default".font);
     	return anchor
     }
-    
+
 
     /**
      * Creates a anchor and a related port figure as well as a port label
      *  onto the west side of a given shape with the port label text 'label'.
      */
-    def Anchor createLabeledWestPortAnchor(Shape shape, String label) {
+    def Anchor createLabeledWestPortAnchor(Shape shape, EObject o, String label) {
     	val x = -6
     	val y = shape.getAndAddIntProperty("westports") * 15 + 25;
-    	val anchor = shape.createPortAnchor(x,y);
+    	val anchor = shape.createPortAnchor(o,x,y);
     	val rect = anchor.createRectangle(0,0,7,7, "black_black".style);
     	rect.createText(10, -2, label, Orientation::ALIGNMENT_LEFT, "default".font);
     	return anchor
@@ -173,11 +178,21 @@ class DiagramUtil {
         connection.setGraphicsAlgorithm(polyline);
         connection.setLink(PictogramsFactory::eINSTANCE.createPictogramLink);  
         getDiagram().connections.add(connection);
-        return connection;
+        return connection
     }
 
     def Connection createConnection() {
         createConnection(1);
+    }
+    
+    def Connection from(Connection connection, Anchor start) {
+    	connection.setStart(start);
+    	return connection
+    }
+
+    def Connection to(Connection connection, Anchor end) {
+    	connection.setEnd(end);
+    	return connection
     }
 
 
@@ -198,7 +213,7 @@ class DiagramUtil {
         decorator.setLocationRelative(true);
         decorator.setGraphicsAlgorithm(figure);
         connection.connectionDecorators.add(decorator);
-        return connection;
+        return connection
     } 
 
     def Connection addArrowHead(Connection connection) {
@@ -212,7 +227,7 @@ class DiagramUtil {
         val point = StylesFactory::eINSTANCE.createPoint;
         point.setX(x);
         point.setY(y);
-        return point;
+        return point
     }
 
 
@@ -282,6 +297,12 @@ class DiagramUtil {
     
     def Rectangle createRectangle(PictogramElement element, int x, int y, int width, int height, Style style) {
     	val rect = createRectangle(x,y,width,height, style);
+    	element.setGraphicsAlgorithm(rect);
+    	return rect;
+    }
+    
+    def Rectangle createRectangle(PictogramElement element, int width, int height, Style style) {
+    	val rect = createRectangle(0,0,width,height, style);
     	element.setGraphicsAlgorithm(rect);
     	return rect;
     }
@@ -366,31 +387,43 @@ class DiagramUtil {
         style.setId("black_white");
         style.setForeground(getColor("black"));
         style.setBackground(getColor("white"));
+        style.setLineWidth(1);
+       }
+       case "black_white_2" : {
+        style.setId("black_white");
+        style.setForeground(getColor("black"));
+        style.setBackground(getColor("white"));
+        style.setLineWidth(2);
+       }
+       case "black_white_4" : {
+        style.setId("black_white");
+        style.setForeground(getColor("black"));
+        style.setBackground(getColor("white"));
         style.setLineWidth(4);
        }
        case "black_black" : {
         style.setId("black_black");
         style.setForeground(getColor("black"));
         style.setBackground(getColor("black"));
-        style.setLineWidth(4);
+        style.setLineWidth(1);
        }
-       case "black_gray" : {
+       case "black_gray_4" : {
         style.setId("black_gray");
         style.setForeground(getColor("black"));
         style.setBackground(getColor("gray"));
         style.setLineWidth(4);
        }
-       case "black_darkGray" : {
+       case "black_darkGray_4" : {
         style.setId("black_darkGray");
         style.setForeground(getColor("black"));
         style.setBackground(getColor("darkGray"));
         style.setLineWidth(4);
        }
-       case "red" : {
-        style.setId("red");
+       case "red_white" : {
+        style.setId("red_white");
         style.setForeground(getColor("red"));
         style.setBackground(getColor("white"));
-        style.setLineWidth(4);
+        style.setLineWidth(1);
        }
       }
       getDiagram().styles.add(style);
