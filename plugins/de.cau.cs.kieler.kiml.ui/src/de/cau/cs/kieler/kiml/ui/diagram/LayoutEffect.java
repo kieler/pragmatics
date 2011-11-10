@@ -13,11 +13,12 @@
  */
 package de.cau.cs.kieler.kiml.ui.diagram;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.RootEditPart;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
@@ -276,36 +277,32 @@ public class LayoutEffect extends AbstractEffect {
     private EditPart commonAncestor(final EditPart a, final EditPart b) {
         if (a == b) {
             return a;
-        } else if (a == null || b == null) {
-            return null;
         }
         EditPart aParent = a;
         EditPart bParent = b;
-        List<EditPart> aAncestors = new ArrayList<EditPart>();
-        List<EditPart> bAncestors = new ArrayList<EditPart>();
-        aAncestors.add(a);
-        bAncestors.add(b);
+        Set<EditPart> aAncestors = new HashSet<EditPart>();
+        Set<EditPart> bAncestors = new HashSet<EditPart>();
+        EditPart result = null;
         do {
             if (aParent != null) {
+                aAncestors.add(aParent);
+                if (bAncestors.contains(aParent)) {
+                    result = aParent;
+                }
                 aParent = aParent.getParent();
             }
             if (bParent != null) {
+                bAncestors.add(bParent);
+                if (aAncestors.contains(bParent)) {
+                    result = bParent;
+                }
                 bParent = bParent.getParent();
             }
-            if (aParent != null) {
-                aAncestors.add(aParent);
-            }
-            if (bParent != null) {
-                bAncestors.add(bParent);
-            }
-            if (aAncestors.contains(bParent)) {
-                return bParent;
-            }
-            if (bAncestors.contains(aParent)) {
-                return aParent;
-            }
-        } while (!(aParent == null && bParent == null));
-        return null;
+        } while (result == null && !(aParent == null && bParent == null));
+        if (result instanceof RootEditPart) {
+            return ((RootEditPart) result).getContents();
+        }
+        return result;
     }
 
 }
