@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.spi.RegistryContributor;
 import org.osgi.framework.Bundle;
 
 import com.google.common.base.Strings;
-import com.google.inject.Guice;
 
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.klighd.KlighdPlugin;
@@ -49,7 +48,7 @@ public class GuiceBasedTransformationFactory implements IExecutableExtension,
     public void setInitializationData(final IConfigurationElement config,
             final String propertyName, final Object data) throws CoreException {
         // implementation inspired by org.eclipse.core.internal.registry.ConfigurationElement
-        if (data instanceof String) {
+        if (propertyName.equals("class") && data instanceof String) {
             String string = (String) data;
             int index = string.indexOf('/');
             if (index == -1) {
@@ -70,6 +69,7 @@ public class GuiceBasedTransformationFactory implements IExecutableExtension,
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Object create() throws CoreException {
         try {
             Class<?> clazz = null;
@@ -81,9 +81,13 @@ public class GuiceBasedTransformationFactory implements IExecutableExtension,
                 clazz = Platform.getBundle(contributingBundleName).loadClass(
                         transformationClassName);
             }
-            return Guice.createInjector().getInstance(clazz);
+            
+            return new ReinitializingTransformationProxy(clazz);
         } catch (ClassNotFoundException e) {
-            throw new WrappedException(e, "Did you miss to provide the related bundle id?");
+            throw new WrappedException(e,
+                    "KLighD: Registered transformation class could not be loaded properly via the"
+                    + "GuiceBasedTransformationFactory. Did you miss to provide the related bundle"
+                    + "id in the extension (plugin.xml)?");
         }
     }
 }

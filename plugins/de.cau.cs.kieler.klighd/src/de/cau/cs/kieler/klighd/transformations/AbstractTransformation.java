@@ -128,7 +128,15 @@ public abstract class AbstractTransformation<S, T> implements ITransformation<S,
         }
         return sourceModelClass;
     }
-
+    
+    /**
+     * Setter for the sourceModelClass property.
+     * @param theSourceClass the class of the source models.
+     */
+    protected void setSourceClass(final Class<?> theSourceClass) {
+        this.sourceModelClass = theSourceClass;
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -137,6 +145,21 @@ public abstract class AbstractTransformation<S, T> implements ITransformation<S,
             inferSourceAndTargetModelClass();
         }
         return targetModelClass;
+    }  
+    
+    /**
+     * Setter for the sourceModelClass property.
+     * @param theTargetClass the class of the source models.
+     */
+    protected void setTargetClass(final Class<?> theTargetClass) {
+        this.targetModelClass = theTargetClass;
+    }   
+    
+    /**
+     * Setter for the triedToInferClasses flag.
+     */
+    protected void setTriedToInferClass() {
+        this.triedToInferClasses = true;
     }
     
     /**
@@ -149,7 +172,7 @@ public abstract class AbstractTransformation<S, T> implements ITransformation<S,
     /**
      * Tries to infer the class of the source and target model by analyzing the transform method.
      */
-    private void inferSourceAndTargetModelClass() {
+    protected void inferSourceAndTargetModelClass() {
         triedToInferClasses = true;
         // try to find a method with one parameter which returns non-void
         // takes the first matching method if the parameter is not Object
