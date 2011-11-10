@@ -20,101 +20,33 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
 
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
+
 /**
  * Describes a parameter of a combination.
  * 
+ * @param <T> the type of parameter
  * @author mmu
- * 
+ * @author msp
  */
-public class CombinationParameter {
+public class CombinationParameter<T> implements IProperty<T> {
 
-    /**
-     * Default parameter type for strings.
-     */
-    public static final IParameterType STRING_TYPE = new IParameterType() {
-        public void initialize(final IPreferenceStore p, final String k, final Object o) {
-            p.setDefault(k, (String) o);
-        }
-        
-        public Class<?> getType() {
-            return String.class;
-        }
-    };
-    
-    /**
-     * Default parameter type for integers.
-     */
-    public static final IParameterType INTEGER_TYPE = new IParameterType() {
-        public void initialize(final IPreferenceStore p, final String k, final Object o) {
-            p.setDefault(k, (Integer) o);
-        }
-        
-        public Class<?> getType() {
-            return Integer.class;
-        }
-    };
-    
-    /**
-     * Default parameter type for floats.
-     */
-    public static final IParameterType FLOAT_TYPE = new IParameterType() {
-        public void initialize(final IPreferenceStore p, final String k, final Object o) {
-            p.setDefault(k, (Float) o);
-        }
-        
-        public Class<?> getType() {
-            return Float.class;
-        }
-    };
-    
-    /**
-     * Default parameter type for doubles.
-     */
-    public static final IParameterType DOUBLE_TYPE = new IParameterType() {
-        public void initialize(final IPreferenceStore p, final String k, final Object o) {
-            p.setDefault(k, (Double) o);
-        }
-        
-        public Class<?> getType() {
-            return Double.class;
-        }
-    };
-    
-    /**
-     * Default parameter type for booleans.
-     */
-    public static final IParameterType BOOLEAN_TYPE = new IParameterType() {
-        public void initialize(final IPreferenceStore p, final String k, final Object o) {
-            p.setDefault(k, (Boolean) o);
-        }
-        
-        public Class<?> getType() {
-            return Boolean.class;
-        }
-    };
-    
-    /**
-     * Default parameter type for RGB color values.
-     */
-    public static final IParameterType RGB_TYPE = new IParameterType() {
-        public void initialize(final IPreferenceStore p, final String k, final Object o) {
-            PreferenceConverter.setDefault(p, k, (RGB) o);
-        }
-        
-        public Class<?> getType() {
-            return RGB.class;
-        }
-    };
-    
+    /** the parameter key. */
     private String key;
+    /** the preference store where values are set. */
     private IPreferenceStore preferenceStore;
+    /** a user-friendly name. */
     private String name;
+    /** a user-friendly description. */
     private String description;
-    private Object defaultValue;
-    private IParameterType type;
+    /** the default value. */
+    private T defaultValue;
+    /** the type of parameter. */
+    private Class<T> type;
 
     /**
-     * Create a new combination parameter.
+     * Create a new combination parameter with default value.
      * 
      * @param k
      *            the preference key
@@ -126,17 +58,39 @@ public class CombinationParameter {
      *            the readable description
      * @param def
      *            the default value
-     * @param t
-     *            The parameter type
      */
+    @SuppressWarnings("unchecked")
     public CombinationParameter(final String k, final IPreferenceStore store, final String n,
-            final String d, final Object def, final IParameterType t) {
+            final String d, final T def) {
         key = k;
         preferenceStore = store;
         name = n;
         description = d;
         defaultValue = def;
-        type = t;
+        type = (Class<T>) def.getClass();
+    }
+
+    /**
+     * Create a new combination parameter without a default value.
+     * 
+     * @param k
+     *            the preference key
+     * @param store
+     *            the preference store
+     * @param n
+     *            the readable name
+     * @param d
+     *            the readable description
+     * @param clazz
+     *            The parameter class
+     */
+    public CombinationParameter(final String k, final IPreferenceStore store, final String n,
+            final String d, final Class<T> clazz) {
+        key = k;
+        preferenceStore = store;
+        name = n;
+        description = d;
+        type = clazz;
     }
 
     /**
@@ -144,7 +98,7 @@ public class CombinationParameter {
      * 
      * @return the key
      */
-    public String getKey() {
+    public String getId() {
         return key;
     }
 
@@ -180,8 +134,8 @@ public class CombinationParameter {
      * 
      * @return the type
      */
-    public Class<?> getType() {
-        return type.getType();
+    public Class<T> getType() {
+        return type;
     }
 
     /**
@@ -189,15 +143,43 @@ public class CombinationParameter {
      * 
      * @return the default value
      */
-    public Object getDefaultValue() {
+    public T getDefault() {
         return defaultValue;
     }
 
     /**
-     * 
+     * Initialize the default value of the combination parameter.
      */
     public void initialize() {
-        type.initialize(preferenceStore, key, defaultValue);
+        if (type == String.class) {
+            preferenceStore.setDefault(key, (String) defaultValue);
+        } else if (type == Integer.class) {
+            preferenceStore.setDefault(key, (Integer) defaultValue);
+        } else if (type == Float.class) {
+            preferenceStore.setDefault(key, (Float) defaultValue);
+        } else if (type == Double.class) {
+            preferenceStore.setDefault(key, (Double) defaultValue);
+        } else if (type == Boolean.class) {
+            preferenceStore.setDefault(key, (Boolean) defaultValue);
+        } else if (type == RGB.class) {
+            PreferenceConverter.setDefault(preferenceStore, key, (RGB) defaultValue);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public Comparable<T> getLowerBound() {
+        return (Comparable<T>) Property.NEGATIVE_INFINITY;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public Comparable<T> getUpperBound() {
+        return (Comparable<T>) Property.POSITIVE_INFINITY;
     }
 
     /**
@@ -207,7 +189,8 @@ public class CombinationParameter {
      *            the combination class to look in
      * @return its combination parameters, or an empty array if there are none
      */
-    public static CombinationParameter[] getParameters(final Class<? extends ICombination> combination) {
+    public static CombinationParameter<?>[] getParameters(
+            final Class<? extends ICombination> combination) {
         try {
             Method method = combination.getMethod("getParameters");
             Object result = method.invoke(null);
@@ -227,32 +210,5 @@ public class CombinationParameter {
         }
         return new CombinationParameter[0];
     }
-
-    /**
-     * Honor type-specific issues.
-     * 
-     * @author mmu
-     * 
-     */
-    public static interface IParameterType {
-
-        /**
-         * Initialize the preference store for the key with the default value.
-         * 
-         * @param p
-         *            the preference store
-         * @param k
-         *            the key
-         * @param o
-         *            the default value
-         */
-        void initialize(IPreferenceStore p, String k, Object o);
-        
-        /**
-         * Get the class for this type.
-         * 
-         * @return the type class
-         */
-        Class<?> getType();
-    }
+    
 }

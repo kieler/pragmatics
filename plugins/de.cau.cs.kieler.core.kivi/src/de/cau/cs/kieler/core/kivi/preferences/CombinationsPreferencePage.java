@@ -113,7 +113,7 @@ public class CombinationsPreferencePage extends PreferencePage implements IWorkb
 
         List<CombinationDescriptor> combinations = KiVi.getInstance().getAvailableCombinations();
         for (CombinationDescriptor descriptor : combinations) {
-            CombinationParameter[] parameters = CombinationParameter.getParameters(descriptor
+            CombinationParameter<?>[] parameters = CombinationParameter.getParameters(descriptor
                     .getClazz());
             if (parameters.length > 0) {
                 Group group = new Group(main, SWT.NONE);
@@ -122,7 +122,7 @@ public class CombinationsPreferencePage extends PreferencePage implements IWorkb
                 group.setFont(font);
                 group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
                 
-                for (CombinationParameter parameter : parameters) {
+                for (CombinationParameter<?> parameter : parameters) {
                     FieldEditor editor = createFieldEditor(parameter, group);
                     if (editor != null) {
                         parameterEditors.add(editor);
@@ -177,24 +177,24 @@ public class CombinationsPreferencePage extends PreferencePage implements IWorkb
      * @param parent the control to place the editor in.
      * @return the generated field editor.
      */
-    private FieldEditor createFieldEditor(final CombinationParameter parameter,
+    private FieldEditor createFieldEditor(final CombinationParameter<?> parameter,
             final Composite parent) {
         
         FieldEditor editor = null;
         if (parameter.getType().equals(String.class)) {
-            editor = new StringFieldEditor(parameter.getKey(), parameter.getName(), parent);
+            editor = new StringFieldEditor(parameter.getId(), parameter.getName(), parent);
         } else if (parameter.getType().equals(Integer.class)) {
-            editor = new IntegerFieldEditor(parameter.getKey(), parameter.getName(), parent);
+            editor = new IntegerFieldEditor(parameter.getId(), parameter.getName(), parent);
         } else if (parameter.getType().equals(Float.class)) {
-            editor = new FloatFieldEditor(parameter.getKey(), parameter.getName(), parent);
+            editor = new FloatFieldEditor(parameter.getId(), parameter.getName(), parent);
         } else if (parameter.getType().equals(Double.class)) {
-            editor = new DoubleFieldEditor(parameter.getKey(), parameter.getName(), parent);
+            editor = new DoubleFieldEditor(parameter.getId(), parameter.getName(), parent);
         } else if (parameter.getType().equals(Boolean.class)) {
-            editor = new BooleanFieldEditor(parameter.getKey(), parameter.getName(), parent);
+            editor = new BooleanFieldEditor(parameter.getId(), parameter.getName(), parent);
         } else if (parameter.getType().equals(RGB.class)) {
-            editor = new ColorFieldEditor(parameter.getKey(), parameter.getName(), parent);
+            editor = new ColorFieldEditor(parameter.getId(), parameter.getName(), parent);
         } else {
-            editor = new StringFieldEditor(parameter.getKey(), parameter.getName()
+            editor = new StringFieldEditor(parameter.getId(), parameter.getName()
                     + " (unknown type!)", parent);
         }
 

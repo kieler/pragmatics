@@ -38,16 +38,14 @@ public class LayoutCombination extends AbstractCombination {
     public static final String PROGRESS_BAR = "de.cau.cs.kieler.kiml.progressBar";
     
     /** parameter array for this combination. */
-    private static final CombinationParameter[] PARAMETERS = new CombinationParameter[] {
-            new CombinationParameter(ANIMATE, getPreferenceStore(), "Animate",
-                    "Animates the automatic layout of a graph.", true,
-                    CombinationParameter.BOOLEAN_TYPE),
-            new CombinationParameter(ZOOM_TO_FIT, getPreferenceStore(), "Zoom to Fit",
-                    "Perform zoom to fit with automatic layout.", false,
-                    CombinationParameter.BOOLEAN_TYPE),
-            new CombinationParameter(PROGRESS_BAR, getPreferenceStore(), "Progress Bar",
-                    "Display a progress bar while performing automatic layout.", false,
-                    CombinationParameter.BOOLEAN_TYPE) };
+    private static final CombinationParameter<?>[] PARAMETERS = new CombinationParameter[] {
+            new CombinationParameter<Boolean>(ANIMATE, getPreferenceStore(), "Animate",
+                    "Animates the automatic layout of a graph.", true),
+            new CombinationParameter<Boolean>(ZOOM_TO_FIT, getPreferenceStore(), "Zoom to Fit",
+                    "Perform zoom to fit with automatic layout.", false),
+            new CombinationParameter<Boolean>(PROGRESS_BAR, getPreferenceStore(), "Progress Bar",
+                    "Display a progress bar while performing automatic layout.", false)
+    };
 
     /** the id of the layout command. */
     private static final String COMMAND_ID = "de.cau.cs.kieler.kiml.ui.command.layout";
@@ -72,7 +70,7 @@ public class LayoutCombination extends AbstractCombination {
      * 
      * @return array of parameters
      */
-    public static CombinationParameter[] getParameters() {
+    public static CombinationParameter<?>[] getParameters() {
         return PARAMETERS;
     }
 

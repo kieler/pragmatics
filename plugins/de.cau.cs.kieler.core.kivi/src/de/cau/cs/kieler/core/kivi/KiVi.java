@@ -388,9 +388,9 @@ public class KiVi {
                     combination.setActive(true);
                     descriptor.setActive(true);
                 }
-                CombinationParameter[] parameters = CombinationParameter.getParameters(combination
+                CombinationParameter<?>[] parameters = CombinationParameter.getParameters(combination
                         .getClass());
-                for (CombinationParameter parameter : parameters) {
+                for (CombinationParameter<?> parameter : parameters) {
                     parameter.initialize();
                 }
             } catch (InvalidRegistryObjectException e) {
