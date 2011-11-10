@@ -73,8 +73,7 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
         Entity entity = (Entity) context.getNewObject();
         link(entityShape, entity);
 
-        // invisible rectangle created so that ports can be placed on the
-        // boundary
+        // invisible rectangle created so that ports can be placed on the boundary
         IGaService gaService = Graphiti.getGaService();
         Rectangle portContainer = gaService.createInvisibleRectangle(entityShape);
         int width = context.getWidth() <= 2 ? 2 : context.getWidth();

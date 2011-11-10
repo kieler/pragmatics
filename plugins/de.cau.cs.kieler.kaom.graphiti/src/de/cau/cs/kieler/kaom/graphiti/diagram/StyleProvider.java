@@ -105,6 +105,8 @@ public class StyleProvider implements IStyleProvider {
 
     /** the lightness value for entity background. */
     private static final int ENTITY_VALUE = 245;
+    /** the default font size. */
+    private static final int FONT_SIZE = 10;
 
     /**
      * Create the style with given identifier.
@@ -124,6 +126,7 @@ public class StyleProvider implements IStyleProvider {
                     ColorConstant.BLACK));
             style.setBackground(gaService.manageColor(diagram,
                     ColorConstant.WHITE));
+            style.setFont(Graphiti.getGaService().manageFont(diagram, "Sans", FONT_SIZE));
         } else if (SOLID_STYLE.equals(id)) {
             Style defaultStyle = getStyle(DEFAULT_STYLE);
             style = gaService.createStyle(defaultStyle, id);

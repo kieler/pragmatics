@@ -74,10 +74,8 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     /**
      * Creates a Graphiti layout command.
      * 
-     * @param domain
-     *            the transactional editing domain
-     * @param thefeatureProvider
-     *            the feature provider
+     * @param domain the transactional editing domain
+     * @param thefeatureProvider the feature provider
      */
     public GraphitiLayoutCommand(
             final TransactionalEditingDomain domain,
@@ -89,10 +87,8 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     /**
      * Adds the given element to this command.
      * 
-     * @param graphElement
-     *            an element of the layout graph
-     * @param pictogramElement
-     *            the corresponding pictogram element
+     * @param graphElement an element of the layout graph
+     * @param pictogramElement the corresponding pictogram element
      */
     public void add(final KGraphElement graphElement,
             final PictogramElement pictogramElement) {
@@ -128,33 +124,41 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     /**
      * Apply layout for a port.
      * 
-     * @param kport
-     *            a port
-     * @param pelem
-     *            the corresponding pictogram element
+     * @param kport a port
+     * @param pelem the corresponding pictogram element
      */
     private void applyPortLayout(final KPort kport, final PictogramElement pelem) {
         KShapeLayout shapeLayout = kport.getData(KShapeLayout.class);
-        double offsetx = 0;
-        double offsety = 0;
-
+        applyPortLayout(shapeLayout.getXpos(), shapeLayout.getYpos(), pelem, kport.getNode());
+    }
+    
+    /**
+     * Apply layout for a port.
+     * 
+     * @param xpos x position of the port
+     * @param ypos y position of the port
+     * @param pelem the pictogram element
+     * @param knode the node to which the port is connected
+     */
+    private void applyPortLayout(final double xpos, final double ypos,
+            final PictogramElement pelem, final KNode knode) {
+        int offsetx = 0, offsety = 0;
         if (pelem.getGraphicsAlgorithm() != null) {
-            offsetx += pelem.getGraphicsAlgorithm().getX();
-            offsety += pelem.getGraphicsAlgorithm().getY();
+            offsetx = pelem.getGraphicsAlgorithm().getX();
+            offsety = pelem.getGraphicsAlgorithm().getY();
         }
-        
         if (pelem instanceof BoxRelativeAnchor) {
             BoxRelativeAnchor anchor = (BoxRelativeAnchor) pelem;
             
-            KShapeLayout nodeLayout = kport.getNode().getData(KShapeLayout.class);
-            double relWidth = (shapeLayout.getXpos() - offsetx) / nodeLayout.getWidth();
+            KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
+            double relWidth = (xpos - offsetx) / nodeLayout.getWidth();
             if (relWidth < 0) {
                 relWidth = 0;
             }
             if (relWidth > 1) {
                 relWidth = 1;
             }
-            double relHeight = (shapeLayout.getYpos() - offsety) / nodeLayout.getHeight();
+            double relHeight = (ypos - offsety) / nodeLayout.getHeight();
             if (relHeight < 0) {
                 relHeight = 0;
             }
@@ -169,18 +173,16 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         } else if (pelem instanceof FixPointAnchor) {
             FixPointAnchor anchor = (FixPointAnchor) pelem;
 
-            anchor.getLocation().setX((int) (shapeLayout.getXpos() - offsetx));
-            anchor.getLocation().setY((int) (shapeLayout.getYpos() - offsety));
+            anchor.getLocation().setX((int) (xpos - offsetx));
+            anchor.getLocation().setY((int) (ypos - offsety));
         }
     }
 
     /**
      * Apply layout for a node.
      * 
-     * @param knode
-     *            a node
-     * @param pelem
-     *            the corresponding pictogram element
+     * @param knode a node
+     * @param pelem the corresponding pictogram element
      */
     private void applyNodeLayout(final KNode knode, final PictogramElement pelem) {
         KShapeLayout shapeLayout = knode.getData(KShapeLayout.class);
@@ -214,10 +216,8 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     /**
      * Apply layout for an edge.
      * 
-     * @param kedge
-     *            an edge
-     * @param pelem
-     *            the corresponding pictogram element
+     * @param kedge an edge
+     * @param pelem the corresponding pictogram element
      */
     private void applyEdgeLayout(final KEdge kedge, final PictogramElement pelem) {
         // create bend points for the edge
@@ -241,6 +241,36 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             }
             while (pointList.size() > bendPoints.size()) {
                 pointList.remove(pointList.size() - 1);
+            }
+            
+            // set source anchor position, if not already set via a port
+            if (kedge.getSourcePort() == null) {
+                KNode source = kedge.getSource();
+                KPoint sourcePoint = kedge.getData(KEdgeLayout.class).getSourcePoint();
+                float xpos = sourcePoint.getX(), ypos = sourcePoint.getY();
+                if (KimlUtil.isDescendant(kedge.getTarget(), source)) {
+                    KInsets insets = source.getData(KShapeLayout.class).getInsets();
+                    xpos += insets.getLeft();
+                    ypos += insets.getTop();
+                } else {
+                    KShapeLayout sourceLayout = source.getData(KShapeLayout.class);
+                    xpos -= sourceLayout.getXpos();
+                    ypos -= sourceLayout.getYpos();
+                }
+                applyPortLayout(xpos, ypos, connection.getStart(), source);
+            }
+            
+            // set target anchor position, if not already set via a port
+            if (kedge.getTargetPort() == null) {
+                KNode target = kedge.getTarget();
+                KVector targetPoint = kedge.getData(KEdgeLayout.class).getTargetPoint().createVector();
+                KNode referenceNode = kedge.getSource();
+                if (!KimlUtil.isDescendant(target, referenceNode)) {
+                    referenceNode = referenceNode.getParent();
+                }
+                KimlUtil.toAbsolute(targetPoint, referenceNode);
+                KimlUtil.toRelative(targetPoint, target);
+                applyPortLayout(targetPoint.x, targetPoint.y, connection.getEnd(), target);
             }
         }
     }
@@ -280,62 +310,18 @@ public class GraphitiLayoutCommand extends RecordingCommand {
                 bendPoints = KielerMath.appoximateSpline(bendPoints);
             }
             
-            // remove source and target point if ports are present, else move them a little
-            if (edge.getSourcePort() == null) {
-                moveBendpointOutofNode(edge.getSource(), bendPoints.getFirst());
-            } else {
-                bendPoints.removeFirst();
-            }
-            if (edge.getTargetPort() == null) {
-                moveBendpointOutofNode(edge.getTarget(), bendPoints.getLast());
-            } else {
-                bendPoints.removeLast();
-            }
+            bendPoints.removeFirst();
+            bendPoints.removeLast();
             bendpointsMap.put(edgeLayout, bendPoints);
         }
         return bendPoints;
     }
 
-    /** how much to move bend points out of the source or target node. */
-    private static final float ENDPOINT_MOVE = 3.0f;
-
-    /**
-     * Move the given bend point out of the node in order to approximate a
-     * source or target point for chopbox anchors.
-     * 
-     * @param node
-     *            the node that contains the anchor
-     * @param point
-     *            the bend point to move
-     */
-    private void moveBendpointOutofNode(final KNode node, final KVector point) {
-        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        float widthPercent = ((float) point.x - nodeLayout.getXpos()) / nodeLayout.getWidth();
-        float heightPercent = ((float) point.y - nodeLayout.getYpos()) / nodeLayout.getHeight();
-        if (widthPercent + heightPercent <= 1
-                && widthPercent - heightPercent <= 0) {
-            // bend point is put to the left
-            point.x -= ENDPOINT_MOVE;
-        } else if (widthPercent + heightPercent >= 1
-                && widthPercent - heightPercent >= 0) {
-            // bend point is put to the right
-            point.x += ENDPOINT_MOVE;
-        } else if (heightPercent < 1.0f / 2) {
-            // bend point is put to the top
-            point.y -= ENDPOINT_MOVE;
-        } else {
-            // bend point is put to the bottom
-            point.y += ENDPOINT_MOVE;
-        }
-    }
-
     /**
      * Apply layout for an edge label.
      * 
-     * @param klabel
-     *            an edge label
-     * @param pelem
-     *            the corresponding pictogram element
+     * @param klabel an edge label
+     * @param pelem the corresponding pictogram element
      */
     private void applyEdgeLabelLayout(final KLabel klabel,
             final PictogramElement pelem) {
@@ -373,10 +359,8 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     /**
      * Returns an end point for an anchor.
      * 
-     * @param node
-     *            the node that owns the anchor
-     * @param port
-     *            the port that represents the anchor
+     * @param node the node that owns the anchor
+     * @param port the port that represents the anchor
      */
     private KVector calculateAnchorEnds(final KNode node, final KPort port) {
         KVector pos = new KVector();

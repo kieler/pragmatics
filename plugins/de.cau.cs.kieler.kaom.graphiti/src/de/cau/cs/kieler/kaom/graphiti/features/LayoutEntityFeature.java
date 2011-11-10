@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kaom.graphiti.features;
 
 import java.util.List;
 
+import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.impl.LayoutContext;
@@ -25,6 +26,8 @@ import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.graphiti.services.Graphiti;
+import org.eclipse.graphiti.ui.services.GraphitiUi;
 
 import de.cau.cs.kieler.core.model.graphiti.GraphitiUtil;
 import de.cau.cs.kieler.kaom.Entity;
@@ -37,10 +40,10 @@ import de.cau.cs.kieler.kaom.Entity;
  */
 public class LayoutEntityFeature extends AbstractLayoutFeature {
 
-    /** the fixed height of the entity name. */
-    public static final int TEXT_HEIGHT = 10;
     /** the fixed distance of the entity name. */
     public static final int TEXT_DIST = 2;
+    /** fixed text height. */
+    public static final int TEXT_HEIGHT = 10;
     /** minimal width for entities. */
     public static final int MIN_WIDTH = 25;
     /** minimal width for the port container shapes. */
@@ -88,27 +91,33 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
             containerGa.setWidth(MIN_CONTAINER_WIDTH);
             changed = true;
         }
+        
+        int entityWidth = containerGa.getWidth() - AddPortFeature.PORT_SIZE;
+        int entityHeight = containerGa.getHeight() - AddPortFeature.PORT_SIZE
+                - TEXT_DIST - TEXT_HEIGHT;
+        
+        // adjust label of the entity
+        for (Shape shape : containerShape.getChildren()) {
+            GraphicsAlgorithm ga = shape.getGraphicsAlgorithm();
+            if (ga instanceof AbstractText) {
+                AbstractText text = (AbstractText) ga;
+                IDimension labelDim = GraphitiUi.getUiLayoutService().calculateTextSize(
+                        text.getValue(), Graphiti.getGaService().getFont(text, true));
+                if (labelDim != null) {
+                    changed |= GraphitiUtil.setBounds(ga, (entityWidth - labelDim.getWidth()) / 2,
+                            AddPortFeature.PORT_SIZE + entityHeight + TEXT_DIST,
+                            labelDim.getWidth(), labelDim.getHeight());
+                }
+            }
+        }
 
         // container width initially of the invisible rectangle
         // now adjusted to the width of the normal inner rectangle
-        int entityWidth = containerGa.getWidth() - AddPortFeature.PORT_SIZE;
-        int entityHeight = containerGa.getHeight()
-                - (AddPortFeature.PORT_SIZE + TEXT_DIST + TEXT_HEIGHT);
         for (GraphicsAlgorithm child : containerGa
                 .getGraphicsAlgorithmChildren()) {
             changed |= GraphitiUtil.setBounds(child,
                     AddPortFeature.PORT_SIZE / 2, AddPortFeature.PORT_SIZE / 2,
                     entityWidth, entityHeight);
-        }
-
-        // position of each child shape of the entity adjusted
-        for (Shape shape : containerShape.getChildren()) {
-            GraphicsAlgorithm ga = shape.getGraphicsAlgorithm();
-            if (ga instanceof AbstractText) {
-                changed |= GraphitiUtil.setBounds(ga, 0,
-                        AddPortFeature.PORT_SIZE + entityHeight + TEXT_DIST,
-                        containerGa.getWidth(), TEXT_HEIGHT);
-            }
         }
 
         // layout ports to be in a valid position

@@ -255,10 +255,12 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
 
         for (Anchor anchor : shape.getAnchors()) {
             // box-relative anchors and fixed-position anchors are interpreted as ports
-            if (anchor instanceof BoxRelativeAnchor) {
-                createPort(mapping, childNode, (BoxRelativeAnchor) anchor);
-            } else if (anchor instanceof FixPointAnchor) {
-                createPort(mapping, childNode, (FixPointAnchor) anchor);
+            if (anchor.getGraphicsAlgorithm() != null) {
+                if (anchor instanceof BoxRelativeAnchor) {
+                    createPort(mapping, childNode, (BoxRelativeAnchor) anchor);
+                } else if (anchor instanceof FixPointAnchor) {
+                    createPort(mapping, childNode, (FixPointAnchor) anchor);
+                }
             }
             // gather all connections in the diagram
             mapping.getProperty(CONNECTIONS).addAll(anchor.getOutgoingConnections());

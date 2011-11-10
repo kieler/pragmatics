@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kaom.graphiti.features;
 
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.graphiti.features.context.impl.LayoutContext;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
@@ -48,9 +49,15 @@ public class KaomPropertySection extends GFPropertySection implements ITabbedPro
       */
     private class KaomFocusListener implements FocusListener {
 
+        /**
+         * {@inheritDoc}
+         */
         public void focusGained(final FocusEvent e) {
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void focusLost(final FocusEvent e) {
             PictogramElement pe = getSelectedPictogramElement();
             if (pe instanceof ConnectionDecorator) {
@@ -60,15 +67,18 @@ public class KaomPropertySection extends GFPropertySection implements ITabbedPro
                 final Object bo = Graphiti.getLinkService()
                         .getBusinessObjectForLinkedPictogramElement(pe);
                 if (bo instanceof NamedObject) {
-                    DiagramEditor diagramEditor = (DiagramEditor) getDiagramEditor();
+                    final DiagramEditor diagramEditor = (DiagramEditor) getDiagramEditor();
                     TransactionalEditingDomain editingDomain = diagramEditor.getEditingDomain();
 
+                    final PictogramElement pictogramElement = pe;
                     KimlUiUtil.runModelChange(new Runnable() {
                         public void run() {
                             String name = nameText.getText();
                             if (name != null) {
                                 if (bo instanceof NamedObject) {
                                     ((NamedObject) bo).setName(name);
+                                    diagramEditor.getDiagramTypeProvider().getFeatureProvider()
+                                            .layoutIfPossible(new LayoutContext(pictogramElement));
                                 }
                             }
                         }

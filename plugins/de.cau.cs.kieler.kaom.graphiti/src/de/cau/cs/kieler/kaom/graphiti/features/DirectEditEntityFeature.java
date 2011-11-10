@@ -17,6 +17,7 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import de.cau.cs.kieler.kaom.Entity;
 
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
+import org.eclipse.graphiti.features.context.impl.LayoutContext;
 import org.eclipse.graphiti.features.impl.AbstractDirectEditingFeature;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
