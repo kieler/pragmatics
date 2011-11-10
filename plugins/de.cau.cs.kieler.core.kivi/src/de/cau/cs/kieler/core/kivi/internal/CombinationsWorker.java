@@ -17,8 +17,13 @@ import java.util.concurrent.BlockingQueue;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.statushandlers.StatusManager;
+
 import de.cau.cs.kieler.core.kivi.ITriggerState;
 import de.cau.cs.kieler.core.kivi.KiVi;
+import de.cau.cs.kieler.core.kivi.KiViPlugin;
 import de.cau.cs.kieler.core.kivi.UnlockEffect;
 import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
 
@@ -49,16 +54,19 @@ public class CombinationsWorker extends Thread {
                 ITriggerState triggerState = triggerStates.take();
                 try {
                     KiVi.getInstance().distributeTriggerState(triggerState);
-                    // schedule an UnlockEffect, that calls notifyAll on the given
+                    // Schedule an UnlockEffect that calls notifyAll on the given
                     // triggerState. Any Triggers that wait on that state will be
                     // awakened. This way triggers can wait for the execution of effects
                     // before they continue triggering.
                     if (!(triggerState instanceof EffectTriggerState)) {
-                        // dont unlock if the trigger is reaction to an effect -> endless loop
+                        // don't unlock if the trigger is reaction to an effect -> endless loop
                         KiVi.getInstance().executeEffect(new UnlockEffect(triggerState));
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Throwable e) {
+                    IStatus status = new Status(IStatus.ERROR, KiViPlugin.PLUGIN_ID,
+                            "View Management combinations queue caught an exception while"
+                            + " distributing a trigger: " + e.getMessage(), e);
+                    StatusManager.getManager().handle(status);
                 }
             } catch (InterruptedException e) {
                 // got interrupted
