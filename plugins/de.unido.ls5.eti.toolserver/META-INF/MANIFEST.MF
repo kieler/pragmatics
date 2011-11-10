@@ -4,7 +4,7 @@ Bundle-Name: jETI Tool Server
 Bundle-SymbolicName: de.unido.ls5.eti.toolserver;singleton:=true
 Bundle-Version: 1.5.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bundle-Vendor: Technische Universit+�t Dortmund
+Bundle-Vendor: Technische Universität Dortmund
 Export-Package: de.unido.ls5.eti.toolserver
 Require-Bundle: org.apache.commons.codec;bundle-version="1.3.0",
  org.apache.commons.lang;bundle-version="2.4.0",

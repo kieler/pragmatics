@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: KAOM Graphiti Editor
+Bundle-Name: KIELER KAOM Graphiti Editor
 Bundle-SymbolicName: de.cau.cs.kieler.kaom.graphiti;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: de.cau.cs.kieler.kaom.graphiti.KaomGraphitiPlugin

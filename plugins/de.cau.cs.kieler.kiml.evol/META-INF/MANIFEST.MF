@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: KIML Evolutionary
+Bundle-Name: KIELER Evolutionary Layout
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.evol;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: de.cau.cs.kieler.kiml.evol.EvolPlugin

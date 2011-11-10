@@ -4,7 +4,7 @@ Bundle-SymbolicName: de.cau.cs.kieler.core.kgraph.edit;singleton:=true
 Bundle-Version: 0.2.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: de.cau.cs.kieler.core.kgraph.provider.KGraphEditPlugin$Implementation
-Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: de.cau.cs.kieler.core.kgraph.provider
