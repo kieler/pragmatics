@@ -6,8 +6,8 @@
       <combination
             active="true"
             class="de.cau.cs.kieler.klighd.xtext.UpdateXtextModelKLighDCombination"
-            description="Combination that updates the KlighD view if a model change in an Xtext editor happens"
-            name="de.cau.cs.kieler.klighd.xtext.UpdateXtextModelKLighDCombination">
+            description="Updates the KlighD view if a model change in an Xtext editor happens"
+            name="Create graphical views of textual specifications">
       </combination>
    </extension>
 
