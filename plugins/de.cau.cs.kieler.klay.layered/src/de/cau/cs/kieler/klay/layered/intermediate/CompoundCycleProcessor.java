@@ -22,6 +22,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -60,12 +61,15 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
 
         // Represent the cyclic dependencies of compound nodes in a cycle-removal-graph
         LayeredGraph cycleRemovalGraph = new LayeredGraph();
-        cycleRemovalGraph.setProperty(Properties.RANDOM, layeredGraph.getProperty(Properties.RANDOM));
+        cycleRemovalGraph.setProperty(Properties.RANDOM,
+                layeredGraph.getProperty(Properties.RANDOM));
         List<LNode> cycleRemovalNodes = cycleRemovalGraph.getLayerlessNodes();
         HashMap<LNode, LNode> insertedNodes = new HashMap<LNode, LNode>();
 
         HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
                 .getProperty(Properties.ELEMENT_MAP);
+
+        LinkedList<LEdge> toDescendantEdges = new LinkedList<LEdge>();
 
         // For each edge, walk up the nesting tree of the compound graph until a pair of ancestors
         // of source and target node is found that shares the same parent. Propagating dependencies
@@ -88,6 +92,29 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                     KNode currentTargetAncestor = targetOriginalParent;
                     KNode currentSource = sourceOriginal;
                     KNode currentTarget = targetOriginal;
+
+                    // Edges leading from ports of compound nodes to their descendants are reverted
+                    // in case the port has incoming edges. Otherwise the layering for ports with
+                    // incoming and outgoing descendant edges could lead to faulty layer
+                    // assignments.
+                    if (Util.isDescendant(edge.getTarget().getNode(), edge.getSource().getNode()
+                            .getProperty(Properties.COMPOUND_NODE))) {
+                        List<LEdge> portIncomingEdges = edge.getSource().getIncomingEdges();
+                        if (!portIncomingEdges.isEmpty()) {
+                            boolean descendantIncoming = false;
+                            for (LEdge ledge : portIncomingEdges) {
+                                if (Util.isDescendant(ledge.getSource().getNode(), ledge
+                                        .getTarget().getNode()
+                                        .getProperty(Properties.COMPOUND_NODE))) {
+                                    descendantIncoming = true;
+                                }
+                                if (descendantIncoming) {
+                                    toDescendantEdges.add(edge);
+                                }
+                            }
+
+                        }
+                    }
 
                     // Establishes the edge an adjacency of two compound nodes (source and target
                     // are one of the compound nodes or any of it's descendants)?
@@ -142,6 +169,17 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
             }
         }
         reverseCyclicEdges(layeredGraph, cycleRemovalGraph);
+        // reverseEdges(toDescendantEdges, layeredGraph);
+        int toDescendantSize = toDescendantEdges.size();
+        for (int i = 0; i < toDescendantSize; i++) {
+            LEdge edge = toDescendantEdges.get(i);
+            if (!edge.getProperty(Properties.REVERSED)) {
+                LPort source = edge.getSource();
+                LPort target = edge.getTarget();
+                edge.setSource(target);
+                edge.setTarget(source);
+            }
+        }
 
         getMonitor().done();
     }
