@@ -135,7 +135,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
             if (currentNode != graph) {
                 transformCompoundNodeWithEdges(currentNode, layeredNodes, layeredGraph, elemMap,
                         direction, depth);
-                setCompoundDummyEdges(layeredNodes, parentChildMap);
+                setCompoundDummyEdges(layeredNodes, parentChildMap, elemMap);
             }
         }
     }
@@ -169,9 +169,9 @@ public class CompoundKGraphImporter extends KGraphImporter {
 
         // Add ports to connect dummy edges for the layering phase.
 
-        LPort dummyPortWest = createDummyPort(newNode, PortSide.WEST);
+        LPort dummyPortWest = createDummyPort(newNode, PortSide.WEST, null, elemMap);
         dummyPortWest.setProperty(Properties.LEAVE_DUMMY_PORT, true);
-        LPort dummyPortEast = createDummyPort(newNode, PortSide.EAST);
+        LPort dummyPortEast = createDummyPort(newNode, PortSide.EAST, null, elemMap);
         dummyPortEast.setProperty(Properties.LEAVE_DUMMY_PORT, true);
 
         // Set the depth-Property.
@@ -204,7 +204,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
             }
             LNode representative = (LNode) elemMap.get(knode);
             if (edge.getTargetPort() == null) {
-                LPort newPort = createDummyPort(representative, PortSide.WEST);
+                LPort newPort = createDummyPort(representative, PortSide.WEST, null, elemMap);
                 KPoint targetPoint = edgeLayout.getTargetPoint();
                 newPort.getPosition().x = targetPoint.getX() - representative.getPosition().x;
                 newPort.getPosition().y = targetPoint.getY() - representative.getPosition().y;
@@ -224,7 +224,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
             }
             LNode representative = (LNode) elemMap.get(knode);
             if (edge.getSourcePort() == null) {
-                LPort newPort = createDummyPort(representative, PortSide.EAST);
+                LPort newPort = createDummyPort(representative, PortSide.EAST, null, elemMap);
                 KPoint sourcePoint = edgeLayout.getSourcePoint();
                 newPort.getPosition().x = sourcePoint.getX() - representative.getPosition().x;
                 newPort.getPosition().y = sourcePoint.getY() - representative.getPosition().y;
@@ -377,18 +377,24 @@ public class CompoundKGraphImporter extends KGraphImporter {
                     representative = upperBorder;
                 }
 
-                // If edge has a target port, create adequate compound port dummy node
+                // If edge has a target port, create adequate compound port dummy node, if not done
+                // before
             } else {
-                if (fromInside) {
-                    representative = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_PORT,
-                            dummyNodes, elemMap, depth);
-                    // representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
-                    representative.getSize().x = insets.getRight() + borderSpacing;
+                LGraphElement portRepresentative = elemMap.get(port);
+                if (portRepresentative == null) {
+                    if (fromInside) {
+                        representative = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_PORT,
+                                dummyNodes, elemMap, depth);
+                        // representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
+                        representative.getSize().x = insets.getRight() + borderSpacing;
+                    } else {
+                        representative = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_PORT,
+                                dummyNodes, elemMap, depth);
+                        // representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
+                        representative.getSize().x = insets.getLeft() + borderSpacing;
+                    }
                 } else {
-                    representative = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_PORT,
-                            dummyNodes, elemMap, depth);
-                    // representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
-                    representative.getSize().x = insets.getLeft() + borderSpacing;
+                    representative = ((LPort) portRepresentative).getNode();
                 }
             }
             if (!layeredNodes.contains(representative)) {
@@ -403,7 +409,9 @@ public class CompoundKGraphImporter extends KGraphImporter {
             } else {
                 portSide = PortSide.EAST;
             }
-            LPort dummyPort = createDummyPort(representative, portSide);
+            // Make an entry to the elemMap, if the dummyport is to represent a port in the original
+            // graph
+            LPort dummyPort = createDummyPort(representative, portSide, port, elemMap);
             // make sure, edges do not overlap
             float edgeSpacing = layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR)
                     * layeredGraph.getProperty(Properties.OBJ_SPACING);
@@ -456,11 +464,13 @@ public class CompoundKGraphImporter extends KGraphImporter {
      * @param layeredNodes
      * @param layeredNodes
      *            the list of LNodes with the created dummy nodes and the imported nodes.
+     * @param elemMap
      * @param source
      *            the source node.
      */
     private void setCompoundDummyEdges(final List<LNode> layeredNodes,
-            final Map<LNode, List<LNode>> parentChildMap) {
+            final Map<LNode, List<LNode>> parentChildMap,
+            final HashMap<KGraphElement, LGraphElement> elemMap) {
         for (LNode lNode : layeredNodes) {
             NodeType nodeType = lNode.getProperty(Properties.NODE_TYPE);
             switch (nodeType) {
@@ -481,7 +491,8 @@ public class CompoundKGraphImporter extends KGraphImporter {
                             LPort sourcePort = lNode.getPorts(PortSide.EAST).iterator().next();
                             dummyEdge.setSource(sourcePort);
 
-                            LPort targetPort = findDummyEdgePort(childCandidate, PortSide.WEST);
+                            LPort targetPort = findDummyEdgePort(childCandidate, PortSide.WEST,
+                                    elemMap);
                             dummyEdge.setTarget(targetPort);
                             if (parentChildMap.containsKey(lNode)) {
                                 parentChildMap.get(lNode).add(childCandidate);
@@ -508,7 +519,8 @@ public class CompoundKGraphImporter extends KGraphImporter {
                             LEdge dummyEdge = new LEdge();
                             dummyEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_DUMMY);
 
-                            LPort sourcePort = findDummyEdgePort(childCandidate, PortSide.EAST);
+                            LPort sourcePort = findDummyEdgePort(childCandidate, PortSide.EAST,
+                                    elemMap);
                             dummyEdge.setSource(sourcePort);
 
                             LPort targetPort = lNode.getPorts(PortSide.WEST).iterator().next();
@@ -600,8 +612,8 @@ public class CompoundKGraphImporter extends KGraphImporter {
                     || nodeType == NodeType.LOWER_COMPOUND_PORT) {
                 dummyNode.setProperty(LayoutOptions.ALIGNMENT, Alignment.LEFT);
             }
-            createDummyPort(dummyNode, PortSide.EAST);
-            createDummyPort(dummyNode, PortSide.WEST);
+            createDummyPort(dummyNode, PortSide.EAST, null, elemMap);
+            createDummyPort(dummyNode, PortSide.WEST, null, elemMap);
             if (nodeType == NodeType.UPPER_COMPOUND_BORDER) {
                 transferNodePropertiesAndAttributes(node, dummyNode);
             }
@@ -642,19 +654,36 @@ public class CompoundKGraphImporter extends KGraphImporter {
     }
 
     /**
-     * Creates a port for an LNode with the given PortSide.
+     * Creates a port for an LNode with the given PortSide. If the port is to represent a port from
+     * the original graph, who already has a representative, the latter will be returned.
      * 
      * @param dummyNode
      *            the node the port is to be created for.
      * @param side
      *            the side of the node, on which the port is to be located.
+     * @param port
+     *            the port to be represented, null, if original edge had no port.
+     * @param elemMap
+     *            the element map, mapping the KGraph-Elements to their LGraph-Representatives.
      */
-    private LPort createDummyPort(final LNode node, final PortSide side) {
+    private LPort createDummyPort(final LNode node, final PortSide side, final KPort port,
+            final Map<KGraphElement, LGraphElement> elemMap) {
 
-        LPort dummyPort = new LPort();
-        dummyPort.setSide(side);
-        dummyPort.setNode(node);
-        return dummyPort;
+        LPort portRepresentative = null;
+        if (port != null) {
+            portRepresentative = (LPort) elemMap.get(port);
+        }
+        if (portRepresentative == null) {
+            LPort dummyPort = new LPort();
+            dummyPort.setSide(side);
+            dummyPort.setNode(node);
+            if (port != null) {
+                elemMap.put(port, dummyPort);
+            }
+            return dummyPort;
+        } else {
+            return portRepresentative;
+        }
     }
 
     /**
@@ -721,8 +750,10 @@ public class CompoundKGraphImporter extends KGraphImporter {
      *            The node who's ports are to be probed.
      * @param side
      *            The side for which the ports are to be probed.
+     * @param elemMap
      */
-    private LPort findDummyEdgePort(final LNode node, final PortSide side) {
+    private LPort findDummyEdgePort(final LNode node, final PortSide side,
+            final Map<KGraphElement, LGraphElement> elemMap) {
         LPort port = null;
         Iterator<LPort> portIterator = node.getPorts(side).iterator();
         // Find the correct port to connect the edge to: do not use ports that are
@@ -739,7 +770,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
         }
         // Do not return null, if there is no applicable port, create one.
         if (port == null) {
-            port = createDummyPort(node, side);
+            port = createDummyPort(node, side, null, elemMap);
         }
         return port;
     }
@@ -771,7 +802,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
                 applyNodeLayout(layeredGraph, lnode);
                 // apply the layout to the KNode's ports
                 boolean isCompound = (lnode.getProperty(Properties.NODE_TYPE) 
-                            == NodeType.UPPER_COMPOUND_BORDER);
+                                == NodeType.UPPER_COMPOUND_BORDER);
                 if (isCompound) {
                     compoundApplyPortLayout(kNode, layeredGraph, lnode);
                 } else {
@@ -905,6 +936,11 @@ public class CompoundKGraphImporter extends KGraphImporter {
         }
 
         KVector difference = getAbsolute(kTargetNode).sub(getAbsolute(kSourceNode));
+        // Mind the fact that getAbsolute calculates absolute coordinates plus insets. We need the
+        // difference from the absolute sourceNode position without insets.
+        KVector sourceInsets = new KVector(kSourceNodeLayout.getInsets().getLeft(),
+                kSourceNodeLayout.getInsets().getTop());
+        difference.add(sourceInsets);
 
         // calculate end point of edge
         KVector edgeEnd = new KVector(0, 0);
@@ -926,13 +962,15 @@ public class CompoundKGraphImporter extends KGraphImporter {
                 edgeEnd.add(kSourceNodePosition);
             }
             edgeEnd.add(difference);
-            // mind the fact, that getAbsolute calculates absolute coordinates plus insets.
+            // mind the fact that getAbsolute calculates absolute coordinates plus insets.
             edgeEnd.x -= kTargetNodeLayout.getInsets().getLeft();
             edgeEnd.y -= kTargetNodeLayout.getInsets().getTop();
         }
 
         // add starting- and endpoint of edge to bendpoints
         bendPoints.addFirst(edgeStart);
+        // edgeEnd.x = edgeEnd.x + 30;
+        // edgeEnd.y = edgeEnd.y + 38;
         bendPoints.addLast(edgeEnd);
 
         edgeLayout.applyVectorChain(bendPoints);
@@ -1081,8 +1119,12 @@ public class CompoundKGraphImporter extends KGraphImporter {
      */
     private KVector getAbsolute(final KNode kNode) {
         KShapeLayout nodeLayout = kNode.getData(KShapeLayout.class);
-        KVector position = new KVector(nodeLayout.getXpos() + nodeLayout.getInsets().getLeft(),
-                nodeLayout.getYpos() + nodeLayout.getInsets().getTop());
+        KVector purePosition = new KVector(nodeLayout.getXpos(), nodeLayout.getYpos());
+        KVector insets = new KVector(nodeLayout.getInsets().getLeft(), nodeLayout.getInsets()
+                .getTop());
+        KVector position = new KVector(0, 0);
+        position.add(purePosition);
+        position.add(insets);
         if (kNode.getParent().getParent() == null) {
             return position;
         } else {
@@ -1096,9 +1138,9 @@ public class CompoundKGraphImporter extends KGraphImporter {
      * Recursive method.
      * 
      * @param layeredGraph
-     *        The LayeredGraph representation of the graph to be laid out.
+     *            The LayeredGraph representation of the graph to be laid out.
      * @param knode
-     *        The current node.
+     *            The current node.
      */
     private void createInclusionTree(final LayeredGraph layeredGraph, final KNode knode) {
         // get the layeredGraph's element map
