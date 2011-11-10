@@ -102,7 +102,7 @@ public final class DynamicMenuContributions {
         private KSBasETransformation transformation;
 
         /**
-         * The editor settings the transformation belongs to
+         * The editor settings the transformation belongs to.
          */
         private EditorTransformationSettings editorSettings;
 
@@ -140,34 +140,48 @@ public final class DynamicMenuContributions {
          * @return true if validation evaluated positive false if negative or an error occured.
          */
         private boolean evaluateValidation(final List<Object> selectionMapping) {
-            final String val = transformation.getValidation();
-            HashMap<List<Object>, Boolean> cache = validationCache.get(val);
-            if (cache != null) {
-                Boolean cachedResult = cache.get(selectionMapping);
-                if (cachedResult != null) {
-                    return cachedResult;
+            if (transformation.getValidation() != null) {
+            String[] validations = transformation.getValidation().split(",");
+            boolean result = true;
+            for (String val: validations) {
+                //final String val = transformation.getValidation();
+                HashMap<List<Object>, Boolean> cache = validationCache.get(val);
+                if (cache != null) {
+                    Boolean cachedResult = cache.get(selectionMapping);
+                    if (cachedResult != null) {
+                        if (!cachedResult) {
+                            return false;
+                        }
+                    }
+                } else {
+                    validationCache.put(val, new HashMap<List<Object>, Boolean>());
                 }
-            } else {
-                validationCache.put(val, new HashMap<List<Object>, Boolean>());
-            }
-
-            if ((val != null) && (!val.isEmpty()) && (transDomain != null)) {
-                TransformationDescriptor descriptor = new TransformationDescriptor(
-                        transformation.getValidation(), selectionMapping.toArray());
-                XtendTransformationContext context = new XtendTransformationContext(
-                        editorSettings.getTransformationFile(), editorSettings.getModelPackages()
-                                .toArray(new String[editorSettings.getModelPackages().size()]),
-                        null, transDomain);
-                context.execute(descriptor);
-                Object result = descriptor.getResult();
-                if (result instanceof Boolean) {
-                    cache = validationCache.get(val);
-                    cache.put(selectionMapping, (Boolean) result);
-                    return (Boolean) result;
+    
+                if ((val != null) && (!val.isEmpty()) && (transDomain != null)) {
+                    TransformationDescriptor descriptor = new TransformationDescriptor(
+                            transformation.getValidation(), selectionMapping.toArray());
+                    XtendTransformationContext context = new XtendTransformationContext(
+                            editorSettings.getTransformationFile(), editorSettings.getModelPackages()
+                                    .toArray(new String[editorSettings.getModelPackages().size()]),
+                            null, transDomain);
+                    context.execute(descriptor);
+                    Object valResult = descriptor.getResult();
+                    if (valResult instanceof Boolean) {
+                        cache = validationCache.get(val);
+                        cache.put(selectionMapping, (Boolean) valResult);
+                        if (!(Boolean) result) {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
                 } else {
                     return false;
                 }
             }
+            return result;
+            }
+            //transformation has no validation so return true
             return true;
         }
 
