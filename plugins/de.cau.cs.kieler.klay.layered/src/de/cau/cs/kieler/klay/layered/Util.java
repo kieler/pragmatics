@@ -18,19 +18,20 @@ import java.io.File;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
-
 /**
  * Contains utility methods used throughout KLay Layered.
  * 
  * @author cds
+ * @author ima
  */
 public final class Util {
-    
+
     /**
      * Private constructor.
      */
@@ -38,18 +39,20 @@ public final class Util {
         // This space intentionally left blank
     }
 
-    ///////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////
     // General Utility
-    
+
     /**
      * Center the given point on one side of a boundary.
      * 
-     * @param point a point to change
-     * @param boundary the boundary to use for centering
-     * @param side the side of the boundary
+     * @param point
+     *            a point to change
+     * @param boundary
+     *            the boundary to use for centering
+     * @param side
+     *            the side of the boundary
      */
-    public static void centerPoint(final KVector point, final KVector boundary,
-            final PortSide side) {
+    public static void centerPoint(final KVector point, final KVector boundary, final PortSide side) {
         switch (side) {
         case NORTH:
             point.x = boundary.x / 2;
@@ -69,15 +72,18 @@ public final class Util {
             break;
         }
     }
-    
+
     /**
-     * Return a collector port of given type, creating it if necessary. A collector port is
-     * used to merge all incident edges that originally had no ports.
+     * Return a collector port of given type, creating it if necessary. A collector port is used to
+     * merge all incident edges that originally had no ports.
      * 
-     * @param node a node
-     * @param type if {@code INPUT}, an input collector port is returned; if {@code OUTPUT},
-     *     an output collector port is returned
-     * @param side the side to set for a newly created port
+     * @param node
+     *            a node
+     * @param type
+     *            if {@code INPUT}, an input collector port is returned; if {@code OUTPUT}, an
+     *            output collector port is returned
+     * @param side
+     *            the side to set for a newly created port
      * @return a collector port
      */
     public static LPort provideCollectorPort(final LNode node, final PortType type,
@@ -110,10 +116,10 @@ public final class Util {
         }
         return port;
     }
-    
-    ///////////////////////////////////////////////////////////////////////////////
+
+    // /////////////////////////////////////////////////////////////////////////////
     // Debug Files
-    
+
     /**
      * Returns the path for debug output graphs.
      * 
@@ -126,18 +132,46 @@ public final class Util {
         } else {
             path += File.separator + "tmp" + File.separator + "klay";
         }
-        
+
         return path;
     }
-    
+
     /**
-     * Returns the beginning of the file name used for debug output graphs while layouting the
-     * given layered graph. This will look something like {@code "143293-"}.
+     * Returns the beginning of the file name used for debug output graphs while layouting the given
+     * layered graph. This will look something like {@code "143293-"}.
      * 
-     * @param graph the graph to return the base debug file name for.
+     * @param graph
+     *            the graph to return the base debug file name for.
      * @return the base debug file name for the given graph.
      */
     public static String getDebugOutputFileBaseName(final LayeredGraph graph) {
         return Integer.toString(graph.hashCode() & ((1 << (Integer.SIZE / 2)) - 1)) + "-";
+    }
+
+    // ///////////////////////////////////////////////////////////////////////////
+    // Layout of Compound Graphs
+
+    /**
+     * Determines whether the given child node is a descendant of the parent node.
+     * 
+     * @param child
+     *            a child node
+     * @param parent
+     *            a parent node
+     * @return true if {@code child} is a direct or indirect child of {@code parent}
+     */
+    public static boolean isDescendant(final LNode child, final LNode parent) {
+        LNode current = child;
+        LGraphElement currentParent = current.getProperty(Properties.PARENT);
+        // Nodes that are directly contained by the layered graph carry it in their parent property.
+        // So if the parent changes instance from LNode to LayeredGraph, the loop ends.
+        while (currentParent instanceof LNode) {
+            current = (LNode) currentParent;
+            if (current == parent) {
+                return true;
+            }
+            currentParent = current.getProperty(Properties.PARENT);
+        }
+        return false;
     }
 }
