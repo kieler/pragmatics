@@ -168,7 +168,6 @@ public class CompoundKGraphImporter extends KGraphImporter {
         newNode.setProperty(Properties.K_PARENT, node.getParent());
 
         // Add ports to connect dummy edges for the layering phase.
-
         LPort dummyPortWest = createDummyPort(newNode, PortSide.WEST, null, elemMap);
         dummyPortWest.setProperty(Properties.LEAVE_DUMMY_PORT, true);
         LPort dummyPortEast = createDummyPort(newNode, PortSide.EAST, null, elemMap);
@@ -420,12 +419,10 @@ public class CompoundKGraphImporter extends KGraphImporter {
             if (incoming) {
                 KPoint targetPoint = edgeLayout.getTargetPoint();
                 dummyPort.getPosition().x = targetPoint.getX() - representative.getPosition().x;
-                // dummyPort.getPosition().y = targetPoint.getY() - representative.getPosition().y;
                 lEdge.setTarget(dummyPort);
             } else {
                 KPoint sourcePoint = edgeLayout.getSourcePoint();
                 dummyPort.getPosition().x = sourcePoint.getX() - representative.getPosition().x;
-                // dummyPort.getPosition().y = sourcePoint.getY() - representative.getPosition().y;
                 lEdge.setSource(dummyPort);
             }
 
@@ -450,7 +447,6 @@ public class CompoundKGraphImporter extends KGraphImporter {
         } else {
             nodeType = NodeType.LOWER_COMPOUND_BORDER;
             LNode dummyNode = createBorderDummyNode(node, nodeType, dummyNodes, elemMap, depth);
-            // dummyNode.setProperty(Properties.COMPOUND_NODE, upperBorder);
             dummyNode.getSize().x = insets.getRight() + borderSpacing;
             if (!(layeredNodes.contains(dummyNode))) {
                 layeredNodes.add(dummyNode);
@@ -475,8 +471,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
             NodeType nodeType = lNode.getProperty(Properties.NODE_TYPE);
             switch (nodeType) {
             // If the node is a compound dummy node at the upper line of the compound node, add
-            // edge
-            // to every child node
+            // edge to every child node
             case UPPER_COMPOUND_BORDER:
             case UPPER_COMPOUND_PORT:
                 for (LNode childCandidate : layeredNodes) {
@@ -588,8 +583,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
             final List<LNode> dummyList, final Map<KGraphElement, LGraphElement> elemMap,
             final int depth) {
         LNode dummyNode = null;
-        if ((nodeType == NodeType.LOWER_COMPOUND_BORDER)
-        /* || (nodeType == NodeType.UPPER_COMPOUND_BORDER) */) {
+        if ((nodeType == NodeType.LOWER_COMPOUND_BORDER)) {
             for (LNode dummy : dummyList) {
                 if (dummy.getProperty(Properties.NODE_TYPE) == nodeType) {
                     dummyNode = dummy;
@@ -672,7 +666,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
         if (port != null) {
             portRepresentative = (LPort) elemMap.get(port);
         }
-        if (portRepresentative == null) {
+        if ((portRepresentative == null)) {
             LPort dummyPort = new LPort();
             dummyPort.setSide(side);
             dummyPort.setNode(node);
@@ -801,7 +795,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
                 applyNodeLayout(layeredGraph, lnode);
                 // apply the layout to the KNode's ports
                 boolean isCompound = (lnode.getProperty(Properties.NODE_TYPE) 
-                                == NodeType.UPPER_COMPOUND_BORDER);
+                        == NodeType.UPPER_COMPOUND_BORDER);
                 if (isCompound) {
                     compoundApplyPortLayout(kNode, layeredGraph, lnode);
                 } else {
@@ -935,11 +929,14 @@ public class CompoundKGraphImporter extends KGraphImporter {
         }
 
         KVector difference = getAbsolute(kTargetNode).sub(getAbsolute(kSourceNode));
-        // Mind the fact that getAbsolute calculates absolute coordinates plus insets. We need the
-        // difference from the absolute sourceNode position without insets.
-        KVector sourceInsets = new KVector(kSourceNodeLayout.getInsets().getLeft(),
-                kSourceNodeLayout.getInsets().getTop());
-        difference.add(sourceInsets);
+        if (!descendantEdge) {
+            // Mind the fact that getAbsolute calculates absolute coordinates plus insets. We need
+            // the
+            // difference from the absolute sourceNode position without insets.
+            KVector sourceInsets = new KVector(kSourceNodeLayout.getInsets().getLeft(),
+                    kSourceNodeLayout.getInsets().getTop());
+            difference.add(sourceInsets);
+        }
 
         // calculate end point of edge
         KVector edgeEnd = new KVector(0, 0);
@@ -968,8 +965,6 @@ public class CompoundKGraphImporter extends KGraphImporter {
 
         // add starting- and endpoint of edge to bendpoints
         bendPoints.addFirst(edgeStart);
-        // edgeEnd.x = edgeEnd.x + 30;
-        // edgeEnd.y = edgeEnd.y + 38;
         bendPoints.addLast(edgeEnd);
 
         edgeLayout.applyVectorChain(bendPoints);
