@@ -33,6 +33,7 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
+ * Graph importer for the GML format.
  * 
  * @author msp
  */
@@ -48,7 +49,6 @@ public class GmlImporter implements IGraphTransformer<GmlModel, KNode> {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void transform(final TransformationData<GmlModel, KNode> data) {
         GmlModel gmlModel = data.getSourceGraph();
         for (Element element : gmlModel.getElements()) {
@@ -65,7 +65,6 @@ public class GmlImporter implements IGraphTransformer<GmlModel, KNode> {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void transferLayout(final TransformationData<GmlModel, KNode> data) {
         for (KNode layoutNode : data.getTargetGraphs()) {
             applyLayout(layoutNode);
