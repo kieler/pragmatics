@@ -75,8 +75,6 @@ public final class LightDiagramServices {
     public static final String ATTRIBUTE_EPACKAGE = "EPackage";
     /** name of the 'EPackageClass' attribute in the extension points. */
     public static final String ATTRIBUTE_EPACKAGE_CLASS = "EPackageClass";
-    /** name of the 'contributingBundle' attribute in the extension points. */
-    public static final String ATTRIBUTE_CO_CONTRIBUTING_BUNDLE = "contributingBundle";
 
     /** the singleton instance. */
     private static LightDiagramServices instance;
@@ -196,9 +194,22 @@ public final class LightDiagramServices {
                     String extension = element.getAttribute(ATTRIBUTE_EXTENSION);
                     Bundle contributingBundle =
                             Platform.getBundle(element.getContributor().getName());
-                    String coContributingBundlesName =
-                            element.getAttribute(ATTRIBUTE_CO_CONTRIBUTING_BUNDLE);
-
+                    String coContributingBundlesName = null;
+                    
+                    int index = extFile.indexOf("::");
+                    if (index != -1) {
+                        // in case the extFile's path contain '::' it may involve an
+                        //  external co-contributing bundle indicated by a '/' in the path
+                        index = extFile.indexOf("/");
+                        if (index != -1) {
+                            // there is a '/'!
+                            //  determine the co-contributing bundle's name...
+                            coContributingBundlesName = extFile.substring(0, index);
+                            //  ... as well as the actual path of the extFile
+                            extFile = extFile.substring(index + 1);
+                        }
+                    }
+                    
                     // "normalize" the Xtend file path
                     extFile = extFile.replaceAll("::", "/");
                     if (!extFile.endsWith(".ext")) {

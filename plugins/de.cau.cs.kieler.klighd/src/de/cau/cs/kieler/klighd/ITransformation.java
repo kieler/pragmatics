@@ -76,7 +76,11 @@ public interface ITransformation<S, T> {
     Class<?> getTargetClass();
     
     /**
-     * Returns whether the given model is a valid source for the transformation.
+     * Returns whether the given model is a valid source for the transformation. This can be used in
+     * addition to the source/target model type inference in order to restrict the application of
+     * the transformation further. Especially in case of transformations with the same source and
+     * target model type (e.g. filters) this method will be used in order to determine the
+     * application of the transformation.
      * 
      * @param model
      *            the model, an instance of the class returned by {@code getSourceClass}

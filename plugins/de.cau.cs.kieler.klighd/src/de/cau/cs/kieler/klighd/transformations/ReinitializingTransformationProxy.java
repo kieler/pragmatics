@@ -21,12 +21,24 @@ import de.cau.cs.kieler.klighd.TransformationContext;
 
 
 /**
- * Transformation proxy realizes the re-initialization of stateful model transformations.
- * This is needed for Xtend2 based transformation leveraging "create extensions".
+ * This transformation proxy realizes the re-initialization of stateful model transformations. It is
+ * needed for Xtend2 based transformation leveraging "create extensions", for example. The
+ * implementation cares about creating new transformation instances, as well as their proper
+ * initialization by means of Guice.<br>
+ * <br>
  * 
- * @param <S> type of the input models
- * @param <T> type of the created models
- *   
+ * Transformation that shall be preceded with an instance of this class must be registered by
+ * prefixing their class name with the string <code>
+ * "de.cau.cs.kieler.klighd/de.cau.cs.kieler.klighd.transformations.GuiceBasedTransformationFactory:"
+ * </code>.
+ * 
+ * This class shall not be instantiated by any user program but only by the runtime.
+ * 
+ * @param <S>
+ *            type of the input models
+ * @param <T>
+ *            type of the created models
+ * 
  * @author chsch
  */
 public class ReinitializingTransformationProxy<S, T> extends AbstractTransformation<S, T> {
@@ -37,10 +49,10 @@ public class ReinitializingTransformationProxy<S, T> extends AbstractTransformat
     
 
     /**
-     * 
+     * Package protected constructor.
      * @param clazz the transformation class
      */
-    public ReinitializingTransformationProxy(final Class<AbstractTransformation<S, T>> clazz) {
+    ReinitializingTransformationProxy(final Class<AbstractTransformation<S, T>> clazz) {
         this.transformationClass = clazz;
     }
     
@@ -56,6 +68,7 @@ public class ReinitializingTransformationProxy<S, T> extends AbstractTransformat
     
     
     /**
+     * Stub enforced by {@link AbstractTransformation}.
      * @param model the model
      * @return null
      */
@@ -74,7 +87,7 @@ public class ReinitializingTransformationProxy<S, T> extends AbstractTransformat
     
     
     /**
-     * 
+     * {@inheritDoc}
      */
     protected void inferSourceAndTargetModelClass() {
         this.setTriedToInferClass();
@@ -85,6 +98,4 @@ public class ReinitializingTransformationProxy<S, T> extends AbstractTransformat
             this.setTargetClass(delegate.getTargetClass());
         }
     }
-
-
 }
