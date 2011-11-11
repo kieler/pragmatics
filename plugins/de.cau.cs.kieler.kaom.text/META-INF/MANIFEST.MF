@@ -15,6 +15,7 @@ Require-Bundle: org.eclipse.xtext,
  org.eclipse.xtext.xtend;resolution:=optional,
  de.cau.cs.kieler.kaom,
  de.cau.cs.kieler.core.annotations,
+ de.cau.cs.kieler.core.annotations.text,
  org.eclipse.xtext.util,
  org.antlr.runtime
 Import-Package: org.apache.log4j
