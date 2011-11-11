@@ -136,14 +136,28 @@ public final class JaxWsService extends AbstractService implements LayoutService
      * @return the {@code ServiceFault_Exception}
      */
     private ServiceFault_Exception createException(final int code, final Throwable throwable) {        
+        StringBuilder message = new StringBuilder();
+        Throwable t = throwable;
+        while (t != null) {
+            if (t.getMessage() != null) {
+                if (message.length() > 0) {
+                    message.append('\n');
+                }
+                message.append(t.getMessage());
+            }
+            if (t.getCause() == t) {
+                t = null;
+            } else {
+                t = t.getCause();
+            }
+        }
+        if (message.length() == 0) {
+            message.append("Unknown cause");
+        }
         ServiceFault fault = new ServiceFault();
         fault.setCode(code);
-        String message = throwable.getMessage();
-        if (message == null) {
-            message = "Unknown cause";
-        }
-        fault.setMessage(message);
-        return new ServiceFault_Exception(message, fault);
+        fault.setMessage(message.toString());
+        return new ServiceFault_Exception(message.toString(), fault);
     }
 
 }
