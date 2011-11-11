@@ -22,10 +22,8 @@ import java.util.Set;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -33,7 +31,6 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -117,7 +114,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             for (int i = 0; i < (layerNodes.size() - 1); i++) {
 
                 LNode currentNode = layerNodes.get(i);
-                LNode relatedCompoundCurrent = getRelatedCompoundNode(currentNode, layeredGraph);
+                LNode relatedCompoundCurrent = Util.getRelatedCompoundNode(currentNode, layeredGraph);
                 // Store the currentNode in layerCompoundContents under the key of
                 // relatedCompoundCurrent.
                 insertRelatedCompound(layerCompoundContents, currentNode, relatedCompoundCurrent,
@@ -129,7 +126,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                 LNode nextNode = layerNodes.get(i + 1);
                 // Store the currentNode in layerCompoundContents under the key of
                 // relatedCompoundCurrent.
-                LNode relatedCompoundNext = getRelatedCompoundNode(nextNode, layeredGraph);
+                LNode relatedCompoundNext = Util.getRelatedCompoundNode(nextNode, layeredGraph);
                 insertRelatedCompound(layerCompoundContents, nextNode, relatedCompoundNext,
                         graphKey);
                 // fill in the insertions in the layerCompoundContents up the inclusion tree
@@ -146,7 +143,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                     LinkedList<LNode> leftRightList = new LinkedList<LNode>();
                     leftRightList.add(currentNode);
                     leftRightList.add(nextNode);
-                    propagatePair(leftRightList, elemMap);
+                    Util.propagatePair(leftRightList, elemMap);
                     LNode propCompoundCurrent = leftRightList.getFirst();
                     LNode propCompoundNext = leftRightList.getLast();
                     // Do not insert self-loops into the subgraph-ordering-graph.
@@ -519,198 +516,6 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             // retNode.copyProperties(node);
             insertedNodes.put(node, retNode);
             layerlessNodes.add(retNode);
-        }
-        return retNode;
-    }
-
-    /**
-     * Get the compound node an LNode belongs to.
-     * 
-     * @param node
-     *            The LNode for which the corresponding compound node is to be returned.
-     * @param layeredGraph
-     *            The layered Graph, which is to be laid out.
-     * @return Returns: A. The parent node for a leave node, if it is not a node of the uppermost
-     *         hierarchy level- in that case, null will be returned. B. The compound node of which's
-     *         representation the node is part of for compound dummies. C. The node enclosing the
-     *         represented LGraphElement for dummies of another kind. Null, if represented
-     *         LGraphElement is of depth 1. D. null in default case.
-     */
-    public static LNode getRelatedCompoundNode(final LNode node, final LayeredGraph layeredGraph) {
-        // method is to return null in the default case
-        LNode retNode = null;
-        HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
-                .getProperty(Properties.ELEMENT_MAP);
-        NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
-        LGraphElement parentRepresentative;
-        switch (nodeType) {
-        case LOWER_COMPOUND_BORDER:
-        case LOWER_COMPOUND_PORT:
-        case UPPER_COMPOUND_BORDER:
-        case UPPER_COMPOUND_PORT:
-            retNode = node.getProperty(Properties.COMPOUND_NODE);
-            break;
-        case NORMAL:
-            KNode parent = node.getProperty(Properties.K_PARENT);
-            parentRepresentative = elemMap.get(parent);
-            if (!(parentRepresentative instanceof LayeredGraph)) {
-                retNode = (LNode) parentRepresentative;
-            }
-            break;
-        case LONG_EDGE:
-            // In case of a to-descendant or from-descendant edge:
-            // An edge is regarded contained by the compound node which contains both source and
-            // target (directly or indirectly). If this is the layeredGraph, return null.
-            LPort sourcePort = node.getProperty(Properties.LONG_EDGE_SOURCE);
-            LPort targetPort = node.getProperty(Properties.LONG_EDGE_TARGET);
-            LNode sourceNode = sourcePort.getNode();
-            LNode targetNode = targetPort.getNode();
-            KNode sourceNodeOrigin = (KNode) sourceNode.getProperty(Properties.ORIGIN);
-            KNode targetNodeOrigin = (KNode) targetNode.getProperty(Properties.ORIGIN);
-            if (KimlUtil.isDescendant(sourceNodeOrigin, targetNodeOrigin)
-                    || KimlUtil.isDescendant(targetNodeOrigin, sourceNodeOrigin)) {
-                LinkedList<LNode> sourceTargetList = new LinkedList<LNode>();
-                sourceTargetList.add(sourceNode);
-                sourceTargetList.add(targetNode);
-                propagatePair(sourceTargetList, elemMap);
-                LNode newSource = sourceTargetList.getFirst();
-                KNode newSourceParent = newSource.getProperty(Properties.K_PARENT);
-                LGraphElement container = elemMap.get(newSourceParent);
-                if (!(container instanceof LayeredGraph)) {
-                    retNode = (LNode) container;
-                }
-                // In other cases, determine, if the edge is hierarchy-crossing.
-            } else {
-                LNode sourceNodeCompound = getRelatedCompoundNode(sourceNode, layeredGraph);
-                LNode targetNodeCompound = getRelatedCompoundNode(targetNode, layeredGraph);
-                // if it is not hierarchy-crossing, return the compound node that is parent of both
-                // source and target
-                if (sourceNodeCompound == targetNodeCompound) {
-                    retNode = sourceNodeCompound;
-                // if the edge is hierarchy-crossing, choose the compound node of the target
-                } else {
-                    retNode = targetNodeCompound;
-                }
-            }
-            break;
-        case EXTERNAL_PORT:
-            LGraphElement nodeParentRep = elemMap
-                    .get(((KPort) (node.getProperty(Properties.ORIGIN))).getNode().getParent());
-            if (!(nodeParentRep == layeredGraph)) {
-                retNode = (LNode) nodeParentRep;
-            }
-            break;
-        case NORTH_SOUTH_PORT:
-            LNode portNode = node.getProperty(Properties.IN_LAYER_LAYOUT_UNIT);
-            KNode portNodeParent = portNode.getProperty(Properties.K_PARENT);
-            LGraphElement portNodeParentRepresentative = elemMap.get(portNodeParent);
-            if (!(elemMap.get(portNodeParent) instanceof LayeredGraph)) {
-                retNode = (LNode) portNodeParentRepresentative;
-            }
-            break;
-        case COMPOUND_SIDE:
-            retNode = node.getProperty(Properties.SIDE_OWNER);
-            break;
-        default:
-            break;
-        }
-
-        return retNode;
-    }
-
-    /**
-     * Finds for a pair of LNodes the pair of ancestors with a common parent that is highest in
-     * depth in the inclusion tree. Each of the ancestors may be the given node itself.
-     * 
-     * @param sourceTargetList
-     *            The pair of nodes is handed over as a List. The pair of ancestors will be stored
-     *            in the same list.
-     * @param elemMap
-     *            The element map that maps the original KGraphElements to the LGraphElements.
-     */
-    private static void propagatePair(final LinkedList<LNode> sourceTargetList,
-            final HashMap<KGraphElement, LGraphElement> elemMap) {
-        LNode sourceNode = sourceTargetList.getFirst();
-        LNode targetNode = sourceTargetList.getLast();
-
-        KNode currentSource = getRelatedKNode(sourceNode);
-        KNode currentTarget = getRelatedKNode(targetNode);
-
-        int depthSource = elemMap.get(currentSource).getProperty(Properties.DEPTH);
-        int depthTarget = elemMap.get(currentTarget).getProperty(Properties.DEPTH);
-        assert (depthSource > 0);
-        assert (depthTarget > 0);
-
-        KNode currentSourceAncestor = currentSource.getParent();
-        KNode currentTargetAncestor = currentTarget.getParent();
-
-        // If source and target differ in depth in the nesting tree, crawl up the
-        // nesting tree on the deep side to reach even depth level
-        if (depthSource != depthTarget) {
-            for (int i = depthSource; i > depthTarget; i--) {
-                currentSource = currentSource.getParent();
-            }
-            for (int j = depthTarget; j > depthSource; j--) {
-                currentTarget = currentTarget.getParent();
-            }
-        }
-
-        if (currentSourceAncestor != currentTargetAncestor) {
-            // Walk up the nesting tree from both sides, until nodes have the same
-            // parent.
-            currentSourceAncestor = currentSource.getParent();
-            currentTargetAncestor = currentTarget.getParent();
-            while (currentSourceAncestor != currentTargetAncestor) {
-                currentSource = currentSource.getParent();
-                currentTarget = currentTarget.getParent();
-                currentSourceAncestor = currentSource.getParent();
-                currentTargetAncestor = currentTarget.getParent();
-            }
-        }
-        LNode newSource = (LNode) elemMap.get(currentSource);
-        LNode newTarget = (LNode) elemMap.get(currentTarget);
-        sourceTargetList.addFirst(newSource);
-        sourceTargetList.addLast(newTarget);
-    }
-
-    /**
-     * Returns the KNode the given node is representing (in case of normal or compound dummy nodes)
-     * or directly related to - port node in case of Port dummies, target node origin in case of
-     * long edge dummies.
-     * 
-     * @param node
-     *            The node for which to find the related KNode.
-     * @return The KNode represented by the given node or directly related to it.
-     */
-    private static KNode getRelatedKNode(final LNode node) {
-        KNode retNode;
-        Object origin = node.getProperty(Properties.ORIGIN);
-        NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
-        switch (nodeType) {
-        case EXTERNAL_PORT:
-            KNode portNode = ((KPort) (node.getProperty(Properties.ORIGIN))).getNode();
-            retNode = portNode;
-            break;
-        case LONG_EDGE:
-            LNode edgeTarget = node.getProperty(Properties.LONG_EDGE_TARGET).getNode();
-            Object edgeTargetOrigin = edgeTarget.getProperty(Properties.ORIGIN);
-            assert (edgeTargetOrigin instanceof KNode);
-            retNode = (KNode) edgeTargetOrigin;
-            break;
-        case NORTH_SOUTH_PORT:
-            LNode lnode = node.getProperty(Properties.IN_LAYER_LAYOUT_UNIT);
-            Object nodeOrigin = lnode.getProperty(Properties.ORIGIN);
-            assert (nodeOrigin instanceof KNode);
-            retNode = (KNode) nodeOrigin;
-            break;
-        case COMPOUND_SIDE:
-            LNode compoundNode = node.getProperty(Properties.SIDE_OWNER);
-            retNode = (KNode) compoundNode.getProperty(Properties.ORIGIN);
-            break;
-        default:
-            assert (origin instanceof KNode);
-            retNode = (KNode) origin;
-            break;
         }
         return retNode;
     }

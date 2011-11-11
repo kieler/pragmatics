@@ -23,10 +23,10 @@ import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.SubgraphOrderingProcessor;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -156,7 +156,7 @@ public class CompoundGraphLayerCrossingMinimizer {
 
             for (LNode node : layer) {
                 // The correlation node/compoundNode is the same as in the SubGraphOrderingProcessor
-                LNode key = SubgraphOrderingProcessor.getRelatedCompoundNode(node, layeredGraph);
+                LNode key = Util.getRelatedCompoundNode(node, layeredGraph);
                 // If node is contained by the layeredGraph directly, getRelatedCompoundNode has
                 // returned null. Use the graphkey in this case.
                 if (key == null) {
