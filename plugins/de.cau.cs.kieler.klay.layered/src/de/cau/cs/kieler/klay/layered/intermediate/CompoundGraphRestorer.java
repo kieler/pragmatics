@@ -17,12 +17,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -165,8 +164,7 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
                 case UPPER_COMPOUND_BORDER:
                     // Keep an eye on edges to descendant nodes: Their port coordinates have to be
                     // updated.
-                    if (KimlUtil.isDescendant((KNode) targetNode.getProperty(Properties.ORIGIN),
-                            (KNode) sourceNode.getProperty(Properties.ORIGIN))) {
+                    if (Util.isDescendant(targetNode, sourceNode)) {
                         LPort newPort3 = transferPort(sourcePort, compoundNodeSource);
                         ledge.setSource(newPort3);
                     }
