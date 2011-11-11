@@ -138,14 +138,17 @@ public class PiccoloAttributeLayoutConfig implements ILayoutConfig {
     
     /**
      * Returns the options which are affected by this layout configuration derived from the given
-     * Piccolo node.
+     * Piccolo node.<br><br>
+     * 
+     * chsch: set this and dependent method/field 'public static' for use in
+     * {@link PiccoloDiagramLayoutManager}. Why is the list transformed into an array?
      * 
      * @param node
      *            the node
      * @return the options
      */
     @SuppressWarnings("unchecked")
-    private IProperty<?>[] getAffectedOptions(final PNode node) {
+    public static IProperty<?>[] getAffectedOptions(final PNode node) {
         List<LayoutOptionData<?>> data = new LinkedList<LayoutOptionData<?>>();
         Enumeration<Object> keyEnumeration = node.getClientPropertyKeysEnumeration();
         while (keyEnumeration.hasMoreElements()) {
@@ -161,7 +164,7 @@ public class PiccoloAttributeLayoutConfig implements ILayoutConfig {
     }
 
     /** a caching map for layout option data. */
-    private Map<String, LayoutOptionData<?>> optionDataMap;
+    private static Map<String, LayoutOptionData<?>> optionDataMap;
 
     /**
      * Return a layout option data for the given identifier.<br>
@@ -172,7 +175,7 @@ public class PiccoloAttributeLayoutConfig implements ILayoutConfig {
      *            an identifier
      * @return the corresponding option data
      */
-    private LayoutOptionData<?> getOptionData(final String id) {
+    private static LayoutOptionData<?> getOptionData(final String id) {
         if (optionDataMap == null) {
             optionDataMap = new HashMap<String, LayoutOptionData<?>>();
             LayoutDataService layoutServices = LayoutDataService.getInstance();
