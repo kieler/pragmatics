@@ -142,22 +142,30 @@ public class DiagramLayoutEngine {
             // first phase: build the layout graph
             @Override
             protected void preUIexec() {
-                layoutMapping.set(layoutManager.buildLayoutGraph(workbenchPart,
-                        layoutAncestors ? null : diagramPart));
+                if (workbenchPart.getSite().getPage().isPartVisible(workbenchPart)) {
+                    layoutMapping.set(layoutManager.buildLayoutGraph(workbenchPart,
+                            layoutAncestors ? null : diagramPart));
+                }
             }
 
             // second phase: execute layout algorithms
             @Override
             protected IStatus execute(final IProgressMonitor monitor) {
-                IKielerProgressMonitor kielerMonitor;
-                if (monitor == null) {
-                    kielerMonitor = new BasicProgressMonitor(0);
+                IStatus status;
+                if (layoutMapping.get() == null) {
+                    status = new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
+                            Messages.getString("kiml.ui.62")); 
                 } else {
-                    kielerMonitor = new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS);
+                    IKielerProgressMonitor kielerMonitor;
+                    if (monitor == null) {
+                        kielerMonitor = new BasicProgressMonitor(0);
+                    } else {
+                        kielerMonitor = new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS);
+                    }
+                    status = layout(layoutMapping.get(), diagramPart, kielerMonitor,
+                            extraLayoutConfig, layoutAncestors);
+                    kielerMonitor.done();
                 }
-                IStatus status = layout(layoutMapping.get(), diagramPart, kielerMonitor,
-                        extraLayoutConfig, layoutAncestors);
-                kielerMonitor.done();
                 return status;
             }
 
