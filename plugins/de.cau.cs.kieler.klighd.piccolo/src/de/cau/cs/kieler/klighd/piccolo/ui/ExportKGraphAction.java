@@ -27,8 +27,12 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
+import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
 import de.cau.cs.kieler.klighd.piccolo.PiccoloViewer;
+import de.cau.cs.kieler.klighd.piccolo.graph.IGraphObject;
 import de.cau.cs.kieler.klighd.piccolo.graph.layout.PiccoloDiagramLayoutManager;
 
 /**
@@ -70,9 +74,12 @@ public class ExportKGraphAction extends Action {
                 ResourceSet set = new ResourceSetImpl();
                 Resource resource = set.createResource(fileURI);
                 
-                KNode kgraph = new PiccoloDiagramLayoutManager().buildLayoutGraph(null, viewer)
-                        .getLayoutGraph();
-                
+                LayoutMapping<IGraphObject> layoutMapping = new PiccoloDiagramLayoutManager()
+                        .buildLayoutGraph(null, viewer);
+                new LayoutOptionManager().configure(layoutMapping);
+
+                KNode kgraph = layoutMapping.getLayoutGraph();
+                KimlUtil.persistDataElements(kgraph);
                 resource.getContents().add(kgraph);
                 
                 resource.save(Collections.emptyMap());
