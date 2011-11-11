@@ -58,6 +58,8 @@ public class LayoutEffect extends AbstractEffect {
     private LayoutMapping<?> layoutMapping;
     /** additional layout options configuration. */
     private VolatileLayoutConfig layoutConfig;
+    /** whether the effect should be merged with other layout effects. */
+    private boolean doMerge = true;
 
     /**
      * Create a new layout effect for the given diagram editor and EObject. If {@code null}
@@ -171,6 +173,13 @@ public class LayoutEffect extends AbstractEffect {
         this.layoutAncestors = ancestors;
         this.doAnimate = animation;
     }
+    
+    /**
+     * Constrain this layout effect not to be merged with any other effect.
+     */
+    public void dontMerge() {
+        doMerge = false;
+    }
 
     /**
      * Set a layout option value for this layout effect. The value is only applied for this layout
@@ -232,7 +241,7 @@ public class LayoutEffect extends AbstractEffect {
      */
     @Override
     public boolean isMergeable() {
-        return true;
+        return doMerge;
     }
 
     /**
@@ -240,9 +249,9 @@ public class LayoutEffect extends AbstractEffect {
      */
     @Override
     public IEffect merge(final IEffect otherEffect) {
-        if (otherEffect instanceof LayoutEffect) {
+        if (doMerge && otherEffect instanceof LayoutEffect) {
             LayoutEffect other = (LayoutEffect) otherEffect;
-            if (diagramEditor == other.diagramEditor) {
+            if (other.doMerge && diagramEditor == other.diagramEditor) {
                 if (this.diagramPart instanceof EditPart && other.diagramPart instanceof EditPart) {
                     this.diagramPart = commonAncestor((EditPart) this.diagramPart,
                             (EditPart) other.diagramPart);
