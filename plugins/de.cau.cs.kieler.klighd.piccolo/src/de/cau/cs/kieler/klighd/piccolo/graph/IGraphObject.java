@@ -17,5 +17,15 @@ package de.cau.cs.kieler.klighd.piccolo.graph;
  * @author mri
  */
 public interface IGraphObject {
+    
+    /**
+     * Returns a client attribute for a given key.
+     * Enables the use of {@link edu.umd.cs.piccolo.PNode#getAttribute(Object)}.
+     * 
+     * @author chsch
+     * @param o attribute key
+     * @return attribute value
+     */
+    Object getAttribute(Object o);
 
 }

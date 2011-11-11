@@ -12,6 +12,7 @@
 package de.cau.cs.kieler.klighd.piccolo.graph.layout;
 
 import java.awt.geom.Point2D;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,6 +26,8 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -32,6 +35,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
@@ -178,7 +182,10 @@ public class PiccoloDiagramLayoutManager implements IDiagramLayoutManager<IGraph
             final IGraphParent parent, final KNode layoutParent) {
         // iterate through the children of the element
         for (IGraphNode node : parent.getChildren()) {
-            createNode(mapping, node, parent, layoutParent);
+            if (shallBeLayouted(node)) {
+                // chsch: test added
+                createNode(mapping, node, parent, layoutParent);
+            }
         }
     }
 
@@ -216,10 +223,39 @@ public class PiccoloDiagramLayoutManager implements IDiagramLayoutManager<IGraph
 
         // store all the edges to process them later
         for (IGraphEdge edge : node.getOutgoingEdges()) {
-            mapping.getProperty(EDGES).add(edge);
+            // chsch: test added
+            if (shallBeLayouted(edge)) {
+                mapping.getProperty(EDGES).add(edge);
+            }
         }
 
         // TODO node label
+    }    
+    
+    /**
+     * A preliminary solution for excluding elements from layout according to msp's ideas.
+     * Open question: How deal with such elements if they shall by modified during applyLayout, though?
+     * 
+     * @author chsch
+     */
+    private boolean shallBeLayouted(final IGraphObject edge) {
+        List<IProperty<?>> options = Arrays.asList(PiccoloAttributeLayoutConfig
+                .getAffectedOptions((PNode) edge));
+        for (IProperty<?> option : options) {
+            LayoutOptionData<?> data = LayoutDataService.getInstance().getOptionDataBySuffix(
+                    option.getId());
+            if (data != null && data.getId().equals(LayoutOptions.NO_LAYOUT_ID)) {
+                Object value = edge.getAttribute(data.getId());
+                if (value == null) {
+                    value = edge.getAttribute(data.getId().substring(
+                            data.getId().lastIndexOf(".") + 1));
+                }
+                if (value != null && value.equals("true")) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private void createPort(final LayoutMapping<IGraphObject> mapping, final IGraphPort port,
