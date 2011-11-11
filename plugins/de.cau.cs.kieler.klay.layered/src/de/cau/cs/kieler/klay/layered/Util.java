@@ -22,6 +22,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -173,5 +174,26 @@ public final class Util {
             currentParent = current.getProperty(Properties.PARENT);
         }
         return false;
+    }
+
+    /**
+     * Finds and returns the given node's parent's representative in the LayeredGraph.
+     * 
+     * @param child
+     *            the node for which the parent representative is to be found.
+     * @return returns the LGraphElement representing the parent of the given node in the original
+     *         graph. Returned element can be instance of LayeredGraph (in case the given Node is of
+     *         depth level one, that is directly contained by the layered graph) or LNode (any other
+     *         case).
+     */
+    public static LGraphElement getParent(final LNode child) {
+        NodeType childNodeType = child.getProperty(Properties.NODE_TYPE);
+        switch (childNodeType) {
+        case NORMAL:
+        case UPPER_COMPOUND_BORDER:
+            return child.getProperty(Properties.PARENT);
+        default:
+            return child.getProperty(Properties.COMPOUND_NODE).getProperty(Properties.PARENT);
+        }
     }
 }
