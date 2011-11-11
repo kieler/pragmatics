@@ -111,9 +111,13 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
 
                     // Establishes the edge an adjacency of two compound nodes (source and target
                     // are one of the compound nodes or any of it's descendants)?
+                    LinkedList<LNode> sourceChildren = Util.getChildren(sourceNode);
+                    LinkedList<LNode> targetChildren = Util.getChildren(targetNode);
                     if ((currentSourceAncestor != currentTargetAncestor)
                             || ((!Util.getChildren(sourceNode).isEmpty()) && (!Util.getChildren(
-                                    targetNode).isEmpty()))) {
+                                    targetNode).isEmpty()))
+                            || (sourceChildren.isEmpty() && !targetChildren.isEmpty())
+                            || (!sourceChildren.isEmpty() && targetChildren.isEmpty())) {
 
                         int depthSource = sourceNode.getProperty(Properties.DEPTH);
                         int depthTarget = targetNode.getProperty(Properties.DEPTH);
@@ -155,16 +159,14 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
 
                             NodeType sourceNodeType = currentSource
                                     .getProperty(Properties.NODE_TYPE);
-                            NodeType targetNodeType = currentSource
+                            NodeType targetNodeType = currentTarget
                                     .getProperty(Properties.NODE_TYPE);
 
-                            if (!((sourceNodeType == NodeType.NORMAL) || (sourceNodeType 
-                                    == NodeType.UPPER_COMPOUND_BORDER))) {
+                            if (!((sourceNodeType == NodeType.NORMAL) || (sourceNodeType == NodeType.UPPER_COMPOUND_BORDER))) {
                                 currentSource = currentSource.getProperty(Properties.COMPOUND_NODE);
                             }
 
-                            if (!((targetNodeType == NodeType.NORMAL) || (targetNodeType 
-                                    == NodeType.UPPER_COMPOUND_BORDER))) {
+                            if (!((targetNodeType == NodeType.NORMAL) || (targetNodeType == NodeType.UPPER_COMPOUND_BORDER))) {
                                 currentTarget = currentTarget.getProperty(Properties.COMPOUND_NODE);
                             }
 
