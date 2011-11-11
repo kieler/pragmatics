@@ -335,6 +335,13 @@ public final class Properties {
      */
     public static final IProperty<Boolean> MERGE_PORTS = new Property<Boolean>(
             MERGE_PORTS_ID, false);
+    
+    /** option identifier for interactive layout anchor point. */
+    public static final String INTERACTIVE_LAYOUT_ANCHOR_ID =
+            "de.cau.cs.kieler.klay.layered.interactiveLayoutAnchor";
+    /** property that determines which point in a node determines the result of interactive phases. */
+    public static final IProperty<AnchorPoint> INTERACTIVE_LAYOUT_ANCHOR = new Property<AnchorPoint>(
+            INTERACTIVE_LAYOUT_ANCHOR_ID, AnchorPoint.CENTER);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

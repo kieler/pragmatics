@@ -89,6 +89,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.mergePorts">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.interactiveLayoutAnchor">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
@@ -170,6 +173,16 @@
             id="de.cau.cs.kieler.klay.layered.mergePorts"
             name="Merge Edges"
             type="boolean">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.properties.AnchorPoint"
+            default="CENTER"
+            description="Determines which point of a node is considered by interactive layout phases."
+            id="de.cau.cs.kieler.klay.layered.interactiveLayoutAnchor"
+            name="Interactive Layout Anchor"
+            type="enum">
       </layoutOption>
    </extension>
 

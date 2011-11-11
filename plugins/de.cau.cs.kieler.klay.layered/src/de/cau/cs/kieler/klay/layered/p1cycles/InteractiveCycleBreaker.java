@@ -63,12 +63,12 @@ public class InteractiveCycleBreaker extends AbstractAlgorithm implements ILayou
         LinkedList<LEdge> revEdges = new LinkedList<LEdge>();
         for (LNode source : layeredGraph.getLayerlessNodes()) {
             source.id = 1;
-            double sourcex = source.getPosition().x + source.getSize().x / 2;
+            double sourcex = source.getAnchorPointPosition(layeredGraph).x;
             for (LPort port : source.getPorts(PortType.OUTPUT)) {
                 for (LEdge edge : port.getOutgoingEdges()) {
                     LNode target = edge.getTarget().getNode();
                     if (target != source) {
-                        double targetx = target.getPosition().x + target.getSize().x / 2;
+                        double targetx = target.getAnchorPointPosition(layeredGraph).x;
                         if (targetx < sourcex) {
                             revEdges.add(edge);
                         }

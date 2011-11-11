@@ -69,13 +69,30 @@ public class InteractiveCrossingMinimizer extends AbstractCrossingMinimizer {
             int nextIndex = 0;
             for (LNode node : layer) {
                 node.id = nextIndex++;
-                pos[node.id] = getPos(node, horizPos);
+                pos[node.id] = getPos(node, horizPos, layeredGraph);
             }
             
             // sort the nodes using the position array
             Collections.sort(layer.getNodes(), new Comparator<LNode>() {
                 public int compare(final LNode node1, final LNode node2) {
-                    return Double.compare(pos[node1.id], pos[node2.id]);
+                    int compare = Double.compare(pos[node1.id], pos[node2.id]);
+                    
+                    if (compare == 0) {
+                        // The two nodes have the same y coordinate. Check for node successor
+                        // constraints
+                        LNode node1Successor =
+                                node1.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINT);
+                        LNode node2Successor =
+                                node2.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINT);
+                        
+                        if (node1Successor == node2) {
+                            return -1;
+                        } else if (node2Successor == node1) {
+                            return 1;
+                        }
+                    }
+                    
+                    return compare;
                 }
             });
         }
@@ -104,9 +121,10 @@ public class InteractiveCrossingMinimizer extends AbstractCrossingMinimizer {
      * 
      * @param node a node
      * @param horizPos the horizontal position at which to measure (relevant for edges)
+     * @param graph the layered graph.
      * @return the vertical position used for sorting
      */
-    private double getPos(final LNode node, final double horizPos) {
+    private double getPos(final LNode node, final double horizPos, final LayeredGraph graph) {
         switch (node.getProperty(Properties.NODE_TYPE)) {
         case LONG_EDGE:
             LEdge edge = (LEdge) node.getProperty(Properties.ORIGIN);
@@ -146,7 +164,10 @@ public class InteractiveCrossingMinimizer extends AbstractCrossingMinimizer {
             
             switch (originPort.getSide()) {
             case NORTH:
-                // Use the position of the node's northern side
+                // Use the position of the node's northern side. This causes northern dummies to
+                // have the same y coordinate as the node they were created from if TOP_LEFT is
+                // used as the anchor point. We solve this when sorting the nodes by y coordinate
+                // by respecting node successor constraints.
                 return originNode.getPosition().y;
             
             case SOUTH:
@@ -158,8 +179,9 @@ public class InteractiveCrossingMinimizer extends AbstractCrossingMinimizer {
 
         // FIXME What about the other node types?
         }
-        // the fallback solution is to take the previous position of the node's mid point
-        return node.getPosition().y + node.getSize().y / 2.0;
+        
+        // the fallback solution is to take the previous position of the node's anchor point
+        return node.getAnchorPointPosition(graph).y;
     }
 
 }

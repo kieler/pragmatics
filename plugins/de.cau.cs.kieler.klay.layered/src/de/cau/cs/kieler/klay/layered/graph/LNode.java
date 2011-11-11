@@ -292,4 +292,28 @@ public class LNode extends LShape {
         }
     }
 
+    /**
+     * Returns the position of this node's anchor point. This position depends on the graph's
+     * {@link de.cau.cs.kieler.klay.layered.properties.Properties#INTERACTIVE_LAYOUT_ANCHOR} property.
+     * 
+     * @param graph the layered graph.
+     * @return the anchor point position.
+     */
+    public KVector getAnchorPointPosition(final LayeredGraph graph) {
+        switch (graph.getProperty(Properties.INTERACTIVE_LAYOUT_ANCHOR)) {
+        case CENTER:
+            KVector nodePos = getPosition();
+            KVector nodeSize = getSize();
+            
+            return new KVector(nodePos.x + nodeSize.x / 2.0, nodePos.y + nodeSize.y / 2.0);
+        
+        case TOP_LEFT:
+            return new KVector(getPosition());
+        
+        default:
+            // This shouldn't happen.
+            return null;
+        }
+    }
+
 }
