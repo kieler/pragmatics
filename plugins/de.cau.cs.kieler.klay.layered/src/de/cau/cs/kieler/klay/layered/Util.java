@@ -164,7 +164,7 @@ public final class Util {
      */
     public static boolean isDescendant(final LNode child, final LNode parent) {
         LNode current = child;
-        LGraphElement currentParent = current.getProperty(Properties.PARENT);
+        LGraphElement currentParent = getParent(current);
         // Nodes that are directly contained by the layered graph carry it in their parent property.
         // So if the parent changes instance from LNode to LayeredGraph, the loop ends.
         while (currentParent instanceof LNode) {
@@ -172,7 +172,7 @@ public final class Util {
             if (current == parent) {
                 return true;
             }
-            currentParent = current.getProperty(Properties.PARENT);
+            currentParent = getParent(current);
         }
         return false;
     }
