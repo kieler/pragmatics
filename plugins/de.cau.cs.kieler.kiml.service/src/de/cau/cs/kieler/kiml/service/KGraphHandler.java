@@ -45,6 +45,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.service.formats.AbstractEmfHandler;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Transformer for the KGraph model and XMI serialization.
@@ -61,7 +62,7 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
      */
     @Override
     public String serialize(final KNode graph) {
-        persistDataElements(graph);
+        KimlUtil.persistDataElements(graph);
         return super.serialize(graph);
     }
 
@@ -129,25 +130,6 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
      */
     public IGraphTransformer<KNode, KNode> getExporter() {
         return TRANSFORMER;
-    }
-
-    /**
-     * Persists all KGraphData elements of a KNode graph.
-     *
-     * @param graph
-     *            the root element of the graph to persist elements of.
-     */
-    private void persistDataElements(final KNode graph) {
-        if (graph != null) {
-            TreeIterator<EObject> iterator = graph.eAllContents();
-            EObject eObject = null;
-            while (iterator.hasNext()) {
-                eObject = iterator.next();
-                if (eObject instanceof KGraphData) {
-                    ((KGraphData) eObject).makePersistent();
-                }
-            }
-        }
     }
 
     /**

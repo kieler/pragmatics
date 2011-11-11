@@ -18,6 +18,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.ecore.EObject;
+
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -789,6 +792,23 @@ public final class KimlUtil {
             Object obj = optionData.parseValue(value);
             if (obj != null) {
                 graphData.setProperty(optionData, obj);
+            }
+        }
+    }
+
+    /**
+     * Persists all KGraphData elements of a KNode graph.
+     *
+     * @param graph
+     *            the root element of the graph to persist elements of.
+     */
+    public static void persistDataElements(final KNode graph) {
+        TreeIterator<EObject> iterator = graph.eAllContents();
+        EObject eObject = null;
+        while (iterator.hasNext()) {
+            eObject = iterator.next();
+            if (eObject instanceof KGraphData) {
+                ((KGraphData) eObject).makePersistent();
             }
         }
     }
