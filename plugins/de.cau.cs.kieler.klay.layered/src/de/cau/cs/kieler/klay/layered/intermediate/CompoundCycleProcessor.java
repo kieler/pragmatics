@@ -193,10 +193,12 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
         for (int i = 0; i < toDescendantSize; i++) {
             LEdge edge = toDescendantEdges.get(i);
             if (!edge.getProperty(Properties.REVERSED)) {
-                LPort source = edge.getSource();
-                LPort target = edge.getTarget();
-                edge.setSource(target);
-                edge.setTarget(source);
+//                LPort source = edge.getSource();
+//                LPort target = edge.getTarget();
+//                edge.setSource(target);
+//                edge.setTarget(source);
+//                edge.setProperty(Properties.REVERSED, true);
+                edge.reverse(true);
             }
         }
 
