@@ -25,6 +25,7 @@ import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
@@ -156,6 +157,13 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             return null;
         }
     }
+    
+    /** property for maximal priority of incoming edges. */
+    private static final Property<Integer> INPUT_PRIO = new Property<Integer>(
+            "linearSegments.inputPrio", 0);
+    /** property for maximal priority of outgoing edges. */
+    private static final Property<Integer> OUTPUT_PRIO = new Property<Integer>(
+            "linearSegments.outputPrio", 0);
 
     /** array of sorted linear segments. */
     private LinearSegment[] linearSegments;
@@ -180,7 +188,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
 
         // set the proper offset and height for the whole graph
         double minY = 0, maxY = 0;
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
             KVector layerSize = layer.getSize();
             LNode firstNode = layer.getNodes().get(0);
             double top = firstNode.getPosition().y - firstNode.getMargin().top;
@@ -211,18 +219,31 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      * @return a sorted array of linear segments
      */
     private LinearSegment[] sortLinearSegments(final LayeredGraph layeredGraph) {
-        // reset all node IDs
+        // set the identifier and input / output priority for all nodes
         List<LinearSegment> segmentList = new LinkedList<LinearSegment>();
-        for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
+        for (Layer layer : layeredGraph) {
+            for (LNode node : layer) {
                 node.id = -1;
+                int inprio = Integer.MIN_VALUE, outprio = Integer.MIN_VALUE;
+                for (LPort port : node.getPorts()) {
+                    for (LEdge edge : port.getIncomingEdges()) {
+                        int prio = edge.getProperty(Properties.PRIORITY);
+                        inprio = Math.max(inprio, prio);
+                    }
+                    for (LEdge edge : port.getOutgoingEdges()) {
+                        int prio = edge.getProperty(Properties.PRIORITY);
+                        outprio = Math.max(outprio, prio);
+                    }
+                }
+                node.setProperty(INPUT_PRIO, inprio);
+                node.setProperty(OUTPUT_PRIO, outprio);
             }
         }
-
+        
         // create linear segments for the layered graph, ignoring odd port side dummies
         int nextLinearSegmentID = 0;
-        for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
+        for (Layer layer : layeredGraph) {
+            for (LNode node : layer) {
                 // Test for the node ID; calls to fillSegment(...) may have caused the node ID
                 // to be != -1.
                 if (node.id < 0) {
@@ -335,7 +356,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
 
         int nextLinearSegmentID = segmentList.size();
         int layerIndex = 0;
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
             List<LNode> nodes = layer.getNodes();
             if (nodes.isEmpty()) {
                 // Ignore empty layers
@@ -566,7 +587,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     private void balancePlacement(final LayeredGraph layeredGraph) {
         float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         float smallSpacing = spacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
-
+        
         // Determine a suitable number of pendulum iterations
         int thoroughness = layeredGraph.getProperty(Properties.THOROUGHNESS);
         int pendulumIters = thoroughness;
@@ -630,6 +651,9 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         } while (!(ready && finalIters <= 0));
         
     }
+    
+    /** factor by which deflections are damped. */
+    private static final double DEFLECTION_DAMP = 0.6;
 
     /**
      * Calculate the force acting on the given linear segment. The force is stored in the segment's
@@ -642,10 +666,13 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     private void calcDeflection(final LinearSegment segment, final boolean incoming,
             final boolean outgoing) {
         double segmentDeflection = 0;
-        double nodeWeightSum = 0;
+        int nodeWeightSum = 0;
         for (LNode node : segment.nodes) {
             double nodeDeflection = 0;
-            double edgeWeightSum = 0;
+            int edgeWeightSum = 0;
+            int inputPrio = incoming ? node.getProperty(INPUT_PRIO) : Integer.MIN_VALUE;
+            int outputPrio = outgoing ? node.getProperty(OUTPUT_PRIO) : Integer.MIN_VALUE;
+            int minPrio = Math.max(inputPrio, outputPrio);
 
             // Calculate force for every port/edge
             for (LPort port : node.getPorts()) {
@@ -655,16 +682,12 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                         LPort otherPort = edge.getTarget();
                         LNode otherNode = otherPort.getNode();
                         if (segment != linearSegments[otherNode.id]) {
-                            double weight = 1;
                             int prio = edge.getProperty(Properties.PRIORITY);
-                            if (prio < 0) {
-                                weight = 1 / (double) -prio;
-                            } else if (prio > 0) {
-                                weight = prio + 1;
+                            if (prio >= minPrio) {
+                                nodeDeflection += otherNode.getPosition().y
+                                        + otherPort.getPosition().y - portpos;
+                                edgeWeightSum++;
                             }
-                            nodeDeflection += weight * ((otherNode.getPosition().y
-                                    + otherPort.getPosition().y) - portpos) / 2;
-                            edgeWeightSum += weight;
                         }
                     }
                 }
@@ -674,16 +697,12 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                         LPort otherPort = edge.getSource();
                         LNode otherNode = otherPort.getNode();
                         if (segment != linearSegments[otherNode.id]) {
-                            double weight = 1;
                             int prio = edge.getProperty(Properties.PRIORITY);
-                            if (prio < 0) {
-                                weight = 1 / (double) prio;
-                            } else if (prio > 0) {
-                                weight = prio + 1;
+                            if (prio >= minPrio) {
+                                nodeDeflection += otherNode.getPosition().y
+                                        + otherPort.getPosition().y - portpos;
+                                edgeWeightSum++;
                             }
-                            nodeDeflection += weight * ((otherNode.getPosition().y
-                                    + otherPort.getPosition().y) - portpos) / 2;
-                            edgeWeightSum += weight;
                         }
                     }
                 }
@@ -691,21 +710,21 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
 
             // Avoid division by zero
             if (edgeWeightSum > 0) {
-                nodeDeflection /= edgeWeightSum;
+                segmentDeflection += nodeDeflection / edgeWeightSum;
+                nodeWeightSum++;
             }
-            double weight = 1;
-            int prio = node.getProperty(Properties.PRIORITY);
-            if (prio < 0) {
-                weight = 1 / (double) -prio;
-            } else if (prio > 0) {
-                weight = prio + 1;
-            }
-            segmentDeflection += weight * nodeDeflection;
-            nodeWeightSum += weight;
         }
-        segment.deflection = segmentDeflection / nodeWeightSum;
-        segment.weight = 1;
+        if (nodeWeightSum > 0) {
+            segment.deflection = DEFLECTION_DAMP * segmentDeflection / nodeWeightSum;
+            segment.weight = nodeWeightSum;
+        } else {
+            segment.deflection = 0;
+            segment.weight = 0;
+        }
     }
+    
+    /** factor for threshold within which node overlapping is detected. */
+    private static final double OVERLAP_DETECT = 0.01;
 
     /**
      * Merge regions by testing whether they would overlap after applying the deflection.
@@ -718,7 +737,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     private boolean mergeRegions(final LayeredGraph layeredGraph,
             final float normalSpacing, final float smallSpacing) {
         boolean changed = false;
-        for (Layer layer : layeredGraph.getLayers()) {
+        double threshold = OVERLAP_DETECT * normalSpacing;
+        for (Layer layer : layeredGraph) {
             Iterator<LNode> nodeIter = layer.getNodes().iterator();
 
             // Get the first node
@@ -742,9 +762,10 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                             + region2.deflection;
     
                     // Test if the nodes are overlapping
-                    if (node1Extent > node2Extent) {
+                    if (node1Extent > node2Extent + threshold) {
                         // Merge the first region under the second top level segment
                         int weightSum = region1.weight + region2.weight;
+                        assert weightSum > 0;
                         region2.deflection = (region2.weight * region2.deflection
                                 + region1.weight * region1.deflection) / weightSum;
                         region2.weight = weightSum;
