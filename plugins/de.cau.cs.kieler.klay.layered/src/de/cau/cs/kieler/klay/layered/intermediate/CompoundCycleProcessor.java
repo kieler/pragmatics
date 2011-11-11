@@ -17,8 +17,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
@@ -66,9 +64,6 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
         List<LNode> cycleRemovalNodes = cycleRemovalGraph.getLayerlessNodes();
         HashMap<LNode, LNode> insertedNodes = new HashMap<LNode, LNode>();
 
-        HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
-                .getProperty(Properties.ELEMENT_MAP);
-
         LinkedList<LEdge> toDescendantEdges = new LinkedList<LEdge>();
 
         // For each edge, walk up the nesting tree of the compound graph until a pair of ancestors
@@ -82,23 +77,21 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                 EdgeType edgeType = edge.getProperty(Properties.EDGE_TYPE);
                 if (edgeType == EdgeType.NORMAL) {
 
-                    KNode sourceOriginal = (KNode) edge.getSource().getNode()
-                            .getProperty(Properties.ORIGIN);
-                    KNode targetOriginal = (KNode) edge.getTarget().getNode()
-                            .getProperty(Properties.ORIGIN);
-                    KNode sourceOriginalParent = sourceOriginal.getParent();
-                    KNode targetOriginalParent = targetOriginal.getParent();
-                    KNode currentSourceAncestor = sourceOriginalParent;
-                    KNode currentTargetAncestor = targetOriginalParent;
-                    KNode currentSource = sourceOriginal;
-                    KNode currentTarget = targetOriginal;
+                    LNode sourceNode = edge.getSource().getNode();
+                    LNode targetNode = edge.getTarget().getNode();
+                    LGraphElement sourceParent = Util.getParent(sourceNode);
+                    LGraphElement targetParent = Util.getParent(targetNode);
+                    LNode currentSource = sourceNode;
+                    LNode currentTarget = targetNode;
+                    LGraphElement currentSourceAncestor = sourceParent;
+                    LGraphElement currentTargetAncestor = targetParent;
 
                     // Edges leading from ports of compound nodes to their descendants are reverted
                     // in case the port has incoming edges. Otherwise the layering for ports with
                     // incoming and outgoing descendant edges could lead to faulty layer
                     // assignments.
-                    if (Util.isDescendant(edge.getTarget().getNode(), edge.getSource().getNode()
-                            .getProperty(Properties.COMPOUND_NODE))) {
+                    if (Util.isDescendant(targetNode,
+                            sourceNode.getProperty(Properties.COMPOUND_NODE))) {
                         List<LEdge> portIncomingEdges = edge.getSource().getIncomingEdges();
                         if (!portIncomingEdges.isEmpty()) {
                             boolean descendantIncoming = false;
@@ -119,41 +112,64 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                     // Establishes the edge an adjacency of two compound nodes (source and target
                     // are one of the compound nodes or any of it's descendants)?
                     if ((currentSourceAncestor != currentTargetAncestor)
-                            || ((!sourceOriginal.getChildren().isEmpty()) && (!targetOriginal
-                                    .getChildren().isEmpty()))) {
+                            || ((!Util.getChildren(sourceNode).isEmpty()) && (!Util.getChildren(
+                                    targetNode).isEmpty()))) {
 
-                        KNode layoutNode = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
-                        int depthSource = getDepth(currentSource, layoutNode);
-                        int depthTarget = getDepth(currentTarget, layoutNode);
+                        int depthSource = sourceNode.getProperty(Properties.DEPTH);
+                        int depthTarget = targetNode.getProperty(Properties.DEPTH);
 
                         // If source and target differ in depth in the nesting tree, crawl up the
                         // nesting tree on the deep side to reach even depth level
                         if (depthSource != depthTarget) {
                             for (int i = depthSource; i > depthTarget; i--) {
-                                currentSource = currentSource.getParent();
+                                LGraphElement sourceNextParent = Util.getParent(currentSource);
+                                // This should stop at the latest, when a node of depth 1 is
+                                // reached;
+                                assert (sourceNextParent instanceof LNode);
+                                currentSource = (LNode) sourceNextParent;
                             }
                             for (int j = depthTarget; j > depthSource; j--) {
-                                currentTarget = currentTarget.getParent();
+                                LGraphElement targetNextParent = Util.getParent(currentTarget);
+                                // This should stop at the latest, when a node of depth 1 is
+                                // reached;
+                                assert (targetNextParent instanceof LNode);
+                                currentTarget = (LNode) targetNextParent;
                             }
                         }
 
                         if (currentSource != currentTarget) {
                             // Walk up the nesting tree from both sides, until nodes have the same
                             // parent.
-                            currentSourceAncestor = currentSource.getParent();
-                            currentTargetAncestor = currentTarget.getParent();
+                            currentSourceAncestor = Util.getParent(currentSource);
+                            currentTargetAncestor = Util.getParent(currentTarget);
                             while (currentSourceAncestor != currentTargetAncestor) {
-                                currentSource = currentSource.getParent();
-                                currentTarget = currentTarget.getParent();
-                                currentSourceAncestor = currentSource.getParent();
-                                currentTargetAncestor = currentTarget.getParent();
+                                // The loop should stop at the latest, when Nodes of depth 1 are
+                                // reached, whose parent is the layeredGraph
+                                assert (currentSourceAncestor instanceof LNode);
+                                assert (currentTargetAncestor instanceof LNode);
+                                currentSource = (LNode) currentSourceAncestor;
+                                currentTarget = (LNode) currentTargetAncestor;
+                                currentSourceAncestor = Util.getParent(currentSource);
+                                currentTargetAncestor = Util.getParent(currentTarget);
                             }
 
-                            LNode lCurrentSource = (LNode) elemMap.get(currentSource);
-                            LNode lCurrentTarget = (LNode) elemMap.get(currentTarget);
+                            NodeType sourceNodeType = currentSource
+                                    .getProperty(Properties.NODE_TYPE);
+                            NodeType targetNodeType = currentSource
+                                    .getProperty(Properties.NODE_TYPE);
 
-                            insertCycleNode(lCurrentSource, insertedNodes, cycleRemovalNodes);
-                            insertCycleNode(lCurrentTarget, insertedNodes, cycleRemovalNodes);
+                            if (!((sourceNodeType == NodeType.NORMAL) || (sourceNodeType 
+                                    == NodeType.UPPER_COMPOUND_BORDER))) {
+                                currentSource = currentSource.getProperty(Properties.COMPOUND_NODE);
+                            }
+
+                            if (!((targetNodeType == NodeType.NORMAL) || (targetNodeType 
+                                    == NodeType.UPPER_COMPOUND_BORDER))) {
+                                currentTarget = currentTarget.getProperty(Properties.COMPOUND_NODE);
+                            }
+
+                            insertCycleNode(currentSource, insertedNodes, cycleRemovalNodes);
+                            insertCycleNode(currentTarget, insertedNodes, cycleRemovalNodes);
 
                             LEdge cycleGraphEdge = new LEdge();
                             cycleGraphEdge.setProperty(Properties.ORIGIN, edge);
@@ -161,15 +177,14 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                             LPort cycleTargetPort = new LPort();
                             cycleGraphEdge.setSource(cycleSourcePort);
                             cycleGraphEdge.setTarget(cycleTargetPort);
-                            cycleSourcePort.setNode(insertedNodes.get(lCurrentSource));
-                            cycleTargetPort.setNode(insertedNodes.get(lCurrentTarget));
+                            cycleSourcePort.setNode(insertedNodes.get(currentSource));
+                            cycleTargetPort.setNode(insertedNodes.get(currentTarget));
                         }
                     }
                 }
             }
         }
         reverseCyclicEdges(layeredGraph, cycleRemovalGraph);
-        // reverseEdges(toDescendantEdges, layeredGraph);
         int toDescendantSize = toDescendantEdges.size();
         for (int i = 0; i < toDescendantSize; i++) {
             LEdge edge = toDescendantEdges.get(i);
@@ -350,18 +365,10 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
             dummyConnectionPort.setSide(PortSide.WEST);
             dummyConnectionPort.setNode(newLowerCompoundPort);
             // Connect it with compound dummy edges to the direct children of the compound node
-            for (KNode knode : ((KNode) node.getProperty(Properties.COMPOUND_NODE).getProperty(
-                    Properties.ORIGIN)).getChildren()) {
-                LNode representative = null;
-                for (LNode lnode : layeredGraph.getLayerlessNodes()) {
-                    if ((KNode) lnode.getProperty(Properties.ORIGIN) == knode) {
-                        representative = lnode;
-                        break;
-                    }
-                }
+            for (LNode child : Util.getChildren(node)) {
                 LEdge dummyEdge = new LEdge();
                 dummyEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_DUMMY);
-                LPort startPort = representative.getPorts(PortSide.WEST).iterator().next();
+                LPort startPort = child.getPorts(PortSide.WEST).iterator().next();
                 dummyEdge.setSource(startPort);
                 dummyEdge.setTarget(dummyConnectionPort);
             }
@@ -384,18 +391,10 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
             dummyConnector.setSide(PortSide.EAST);
             dummyConnector.setNode(newUpperCompoundPort);
             // Connect it with compound dummy edges to the direct children of the compound node
-            for (KNode knode : ((KNode) node.getProperty(Properties.COMPOUND_NODE).getProperty(
-                    Properties.ORIGIN)).getChildren()) {
-                LNode representative = null;
-                for (LNode lnode : layeredGraph.getLayerlessNodes()) {
-                    if ((KNode) lnode.getProperty(Properties.ORIGIN) == knode) {
-                        representative = lnode;
-                        break;
-                    }
-                }
+            for (LNode child : Util.getChildren(node)) {
                 LEdge dummyEdge = new LEdge();
                 dummyEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_DUMMY);
-                LPort endPort = representative.getPorts(PortSide.EAST).iterator().next();
+                LPort endPort = child.getPorts(PortSide.EAST).iterator().next();
                 dummyEdge.setSource(dummyConnector);
                 dummyEdge.setTarget(endPort);
             }
@@ -408,27 +407,5 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
         }
 
         return newPort;
-    }
-
-    /**
-     * Returns the depth of the given KNode in the nesting tree of the compound graph.
-     * 
-     * @param knode
-     *            The KNode, whose depth is to be calculated.
-     * @param layoutNode
-     *            The layoutNode of the original graph.
-     * @return The depth of the KNode. The layoutNode is regarded to have depth 0.
-     */
-    private int getDepth(final KNode knode, final KNode layoutNode) {
-        int ret = 0;
-        if (knode != layoutNode) {
-            ret = 1;
-            KNode currentAncestor = knode.getParent();
-            while (currentAncestor != layoutNode) {
-                ret += 1;
-                currentAncestor = currentAncestor.getParent();
-            }
-        }
-        return ret;
     }
 }
