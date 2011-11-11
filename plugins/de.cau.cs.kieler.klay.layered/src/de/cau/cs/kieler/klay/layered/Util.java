@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered;
 
 import java.io.File;
+import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -194,6 +195,26 @@ public final class Util {
             return child.getProperty(Properties.PARENT);
         default:
             return child.getProperty(Properties.COMPOUND_NODE).getProperty(Properties.PARENT);
+        }
+    }
+
+    /**
+     * Get the given node's children list. If the node is not of NodeType NORMAL oder
+     * UPPER_COMPOUND_BORDER and therefore directly representing a node of the original graph, get
+     * the children-list of the related compound border dummy.
+     * 
+     * @param node
+     *            the LNode, for which the children are to be returned
+     * @return the list of the representatives of the represented node's children.
+     */
+    public static LinkedList<LNode> getChildren(final LNode node) {
+        NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
+        switch (nodeType) {
+        case NORMAL:
+        case UPPER_COMPOUND_BORDER:
+            return node.getProperty(Properties.CHILDREN);
+        default:
+            return node.getProperty(Properties.COMPOUND_NODE).getProperty(Properties.CHILDREN);
         }
     }
 }
