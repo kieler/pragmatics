@@ -25,6 +25,7 @@ import org.eclipse.graphiti.mm.algorithms.styles.Orientation
 import de.cau.cs.kieler.core.annotations.IntAnnotation
 import de.cau.cs.kieler.core.annotations.AnnotationsFactory
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor
+import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator
 
 class DiagramUtil {
 	
@@ -107,7 +108,7 @@ class DiagramUtil {
      */
     def Anchor createLabeledEastPortAnchor(Shape shape, EObject o, String label) {
     	val x = shape.graphicsAlgorithm.width+1
-    	val y = shape.getAndAddIntProperty("eastports") * 15 + 25;
+    	val y = shape.getAndAddIntProperty("eastports") * 15 + verticalPortPlacementOffetTop.value;
     	val anchor = shape.createPortAnchor(o, x,y);
     	val rect = anchor.createRectangle(0,0,7,7, "black_black".style);
     	val text = rect.createText(-10, -2, label, Orientation::ALIGNMENT_RIGHT, "default".font);
@@ -121,11 +122,20 @@ class DiagramUtil {
      */
     def Anchor createLabeledWestPortAnchor(Shape shape, EObject o, String label) {
     	val x = -6
-    	val y = shape.getAndAddIntProperty("westports") * 15 + 25;
+    	val y = shape.getAndAddIntProperty("westports") * 15 + verticalPortPlacementOffetTop.value;
     	val anchor = shape.createPortAnchor(o,x,y);
     	val rect = anchor.createRectangle(0,0,7,7, "black_black".style);
     	rect.createText(10, -2, label, Orientation::ALIGNMENT_LEFT, "default".font);
     	return anchor
+    }
+    
+    
+    /**
+     * Default constant. Configured to enable a proper box label placement.
+     * Can be reconfigured using '...verticalPortPlacementOffsetTop.setValue'. 
+     */
+    def IntAnnotation create offset: AnnotationsFactory::eINSTANCE.createIntAnnotation getVerticalPortPlacementOffetTop() {
+    	offset.value = 25;
     }
 
 
@@ -199,25 +209,45 @@ class DiagramUtil {
     /**
       *
       */
-    def Connection addArrowHead(Connection connection, int scale) {
+    def ConnectionDecorator addConnectionArrow(Connection connection, int scale, boolean toHead) {
         val decorator = PictogramsFactory::eINSTANCE.createConnectionDecorator;
         val figure = AlgorithmsFactory::eINSTANCE.createPolygon;
-        figure.points.addAll(newArrayList(
-        	createPoint(scale*-5,scale*2), createPoint(scale*-3,0), createPoint(scale*-5,scale*-2), createPoint(0,0)
-        ));
+        if (toHead) {
+            figure.points.addAll(newArrayList(
+        	    createPoint(scale*-5,scale*2), createPoint(scale*-3,0), createPoint(scale*-5,scale*-2), createPoint(0,0)
+            ));
+        } else {
+            figure.points.addAll(newArrayList(
+        	    createPoint(scale* 5,scale*2), createPoint(scale* 3,0), createPoint(scale* 5,scale*-2), createPoint(0,0)
+            ));
+        }
         figure.setForeground(connection.graphicsAlgorithm.foreground);
         figure.setBackground(figure.foreground);
         figure.setFilled(true);  
         decorator.setVisible(true);
-        decorator.setLocation(Float::valueOf("1.0"));
+        decorator.setLocation(if (toHead) Float::valueOf("1.0") else Float::valueOf("0.0"));
         decorator.setLocationRelative(true);
         decorator.setGraphicsAlgorithm(figure);
         connection.connectionDecorators.add(decorator);
-        return connection
-    } 
-
-    def Connection addArrowHead(Connection connection) {
-        return addArrowHead(connection,  1)
+        return decorator
+    }
+    
+    def Connection addHeadArrow(Connection connection, int scale) {
+    	connection.addConnectionArrow(scale, true);
+    	return connection
+    }
+    
+    def Connection addTailArrow(Connection connection, int scale) {
+    	connection.addConnectionArrow(scale, false);
+    	return connection
+    }
+    
+    def Connection addHeadArrow(Connection connection) {
+        return addHeadArrow(connection,  1)
+    }
+    
+    def Connection addTailArrow(Connection connection) {
+        return addTailArrow(connection,  1)
     }
     
     /**
