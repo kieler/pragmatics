@@ -53,9 +53,9 @@ public class CommentPostprocessor extends AbstractAlgorithm implements ILayoutPr
         getMonitor().begin("Comment post-processing", 1);
         double spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
             List<LNode> boxes = new LinkedList<LNode>();
-            for (LNode node : layer.getNodes()) {
+            for (LNode node : layer) {
                 List<LNode> topBoxes = node.getProperty(Properties.TOP_COMMENTS);
                 List<LNode> bottomBoxes = node.getProperty(Properties.BOTTOM_COMMENTS);
                 if (topBoxes != null || bottomBoxes != null) {

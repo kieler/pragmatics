@@ -70,7 +70,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
         // Iterate layers to find the UPPER_COMPOUND_BORDER-Nodes indicating the beginning of a
         // compound node
         for (Layer layer : layers) {
-            for (LNode lnode : layer.getNodes()) {
+            for (LNode lnode : layer) {
                 if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.UPPER_COMPOUND_BORDER) {
                     openingBorders.add(lnode);
                 }
@@ -199,7 +199,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
         LNode spanEndNode = null;
         // Find the corresponding lower compound border for upperBorder
         for (Layer layer : layers) {
-            for (LNode lnode : layer.getNodes()) {
+            for (LNode lnode : layer) {
                 if ((lnode.getProperty(Properties.NODE_TYPE) == NodeType.LOWER_COMPOUND_BORDER)
                         && (lnode.getProperty(Properties.ORIGIN) == upperBorder
                                 .getProperty(Properties.ORIGIN))) {

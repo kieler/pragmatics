@@ -111,7 +111,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         List<LNode> southDummyNodes = new LinkedList<LNode>();
         
         // Iterate through the layers
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
             // The pointer indicates the index of the current node while northern ports are
             // processed, and the index of the most recently inserted dummy while south ports
             // are processed

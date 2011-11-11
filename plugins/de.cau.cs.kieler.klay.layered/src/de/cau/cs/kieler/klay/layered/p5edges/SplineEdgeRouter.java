@@ -90,10 +90,10 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase 
         // set horizontal positioning for each layer
         double xpos = 0.0, spacing = 0.0;
         List<LLabel> consideredLabelsInLayerSize = new LinkedList<LLabel>();
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
             layer.placeNodes(xpos);
             int edgeCount = 0;
-            for (LNode node : layer.getNodes()) {
+            for (LNode node : layer) {
                 for (LPort port : node.getPorts()) {
                     edgeCount += port.getOutgoingEdges().size();
                 }

@@ -57,8 +57,8 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements ILayoutPhase
 
         // determine starting position for straight-first DFS
         LNode walker = null;
-        findStart: for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
+        findStart: for (Layer layer : layeredGraph) {
+            for (LNode node : layer) {
                 if (node.getProperty(Properties.ENTRY_POINT)) {
                     walker = node;
                     break findStart;
@@ -77,7 +77,7 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements ILayoutPhase
         helper.placeNodesDFS(walker, layerCount, this);
 
         // apply grid to graph
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
             if (layer instanceof RailLayer) {
                 gridToAbsolutePosition((RailLayer) layer, getMinimalPosition(layeredGraph));
             } else {
@@ -111,7 +111,7 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements ILayoutPhase
      */
     private int getMinimalPosition(final LayeredGraph graph) {
         int result = Integer.MAX_VALUE;
-        for (Layer layer : graph.getLayers()) {
+        for (Layer layer : graph) {
             if (layer instanceof RailLayer) {
                 int i = ((RailLayer) layer).getRowList().getMinimalPosition();
                 if (i < result) {

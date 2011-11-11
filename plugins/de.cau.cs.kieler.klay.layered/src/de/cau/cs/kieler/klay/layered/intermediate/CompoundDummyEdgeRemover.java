@@ -58,7 +58,7 @@ public class CompoundDummyEdgeRemover extends AbstractAlgorithm implements ILayo
 
         // Find dummy edges.
         for (Layer layer : layerList) {
-            for (LNode lNode : layer.getNodes()) {
+            for (LNode lNode : layer) {
                 for (LEdge lEdge : lNode.getOutgoingEdges()) {
                     if (lEdge.getProperty(Properties.EDGE_TYPE) == EdgeType.COMPOUND_DUMMY) {
                         dummyEdgeList.add(lEdge);
@@ -73,8 +73,8 @@ public class CompoundDummyEdgeRemover extends AbstractAlgorithm implements ILayo
         }
 
         // remove unused ports
-        for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
+        for (Layer layer : layeredGraph) {
+            for (LNode node : layer) {
                 List<LPort> ports = node.getPorts();
                 List<LPort> removables = new LinkedList<LPort>();
                 for (int j = 0; j < ports.size(); j++) {

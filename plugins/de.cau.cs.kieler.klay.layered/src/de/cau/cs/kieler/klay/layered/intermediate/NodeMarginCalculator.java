@@ -54,9 +54,9 @@ public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutPr
         double spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
 
         // Iterate through the layers
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
             // Iterate through the layer's nodes
-            for (LNode node : layer.getNodes()) {
+            for (LNode node : layer) {
                 // This will be our bounding box. We'll start with one that's the same size
                 // as our node, and at the same position.
                 Rectangle2D.Double boundingBox = new Rectangle2D.Double(

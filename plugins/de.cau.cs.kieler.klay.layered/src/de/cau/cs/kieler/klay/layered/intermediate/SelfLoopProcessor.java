@@ -72,10 +72,10 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
         // Iterate through all nodes
         List<LNode> createdDummies = new LinkedList<LNode>();
         
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
             createdDummies.clear();
             
-            for (LNode node : layer.getNodes()) {
+            for (LNode node : layer) {
                 for (LPort port : node.getPorts()) {
                     // Go through the port's outgoing edges
                     LEdge[] edges = port.getOutgoingEdges().toArray(new LEdge[0]);

@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.layered.graph;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author msp
  */
-public class LayeredGraph extends LGraphElement {
+public class LayeredGraph extends LGraphElement implements Iterable<Layer> {
     
     /**
      * Map mapping node types to the colors used to represent those types when
@@ -142,6 +143,15 @@ public class LayeredGraph extends LGraphElement {
      */
     public List<Layer> getLayers() {
         return layers;
+    }
+
+    /**
+     * Returns an iterator over the layers.
+     * 
+     * @return an iterator for the layers of this layered graph
+     */
+    public Iterator<Layer> iterator() {
+        return layers.iterator();
     }
     
     /**
@@ -278,4 +288,5 @@ public class LayeredGraph extends LGraphElement {
             writer.write("    }\n");
         }
     }
+    
 }

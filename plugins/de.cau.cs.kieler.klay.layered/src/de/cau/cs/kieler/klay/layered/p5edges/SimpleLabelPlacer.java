@@ -39,8 +39,8 @@ public class SimpleLabelPlacer {
     public void placeLabels(final LayeredGraph thelayeredGraph) {
         
         //Iterate over all layers
-        for (Layer layer : thelayeredGraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
+        for (Layer layer : thelayeredGraph) {
+            for (LNode node : layer) {
                 for (LPort port : node.getPorts()) {
                     for (LEdge edge : port.getConnectedEdges()) {
                         for (LLabel label : edge.getLabels()) {
@@ -127,7 +127,7 @@ public class SimpleLabelPlacer {
      */
     public LLabel longestLabel(final Layer thelayer) {
         LLabel longest = new LLabel("");
-        for (LNode node : thelayer.getNodes()) {
+        for (LNode node : thelayer) {
             for (LEdge edge : node.getOutgoingEdges()) {
                 for (LLabel label : edge.getLabels()) {
                     if (label.getSize().x > longest.getSize().x) {

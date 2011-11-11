@@ -49,7 +49,7 @@ public class InteractiveCrossingMinimizer extends AbstractCrossingMinimizer {
         getMonitor().begin("Interactive crossing minimization", 1);
         
         int portCount = 0;
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
             // determine a horizontal position for edge bend points comparison
             double horizPos = 0;
             int nodeCount = 0;
@@ -67,7 +67,7 @@ public class InteractiveCrossingMinimizer extends AbstractCrossingMinimizer {
             // create an array of vertical node positions
             final double[] pos = new double[layer.getNodes().size()];
             int nextIndex = 0;
-            for (LNode node : layer.getNodes()) {
+            for (LNode node : layer) {
                 node.id = nextIndex++;
                 pos[node.id] = getPos(node, horizPos);
             }

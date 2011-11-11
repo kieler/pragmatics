@@ -205,7 +205,7 @@ public class NodePlacerHelper {
      */
     private List<Integer> getMinPosByLayer(final LayeredGraph layeredGraph) {
         List<Integer> result = new ArrayList<Integer>(layeredGraph.getLayers().size());
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
             if (layer instanceof RailLayer) {
                 result.add(((RailLayer) layer).getRowList().getMinimalPosition());
             }
@@ -222,7 +222,7 @@ public class NodePlacerHelper {
      */
     private List<Integer> getMaxPosByLayer(final LayeredGraph layeredGraph) {
         List<Integer> result = new ArrayList<Integer>(layeredGraph.getLayers().size());
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
             if (layer instanceof RailLayer) {
                 result.add(((RailLayer) layer).getRowList().getMaximalPosition());
             }

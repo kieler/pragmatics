@@ -55,7 +55,7 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements ILayoutPhase
 
         double xpos = borspacing;
         for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
+            for (LNode node : layer) {
                 if (node.getSize().x > layer.getSize().x) {
                     layer.getSize().x = node.getSize().x;
                 }
@@ -65,9 +65,9 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements ILayoutPhase
             layeredGraph.getSize().x = xpos;
         }
 
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
             NodeLoop:
-            for (LNode node : layer.getNodes()) {
+            for (LNode node : layer) {
                 for (LPort port : node.getPorts()) {
                     for (LEdge edge : port.getConnectedEdges()) {
                         if (node.getProperty(
@@ -125,7 +125,7 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements ILayoutPhase
         for (int i = startAtLayer; i < layeredGraph.getLayers().size(); i++) {
             Layer layer = layeredGraph.getLayers().get(i);
 
-            for (LNode node : layer.getNodes()) {
+            for (LNode node : layer) {
                 node.getPosition().x = xpos;
             }
             xpos += layer.getSize().x + minLayerDist;

@@ -46,8 +46,8 @@ public class PortSideProcessor extends AbstractAlgorithm implements ILayoutProce
         getMonitor().begin("Port side processing", 1);
         
         // Iterate through the nodes of all layers
-        for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
+        for (Layer layer : layeredGraph) {
+            for (LNode node : layer) {
                 if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
                     // We need to distribute the ports
                     distributePorts(node);

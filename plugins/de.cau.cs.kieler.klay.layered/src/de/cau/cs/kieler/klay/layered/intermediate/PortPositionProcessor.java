@@ -47,8 +47,8 @@ public class PortPositionProcessor extends AbstractAlgorithm implements ILayoutP
         getMonitor().begin("Port position processor", 1);
         
         // Iterate through all nodes
-        for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
+        for (Layer layer : layeredGraph) {
+            for (LNode node : layer) {
                 PortConstraints constraints = node.getProperty(LayoutOptions.PORT_CONSTRAINTS);
                 if (!(constraints.isRatioFixed() || constraints.isPosFixed())) {
                     // The ports are not fixed to their positions, so arrange them

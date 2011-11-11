@@ -13,12 +13,11 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
@@ -88,7 +87,9 @@ public class ComponentsProcessor extends AbstractAlgorithm {
             }
             return components;
         }
-        return Lists.newArrayList(graph);
+        ArrayList<LayeredGraph> result = new ArrayList<LayeredGraph>(1);
+        result.add(graph);
+        return result;
     }
     
     /**
@@ -126,7 +127,7 @@ public class ComponentsProcessor extends AbstractAlgorithm {
         if (components.size() == 1) {
             LayeredGraph graph = components.get(0);
             // move all nodes away from the layers
-            for (Layer layer : graph.getLayers()) {
+            for (Layer layer : graph) {
                 graph.getLayerlessNodes().addAll(layer.getNodes());
             }
             graph.getLayers().clear();
@@ -138,8 +139,8 @@ public class ComponentsProcessor extends AbstractAlgorithm {
         // assign priorities
         for (LayeredGraph graph : components) {
             int priority = 0;
-            for (Layer layer : graph.getLayers()) {
-                for (LNode node : layer.getNodes()) {
+            for (Layer layer : graph) {
+                for (LNode node : layer) {
                     priority += node.getProperty(Properties.PRIORITY);
                 }
             }
@@ -207,8 +208,8 @@ public class ComponentsProcessor extends AbstractAlgorithm {
     private void moveGraph(final LayeredGraph destGraph, final LayeredGraph sourceGraph,
             final double offsetx, final double offsety) {
         KVector graphOffset = sourceGraph.getOffset().translate(offsetx, offsety);
-        for (Layer layer : sourceGraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
+        for (Layer layer : sourceGraph) {
+            for (LNode node : layer) {
                 node.getPosition().add(graphOffset);
                 for (LPort port : node.getPorts()) {
                     for (LEdge edge : port.getOutgoingEdges()) {

@@ -84,7 +84,7 @@ public class HierarchicalPortPositionProcessor extends AbstractAlgorithm impleme
         double graphHeight = layeredGraph.getActualSize().y;
         
         // Iterate over external port dummies
-        for (LNode node : layer.getNodes()) {
+        for (LNode node : layer) {
             if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
                 continue;
             }

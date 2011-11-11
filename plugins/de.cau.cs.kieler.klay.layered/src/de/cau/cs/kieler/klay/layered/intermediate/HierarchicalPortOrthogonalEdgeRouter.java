@@ -143,8 +143,8 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
         
         // Iterate through all nodes, looking for hierarchical port dummies that replace
         // another hierarchical port dummy
-        for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
+        for (Layer layer : layeredGraph) {
+            for (LNode node : layer) {
                 if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
                     // Not a hierarchical port dummy - we're not interested. Move along,
                     // please, there's nothing to see here.
@@ -560,8 +560,8 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
         List<LNode> nodesToRemove = new LinkedList<LNode>();
         
         // Iterate through all layers
-        for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
+        for (Layer layer : layeredGraph) {
+            for (LNode node : layer) {
                 if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
                     // We're only looking for hierarchical port dummies
                     continue;
@@ -658,7 +658,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
         KVector offset = graph.getOffset();
         KVector graphActualSize = graph.getActualSize();
         
-        for (LNode node : layer.getNodes()) {
+        for (LNode node : layer) {
             if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
                 // We're only looking for hierarchical port dummies
                 continue;
@@ -728,7 +728,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * @param layer the layer.
      */
     private void correctSlantedEdgeSegments(final Layer layer) {
-        for (LNode node : layer.getNodes()) {
+        for (LNode node : layer) {
             if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
                 // We're only looking for hierarchical port dummies
                 continue;

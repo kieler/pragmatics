@@ -48,8 +48,8 @@ public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutPro
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Hypernodes processing", 1);
         
-        for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
+        for (Layer layer : layeredGraph) {
+            for (LNode node : layer) {
                 if (node.getProperty(LayoutOptions.HYPERNODE) && node.getPorts().size() <= 2) {
                     int topEdges = 0, rightEdges = 0, bottomEdges = 0, leftEdges = 0;
                     for (LPort port : node.getPorts()) {

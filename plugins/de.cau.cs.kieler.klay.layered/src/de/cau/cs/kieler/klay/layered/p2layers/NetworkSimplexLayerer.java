@@ -1055,7 +1055,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
             filling[layer[node.id]]++;
         }
         // also consider nodes of already layered connected components
-        for (Layer eLayer : layeredGraph.getLayers()) {
+        for (Layer eLayer : layeredGraph) {
             filling[layerID++] += eLayer.getNodes().size();
             if (filling.length == layerID) {
                 break;

@@ -47,9 +47,9 @@ public class ReversedEdgeRestorer extends AbstractAlgorithm implements ILayoutPr
         getMonitor().begin("Restoring reversed edges", 1);
         
         // Iterate through the layers
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
             // Iterate through the nodes
-            for (LNode node : layer.getNodes()) {
+            for (LNode node : layer) {
                 // Iterate over all the ports, looking for outgoing edges that should be reversed
                 for (LPort port : node.getPorts()) {
                     // Iterate over a copy of the edges to avoid concurrent modification exceptions

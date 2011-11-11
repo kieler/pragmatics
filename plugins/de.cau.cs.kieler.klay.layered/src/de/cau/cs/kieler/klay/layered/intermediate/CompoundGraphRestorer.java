@@ -71,8 +71,8 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
         List<LNode> removables = new LinkedList<LNode>();
         List<LEdge> edgeList = new LinkedList<LEdge>();
 
-        for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode lnode : layer.getNodes()) {
+        for (Layer layer : layeredGraph) {
+            for (LNode lnode : layer) {
                 NodeType nodeType = lnode.getProperty(Properties.NODE_TYPE);
                 if (nodeType == NodeType.UPPER_COMPOUND_BORDER) {
                     compoundNodeList.add(lnode);
@@ -291,7 +291,7 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
         }
 
         // find maximum (minimum) index of a compound side node owned by this compound node
-        for (LNode layerNode : layer.getNodes()) {
+        for (LNode layerNode : layer) {
             if (layerNode.getProperty(Properties.NODE_TYPE) == NodeType.COMPOUND_SIDE
                     && layerNode.getProperty(Properties.SIDE_OWNER) == lnode) {
                 int test = layerNode.getIndex();

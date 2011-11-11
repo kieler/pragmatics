@@ -50,7 +50,7 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
         getMonitor().begin("Odd port side processing", 1);
         
         // Iterate through the layers
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
             // Iterate through the nodes (use an array to avoid concurrent modification
             // exceptions)
             LNode[] nodeArray = layer.getNodes().toArray(new LNode[0]);

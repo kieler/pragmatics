@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.graph;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,7 +27,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  *
  * @author msp
  */
-public class Layer extends LGraphElement {
+public class Layer extends LGraphElement implements Iterable<LNode> {
 
     /** the owning layered graph. */
     private LayeredGraph owner;
@@ -73,6 +74,15 @@ public class Layer extends LGraphElement {
      */
     public List<LNode> getNodes() {
         return nodes;
+    }
+
+    /**
+     * Returns an iterator over the contained nodes.
+     * 
+     * @return an iterator for the nodes of this layer
+     */
+    public Iterator<LNode> iterator() {
+        return nodes.iterator();
     }
     
     /**

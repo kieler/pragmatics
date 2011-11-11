@@ -188,8 +188,8 @@ public class KRailGraphImporter implements IGraphImporter<KNode> {
                 + layeredGraph.getOffset().y);
 
         // process the nodes
-        for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode lnode : layer.getNodes()) {
+        for (Layer layer : layeredGraph) {
+            for (LNode lnode : layer) {
                 Object origin = lnode.getProperty(Properties.ORIGIN);
                 if (origin instanceof KNode) {
                     KNode knode = (KNode) origin;

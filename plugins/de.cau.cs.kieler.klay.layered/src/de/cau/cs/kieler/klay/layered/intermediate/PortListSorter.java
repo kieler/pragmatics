@@ -112,8 +112,8 @@ public class PortListSorter extends AbstractAlgorithm implements ILayoutProcesso
         getMonitor().begin("Port order processing", 1);
         
         // Iterate through the nodes of all layers
-        for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
+        for (Layer layer : layeredGraph) {
+            for (LNode node : layer) {
                 if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                     // We need to sort the port list accordingly
                     sortPorts(node);

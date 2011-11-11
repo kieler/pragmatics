@@ -59,10 +59,10 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements ILayoutPhas
         
         // set horizontal positioning for each layer and add bend points
         double xpos = 0.0, spacing = 0.0;
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
             layer.placeNodes(xpos);
             int edgeCount = 0;
-            for (LNode node : layer.getNodes()) {
+            for (LNode node : layer) {
                 for (LPort port : node.getPorts()) {
                     edgeCount += port.getOutgoingEdges().size();
                 }

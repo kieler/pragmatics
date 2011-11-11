@@ -210,7 +210,7 @@ public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm imple
             
             // Iterate through the layer's nodes, looking for normal nodes connected to
             // northern / southern hierarchical port dummies
-            for (LNode currentNode : currentLayer.getNodes()) {
+            for (LNode currentNode : currentLayer) {
                 // Iterate through the node's outgoing edges
                 for (LEdge edge : currentNode.getOutgoingEdges()) {
                     LNode targetNode = edge.getTarget().getNode();

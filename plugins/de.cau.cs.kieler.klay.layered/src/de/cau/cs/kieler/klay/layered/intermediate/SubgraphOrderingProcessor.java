@@ -100,7 +100,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         // Build the subgraphOrderingGraph:
         // Insert nodes and edges representing the relationship "is left of" into the subgraph
         // ordering graph parts.
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
 
             // Initialize the compoundChildrenLists-HashMap for this layer
             HashMap<LNode, LinkedList<LNode>> layerCompoundChildrenLists 

@@ -93,7 +93,7 @@ public class InvertedPortProcessor extends AbstractAlgorithm implements ILayoutP
             unassignedNodes.clear();
             
             // Iterate through the layer's nodes
-            for (LNode node : currentLayer.getNodes()) {
+            for (LNode node : currentLayer) {
                 // Skip dummy nodes
                 if (!node.getProperty(Properties.NODE_TYPE).equals(NodeType.NORMAL)) {
                     continue;

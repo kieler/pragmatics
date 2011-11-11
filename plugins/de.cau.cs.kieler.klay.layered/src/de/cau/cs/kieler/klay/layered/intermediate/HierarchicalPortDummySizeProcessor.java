@@ -60,12 +60,12 @@ public class HierarchicalPortDummySizeProcessor extends AbstractAlgorithm implem
         double delta = smallSpacing * 2;
         
         // Iterate through the layers
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
             northernDummies.clear();
             southernDummies.clear();
             
             // Collect northern and southern hierarchical port dummies
-            for (LNode node : layer.getNodes()) {
+            for (LNode node : layer) {
                 if (node.getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
                     PortSide side = node.getProperty(Properties.EXT_PORT_SIDE);
                     

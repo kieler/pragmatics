@@ -61,7 +61,7 @@ public class LongEdgeSplitter extends AbstractAlgorithm implements ILayoutProces
             int layerIndex = layerIter.previousIndex();
             
             // Iterate through the nodes
-            for (LNode node : layer.getNodes()) {
+            for (LNode node : layer) {
                 // Iterate through the outgoing edges
                 for (LPort port : node.getPorts()) {
                     // Iterate through the edges

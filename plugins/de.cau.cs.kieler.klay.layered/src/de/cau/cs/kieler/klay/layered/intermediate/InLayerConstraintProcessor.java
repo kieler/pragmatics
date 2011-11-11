@@ -52,7 +52,7 @@ public class InLayerConstraintProcessor extends AbstractAlgorithm implements ILa
         getMonitor().begin("Layer constraint edge reversal", 1);
         
         // Iterate through each layer
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
             /* We'll go through the layer's nodes, remembering two things:
              *  1. Once we reach the first non-top-constrained node, we remember its
              *     index. Top-constrained nodes encountered afterwards must be inserted

@@ -49,7 +49,7 @@ public class LongEdgeJoiner extends AbstractAlgorithm implements ILayoutProcesso
         getMonitor().begin("Edge joining", 1);
         
         // Iterate through the layers
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
             // Get a list iterator for the layer's nodes (since we might be
             // removing dummy nodes from it)
             ListIterator<LNode> nodeIterator = layer.getNodes().listIterator();
