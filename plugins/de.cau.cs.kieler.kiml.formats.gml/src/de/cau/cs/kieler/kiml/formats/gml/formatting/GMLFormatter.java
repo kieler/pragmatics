@@ -42,5 +42,8 @@ public class GMLFormatter extends AbstractDeclarativeFormatter {
         }
         
         c.setLinewrap(1).after(f.getValueRule());
+        // CHECKSTYLEOFF MagicNumber
+        c.setAutoLinewrap(255);
     }
+    
 }

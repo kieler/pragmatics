@@ -19,14 +19,15 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.formats.gml.gml.Element;
 import de.cau.cs.kieler.kiml.formats.gml.gml.GmlFactory;
 import de.cau.cs.kieler.kiml.formats.gml.gml.GmlModel;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -140,7 +141,13 @@ public class GmlImporter implements IGraphTransformer<GmlModel, KNode> {
                     KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
                     edgeLayout.setProperty(PROP_ELEM, element);
                     for (Element e : element.getElements()) {
-                        KimlUtil.setOption(edgeLayout, e.getKey(), e.getValue());
+                        if ("label".equalsIgnoreCase(e.getKey())) {
+                            KLabel label = KimlUtil.createInitializedLabel();
+                            label.setText(e.getValue());
+                            edge.getLabels().add(label);
+                        } else {
+                            KimlUtil.setOption(edgeLayout, e.getKey(), e.getValue());
+                        }
                     }
                 }
             } else if ("label".equalsIgnoreCase(element.getKey())) {
@@ -266,19 +273,11 @@ public class GmlImporter implements IGraphTransformer<GmlModel, KNode> {
                         }
                     }
                     // create new points
-                    for (KVector point : kedgeLayout.createVectorChain()) {
-                        Element p = GmlFactory.eINSTANCE.createElement();
-                        p.setKey("point");
-                        Element x = GmlFactory.eINSTANCE.createElement();
-                        x.setKey("x");
-                        x.setValue(Double.toString(point.x));
-                        p.getElements().add(x);
-                        Element y = GmlFactory.eINSTANCE.createElement();
-                        y.setKey("y");
-                        y.setValue(Double.toString(point.y));
-                        p.getElements().add(y);
-                        graphics.getElements().add(p);
+                    graphics.getElements().add(GmlHandler.createPoint(kedgeLayout.getSourcePoint()));
+                    for (KPoint point : kedgeLayout.getBendPoints()) {
+                        graphics.getElements().add(GmlHandler.createPoint(point));
                     }
+                    graphics.getElements().add(GmlHandler.createPoint(kedgeLayout.getTargetPoint()));
                 }
             }
             
