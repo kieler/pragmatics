@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.formats.gml;
 import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -83,6 +84,12 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
             id.setKey("id");
             id.setValue(nodeId);
             nodeElement.getElements().add(id);
+            if (knode.getLabel().getText().length() > 0) {
+                Element label = GmlFactory.eINSTANCE.createElement();
+                label.setKey("label");
+                label.setValue(knode.getLabel().getText());
+                nodeElement.getElements().add(label);
+            }
             transform(nodeLayout, nodeElement);
             graphElement.getElements().add(nodeElement);
             
@@ -96,6 +103,12 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
                 id.setKey("id");
                 id.setValue(portId);
                 portElement.getElements().add(id);
+                if (kport.getLabel().getText().length() > 0) {
+                    Element label = GmlFactory.eINSTANCE.createElement();
+                    label.setKey("label");
+                    label.setValue(kport.getLabel().getText());
+                    portElement.getElements().add(label);
+                }
                 transform(portLayout, portElement);
                 nodeElement.getElements().add(portElement);
             }
@@ -126,6 +139,10 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
                     sourcePort.setValue(sourcePortId);
                     edgeElement.getElements().add(sourcePort);
                 }
+                Element target = GmlFactory.eINSTANCE.createElement();
+                target.setKey("target");
+                target.setValue(targetId);
+                edgeElement.getElements().add(target);
                 if (kedge.getTargetPort() != null) {
                     String targetPortId = kedge.getTargetPort().getData(KShapeLayout.class)
                             .getProperty(PROP_ID);
@@ -134,10 +151,14 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
                     targetPort.setValue(targetPortId);
                     edgeElement.getElements().add(targetPort);
                 }
-                Element target = GmlFactory.eINSTANCE.createElement();
-                target.setKey("target");
-                target.setValue(targetId);
-                edgeElement.getElements().add(target);
+                for (KLabel klabel : kedge.getLabels()) {
+                    if (klabel.getText().length() > 0) {
+                        Element label = GmlFactory.eINSTANCE.createElement();
+                        label.setKey("label");
+                        label.setValue(klabel.getText());
+                        edgeElement.getElements().add(label);
+                    }
+                }
                 KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
                 transform(edgeLayout, edgeElement);
                 graphElement.getElements().add(edgeElement);

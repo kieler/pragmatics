@@ -65,12 +65,14 @@ public class GraphMLHandler extends AbstractEmfHandler<DocumentRoot> {
     public IGraphTransformer<DocumentRoot, KNode> getImporter() {
         return importer;
     }
+    
+    private GraphMLExporter exporter = new GraphMLExporter();
 
     /**
      * {@inheritDoc}
      */
     public IGraphTransformer<KNode, DocumentRoot> getExporter() {
-        throw new UnsupportedOperationException("GraphML export is not supported yet.");
+        return exporter;
     }
 
 }

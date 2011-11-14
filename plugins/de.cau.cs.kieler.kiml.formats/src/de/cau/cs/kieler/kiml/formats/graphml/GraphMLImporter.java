@@ -63,16 +63,16 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
     
     /** map of GraphML node identifiers to KNodes. */
     private static final IProperty<Map<String, KNode>> NODE_ID_MAP
-            = new Property<Map<String, KNode>>("graphmlTransformer.nodeIdMap");
+            = new Property<Map<String, KNode>>("graphmlImporter.nodeIdMap");
     /** map of GraphML port identifiers to KPorts. */
     private static final IProperty<Map<Pair<KNode, String>, KPort>> PORT_ID_MAP
-            = new Property<Map<Pair<KNode, String>, KPort>>("graphmlTransformer.portIdMap");
+            = new Property<Map<Pair<KNode, String>, KPort>>("graphmlImporter.portIdMap");
     /** GraphML node attached to each new KNode. */
     private static final IProperty<NodeType> PROP_NODE
-            = new Property<NodeType>("graphmlTransformer.node");
+            = new Property<NodeType>("graphmlImporter.node");
     /** GraphML edge attached to each new KEdge. */
     private static final IProperty<EdgeType> PROP_EDGE
-            = new Property<EdgeType>("graphmlTransformer.edge");
+            = new Property<EdgeType>("graphmlImporter.edge");
     
     /**
      * {@inheritDoc}

@@ -44,10 +44,10 @@ public class GmlImporter implements IGraphTransformer<GmlModel, KNode> {
 
     /** map of GML node identifiers to KNodes. */
     private static final IProperty<Map<String, KNode>> NODE_ID_MAP
-            = new Property<Map<String, KNode>>("gmlTransformer.nodeIdMap");
+            = new Property<Map<String, KNode>>("gmlImporter.nodeIdMap");
     /** GML element attached to each new KGraphElement. */
     private static final IProperty<Element> PROP_ELEM
-            = new Property<Element>("gmlTransformer.element");
+            = new Property<Element>("gmlImporter.element");
     
     /**
      * {@inheritDoc}
