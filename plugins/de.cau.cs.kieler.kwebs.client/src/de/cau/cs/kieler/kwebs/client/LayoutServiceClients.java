@@ -145,6 +145,18 @@ public final class LayoutServiceClients {
     }
 
     /**
+     * Returns the number of protool dependent client implementations available for
+     * 
+     * doing service based layout.
+     * 
+     * @return the number of protool dependent client implementations available for
+     * doing service based layout.
+     */
+    public int countClients() {
+        return clientForProtocol.size();
+    }
+    
+    /**
      * Returns a client for a specific protocol from the pool or {@code null} if no client
      * is available for the specific protocol.
      *

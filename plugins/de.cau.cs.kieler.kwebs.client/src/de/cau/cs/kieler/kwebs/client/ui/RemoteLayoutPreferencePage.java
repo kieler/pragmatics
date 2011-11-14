@@ -35,14 +35,20 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
@@ -52,11 +58,19 @@ import de.cau.cs.kieler.kwebs.client.ServerConfigData;
 import de.cau.cs.kieler.kwebs.client.ServerConfigs;
 import de.cau.cs.kieler.kwebs.client.KwebsClientPlugin;
 import de.cau.cs.kieler.kwebs.client.Preferences;
+import de.cau.cs.kieler.kwebs.client.layout.SwitchLayoutMode;
 import de.cau.cs.kieler.kwebs.client.ui.RemoteLayoutPreferencePage.ServerConfigViewerComparator.SortProperty;
 
 /**
- * Preference page for general KIML preferences.
- *
+ * This class provides the preference page for configuring the service based layout. In order to use
+ * service based layout in KIELER the installation of a client feature is required. Depending on whether
+ * such a feature is installed or not, the preference page displays a help text on how to install a
+ * client feature in KIELER or it displays the configuration options for the service based layout. 
+ * 
+ * Eclipse propagates changes in preferences with the observer pattern. To signal to its listeners that
+ * all required preferences have been updated, this page uses the
+ * {@code Preferences.PREFID_LAYOUT_SETTINGS_CHANGED} preference. 
+ * 
  * @kieler.rating 2011-05-14 red
  * @author swe
  */
@@ -72,9 +86,6 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
     
     /** Radio button for using remote layout. */
     private Button serverConfigRadio2;
-
-    /** Check box button for using compression. */
-    //private Button compressionCheckbox;
 
     /** Button for creating a new server configuration. */
     private Button scEditButton1;
@@ -110,7 +121,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
      * Creates the preference page for the remote layout options.
      */
     public RemoteLayoutPreferencePage() {
-        this(null, "Preferences for the Web Service based Layout", null);
+        this(null, "Preferences for the Service based Layout", null);
     }
 
     /**
@@ -157,21 +168,66 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         setPreferenceStore(store);
     }
 
+    /** Reference to to the KWebS project page. */
+    private static final String KWEBS_PROJECTPAGE 
+        = "http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/Projects/KWebS";
+
     /**
      * {@inheritDoc}
      */
     @Override
     protected final Control createContents(final Composite parent) {
+        // GUI code needs magic numbers
+        //CHECKSTYLEOFF MagicNumber
         Composite composite = new Composite(parent, SWT.NONE);
-        Group layoutGroup1 = createLayoutGroup1(composite);
-        layoutGroup1.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-        //Group layoutGroup2 = createLayoutGroup2(composite);
-        //layoutGroup2.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-        Group layoutGroup3 = createLayoutGroup3(composite);
-        layoutGroup3.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        initRemoteLayoutOptionsView();
+        if (SwitchLayoutMode.isRemoteLayoutInstalled()) {
+            Group layoutGroup1 = createLayoutGroup1(composite);
+            layoutGroup1.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+            Group layoutGroup3 = createLayoutGroup3(composite);
+            layoutGroup3.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+            initRemoteLayoutOptionsView();
+        } else {
+            noDefaultAndApplyButton();
+            Label label = new Label(composite, SWT.WRAP);
+            GridData data = new GridData();
+            data.horizontalSpan = 1;
+            Rectangle rect = composite.getMonitor().getClientArea();
+            data.widthHint = rect.width / 5;
+            label.setLayoutData(data);
+            label.setText(
+                "The service-based layout is an optional part of KIELER and requires the"
+                + " installation of a client to connect to a given layout service. You do not"
+                + " have any client installed. Therefore, at the moment only local layout is available."
+                + " KIELER provides two client features for doing service-based layout."
+                + " You can install them from the KIELER update site at:"
+                + "\n\n"
+                + "    http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/"
+                + "\n\n"
+                + "If you want to use service-based layout, you can install the necessary feature"
+                + "\n\n"
+                + "    KIELER Layout Client over JAX-WS or"
+                + "\n\n"
+                + "    KIELER Layout Client over jETI"
+                + "\n\n"
+                + "depending on the type of service your provider is supporting (either JAX-WS or"
+                + " jETI) by using the \"Install New Software...\" entry in the \"Help\" menu. They both"
+                + " come with predefined service providers from the KIELER project. For using the"
+                + " service-based layout with a different provider you can configure him manually"
+                + " after installing the necessary client feature. For more detailed information,"
+                + " you can take a look at the project page of KWebS:"
+                + "\n\n"
+            );
+            Link link = new Link(composite, SWT.NONE);
+            link.setText("<a>" + KWEBS_PROJECTPAGE + "</a>");
+            link.addListener(SWT.Selection, new Listener() {
+                public void handleEvent(final Event event) {
+                    Program.launch(KWEBS_PROJECTPAGE);
+                }
+            });              
+        }
         composite.setLayout(new GridLayout(1, false));
         return composite;
+        //CHECKSTYLEON MagicNumber
     }
 
     /**
@@ -187,8 +243,6 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         // Defaults fall back to local layout
         serverConfigRadio1.setSelection(true);
         serverConfigRadio2.setSelection(false);       
-        // Defaults fall back to not use compression
-        //compressionCheckbox.setSelection(false);
         // Update the UI
         refreshServerConfigViewer();
         updateRemoteLayoutOptionsView();
@@ -200,7 +254,10 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
      */
     @Override
     public final boolean performCancel() {
-        ServerConfigs.getInstance().read();
+        // Only perform when client features are installed
+        if (SwitchLayoutMode.isRemoteLayoutInstalled()) {
+            ServerConfigs.getInstance().read();
+        }
         return super.performCancel();
     }
 
@@ -209,28 +266,27 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
      */
     @Override
     public final boolean performOk() {
-        // Check whether the server configuration list has been changed.
-        // If it has been changed, store it.
-        boolean isDirty = ServerConfigs.getInstance().isDirty();
-        if (isDirty) {
-            ServerConfigs.getInstance().store();
-        }
-        // Check whether the layout mode selection has been changed.
-        // If it has been changed, store it.
-        boolean remoteLayout = serverConfigRadio2.getSelection();
-        isDirty |= (store.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE) != remoteLayout);
-        store.setValue(Preferences.PREFID_LAYOUT_USE_REMOTE, remoteLayout);
-        // Check whether the compression selection has been changed.
-        // If it has been changed, store it.
-        //boolean compressionLayout = compressionCheckbox.getSelection();
-        //isDirty |= (store.getBoolean(Preferences.PREFID_LAYOUT_USE_COMPRESSION) != compressionLayout);
-        //store.setValue(Preferences.PREFID_LAYOUT_USE_COMPRESSION, compressionLayout);
-        // Fire property change event so that the RemoteGraphLayoutEngine can
-        // initialize itself on the new conditions.
-        if (isDirty) { 
-            store.firePropertyChangeEvent(
-                Preferences.PREFID_LAYOUT_SETTINGS_CHANGED, "1", "2"
-            );
+        // Only perform when client features are installed
+        if (SwitchLayoutMode.isRemoteLayoutInstalled()) {
+            // Check whether the server configuration list has been changed.
+            // If it has been changed, store it.
+            boolean isDirty = ServerConfigs.getInstance().isDirty();
+            if (isDirty) {
+                ServerConfigs.getInstance().store();
+            }
+            // Check whether the layout mode selection has been changed.
+            // If it has been changed, store it.
+            boolean remoteLayout = serverConfigRadio2.getSelection();
+            isDirty |= (store.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE) != remoteLayout);
+            store.setValue(Preferences.PREFID_LAYOUT_USE_REMOTE, remoteLayout);
+            // Fire property change event so that the RemoteGraphLayoutEngine can
+            // initialize itself on the new conditions. The property used is a dummy property
+            // which signals that all other relevant properties have been set.
+            if (isDirty) { 
+                store.firePropertyChangeEvent(
+                    Preferences.PREFID_LAYOUT_SETTINGS_CHANGED, "1", "2"
+                );
+            }
         }
         return true;
     }
@@ -257,7 +313,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         Group generalGroup = new Group(parent, SWT.NONE);
         generalGroup.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
         generalGroup.setLayout(new GridLayout(1, true));
-        generalGroup.setText("Layout type");
+        generalGroup.setText("Layout Type");
 
         // add radio buttons for selection of local or remote layout
         serverConfigRadio1 = new Button(generalGroup, SWT.RADIO | SWT.LEFT);
@@ -274,7 +330,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         );
 
         serverConfigRadio2 = new Button(generalGroup, SWT.RADIO | SWT.LEFT);
-        serverConfigRadio2.setText("Use remote Layout");
+        serverConfigRadio2.setText("Use service based Layout");
 
         serverConfigRadio2.addSelectionListener(
             new SelectionAdapter() {
@@ -290,39 +346,6 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
 
     }
 
-    /**
-     * Creates the group for compression option.
-     *
-     * @param parent
-     *           the parent control
-     * @return a group with general options
-     */
-    /*
-    private Group createLayoutGroup2(final Composite parent) {
-        
-        Group generalGroup = new Group(parent, SWT.NONE);
-        generalGroup.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
-        generalGroup.setLayout(new GridLayout(1, true));
-        generalGroup.setText("Transfer");
-    
-        // add check box for compression option
-        compressionCheckbox = new Button(generalGroup, SWT.CHECK);
-        compressionCheckbox.setText("Use compression");
-    
-        compressionCheckbox.addSelectionListener(
-            new SelectionAdapter() {
-                public void widgetSelected(final SelectionEvent e) {
-                    if (e.widget == compressionCheckbox) {
-                    }
-                }
-            }
-        );
-        
-        return generalGroup;
-
-    }
-    */
-    
     /** Width of the server configuration fixed property column. */
     private static final int SERVERCONFIGACTIVE_WIDTH
         = 50;
@@ -362,7 +385,8 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             public Image getImage(final Object element) {
                 Image image = null;
                 if (((ServerConfigData) element).isActive()) {
-                    ImageDescriptor descriptor = KwebsClientPlugin.getImageDescriptor("icons/active.gif");
+                    ImageDescriptor descriptor 
+                        = KwebsClientPlugin.getImageDescriptor("icons/active.gif");
                     if (descriptor != null) {
                         image = descriptor.createImage();
                     }
@@ -488,7 +512,8 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
                         IStructuredSelection selection
                             = (IStructuredSelection) serverConfigViewer.getSelection();
                         if (!selection.isEmpty()) {
-                            ServerConfigData serverConfig = (ServerConfigData) selection.getFirstElement();
+                            ServerConfigData serverConfig 
+                                = (ServerConfigData) selection.getFirstElement();
                             if (!serverConfig.isFixed()) {
                                 new EditServerConfigDialog(parent.getShell(), serverConfig).open();
                             }
@@ -508,7 +533,8 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
                         IStructuredSelection selection
                             = (IStructuredSelection) serverConfigViewer.getSelection();
                         if (!selection.isEmpty()) {
-                            ServerConfigData serverConfig = (ServerConfigData) selection.getFirstElement();
+                            ServerConfigData serverConfig 
+                                = (ServerConfigData) selection.getFirstElement();
                             if (!serverConfig.isFixed() && !serverConfig.isActive()) {
                                 ServerConfigs.getInstance().removeServerConfig(serverConfig);
                             }                                
@@ -528,7 +554,8 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
                         IStructuredSelection selection
                             = (IStructuredSelection) serverConfigViewer.getSelection();
                         if (!selection.isEmpty()) {
-                            ServerConfigData serverConfig = (ServerConfigData) selection.getFirstElement();
+                            ServerConfigData serverConfig 
+                                = (ServerConfigData) selection.getFirstElement();
                             Job job = new CheckAvailabilityJob(getShell(), serverConfig);
                             job.setUser(true);
                             job.schedule();
@@ -547,7 +574,8 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
                         IStructuredSelection selection
                             = (IStructuredSelection) serverConfigViewer.getSelection();
                         if (!selection.isEmpty()) {
-                            ServerConfigData serverConfig = (ServerConfigData) selection.getFirstElement();
+                            ServerConfigData serverConfig 
+                                = (ServerConfigData) selection.getFirstElement();
                             Job job = new ServerDetailsJob(getShell(), serverConfig);
                             job.setUser(true);
                             job.schedule();
@@ -566,7 +594,8 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
                         IStructuredSelection selection
                             = (IStructuredSelection) serverConfigViewer.getSelection();
                         if (!selection.isEmpty()) {
-                            ServerConfigData serverConfig = (ServerConfigData) selection.getFirstElement();
+                            ServerConfigData serverConfig 
+                                = (ServerConfigData) selection.getFirstElement();
                             ServerConfigs.getInstance().setActiveServerConfig(serverConfig);
                             refreshServerConfigViewer();
                             updateRemoteLayoutOptionsView();
@@ -745,8 +774,6 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         } else {
             serverConfigRadio1.setSelection(true);
         }
-        boolean compressionLayout = store.getBoolean(Preferences.PREFID_LAYOUT_USE_COMPRESSION);
-        //compressionCheckbox.setSelection(compressionLayout);
         updateRemoteLayoutOptionsView();
     }
 
@@ -771,7 +798,6 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             fixed = serverConfig.isFixed();
             active = serverConfig.isActive();
         }
-        //compressionCheckbox.setEnabled(remoteLayout);
         serverConfigTable.setEnabled(remoteLayout);
         scEditButton1.setEnabled(remoteLayout);
         scEditButton2.setEnabled(remoteLayout && !empty && !fixed);

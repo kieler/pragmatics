@@ -106,7 +106,26 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
                     if (result == SWT.YES) {
                         SwitchLayoutMode.toLocal();
                     }
-                    return true; 
+                    return false; 
+                }
+                if (LayoutServiceClients.getInstance().countClients() == 0) {
+                    LayoutDataService.setMode(LayoutDataService.ECLIPSEDATASERVICE);
+                    int result = displayMessage(
+                        "No Client Features installed",
+                        "You do not have any client features installed for doing remote layout."
+                        + " The client features required for doing layout with KWebS are"
+                        + " available at the KIELER update site:"
+                        + "\n\n"
+                        + "http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/"
+                        + "\n\n"
+                        + "The layout was temporarily set back to local."
+                        + " Do you want to switch to local mode permanently ?",
+                        SWT.YES | SWT.NO
+                    );               
+                    if (result == SWT.YES) {
+                        SwitchLayoutMode.toLocal();
+                    }
+                    return false; 
                 }
                 ServerConfigData oldserverConfig = null;
                 if (client != null) {
@@ -187,7 +206,11 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
                 new Status(
                     IStatus.WARNING, 
                     KwebsClientPlugin.PLUGIN_ID, 
-                    "Shell object is null, can not display error dialog", 
+                    "Shell object is null, can not display error dialog. Error is:"
+                    + "\n\n"
+                    + title
+                    + "\n\n"
+                    + message, 
                     null
                 )
             );

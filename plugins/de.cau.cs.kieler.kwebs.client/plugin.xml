@@ -9,7 +9,7 @@
             category="de.cau.cs.kieler.kiml.ui.preferences.layout"
             class="de.cau.cs.kieler.kwebs.client.ui.RemoteLayoutPreferencePage"
             id="de.cau.cs.kieler.kwebs.client.ui.remotelayoutpreferencepage"
-            name="Remote Layout">
+            name="Service Based Layout">
       </page>
    </extension>
    <extension

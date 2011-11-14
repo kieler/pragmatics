@@ -61,6 +61,15 @@ public class KWebSStatusBar extends WorkbenchWindowControlContribution
     /** The label containing the image displayed in the status bar. */
     private Label image;
     
+    /** Item for the context menus local layout entry. */
+    private MenuItem localLayoutItem;
+    
+    /** Item for the context menus remote layout entry. */
+    private MenuItem remoteLayoutItem;
+    
+    /** Item for the context menus statistics entry. */
+    private MenuItem statisticsItem;
+    
     /** The popup menu for right mouse click on tray image. */
     private Menu trayPopup;
     
@@ -106,7 +115,7 @@ public class KWebSStatusBar extends WorkbenchWindowControlContribution
         layout.marginHeight = 6;
         composite.setLayout(layout);
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));    
-        image = new Label(composite, SWT.NONE);
+        image = new Label(composite, SWT.WRAP);
         setStatusInfo();
         image.addMouseListener(
             new MouseListener() {            
@@ -133,40 +142,40 @@ public class KWebSStatusBar extends WorkbenchWindowControlContribution
             }
         );
         trayPopup = new Menu(parent.getShell(), SWT.POP_UP);
-        final MenuItem localLayout = new MenuItem(trayPopup, SWT.PUSH);
-        localLayout.setText("Local Layout");
-        localLayout.setImage(localImage);
-        localLayout.addSelectionListener(
+        localLayoutItem = new MenuItem(trayPopup, SWT.PUSH);
+        localLayoutItem.setText("Local Layout");
+        localLayoutItem.setImage(localImage);
+        localLayoutItem.addSelectionListener(
             new SelectionAdapter() {
                 @Override
                 public void widgetSelected(final SelectionEvent e) {
-                    if (e.getSource() == localLayout) {
+                    if (e.getSource() == localLayoutItem) {
                         SwitchLayoutMode.toLocal();
                     }
                 }
             }
         );
-        final MenuItem remoteLayout = new MenuItem(trayPopup, SWT.PUSH);
-        remoteLayout.setText("Remote Layout");
-        remoteLayout.setImage(remoteImage);
-        remoteLayout.addSelectionListener(
+        remoteLayoutItem = new MenuItem(trayPopup, SWT.PUSH);
+        remoteLayoutItem.setText("Service Based Layout");
+        remoteLayoutItem.setImage(remoteImage);
+        remoteLayoutItem.addSelectionListener(
             new SelectionAdapter() {
                 @Override
                 public void widgetSelected(final SelectionEvent e) {
-                    if (e.getSource() == remoteLayout) {
+                    if (e.getSource() == remoteLayoutItem) {
                         SwitchLayoutMode.toRemote();
                     }
                 }
             }
         );
-        final MenuItem statistics = new MenuItem(trayPopup, SWT.PUSH);
-        statistics.setText("Show Statistics");
-        statistics.setImage(statisticsImage);
-        statistics.addSelectionListener(
+        statisticsItem = new MenuItem(trayPopup, SWT.PUSH);
+        statisticsItem.setText("Show Statistics");
+        statisticsItem.setImage(statisticsImage);
+        statisticsItem.addSelectionListener(
             new SelectionAdapter() {
                 @Override
                 public void widgetSelected(final SelectionEvent e) {
-                    if (e.getSource() == statistics) {
+                    if (e.getSource() == statisticsItem) {
                         Shell shell = Display.getCurrent().getActiveShell();
                         if (LayoutHistory.getInstance().getStatistics().size() > 0) {
                             BrowserDialog dialog = new BrowserDialog(
@@ -190,12 +199,13 @@ public class KWebSStatusBar extends WorkbenchWindowControlContribution
                 }
             }
         );
+        setStatusInfo();
         return composite;        
         //CHECKSTYLEON MagicNumber
     }
 
     /**
-     * Listen to preference changes and update status text.
+     * Listen to preference changes and update the context menu, status symbol and text.
      *
      * @param event
      *            the property change event
@@ -247,27 +257,38 @@ public class KWebSStatusBar extends WorkbenchWindowControlContribution
      * Sets the icon of the status label.
      */
     public void setStatusInfo() {
-        boolean remoteLayout = preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE);
-        Image icon = null;
-        String tooltip = null;
-        if (remoteLayout) {
-            icon = remoteImage;
-            tooltip = "You are using remote layout.";
-        } else {
-            icon = localImage;
-            tooltip = "You are using local layout.";
-        }          
-        final Image tempIcon = icon;
-        final String tempTooltip = tooltip
-                                   +" You can double click on this item to change layout settings"
-                                   + " or switch between local and remote layout by using the"
-                                   + " right mouse button.";
+        final Image icon = (SwitchLayoutMode.isRemoteLayoutActive() ? remoteImage : localImage);
+        final String tooltip = "You are using " 
+                             + (SwitchLayoutMode.isRemoteLayoutActive() ? "service based" : "local") 
+                             + " layout."
+                             + (
+                                 SwitchLayoutMode.isRemoteLayoutInstalled()
+                                 ?
+                                 " You can double click on this item to change layout settings"
+                                 + " or switch between local and remote layout by using the"
+                                 + " right mouse button."
+                                 :
+                                 " Currently no client feature is installed, therefore service based"
+                                 + " layout is not available. You can double click on this item to"
+                                 + " see how you can install client support for service based layout."
+                             );
         Display.getDefault().syncExec(new Runnable() {            
             public void run() {
-                image.setToolTipText(tempTooltip);
-                if (tempIcon != null) {
-                    image.setImage(tempIcon);
-                }                            
+                image.setToolTipText(tooltip);
+                if (icon != null) {
+                    image.setImage(icon);
+                }     
+                if (localLayoutItem != null) {
+                    localLayoutItem.setEnabled(SwitchLayoutMode.isRemoteLayoutActive());
+                }
+                if (remoteLayoutItem != null) {
+                    remoteLayoutItem.setEnabled(!SwitchLayoutMode.isRemoteLayoutActive() 
+                        && SwitchLayoutMode.isRemoteLayoutInstalled()
+                    );
+                }
+                if (statisticsItem != null) {
+                    statisticsItem.setEnabled(SwitchLayoutMode.isRemoteLayoutInstalled());
+                }
             }
         });
     }    

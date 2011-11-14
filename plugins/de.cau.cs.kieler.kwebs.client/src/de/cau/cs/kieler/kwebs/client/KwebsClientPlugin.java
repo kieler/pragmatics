@@ -27,6 +27,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.BundleContext;
 
 import de.cau.cs.kieler.kwebs.client.layout.RemoteLayoutDataService;
+import de.cau.cs.kieler.kwebs.client.layout.SwitchLayoutMode;
 
 /**
  * Activator for the client plug-in. It provides storage management for the user defined provider list.
@@ -63,8 +64,12 @@ public class KwebsClientPlugin extends Plugin {
         ServerConfigs.getInstance().registerStorageManager(new EclipseServerConfigsStorageManager());
         // Initialize providers from preference store
         ServerConfigs.getInstance().read();
-        // Create and register layout data for remote layout.
+        // Create and register layout data for remote layout
         RemoteLayoutDataService.create();
+        // Check whether client features are installed, otherwise set to local layout by default
+        if (!SwitchLayoutMode.isRemoteLayoutInstalled()) {
+            SwitchLayoutMode.toLocal();
+        }
     }
         
     /**

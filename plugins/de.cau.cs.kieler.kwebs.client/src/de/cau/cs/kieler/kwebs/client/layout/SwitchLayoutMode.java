@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kwebs.client.layout;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import de.cau.cs.kieler.kwebs.client.LayoutServiceClients;
 import de.cau.cs.kieler.kwebs.client.Preferences;
 
 /**
@@ -39,6 +40,10 @@ public final class SwitchLayoutMode {
     public static void toRemote() {
         activateRemoteLayout(true);
     }
+
+    /** The preference store. */
+    private static IPreferenceStore preferenceStore
+        = Preferences.getPreferenceStore();
     
     /**
      * Enable or disable remote layout.
@@ -46,19 +51,36 @@ public final class SwitchLayoutMode {
      * @param remoteLayout
      *            whether to enable or disable remote layout
      */
-    private static void activateRemoteLayout(final boolean remoteLayout) {
-        IPreferenceStore store = Preferences.getPreferenceStore();
-        boolean oldSetting = store.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE);
+    private static void activateRemoteLayout(final boolean remoteLayout) {        
+        boolean oldSetting = preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE);
         if (oldSetting != remoteLayout) {
-            store.setValue(Preferences.PREFID_LAYOUT_USE_REMOTE, remoteLayout);
+            preferenceStore.setValue(Preferences.PREFID_LAYOUT_USE_REMOTE, remoteLayout);
             // Fire property change event so that the RemoteGraphLayoutEngine can
             // initialize itself on the new conditions.         
-            store.firePropertyChangeEvent(
+            preferenceStore.firePropertyChangeEvent(
                 Preferences.PREFID_LAYOUT_SETTINGS_CHANGED, "1", "2"
             );
         }
     }
 
+    /**
+     * Checks whether any layout client feature is currently active.
+     * 
+     * @return whether any layout client feature is currently active
+     */
+    public static boolean isRemoteLayoutActive() {
+        return preferenceStore.getBoolean(Preferences.PREFID_LAYOUT_USE_REMOTE);
+    }
+
+    /**
+     * Checks whether any layout client feature is installed.
+     * 
+     * @return whether any layout client feature is installed
+     */
+    public static boolean isRemoteLayoutInstalled() {
+        return LayoutServiceClients.getInstance().countClients() != 0;
+    }
+    
     /**
      * Private Constructor for utility class.
      */
