@@ -22,7 +22,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -31,6 +30,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
 
 /**
@@ -44,12 +44,13 @@ public abstract class AbstractEmfHandler<T extends EObject> implements ITransfor
     /**
      * {@inheritDoc}
      */
-    public T deserialize(final String serializedGraph) {
+    public void deserialize(final String serializedGraph,
+            final TransformationData<T, KNode> transData) {
         try {
             ByteArrayInputStream source = new ByteArrayInputStream(serializedGraph.getBytes("UTF-8"));
-            T result = deserializeBinary(source, null);
+            T result = deserializeBinary(source, null, transData);
             source.close();
-            return result;
+            transData.setSourceGraph(result);
         } catch (UnsupportedEncodingException e) {
             throw new TransformationException(e);
         } catch (IOException e) {
@@ -78,40 +79,38 @@ public abstract class AbstractEmfHandler<T extends EObject> implements ITransfor
      * 
      * @param source
      *            the stream to parse
-     * @param settings
+     * @param options
      *            optional map of settings. Can be {@code null}
+     * @param transData
+     *            transformation data, used only for logging
      * @return the EMF model
      * @throws IOException
      *            when an exception occurs while parsing the model   
      */
     @SuppressWarnings("unchecked")
-    protected final T deserializeBinary(final InputStream source, final Map<Object, Object> settings) 
+    protected final T deserializeBinary(final InputStream source, final Map<Object, Object> options,
+            final TransformationData<?, ?> transData) 
         throws IOException {
         URI uri = URI.createURI("temp." + getFileExtension());
         ResourceSet resourceSet = createResourceSet();
         Resource resource = resourceSet.createResource(uri);   
-        Map<Object, Object> options = new HashMap<Object, Object>();
-        if (settings != null) {
-            options.putAll(settings);
+        Map<Object, Object> optMap = new HashMap<Object, Object>();
+        optMap.put(XMLResource.OPTION_RECORD_UNKNOWN_FEATURE, true);
+        if (options != null) {
+            optMap.putAll(options);
         }
-        resource.load(source, options);
-        EList<EObject> eObjects = resource.getContents();
-        if (eObjects.size() == 0) {
-            throw new TransformationException("The given input is empty.");
-        }
-        if (!resource.getErrors().isEmpty()) {
-            StringBuilder errorBuilder = new StringBuilder();
-            for (Diagnostic diagnostic : resource.getErrors()) {
-                if (diagnostic.getLine() > 0) {
-                    errorBuilder.append(diagnostic.getLine());
-                    errorBuilder.append(": ");
-                }
-                errorBuilder.append(diagnostic.getMessage());
-                errorBuilder.append("\n");
+        resource.load(source, optMap);
+        for (Diagnostic diagnostic : resource.getErrors()) {
+            if (diagnostic.getLine() > 0) {
+                transData.log(diagnostic.getLine() + ": " + diagnostic.getMessage());
+            } else {
+                transData.log(diagnostic.getMessage());
             }
-            throw new TransformationException("Errors while reading input:\n" + errorBuilder.toString());
         }
-        return (T) eObjects.get(0);
+        if (resource.getContents().isEmpty()) {
+            throw new TransformationException("The given input could not be parsed.");
+        }
+        return (T) resource.getContents().get(0);
     }
 
     /**
@@ -122,24 +121,24 @@ public abstract class AbstractEmfHandler<T extends EObject> implements ITransfor
      *            the model to be serialized
      * @param target
      *            the output stream to write to
-     * @param settings
+     * @param options
      *            optional map of settings. Can be {@code null}
      * @throws IOException
      *            when an exception occurs while writing the model
      */
     protected final void serializeBinary(final T graph, final OutputStream target, 
-        final Map<Object, Object> settings) throws IOException {
+        final Map<Object, Object> options) throws IOException {
         EcoreUtil.resolveAll(graph);
         URI uri = URI.createURI("temp." + getFileExtension());
         ResourceSet resourceSet = createResourceSet();
         Resource resource = resourceSet.createResource(uri);
-        resource.getContents().add(graph);      
-        Map<Object, Object> options = new HashMap<Object, Object>();
-        options.put(XMLResource.OPTION_ENCODING, "UTF-8");
-        if (settings != null) {
-            options.putAll(settings);
+        resource.getContents().add(graph);
+        Map<Object, Object> optMap = new HashMap<Object, Object>();
+        optMap.put(XMLResource.OPTION_ENCODING, "UTF-8");
+        if (options != null) {
+            optMap.putAll(options);
         }
-        resource.save(target, options);
+        resource.save(target, optMap);
     }
     
     /**

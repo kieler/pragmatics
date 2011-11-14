@@ -25,13 +25,13 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 public interface ITransformationHandler<T> {
 
     /**
-     * Create a graph instance from serial representation. The returned object may actually
-     * contain multiple graphs.
+     * Create a graph instance from serial representation. The created object, which is stored as
+     * source graph in the given transformation data instance, may actually contain multiple graphs.
      *
      * @param serializedGraph the serialized graph
-     * @return the graph instance
+     * @param transData transformation data for graph import
      */
-    T deserialize(String serializedGraph);
+    void deserialize(String serializedGraph, TransformationData<T, KNode> transData);
 
     /**
      * Serialize the given graph instance in the format supported by this transformer.

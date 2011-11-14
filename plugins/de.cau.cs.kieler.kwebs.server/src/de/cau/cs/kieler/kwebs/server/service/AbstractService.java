@@ -141,11 +141,10 @@ public abstract class AbstractService {
         double operationStarted = System.nanoTime();
         
         // Get the graph instances of which the layout is to be calculated
-        I graph = inhandler.deserialize(serializedGraph);
+        TransformationData<I, KNode> inTransData = new TransformationData<I, KNode>();
+        inhandler.deserialize(serializedGraph, inTransData);
         
         // Derive the layout structures of the graph instances
-        TransformationData<I, KNode> inTransData = new TransformationData<I, KNode>();
-        inTransData.setSourceGraph(graph);
         inhandler.getImporter().transform(inTransData);
         Iterator<String> messageIter = inTransData.getMessages().iterator();
         while (messageIter.hasNext()) {
@@ -170,10 +169,10 @@ public abstract class AbstractService {
 
         // Calculate statistical values and annotate graph if it is a KGraph instance.
         // The serialization process can not be included.        
-        if (graph instanceof KNode) {
+        if (inTransData.getSourceGraph() instanceof KNode) {
             double supplementalTime = System.nanoTime() - operationStarted - layoutTime;
-            annotateStatistics((KNode) graph, inTransData.getTargetGraphs(), serializedGraph.length(),
-                    layoutTime, supplementalTime);
+            annotateStatistics((KNode) inTransData.getSourceGraph(), inTransData.getTargetGraphs(),
+                    serializedGraph.length(), layoutTime, supplementalTime);
         }
         
         String serializedResult;

@@ -24,6 +24,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
+import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 import de.cau.cs.kieler.kiml.service.formats.TransformationException;
 
 /**
@@ -39,7 +40,8 @@ public class MatrixHandler implements ITransformationHandler<Matrix> {
     /**
      * {@inheritDoc}
      */
-    public Matrix deserialize(final String serializedGraph) {
+    public void deserialize(final String serializedGraph,
+            final TransformationData<Matrix, KNode> transData) {
         int linenr = 0;
         try {
             BufferedReader reader = new BufferedReader(new StringReader(serializedGraph));
@@ -107,9 +109,9 @@ public class MatrixHandler implements ITransformationHandler<Matrix> {
                     }
                 }
                 
-                return matrix;
+                transData.setSourceGraph(matrix);
             }
-            return new Matrix(0, 0);
+            transData.setSourceGraph(new Matrix(0, 0));
         } catch (NumberFormatException exception) {
             throw new TransformationException(
                     "Parse error while reading number on input line" + linenr, exception);

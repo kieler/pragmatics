@@ -70,10 +70,10 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
      * {@inheritDoc}
      */
     @Override
-    public KNode deserialize(final String serializedGraph) {
-        KNode graph = super.deserialize(serializedGraph);
-        unpersistDataElements(graph);
-        return graph;
+    public void deserialize(final String serializedGraph,
+            final TransformationData<KNode, KNode> transData) {
+        super.deserialize(serializedGraph, transData);
+        unpersistDataElements(transData.getSourceGraph());
     }
 
     /**
