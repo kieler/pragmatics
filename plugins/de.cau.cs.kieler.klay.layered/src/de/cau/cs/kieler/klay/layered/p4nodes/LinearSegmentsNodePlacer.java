@@ -682,8 +682,10 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                         LPort otherPort = edge.getTarget();
                         LNode otherNode = otherPort.getNode();
                         if (segment != linearSegments[otherNode.id]) {
+                            int otherPrio = Math.max(otherNode.getProperty(INPUT_PRIO),
+                                    otherNode.getProperty(OUTPUT_PRIO));
                             int prio = edge.getProperty(Properties.PRIORITY);
-                            if (prio >= minPrio) {
+                            if (prio >= minPrio && prio >= otherPrio) {
                                 nodeDeflection += otherNode.getPosition().y
                                         + otherPort.getPosition().y - portpos;
                                 edgeWeightSum++;
@@ -697,8 +699,10 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                         LPort otherPort = edge.getSource();
                         LNode otherNode = otherPort.getNode();
                         if (segment != linearSegments[otherNode.id]) {
+                            int otherPrio = Math.max(otherNode.getProperty(INPUT_PRIO),
+                                    otherNode.getProperty(OUTPUT_PRIO));
                             int prio = edge.getProperty(Properties.PRIORITY);
-                            if (prio >= minPrio) {
+                            if (prio >= minPrio && prio >= otherPrio) {
                                 nodeDeflection += otherNode.getPosition().y
                                         + otherPort.getPosition().y - portpos;
                                 edgeWeightSum++;

@@ -274,8 +274,7 @@ public final class Properties {
             EDGE_SPACING_FACTOR_ID, DEF_EDGE_SPACING_FACTOR);
 
     /** priority of elements. controls how much single edges are emphasized. */
-    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY,
-            0);
+    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
 
     /** default value for aspect ratio. */
     public static final float DEF_ASPECT_RATIO = 1.6f;
