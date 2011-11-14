@@ -138,12 +138,15 @@ public final class JaxWsService extends AbstractService implements LayoutService
     private ServiceFault_Exception createException(final int code, final Throwable throwable) {        
         StringBuilder message = new StringBuilder();
         Throwable t = throwable;
+        String lastm = null;
         while (t != null) {
-            if (t.getMessage() != null) {
+            String m = t.getMessage();
+            if (m != null && !(lastm != null && lastm.endsWith(m))) {
                 if (message.length() > 0) {
                     message.append('\n');
                 }
-                message.append(t.getMessage());
+                message.append(m);
+                lastm = m;
             }
             if (t.getCause() == t) {
                 t = null;

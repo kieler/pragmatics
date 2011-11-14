@@ -172,7 +172,9 @@ public abstract class TransformationService {
             if (data == null) {
                 for (GraphFormatData d : graphFormatMap.values()) {
                     // check format identifiers
-                    if (d.getId().endsWith(suffix)) {
+                    String id = d.getId();
+                    if (id.endsWith(suffix) && (suffix.length() == id.length()
+                            || id.charAt(id.length() - suffix.length() - 1) == '.')) {
                         formatSuffixMap.put(suffix, d);
                         return d;
                     }

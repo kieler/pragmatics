@@ -330,7 +330,9 @@ public class LayoutDataService {
             data = algorithmSuffixMap.get(suffix);
             if (data == null) {
                 for (LayoutAlgorithmData d : layoutAlgorithmMap.values()) {
-                    if (d.getId().endsWith(suffix)) {
+                    String id = d.getId();
+                    if (id.endsWith(suffix) && (suffix.length() == id.length()
+                            || id.charAt(id.length() - suffix.length() - 1) == '.')) {
                         algorithmSuffixMap.put(suffix, d);
                         return d;
                     }
@@ -374,7 +376,9 @@ public class LayoutDataService {
             data = optionSuffixMap.get(suffix);
             if (data == null) {
                 for (LayoutOptionData<?> d : layoutOptionMap.values()) {
-                    if (d.getId().endsWith(suffix)) {
+                    String id = d.getId();
+                    if (id.endsWith(suffix) && (suffix.length() == id.length()
+                            || id.charAt(id.length() - suffix.length() - 1) == '.')) {
                         optionSuffixMap.put(suffix, d);
                         return d;
                     }
@@ -444,7 +448,9 @@ public class LayoutDataService {
             data = typeSuffixMap.get(suffix);
             if (data == null) {
                 for (LayoutTypeData d : layoutTypeMap.values()) {
-                    if (d.getId().endsWith(suffix)) {
+                    String id = d.getId();
+                    if (id.endsWith(suffix) && (suffix.length() == id.length()
+                            || id.charAt(id.length() - suffix.length() - 1) == '.')) {
                         typeSuffixMap.put(suffix, d);
                         return d;
                     }
