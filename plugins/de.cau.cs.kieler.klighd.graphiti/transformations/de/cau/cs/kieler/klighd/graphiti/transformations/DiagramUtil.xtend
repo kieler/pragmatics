@@ -178,8 +178,8 @@ class DiagramUtil {
     /**
      *
      */
-    def Connection createConnection(int width) {
-        val connection = PictogramsFactory::eINSTANCE.createFreeFormConnection;
+    def Connection create connection: PictogramsFactory::eINSTANCE.createFreeFormConnection createConnection(Object o,int width) {
+//        val connection = PictogramsFactory::eINSTANCE.createFreeFormConnection;
         val polyline = AlgorithmsFactory::eINSTANCE.createPolyline;
         polyline.setLineWidth(width);
         polyline.setForeground(getColor("black"));
@@ -188,11 +188,11 @@ class DiagramUtil {
         connection.setGraphicsAlgorithm(polyline);
         connection.setLink(PictogramsFactory::eINSTANCE.createPictogramLink);  
         getDiagram().connections.add(connection);
-        return connection
+//        return connection
     }
 
-    def Connection createConnection() {
-        createConnection(1);
+    def Connection createConnection(Object o) {
+        o.createConnection(1);
     }
     
     def Connection from(Connection connection, Anchor start) {
