@@ -33,6 +33,7 @@ import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kiml.service.KGraphHandler;
+import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 import de.cau.cs.kieler.kwebs.LocalServiceException;
 import de.cau.cs.kieler.kwebs.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.Statistics;
@@ -260,7 +261,9 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
             networkStart = System.nanoTime();
             resultXMI = client.graphLayout(sourceXMI, KGraphHandler.FORMAT, null);
             networkTotal = (System.nanoTime() - networkStart);
-            resultGraph = kgraphHandler.deserialize(resultXMI);
+            TransformationData<KNode, KNode> transData = new TransformationData<KNode, KNode>();
+            kgraphHandler.deserialize(resultXMI, transData);
+            resultGraph = transData.getSourceGraph();
             Graphs.duplicateGraphLayoutByUniqueID(resultGraph, layoutGraph);
         } catch (Exception e) {
             throw new RemoteServiceException("Error occurred while doing remote layout", e);
