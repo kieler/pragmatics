@@ -39,7 +39,7 @@ public class SwitchableFigure extends Shape {
     /**
      * The figure that will actually be displayed.
      */
-    private IFigure currentFigure;
+    protected IFigure currentFigure;
 
     /**
      * Trigger for the figure being resizeable or not.

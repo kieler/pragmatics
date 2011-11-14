@@ -178,6 +178,12 @@ public class SwitchableCollapseFigure extends SwitchableFigure {
         revalidate();
         repaint();
     }
+    
+    @Override
+    public void setCurrentFigure(final IFigure figure) {
+        currentFigure = figure;
+        currentFigure.setParent(this.getParent());
+    }
 
     /*
      * (non-Javadoc)
