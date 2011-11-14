@@ -31,6 +31,7 @@ import org.eclipse.core.internal.expressions.WithExpression;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.actions.CompoundContributionItem;
@@ -271,25 +272,31 @@ public class KiviContributionItem extends CompoundContributionItem implements
                             (BindingService) Workbench.getInstance().getService(IBindingService.class);
                     ParameterizedCommand pc = ((CommandContributionItem) item).getCommand();
                     if (config.getShortcutContext() == null) {
-                        bindingService.addBinding(new KeyBinding(
-                                config.getKeySequence(),
-                                pc,
-                                bindingService.getActiveScheme().getId(),
-                                IContextService.CONTEXT_ID_WINDOW,
-                                null,
-                                null,
-                                null,
-                                Binding.USER));
+                        TriggerSequence[] oldBindings = bindingService.getActiveBindingsFor(pc.getId());
+                        if (oldBindings != null && oldBindings.length > 0) {
+                            bindingService.addBinding(new KeyBinding(
+                                    config.getKeySequence(),
+                                    pc,
+                                    bindingService.getActiveScheme().getId(),
+                                    IContextService.CONTEXT_ID_WINDOW,
+                                    null,
+                                    null,
+                                    null,
+                                    Binding.USER));
+                        }
                     } else {
-                        bindingService.addBinding(new KeyBinding(
-                                config.getKeySequence(),
-                                pc,
-                                bindingService.getActiveScheme().getId(),
-                                config.getShortcutContext(),
-                                null,
-                                null,
-                                null,
-                                Binding.USER));
+                        TriggerSequence[] oldBindings = bindingService.getActiveBindingsFor(pc.getId());
+                        if (oldBindings != null && oldBindings.length > 0) {
+                            bindingService.addBinding(new KeyBinding(
+                                    config.getKeySequence(),
+                                    pc,
+                                    bindingService.getActiveScheme().getId(),
+                                    config.getShortcutContext(),
+                                    null,
+                                    null,
+                                    null,
+                                    Binding.USER));
+                        }
                     }
                 }
                 
@@ -395,6 +402,7 @@ public class KiviContributionItem extends CompoundContributionItem implements
         if (myIndex == -1) {
             myIndex = parent.getItemCount();
         }
+        
         IContributionItem[] items = getContributionItems();
         for (int i = 0; i < items.length; i++) {
             IContributionItem item = items[i];
