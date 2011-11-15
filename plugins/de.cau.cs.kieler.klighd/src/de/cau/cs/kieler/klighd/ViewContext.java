@@ -117,7 +117,7 @@ public final class ViewContext extends MapPropertyHolder {
             if (source == null) {
                 return null;
             }
-            source = transformationContext.getSourceElement(element);
+            source = transformationContext.getSourceElement(source);
         }
         return source;
     }
