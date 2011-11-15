@@ -113,7 +113,7 @@ public final class ViewContext extends MapPropertyHolder {
      */
     public Object getSourceElement(final Object element) {
         Object source = element;
-        for (TransformationContext<?, ?> transformationContext : transformationContexts) {
+        for (TransformationContext<?, ?> transformationContext : transformationContextsRev) {
             if (source == null) {
                 return null;
             }
