@@ -108,10 +108,10 @@ class DiagramUtil {
      */
     def Anchor createLabeledEastPortAnchor(Shape shape, EObject o, String label) {
     	val x = shape.graphicsAlgorithm.width
-    	val y = shape.getAndAddIntProperty("eastports") * 15 + verticalPortPlacementOffetTop.value;
+    	val y = shape.getAndAddIntProperty("eastports") * 15 + verticalPortPlacementOffsetTop.value;
     	val anchor = shape.createPortAnchor(o, x,y);
     	val rect = anchor.createRectangle(0,0,7,7, "black_black".style);
-    	val text = rect.createText(-10, -2, label, Orientation::ALIGNMENT_RIGHT, "default".font);
+    	val text = rect.createText(-outerHorizontalPortLabelPlacementOffset.value, -2, label, Orientation::ALIGNMENT_RIGHT, "default".font);
     	return anchor
     }
 
@@ -122,10 +122,10 @@ class DiagramUtil {
      */
     def Anchor createLabeledWestPortAnchor(Shape shape, EObject o, String label) {
     	val x = -5
-    	val y = shape.getAndAddIntProperty("westports") * 15 + verticalPortPlacementOffetTop.value;
+    	val y = shape.getAndAddIntProperty("westports") * 15 + verticalPortPlacementOffsetTop.value;
     	val anchor = shape.createPortAnchor(o,x,y);
     	val rect = anchor.createRectangle(0,0,7,7, "black_black".style);
-    	rect.createText(10, -2, label, Orientation::ALIGNMENT_LEFT, "default".font);
+    	rect.createText(outerHorizontalPortLabelPlacementOffset.value, -2, label, Orientation::ALIGNMENT_LEFT, "default".font);
     	return anchor
     }
     
@@ -134,8 +134,17 @@ class DiagramUtil {
      * Default constant. Configured to enable a proper box label placement.
      * Can be reconfigured using '...verticalPortPlacementOffsetTop.setValue'. 
      */
-    def IntAnnotation create offset: AnnotationsFactory::eINSTANCE.createIntAnnotation getVerticalPortPlacementOffetTop() {
+    def IntAnnotation create offset: AnnotationsFactory::eINSTANCE.createIntAnnotation getVerticalPortPlacementOffsetTop() {
     	offset.value = 25;
+    }
+    
+    
+    /**
+     * Default constant. Configured to enable a proper box label placement.
+     * Can be reconfigured using '...verticalPortPlacementOffsetTop.setValue'. 
+     */
+    def IntAnnotation create offset: AnnotationsFactory::eINSTANCE.createIntAnnotation getOuterHorizontalPortLabelPlacementOffset() {
+    	offset.value = 10;
     }
 
 
@@ -179,7 +188,6 @@ class DiagramUtil {
      *
      */
     def Connection create connection: PictogramsFactory::eINSTANCE.createFreeFormConnection createConnection(Object o,int width) {
-//        val connection = PictogramsFactory::eINSTANCE.createFreeFormConnection;
         val polyline = AlgorithmsFactory::eINSTANCE.createPolyline;
         polyline.setLineWidth(width);
         polyline.setForeground(getColor("black"));
@@ -188,7 +196,6 @@ class DiagramUtil {
         connection.setGraphicsAlgorithm(polyline);
         connection.setLink(PictogramsFactory::eINSTANCE.createPictogramLink);  
         getDiagram().connections.add(connection);
-//        return connection
     }
 
     def Connection createConnection(Object o) {
