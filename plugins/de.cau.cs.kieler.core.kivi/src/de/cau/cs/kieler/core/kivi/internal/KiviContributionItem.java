@@ -273,7 +273,7 @@ public class KiviContributionItem extends CompoundContributionItem implements
                     ParameterizedCommand pc = ((CommandContributionItem) item).getCommand();
                     if (config.getShortcutContext() == null) {
                         TriggerSequence[] oldBindings = bindingService.getActiveBindingsFor(pc.getId());
-                        if (oldBindings != null && oldBindings.length > 0) {
+                        if (oldBindings != null && oldBindings.length == 0) {
                             bindingService.addBinding(new KeyBinding(
                                     config.getKeySequence(),
                                     pc,
@@ -286,7 +286,7 @@ public class KiviContributionItem extends CompoundContributionItem implements
                         }
                     } else {
                         TriggerSequence[] oldBindings = bindingService.getActiveBindingsFor(pc.getId());
-                        if (oldBindings != null && oldBindings.length > 0) {
+                        if (oldBindings != null && oldBindings.length == 0) {
                             bindingService.addBinding(new KeyBinding(
                                     config.getKeySequence(),
                                     pc,
