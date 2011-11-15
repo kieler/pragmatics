@@ -75,6 +75,24 @@ public class ReinitializingTransformationProxy<S, T> extends AbstractTransformat
     public T transform(final S model) {
         return null;
     }
+
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Object getSourceElement(final Object element,
+            final TransformationContext<S, T> transformationContext) {
+        return this.transformationDelegate.getSourceElement(element, transformationContext);
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Object getTargetElement(final Object element,
+            final TransformationContext<S, T> transformationContext) {
+        return this.transformationDelegate.getTargetElement(element, transformationContext);
+    }
     
     
     /**
