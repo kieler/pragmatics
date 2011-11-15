@@ -30,14 +30,6 @@ import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
  * @author msp
  */
 public class GraphMLHandler extends AbstractEmfHandler<DocumentRoot> {
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String getFileExtension() {
-        return "graphml";
-    }
 
     /**
      * Creates a resource set ready to be used with the GraphML meta model.

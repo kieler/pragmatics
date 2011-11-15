@@ -41,6 +41,9 @@ import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
  */
 public abstract class AbstractEmfHandler<T extends EObject> implements ITransformationHandler<T> {
     
+    /** the file extension for loading and saving resources. */
+    private String fileExtension;
+    
     /**
      * {@inheritDoc}
      */
@@ -72,6 +75,24 @@ public abstract class AbstractEmfHandler<T extends EObject> implements ITransfor
         } catch (IOException e) {
             throw new TransformationException(e);
         }
+    }
+    
+    /**
+     * Set the file extension for this handler.
+     * 
+     * @param ext a file extension
+     */
+    public final void setFileExtension(final String ext) {
+        this.fileExtension = ext;
+    }
+    
+    /**
+     * Returns the file extension of this handler.
+     * 
+     * @return the file extension
+     */
+    protected String getFileExtension() {
+        return fileExtension;
     }
 
     /**
@@ -140,13 +161,6 @@ public abstract class AbstractEmfHandler<T extends EObject> implements ITransfor
         }
         resource.save(target, optMap);
     }
-    
-    /**
-     * Return the file extension used for the supported EMF models.
-     * 
-     * @return the file extension
-     */
-    protected abstract String getFileExtension();
     
     /**
      * Create an appropriate resource set for the supported type of graphs.

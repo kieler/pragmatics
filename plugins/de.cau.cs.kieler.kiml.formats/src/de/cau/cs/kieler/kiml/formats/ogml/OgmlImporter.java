@@ -31,7 +31,6 @@ import net.ogdf.ogml.LocationType;
 import net.ogdf.ogml.NodeLayoutType;
 import net.ogdf.ogml.NodeType;
 import net.ogdf.ogml.OgmlFactory;
-import net.ogdf.ogml.PointType;
 import net.ogdf.ogml.ShapeType1;
 import net.ogdf.ogml.SourceTargetType;
 import net.ogdf.ogml.StylesType;

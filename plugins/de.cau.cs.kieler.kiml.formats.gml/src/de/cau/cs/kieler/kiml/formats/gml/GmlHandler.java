@@ -35,14 +35,6 @@ public class GmlHandler extends AbstractEmfHandler<GmlModel> {
     
     /** the injector for creation of resources. */
     private static Injector injector;
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String getFileExtension() {
-        return "gml";
-    }
 
     /**
      * {@inheritDoc}

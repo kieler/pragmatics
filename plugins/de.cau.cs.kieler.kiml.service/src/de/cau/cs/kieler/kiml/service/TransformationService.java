@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
+import de.cau.cs.kieler.kiml.service.formats.AbstractEmfHandler;
 import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
 import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
 
@@ -131,6 +132,15 @@ public abstract class TransformationService {
                             formatData.setExtensions(extArray);
                         }
                         graphFormatMap.put(id, formatData);
+                        if (handler instanceof AbstractEmfHandler<?>) {
+                            if (formatData.getExtensions() == null
+                                    || formatData.getExtensions().length == 0) {
+                                reportError(EXTP_ID_GRAPH_TRANS, element, ATTRIBUTE_EXTENSIONS, null);
+                            } else {
+                                String extension = formatData.getExtensions()[0];
+                                ((AbstractEmfHandler<?>) handler).setFileExtension(extension);
+                            }
+                        }
                     }
                 } catch (CoreException exception) {
                     reportError(exception);

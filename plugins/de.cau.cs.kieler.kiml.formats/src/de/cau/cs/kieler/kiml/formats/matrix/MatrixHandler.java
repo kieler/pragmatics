@@ -110,8 +110,9 @@ public class MatrixHandler implements ITransformationHandler<Matrix> {
                 }
                 
                 transData.setSourceGraph(matrix);
+            } else {
+                transData.setSourceGraph(new Matrix(0, 0));
             }
-            transData.setSourceGraph(new Matrix(0, 0));
         } catch (NumberFormatException exception) {
             throw new TransformationException(
                     "Parse error while reading number on input line" + linenr, exception);

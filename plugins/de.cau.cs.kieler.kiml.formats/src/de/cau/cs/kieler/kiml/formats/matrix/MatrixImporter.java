@@ -77,16 +77,18 @@ public class MatrixImporter implements IGraphTransformer<Matrix, KNode> {
         
         // transform coordinates form
         List<Matrix.Entry> list = matrix.getList();
-        for (Matrix.Entry entry : list) {
-            if (entry.i < nodec && entry.j < nodec && entry.value != 0) {
-                KEdge kedge = KimlUtil.createInitializedEdge();
-                edgeList.add(kedge);
-                if (entry.value > 0) {
-                    kedge.setSource(nodes[entry.i]);
-                    kedge.setTarget(nodes[entry.j]);
-                } else {
-                    kedge.setSource(nodes[entry.j]);
-                    kedge.setTarget(nodes[entry.i]);
+        if (list != null) {
+            for (Matrix.Entry entry : list) {
+                if (entry.i < nodec && entry.j < nodec && entry.value != 0) {
+                    KEdge kedge = KimlUtil.createInitializedEdge();
+                    edgeList.add(kedge);
+                    if (entry.value > 0) {
+                        kedge.setSource(nodes[entry.i]);
+                        kedge.setTarget(nodes[entry.j]);
+                    } else {
+                        kedge.setSource(nodes[entry.j]);
+                        kedge.setTarget(nodes[entry.i]);
+                    }
                 }
             }
         }

@@ -81,8 +81,8 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
      */
     protected ResourceSet createResourceSet() {
         Map<String, Object> extensionMap = Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap();
-        if (!extensionMap.containsKey(getFileExtension())) {
-            extensionMap.put(getFileExtension(), new XMIResourceFactoryImpl());
+        if (!extensionMap.containsKey("kgraph")) {
+            extensionMap.put("kgraph", new XMIResourceFactoryImpl());
         }
         EPackage.Registry registry = EPackage.Registry.INSTANCE;
         if (!registry.containsKey(KGraphPackage.eNS_URI)) {
@@ -92,13 +92,6 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
             registry.put(KLayoutDataPackage.eNS_URI, KLayoutDataPackage.eINSTANCE);
         }
         return new ResourceSetImpl();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected String getFileExtension() {
-        return "kgraph";
     }
     
     /** the identity transformer for KGraph. */
