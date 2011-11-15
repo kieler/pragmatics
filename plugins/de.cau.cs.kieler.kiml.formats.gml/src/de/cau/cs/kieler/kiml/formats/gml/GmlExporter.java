@@ -85,10 +85,7 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
             id.setValue(nodeId);
             nodeElement.getElements().add(id);
             if (knode.getLabel().getText().length() > 0) {
-                Element label = GmlFactory.eINSTANCE.createElement();
-                label.setKey("label");
-                label.setValue(knode.getLabel().getText());
-                nodeElement.getElements().add(label);
+                nodeElement.getElements().add(GmlHandler.createLabel(knode.getLabel()));
             }
             transform(nodeLayout, nodeElement);
             graphElement.getElements().add(nodeElement);
@@ -104,10 +101,7 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
                 id.setValue(portId);
                 portElement.getElements().add(id);
                 if (kport.getLabel().getText().length() > 0) {
-                    Element label = GmlFactory.eINSTANCE.createElement();
-                    label.setKey("label");
-                    label.setValue(kport.getLabel().getText());
-                    portElement.getElements().add(label);
+                    portElement.getElements().add(GmlHandler.createLabel(kport.getLabel()));
                 }
                 transform(portLayout, portElement);
                 nodeElement.getElements().add(portElement);
@@ -153,10 +147,7 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
                 }
                 for (KLabel klabel : kedge.getLabels()) {
                     if (klabel.getText().length() > 0) {
-                        Element label = GmlFactory.eINSTANCE.createElement();
-                        label.setKey("label");
-                        label.setValue(klabel.getText());
-                        edgeElement.getElements().add(label);
+                        edgeElement.getElements().add(GmlHandler.createLabel(klabel));
                     }
                 }
                 KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);

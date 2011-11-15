@@ -175,7 +175,7 @@ public class GMLGrammarAccess extends AbstractGrammarElementFinder {
 	} 
 
 	//terminal STRING:
-	//	"\"" ("&" ("a".."z" | "A".."Z" | "0".."9")+ ";" | !("&" | "\""))* "\"";
+	//	"\"" ("&" ("a".."z" | "A".."Z" | "0".."9" | "#")+ ";" | !("&" | "\""))* "\"";
 	public TerminalRule getSTRINGRule() {
 		return (tSTRING != null) ? tSTRING : (tSTRING = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "STRING"));
 	} 

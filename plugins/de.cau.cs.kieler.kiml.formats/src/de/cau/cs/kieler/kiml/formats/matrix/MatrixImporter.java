@@ -36,9 +36,12 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 public class MatrixImporter implements IGraphTransformer<Matrix, KNode> {
 
     /** the nodes that are created by this transformer, in order as given by the matrix. */
-    private static final IProperty<KNode[]> NODES = new Property<KNode[]>("nodes");
+    private static final IProperty<KNode[]> NODES = new Property<KNode[]>("matrixImporter.nodes");
     /** the edges that are created by this transformer. */
-    private static final IProperty<KEdge[]> EDGES = new Property<KEdge[]>("edges");
+    private static final IProperty<KEdge[]> EDGES = new Property<KEdge[]>("matrixImporter.edges");
+    /** the index that is attached to a node. */
+    private static final IProperty<Integer> NODE_INDEX = new Property<Integer>(
+            "matrixImporter.nodeIndex", -1);
     
     /**
      * {@inheritDoc}
@@ -51,7 +54,7 @@ public class MatrixImporter implements IGraphTransformer<Matrix, KNode> {
         for (int i = 0; i < nodec; i++) {
             nodes[i] = KimlUtil.createInitializedNode();
             nodes[i].setParent(parent);
-            nodes[i].getLabel().setText(Integer.toString(i + 1));
+            nodes[i].getData(KShapeLayout.class).setProperty(NODE_INDEX, i + 1);
         }
         List<KEdge> edgeList = new LinkedList<KEdge>();
         
@@ -118,8 +121,9 @@ public class MatrixImporter implements IGraphTransformer<Matrix, KNode> {
                 try {
                     KVectorChain vectorChain = new KVectorChain();
                     // the first pair of numbers indicates the source and target node
-                    vectorChain.add(Double.valueOf(edge.getSource().getLabel().getText()),
-                            Double.valueOf(edge.getTarget().getLabel().getText()));
+                    vectorChain.add(
+                            edge.getSource().getData(KShapeLayout.class).getProperty(NODE_INDEX),
+                            edge.getTarget().getData(KShapeLayout.class).getProperty(NODE_INDEX));
                     // the remaining numbers are bend point coordinates
                     for (KPoint bendPoint : edgeLayout.getBendPoints()) {
                         vectorChain.add(bendPoint.getX(), bendPoint.getY());

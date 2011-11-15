@@ -19,6 +19,11 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 
@@ -75,6 +80,40 @@ public class MatrixExporter implements IGraphTransformer<KNode, Matrix> {
                     Integer targetIndex = nodeIndex.get(edge.getTarget());
                     if (targetIndex != null) {
                         x[sourceIndex][targetIndex]++;
+                    }
+                }
+            }
+        }
+        
+        // transfer the layout of the graph
+        if (!data.getProperty(LayoutOptions.NO_LAYOUT)) {
+            List<KVectorChain> layout = matrix.createLayout();
+            // first lines: coordinates of node positions
+            for (KNode node : parentNode.getChildren()) {
+                KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+                KVectorChain chain = new KVectorChain();
+                chain.add(nodeLayout.getXpos() + nodeLayout.getWidth() / 2,
+                        nodeLayout.getYpos() + nodeLayout.getHeight() / 2);
+                layout.add(chain);
+            }
+            // remaining lines: coordinates of edge bend points
+            for (KNode node : parentNode.getChildren()) {
+                for (KEdge edge : node.getOutgoingEdges()) {
+                    KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                    if (!edgeLayout.getBendPoints().isEmpty()) {
+                        try {
+                            KVectorChain vectorChain = new KVectorChain();
+                            // the first pair of numbers indicates the source and target node
+                            vectorChain.add(nodeIndex.get(edge.getSource()),
+                                    nodeIndex.get(edge.getTarget()));
+                            // the remaining numbers are bend point coordinates
+                            for (KPoint bendPoint : edgeLayout.getBendPoints()) {
+                                vectorChain.add(bendPoint.getX(), bendPoint.getY());
+                            }
+                            layout.add(vectorChain);
+                        } catch (NumberFormatException exception) {
+                            // ignore exception
+                        }
                     }
                 }
             }

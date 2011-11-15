@@ -50,7 +50,7 @@ public class MatrixHandler implements ITransformationHandler<Matrix> {
             do {
                 line = reader.readLine();
                 linenr++;
-            } while (line != null && line.startsWith("%"));
+            } while (line != null && (line.startsWith("%") || line.length() == 0));
             
             if (line != null) {
                 // read size of the matrix: [rows  columns  non-zero-entries]
@@ -72,7 +72,7 @@ public class MatrixHandler implements ITransformationHandler<Matrix> {
                         do {
                             line = reader.readLine();
                             linenr++;
-                        } while (line != null && line.startsWith("%"));
+                        } while (line != null && (line.startsWith("%") || line.length() == 0));
                         if (line != null) {
                             tokenizer = new StringTokenizer(line, " \t");
                             tokenc = tokenizer.countTokens();
@@ -149,6 +149,7 @@ public class MatrixHandler implements ITransformationHandler<Matrix> {
             }
         } else {
             // serialize the layout of the graph
+            builder.append("%%KIELER matrix layout\n");
             for (KVectorChain chain : graph.getLayout()) {
                 for (KVector vector : chain) {
                     builder.append(toString(vector.x)).append(' ');

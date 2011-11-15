@@ -62,13 +62,6 @@ public class AbstractGMLSemanticSequencer extends AbstractSemanticSequencer {
 	/**
 	 * Constraint:
 	 *     (key=ID (value=Value | elements+=Element*))
-	 *
-	 * Features:
-	 *    key[1, 1]
-	 *    value[0, 1]
-	 *         EXCLUDE_IF_SET elements
-	 *    elements[0, *]
-	 *         EXCLUDE_IF_SET value
 	 */
 	protected void sequence_Element(EObject context, Element semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -78,9 +71,6 @@ public class AbstractGMLSemanticSequencer extends AbstractSemanticSequencer {
 	/**
 	 * Constraint:
 	 *     elements+=Element*
-	 *
-	 * Features:
-	 *    elements[0, *]
 	 */
 	protected void sequence_GmlModel(EObject context, GmlModel semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

@@ -333,11 +333,11 @@ public class InternalGMLLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:13: ( '\"' ( '&' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )+ ';' | ~ ( ( '&' | '\"' ) ) )* '\"' )
-            // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:15: '\"' ( '&' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )+ ';' | ~ ( ( '&' | '\"' ) ) )* '\"'
+            // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:13: ( '\"' ( '&' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '#' )+ ';' | ~ ( ( '&' | '\"' ) ) )* '\"' )
+            // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:15: '\"' ( '&' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '#' )+ ';' | ~ ( ( '&' | '\"' ) ) )* '\"'
             {
             match('\"'); 
-            // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:19: ( '&' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )+ ';' | ~ ( ( '&' | '\"' ) ) )*
+            // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:19: ( '&' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '#' )+ ';' | ~ ( ( '&' | '\"' ) ) )*
             loop10:
             do {
                 int alt10=3;
@@ -353,17 +353,17 @@ public class InternalGMLLexer extends Lexer {
 
                 switch (alt10) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:20: '&' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )+ ';'
+            	    // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:20: '&' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '#' )+ ';'
             	    {
             	    match('&'); 
-            	    // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:24: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )+
+            	    // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:24: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '#' )+
             	    int cnt9=0;
             	    loop9:
             	    do {
             	        int alt9=2;
             	        int LA9_0 = input.LA(1);
 
-            	        if ( ((LA9_0>='0' && LA9_0<='9')||(LA9_0>='A' && LA9_0<='Z')||(LA9_0>='a' && LA9_0<='z')) ) {
+            	        if ( (LA9_0=='#'||(LA9_0>='0' && LA9_0<='9')||(LA9_0>='A' && LA9_0<='Z')||(LA9_0>='a' && LA9_0<='z')) ) {
             	            alt9=1;
             	        }
 
@@ -372,7 +372,7 @@ public class InternalGMLLexer extends Lexer {
             	    	case 1 :
             	    	    // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:
             	    	    {
-            	    	    if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
+            	    	    if ( input.LA(1)=='#'||(input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
             	    	        input.consume();
 
             	    	    }
@@ -399,7 +399,7 @@ public class InternalGMLLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:58: ~ ( ( '&' | '\"' ) )
+            	    // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:62: ~ ( ( '&' | '\"' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='%')||(input.LA(1)>='\'' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
