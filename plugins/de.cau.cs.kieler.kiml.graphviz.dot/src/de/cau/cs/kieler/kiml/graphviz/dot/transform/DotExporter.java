@@ -14,11 +14,15 @@
 package de.cau.cs.kieler.kiml.graphviz.dot.transform;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
@@ -76,8 +80,14 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
     public static final float DPI = 72.0f;
 
     /** the Graphviz command to use for transformation. */
-    public static final IProperty<Command> COMMAND = new Property<Command>("dotTransformer.command",
-            Command.DOT);
+    public static final IProperty<Command> COMMAND = new Property<Command>(
+            "dotExporter.command", Command.DOT);
+    /** whether edge identifiers should be generated or not. */
+    public static final IProperty<Boolean> USE_EDGE_IDS = new Property<Boolean>(
+            "dotExporter.useEdgeIds", false);
+    /** whether to always transform the whole graph with all hierarchy levels. */
+    public static final IProperty<Boolean> FULL_EXPORT = new Property<Boolean>(
+            "dotExporter.fullExport", true);
     
     /** default multiplier for font sizes. */
     private static final double FONT_SIZE_MULT = 1.4;
@@ -85,11 +95,20 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
     private static final String ATTRIBUTE_DELIM = "\", \t\n\r";
 
     /** maps each identifier of a graph element to the instance of the element. */
-    private static final IProperty<HashMap<String, KGraphElement>> GRAPH_ELEMS
-            = new Property<HashMap<String, KGraphElement>>("dotTransformer.graphElemMap");
+    private static final IProperty<BiMap<String, KGraphElement>> GRAPH_ELEMS
+            = new Property<BiMap<String, KGraphElement>>("dotExporter.graphElemMap");
     /** indicates whether splines are used. */
     private static final IProperty<Boolean> USE_SPLINES = new Property<Boolean>(
-            "dotTransformer.useSplines", false);
+            "dotExporter.useSplines", false);
+    /** the next node identifier to use. */
+    private static final IProperty<Integer> NEXT_NODE_ID = new Property<Integer>(
+            "dotExporter.nextNodeId", 1);
+    /** the next edge identifier to use. */
+    private static final IProperty<Integer> NEXT_EDGE_ID = new Property<Integer>(
+            "dotExporter.nextEdgeId", 1);
+    /** cluster dummy node identifier attached to a node. */
+    private static final IProperty<String> CLUSTER_DUMMY = new Property<String>(
+            "dotExporter.clusterDummy");
 
     /**
      * Transforms the KGraph instance to a Dot instance using the given command.
@@ -97,15 +116,15 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
      * @param transData the transformation data instance
      */
     public void transform(final TransformationData<KNode, GraphvizModel> transData) {
-        transData.setProperty(GRAPH_ELEMS, new HashMap<String, KGraphElement>());
+        transData.setProperty(GRAPH_ELEMS, HashBiMap.create());
         KNode kgraph = transData.getSourceGraph();
         GraphvizModel graphvizModel = DotFactory.eINSTANCE.createGraphvizModel();
         Graph graph = DotFactory.eINSTANCE.createGraph();
         graph.setType(GraphType.DIGRAPH);
         graphvizModel.getGraphs().add(graph);
         Command command = transData.getProperty(COMMAND);
-        boolean layoutHierarchy = kgraph.getData(KShapeLayout.class)
-                .getProperty(LayoutOptions.LAYOUT_HIERARCHY)
+        boolean layoutHierarchy = transData.getProperty(FULL_EXPORT)
+                || kgraph.getData(KShapeLayout.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)
                 && (command == Command.DOT || command == Command.FDP);
         transformNodes(kgraph, graph.getStatements(), layoutHierarchy, new KVector(), transData);
         transformEdges(kgraph, graph.getStatements(), layoutHierarchy, transData);
@@ -158,11 +177,12 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
             final boolean hierarchy, final KVector offset,
             final TransformationData<KNode, GraphvizModel> transData) {
         // set attributes for the whole graph
+        boolean fullExport = transData.getProperty(FULL_EXPORT);
         KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
-        setGraphAttributes(statements, parentLayout, transData);
-
-        // get interactive layout option
         boolean interactive = parentLayout.getProperty(LayoutOptions.INTERACTIVE);
+        if (!fullExport) {
+            setGraphAttributes(statements, parentLayout, transData);
+        }
 
         // create nodes and subgraphs
         for (KNode childNode : parent.getChildren()) {
@@ -172,8 +192,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
             String nodeID;
             // if hierarchy mode is active, create a subgraph, else a regular node
             if (hierarchy && !childNode.getChildren().isEmpty()) {
-                String clusterNodeID = getNodeID(childNode, NodeType.CLUSTER);
-                transData.getProperty(GRAPH_ELEMS).put(clusterNodeID, childNode);
+                String clusterNodeID = getNodeID(childNode, NodeType.CLUSTER, transData);
                 Subgraph subgraph = DotFactory.eINSTANCE.createSubgraph();
                 subgraph.setName(clusterNodeID);
                 statements.add(subgraph);
@@ -183,29 +202,36 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                 transformNodes(childNode, subgraph.getStatements(), true,
                         new KVector(offset).translate(subgraphx, subgraphy), transData);
                 // create a dummy node for compound edges
-                nodeID = getNodeID(childNode, NodeType.DUMMY);
+                nodeID = getNodeID(childNode, NodeType.DUMMY, transData);
                 attributes.add(createAttribute(Attributes.STYLE, "invis"));
                 attributes.add(createAttribute(Attributes.WIDTH, 0));
                 attributes.add(createAttribute(Attributes.HEIGHT, 0));
                 subgraph.getStatements().add(nodeStatement);
             } else {
-                nodeID = getNodeID(childNode, NodeType.NODE);
-                transData.getProperty(GRAPH_ELEMS).put(nodeID, childNode);
+                nodeID = getNodeID(childNode, NodeType.NODE, transData);
                 // set width and height
                 if (!nodeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
                     KimlUtil.resizeNode(childNode);
                 }
-                attributes.add(createAttribute(Attributes.WIDTH, nodeLayout.getWidth() / DPI));
-                attributes.add(createAttribute(Attributes.HEIGHT, nodeLayout.getHeight() / DPI));
+                if (nodeLayout.getWidth() > 0) {
+                    attributes.add(createAttribute(Attributes.WIDTH, nodeLayout.getWidth() / DPI));
+                }
+                if (nodeLayout.getHeight() > 0) {
+                    attributes.add(createAttribute(Attributes.HEIGHT, nodeLayout.getHeight() / DPI));
+                }
+                if (childNode.getLabel().getText().length() > 0 && fullExport) {
+                    attributes.add(createAttribute(Attributes.LABEL, createString(
+                            childNode.getLabel().getText())));
+                }
                 // add node position if interactive layout is chosen
-                if (interactive) {
-                    double xpos = (nodeLayout.getXpos() - offset.x) / DPI;
-                    double ypos = (parentLayout.getHeight() - nodeLayout.getYpos() - offset.y) / DPI;
+                if ((interactive || fullExport)
+                        && (nodeLayout.getXpos() != 0 || nodeLayout.getYpos() != 0)) {
+                    double xpos = (nodeLayout.getXpos() + nodeLayout.getWidth() / 2 + offset.x);
+                    double ypos = (nodeLayout.getYpos() + nodeLayout.getHeight() / 2 + offset.y);
                     String posString = "\"" + Double.toString(xpos)
                             + "," + Double.toString(ypos) + "\"";
                     attributes.add(createAttribute(Attributes.POS, posString));
                 }
-                // set node shape
                 statements.add(nodeStatement);
             }
             Node node = DotFactory.eINSTANCE.createNode();
@@ -224,10 +250,13 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
      */
     private void transformEdges(final KNode parent, final List<Statement> statements,
             final boolean hierarchy, final TransformationData<KNode, GraphvizModel> transData) {
+        boolean fullExport = transData.getProperty(FULL_EXPORT);
         KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
         Direction layoutDirection = parentLayout.getProperty(LayoutOptions.DIRECTION);
         boolean vertical = layoutDirection == Direction.DOWN || layoutDirection == Direction.UP;
         LinkedList<KNode> nodes = new LinkedList<KNode>(parent.getChildren());
+        BiMap<KGraphElement, String> nodeIds = transData.getProperty(GRAPH_ELEMS).inverse();
+        
         while (!nodes.isEmpty()) {
             KNode source = nodes.removeFirst();
             for (KEdge edge : source.getOutgoingEdges()) {
@@ -240,32 +269,63 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                     // set source node or cluster
                     Node sourceNode = DotFactory.eINSTANCE.createNode();
                     if (hierarchy && !source.getChildren().isEmpty()) {
-                        sourceNode.setName(getNodeID(source, NodeType.DUMMY));
+                        sourceNode.setName(source.getData(KShapeLayout.class)
+                                .getProperty(CLUSTER_DUMMY));
                         attributes.add(createAttribute(Attributes.LTAIL,
-                                getNodeID(source, NodeType.CLUSTER)));
+                                nodeIds.get(source)));
                     } else {
-                        sourceNode.setName(getNodeID(source, NodeType.NODE));
+                        sourceNode.setName(nodeIds.get(source));
                     }
                     edgeStatement.setSourceNode(sourceNode);
                     // set target node or cluster
                     EdgeTarget edgeTarget = DotFactory.eINSTANCE.createEdgeTarget();
                     Node targetNode = DotFactory.eINSTANCE.createNode();
                     if (hierarchy && !target.getChildren().isEmpty()) {
-                        targetNode.setName(getNodeID(target, NodeType.DUMMY));
-                        attributes.add(createAttribute(Attributes.LHEAD, getNodeID(target,
-                                NodeType.CLUSTER)));
+                        targetNode.setName(target.getData(KShapeLayout.class)
+                                .getProperty(CLUSTER_DUMMY));
+                        attributes.add(createAttribute(Attributes.LHEAD,
+                                nodeIds.get(target)));
                     } else {
-                        targetNode.setName(getNodeID(target, NodeType.NODE));
+                        targetNode.setName(nodeIds.get(target));
                     }
                     edgeTarget.setTargetnode(targetNode);
                     edgeStatement.getEdgeTargets().add(edgeTarget);
 
                     // add edge labels at head, tail, and middle position
                     setEdgeLabels(edge, attributes, vertical);
-                    // add comment with edge identifier
-                    String edgeID = getEdgeID(edge);
-                    attributes.add(createAttribute(Attributes.COMMENT, "\"" + edgeID + "\""));
-                    transData.getProperty(GRAPH_ELEMS).put(edgeID, edge);
+                    
+                    if (transData.getProperty(USE_EDGE_IDS)) {
+                        // add comment with edge identifier
+                        String edgeID = getEdgeID(edge, transData);
+                        attributes.add(createAttribute(Attributes.COMMENT, "\"" + edgeID + "\""));
+                    }
+                    
+                    // include edge routing for full export
+                    KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                    KPoint sourcePoint = edgeLayout.getSourcePoint();
+                    KPoint targetPoint = edgeLayout.getTargetPoint();
+                    if (fullExport && (edgeLayout.getBendPoints().size() > 0
+                            || sourcePoint.getX() != 0 || sourcePoint.getY() != 0
+                            || targetPoint.getX() != 0 || targetPoint.getY() != 0)) {
+                        KNode referenceNode = source;
+                        if (!KimlUtil.isDescendant(target, source)) {
+                            referenceNode = source.getParent();
+                        }
+                        StringBuilder pos = new StringBuilder();
+                        Iterator<KVector> pointIter = edgeLayout.createVectorChain().iterator();
+                        while (pointIter.hasNext()) {
+                            KVector point = pointIter.next();
+                            KimlUtil.toAbsolute(point, referenceNode);
+                            pos.append(point.x);
+                            pos.append(",");
+                            pos.append(point.y);
+                            if (pointIter.hasNext()) {
+                                pos.append(" ");
+                            }
+                        }
+                        attributes.add(createAttribute(Attributes.POS, "\"" + pos + "\""));
+                    }
+                    
                     statements.add(edgeStatement);
                 } else {
                     KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
@@ -624,7 +684,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
         StringBuilder escapeBuffer = new StringBuilder(label.length() + 2);
         // prefix the label with an underscore to prevent it from being equal to
         // a keyword
-        escapeBuffer.append("\"_");
+        escapeBuffer.append("\"");
         for (int i = 0; i < label.length(); i++) {
             char c = label.charAt(i);
             if (c == '\"' || c == '\\' || c > MAX_OUT_CHAR) {
@@ -649,28 +709,45 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
      * 
      * @param node node for which an identifier shall be created
      * @param cluster whether a cluster id should be created
+     * @param transData transformation data
      * @return a unique string used to identify the node
      */
-    private String getNodeID(final KNode node, final NodeType type) {
+    private String getNodeID(final KNode node, final NodeType type,
+            final TransformationData<KNode, GraphvizModel> transData) {
+        int id = transData.getProperty(NEXT_NODE_ID);
+        transData.setProperty(NEXT_NODE_ID, id + 1);
+        String idstring = null;
         switch (type) {
         case NODE:
-            return "node" + node.hashCode();
+            idstring = "node" + id;
+            transData.getProperty(GRAPH_ELEMS).put(idstring, node);
+            break;
         case CLUSTER:
-            return "cluster" + node.hashCode();
+            idstring = "cluster" + id;
+            transData.getProperty(GRAPH_ELEMS).put(idstring, node);
+            break;
         case DUMMY:
-            return "dummy" + node.hashCode();
+            idstring = "dummy" + id;
+            node.getData(KShapeLayout.class).setProperty(CLUSTER_DUMMY, idstring);
+            break;
         }
-        return null;
+        return idstring;
     }
 
     /**
      * Creates a unique identifier for the given edge.
      * 
      * @param edge edge for which an identifier shall be created
+     * @param transData transformation data
      * @return a unique string used to identify the edge
      */
-    private String getEdgeID(final KEdge edge) {
-        return "edge" + edge.hashCode();
+    private String getEdgeID(final KEdge edge,
+            final TransformationData<KNode, GraphvizModel> transData) {
+        int id = transData.getProperty(NEXT_EDGE_ID);
+        transData.setProperty(NEXT_EDGE_ID, id + 1);
+        String idstring = "edge" + id;
+        transData.getProperty(GRAPH_ELEMS).put(idstring, edge);
+        return idstring;
     }
 
     /**

@@ -32,6 +32,7 @@ import de.cau.cs.kieler.core.util.ForwardingInputStream;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.Command;
+import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotExporter;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotHandler;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool.Cleanup;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -106,6 +107,8 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         TransformationData<KNode, GraphvizModel> transData
                 = new TransformationData<KNode, GraphvizModel>();
         transData.setSourceGraph(parentNode);
+        transData.setProperty(DotExporter.USE_EDGE_IDS, true);
+        transData.setProperty(DotExporter.FULL_EXPORT, false);
         dotHandler.getExporter().transform(transData);
         GraphvizModel graphvizInput = transData.getTargetGraphs().get(0);
         writeDotGraph(graphvizInput, progressMonitor.subTask(1), debugMode, resourceSet);

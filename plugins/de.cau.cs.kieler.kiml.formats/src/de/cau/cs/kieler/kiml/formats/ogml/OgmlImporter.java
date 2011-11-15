@@ -367,6 +367,11 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
             }
             
             for (KEdge kedge : knode.getOutgoingEdges()) {
+                KVector edgeOffset = offset;
+                if (KimlUtil.isDescendant(kedge.getTarget(), knode)) {
+                    edgeOffset = new KVector(offset).translate(knodeLayout.getXpos(),
+                            knodeLayout.getYpos());
+                }
                 KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
                 // create edge if it is not present yet
                 EdgeType ogmlEdge = kedgeLayout.getProperty(PROP_EDGE);
@@ -384,12 +389,12 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
                 }
                 ogmlEdgeLayout.getPoint().clear();
                 ogmlEdgeLayout.getPoint().add(OgmlHandler.createPoint(kedgeLayout.getSourcePoint(),
-                        offset));
+                        edgeOffset));
                 for (KPoint bendPoint : kedgeLayout.getBendPoints()) {
-                    ogmlEdgeLayout.getPoint().add(OgmlHandler.createPoint(bendPoint, offset));
+                    ogmlEdgeLayout.getPoint().add(OgmlHandler.createPoint(bendPoint, edgeOffset));
                 }
                 ogmlEdgeLayout.getPoint().add(OgmlHandler.createPoint(kedgeLayout.getTargetPoint(),
-                        offset));
+                        edgeOffset));
                 
                 for (KLabel klabel : kedge.getLabels()) {
                     KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
@@ -406,15 +411,17 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
                         location = OgmlFactory.eINSTANCE.createLocationType();
                         ogmlLabelLayout.setLocation(location);
                     }
-                    location.setX(klabelLayout.getXpos() + klabelLayout.getWidth() / 2 + offset.x);
-                    location.setY(klabelLayout.getYpos() + klabelLayout.getHeight() / 2 + offset.y);
+                    location.setX(klabelLayout.getXpos() + klabelLayout.getWidth() / 2
+                            + edgeOffset.x);
+                    location.setY(klabelLayout.getYpos() + klabelLayout.getHeight() / 2
+                            + edgeOffset.y);
                 }
             }
             
             // apply layout for child nodes
             if (!knode.getChildren().isEmpty()) {
-                KVector childOffset = new KVector(offset).translate(knodeLayout.getXpos(),
-                        knodeLayout.getYpos());
+                KVector childOffset = new KVector(offset);
+                childOffset.translate(knodeLayout.getXpos(), knodeLayout.getYpos());
                 applyLayout(knode, childOffset, graph);
             }
         }

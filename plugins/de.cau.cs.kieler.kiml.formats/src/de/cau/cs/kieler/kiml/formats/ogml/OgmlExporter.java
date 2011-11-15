@@ -44,6 +44,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Graph exporter for OGML.
@@ -129,8 +130,8 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
                 ogmlNodeLayout.setIdRef(nodeId);
                 if (knodeLayout.getXpos() != 0 || knodeLayout.getYpos() != 0) {
                     LocationType location = OgmlFactory.eINSTANCE.createLocationType();
-                    location.setX(knodeLayout.getXpos() + knodeLayout.getWidth() / 2);
-                    location.setY(knodeLayout.getYpos() + knodeLayout.getHeight() / 2);
+                    location.setX(knodeLayout.getXpos() + knodeLayout.getWidth() / 2 + offset.x);
+                    location.setY(knodeLayout.getYpos() + knodeLayout.getHeight() / 2 + offset.y);
                     ogmlNodeLayout.setLocation(location);
                 }
                 if (knodeLayout.getWidth() != 0 || knodeLayout.getHeight() != 0) {
@@ -166,6 +167,12 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
             for (KEdge kedge : knode.getOutgoingEdges()) {
                 // transform edge
                 KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
+                KVector edgeOffset = offset;
+                if (KimlUtil.isDescendant(kedge.getTarget(), knode)) {
+                    KShapeLayout sourceLayout = knode.getData(KShapeLayout.class);
+                    edgeOffset = new KVector(offset).translate(sourceLayout.getXpos(),
+                            sourceLayout.getYpos());
+                }
                 String edgeId = kedgeLayout.getProperty(PROP_ID);
                 EdgeType ogmlEdge = OgmlFactory.eINSTANCE.createEdgeType();
                 ogmlEdge.setId(edgeId);
@@ -187,11 +194,11 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
                         || targetPoint.getY() != 0 || targetPoint.getY() != 0) {
                     EdgeLayoutType ogmlEdgeLayout = OgmlFactory.eINSTANCE.createEdgeLayoutType();
                     ogmlEdgeLayout.setIdRef(edgeId);
-                    ogmlEdgeLayout.getPoint().add(OgmlHandler.createPoint(sourcePoint, offset));
+                    ogmlEdgeLayout.getPoint().add(OgmlHandler.createPoint(sourcePoint, edgeOffset));
                     for (KPoint bendPoint : kedgeLayout.getBendPoints()) {
-                        ogmlEdgeLayout.getPoint().add(OgmlHandler.createPoint(bendPoint, offset));
+                        ogmlEdgeLayout.getPoint().add(OgmlHandler.createPoint(bendPoint, edgeOffset));
                     }
-                    ogmlEdgeLayout.getPoint().add(OgmlHandler.createPoint(targetPoint, offset));
+                    ogmlEdgeLayout.getPoint().add(OgmlHandler.createPoint(targetPoint, edgeOffset));
                     styles.getEdgeStyle().add(ogmlEdgeLayout);
                 }
                 
@@ -208,8 +215,10 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
                                     .createLabelLayoutType();
                             ogmlLabelLayout.setIdRef(labelId);
                             LocationType location = OgmlFactory.eINSTANCE.createLocationType();
-                            location.setX(klabelLayout.getXpos() + klabelLayout.getWidth() / 2);
-                            location.setY(klabelLayout.getYpos() + klabelLayout.getHeight() / 2);
+                            location.setX(klabelLayout.getXpos() + klabelLayout.getWidth() / 2
+                                    + edgeOffset.x);
+                            location.setY(klabelLayout.getYpos() + klabelLayout.getHeight() / 2
+                                    + edgeOffset.y);
                             ogmlLabelLayout.setLocation(location);
                             styles.getLabelStyle().add(ogmlLabelLayout);
                         }
