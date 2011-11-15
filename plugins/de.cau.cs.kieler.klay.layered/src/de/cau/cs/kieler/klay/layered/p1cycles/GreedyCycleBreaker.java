@@ -132,7 +132,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
             index++;
         }
         
-        // TODO: document these variables.
+        // next rank values used for sinks and sources (from right and from left)
         int nextRight = -1, nextLeft = 1;
 
         // assign marks to all nodes
@@ -204,7 +204,6 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
                         // However, this will not happen here, because edges are only reversed for
                         // nodes that are part of a cycle and thus already have both an input and
                         // an output collector port.
-                        System.out.println("REVERSING EDGE!!!");
                         edge.reverse(true);
                         layeredGraph.setProperty(Properties.CYCLIC, true);
                     }
