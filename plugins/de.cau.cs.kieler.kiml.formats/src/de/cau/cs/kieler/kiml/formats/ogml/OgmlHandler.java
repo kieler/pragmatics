@@ -18,10 +18,14 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 import net.ogdf.ogml.DocumentRoot;
+import net.ogdf.ogml.OgmlFactory;
 import net.ogdf.ogml.OgmlPackage;
+import net.ogdf.ogml.PointType;
 import net.ogdf.ogml.util.OgmlResourceFactoryImpl;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.service.formats.AbstractEmfHandler;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 
@@ -66,12 +70,28 @@ public class OgmlHandler extends AbstractEmfHandler<DocumentRoot> {
     public IGraphTransformer<DocumentRoot, KNode> getImporter() {
         return importer;
     }
+    
+    private OgmlExporter exporter = new OgmlExporter();
 
     /**
      * {@inheritDoc}
      */
     public IGraphTransformer<KNode, DocumentRoot> getExporter() {
-        throw new UnsupportedOperationException("OGML export is not supported yet.");
+        return exporter;
+    }
+    
+    /**
+     * Create an OGML point from a KPoint.
+     * 
+     * @param kpoint a point from the KGraph
+     * @param offset offset to be added to coordinates
+     * @return an OGML point
+     */
+    public static PointType createPoint(final KPoint kpoint, final KVector offset) {
+        PointType ogmlPoint = OgmlFactory.eINSTANCE.createPointType();
+        ogmlPoint.setX(kpoint.getX() + offset.x);
+        ogmlPoint.setY(kpoint.getY() + offset.y);
+        return ogmlPoint;
     }
 
 }

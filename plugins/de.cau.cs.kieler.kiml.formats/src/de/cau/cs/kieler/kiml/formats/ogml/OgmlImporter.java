@@ -59,33 +59,33 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
 
     /** map of OGML node identifiers to KNodes. */
     private static final IProperty<Map<String, KNode>> NODE_ID_MAP
-            = new Property<Map<String, KNode>>("ogmlTransformer.nodeIdMap");
+            = new Property<Map<String, KNode>>("ogmlImporter.nodeIdMap");
     /** map of OGML edge identifiers to KEdges. */
     private static final IProperty<Map<String, KEdge>> EDGE_ID_MAP
-            = new Property<Map<String, KEdge>>("ogmlTransformer.edgeIdMap");
+            = new Property<Map<String, KEdge>>("ogmlImporter.edgeIdMap");
     /** map of OGML label identifiers to KLabels. */
     private static final IProperty<Map<String, KLabel>> LABEL_ID_MAP
-            = new Property<Map<String, KLabel>>("ogmlTransformer.labelIdMap");
+            = new Property<Map<String, KLabel>>("ogmlImporter.labelIdMap");
     /** OGML node attached to each new KNode. */
     private static final IProperty<NodeType> PROP_NODE
-            = new Property<NodeType>("ogmlTransformer.node");
+            = new Property<NodeType>("ogmlImporter.node");
     /** node layout attached to each new KNode, if present. */
     private static final IProperty<NodeLayoutType> PROP_NODE_LAYOUT
-            = new Property<NodeLayoutType>("ogmlTransformer.nodeLayout");
+            = new Property<NodeLayoutType>("ogmlImporter.nodeLayout");
     /** OGML edge attached to each new KEdge. */
     private static final IProperty<EdgeType> PROP_EDGE
-            = new Property<EdgeType>("ogmlTransformer.edge");
+            = new Property<EdgeType>("ogmlImporter.edge");
     /** edge layout attached to each new KEdge, if present. */
     private static final IProperty<EdgeLayoutType> PROP_EDGE_LAYOUT
-            = new Property<EdgeLayoutType>("ogmlTransformer.edgeLayout");
+            = new Property<EdgeLayoutType>("ogmlImporter.edgeLayout");
     /** OGML label attached to each new KLabel. */
     private static final IProperty<LabelType> PROP_LABEL
-            = new Property<LabelType>("ogmlTransformer.label");
+            = new Property<LabelType>("ogmlImporter.label");
     /** label layout attached to each new KLabel, if present. */
     private static final IProperty<LabelLayoutType> PROP_LABEL_LAYOUT
-            = new Property<LabelLayoutType>("ogmlTransformer.labelLayout");
+            = new Property<LabelLayoutType>("ogmlImporter.labelLayout");
     /** original OGML identifiers attached to graph elements. */
-    private static final IProperty<String> PROP_ID = new Property<String>("ogmlTransformer.id");
+    private static final IProperty<String> PROP_ID = new Property<String>("ogmlImporter.id");
 
     /**
      * {@inheritDoc}
@@ -384,11 +384,13 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
                     layoutStyles.getEdgeStyle().add(ogmlEdgeLayout);
                 }
                 ogmlEdgeLayout.getPoint().clear();
-                ogmlEdgeLayout.getPoint().add(createPoint(kedgeLayout.getSourcePoint(), offset));
+                ogmlEdgeLayout.getPoint().add(OgmlHandler.createPoint(kedgeLayout.getSourcePoint(),
+                        offset));
                 for (KPoint bendPoint : kedgeLayout.getBendPoints()) {
-                    ogmlEdgeLayout.getPoint().add(createPoint(bendPoint, offset));
+                    ogmlEdgeLayout.getPoint().add(OgmlHandler.createPoint(bendPoint, offset));
                 }
-                ogmlEdgeLayout.getPoint().add(createPoint(kedgeLayout.getTargetPoint(), offset));
+                ogmlEdgeLayout.getPoint().add(OgmlHandler.createPoint(kedgeLayout.getTargetPoint(),
+                        offset));
                 
                 for (KLabel klabel : kedge.getLabels()) {
                     KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
@@ -417,19 +419,6 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
                 applyLayout(knode, childOffset, graph);
             }
         }
-    }
-    
-    /**
-     * Create an OGML point from a KPoint.
-     * 
-     * @param kpoint a point from the KGraph
-     * @return an OGML point
-     */
-    private PointType createPoint(final KPoint kpoint, final KVector offset) {
-        PointType ogmlPoint = OgmlFactory.eINSTANCE.createPointType();
-        ogmlPoint.setX(kpoint.getX() + offset.x);
-        ogmlPoint.setY(kpoint.getY() + offset.y);
-        return ogmlPoint;
     }
 
 }
