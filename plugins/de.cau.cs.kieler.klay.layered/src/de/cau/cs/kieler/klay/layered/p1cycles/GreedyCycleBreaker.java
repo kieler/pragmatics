@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Random;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -88,26 +89,41 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
         
         Collection<LNode> nodes = layeredGraph.getLayerlessNodes();
 
-        // initialize values for the algorithm
+        // initialize values for the algorithm (sum of priorities of incoming edges and outgoing
+        // edges per node, and the "layer" calculated for each node)
         int unprocessedNodes = nodes.size();
         indeg = new int[unprocessedNodes];
         outdeg = new int[unprocessedNodes];
         mark = new int[unprocessedNodes];
-        int nextRight = -1, nextLeft = 1, index = 0;
+        
+        // iterate over all nodes, ...
+        int index = 0;
         for (LNode node : nodes) {
             node.id = index;
             for (LPort port : node.getPorts()) {
+                // calculate the sum of edge priorities
                 for (LEdge edge : port.getIncomingEdges()) {
+                    // ignore self-loops
+                    if (edge.getSource().getNode() == node) {
+                        continue;
+                    }
+                    
                     int priority = edge.getProperty(Properties.PRIORITY);
                     indeg[index] += priority > 0 ? priority + 1 : 1;
                 }
                 
                 for (LEdge edge : port.getOutgoingEdges()) {
+                    // ignore self-loops
+                    if (edge.getTarget().getNode() == node) {
+                        continue;
+                    }
+                    
                     int priority = edge.getProperty(Properties.PRIORITY);
                     outdeg[index] += priority > 0 ? priority + 1 : 1;
                 }
             }
             
+            // collect sources and sinks
             if (outdeg[index] == 0) {
                 sinks.add(node);
             } else if (indeg[index] == 0) {
@@ -115,25 +131,36 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
             }
             index++;
         }
+        
+        // TODO: document these variables.
+        int nextRight = -1, nextLeft = 1;
 
         // assign marks to all nodes
         List<LNode> maxNodes = new ArrayList<LNode>();
         Random random = layeredGraph.getProperty(Properties.RANDOM);
+        
         while (unprocessedNodes > 0) {
+            // while we have sinks left...
             while (!sinks.isEmpty()) {
                 LNode sink = sinks.removeFirst();
                 mark[sink.id] = nextRight--;
                 updateNeighbors(sink);
                 unprocessedNodes--;
             }
+            
+            // while we have sources left...
             while (!sources.isEmpty()) {
                 LNode source = sources.removeFirst();
                 mark[source.id] = nextLeft++;
                 updateNeighbors(source);
                 unprocessedNodes--;
             }
+            
+            // while there are unprocessed nodes left that are neither sinks nor sources...
             if (unprocessedNodes > 0) {
                 int maxOutflow = Integer.MIN_VALUE;
+                
+                // find the set of unprocessed node (=> mark == 0), with the largest out flow
                 for (LNode node : nodes) {
                     if (mark[node.id] == 0) {
                         int outflow = outdeg[node.id] - indeg[node.id];
@@ -146,6 +173,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
                         }
                     }
                 }
+                
                 // randomly select a node from the ones with maximal outflow
                 LNode maxNode = maxNodes.get(random.nextInt(maxNodes.size()));
                 mark[maxNode.id] = nextLeft++;
@@ -163,26 +191,25 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
         }
 
         // reverse edges that point left
-        index = 0;
         for (LNode node : nodes) {
             for (LPort port : node.getPorts()) {
                 LEdge[] outgoingEdges = port.getOutgoingEdges().toArray(new LEdge[0]);
                 
+                // look at the node's outgoing edges
                 for (LEdge edge : outgoingEdges) {
                     int targetIx = edge.getTarget().getNode().id;
-                    if (mark[index] > mark[targetIx]) {
+                    if (mark[node.id] > mark[targetIx]) {
                         // In theory, this could create new collector ports, leading to a concurrent
                         // modification exception due to the iteration over the list of ports.
                         // However, this will not happen here, because edges are only reversed for
                         // nodes that are part of a cycle and thus already have both an input and
                         // an output collector port.
+                        System.out.println("REVERSING EDGE!!!");
                         edge.reverse(true);
                         layeredGraph.setProperty(Properties.CYCLIC, true);
                     }
                 }                
             }
-            
-            index++;
         }
 
         dispose();
@@ -212,6 +239,12 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
             for (LEdge edge : port.getConnectedEdges()) {
                 LPort connectedPort = edge.getSource() == port ? edge.getTarget() : edge.getSource();
                 LNode endpoint = connectedPort.getNode();
+                
+                // exclude self-loops
+                if (node == endpoint) {
+                    continue;
+                }
+                
                 int priority = edge.getProperty(Properties.PRIORITY);
                 if (priority < 0) {
                     priority = 0;
