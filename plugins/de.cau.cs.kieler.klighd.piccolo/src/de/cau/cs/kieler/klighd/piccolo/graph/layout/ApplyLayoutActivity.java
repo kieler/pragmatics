@@ -28,7 +28,9 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphEdge;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphObject;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphPositional;
@@ -100,6 +102,34 @@ public class ApplyLayoutActivity extends PInterpolatingActivity {
                 }
             }
         }
+        
+        // chsch:
+        //  This extension relocates edges that are excluded from automatic layout.
+        //  It allows to visualize "symbolic internal connections" between flexible ports.
+        //  For this purpose additional layout transitions are added consisting of the
+        //  particular edges and "fake" edge layout data. 
+        for (IGraphEdge edge : mapping.getProperty(PiccoloDiagramLayoutManager.NO_LAYOUT_EDGES)) {
+            KGraphElement srcKPort = mapping.getGraphMap().inverse().get(edge.getSourcePort());
+            KGraphElement destKPort = mapping.getGraphMap().inverse().get(edge.getTargetPort());
+            KShapeLayout srcPortL = srcKPort.getData(KShapeLayout.class);
+            KShapeLayout destPortL = destKPort.getData(KShapeLayout.class);
+            KGraphElement srcNode = (KGraphElement) srcKPort.eContainer();
+            KGraphElement destNode = (KGraphElement) destKPort.eContainer();
+            KShapeLayout srcNodeL = srcNode.getData(KShapeLayout.class);
+            KShapeLayout destNodeL = destNode.getData(KShapeLayout.class);
+            
+            KEdgeLayout edgeLayout = KimlUtil.createInitializedEdge().getData(KEdgeLayout.class);
+            edgeLayout.getSourcePoint().setPos(
+                    srcNodeL.getXpos() + srcPortL.getXpos() + srcPortL.getWidth() / 2,
+                    srcNodeL.getYpos() + srcPortL.getYpos() + srcPortL.getHeight() / 2);
+            edgeLayout.getTargetPoint().setPos(
+                    destNodeL.getXpos() + destPortL.getXpos() + destPortL.getWidth() / 2,
+                    destNodeL.getYpos() + destPortL.getYpos() + destPortL.getHeight() / 2);
+            edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
+            
+            layoutTransitions.add(new EdgeLayoutTransition(edge, edgeLayout));
+        }
+        
         // edges can depend on the position of nodes and ports so handle positionals first
         Collections.sort(layoutTransitions, new Comparator<ILayoutTransition>() {
             public int compare(final ILayoutTransition lt1, final ILayoutTransition lt2) {
@@ -108,7 +138,7 @@ public class ApplyLayoutActivity extends PInterpolatingActivity {
                         return -1;
                     } else {
                         return 0;
-                    }
+                    }                    
                 } else {
                     if (lt2 instanceof EdgeLayoutTransition) {
                         return 0;

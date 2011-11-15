@@ -68,6 +68,12 @@ public class PiccoloDiagramLayoutManager implements IDiagramLayoutManager<IGraph
     /** the list of edges found in the graph. */
     public static final IProperty<List<IGraphEdge>> EDGES = new Property<List<IGraphEdge>>(
             "piccolo.edges");
+    
+    /** the list of edges containing the "noLayout=true" option found in the graph.
+     * @author chsch
+     * */
+    public static final IProperty<List<IGraphEdge>> NO_LAYOUT_EDGES = new Property<List<IGraphEdge>>(
+            "piccolo.noLayoutedges");
 
     /** the Piccolo attribute layout config. */
     private ILayoutConfig attributeLayoutConfig = new PiccoloAttributeLayoutConfig();
@@ -155,6 +161,7 @@ public class PiccoloDiagramLayoutManager implements IDiagramLayoutManager<IGraph
     private LayoutMapping<IGraphObject> buildLayoutGraph(final IGraphParent layoutRoot) {
         LayoutMapping<IGraphObject> mapping = new LayoutMapping<IGraphObject>();
         mapping.setProperty(EDGES, new LinkedList<IGraphEdge>());
+        mapping.setProperty(NO_LAYOUT_EDGES, new LinkedList<IGraphEdge>());
 
         // set the parent element
         mapping.setParentElement(layoutRoot);
@@ -226,6 +233,8 @@ public class PiccoloDiagramLayoutManager implements IDiagramLayoutManager<IGraph
             // chsch: test added
             if (shallBeLayouted(edge)) {
                 mapping.getProperty(EDGES).add(edge);
+            } else {
+                mapping.getProperty(NO_LAYOUT_EDGES).add(edge);
             }
         }
 
