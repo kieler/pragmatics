@@ -234,7 +234,8 @@ public abstract class OgdfLayouter {
             if (!dataok) {
                 // FIXME throw a more specific exception
                 throw new RuntimeException("A timeout occured while waiting for the OGDF process."
-                        + " Try increasing the timeout value in the preferences.");
+                        + " Try increasing the timeout value in the preferences"
+                        + " (KIELER / Layout / OGDF).");
             }
             subMon.done();
 

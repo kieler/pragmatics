@@ -256,7 +256,8 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         if (graphvizModel == null || graphvizModel.getGraphs().isEmpty()) {
             graphvizTool.cleanup(Cleanup.ERROR);
             throw new GraphvizException("No output from the Graphviz process."
-                    + " Try increasing the timeout value in the preferences.");
+                    + " Try increasing the timeout value in the preferences"
+                    + "(KIELER / Layout / Graphviz).");
         }
 
         monitor.done();
