@@ -85,8 +85,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             newNode.setProperty(Properties.ORIGIN, knode);
             newNode.getPosition().x = nodeLayout.getXpos() + nodeLayout.getWidth() / 2;
             newNode.getPosition().y = nodeLayout.getYpos() + nodeLayout.getHeight() / 2;
-            newNode.getSize().x = nodeLayout.getWidth();
-            newNode.getSize().y = nodeLayout.getHeight();
+            newNode.getSize().x = Math.max(nodeLayout.getWidth(), 1);
+            newNode.getSize().y = Math.max(nodeLayout.getHeight(), 1);
             fgraph.getNodes().add(newNode);
             
             elemMap.put(knode, newNode);
@@ -131,8 +131,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     for (KLabel klabel : kedge.getLabels()) {
                         KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
                         FLabel newLabel = new FLabel(newEdge, klabel.getText());
-                        newLabel.getSize().x = labelLayout.getWidth();
-                        newLabel.getSize().y = labelLayout.getHeight();
+                        newLabel.getSize().x = Math.max(labelLayout.getWidth(), 1);
+                        newLabel.getSize().y = Math.max(labelLayout.getHeight(), 1);
                         newLabel.setProperty(Properties.ORIGIN, klabel);
                         newLabel.refreshPosition();
                         fgraph.getLabels().add(newLabel);
