@@ -74,6 +74,7 @@ public class XtendBasedTransformation implements ITransformation<EObject, EObjec
     private static final String TRANSFORMATION_EXTENSION_NAME = "transform";
     private static final String DEFAULT_TRANSFORMATION_EXTENSION_NAME = "onError";
 
+    /** A lookup table for optimizing the source-target-type-resolution for the transformation. */
     private static final HashMap<String, ENamedElement> NAME_ELEMENT_LOOK_UP
                          = new HashMap<String, ENamedElement>();
     

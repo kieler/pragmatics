@@ -15,6 +15,9 @@ package de.cau.cs.kieler.klighd.transformations;
 
 import java.lang.reflect.Method;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 import de.cau.cs.kieler.klighd.ITransformation;
 import de.cau.cs.kieler.klighd.TransformationContext;
 
@@ -31,8 +34,10 @@ import de.cau.cs.kieler.klighd.TransformationContext;
  */
 public abstract class AbstractTransformation<S, T> implements ITransformation<S, T> {
 
-    /** the current transformation context. */
+    /** The current transformation context. */
     private TransformationContext<S, T> context = null;
+    /** The lookup table maintaining the model-image-relation of the transformation. */
+    private BiMap<Object, Object> sourceTargetElementMap = null;
 
     /**
      * {@inheritDoc}
@@ -83,6 +88,9 @@ public abstract class AbstractTransformation<S, T> implements ITransformation<S,
      * @return the element in the source model or null if the element could not be found
      */
     public Object getSourceElement(final Object element) {
+        if (this.sourceTargetElementMap != null) {
+            return this.sourceTargetElementMap.inverse().get(element);
+        }
         return null;
     }
     
@@ -106,17 +114,38 @@ public abstract class AbstractTransformation<S, T> implements ITransformation<S,
      * @return the element in the target model or null if the element could not be found
      */
     public Object getTargetElement(final Object element) {
+        if (this.sourceTargetElementMap != null) {
+            return this.sourceTargetElementMap.get(element);
+        }
         return null;
     }
 
-    /** the name of the {@code transform} method. */
-    private static final String TRANSFORM_METHOD_NAME = "transform";
-
+    /**
+     * Method to put a pair of source target into the lookup table.<br>
+     * Name, Parameter ordering, and return value (the target) are optimized for
+     * calling in Xtend2 based transformations in a fluent interface fashion, like
+     * "model.createShape().putToSourceTargetLookUpWith(model);"
+     * 
+     * @param <C> the type of the target element which is implicitly determined 
+     * @param target the image element
+     * @param source the model element
+     * @return the image element
+     */
+    protected <C> C putToLookUpWith(final C target, final Object source) {
+        if (this.sourceTargetElementMap == null) {
+            this.sourceTargetElementMap = HashBiMap.create();
+        }
+        this.sourceTargetElementMap.put(source, target);
+        return target;
+    }
+     
+    
+    
     /** whether it has been tried to infer the classes. */
     private boolean triedToInferClasses = false;
-    /** the infered source model class. */
+    /** the inferred source model class. */
     private Class<?> sourceModelClass = null;
-    /** the infered target model class. */
+    /** the inferred target model class. */
     private Class<?> targetModelClass = null;
 
     /**
@@ -168,6 +197,10 @@ public abstract class AbstractTransformation<S, T> implements ITransformation<S,
     public boolean supports(final Object model) {
         return true;
     }
+
+
+    /** the name of the {@code transform} method. */
+    private static final String TRANSFORM_METHOD_NAME = "transform";
 
     /**
      * Tries to infer the class of the source and target model by analyzing the transform method.
