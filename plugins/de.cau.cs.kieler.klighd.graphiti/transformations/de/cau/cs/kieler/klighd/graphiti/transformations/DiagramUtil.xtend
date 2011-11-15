@@ -107,7 +107,7 @@ class DiagramUtil {
      *  onto the west side of a given shape with the port label text 'label'.
      */
     def Anchor createLabeledEastPortAnchor(Shape shape, EObject o, String label) {
-    	val x = shape.graphicsAlgorithm.width+1
+    	val x = shape.graphicsAlgorithm.width
     	val y = shape.getAndAddIntProperty("eastports") * 15 + verticalPortPlacementOffetTop.value;
     	val anchor = shape.createPortAnchor(o, x,y);
     	val rect = anchor.createRectangle(0,0,7,7, "black_black".style);
@@ -121,7 +121,7 @@ class DiagramUtil {
      *  onto the west side of a given shape with the port label text 'label'.
      */
     def Anchor createLabeledWestPortAnchor(Shape shape, EObject o, String label) {
-    	val x = -6
+    	val x = -5
     	val y = shape.getAndAddIntProperty("westports") * 15 + verticalPortPlacementOffetTop.value;
     	val anchor = shape.createPortAnchor(o,x,y);
     	val rect = anchor.createRectangle(0,0,7,7, "black_black".style);
@@ -214,18 +214,18 @@ class DiagramUtil {
         val figure = AlgorithmsFactory::eINSTANCE.createPolygon;
         if (toHead) {
             figure.points.addAll(newArrayList(
-        	    createPoint(scale*-5,scale*2), createPoint(scale*-3,0), createPoint(scale*-5,scale*-2), createPoint(0,0)
+        	    createPoint(scale*-8,scale*3), createPoint(scale*-6,0), createPoint(scale*-8,scale*-3), createPoint(0,0)
             ));
         } else {
             figure.points.addAll(newArrayList(
-        	    createPoint(scale* 5,scale*2), createPoint(scale* 3,0), createPoint(scale* 5,scale*-2), createPoint(0,0)
+        	    createPoint(scale* 8,scale*3), createPoint(scale* 6,0), createPoint(scale* 8,scale*-3), createPoint(0,0)
             ));
         }
         figure.setForeground(connection.graphicsAlgorithm.foreground);
         figure.setBackground(figure.foreground);
         figure.setFilled(true);  
         decorator.setVisible(true);
-        decorator.setLocation(if (toHead) Float::valueOf("1.0") else Float::valueOf("0.0"));
+        decorator.setLocation(if (toHead) Float::valueOf("0.95") else Float::valueOf("0.05"));
         decorator.setLocationRelative(true);
         decorator.setGraphicsAlgorithm(figure);
         connection.connectionDecorators.add(decorator);
