@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klighd.graphiti.piccolo;
 
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
 
 /**
  * The interface for Piccolo nodes representing Pictogram elements.
@@ -27,6 +27,9 @@ public interface IPictogramNode {
      * 
      * @return the Pictogram element
      */
-    PictogramElement getPictogramElement();
+    // chsch: return type changed in order to allow e.g. text fields to be related to
+    //  an element in the model
+    GraphicsAlgorithmContainer getPictogramElement();
+    //PictogramElement getPictogramElement();
 
 }

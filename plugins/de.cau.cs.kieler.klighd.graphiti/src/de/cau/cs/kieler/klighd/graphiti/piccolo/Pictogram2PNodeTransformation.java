@@ -17,6 +17,7 @@ import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.AbstractText;
@@ -73,9 +74,9 @@ public class Pictogram2PNodeTransformation extends
     public static final String ID = "de.cau.cs.kieler.klighd.graphiti.pictogram2PNodeTransformation";
 
     /** the property for the element mapping. */
-    private static final IProperty<Map<PictogramElement, PNode>> MAPPING_PROPERTY =
-            new de.cau.cs.kieler.core.properties.Property<Map<PictogramElement, PNode>>(
-                    "klighd.graphiti.mapping", new HashMap<PictogramElement, PNode>());
+    private static final IProperty<Map<GraphicsAlgorithmContainer, PNode>> MAPPING_PROPERTY =
+            new de.cau.cs.kieler.core.properties.Property<Map<GraphicsAlgorithmContainer, PNode>>(
+                    "klighd.graphiti.mapping", new HashMap<GraphicsAlgorithmContainer, PNode>());
 
     /** the Pictogram color for white. */
     private static final Color WHITE = StylesFactory.eINSTANCE.createColor();
@@ -87,7 +88,7 @@ public class Pictogram2PNodeTransformation extends
     /** a mapping between Pictogram graphics algorithms and Piccolo nodes. */
     private Map<GraphicsAlgorithm, PNode> gaMap;
     /** a mapping between Pictogram elements and Piccolo nodes. */
-    private Map<PictogramElement, PNode> elementMap;
+    private Map<GraphicsAlgorithmContainer, PNode> elementMap;
 
     // CHECKSTYLEOFF MagicNumber
     static {
@@ -520,7 +521,7 @@ public class Pictogram2PNodeTransformation extends
         textBox.setPickable(false);
         textBox.setWidth(t.getWidth());
         textBox.setHeight(t.getHeight());
-        PSWTText text = new PSWTText();
+        PSWTText text = new TextNode(t);
         text.setFont(transformFont(t.getFont()));
         text.setText(t.getValue() != null ? t.getValue() : "");
         text.setTransparent(true);
@@ -558,6 +559,9 @@ public class Pictogram2PNodeTransformation extends
             text.setBackgroundColor(null);
         }
         text.setGreekThreshold(GREEK_THRESHOLD);
+        // chsch:
+        elementMap.put(t, text);
+        
         textBox.addAlignedChild(text, halignment, valignment);
         return textBox;
     }
