@@ -1,6 +1,5 @@
 package de.cau.cs.kieler.klighd.graphiti.transformations
 
-import java.util.List
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.graphiti.mm.MmFactory
 import org.eclipse.graphiti.mm.Property
@@ -14,9 +13,7 @@ import org.eclipse.graphiti.mm.algorithms.AlgorithmsFactory
 import org.eclipse.graphiti.mm.algorithms.styles.StylesFactory
 import org.eclipse.graphiti.mm.algorithms.styles.Color
 import org.eclipse.graphiti.mm.algorithms.styles.Point
-import org.eclipse.graphiti.mm.algorithms.styles.impl.PointImpl
 import org.eclipse.graphiti.mm.algorithms.Rectangle
-import org.eclipse.graphiti.mm.algorithms.styles.StylesPackage
 import org.eclipse.graphiti.mm.algorithms.styles.Style
 import org.eclipse.graphiti.mm.algorithms.styles.Font
 import org.eclipse.graphiti.mm.algorithms.Text
