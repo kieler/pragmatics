@@ -53,7 +53,6 @@ class DiagramUtil {
         getDiagram.children.add(shape);
 	}
 
-
     /**
      * Just a wrapper to be used to reveal the shape
      *  indicating that it has been created already!
@@ -187,9 +186,9 @@ class DiagramUtil {
     /**
      *
      */
-    def Connection create connection: PictogramsFactory::eINSTANCE.createFreeFormConnection createConnection(Object o,int width) {
+    def Connection create connection: PictogramsFactory::eINSTANCE.createFreeFormConnection createConnection(Object o) {
         val polyline = AlgorithmsFactory::eINSTANCE.createPolyline;
-        polyline.setLineWidth(width);
+        polyline.setLineWidth(1);
         polyline.setForeground(getColor("black"));
         connection.setActive(false);
         connection.setVisible(true);
@@ -198,8 +197,21 @@ class DiagramUtil {
         getDiagram().connections.add(connection);
     }
 
-    def Connection createConnection(Object o) {
-        o.createConnection(1);
+    /**
+     * Just a wrapper to be used to reveal the connection
+     *  indicating that it has been created already!
+     *  (only for code-readability)
+     */
+    def Connection getConnection(Object o) {
+        o.createConnection();
+    }
+    
+    
+    def Connection createConnection(Object o, int width) {
+        val connection = o.createConnection;
+        connection.graphicsAlgorithm.setLineWidth(width);
+        return connection
+        
     }
     
     def Connection from(Connection connection, Anchor start) {
@@ -281,7 +293,7 @@ class DiagramUtil {
     /**
      * Shorthand wraper for property creation.
      */
-    def PictogramElement addProperty(PictogramElement element, String key, String value) {
+    def <T extends PictogramElement> T addProperty(T element, String key, String value) {
         element.properties.add(createProperty(key, value));
     	return element
     }
