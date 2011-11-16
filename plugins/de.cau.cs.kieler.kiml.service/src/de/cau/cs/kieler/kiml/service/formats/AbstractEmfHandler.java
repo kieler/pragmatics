@@ -51,7 +51,7 @@ public abstract class AbstractEmfHandler<T extends EObject> implements ITransfor
             final TransformationData<T, KNode> transData) {
         try {
             ByteArrayInputStream source = new ByteArrayInputStream(serializedGraph.getBytes("UTF-8"));
-            T result = deserializeBinary(source, null, transData);
+            T result = deserializeBinary(source, null);
             source.close();
             transData.setSourceGraph(result);
         } catch (UnsupportedEncodingException e) {
@@ -96,21 +96,18 @@ public abstract class AbstractEmfHandler<T extends EObject> implements ITransfor
     }
 
     /**
-     * Deserializes an EMF model.
+     * Deserialize an EMF model.
      * 
      * @param source
      *            the stream to parse
      * @param options
      *            optional map of settings. Can be {@code null}
-     * @param transData
-     *            transformation data, used only for logging
      * @return the EMF model
      * @throws IOException
      *            when an exception occurs while parsing the model   
      */
     @SuppressWarnings("unchecked")
-    protected final T deserializeBinary(final InputStream source, final Map<Object, Object> options,
-            final TransformationData<?, ?> transData) 
+    protected final T deserializeBinary(final InputStream source, final Map<Object, Object> options) 
         throws IOException {
         URI uri = URI.createURI("temp." + getFileExtension());
         ResourceSet resourceSet = createResourceSet();
@@ -121,21 +118,34 @@ public abstract class AbstractEmfHandler<T extends EObject> implements ITransfor
             optMap.putAll(options);
         }
         resource.load(source, optMap);
-        for (Diagnostic diagnostic : resource.getErrors()) {
-            if (diagnostic.getLine() > 0) {
-                transData.log(diagnostic.getLine() + ": " + diagnostic.getMessage());
-            } else {
-                transData.log(diagnostic.getMessage());
+        if (!resource.getErrors().isEmpty()) {
+            StringBuilder message = new StringBuilder("The given input could not be parsed.");
+            for (Diagnostic diagnostic : resource.getErrors()) {
+                message.append("\n");
+                if (diagnostic.getLine() > 0) {
+                    message.append(diagnostic.getLine());
+                    try {
+                        if (diagnostic.getColumn() > 0) {
+                            message.append(":");
+                            message.append(diagnostic.getColumn());
+                        }
+                    } catch (UnsupportedOperationException exception) {
+                        // columns may not be supported, so ignore the exception
+                    }
+                    message.append(" - ");
+                }
+                message.append(diagnostic.getMessage());
             }
+            throw new TransformationException(message.toString());
         }
         if (resource.getContents().isEmpty()) {
-            throw new TransformationException("The given input could not be parsed.");
+            return null;
         }
         return (T) resource.getContents().get(0);
     }
 
     /**
-     * Serializes a given EMF model to the given output stream. The serial representation
+     * Serialize a given EMF model to the given output stream. The serial representation
      * is stored using UTF-8 encoding.
      * 
      * @param graph

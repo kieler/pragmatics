@@ -142,7 +142,12 @@ public abstract class AbstractService {
         
         // Get the graph instances of which the layout is to be calculated
         TransformationData<I, KNode> inTransData = new TransformationData<I, KNode>();
+        annotateTransData(inTransData, options);
         inhandler.deserialize(serializedGraph, inTransData);
+        if (inTransData.getSourceGraph() == null) {
+            // The input was empty, so return an empty graph
+            return "";
+        }
         
         // Derive the layout structures of the graph instances
         inhandler.getImporter().transform(inTransData);
@@ -177,8 +182,10 @@ public abstract class AbstractService {
         
         String serializedResult;
         if (outhandler == null) {
-            // Apply the calculated layout back to the graph instance
-            inhandler.getImporter().transferLayout(inTransData);
+            if (!inTransData.getProperty(LayoutOptions.NO_LAYOUT)) {
+                // Apply the calculated layout back to the graph instance
+                inhandler.getImporter().transferLayout(inTransData);
+            }
             
             // Serialize the resulting graph
             serializedResult = inhandler.serialize(inTransData.getSourceGraph());
@@ -188,6 +195,7 @@ public abstract class AbstractService {
             for (KNode layoutGraph : inTransData.getTargetGraphs()) {
                 // Transform the graph to the output format
                 TransformationData<KNode, O> outTransData = new TransformationData<KNode, O>();
+                annotateTransData(outTransData, options);
                 outTransData.setSourceGraph(layoutGraph);
                 outhandler.getExporter().transform(outTransData);
                 messageIter = outTransData.getMessages().iterator();
@@ -251,6 +259,26 @@ public abstract class AbstractService {
             sourceGraph.getData().add(identifier);
         }    
         identifier.setProperty(Statistics.STATISTICS, statistics);
+    }
+    
+    /**
+     * Annotate transformation data with the given layout options.
+     * 
+     * @param transData a transformation data instance
+     * @param options a list of layout options
+     */
+    private void annotateTransData(final TransformationData<?, ?> transData,
+            final List<GraphLayoutOption> options) {
+        LayoutDataService dataService = LayoutDataService.getInstance();
+        for (GraphLayoutOption option : options) {
+            LayoutOptionData<?> optionData = dataService.getOptionDataBySuffix(option.getId());
+            if (optionData != null) {
+                Object optionValue = optionData.parseValue(option.getValue());
+                if (optionValue != null) {
+                    transData.setProperty(optionData, optionValue);
+                }
+            }
+        }
     }
     
     /**
