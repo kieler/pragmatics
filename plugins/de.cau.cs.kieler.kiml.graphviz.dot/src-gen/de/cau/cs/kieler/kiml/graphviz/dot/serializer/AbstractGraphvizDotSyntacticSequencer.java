@@ -24,6 +24,7 @@ public class AbstractGraphvizDotSyntacticSequencer extends AbstractSyntacticSequ
 	protected AbstractElementAlias match_NodeStatement_CommaKeyword_1_1_1_0_q;
 	protected AbstractElementAlias match_NodeStatement___LeftSquareBracketKeyword_1_0_RightSquareBracketKeyword_1_2__q;
 	protected AbstractElementAlias match_Statement_SemicolonKeyword_1_q;
+	protected AbstractElementAlias match_Subgraph_SubgraphKeyword_1_0_q;
 	
 	@Inject
 	protected void init(IGrammarAccess access) {
@@ -34,6 +35,7 @@ public class AbstractGraphvizDotSyntacticSequencer extends AbstractSyntacticSequ
 		match_NodeStatement_CommaKeyword_1_1_1_0_q = new TokenAlias(true, false, grammarAccess.getNodeStatementAccess().getCommaKeyword_1_1_1_0());
 		match_NodeStatement___LeftSquareBracketKeyword_1_0_RightSquareBracketKeyword_1_2__q = new GroupAlias(true, false, new TokenAlias(false, false, grammarAccess.getNodeStatementAccess().getLeftSquareBracketKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getNodeStatementAccess().getRightSquareBracketKeyword_1_2()));
 		match_Statement_SemicolonKeyword_1_q = new TokenAlias(true, false, grammarAccess.getStatementAccess().getSemicolonKeyword_1());
+		match_Subgraph_SubgraphKeyword_1_0_q = new TokenAlias(true, false, grammarAccess.getSubgraphAccess().getSubgraphKeyword_1_0());
 	}
 	
 	@Override
@@ -60,6 +62,8 @@ public class AbstractGraphvizDotSyntacticSequencer extends AbstractSyntacticSequ
 				emit_NodeStatement___LeftSquareBracketKeyword_1_0_RightSquareBracketKeyword_1_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if(match_Statement_SemicolonKeyword_1_q.equals(syntax))
 				emit_Statement_SemicolonKeyword_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if(match_Subgraph_SubgraphKeyword_1_0_q.equals(syntax))
+				emit_Subgraph_SubgraphKeyword_1_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else acceptNodes(getLastNavigableState(), syntaxNodes);
 		}
 	}
@@ -109,6 +113,14 @@ public class AbstractGraphvizDotSyntacticSequencer extends AbstractSyntacticSequ
 	 *     ';'?
 	 */
 	protected void emit_Statement_SemicolonKeyword_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Syntax:
+	 *     'subgraph'?
+	 */
+	protected void emit_Subgraph_SubgraphKeyword_1_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

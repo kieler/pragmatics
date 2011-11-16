@@ -82,7 +82,7 @@ AttributeStatement: type=AttributeType
 /*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *  subgraph:   [ 'subgraph' [ ID ] ] '{' stmt_list '}'
  */
-Subgraph: {Subgraph} "subgraph" (name=ID)? "{" (statements+=Statement)* "}";
+Subgraph: {Subgraph} ("subgraph" (name=ID)?)? "{" (statements+=Statement)* "}";
 
 
 /*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

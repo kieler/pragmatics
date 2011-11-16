@@ -381,7 +381,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                 int alt4=2;
                 int LA4_0 = input.LA(1);
 
-                if ( ((LA4_0>=RULE_ID && LA4_0<=RULE_STRING)||LA4_0==22||LA4_0==25||(LA4_0>=27 && LA4_0<=28)) ) {
+                if ( ((LA4_0>=RULE_ID && LA4_0<=RULE_STRING)||LA4_0==14||LA4_0==22||LA4_0==25||(LA4_0>=27 && LA4_0<=28)) ) {
                     alt4=1;
                 }
 
@@ -1617,7 +1617,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             int alt17=2;
             int LA17_0 = input.LA(1);
 
-            if ( (LA17_0==22) ) {
+            if ( (LA17_0==14||LA17_0==22) ) {
                 alt17=1;
             }
             else if ( ((LA17_0>=RULE_ID && LA17_0<=RULE_STRING)) ) {
@@ -2007,7 +2007,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleSubgraph"
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:765:1: ruleSubgraph returns [EObject current=null] : ( () otherlv_1= 'subgraph' ( (lv_name_2_0= RULE_ID ) )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}' ) ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:765:1: ruleSubgraph returns [EObject current=null] : ( () (otherlv_1= 'subgraph' ( (lv_name_2_0= RULE_ID ) )? )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}' ) ;
     public final EObject ruleSubgraph() throws RecognitionException {
         EObject current = null;
 
@@ -2021,11 +2021,11 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:768:28: ( ( () otherlv_1= 'subgraph' ( (lv_name_2_0= RULE_ID ) )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}' ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:769:1: ( () otherlv_1= 'subgraph' ( (lv_name_2_0= RULE_ID ) )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}' )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:768:28: ( ( () (otherlv_1= 'subgraph' ( (lv_name_2_0= RULE_ID ) )? )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:769:1: ( () (otherlv_1= 'subgraph' ( (lv_name_2_0= RULE_ID ) )? )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}' )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:769:1: ( () otherlv_1= 'subgraph' ( (lv_name_2_0= RULE_ID ) )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}' )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:769:2: () otherlv_1= 'subgraph' ( (lv_name_2_0= RULE_ID ) )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}'
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:769:1: ( () (otherlv_1= 'subgraph' ( (lv_name_2_0= RULE_ID ) )? )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}' )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:769:2: () (otherlv_1= 'subgraph' ( (lv_name_2_0= RULE_ID ) )? )? otherlv_3= '{' ( (lv_statements_4_0= ruleStatement ) )* otherlv_5= '}'
             {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:769:2: ()
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:770:5: 
@@ -2038,38 +2038,55 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,22,FOLLOW_22_in_ruleSubgraph1591); 
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:775:2: (otherlv_1= 'subgraph' ( (lv_name_2_0= RULE_ID ) )? )?
+            int alt22=2;
+            int LA22_0 = input.LA(1);
 
-                	newLeafNode(otherlv_1, grammarAccess.getSubgraphAccess().getSubgraphKeyword_1());
-                
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:779:1: ( (lv_name_2_0= RULE_ID ) )?
-            int alt21=2;
-            int LA21_0 = input.LA(1);
-
-            if ( (LA21_0==RULE_ID) ) {
-                alt21=1;
+            if ( (LA22_0==22) ) {
+                alt22=1;
             }
-            switch (alt21) {
+            switch (alt22) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:780:1: (lv_name_2_0= RULE_ID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:775:4: otherlv_1= 'subgraph' ( (lv_name_2_0= RULE_ID ) )?
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:780:1: (lv_name_2_0= RULE_ID )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:781:3: lv_name_2_0= RULE_ID
-                    {
-                    lv_name_2_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleSubgraph1608); 
+                    otherlv_1=(Token)match(input,22,FOLLOW_22_in_ruleSubgraph1592); 
 
-                    			newLeafNode(lv_name_2_0, grammarAccess.getSubgraphAccess().getNameIDTerminalRuleCall_2_0()); 
-                    		
+                        	newLeafNode(otherlv_1, grammarAccess.getSubgraphAccess().getSubgraphKeyword_1_0());
+                        
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:779:1: ( (lv_name_2_0= RULE_ID ) )?
+                    int alt21=2;
+                    int LA21_0 = input.LA(1);
 
-                    	        if (current==null) {
-                    	            current = createModelElement(grammarAccess.getSubgraphRule());
-                    	        }
-                           		setWithLastConsumed(
-                           			current, 
-                           			"name",
-                            		lv_name_2_0, 
-                            		"ID");
-                    	    
+                    if ( (LA21_0==RULE_ID) ) {
+                        alt21=1;
+                    }
+                    switch (alt21) {
+                        case 1 :
+                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:780:1: (lv_name_2_0= RULE_ID )
+                            {
+                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:780:1: (lv_name_2_0= RULE_ID )
+                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:781:3: lv_name_2_0= RULE_ID
+                            {
+                            lv_name_2_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleSubgraph1609); 
+
+                            			newLeafNode(lv_name_2_0, grammarAccess.getSubgraphAccess().getNameIDTerminalRuleCall_1_1_0()); 
+                            		
+
+                            	        if (current==null) {
+                            	            current = createModelElement(grammarAccess.getSubgraphRule());
+                            	        }
+                                   		setWithLastConsumed(
+                                   			current, 
+                                   			"name",
+                                    		lv_name_2_0, 
+                                    		"ID");
+                            	    
+
+                            }
+
+
+                            }
+                            break;
 
                     }
 
@@ -2079,22 +2096,22 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_3=(Token)match(input,14,FOLLOW_14_in_ruleSubgraph1626); 
+            otherlv_3=(Token)match(input,14,FOLLOW_14_in_ruleSubgraph1629); 
 
-                	newLeafNode(otherlv_3, grammarAccess.getSubgraphAccess().getLeftCurlyBracketKeyword_3());
+                	newLeafNode(otherlv_3, grammarAccess.getSubgraphAccess().getLeftCurlyBracketKeyword_2());
                 
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:801:1: ( (lv_statements_4_0= ruleStatement ) )*
-            loop22:
+            loop23:
             do {
-                int alt22=2;
-                int LA22_0 = input.LA(1);
+                int alt23=2;
+                int LA23_0 = input.LA(1);
 
-                if ( ((LA22_0>=RULE_ID && LA22_0<=RULE_STRING)||LA22_0==22||LA22_0==25||(LA22_0>=27 && LA22_0<=28)) ) {
-                    alt22=1;
+                if ( ((LA23_0>=RULE_ID && LA23_0<=RULE_STRING)||LA23_0==14||LA23_0==22||LA23_0==25||(LA23_0>=27 && LA23_0<=28)) ) {
+                    alt23=1;
                 }
 
 
-                switch (alt22) {
+                switch (alt23) {
             	case 1 :
             	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:802:1: (lv_statements_4_0= ruleStatement )
             	    {
@@ -2102,9 +2119,9 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:803:3: lv_statements_4_0= ruleStatement
             	    {
             	     
-            	    	        newCompositeNode(grammarAccess.getSubgraphAccess().getStatementsStatementParserRuleCall_4_0()); 
+            	    	        newCompositeNode(grammarAccess.getSubgraphAccess().getStatementsStatementParserRuleCall_3_0()); 
             	    	    
-            	    pushFollow(FOLLOW_ruleStatement_in_ruleSubgraph1647);
+            	    pushFollow(FOLLOW_ruleStatement_in_ruleSubgraph1650);
             	    lv_statements_4_0=ruleStatement();
 
             	    state._fsp--;
@@ -2128,13 +2145,13 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    break loop22;
+            	    break loop23;
                 }
             } while (true);
 
-            otherlv_5=(Token)match(input,15,FOLLOW_15_in_ruleSubgraph1660); 
+            otherlv_5=(Token)match(input,15,FOLLOW_15_in_ruleSubgraph1663); 
 
-                	newLeafNode(otherlv_5, grammarAccess.getSubgraphAccess().getRightCurlyBracketKeyword_5());
+                	newLeafNode(otherlv_5, grammarAccess.getSubgraphAccess().getRightCurlyBracketKeyword_4());
                 
 
             }
@@ -2169,13 +2186,13 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:833:2: iv_ruleListAttribute= ruleListAttribute EOF
             {
              newCompositeNode(grammarAccess.getListAttributeRule()); 
-            pushFollow(FOLLOW_ruleListAttribute_in_entryRuleListAttribute1696);
+            pushFollow(FOLLOW_ruleListAttribute_in_entryRuleListAttribute1699);
             iv_ruleListAttribute=ruleListAttribute();
 
             state._fsp--;
 
              current =iv_ruleListAttribute; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleListAttribute1706); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleListAttribute1709); 
 
             }
 
@@ -2221,7 +2238,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
              
             	        newCompositeNode(grammarAccess.getListAttributeAccess().getNameDotIDParserRuleCall_0_0()); 
             	    
-            pushFollow(FOLLOW_ruleDotID_in_ruleListAttribute1752);
+            pushFollow(FOLLOW_ruleDotID_in_ruleListAttribute1755);
             lv_name_0_0=ruleDotID();
 
             state._fsp--;
@@ -2244,17 +2261,17 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             }
 
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:862:2: (otherlv_1= '=' ( (lv_value_2_0= ruleDotID ) ) )?
-            int alt23=2;
-            int LA23_0 = input.LA(1);
+            int alt24=2;
+            int LA24_0 = input.LA(1);
 
-            if ( (LA23_0==17) ) {
-                alt23=1;
+            if ( (LA24_0==17) ) {
+                alt24=1;
             }
-            switch (alt23) {
+            switch (alt24) {
                 case 1 :
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:862:4: otherlv_1= '=' ( (lv_value_2_0= ruleDotID ) )
                     {
-                    otherlv_1=(Token)match(input,17,FOLLOW_17_in_ruleListAttribute1765); 
+                    otherlv_1=(Token)match(input,17,FOLLOW_17_in_ruleListAttribute1768); 
 
                         	newLeafNode(otherlv_1, grammarAccess.getListAttributeAccess().getEqualsSignKeyword_1_0());
                         
@@ -2267,7 +2284,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                      
                     	        newCompositeNode(grammarAccess.getListAttributeAccess().getValueDotIDParserRuleCall_1_1_0()); 
                     	    
-                    pushFollow(FOLLOW_ruleDotID_in_ruleListAttribute1786);
+                    pushFollow(FOLLOW_ruleDotID_in_ruleListAttribute1789);
                     lv_value_2_0=ruleDotID();
 
                     state._fsp--;
@@ -2328,13 +2345,13 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:894:2: iv_rulePort= rulePort EOF
             {
              newCompositeNode(grammarAccess.getPortRule()); 
-            pushFollow(FOLLOW_rulePort_in_entryRulePort1824);
+            pushFollow(FOLLOW_rulePort_in_entryRulePort1827);
             iv_rulePort=rulePort();
 
             state._fsp--;
 
              current =iv_rulePort; 
-            match(input,EOF,FOLLOW_EOF_in_entryRulePort1834); 
+            match(input,EOF,FOLLOW_EOF_in_entryRulePort1837); 
 
             }
 
@@ -2379,7 +2396,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
              
             	        newCompositeNode(grammarAccess.getPortAccess().getNameDotIDParserRuleCall_0_0()); 
             	    
-            pushFollow(FOLLOW_ruleDotID_in_rulePort1880);
+            pushFollow(FOLLOW_ruleDotID_in_rulePort1883);
             lv_name_0_0=ruleDotID();
 
             state._fsp--;
@@ -2402,17 +2419,17 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             }
 
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:923:2: (otherlv_1= ':' ( (lv_compass_pt_2_0= RULE_ID ) ) )?
-            int alt24=2;
-            int LA24_0 = input.LA(1);
+            int alt25=2;
+            int LA25_0 = input.LA(1);
 
-            if ( (LA24_0==21) ) {
-                alt24=1;
+            if ( (LA25_0==21) ) {
+                alt25=1;
             }
-            switch (alt24) {
+            switch (alt25) {
                 case 1 :
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:923:4: otherlv_1= ':' ( (lv_compass_pt_2_0= RULE_ID ) )
                     {
-                    otherlv_1=(Token)match(input,21,FOLLOW_21_in_rulePort1893); 
+                    otherlv_1=(Token)match(input,21,FOLLOW_21_in_rulePort1896); 
 
                         	newLeafNode(otherlv_1, grammarAccess.getPortAccess().getColonKeyword_1_0());
                         
@@ -2422,7 +2439,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:928:1: (lv_compass_pt_2_0= RULE_ID )
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:929:3: lv_compass_pt_2_0= RULE_ID
                     {
-                    lv_compass_pt_2_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_rulePort1910); 
+                    lv_compass_pt_2_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_rulePort1913); 
 
                     			newLeafNode(lv_compass_pt_2_0, grammarAccess.getPortAccess().getCompass_ptIDTerminalRuleCall_1_1_0()); 
                     		
@@ -2481,13 +2498,13 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:955:2: iv_ruleDotID= ruleDotID EOF
             {
              newCompositeNode(grammarAccess.getDotIDRule()); 
-            pushFollow(FOLLOW_ruleDotID_in_entryRuleDotID1954);
+            pushFollow(FOLLOW_ruleDotID_in_entryRuleDotID1957);
             iv_ruleDotID=ruleDotID();
 
             state._fsp--;
 
              current =iv_ruleDotID.getText(); 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleDotID1965); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleDotID1968); 
 
             }
 
@@ -2521,40 +2538,40 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:966:1: (this_ID_0= RULE_ID | this_INT_1= RULE_INT | this_FLOAT_2= RULE_FLOAT | this_STRING_3= RULE_STRING )
             {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:966:1: (this_ID_0= RULE_ID | this_INT_1= RULE_INT | this_FLOAT_2= RULE_FLOAT | this_STRING_3= RULE_STRING )
-            int alt25=4;
+            int alt26=4;
             switch ( input.LA(1) ) {
             case RULE_ID:
                 {
-                alt25=1;
+                alt26=1;
                 }
                 break;
             case RULE_INT:
                 {
-                alt25=2;
+                alt26=2;
                 }
                 break;
             case RULE_FLOAT:
                 {
-                alt25=3;
+                alt26=3;
                 }
                 break;
             case RULE_STRING:
                 {
-                alt25=4;
+                alt26=4;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 25, 0, input);
+                    new NoViableAltException("", 26, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt25) {
+            switch (alt26) {
                 case 1 :
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:966:6: this_ID_0= RULE_ID
                     {
-                    this_ID_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleDotID2005); 
+                    this_ID_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleDotID2008); 
 
                     		current.merge(this_ID_0);
                         
@@ -2567,7 +2584,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                 case 2 :
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:974:10: this_INT_1= RULE_INT
                     {
-                    this_INT_1=(Token)match(input,RULE_INT,FOLLOW_RULE_INT_in_ruleDotID2031); 
+                    this_INT_1=(Token)match(input,RULE_INT,FOLLOW_RULE_INT_in_ruleDotID2034); 
 
                     		current.merge(this_INT_1);
                         
@@ -2580,7 +2597,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                 case 3 :
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:982:10: this_FLOAT_2= RULE_FLOAT
                     {
-                    this_FLOAT_2=(Token)match(input,RULE_FLOAT,FOLLOW_RULE_FLOAT_in_ruleDotID2057); 
+                    this_FLOAT_2=(Token)match(input,RULE_FLOAT,FOLLOW_RULE_FLOAT_in_ruleDotID2060); 
 
                     		current.merge(this_FLOAT_2);
                         
@@ -2593,7 +2610,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                 case 4 :
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:990:10: this_STRING_3= RULE_STRING
                     {
-                    this_STRING_3=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleDotID2083); 
+                    this_STRING_3=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleDotID2086); 
 
                     		current.merge(this_STRING_3);
                         
@@ -2637,29 +2654,29 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1008:1: ( (enumLiteral_0= '->' ) | (enumLiteral_1= '--' ) )
             {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1008:1: ( (enumLiteral_0= '->' ) | (enumLiteral_1= '--' ) )
-            int alt26=2;
-            int LA26_0 = input.LA(1);
+            int alt27=2;
+            int LA27_0 = input.LA(1);
 
-            if ( (LA26_0==23) ) {
-                alt26=1;
+            if ( (LA27_0==23) ) {
+                alt27=1;
             }
-            else if ( (LA26_0==24) ) {
-                alt26=2;
+            else if ( (LA27_0==24) ) {
+                alt27=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 26, 0, input);
+                    new NoViableAltException("", 27, 0, input);
 
                 throw nvae;
             }
-            switch (alt26) {
+            switch (alt27) {
                 case 1 :
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1008:2: (enumLiteral_0= '->' )
                     {
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1008:2: (enumLiteral_0= '->' )
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1008:4: enumLiteral_0= '->'
                     {
-                    enumLiteral_0=(Token)match(input,23,FOLLOW_23_in_ruleEdgeOperator2142); 
+                    enumLiteral_0=(Token)match(input,23,FOLLOW_23_in_ruleEdgeOperator2145); 
 
                             current = grammarAccess.getEdgeOperatorAccess().getDirectedEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
                             newLeafNode(enumLiteral_0, grammarAccess.getEdgeOperatorAccess().getDirectedEnumLiteralDeclaration_0()); 
@@ -2676,7 +2693,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1014:6: (enumLiteral_1= '--' )
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1014:8: enumLiteral_1= '--'
                     {
-                    enumLiteral_1=(Token)match(input,24,FOLLOW_24_in_ruleEdgeOperator2159); 
+                    enumLiteral_1=(Token)match(input,24,FOLLOW_24_in_ruleEdgeOperator2162); 
 
                             current = grammarAccess.getEdgeOperatorAccess().getUndirectedEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
                             newLeafNode(enumLiteral_1, grammarAccess.getEdgeOperatorAccess().getUndirectedEnumLiteralDeclaration_1()); 
@@ -2721,29 +2738,29 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1027:1: ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'digraph' ) )
             {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1027:1: ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'digraph' ) )
-            int alt27=2;
-            int LA27_0 = input.LA(1);
+            int alt28=2;
+            int LA28_0 = input.LA(1);
 
-            if ( (LA27_0==25) ) {
-                alt27=1;
+            if ( (LA28_0==25) ) {
+                alt28=1;
             }
-            else if ( (LA27_0==26) ) {
-                alt27=2;
+            else if ( (LA28_0==26) ) {
+                alt28=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 27, 0, input);
+                    new NoViableAltException("", 28, 0, input);
 
                 throw nvae;
             }
-            switch (alt27) {
+            switch (alt28) {
                 case 1 :
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1027:2: (enumLiteral_0= 'graph' )
                     {
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1027:2: (enumLiteral_0= 'graph' )
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1027:4: enumLiteral_0= 'graph'
                     {
-                    enumLiteral_0=(Token)match(input,25,FOLLOW_25_in_ruleGraphType2204); 
+                    enumLiteral_0=(Token)match(input,25,FOLLOW_25_in_ruleGraphType2207); 
 
                             current = grammarAccess.getGraphTypeAccess().getGraphEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
                             newLeafNode(enumLiteral_0, grammarAccess.getGraphTypeAccess().getGraphEnumLiteralDeclaration_0()); 
@@ -2760,7 +2777,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1033:6: (enumLiteral_1= 'digraph' )
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1033:8: enumLiteral_1= 'digraph'
                     {
-                    enumLiteral_1=(Token)match(input,26,FOLLOW_26_in_ruleGraphType2221); 
+                    enumLiteral_1=(Token)match(input,26,FOLLOW_26_in_ruleGraphType2224); 
 
                             current = grammarAccess.getGraphTypeAccess().getDigraphEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
                             newLeafNode(enumLiteral_1, grammarAccess.getGraphTypeAccess().getDigraphEnumLiteralDeclaration_1()); 
@@ -2806,38 +2823,38 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1046:1: ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'node' ) | (enumLiteral_2= 'edge' ) )
             {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1046:1: ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'node' ) | (enumLiteral_2= 'edge' ) )
-            int alt28=3;
+            int alt29=3;
             switch ( input.LA(1) ) {
             case 25:
                 {
-                alt28=1;
+                alt29=1;
                 }
                 break;
             case 27:
                 {
-                alt28=2;
+                alt29=2;
                 }
                 break;
             case 28:
                 {
-                alt28=3;
+                alt29=3;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 28, 0, input);
+                    new NoViableAltException("", 29, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt28) {
+            switch (alt29) {
                 case 1 :
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1046:2: (enumLiteral_0= 'graph' )
                     {
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1046:2: (enumLiteral_0= 'graph' )
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1046:4: enumLiteral_0= 'graph'
                     {
-                    enumLiteral_0=(Token)match(input,25,FOLLOW_25_in_ruleAttributeType2266); 
+                    enumLiteral_0=(Token)match(input,25,FOLLOW_25_in_ruleAttributeType2269); 
 
                             current = grammarAccess.getAttributeTypeAccess().getGraphEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
                             newLeafNode(enumLiteral_0, grammarAccess.getAttributeTypeAccess().getGraphEnumLiteralDeclaration_0()); 
@@ -2854,7 +2871,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1052:6: (enumLiteral_1= 'node' )
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1052:8: enumLiteral_1= 'node'
                     {
-                    enumLiteral_1=(Token)match(input,27,FOLLOW_27_in_ruleAttributeType2283); 
+                    enumLiteral_1=(Token)match(input,27,FOLLOW_27_in_ruleAttributeType2286); 
 
                             current = grammarAccess.getAttributeTypeAccess().getNodeEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
                             newLeafNode(enumLiteral_1, grammarAccess.getAttributeTypeAccess().getNodeEnumLiteralDeclaration_1()); 
@@ -2871,7 +2888,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1058:6: (enumLiteral_2= 'edge' )
                     // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1058:8: enumLiteral_2= 'edge'
                     {
-                    enumLiteral_2=(Token)match(input,28,FOLLOW_28_in_ruleAttributeType2300); 
+                    enumLiteral_2=(Token)match(input,28,FOLLOW_28_in_ruleAttributeType2303); 
 
                             current = grammarAccess.getAttributeTypeAccess().getEdgeEnumLiteralDeclaration_2().getEnumLiteral().getInstance();
                             newLeafNode(enumLiteral_2, grammarAccess.getAttributeTypeAccess().getEdgeEnumLiteralDeclaration_2()); 
@@ -2908,42 +2925,43 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
     static final String DFA5_eotS =
         "\21\uffff";
     static final String DFA5_eofS =
-        "\1\uffff\4\11\6\uffff\4\11\1\uffff\1\11";
+        "\1\uffff\4\10\6\uffff\4\10\1\uffff\1\10";
     static final String DFA5_minS =
         "\5\4\2\uffff\1\4\3\uffff\6\4";
     static final String DFA5_maxS =
         "\5\34\2\uffff\1\7\3\uffff\4\34\1\4\1\34";
     static final String DFA5_acceptS =
-        "\5\uffff\1\3\1\5\1\uffff\1\2\1\1\1\4\6\uffff";
+        "\5\uffff\1\3\1\5\1\uffff\1\1\1\2\1\4\6\uffff";
     static final String DFA5_specialS =
         "\21\uffff}>";
     static final String[] DFA5_transitionS = {
-            "\1\1\1\2\1\3\1\4\16\uffff\1\6\2\uffff\1\5\1\uffff\2\5",
-            "\4\11\7\uffff\2\11\1\12\1\11\2\uffff\1\7\1\11\2\10\1\11\1\uffff"+
-            "\2\11",
-            "\4\11\7\uffff\2\11\1\12\1\11\2\uffff\1\7\1\11\2\10\1\11\1\uffff"+
-            "\2\11",
-            "\4\11\7\uffff\2\11\1\12\1\11\2\uffff\1\7\1\11\2\10\1\11\1\uffff"+
-            "\2\11",
-            "\4\11\7\uffff\2\11\1\12\1\11\2\uffff\1\7\1\11\2\10\1\11\1\uffff"+
-            "\2\11",
+            "\1\1\1\2\1\3\1\4\6\uffff\1\6\7\uffff\1\6\2\uffff\1\5\1\uffff"+
+            "\2\5",
+            "\4\10\6\uffff\3\10\1\12\1\10\2\uffff\1\7\1\10\2\11\1\10\1\uffff"+
+            "\2\10",
+            "\4\10\6\uffff\3\10\1\12\1\10\2\uffff\1\7\1\10\2\11\1\10\1\uffff"+
+            "\2\10",
+            "\4\10\6\uffff\3\10\1\12\1\10\2\uffff\1\7\1\10\2\11\1\10\1\uffff"+
+            "\2\10",
+            "\4\10\6\uffff\3\10\1\12\1\10\2\uffff\1\7\1\10\2\11\1\10\1\uffff"+
+            "\2\10",
             "",
             "",
             "\1\13\1\14\1\15\1\16",
             "",
             "",
             "",
-            "\4\11\7\uffff\2\11\1\uffff\1\11\2\uffff\1\17\1\11\2\10\1\11"+
-            "\1\uffff\2\11",
-            "\4\11\7\uffff\2\11\1\uffff\1\11\2\uffff\1\17\1\11\2\10\1\11"+
-            "\1\uffff\2\11",
-            "\4\11\7\uffff\2\11\1\uffff\1\11\2\uffff\1\17\1\11\2\10\1\11"+
-            "\1\uffff\2\11",
-            "\4\11\7\uffff\2\11\1\uffff\1\11\2\uffff\1\17\1\11\2\10\1\11"+
-            "\1\uffff\2\11",
+            "\4\10\6\uffff\3\10\1\uffff\1\10\2\uffff\1\17\1\10\2\11\1\10"+
+            "\1\uffff\2\10",
+            "\4\10\6\uffff\3\10\1\uffff\1\10\2\uffff\1\17\1\10\2\11\1\10"+
+            "\1\uffff\2\10",
+            "\4\10\6\uffff\3\10\1\uffff\1\10\2\uffff\1\17\1\10\2\11\1\10"+
+            "\1\uffff\2\10",
+            "\4\10\6\uffff\3\10\1\uffff\1\10\2\uffff\1\17\1\10\2\11\1\10"+
+            "\1\uffff\2\10",
             "\1\20",
-            "\4\11\7\uffff\2\11\1\uffff\1\11\3\uffff\1\11\2\10\1\11\1\uffff"+
-            "\2\11"
+            "\4\10\6\uffff\3\10\1\uffff\1\10\3\uffff\1\10\2\11\1\10\1\uffff"+
+            "\2\10"
     };
 
     static final short[] DFA5_eot = DFA.unpackEncodedString(DFA5_eotS);
@@ -2989,8 +3007,8 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_13_in_ruleGraph219 = new BitSet(new long[]{0x00000000060060F0L});
     public static final BitSet FOLLOW_ruleGraphType_in_ruleGraph254 = new BitSet(new long[]{0x00000000000040F0L});
     public static final BitSet FOLLOW_ruleDotID_in_ruleGraph275 = new BitSet(new long[]{0x0000000000004000L});
-    public static final BitSet FOLLOW_14_in_ruleGraph288 = new BitSet(new long[]{0x000000001A4080F0L});
-    public static final BitSet FOLLOW_ruleStatement_in_ruleGraph309 = new BitSet(new long[]{0x000000001A4080F0L});
+    public static final BitSet FOLLOW_14_in_ruleGraph288 = new BitSet(new long[]{0x000000001A40C0F0L});
+    public static final BitSet FOLLOW_ruleStatement_in_ruleGraph309 = new BitSet(new long[]{0x000000001A40C0F0L});
     public static final BitSet FOLLOW_15_in_ruleGraph322 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_ruleStatement_in_entryRuleStatement358 = new BitSet(new long[]{0x0000000000000000L});
     public static final BitSet FOLLOW_EOF_in_entryRuleStatement368 = new BitSet(new long[]{0x0000000000000002L});
@@ -3029,7 +3047,7 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_20_in_ruleEdgeStatement1176 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_ruleEdgeTarget_in_entryRuleEdgeTarget1214 = new BitSet(new long[]{0x0000000000000000L});
     public static final BitSet FOLLOW_EOF_in_entryRuleEdgeTarget1224 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleEdgeOperator_in_ruleEdgeTarget1270 = new BitSet(new long[]{0x000000001A4000F0L});
+    public static final BitSet FOLLOW_ruleEdgeOperator_in_ruleEdgeTarget1270 = new BitSet(new long[]{0x000000001A4040F0L});
     public static final BitSet FOLLOW_ruleSubgraph_in_ruleEdgeTarget1292 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_ruleNode_in_ruleEdgeTarget1319 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_ruleAttributeStatement_in_entryRuleAttributeStatement1356 = new BitSet(new long[]{0x0000000000000000L});
@@ -3042,33 +3060,33 @@ public class InternalGraphvizDotParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_20_in_ruleAttributeStatement1499 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_ruleSubgraph_in_entryRuleSubgraph1535 = new BitSet(new long[]{0x0000000000000000L});
     public static final BitSet FOLLOW_EOF_in_entryRuleSubgraph1545 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_22_in_ruleSubgraph1591 = new BitSet(new long[]{0x0000000000004010L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleSubgraph1608 = new BitSet(new long[]{0x0000000000004000L});
-    public static final BitSet FOLLOW_14_in_ruleSubgraph1626 = new BitSet(new long[]{0x000000001A4080F0L});
-    public static final BitSet FOLLOW_ruleStatement_in_ruleSubgraph1647 = new BitSet(new long[]{0x000000001A4080F0L});
-    public static final BitSet FOLLOW_15_in_ruleSubgraph1660 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleListAttribute_in_entryRuleListAttribute1696 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleListAttribute1706 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleDotID_in_ruleListAttribute1752 = new BitSet(new long[]{0x0000000000020002L});
-    public static final BitSet FOLLOW_17_in_ruleListAttribute1765 = new BitSet(new long[]{0x00000000000000F0L});
-    public static final BitSet FOLLOW_ruleDotID_in_ruleListAttribute1786 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rulePort_in_entryRulePort1824 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRulePort1834 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleDotID_in_rulePort1880 = new BitSet(new long[]{0x0000000000200002L});
-    public static final BitSet FOLLOW_21_in_rulePort1893 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_RULE_ID_in_rulePort1910 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleDotID_in_entryRuleDotID1954 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleDotID1965 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleDotID2005 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_INT_in_ruleDotID2031 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_FLOAT_in_ruleDotID2057 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_ruleDotID2083 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_23_in_ruleEdgeOperator2142 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_24_in_ruleEdgeOperator2159 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_25_in_ruleGraphType2204 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_26_in_ruleGraphType2221 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_25_in_ruleAttributeType2266 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_27_in_ruleAttributeType2283 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_28_in_ruleAttributeType2300 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_22_in_ruleSubgraph1592 = new BitSet(new long[]{0x0000000000004010L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleSubgraph1609 = new BitSet(new long[]{0x0000000000004000L});
+    public static final BitSet FOLLOW_14_in_ruleSubgraph1629 = new BitSet(new long[]{0x000000001A40C0F0L});
+    public static final BitSet FOLLOW_ruleStatement_in_ruleSubgraph1650 = new BitSet(new long[]{0x000000001A40C0F0L});
+    public static final BitSet FOLLOW_15_in_ruleSubgraph1663 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleListAttribute_in_entryRuleListAttribute1699 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleListAttribute1709 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleDotID_in_ruleListAttribute1755 = new BitSet(new long[]{0x0000000000020002L});
+    public static final BitSet FOLLOW_17_in_ruleListAttribute1768 = new BitSet(new long[]{0x00000000000000F0L});
+    public static final BitSet FOLLOW_ruleDotID_in_ruleListAttribute1789 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rulePort_in_entryRulePort1827 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRulePort1837 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleDotID_in_rulePort1883 = new BitSet(new long[]{0x0000000000200002L});
+    public static final BitSet FOLLOW_21_in_rulePort1896 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_RULE_ID_in_rulePort1913 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleDotID_in_entryRuleDotID1957 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleDotID1968 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleDotID2008 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_INT_in_ruleDotID2034 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_FLOAT_in_ruleDotID2060 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_ruleDotID2086 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_23_in_ruleEdgeOperator2145 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_24_in_ruleEdgeOperator2162 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_25_in_ruleGraphType2207 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_26_in_ruleGraphType2224 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_25_in_ruleAttributeType2269 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_27_in_ruleAttributeType2286 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_28_in_ruleAttributeType2303 = new BitSet(new long[]{0x0000000000000002L});
 
 }

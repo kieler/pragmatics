@@ -130,10 +130,6 @@ public class AbstractGraphvizDotSemanticSequencer extends AbstractSemanticSequen
 	/**
 	 * Constraint:
 	 *     (type=AttributeType (attributes+=ListAttribute attributes+=ListAttribute*)?)
-	 *
-	 * Features:
-	 *    type[1, 1]
-	 *    attributes[0, *]
 	 */
 	protected void sequence_AttributeStatement(EObject context, AttributeStatement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -143,10 +139,6 @@ public class AbstractGraphvizDotSemanticSequencer extends AbstractSemanticSequen
 	/**
 	 * Constraint:
 	 *     (name=DotID value=DotID)
-	 *
-	 * Features:
-	 *    name[1, 1]
-	 *    value[1, 1]
 	 */
 	protected void sequence_Attribute(EObject context, Attribute semanticObject) {
 		if(errorAcceptor != null) {
@@ -166,11 +158,6 @@ public class AbstractGraphvizDotSemanticSequencer extends AbstractSemanticSequen
 	/**
 	 * Constraint:
 	 *     (sourceNode=Node edgeTargets+=EdgeTarget+ (attributes+=ListAttribute attributes+=ListAttribute*)?)
-	 *
-	 * Features:
-	 *    sourceNode[1, 1]
-	 *    edgeTargets[1, *]
-	 *    attributes[0, *]
 	 */
 	protected void sequence_EdgeStatement(EObject context, EdgeStatement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -180,13 +167,6 @@ public class AbstractGraphvizDotSemanticSequencer extends AbstractSemanticSequen
 	/**
 	 * Constraint:
 	 *     (operator=EdgeOperator (targetSubgraph=Subgraph | targetnode=Node))
-	 *
-	 * Features:
-	 *    operator[1, 1]
-	 *    targetSubgraph[0, 1]
-	 *         EXCLUDE_IF_SET targetnode
-	 *    targetnode[0, 1]
-	 *         EXCLUDE_IF_SET targetSubgraph
 	 */
 	protected void sequence_EdgeTarget(EObject context, EdgeTarget semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -196,12 +176,6 @@ public class AbstractGraphvizDotSemanticSequencer extends AbstractSemanticSequen
 	/**
 	 * Constraint:
 	 *     (strict?='strict'? type=GraphType name=DotID? statements+=Statement*)
-	 *
-	 * Features:
-	 *    strict[0, 1]
-	 *    type[1, 1]
-	 *    name[0, 1]
-	 *    statements[0, *]
 	 */
 	protected void sequence_Graph(EObject context, Graph semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -211,9 +185,6 @@ public class AbstractGraphvizDotSemanticSequencer extends AbstractSemanticSequen
 	/**
 	 * Constraint:
 	 *     graphs+=Graph*
-	 *
-	 * Features:
-	 *    graphs[0, *]
 	 */
 	protected void sequence_GraphvizModel(EObject context, GraphvizModel semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -223,10 +194,6 @@ public class AbstractGraphvizDotSemanticSequencer extends AbstractSemanticSequen
 	/**
 	 * Constraint:
 	 *     (name=DotID value=DotID?)
-	 *
-	 * Features:
-	 *    name[1, 1]
-	 *    value[0, 1]
 	 */
 	protected void sequence_ListAttribute(EObject context, Attribute semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -236,10 +203,6 @@ public class AbstractGraphvizDotSemanticSequencer extends AbstractSemanticSequen
 	/**
 	 * Constraint:
 	 *     (node=Node (attributes+=ListAttribute attributes+=ListAttribute*)?)
-	 *
-	 * Features:
-	 *    node[1, 1]
-	 *    attributes[0, *]
 	 */
 	protected void sequence_NodeStatement(EObject context, NodeStatement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -249,10 +212,6 @@ public class AbstractGraphvizDotSemanticSequencer extends AbstractSemanticSequen
 	/**
 	 * Constraint:
 	 *     (name=DotID port=Port?)
-	 *
-	 * Features:
-	 *    name[1, 1]
-	 *    port[0, 1]
 	 */
 	protected void sequence_Node(EObject context, Node semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -262,10 +221,6 @@ public class AbstractGraphvizDotSemanticSequencer extends AbstractSemanticSequen
 	/**
 	 * Constraint:
 	 *     (name=DotID compass_pt=ID?)
-	 *
-	 * Features:
-	 *    name[1, 1]
-	 *    compass_pt[0, 1]
 	 */
 	protected void sequence_Port(EObject context, Port semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -275,10 +230,6 @@ public class AbstractGraphvizDotSemanticSequencer extends AbstractSemanticSequen
 	/**
 	 * Constraint:
 	 *     (name=ID? statements+=Statement*)
-	 *
-	 * Features:
-	 *    name[0, 1]
-	 *    statements[0, *]
 	 */
 	protected void sequence_Subgraph(EObject context, Subgraph semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

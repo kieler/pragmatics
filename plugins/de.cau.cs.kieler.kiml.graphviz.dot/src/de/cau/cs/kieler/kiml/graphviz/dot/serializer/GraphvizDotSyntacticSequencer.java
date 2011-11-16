@@ -53,6 +53,7 @@ public class GraphvizDotSyntacticSequencer extends AbstractGraphvizDotSyntacticS
         match_NodeStatement_CommaKeyword_1_1_1_0_q = new TokenAlias(false, true, grammarAccess.getNodeStatementAccess().getCommaKeyword_1_1_1_0());
         match_NodeStatement___LeftSquareBracketKeyword_1_0_RightSquareBracketKeyword_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getNodeStatementAccess().getLeftSquareBracketKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getNodeStatementAccess().getRightSquareBracketKeyword_1_2()));
         match_Statement_SemicolonKeyword_1_q = new TokenAlias(false, true, grammarAccess.getStatementAccess().getSemicolonKeyword_1());
+        match_Subgraph_SubgraphKeyword_1_0_q = new TokenAlias(false, true, grammarAccess.getSubgraphAccess().getSubgraphKeyword_1_0());
     }
     
     /**
@@ -61,8 +62,8 @@ public class GraphvizDotSyntacticSequencer extends AbstractGraphvizDotSyntacticS
     @Override
     protected void emit_AttributeStatement_CommaKeyword_2_1_0_q(final EObject semanticObject,
             final ISynNavigable transition, final List<INode> nodes) {
-        acceptUnassignedKeyword(grammarAccess.getAttributeStatementAccess()
-                .getCommaKeyword_2_1_0(), ",", null);
+        acceptUnassignedKeyword(grammarAccess.getAttributeStatementAccess().getCommaKeyword_2_1_0(),
+                ",", null);
     }
     
     /**
@@ -71,8 +72,8 @@ public class GraphvizDotSyntacticSequencer extends AbstractGraphvizDotSyntacticS
     @Override
     protected void emit_EdgeStatement_CommaKeyword_2_1_1_0_q(final EObject semanticObject,
             final ISynNavigable transition, final List<INode> nodes) {
-        acceptUnassignedKeyword(grammarAccess.getEdgeStatementAccess()
-                .getCommaKeyword_2_1_1_0(), ",", null);
+        acceptUnassignedKeyword(grammarAccess.getEdgeStatementAccess().getCommaKeyword_2_1_1_0(),
+                ",", null);
     }
     
     /**
@@ -81,8 +82,8 @@ public class GraphvizDotSyntacticSequencer extends AbstractGraphvizDotSyntacticS
     @Override
     protected void emit_NodeStatement_CommaKeyword_1_1_1_0_q(final EObject semanticObject,
             final ISynNavigable transition, final List<INode> nodes) {
-        acceptUnassignedKeyword(grammarAccess.getNodeStatementAccess()
-                .getCommaKeyword_1_1_1_0(), ",", null);
+        acceptUnassignedKeyword(grammarAccess.getNodeStatementAccess().getCommaKeyword_1_1_1_0(),
+                ",", null);
     }
     
     /**
@@ -91,8 +92,18 @@ public class GraphvizDotSyntacticSequencer extends AbstractGraphvizDotSyntacticS
     @Override
     protected void emit_Statement_SemicolonKeyword_1_q(final EObject semanticObject,
             final ISynNavigable transition, final List<INode> nodes) {
-        acceptUnassignedKeyword(grammarAccess.getStatementAccess()
-                .getSemicolonKeyword_1(), ";", null);
+        acceptUnassignedKeyword(grammarAccess.getStatementAccess().getSemicolonKeyword_1(),
+                ";", null);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void emit_Subgraph_SubgraphKeyword_1_0_q(final EObject semanticObject,
+            final ISynNavigable transition, final List<INode> nodes) {
+        acceptUnassignedKeyword(grammarAccess.getSubgraphAccess().getSubgraphKeyword_1_0(),
+                "subgraph", null);
     }
     
 }

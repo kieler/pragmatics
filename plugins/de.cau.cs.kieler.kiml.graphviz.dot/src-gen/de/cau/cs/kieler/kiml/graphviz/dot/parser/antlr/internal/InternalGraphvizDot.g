@@ -772,15 +772,15 @@ ruleSubgraph returns [EObject current=null]
             grammarAccess.getSubgraphAccess().getSubgraphAction_0(),
             $current);
     }
-)	otherlv_1='subgraph' 
+)(	otherlv_1='subgraph' 
     {
-    	newLeafNode(otherlv_1, grammarAccess.getSubgraphAccess().getSubgraphKeyword_1());
+    	newLeafNode(otherlv_1, grammarAccess.getSubgraphAccess().getSubgraphKeyword_1_0());
     }
 (
 (
 		lv_name_2_0=RULE_ID
 		{
-			newLeafNode(lv_name_2_0, grammarAccess.getSubgraphAccess().getNameIDTerminalRuleCall_2_0()); 
+			newLeafNode(lv_name_2_0, grammarAccess.getSubgraphAccess().getNameIDTerminalRuleCall_1_1_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -794,14 +794,14 @@ ruleSubgraph returns [EObject current=null]
 	    }
 
 )
-)?	otherlv_3='{' 
+)?)?	otherlv_3='{' 
     {
-    	newLeafNode(otherlv_3, grammarAccess.getSubgraphAccess().getLeftCurlyBracketKeyword_3());
+    	newLeafNode(otherlv_3, grammarAccess.getSubgraphAccess().getLeftCurlyBracketKeyword_2());
     }
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getSubgraphAccess().getStatementsStatementParserRuleCall_4_0()); 
+	        newCompositeNode(grammarAccess.getSubgraphAccess().getStatementsStatementParserRuleCall_3_0()); 
 	    }
 		lv_statements_4_0=ruleStatement		{
 	        if ($current==null) {
@@ -818,7 +818,7 @@ ruleSubgraph returns [EObject current=null]
 )
 )*	otherlv_5='}' 
     {
-    	newLeafNode(otherlv_5, grammarAccess.getSubgraphAccess().getRightCurlyBracketKeyword_5());
+    	newLeafNode(otherlv_5, grammarAccess.getSubgraphAccess().getRightCurlyBracketKeyword_4());
     }
 )
 ;

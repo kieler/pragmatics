@@ -436,46 +436,50 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Subgraph");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Action cSubgraphAction_0 = (Action)cGroup.eContents().get(0);
-		private final Keyword cSubgraphKeyword_1 = (Keyword)cGroup.eContents().get(1);
-		private final Assignment cNameAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cNameIDTerminalRuleCall_2_0 = (RuleCall)cNameAssignment_2.eContents().get(0);
-		private final Keyword cLeftCurlyBracketKeyword_3 = (Keyword)cGroup.eContents().get(3);
-		private final Assignment cStatementsAssignment_4 = (Assignment)cGroup.eContents().get(4);
-		private final RuleCall cStatementsStatementParserRuleCall_4_0 = (RuleCall)cStatementsAssignment_4.eContents().get(0);
-		private final Keyword cRightCurlyBracketKeyword_5 = (Keyword)cGroup.eContents().get(5);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Keyword cSubgraphKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cNameAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cNameIDTerminalRuleCall_1_1_0 = (RuleCall)cNameAssignment_1_1.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Assignment cStatementsAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cStatementsStatementParserRuleCall_3_0 = (RuleCall)cStatementsAssignment_3.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_4 = (Keyword)cGroup.eContents().get(4);
 		
 		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// *  subgraph:   [ 'subgraph' [ ID ] ] '{' stmt_list '}'
 		// * / Subgraph:
-		//	{Subgraph} "subgraph" name=ID? "{" statements+=Statement* "}";
+		//	{Subgraph} ("subgraph" name=ID?)? "{" statements+=Statement* "}";
 		public ParserRule getRule() { return rule; }
 
-		//{Subgraph} "subgraph" name=ID? "{" statements+=Statement* "}"
+		//{Subgraph} ("subgraph" name=ID?)? "{" statements+=Statement* "}"
 		public Group getGroup() { return cGroup; }
 
 		//{Subgraph}
 		public Action getSubgraphAction_0() { return cSubgraphAction_0; }
 
+		//("subgraph" name=ID?)?
+		public Group getGroup_1() { return cGroup_1; }
+
 		//"subgraph"
-		public Keyword getSubgraphKeyword_1() { return cSubgraphKeyword_1; }
+		public Keyword getSubgraphKeyword_1_0() { return cSubgraphKeyword_1_0; }
 
 		//name=ID?
-		public Assignment getNameAssignment_2() { return cNameAssignment_2; }
+		public Assignment getNameAssignment_1_1() { return cNameAssignment_1_1; }
 
 		//ID
-		public RuleCall getNameIDTerminalRuleCall_2_0() { return cNameIDTerminalRuleCall_2_0; }
+		public RuleCall getNameIDTerminalRuleCall_1_1_0() { return cNameIDTerminalRuleCall_1_1_0; }
 
 		//"{"
-		public Keyword getLeftCurlyBracketKeyword_3() { return cLeftCurlyBracketKeyword_3; }
+		public Keyword getLeftCurlyBracketKeyword_2() { return cLeftCurlyBracketKeyword_2; }
 
 		//statements+=Statement*
-		public Assignment getStatementsAssignment_4() { return cStatementsAssignment_4; }
+		public Assignment getStatementsAssignment_3() { return cStatementsAssignment_3; }
 
 		//Statement
-		public RuleCall getStatementsStatementParserRuleCall_4_0() { return cStatementsStatementParserRuleCall_4_0; }
+		public RuleCall getStatementsStatementParserRuleCall_3_0() { return cStatementsStatementParserRuleCall_3_0; }
 
 		//"}"
-		public Keyword getRightCurlyBracketKeyword_5() { return cRightCurlyBracketKeyword_5; }
+		public Keyword getRightCurlyBracketKeyword_4() { return cRightCurlyBracketKeyword_4; }
 	}
 
 	public class ListAttributeElements extends AbstractParserRuleElementFinder {
@@ -835,7 +839,7 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// *  subgraph:   [ 'subgraph' [ ID ] ] '{' stmt_list '}'
 	// * / Subgraph:
-	//	{Subgraph} "subgraph" name=ID? "{" statements+=Statement* "}";
+	//	{Subgraph} ("subgraph" name=ID?)? "{" statements+=Statement* "}";
 	public SubgraphElements getSubgraphAccess() {
 		return (pSubgraph != null) ? pSubgraph : (pSubgraph = new SubgraphElements());
 	}
