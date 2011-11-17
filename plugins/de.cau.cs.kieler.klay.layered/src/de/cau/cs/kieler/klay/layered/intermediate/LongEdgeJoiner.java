@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -81,7 +83,10 @@ public class LongEdgeJoiner extends AbstractAlgorithm implements ILayoutProcesso
                         droppedEdge.setTarget(null);
                         
                         // Join their bend points
-                        survivingEdge.getBendPoints().addAll(droppedEdge.getBendPoints());
+                        KVectorChain survivingBendPoints = survivingEdge.getBendPoints();
+                        for (KVector bendPoint : droppedEdge.getBendPoints()) {
+                            survivingBendPoints.add(new KVector(bendPoint));
+                        }
                     }
                     
                     // Remove the node
