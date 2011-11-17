@@ -121,6 +121,10 @@ public class LayeredGraph extends LGraphElement implements Iterable<Layer> {
      * to be added to all position values of nodes and edges. It is usually used
      * to reserve some space in the content area for additional edge routing.
      * 
+     * <b>Note:</b> Since many different parts of the algorithm may contribute to
+     * the offset, never set the offset to an absolute value! Rather, only add to
+     * the offset!
+     * 
      * @return the offset of the layered graph
      */
     public KVector getOffset() {
