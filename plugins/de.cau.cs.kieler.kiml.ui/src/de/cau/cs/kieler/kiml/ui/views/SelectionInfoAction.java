@@ -111,7 +111,7 @@ public class SelectionInfoAction extends Action {
         protected Control createDialogArea(final Composite parent) {
             Composite composite = (Composite) super.createDialogArea(parent);
             try {
-                Browser browser = new Browser(composite, SWT.NONE);
+                Browser browser = new Browser(composite, SWT.BORDER);
                 GridData gridData = new GridData(GridData.FILL_BOTH);
                 browser.setLayoutData(gridData);
                 browser.setText(htmlText);
