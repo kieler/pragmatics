@@ -14,9 +14,11 @@
 package de.cau.cs.kieler.klighd.transformations;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.klighd.ITransformation;
 import de.cau.cs.kieler.klighd.TransformationContext;
@@ -36,8 +38,9 @@ public abstract class AbstractTransformation<S, T> implements ITransformation<S,
 
     /** The current transformation context. */
     private TransformationContext<S, T> context = null;
-    /** The lookup table maintaining the model-image-relation of the transformation. */
-    private BiMap<Object, Object> sourceTargetElementMap = null;
+    /** The lookup tables maintaining the model-image-relation of the transformation. */
+    private Multimap<Object, Object> sourceTargetElementMap = null;
+    private Map<Object, Object> targetSourceElementMap = null;
 
     /**
      * {@inheritDoc}
@@ -83,13 +86,13 @@ public abstract class AbstractTransformation<S, T> implements ITransformation<S,
      * Returns the element in the source model which is represented by the given element in the
      * target model.
      * 
-     * @param element
+     * @param target
      *            the element in the target model
      * @return the element in the source model or null if the element could not be found
      */
-    public Object getSourceElement(final Object element) {
-        if (this.sourceTargetElementMap != null) {
-            return this.sourceTargetElementMap.inverse().get(element);
+    public Object getSourceElement(final Object target) {
+        if (this.targetSourceElementMap != null) {
+            return this.targetSourceElementMap.get(target);
         }
         return null;
     }
@@ -109,13 +112,13 @@ public abstract class AbstractTransformation<S, T> implements ITransformation<S,
      * Returns the element in the target model which represents the given element in the source
      * model.
      * 
-     * @param element
+     * @param source
      *            the element in the source model
      * @return the element in the target model or null if the element could not be found
      */
-    public Object getTargetElement(final Object element) {
+    public Object getTargetElement(final Object source) {
         if (this.sourceTargetElementMap != null) {
-            return this.sourceTargetElementMap.get(element);
+            return this.sourceTargetElementMap.get(source);
         }
         return null;
     }
@@ -132,10 +135,13 @@ public abstract class AbstractTransformation<S, T> implements ITransformation<S,
      * @return the image element
      */
     protected <C> C putToLookUpWith(final C target, final Object source) {
-        if (this.sourceTargetElementMap == null) {
-            this.sourceTargetElementMap = HashBiMap.create();
+        if (this.targetSourceElementMap == null
+                || this.sourceTargetElementMap == null) {
+            this.targetSourceElementMap = Maps.newHashMap();
+            this.sourceTargetElementMap = HashMultimap.create();
         }
         this.sourceTargetElementMap.put(source, target);
+        this.targetSourceElementMap.put(target, source);
         return target;
     }
      

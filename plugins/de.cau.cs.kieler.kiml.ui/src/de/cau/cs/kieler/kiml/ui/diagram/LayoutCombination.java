@@ -19,7 +19,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.CombinationParameter;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
-import de.cau.cs.kieler.core.model.triggers.SelectionTrigger.SelectionState;
+import de.cau.cs.kieler.core.model.triggers.SelectionTrigger.DiagramSelectionState;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 
 /**
@@ -82,7 +82,7 @@ public class LayoutCombination extends AbstractCombination {
      * @param selection
      *            the trigger state for the current selection
      */
-    public void execute(final ButtonState button, final SelectionState selection) {
+    public void execute(final ButtonState button, final DiagramSelectionState selection) {
         if (button == latestState() && COMMAND_ID.equals(button.getButtonId())) {
             IPreferenceStore preferenceStore = getPreferenceStore();
             boolean animate = preferenceStore.getBoolean(ANIMATE);
