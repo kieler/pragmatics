@@ -117,8 +117,14 @@ public class LoadGraphAction extends Action {
                 KGraphData graphData = (KGraphData) obj;
                 for (PersistentEntry entry : graphData.getPersistentEntries()) {
                     LayoutOptionData<?> optionData = dataService.getOptionData(entry.getKey());
-                    Object value = optionData.parseValue(entry.getValue());
-                    graphData.setProperty(optionData, value);
+                    
+                    if (optionData != null) {
+                        Object value = optionData.parseValue(entry.getValue());
+                        
+                        if (value != null) {
+                            graphData.setProperty(optionData, value);
+                        }
+                    }
                 }
             }
         }
