@@ -107,7 +107,7 @@ class DiagramUtil {
     	val y = shape.getAndAddIntProperty("eastports") * 15 + verticalPortPlacementOffsetTop.value;
     	val anchor = shape.createPortAnchor(o, x,y);
     	val rect = anchor.createRectangle(0,0,7,7, "black_black".style);
-    	val text = rect.createText(-outerHorizontalPortLabelPlacementOffset.value, -2, label, Orientation::ALIGNMENT_RIGHT, "default".font);
+    	val text = rect.createLabelText(o, -outerHorizontalPortLabelPlacementOffset.value, -2, label, Orientation::ALIGNMENT_RIGHT, "default".font);
     	return anchor
     }
 
@@ -121,7 +121,7 @@ class DiagramUtil {
     	val y = shape.getAndAddIntProperty("westports") * 15 + verticalPortPlacementOffsetTop.value;
     	val anchor = shape.createPortAnchor(o,x,y);
     	val rect = anchor.createRectangle(0,0,7,7, "black_black".style);
-    	rect.createText(outerHorizontalPortLabelPlacementOffset.value, -2, label, Orientation::ALIGNMENT_LEFT, "default".font);
+    	rect.createLabelText(o, outerHorizontalPortLabelPlacementOffset.value, -2, label, Orientation::ALIGNMENT_LEFT, "default".font);
     	return anchor
     }
     
@@ -162,12 +162,18 @@ class DiagramUtil {
         return createText(ga, value, "default".font)
     }
 
+    def Text createText(GraphicsAlgorithm ga) {
+        return createText(ga, null)
+    }
+
 
     /**
-     *
+     * Special extension targeting the label text creation.
+     * This is reasonable since the label element is pickable in the graphic represention
+     * and, hence, should be mapped to the related model element, as well.
      */
-    def Text createText(GraphicsAlgorithm ga, int x, int y, String value, Orientation alignment, Font font) {
-        val text = AlgorithmsFactory::eINSTANCE.createText
+    def Text createLabelText(GraphicsAlgorithm ga, EObject o, int x, int y, String value, Orientation alignment, Font font) {
+        val text = o.createLabelText()
         text.setX(x);
         text.setY(y);
         text.setWidth(ga.width);
@@ -179,6 +185,14 @@ class DiagramUtil {
         return text
     }
 
+    def private Text create text: o.portAnchor.graphicsAlgorithm.createText() createLabelText(EObject o) {
+    }
+    
+    def Text getLabelText(EObject o) {
+    	return o.createLabelText
+    }
+    
+    
 
     /**
      *
