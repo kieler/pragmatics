@@ -16,7 +16,9 @@ package de.cau.cs.kieler.ksbase.ui.handler;
 import java.net.URL;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.emf.ecore.EClass;
@@ -33,10 +35,12 @@ import org.eclipse.gmf.runtime.emf.type.core.requests.IEditCommandRequest;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.model.gmf.policies.BalloonMouseListener;
 import de.cau.cs.kieler.core.model.gmf.policies.DiagramPopupBarPolicy;
 import de.cau.cs.kieler.core.model.gmf.policies.IBalloonContribution;
+import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
 /**
  * Policy for displaying balloons.
@@ -98,13 +102,42 @@ public class BalloonPopupBarEditPolicy extends DiagramPopupBarPolicy {
         if (editDomain instanceof IDiagramEditDomain) {
             domain = (IDiagramEditDomain) editDomain;
         }
-
+        
+        ////debug
+        if (domain == null) {
+            Status myStatus = new Status(IStatus.WARNING, KSBasEUIPlugin.PLUGIN_ID,
+                    "domain is null");
+                StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
+        } else if (!(domain instanceof DiagramEditDomain)) {
+            Status myStatus = new Status(IStatus.WARNING, KSBasEUIPlugin.PLUGIN_ID,
+                    "domain is no DiagramEditDomain");
+                StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
+        }
+        ////
+        
         if (domain != null && domain instanceof DiagramEditDomain) {
             IEditorPart editor = ((DiagramEditDomain) domain).getEditorPart();
             final DiagramDocumentEditor diagramEditor = (DiagramDocumentEditor) editor;
             String id = diagramEditor.getEditorSite().getPluginId();
             boolean showPopupBars = Platform.getPreferencesService().getBoolean(id,
-                    "Global.showPopupBars", false, null);
+                    "Global.showPopupBars", true, null);
+            ////debug
+            if (contributions == null) {
+                Status myStatus = new Status(IStatus.WARNING, KSBasEUIPlugin.PLUGIN_ID,
+                    "contributionList is null");
+                StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
+            }
+            if (contributions.isEmpty()) {
+                Status myStatus = new Status(IStatus.WARNING, KSBasEUIPlugin.PLUGIN_ID,
+                        "no contributions found");
+                    StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
+            }
+            if (!showPopupBars) {
+                Status myStatus = new Status(IStatus.WARNING, KSBasEUIPlugin.PLUGIN_ID,
+                        "show popupbars is false");
+                    StatusManager.getManager().handle(myStatus, StatusManager.SHOW);             
+            }
+            ////
             if (contributions != null && showPopupBars) {
                 for (IBalloonContribution item : contributions) {
                     item.init(editPart);
