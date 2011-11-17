@@ -91,7 +91,7 @@ public class LayoutCombination extends AbstractCombination {
             // check parameter for layout scope, default is diagram scope
             Object layoutScope = button.getParameters().get(PARAM_LAYOUT_SCOPE);
             if (layoutScope instanceof String && layoutScope.equals(VAL_SELECTION)) {
-                for (EObject selected : selection.getSelectedEObjects()) {
+                for (EObject selected : selection.getSelectedObjects()) {
                     // merging of multiple selected objects is done by the layout effect
                     schedule(new LayoutEffect(button.getEditor(), selected, zoom, progressBar,
                             false, animate));
