@@ -200,7 +200,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             maxY = Math.max(maxY, bottom);
         }
         layeredGraph.getSize().y = maxY - minY;
-        layeredGraph.getOffset().y = -minY;
+        layeredGraph.getOffset().y -= minY;
 
         // release the created resources
         linearSegments = null;

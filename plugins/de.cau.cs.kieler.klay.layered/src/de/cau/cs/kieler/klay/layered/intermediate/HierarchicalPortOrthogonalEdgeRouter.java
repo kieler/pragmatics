@@ -519,7 +519,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             
             // If anything was routed, adjust the graph's offset and height
             if (slots > 0) {
-                layeredGraph.getOffset().y = nodeSpacing + (slots - 1) * edgeSpacing;
+                layeredGraph.getOffset().y += nodeSpacing + (slots - 1) * edgeSpacing;
                 layeredGraph.getSize().y += layeredGraph.getOffset().y;
             }
         }
