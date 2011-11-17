@@ -52,11 +52,16 @@ import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
  */
 public abstract class AbstractCombination implements ICombination {
 
+    /**
+     * Whether the combination is active.
+     */
     private boolean active = false;
 
-    private Map<Class<? extends Object>, Method> executeCache = Maps.newHashMap(); // speed up
-                                                                                   // reflection
-
+    /**
+     * Cache of execute methods to speed up reflection.
+     */
+    private Map<Class<? extends Object>, Method> executeCache = Maps.newHashMap();
+    
     /**
      * Effects that have been scheduled in one iteration of the handle method.
      */
@@ -72,23 +77,42 @@ public abstract class AbstractCombination implements ICombination {
      */
     private List<IEffect> mergedEffects = new ArrayList<IEffect>();
 
+    /**
+     * The trigger state that actually triggered execution of the execute method.
+     */
     private ITriggerState triggeringState;
+    
+    /**
+     * The trigger state parameters that are passed to the execute method.
+     */
+    private Object[] stateParameters;
 
+    /**
+     * Whether recording of old effects is enabled. This is required for undo to work properly.
+     */
     private boolean enableRecording;
+    
+    /**
+     * Whether the execution of undo effects for the old effects is enabled.
+     */
     private boolean undo;
 
+    /**
+     * The maximal number of recorded effects before a warning is emitted.
+     */
     private static final int MAX_RECORD_LENGTH = 100000;
     
     /**
      * {@inheritDoc}
      */
-    public void handle(final ITriggerState triggerState) {
+    public final void handle(final ITriggerState triggerState) {
         boolean debug = KiVi.getInstance().isDebug();
 
         this.triggeringState = triggerState;
         boolean found = true;
         if (triggerState instanceof EffectTriggerState<?>) {
-            found = false; // potentially skip execution if wrong effect type
+            // potentially skip execution if wrong effect type
+            found = false;
         }
         // get the relevant execute method for the given triggerState
         Method execute = getExecuteMethod(triggerState);
@@ -100,11 +124,11 @@ public abstract class AbstractCombination implements ICombination {
         Type[] types = execute.getGenericParameterTypes();
         Object[] states = new Object[types.length];
         for (int i = 0; i < types.length; i++) {
-            if (types[i] instanceof Class) { // trigger state without generic parameter, may also be
-                                             // directly an IEffect
+            // trigger state without generic parameter, may also be directly an IEffect
+            if (types[i] instanceof Class) {
                 states[i] = KiVi.getInstance().getTriggerState((Class<?>) types[i]);
-                if (IEffect.class.isAssignableFrom((Class<?>) types[i])) { // we see an effect
-                                                                           // trigger parameter
+                // we see an effect trigger parameter
+                if (IEffect.class.isAssignableFrom((Class<?>) types[i])) {
                     IEffect effectParam = ((EffectTriggerState<?>) states[i]).getEffect();
                     states[i] = effectParam;
 
@@ -156,6 +180,7 @@ public abstract class AbstractCombination implements ICombination {
             if (debug) {
                 System.out.println(this);
             }
+            stateParameters = states;
             execute.invoke(this, states);
         } catch (IllegalArgumentException e) {
             KiVi.error(e);
@@ -176,8 +201,6 @@ public abstract class AbstractCombination implements ICombination {
                 System.out.println();
             }
         }
-
-        return;
     }
 
     /**
@@ -189,6 +212,9 @@ public abstract class AbstractCombination implements ICombination {
         return result;
     }
 
+    /**
+     * Merge all scheduled effects and undo effects.
+     */
     private void mergeScheduledEffects() {
         List<IEffect> toRemove = new ArrayList<IEffect>();
         List<IEffect> allEffects = new ArrayList<IEffect>();
@@ -231,7 +257,7 @@ public abstract class AbstractCombination implements ICombination {
      * @param effect
      *            the effect to schedule
      */
-    protected void schedule(final IEffect effect) {
+    protected final void schedule(final IEffect effect) {
         effects.add(effect);
     }
 
@@ -243,26 +269,26 @@ public abstract class AbstractCombination implements ICombination {
      * @param compoundEffect
      *            the compound effect to schedule
      */
-    protected void schedule(final IEffectCompound compoundEffect) {
+    protected final void schedule(final IEffectCompound compoundEffect) {
         effects.addAll(compoundEffect.getPrimitiveEffects());
     }
 
     /**
-     * Activate recording of old effects. This way old effects can be easily undone lateron.
+     * Activate recording of old effects. This way old effects can be easily undone later on.
      * However, if they are never undone, this record may increase over time as arbitrarily many old
      * effects may be stored.
      */
-    protected void enableEffectRecording() {
+    protected final void enableEffectRecording() {
         enableRecording = true;
     }
 
     /**
-     * Explicit call to undo all old effects since the last call of this method. This will schedule
-     * new UndoEffects and merge them with new effects of this round. This should be called from
-     * inside the execute method to easily undo old stuff. Don't use the plain undo() method, as it
-     * does not only schedule but also execute the undo immediately.
+     * Explicit call to enable undoing all old effects since the last call of this method. This will
+     * schedule new UndoEffects and merge them with new effects of this round. This should be called
+     * from inside the execute method to easily undo old stuff. Don't use the plain undo() method, as
+     * it does not only schedule but also execute the undo immediately.
      */
-    protected void undoRecordedEffects() {
+    protected final void undoRecordedEffects() {
         enableRecording = true;
         undo = true;
     }
@@ -282,7 +308,7 @@ public abstract class AbstractCombination implements ICombination {
      * @returns array of trigger states that this combination listens to.
      */
     @SuppressWarnings("unchecked")
-    public Class<? extends ITriggerState>[] getTriggerStates() {
+    public final Class<? extends ITriggerState>[] getTriggerStates() {
         Method[] methods = getClass().getMethods();
         boolean existsExecute = false;
         List<Class<? extends ITriggerState>> types = new ArrayList<Class<? extends ITriggerState>>();
@@ -322,15 +348,51 @@ public abstract class AbstractCombination implements ICombination {
     }
 
     /**
-     * Convenience method to obtain the ITriggerState that actually caused the execute method to be
-     * invoked. This can be used to conceptually go back from the states to the event, to find out,
+     * Convenience method to obtain the trigger state that actually caused the execute method to be
+     * invoked. This can be used to conceptually go back from the states to the event, to find out
      * which state was constructed last.
      * 
      * @return the trigger state that was constructed last
      */
-    protected ITriggerState getTriggerState() {
+    protected final ITriggerState latestState() {
         return triggeringState;
     }
+    
+    /**
+     * Convenience method to obtain the index of the trigger state that actually caused the execute
+     * method to be invoked. Use this index in a {@code switch} statement to implement different
+     * behavior depending on the latest trigger state. The result corresponds to the index in the
+     * order of parameters as given in the execute method header. <b>Caution:</b> The meaning of
+     * the returned indices may change when more parameters are added to the execute method, or
+     * when their order is modified.
+     * 
+     * @return the index of the latest trigger state
+     */
+    protected final int latestStateIndex() {
+        if (triggeringState != null && stateParameters != null) {
+            for (int i = 0; i < stateParameters.length; i++) {
+                if (triggeringState.equals(stateParameters[i])) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+    
+    /** index constant for the first trigger state parameter. */
+    protected static final int FIRST = 0;
+    /** index constant for the second trigger state parameter. */
+    protected static final int SECOND = 1;
+    /** index constant for the third trigger state parameter. */
+    protected static final int THIRD = 2;
+    /** index constant for the fourth trigger state parameter. */
+    protected static final int FOURTH = 3;
+    /** index constant for the fifth trigger state parameter. */
+    protected static final int FIFTH = 4;
+    /** index constant for the sixth trigger state parameter. */
+    protected static final int SIXTH = 5;
+    /** index constant for the seventh trigger state parameter. */
+    protected static final int SEVENTH = 6;
 
     /**
      * Convenience method to retrieve the method called execute with the longest list of parameters.
@@ -398,14 +460,14 @@ public abstract class AbstractCombination implements ICombination {
     /**
      * {@inheritDoc}
      */
-    public boolean isActive() {
+    public final boolean isActive() {
         return active;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setActive(final boolean a) {
+    public final void setActive(final boolean a) {
         if (active && !a) {
             active = a;
             undo();
@@ -423,4 +485,5 @@ public abstract class AbstractCombination implements ICombination {
         int index = name.lastIndexOf(".");
         return "Combination[" + name.substring(index) + "]";
     }
+    
 }

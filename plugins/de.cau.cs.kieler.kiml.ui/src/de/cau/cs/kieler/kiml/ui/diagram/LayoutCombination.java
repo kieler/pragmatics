@@ -83,8 +83,7 @@ public class LayoutCombination extends AbstractCombination {
      *            the trigger state for the current selection
      */
     public void execute(final ButtonState button, final SelectionState selection) {
-        if (this.getTriggerState() instanceof ButtonState
-                && COMMAND_ID.equals(button.getButtonId())) {
+        if (button == latestState() && COMMAND_ID.equals(button.getButtonId())) {
             IPreferenceStore preferenceStore = getPreferenceStore();
             boolean animate = preferenceStore.getBoolean(ANIMATE);
             boolean zoom = preferenceStore.getBoolean(ZOOM_TO_FIT);

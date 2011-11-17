@@ -80,8 +80,7 @@ public class RandomLayoutCombination extends AbstractCombination {
         boolean zoom = preferenceStore.getBoolean(ZOOM_TO_FIT);
         boolean progressBar = preferenceStore.getBoolean(PROGRESS_BAR);
         // dontUndo();
-        if (this.getTriggerState() instanceof ButtonState
-                && button.getButtonId().equals(RANDOM_BUTTON)) {
+        if (button == latestState() && button.getButtonId().equals(RANDOM_BUTTON)) {
             LayoutEffect layout = new LayoutEffect(diagram.getDiagramPart(), null, zoom,
                     progressBar, true, animate);
             TreeIterator<?> iterator = diagram.getSemanticModel().eAllContents();
