@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klighd.effects;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 
@@ -24,7 +25,7 @@ import de.cau.cs.kieler.klighd.views.DiagramViewManager;
  * 
  * @author mri
  */
-public class KlighdSelectionEffect {
+public class KlighdSelectionEffect extends AbstractEffect {
 
     /** the view identifier. */
     private String viewId;
