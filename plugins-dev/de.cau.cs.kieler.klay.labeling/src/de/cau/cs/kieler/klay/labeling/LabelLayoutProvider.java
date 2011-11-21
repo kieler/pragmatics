@@ -35,7 +35,7 @@ public class LabelLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(KNode parentNode, IKielerProgressMonitor progressMonitor) {
+    public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Label layout", 1);
         
         // Iterate over all the outgoing edges we can find
@@ -53,7 +53,7 @@ public class LabelLayoutProvider extends AbstractLayoutProvider {
      * 
      * @param edge the edge whose labels to distribute.
      */
-    private void distributeLabels(KEdge edge) {
+    private void distributeLabels(final KEdge edge) {
         /* This method implements an extremely naive first approach to placing labels. One of
          * the drawbacks is that this assumes that edges don't have any bend points. Much room
          * for improvement. Left as an exercise to the reader... ;)
