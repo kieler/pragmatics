@@ -15,6 +15,7 @@ package de.cau.cs.kieler.ksbase.ui.kivi;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -162,13 +163,21 @@ public class KSBasECombination extends AbstractCombination {
                 params = new LinkedList();
                 method = m;
                 for (Class<?> c : m.getParameterTypes()) {
-                    Object param = selectionCache.get(c);
+                    Object param = null;
+                    for (Object p: selectionCache.values()) {
+                        if (this.match(c, p.getClass()) && !params.contains(p)) {
+                            param = p;
+                            break;
+                        }
+                    }
+                    //Object param = selectionCache.get(c);
                     if (param != null) {
                         params.add(param);
                     } else {
                         method = null;
                     }
                 }
+                
                 if (method != null) {
                     break;
                 }
@@ -193,6 +202,13 @@ public class KSBasECombination extends AbstractCombination {
 
     }
 
+    private boolean match(Class a, Class b) {
+        if (a.isAssignableFrom(b)) {
+            return true;
+        } 
+        return false;
+    }
+    
     private void evokeXtend(final KSBasETransformation transformation,
             final List<Object> selectionMapping, final DiagramDocumentEditor diagramEditor) {
         TransformationDescriptor descriptor = new TransformationDescriptor(
