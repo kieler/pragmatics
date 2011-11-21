@@ -6,20 +6,20 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: de.cau.cs.kieler.keg.importer.KEGImporterPlugin
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.expressions;bundle-version="3.4.200",
  org.eclipse.ui,
  org.eclipse.ui.ide;bundle-version="3.6.0",
  org.eclipse.xtext;bundle-version="1.0.1",
- de.cau.cs.kieler.core;bundle-version="0.5.0",
- de.cau.cs.kieler.core.model.xtend;bundle-version="0.1.0",
- de.cau.cs.kieler.core.ui;bundle-version="0.4.0",
- de.cau.cs.kieler.core.model;bundle-version="0.4.0",
- de.cau.cs.kieler.keg;bundle-version="0.2.0",
- de.cau.cs.kieler.keg.diagram;bundle-version="0.2.0",
- de.cau.cs.kieler.kiml;bundle-version="0.8.0",
- de.cau.cs.kieler.kiml.graphviz.dot;bundle-version="0.3.0",
- de.cau.cs.kieler.kiml.ui;bundle-version="0.4.0",
- org.graphdrawing.graphml;bundle-version="1.0.0",
- org.eclipse.core.expressions;bundle-version="3.4.200",
- net.ogdf.ogml;bundle-version="1.0.0"
+ de.cau.cs.kieler.core,
+ de.cau.cs.kieler.core.model.xtend,
+ de.cau.cs.kieler.core.ui,
+ de.cau.cs.kieler.core.model,
+ de.cau.cs.kieler.keg,
+ de.cau.cs.kieler.keg.diagram,
+ de.cau.cs.kieler.kiml,
+ de.cau.cs.kieler.kiml.graphviz.dot,
+ de.cau.cs.kieler.kiml.ui,
+ org.graphdrawing.graphml,
+ net.ogdf.ogml
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy

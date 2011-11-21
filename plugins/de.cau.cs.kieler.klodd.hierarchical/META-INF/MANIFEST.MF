@@ -4,7 +4,8 @@ Bundle-Name: KIELER Hierarchical Dataflow Layout
 Bundle-SymbolicName: de.cau.cs.kieler.klodd.hierarchical;singleton:=true
 Bundle-Version: 0.7.1.qualifier
 Require-Bundle: de.cau.cs.kieler.core,
- de.cau.cs.kieler.kiml
+ de.cau.cs.kieler.kiml,
+ de.cau.cs.kieler.core.kgraph
 Export-Package: de.cau.cs.kieler.klodd.hierarchical;
   uses:="de.cau.cs.kieler.kiml.services,
    de.cau.cs.kieler.core,

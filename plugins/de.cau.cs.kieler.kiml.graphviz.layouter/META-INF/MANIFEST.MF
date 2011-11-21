@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.ui,
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.kiml.graphviz.dot,
- de.cau.cs.kieler.kiml.service
+ de.cau.cs.kieler.kiml.service,
+ de.cau.cs.kieler.core.kgraph
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
