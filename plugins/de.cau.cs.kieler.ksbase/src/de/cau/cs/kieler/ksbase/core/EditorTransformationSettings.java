@@ -418,16 +418,21 @@ public class EditorTransformationSettings implements Serializable {
      */
     public final void parseTransformations(final boolean createTransformations, final URL fileURL) {
         if (framework != null) {
+            List<AbstractTransformation> parseTransformations = null;
+            if (fileURL != null) {
             // Parse transformations with the framework
-            List<AbstractTransformation> parseTransformations = framework.parseTransformations(
+                parseTransformations = framework.parseTransformations(
                     fileURL, true);
-            if (parseTransformations == null) {
-                KSBasEPlugin.getDefault().logError(
-                                "Could not parse extensions for editor "
-                                        + editorId
-                                        + ". Developer hint: make sure that the .ext file's containing"
-                                        + "folder is part of the binary build (build.properties)");
-                return;
+                if (parseTransformations == null) {
+                    KSBasEPlugin.getDefault().logError(
+                                    "Could not parse extensions for editor "
+                                            + editorId
+                                            + ". Developer hint: make sure that the .ext file's containing"
+                                            + "folder is part of the binary build (build.properties)");
+                    return;
+                }
+            } else {
+                parseTransformations = new LinkedList<AbstractTransformation>();
             }
             // If we have any invalid transformations, i.e.
             // the transformation defined here has no transformation

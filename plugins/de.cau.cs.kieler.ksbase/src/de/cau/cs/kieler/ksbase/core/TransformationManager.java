@@ -596,6 +596,8 @@ public final class TransformationManager {
                                         + editor.getEditorId());
                     }
                 }
+            } else {
+                editor.parseTransformations(false, null);
             }
             activeEditors.put(editor.getEditorId(), editor);
         }
