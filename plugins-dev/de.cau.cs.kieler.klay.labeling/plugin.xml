@@ -23,7 +23,19 @@
          <knownOption
                option="de.cau.cs.kieler.debugMode">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.labeling.position">
+         </knownOption>
       </layoutAlgorithm>
+      <layoutOption
+            advanced="true"
+            appliesTo="labels"
+            default="0.5f"
+            description="The position of the label along the edge, between 0.0 and 1.0"
+            id="de.cau.cs.kieler.klay.labeling.position"
+            name="position"
+            type="float">
+      </layoutOption>
       
    </extension>
 </plugin>

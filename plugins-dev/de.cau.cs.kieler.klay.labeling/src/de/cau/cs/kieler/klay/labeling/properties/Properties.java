@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.klay.labeling.properties;
 
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
+
 /**
  * Container for property definitions.
  *
@@ -20,4 +23,10 @@ package de.cau.cs.kieler.klay.labeling.properties;
  */
 public class Properties {
 
+	 /**
+     * The position of a label along its edge. Some value between 0.0 and 1.0.
+     */
+    public static final IProperty<Float> POSITION = new Property<Float>("position", 0.5f);
+
+	
 }
