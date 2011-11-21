@@ -231,6 +231,19 @@ public final class DynamicMenuContributions {
                         }
                         return selectionList;
                     }
+                    // no Diagram EditDomain found -> still try to look for EObjects directly, maybe we have some
+                    // structural EMF Editor like the tree editor (haf)
+                    else{
+                    	List<EObject> eObjects = new ArrayList<EObject>(((List<?>) defaultVar).size());
+                    	try{
+                    		for(Object o:(List<?>) defaultVar){
+                    			eObjects.add((EObject)o);
+                    		}
+                    		return eObjects;
+                    	}catch(ClassCastException e){
+                    		// fall through
+                    	}
+                    }
                 }
             }
             return null;
