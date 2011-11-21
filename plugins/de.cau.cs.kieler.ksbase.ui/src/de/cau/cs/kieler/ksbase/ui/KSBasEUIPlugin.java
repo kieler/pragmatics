@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.BundleContext;
 
 import de.cau.cs.kieler.ksbase.ui.menus.DynamicBundleLoader;
@@ -106,7 +107,7 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
         DynamicMenuContributions.INSTANCE.createAllMenuContributions();
 
         // Adding a part listener to check when to activate a bundle
-        if (PlatformUI.getWorkbench() != null) {
+        try {
             for (IWorkbenchWindow window : PlatformUI.getWorkbench().getWorkbenchWindows()) {
                 if (window.getActivePage() != null) {
                     window.getActivePage().addPartListener(DynamicBundleLoader.INSTANCE);
@@ -114,6 +115,10 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
                 window.addPageListener(DynamicBundleLoader.INSTANCE);
             }
             PlatformUI.getWorkbench().addWindowListener(DynamicBundleLoader.INSTANCE);
+        } catch (IllegalStateException exception) {
+            // workbench has not been initialized yet
+            StatusManager.getManager().handle(new Status(Status.ERROR, PLUGIN_ID,
+                    "Unable to register part listener for KSBase.", exception));
         }
     }
 
