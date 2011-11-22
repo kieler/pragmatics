@@ -186,8 +186,8 @@ public final class DynamicMenuContributions {
             return true;
         }
         
-        private HashMap<Class<?>, Object> getSelectionHash(final List<EObject> selection) {
-            HashMap<Class<?>, Object> selectionCache = new HashMap<Class<?>, Object>();
+        private HashMap<Object, Object> getSelectionHash(final List<EObject> selection) {
+            HashMap<Object, Object> selectionCache = new HashMap<Object, Object>();
             for (EObject obj : selection) {
                 Object cache = selectionCache.get(obj.getClass());
                 List listCache;
@@ -204,7 +204,7 @@ public final class DynamicMenuContributions {
             for (Object obj : selectionCache.values()) {
                 if (obj instanceof List) {
                     if (((List) obj).size() == 1) {
-                        selectionCache.put(((List) obj).get(0).getClass(), ((List) obj).get(0));
+                        selectionCache.put(((List) obj).get(0), ((List) obj).get(0));
                     }
                 }
             }
@@ -289,17 +289,17 @@ public final class DynamicMenuContributions {
             List<EObject> selection = getCurrentSelection(context);
             if (selection != null) {
                 if (transformation.getTransformationClass() != null) {
-                    HashMap<Class<?>, Object> selectionHash = this.getSelectionHash(selection);
+                    HashMap<Object, Object> selectionHash = this.getSelectionHash(selection);
                     Method method = null;
                     List params = new LinkedList();
                     for (Method m : transformation.getTransformationClass().getClass().getMethods()) {
                         if (m.getName().equals(transformation.getTransformation())) {
-                            HashMap<Class<?>, Object> selectionCache = this.getSelectionHash(selection);
+                            //HashMap<Class<?>, Object> selectionCache = this.getSelectionHash(selection);
                             params = new LinkedList();
                             method = m;
                             for (Class<?> c : m.getParameterTypes()) {
                                 Object param = null;
-                                for (Object p: selectionCache.values()) {
+                                for (Object p: selectionHash.values()) {
                                     if (this.match(c, p.getClass()) && !params.contains(p)) {
                                         param = p;
                                         break;

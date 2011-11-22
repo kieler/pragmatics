@@ -126,8 +126,8 @@ public class KSBasECombination extends AbstractCombination {
         }
     }
 
-    private HashMap<Class<?>, Object> getSelectionHash(final List<EObject> selection) {
-        HashMap<Class<?>, Object> selectionCache = new HashMap<Class<?>, Object>();
+    private HashMap<Object, Object> getSelectionHash(final List<EObject> selection) {
+        HashMap<Object, Object> selectionCache = new HashMap<Object, Object>();
         for (EObject obj : selection) {
             Object cache = selectionCache.get(obj.getClass());
             List listCache;
@@ -144,7 +144,7 @@ public class KSBasECombination extends AbstractCombination {
         for (Object obj : selectionCache.values()) {
             if (obj instanceof List) {
                 if (((List) obj).size() == 1) {
-                    selectionCache.put(((List) obj).get(0).getClass(), ((List) obj).get(0));
+                    selectionCache.put(((List) obj).get(0), ((List) obj).get(0));
                 }
             }
         }
@@ -159,7 +159,7 @@ public class KSBasECombination extends AbstractCombination {
         List params = new LinkedList();
         for (Method m : transformation.getTransformationClass().getClass().getMethods()) {
             if (m.getName().equals(transformation.getTransformation())) {
-                HashMap<Class<?>, Object> selectionCache = this.getSelectionHash(selection);
+                HashMap<Object, Object> selectionCache = this.getSelectionHash(selection);
                 params = new LinkedList();
                 method = m;
                 for (Class<?> c : m.getParameterTypes()) {
