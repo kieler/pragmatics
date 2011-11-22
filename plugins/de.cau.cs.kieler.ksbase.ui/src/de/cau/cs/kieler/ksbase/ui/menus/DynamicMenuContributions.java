@@ -358,8 +358,10 @@ public final class DynamicMenuContributions {
                             editorSettings, validationCache);
                     KSBasECombination combination = new KSBasECombination(editorSettings);
                     ImageDescriptor icon = null;
-                    icon = KSBasEUIPlugin.imageDescriptorFromPlugin(editorSettings.getContributor()
-                            .getName(), transformation.getIcon());
+                    if(transformation.getIcon() != null && !transformation.getIcon().equals("")){
+                    	icon = KSBasEUIPlugin.imageDescriptorFromPlugin(editorSettings.getContributor()
+                    			.getName(), transformation.getIcon());
+                    }
                     KeySequence keySequence = null;
 
                     try {
