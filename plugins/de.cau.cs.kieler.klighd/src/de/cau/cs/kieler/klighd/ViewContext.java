@@ -40,7 +40,7 @@ public final class ViewContext extends MapPropertyHolder {
      * @param viewerProvider
      *            the viewer provider
      */
-    public void setViewerProvider(final IViewerProvider viewerProvider) {
+    protected void setViewerProvider(final IViewerProvider viewerProvider) {
         this.viewerProvider = viewerProvider;
     }
 
@@ -59,7 +59,7 @@ public final class ViewContext extends MapPropertyHolder {
      * @param transformationContext
      *            the transformation context
      */
-    public void addTransformationContext(final TransformationContext<?, ?> transformationContext) {
+    protected void addTransformationContext(final TransformationContext<?, ?> transformationContext) {
         transformationContexts.add(transformationContext);
         transformationContext.setViewContext(this);
     }
@@ -70,7 +70,7 @@ public final class ViewContext extends MapPropertyHolder {
      * @param contexts
      *            the transformation contexts
      */
-    public void addTransformationContexts(final List<TransformationContext<?, ?>> contexts) {
+    protected void addTransformationContexts(final List<TransformationContext<?, ?>> contexts) {
         for (TransformationContext<?, ?> transformationContext : contexts) {
             addTransformationContext(transformationContext);
         }

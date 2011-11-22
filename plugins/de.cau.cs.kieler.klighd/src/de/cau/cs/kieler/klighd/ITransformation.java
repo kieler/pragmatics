@@ -41,13 +41,13 @@ public interface ITransformation<S, T> {
      * Returns the element in the source model which is represented by the given element in the
      * target model.
      * 
-     * @param object
+     * @param element
      *            the element in the target model
      * @param transformationContext
      *            the transformation context
      * @return the element in the source model or null if the element could not be found
      */
-    Object getSourceElement(Object object, TransformationContext<S, T> transformationContext);
+    Object getSourceElement(Object element, TransformationContext<S, T> transformationContext);
 
     /**
      * Returns the element in the target model which represents the given element in the source

@@ -217,6 +217,26 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
     public void setSelection(final ISelection selection) {
         // not supported yet
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setSelection(final Object[] diagramElements) {
+        if (currentViewer != null) {
+            currentViewer.setSelection(diagramElements);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clearSelection() {
+        if (currentViewer != null) {
+            currentViewer.clearSelection();
+        }
+    }
 
     /**
      * {@inheritDoc}
