@@ -109,7 +109,7 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
     }
 
     /**
-     * Sets the balloon attributes. *
+     * Sets the balloon attributes.
      * 
      * @param map
      *            A map of key-value pairs.
@@ -152,7 +152,7 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
     /**
      * Sets the corresponding edit part that is target for this balloon.
      * 
-     * FIXME: seperate setter and tester
+     * FIXME: separate setter and tester
      * 
      * @return true iff the given EditPart is target for the balloon
      */

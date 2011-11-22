@@ -190,33 +190,25 @@ public final class DynamicMenuContributions {
             HashMap<Object, Object> selectionCache = new HashMap<Object, Object>();
             for (EObject obj : selection) {
                 Object cache = selectionCache.get(obj.getClass());
-                List listCache;
+                List<Object> listCache;
                 if (cache == null) {
-                    listCache = new LinkedList();
+                    listCache = new LinkedList<Object>();
                     selectionCache.put(obj.getClass(), listCache);
                     listCache.add(obj);
                 } else if (cache instanceof List<?>) {
-                    listCache = (List<?>) cache;
+                    listCache = (List<Object>) cache;
                     listCache.add(obj);
-
                 }
             }
             for (Object obj : selectionCache.values()) {
                 if (obj instanceof List) {
-                    if (((List) obj).size() == 1) {
-                        selectionCache.put(((List) obj).get(0), ((List) obj).get(0));
+                    if (((List<?>) obj).size() == 1) {
+                        selectionCache.put(((List<?>) obj).get(0), ((List<?>) obj).get(0));
                     }
                 }
             }
 
             return selectionCache;
-        }
-        
-        private boolean match(Class a, Class b) {
-            if (a.isAssignableFrom(b)) {
-                return true;
-            } 
-            return false;
         }
 
         /**
@@ -245,6 +237,7 @@ public final class DynamicMenuContributions {
                         IEditorPart editor = ((DiagramEditDomain) domain).getEditorPart();
                         final DiagramDocumentEditor diagramEditor = (DiagramDocumentEditor) editor;
                         this.transDomain = diagramEditor.getEditingDomain();
+                        @SuppressWarnings("unchecked")
                         List<EditPart> selectedParts = diagramEditor.getDiagramGraphicalViewer()
                                 .getSelectedEditParts();
                         EditPart root = diagramEditor.getDiagramGraphicalViewer().getRootEditPart();
@@ -264,19 +257,19 @@ public final class DynamicMenuContributions {
                             selectionList.add(rootObject);
                         }
                         return selectionList;
-                    }
-                    // no Diagram EditDomain found -> still try to look for EObjects directly, maybe we have some
-                    // structural EMF Editor like the tree editor (haf)
-                    else{
-                    	List<EObject> eObjects = new ArrayList<EObject>(((List<?>) defaultVar).size());
-                    	try{
-                    		for(Object o:(List<?>) defaultVar){
-                    			eObjects.add((EObject)o);
-                    		}
-                    		return eObjects;
-                    	}catch(ClassCastException e){
-                    		// fall through
-                    	}
+                    } else {
+                        // no Diagram EditDomain found -> still try to look for EObjects directly, maybe
+                        // we have some structural EMF Editor like the tree editor (haf)
+                        List<EObject> eObjects = new ArrayList<EObject>(
+                                ((List<?>) defaultVar).size());
+                        try {
+                            for (Object o : (List<?>) defaultVar) {
+                                eObjects.add((EObject) o);
+                            }
+                            return eObjects;
+                        } catch (ClassCastException e) {
+                            // ignore exception
+                        }
                     }
                 }
             }
@@ -291,21 +284,20 @@ public final class DynamicMenuContributions {
                 if (transformation.getTransformationClass() != null) {
                     HashMap<Object, Object> selectionHash = this.getSelectionHash(selection);
                     Method method = null;
-                    List params = new LinkedList();
+                    List<Object> params = new LinkedList<Object>();
                     for (Method m : transformation.getTransformationClass().getClass().getMethods()) {
                         if (m.getName().equals(transformation.getTransformation())) {
                             //HashMap<Class<?>, Object> selectionCache = this.getSelectionHash(selection);
-                            params = new LinkedList();
+                            params = new LinkedList<Object>();
                             method = m;
                             for (Class<?> c : m.getParameterTypes()) {
                                 Object param = null;
                                 for (Object p: selectionHash.values()) {
-                                    if (this.match(c, p.getClass()) && !params.contains(p)) {
+                                    if (c.isAssignableFrom(p.getClass()) && !params.contains(p)) {
                                         param = p;
                                         break;
                                     }
                                 }
-                                //Object param = selectionCache.get(c);
                                 if (param != null) {
                                     params.add(param);
                                 } else {
@@ -379,7 +371,6 @@ public final class DynamicMenuContributions {
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                    String con = contrib.getData();
                     if (contrib.getData().startsWith("menu:")) {
                         KiviMenuContributionService.INSTANCE.addToolbarButton(combination, command
                                 + ".menu", transformation.getName(), transformation.getToolTip(),

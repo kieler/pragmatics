@@ -14,14 +14,8 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.ui.handler;
 
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.common.core.service.AbstractProvider;
 import org.eclipse.gmf.runtime.common.core.service.IOperation;
@@ -30,9 +24,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.NoteEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
 import org.eclipse.gmf.runtime.diagram.ui.internal.editparts.NoteAttachmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.IEditPolicyProvider;
-import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.model.gmf.ModelGmfPlugin;
 import de.cau.cs.kieler.core.model.gmf.policies.IBalloonContribution;
 import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
 
@@ -96,50 +88,6 @@ public class BalloonPopupEditPolicyProvider extends AbstractProvider implements
      * @return the list of contributions
      */
     private List<IBalloonContribution> getContributions() {
-        /*
-        if (contributions == null) {
-            IConfigurationElement[] contributors = Platform
-                    .getExtensionRegistry()
-                    .getConfigurationElementsFor(
-                            "de.cau.cs.kieler.core.model.gmf.balloonPopupBarContribution");
-
-            if (contributors != null && contributors.length > 0) {
-                contributions = new LinkedList<IBalloonContribution>();
-
-                for (IConfigurationElement contributor : contributors) {
-                    if (contributor.isValid()) {
-                        try {
-                            Object o = contributor
-                                    .createExecutableExtension("class");
-
-                            if (o instanceof IBalloonContribution) {
-                                IBalloonContribution con = (IBalloonContribution) o;
-
-                                Map<String, String> map = new HashMap<String, String>();
-
-                                IConfigurationElement[] children = contributor
-                                        .getChildren();
-
-                                if (children != null && children.length > 0) {
-
-                                    for (IConfigurationElement child : children) {
-                                        String key = child.getAttribute("key");
-                                        String value = child
-                                                .getAttribute("value");
-                                        map.put(key, value);
-                                    }
-                                    con.init(map);
-                                }
-                                contributions.add(con);
-                            }
-                        } catch (CoreException exception) {
-                            StatusManager.getManager().handle(exception, ModelGmfPlugin.PLUGIN_ID);
-                        }
-                    }
-                }
-            }
-        }
-        */
         if (contributions == null) {
             contributions = DynamicMenuContributions.INSTANCE.getBalloonContributions();
         }

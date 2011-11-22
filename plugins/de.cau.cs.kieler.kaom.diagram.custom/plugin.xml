@@ -70,31 +70,6 @@
          </propertyTester>
       </extension>
       <extension
-            point="org.eclipse.gmf.runtime.common.ui.services.action.globalActionHandlerProviders">
-         <GlobalActionHandlerProvider
-               class="de.cau.cs.kieler.kaom.diagram.custom.handlers.KaomCutCopyPasteHandlerProvider"
-               id="de.cau.cs.kieler.kaom.diagram.custom.CutCopyPasteHandler">
-            <Priority
-                  name="Lowest">
-            </Priority>
-            <ViewId
-                  id="de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID">
-               <ElementType
-                     class="org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart">
-                  <GlobalActionId
-                        actionId="cut">
-                  </GlobalActionId>
-                  <GlobalActionId
-                        actionId="copy">
-                  </GlobalActionId>
-                  <GlobalActionId
-                        actionId="paste">
-                  </GlobalActionId>
-               </ElementType>
-            </ViewId>
-         </GlobalActionHandlerProvider>
-      </extension>
-      <extension
             point="org.eclipse.ui.navigator.navigatorContent">
          <commonWizard
                menuGroupId="de.cau.cs.kieler"
