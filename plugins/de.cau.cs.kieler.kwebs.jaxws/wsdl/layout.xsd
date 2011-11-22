@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<xs:schema xmlns:tns="http://rtsys.informatik.uni-kiel.de/layout" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://rtsys.informatik.uni-kiel.de/layout" version="1.0">
+<xs:schema xmlns:tns="http://layout.rtsys.informatik.uni-kiel.de/layout" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://layout.rtsys.informatik.uni-kiel.de/layout" version="1.0">
 
   <xs:element name="getPreviewImage" type="tns:getPreviewImage"/>
   <xs:element name="getPreviewImageResponse" type="tns:getPreviewImageResponse"/>

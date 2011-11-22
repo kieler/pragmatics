@@ -4,14 +4,14 @@
   xmlns="http://schemas.xmlsoap.org/wsdl/"
   xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-  xmlns:tns="http://rtsys.informatik.uni-kiel.de/layout"
+  xmlns:tns="http://layout.rtsys.informatik.uni-kiel.de/layout"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  targetNamespace="http://rtsys.informatik.uni-kiel.de/layout">
+  targetNamespace="http://layout.rtsys.informatik.uni-kiel.de/layout">
 
   <documentation>
     This document contains the interface description for the KIELER Web Service for Layout (KWebS). More details
     on how to use this service and how to set up your own server can be found at the project page at
-    http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/Projects/KWebS.
+    http://layout.rtsys.informatik.uni-kiel.de/trac/kieler/wiki/Projects/KWebS.
   </documentation>
 
   <!-- Abstract part of the web service definition -->
@@ -22,9 +22,9 @@
 
     <xs:schema
       version="1.0"
-      xmlns:tns="http://rtsys.informatik.uni-kiel.de/layout"
+      xmlns:tns="http://layout.rtsys.informatik.uni-kiel.de/layout"
       xmlns:xs="http://www.w3.org/2001/XMLSchema"
-      targetNamespace="http://rtsys.informatik.uni-kiel.de/layout">
+      targetNamespace="http://layout.rtsys.informatik.uni-kiel.de/layout">
 
       <xs:element name="getPreviewImage" type="tns:getPreviewImage"/>
       <xs:element name="getPreviewImageResponse" type="tns:getPreviewImageResponse"/>
@@ -133,9 +133,9 @@
         which the service can handle can be determined by using it's getServiceData() operation.
       </documentation>
 
-      <input wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/graphLayoutRequest" message="tns:graphLayout"/>
-      <output wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/graphLayoutResponse" message="tns:graphLayoutResponse"/>
-      <fault wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/ServiceFault" name="ServiceFault" message="tns:ServiceFault"/>
+      <input wsam:Action="http://layout.rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/graphLayoutRequest" message="tns:graphLayout"/>
+      <output wsam:Action="http://layout.rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/graphLayoutResponse" message="tns:graphLayoutResponse"/>
+      <fault wsam:Action="http://layout.rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/ServiceFault" name="ServiceFault" message="tns:ServiceFault"/>
 
     </operation>
 
@@ -146,9 +146,9 @@
         representations understood by the service.
       </documentation>
 
-      <input wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/getServiceDataRequest" message="tns:getServiceData"/>
-      <output wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/getServiceDataResponse" message="tns:getServiceDataResponse"/>
-      <fault wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/ServiceFault" name="ServiceFault" message="tns:ServiceFault"/>
+      <input wsam:Action="http://layout.rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/getServiceDataRequest" message="tns:getServiceData"/>
+      <output wsam:Action="http://layout.rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/getServiceDataResponse" message="tns:getServiceDataResponse"/>
+      <fault wsam:Action="http://layout.rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/ServiceFault" name="ServiceFault" message="tns:ServiceFault"/>
 
     </operation>
 
@@ -159,9 +159,9 @@
         The preview image is identified by it's unique identifier which can be determined from the services meta data.
       </documentation>
 
-      <input wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/getPreviewImageRequest" message="tns:getPreviewImage"/>
-      <output wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/getPreviewImageResponse" message="tns:getPreviewImageResponse"/>
-      <fault wsam:Action="http://rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/ServiceFault" name="ServiceFault" message="tns:ServiceFault"/>
+      <input wsam:Action="http://layout.rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/getPreviewImageRequest" message="tns:getPreviewImage"/>
+      <output wsam:Action="http://layout.rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/getPreviewImageResponse" message="tns:getPreviewImageResponse"/>
+      <fault wsam:Action="http://layout.rtsys.informatik.uni-kiel.de/layout/LayoutServicePort/ServiceFault" name="ServiceFault" message="tns:ServiceFault"/>
 
     </operation>
 

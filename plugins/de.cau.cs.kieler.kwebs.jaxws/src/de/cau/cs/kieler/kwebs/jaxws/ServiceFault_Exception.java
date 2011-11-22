@@ -10,7 +10,7 @@ import javax.xml.ws.WebFault;
  * Generated source version: 2.1
  * 
  */
-@WebFault(name = "ServiceFault", targetNamespace = "http://rtsys.informatik.uni-kiel.de/layout")
+@WebFault(name = "ServiceFault", targetNamespace = "http://layout.rtsys.informatik.uni-kiel.de/layout")
 public class ServiceFault_Exception
     extends Exception
 {

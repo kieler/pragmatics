@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.1
  * 
  */
-@WebServiceClient(name = "LayoutService", targetNamespace = "http://rtsys.informatik.uni-kiel.de/layout")
+@WebServiceClient(name = "LayoutService", targetNamespace = "http://layout.rtsys.informatik.uni-kiel.de/layout")
 public class LayoutService
     extends Service
 {
@@ -30,9 +30,9 @@ public class LayoutService
         try {
             URL baseUrl;
             baseUrl = de.cau.cs.kieler.kwebs.jaxws.LayoutService.class.getResource(".");
-            url = new URL(baseUrl, "http://rtsys.informatik.uni-kiel.de:9442/layout?wsdl");
+            url = new URL(baseUrl, "http://layout.rtsys.informatik.uni-kiel.de:9442/layout?wsdl");
         } catch (MalformedURLException e) {
-            logger.warning("Failed to create URL for the wsdl Location: 'http://rtsys.informatik.uni-kiel.de:9442/layout?wsdl', retrying as a local file");
+            logger.warning("Failed to create URL for the wsdl Location: 'http://layout.rtsys.informatik.uni-kiel.de:9442/layout?wsdl', retrying as a local file");
             logger.warning(e.getMessage());
         }
         LAYOUTSERVICE_WSDL_LOCATION = url;
@@ -43,7 +43,7 @@ public class LayoutService
     }
 
     public LayoutService() {
-        super(LAYOUTSERVICE_WSDL_LOCATION, new QName("http://rtsys.informatik.uni-kiel.de/layout", "LayoutService"));
+        super(LAYOUTSERVICE_WSDL_LOCATION, new QName("http://layout.rtsys.informatik.uni-kiel.de/layout", "LayoutService"));
     }
 
     /**
@@ -53,7 +53,7 @@ public class LayoutService
      */
     @WebEndpoint(name = "LayoutServicePort")
     public LayoutServicePort getLayoutServicePort() {
-        return super.getPort(new QName("http://rtsys.informatik.uni-kiel.de/layout", "LayoutServicePort"), LayoutServicePort.class);
+        return super.getPort(new QName("http://layout.rtsys.informatik.uni-kiel.de/layout", "LayoutServicePort"), LayoutServicePort.class);
     }
 
     /**
@@ -65,7 +65,7 @@ public class LayoutService
      */
     @WebEndpoint(name = "LayoutServicePort")
     public LayoutServicePort getLayoutServicePort(WebServiceFeature... features) {
-        return super.getPort(new QName("http://rtsys.informatik.uni-kiel.de/layout", "LayoutServicePort"), LayoutServicePort.class, features);
+        return super.getPort(new QName("http://layout.rtsys.informatik.uni-kiel.de/layout", "LayoutServicePort"), LayoutServicePort.class, features);
     }
 
 }

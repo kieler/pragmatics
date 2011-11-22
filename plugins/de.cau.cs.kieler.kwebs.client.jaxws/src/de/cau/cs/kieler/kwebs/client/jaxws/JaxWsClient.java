@@ -75,7 +75,7 @@ public class JaxWsClient extends HttpBasedLayoutServiceClient {
 
     /** */
     private static final String QNAME_NS
-        = "http://rtsys.informatik.uni-kiel.de/layout";
+        = "http://layout.rtsys.informatik.uni-kiel.de/layout";
 
     /** */
     private static final String QNAME_SERVICE

@@ -11,7 +11,7 @@
    <extension
          point="de.cau.cs.kieler.kwebs.client.configurations">
       <defaultServerConfig
-            address="eti://rtsys.informatik.uni-kiel.de:9867"
+            address="eti://layout.rtsys.informatik.uni-kiel.de:9867"
             name="KIELER Demo Layout Service (jETI)">
       </defaultServerConfig>
    </extension>

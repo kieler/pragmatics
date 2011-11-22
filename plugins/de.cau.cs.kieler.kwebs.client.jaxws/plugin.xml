@@ -11,7 +11,7 @@
    <extension
          point="de.cau.cs.kieler.kwebs.client.configurations">
       <defaultServerConfig
-            address="http://rtsys.informatik.uni-kiel.de:9442/layout"
+            address="http://layout.rtsys.informatik.uni-kiel.de:9442/layout"
             isStandard="true"
             name="KIELER Demo Layout Service (HTTP)">
       </defaultServerConfig>

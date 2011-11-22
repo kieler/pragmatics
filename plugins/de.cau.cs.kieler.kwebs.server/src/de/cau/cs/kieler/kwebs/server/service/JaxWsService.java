@@ -42,7 +42,7 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
     name = "LayoutServicePort",
     portName = "LayoutServicePort",
     serviceName = "LayoutService",
-    targetNamespace = "http://rtsys.informatik.uni-kiel.de/layout",
+    targetNamespace = "http://layout.rtsys.informatik.uni-kiel.de/layout",
     wsdlLocation = "server/kwebs/wsdl/layoutService.wsdl"
 )  
 //@HandlerChain(file = "handlerchain/handlerchain.xml")
