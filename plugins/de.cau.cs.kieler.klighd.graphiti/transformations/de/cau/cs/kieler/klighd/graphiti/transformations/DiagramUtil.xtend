@@ -66,14 +66,13 @@ class DiagramUtil {
      *  in an edge rendering that one used to from typical
      *  graph layouts (edge tip points to the center of shape's GA).
      */
-    def Anchor createAnchor(Shape shape) {
-        val anchor = PictogramsFactory::eINSTANCE.createChopboxAnchor
+    def create anchor:PictogramsFactory::eINSTANCE.createChopboxAnchor createAnchor(Shape shape) {
         anchor.setActive(false)
         anchor.setVisible(true)
         anchor.setLink(PictogramsFactory::eINSTANCE.createPictogramLink)
         anchor.setReferencedGraphicsAlgorithm(shape.graphicsAlgorithm)
         shape.anchors.add(anchor)
-        return anchor
+        anchor
     }
 
 
@@ -217,6 +216,11 @@ class DiagramUtil {
         o.createConnection();
     }
     
+    def Connection createConnection(Object o, int width, Color color){
+    	val connection = o.createConnection(width)
+    	connection.graphicsAlgorithm.setForeground(color)
+    	return connection
+    }
     
     def Connection createConnection(Object o, int width) {
         val connection = o.createConnection;
@@ -385,6 +389,11 @@ class DiagramUtil {
         color.setGreen(51);
         color.setBlue(153);
        }
+       case "lightBlue" : {
+        color.setRed(150);
+        color.setGreen(150);
+        color.setBlue(255);
+       }
        case "darkGray" : {
         color.setRed(105);
         color.setGreen(105);
@@ -422,6 +431,11 @@ class DiagramUtil {
        }
        case "yellow" : {
         color.setRed(255);
+        color.setGreen(255);
+        color.setBlue(0);
+       }
+       case "green" : {
+        color.setRed(0);
         color.setGreen(255);
         color.setBlue(0);
        }
