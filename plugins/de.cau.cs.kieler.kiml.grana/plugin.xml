@@ -395,6 +395,36 @@
             id="de.cau.cs.kieler.kiml.grana.hyperedgeCrossings"
             name="Hyperedge Crossings">
       </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.basic"
+            class="de.cau.cs.kieler.kiml.grana.analyses.PortCountAnalysis"
+            description="The number of ports including hierarchies."
+            id="de.cau.cs.kieler.kiml.grana.portCount"
+            name="Port Count">
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.PortSideAnalysis"
+            description="The number of ports for each side a port can be attached to"
+            id="de.cau.cs.kieler.kiml.grana.portSides"
+            name="Port Sides">
+         <component
+               abbreviation="N"
+               name="North">
+         </component>
+         <component
+               abbreviation="E"
+               name="East">
+         </component>
+         <component
+               abbreviation="S"
+               name="South">
+         </component>
+         <component
+               abbreviation="W"
+               name="West">
+         </component>
+      </provider>
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.grana.resultVisualizers">

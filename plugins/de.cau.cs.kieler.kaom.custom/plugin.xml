@@ -3,15 +3,20 @@
 <plugin>
    <extension
          point="de.cau.cs.kieler.kiml.layoutInfo">
+      <semanticOption
+            class="de.cau.cs.kieler.kaom.Entity"
+            config="de.cau.cs.kieler.kaom.custom.TypeLayoutConfig">
+      </semanticOption>
       <option
             class="de.cau.cs.kieler.kaom.Relation"
             option="de.cau.cs.kieler.hypernode"
             value="true">
       </option>
-      <semanticOption
+      <option
             class="de.cau.cs.kieler.kaom.Entity"
-            config="de.cau.cs.kieler.kaom.custom.TypeLayoutConfig">
-      </semanticOption>
+            option="de.cau.cs.kieler.direction"
+            value="RIGHT">
+      </option>
    </extension>
 
 </plugin>

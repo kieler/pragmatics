@@ -22,31 +22,30 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 
 /**
- * A graph analysis that computes the number of edges in the given graph.
+ * A graph analysis that computes the number of ports in the given graph.
  * 
- * @author mri
+ * @author msp
  */
-public class EdgeCountAnalysis implements IAnalysis {
+public class PortCountAnalysis implements IAnalysis {
 
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
+    public Object doAnalysis(final KNode parentNode,
+            final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Number of edges analysis", 1);
-        int numberOfEdges = 0;
+        progressMonitor.begin("Number of ports analysis", 1);
+        int numberOfports = 0;
         List<KNode> nodeQueue = new LinkedList<KNode>();
         nodeQueue.add(parentNode);
         while (nodeQueue.size() > 0) {
             // pop first element
             KNode node = nodeQueue.remove(0);
-            numberOfEdges += node.getOutgoingEdges().size();
-            
+            numberOfports += node.getPorts().size();
+
             nodeQueue.addAll(node.getChildren());
         }
-
         progressMonitor.done();
-        return numberOfEdges;
+        return numberOfports;
     }
-
 }

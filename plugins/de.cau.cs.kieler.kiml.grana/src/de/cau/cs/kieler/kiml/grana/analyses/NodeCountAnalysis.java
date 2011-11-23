@@ -34,8 +34,8 @@ public class NodeCountAnalysis implements IAnalysis {
     public Object doAnalysis(final KNode parentNode,
             final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Number of Nodes analysis", 1);
-        Integer numberOfNodes = 0;
+        progressMonitor.begin("Number of nodes analysis", 1);
+        int numberOfNodes = 0;
         List<KNode> nodeQueue = new LinkedList<KNode>();
         nodeQueue.add(parentNode);
         while (nodeQueue.size() > 0) {
