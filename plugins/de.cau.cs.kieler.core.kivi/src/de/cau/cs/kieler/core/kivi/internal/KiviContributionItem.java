@@ -410,7 +410,11 @@ public class KiviContributionItem extends CompoundContributionItem implements
             IContributionItem item = items[i];
             int oldItemCount = parent.getItemCount();
             if (item.isVisible()) {
-                item.fill(parent, myIndex);
+                try{
+                	item.fill(parent, myIndex);
+                }catch(java.lang.RuntimeException e){
+                	System.out.println(e.getMessage());
+                }
             }
             int newItemCount = parent.getItemCount();
             int numAdded = newItemCount - oldItemCount;
