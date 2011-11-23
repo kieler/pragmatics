@@ -383,11 +383,13 @@ public class KiviContributionItem extends CompoundContributionItem implements
      * @param buttonID the button identifier
      */
     private static void unload(final String buttonID) {
-        IContributionItem item = idButtonMap.get(buttonID);
-        if (item != null) {
-            ButtonHandler handler = oldButtonsHandlerMap.get(item);
-            if (handler != null) {
-                handler.unload();
+        if (!softUpdate) {
+            IContributionItem item = idButtonMap.get(buttonID);
+            if (item != null) {
+                ButtonHandler handler = oldButtonsHandlerMap.get(item);
+                if (handler != null) {
+                    handler.unload();
+                }
             }
         }
     }
@@ -414,6 +416,12 @@ public class KiviContributionItem extends CompoundContributionItem implements
             int numAdded = newItemCount - oldItemCount;
             myIndex += numAdded;
         }
+    }
+    
+    private static boolean softUpdate = false;
+    
+    public static void setSoftUpdate(boolean _softUpdate) {
+        softUpdate = _softUpdate;
     }
 
 }

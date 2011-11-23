@@ -381,7 +381,7 @@ public final class DynamicMenuContributions {
                                 editorSettings.getEditorId());
                         combination.addTransformation(command + ".menu", transformation);
                     } else if (contrib.getData().startsWith("toolbar:")) {
-                        KiviMenuContributionService.INSTANCE.addToolbarButton(combination, command
+                        KiviMenuContributionService.INSTANCE.addToolbarButton(combination, "ksbase." + command
                                 + ".toolbar", transformation.getName(),
                                 transformation.getToolTip(), icon, SWT.PUSH,
                                 KiviMenuContributionService.LocationScheme.TOOLBAR, visibility,
