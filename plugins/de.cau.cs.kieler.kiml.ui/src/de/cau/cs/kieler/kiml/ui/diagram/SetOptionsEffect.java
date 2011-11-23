@@ -25,6 +25,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
+import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
@@ -79,9 +80,9 @@ public class SetOptionsEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance()
-                .getBridge(workbenchPart);
-        if (bridge != null) {
+        try {
+            IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance()
+                    .getBridge(workbenchPart);
             EditPart editPart = bridge.getEditPart(modelElement);
             IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
                     .getManager(workbenchPart, editPart);
@@ -109,6 +110,8 @@ public class SetOptionsEffect extends AbstractEffect {
                     } , (TransactionalEditingDomain) editingDomain, Messages.getString("kiml.ui.40"));
                 }
             }
+        } catch (UnsupportedPartException exception) {
+            // ignore exception
         }
     }
 
