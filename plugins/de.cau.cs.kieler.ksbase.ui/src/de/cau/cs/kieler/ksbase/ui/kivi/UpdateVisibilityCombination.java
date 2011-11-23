@@ -13,24 +13,14 @@
  */
 package de.cau.cs.kieler.ksbase.ui.kivi;
 
-import java.util.Map;
-
-import org.eclipse.core.expressions.EvaluationResult;
-import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
-import org.eclipse.gmf.runtime.notation.Diagram;
-import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.menus.DynamicMenuContributionItem;
 import org.eclipse.ui.services.IEvaluationService;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.internal.KiviContributionItem;
-import de.cau.cs.kieler.core.model.triggers.SelectionTrigger.DiagramSelectionState;
 import de.cau.cs.kieler.core.model.triggers.SelectionTrigger.EObjectSelectionState;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 
@@ -44,28 +34,12 @@ import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
  */
 public class UpdateVisibilityCombination extends AbstractCombination {
 
-    IWorkbenchPart lastPart = null;
-
-    Diagram lastDiagram = null;
-
     /**
      * {@inheritDoc}
      */
-    public void execute(final EObjectSelectionState selection) {
-        
-        if (lastPart == selection.getWorkbenchPart()
-                && selection.getWorkbenchPart() instanceof IEditorPart) {
-            if ((selection.getWorkbenchPart() instanceof DiagramDocumentEditor)
-                    && ((DiagramDocumentEditor) selection.getWorkbenchPart()).getDiagram() == lastDiagram) {
-                update((IEditorPart) selection.getWorkbenchPart());
-
-            } else {
-                // update((IEditorPart)selection.getWorkbenchPart());
-                lastPart = selection.getWorkbenchPart();
-                lastDiagram = ((DiagramDocumentEditor) selection.getWorkbenchPart()).getDiagram();
-            }
-        } else {
-            lastPart = selection.getWorkbenchPart();
+    public void execute(final EObjectSelectionState selection) {      
+        if (selection.getWorkbenchPart() instanceof IEditorPart) {
+            update((IEditorPart) selection.getWorkbenchPart());
         }
     
     }
