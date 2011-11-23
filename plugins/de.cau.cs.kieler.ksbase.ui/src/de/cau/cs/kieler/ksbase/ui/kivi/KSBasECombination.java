@@ -15,6 +15,8 @@ package de.cau.cs.kieler.ksbase.ui.kivi;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -169,10 +171,10 @@ public class KSBasECombination extends AbstractCombination {
                 HashMap<Object, Object> selectionCache = this.getSelectionHash(selection);
                 params = new LinkedList();
                 method = m;
-                for (Class<?> c : m.getParameterTypes()) {
+                for (Type t : m.getGenericParameterTypes()) {
                     Object param = null;
                     for (Object p: selectionCache.values()) {
-                        if (this.match(c, p.getClass()) && !params.contains(p)) {
+                        if (this.match(t, p) && !params.contains(p)) {
                             param = p;
                             break;
                         }
@@ -209,10 +211,37 @@ public class KSBasECombination extends AbstractCombination {
 
     }
 
-    private boolean match(Class a, Class b) {
-        if (a.isAssignableFrom(b)) {
-            return true;
-        } 
+    private boolean match(Type a, Object b) {
+        if (a instanceof ParameterizedType) {
+            Type rawType = ((ParameterizedType) a).getRawType();
+            if (rawType instanceof Class) {
+                Class<?> c1 = (Class<?>) rawType;
+                Class<?> c2 = b.getClass();
+                if (c1.isAssignableFrom(c2)) {
+                    //if its a list also check generics
+                    if (c1.isAssignableFrom(List.class) && b instanceof List) {
+                        for (Type actualType: ((ParameterizedType) a).getActualTypeArguments()) {
+                            if (actualType instanceof Class) {
+                                Class<?> c3 = (Class<?>) actualType;
+                                Class<?> c4 = ((List) b).get(0).getClass();
+                                if (c3.isAssignableFrom(c4)) {
+                                    return true;
+                                }
+                            }
+                        }
+                        
+                    } else {
+                        return true;
+                    }
+                } 
+            }
+        } else if (a instanceof Class) {
+            Class<?> c1 = (Class<?>) a;
+            Class<?> c2 = b.getClass();
+            if (c1.isAssignableFrom(c2)) {
+                return true;
+            }
+        }
         return false;
     }
     
