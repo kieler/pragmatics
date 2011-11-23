@@ -31,6 +31,7 @@ import org.eclipse.ui.services.IEvaluationService;
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.internal.KiviContributionItem;
 import de.cau.cs.kieler.core.model.triggers.SelectionTrigger.DiagramSelectionState;
+import de.cau.cs.kieler.core.model.triggers.SelectionTrigger.EObjectSelectionState;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 
 /**
@@ -50,7 +51,7 @@ public class UpdateVisibilityCombination extends AbstractCombination {
     /**
      * {@inheritDoc}
      */
-    public void execute(final DiagramSelectionState selection) {
+    public void execute(final EObjectSelectionState selection) {
         
         if (lastPart == selection.getWorkbenchPart()
                 && selection.getWorkbenchPart() instanceof IEditorPart) {
