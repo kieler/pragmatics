@@ -215,7 +215,11 @@ public final class DynamicMenuContributions {
                     listCache.add(obj);
                 }
             }
-            for (Object obj : selectionCache.values()) {
+            //Collection<Object> values = selectionCache.values();
+            List<Object> cache = new LinkedList<Object>();
+            cache.addAll(selectionCache.values());
+            
+            for (Object obj : cache) {
                 if (obj instanceof List) {
                     if (((List<?>) obj).size() == 1) {
                         selectionCache.put(((List<?>) obj).get(0), ((List<?>) obj).get(0));

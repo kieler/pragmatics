@@ -150,7 +150,10 @@ public class KSBasECombination extends AbstractCombination {
 
             }
         }
-        for (Object obj : selectionCache.values()) {
+        List<Object> cache = new LinkedList<Object>();
+        cache.addAll(selectionCache.values());
+        
+        for (Object obj : cache) {
             if (obj instanceof List) {
                 if (((List) obj).size() == 1) {
                     selectionCache.put(((List) obj).get(0), ((List) obj).get(0));
