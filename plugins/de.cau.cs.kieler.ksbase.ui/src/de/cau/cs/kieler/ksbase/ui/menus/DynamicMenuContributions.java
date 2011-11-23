@@ -398,8 +398,6 @@ public final class DynamicMenuContributions {
      */
     public void createMenuForEditor(final EditorTransformationSettings editorSettings) {
         Assert.isNotNull(editorSettings);
-        UpdateVisibilityCombination com = new UpdateVisibilityCombination();
-        com.setActive(true);
         HashMap<String, HashMap<List<Object>, Boolean>> validationCache = new HashMap<String, HashMap<List<Object>, Boolean>>();
         for (KSBasEMenuContribution contrib : editorSettings.getMenuContributions()) {
             for (String command : contrib.getCommands()) {
