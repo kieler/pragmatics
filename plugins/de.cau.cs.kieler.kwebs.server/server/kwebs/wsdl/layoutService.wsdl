@@ -220,7 +220,7 @@
 
   <service name="LayoutService">
     <port name="LayoutServicePort" binding="tns:LayoutServicePortBinding">
-      <soap:address location="http://localhost:8442/layout"/>
+      <soap:address location="http://localhost:9442/layout"/>
     </port>
   </service>
 

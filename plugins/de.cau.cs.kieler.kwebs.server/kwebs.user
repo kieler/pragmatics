@@ -21,13 +21,13 @@
 #
 
 # Use this option to configure the address, port and context under which the JAXWS and HTTP based layout will be published 
-#de.cau.cs.kieler.kwebs.jaxws.httpAddress=http://0.0.0.0:8442/layout
+#de.cau.cs.kieler.kwebs.jaxws.httpAddress=http://0.0.0.0:9442/layout
 
 # Use this option to configure the address, port and context under which the JAXWS and HTTPS based layout will be published 
-#de.cau.cs.kieler.kwebs.jaxws.httpsAddress=https://0.0.0.0:8443/layout
+#de.cau.cs.kieler.kwebs.jaxws.httpsAddress=https://0.0.0.0:9443/layout
 
 # Use this option to configure the address and port under which the support server will be published
-#de.cau.cs.kieler.kwebs.supportServerAddress=http://0.0.0.0:8444
+#de.cau.cs.kieler.kwebs.supportServerAddress=http://0.0.0.0:9444
 
 # Use this option to configure the address under which the jETI server will be published
 #de.cau.cs.kieler.kwebs.jeti.server.hostname=0.0.0.0

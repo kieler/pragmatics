@@ -52,12 +52,10 @@ import de.cau.cs.kieler.kwebs.util.Resources;
 final class HttpsServerManager extends HttpServerManager {
 
     /** Default host for HTTPS connections. */
-    private static final String HTTPS_DEFAULTHOST
-        = "0.0.0.0";
+    private static final String HTTPS_DEFAULTHOST = "0.0.0.0";
 
     /** Default port for HTTPS connections. */
-    private static final int HTTPS_DEFAULTPORT
-        = 8443;
+    private static final int HTTPS_DEFAULTPORT = 9443;
     
     /**
      * Creates the {@code HttpsServer} instance configured to listen on the host and port specified by

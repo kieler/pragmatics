@@ -42,12 +42,10 @@ import de.cau.cs.kieler.kwebs.server.service.JaxWsService;
 class HttpServerManager extends AbstractServerManager {
 
     /** Default host for HTTP connections. */
-    private static final String HTTP_DEFAULTHOST
-        = "0.0.0.0";
+    private static final String HTTP_DEFAULTHOST = "0.0.0.0";
 
     /** Default port for HTTP connections. */
-    private static final int HTTP_DEFAULTPORT
-        = 80;
+    private static final int HTTP_DEFAULTPORT = 80;
     
     // The class {@code HttpServerManager} and its descendants are package private
     // so no need for getters and setters here.

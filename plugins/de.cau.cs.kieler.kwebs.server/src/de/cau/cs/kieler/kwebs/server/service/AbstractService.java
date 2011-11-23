@@ -90,8 +90,12 @@ public abstract class AbstractService {
             final String outformat, final List<GraphLayoutOption> options) {
         // Parameter testing
         if (serializedGraph == null) {
-            throw new IllegalArgumentException("No graph given");
+            throw new IllegalArgumentException("No input graph to process.");
         }
+        if (informat == null) {
+            throw new IllegalArgumentException("No input graph format was specified.");
+        }
+        
         Logger.log(Severity.DEBUG, "Starting layout");
         GraphFormatData informatData = TransformationService.getInstance()
                 .getFormatDataBySuffix(informat);
@@ -110,6 +114,7 @@ public abstract class AbstractService {
             serializedResult = layout(serializedGraph, informatData.getHandler(),
                     outformatData.getHandler(), options);
         }
+        
         Logger.log(Severity.DEBUG, "Finished layout");
         return serializedResult;
     }

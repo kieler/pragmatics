@@ -4,15 +4,17 @@ Bundle-Name: KIELER Layout Web Service Server Components
 Bundle-SymbolicName: de.cau.cs.kieler.kwebs.server;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Require-Bundle: org.eclipse.core.runtime,
- de.cau.cs.kieler.core;bundle-version="0.6.0",
- de.cau.cs.kieler.kiml;bundle-version="0.9.0",
- de.cau.cs.kieler.kiml.service;bundle-version="0.1.0",
- de.cau.cs.kieler.kwebs;bundle-version="0.1.0",
- de.cau.cs.kieler.kwebs.jaxws;bundle-version="0.1.0",
+ de.cau.cs.kieler.core,
+ de.cau.cs.kieler.core.kgraph,
+ de.cau.cs.kieler.kiml,
+ de.cau.cs.kieler.kiml.service,
+ de.cau.cs.kieler.kwebs,
+ de.cau.cs.kieler.kwebs.jaxws,
  javax.xml.ws;bundle-version="2.1.0",
  de.unido.ls5.eti.connector.sepp;bundle-version="1.5.0",
  de.unido.ls5.eti.toolserver;bundle-version="0.1.0",
- org.apache.log4j;bundle-version="1.2.15"
+ org.apache.log4j;bundle-version="1.2.15",
+ org.eclipse.emf.ecore;bundle-version="2.7.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.cau.cs.kieler.kwebs.server,
  de.cau.cs.kieler.kwebs.server.configuration,
