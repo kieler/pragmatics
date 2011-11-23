@@ -14,6 +14,7 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.ui.menus;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,6 +46,7 @@ import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.model.gmf.policies.IBalloonContribution;
 import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
 import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationContext;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasEMenuContribution;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
@@ -74,6 +76,7 @@ public final class DynamicMenuContributions {
 
     /**
      * Getter method for elements that should show up in balloon popups.
+     * 
      * @return the list of balloon popup contributions.
      */
     public List<IBalloonContribution> getBalloonContributions() {
@@ -119,11 +122,16 @@ public final class DynamicMenuContributions {
         private HashMap<String, HashMap<List<Object>, Boolean>> validationCache = null;
 
         /**
-         * Constructs a new expression evaluating the visibility of an transformation by matching the
+         * Constructs a new expression evaluating the visibility of an transformation by matching
+         * the
          * current selection and evaluation a validation method.
-         * @param transformation the transformation this expression belongs to.
-         * @param editorSettings the editor settings the transformation belongs to
-         * @param validationCache a cache of evaluated evaluations for better performance.
+         * 
+         * @param transformation
+         *            the transformation this expression belongs to.
+         * @param editorSettings
+         *            the editor settings the transformation belongs to
+         * @param validationCache
+         *            a cache of evaluated evaluations for better performance.
          */
         public KsbaseVisibilityExpression(final KSBasETransformation transformation,
                 final EditorTransformationSettings editorSettings,
@@ -136,56 +144,61 @@ public final class DynamicMenuContributions {
         /**
          * This method will evaluate the validation method belonging to the transformation of this
          * expression.
-         * @param selectionMapping a mapping of the current selection. Hopefully fits the 
-         *      parameters of the validation method.
+         * 
+         * @param selectionMapping
+         *            a mapping of the current selection. Hopefully fits the
+         *            parameters of the validation method.
          * @return true if validation evaluated positive false if negative or an error occured.
          */
         private boolean evaluateValidation(final List<Object> selectionMapping) {
             if (transformation.getValidation() != null) {
-            String[] validations = transformation.getValidation().split(",");
-            boolean result = true;
-            for (String val: validations) {
-                //final String val = transformation.getValidation();
-                HashMap<List<Object>, Boolean> cache = validationCache.get(val);
-                if (cache != null) {
-                    Boolean cachedResult = cache.get(selectionMapping);
-                    if (cachedResult != null) {
-                        if (!cachedResult) {
-                            return false;
+                String[] validations = transformation.getValidation().split(",");
+                boolean result = true;
+                for (String val : validations) {
+                    // final String val = transformation.getValidation();
+
+                    HashMap<List<Object>, Boolean> cache = validationCache.get(val);
+                    if (cache != null) {
+                        Boolean cachedResult = cache.get(selectionMapping);
+                        if (cachedResult != null) {
+                            if (!cachedResult) {
+                                return false;
+                            }
                         }
+                    } else {
+                        validationCache.put(val, new HashMap<List<Object>, Boolean>());
                     }
-                } else {
-                    validationCache.put(val, new HashMap<List<Object>, Boolean>());
-                }
-    
-                if ((val != null) && (!val.isEmpty()) && (transDomain != null)) {
-                    TransformationDescriptor descriptor = new TransformationDescriptor(
-                            transformation.getValidation(), selectionMapping.toArray());
-                    XtendTransformationContext context = new XtendTransformationContext(
-                            editorSettings.getTransformationFile(), editorSettings.getModelPackages()
-                                    .toArray(new String[editorSettings.getModelPackages().size()]),
-                            null, transDomain);
-                    context.execute(descriptor);
-                    Object valResult = descriptor.getResult();
-                    if (valResult instanceof Boolean) {
-                        cache = validationCache.get(val);
-                        cache.put(selectionMapping, (Boolean) valResult);
-                        if (!(Boolean) result) {
+
+                    if ((val != null) && (!val.isEmpty()) && (transDomain != null)) {
+                        TransformationDescriptor descriptor = new TransformationDescriptor(
+                                transformation.getValidation(), selectionMapping.toArray());
+                        XtendTransformationContext context = new XtendTransformationContext(
+                                editorSettings.getTransformationFile(),
+                                editorSettings.getModelPackages().toArray(
+                                        new String[editorSettings.getModelPackages().size()]),
+                                null, transDomain);
+                        context.execute(descriptor);
+                        Object valResult = descriptor.getResult();
+                        if (valResult instanceof Boolean) {
+                            cache = validationCache.get(val);
+                            cache.put(selectionMapping, (Boolean) valResult);
+                            if (!(Boolean) result) {
+                                return false;
+                            }
+                        } else {
                             return false;
                         }
                     } else {
                         return false;
                     }
-                } else {
-                    return false;
+
                 }
+                return result;
             }
-            return result;
-            }
-            //transformation has no validation so return true
+            // transformation has no validation so return true
             return true;
         }
-        
+
         private HashMap<Object, Object> getSelectionHash(final List<EObject> selection) {
             HashMap<Object, Object> selectionCache = new HashMap<Object, Object>();
             for (EObject obj : selection) {
@@ -213,7 +226,9 @@ public final class DynamicMenuContributions {
 
         /**
          * This method tries to get the current selection.
-         * @param context the evaluation context in which this expression was executed.
+         * 
+         * @param context
+         *            the evaluation context in which this expression was executed.
          * @return A list of the EObjects currently selected in the editor.
          */
         private List<EObject> getCurrentSelection(final IEvaluationContext context) {
@@ -258,7 +273,8 @@ public final class DynamicMenuContributions {
                         }
                         return selectionList;
                     } else {
-                        // no Diagram EditDomain found -> still try to look for EObjects directly, maybe
+                        // no Diagram EditDomain found -> still try to look for EObjects directly,
+                        // maybe
                         // we have some structural EMF Editor like the tree editor (haf)
                         List<EObject> eObjects = new ArrayList<EObject>(
                                 ((List<?>) defaultVar).size());
@@ -276,6 +292,40 @@ public final class DynamicMenuContributions {
             return null;
         }
 
+        private Pair<Method, List<Object>> findMethod(HashMap<Object, Object> selectionHash,
+                String name) {
+            Method method = null;
+            List<Object> params = new LinkedList<Object>();
+            for (Method m : transformation.getTransformationClass().getClass().getMethods()) {
+                if (m.getName().equals(name)) {
+                    // HashMap<Class<?>, Object> selectionCache =
+                    // this.getSelectionHash(selection);
+                    params = new LinkedList<Object>();
+                    method = m;
+                    for (Class<?> c : m.getParameterTypes()) {
+                        Object param = null;
+                        for (Object p : selectionHash.values()) {
+                            if (c.isAssignableFrom(p.getClass()) && !params.contains(p)) {
+                                param = p;
+                                break;
+                            }
+                        }
+                        if (param != null) {
+                            params.add(param);
+                        } else {
+                            method = null;
+                        }
+                    }
+
+                    if (method != null) {
+                        break;
+                    }
+
+                }
+            }
+            return new Pair<Method, List<Object>>(method, params);
+        }
+
         @Override
         public EvaluationResult evaluate(final IEvaluationContext context) throws CoreException {
 
@@ -283,42 +333,45 @@ public final class DynamicMenuContributions {
             if (selection != null) {
                 if (transformation.getTransformationClass() != null) {
                     HashMap<Object, Object> selectionHash = this.getSelectionHash(selection);
-                    Method method = null;
-                    List<Object> params = new LinkedList<Object>();
-                    for (Method m : transformation.getTransformationClass().getClass().getMethods()) {
-                        if (m.getName().equals(transformation.getTransformation())) {
-                            //HashMap<Class<?>, Object> selectionCache = this.getSelectionHash(selection);
-                            params = new LinkedList<Object>();
-                            method = m;
-                            for (Class<?> c : m.getParameterTypes()) {
-                                Object param = null;
-                                for (Object p: selectionHash.values()) {
-                                    if (c.isAssignableFrom(p.getClass()) && !params.contains(p)) {
-                                        param = p;
-                                        break;
+                    Method method = this.findMethod(selectionHash,
+                            transformation.getTransformation()).getFirst();
+                    boolean validationResult = true;
+                    if (transformation.getValidation() != null) {
+                        String[] validations = transformation.getValidation().split(",");
+                        for (String val : validations) {
+                            Pair<Method, List<Object>> validation = this.findMethod(selectionHash,
+                                    val);
+                            try {
+                                Object res = validation.getFirst().invoke(
+                                        transformation.getTransformationClass(),
+                                        validation.getSecond());
+                                if (res instanceof Boolean) {
+                                    if (!(Boolean) res) {
+                                        validationResult = (Boolean) res;
                                     }
                                 }
-                                if (param != null) {
-                                    params.add(param);
-                                } else {
-                                    method = null;
-                                }
+                            } catch (IllegalArgumentException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                            } catch (IllegalAccessException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                            } catch (InvocationTargetException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
                             }
-                            
-                            if (method != null) {
-                                break;
-                            }
-
                         }
                     }
-                    if (method != null) {
+
+                    if (method != null && validationResult) {
                         return EvaluationResult.TRUE;
                     }
                 } else {
                     List<Object> selectionMapping = null;
                     for (List<String> parameters : transformation.getParameterList()) {
                         selectionMapping = TransformationFrameworkFactory
-                                .getDefaultTransformationFramework().createParameterMapping(selection,
+                                .getDefaultTransformationFramework().createParameterMapping(
+                                        selection,
                                         parameters.toArray(new String[parameters.size()]));
                     }
                     if (selectionMapping == null) {
@@ -347,8 +400,7 @@ public final class DynamicMenuContributions {
         Assert.isNotNull(editorSettings);
         UpdateVisibilityCombination com = new UpdateVisibilityCombination();
         com.setActive(true);
-        HashMap<String, HashMap<List<Object>, Boolean>> validationCache = 
-                new HashMap<String, HashMap<List<Object>, Boolean>>();
+        HashMap<String, HashMap<List<Object>, Boolean>> validationCache = new HashMap<String, HashMap<List<Object>, Boolean>>();
         for (KSBasEMenuContribution contrib : editorSettings.getMenuContributions()) {
             for (String command : contrib.getCommands()) {
                 if (!command.endsWith("_SEPARATOR")) {
@@ -358,9 +410,9 @@ public final class DynamicMenuContributions {
                             editorSettings, validationCache);
                     KSBasECombination combination = new KSBasECombination(editorSettings);
                     ImageDescriptor icon = null;
-                    if(transformation.getIcon() != null && !transformation.getIcon().equals("")){
-                    	icon = KSBasEUIPlugin.imageDescriptorFromPlugin(editorSettings.getContributor()
-                    			.getName(), transformation.getIcon());
+                    if (transformation.getIcon() != null && !transformation.getIcon().equals("")) {
+                        icon = KSBasEUIPlugin.imageDescriptorFromPlugin(editorSettings
+                                .getContributor().getName(), transformation.getIcon());
                     }
                     KeySequence keySequence = null;
 
@@ -381,8 +433,8 @@ public final class DynamicMenuContributions {
                                 editorSettings.getEditorId());
                         combination.addTransformation(command + ".menu", transformation);
                     } else if (contrib.getData().startsWith("toolbar:")) {
-                        KiviMenuContributionService.INSTANCE.addToolbarButton(combination, "ksbase." + command
-                                + ".toolbar", transformation.getName(),
+                        KiviMenuContributionService.INSTANCE.addToolbarButton(combination,
+                                "ksbase." + command + ".toolbar", transformation.getName(),
                                 transformation.getToolTip(), icon, SWT.PUSH,
                                 KiviMenuContributionService.LocationScheme.TOOLBAR, visibility,
                                 null, null, editorSettings.getEditorId());
