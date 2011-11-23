@@ -58,7 +58,8 @@ import de.cau.cs.kieler.kwebs.util.Graphs;
  * @kieler.rating  2011-08-25 proposed yellow
  *      reviewed by ckru, msp, mri
  *      
- * @author  swe
+ * @author swe
+ * @author msp
  */
 public abstract class AbstractService {
 

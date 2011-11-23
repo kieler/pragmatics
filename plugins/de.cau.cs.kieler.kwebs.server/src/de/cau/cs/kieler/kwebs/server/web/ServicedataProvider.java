@@ -32,12 +32,13 @@ import de.cau.cs.kieler.kwebs.util.Resources;
 /**
  * This class implements a web content provider for displaying the service meta data in HTML format.
  *
- * @kieler.rating  2011-05-04 red
- * @author  swe
+ * @author swe
+ * @author msp
  */
 public class ServicedataProvider implements IDynamicWebContentProvider {
 
-    //CHECKSTYLEOFF LineLength
+    // In this case readability of the code is worse if lines are limited to 100 characters.
+    // CHECKSTYLEOFF LineLength
     
     /** Prefix of the HTML content. */
     private static final String HTML_PREFIX
@@ -76,27 +77,19 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
           + "<body>\n";
     
     /** Postfix of the HTML content. */
-    private static final String HTML_POSTFIX
-        = "</body>\n"
-          + "</html>";
-
-    //CHECKSTYLEON LineLength
+    private static final String HTML_POSTFIX = "</body>\n</html>";
 
     /** Constant for query parameter 'algorithm'. */
-    private static final String PARAM_ALGORITHM 
-        = "algorithm";
+    private static final String PARAM_ALGORITHM = "algorithm";
 
     /** Constant for query parameter 'option'. */
-    private static final String PARAM_OPTION
-        = "option";
+    private static final String PARAM_OPTION = "option";
 
     /** Constant for query parameter 'format'. */
-    private static final String PARAM_FORMAT 
-        = "format";
+    private static final String PARAM_FORMAT = "format";
 
     /** Constant for query parameter 'previewimage'. */
-    private static final String PARAM_PREVIEWIMAGE 
-        = "previewimage";
+    private static final String PARAM_PREVIEWIMAGE = "previewimage";
 
      /** Caching the service data model. */
      private ServiceData serviceData 
@@ -123,8 +116,6 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
         }        
     }
 
-    //CHECKSTYLEOFF LineLength
-    
     /**
      * Generates web page content describing a layout algorithm.
      * 
@@ -150,62 +141,45 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
 
         int scriptIndex = 0;
         
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         
         sb.append(HTML_PREFIX);
         
         sb.append("<p class='title'>Algorithm Details</p>\n");
-        
-        sb.append("<p>\n");
-        sb.append("Name: " + algorithm.getName() + "<br/>\n");
-        sb.append("</p>\n");
 
-        sb.append("<p>\n");
-        sb.append("Identifier: " + algorithm.getId() + "<br/>\n");
-        sb.append("</p>\n");
+        sb.append("<p>\nName: ").append(algorithm.getName()).append("<br/>\n</p>\n");
+        sb.append("<p>\nIdentifier: ").append(algorithm.getId()).append("<br/>\n</p>\n");
 
-        sb.append("<p>\n");
-        sb.append(algorithm.getDescription() + "\n");
-        sb.append("</p>\n");
+        if (algorithm.getDescription() != null) {
+            sb.append("<p>\n");
+            generateHypertext(sb, algorithm.getDescription());
+            sb.append("\n</p>\n");
+        }
 
         sb.append("<p class='title'>A Quick Preview</p>\n");
         
-        sb.append("<p>\n");
-        sb.append("<img src=\"/ServiceData.html?previewimage=" + algorithm.getPreviewImagePath() + "\"/>\n");
-        sb.append("</p>\n");
+        sb.append("<p>\n<img src=\"/ServiceData.html?previewimage=").append(algorithm.getPreviewImagePath()).append("\"/>\n</p>\n");
 
         sb.append("<p class='title'>Supported Layout Options</p>\n");
         
-        sb.append("<p>\n");        
-        sb.append("<table cellspacing='0' cellpadding='5'>\n");        
-        sb.append("<thead><tr><th>Name</th></tr></thead>\n");
-        sb.append("<tbody>\n");        
+        sb.append("<p>\n<table cellspacing='0' cellpadding='5'>\n");        
+        sb.append("<thead><tr><th>Name</th></tr></thead>\n<tbody>\n");
         for (KnownOption knownOption :  algorithm.getKnownOptions()) {
             LayoutOption option = knownOption.getOption();
-            sb.append(
-                "<tr"
-                + (scriptIndex % 2 == 0 ? " class='lightgrey'" : "")
-                + " id='" 
-                + scriptIndex + "short' onmouseover='doHover(\"" 
-                + scriptIndex + "short\");' onmouseout='doUnhover(\"" 
-                + scriptIndex + "short\");' onclick='document.location.href=\"ServiceData.html?option="
-                + option.getId()
-                + "\";'>"
-                + "<td>" + option.getName() + "</td>" 
-                + "</tr>\n"
-            );
+            sb.append("<tr").append(scriptIndex % 2 == 0 ? " class='lightgrey'" : "");
+            sb.append(" id='").append(scriptIndex).append("short' onmouseover='doHover(\""); 
+            sb.append(scriptIndex).append("short\");' onmouseout='doUnhover(\""); 
+            sb.append(scriptIndex).append("short\");' onclick='document.location.href=\"ServiceData.html?option=");
+            sb.append(option.getId()).append("\";'><td>").append(option.getName()).append("</td></tr>\n");
             scriptIndex++;
         }        
-        sb.append("</tbody>\n");
-        sb.append("</table>\n");
-        sb.append("</p>\n");
+        sb.append("</tbody>\n</table>\n</p>\n");
         
         generateBackButton(requestData, sb);
         
         sb.append(HTML_POSTFIX);
         
         requestData.setContent(sb.toString().getBytes());
-        
     }
 
     /**
@@ -221,7 +195,7 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
      *            create full page or simply add the raw algorithm description
      */
     private void generateForOption(final RequestData requestData, 
-        final String algorithmId, final StringBuffer appendTo, final boolean rawAppend) {
+        final String algorithmId, final StringBuilder appendTo, final boolean rawAppend) {
         Map<String, String> params = requestData.getParams();
         String id = params.get(PARAM_OPTION);
         if (id == null) {
@@ -242,7 +216,7 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
             return;
         }
         
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         
         if (!rawAppend) {
             
@@ -252,60 +226,45 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
             
         }
         
-        sb.append("<p>\n");
-        sb.append("Name: " + option.getName() + "<br/>\n");
-        sb.append("</p>\n");
+        sb.append("<p>\nName: ").append(option.getName()).append("<br/>\n</p>\n");
 
-        sb.append("<p>\n");
-        sb.append("Identifier: " + option.getId() + "<br/>\n");
-        sb.append("</p>\n");
+        sb.append("<p>\nIdentifier: ").append(option.getId()).append("<br/>\n</p>\n");
 
         String type = option.getType();
         
         sb.append("<p>\n");
-        sb.append(
-            "Type: " + (type.equals(LayoutOptionData.REMOTEENUM_LITERAL) ? "enumeration" : type) + "<br/>\n"
-        );
-        sb.append("</p>\n");
+        sb.append("Type: ").append((type.equals(LayoutOptionData.REMOTEENUM_LITERAL) ? "enumeration" : type)).append("<br/>\n</p>\n");
         
         if (type.equals(LayoutOptionData.REMOTEENUM_LITERAL)) {
-            sb.append("<p>\n");
-            sb.append("Possible Values: ");
+            sb.append("<p>\nPossible Values: ");
             for (String v : option.getRemoteEnum().getValues()) {
-                sb.append(v + ", ");
+                sb.append(v).append(", ");
             }
-            sb.append("<br/>\n");
-            sb.append("</p>\n");            
+            sb.append("<br/>\n</p>\n");            
         }
         
         String defaultValue = option.getDefault();
         if (defaultValue == null) {
             defaultValue = "<NONE>";
         }
-        sb.append("<p>\n");
-        sb.append("Default Value: " + defaultValue + "<br/>\n");
-        sb.append("</p>\n");
+        sb.append("<p>\nDefault Value: ").append(defaultValue).append("<br/>\n</p>\n");
 
         sb.append("<p class='title'>Description</p>\n");
         
-        sb.append("<p>\n");
-        sb.append(option.getDescription() + "\n");
-        sb.append("</p>\n");
+        if (option.getDescription() != null) {
+            sb.append("<p>\n");
+            generateHypertext(sb, option.getDescription());
+            sb.append("\n</p>\n");
+        }
 
         if (rawAppend) {
-            
             appendTo.append(sb);
             
         } else {
-         
             generateBackButton(requestData, sb);
-        
             sb.append(HTML_POSTFIX);
-
             requestData.setContent(sb.toString().getBytes());
-            
         }
-        
     }
     
     /**
@@ -331,25 +290,23 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
             return;
         }
         
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         
         sb.append(HTML_PREFIX);
         
         sb.append("<p class='title'>Format Details</p>\n");
         
-        sb.append("<p>\n");
-        sb.append("Name: " + format.getName() + "<br/>\n");
-        sb.append("</p>\n");
+        sb.append("<p>\nName: ").append(format.getName()).append("<br/>\n</p>\n");
 
-        sb.append("<p>\n");
-        sb.append("Identifier: " + format.getId() + "<br/>\n");
-        sb.append("</p>\n");
+        sb.append("<p>\nIdentifier: ").append(format.getId()).append("<br/>\n</p>\n");
 
         sb.append("<p class='title'>Description</p>\n");
         
-        sb.append("<p>\n");
-        sb.append(format.getDescription() + "\n");
-        sb.append("</p>\n");
+        if (format.getDescription() != null) {
+            sb.append("<p>\n");
+            generateHypertext(sb, format.getDescription());
+            sb.append("\n</p>\n");
+        }
 
         generateBackButton(requestData, sb);
         
@@ -395,38 +352,28 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
 
         int scriptIndex = 0;
         
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         
         sb.append(HTML_PREFIX);
         
         sb.append("<p class='title'>Service Details</p>\n");
         
-        sb.append("<p>\n");
-        sb.append("Version: " + serviceData.getVersion() + "<br/>\n");
-        sb.append("</p>\n");
+        sb.append("<p>\nVersion: ").append(serviceData.getVersion()).append("<br/>\n</p>\n");
 
-        sb.append("<p class='title'>How do you select an algorithm ?</p>\n");
-        sb.append("<p>\n");
-        sb.append("In order to select a concrete layout algorithm when doing layout with the provided service, you can");
-        sb.append(" use the following layout option:\n");
+        sb.append("<p class='title'>Selection of Layout Algorithm</p>\n<p>\n");
+        sb.append("In order to select a specific layout algorithm when doing layout with the provided service, you can use the following layout option:\n");
         sb.append("</p>\n");
         
-        sb.append("<p>\n");
-        sb.append("<table class='lightgrey' border='1px;' style='border-style:solid;'>\n");
-        sb.append("<tr>\n");
-        sb.append("<td>\n");
+        sb.append("<p>\n<table class='lightgrey' border='1px;' style='border-style:solid;'>\n");
+        sb.append("<tr>\n<td>\n");
         generateForOption(requestData, LayoutOptions.ALGORITHM_ID, sb, true);
-        sb.append("</td>\n");
-        sb.append("</tr>\n");
-        sb.append("</table>\n");
-        sb.append("</p>\n");
+        sb.append("</td>\n</tr>\n");
+        sb.append("</table>\n</p>\n");
         
         sb.append("<p class='title'>Supported Algorithms</p>\n");
 
-        sb.append("<p>\n");        
-        sb.append("<table cellspacing='0' cellpadding='5'>\n");        
-        sb.append("<thead><tr><th>Name</th><th>Category</th><th>Type</th><th>Version</th></tr></thead>\n");
-        sb.append("<tbody>\n");        
+        sb.append("<p>\n<table cellspacing='0' cellpadding='5'>\n");        
+        sb.append("<thead><tr><th>Name</th><th>Category</th><th>Type</th><th>Version</th></tr></thead>\n<tbody>\n");
         for (LayoutAlgorithm algorithm : serviceData.getLayoutAlgorithms()) {
             String category = (algorithm.getCategory() != null ? algorithm.getCategory().getName() : null);
             String type = (algorithm.getType() != null ? algorithm.getType().getName() : null);
@@ -440,56 +387,37 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
             if (version == null || version.length() == 0) {
                 version = "&nbsp;";
             }
-            sb.append(
-                "<tr"
-                + (scriptIndex % 2 == 0 ? " class='lightgrey'" : "")
-                + " id='" 
-                + scriptIndex + "short' onmouseover='doHover(\"" 
-                + scriptIndex + "short\");' onmouseout='doUnhover(\"" 
-                + scriptIndex + "short\");' onclick='document.location.href=\"ServiceData.html?algorithm="
-                + algorithm.getId()
-                + "\";'>"
-                + "<td>" + algorithm.getName() + "</td>" 
-                + "<td>" + category + "</td>"
-                + "<td>" + type + "</td>"
-                + "<td>" + version + "</td>"
-                + "</tr>\n"
-            );
+            sb.append("<tr").append(scriptIndex % 2 == 0 ? " class='lightgrey'" : "").append(" id='");
+            sb.append(scriptIndex).append("short' onmouseover='doHover(\""); 
+            sb.append(scriptIndex).append("short\");' onmouseout='doUnhover(\""); 
+            sb.append(scriptIndex).append("short\");' onclick='document.location.href=\"ServiceData.html?algorithm=");
+            sb.append(algorithm.getId()).append("\";'><td>").append(algorithm.getName()).append("</td>");
+            sb.append("<td>").append(category).append("</td>").append("<td>").append(type).append("</td>");
+            sb.append("<td>").append(version).append("</td></tr>\n");
             scriptIndex++;
-        }        
-        sb.append("</tbody>\n");
-        sb.append("</table>\n");
-        sb.append("</p>\n");
+        }
+        sb.append("</tbody>\n</table>\n</p>\n");
 
         sb.append("<p class='title'>Supported Formats</p>\n");
 
-        sb.append("<p>\n");        
-        sb.append("<table cellspacing='0' cellpadding='5'>\n");        
-        sb.append("<thead><tr><th>Name</th><th>Identifier</th></tr></thead>\n");
-        sb.append("<tbody>\n");
+        sb.append("<p>\n<table cellspacing='0' cellpadding='5'>\n");        
+        sb.append("<thead><tr><th>Name</th><th>Identifier</th></tr></thead>\n<tbody>\n");
         
         scriptIndex *= 2; // Needs to be even on the beginning of a table
 
         for (SupportedFormat format : serviceData.getSupportedFormats()) {
-            sb.append(
-                "<tr"
-                + (scriptIndex % 2 == 0 ? " class='lightgrey'" : "")
-                + " id='" 
-                + scriptIndex + "short' onmouseover='doHover(\"" 
-                + scriptIndex + "short\");' onmouseout='doUnhover(\"" 
-                + scriptIndex + "short\");' onclick='document.location.href=\"ServiceData.html?format="
-                + format.getId()
-                + "\";'>"
-                + "<td>" + format.getName()  + "</td>" 
-                + "<td>" + format.getId()  + "</td>"
-                + "</tr>\n"
-            );
+            sb.append("<tr");
+            sb.append(scriptIndex % 2 == 0 ? " class='lightgrey'" : "").append(" id='"); 
+            sb.append(scriptIndex).append("short' onmouseover='doHover(\""); 
+            sb.append(scriptIndex).append("short\");' onmouseout='doUnhover(\""); 
+            sb.append(scriptIndex).append("short\");' onclick='document.location.href=\"ServiceData.html?format=");
+            sb.append(format.getId()).append("\";'>");
+            sb.append("<td>").append(format.getName()).append("</td>"); 
+            sb.append("<td>").append(format.getId()).append("</td></tr>\n");
             scriptIndex++;
         }
 
-        sb.append("</tbody>\n");
-        sb.append("</table>\n");
-        sb.append("</p>\n");
+        sb.append("</tbody>\n</table>\n</p>\n");
         
         sb.append(HTML_POSTFIX);
 
@@ -498,8 +426,7 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
     }
 
     /** Name of the referer entry in the headers of a HTTP request. */
-    private static final String HEADER_REFERER
-        = "Referer";
+    private static final String HEADER_REFERER = "Referer";
     
     /**
      * Inserts a "Back" button in the response data buffer.
@@ -509,11 +436,10 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
      * @param buffer
      *            the response buffer to append to
      */
-    private void generateBackButton(final RequestData requestData, final StringBuffer buffer) {
+    private static void generateBackButton(final RequestData requestData, final StringBuilder buffer) {
         Headers headers = requestData.getExchange().getRequestHeaders();
 
-        buffer.append("<p>\n");
-        buffer.append("<form action=\"");
+        buffer.append("<p>\n<form action=\"");
         
         if (headers.containsKey(HEADER_REFERER)) {
             buffer.append(headers.getFirst(HEADER_REFERER));
@@ -521,11 +447,42 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
             buffer.append("javascript:history.back();");
         }
         
-        buffer.append("\" method=\"POST\"><input type=\"submit\" value=\"Back\"/></form>\n");
-        buffer.append("</p>\n");
+        buffer.append("\" method=\"POST\"><input type=\"submit\" value=\"Back\"/></form>\n</p>\n");
         
     }
     
-    //CHECKSTYLEON LineLength
+    /**
+     * Generates hypertext from a description text. URLs are converted to hyperlinks.
+     * 
+     * @param sb
+     *            the response buffer to append to
+     * @param text
+     *            description text
+     */
+    private static void generateHypertext(final StringBuilder sb, final String text) {
+        int p = 0;
+        while (p < text.length()) {
+            int s = text.indexOf("http", p);
+            if (s >= 0) {
+                if (s > p) {
+                    sb.append(text.substring(p, s));
+                }
+                int e = s;
+                char c = 0;
+                do {
+                    e++;
+                    if (e < text.length()) {
+                        c = text.charAt(e);
+                    }
+                } while (e < text.length() && c != ' ' && c != '\t' && c != '\r' && c != '\n');
+                String url = text.substring(s, e);
+                sb.append("<a href=\"").append(url).append("\">").append(url).append("</a>");
+                p = e;
+            } else {
+                sb.append(text.substring(p));
+                p = text.length();
+            }
+        }
+    }
     
 }
