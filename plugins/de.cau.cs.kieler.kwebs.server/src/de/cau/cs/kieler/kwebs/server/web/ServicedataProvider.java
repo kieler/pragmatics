@@ -46,13 +46,13 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
           + "<head>\n"
           + "<style type='text/css'>\n"
           + "<!--\n"
-          + "body { font-family : Verdana, Arial; font-size : 8pt; }\n"
+          + "body { font-family: Verdana, Arial; font-size: 8pt; text-align: center; }\n"
           + ".lightgrey { background-color : #efefef; }"
-          + ".title { font-size : 10pt; font-weight : bold; }\n"
-          + "p { font-family : Verdana, Arial; font-size : 8pt; margin : 10pt; }\n"
-          + "table { border-width : 2px; border-style : ridge; border-color : #000000; table-layout : fixed; }\n"
-          + "td { font-family : Verdana, Arial; font-size : 8pt; border-tyle : none; text-align : left; }\n"
-          + "th { font-family : Verdana, Arial; font-size : 8pt; font-weight : bold; text-align : left; border-bottom: 1px solid; }\n"
+          + ".title { font-size: 10pt; font-weight: bold; }\n"
+          + "p { font-family: Verdana, Arial; font-size: 8pt; margin: 10pt; }\n"
+          + "table { border-width : 2px; border-style : ridge; border-color: #000000; table-layout: fixed; }\n"
+          + "td { font-family: Verdana, Arial; font-size: 8pt; border-tyle: none; text-align: left; }\n"
+          + "th { font-family: Verdana, Arial; font-size: 8pt; font-weight: bold; text-align: left; border-bottom: 1px solid; }\n"
           + "thead:first-child tr { border: 1px solid; }\n"
           + "//-->\n"
           + "</style>\n"
@@ -74,10 +74,12 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
           + "//-->\n"
           + "</script>\n"
           + "</head>\n"
-          + "<body>\n";
+          + "<body>\n"
+          + "<table style=\"border-style: none; margin-left: auto; margin-right: auto; background-color: #feffe6;\">\n"
+          + "<tr><td>\n";
     
     /** Postfix of the HTML content. */
-    private static final String HTML_POSTFIX = "</body>\n</html>";
+    private static final String HTML_POSTFIX = "</td></tr>\n</table>\n</body>\n</html>";
 
     /** Constant for query parameter 'algorithm'. */
     private static final String PARAM_ALGORITHM = "algorithm";
