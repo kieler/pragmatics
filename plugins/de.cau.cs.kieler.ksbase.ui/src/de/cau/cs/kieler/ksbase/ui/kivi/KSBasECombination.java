@@ -17,13 +17,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
@@ -81,60 +79,60 @@ public class KSBasECombination extends AbstractCombination {
      */
     public void execute(final ButtonState button, final EObjectSelectionState selection) {
         // don't perform transformation if only selection changed.
-    	if(button.getSequenceNumber() > selection.getSequenceNumber()){
-	    	KSBasETransformation transformation = transformations.get(button.getButtonId());
-	        if (transformation != null) {
-	            IEditorPart editor = button.getEditor();
-	            List<EObject> selectionList = new ArrayList<EObject>();
-	            
-	            if(editor instanceof DiagramDocumentEditor){
-		            final DiagramDocumentEditor diagramEditor = (DiagramDocumentEditor) editor;
-		            List<EditPart> selectedParts = diagramEditor.getDiagramGraphicalViewer()
-		                    .getSelectedEditParts();
-		            EditPart root = diagramEditor.getDiagramGraphicalViewer().getRootEditPart();
-		            IGraphicalEditPart groot = (IGraphicalEditPart) root.getChildren().get(0);
-		            EObject rootObject = groot.getNotationView().getElement();
-		            // get the current selection
-		            for (EditPart part : selectedParts) {
-		            	if (part instanceof IGraphicalEditPart) {
-		            		IGraphicalEditPart gpart = (IGraphicalEditPart) part;
-		            		selectionList.add(gpart.getNotationView().getElement());
-		            	}
-		            }
-		            // if the selection is empty assume the root object as selected
-		            if (selectionList.isEmpty()) {
-		            	selectionList.add(rootObject);
-		            }
-		            // do xtend2 stuff
-		            if (transformation.getTransformationClass() != null) {
-		                evokeXtend2(transformation, selectionList);
-		                refreshEditPolicy(diagramEditor);
-		                evokeLayout(selectionList, rootObject, button);
-		
-		                // do xtend1 stuff
-		            } else {
-		                // map the selection to the parameters of this transformation
-		                List<Object> selectionMapping = null;
-		                for (List<String> parameters : transformation.getParameterList()) {
-		                    selectionMapping = TransformationFrameworkFactory
-		                            .getDefaultTransformationFramework().createParameterMapping(
-		                                    selectionList,
-		                                    parameters.toArray(new String[parameters.size()]));
-		                }
-		                // execute xtend transformation
-		                if (selectionMapping != null) {
-		                    evokeXtend(transformation, selectionMapping, diagramEditor);
-		                    refreshEditPolicy(diagramEditor);
-		                    evokeLayout(selectionList, rootObject, button);
-		                }
-		            }
-	            }else{ // editor is no Diagram Editor
-	            	 // do xtend2 stuff
-		            if (transformation.getTransformationClass() != null) {
-		                evokeXtend2(transformation, selection.getSelectedObjects());
-		            }
-	            }
-	        }
+        if (button.getSequenceNumber() > selection.getSequenceNumber()) {
+            KSBasETransformation transformation = transformations.get(button.getButtonId());
+            if (transformation != null) {
+                IEditorPart editor = button.getEditor();
+                List<EObject> selectionList = new ArrayList<EObject>();
+
+                if (editor instanceof DiagramDocumentEditor) {
+                    final DiagramDocumentEditor diagramEditor = (DiagramDocumentEditor) editor;
+                    List<EditPart> selectedParts = diagramEditor.getDiagramGraphicalViewer()
+                            .getSelectedEditParts();
+                    EditPart root = diagramEditor.getDiagramGraphicalViewer().getRootEditPart();
+                    IGraphicalEditPart groot = (IGraphicalEditPart) root.getChildren().get(0);
+                    EObject rootObject = groot.getNotationView().getElement();
+                    // get the current selection
+                    for (EditPart part : selectedParts) {
+                        if (part instanceof IGraphicalEditPart) {
+                            IGraphicalEditPart gpart = (IGraphicalEditPart) part;
+                            selectionList.add(gpart.getNotationView().getElement());
+                        }
+                    }
+                    // if the selection is empty assume the root object as selected
+                    if (selectionList.isEmpty()) {
+                        selectionList.add(rootObject);
+                    }
+                    // do xtend2 stuff
+                    if (transformation.getTransformationClass() != null) {
+                        evokeXtend2(transformation, selectionList);
+                        refreshEditPolicy(diagramEditor);
+                        evokeLayout(selectionList, rootObject, button);
+
+                        // do xtend1 stuff
+                    } else {
+                        // map the selection to the parameters of this transformation
+                        List<Object> selectionMapping = null;
+                        for (List<String> parameters : transformation.getParameterList()) {
+                            selectionMapping = TransformationFrameworkFactory
+                                    .getDefaultTransformationFramework().createParameterMapping(
+                                            selectionList,
+                                            parameters.toArray(new String[parameters.size()]));
+                        }
+                        // execute xtend transformation
+                        if (selectionMapping != null) {
+                            evokeXtend(transformation, selectionMapping, diagramEditor);
+                            refreshEditPolicy(diagramEditor);
+                            evokeLayout(selectionList, rootObject, button);
+                        }
+                    }
+                } else { // editor is no Diagram Editor
+                         // do xtend2 stuff
+                    if (transformation.getTransformationClass() != null) {
+                        evokeXtend2(transformation, selection.getSelectedObjects());
+                    }
+                }
+            }
         }
     }
 
@@ -142,24 +140,24 @@ public class KSBasECombination extends AbstractCombination {
         HashMap<Object, Object> selectionCache = new HashMap<Object, Object>();
         for (EObject obj : selection) {
             Object cache = selectionCache.get(obj.getClass());
-            List listCache;
+            List<Object> listCache;
             if (cache == null) {
-                listCache = new LinkedList();
+                listCache = new LinkedList<Object>();
                 selectionCache.put(obj.getClass(), listCache);
                 listCache.add(obj);
             } else if (cache instanceof List<?>) {
-                listCache = (List<?>) cache;
+                listCache = (List<Object>) cache;
                 listCache.add(obj);
 
             }
         }
         List<Object> cache = new LinkedList<Object>();
         cache.addAll(selectionCache.values());
-        
+
         for (Object obj : cache) {
             if (obj instanceof List) {
-                if (((List) obj).size() == 1) {
-                    selectionCache.put(((List) obj).get(0), ((List) obj).get(0));
+                if (((List<?>) obj).size() == 1) {
+                    selectionCache.put(((List<?>) obj).get(0), ((List<?>) obj).get(0));
                 }
             }
         }
@@ -171,28 +169,28 @@ public class KSBasECombination extends AbstractCombination {
             final List<EObject> selection) {
 
         Method method = null;
-        List params = new LinkedList();
+        List<Object> params = new LinkedList<Object>();
         for (Method m : transformation.getTransformationClass().getClass().getMethods()) {
             if (m.getName().equals(transformation.getTransformation())) {
                 HashMap<Object, Object> selectionCache = this.getSelectionHash(selection);
-                params = new LinkedList();
+                params = new LinkedList<Object>();
                 method = m;
                 for (Type t : m.getGenericParameterTypes()) {
                     Object param = null;
-                    for (Object p: selectionCache.values()) {
+                    for (Object p : selectionCache.values()) {
                         if (this.match(t, p) && !params.contains(p)) {
                             param = p;
                             break;
                         }
                     }
-                    //Object param = selectionCache.get(c);
+                    // Object param = selectionCache.get(c);
                     if (param != null) {
                         params.add(param);
                     } else {
                         method = null;
                     }
                 }
-                
+
                 if (method != null) {
                     break;
                 }
@@ -217,29 +215,29 @@ public class KSBasECombination extends AbstractCombination {
 
     }
 
-    private boolean match(Type a, Object b) {
+    private boolean match(final Type a, final Object b) {
         if (a instanceof ParameterizedType) {
             Type rawType = ((ParameterizedType) a).getRawType();
             if (rawType instanceof Class) {
                 Class<?> c1 = (Class<?>) rawType;
                 Class<?> c2 = b.getClass();
                 if (c1.isAssignableFrom(c2)) {
-                    //if its a list also check generics
+                    // if its a list also check generics
                     if (c1.isAssignableFrom(List.class) && b instanceof List) {
-                        for (Type actualType: ((ParameterizedType) a).getActualTypeArguments()) {
+                        for (Type actualType : ((ParameterizedType) a).getActualTypeArguments()) {
                             if (actualType instanceof Class) {
                                 Class<?> c3 = (Class<?>) actualType;
-                                Class<?> c4 = ((List) b).get(0).getClass();
+                                Class<?> c4 = ((List<?>) b).get(0).getClass();
                                 if (c3.isAssignableFrom(c4)) {
                                     return true;
                                 }
                             }
                         }
-                        
+
                     } else {
                         return true;
                     }
-                } 
+                }
             }
         } else if (a instanceof Class) {
             Class<?> c1 = (Class<?>) a;
@@ -250,7 +248,7 @@ public class KSBasECombination extends AbstractCombination {
         }
         return false;
     }
-    
+
     private void evokeXtend(final KSBasETransformation transformation,
             final List<Object> selectionMapping, final DiagramDocumentEditor diagramEditor) {
         TransformationDescriptor descriptor = new TransformationDescriptor(

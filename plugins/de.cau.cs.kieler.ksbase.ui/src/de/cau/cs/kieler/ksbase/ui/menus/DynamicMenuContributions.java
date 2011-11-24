@@ -56,7 +56,6 @@ import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 import de.cau.cs.kieler.ksbase.ui.kivi.KSBasECombination;
-import de.cau.cs.kieler.ksbase.ui.kivi.UpdateVisibilityCombination;
 
 /**
  * Creates menus for all registered editor transformation settings and
@@ -193,7 +192,6 @@ public final class DynamicMenuContributions {
                     } else {
                         return false;
                     }
-
                 }
                 return result;
             }
@@ -298,7 +296,7 @@ public final class DynamicMenuContributions {
             return null;
         }
 
-        private boolean match(Type a, Object b) {
+        private boolean match(final Type a, final Object b) {
             if (a instanceof ParameterizedType) {
                 Type rawType = ((ParameterizedType) a).getRawType();
                 if (rawType instanceof Class) {
@@ -310,7 +308,7 @@ public final class DynamicMenuContributions {
                             for (Type actualType: ((ParameterizedType) a).getActualTypeArguments()) {
                                 if (actualType instanceof Class) {
                                     Class<?> c3 = (Class<?>) actualType;
-                                    Class<?> c4 = ((List) b).get(0).getClass();
+                                    Class<?> c4 = ((List<?>) b).get(0).getClass();
                                     if (c3.isAssignableFrom(c4)) {
                                         return true;
                                     }
