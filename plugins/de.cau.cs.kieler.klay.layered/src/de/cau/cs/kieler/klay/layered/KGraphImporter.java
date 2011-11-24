@@ -474,7 +474,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             LPort targetPort = null;
 
             // check if the edge source is an external port
-            if (kedge.getSource() == graph) {
+            if (kedge.getSource() == graph && kedge.getSourcePort() != null) {
                 sourceNode = (LNode) elemMap.get(kedge.getSourcePort());
                 sourcePort = sourceNode.getPorts().get(0);
             } else {
@@ -483,16 +483,25 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             }
 
             // check if the edge target is an external port
-            if (kedge.getTarget() == graph) {
+            if (kedge.getTarget() == graph && kedge.getTargetPort() != null) {
                 targetNode = (LNode) elemMap.get(kedge.getTargetPort());
                 targetPort = targetNode.getPorts().get(0);
             } else {
                 targetNode = (LNode) elemMap.get(kedge.getTarget());
                 targetPort = (LPort) elemMap.get(kedge.getTargetPort());
             }
+            
+            // if the source or target node could not be found, omit the edge
+            if (sourceNode == null || targetNode == null) {
+                edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
+                for (KLabel label : kedge.getLabels()) {
+                    label.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
+                }
+                return;
+            }
 
             // if we have a self-loop, set the appropriate graph property
-            if (sourceNode != null && sourceNode != graph && sourceNode == targetNode) {
+            if (sourceNode != graph && sourceNode == targetNode) {
                 Set<GraphProperties> graphProperties = layeredGraph.getProperty(
                         Properties.GRAPH_PROPERTIES);
                 graphProperties.add(GraphProperties.SELF_LOOPS);
