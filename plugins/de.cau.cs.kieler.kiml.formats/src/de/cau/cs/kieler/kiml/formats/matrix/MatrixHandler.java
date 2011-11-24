@@ -115,7 +115,7 @@ public class MatrixHandler implements ITransformationHandler<Matrix> {
             }
         } catch (NumberFormatException exception) {
             throw new TransformationException(
-                    "Parse error while reading number on input line" + linenr, exception);
+                    "Parse error while reading number on input line " + linenr, exception);
         } catch (IOException exception) {
             // this should not happen
             throw new TransformationException(exception);
