@@ -382,14 +382,19 @@ public final class DynamicMenuContributions {
                             Pair<Method, List<Object>> validation = this.findMethod(selectionHash,
                                     val);
                             try {
-                                Object res = validation.getFirst().invoke(
-                                        transformation.getTransformationClass(),
-                                        validation.getSecond());
-                                if (res instanceof Boolean) {
-                                    if (!(Boolean) res) {
-                                        validationResult = (Boolean) res;
-                                    }
-                                }
+                                if(validation.getFirst() == null){
+                                	// validation method matching the current parameter not found
+                                	validationResult = false;
+                                }else{
+	                            	Object res = validation.getFirst().invoke(
+	                                        transformation.getTransformationClass(),
+	                                        validation.getSecond());
+	                                if (res instanceof Boolean) {
+	                                    if (!(Boolean) res) {
+	                                        validationResult = (Boolean) res;
+	                                    }
+	                                }
+	                            }
                             } catch (IllegalArgumentException e) {
                                 // TODO Auto-generated catch block
                                 e.printStackTrace();
