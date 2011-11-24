@@ -80,58 +80,61 @@ public class KSBasECombination extends AbstractCombination {
      * {@inheritDoc}
      */
     public void execute(final ButtonState button, final EObjectSelectionState selection) {
-        KSBasETransformation transformation = transformations.get(button.getButtonId());
-        if (transformation != null) {
-            IEditorPart editor = button.getEditor();
-            List<EObject> selectionList = new ArrayList<EObject>();
-            
-            if(editor instanceof DiagramDocumentEditor){
-	            final DiagramDocumentEditor diagramEditor = (DiagramDocumentEditor) editor;
-	            List<EditPart> selectedParts = diagramEditor.getDiagramGraphicalViewer()
-	                    .getSelectedEditParts();
-	            EditPart root = diagramEditor.getDiagramGraphicalViewer().getRootEditPart();
-	            IGraphicalEditPart groot = (IGraphicalEditPart) root.getChildren().get(0);
-	            EObject rootObject = groot.getNotationView().getElement();
-	            // get the current selection
-	            for (EditPart part : selectedParts) {
-	            	if (part instanceof IGraphicalEditPart) {
-	            		IGraphicalEditPart gpart = (IGraphicalEditPart) part;
-	            		selectionList.add(gpart.getNotationView().getElement());
-	            	}
+        // don't perform transformation if only selection changed.
+    	if(button.getSequenceNumber() > selection.getSequenceNumber()){
+	    	KSBasETransformation transformation = transformations.get(button.getButtonId());
+	        if (transformation != null) {
+	            IEditorPart editor = button.getEditor();
+	            List<EObject> selectionList = new ArrayList<EObject>();
+	            
+	            if(editor instanceof DiagramDocumentEditor){
+		            final DiagramDocumentEditor diagramEditor = (DiagramDocumentEditor) editor;
+		            List<EditPart> selectedParts = diagramEditor.getDiagramGraphicalViewer()
+		                    .getSelectedEditParts();
+		            EditPart root = diagramEditor.getDiagramGraphicalViewer().getRootEditPart();
+		            IGraphicalEditPart groot = (IGraphicalEditPart) root.getChildren().get(0);
+		            EObject rootObject = groot.getNotationView().getElement();
+		            // get the current selection
+		            for (EditPart part : selectedParts) {
+		            	if (part instanceof IGraphicalEditPart) {
+		            		IGraphicalEditPart gpart = (IGraphicalEditPart) part;
+		            		selectionList.add(gpart.getNotationView().getElement());
+		            	}
+		            }
+		            // if the selection is empty assume the root object as selected
+		            if (selectionList.isEmpty()) {
+		            	selectionList.add(rootObject);
+		            }
+		            // do xtend2 stuff
+		            if (transformation.getTransformationClass() != null) {
+		                evokeXtend2(transformation, selectionList);
+		                refreshEditPolicy(diagramEditor);
+		                evokeLayout(selectionList, rootObject, button);
+		
+		                // do xtend1 stuff
+		            } else {
+		                // map the selection to the parameters of this transformation
+		                List<Object> selectionMapping = null;
+		                for (List<String> parameters : transformation.getParameterList()) {
+		                    selectionMapping = TransformationFrameworkFactory
+		                            .getDefaultTransformationFramework().createParameterMapping(
+		                                    selectionList,
+		                                    parameters.toArray(new String[parameters.size()]));
+		                }
+		                // execute xtend transformation
+		                if (selectionMapping != null) {
+		                    evokeXtend(transformation, selectionMapping, diagramEditor);
+		                    refreshEditPolicy(diagramEditor);
+		                    evokeLayout(selectionList, rootObject, button);
+		                }
+		            }
+	            }else{ // editor is no Diagram Editor
+	            	 // do xtend2 stuff
+		            if (transformation.getTransformationClass() != null) {
+		                evokeXtend2(transformation, selection.getSelectedObjects());
+		            }
 	            }
-	            // if the selection is empty assume the root object as selected
-	            if (selectionList.isEmpty()) {
-	            	selectionList.add(rootObject);
-	            }
-	            // do xtend2 stuff
-	            if (transformation.getTransformationClass() != null) {
-	                evokeXtend2(transformation, selectionList);
-	                refreshEditPolicy(diagramEditor);
-	                evokeLayout(selectionList, rootObject, button);
-	
-	                // do xtend1 stuff
-	            } else {
-	                // map the selection to the parameters of this transformation
-	                List<Object> selectionMapping = null;
-	                for (List<String> parameters : transformation.getParameterList()) {
-	                    selectionMapping = TransformationFrameworkFactory
-	                            .getDefaultTransformationFramework().createParameterMapping(
-	                                    selectionList,
-	                                    parameters.toArray(new String[parameters.size()]));
-	                }
-	                // execute xtend transformation
-	                if (selectionMapping != null) {
-	                    evokeXtend(transformation, selectionMapping, diagramEditor);
-	                    refreshEditPolicy(diagramEditor);
-	                    evokeLayout(selectionList, rootObject, button);
-	                }
-	            }
-            }else{ // editor is no Diagram Editor
-            	 // do xtend2 stuff
-	            if (transformation.getTransformationClass() != null) {
-	                evokeXtend2(transformation, selection.getSelectedObjects());
-	            }
-            }
+	        }
         }
     }
 
