@@ -173,7 +173,7 @@ public final class DynamicMenuContributions {
 
                     if ((val != null) && (!val.isEmpty()) && (transDomain != null)) {
                         TransformationDescriptor descriptor = new TransformationDescriptor(
-                                transformation.getValidation(), selectionMapping.toArray());
+                                val, selectionMapping.toArray());
                         XtendTransformationContext context = new XtendTransformationContext(
                                 editorSettings.getTransformationFile(),
                                 editorSettings.getModelPackages().toArray(
