@@ -8,7 +8,7 @@ Bundle-ActivationPolicy: lazy
 Require-Bundle: de.cau.cs.kieler.kaom,
  de.cau.cs.kieler.kaom.text;visibility:=reexport,
  de.cau.cs.kieler.core.annotations,
- de.cau.cs.kieler.core.annotations.ui,
+ de.cau.cs.kieler.core.annotations.text.ui,
  de.cau.cs.kieler.core.model,
  org.eclipse.xtext.ui,
  org.eclipse.ui.editors;bundle-version="3.5.0",
