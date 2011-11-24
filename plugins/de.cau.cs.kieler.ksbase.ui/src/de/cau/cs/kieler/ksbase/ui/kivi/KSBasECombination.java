@@ -51,7 +51,8 @@ public class KSBasECombination extends AbstractCombination {
 
     private EditorTransformationSettings editorSettings;
 
-    private HashMap<String, KSBasETransformation> transformations = new HashMap<String, KSBasETransformation>();
+    private HashMap<String, KSBasETransformation> transformations = 
+            new HashMap<String, KSBasETransformation>();
 
     /**
      * @param editorSettings
@@ -136,6 +137,15 @@ public class KSBasECombination extends AbstractCombination {
         }
     }
 
+    /**
+     * Helper method for xtend2 to bring the current selection to a form we can easier pass as
+     * parameters.
+     * 
+     * @param selection
+     *            the current selection
+     * @return the current selection of a hashmap with type as key and proposed parameter as
+     *         value
+     */
     private HashMap<Object, Object> getSelectionHash(final List<EObject> selection) {
         HashMap<Object, Object> selectionCache = new HashMap<Object, Object>();
         for (EObject obj : selection) {
@@ -151,9 +161,12 @@ public class KSBasECombination extends AbstractCombination {
 
             }
         }
+        /*
+        // a cache to eliminate concurrent modification error
         List<Object> cache = new LinkedList<Object>();
         cache.addAll(selectionCache.values());
-
+        // Also put the element of a list of length = 1 in there for non list single object
+        // parameters.
         for (Object obj : cache) {
             if (obj instanceof List) {
                 if (((List<?>) obj).size() == 1) {
@@ -161,29 +174,37 @@ public class KSBasECombination extends AbstractCombination {
                 }
             }
         }
-
+        */
         return selectionCache;
     }
 
+    /**
+     * Method to execute the given xtend2 transformation.
+     * @param transformation the xtend2 transformation to execute
+     * @param selection the current selection
+     */
     private void evokeXtend2(final KSBasETransformation transformation,
             final List<EObject> selection) {
-
         Method method = null;
         List<Object> params = new LinkedList<Object>();
+        //find the right method to execute in the xtend2 transformation class
         for (Method m : transformation.getTransformationClass().getClass().getMethods()) {
             if (m.getName().equals(transformation.getTransformation())) {
                 HashMap<Object, Object> selectionCache = this.getSelectionHash(selection);
                 params = new LinkedList<Object>();
                 method = m;
+                int index = 0;
                 for (Type t : m.getGenericParameterTypes()) {
                     Object param = null;
                     for (Object p : selectionCache.values()) {
                         if (this.match(t, p) && !params.contains(p)) {
                             param = p;
                             break;
+                        } else if ((p instanceof List) && (((List)p).size() >= index + 1) && match(t, ((List) p).get(index)) ) {
+                            param = ((List) p).get(index);
+                            break;
                         }
                     }
-                    // Object param = selectionCache.get(c);
                     if (param != null) {
                         params.add(param);
                     } else {
@@ -197,6 +218,7 @@ public class KSBasECombination extends AbstractCombination {
 
             }
         }
+        //if you found a fitting method execute it
         if (method != null) {
             try {
                 method.invoke(transformation.getTransformationClass(), params.toArray());
@@ -215,6 +237,15 @@ public class KSBasECombination extends AbstractCombination {
 
     }
 
+    /**
+     * A helper method for xtend2 to determine whether an object matches a certain type.
+     * 
+     * @param a
+     *            the type. Likely the type of a parameter.
+     * @param b
+     *            the objects whose matchability to test
+     * @return true if a matches the type of b else false
+     */
     private boolean match(final Type a, final Object b) {
         if (a instanceof ParameterizedType) {
             Type rawType = ((ParameterizedType) a).getRawType();
@@ -249,6 +280,12 @@ public class KSBasECombination extends AbstractCombination {
         return false;
     }
 
+    /**
+     * Method to execute a given Xtend1 transformation.
+     * @param transformation the transformation to execute
+     * @param selectionMapping the current selection
+     * @param diagramEditor the current diagram editor
+     */
     private void evokeXtend(final KSBasETransformation transformation,
             final List<Object> selectionMapping, final DiagramDocumentEditor diagramEditor) {
         TransformationDescriptor descriptor = new TransformationDescriptor(
@@ -261,6 +298,10 @@ public class KSBasECombination extends AbstractCombination {
         effect.schedule();
     }
 
+    /**
+     * Method to refresh the CanonicalEditPolicy to show the changes done by a transformation.
+     * @param diagramEditor the current diagram editor.
+     */
     private void refreshEditPolicy(final DiagramDocumentEditor diagramEditor) {
         AbstractEffect refresh = new AbstractEffect() {
             public void execute() {
@@ -274,6 +315,12 @@ public class KSBasECombination extends AbstractCombination {
         refresh.schedule();
     }
 
+    /**
+     * Method to execute the layout so that it adapts to recent changes done by a transformation.
+     * @param selectionList the current selection
+     * @param rootObject the root element to do the layout on if nothing is selected.
+     * @param button the button triggering this combination to get the editor from
+     */
     private void evokeLayout(final List<EObject> selectionList, final EObject rootObject,
             final ButtonState button) {
         LayoutEffect layout = null;
