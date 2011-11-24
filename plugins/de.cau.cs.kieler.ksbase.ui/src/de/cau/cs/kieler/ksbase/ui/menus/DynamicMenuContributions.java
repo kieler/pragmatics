@@ -153,11 +153,11 @@ public final class DynamicMenuContributions {
          */
         private boolean evaluateValidation(final List<Object> selectionMapping) {
             if (transformation.getValidation() != null) {
+                //there might be a number of validations separated by ","
                 String[] validations = transformation.getValidation().split(",");
                 boolean result = true;
                 for (String val : validations) {
-                    // final String val = transformation.getValidation();
-
+                    //if validation has been evaluated under the same circumstances so don't do it again
                     HashMap<List<Object>, Boolean> cache = validationCache.get(val);
                     if (cache != null) {
                         Boolean cachedResult = cache.get(selectionMapping);
@@ -169,7 +169,7 @@ public final class DynamicMenuContributions {
                     } else {
                         validationCache.put(val, new HashMap<List<Object>, Boolean>());
                     }
-
+                    //execute the validation
                     if ((val != null) && (!val.isEmpty()) && (transDomain != null)) {
                         TransformationDescriptor descriptor = new TransformationDescriptor(
                                 val, selectionMapping.toArray());
@@ -199,6 +199,12 @@ public final class DynamicMenuContributions {
             return true;
         }
 
+        /**
+         * Helper method for xtend2 to bring the current selection to a form we can easier pass as 
+         * parameters.
+         * @param selection the current selection
+         * @return the current selection of a hashmap with type as key and proposed parameter as value
+         */
         private HashMap<Object, Object> getSelectionHash(final List<EObject> selection) {
             HashMap<Object, Object> selectionCache = new HashMap<Object, Object>();
             for (EObject obj : selection) {
@@ -213,10 +219,10 @@ public final class DynamicMenuContributions {
                     listCache.add(obj);
                 }
             }
-            //Collection<Object> values = selectionCache.values();
+            //a cache to eliminate concurrent modification error
             List<Object> cache = new LinkedList<Object>();
             cache.addAll(selectionCache.values());
-            
+            //Also put the element of a list of length = 1 in there for non list single object parameters
             for (Object obj : cache) {
                 if (obj instanceof List) {
                     if (((List<?>) obj).size() == 1) {
@@ -296,6 +302,12 @@ public final class DynamicMenuContributions {
             return null;
         }
 
+        /**
+         * A helper method for xtend2 to determine whether an object matches a certain type.
+         * @param a the type. Likely the type of a parameter.
+         * @param b the objects whose matchability to test
+         * @return true if a matches the type of b else false
+         */
         private boolean match(final Type a, final Object b) {
             if (a instanceof ParameterizedType) {
                 Type rawType = ((ParameterizedType) a).getRawType();
@@ -330,8 +342,16 @@ public final class DynamicMenuContributions {
             return false;
         }
         
-        private Pair<Method, List<Object>> findMethod(HashMap<Object, Object> selectionHash,
-                String name) {
+        /**
+         * Helper method for xtend2 to find a method of a certain name that matches the current 
+         * selection. 
+         * @param selectionHash the current selection
+         * @param name the name of the method
+         * @return the found method as well as the parameters to be given to it. null if no fitting #
+         * method is found
+         */
+        private Pair<Method, List<Object>> findMethod(final HashMap<Object, Object> selectionHash,
+                final String name) {
             Method method = null;
             List<Object> params = new LinkedList<Object>();
             for (Method m : transformation.getTransformationClass().getClass().getMethods()) {
@@ -366,14 +386,15 @@ public final class DynamicMenuContributions {
 
         @Override
         public EvaluationResult evaluate(final IEvaluationContext context) throws CoreException {
-
             List<EObject> selection = getCurrentSelection(context);
             if (selection != null) {
+                //this is an xtend2 transformation
                 if (transformation.getTransformationClass() != null) {
                     HashMap<Object, Object> selectionHash = this.getSelectionHash(selection);
                     Method method = this.findMethod(selectionHash,
                             transformation.getTransformation()).getFirst();
                     boolean validationResult = true;
+                    //evaluate validations
                     if (transformation.getValidation() != null) {
                         String[] validations = transformation.getValidation().split(",");
                         for (String val : validations) {
@@ -409,6 +430,7 @@ public final class DynamicMenuContributions {
                     if (method != null && validationResult) {
                         return EvaluationResult.TRUE;
                     }
+                //this is an xtend1 transformation
                 } else {
                     List<Object> selectionMapping = null;
                     for (List<String> parameters : transformation.getParameterList()) {
