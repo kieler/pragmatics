@@ -24,6 +24,7 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -196,7 +197,7 @@ public class LayerElement {
     public String toString() {
         if (elemObj instanceof KNode) {
             KNode node = (KNode) elemObj;
-            String label = node.getLabel().getText();
+            String label = node.getLabels().get(0).getText();
             if (label != null && label.length() > 0) {
                 return label;
             } else {
@@ -204,22 +205,23 @@ public class LayerElement {
             }
         } else if (elemObj instanceof KPort) {
             KPort port = (KPort) elemObj;
-            return "port:" + port.getLabel().getText();
+            return "port:" + port.getLabels().get(0).getText();
         } else if (elemObj instanceof KEdge) {
             KEdge edge = (KEdge) elemObj;
             KNode source = edge.getSource();
             KNode target = edge.getTarget();
             if (source != null && target != null) {
-                return "(" + source.getLabel().getText() + ") > (" + target.getLabel().getText() + ")";
+                return "(" + source.getLabels().get(0).getText() + ") > ("
+                        + target.getLabels().get(0).getText() + ")";
             } else if (target != null) {
-                return "(" + edge.getSourcePort().getLabel().getText() + ") > ("
-                        + target.getLabel().getText() + ")";
+                return "(" + edge.getSourcePort().getLabels().get(0).getText() + ") > ("
+                        + target.getLabels().get(0).getText() + ")";
             } else if (source != null) {
-                return "(" + source.getLabel().getText() + ") > ("
-                        + edge.getTargetPort().getLabel().getText() + ")";
+                return "(" + source.getLabels().get(0).getText() + ") > ("
+                        + edge.getTargetPort().getLabels().get(0).getText() + ")";
             } else {
-                return "(" + edge.getSourcePort().getLabel().getText() + ") > ("
-                        + edge.getTargetPort().getLabel().getText() + ")";
+                return "(" + edge.getSourcePort().getLabels().get(0).getText() + ") > ("
+                        + edge.getTargetPort().getLabels().get(0).getText() + ")";
             }
         } else {
             return "element:" + rank;
@@ -456,12 +458,14 @@ public class LayerElement {
                 if (elemObj instanceof KNode) {
                     float minX = 0, maxX = realWidth;
                     KNode node = (KNode) elemObj;
-                    KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);
-                    if (labelLayout.getXpos() < minX) {
-                        minX = labelLayout.getXpos();
-                    }
-                    if (labelLayout.getXpos() + labelLayout.getWidth() > maxX) {
-                        maxX = labelLayout.getXpos() + labelLayout.getWidth();
+                    for (KLabel label : node.getLabels()) {
+                        KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                        if (labelLayout.getXpos() < minX) {
+                            minX = labelLayout.getXpos();
+                        }
+                        if (labelLayout.getXpos() + labelLayout.getWidth() > maxX) {
+                            maxX = labelLayout.getXpos() + labelLayout.getWidth();
+                        }
                     }
                     preSpacingCross = -minX;
                     totalCrosswiseDim += preSpacingCross + maxX - realWidth;
@@ -471,12 +475,14 @@ public class LayerElement {
                 if (elemObj instanceof KNode) {
                     float minY = 0, maxY = realHeight;
                     KNode node = (KNode) elemObj;
-                    KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);
-                    if (labelLayout.getYpos() < minY) {
-                        minY = labelLayout.getYpos();
-                    }
-                    if (labelLayout.getYpos() + labelLayout.getHeight() > maxY) {
-                        maxY = labelLayout.getYpos() + labelLayout.getHeight();
+                    for (KLabel label : node.getLabels()) {
+                        KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                        if (labelLayout.getYpos() < minY) {
+                            minY = labelLayout.getYpos();
+                        }
+                        if (labelLayout.getYpos() + labelLayout.getHeight() > maxY) {
+                            maxY = labelLayout.getYpos() + labelLayout.getHeight();
+                        }
                     }
                     preSpacingCross = -minY;
                     totalCrosswiseDim += preSpacingCross + maxY - realHeight;
@@ -511,20 +517,24 @@ public class LayerElement {
                         } else if (portLayout.getYpos() + portLayout.getHeight() > maxY) {
                             maxY = portLayout.getYpos() + portLayout.getHeight();
                         }
-                        KShapeLayout labelLayout = port.getLabel().getData(KShapeLayout.class);
-                        float ypos = portLayout.getYpos() + labelLayout.getYpos();
-                        if (ypos < minY) {
-                            minY = ypos;
-                        } else if (ypos + labelLayout.getHeight() > maxY) {
-                            maxY = ypos + labelLayout.getHeight();
+                        for (KLabel label : port.getLabels()) {
+                            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                            float ypos = portLayout.getYpos() + labelLayout.getYpos();
+                            if (ypos < minY) {
+                                minY = ypos;
+                            } else if (ypos + labelLayout.getHeight() > maxY) {
+                                maxY = ypos + labelLayout.getHeight();
+                            }
                         }
                     }
-                    KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);
-                    if (labelLayout.getYpos() < minY) {
-                        minY = labelLayout.getYpos();
-                    }
-                    if (labelLayout.getYpos() + labelLayout.getHeight() > maxY) {
-                        maxY = labelLayout.getYpos() + labelLayout.getHeight();
+                    for (KLabel label : node.getLabels()) {
+                        KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                        if (labelLayout.getYpos() < minY) {
+                            minY = labelLayout.getYpos();
+                        }
+                        if (labelLayout.getYpos() + labelLayout.getHeight() > maxY) {
+                            maxY = labelLayout.getYpos() + labelLayout.getHeight();
+                        }
                     }
                     preSpacingLength = -minY;
                     totalLengthwiseDim += preSpacingLength + maxY - realHeight;
@@ -541,20 +551,24 @@ public class LayerElement {
                         } else if (portLayout.getXpos() + portLayout.getWidth() > maxX) {
                             maxX = portLayout.getXpos() + portLayout.getWidth();
                         }
-                        KShapeLayout labelLayout = port.getLabel().getData(KShapeLayout.class);
-                        float xpos = portLayout.getXpos() + labelLayout.getXpos();
-                        if (xpos < minX) {
-                            minX = xpos;
-                        } else if (xpos + labelLayout.getWidth() > maxX) {
-                            maxX = xpos + labelLayout.getWidth();
+                        for (KLabel label : port.getLabels()) {
+                            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                            float xpos = portLayout.getXpos() + labelLayout.getXpos();
+                            if (xpos < minX) {
+                                minX = xpos;
+                            } else if (xpos + labelLayout.getWidth() > maxX) {
+                                maxX = xpos + labelLayout.getWidth();
+                            }
                         }
                     }
-                    KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);
-                    if (labelLayout.getXpos() < minX) {
-                        minX = labelLayout.getXpos();
-                    }
-                    if (labelLayout.getXpos() + labelLayout.getWidth() > maxX) {
-                        maxX = labelLayout.getXpos() + labelLayout.getWidth();
+                    for (KLabel label : node.getLabels()) {
+                        KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                        if (labelLayout.getXpos() < minX) {
+                            minX = labelLayout.getXpos();
+                        }
+                        if (labelLayout.getXpos() + labelLayout.getWidth() > maxX) {
+                            maxX = labelLayout.getXpos() + labelLayout.getWidth();
+                        }
                     }
                     preSpacingLength = -minX;
                     totalLengthwiseDim += preSpacingLength + maxX - realWidth;

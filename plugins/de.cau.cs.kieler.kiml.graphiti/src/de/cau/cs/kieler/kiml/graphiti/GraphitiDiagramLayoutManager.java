@@ -46,6 +46,7 @@ import com.google.common.collect.BiMap;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
+import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
@@ -243,9 +244,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             for (Shape child : ((ContainerShape) shape).getChildren()) {
                 GraphicsAlgorithm childGa = child.getGraphicsAlgorithm();
                 if (childGa instanceof AbstractText) {
-                    createLabel(childNode.getLabel(), (AbstractText) childGa,
+                    createLabel(childNode, (AbstractText) childGa,
                             -nodeInsets.getLeft(), -nodeInsets.getTop());
-                    break;
                 }
             }
             
@@ -340,15 +340,17 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     /**
      * Set up a label for a node or a port.
      * 
-     * @param label a label
+     * @param element the graph element to which the label is added
      * @param abstractText the text graphics algorithm to set up the label
      * @param offsetx the x coordinate offset
      * @param offsety the y coordinate offset
+     * @return the new label
      */
-    private void createLabel(final KLabel label, final AbstractText abstractText,
+    private KLabel createLabel(final KLabeledGraphElement element, final AbstractText abstractText,
             final float offsetx, final float offsety) {
         String labelText = abstractText.getValue();
         if (labelText != null) {
+            KLabel label = KimlUtil.createInitializedLabel(element);
             label.setText(labelText);
             IGaService gaService = Graphiti.getGaService();
             Font font = gaService.getFont(abstractText, true);
@@ -391,7 +393,9 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
             labelLayout.setPos(xpos + offsetx, ypos + offsety);
             labelLayout.setSize(width, height);
+            return label;
         }
+        return null;
     }
 
     /** minimal value for the relative location of head labels. */
@@ -477,9 +481,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             if (ga instanceof AbstractText) {
                 AbstractText text = (AbstractText) ga;
                 String labelText = text.getValue();
-                KLabel label = KimlUtil.createInitializedLabel();
+                KLabel label = KimlUtil.createInitializedLabel(edge);
                 label.setText(labelText);
-                edge.getLabels().add(label);
                 graphMap.put(label, decorator);
 
                 // set label placement

@@ -43,10 +43,11 @@ Void transformPort(KPort port, Node node):
 ;
 
 create Node getNode(KNode node):
-	(if node.label != null then this.setNodeLabel(node.label.text)) ->
+	(if !node.labels.isEmpty then this.setNodeLabel(node.labels.get(0).text)) ->
 	this.data.addAll(node.data.clone())
 ;
 
 create Port getPort(KPort port):
+	(if !port.labels.isEmpty then this.setPortLabel(port.labels.get(0).text)) ->
 	this.data.addAll(port.data.clone())
 ;

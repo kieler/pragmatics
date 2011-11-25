@@ -219,9 +219,10 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                 if (nodeLayout.getHeight() > 0) {
                     attributes.add(createAttribute(Attributes.HEIGHT, nodeLayout.getHeight() / DPI));
                 }
-                if (childNode.getLabel().getText().length() > 0 && fullExport) {
+                if (!childNode.getLabels().isEmpty()
+                        && childNode.getLabels().get(0).getText().length() > 0 && fullExport) {
                     attributes.add(createAttribute(Attributes.LABEL, createString(
-                            childNode.getLabel().getText())));
+                            childNode.getLabels().get(0).getText())));
                 }
                 // add node position if interactive layout is chosen
                 if ((interactive || fullExport)
@@ -873,6 +874,9 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
         }
         nodeLayout.setXpos(xpos - width / 2);
         nodeLayout.setYpos(ypos - height / 2);
+        // ignore node labels and ports
+        KimlUtil.excludeLabels(knode);
+        KimlUtil.excludePorts(knode);
     }
     
     /**

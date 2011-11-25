@@ -43,8 +43,8 @@ public class LPort extends LShape {
     private LNode owner;
     /** the port side. */
     private PortSide side = PortSide.UNDEFINED;
-    /** this port's label, if any. */
-    private LLabel label = null;
+    /** this port's labels. */
+    private List<LLabel> labels = new LinkedList<LLabel>();
     /** the edges going into the port. */
     private List<LEdge> incomingEdges = new LinkedList<LEdge>();
     /** the edges going out of the port. */
@@ -162,21 +162,12 @@ public class LPort extends LShape {
     }
     
     /**
-     * Sets this port's label.
+     * Returns this port's labels.
      * 
-     * @param label the new label. May be {@code null}.
+     * @return this port's labels.
      */
-    public void setLabel(final LLabel label) {
-        this.label = label;
-    }
-    
-    /**
-     * Returns this port's label, if any.
-     * 
-     * @return this port's label.
-     */
-    public LLabel getLabel() {
-        return label;
+    public List<LLabel> getLabels() {
+        return labels;
     }
     
     /**
@@ -185,8 +176,8 @@ public class LPort extends LShape {
      * @return the name, or {@code null}
      */
     public String getName() {
-        if (label != null) {
-            return label.getText();
+        if (!labels.isEmpty()) {
+            return labels.get(0).getText();
         }
         return null;
     }

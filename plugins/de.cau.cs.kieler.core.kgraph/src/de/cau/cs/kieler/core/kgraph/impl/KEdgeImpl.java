@@ -17,25 +17,18 @@ package de.cau.cs.kieler.core.kgraph.impl;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
-import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 
-import java.util.Collection;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
-import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -48,7 +41,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link de.cau.cs.kieler.core.kgraph.impl.KEdgeImpl#getTarget <em>Target</em>}</li>
  *   <li>{@link de.cau.cs.kieler.core.kgraph.impl.KEdgeImpl#getSourcePort <em>Source Port</em>}</li>
  *   <li>{@link de.cau.cs.kieler.core.kgraph.impl.KEdgeImpl#getTargetPort <em>Target Port</em>}</li>
- *   <li>{@link de.cau.cs.kieler.core.kgraph.impl.KEdgeImpl#getLabels <em>Labels</em>}</li>
  * </ul>
  * </p>
  *
@@ -56,7 +48,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * @kieler.rating 2011-02-01 yellow
  *     reviewed by cmot, soh
  */
-public class KEdgeImpl extends KGraphElementImpl implements KEdge {
+public class KEdgeImpl extends KLabeledGraphElementImpl implements KEdge {
     /**
      * The cached value of the '{@link #getTarget() <em>Target</em>}' reference.
      * <!-- begin-user-doc -->
@@ -86,16 +78,6 @@ public class KEdgeImpl extends KGraphElementImpl implements KEdge {
      * @ordered
      */
     protected KPort targetPort;
-
-    /**
-     * The cached value of the '{@link #getLabels() <em>Labels</em>}' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getLabels()
-     * @generated
-     * @ordered
-     */
-    protected EList<KLabel> labels;
 
     /**
      * <!-- begin-user-doc -->
@@ -298,18 +280,6 @@ public class KEdgeImpl extends KGraphElementImpl implements KEdge {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EList<KLabel> getLabels() {
-        if (labels == null) {
-            labels = new EObjectContainmentEList<KLabel>(KLabel.class, this, KGraphPackage.KEDGE__LABELS);
-        }
-        return labels;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     @Override
     public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
@@ -337,8 +307,6 @@ public class KEdgeImpl extends KGraphElementImpl implements KEdge {
                 return basicSetSource(null, msgs);
             case KGraphPackage.KEDGE__TARGET:
                 return basicSetTarget(null, msgs);
-            case KGraphPackage.KEDGE__LABELS:
-                return ((InternalEList<?>)getLabels()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
@@ -376,8 +344,6 @@ public class KEdgeImpl extends KGraphElementImpl implements KEdge {
             case KGraphPackage.KEDGE__TARGET_PORT:
                 if (resolve) return getTargetPort();
                 return basicGetTargetPort();
-            case KGraphPackage.KEDGE__LABELS:
-                return getLabels();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -387,7 +353,6 @@ public class KEdgeImpl extends KGraphElementImpl implements KEdge {
      * <!-- end-user-doc -->
      * @generated
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
@@ -402,10 +367,6 @@ public class KEdgeImpl extends KGraphElementImpl implements KEdge {
                 return;
             case KGraphPackage.KEDGE__TARGET_PORT:
                 setTargetPort((KPort)newValue);
-                return;
-            case KGraphPackage.KEDGE__LABELS:
-                getLabels().clear();
-                getLabels().addAll((Collection<? extends KLabel>)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -431,9 +392,6 @@ public class KEdgeImpl extends KGraphElementImpl implements KEdge {
             case KGraphPackage.KEDGE__TARGET_PORT:
                 setTargetPort((KPort)null);
                 return;
-            case KGraphPackage.KEDGE__LABELS:
-                getLabels().clear();
-                return;
         }
         super.eUnset(featureID);
     }
@@ -454,8 +412,6 @@ public class KEdgeImpl extends KGraphElementImpl implements KEdge {
                 return sourcePort != null;
             case KGraphPackage.KEDGE__TARGET_PORT:
                 return targetPort != null;
-            case KGraphPackage.KEDGE__LABELS:
-                return labels != null && !labels.isEmpty();
         }
         return super.eIsSet(featureID);
     }

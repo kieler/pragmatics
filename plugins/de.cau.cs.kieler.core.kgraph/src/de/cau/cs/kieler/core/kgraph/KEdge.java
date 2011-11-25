@@ -15,8 +15,6 @@
  */
 package de.cau.cs.kieler.core.kgraph;
 
-import org.eclipse.emf.common.util.EList;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Edge</b></em>'.
@@ -34,7 +32,6 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link de.cau.cs.kieler.core.kgraph.KEdge#getTarget <em>Target</em>}</li>
  *   <li>{@link de.cau.cs.kieler.core.kgraph.KEdge#getSourcePort <em>Source Port</em>}</li>
  *   <li>{@link de.cau.cs.kieler.core.kgraph.KEdge#getTargetPort <em>Target Port</em>}</li>
- *   <li>{@link de.cau.cs.kieler.core.kgraph.KEdge#getLabels <em>Labels</em>}</li>
  * </ul>
  * </p>
  *
@@ -44,7 +41,7 @@ import org.eclipse.emf.common.util.EList;
  * @kieler.rating 2011-02-01 yellow
  *     reviewed by cmot, soh
  */
-public interface KEdge extends KGraphElement {
+public interface KEdge extends KLabeledGraphElement {
     /**
      * Returns the value of the '<em><b>Source</b></em>' container reference.
      * It is bidirectional and its opposite is '{@link de.cau.cs.kieler.core.kgraph.KNode#getOutgoingEdges <em>Outgoing Edges</em>}'.
@@ -169,20 +166,5 @@ public interface KEdge extends KGraphElement {
      * @generated
      */
     void setTargetPort(KPort value);
-
-    /**
-     * Returns the value of the '<em><b>Labels</b></em>' containment reference list.
-     * The list contents are of type {@link de.cau.cs.kieler.core.kgraph.KLabel}.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * <!-- begin-model-doc -->
-     * An edge may have multiple labels.
-     * <!-- end-model-doc -->
-     * @return the value of the '<em>Labels</em>' containment reference list.
-     * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKEdge_Labels()
-     * @model containment="true"
-     * @generated
-     */
-    EList<KLabel> getLabels();
 
 } // KEdge

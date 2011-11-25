@@ -244,7 +244,9 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // add a new node to the layered graph, copying its size
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        if (!nodeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
+        if (nodeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
+            KimlUtil.excludeLabels(node);
+        } else {
             KVector ratio = KimlUtil.resizeNode(node);
             if (ratio != null && (ratio.x != 1 || ratio.y != 1)) {
                 newNode.setProperty(Properties.RESIZE_RATIO, ratio);
@@ -310,9 +312,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
             elemMap.put(kport, newPort);
 
-            // create layered label, if any
-            KLabel klabel = kport.getLabel();
-            if (klabel != null) {
+            // create the port's labels
+            for (KLabel klabel : kport.getLabels()) {
                 KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
 
                 LLabel newLabel = new LLabel(klabel.getText());
@@ -321,7 +322,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 newLabel.getSize().y = labelLayout.getHeight();
                 newLabel.getPosition().x = labelLayout.getXpos() - portLayout.getWidth() / 2;
                 newLabel.getPosition().y = labelLayout.getYpos() - portLayout.getHeight() / 2;
-                newPort.setLabel(newLabel);
+                newPort.getLabels().add(newLabel);
             }
 
             PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
@@ -345,18 +346,16 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             }
         }
 
-        // add the node's label, if any
-        KLabel klabel = node.getLabel();
-        if (klabel != null) {
+        // add the node's labels
+        for (KLabel klabel : node.getLabels()) {
             KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
-
             LLabel newLabel = new LLabel(klabel.getText());
             newLabel.setProperty(Properties.ORIGIN, node);
             newLabel.getSize().x = labelLayout.getWidth();
             newLabel.getSize().y = labelLayout.getHeight();
             newLabel.getPosition().x = labelLayout.getXpos();
             newLabel.getPosition().y = labelLayout.getYpos();
-            newNode.setLabel(newLabel);
+            newNode.getLabels().add(newLabel);
         }
 
         // set properties of the new node
@@ -673,7 +672,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
             if (origin instanceof KNode) {
                 // set the node position
-                KShapeLayout nodeLayout = ((KNode) origin).getData(KShapeLayout.class);
+                KNode knode = (KNode) origin;
+                KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
 
                 nodeLayout.setXpos((float) (lnode.getPosition().x + offset.x));
                 nodeLayout.setYpos((float) (lnode.getPosition().y + offset.y));
@@ -683,11 +683,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                     for (LPort lport : lnode.getPorts()) {
                         origin = lport.getProperty(Properties.ORIGIN);
                         if (origin instanceof KPort) {
-                            KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
-                            portLayout
-                                    .setXpos((float) (lport.getPosition().x - lport.getSize().x / 2.0));
-                            portLayout
-                                    .setYpos((float) (lport.getPosition().y - lport.getSize().y / 2.0));
+                            KPort kport = (KPort) origin;
+                            KShapeLayout portLayout = kport.getData(KShapeLayout.class);
+                            portLayout.setXpos((float)
+                                    (lport.getPosition().x - lport.getSize().x / 2.0));
+                            portLayout.setYpos((float)
+                                    (lport.getPosition().y - lport.getSize().y / 2.0));
+                            KimlUtil.excludeLabels(kport);
                         }
                     }
                 }

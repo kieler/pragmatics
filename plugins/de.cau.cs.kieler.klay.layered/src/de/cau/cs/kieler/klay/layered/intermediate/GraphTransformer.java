@@ -109,12 +109,15 @@ public class GraphTransformer extends AbstractAlgorithm implements ILayoutProces
                         mirror(bendPoint, maxx);
                     }
                     for (LLabel label : edge.getLabels()) {
-                        mirror(label.getPosition(), maxx);
+                        mirror(label.getPosition(), maxx - label.getSize().x);
                     }
                 }
+                for (LLabel label : port.getLabels()) {
+                    mirror(label.getPosition(), -label.getSize().x);
+                }
             }
-            if (node.getLabel() != null) {
-                mirror(node.getLabel().getPosition(), nodeSize.x);
+            for (LLabel label : node.getLabels()) {
+                mirror(label.getPosition(), nodeSize.x - label.getSize().x);
             }
         }
     }
@@ -176,14 +179,12 @@ public class GraphTransformer extends AbstractAlgorithm implements ILayoutProces
                         transpose(label.getSize());
                     }
                 }
-                LLabel label = port.getLabel();
-                if (label != null) {
+                for (LLabel label : port.getLabels()) {
                     transpose(label.getPosition());
                     transpose(label.getSize());
                 }
             }
-            LLabel label = node.getLabel();
-            if (label != null) {
+            for (LLabel label : node.getLabels()) {
                 transpose(label.getPosition());
                 transpose(label.getSize());
             }

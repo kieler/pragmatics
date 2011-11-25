@@ -43,7 +43,7 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * @generated
  */
 public class KNodeItemProvider
-    extends KGraphElementItemProvider
+    extends KLabeledGraphElementItemProvider
     implements
         IEditingDomainItemProvider,
         IStructuredItemContentProvider,
@@ -90,7 +90,6 @@ public class KNodeItemProvider
             childrenFeatures.add(KGraphPackage.Literals.KNODE__CHILDREN);
             childrenFeatures.add(KGraphPackage.Literals.KNODE__PORTS);
             childrenFeatures.add(KGraphPackage.Literals.KNODE__OUTGOING_EDGES);
-            childrenFeatures.add(KGraphPackage.Literals.KNODE__LABEL);
         }
         return childrenFeatures;
     }
@@ -145,7 +144,6 @@ public class KNodeItemProvider
             case KGraphPackage.KNODE__CHILDREN:
             case KGraphPackage.KNODE__PORTS:
             case KGraphPackage.KNODE__OUTGOING_EDGES:
-            case KGraphPackage.KNODE__LABEL:
                 fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
                 return;
         }
@@ -177,11 +175,6 @@ public class KNodeItemProvider
             (createChildParameter
                 (KGraphPackage.Literals.KNODE__OUTGOING_EDGES,
                  KGraphFactory.eINSTANCE.createKEdge()));
-
-        newChildDescriptors.add
-            (createChildParameter
-                (KGraphPackage.Literals.KNODE__LABEL,
-                 KGraphFactory.eINSTANCE.createKLabel()));
     }
 
 }

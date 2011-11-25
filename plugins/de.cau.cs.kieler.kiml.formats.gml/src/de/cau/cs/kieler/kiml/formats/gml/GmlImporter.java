@@ -101,7 +101,8 @@ public class GmlImporter implements IGraphTransformer<GmlModel, KNode> {
                     if ("graph".equalsIgnoreCase(e.getKey())) {
                         transformGraph(e, knode, transData);
                     } else if ("label".equalsIgnoreCase(e.getKey())) {
-                        knode.getLabel().setText(e.getValue());
+                        KLabel label = KimlUtil.createInitializedLabel(knode);
+                        label.setText(e.getValue());
                     } else if ("graphics".equalsIgnoreCase(e.getKey())) {
                         for (Element f : e.getElements()) {
                             try {
@@ -135,23 +136,23 @@ public class GmlImporter implements IGraphTransformer<GmlModel, KNode> {
                 if (sourceid != null && targetid != null) {
                     KNode source = transformNode(sourceid, parent, transData);
                     KNode target = transformNode(targetid, parent, transData);
-                    KEdge edge = KimlUtil.createInitializedEdge();
-                    edge.setSource(source);
-                    edge.setTarget(target);
-                    KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                    KEdge kedge = KimlUtil.createInitializedEdge();
+                    kedge.setSource(source);
+                    kedge.setTarget(target);
+                    KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
                     edgeLayout.setProperty(PROP_ELEM, element);
                     for (Element e : element.getElements()) {
                         if ("label".equalsIgnoreCase(e.getKey())) {
-                            KLabel label = KimlUtil.createInitializedLabel();
+                            KLabel label = KimlUtil.createInitializedLabel(kedge);
                             label.setText(e.getValue());
-                            edge.getLabels().add(label);
                         } else {
                             KimlUtil.setOption(edgeLayout, e.getKey(), e.getValue());
                         }
                     }
                 }
             } else if ("label".equalsIgnoreCase(element.getKey())) {
-                parent.getLabel().setText(element.getValue());
+                KLabel klabel = KimlUtil.createInitializedLabel(parent);
+                klabel.setText(element.getValue());
             }
         }
     }

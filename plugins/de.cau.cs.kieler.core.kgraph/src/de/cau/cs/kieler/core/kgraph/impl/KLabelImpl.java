@@ -18,11 +18,15 @@ package de.cau.cs.kieler.core.kgraph.impl;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 
+import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement;
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
  * <!-- begin-user-doc -->
@@ -32,6 +36,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.core.kgraph.impl.KLabelImpl#getText <em>Text</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.core.kgraph.impl.KLabelImpl#getParent <em>Parent</em>}</li>
  * </ul>
  * </p>
  *
@@ -105,11 +110,98 @@ public class KLabelImpl extends KGraphElementImpl implements KLabel {
      * <!-- end-user-doc -->
      * @generated
      */
+    public KLabeledGraphElement getParent() {
+        if (eContainerFeatureID() != KGraphPackage.KLABEL__PARENT) return null;
+        return (KLabeledGraphElement)eContainer();
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public NotificationChain basicSetParent(KLabeledGraphElement newParent, NotificationChain msgs) {
+        msgs = eBasicSetContainer((InternalEObject)newParent, KGraphPackage.KLABEL__PARENT, msgs);
+        return msgs;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setParent(KLabeledGraphElement newParent) {
+        if (newParent != eInternalContainer() || (eContainerFeatureID() != KGraphPackage.KLABEL__PARENT && newParent != null)) {
+            if (EcoreUtil.isAncestor(this, newParent))
+                throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
+            NotificationChain msgs = null;
+            if (eInternalContainer() != null)
+                msgs = eBasicRemoveFromContainer(msgs);
+            if (newParent != null)
+                msgs = ((InternalEObject)newParent).eInverseAdd(this, KGraphPackage.KLABELED_GRAPH_ELEMENT__LABELS, KLabeledGraphElement.class, msgs);
+            msgs = basicSetParent(newParent, msgs);
+            if (msgs != null) msgs.dispatch();
+        }
+        else if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, KGraphPackage.KLABEL__PARENT, newParent, newParent));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+        switch (featureID) {
+            case KGraphPackage.KLABEL__PARENT:
+                if (eInternalContainer() != null)
+                    msgs = eBasicRemoveFromContainer(msgs);
+                return basicSetParent((KLabeledGraphElement)otherEnd, msgs);
+        }
+        return super.eInverseAdd(otherEnd, featureID, msgs);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+        switch (featureID) {
+            case KGraphPackage.KLABEL__PARENT:
+                return basicSetParent(null, msgs);
+        }
+        return super.eInverseRemove(otherEnd, featureID, msgs);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
+        switch (eContainerFeatureID()) {
+            case KGraphPackage.KLABEL__PARENT:
+                return eInternalContainer().eInverseRemove(this, KGraphPackage.KLABELED_GRAPH_ELEMENT__LABELS, KLabeledGraphElement.class, msgs);
+        }
+        return super.eBasicRemoveFromContainerFeature(msgs);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
             case KGraphPackage.KLABEL__TEXT:
                 return getText();
+            case KGraphPackage.KLABEL__PARENT:
+                return getParent();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -124,6 +216,9 @@ public class KLabelImpl extends KGraphElementImpl implements KLabel {
         switch (featureID) {
             case KGraphPackage.KLABEL__TEXT:
                 setText((String)newValue);
+                return;
+            case KGraphPackage.KLABEL__PARENT:
+                setParent((KLabeledGraphElement)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -140,6 +235,9 @@ public class KLabelImpl extends KGraphElementImpl implements KLabel {
             case KGraphPackage.KLABEL__TEXT:
                 setText(TEXT_EDEFAULT);
                 return;
+            case KGraphPackage.KLABEL__PARENT:
+                setParent((KLabeledGraphElement)null);
+                return;
         }
         super.eUnset(featureID);
     }
@@ -154,6 +252,8 @@ public class KLabelImpl extends KGraphElementImpl implements KLabel {
         switch (featureID) {
             case KGraphPackage.KLABEL__TEXT:
                 return TEXT_EDEFAULT == null ? text != null : !TEXT_EDEFAULT.equals(text);
+            case KGraphPackage.KLABEL__PARENT:
+                return getParent() != null;
         }
         return super.eIsSet(featureID);
     }

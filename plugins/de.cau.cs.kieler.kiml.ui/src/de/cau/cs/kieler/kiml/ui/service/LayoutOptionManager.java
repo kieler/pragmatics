@@ -108,15 +108,15 @@ public class LayoutOptionManager {
             final CompoundLayoutConfig config) {
         // configure the node and its label
         configure(node, layoutMapping, config);
-        if (node.getLabel() != null) {
-            configure(node.getLabel(), layoutMapping, config);
+        for (KLabel label : node.getLabels()) {
+            configure(label, layoutMapping, config);
         }
 
         // configure ports
         for (KPort port : node.getPorts()) {
             configure(port, layoutMapping, config);
-            if (port.getLabel() != null) {
-                configure(port.getLabel(), layoutMapping, config);
+            for (KLabel label : port.getLabels()) {
+                configure(label, layoutMapping, config);
             }
         }
 

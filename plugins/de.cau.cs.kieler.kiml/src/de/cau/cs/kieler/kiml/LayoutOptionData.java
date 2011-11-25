@@ -662,7 +662,8 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     /**
      * Sets whether this option is visible to users, e.g. should be displayed in GUI elements.
      * 
-     * @param thevisible whether this option is visible to users, e.g. should be displayed in GUI elements
+     * @param thevisible whether this option is visible to users, e.g. should be displayed in
+     *          GUI elements
      */
     public void setVisible(final boolean thevisible) {
         this.visible = thevisible;

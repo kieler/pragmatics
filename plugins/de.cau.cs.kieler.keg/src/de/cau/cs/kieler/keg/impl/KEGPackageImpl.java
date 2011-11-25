@@ -112,6 +112,7 @@ public class KEGPackageImpl extends EPackageImpl implements KEGPackage {
         isInited = true;
 
         // Initialize simple dependencies
+        EcorePackage.eINSTANCE.eClass();
         KGraphPackage.eINSTANCE.eClass();
 
         // Create package meta-data objects

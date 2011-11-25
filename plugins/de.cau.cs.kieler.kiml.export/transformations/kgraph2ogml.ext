@@ -87,11 +87,6 @@ Void transformNode(KNode node, ogml::NodeType parent):
 
 // returns the ogml counterpart for the given kgraph node
 create ogml::NodeType getNode(KNode node): 
-	(if node.label.text.length > 0 then
-		(let label = new LabelType:
-		label.setId(getId(node.label)) ->
-		label.setContent(node.label.text) ->
-		this.label.add(label))) ->
 	this.setId(getId(node))
 ;
 

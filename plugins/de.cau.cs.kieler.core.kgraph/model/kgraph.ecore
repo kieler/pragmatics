@@ -34,12 +34,24 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KLabeledGraphElement" abstract="true"
+      eSuperTypes="#//KGraphElement">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Labeled graph elements contain an arbitrary number of labels."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="labels" upperBound="-1"
+        eType="#//KLabel" containment="true" eOpposite="#//KLabel/parent">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="An edge may have multiple labels."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KGraphData" eSuperTypes="#//EMapPropertyHolder">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="This class can be extended to hold arbitrary additional data for each&#xA;graph element."/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KNode" eSuperTypes="#//KGraphElement">
+  <eClassifiers xsi:type="ecore:EClass" name="KNode" eSuperTypes="#//KLabeledGraphElement">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="All nodes except exactly one node must have an assigned parent node. The node&#xA;without parent is the top node of the graph and represents the graph itself. Each&#xA;node must be assigned a label.&#xA;&lt;p>The parent-child relationship of nodes can be used to describe hierarchy in&#xA;nested graphs.&lt;/p>"/>
     </eAnnotations>
@@ -65,14 +77,8 @@
         eType="#//KEdge" containment="true" eOpposite="#//KEdge/source"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="incomingEdges" upperBound="-1"
         eType="#//KEdge" eOpposite="#//KEdge/target"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="label" eType="#//KLabel"
-        containment="true">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Each node must be assigned a label."/>
-      </eAnnotations>
-    </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KEdge" eSuperTypes="#//KGraphElement">
+  <eClassifiers xsi:type="ecore:EClass" name="KEdge" eSuperTypes="#//KLabeledGraphElement">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="An edge must be assigned a source and a target node, but the source and target ports&#xA;are optional."/>
     </eAnnotations>
@@ -98,14 +104,8 @@
         <details key="documentation" value="This reference is optional, as a node may have no ports."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="labels" upperBound="-1"
-        eType="#//KLabel" containment="true">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="An edge may have multiple labels."/>
-      </eAnnotations>
-    </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KPort" eSuperTypes="#//KGraphElement">
+  <eClassifiers xsi:type="ecore:EClass" name="KPort" eSuperTypes="#//KLabeledGraphElement">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Each port must be assigned a containing node. A port may contain incoming&#xA;edges as well as outgoing edges, independently of its type."/>
     </eAnnotations>
@@ -121,18 +121,14 @@
         <details key="documentation" value="Edges in this list may be incoming as well as outgoing with respect&#xA;to the containing node."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="label" eType="#//KLabel"
-        containment="true">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="The label of a port is optional."/>
-      </eAnnotations>
-    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KLabel" eSuperTypes="#//KGraphElement">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Each label must be assigned a parent graph element and a text string."/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="text" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" lowerBound="1"
+        eType="#//KLabeledGraphElement" eOpposite="#//KLabeledGraphElement/labels"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EMapPropertyHolder" abstract="true"
       eSuperTypes="#//IPropertyHolder">

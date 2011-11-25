@@ -17,7 +17,6 @@ package de.cau.cs.kieler.core.kgraph.impl;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
-import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 
@@ -50,7 +49,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link de.cau.cs.kieler.core.kgraph.impl.KNodeImpl#getPorts <em>Ports</em>}</li>
  *   <li>{@link de.cau.cs.kieler.core.kgraph.impl.KNodeImpl#getOutgoingEdges <em>Outgoing Edges</em>}</li>
  *   <li>{@link de.cau.cs.kieler.core.kgraph.impl.KNodeImpl#getIncomingEdges <em>Incoming Edges</em>}</li>
- *   <li>{@link de.cau.cs.kieler.core.kgraph.impl.KNodeImpl#getLabel <em>Label</em>}</li>
  * </ul>
  * </p>
  *
@@ -58,7 +56,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * @kieler.rating 2011-02-01 yellow
  *     reviewed by cmot, soh
  */
-public class KNodeImpl extends KGraphElementImpl implements KNode {
+public class KNodeImpl extends KLabeledGraphElementImpl implements KNode {
     /**
      * The cached value of the '{@link #getChildren() <em>Children</em>}' containment reference list.
      * <!-- begin-user-doc -->
@@ -98,16 +96,6 @@ public class KNodeImpl extends KGraphElementImpl implements KNode {
      * @ordered
      */
     protected EList<KEdge> incomingEdges;
-
-    /**
-     * The cached value of the '{@link #getLabel() <em>Label</em>}' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getLabel()
-     * @generated
-     * @ordered
-     */
-    protected KLabel label;
 
     /**
      * <!-- begin-user-doc -->
@@ -222,49 +210,6 @@ public class KNodeImpl extends KGraphElementImpl implements KNode {
      * <!-- end-user-doc -->
      * @generated
      */
-    public KLabel getLabel() {
-        return label;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public NotificationChain basicSetLabel(KLabel newLabel, NotificationChain msgs) {
-        KLabel oldLabel = label;
-        label = newLabel;
-        if (eNotificationRequired()) {
-            ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KGraphPackage.KNODE__LABEL, oldLabel, newLabel);
-            if (msgs == null) msgs = notification; else msgs.add(notification);
-        }
-        return msgs;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void setLabel(KLabel newLabel) {
-        if (newLabel != label) {
-            NotificationChain msgs = null;
-            if (label != null)
-                msgs = ((InternalEObject)label).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KGraphPackage.KNODE__LABEL, null, msgs);
-            if (newLabel != null)
-                msgs = ((InternalEObject)newLabel).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KGraphPackage.KNODE__LABEL, null, msgs);
-            msgs = basicSetLabel(newLabel, msgs);
-            if (msgs != null) msgs.dispatch();
-        }
-        else if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KGraphPackage.KNODE__LABEL, newLabel, newLabel));
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     @SuppressWarnings("unchecked")
     @Override
     public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -303,8 +248,6 @@ public class KNodeImpl extends KGraphElementImpl implements KNode {
                 return ((InternalEList<?>)getOutgoingEdges()).basicRemove(otherEnd, msgs);
             case KGraphPackage.KNODE__INCOMING_EDGES:
                 return ((InternalEList<?>)getIncomingEdges()).basicRemove(otherEnd, msgs);
-            case KGraphPackage.KNODE__LABEL:
-                return basicSetLabel(null, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
@@ -341,8 +284,6 @@ public class KNodeImpl extends KGraphElementImpl implements KNode {
                 return getOutgoingEdges();
             case KGraphPackage.KNODE__INCOMING_EDGES:
                 return getIncomingEdges();
-            case KGraphPackage.KNODE__LABEL:
-                return getLabel();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -375,9 +316,6 @@ public class KNodeImpl extends KGraphElementImpl implements KNode {
                 getIncomingEdges().clear();
                 getIncomingEdges().addAll((Collection<? extends KEdge>)newValue);
                 return;
-            case KGraphPackage.KNODE__LABEL:
-                setLabel((KLabel)newValue);
-                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -405,9 +343,6 @@ public class KNodeImpl extends KGraphElementImpl implements KNode {
             case KGraphPackage.KNODE__INCOMING_EDGES:
                 getIncomingEdges().clear();
                 return;
-            case KGraphPackage.KNODE__LABEL:
-                setLabel((KLabel)null);
-                return;
         }
         super.eUnset(featureID);
     }
@@ -430,8 +365,6 @@ public class KNodeImpl extends KGraphElementImpl implements KNode {
                 return outgoingEdges != null && !outgoingEdges.isEmpty();
             case KGraphPackage.KNODE__INCOMING_EDGES:
                 return incomingEdges != null && !incomingEdges.isEmpty();
-            case KGraphPackage.KNODE__LABEL:
-                return label != null;
         }
         return super.eIsSet(featureID);
     }
@@ -441,9 +374,8 @@ public class KNodeImpl extends KGraphElementImpl implements KNode {
      */
     @Override
     public String toString() {
-        KLabel label = getLabel();
-        if (label != null) {
-            String text = label.getText();
+        if (getLabels().size() > 0) {
+            String text = getLabels().get(0).getText();
             if (text != null && text.length() > 0) {
                 return "KNode \"" + text + "\"";
             }

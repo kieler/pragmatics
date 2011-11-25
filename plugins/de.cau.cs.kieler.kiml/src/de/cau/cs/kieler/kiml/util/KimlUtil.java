@@ -26,6 +26,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KGraphFactory;
 import de.cau.cs.kieler.core.kgraph.KLabel;
+import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
@@ -125,7 +126,6 @@ public final class KimlUtil {
      */
     public static KNode createInitializedNode() {
         KNode layoutNode = KGraphFactory.eINSTANCE.createKNode();
-        layoutNode.setLabel(createInitializedLabel());
         KShapeLayout layout = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
         layout.setInsets(KLayoutDataFactory.eINSTANCE.createKInsets());
         layoutNode.getData().add(layout);
@@ -153,7 +153,6 @@ public final class KimlUtil {
      */
     public static KPort createInitializedPort() {
         KPort port = KGraphFactory.eINSTANCE.createKPort();
-        port.setLabel(createInitializedLabel());
         KShapeLayout labelLayout = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
         port.getData().add(labelLayout);
         return port;
@@ -162,13 +161,15 @@ public final class KimlUtil {
     /**
      * Creates a KLabel, initializes some attributes, and returns it.
      * 
+     * @param element a labeled graph element
      * @return an initialized KLabel
      */
-    public static KLabel createInitializedLabel() {
+    public static KLabel createInitializedLabel(final KLabeledGraphElement element) {
         KLabel label = KGraphFactory.eINSTANCE.createKLabel();
         KShapeLayout labelLayout = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
         label.getData().add(labelLayout);
         label.setText("");
+        label.setParent(element);
         return label;
     }
     
@@ -592,25 +593,27 @@ public final class KimlUtil {
         // resize the node AFTER ports have been placed, since calcPortSide needs the old size
         nodeLayout.setSize((float) newSize.x, (float) newSize.y);
         
-        // update label position
-        KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);
-        float midx = labelLayout.getXpos() + labelLayout.getWidth() / 2;
-        float midy = labelLayout.getYpos() + labelLayout.getHeight() / 2;
-        float widthPercent = midx / (float) oldSize.x;
-        float heightPercent = midy / (float) oldSize.y;
-        if (widthPercent + heightPercent >= 1) {
-            if (widthPercent - heightPercent > 0 && midy >= 0) {
-                // label is on the right
-                labelLayout.setXpos(labelLayout.getXpos() + widthDiff);
-                labelLayout.setYpos(labelLayout.getYpos() + heightDiff * heightPercent);
-                // enable layout application for the node label
-                labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
-            } else if (widthPercent - heightPercent < 0 && midx >= 0) {
-                // label is on the bottom
-                labelLayout.setXpos(labelLayout.getXpos() + widthDiff * widthPercent);
-                labelLayout.setYpos(labelLayout.getYpos() + heightDiff);
-                // enable layout application for the node label
-                labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
+        // update label positions
+        for (KLabel label : node.getLabels()) {
+            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+            float midx = labelLayout.getXpos() + labelLayout.getWidth() / 2;
+            float midy = labelLayout.getYpos() + labelLayout.getHeight() / 2;
+            float widthPercent = midx / (float) oldSize.x;
+            float heightPercent = midy / (float) oldSize.y;
+            if (widthPercent + heightPercent >= 1) {
+                if (widthPercent - heightPercent > 0 && midy >= 0) {
+                    // label is on the right
+                    labelLayout.setXpos(labelLayout.getXpos() + widthDiff);
+                    labelLayout.setYpos(labelLayout.getYpos() + heightDiff * heightPercent);
+                    // enable layout application for the node label
+                    labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
+                } else if (widthPercent - heightPercent < 0 && midx >= 0) {
+                    // label is on the bottom
+                    labelLayout.setXpos(labelLayout.getXpos() + widthDiff * widthPercent);
+                    labelLayout.setYpos(labelLayout.getYpos() + heightDiff);
+                    // enable layout application for the node label
+                    labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
+                }
             }
         }
         
@@ -757,23 +760,48 @@ public final class KimlUtil {
     }
     
     /**
-     * Excludes the content of the given node from automatic layout.
+     * Excludes the content of the given node from layout. This means setting the
+     * {@link LayoutOptions#NO_LAYOUT} option to {@code true} for all children.
      * 
-     * @param node a layout node
+     * @param node a parent node
      */
     public static void excludeContent(final KNode node) {
         for (KNode child : node.getChildren()) {
             child.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
-            for (KPort port : child.getPorts()) {
-                port.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
-            }
+            excludeLabels(child);
+            excludePorts(child);
             for (KEdge edge : child.getOutgoingEdges()) {
                 edge.getData(KEdgeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
-                for (KLabel label : edge.getLabels()) {
-                    label.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
-                }
+                excludeLabels(edge);
             }
             excludeContent(child);
+        }
+    }
+    
+    /**
+     * Exclude all labels of the given graph element from layout. This means setting the
+     * {@link LayoutOptions#NO_LAYOUT} option to {@code true} for all labels.
+     * 
+     * @param element a graph element with labels
+     */
+    public static void excludeLabels(final KLabeledGraphElement element) {
+        for (KLabel label : element.getLabels()) {
+            label.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
+        }
+    }
+    
+    /**
+     * Exclude all ports of the given graph element from layout. This means setting the
+     * {@link LayoutOptions#NO_LAYOUT} option to {@code true} for all ports and their labels.
+     * 
+     * @param node a node with ports
+     */
+    public static void excludePorts(final KNode node) {
+        for (KPort port : node.getPorts()) {
+            port.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
+            for (KLabel label : port.getLabels()) {
+                label.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
+            }
         }
     }
     

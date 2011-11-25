@@ -126,8 +126,9 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
             KNode knode = transformNode(node.getId(), parent, transData);
             KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
             nodeLayout.setProperty(PROP_NODE, node);
-            if (!node.getLabel().isEmpty()) {
-                knode.getLabel().setText(node.getLabel().get(0).getContent());
+            for (LabelType label : node.getLabel()) {
+                KLabel klabel = KimlUtil.createInitializedLabel(knode);
+                klabel.setText(label.getContent());
             }
             // transform layout options
             for (DataType data : node.getData()) {
@@ -175,7 +176,7 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
                 }
                 // transform edge labels
                 for (LabelType label : edge.getLabel()) {
-                    KLabel klabel = KimlUtil.createInitializedLabel();
+                    KLabel klabel = KimlUtil.createInitializedLabel(kedge);
                     KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
                     labelIdMap.put(label.getId(), klabel);
                     labelLayout.setProperty(PROP_LABEL, label);
@@ -203,8 +204,9 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
                     kedge.setSource(hypernode);
                     kedge.setTarget(target);
                 }
-                if (!edge.getLabel().isEmpty()) {
-                    hypernode.getLabel().setText(edge.getLabel().get(0).getContent());
+                for (LabelType label : edge.getLabel()) {
+                    KLabel klabel = KimlUtil.createInitializedLabel(hypernode);
+                    klabel.setText(label.getContent());
                 }
             }
         }

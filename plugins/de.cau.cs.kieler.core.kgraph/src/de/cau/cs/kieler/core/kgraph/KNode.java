@@ -38,7 +38,6 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link de.cau.cs.kieler.core.kgraph.KNode#getPorts <em>Ports</em>}</li>
  *   <li>{@link de.cau.cs.kieler.core.kgraph.KNode#getOutgoingEdges <em>Outgoing Edges</em>}</li>
  *   <li>{@link de.cau.cs.kieler.core.kgraph.KNode#getIncomingEdges <em>Incoming Edges</em>}</li>
- *   <li>{@link de.cau.cs.kieler.core.kgraph.KNode#getLabel <em>Label</em>}</li>
  * </ul>
  * </p>
  *
@@ -48,7 +47,7 @@ import org.eclipse.emf.common.util.EList;
  * @kieler.rating 2011-02-01 yellow
  *     reviewed by cmot, soh
  */
-public interface KNode extends KGraphElement {
+public interface KNode extends KLabeledGraphElement {
     /**
      * Returns the value of the '<em><b>Children</b></em>' containment reference list.
      * The list contents are of type {@link de.cau.cs.kieler.core.kgraph.KNode}.
@@ -141,30 +140,5 @@ public interface KNode extends KGraphElement {
      * @generated
      */
     EList<KEdge> getIncomingEdges();
-
-    /**
-     * Returns the value of the '<em><b>Label</b></em>' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * <!-- begin-model-doc -->
-     * Each node must be assigned a label.
-     * <!-- end-model-doc -->
-     * @return the value of the '<em>Label</em>' containment reference.
-     * @see #setLabel(KLabel)
-     * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKNode_Label()
-     * @model containment="true"
-     * @generated
-     */
-    KLabel getLabel();
-
-    /**
-     * Sets the value of the '{@link de.cau.cs.kieler.core.kgraph.KNode#getLabel <em>Label</em>}' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Label</em>' containment reference.
-     * @see #getLabel()
-     * @generated
-     */
-    void setLabel(KLabel value);
 
 } // KNode

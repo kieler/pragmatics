@@ -68,9 +68,8 @@ public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutPr
                 // We'll reuse this rectangle as our box for elements to add to the bounding box
                 Rectangle2D.Double elementBox = new Rectangle2D.Double();
                 
-                // Put the node's label into the bounding box
-                LLabel label = node.getLabel();
-                if (label != null) {
+                // Put the node's labels into the bounding box
+                for (LLabel label : node.getLabels()) {
                     elementBox.x = label.getPosition().x + node.getPosition().x;
                     elementBox.y = label.getPosition().y + node.getPosition().y;
                     elementBox.width = label.getSize().x;
@@ -93,9 +92,8 @@ public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutPr
                     
                     Rectangle2D.union(boundingBox, elementBox, boundingBox);
                     
-                    // The port's label, if any
-                    label = port.getLabel();
-                    if (label != null) {
+                    // The port's labels
+                    for (LLabel label : port.getLabels()) {
                         elementBox.x = label.getPosition().x + portX;
                         elementBox.y = label.getPosition().y + portY;
                         elementBox.width = label.getSize().x;

@@ -29,6 +29,7 @@ package de.cau.cs.kieler.core.kgraph;
  * The following features are supported:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.core.kgraph.KLabel#getText <em>Text</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.core.kgraph.KLabel#getParent <em>Parent</em>}</li>
  * </ul>
  * </p>
  *
@@ -60,5 +61,33 @@ public interface KLabel extends KGraphElement {
      * @generated
      */
     void setText(String value);
+
+    /**
+     * Returns the value of the '<em><b>Parent</b></em>' container reference.
+     * It is bidirectional and its opposite is '{@link de.cau.cs.kieler.core.kgraph.KLabeledGraphElement#getLabels <em>Labels</em>}'.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Parent</em>' container reference isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Parent</em>' container reference.
+     * @see #setParent(KLabeledGraphElement)
+     * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKLabel_Parent()
+     * @see de.cau.cs.kieler.core.kgraph.KLabeledGraphElement#getLabels
+     * @model opposite="labels" required="true" transient="false"
+     * @generated
+     */
+    KLabeledGraphElement getParent();
+
+    /**
+     * Sets the value of the '{@link de.cau.cs.kieler.core.kgraph.KLabel#getParent <em>Parent</em>}' container reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Parent</em>' container reference.
+     * @see #getParent()
+     * @generated
+     */
+    void setParent(KLabeledGraphElement value);
 
 } // KLabel

@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.emf.common.util.EList;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
@@ -185,10 +186,9 @@ public class NodeSizeAnalysis implements IAnalysis {
         nodeBottomRightY = layoutData.getHeight();
         
         // Take the label into account, if any
-        if (includeLabel && node.getLabel() != null) {
-            KShapeLayout labelLayoutData = node.getLabel().getData(KShapeLayout.class);
-            
-            if (labelLayoutData != null) {
+        if (includeLabel) {
+            for (KLabel label : node.getLabels()) {
+                KShapeLayout labelLayoutData = label.getData(KShapeLayout.class);
                 nodeTopLeftX = Math.min(nodeTopLeftX, labelLayoutData.getXpos());
                 nodeTopLeftY = Math.min(nodeTopLeftY, labelLayoutData.getYpos());
                 nodeBottomRightX = Math.max(nodeBottomRightX,
@@ -211,10 +211,9 @@ public class NodeSizeAnalysis implements IAnalysis {
                         portLayoutData.getYpos() + portLayoutData.getHeight());
                 
                 // Take the port label into account, if any
-                if (includePortLabels && port.getLabel() != null) {
-                    KShapeLayout labelLayoutData = port.getLabel().getData(KShapeLayout.class);
-                    
-                    if (labelLayoutData != null) {
+                if (includePortLabels) {
+                    for (KLabel label : port.getLabels()) {
+                        KShapeLayout labelLayoutData = label.getData(KShapeLayout.class);
                         nodeTopLeftX = Math.min(nodeTopLeftX,
                                 portLayoutData.getXpos() + labelLayoutData.getXpos());
                         nodeTopLeftY = Math.min(nodeTopLeftY,

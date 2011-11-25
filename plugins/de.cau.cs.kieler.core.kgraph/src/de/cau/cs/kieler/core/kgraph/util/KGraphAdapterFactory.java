@@ -98,6 +98,10 @@ public class KGraphAdapterFactory extends AdapterFactoryImpl {
                 return createKGraphElementAdapter();
             }
             @Override
+            public Adapter caseKLabeledGraphElement(KLabeledGraphElement object) {
+                return createKLabeledGraphElementAdapter();
+            }
+            @Override
             public Adapter caseKGraphData(KGraphData object) {
                 return createKGraphDataAdapter();
             }
@@ -164,6 +168,20 @@ public class KGraphAdapterFactory extends AdapterFactoryImpl {
      * @generated
      */
     public Adapter createKGraphElementAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.core.kgraph.KLabeledGraphElement <em>KLabeled Graph Element</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see de.cau.cs.kieler.core.kgraph.KLabeledGraphElement
+     * @generated
+     */
+    public Adapter createKLabeledGraphElementAdapter() {
         return null;
     }
 

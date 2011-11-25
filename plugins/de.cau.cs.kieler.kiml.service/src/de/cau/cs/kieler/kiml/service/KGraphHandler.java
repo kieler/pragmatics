@@ -28,7 +28,6 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
-import de.cau.cs.kieler.core.kgraph.KGraphFactory;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -184,7 +183,6 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
         if (graph == null) {
             throw new IllegalArgumentException("Graph instance is null");
         }
-        KGraphFactory elementFactory = KGraphFactory.eINSTANCE;
         KLayoutDataFactory layoutFactory = KLayoutDataFactory.eINSTANCE;
         Iterator<EObject> contentIter = graph.eAllContents();
         while (contentIter.hasNext()) {
@@ -200,12 +198,6 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
                 if (sLayout.getInsets() == null) {
                     sLayout.setInsets(layoutFactory.createKInsets());
                 }
-                if (node.getLabel() == null) {
-                    KLabel label = elementFactory.createKLabel();
-                    label.getData().add(layoutFactory.createKShapeLayout());
-                    label.setText("");
-                    node.setLabel(label);
-                }
             // Make sure ports are OK           
             } else if (element instanceof KPort) {
                 KPort port = (KPort) element;
@@ -213,12 +205,6 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
                 if (sLayout == null) {
                     port.getData().add(layoutFactory.createKShapeLayout());
                 }    
-                if (port.getLabel() == null) {
-                    KLabel label = elementFactory.createKLabel();
-                    label.getData().add(layoutFactory.createKShapeLayout());
-                    label.setText("");
-                    port.setLabel(label);
-                }
             // Make sure labels are OK
             } else if (element instanceof KLabel) {
                 KLabel label = (KLabel) element;

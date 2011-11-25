@@ -27,6 +27,10 @@
         <genTypeParameters ecoreTypeParameter="kgraph.ecore#//KGraphElement/getData.1/T"/>
       </genOperations>
     </genClasses>
+    <genClasses image="false" ecoreClass="kgraph.ecore#//KLabeledGraphElement">
+      <genFeatures property="None" children="true" createChild="true" propertyDescription="The labels associated with this graph element"
+          ecoreFeature="ecore:EReference kgraph.ecore#//KLabeledGraphElement/labels"/>
+    </genClasses>
     <genClasses image="false" ecoreClass="kgraph.ecore#//KGraphData"/>
     <genClasses ecoreClass="kgraph.ecore#//KNode">
       <genFeatures property="None" children="true" createChild="true" propertyDescription="The child nodes form a nested graph, making the owner a compound node"
@@ -39,8 +43,6 @@
           ecoreFeature="ecore:EReference kgraph.ecore#//KNode/outgoingEdges"/>
       <genFeatures property="None" notify="false" createChild="false" propertyDescription="The incoming edges of this node"
           propertySortChoices="true" ecoreFeature="ecore:EReference kgraph.ecore#//KNode/incomingEdges"/>
-      <genFeatures property="None" children="true" createChild="true" propertyDescription="The label specifying a visible text"
-          ecoreFeature="ecore:EReference kgraph.ecore#//KNode/label"/>
     </genClasses>
     <genClasses ecoreClass="kgraph.ecore#//KEdge">
       <genFeatures property="None" notify="false" createChild="false" propertyDescription="The source node of this edge"
@@ -51,16 +53,12 @@
           propertySortChoices="true" ecoreFeature="ecore:EReference kgraph.ecore#//KEdge/sourcePort"/>
       <genFeatures notify="false" createChild="false" propertyDescription="The target port, which may be null for graphs without ports"
           propertySortChoices="true" ecoreFeature="ecore:EReference kgraph.ecore#//KEdge/targetPort"/>
-      <genFeatures property="None" children="true" createChild="true" propertyDescription="Labels with visible text along the edge"
-          ecoreFeature="ecore:EReference kgraph.ecore#//KEdge/labels"/>
     </genClasses>
     <genClasses ecoreClass="kgraph.ecore#//KPort">
       <genFeatures property="None" notify="false" createChild="false" propertyDescription="The node that contains this port"
           ecoreFeature="ecore:EReference kgraph.ecore#//KPort/node"/>
       <genFeatures property="None" notify="false" createChild="false" propertyDescription="The edges that are incident to this port"
           propertySortChoices="true" ecoreFeature="ecore:EReference kgraph.ecore#//KPort/edges"/>
-      <genFeatures property="None" children="true" createChild="true" propertyDescription="The label specifying a visible text"
-          ecoreFeature="ecore:EReference kgraph.ecore#//KPort/label"/>
     </genClasses>
     <genClasses ecoreClass="kgraph.ecore#//KLabel">
       <genFeatures createChild="false" propertyDescription="The visible text of this label"

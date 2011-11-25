@@ -361,7 +361,8 @@ public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
                 String value = trimValue(attr);
                 try {
                     if (Attributes.LABEL.equals(attr.getName())) {
-                        knode.getLabel().setText(value);
+                        KLabel label = KimlUtil.createInitializedLabel(knode);
+                        label.setText(value);
                     } else if (Attributes.POS.equals(attr.getName())) {
                         KVector pos = new KVector();
                         pos.parse(value);
@@ -512,23 +513,20 @@ public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
             for (Attribute attr : statement.getAttributes()) {
                 String value = trimValue(attr);
                 if (Attributes.LABEL.equals(attr.getName())) {
-                    KLabel label = KimlUtil.createInitializedLabel();
+                    KLabel label = KimlUtil.createInitializedLabel(kedge);
                     label.setText(value);
                     label.getData(KShapeLayout.class).setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
                             EdgeLabelPlacement.CENTER);
-                    kedge.getLabels().add(label);
                 } else if (Attributes.HEADLABEL.equals(attr.getName())) {
-                    KLabel label = KimlUtil.createInitializedLabel();
+                    KLabel label = KimlUtil.createInitializedLabel(kedge);
                     label.setText(value);
                     label.getData(KShapeLayout.class).setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
                             EdgeLabelPlacement.HEAD);
-                    kedge.getLabels().add(label);
                 } else if (Attributes.TAILLABEL.equals(attr.getName())) {
-                    KLabel label = KimlUtil.createInitializedLabel();
+                    KLabel label = KimlUtil.createInitializedLabel(kedge);
                     label.setText(value);
                     label.getData(KShapeLayout.class).setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
                             EdgeLabelPlacement.TAIL);
-                    kedge.getLabels().add(label);
                 } else {
                     transformAttribute(edgeLayout, attr, transData);
                 }

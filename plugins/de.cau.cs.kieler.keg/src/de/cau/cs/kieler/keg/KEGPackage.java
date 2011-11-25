@@ -88,6 +88,15 @@ public interface KEGPackage extends EPackage {
     int NODE__DATA = KGraphPackage.KNODE__DATA;
 
     /**
+     * The feature id for the '<em><b>Labels</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int NODE__LABELS = KGraphPackage.KNODE__LABELS;
+
+    /**
      * The feature id for the '<em><b>Children</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -131,15 +140,6 @@ public interface KEGPackage extends EPackage {
      * @ordered
      */
     int NODE__INCOMING_EDGES = KGraphPackage.KNODE__INCOMING_EDGES;
-
-    /**
-     * The feature id for the '<em><b>Label</b></em>' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int NODE__LABEL = KGraphPackage.KNODE__LABEL;
 
     /**
      * The feature id for the '<em><b>Node Label</b></em>' attribute.
@@ -188,6 +188,15 @@ public interface KEGPackage extends EPackage {
     int EDGE__DATA = KGraphPackage.KEDGE__DATA;
 
     /**
+     * The feature id for the '<em><b>Labels</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int EDGE__LABELS = KGraphPackage.KEDGE__LABELS;
+
+    /**
      * The feature id for the '<em><b>Source</b></em>' container reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -222,15 +231,6 @@ public interface KEGPackage extends EPackage {
      * @ordered
      */
     int EDGE__TARGET_PORT = KGraphPackage.KEDGE__TARGET_PORT;
-
-    /**
-     * The feature id for the '<em><b>Labels</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int EDGE__LABELS = KGraphPackage.KEDGE__LABELS;
 
     /**
      * The feature id for the '<em><b>Head Label</b></em>' attribute.
@@ -306,6 +306,15 @@ public interface KEGPackage extends EPackage {
     int PORT__DATA = KGraphPackage.KPORT__DATA;
 
     /**
+     * The feature id for the '<em><b>Labels</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int PORT__LABELS = KGraphPackage.KPORT__LABELS;
+
+    /**
      * The feature id for the '<em><b>Node</b></em>' container reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -322,15 +331,6 @@ public interface KEGPackage extends EPackage {
      * @ordered
      */
     int PORT__EDGES = KGraphPackage.KPORT__EDGES;
-
-    /**
-     * The feature id for the '<em><b>Label</b></em>' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int PORT__LABEL = KGraphPackage.KPORT__LABEL;
 
     /**
      * The feature id for the '<em><b>Port Label</b></em>' attribute.

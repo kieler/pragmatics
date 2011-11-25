@@ -120,6 +120,8 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
             float x = offset + random.nextFloat() * (drawWidth - nodeLayout.getWidth());
             float y = offset + random.nextFloat() * (drawHeight - nodeLayout.getHeight());
             nodeLayout.setPos(x, y);
+            // ignore node labels
+            KimlUtil.excludeLabels(node);
         }
         
         // randomize edge positions
@@ -258,6 +260,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
             bendPoint.setY(randy);
             edgeLayout.getBendPoints().add(bendPoint);
         }
+        KimlUtil.excludeLabels(edge);
     }
 
 }

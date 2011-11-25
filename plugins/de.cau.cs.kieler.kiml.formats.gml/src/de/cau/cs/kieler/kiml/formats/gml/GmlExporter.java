@@ -84,8 +84,8 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
             id.setKey("id");
             id.setValue(nodeId);
             nodeElement.getElements().add(id);
-            if (knode.getLabel().getText().length() > 0) {
-                nodeElement.getElements().add(GmlHandler.createLabel(knode.getLabel()));
+            for (KLabel klabel : knode.getLabels()) {
+                nodeElement.getElements().add(GmlHandler.createLabel(klabel));
             }
             transform(nodeLayout, nodeElement);
             graphElement.getElements().add(nodeElement);
@@ -100,8 +100,8 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
                 id.setKey("id");
                 id.setValue(portId);
                 portElement.getElements().add(id);
-                if (kport.getLabel().getText().length() > 0) {
-                    portElement.getElements().add(GmlHandler.createLabel(kport.getLabel()));
+                for (KLabel klabel : kport.getLabels()) {
+                    portElement.getElements().add(GmlHandler.createLabel(klabel));
                 }
                 transform(portLayout, portElement);
                 nodeElement.getElements().add(portElement);

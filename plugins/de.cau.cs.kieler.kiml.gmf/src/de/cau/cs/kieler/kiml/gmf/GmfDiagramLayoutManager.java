@@ -53,6 +53,7 @@ import com.google.common.collect.BiMap;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KGraphFactory;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
@@ -184,8 +185,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         Rectangle rootBounds = layoutRootPart.getFigure().getBounds();
         if (layoutRootPart instanceof DiagramEditPart) {
             // start with the whole diagram as root for layout
-            topNode.getLabel().setText(
-                    ((DiagramEditPart) layoutRootPart).getDiagramView().getName());
+            KLabel label = KimlUtil.createInitializedLabel(topNode);
+            label.setText(((DiagramEditPart) layoutRootPart).getDiagramView().getName());
         } else {
             // start with a specific node as root for layout
             shapeLayout.setPos(rootBounds.x, rootBounds.y);
@@ -432,7 +433,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                     text = ((Label) labelFigure).getText();
                 }
                 if (text != null) {
-                    KLabel portLabel = port.getLabel();
+                    KLabel portLabel = KimlUtil.createInitializedLabel(port);
                     portLabel.setText(text);
                     mapping.getGraphMap().put(portLabel, (IGraphicalEditPart) portChildObj);
                     // set the port label's layout
@@ -447,8 +448,6 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                     } catch (SWTException exception) {
                         // ignore exception and leave the label size to (0, 0)
                     }
-                    // port labels are excluded from layout by default
-                    labelLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 }
             }
         }
@@ -481,8 +480,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             text = label.getText();
             font = label.getFont();
         }
-        KLabel label = knode.getLabel();
-        if (text != null && (label.getText() == null || label.getText().length() == 0)) {
+        if (text != null) {
+            KLabel label = KimlUtil.createInitializedLabel(knode);
             label.setText(text);
             mapping.getGraphMap().put(label, labelEditPart);
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
@@ -498,8 +497,6 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             } catch (SWTException exception) {
                 // ignore exception and leave the label size to (0, 0)
             }
-            // exclude the label from layout by default
-            labelLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
         }
     }
 
@@ -717,7 +714,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                     }
                 }
                 if (labelText != null && labelText.length() > 0) {
-                    KLabel label = KimlUtil.createInitializedLabel();
+                    KLabel label = KimlUtil.createInitializedLabel(edge);
                     KShapeLayout labelLayout = label.getData(KShapeLayout.class);
                     if (placement == EdgeLabelPlacement.UNDEFINED) {
                         switch (labelEditPart.getKeyPoint()) {
@@ -753,14 +750,13 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                     }
                     labelLayout.setHeight(labelBounds.height);
                     label.setText(labelText);
-                    edge.getLabels().add(label);
                     mapping.getGraphMap().put(label, labelEditPart);
-
-                    // exclude the label from layout by default
-                    labelLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 } else {
                     // add the label to the mapping anyway so it is reset to its reference location
-                    mapping.getGraphMap().put(KimlUtil.createInitializedLabel(), labelEditPart);
+                    KLabel label = KGraphFactory.eINSTANCE.createKLabel();
+                    KShapeLayout labelLayout = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
+                    label.getData().add(labelLayout);
+                    mapping.getGraphMap().put(label, labelEditPart);
                 }
             }
         }

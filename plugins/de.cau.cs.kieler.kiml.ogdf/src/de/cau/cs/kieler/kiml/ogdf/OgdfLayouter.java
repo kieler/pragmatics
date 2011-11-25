@@ -388,6 +388,9 @@ public abstract class OgdfLayouter {
             styles.getNodeStyle().add(ogmlNodeLayout);
             // add the node
             structure.getNode().add(ogmlNode);
+            // ignore ports and labels
+            KimlUtil.excludePorts(node);
+            KimlUtil.excludeLabels(node);
         }
         // transform edges
         for (KNode sourceNode : layoutNode.getChildren()) {

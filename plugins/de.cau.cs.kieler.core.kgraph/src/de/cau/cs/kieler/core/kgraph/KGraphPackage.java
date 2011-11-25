@@ -100,6 +100,43 @@ public interface KGraphPackage extends EPackage {
     int KGRAPH_ELEMENT_FEATURE_COUNT = 1;
 
     /**
+     * The meta object id for the '{@link de.cau.cs.kieler.core.kgraph.impl.KLabeledGraphElementImpl <em>KLabeled Graph Element</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.core.kgraph.impl.KLabeledGraphElementImpl
+     * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getKLabeledGraphElement()
+     * @generated
+     */
+    int KLABELED_GRAPH_ELEMENT = 1;
+
+    /**
+     * The feature id for the '<em><b>Data</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLABELED_GRAPH_ELEMENT__DATA = KGRAPH_ELEMENT__DATA;
+
+    /**
+     * The feature id for the '<em><b>Labels</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLABELED_GRAPH_ELEMENT__LABELS = KGRAPH_ELEMENT_FEATURE_COUNT + 0;
+
+    /**
+     * The number of structural features of the '<em>KLabeled Graph Element</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLABELED_GRAPH_ELEMENT_FEATURE_COUNT = KGRAPH_ELEMENT_FEATURE_COUNT + 1;
+
+    /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.properties.IPropertyHolder <em>IProperty Holder</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -107,7 +144,7 @@ public interface KGraphPackage extends EPackage {
      * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getIPropertyHolder()
      * @generated
      */
-    int IPROPERTY_HOLDER = 8;
+    int IPROPERTY_HOLDER = 9;
 
     /**
      * The number of structural features of the '<em>IProperty Holder</em>' class.
@@ -126,7 +163,7 @@ public interface KGraphPackage extends EPackage {
      * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getEMapPropertyHolder()
      * @generated
      */
-    int EMAP_PROPERTY_HOLDER = 6;
+    int EMAP_PROPERTY_HOLDER = 7;
 
     /**
      * The feature id for the '<em><b>Properties</b></em>' map.
@@ -163,7 +200,7 @@ public interface KGraphPackage extends EPackage {
      * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getKGraphData()
      * @generated
      */
-    int KGRAPH_DATA = 1;
+    int KGRAPH_DATA = 2;
 
     /**
      * The feature id for the '<em><b>Properties</b></em>' map.
@@ -200,7 +237,7 @@ public interface KGraphPackage extends EPackage {
      * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getKNode()
      * @generated
      */
-    int KNODE = 2;
+    int KNODE = 3;
 
     /**
      * The feature id for the '<em><b>Data</b></em>' containment reference list.
@@ -209,7 +246,16 @@ public interface KGraphPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KNODE__DATA = KGRAPH_ELEMENT__DATA;
+    int KNODE__DATA = KLABELED_GRAPH_ELEMENT__DATA;
+
+    /**
+     * The feature id for the '<em><b>Labels</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KNODE__LABELS = KLABELED_GRAPH_ELEMENT__LABELS;
 
     /**
      * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -218,7 +264,7 @@ public interface KGraphPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KNODE__CHILDREN = KGRAPH_ELEMENT_FEATURE_COUNT + 0;
+    int KNODE__CHILDREN = KLABELED_GRAPH_ELEMENT_FEATURE_COUNT + 0;
 
     /**
      * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -227,7 +273,7 @@ public interface KGraphPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KNODE__PARENT = KGRAPH_ELEMENT_FEATURE_COUNT + 1;
+    int KNODE__PARENT = KLABELED_GRAPH_ELEMENT_FEATURE_COUNT + 1;
 
     /**
      * The feature id for the '<em><b>Ports</b></em>' containment reference list.
@@ -236,7 +282,7 @@ public interface KGraphPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KNODE__PORTS = KGRAPH_ELEMENT_FEATURE_COUNT + 2;
+    int KNODE__PORTS = KLABELED_GRAPH_ELEMENT_FEATURE_COUNT + 2;
 
     /**
      * The feature id for the '<em><b>Outgoing Edges</b></em>' containment reference list.
@@ -245,7 +291,7 @@ public interface KGraphPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KNODE__OUTGOING_EDGES = KGRAPH_ELEMENT_FEATURE_COUNT + 3;
+    int KNODE__OUTGOING_EDGES = KLABELED_GRAPH_ELEMENT_FEATURE_COUNT + 3;
 
     /**
      * The feature id for the '<em><b>Incoming Edges</b></em>' reference list.
@@ -254,16 +300,7 @@ public interface KGraphPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KNODE__INCOMING_EDGES = KGRAPH_ELEMENT_FEATURE_COUNT + 4;
-
-    /**
-     * The feature id for the '<em><b>Label</b></em>' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KNODE__LABEL = KGRAPH_ELEMENT_FEATURE_COUNT + 5;
+    int KNODE__INCOMING_EDGES = KLABELED_GRAPH_ELEMENT_FEATURE_COUNT + 4;
 
     /**
      * The number of structural features of the '<em>KNode</em>' class.
@@ -272,7 +309,7 @@ public interface KGraphPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KNODE_FEATURE_COUNT = KGRAPH_ELEMENT_FEATURE_COUNT + 6;
+    int KNODE_FEATURE_COUNT = KLABELED_GRAPH_ELEMENT_FEATURE_COUNT + 5;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.kgraph.impl.KEdgeImpl <em>KEdge</em>}' class.
@@ -282,7 +319,7 @@ public interface KGraphPackage extends EPackage {
      * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getKEdge()
      * @generated
      */
-    int KEDGE = 3;
+    int KEDGE = 4;
 
     /**
      * The feature id for the '<em><b>Data</b></em>' containment reference list.
@@ -291,43 +328,7 @@ public interface KGraphPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KEDGE__DATA = KGRAPH_ELEMENT__DATA;
-
-    /**
-     * The feature id for the '<em><b>Source</b></em>' container reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KEDGE__SOURCE = KGRAPH_ELEMENT_FEATURE_COUNT + 0;
-
-    /**
-     * The feature id for the '<em><b>Target</b></em>' reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KEDGE__TARGET = KGRAPH_ELEMENT_FEATURE_COUNT + 1;
-
-    /**
-     * The feature id for the '<em><b>Source Port</b></em>' reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KEDGE__SOURCE_PORT = KGRAPH_ELEMENT_FEATURE_COUNT + 2;
-
-    /**
-     * The feature id for the '<em><b>Target Port</b></em>' reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KEDGE__TARGET_PORT = KGRAPH_ELEMENT_FEATURE_COUNT + 3;
+    int KEDGE__DATA = KLABELED_GRAPH_ELEMENT__DATA;
 
     /**
      * The feature id for the '<em><b>Labels</b></em>' containment reference list.
@@ -336,7 +337,43 @@ public interface KGraphPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KEDGE__LABELS = KGRAPH_ELEMENT_FEATURE_COUNT + 4;
+    int KEDGE__LABELS = KLABELED_GRAPH_ELEMENT__LABELS;
+
+    /**
+     * The feature id for the '<em><b>Source</b></em>' container reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KEDGE__SOURCE = KLABELED_GRAPH_ELEMENT_FEATURE_COUNT + 0;
+
+    /**
+     * The feature id for the '<em><b>Target</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KEDGE__TARGET = KLABELED_GRAPH_ELEMENT_FEATURE_COUNT + 1;
+
+    /**
+     * The feature id for the '<em><b>Source Port</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KEDGE__SOURCE_PORT = KLABELED_GRAPH_ELEMENT_FEATURE_COUNT + 2;
+
+    /**
+     * The feature id for the '<em><b>Target Port</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KEDGE__TARGET_PORT = KLABELED_GRAPH_ELEMENT_FEATURE_COUNT + 3;
 
     /**
      * The number of structural features of the '<em>KEdge</em>' class.
@@ -345,7 +382,7 @@ public interface KGraphPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KEDGE_FEATURE_COUNT = KGRAPH_ELEMENT_FEATURE_COUNT + 5;
+    int KEDGE_FEATURE_COUNT = KLABELED_GRAPH_ELEMENT_FEATURE_COUNT + 4;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.kgraph.impl.KPortImpl <em>KPort</em>}' class.
@@ -355,7 +392,7 @@ public interface KGraphPackage extends EPackage {
      * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getKPort()
      * @generated
      */
-    int KPORT = 4;
+    int KPORT = 5;
 
     /**
      * The feature id for the '<em><b>Data</b></em>' containment reference list.
@@ -364,7 +401,16 @@ public interface KGraphPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KPORT__DATA = KGRAPH_ELEMENT__DATA;
+    int KPORT__DATA = KLABELED_GRAPH_ELEMENT__DATA;
+
+    /**
+     * The feature id for the '<em><b>Labels</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KPORT__LABELS = KLABELED_GRAPH_ELEMENT__LABELS;
 
     /**
      * The feature id for the '<em><b>Node</b></em>' container reference.
@@ -373,7 +419,7 @@ public interface KGraphPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KPORT__NODE = KGRAPH_ELEMENT_FEATURE_COUNT + 0;
+    int KPORT__NODE = KLABELED_GRAPH_ELEMENT_FEATURE_COUNT + 0;
 
     /**
      * The feature id for the '<em><b>Edges</b></em>' reference list.
@@ -382,16 +428,7 @@ public interface KGraphPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KPORT__EDGES = KGRAPH_ELEMENT_FEATURE_COUNT + 1;
-
-    /**
-     * The feature id for the '<em><b>Label</b></em>' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KPORT__LABEL = KGRAPH_ELEMENT_FEATURE_COUNT + 2;
+    int KPORT__EDGES = KLABELED_GRAPH_ELEMENT_FEATURE_COUNT + 1;
 
     /**
      * The number of structural features of the '<em>KPort</em>' class.
@@ -400,7 +437,7 @@ public interface KGraphPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KPORT_FEATURE_COUNT = KGRAPH_ELEMENT_FEATURE_COUNT + 3;
+    int KPORT_FEATURE_COUNT = KLABELED_GRAPH_ELEMENT_FEATURE_COUNT + 2;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.kgraph.impl.KLabelImpl <em>KLabel</em>}' class.
@@ -410,7 +447,7 @@ public interface KGraphPackage extends EPackage {
      * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getKLabel()
      * @generated
      */
-    int KLABEL = 5;
+    int KLABEL = 6;
 
     /**
      * The feature id for the '<em><b>Data</b></em>' containment reference list.
@@ -431,13 +468,22 @@ public interface KGraphPackage extends EPackage {
     int KLABEL__TEXT = KGRAPH_ELEMENT_FEATURE_COUNT + 0;
 
     /**
+     * The feature id for the '<em><b>Parent</b></em>' container reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLABEL__PARENT = KGRAPH_ELEMENT_FEATURE_COUNT + 1;
+
+    /**
      * The number of structural features of the '<em>KLabel</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KLABEL_FEATURE_COUNT = KGRAPH_ELEMENT_FEATURE_COUNT + 1;
+    int KLABEL_FEATURE_COUNT = KGRAPH_ELEMENT_FEATURE_COUNT + 2;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.kgraph.impl.IPropertyToObjectMapImpl <em>IProperty To Object Map</em>}' class.
@@ -447,7 +493,7 @@ public interface KGraphPackage extends EPackage {
      * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getIPropertyToObjectMap()
      * @generated
      */
-    int IPROPERTY_TO_OBJECT_MAP = 7;
+    int IPROPERTY_TO_OBJECT_MAP = 8;
 
     /**
      * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -484,7 +530,7 @@ public interface KGraphPackage extends EPackage {
      * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getIProperty()
      * @generated
      */
-    int IPROPERTY = 10;
+    int IPROPERTY = 11;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.kgraph.impl.PersistentEntryImpl <em>Persistent Entry</em>}' class.
@@ -494,7 +540,7 @@ public interface KGraphPackage extends EPackage {
      * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getPersistentEntry()
      * @generated
      */
-    int PERSISTENT_ENTRY = 9;
+    int PERSISTENT_ENTRY = 10;
 
     /**
      * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -543,6 +589,27 @@ public interface KGraphPackage extends EPackage {
      * @generated
      */
     EReference getKGraphElement_Data();
+
+    /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.core.kgraph.KLabeledGraphElement <em>KLabeled Graph Element</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>KLabeled Graph Element</em>'.
+     * @see de.cau.cs.kieler.core.kgraph.KLabeledGraphElement
+     * @generated
+     */
+    EClass getKLabeledGraphElement();
+
+    /**
+     * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.core.kgraph.KLabeledGraphElement#getLabels <em>Labels</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference list '<em>Labels</em>'.
+     * @see de.cau.cs.kieler.core.kgraph.KLabeledGraphElement#getLabels()
+     * @see #getKLabeledGraphElement()
+     * @generated
+     */
+    EReference getKLabeledGraphElement_Labels();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.kgraph.KGraphData <em>Data</em>}'.
@@ -620,17 +687,6 @@ public interface KGraphPackage extends EPackage {
     EReference getKNode_IncomingEdges();
 
     /**
-     * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.core.kgraph.KNode#getLabel <em>Label</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the containment reference '<em>Label</em>'.
-     * @see de.cau.cs.kieler.core.kgraph.KNode#getLabel()
-     * @see #getKNode()
-     * @generated
-     */
-    EReference getKNode_Label();
-
-    /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.kgraph.KEdge <em>KEdge</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -685,17 +741,6 @@ public interface KGraphPackage extends EPackage {
     EReference getKEdge_TargetPort();
 
     /**
-     * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.core.kgraph.KEdge#getLabels <em>Labels</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the containment reference list '<em>Labels</em>'.
-     * @see de.cau.cs.kieler.core.kgraph.KEdge#getLabels()
-     * @see #getKEdge()
-     * @generated
-     */
-    EReference getKEdge_Labels();
-
-    /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.kgraph.KPort <em>KPort</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -728,17 +773,6 @@ public interface KGraphPackage extends EPackage {
     EReference getKPort_Edges();
 
     /**
-     * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.core.kgraph.KPort#getLabel <em>Label</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the containment reference '<em>Label</em>'.
-     * @see de.cau.cs.kieler.core.kgraph.KPort#getLabel()
-     * @see #getKPort()
-     * @generated
-     */
-    EReference getKPort_Label();
-
-    /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.kgraph.KLabel <em>KLabel</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -758,6 +792,17 @@ public interface KGraphPackage extends EPackage {
      * @generated
      */
     EAttribute getKLabel_Text();
+
+    /**
+     * Returns the meta object for the container reference '{@link de.cau.cs.kieler.core.kgraph.KLabel#getParent <em>Parent</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the container reference '<em>Parent</em>'.
+     * @see de.cau.cs.kieler.core.kgraph.KLabel#getParent()
+     * @see #getKLabel()
+     * @generated
+     */
+    EReference getKLabel_Parent();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.kgraph.EMapPropertyHolder <em>EMap Property Holder</em>}'.
@@ -920,6 +965,24 @@ public interface KGraphPackage extends EPackage {
         EReference KGRAPH_ELEMENT__DATA = eINSTANCE.getKGraphElement_Data();
 
         /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.core.kgraph.impl.KLabeledGraphElementImpl <em>KLabeled Graph Element</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.core.kgraph.impl.KLabeledGraphElementImpl
+         * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getKLabeledGraphElement()
+         * @generated
+         */
+        EClass KLABELED_GRAPH_ELEMENT = eINSTANCE.getKLabeledGraphElement();
+
+        /**
+         * The meta object literal for the '<em><b>Labels</b></em>' containment reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference KLABELED_GRAPH_ELEMENT__LABELS = eINSTANCE.getKLabeledGraphElement_Labels();
+
+        /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.kgraph.impl.KGraphDataImpl <em>Data</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -980,14 +1043,6 @@ public interface KGraphPackage extends EPackage {
         EReference KNODE__INCOMING_EDGES = eINSTANCE.getKNode_IncomingEdges();
 
         /**
-         * The meta object literal for the '<em><b>Label</b></em>' containment reference feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference KNODE__LABEL = eINSTANCE.getKNode_Label();
-
-        /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.kgraph.impl.KEdgeImpl <em>KEdge</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -1030,14 +1085,6 @@ public interface KGraphPackage extends EPackage {
         EReference KEDGE__TARGET_PORT = eINSTANCE.getKEdge_TargetPort();
 
         /**
-         * The meta object literal for the '<em><b>Labels</b></em>' containment reference list feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference KEDGE__LABELS = eINSTANCE.getKEdge_Labels();
-
-        /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.kgraph.impl.KPortImpl <em>KPort</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -1064,14 +1111,6 @@ public interface KGraphPackage extends EPackage {
         EReference KPORT__EDGES = eINSTANCE.getKPort_Edges();
 
         /**
-         * The meta object literal for the '<em><b>Label</b></em>' containment reference feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference KPORT__LABEL = eINSTANCE.getKPort_Label();
-
-        /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.kgraph.impl.KLabelImpl <em>KLabel</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -1088,6 +1127,14 @@ public interface KGraphPackage extends EPackage {
          * @generated
          */
         EAttribute KLABEL__TEXT = eINSTANCE.getKLabel_Text();
+
+        /**
+         * The meta object literal for the '<em><b>Parent</b></em>' container reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference KLABEL__PARENT = eINSTANCE.getKLabel_Parent();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.kgraph.impl.EMapPropertyHolderImpl <em>EMap Property Holder</em>}' class.

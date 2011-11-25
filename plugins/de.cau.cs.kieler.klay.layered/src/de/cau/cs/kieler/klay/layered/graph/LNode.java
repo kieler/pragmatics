@@ -38,8 +38,8 @@ public class LNode extends LShape {
     private Layer owner;
     /** the ports of the node. */
     private List<LPort> ports = new LinkedList<LPort>();
-    /** this node's label, if any. */
-    private LLabel label = null;
+    /** this node's labels. */
+    private List<LLabel> labels = new LinkedList<LLabel>();
     /** this node's insets. */
     private LInsets.Double margin = new LInsets.Double();
 
@@ -61,8 +61,8 @@ public class LNode extends LShape {
      * @return the name, or {@code null}
      */
     public String getName() {
-        if (label != null) {
-            return label.getText();
+        if (!labels.isEmpty()) {
+            return labels.get(0).getText();
         }
         return null;
     }
@@ -216,21 +216,12 @@ public class LNode extends LShape {
     }
     
     /**
-     * Sets this node's label.
+     * Returns this node's labels.
      * 
-     * @param label the new label. May be {@code null}.
+     * @return this node's labels.
      */
-    public void setLabel(final LLabel label) {
-        this.label = label;
-    }
-    
-    /**
-     * Returns this node's label, if any.
-     * 
-     * @return this node's label.
-     */
-    public LLabel getLabel() {
-        return label;
+    public List<LLabel> getLabels() {
+        return labels;
     }
     
     /**

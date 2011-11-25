@@ -98,6 +98,13 @@ public class KGraphSwitch<T> extends Switch<T> {
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
+            case KGraphPackage.KLABELED_GRAPH_ELEMENT: {
+                KLabeledGraphElement kLabeledGraphElement = (KLabeledGraphElement)theEObject;
+                T result = caseKLabeledGraphElement(kLabeledGraphElement);
+                if (result == null) result = caseKGraphElement(kLabeledGraphElement);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
             case KGraphPackage.KGRAPH_DATA: {
                 KGraphData kGraphData = (KGraphData)theEObject;
                 T result = caseKGraphData(kGraphData);
@@ -109,6 +116,7 @@ public class KGraphSwitch<T> extends Switch<T> {
             case KGraphPackage.KNODE: {
                 KNode kNode = (KNode)theEObject;
                 T result = caseKNode(kNode);
+                if (result == null) result = caseKLabeledGraphElement(kNode);
                 if (result == null) result = caseKGraphElement(kNode);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
@@ -116,6 +124,7 @@ public class KGraphSwitch<T> extends Switch<T> {
             case KGraphPackage.KEDGE: {
                 KEdge kEdge = (KEdge)theEObject;
                 T result = caseKEdge(kEdge);
+                if (result == null) result = caseKLabeledGraphElement(kEdge);
                 if (result == null) result = caseKGraphElement(kEdge);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
@@ -123,6 +132,7 @@ public class KGraphSwitch<T> extends Switch<T> {
             case KGraphPackage.KPORT: {
                 KPort kPort = (KPort)theEObject;
                 T result = caseKPort(kPort);
+                if (result == null) result = caseKLabeledGraphElement(kPort);
                 if (result == null) result = caseKGraphElement(kPort);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
@@ -169,6 +179,21 @@ public class KGraphSwitch<T> extends Switch<T> {
      * @generated
      */
     public T caseKGraphElement(KGraphElement object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>KLabeled Graph Element</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>KLabeled Graph Element</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseKLabeledGraphElement(KLabeledGraphElement object) {
         return null;
     }
 

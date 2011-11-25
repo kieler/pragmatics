@@ -140,9 +140,9 @@ public class GMLExporter extends AbstractExporter {
             int id = currentNodeId++;
             nodeIds.put(node, id);
             writer.write(INDENTATION2 + "id " + id + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-            if (node.getLabel().getText().length() > 0) {
+            if (node.getLabels().size() > 0 && node.getLabels().get(0).getText().length() > 0) {
                 writer.write(INDENTATION2 + "label \"" //$NON-NLS-1$
-                        + node.getLabel().getText() + "\"\n"); //$NON-NLS-1$
+                        + node.getLabels().get(0).getText() + "\"\n"); //$NON-NLS-1$
             }
             // layout information
             if (layoutInformation) {

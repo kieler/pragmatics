@@ -71,18 +71,21 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                 }
             }
             
-            // set the fixed position of the node label, or leave it as it is
-            KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);
-            pos = labelLayout.getProperty(LayoutOptions.POSITION);
-            if (pos != null) {
-                labelLayout.applyVector(pos);
-                labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
+            // set the fixed position of the node labels, or leave them as they are
+            for (KLabel label : node.getLabels()) {
+                KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                pos = labelLayout.getProperty(LayoutOptions.POSITION);
+                if (pos == null) {
+                    labelLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
+                } else {
+                    labelLayout.applyVector(pos);
+                }
+                maxx = KielerMath.maxf(maxx, nodeLayout.getXpos() + nodeLayout.getWidth(),
+                        nodeLayout.getXpos() + labelLayout.getXpos() + labelLayout.getWidth());
+                maxy = KielerMath.maxf(maxy, nodeLayout.getYpos() + nodeLayout.getHeight(),
+                        nodeLayout.getYpos() + labelLayout.getYpos() + labelLayout.getHeight());
             }
-            maxx = KielerMath.maxf(maxx, nodeLayout.getXpos() + nodeLayout.getWidth(),
-                    nodeLayout.getXpos() + labelLayout.getXpos() + labelLayout.getWidth());
-            maxy = KielerMath.maxf(maxy, nodeLayout.getYpos() + nodeLayout.getHeight(),
-                    nodeLayout.getYpos() + labelLayout.getYpos() + labelLayout.getHeight());
-            
+                
             // set the fixed position of the ports, or leave them as they are
             for (KPort port : node.getPorts()) {
                 KShapeLayout portLayout = port.getData(KShapeLayout.class);
@@ -94,20 +97,23 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                     portLayout.setYpos((float) pos.y);
                 }
                 
-                // set the fixed position of the port label, or leave it as it is
-                labelLayout = port.getLabel().getData(KShapeLayout.class);
-                pos = labelLayout.getProperty(LayoutOptions.POSITION);
-                if (pos != null) {
-                    labelLayout.setXpos((float) pos.x);
-                    labelLayout.setYpos((float) pos.y);
-                    labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
+                // set the fixed position of the port labels, or leave them as they are
+                for (KLabel label : port.getLabels()) {
+                    KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                    pos = labelLayout.getProperty(LayoutOptions.POSITION);
+                    if (pos == null) {
+                        labelLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
+                    } else {
+                        labelLayout.setXpos((float) pos.x);
+                        labelLayout.setYpos((float) pos.y);
+                    }
+                    float portx = nodeLayout.getXpos() + portLayout.getXpos();
+                    float porty = nodeLayout.getYpos() + portLayout.getYpos();
+                    maxx = KielerMath.maxf(maxx, portx + portLayout.getWidth(),
+                            portx + labelLayout.getXpos() + labelLayout.getWidth());
+                    maxy = KielerMath.maxf(maxy, porty + portLayout.getHeight(),
+                            porty + labelLayout.getYpos() + labelLayout.getHeight());
                 }
-                float portx = nodeLayout.getXpos() + portLayout.getXpos();
-                float porty = nodeLayout.getYpos() + portLayout.getYpos();
-                maxx = KielerMath.maxf(maxx, portx + portLayout.getWidth(),
-                        portx + labelLayout.getXpos() + labelLayout.getWidth());
-                maxy = KielerMath.maxf(maxy, porty + portLayout.getHeight(),
-                        porty + labelLayout.getYpos() + labelLayout.getHeight());
             }
             
             // set fixed routing for the connected edges, or leave them as they are
@@ -165,10 +171,10 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         for (KLabel label : edge.getLabels()) {
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
             KVector pos = labelLayout.getProperty(LayoutOptions.POSITION);
-            // edge labels are excluded from layout by default
-            if (pos != null) {
+            if (pos == null) {
+                labelLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
+            } else {
                 labelLayout.applyVector(pos);
-                labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
             }
             if (sameHierarchy) {
                 maxv.x = Math.max(maxv.x, labelLayout.getXpos() + labelLayout.getWidth());

@@ -32,7 +32,6 @@ import org.eclipse.emf.common.util.EList;
  * <ul>
  *   <li>{@link de.cau.cs.kieler.core.kgraph.KPort#getNode <em>Node</em>}</li>
  *   <li>{@link de.cau.cs.kieler.core.kgraph.KPort#getEdges <em>Edges</em>}</li>
- *   <li>{@link de.cau.cs.kieler.core.kgraph.KPort#getLabel <em>Label</em>}</li>
  * </ul>
  * </p>
  *
@@ -42,7 +41,7 @@ import org.eclipse.emf.common.util.EList;
  * @kieler.rating 2011-02-01 yellow
  *     reviewed by cmot, soh
  */
-public interface KPort extends KGraphElement {
+public interface KPort extends KLabeledGraphElement {
     /**
      * Returns the value of the '<em><b>Node</b></em>' container reference.
      * It is bidirectional and its opposite is '{@link de.cau.cs.kieler.core.kgraph.KNode#getPorts <em>Ports</em>}'.
@@ -90,30 +89,5 @@ public interface KPort extends KGraphElement {
      * @generated
      */
     EList<KEdge> getEdges();
-
-    /**
-     * Returns the value of the '<em><b>Label</b></em>' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * <!-- begin-model-doc -->
-     * The label of a port is optional.
-     * <!-- end-model-doc -->
-     * @return the value of the '<em>Label</em>' containment reference.
-     * @see #setLabel(KLabel)
-     * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKPort_Label()
-     * @model containment="true"
-     * @generated
-     */
-    KLabel getLabel();
-
-    /**
-     * Sets the value of the '{@link de.cau.cs.kieler.core.kgraph.KPort#getLabel <em>Label</em>}' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Label</em>' containment reference.
-     * @see #getLabel()
-     * @generated
-     */
-    void setLabel(KLabel value);
 
 } // KPort

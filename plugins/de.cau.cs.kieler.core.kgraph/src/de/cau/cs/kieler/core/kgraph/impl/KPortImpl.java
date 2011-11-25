@@ -17,7 +17,6 @@ package de.cau.cs.kieler.core.kgraph.impl;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
-import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 
@@ -45,7 +44,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * <ul>
  *   <li>{@link de.cau.cs.kieler.core.kgraph.impl.KPortImpl#getNode <em>Node</em>}</li>
  *   <li>{@link de.cau.cs.kieler.core.kgraph.impl.KPortImpl#getEdges <em>Edges</em>}</li>
- *   <li>{@link de.cau.cs.kieler.core.kgraph.impl.KPortImpl#getLabel <em>Label</em>}</li>
  * </ul>
  * </p>
  *
@@ -53,7 +51,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * @kieler.rating 2011-02-01 yellow
  *     reviewed by cmot, soh
  */
-public class KPortImpl extends KGraphElementImpl implements KPort {
+public class KPortImpl extends KLabeledGraphElementImpl implements KPort {
     /**
      * The cached value of the '{@link #getEdges() <em>Edges</em>}' reference list.
      * <!-- begin-user-doc -->
@@ -63,16 +61,6 @@ public class KPortImpl extends KGraphElementImpl implements KPort {
      * @ordered
      */
     protected EList<KEdge> edges;
-
-    /**
-     * The cached value of the '{@link #getLabel() <em>Label</em>}' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getLabel()
-     * @generated
-     * @ordered
-     */
-    protected KLabel label;
 
     /**
      * <!-- begin-user-doc -->
@@ -151,49 +139,6 @@ public class KPortImpl extends KGraphElementImpl implements KPort {
      * <!-- end-user-doc -->
      * @generated
      */
-    public KLabel getLabel() {
-        return label;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public NotificationChain basicSetLabel(KLabel newLabel, NotificationChain msgs) {
-        KLabel oldLabel = label;
-        label = newLabel;
-        if (eNotificationRequired()) {
-            ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KGraphPackage.KPORT__LABEL, oldLabel, newLabel);
-            if (msgs == null) msgs = notification; else msgs.add(notification);
-        }
-        return msgs;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void setLabel(KLabel newLabel) {
-        if (newLabel != label) {
-            NotificationChain msgs = null;
-            if (label != null)
-                msgs = ((InternalEObject)label).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KGraphPackage.KPORT__LABEL, null, msgs);
-            if (newLabel != null)
-                msgs = ((InternalEObject)newLabel).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KGraphPackage.KPORT__LABEL, null, msgs);
-            msgs = basicSetLabel(newLabel, msgs);
-            if (msgs != null) msgs.dispatch();
-        }
-        else if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KGraphPackage.KPORT__LABEL, newLabel, newLabel));
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     @Override
     public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
@@ -215,8 +160,6 @@ public class KPortImpl extends KGraphElementImpl implements KPort {
         switch (featureID) {
             case KGraphPackage.KPORT__NODE:
                 return basicSetNode(null, msgs);
-            case KGraphPackage.KPORT__LABEL:
-                return basicSetLabel(null, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
@@ -247,8 +190,6 @@ public class KPortImpl extends KGraphElementImpl implements KPort {
                 return getNode();
             case KGraphPackage.KPORT__EDGES:
                 return getEdges();
-            case KGraphPackage.KPORT__LABEL:
-                return getLabel();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -269,9 +210,6 @@ public class KPortImpl extends KGraphElementImpl implements KPort {
                 getEdges().clear();
                 getEdges().addAll((Collection<? extends KEdge>)newValue);
                 return;
-            case KGraphPackage.KPORT__LABEL:
-                setLabel((KLabel)newValue);
-                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -290,9 +228,6 @@ public class KPortImpl extends KGraphElementImpl implements KPort {
             case KGraphPackage.KPORT__EDGES:
                 getEdges().clear();
                 return;
-            case KGraphPackage.KPORT__LABEL:
-                setLabel((KLabel)null);
-                return;
         }
         super.eUnset(featureID);
     }
@@ -309,8 +244,6 @@ public class KPortImpl extends KGraphElementImpl implements KPort {
                 return getNode() != null;
             case KGraphPackage.KPORT__EDGES:
                 return edges != null && !edges.isEmpty();
-            case KGraphPackage.KPORT__LABEL:
-                return label != null;
         }
         return super.eIsSet(featureID);
     }
@@ -320,13 +253,13 @@ public class KPortImpl extends KGraphElementImpl implements KPort {
      */
     @Override
     public String toString() {
-        KLabel label = getLabel();
-        if (label != null) {
-            String text = label.getText();
+        if (getLabels().size() > 0) {
+            String text = getLabels().get(0).getText();
             if (text != null && text.length() > 0) {
-                return text;
+                return "KPort \"" + text + "\"";
             }
         }
+
         return super.toString();
     }
 

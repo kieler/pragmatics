@@ -111,7 +111,8 @@ public class BoxPlacer extends AbstractAlgorithm {
         LinkedList<Float> rowHeights = new LinkedList<Float>();
         ListIterator<KNode> boxIter = sortedBoxes.listIterator();
         while (boxIter.hasNext()) {
-            KShapeLayout boxLayout = boxIter.next().getData(KShapeLayout.class);
+            KNode box = boxIter.next();
+            KShapeLayout boxLayout = box.getData(KShapeLayout.class);
             float width = boxLayout.getWidth();
             float height = boxLayout.getHeight();
             if (xpos + width > maxRowWidth) {
@@ -129,6 +130,9 @@ public class BoxPlacer extends AbstractAlgorithm {
             broadestRow = Math.max(broadestRow, xpos + width + borderSpacing);
             highestBox = Math.max(highestBox, height);
             xpos += width + minSpacing;
+            // ignore ports and labels
+            KimlUtil.excludePorts(box);
+            KimlUtil.excludeLabels(box);
         }
         broadestRow = Math.max(broadestRow, minTotalWidth);
         float totalHeight = ypos + highestBox + borderSpacing;

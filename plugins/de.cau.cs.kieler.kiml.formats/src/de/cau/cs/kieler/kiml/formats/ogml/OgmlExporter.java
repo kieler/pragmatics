@@ -116,9 +116,9 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
             String nodeId = knodeLayout.getProperty(PROP_ID);
             NodeType ogmlNode = OgmlFactory.eINSTANCE.createNodeType();
             ogmlNode.setId(nodeId);
-            if (knode.getLabel().getText().length() > 0) {
+            for (KLabel label : knode.getLabels()) {
                 LabelType nodeLabel = OgmlFactory.eINSTANCE.createLabelType();
-                nodeLabel.setContent(knode.getLabel().getText());
+                nodeLabel.setContent(label.getText());
                 ogmlNode.getLabel().add(nodeLabel);
             }
             nodeList.add(ogmlNode);

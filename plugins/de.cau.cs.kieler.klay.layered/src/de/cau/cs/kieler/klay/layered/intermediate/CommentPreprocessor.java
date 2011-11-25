@@ -22,6 +22,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
@@ -131,10 +132,12 @@ public class CommentPreprocessor extends AbstractAlgorithm implements ILayoutPro
             onlyTop = hasSouth && !hasNorth;
             onlyBottom = hasNorth && !hasSouth;
         }
-        if (!onlyTop && !onlyBottom && realNode.getLabel() != null
-                && realNode.getLabel().getText() != null) {
-            double labelPos = realNode.getLabel().getPosition().y
-                    + realNode.getLabel().getSize().y / 2;
+        if (!onlyTop && !onlyBottom && !realNode.getLabels().isEmpty()) {
+            double labelPos = 0;
+            for (LLabel label : realNode.getLabels()) {
+                labelPos += label.getPosition().y + label.getSize().y / 2;
+            }
+            labelPos /= realNode.getLabels().size();
             topFirst = labelPos >= realNode.getSize().y / 2;
         } else {
             topFirst = !onlyBottom;

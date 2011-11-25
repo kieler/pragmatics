@@ -94,8 +94,8 @@ public class LayeredGraph {
     @Override
     public String toString() {
         String text = getClass().getSimpleName();
-        if (parentNode.getLabel() != null) {
-            text += "(" + parentNode.getLabel().getText() + ")";
+        if (parentNode.getLabels().size() > 0) {
+            text += "(" + parentNode.getLabels().get(0).getText() + ")";
         }
         return text;
     }

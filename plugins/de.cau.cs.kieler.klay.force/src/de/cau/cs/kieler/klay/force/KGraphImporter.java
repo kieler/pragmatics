@@ -80,7 +80,11 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             // add a new node to the force graph, copying its size
             KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
             
-            FNode newNode = new FNode(knode.getLabel().getText());
+            String label = "";
+            if (!knode.getLabels().isEmpty()) {
+                label = knode.getLabels().get(0).getText();
+            }
+            FNode newNode = new FNode(label);
             newNode.id = index++;
             newNode.setProperty(Properties.ORIGIN, knode);
             newNode.getPosition().x = nodeLayout.getXpos() + nodeLayout.getWidth() / 2;
@@ -188,10 +192,14 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             
             if (object instanceof KNode) {
                 // set the node position
-                KShapeLayout nodeLayout = ((KNode) object).getData(KShapeLayout.class);
+                KNode knode = (KNode) object;
+                KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
                 KVector nodePos = fnode.getPosition().add(offset);
                 nodeLayout.setXpos((float) nodePos.x - nodeLayout.getWidth() / 2);
                 nodeLayout.setYpos((float) nodePos.y - nodeLayout.getHeight() / 2);
+                // ignore ports and labels
+                KimlUtil.excludePorts(knode);
+                KimlUtil.excludeLabels(knode);
             }
         }
         

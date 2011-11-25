@@ -328,7 +328,7 @@ public class PortLayoutProvider extends AbstractLayoutProvider {
         float yFactor = north ? -1.0f : 1.0f;
         
         if (debug) {
-            System.out.print(ports.get(0).getNode().getLabel().getText());
+            System.out.print(ports.get(0).getNode().getLabels().get(0).getText());
             if (north) {
                 System.out.println(" North port placement (y = " + yPos + ")");
             } else {
@@ -367,7 +367,7 @@ public class PortLayoutProvider extends AbstractLayoutProvider {
         float xFactor = west ? -1.0f : 1.0f;
 
         if (debug) {
-            System.out.print(ports.get(0).getNode().getLabel().getText());
+            System.out.print(ports.get(0).getNode().getLabels().get(0).getText());
             if (west) {
                 System.out.println(" West port placement (x = " + xPos + ")");
             } else {

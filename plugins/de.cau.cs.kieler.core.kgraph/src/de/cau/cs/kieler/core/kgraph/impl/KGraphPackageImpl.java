@@ -22,6 +22,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KGraphFactory;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.KLabel;
+import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 
@@ -55,6 +56,13 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
      * @generated
      */
     private EClass kGraphElementEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass kLabeledGraphElementEClass = null;
 
     /**
      * <!-- begin-user-doc -->
@@ -210,6 +218,24 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
      * <!-- end-user-doc -->
      * @generated
      */
+    public EClass getKLabeledGraphElement() {
+        return kLabeledGraphElementEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getKLabeledGraphElement_Labels() {
+        return (EReference)kLabeledGraphElementEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getKGraphData() {
         return kGraphDataEClass;
     }
@@ -273,15 +299,6 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getKNode_Label() {
-        return (EReference)kNodeEClass.getEStructuralFeatures().get(5);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EClass getKEdge() {
         return kEdgeEClass;
     }
@@ -327,15 +344,6 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getKEdge_Labels() {
-        return (EReference)kEdgeEClass.getEStructuralFeatures().get(4);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EClass getKPort() {
         return kPortEClass;
     }
@@ -363,15 +371,6 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getKPort_Label() {
-        return (EReference)kPortEClass.getEStructuralFeatures().get(2);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EClass getKLabel() {
         return kLabelEClass;
     }
@@ -383,6 +382,15 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
      */
     public EAttribute getKLabel_Text() {
         return (EAttribute)kLabelEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getKLabel_Parent() {
+        return (EReference)kLabelEClass.getEStructuralFeatures().get(1);
     }
 
     /**
@@ -515,6 +523,9 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
         kGraphElementEClass = createEClass(KGRAPH_ELEMENT);
         createEReference(kGraphElementEClass, KGRAPH_ELEMENT__DATA);
 
+        kLabeledGraphElementEClass = createEClass(KLABELED_GRAPH_ELEMENT);
+        createEReference(kLabeledGraphElementEClass, KLABELED_GRAPH_ELEMENT__LABELS);
+
         kGraphDataEClass = createEClass(KGRAPH_DATA);
 
         kNodeEClass = createEClass(KNODE);
@@ -523,22 +534,20 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
         createEReference(kNodeEClass, KNODE__PORTS);
         createEReference(kNodeEClass, KNODE__OUTGOING_EDGES);
         createEReference(kNodeEClass, KNODE__INCOMING_EDGES);
-        createEReference(kNodeEClass, KNODE__LABEL);
 
         kEdgeEClass = createEClass(KEDGE);
         createEReference(kEdgeEClass, KEDGE__SOURCE);
         createEReference(kEdgeEClass, KEDGE__TARGET);
         createEReference(kEdgeEClass, KEDGE__SOURCE_PORT);
         createEReference(kEdgeEClass, KEDGE__TARGET_PORT);
-        createEReference(kEdgeEClass, KEDGE__LABELS);
 
         kPortEClass = createEClass(KPORT);
         createEReference(kPortEClass, KPORT__NODE);
         createEReference(kPortEClass, KPORT__EDGES);
-        createEReference(kPortEClass, KPORT__LABEL);
 
         kLabelEClass = createEClass(KLABEL);
         createEAttribute(kLabelEClass, KLABEL__TEXT);
+        createEReference(kLabelEClass, KLABEL__PARENT);
 
         eMapPropertyHolderEClass = createEClass(EMAP_PROPERTY_HOLDER);
         createEReference(eMapPropertyHolderEClass, EMAP_PROPERTY_HOLDER__PROPERTIES);
@@ -587,10 +596,11 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
         // Set bounds for type parameters
 
         // Add supertypes to classes
+        kLabeledGraphElementEClass.getESuperTypes().add(this.getKGraphElement());
         kGraphDataEClass.getESuperTypes().add(this.getEMapPropertyHolder());
-        kNodeEClass.getESuperTypes().add(this.getKGraphElement());
-        kEdgeEClass.getESuperTypes().add(this.getKGraphElement());
-        kPortEClass.getESuperTypes().add(this.getKGraphElement());
+        kNodeEClass.getESuperTypes().add(this.getKLabeledGraphElement());
+        kEdgeEClass.getESuperTypes().add(this.getKLabeledGraphElement());
+        kPortEClass.getESuperTypes().add(this.getKLabeledGraphElement());
         kLabelEClass.getESuperTypes().add(this.getKGraphElement());
         eMapPropertyHolderEClass.getESuperTypes().add(this.getIPropertyHolder());
 
@@ -612,6 +622,9 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
         g1 = createEGenericType(t1);
         initEOperation(op, g1);
 
+        initEClass(kLabeledGraphElementEClass, KLabeledGraphElement.class, "KLabeledGraphElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEReference(getKLabeledGraphElement_Labels(), this.getKLabel(), this.getKLabel_Parent(), "labels", null, 0, -1, KLabeledGraphElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
         initEClass(kGraphDataEClass, KGraphData.class, "KGraphData", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
         initEClass(kNodeEClass, KNode.class, "KNode", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -620,22 +633,20 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
         initEReference(getKNode_Ports(), this.getKPort(), this.getKPort_Node(), "ports", null, 0, -1, KNode.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getKNode_OutgoingEdges(), this.getKEdge(), this.getKEdge_Source(), "outgoingEdges", null, 0, -1, KNode.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getKNode_IncomingEdges(), this.getKEdge(), this.getKEdge_Target(), "incomingEdges", null, 0, -1, KNode.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getKNode_Label(), this.getKLabel(), null, "label", null, 0, 1, KNode.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(kEdgeEClass, KEdge.class, "KEdge", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getKEdge_Source(), this.getKNode(), this.getKNode_OutgoingEdges(), "source", null, 1, 1, KEdge.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getKEdge_Target(), this.getKNode(), this.getKNode_IncomingEdges(), "target", null, 1, 1, KEdge.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getKEdge_SourcePort(), this.getKPort(), null, "sourcePort", null, 0, 1, KEdge.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getKEdge_TargetPort(), this.getKPort(), null, "targetPort", null, 0, 1, KEdge.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getKEdge_Labels(), this.getKLabel(), null, "labels", null, 0, -1, KEdge.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(kPortEClass, KPort.class, "KPort", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getKPort_Node(), this.getKNode(), this.getKNode_Ports(), "node", null, 1, 1, KPort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getKPort_Edges(), this.getKEdge(), null, "edges", null, 0, -1, KPort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getKPort_Label(), this.getKLabel(), null, "label", null, 0, 1, KPort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(kLabelEClass, KLabel.class, "KLabel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getKLabel_Text(), ecorePackage.getEString(), "text", null, 1, 1, KLabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getKLabel_Parent(), this.getKLabeledGraphElement(), this.getKLabeledGraphElement_Labels(), "parent", null, 1, 1, KLabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(eMapPropertyHolderEClass, EMapPropertyHolder.class, "EMapPropertyHolder", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getEMapPropertyHolder_Properties(), this.getIPropertyToObjectMap(), null, "properties", null, 0, -1, EMapPropertyHolder.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
