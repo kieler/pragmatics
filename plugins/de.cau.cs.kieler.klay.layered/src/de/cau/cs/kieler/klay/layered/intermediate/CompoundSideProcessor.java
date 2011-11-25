@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.options.Alignment;
@@ -26,6 +25,7 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.CompoundKGraphImporter;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -241,49 +241,54 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
             if (lnode.getProperty(Properties.ORIGIN) instanceof KNode) {
                 KNode origin = (KNode) lnode.getProperty(Properties.ORIGIN);
                 if (CompoundKGraphImporter.isDescendant(upperBorderOrigin, origin)) {
-                   ret = compareIndex(lnode, ret, lowerSide);
+                    ret = compareIndex(lnode, ret, lowerSide);
                 }
             }
             if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
-                LEdge edge = (LEdge) lnode.getProperty(Properties.ORIGIN);
-                Object origin = edge.getProperty(Properties.ORIGIN);
-                if (origin instanceof KEdge) {
-                    LNode sourceNode = edge.getSource().getNode();
-                    // KNode kSourceNode = (KNode) (sourceNode.getProperty(Properties.ORIGIN));
-                    KEdge originEdge = (KEdge) origin;
-                    KNode kSourceNode = originEdge.getSource();
-                    if (sourceNode == upperBorder
-                            || KimlUtil.isDescendant(kSourceNode, upperBorderOrigin)) {
-                        ret = compareIndex(lnode, ret, lowerSide);
-                    }
+                LNode sourceNode = lnode.getProperty(Properties.LONG_EDGE_SOURCE).getNode();
+                LNode targetNode = lnode.getProperty(Properties.LONG_EDGE_TARGET).getNode();
+                if ((Util.isDescendant(sourceNode, upperBorder))
+                        || (Util.isDescendant(targetNode, upperBorder))) {
+                    ret = compareIndex(lnode, ret, lowerSide);
                 }
+
+                // Object origin = edge.getProperty(Properties.ORIGIN);
+                // if (origin instanceof KEdge) {
+                // LNode sourceNode = edge.getSource().getNode();
+                // // KNode kSourceNode = (KNode) (sourceNode.getProperty(Properties.ORIGIN));
+                // KEdge originEdge = (KEdge) origin;
+                // KNode kSourceNode = originEdge.getSource();
+                // if (sourceNode == upperBorder
+                // || KimlUtil.isDescendant(kSourceNode, upperBorderOrigin)) {
+                // ret = compareIndex(lnode, ret, lowerSide);
+                // }
+                // }
             }
             // keep north-south-port dummies and their nodes together
             if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
                 LNode portNode = lnode.getProperty(Properties.IN_LAYER_LAYOUT_UNIT);
                 KNode originPortNode = (KNode) portNode.getProperty(Properties.ORIGIN);
                 if (KimlUtil.isDescendant(originPortNode, upperBorderOrigin)) {
-                   ret = compareIndex(lnode, ret, lowerSide);
+                    ret = compareIndex(lnode, ret, lowerSide);
                 }
             }
         }
         return ret;
     }
-    
-    /** 
+
+    /**
      * Compares a node's index to an actual index to update a maximum/minimum value.
      * 
      * @param lnode
-     *      node whose index is to be compared.
+     *            node whose index is to be compared.
      * @param actualValue
-     *      the actual maximum/minimum value.
+     *            the actual maximum/minimum value.
      * @param lowerSide
-     *      if true, the maximum is to be updated, if false, the minimum.
-     * @return
-     *      returns the updated max or min value.
+     *            if true, the maximum is to be updated, if false, the minimum.
+     * @return returns the updated max or min value.
      */
     private int compareIndex(final LNode lnode, final int actualValue, final boolean lowerSide) {
-        
+
         int test = lnode.getIndex();
         int ret = 0;
         ret += actualValue;

@@ -168,13 +168,24 @@ public final class Util {
      * @return true if {@code child} is a direct or indirect child of {@code parent}
      */
     public static boolean isDescendant(final LNode child, final LNode parent) {
-        LNode current = child;
+        LNode cParent = parent;
+        LNode cChild = child;
+        NodeType nodeTypeParent = parent.getProperty(Properties.NODE_TYPE);
+        NodeType nodeTypeChild = child.getProperty(Properties.NODE_TYPE);
+        if ((nodeTypeParent != NodeType.NORMAL) && (nodeTypeParent != NodeType.UPPER_COMPOUND_BORDER)) {
+            cParent = parent.getProperty(Properties.COMPOUND_NODE);
+        }
+        if ((nodeTypeChild != NodeType.NORMAL) && (nodeTypeChild != NodeType.UPPER_COMPOUND_BORDER)) {
+            cChild = child.getProperty(Properties.COMPOUND_NODE);
+        }
+       
+        LNode current = cChild;
         LGraphElement currentParent = getParent(current);
         // Nodes that are directly contained by the layered graph carry it in their parent property.
         // So if the parent changes instance from LNode to LayeredGraph, the loop ends.
         while (currentParent instanceof LNode) {
             current = (LNode) currentParent;
-            if (current == parent) {
+            if (current == cParent) {
                 return true;
             }
             currentParent = getParent(current);

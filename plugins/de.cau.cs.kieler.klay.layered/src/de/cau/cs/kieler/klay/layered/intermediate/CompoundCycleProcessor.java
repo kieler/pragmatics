@@ -50,6 +50,9 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author ima
  */
 public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+    
+    // Store information about inserted dummy edges
+    private HashMap<LEdge, LEdge> dummyEdgeMap = new HashMap<LEdge, LEdge>();
 
     /**
      * {@inheritDoc}
@@ -76,9 +79,16 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                 // only normal edges need to be regarded
                 EdgeType edgeType = edge.getProperty(Properties.EDGE_TYPE);
                 if (edgeType == EdgeType.NORMAL) {
+                    boolean isDescendantEdge = false;
 
                     LNode sourceNode = edge.getSource().getNode();
                     LNode targetNode = edge.getTarget().getNode();
+
+                    if ((Util.isDescendant(sourceNode, targetNode))
+                            || (Util.isDescendant(targetNode, sourceNode))) {
+                        isDescendantEdge = true;
+                    }
+
                     LGraphElement sourceParent = Util.getParent(sourceNode);
                     LGraphElement targetParent = Util.getParent(targetNode);
                     LNode currentSource = sourceNode;
@@ -90,22 +100,27 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                     // in case the port has incoming edges. Otherwise the layering for ports with
                     // incoming and outgoing descendant edges could lead to faulty layer
                     // assignments.
-                    if (Util.isDescendant(targetNode,
-                            sourceNode.getProperty(Properties.COMPOUND_NODE))) {
-                        List<LEdge> portIncomingEdges = edge.getSource().getIncomingEdges();
-                        if (!portIncomingEdges.isEmpty()) {
-                            boolean descendantIncoming = false;
-                            for (LEdge ledge : portIncomingEdges) {
-                                if (Util.isDescendant(ledge.getSource().getNode(), ledge
-                                        .getTarget().getNode()
-                                        .getProperty(Properties.COMPOUND_NODE))) {
-                                    descendantIncoming = true;
+                    NodeType sourceNType = sourceNode.getProperty(Properties.NODE_TYPE);
+                    if ((sourceNType == NodeType.LOWER_COMPOUND_PORT)
+                            || sourceNType == NodeType.UPPER_COMPOUND_PORT) {
+                        if (Util.isDescendant(targetNode,
+                                sourceNode.getProperty(Properties.COMPOUND_NODE))) {
+                            List<LEdge> portIncomingEdges = edge.getSource().getIncomingEdges();
+                            if (!portIncomingEdges.isEmpty()) {
+                                boolean descendantIncoming = false;
+                                for (LEdge ledge : portIncomingEdges) {
+                                    if (Util.isDescendant(
+                                            ledge.getSource().getNode(),
+                                            ledge.getTarget().getNode()
+                                                    .getProperty(Properties.COMPOUND_NODE))) {
+                                        descendantIncoming = true;
+                                    }
+                                    if (descendantIncoming) {
+                                        toDescendantEdges.add(edge);
+                                    }
                                 }
-                                if (descendantIncoming) {
-                                    toDescendantEdges.add(edge);
-                                }
-                            }
 
+                            }
                         }
                     }
 
@@ -175,6 +190,39 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                             insertCycleNode(currentSource, insertedNodes, cycleRemovalNodes);
                             insertCycleNode(currentTarget, insertedNodes, cycleRemovalNodes);
 
+                            // While at it, add dummy edges to enhance the layering of the dependent
+                            // nodes. Remember, which edge lead to the insertion of which dummy edge,
+                            // because dummy edges inserted for an edge that is reverted later on have
+                            // to be removed again
+                            if (!isDescendantEdge) {
+                                NodeType nodeTypeDummySource = currentSource
+                                        .getProperty(Properties.NODE_TYPE);
+                                LEdge dummyEdge = new LEdge();
+                                dummyEdgeMap.put(edge, dummyEdge);
+                                dummyEdge
+                                        .setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_DUMMY);
+                                LPort dummyPortSource = new LPort();
+                                LPort dummyPortTarget = new LPort();
+                                dummyEdge.setSource(dummyPortSource);
+                                dummyEdge.setTarget(dummyPortTarget);
+                                dummyPortTarget.setNode(currentTarget);
+                                if (nodeTypeDummySource == NodeType.NORMAL) {
+                                    // leave node
+                                    dummyPortSource.setNode(currentSource);
+                                } else {
+                                    // compound node, lower border dummy has to be found
+                                    for (LNode node : layeredGraph.getLayerlessNodes()) {
+                                        if ((node.getProperty(Properties.NODE_TYPE) 
+                                                == NodeType.LOWER_COMPOUND_BORDER)
+                                                && (node.getProperty(Properties.COMPOUND_NODE) 
+                                                        == currentSource)) {
+                                            dummyPortSource.setNode(node);
+                                        }
+                                    }
+                                    assert (dummyPortSource.getNode() != null);
+                                }
+                            }
+
                             LEdge cycleGraphEdge = new LEdge();
                             cycleGraphEdge.setProperty(Properties.ORIGIN, edge);
                             LPort cycleSourcePort = new LPort();
@@ -184,6 +232,7 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                             cycleSourcePort.setNode(insertedNodes.get(currentSource));
                             cycleTargetPort.setNode(insertedNodes.get(currentTarget));
                         }
+
                     }
                 }
             }
@@ -193,11 +242,11 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
         for (int i = 0; i < toDescendantSize; i++) {
             LEdge edge = toDescendantEdges.get(i);
             if (!edge.getProperty(Properties.REVERSED)) {
-//                LPort source = edge.getSource();
-//                LPort target = edge.getTarget();
-//                edge.setSource(target);
-//                edge.setTarget(source);
-//                edge.setProperty(Properties.REVERSED, true);
+                // LPort source = edge.getSource();
+                // LPort target = edge.getTarget();
+                // edge.setSource(target);
+                // edge.setTarget(source);
+                // edge.setProperty(Properties.REVERSED, true);
                 edge.reverse(true);
             }
         }
@@ -308,6 +357,11 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                     ledge.getSource().getOutgoingEdges().remove(ledge);
                 }
                 layeredGraph.getLayerlessNodes().remove(targetNode);
+            }
+            LEdge dummyEdge = dummyEdgeMap.get(edge);
+            if (dummyEdge != null) {
+                dummyEdge.getSource().getOutgoingEdges().remove(dummyEdge);
+                dummyEdge.getTarget().getIncomingEdges().remove(dummyEdge);
             }
         }
     }
