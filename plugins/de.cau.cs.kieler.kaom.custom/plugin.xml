@@ -17,6 +17,14 @@
             option="de.cau.cs.kieler.direction"
             value="RIGHT">
       </option>
+      <semanticOption
+            class="de.cau.cs.kieler.kaom.Linkable"
+            config="de.cau.cs.kieler.kaom.custom.AnnotationsLayoutConfig">
+      </semanticOption>
+      <semanticOption
+            class="de.cau.cs.kieler.kaom.Link"
+            config="de.cau.cs.kieler.kaom.custom.AnnotationsLayoutConfig">
+      </semanticOption>
    </extension>
 
 </plugin>
