@@ -721,11 +721,21 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
             // add the source port and target port positions to the vector chain
             LPort sourcePort = ledge.getSource();
-            bendPoints.addFirst(KVector.add(sourcePort.getPosition(), sourcePort.getNode()
-                    .getPosition()));
+            KVector sourcePoint = KVector.add(sourcePort.getPosition(),
+                    sourcePort.getNode().getPosition());
+            bendPoints.addFirst(sourcePoint);
             LPort targetPort = ledge.getTarget();
-            bendPoints.addLast(KVector.add(targetPort.getPosition(), targetPort.getNode()
-                    .getPosition()));
+            KVector targetPoint = KVector.add(targetPort.getPosition(),
+                    targetPort.getNode().getPosition());
+            bendPoints.addLast(targetPoint);
+            
+            // clip the endpoints at the port border
+            if (sourcePort.getProperty(Properties.ORIGIN) != null) {
+                clip(sourcePoint, sourcePort.getSize(), bendPoints.get(1));
+            }
+            if (targetPort.getProperty(Properties.ORIGIN) != null) {
+                clip(targetPoint, targetPort.getSize(), bendPoints.get(bendPoints.size() - 2));
+            }
 
             // translate the bend points by the offset and apply the bend points
             bendPoints.translate(offset);
@@ -766,6 +776,31 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         } else {
             // ports have not been positioned yet - leave this for next layouter
             KimlUtil.resizeNode(parentNode, width, height, true);
+        }
+    }
+    
+    /**
+     * KLay Layered aligns ports at their center. Incident edges must be clipped on the port's border.
+     * 
+     * @param endpoint an endpoint of an edge
+     * @param portSize the size of the corresponding port
+     * @param next the next point on the edge's path
+     */
+    protected void clip(final KVector endpoint, final KVector portSize, final KVector next) {
+        double xdiff = Math.abs(next.x - endpoint.x);
+        double ydiff = Math.abs(next.y - endpoint.y);
+        if (xdiff >= ydiff) {
+            if (next.x > endpoint.x) {
+                endpoint.x += portSize.x / 2;
+            } else if (next.x < endpoint.x) {
+                endpoint.x -= portSize.x / 2;
+            }
+        } else {
+            if (next.y > endpoint.y) {
+                endpoint.y += portSize.y / 2;
+            } else if (next.y < endpoint.y) {
+                endpoint.y -= portSize.y / 2;
+            }
         }
     }
 

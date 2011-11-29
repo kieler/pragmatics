@@ -966,7 +966,16 @@ public class CompoundKGraphImporter extends KGraphImporter {
         // add starting- and endpoint of edge to bendpoints
         bendPoints.addFirst(edgeStart);
         bendPoints.addLast(edgeEnd);
+        
+        // clip the endpoints at the port border
+        if (sourcePort.getProperty(Properties.ORIGIN) != null) {
+            clip(edgeStart, sourcePort.getSize(), bendPoints.get(1));
+        }
+        if (targetPort.getProperty(Properties.ORIGIN) != null) {
+            clip(edgeEnd, targetPort.getSize(), bendPoints.get(bendPoints.size() - 2));
+        }
 
+        // transfer the bend points and end points to the edge layout
         edgeLayout.applyVectorChain(bendPoints);
 
         // set spline option
