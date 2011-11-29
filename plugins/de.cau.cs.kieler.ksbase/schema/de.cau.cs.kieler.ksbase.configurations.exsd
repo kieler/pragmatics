@@ -197,6 +197,16 @@ Make sure that the transformation is short and fast, it is not recommended to ca
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="customMenuEntry" type="string">
+            <annotation>
+               <documentation>
+                  You can also make your own menu entry using the eclipse menu extension point. This should be the command id associated with that menu entry.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.menus/menuContribution/command/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

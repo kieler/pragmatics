@@ -61,6 +61,8 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
 
     private Object transformationClass;
     
+    private String commandId;
+    
     /**
      * Creates a new Transformation.
      * 
@@ -98,6 +100,7 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
         this.validation = t.validation;
         this.parameters = new LinkedList<List<String>>(t.parameters);
         this.transformationClass = t.transformationClass;
+        this.commandId = t.commandId;
 
     }
 
@@ -301,6 +304,14 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
     
     public void setTransformationClass(Object transformationClass) {
         this.transformationClass = transformationClass;
+    }
+    
+    public String getCommandId() {
+        return this.commandId;
+    }
+    
+    public void setCommandId(String id) {
+        this.commandId = id;
     }
     
     /**

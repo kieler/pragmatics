@@ -369,8 +369,6 @@ public final class DynamicMenuContributions {
             List<Object> params = new LinkedList<Object>();
             for (Method m : transformation.getTransformationClass().getClass().getMethods()) {
                 if (m.getName().equals(name)) {
-                    // HashMap<Class<?>, Object> selectionCache =
-                    // this.getSelectionHash(selection);
                     params = new LinkedList<Object>();
                     method = m;
                     int index = 0;
@@ -380,8 +378,9 @@ public final class DynamicMenuContributions {
                             if (match(t, p) && !params.contains(p)) {
                                 param = p;
                                 break;
-                            } else if ((p instanceof List) && (((List)p).size() >= index + 1) && match(t, ((List) p).get(index)) ) {
-                                param = ((List) p).get(index);
+                            } else if ((p instanceof List<?>) && (((List<?>) p).size() >= index + 1) 
+                                    && match(t, ((List<?>) p).get(index))) {
+                                param = ((List<?>) p).get(index);
                                 break;
                             }
                         }
@@ -536,6 +535,8 @@ public final class DynamicMenuContributions {
 
                         contribution.init(params);
                         this.balloonContributions.add(contribution);
+                    } else if (contrib.getData().startsWith("custom:")) {
+                        combination.addTransformation(transformation.getCommandId(), transformation);
                     }
                 } else {
                     if (/*!(contrib.getCommands().indexOf(command) == 0)*/true) {

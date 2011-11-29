@@ -200,8 +200,9 @@ public class KSBasECombination extends AbstractCombination {
                         if (this.match(t, p) && !params.contains(p)) {
                             param = p;
                             break;
-                        } else if ((p instanceof List) && (((List)p).size() >= index + 1) && match(t, ((List) p).get(index)) ) {
-                            param = ((List) p).get(index);
+                        } else if ((p instanceof List) && (((List<?>) p).size() >= index + 1) 
+                                && match(t, ((List<?>) p).get(index))) {
+                            param = ((List<?>) p).get(index);
                             break;
                         }
                     }

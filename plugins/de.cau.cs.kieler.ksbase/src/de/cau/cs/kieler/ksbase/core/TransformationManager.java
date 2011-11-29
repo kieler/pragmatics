@@ -338,6 +338,8 @@ public final class TransformationManager {
                     "popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu?after=addGroup");
             KSBasEMenuContribution popupbarContrib = new KSBasEMenuContribution(
                     "popupbar:de.cau.cs.kieler");
+            KSBasEMenuContribution customContrib = new KSBasEMenuContribution(
+                    "custom:de.cau.cs.kieler");
 
             // get all package declarations
             IConfigurationElement[] packages = settings.getChildren("package");
@@ -376,7 +378,7 @@ public final class TransformationManager {
                         transformation.setToolTip(transformation.getName());
                     }
                     transformation.setValidation(t.getAttribute("validation"));
-                    editor.addTransformation(transformation);
+                    
                     
                     // fill the desired menus
                     String attr = t.getAttribute("menu");
@@ -413,13 +415,19 @@ public final class TransformationManager {
                         } 
                         popupbarContrib.addCommand(t.getAttribute("transformationId"));
                     }
-                    
+                    attr = t.getAttribute("customMenuEntry");
+                    if ((attr != null) && !attr.isEmpty()) {
+                        customContrib.addCommand(t.getAttribute("transformationId"));
+                        transformation.setCommandId(attr);
+                    }
+                    editor.addTransformation(transformation);
 
                 }
                 editor.addMenuContribution(menuContrib);
                 editor.addMenuContribution(toolbarContrib);
                 editor.addMenuContribution(popupContrib);
                 editor.addMenuContribution(popupbarContrib);
+                editor.addMenuContribution(customContrib);
             }
             // read alternate command handler
             IConfigurationElement[] commandHandler = settings.getChildren("commandHandler");
