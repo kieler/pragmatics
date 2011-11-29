@@ -20,13 +20,14 @@ public class UpdateVisibilityEffect extends AbstractEffect {
     
     public void execute() {
         // TODO Auto-generated method stub
-        IEvaluationService evaluationService = (IEvaluationService) editorPart.getEditorSite()
+        final IEvaluationService evaluationService = (IEvaluationService) editorPart.getEditorSite()
                 .getService(IEvaluationService.class);
 
-        evaluationService.requestEvaluation("activeEditorId");
+        
         MonitoredOperation.runInUI(new Runnable() {
 
             public void run() {
+                evaluationService.requestEvaluation("activeEditorId");
                 WorkbenchWindow b = (WorkbenchWindow) editorPart.getSite().getPage()
                         .getWorkbenchWindow();
                 ToolBarContributionItem it = (ToolBarContributionItem) b.getCoolBarManager().find(
