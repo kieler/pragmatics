@@ -447,10 +447,7 @@ public final class LightDiagramServices {
         if (viewerProvider != null) {
             // create a new viewer
             IViewer<?> viewer = viewerProvider.createViewer(parent);
-            @SuppressWarnings("unchecked")
-            IViewer<Object> objViewer = (IViewer<Object>) viewer;
-            // set the input model
-            objViewer.setModel(viewContext.getTargetModel());
+            //IViewer<Object> objViewer = (IViewer<Object>) viewer;
             // remember the created viewer in a property
             viewContext.setProperty(VIEWER, viewer);
             return viewer;

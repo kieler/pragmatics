@@ -42,9 +42,6 @@ import de.cau.cs.kieler.klighd.util.KlighdColor;
  * supplied by the current view context. The method {@code getControl} returns the control for that
  * viewer and all other methods are delegated to the wrapped viewer.<br>
  * <br>
- * If a model is set that is not of type {@code ViewContext} but is supported by the currently
- * wrapped viewer it is set as model for that viewer instead.<br>
- * <br>
  * In addition it is possible to set a message to be shown instead of a view context, the wrapped
  * viewer is then of type {@code StringViewer}.<br>
  * <br>
@@ -99,15 +96,20 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
         // input model for the current viewer if possible or show it if it is a string
         if (model instanceof ViewContext) {
             ViewContext viewContext = (ViewContext) model;
-            // remove the old viewer
-            removeViewer();
-            // create the new viewer
-            IViewer<?> viewer =
-                    LightDiagramServices.getInstance().createViewer(viewContext, parent);
-            // add the new viewer
-            addViewer(viewer);
+            if (currentViewContext == null
+                    || currentViewContext.getViewerProvider() != viewContext.getViewerProvider()) {
+                // remove the old viewer
+                removeViewer();
+                // create the new viewer
+                IViewer<?> viewer =
+                        LightDiagramServices.getInstance().createViewer(viewContext, parent);
+                // add the new viewer
+                addViewer(viewer);
+            }
             // set the new view context
             currentViewContext = viewContext;
+            // set the input model
+            currentViewer.setModel(viewContext.getTargetModel());
             // reset the current selection
             resetSelection();
         } else if (model instanceof String) {
