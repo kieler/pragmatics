@@ -211,6 +211,7 @@ public class KSBasECombination extends AbstractCombination {
                     } else {
                         method = null;
                     }
+                    index++;
                 }
 
                 if (method != null) {
