@@ -64,7 +64,7 @@ public class ApplyLayoutRequest extends Request {
     public void addElement(final KGraphElement element, final GraphicalEditPart editPart) {
         KGraphData layoutData = element.getData(element instanceof KEdge
                 ? KEdgeLayout.class : KShapeLayout.class);
-        if (layoutData == null || !layoutData.getProperty(LayoutOptions.NO_LAYOUT)) {
+        if (!(layoutData == null || layoutData.getProperty(LayoutOptions.NO_LAYOUT))) {
             mappingList.add(new Pair<KGraphElement, GraphicalEditPart>(element, editPart));
         }
     }
