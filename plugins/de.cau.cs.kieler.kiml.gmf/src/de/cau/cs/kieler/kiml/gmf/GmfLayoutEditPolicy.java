@@ -233,20 +233,28 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         if (edge.getSourcePort() != null) {
             // calculate the relative position to the port size
             KShapeLayout portLayout = edge.getSourcePort().getData(KShapeLayout.class);
-            if (portLayout.getWidth() == 0) {
+            if (portLayout.getWidth() <= 0) {
                 sourceRel.x = 0;
             } else {
                 sourceRel.x = (sourceRel.x - portLayout.getXpos()) / portLayout.getWidth();
             }
-            if (portLayout.getHeight() == 0) {
+            if (portLayout.getHeight() <= 0) {
                 sourceRel.y = 0;
             } else {
                 sourceRel.y = (sourceRel.y - portLayout.getYpos()) / portLayout.getHeight();
             }
         } else {
-            // calculate the relative position to the node size, which is assumed to be greater than 0
-            sourceRel.x /= sourceLayout.getWidth();
-            sourceRel.y /= sourceLayout.getHeight();
+            // calculate the relative position to the node size
+            if (sourceLayout.getWidth() <= 0) {
+                sourceRel.x = 0;
+            } else {
+                sourceRel.x /= sourceLayout.getWidth();
+            }
+            if (sourceLayout.getHeight() <= 0) {
+                sourceRel.y = 0;
+            } else {
+                sourceRel.y /= sourceLayout.getHeight();
+            }
         }
         
         // check the bound of the relative position
@@ -267,13 +275,18 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         KVector targetRel = targetPoint.createVector();
         KShapeLayout targetLayout = targetNode.getData(KShapeLayout.class);
 
-        if (KimlUtil.isDescendant(sourceNode, targetNode)) {
+        if (KimlUtil.isDescendant(targetNode, sourceNode)) {
             // the target node is contained in the source node
-            translateDescendantPoint(targetRel, targetLayout);
+            if (sourceNode != targetNode.getParent()) {
+                KimlUtil.toAbsolute(targetRel, sourceNode);
+                KimlUtil.toRelative(targetRel, targetNode.getParent());
+            }
+            targetRel.translate(-targetLayout.getXpos(), -targetLayout.getYpos());
         } else if (sourceNode.getParent() != targetNode.getParent()) {
             // the reference point of the target is different from the source
             KimlUtil.toAbsolute(targetRel, sourceNode.getParent());
-            KimlUtil.toRelative(targetRel, targetNode);
+            KimlUtil.toRelative(targetRel, targetNode.getParent());
+            targetRel.translate(-targetLayout.getXpos(), -targetLayout.getYpos());
         } else {
             // source and target have the same reference point
             targetRel.translate(-targetLayout.getXpos(), -targetLayout.getYpos());
@@ -282,20 +295,28 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         if (edge.getTargetPort() != null) {
             // calculate the relative position to the port size
             KShapeLayout portLayout = edge.getTargetPort().getData(KShapeLayout.class);
-            if (portLayout.getWidth() == 0) {
+            if (portLayout.getWidth() <= 0) {
                 targetRel.x = 0;
             } else {
                 targetRel.x = (targetRel.x - portLayout.getXpos()) / portLayout.getWidth();
             }
-            if (portLayout.getHeight() == 0) {
+            if (portLayout.getHeight() <= 0) {
                 targetRel.y = 0;
             } else {
                 targetRel.y = (targetRel.y - portLayout.getYpos()) / portLayout.getHeight();
             }
         } else {
-            // calculate the relative position to the node size, which is assumed to be greater than 0
-            targetRel.x /= targetLayout.getWidth();
-            targetRel.y /= targetLayout.getHeight();
+            // calculate the relative position to the node size
+            if (targetLayout.getWidth() <= 0) {
+                targetRel.x = 0;
+            } else {
+                targetRel.x /= targetLayout.getWidth();
+            }
+            if (targetLayout.getHeight() <= 0) {
+                targetRel.y = 0;
+            } else {
+                targetRel.y /= targetLayout.getHeight();
+            }
         }
         
         // check the bound of the relative position
