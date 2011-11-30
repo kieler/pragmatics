@@ -32,6 +32,7 @@ import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.AbstractEditPolicy;
+import org.eclipse.gmf.runtime.diagram.core.util.ViewUtil;
 import org.eclipse.gmf.runtime.diagram.ui.commands.ICommandProxy;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
@@ -42,12 +43,14 @@ import org.eclipse.gmf.runtime.draw2d.ui.geometry.PointListUtilities;
 import org.eclipse.gmf.runtime.emf.core.util.EObjectAdapter;
 import org.eclipse.gmf.runtime.gef.ui.figures.SlidableAnchor;
 import org.eclipse.gmf.runtime.notation.Edge;
+import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
+import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
@@ -109,10 +112,9 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 for (Pair<KGraphElement, GraphicalEditPart> layoutPair : layoutRequest
                         .getElements()) {
                     if (layoutPair.getFirst() instanceof KNode) {
-                        addShapeLayout(command, layoutPair.getFirst(), layoutPair.getSecond(), null);
+                        addShapeLayout(command, layoutPair.getFirst(), layoutPair.getSecond());
                     } else if (layoutPair.getFirst() instanceof KPort) {
-                        addShapeLayout(command, layoutPair.getFirst(), layoutPair.getSecond(),
-                                ((KPort) layoutPair.getFirst()).getNode().getData(KShapeLayout.class));
+                        addShapeLayout(command, layoutPair.getFirst(), layoutPair.getSecond());
                     } else if (layoutPair.getFirst() instanceof KEdge) {
                         addEdgeLayout(command, (KEdge) layoutPair.getFirst(),
                                 (ConnectionEditPart) layoutPair.getSecond());
@@ -146,26 +148,35 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      *            graph element with layout data
      * @param editPart
      *            edit part to which layout is applied
-     * @param offsetLayout
-     *            layout data of the graph element whose position is added as offset to the current
-     *            shape, or {@code null} if no offset shall be added
      */
     private void addShapeLayout(final GmfLayoutCommand command, final KGraphElement kgraphElement,
-            final GraphicalEditPart editPart, final KShapeLayout offsetLayout) {
+            final GraphicalEditPart editPart) {
         KShapeLayout layoutData = kgraphElement.getData(KShapeLayout.class);
-        Rectangle oldBounds = editPart.getFigure().getBounds();
+        View view = (View) editPart.getModel();
+        
+        // check whether the location has changed
         Point newLocation = new Point((int) layoutData.getXpos(), (int) layoutData.getYpos());
-        int offsetx = offsetLayout == null ? 0 : (int) offsetLayout.getXpos();
-        int offsety = offsetLayout == null ? 0 : (int) offsetLayout.getYpos();
-        if (newLocation.x + offsetx == oldBounds.x && newLocation.y + offsety == oldBounds.y) {
+        Object oldx = ViewUtil.getStructuralFeatureValue(view,
+                NotationPackage.eINSTANCE.getLocation_X());
+        Object oldy = ViewUtil.getStructuralFeatureValue(view,
+                NotationPackage.eINSTANCE.getLocation_Y());
+        if (oldx != null && oldy != null && newLocation.x == (Integer) oldx
+                && newLocation.y == (Integer) oldy) {
             newLocation = null;
         }
+        
+        // check whether the size has changed
         Dimension newSize = new Dimension((int) layoutData.getWidth(), (int) layoutData.getHeight());
-        if (newSize.width == oldBounds.width && newSize.height == oldBounds.height) {
+        Object oldWidth = ViewUtil.getStructuralFeatureValue(view,
+                NotationPackage.eINSTANCE.getSize_Width());
+        Object oldHeight = ViewUtil.getStructuralFeatureValue(view,
+                NotationPackage.eINSTANCE.getSize_Height());
+        if (oldWidth != null && oldHeight != null && newSize.width == (Integer) oldWidth
+                && newSize.height == (Integer) oldHeight) {
             newSize = null;
         }
+        
         if (newLocation != null || newSize != null) {
-            View view = (View) editPart.getModel();
             command.addShapeLayout(view, newLocation, newSize);
         }
     }
@@ -355,12 +366,20 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      */
     private void addLabelLayout(final GmfLayoutCommand command, final KLabel klabel,
             final GraphicalEditPart labelEditPart, final float xbound, final float ybound) {
-        EObject parent = klabel.eContainer();
+        KLabeledGraphElement parent = klabel.getParent();
         KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
         // node and port labels are processed separately
         if (parent instanceof KNode || parent instanceof KPort) {
-            Point location = new Point((int) labelLayout.getXpos(), (int) labelLayout.getYpos());
-            command.addShapeLayout((View) labelEditPart.getModel(), location, null);
+            View view = (View) labelEditPart.getModel();
+            int xpos = (int) labelLayout.getXpos();
+            int ypos = (int) labelLayout.getYpos();
+            Object oldx = ViewUtil.getStructuralFeatureValue(view,
+                    NotationPackage.eINSTANCE.getLocation_X());
+            Object oldy = ViewUtil.getStructuralFeatureValue(view,
+                    NotationPackage.eINSTANCE.getLocation_Y());
+            if (oldx == null || oldy == null || xpos != (Integer) oldx || ypos != (Integer) oldy) {
+                command.addShapeLayout(view, new Point(xpos, ypos), null);
+            }
             return;
         }
         

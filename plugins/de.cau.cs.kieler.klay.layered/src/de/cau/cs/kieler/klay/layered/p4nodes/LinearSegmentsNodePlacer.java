@@ -590,8 +590,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         
         // Determine a suitable number of pendulum iterations
         int thoroughness = layeredGraph.getProperty(Properties.THOROUGHNESS);
-        int pendulumIters = thoroughness;
-        int finalIters = thoroughness - 1;
+        int pendulumIters = 5;
+        int finalIters = 3;
         double threshold = THRESHOLD_FACTOR / thoroughness;
 
         // Iterate the balancing
@@ -649,7 +649,6 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 }
             }
         } while (!(ready && finalIters <= 0));
-        
     }
     
     /** factor by which deflections are damped. */

@@ -605,14 +605,10 @@ public final class KimlUtil {
                     // label is on the right
                     labelLayout.setXpos(labelLayout.getXpos() + widthDiff);
                     labelLayout.setYpos(labelLayout.getYpos() + heightDiff * heightPercent);
-                    // enable layout application for the node label
-                    labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
                 } else if (widthPercent - heightPercent < 0 && midx >= 0) {
                     // label is on the bottom
                     labelLayout.setXpos(labelLayout.getXpos() + widthDiff * widthPercent);
                     labelLayout.setYpos(labelLayout.getYpos() + heightDiff);
-                    // enable layout application for the node label
-                    labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
                 }
             }
         }

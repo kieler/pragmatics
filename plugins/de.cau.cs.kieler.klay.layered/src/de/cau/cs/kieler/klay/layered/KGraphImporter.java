@@ -245,7 +245,10 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         // add a new node to the layered graph, copying its size
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         if (nodeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
-            KimlUtil.excludeLabels(node);
+            if (node.getChildren().isEmpty()) {
+                // if the node is empty and its size is fixed, the node label won't be moved
+                KimlUtil.excludeLabels(node);
+            }
         } else {
             KVector ratio = KimlUtil.resizeNode(node);
             if (ratio != null && (ratio.x != 1 || ratio.y != 1)) {
@@ -403,8 +406,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
                     // the edge is excluded from layout since it does not
                     // connect two adjacent hierarchy levels
-                    KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-                    edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
+                    kedge.getData(KEdgeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
+                    KimlUtil.excludeLabels(kedge);
                 }
             }
         }
@@ -493,9 +496,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             // if the source or target node could not be found, omit the edge
             if (sourceNode == null || targetNode == null) {
                 edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
-                for (KLabel label : kedge.getLabels()) {
-                    label.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
-                }
+                KimlUtil.excludeLabels(kedge);
                 return;
             }
 
@@ -695,12 +696,14 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 }
             } else if (origin instanceof KPort) {
                 // It's an external port. Set its position
-                KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
+                KPort kport = (KPort) origin;
+                KShapeLayout portLayout = kport.getData(KShapeLayout.class);
                 KVector portPosition = getExternalPortPosition(layeredGraph, lnode,
                         portLayout.getWidth(), portLayout.getHeight());
 
                 portLayout.setXpos((float) portPosition.x);
                 portLayout.setYpos((float) portPosition.y);
+                KimlUtil.excludeLabels(kport);
             }
 
             // collect edges
