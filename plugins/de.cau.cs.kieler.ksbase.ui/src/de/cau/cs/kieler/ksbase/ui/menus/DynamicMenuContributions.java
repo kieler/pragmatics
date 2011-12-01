@@ -371,16 +371,33 @@ public final class DynamicMenuContributions {
                 if (m.getName().equals(name)) {
                     params = new LinkedList<Object>();
                     method = m;
-                    int index = 0;
+                    //int index = 0;
+                    int parameterindex = 0;
+                    HashMap<Object,Object> selectionValidationCache = (HashMap<Object, Object>) selectionHash.clone();
                     for (Type t : m.getGenericParameterTypes()) {
                         Object param = null;
+                        if (selectionValidationCache.isEmpty()) {
+                            method = null;
+                            break;
+                        }
                         for (Object p : selectionHash.values()) {
                             if (match(t, p) && !params.contains(p)) {
                                 param = p;
+                                if ((p instanceof List<?>) && (!((List<?>)p).isEmpty())) {
+                                    selectionValidationCache.remove(((List<?>)p).get(0).getClass());
+                                } else {
+                                    selectionValidationCache.remove(p.getClass());
+                                }
                                 break;
-                            } else if ((p instanceof List<?>) && (((List<?>) p).size() >= index + 1) 
-                                    && match(t, ((List<?>) p).get(index))) {
-                                param = ((List<?>) p).get(index);
+                            } else if ((p instanceof List<?>) && (!((List<?>) p).isEmpty()) 
+                                    && match(t, ((List<?>) p).get(0))) {
+                                param = ((List<?>) p).get(0);
+                                if (((List<?>) selectionValidationCache.get(((List<?>) p).get(0).getClass())).size() == 1) {
+                                    selectionValidationCache.remove(((List<?>) p).get(0).getClass());
+                                } else {
+                                    ((List<?>) selectionValidationCache.get(((List<?>) p).get(0).getClass())).remove(param);
+                                }
+                                //index++;
                                 break;
                             }
                         }
@@ -389,7 +406,12 @@ public final class DynamicMenuContributions {
                         } else {
                             method = null;
                         }
-                        index++;
+                        if ((parameterindex + 1) == m.getGenericParameterTypes().length) {
+                            if (!selectionValidationCache.isEmpty()) {
+                                method = null;
+                            }
+                        }
+                        parameterindex++;
                         
                     }
 
