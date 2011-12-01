@@ -321,12 +321,14 @@ public class ImportExamplePage extends WizardPage {
                     ImageData imgData = descriptor.getImageData();
                     double resizeFactor = Math.max((double) imgData.width / (double) displayWidth,
                             (double) imgData.height / (double) displayHeight);
-                    if (resizeFactor < 1) {
-                        resizeFactor = 1;
+                    if (resizeFactor != 1) {
+                        if (resizeFactor < 1) {
+                            resizeFactor = 1;
+                        }
+                        imgData = ImageConverter.scaleSWTImage(imgData,
+                                (int) (imgData.width / resizeFactor), (int) (imgData.height / resizeFactor),
+                                scaleType);
                     }
-                    imgData = ImageConverter.scaleSWTImage(imgData,
-                            (int) (imgData.width / resizeFactor), (int) (imgData.height / resizeFactor),
-                            scaleType);
                     image = new Image(this.getShell().getDisplay(), imgData);
                 } else {
                     image = descriptor.createImage();
