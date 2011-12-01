@@ -4,9 +4,9 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: de.cau.cs.kieler.kiml;singleton:=true
 Bundle-Version: 0.10.0.qualifier
 Bundle-Localization: plugin
-Require-Bundle: de.cau.cs.kieler.core,
- de.cau.cs.kieler.core.kgraph,
- com.google.guava;bundle-version="9.0.0"
+Require-Bundle: com.google.guava;bundle-version="9.0.0",
+ de.cau.cs.kieler.core,
+ de.cau.cs.kieler.core.kgraph
 Export-Package: de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.kiml.config,
  de.cau.cs.kieler.kiml.klayoutdata;uses:="org.eclipse.emf.ecore,org.eclipse.emf.common.util,de.cau.cs.kieler.core.kgraph",

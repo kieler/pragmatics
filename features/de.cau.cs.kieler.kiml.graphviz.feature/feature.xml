@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.cau.cs.kieler.kiml.graphviz"
-      label="KIELER Graphviz Layout (optional)"
+      label="KIELER Layout - Graphviz Support (optional)"
       version="0.6.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
@@ -223,7 +223,7 @@ litigation.
       <import plugin="de.cau.cs.kieler.kiml"/>
       <import plugin="de.cau.cs.kieler.kiml.service"/>
       <import feature="org.eclipse.emf" version="2.7.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xtext.runtime" version="2.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.xtext.runtime" version="2.1.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

@@ -230,7 +230,7 @@ litigation.
       <import feature="com.google.guava.runtime.feature" version="8.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.gef" version="3.6.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.graphiti.feature" version="0.8.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.graphiti.feature" version="0.8.1" match="greaterOrEqual"/>
    </requires>
 
    <plugin

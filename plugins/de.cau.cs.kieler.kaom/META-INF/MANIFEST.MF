@@ -12,5 +12,5 @@ Export-Package: de.cau.cs.kieler.kaom,
  de.cau.cs.kieler.kaom.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
- de.cau.cs.kieler.core.annotations;bundle-version="0.1.0"
+ de.cau.cs.kieler.core.annotations
 Bundle-ActivationPolicy: lazy
