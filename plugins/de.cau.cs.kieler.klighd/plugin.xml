@@ -29,6 +29,12 @@
             description="Applies automatic layout on KLighD views which have been created or updated using the appropriate effect."
             name="Automatic Layout after KLighD View Creation and Update">
       </combination>
+      <combination
+            active="true"
+            class="de.cau.cs.kieler.klighd.combinations.KlighdVisualizeEMFEditorContentCombination"
+            description="Visualize EMF tree editor conten"
+            name="Visualize EMF tree editor conten">
+      </combination>
    </extension>
 
 </plugin>
