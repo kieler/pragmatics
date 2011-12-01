@@ -38,30 +38,29 @@ public class KlighdVisualizeEMFEditorContentCombination extends AbstractCombinat
     /**
      * The execute method revealed and invoked by KIVi.
      * 
-     * @param ps
-     *            A {@link de.cau.cs.kieler.core.kivi.ITriggerState} carrying the necessary
-     *            information.
+     * @param es
+     *            A {@link EditorState} carrying information on the last workbench part change.
      * @param ss
-     *            a.
+     *            A {@link SelectionState} carrying information on the last selection change.
      */
-    public void execute(final EditorState ps, final SelectionState ss) {
-        if (ps.getPart() == null || !(ps.getPart() instanceof IEditingDomainProvider)) { 
+    public void execute(final EditorState es, final SelectionState ss) {
+        if (es.getPart() == null || !(es.getPart() instanceof IEditingDomainProvider)) { 
             return;
         }
         
-        IPath inputPath = ps.getProperty(PartTrigger.EDITOR_INPUT_PATH);
+        IPath inputPath = es.getProperty(PartTrigger.EDITOR_INPUT_PATH);
         String id = inputPath.toPortableString().replace(":", "");
         // the replacement is needed since the secondary view ids seem to be required
         //  to be free of ':', which will be violated on windows determining them this way. 
 
-        if (this.latestState() == ps) {            
+        if (this.latestState() == es) {            
             // in case the combination is fired by an editor change ...
             
-            if (ps.getEventType() == EventType.ACTIVE_EDITOR_CLOSED) {
+            if (es.getEventType() == EventType.ACTIVE_EDITOR_CLOSED) {
                 this.schedule(new KlighdCloseDiagramEffect(id));
                 
             } else {            
-                IEditingDomainProvider editor = (IEditingDomainProvider) ps.getEditorPart();
+                IEditingDomainProvider editor = (IEditingDomainProvider) es.getEditorPart();
                 List<Resource> resources = editor.getEditingDomain().getResourceSet()
                         .getResources();
                 if (!resources.isEmpty() && !resources.get(0).getContents().isEmpty()) {
