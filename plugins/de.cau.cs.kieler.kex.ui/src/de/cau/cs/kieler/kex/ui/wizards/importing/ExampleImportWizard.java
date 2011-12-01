@@ -219,8 +219,12 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
         // Get selected examples
         final List<Example> selectedExamples = mainPage.getCheckedExamples();
         if (selectedExamples.isEmpty()) {
-            // FIXME throw a more specific exception
-            throw new RuntimeException(ErrorMessage.NO_EXAMPLE_SELECTED);
+            // Display a proper message to the user
+            MessageDialog.openWarning(
+                    this.getShell(),
+                    "No Examples",
+                    "Select at least one example to import.");
+            return false;
         }
         
         // Warning if more examples selected than WARNING_THRESHOLD
