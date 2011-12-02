@@ -34,6 +34,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.model.gmf.util.GmfModelingUtil;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutEffect;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
@@ -225,6 +226,9 @@ public final class TransformationUIManager {
                 te.transformationExecuted(new Object[] { obj, activeEditor });
             }
 
+            //do a layout in the end
+            LayoutEffect effect = new LayoutEffect(activeEditor, (EObject)((IDiagramWorkbenchPart) activeEditor).getDiagramEditPart().getModel(), false);
+            effect.schedule();
         }
     }
 }
