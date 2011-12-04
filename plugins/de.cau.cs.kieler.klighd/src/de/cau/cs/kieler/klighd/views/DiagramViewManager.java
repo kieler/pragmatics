@@ -217,7 +217,9 @@ public final class DiagramViewManager implements IPartListener {
                 KlighdStatusState state =
                         new KlighdStatusState(KlighdStatusState.Status.CREATE_SUCCESS, id,
                                 viewContext, viewContext.getProperty(LightDiagramServices.VIEWER));
-                KlighdStatusTrigger.getInstance().trigger(state);
+                if (KlighdStatusTrigger.getInstance() != null) {
+                    KlighdStatusTrigger.getInstance().trigger(state);
+                }
             } else {
                 // if the newly created view could not be initialized with a diagram,
                 // hide it and return nothing.
@@ -226,7 +228,9 @@ public final class DiagramViewManager implements IPartListener {
                 // trigger the create failure status
                 KlighdStatusState state =
                         new KlighdStatusState(KlighdStatusState.Status.CREATE_FAILURE, id, null, null);
-                KlighdStatusTrigger.getInstance().trigger(state);
+                if (KlighdStatusTrigger.getInstance() != null) {
+                    KlighdStatusTrigger.getInstance().trigger(state);   
+                }
                 return null;
 
             }
@@ -263,7 +267,9 @@ public final class DiagramViewManager implements IPartListener {
                 KlighdStatusState state =
                         new KlighdStatusState(KlighdStatusState.Status.CLOSE, id, viewContext,
                                 viewContext.getProperty(LightDiagramServices.VIEWER));
-                KlighdStatusTrigger.getInstance().trigger(state);
+                if (KlighdStatusTrigger.getInstance() != null) {
+                    KlighdStatusTrigger.getInstance().trigger(state);
+                }
             }
         }
         // unmap the view from all contexts
