@@ -50,7 +50,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author ima
  */
 public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayoutProcessor {
-    
+
     // Store information about inserted dummy edges
     private HashMap<LEdge, LEdge> dummyEdgeMap = new HashMap<LEdge, LEdge>();
 
@@ -191,35 +191,30 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                             insertCycleNode(currentTarget, insertedNodes, cycleRemovalNodes);
 
                             // While at it, add dummy edges to enhance the layering of the dependent
-                            // nodes. Remember, which edge lead to the insertion of which dummy edge,
-                            // because dummy edges inserted for an edge that is reverted later on have
+                            // nodes. Remember, which edge lead to the insertion of which dummy
+                            // edge,
+                            // because dummy edges inserted for an edge that is reverted later on
+                            // have
                             // to be removed again
                             if (!isDescendantEdge) {
                                 NodeType nodeTypeDummySource = currentSource
                                         .getProperty(Properties.NODE_TYPE);
-                                LEdge dummyEdge = new LEdge();
-                                dummyEdgeMap.put(edge, dummyEdge);
-                                dummyEdge
-                                        .setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_DUMMY);
-                                LPort dummyPortSource = new LPort();
-                                LPort dummyPortTarget = new LPort();
-                                dummyEdge.setSource(dummyPortSource);
-                                dummyEdge.setTarget(dummyPortTarget);
-                                dummyPortTarget.setNode(currentTarget);
                                 if (nodeTypeDummySource == NodeType.NORMAL) {
                                     // leave node
-                                    dummyPortSource.setNode(currentSource);
+                                    insertDummyEdge(currentTarget, currentSource, edge);
                                 } else {
-                                    // compound node, lower border dummy has to be found
+                                    // compound node, lower border and port dummy nodes have to be
+                                    // found
                                     for (LNode node : layeredGraph.getLayerlessNodes()) {
-                                        if ((node.getProperty(Properties.NODE_TYPE) 
-                                                == NodeType.LOWER_COMPOUND_BORDER)
+                                        if (((node.getProperty(Properties.NODE_TYPE) 
+                                                == NodeType.LOWER_COMPOUND_BORDER) 
+                                                || (node.getProperty(Properties.NODE_TYPE) 
+                                                        == NodeType.LOWER_COMPOUND_PORT))
                                                 && (node.getProperty(Properties.COMPOUND_NODE) 
                                                         == currentSource)) {
-                                            dummyPortSource.setNode(node);
+                                            insertDummyEdge(currentTarget, node, edge);
                                         }
                                     }
-                                    assert (dummyPortSource.getNode() != null);
                                 }
                             }
 
@@ -252,6 +247,29 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
         }
 
         getMonitor().done();
+    }
+
+    /**
+     * Inserts dummy edge for the layering phase.
+     * 
+     * @param target
+     *            the LNode that is to be the edge's target.
+     * @param currentSource
+     *            the LNode that is to be the edge's source.
+     * @param edge
+     *            the edge, for which this dummy edge is inserted (edge leading to the requirement,
+     *            one node should be placed before the other in layering)
+     */
+    private void insertDummyEdge(final LNode target, final LNode source, final LEdge edge) {
+        LEdge dummyEdge = new LEdge();
+        dummyEdgeMap.put(edge, dummyEdge);
+        dummyEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_DUMMY);
+        LPort dummyPortSource = new LPort();
+        LPort dummyPortTarget = new LPort();
+        dummyEdge.setSource(dummyPortSource);
+        dummyEdge.setTarget(dummyPortTarget);
+        dummyPortTarget.setNode(target);
+        dummyPortSource.setNode(source);
     }
 
     /**
