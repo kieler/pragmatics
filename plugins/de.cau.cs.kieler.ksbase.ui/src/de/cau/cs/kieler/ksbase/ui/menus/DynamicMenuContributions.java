@@ -537,7 +537,7 @@ public final class DynamicMenuContributions {
                         combination.addTransformation(command + ".menu", transformation);
                     } else if (contrib.getData().startsWith("toolbar:")) {
                         KSBasEMenuContributionService.INSTANCE.addToolbarButton(combination,
-                                "ksbase." + command + ".toolbar", transformation.getName(),
+                                command + ".toolbar", transformation.getName(),
                                 transformation.getToolTip(), icon, SWT.PUSH,
                                 KSBasEMenuContributionService.LocationScheme.TOOLBAR, visibility,
                                 null, null, editorSettings.getEditorId());
