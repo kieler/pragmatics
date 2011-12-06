@@ -194,6 +194,7 @@ public class KSBasECombination extends AbstractCombination {
                 params = new LinkedList<Object>();
                 method = m;
                 int index = 0;
+                int parameterindex = 0;
                 for (Type t : m.getGenericParameterTypes()) {
                     Object param = null;
                     for (Object p : selectionCache.values()) {
@@ -203,6 +204,7 @@ public class KSBasECombination extends AbstractCombination {
                         } else if ((p instanceof List) && (((List<?>) p).size() >= index + 1) 
                                 && match(t, ((List<?>) p).get(index))) {
                             param = ((List<?>) p).get(index);
+                            index++;
                             break;
                         }
                     }
@@ -211,7 +213,8 @@ public class KSBasECombination extends AbstractCombination {
                     } else {
                         method = null;
                     }
-                    index++;
+                    parameterindex++;
+                    
                 }
 
                 if (method != null) {
@@ -327,9 +330,9 @@ public class KSBasECombination extends AbstractCombination {
             final ButtonState button) {
         LayoutEffect layout = null;
         if (selectionList.get(0) == rootObject) {
-            layout = new LayoutEffect(button.getEditor(), ((EObject) rootObject), false);
+            layout = new LayoutEffect(button.getEditor(), null, false);
         } else {
-            layout = new LayoutEffect(button.getEditor(), selectionList.get(0).eContainer(), false);
+            layout = new LayoutEffect(button.getEditor(), null, false);
         }
         layout.schedule();
     }
