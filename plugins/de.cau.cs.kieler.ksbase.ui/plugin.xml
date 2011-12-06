@@ -58,6 +58,33 @@
             name="KSBasE Menu Updates">
       </combination>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="true"
+            locationURI="toolbar:de.cau.cs.kieler">
+         <dynamic
+               class="de.cau.cs.kieler.ksbase.ui.menus.KSBasEContributionItem"
+               id="de.cau.cs.kieler.ksbase.ui.dynamic.toolbar">
+         </dynamic>
+      </menuContribution>
+      <menuContribution
+            allPopups="true"
+            locationURI="menu:de.cau.cs.kieler">
+         <dynamic
+               class="de.cau.cs.kieler.ksbase.ui.menus.KSBasEContributionItem"
+               id="de.cau.cs.kieler.ksbase.ui.dynamic.menu">
+         </dynamic>
+      </menuContribution>
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu?after=addGroup">
+         <dynamic
+               class="de.cau.cs.kieler.ksbase.ui.menus.KSBasEContributionItem"
+               id="de.cau.cs.kieler.ksbase.ui.dynamic.popup">
+         </dynamic>
+      </menuContribution>
+   </extension>
 
   <!--    
   <extension

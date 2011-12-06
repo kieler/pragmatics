@@ -44,7 +44,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorPart;
 
-import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.model.gmf.policies.IBalloonContribution;
 import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
 import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationContext;
@@ -530,23 +529,23 @@ public final class DynamicMenuContributions {
                         e.printStackTrace();
                     }
                     if (contrib.getData().startsWith("menu:")) {
-                        KiviMenuContributionService.INSTANCE.addToolbarButton(combination, command
+                        KSBasEMenuContributionService.INSTANCE.addToolbarButton(combination, command
                                 + ".menu", transformation.getName(), transformation.getToolTip(),
-                                icon, SWT.PUSH, KiviMenuContributionService.LocationScheme.MENU,
+                                icon, SWT.PUSH, KSBasEMenuContributionService.LocationScheme.MENU,
                                 visibility, keySequence, editorSettings.getContext(),
                                 editorSettings.getEditorId());
                         combination.addTransformation(command + ".menu", transformation);
                     } else if (contrib.getData().startsWith("toolbar:")) {
-                        KiviMenuContributionService.INSTANCE.addToolbarButton(combination,
+                        KSBasEMenuContributionService.INSTANCE.addToolbarButton(combination,
                                 "ksbase." + command + ".toolbar", transformation.getName(),
                                 transformation.getToolTip(), icon, SWT.PUSH,
-                                KiviMenuContributionService.LocationScheme.TOOLBAR, visibility,
+                                KSBasEMenuContributionService.LocationScheme.TOOLBAR, visibility,
                                 null, null, editorSettings.getEditorId());
                         combination.addTransformation(command + ".toolbar", transformation);
                     } else if (contrib.getData().startsWith("popup:")) {
-                        KiviMenuContributionService.INSTANCE.addToolbarButton(combination, command
+                        KSBasEMenuContributionService.INSTANCE.addToolbarButton(combination, command
                                 + ".popup", transformation.getName(), transformation.getToolTip(),
-                                icon, SWT.PUSH, KiviMenuContributionService.LocationScheme.POPUP,
+                                icon, SWT.PUSH, KSBasEMenuContributionService.LocationScheme.POPUP,
                                 visibility, null, null, editorSettings.getEditorId());
                         combination.addTransformation(command + ".popup", transformation);
                     } else if (contrib.getData().startsWith("popupbar:")) {
@@ -569,23 +568,23 @@ public final class DynamicMenuContributions {
                                 .getTransformationById(separatedCommand);
 
                         if (contrib.getData().startsWith("menu:")) {
-                            KiviMenuContributionService.INSTANCE.addSeparator(separatedCommand
+                            KSBasEMenuContributionService.INSTANCE.addSeparator(separatedCommand
                                     + ".menu" + ".separator",
-                                    KiviMenuContributionService.LocationScheme.MENU,
+                                    KSBasEMenuContributionService.LocationScheme.MENU,
                                     new KsbaseVisibilityExpression(separatedTransformation,
                                             editorSettings, validationCache), editorSettings
                                             .getEditorId());
                         } else if (contrib.getData().startsWith("toolbar:")) {
-                            KiviMenuContributionService.INSTANCE.addSeparator(separatedCommand
+                            KSBasEMenuContributionService.INSTANCE.addSeparator(separatedCommand
                                     + ".toolbar" + ".separator",
-                                    KiviMenuContributionService.LocationScheme.TOOLBAR,
+                                    KSBasEMenuContributionService.LocationScheme.TOOLBAR,
                                     new KsbaseVisibilityExpression(separatedTransformation,
                                             editorSettings, validationCache), editorSettings
                                             .getEditorId());
                         } else if (contrib.getData().startsWith("popup:")) {
-                            KiviMenuContributionService.INSTANCE.addSeparator(separatedCommand
+                            KSBasEMenuContributionService.INSTANCE.addSeparator(separatedCommand
                                     + ".popup" + ".separator",
-                                    KiviMenuContributionService.LocationScheme.POPUP,
+                                    KSBasEMenuContributionService.LocationScheme.POPUP,
                                     new KsbaseVisibilityExpression(separatedTransformation,
                                             editorSettings, validationCache), editorSettings
                                             .getEditorId());
