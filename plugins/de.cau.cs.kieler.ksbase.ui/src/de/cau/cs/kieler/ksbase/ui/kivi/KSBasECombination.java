@@ -330,9 +330,9 @@ public class KSBasECombination extends AbstractCombination {
             final ButtonState button) {
         LayoutEffect layout = null;
         if (selectionList.get(0) == rootObject) {
-            layout = new LayoutEffect(button.getEditor(), null, false);
+            layout = new LayoutEffect(button.getEditor(), rootObject, false);
         } else {
-            layout = new LayoutEffect(button.getEditor(), null, false);
+            layout = new LayoutEffect(button.getEditor(), rootObject, false);
         }
         layout.schedule();
     }
