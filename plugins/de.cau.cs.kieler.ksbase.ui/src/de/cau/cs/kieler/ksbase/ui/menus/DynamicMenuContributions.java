@@ -164,6 +164,8 @@ public final class DynamicMenuContributions {
                         if (cachedResult != null) {
                             if (!cachedResult) {
                                 return false;
+                            } else {
+                                continue;
                             }
                         }
                     } else {
