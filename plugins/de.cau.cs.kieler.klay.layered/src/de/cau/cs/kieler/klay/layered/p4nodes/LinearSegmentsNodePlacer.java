@@ -576,13 +576,22 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     }
     
     /** factor for threshold after which balancing is aborted. */
-    private static final double THRESHOLD_FACTOR = 10.0;
+    private static final double THRESHOLD_FACTOR = 20.0;
+    /** the minimal number of iterations in pendulum mode. */
+    private static final int PENDULUM_ITERS = 4;
+    /** the number of additional iterations after the abort condition was met. */
+    private static final int FINAL_ITERS = 3;
     
     /**
-     * Balance the initial placement by force-based movement of regions.
+     * Balance the initial placement by force-based movement of regions. First perform <em>pendulum</em>
+     * iterations, where only one direction of edges is considered, then <em>rubber</em> iterations,
+     * where both incoming and outgoing edges are considered. In each iteration first determine the
+     * <em>deflection</em> of each linear segment, i.e. the optimal position delta that leads to
+     * a balanced placement with respect to its adjacent segments. Then merge regions that touch each
+     * other, building mean values of the involved deflections, and finally apply the resulting
+     * deflection values to all segments. The iterations stop when no further improvement is done.
      * 
-     * @param layeredGraph
-     *            a layered graph
+     * @param layeredGraph a layered graph
      */
     private void balancePlacement(final LayeredGraph layeredGraph) {
         float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
@@ -590,8 +599,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         
         // Determine a suitable number of pendulum iterations
         int thoroughness = layeredGraph.getProperty(Properties.THOROUGHNESS);
-        int pendulumIters = 5;
-        int finalIters = 3;
+        int pendulumIters = PENDULUM_ITERS;
+        int finalIters = FINAL_ITERS;
         double threshold = THRESHOLD_FACTOR / thoroughness;
 
         // Iterate the balancing
@@ -651,8 +660,12 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         } while (!(ready && finalIters <= 0));
     }
     
-    /** factor by which deflections are damped. */
-    private static final double DEFLECTION_DAMP = 0.6;
+    /**
+     * Factor by which deflections are damped. WARNING: For high values the balancing can become
+     * unstable, creating a lot of whitespace. Therefore a low constant value (i.e. strong damping)
+     * is preferable.
+     */
+    private static final double DEFLECTION_DAMP = 0.3;
 
     /**
      * Calculate the force acting on the given linear segment. The force is stored in the segment's
