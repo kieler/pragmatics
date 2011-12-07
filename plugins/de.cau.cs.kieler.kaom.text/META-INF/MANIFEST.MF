@@ -25,4 +25,6 @@ Export-Package: de.cau.cs.kieler.kaom.text,
  de.cau.cs.kieler.kaom.text.parseTreeConstruction,
  de.cau.cs.kieler.kaom.text.parser.antlr,
  de.cau.cs.kieler.kaom.text.parser.antlr.internal,
- de.cau.cs.kieler.kaom.text.validation
+ de.cau.cs.kieler.kaom.text.validation,
+ de.cau.cs.kieler.kaom.text.scoping,
+ de.cau.cs.kieler.kaom.text.formatting

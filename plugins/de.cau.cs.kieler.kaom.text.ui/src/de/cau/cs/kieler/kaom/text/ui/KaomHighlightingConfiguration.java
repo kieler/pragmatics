@@ -15,7 +15,7 @@ package de.cau.cs.kieler.kaom.text.ui;
 
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 
-import de.cau.cs.kieler.core.annotations.ui.AnnotationsHighlightingConfiguration;
+import de.cau.cs.kieler.core.annotations.text.ui.AnnotationsHighlightingConfiguration;
 
 /**
  * Custom {@link IHighlightingConfiguration} contributing to the Kits editor. The required method

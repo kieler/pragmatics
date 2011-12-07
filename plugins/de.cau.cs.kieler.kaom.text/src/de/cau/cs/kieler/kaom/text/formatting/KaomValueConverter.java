@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kaom.text.formatting;
 
-import de.cau.cs.kieler.core.annotations.formatting.AnnotationsValueConverter;
+import de.cau.cs.kieler.core.annotations.text.formatting.AnnotationsValueConverter;
 
 /**
  * Customized {@link IValueConverter}.
