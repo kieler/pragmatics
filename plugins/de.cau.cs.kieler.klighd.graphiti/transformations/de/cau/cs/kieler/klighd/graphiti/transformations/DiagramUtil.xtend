@@ -200,7 +200,7 @@ class DiagramUtil {
         val polyline = AlgorithmsFactory::eINSTANCE.createPolyline;
         polyline.setLineWidth(1);
         polyline.setForeground(getColor("black"));
-        connection.setActive(false);
+        connection.setActive(true);
         connection.setVisible(true);
         connection.setGraphicsAlgorithm(polyline);
         connection.setLink(PictogramsFactory::eINSTANCE.createPictogramLink);  

@@ -66,7 +66,7 @@ Anchor createAnchor(Shape shape):
  *  as port to 'shape' at position (x,y).
  *  To this end an active and visible FixPointAnchor is created.  
  */
-Anchor createPortAnchor(Shape shape, int x, int y):
+FixPointAnchor createPortAnchor(Shape shape, int x, int y):
   let anchor = new FixPointAnchor:
   anchor.setActive(true) ->
   anchor.setVisible(true) ->
@@ -86,7 +86,7 @@ Connection createConnection(int width):
   let polyline = new Polyline:
   polyline.setLineWidth(width) ->
   polyline.setForeground(getColor("black")) ->
-  connection.setActive(false) ->
+  connection.setActive(true) ->
   connection.setVisible(true) ->
   connection.setGraphicsAlgorithm(polyline) ->
   connection.setLink(new PictogramLink) ->  
@@ -103,7 +103,7 @@ Connection createConnection():
  *
  */
 Connection createArrowConnection(int width):
-  createConnection(width).addArrowHead(width)
+  createConnection(width).addHeadArrow(width)
 ;
 
 
@@ -115,23 +115,41 @@ Connection createArrowConnection():
 /**
   *
   */
-Connection addArrowHead(Connection connection, int scale):
+Connection addConnectionArrow(Connection connection, int scale, Boolean toHead):
   let decorator = new ConnectionDecorator:
   let figure = new Polygon:
-  figure.points.addAll({createPoint(scale*-5,scale*2), createPoint(scale*-3,0), createPoint(scale*-5,scale*-2), createPoint(0,0)}) ->
+  (toHead ? (
+     figure.points.addAll( { createPoint(scale*-8,scale*3), createPoint(scale*-6,0), createPoint(scale*-8,scale*-3), createPoint(0,0) } )
+    ) : (
+     figure.points.addAll( { createPoint(scale* 8,scale*3), createPoint(scale* 6,0), createPoint(scale* 8,scale*-3), createPoint(0,0) } )
+    )
+   ) -> 
+  //figure.points.addAll({createPoint(scale*-5,scale*2), createPoint(scale*-3,0), createPoint(scale*-5,scale*-2), createPoint(0,0)}) ->
   figure.setForeground(connection.graphicsAlgorithm.foreground) ->
   figure.setBackground(figure.foreground) ->
-  figure.setFilled(true) ->  
+  figure.setFilled(true) ->    
   decorator.setVisible(true) ->
-  decorator.setLocation(1.0) ->
+  decorator.setLocation( toHead ? 1.0 : 0.0) ->
   decorator.setLocationRelative(true) ->
   decorator.setGraphicsAlgorithm(figure) ->
   connection.connectionDecorators.add(decorator) ->
   connection
 ; 
 
-Connection addArrowHead(Connection connection):
-   addArrowHead(connection,  1)
+Connection addHeadArrow(Connection connection, int scale):
+   addConnectionArrow(connection,  scale, true)
+; 
+
+Connection addHeadArrow(Connection connection):
+   addHeadArrow(connection,  1)
+; 
+
+Connection addTailArrow(Connection connection, int scale):
+   addConnectionArrow(connection,  scale, false)
+; 
+
+Connection addTailArrow(Connection connection):
+   addHeadArrow(connection,  1)
 ; 
 
 
@@ -478,6 +496,13 @@ int max(List[int] ints):
   let maxRemainder = (ints.size == 1?ints.first():ints.withoutFirst().max()):
   (ints.first() >= maxRemainder?ints.first():maxRemainder)
 ;
+
+IntAnnotation toIntAnnotation(Integer i) :
+  let anno = new IntAnnotation:
+  anno.setValue(i) ->
+  anno
+;
+  
 
 
 create IntAnnotation getIntProperty(Shape shape, String name):
