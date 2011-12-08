@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2011 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.ksbase.ui.kivi;
 
 import org.eclipse.jface.action.ToolBarContributionItem;
@@ -10,16 +23,32 @@ import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.kivi.internal.KiviContributionItem;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 
+/**
+ * This effect will request a reevaluation of all Visibility expressions and update the
+ * toolbar accordingly.
+ * 
+ * @author ckru
+ *
+ */
 public class UpdateVisibilityEffect extends AbstractEffect {
 
+    /**
+     * the current editor.
+     */
     private IEditorPart editorPart;
     
-    public UpdateVisibilityEffect(IEditorPart editorPart) {
+    /**
+     * the constructor.
+     * @param editorPart the current editor
+     */
+    public UpdateVisibilityEffect(final IEditorPart editorPart) {
         this.editorPart = editorPart;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public void execute() {
-        // TODO Auto-generated method stub
         final IEvaluationService evaluationService = (IEvaluationService) editorPart.getEditorSite()
                 .getService(IEvaluationService.class);
 

@@ -165,6 +165,8 @@ public final class DynamicMenuContributions {
                             if (!cachedResult) {
                                 return false;
                             } else {
+                                // we have true cached so don't evaluate again and try the
+                                // next validation instead
                                 continue;
                             }
                         }
@@ -224,20 +226,6 @@ public final class DynamicMenuContributions {
                     listCache.add(obj);
                 }
             }
-            /*
-            // a cache to eliminate concurrent modification error
-            List<Object> cache = new LinkedList<Object>();
-            cache.addAll(selectionCache.values());
-            // Also put the element of a list of length = 1 in there for non list single object
-            // parameters
-            for (Object obj : cache) {
-                if (obj instanceof List) {
-                    if (((List<?>) obj).size() == 1) {
-                        selectionCache.put(((List<?>) obj).get(0), ((List<?>) obj).get(0));
-                    }
-                }
-            }
-             */
             return selectionCache;
         }
 
@@ -372,9 +360,10 @@ public final class DynamicMenuContributions {
                 if (m.getName().equals(name)) {
                     params = new LinkedList<Object>();
                     method = m;
-                    //int index = 0;
+                    // int index = 0;
                     int parameterindex = 0;
-                    HashMap<Object,Object> selectionValidationCache = (HashMap<Object, Object>) selectionHash.clone();
+                    HashMap<Object, Object> selectionValidationCache = (HashMap<Object, Object>) selectionHash
+                            .clone();
                     for (Type t : m.getGenericParameterTypes()) {
                         Object param = null;
                         if (selectionValidationCache.isEmpty()) {
@@ -384,21 +373,25 @@ public final class DynamicMenuContributions {
                         for (Object p : selectionHash.values()) {
                             if (match(t, p) && !params.contains(p)) {
                                 param = p;
-                                if ((p instanceof List<?>) && (!((List<?>)p).isEmpty())) {
-                                    selectionValidationCache.remove(((List<?>)p).get(0).getClass());
+                                if ((p instanceof List<?>) && (!((List<?>) p).isEmpty())) {
+                                    selectionValidationCache
+                                            .remove(((List<?>) p).get(0).getClass());
                                 } else {
                                     selectionValidationCache.remove(p.getClass());
                                 }
                                 break;
-                            } else if ((p instanceof List<?>) && (!((List<?>) p).isEmpty()) 
+                            } else if ((p instanceof List<?>) && (!((List<?>) p).isEmpty())
                                     && match(t, ((List<?>) p).get(0))) {
                                 param = ((List<?>) p).get(0);
-                                if (((List<?>) selectionValidationCache.get(((List<?>) p).get(0).getClass())).size() == 1) {
-                                    selectionValidationCache.remove(((List<?>) p).get(0).getClass());
+                                if (((List<?>) selectionValidationCache.get(((List<?>) p).get(0)
+                                        .getClass())).size() == 1) {
+                                    selectionValidationCache
+                                            .remove(((List<?>) p).get(0).getClass());
                                 } else {
-                                    ((List<?>) selectionValidationCache.get(((List<?>) p).get(0).getClass())).remove(param);
+                                    ((List<?>) selectionValidationCache.get(((List<?>) p).get(0)
+                                            .getClass())).remove(param);
                                 }
-                                //index++;
+                                // index++;
                                 break;
                             }
                         }
@@ -413,7 +406,7 @@ public final class DynamicMenuContributions {
                             }
                         }
                         parameterindex++;
-                        
+
                     }
 
                     if (method != null) {
@@ -433,7 +426,7 @@ public final class DynamicMenuContributions {
                 if (transformation.getTransformationClass() != null) {
                     HashMap<Object, Object> selectionHash = this.getSelectionHash(selection);
                     Method method = this.findMethod(selectionHash,
-                    transformation.getTransformation()).getFirst();
+                            transformation.getTransformation()).getFirst();
                     boolean validationResult = true;
                     // evaluate validations
                     if (transformation.getValidation() != null) {
@@ -447,8 +440,8 @@ public final class DynamicMenuContributions {
                                     validationResult = false;
                                 } else {
                                     Object res = validation.getFirst().invoke(
-                                    transformation.getTransformationClass(),
-                                    validation.getSecond());
+                                            transformation.getTransformationClass(),
+                                            validation.getSecond());
                                     if (res instanceof Boolean) {
                                         if (!(Boolean) res) {
                                             validationResult = (Boolean) res;
@@ -504,8 +497,7 @@ public final class DynamicMenuContributions {
      */
     public void createMenuForEditor(final EditorTransformationSettings editorSettings) {
         Assert.isNotNull(editorSettings);
-        HashMap<String, HashMap<List<Object>, Boolean>> validationCache = 
-                new HashMap<String, HashMap<List<Object>, Boolean>>();
+        HashMap<String, HashMap<List<Object>, Boolean>> validationCache = new HashMap<String, HashMap<List<Object>, Boolean>>();
         for (KSBasEMenuContribution contrib : editorSettings.getMenuContributions()) {
             for (String command : contrib.getCommands()) {
                 if (!command.endsWith("_SEPARATOR")) {
@@ -531,10 +523,11 @@ public final class DynamicMenuContributions {
                         e.printStackTrace();
                     }
                     if (contrib.getData().startsWith("menu:")) {
-                        KSBasEMenuContributionService.INSTANCE.addToolbarButton(combination, command
-                                + ".menu", transformation.getName(), transformation.getToolTip(),
-                                icon, SWT.PUSH, KSBasEMenuContributionService.LocationScheme.MENU,
-                                visibility, keySequence, editorSettings.getContext(),
+                        KSBasEMenuContributionService.INSTANCE.addToolbarButton(combination,
+                                command + ".menu", transformation.getName(),
+                                transformation.getToolTip(), icon, SWT.PUSH,
+                                KSBasEMenuContributionService.LocationScheme.MENU, visibility,
+                                keySequence, editorSettings.getContext(),
                                 editorSettings.getEditorId());
                         combination.addTransformation(command + ".menu", transformation);
                     } else if (contrib.getData().startsWith("toolbar:")) {
@@ -545,10 +538,11 @@ public final class DynamicMenuContributions {
                                 null, null, editorSettings.getEditorId());
                         combination.addTransformation(command + ".toolbar", transformation);
                     } else if (contrib.getData().startsWith("popup:")) {
-                        KSBasEMenuContributionService.INSTANCE.addToolbarButton(combination, command
-                                + ".popup", transformation.getName(), transformation.getToolTip(),
-                                icon, SWT.PUSH, KSBasEMenuContributionService.LocationScheme.POPUP,
-                                visibility, null, null, editorSettings.getEditorId());
+                        KSBasEMenuContributionService.INSTANCE.addToolbarButton(combination,
+                                command + ".popup", transformation.getName(),
+                                transformation.getToolTip(), icon, SWT.PUSH,
+                                KSBasEMenuContributionService.LocationScheme.POPUP, visibility,
+                                null, null, editorSettings.getEditorId());
                         combination.addTransformation(command + ".popup", transformation);
                     } else if (contrib.getData().startsWith("popupbar:")) {
                         KSbasEBalloonPopup contribution = new KSbasEBalloonPopup();
@@ -559,7 +553,8 @@ public final class DynamicMenuContributions {
                         contribution.init(params);
                         this.balloonContributions.add(contribution);
                     } else if (contrib.getData().startsWith("custom:")) {
-                        combination.addTransformation(transformation.getCommandId(), transformation);
+                        combination
+                                .addTransformation(transformation.getCommandId(), transformation);
                     }
                 } else {
                     if (/*!(contrib.getCommands().indexOf(command) == 0)*/true) {
