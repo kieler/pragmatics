@@ -125,18 +125,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
          id="de.unido.ls5.eti.toolserver"
          version="0.0.0"/>
 
-   <requires>
-      <import plugin="javax.xml.ws" version="2.1.0" match="greaterOrEqual"/>
-      <import plugin="org.apache.log4j" version="1.2.0" match="greaterOrEqual"/>
-      <import plugin="org.antlr.runtime" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.graphdrawing.graphml" version="1.0.0" match="greaterOrEqual"/>
-      <import feature="com.google.guava.runtime.feature" version="10.0.0" match="greaterOrEqual"/>
-      <import feature="de.unido.ls5.eti.toolserver" version="1.5.0" match="greaterOrEqual"/>
-      <import feature="net.ogdf.bin" version="1.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf" version="2.7.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xtext.runtime" version="2.1.0" match="greaterOrEqual"/>
-   </requires>
-
    <plugin
          id="com.google.collect"
          download-size="0"
