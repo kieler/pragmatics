@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.kiml.service.formats.TransformationException;
 
 /**
  * Internal data structure for matrices.
@@ -69,9 +70,15 @@ public class Matrix {
      * @param columns the number of columns
      */
     public Matrix(final int rows, final int columns) {
+        if (rows < 0 || columns < 0) {
+            throw new IllegalArgumentException("The number of rows and columns must not be negative.");
+        }
         this.rows = rows;
         this.columns = columns;
     }
+    
+    /** the maximal number of entries in an adjacency list. */
+    public static final int MAX_LIST_SIZE = 6553600;
     
     /**
      * Create the adjacency list.
@@ -80,9 +87,16 @@ public class Matrix {
      * @return the new adjacency list
      */
     public List<Entry> createList(final int nonzeros) {
+        if (nonzeros > MAX_LIST_SIZE) {
+            throw new TransformationException("The matrix exceeds the maximal number of"
+                    + " non-zero entries (max. " + MAX_LIST_SIZE + ", here " + nonzeros + ").");
+        }
         list = new ArrayList<Entry>(nonzeros);
         return list;
     }
+    
+    /** the maximal number of elements in an adjacency matrix. */
+    public static final long MAX_MATRIX_SIZE = 26214400L;
     
     /**
      * Create the adjacency matrix.
@@ -90,6 +104,10 @@ public class Matrix {
      * @return the new adjacency matrix
      */
     public int[][] createMatrix() {
+        if ((long) rows * columns > MAX_MATRIX_SIZE) {
+            throw new TransformationException("The matrix exceeds the maximal number of elements (max. "
+                    + MAX_MATRIX_SIZE + ", here " + ((long) rows * columns) + ").");
+        }
         matrix = new int[rows][columns];
         return matrix;
     }
