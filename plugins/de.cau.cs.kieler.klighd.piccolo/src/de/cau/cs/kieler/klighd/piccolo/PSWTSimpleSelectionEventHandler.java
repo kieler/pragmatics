@@ -38,7 +38,7 @@ import edu.umd.cs.piccolo.util.PNodeFilter;
  * This handler provides simple interaction for node selection. Clicking selects the object under
  * the cursor and dragging with control pressed offers marquee selection. This handler does not
  * modify the selected nodes in any way, it just provides selection functionality. Much of the
- * implementation is based on {@code PSelectionEventHandler}.<br <br
+ * implementation is based on {@code PSelectionEventHandler}.<br> <br>
  * The selection is visualized by applying a highlighting effect using {@code HighlightUtil}.
  * 
  * @author mri
