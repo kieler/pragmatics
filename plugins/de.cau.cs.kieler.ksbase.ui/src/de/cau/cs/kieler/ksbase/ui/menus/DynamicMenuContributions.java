@@ -212,6 +212,7 @@ public final class DynamicMenuContributions {
          * @return the current selection of a hashmap with type as key and proposed parameter as
          *         value
          */
+        @SuppressWarnings("unchecked")
         private HashMap<Object, Object> getSelectionHash(final List<EObject> selection) {
             HashMap<Object, Object> selectionCache = new HashMap<Object, Object>();
             for (EObject obj : selection) {
@@ -362,8 +363,8 @@ public final class DynamicMenuContributions {
                     method = m;
                     // int index = 0;
                     int parameterindex = 0;
-                    HashMap<Object, Object> selectionValidationCache = (HashMap<Object, Object>) selectionHash
-                            .clone();
+                    HashMap<Object, Object> selectionValidationCache =
+                            (HashMap<Object, Object>) selectionHash.clone();
                     for (Type t : m.getGenericParameterTypes()) {
                         Object param = null;
                         if (selectionValidationCache.isEmpty()) {
@@ -469,8 +470,7 @@ public final class DynamicMenuContributions {
                     List<Object> selectionMapping = null;
                     for (List<String> parameters : transformation.getParameterList()) {
                         selectionMapping = TransformationFrameworkFactory
-                                .getDefaultTransformationFramework().createParameterMapping(
-                                        selection,
+                                .getDefaultTransformationFramework().createParameterMapping(selection,
                                         parameters.toArray(new String[parameters.size()]));
                     }
                     if (selectionMapping == null) {
@@ -497,12 +497,16 @@ public final class DynamicMenuContributions {
      */
     public void createMenuForEditor(final EditorTransformationSettings editorSettings) {
         Assert.isNotNull(editorSettings);
-        HashMap<String, HashMap<List<Object>, Boolean>> validationCache = new HashMap<String, HashMap<List<Object>, Boolean>>();
+        HashMap<String, HashMap<List<Object>, Boolean>> validationCache =
+                new HashMap<String, HashMap<List<Object>, Boolean>>();
         for (KSBasEMenuContribution contrib : editorSettings.getMenuContributions()) {
             for (String command : contrib.getCommands()) {
                 if (!command.endsWith("_SEPARATOR")) {
                     KSBasETransformation transformation = editorSettings
                             .getTransformationById(command);
+                    if (transformation == null) {
+                        continue;
+                    }
                     Expression visibility = new KsbaseVisibilityExpression(transformation,
                             editorSettings, validationCache);
                     KSBasECombination combination = new KSBasECombination(editorSettings);
