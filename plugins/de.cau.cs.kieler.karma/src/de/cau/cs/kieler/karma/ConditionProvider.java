@@ -15,6 +15,7 @@
 
 package de.cau.cs.kieler.karma;
 
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -34,8 +35,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EAttributeImpl;
-import org.eclipse.emf.mwe.core.ConfigurationException;
-import org.eclipse.xtend.typesystem.emf.EcoreUtil2;
+import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.model.util.FeatureValueCondition;
 import de.cau.cs.kieler.core.model.util.ListSizeCondition;
@@ -304,31 +304,60 @@ public final class ConditionProvider {
      *            an array of configuration elements that represent the packages
      * @param feature
      *            the name of the feature to be searched
-     * @return a feature if found else null
+     * @param type
+     *            the class type that contains the feature
+     * @return a feature if found, else {@code null}
      */
-    private EStructuralFeature getFeatureFromPackages(final IConfigurationElement[] packages,
+    private static EStructuralFeature getFeatureFromPackages(final IConfigurationElement[] packages,
             final String feature, final String type) {
-        EStructuralFeature result = null;
-        EPackage pack = null;
         for (IConfigurationElement packConfig : packages) {
-            String packClassName = packConfig.getAttribute("class");
-            try {
-                pack = EcoreUtil2.getEPackageByClassName(packClassName);
-            } catch (ConfigurationException ce) {
-                throw new WrappedException(ce);
-            }
-            if (pack != null) {
-                EClassifier classifier = pack.getEClassifier(type);
-                EClass cl = (EClass) classifier;
-                if (cl != null) {
-                    result = cl.getEStructuralFeature(feature);
-                }
-                if (result != null) {
-                    return result;
+            Bundle bundle = Platform.getBundle(packConfig.getContributor().getName());
+            if (bundle != null) {
+                try {
+                    Class<?> clazz = bundle.loadClass(packConfig.getAttribute("class"));
+                    EPackage pack = getEPackageByClass(clazz);
+                    if (pack != null) {
+                        EClassifier classifier = pack.getEClassifier(type);
+                        if (classifier instanceof EClass) {
+                            EStructuralFeature result = ((EClass) classifier).getEStructuralFeature(
+                                    feature);
+                            if (result != null) {
+                                return result;
+                            }
+                        }
+                    }
+                } catch (ClassNotFoundException exception) {
+                    // ignore exception
                 }
             }
         }
-        return result;
+        return null;
+    }
+    
+    /**
+     * Returns the EPackage instance for the given package class.
+     * 
+     * @param clazz a package class
+     * @return the corresponding package instance, or {@code null} if none is found
+     */
+    private static EPackage getEPackageByClass(final Class<?> clazz) {
+        try {
+            // each EPackage class has an 'eINSTANCE' field which holds the implementation instance
+            final Field f = clazz.getField("eINSTANCE");
+            // retrieve the EPackage instance from the eINSTANCE field
+            final EPackage result = (EPackage) f.get(null);
+            // register the EPackage instance in the EPackage Registry
+            EPackage.Registry.INSTANCE.put(result.getNsURI(), result);
+            return result;
+        } catch (SecurityException e) {
+            return null;
+        } catch (NoSuchFieldException e) {
+            return null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        } catch (IllegalAccessException e) {
+            return null;
+        }
     }
 
     /**
