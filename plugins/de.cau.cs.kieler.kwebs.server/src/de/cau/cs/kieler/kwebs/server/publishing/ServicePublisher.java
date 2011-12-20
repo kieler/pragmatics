@@ -26,7 +26,7 @@ import de.cau.cs.kieler.kwebs.server.service.JaxWsService;
  * The {@code ServicePublisher} is the central point for managing the
  * publishing of the layout service.
  * 
- * @kieler.rating  2011-08-25 proposed yellow
+ * @kieler.rating  2011-08-25 yellow
  *      reviewed by ckru, msp, mri
  *      
  * @author  swe

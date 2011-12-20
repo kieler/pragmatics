@@ -49,7 +49,7 @@ import de.cau.cs.kieler.kwebs.util.Graphs;
 /**
  * This class is used to calculate the layout of a graph using a remote layout service.
  *
- * @kieler.rating 2011-08-02 proposed yellow
+ * @kieler.rating 2011-08-02 yellow
  *     reviewed by ckru, mri, msp
  *
  * @author swe

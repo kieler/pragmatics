@@ -27,7 +27,7 @@ import de.unido.ls5.eti.toolserver.OutputFileReference;
 /**
  * Implementation of the jETI based layout service.
  * 
- * @kieler.rating  2011-08-25 proposed yellow
+ * @kieler.rating  2011-08-25 yellow
  *      reviewed by ckru, msp, mri
  *      
  * @author  swe

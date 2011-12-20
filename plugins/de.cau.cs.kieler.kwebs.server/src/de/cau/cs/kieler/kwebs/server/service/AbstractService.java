@@ -55,7 +55,7 @@ import de.cau.cs.kieler.kwebs.util.Graphs;
  * architecture specific service implementations may sub class this class in order to use the provided
  * layout.
  *
- * @kieler.rating  2011-08-25 proposed yellow
+ * @kieler.rating  2011-08-25 yellow
  *      reviewed by ckru, msp, mri
  *      
  * @author swe

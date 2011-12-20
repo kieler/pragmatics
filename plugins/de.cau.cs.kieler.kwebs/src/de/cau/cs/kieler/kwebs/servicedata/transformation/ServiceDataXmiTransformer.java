@@ -33,7 +33,7 @@ import de.cau.cs.kieler.kwebs.servicedata.ServiceDataPackage;
 /**
  * This class is used for the serialization and deserialization of the service data model.
  *
- * @kieler.rating 2011-08-02 proposed yellow
+ * @kieler.rating 2011-08-02 yellow
  *     reviewed by ckru, mri, msp
  *
  * @author swe

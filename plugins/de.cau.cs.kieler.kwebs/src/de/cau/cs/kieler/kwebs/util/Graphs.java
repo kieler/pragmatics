@@ -39,7 +39,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * This is used to duplicate the calculated layout information from a 
  * graph which was layout done on back to the original graph.
  *
- * @kieler.rating 2011-08-02 proposed yellow
+ * @kieler.rating 2011-08-02 yellow
  *     reviewed by ckru, mri, msp
  *
  * @author swe

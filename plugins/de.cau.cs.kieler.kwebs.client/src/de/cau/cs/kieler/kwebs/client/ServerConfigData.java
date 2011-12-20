@@ -21,7 +21,7 @@ import java.net.URI;
  * it on the preference page for remote layout. It can also be used for non KIELER
  * clients to easily manage server configurations.
  *
- * @kieler.rating 2011-08-02 proposed yellow
+ * @kieler.rating 2011-08-02 yellow
  *     reviewed by ckru, mri, msp
  *
  * @author swe
