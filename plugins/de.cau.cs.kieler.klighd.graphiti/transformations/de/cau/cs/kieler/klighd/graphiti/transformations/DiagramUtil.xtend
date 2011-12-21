@@ -23,6 +23,7 @@ import de.cau.cs.kieler.core.annotations.IntAnnotation
 import de.cau.cs.kieler.core.annotations.AnnotationsFactory
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator
+import java.util.List
 
 class DiagramUtil {
 	
@@ -77,17 +78,59 @@ class DiagramUtil {
 
 
     /**
-     * Create and add a visible anchor intended to serve
-     *  as port to 'shape'. // at position (x,y).
-     *  To color end an active and visible FixPointAnchor is created.  
+     * Creates an anchor and a related port figure as well as a port label
+     *  onto the east side of a given shape with the port label text 'label'.
+     *  The anchor is related to the given EObjects.
      */
-    def FixPointAnchor create anchor: PictogramsFactory::eINSTANCE.createFixPointAnchor getPortAnchor(EObject o) {
-        anchor.setLink(PictogramsFactory::eINSTANCE.createPictogramLink);
-        anchor.link.businessObjects.add(o);
+    def Anchor createLabeledEastPortAnchor(Shape shape, String label, EObject eo1) {
+    	shape.createLabeledEastPortAnchor(label, newArrayList(eo1, eo1, eo1))
+    }
+    def Anchor createLabeledEastPortAnchor(Shape shape, String label, EObject eo1, EObject eo2) {
+    	shape.createLabeledEastPortAnchor(label, newArrayList(eo1, eo2, eo2))
+    }
+    def Anchor createLabeledEastPortAnchor(Shape shape, String label, EObject eo1, EObject eo2, EObject eo3) {
+    	shape.createLabeledEastPortAnchor(label, newArrayList(eo1, eo2, eo3))
     }
 
-    def Anchor createPortAnchor(Shape shape, EObject o,int x, int y) {
-    	val anchor = o.getPortAnchor();
+
+    /**
+     * Creates an anchor and a related port figure as well as a port label
+     *  onto the west side of a given shape with the port label text 'label'.
+     *  The anchor is related to the given EObjects.
+     */
+    def Anchor createLabeledWestPortAnchor(Shape shape, String label, EObject eo1) {
+    	shape.createLabeledWestPortAnchor(label, newArrayList(eo1, eo1, eo1))
+    }
+    def Anchor createLabeledWestPortAnchor(Shape shape, String label, EObject eo1, EObject eo2) {
+    	shape.createLabeledWestPortAnchor(label, newArrayList(eo1, eo2, eo2))
+    }
+    def Anchor createLabeledWestPortAnchor(Shape shape, String label, EObject eo1, EObject eo2, EObject eo3) {
+    	shape.createLabeledWestPortAnchor(label, newArrayList(eo1, eo2, eo3))
+    }
+
+
+    def private Anchor createLabeledEastPortAnchor(Shape shape, String label, List<EObject> eos) {
+    	val x = shape.graphicsAlgorithm.width
+    	val y = shape.getAndAddIntProperty("eastports") * 15 + verticalPortPlacementOffsetTop.value;
+    	val anchor = shape.createPortAnchor(eos, x,y);
+    	val rect = anchor.createRectangle(0,0,7,7, "black_black".style);
+    	rect.createLabelText(anchor, -outerHorizontalPortLabelPlacementOffset.value, -2, label, Orientation::ALIGNMENT_RIGHT, "default".font);
+        shape.graphicsAlgorithm.setHeight(Math::max(shape.graphicsAlgorithm.height, y+15));
+    	return anchor    	
+    }
+
+    def private Anchor createLabeledWestPortAnchor(Shape shape, String label, List<EObject> eos) {
+    	val x = -5
+    	val y = shape.getAndAddIntProperty("westports") * 15 + verticalPortPlacementOffsetTop.value;
+    	val anchor = shape.createPortAnchor(eos,x,y);
+    	val rect = anchor.createRectangle(0,0,7,7, "black_black".style);
+    	rect.createLabelText(anchor, outerHorizontalPortLabelPlacementOffset.value, -2, label, Orientation::ALIGNMENT_LEFT, "default".font);
+        shape.graphicsAlgorithm.setHeight(Math::max(shape.graphicsAlgorithm.height, y+15));
+    	return anchor
+    }
+    
+    def private Anchor createPortAnchor(Shape shape, List<EObject> eos,int x, int y) {
+    	val anchor = createPortAnchor(eos.get(0), eos.get(1), eos.get(2));
         anchor.setActive(true);
         anchor.setVisible(true);        
         anchor.setLocation(createPoint(x,y));
@@ -96,35 +139,26 @@ class DiagramUtil {
         return anchor
     }
 
-
-    /**
-     * Creates a anchor and a related port figure as well as a port label
-     *  onto the west side of a given shape with the port label text 'label'.
-     */
-    def Anchor createLabeledEastPortAnchor(Shape shape, EObject o, String label) {
-    	val x = shape.graphicsAlgorithm.width
-    	val y = shape.getAndAddIntProperty("eastports") * 15 + verticalPortPlacementOffsetTop.value;
-    	val anchor = shape.createPortAnchor(o, x,y);
-    	val rect = anchor.createRectangle(0,0,7,7, "black_black".style);
-    	val text = rect.createLabelText(o, -outerHorizontalPortLabelPlacementOffset.value, -2, label, Orientation::ALIGNMENT_RIGHT, "default".font);
-    	return anchor
-    }
-
-
-    /**
-     * Creates a anchor and a related port figure as well as a port label
-     *  onto the west side of a given shape with the port label text 'label'.
-     */
-    def Anchor createLabeledWestPortAnchor(Shape shape, EObject o, String label) {
-    	val x = -5
-    	val y = shape.getAndAddIntProperty("westports") * 15 + verticalPortPlacementOffsetTop.value;
-    	val anchor = shape.createPortAnchor(o,x,y);
-    	val rect = anchor.createRectangle(0,0,7,7, "black_black".style);
-    	rect.createLabelText(o, outerHorizontalPortLabelPlacementOffset.value, -2, label, Orientation::ALIGNMENT_LEFT, "default".font);
-    	return anchor
+    def private FixPointAnchor create anchor: PictogramsFactory::eINSTANCE.createFixPointAnchor createPortAnchor(EObject eo1, EObject eo2, EObject eo3) {
+        anchor.setLink(PictogramsFactory::eINSTANCE.createPictogramLink);
+        anchor.link.businessObjects.addAll(newArrayList(eo1, eo2, eo3));
     }
     
     
+    /**
+     * Some shortcuts revealing an anchor by means of up to 3 EObjects the anchor mapped to  
+     */
+    def Anchor getPortAnchor(EObject eo) {
+    	eo.createPortAnchor(eo, eo);
+    }
+    def Anchor getPortAnchor(EObject eo, EObject eo1) {
+    	eo.createPortAnchor(eo1, eo1);
+    }
+    def Anchor getPortAnchor(EObject eo, EObject eo1, EObject eo2) {
+    	eo.createPortAnchor(eo1, eo2);
+    }
+
+
     /**
      * Default constant. Configured to enable a proper box label placement.
      * Can be reconfigured using '...verticalPortPlacementOffsetTop.setValue'. 
@@ -171,8 +205,8 @@ class DiagramUtil {
      * This is reasonable since the label element is pickable in the graphic represention
      * and, hence, should be mapped to the related model element, as well.
      */
-    def Text createLabelText(GraphicsAlgorithm ga, EObject o, int x, int y, String value, Orientation alignment, Font font) {
-        val text = o.createLabelText()
+    def Text createLabelText(GraphicsAlgorithm ga, Anchor a, int x, int y, String value, Orientation alignment, Font font) {
+        val text = a.createLabelText()
         text.setX(x);
         text.setY(y);
         text.setWidth(ga.width);
@@ -184,11 +218,11 @@ class DiagramUtil {
         return text
     }
 
-    def private Text create text: o.portAnchor.graphicsAlgorithm.createText() createLabelText(EObject o) {
+    def private Text create text: a.graphicsAlgorithm.createText() createLabelText(Anchor a) {
     }
     
-    def Text getLabelText(EObject o) {
-    	return o.createLabelText
+    def Text getLabelText(Anchor a) {
+    	return a.createLabelText
     }
     
     
@@ -557,7 +591,11 @@ class DiagramUtil {
      *                    *
      **********************/
     
-    
+     def IntAnnotation intEObject(Integer value) {
+     	 val eo = AnnotationsFactory::eINSTANCE.createIntAnnotation;
+     	 eo.value = value;
+     	 eo
+     }
      /**
       * 
       */
@@ -570,6 +608,6 @@ class DiagramUtil {
      def int getAndAddIntProperty(Shape shape, String name) {
          val intAnno = shape.getIntProperty(name);
          intAnno.setValue(intAnno.value + 1);
-         return intAnno.value
+         intAnno.value
      }
 }
