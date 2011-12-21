@@ -4,6 +4,7 @@ import de.cau.cs.kieler.core.annotations.AnnotationsFactory;
 import de.cau.cs.kieler.core.annotations.IntAnnotation;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.mm.MmFactory;
@@ -142,37 +143,126 @@ public class DiagramUtil {
   }
   
   /**
-   * Create and add a visible anchor intended to serve
-   *  as port to 'shape'. // at position (x,y).
-   *  To color end an active and visible FixPointAnchor is created.
+   * Creates an anchor and a related port figure as well as a port label
+   *  onto the east side of a given shape with the port label text 'label'.
+   *  The anchor is related to the given EObjects.
    */
-  public FixPointAnchor getPortAnchor(final EObject o) {
-    final ArrayList<?>_cacheKey = CollectionLiterals.newArrayList(o);
-    final FixPointAnchor _result;
-    synchronized (_createCache_getPortAnchor) {
-      if (_createCache_getPortAnchor.containsKey(_cacheKey)) {
-        return _createCache_getPortAnchor.get(_cacheKey);
-      }
-      FixPointAnchor _createFixPointAnchor = PictogramsFactory.eINSTANCE.createFixPointAnchor();
-      _result = _createFixPointAnchor;
-      _createCache_getPortAnchor.put(_cacheKey, _result);
-    }
-    _init_getPortAnchor(_result, o);
-    return _result;
+  public Anchor createLabeledEastPortAnchor(final Shape shape, final String label, final EObject eo1) {
+    ArrayList<EObject> _newArrayList = CollectionLiterals.<EObject>newArrayList(eo1, eo1, eo1);
+    Anchor _createLabeledEastPortAnchor = this.createLabeledEastPortAnchor(shape, label, _newArrayList);
+    return _createLabeledEastPortAnchor;
   }
   
-  private final HashMap<ArrayList<?>,FixPointAnchor> _createCache_getPortAnchor = CollectionLiterals.newHashMap();
-  
-  private void _init_getPortAnchor(final FixPointAnchor anchor, final EObject o) {
-      PictogramLink _createPictogramLink = PictogramsFactory.eINSTANCE.createPictogramLink();
-      anchor.setLink(_createPictogramLink);
-      PictogramLink _link = anchor.getLink();
-      EList<EObject> _businessObjects = _link.getBusinessObjects();
-      _businessObjects.add(o);
+  public Anchor createLabeledEastPortAnchor(final Shape shape, final String label, final EObject eo1, final EObject eo2) {
+    ArrayList<EObject> _newArrayList = CollectionLiterals.<EObject>newArrayList(eo1, eo2, eo2);
+    Anchor _createLabeledEastPortAnchor = this.createLabeledEastPortAnchor(shape, label, _newArrayList);
+    return _createLabeledEastPortAnchor;
   }
   
-  public Anchor createPortAnchor(final Shape shape, final EObject o, final int x, final int y) {
-      FixPointAnchor _portAnchor = this.getPortAnchor(o);
+  public Anchor createLabeledEastPortAnchor(final Shape shape, final String label, final EObject eo1, final EObject eo2, final EObject eo3) {
+    ArrayList<EObject> _newArrayList = CollectionLiterals.<EObject>newArrayList(eo1, eo2, eo3);
+    Anchor _createLabeledEastPortAnchor = this.createLabeledEastPortAnchor(shape, label, _newArrayList);
+    return _createLabeledEastPortAnchor;
+  }
+  
+  public Anchor createLabeledEastPortAnchor(final Shape shape, final EObject eo, final String label) {
+    ArrayList<EObject> _newArrayList = CollectionLiterals.<EObject>newArrayList(eo, eo, eo);
+    Anchor _createLabeledEastPortAnchor = this.createLabeledEastPortAnchor(shape, label, _newArrayList);
+    return _createLabeledEastPortAnchor;
+  }
+  
+  /**
+   * Creates an anchor and a related port figure as well as a port label
+   *  onto the west side of a given shape with the port label text 'label'.
+   *  The anchor is related to the given EObjects.
+   */
+  public Anchor createLabeledWestPortAnchor(final Shape shape, final String label, final EObject eo1) {
+    ArrayList<EObject> _newArrayList = CollectionLiterals.<EObject>newArrayList(eo1, eo1, eo1);
+    Anchor _createLabeledWestPortAnchor = this.createLabeledWestPortAnchor(shape, label, _newArrayList);
+    return _createLabeledWestPortAnchor;
+  }
+  
+  public Anchor createLabeledWestPortAnchor(final Shape shape, final String label, final EObject eo1, final EObject eo2) {
+    ArrayList<EObject> _newArrayList = CollectionLiterals.<EObject>newArrayList(eo1, eo2, eo2);
+    Anchor _createLabeledWestPortAnchor = this.createLabeledWestPortAnchor(shape, label, _newArrayList);
+    return _createLabeledWestPortAnchor;
+  }
+  
+  public Anchor createLabeledWestPortAnchor(final Shape shape, final String label, final EObject eo1, final EObject eo2, final EObject eo3) {
+    ArrayList<EObject> _newArrayList = CollectionLiterals.<EObject>newArrayList(eo1, eo2, eo3);
+    Anchor _createLabeledWestPortAnchor = this.createLabeledWestPortAnchor(shape, label, _newArrayList);
+    return _createLabeledWestPortAnchor;
+  }
+  
+  public Anchor createLabeledWestPortAnchor(final Shape shape, final EObject eo, final String label) {
+    ArrayList<EObject> _newArrayList = CollectionLiterals.<EObject>newArrayList(eo, eo, eo);
+    Anchor _createLabeledWestPortAnchor = this.createLabeledWestPortAnchor(shape, label, _newArrayList);
+    return _createLabeledWestPortAnchor;
+  }
+  
+  private Anchor createLabeledEastPortAnchor(final Shape shape, final String label, final List<EObject> eos) {
+      GraphicsAlgorithm _graphicsAlgorithm = shape.getGraphicsAlgorithm();
+      int _width = _graphicsAlgorithm.getWidth();
+      final int x = _width;
+      int _andAddIntProperty = this.getAndAddIntProperty(shape, "eastports");
+      int _operator_multiply = IntegerExtensions.operator_multiply(((Integer)_andAddIntProperty), ((Integer)15));
+      IntAnnotation _verticalPortPlacementOffsetTop = this.getVerticalPortPlacementOffsetTop();
+      int _value = _verticalPortPlacementOffsetTop.getValue();
+      int _operator_plus = IntegerExtensions.operator_plus(((Integer)_operator_multiply), ((Integer)_value));
+      final int y = _operator_plus;
+      Anchor _createPortAnchor = this.createPortAnchor(shape, eos, x, y);
+      final Anchor anchor = _createPortAnchor;
+      Style _style = this.getStyle("black_black");
+      Rectangle _createRectangle = this.createRectangle(anchor, 0, 0, 7, 7, _style);
+      final Rectangle rect = _createRectangle;
+      IntAnnotation _outerHorizontalPortLabelPlacementOffset = this.getOuterHorizontalPortLabelPlacementOffset();
+      int _value_1 = _outerHorizontalPortLabelPlacementOffset.getValue();
+      int _operator_minus = IntegerExtensions.operator_minus(_value_1);
+      int _operator_minus_1 = IntegerExtensions.operator_minus(2);
+      Font _font = this.getFont("default");
+      this.createLabelText(rect, anchor, _operator_minus, _operator_minus_1, label, Orientation.ALIGNMENT_RIGHT, _font);
+      GraphicsAlgorithm _graphicsAlgorithm_1 = shape.getGraphicsAlgorithm();
+      GraphicsAlgorithm _graphicsAlgorithm_2 = shape.getGraphicsAlgorithm();
+      int _height = _graphicsAlgorithm_2.getHeight();
+      int _operator_plus_1 = IntegerExtensions.operator_plus(((Integer)y), ((Integer)15));
+      int _max = Math.max(_height, _operator_plus_1);
+      _graphicsAlgorithm_1.setHeight(_max);
+      return anchor;
+  }
+  
+  private Anchor createLabeledWestPortAnchor(final Shape shape, final String label, final List<EObject> eos) {
+      int _operator_minus = IntegerExtensions.operator_minus(5);
+      final int x = _operator_minus;
+      int _andAddIntProperty = this.getAndAddIntProperty(shape, "westports");
+      int _operator_multiply = IntegerExtensions.operator_multiply(((Integer)_andAddIntProperty), ((Integer)15));
+      IntAnnotation _verticalPortPlacementOffsetTop = this.getVerticalPortPlacementOffsetTop();
+      int _value = _verticalPortPlacementOffsetTop.getValue();
+      int _operator_plus = IntegerExtensions.operator_plus(((Integer)_operator_multiply), ((Integer)_value));
+      final int y = _operator_plus;
+      Anchor _createPortAnchor = this.createPortAnchor(shape, eos, x, y);
+      final Anchor anchor = _createPortAnchor;
+      Style _style = this.getStyle("black_black");
+      Rectangle _createRectangle = this.createRectangle(anchor, 0, 0, 7, 7, _style);
+      final Rectangle rect = _createRectangle;
+      IntAnnotation _outerHorizontalPortLabelPlacementOffset = this.getOuterHorizontalPortLabelPlacementOffset();
+      int _value_1 = _outerHorizontalPortLabelPlacementOffset.getValue();
+      int _operator_minus_1 = IntegerExtensions.operator_minus(2);
+      Font _font = this.getFont("default");
+      this.createLabelText(rect, anchor, _value_1, _operator_minus_1, label, Orientation.ALIGNMENT_LEFT, _font);
+      GraphicsAlgorithm _graphicsAlgorithm = shape.getGraphicsAlgorithm();
+      GraphicsAlgorithm _graphicsAlgorithm_1 = shape.getGraphicsAlgorithm();
+      int _height = _graphicsAlgorithm_1.getHeight();
+      int _operator_plus_1 = IntegerExtensions.operator_plus(((Integer)y), ((Integer)15));
+      int _max = Math.max(_height, _operator_plus_1);
+      _graphicsAlgorithm.setHeight(_max);
+      return anchor;
+  }
+  
+  private Anchor createPortAnchor(final Shape shape, final List<EObject> eos, final int x, final int y) {
+      EObject _get = eos.get(0);
+      EObject _get_1 = eos.get(1);
+      EObject _get_2 = eos.get(2);
+      FixPointAnchor _portAnchor = this.getPortAnchor(_get, _get_1, _get_2);
       final FixPointAnchor anchor = _portAnchor;
       anchor.setActive(true);
       anchor.setVisible(true);
@@ -185,59 +275,35 @@ public class DiagramUtil {
       return anchor;
   }
   
-  /**
-   * Creates a anchor and a related port figure as well as a port label
-   *  onto the west side of a given shape with the port label text 'label'.
-   */
-  public Anchor createLabeledEastPortAnchor(final Shape shape, final EObject o, final String label) {
-      GraphicsAlgorithm _graphicsAlgorithm = shape.getGraphicsAlgorithm();
-      int _width = _graphicsAlgorithm.getWidth();
-      final int x = _width;
-      int _andAddIntProperty = this.getAndAddIntProperty(shape, "eastports");
-      int _operator_multiply = IntegerExtensions.operator_multiply(((Integer)_andAddIntProperty), ((Integer)15));
-      IntAnnotation _verticalPortPlacementOffsetTop = this.getVerticalPortPlacementOffsetTop();
-      int _value = _verticalPortPlacementOffsetTop.getValue();
-      int _operator_plus = IntegerExtensions.operator_plus(((Integer)_operator_multiply), ((Integer)_value));
-      final int y = _operator_plus;
-      Anchor _createPortAnchor = this.createPortAnchor(shape, o, x, y);
-      final Anchor anchor = _createPortAnchor;
-      Style _style = this.getStyle("black_black");
-      Rectangle _createRectangle = this.createRectangle(anchor, 0, 0, 7, 7, _style);
-      final Rectangle rect = _createRectangle;
-      IntAnnotation _outerHorizontalPortLabelPlacementOffset = this.getOuterHorizontalPortLabelPlacementOffset();
-      int _value_1 = _outerHorizontalPortLabelPlacementOffset.getValue();
-      int _operator_minus = IntegerExtensions.operator_minus(_value_1);
-      int _operator_minus_1 = IntegerExtensions.operator_minus(2);
-      Font _font = this.getFont("default");
-      Text _createLabelText = this.createLabelText(rect, o, _operator_minus, _operator_minus_1, label, Orientation.ALIGNMENT_RIGHT, _font);
-      final Text text = _createLabelText;
-      return anchor;
+  private FixPointAnchor getPortAnchor(final EObject eo1, final EObject eo2, final EObject eo3) {
+    final ArrayList<?>_cacheKey = CollectionLiterals.newArrayList(eo1, eo2, eo3);
+    final FixPointAnchor _result;
+    synchronized (_createCache_getPortAnchor) {
+      if (_createCache_getPortAnchor.containsKey(_cacheKey)) {
+        return _createCache_getPortAnchor.get(_cacheKey);
+      }
+      FixPointAnchor _createFixPointAnchor = PictogramsFactory.eINSTANCE.createFixPointAnchor();
+      _result = _createFixPointAnchor;
+      _createCache_getPortAnchor.put(_cacheKey, _result);
+    }
+    _init_getPortAnchor(_result, eo1, eo2, eo3);
+    return _result;
   }
   
-  /**
-   * Creates a anchor and a related port figure as well as a port label
-   *  onto the west side of a given shape with the port label text 'label'.
-   */
-  public Anchor createLabeledWestPortAnchor(final Shape shape, final EObject o, final String label) {
-      int _operator_minus = IntegerExtensions.operator_minus(5);
-      final int x = _operator_minus;
-      int _andAddIntProperty = this.getAndAddIntProperty(shape, "westports");
-      int _operator_multiply = IntegerExtensions.operator_multiply(((Integer)_andAddIntProperty), ((Integer)15));
-      IntAnnotation _verticalPortPlacementOffsetTop = this.getVerticalPortPlacementOffsetTop();
-      int _value = _verticalPortPlacementOffsetTop.getValue();
-      int _operator_plus = IntegerExtensions.operator_plus(((Integer)_operator_multiply), ((Integer)_value));
-      final int y = _operator_plus;
-      Anchor _createPortAnchor = this.createPortAnchor(shape, o, x, y);
-      final Anchor anchor = _createPortAnchor;
-      Style _style = this.getStyle("black_black");
-      Rectangle _createRectangle = this.createRectangle(anchor, 0, 0, 7, 7, _style);
-      final Rectangle rect = _createRectangle;
-      IntAnnotation _outerHorizontalPortLabelPlacementOffset = this.getOuterHorizontalPortLabelPlacementOffset();
-      int _value_1 = _outerHorizontalPortLabelPlacementOffset.getValue();
-      int _operator_minus_1 = IntegerExtensions.operator_minus(2);
-      Font _font = this.getFont("default");
-      this.createLabelText(rect, o, _value_1, _operator_minus_1, label, Orientation.ALIGNMENT_LEFT, _font);
-      return anchor;
+  private final HashMap<ArrayList<?>,FixPointAnchor> _createCache_getPortAnchor = CollectionLiterals.newHashMap();
+  
+  private void _init_getPortAnchor(final FixPointAnchor anchor, final EObject eo1, final EObject eo2, final EObject eo3) {
+      PictogramLink _createPictogramLink = PictogramsFactory.eINSTANCE.createPictogramLink();
+      anchor.setLink(_createPictogramLink);
+      PictogramLink _link = anchor.getLink();
+      EList<EObject> _businessObjects = _link.getBusinessObjects();
+      ArrayList<EObject> _newArrayList = CollectionLiterals.<EObject>newArrayList(eo1, eo2, eo3);
+      _businessObjects.addAll(_newArrayList);
+  }
+  
+  public FixPointAnchor getPortAnchor(final EObject eo) {
+    FixPointAnchor _portAnchor = this.getPortAnchor(eo, eo, eo);
+    return _portAnchor;
   }
   
   /**
@@ -321,8 +387,8 @@ public class DiagramUtil {
    * This is reasonable since the label element is pickable in the graphic represention
    * and, hence, should be mapped to the related model element, as well.
    */
-  public Text createLabelText(final GraphicsAlgorithm ga, final EObject o, final int x, final int y, final String value, final Orientation alignment, final Font font) {
-      Text _createLabelText = this.createLabelText(o);
+  public Text createLabelText(final GraphicsAlgorithm ga, final Anchor a, final int x, final int y, final String value, final Orientation alignment, final Font font) {
+      Text _createLabelText = this.createLabelText(a);
       final Text text = _createLabelText;
       text.setX(x);
       text.setY(y);
@@ -338,30 +404,29 @@ public class DiagramUtil {
       return text;
   }
   
-  private Text createLabelText(final EObject o) {
-    final ArrayList<?>_cacheKey = CollectionLiterals.newArrayList(o);
+  private Text createLabelText(final Anchor a) {
+    final ArrayList<?>_cacheKey = CollectionLiterals.newArrayList(a);
     final Text _result;
     synchronized (_createCache_createLabelText) {
       if (_createCache_createLabelText.containsKey(_cacheKey)) {
         return _createCache_createLabelText.get(_cacheKey);
       }
-      FixPointAnchor _portAnchor = this.getPortAnchor(o);
-      GraphicsAlgorithm _graphicsAlgorithm = _portAnchor.getGraphicsAlgorithm();
+      GraphicsAlgorithm _graphicsAlgorithm = a.getGraphicsAlgorithm();
       Text _createText = this.createText(_graphicsAlgorithm);
       _result = _createText;
       _createCache_createLabelText.put(_cacheKey, _result);
     }
-    _init_createLabelText(_result, o);
+    _init_createLabelText(_result, a);
     return _result;
   }
   
   private final HashMap<ArrayList<?>,Text> _createCache_createLabelText = CollectionLiterals.newHashMap();
   
-  private void _init_createLabelText(final Text text, final EObject o) {
+  private void _init_createLabelText(final Text text, final Anchor a) {
   }
   
-  public Text getLabelText(final EObject o) {
-    Text _createLabelText = this.createLabelText(o);
+  public Text getLabelText(final Anchor a) {
+    Text _createLabelText = this.createLabelText(a);
     return _createLabelText;
   }
   
@@ -976,6 +1041,20 @@ public class DiagramUtil {
       _fonts.add(font);
   }
   
+  /**
+   * auxiliary stuff
+   */
+  public IntAnnotation intEObject(final Integer value) {
+    IntAnnotation _xblockexpression = null;
+    {
+      IntAnnotation _createIntAnnotation = AnnotationsFactory.eINSTANCE.createIntAnnotation();
+      final IntAnnotation eo = _createIntAnnotation;
+      eo.setValue(value);
+      _xblockexpression = (eo);
+    }
+    return _xblockexpression;
+  }
+  
   public IntAnnotation getIntProperty(final Shape shape, final String name) {
     final ArrayList<?>_cacheKey = CollectionLiterals.newArrayList(shape, name);
     final IntAnnotation _result;
@@ -999,12 +1078,16 @@ public class DiagramUtil {
   }
   
   public int getAndAddIntProperty(final Shape shape, final String name) {
+    int _xblockexpression = (int) 0;
+    {
       IntAnnotation _intProperty = this.getIntProperty(shape, name);
       final IntAnnotation intAnno = _intProperty;
       int _value = intAnno.getValue();
       int _operator_plus = IntegerExtensions.operator_plus(((Integer)_value), ((Integer)1));
       intAnno.setValue(_operator_plus);
       int _value_1 = intAnno.getValue();
-      return _value_1;
+      _xblockexpression = (_value_1);
+    }
+    return _xblockexpression;
   }
 }
