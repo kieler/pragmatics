@@ -165,12 +165,6 @@ public class DiagramUtil {
     return _createLabeledEastPortAnchor;
   }
   
-  public Anchor createLabeledEastPortAnchor(final Shape shape, final EObject eo, final String label) {
-    ArrayList<EObject> _newArrayList = CollectionLiterals.<EObject>newArrayList(eo, eo, eo);
-    Anchor _createLabeledEastPortAnchor = this.createLabeledEastPortAnchor(shape, label, _newArrayList);
-    return _createLabeledEastPortAnchor;
-  }
-  
   /**
    * Creates an anchor and a related port figure as well as a port label
    *  onto the west side of a given shape with the port label text 'label'.
@@ -190,12 +184,6 @@ public class DiagramUtil {
   
   public Anchor createLabeledWestPortAnchor(final Shape shape, final String label, final EObject eo1, final EObject eo2, final EObject eo3) {
     ArrayList<EObject> _newArrayList = CollectionLiterals.<EObject>newArrayList(eo1, eo2, eo3);
-    Anchor _createLabeledWestPortAnchor = this.createLabeledWestPortAnchor(shape, label, _newArrayList);
-    return _createLabeledWestPortAnchor;
-  }
-  
-  public Anchor createLabeledWestPortAnchor(final Shape shape, final EObject eo, final String label) {
-    ArrayList<EObject> _newArrayList = CollectionLiterals.<EObject>newArrayList(eo, eo, eo);
     Anchor _createLabeledWestPortAnchor = this.createLabeledWestPortAnchor(shape, label, _newArrayList);
     return _createLabeledWestPortAnchor;
   }
@@ -262,8 +250,8 @@ public class DiagramUtil {
       EObject _get = eos.get(0);
       EObject _get_1 = eos.get(1);
       EObject _get_2 = eos.get(2);
-      FixPointAnchor _portAnchor = this.getPortAnchor(_get, _get_1, _get_2);
-      final FixPointAnchor anchor = _portAnchor;
+      FixPointAnchor _createPortAnchor = this.createPortAnchor(_get, _get_1, _get_2);
+      final FixPointAnchor anchor = _createPortAnchor;
       anchor.setActive(true);
       anchor.setVisible(true);
       Point _createPoint = this.createPoint(x, y);
@@ -275,24 +263,24 @@ public class DiagramUtil {
       return anchor;
   }
   
-  private FixPointAnchor getPortAnchor(final EObject eo1, final EObject eo2, final EObject eo3) {
+  private FixPointAnchor createPortAnchor(final EObject eo1, final EObject eo2, final EObject eo3) {
     final ArrayList<?>_cacheKey = CollectionLiterals.newArrayList(eo1, eo2, eo3);
     final FixPointAnchor _result;
-    synchronized (_createCache_getPortAnchor) {
-      if (_createCache_getPortAnchor.containsKey(_cacheKey)) {
-        return _createCache_getPortAnchor.get(_cacheKey);
+    synchronized (_createCache_createPortAnchor) {
+      if (_createCache_createPortAnchor.containsKey(_cacheKey)) {
+        return _createCache_createPortAnchor.get(_cacheKey);
       }
       FixPointAnchor _createFixPointAnchor = PictogramsFactory.eINSTANCE.createFixPointAnchor();
       _result = _createFixPointAnchor;
-      _createCache_getPortAnchor.put(_cacheKey, _result);
+      _createCache_createPortAnchor.put(_cacheKey, _result);
     }
-    _init_getPortAnchor(_result, eo1, eo2, eo3);
+    _init_createPortAnchor(_result, eo1, eo2, eo3);
     return _result;
   }
   
-  private final HashMap<ArrayList<?>,FixPointAnchor> _createCache_getPortAnchor = CollectionLiterals.newHashMap();
+  private final HashMap<ArrayList<?>,FixPointAnchor> _createCache_createPortAnchor = CollectionLiterals.newHashMap();
   
-  private void _init_getPortAnchor(final FixPointAnchor anchor, final EObject eo1, final EObject eo2, final EObject eo3) {
+  private void _init_createPortAnchor(final FixPointAnchor anchor, final EObject eo1, final EObject eo2, final EObject eo3) {
       PictogramLink _createPictogramLink = PictogramsFactory.eINSTANCE.createPictogramLink();
       anchor.setLink(_createPictogramLink);
       PictogramLink _link = anchor.getLink();
@@ -301,9 +289,22 @@ public class DiagramUtil {
       _businessObjects.addAll(_newArrayList);
   }
   
-  public FixPointAnchor getPortAnchor(final EObject eo) {
-    FixPointAnchor _portAnchor = this.getPortAnchor(eo, eo, eo);
-    return _portAnchor;
+  /**
+   * Some shortcuts revealing an anchor by means of up to 3 EObjects the anchor mapped to
+   */
+  public Anchor getPortAnchor(final EObject eo) {
+    FixPointAnchor _createPortAnchor = this.createPortAnchor(eo, eo, eo);
+    return _createPortAnchor;
+  }
+  
+  public Anchor getPortAnchor(final EObject eo, final EObject eo1) {
+    FixPointAnchor _createPortAnchor = this.createPortAnchor(eo, eo1, eo1);
+    return _createPortAnchor;
+  }
+  
+  public Anchor getPortAnchor(final EObject eo, final EObject eo1, final EObject eo2) {
+    FixPointAnchor _createPortAnchor = this.createPortAnchor(eo, eo1, eo2);
+    return _createPortAnchor;
   }
   
   /**

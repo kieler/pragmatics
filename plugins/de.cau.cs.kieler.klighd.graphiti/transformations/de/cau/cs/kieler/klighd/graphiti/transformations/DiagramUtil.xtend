@@ -91,10 +91,6 @@ class DiagramUtil {
     def Anchor createLabeledEastPortAnchor(Shape shape, String label, EObject eo1, EObject eo2, EObject eo3) {
     	shape.createLabeledEastPortAnchor(label, newArrayList(eo1, eo2, eo3))
     }
-    // @deprecated: legacy
-    def Anchor createLabeledEastPortAnchor(Shape shape, EObject eo, String label) {
-    	shape.createLabeledEastPortAnchor(label, newArrayList(eo, eo, eo));
-    }
 
 
     /**
@@ -111,10 +107,7 @@ class DiagramUtil {
     def Anchor createLabeledWestPortAnchor(Shape shape, String label, EObject eo1, EObject eo2, EObject eo3) {
     	shape.createLabeledWestPortAnchor(label, newArrayList(eo1, eo2, eo3))
     }
-    // @deprecated: legacy
-    def Anchor createLabeledWestPortAnchor(Shape shape, EObject eo, String label) {
-    	shape.createLabeledWestPortAnchor(label, newArrayList(eo, eo, eo));
-    }
+
 
     def private Anchor createLabeledEastPortAnchor(Shape shape, String label, List<EObject> eos) {
     	val x = shape.graphicsAlgorithm.width
@@ -137,7 +130,7 @@ class DiagramUtil {
     }
     
     def private Anchor createPortAnchor(Shape shape, List<EObject> eos,int x, int y) {
-    	val anchor = getPortAnchor(eos.get(0), eos.get(1), eos.get(2));
+    	val anchor = createPortAnchor(eos.get(0), eos.get(1), eos.get(2));
         anchor.setActive(true);
         anchor.setVisible(true);        
         anchor.setLocation(createPoint(x,y));
@@ -146,13 +139,23 @@ class DiagramUtil {
         return anchor
     }
 
-    def private FixPointAnchor create anchor: PictogramsFactory::eINSTANCE.createFixPointAnchor getPortAnchor(EObject eo1, EObject eo2, EObject eo3) {
+    def private FixPointAnchor create anchor: PictogramsFactory::eINSTANCE.createFixPointAnchor createPortAnchor(EObject eo1, EObject eo2, EObject eo3) {
         anchor.setLink(PictogramsFactory::eINSTANCE.createPictogramLink);
         anchor.link.businessObjects.addAll(newArrayList(eo1, eo2, eo3));
     }
     
-    def FixPointAnchor getPortAnchor(EObject eo) {
-    	eo.getPortAnchor(eo, eo);
+    
+    /**
+     * Some shortcuts revealing an anchor by means of up to 3 EObjects the anchor mapped to  
+     */
+    def Anchor getPortAnchor(EObject eo) {
+    	eo.createPortAnchor(eo, eo);
+    }
+    def Anchor getPortAnchor(EObject eo, EObject eo1) {
+    	eo.createPortAnchor(eo1, eo1);
+    }
+    def Anchor getPortAnchor(EObject eo, EObject eo1, EObject eo2) {
+    	eo.createPortAnchor(eo1, eo2);
     }
 
 
