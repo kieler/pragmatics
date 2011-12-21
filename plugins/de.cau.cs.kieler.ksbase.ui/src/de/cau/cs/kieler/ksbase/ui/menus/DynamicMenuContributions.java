@@ -422,7 +422,7 @@ public final class DynamicMenuContributions {
         @Override
         public EvaluationResult evaluate(final IEvaluationContext context) throws CoreException {
             List<EObject> selection = getCurrentSelection(context);
-            if (selection != null) {
+            if (selection != null && transformation != null) {
                 // this is an xtend2 transformation
                 if (transformation.getTransformationClass() != null) {
                     HashMap<Object, Object> selectionHash = this.getSelectionHash(selection);
