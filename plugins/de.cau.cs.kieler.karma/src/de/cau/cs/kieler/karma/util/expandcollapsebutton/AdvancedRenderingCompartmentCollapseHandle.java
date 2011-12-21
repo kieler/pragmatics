@@ -28,6 +28,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.DragTracker;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.handles.AbstractHandle;
 import org.eclipse.gmf.runtime.diagram.core.listener.DiagramEventBroker;
 import org.eclipse.gmf.runtime.diagram.core.listener.NotificationListener;
@@ -38,6 +39,8 @@ import org.eclipse.gmf.runtime.diagram.ui.internal.tools.CompartmentCollapseTrac
 import org.eclipse.gmf.runtime.notation.DrawerStyle;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.gmf.runtime.notation.View;
+
+import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
 
 /**
  * 
@@ -158,6 +161,10 @@ public class AdvancedRenderingCompartmentCollapseHandle extends AbstractHandle i
     public void notifyChanged(final Notification notification) {
         if (NotationPackage.eINSTANCE.getDrawerStyle_Collapsed() == notification.getFeature()) {
             switchableCollapseFigure.setCollapsed(notification.getNewBooleanValue());
+            EditPart part = this.getOwner().getParent();
+            if (part instanceof IAdvancedRenderingEditPart) {
+                ((IAdvancedRenderingEditPart) part).handleNotificationEvent(notification);
+            }
         }
     }
 
