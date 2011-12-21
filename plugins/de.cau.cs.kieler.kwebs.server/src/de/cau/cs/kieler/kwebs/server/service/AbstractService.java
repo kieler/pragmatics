@@ -181,14 +181,15 @@ public abstract class AbstractService {
             messageIter.remove();
         }
         
-        // Test if the user graphs are within configured tolerances
-        
+        // Test if the user graphs are within configured tolerances        
         List<KNode> graphs = inTransData.getTargetGraphs();
         if (graphs.size() > maxGraphs) {
+        	Logger.log(Severity.WARNING, "Too many graphs in request, maximum number is " + maxGraphs);
         	throw new RemoteServiceException("Too many graphs in request, maximum number is " + maxGraphs);
         }
         for (KNode layout : graphs) {
         	if (Graphs.countElements(layout) > maxElements) {
+        		Logger.log(Severity.WARNING, "Too many elements in graph, maximum number is " + maxElements);
         		throw new RemoteServiceException("Too many elements in graph, maximum number is " + maxElements);
         	}
         }
