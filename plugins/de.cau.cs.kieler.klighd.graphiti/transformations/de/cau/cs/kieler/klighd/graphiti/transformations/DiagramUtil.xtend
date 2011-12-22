@@ -24,6 +24,8 @@ import de.cau.cs.kieler.core.annotations.AnnotationsFactory
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator
 import java.util.List
+import org.eclipse.emf.common.util.TreeIterator
+import com.google.common.collect.ImmutableList
 
 class DiagramUtil {
 	
@@ -226,11 +228,16 @@ class DiagramUtil {
     }
     
     
-
     /**
-     *
+     * Creation of connections and mapping to 1, 2, or 3 source elements.
      */
-    def Connection create connection: PictogramsFactory::eINSTANCE.createFreeFormConnection createConnection(Object o) {
+    def Connection createConnection(EObject eo) {
+    	eo.createConnection(eo, eo);
+    }
+    def Connection createConnection(EObject eo1, EObject eo2) {
+    	eo1.createConnection(eo2, eo2);
+    }
+    def Connection create connection: PictogramsFactory::eINSTANCE.createFreeFormConnection createConnection(EObject eo1, EObject eo2, EObject eo3) {
         val polyline = AlgorithmsFactory::eINSTANCE.createPolyline;
         polyline.setLineWidth(1);
         polyline.setForeground(getColor("black"));
@@ -242,27 +249,39 @@ class DiagramUtil {
     }
 
     /**
-     * Just a wrapper to be used to reveal the connection
-     *  indicating that it has been created already!
-     *  (only for code-readability)
+     * Creation of connections and mapping to 1 source element
+     *  with additional specification of linewidth and line color.
      */
-    def Connection getConnection(Object o) {
-        o.createConnection();
+    def Connection createConnection(EObject eo, int width) {
+        val connection = eo.createConnection(eo,eo);
+        connection.graphicsAlgorithm.setLineWidth(width);
+        return connection
     }
-    
-    def Connection createConnection(Object o, int width, Color color){
-    	val connection = o.createConnection(width)
+    def Connection createConnection(EObject eo, int width, Color color){
+    	val connection = eo.createConnection(width)
     	connection.graphicsAlgorithm.setForeground(color)
     	return connection
     }
-    
-    def Connection createConnection(Object o, int width) {
-        val connection = o.createConnection;
-        connection.graphicsAlgorithm.setLineWidth(width);
-        return connection
-        
+
+    /**
+     * Just some wrappers to be used to reveal the connection
+     *  indicating that it has been created already!
+     *  (only for code-readability)
+     */
+    def Connection getConnection(EObject eo) {
+        eo.createConnection(eo,eo);
+    }
+    def Connection getConnection(EObject eo1, EObject eo2) {
+        eo1.createConnection(eo2,eo2);
+    }
+    def Connection getConnection(EObject eo1, EObject eo2, EObject eo3) {
+        eo1.createConnection(eo2,eo3);
     }
     
+    /**
+     * Convenience extensions for setting start and end in a
+     * fluent interface style.
+     */
     def Connection from(Connection connection, Anchor start) {
     	connection.setStart(start);
     	return connection
@@ -609,5 +628,13 @@ class DiagramUtil {
          val intAnno = shape.getIntProperty(name);
          intAnno.setValue(intAnno.value + 1);
          intAnno.value
+     }
+     
+     /**
+      * Helper transforming an TreeIterator (mainly to be used with 'eAllContents')
+      * into an Iterable by creating a dedicated. 
+      */
+     def <T> List<T> toIterable(TreeIterator<T> iterator) {
+     	ImmutableList::<T>copyOf(iterator)
      }
 }

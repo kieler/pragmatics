@@ -1,11 +1,13 @@
 package de.cau.cs.kieler.klighd.graphiti.transformations;
 
+import com.google.common.collect.ImmutableList;
 import de.cau.cs.kieler.core.annotations.AnnotationsFactory;
 import de.cau.cs.kieler.core.annotations.IntAnnotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.mm.MmFactory;
 import org.eclipse.graphiti.mm.Property;
@@ -431,8 +433,21 @@ public class DiagramUtil {
     return _createLabelText;
   }
   
-  public Connection createConnection(final Object o) {
-    final ArrayList<?>_cacheKey = CollectionLiterals.newArrayList(o);
+  /**
+   * Creation of connections and mapping to 1, 2, or 3 source elements.
+   */
+  public Connection createConnection(final EObject eo) {
+    Connection _createConnection = this.createConnection(eo, eo, eo);
+    return _createConnection;
+  }
+  
+  public Connection createConnection(final EObject eo1, final EObject eo2) {
+    Connection _createConnection = this.createConnection(eo1, eo2, eo2);
+    return _createConnection;
+  }
+  
+  public Connection createConnection(final EObject eo1, final EObject eo2, final EObject eo3) {
+    final ArrayList<?>_cacheKey = CollectionLiterals.newArrayList(eo1, eo2, eo3);
     final FreeFormConnection _result;
     synchronized (_createCache_createConnection) {
       if (_createCache_createConnection.containsKey(_cacheKey)) {
@@ -442,13 +457,13 @@ public class DiagramUtil {
       _result = _createFreeFormConnection;
       _createCache_createConnection.put(_cacheKey, _result);
     }
-    _init_createConnection(_result, o);
+    _init_createConnection(_result, eo1, eo2, eo3);
     return _result;
   }
   
   private final HashMap<ArrayList<?>,Connection> _createCache_createConnection = CollectionLiterals.newHashMap();
   
-  private void _init_createConnection(final FreeFormConnection connection, final Object o) {
+  private void _init_createConnection(final FreeFormConnection connection, final EObject eo1, final EObject eo2, final EObject eo3) {
       Polyline _createPolyline = AlgorithmsFactory.eINSTANCE.createPolyline();
       final Polyline polyline = _createPolyline;
       polyline.setLineWidth(((Integer)1));
@@ -465,31 +480,49 @@ public class DiagramUtil {
   }
   
   /**
-   * Just a wrapper to be used to reveal the connection
-   *  indicating that it has been created already!
-   *  (only for code-readability)
+   * Creation of connections and mapping to 1 source element
+   *  with additional specification of linewidth and line color.
    */
-  public Connection getConnection(final Object o) {
-    Connection _createConnection = this.createConnection(o);
-    return _createConnection;
-  }
-  
-  public Connection createConnection(final Object o, final int width, final Color color) {
-      Connection _createConnection = this.createConnection(o, width);
-      final Connection connection = _createConnection;
-      GraphicsAlgorithm _graphicsAlgorithm = connection.getGraphicsAlgorithm();
-      _graphicsAlgorithm.setForeground(color);
-      return connection;
-  }
-  
-  public Connection createConnection(final Object o, final int width) {
-      Connection _createConnection = this.createConnection(o);
+  public Connection createConnection(final EObject eo, final int width) {
+      Connection _createConnection = this.createConnection(eo, eo, eo);
       final Connection connection = _createConnection;
       GraphicsAlgorithm _graphicsAlgorithm = connection.getGraphicsAlgorithm();
       _graphicsAlgorithm.setLineWidth(((Integer)width));
       return connection;
   }
   
+  public Connection createConnection(final EObject eo, final int width, final Color color) {
+      Connection _createConnection = this.createConnection(eo, width);
+      final Connection connection = _createConnection;
+      GraphicsAlgorithm _graphicsAlgorithm = connection.getGraphicsAlgorithm();
+      _graphicsAlgorithm.setForeground(color);
+      return connection;
+  }
+  
+  /**
+   * Just some wrappers to be used to reveal the connection
+   *  indicating that it has been created already!
+   *  (only for code-readability)
+   */
+  public Connection getConnection(final EObject eo) {
+    Connection _createConnection = this.createConnection(eo, eo, eo);
+    return _createConnection;
+  }
+  
+  public Connection getConnection(final EObject eo1, final EObject eo2) {
+    Connection _createConnection = this.createConnection(eo1, eo2, eo2);
+    return _createConnection;
+  }
+  
+  public Connection getConnection(final EObject eo1, final EObject eo2, final EObject eo3) {
+    Connection _createConnection = this.createConnection(eo1, eo2, eo3);
+    return _createConnection;
+  }
+  
+  /**
+   * Convenience extensions for setting start and end in a
+   * fluent interface style.
+   */
   public Connection from(final Connection connection, final Anchor start) {
       connection.setStart(start);
       return connection;
@@ -1090,5 +1123,14 @@ public class DiagramUtil {
       _xblockexpression = (_value_1);
     }
     return _xblockexpression;
+  }
+  
+  /**
+   * Helper transforming an TreeIterator (mainly to be used with 'eAllContents')
+   * into an Iterable by creating a dedicated.
+   */
+  public <T extends Object> List<T> toIterable(final TreeIterator<T> iterator) {
+    ImmutableList<T> _copyOf = ImmutableList.<T>copyOf(iterator);
+    return _copyOf;
   }
 }
