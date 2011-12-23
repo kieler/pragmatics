@@ -1,8 +1,11 @@
 package de.cau.cs.kieler.klighd.graphiti.transformations;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 import de.cau.cs.kieler.core.annotations.AnnotationsFactory;
+import de.cau.cs.kieler.core.annotations.FloatAnnotation;
 import de.cau.cs.kieler.core.annotations.IntAnnotation;
+import de.cau.cs.kieler.klighd.graphiti.transformations.XtendArithmeticExtensions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,11 +38,16 @@ import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 import org.eclipse.graphiti.mm.pictograms.PictogramsFactory;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
+import org.eclipse.xtext.xbase.lib.ComparableExtensions;
 import org.eclipse.xtext.xbase.lib.IntegerExtensions;
+import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ObjectExtensions;
 
 @SuppressWarnings("all")
 public class DiagramUtil {
+  @Inject
+  private XtendArithmeticExtensions _xtendArithmeticExtensions;
+  
   /**
    * Shortcut method for creating shapes.
    */
@@ -248,12 +256,39 @@ public class DiagramUtil {
       return anchor;
   }
   
-  private Anchor createPortAnchor(final Shape shape, final List<EObject> eos, final int x, final int y) {
-      EObject _get = eos.get(0);
-      EObject _get_1 = eos.get(1);
-      EObject _get_2 = eos.get(2);
-      FixPointAnchor _createPortAnchor = this.createPortAnchor(_get, _get_1, _get_2);
-      final FixPointAnchor anchor = _createPortAnchor;
+  public Anchor createPortAnchor(final Shape shape, final List<? extends EObject> eos, final int x, final int y) {
+      EObject _head = IterableExtensions.head(eos);
+      final EObject first = _head;
+      EObject _xifexpression = null;
+      int _size = eos.size();
+      boolean _operator_greaterThan = ComparableExtensions.<Integer>operator_greaterThan(((Integer)_size), ((Integer)1));
+      if (_operator_greaterThan) {
+        EObject _get = eos.get(1);
+        _xifexpression = _get;
+      } else {
+        _xifexpression = first;
+      }
+      final EObject second = _xifexpression;
+      EObject _xifexpression_1 = null;
+      int _size_1 = eos.size();
+      boolean _operator_greaterThan_1 = ComparableExtensions.<Integer>operator_greaterThan(((Integer)_size_1), ((Integer)2));
+      if (_operator_greaterThan_1) {
+        EObject _get_1 = eos.get(2);
+        _xifexpression_1 = _get_1;
+      } else {
+        _xifexpression_1 = second;
+      }
+      final EObject third = _xifexpression_1;
+      FixPointAnchor _xifexpression_2 = null;
+      boolean _isEmpty = eos.isEmpty();
+      if (_isEmpty) {
+        FixPointAnchor _createAnonymousPortAnchor = this.createAnonymousPortAnchor();
+        _xifexpression_2 = _createAnonymousPortAnchor;
+      } else {
+        FixPointAnchor _createPortAnchor = this.createPortAnchor(first, second, third);
+        _xifexpression_2 = _createPortAnchor;
+      }
+      final FixPointAnchor anchor = _xifexpression_2;
       anchor.setActive(true);
       anchor.setVisible(true);
       Point _createPoint = this.createPoint(x, y);
@@ -289,6 +324,11 @@ public class DiagramUtil {
       EList<EObject> _businessObjects = _link.getBusinessObjects();
       ArrayList<EObject> _newArrayList = CollectionLiterals.<EObject>newArrayList(eo1, eo2, eo3);
       _businessObjects.addAll(_newArrayList);
+  }
+  
+  private FixPointAnchor createAnonymousPortAnchor() {
+    FixPointAnchor _createFixPointAnchor = PictogramsFactory.eINSTANCE.createFixPointAnchor();
+    return _createFixPointAnchor;
   }
   
   /**
@@ -577,13 +617,21 @@ public class DiagramUtil {
       figure.setBackground(_foreground_1);
       figure.setFilled(((Boolean)true));
       decorator.setVisible(true);
+      int _operator_plus = IntegerExtensions.operator_plus(((Integer)33), ((Integer)7));
+      final int x = _operator_plus;
       Float _xifexpression = null;
       if (toHead) {
-        Float _valueOf = Float.valueOf("0.95");
-        _xifexpression = _valueOf;
+        Float _valueOf = Float.valueOf("1.0");
+        FloatAnnotation _relativeConnectionArrowOffset = this.getRelativeConnectionArrowOffset();
+        float _value = _relativeConnectionArrowOffset.getValue();
+        Float _operator_minus_5 = this._xtendArithmeticExtensions.operator_minus(_valueOf, ((Float)_value));
+        _xifexpression = _operator_minus_5;
       } else {
-        Float _valueOf_1 = Float.valueOf("0.05");
-        _xifexpression = _valueOf_1;
+        Float _valueOf_1 = Float.valueOf("0.0");
+        FloatAnnotation _relativeConnectionArrowOffset_1 = this.getRelativeConnectionArrowOffset();
+        float _value_1 = _relativeConnectionArrowOffset_1.getValue();
+        Float _operator_plus_1 = this._xtendArithmeticExtensions.operator_plus(_valueOf_1, ((Float)_value_1));
+        _xifexpression = _operator_plus_1;
       }
       decorator.setLocation(_xifexpression);
       decorator.setLocationRelative(true);
@@ -591,6 +639,32 @@ public class DiagramUtil {
       EList<ConnectionDecorator> _connectionDecorators = connection.getConnectionDecorators();
       _connectionDecorators.add(decorator);
       return decorator;
+  }
+  
+  /**
+   * Default constant. Configured to enable a proper box label placement.
+   * Can be reconfigured using '...verticalPortPlacementOffsetTop.setValue'.
+   */
+  public FloatAnnotation getRelativeConnectionArrowOffset() {
+    final ArrayList<?>_cacheKey = CollectionLiterals.newArrayList();
+    final FloatAnnotation _result;
+    synchronized (_createCache_getRelativeConnectionArrowOffset) {
+      if (_createCache_getRelativeConnectionArrowOffset.containsKey(_cacheKey)) {
+        return _createCache_getRelativeConnectionArrowOffset.get(_cacheKey);
+      }
+      FloatAnnotation _createFloatAnnotation = AnnotationsFactory.eINSTANCE.createFloatAnnotation();
+      _result = _createFloatAnnotation;
+      _createCache_getRelativeConnectionArrowOffset.put(_cacheKey, _result);
+    }
+    _init_getRelativeConnectionArrowOffset(_result);
+    return _result;
+  }
+  
+  private final HashMap<ArrayList<?>,FloatAnnotation> _createCache_getRelativeConnectionArrowOffset = CollectionLiterals.newHashMap();
+  
+  private void _init_getRelativeConnectionArrowOffset(final FloatAnnotation offset) {
+    Float _valueOf = Float.valueOf("0.00");
+    offset.setValue(_valueOf);
   }
   
   public Connection addHeadArrow(final Connection connection, final int scale) {

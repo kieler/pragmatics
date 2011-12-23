@@ -26,8 +26,13 @@ import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator
 import java.util.List
 import org.eclipse.emf.common.util.TreeIterator
 import com.google.common.collect.ImmutableList
+import de.cau.cs.kieler.core.annotations.FloatAnnotation
+import com.google.inject.Inject
 
 class DiagramUtil {
+	
+	@Inject
+	extension XtendArithmeticExtensions
 	
     /**
      * Shortcut method for creating shapes. 
@@ -131,8 +136,11 @@ class DiagramUtil {
     	return anchor
     }
     
-    def private Anchor createPortAnchor(Shape shape, List<EObject> eos,int x, int y) {
-    	val anchor = createPortAnchor(eos.get(0), eos.get(1), eos.get(2));
+    def Anchor createPortAnchor(Shape shape, List<? extends EObject> eos,int x, int y) {
+    	val first = eos.head;
+    	val second = if (eos.size > 1) eos.get(1) else first;
+    	val third = if (eos.size > 2) eos.get(2) else second;
+    	val anchor = if (eos.empty) createAnonymousPortAnchor else createPortAnchor(first, second, third);
         anchor.setActive(true);
         anchor.setVisible(true);        
         anchor.setLocation(createPoint(x,y));
@@ -144,6 +152,10 @@ class DiagramUtil {
     def private FixPointAnchor create anchor: PictogramsFactory::eINSTANCE.createFixPointAnchor createPortAnchor(EObject eo1, EObject eo2, EObject eo3) {
         anchor.setLink(PictogramsFactory::eINSTANCE.createPictogramLink);
         anchor.link.businessObjects.addAll(newArrayList(eo1, eo2, eo3));
+    }
+    
+    def private FixPointAnchor createAnonymousPortAnchor() {
+    	PictogramsFactory::eINSTANCE.createFixPointAnchor
     }
     
     
@@ -311,14 +323,23 @@ class DiagramUtil {
         figure.setForeground(connection.graphicsAlgorithm.foreground);
         figure.setBackground(figure.foreground);
         figure.setFilled(true);  
-        decorator.setVisible(true);
-        decorator.setLocation(if (toHead) Float::valueOf("0.95") else Float::valueOf("0.05"));
+        decorator.setVisible(true); val x = 33+7;
+        decorator.setLocation(if (toHead) Float::valueOf("1.0") - relativeConnectionArrowOffset.value 
+        	                         else Float::valueOf("0.0") + relativeConnectionArrowOffset.value);
         decorator.setLocationRelative(true);
         decorator.setGraphicsAlgorithm(figure);
         connection.connectionDecorators.add(decorator);
         return decorator
     }
     
+    /**
+     * Default constant. Configured to enable a proper box label placement.
+     * Can be reconfigured using '...verticalPortPlacementOffsetTop.setValue'. 
+     */
+    def FloatAnnotation create offset: AnnotationsFactory::eINSTANCE.createFloatAnnotation getRelativeConnectionArrowOffset() {
+    	offset.value = Float::valueOf("0.00");
+    }
+
     def Connection addHeadArrow(Connection connection, int scale) {
     	connection.addConnectionArrow(scale, true);
     	return connection
