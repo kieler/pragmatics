@@ -28,6 +28,7 @@ import org.eclipse.emf.common.util.TreeIterator
 import com.google.common.collect.ImmutableList
 import de.cau.cs.kieler.core.annotations.FloatAnnotation
 import com.google.inject.Inject
+import java.util.ArrayList
 
 class DiagramUtil {
 	
@@ -44,7 +45,7 @@ class DiagramUtil {
         rect.setWidth(1000);
                 
 		diag.link = PictogramsFactory::eINSTANCE.createPictogramLink;
-        diag.setGraphicsAlgorithm(rect); 
+        diag.setGraphicsAlgorithm(rect);
 	}
 	
 	
@@ -631,31 +632,39 @@ class DiagramUtil {
      *                    *
      **********************/
     
-     def IntAnnotation intEObject(Integer value) {
-     	 val eo = AnnotationsFactory::eINSTANCE.createIntAnnotation;
-     	 eo.value = value;
-     	 eo
-     }
-     /**
-      * 
-      */
-     def IntAnnotation create intAnno: AnnotationsFactory::eINSTANCE.createIntAnnotation getIntProperty(Shape shape, String name) {
-         intAnno.setName(name);
-         intAnno.setValue(0);
-     }
+    def IntAnnotation intEObject(Integer value) {
+        val eo = AnnotationsFactory::eINSTANCE.createIntAnnotation;
+        eo.value = value;
+        eo
+    }
+    /**
+     * 
+     */
+    def IntAnnotation create intAnno: AnnotationsFactory::eINSTANCE.createIntAnnotation getIntProperty(Shape shape, String name) {
+        intAnno.setName(name);
+        intAnno.setValue(0);
+    }
 
 
-     def int getAndAddIntProperty(Shape shape, String name) {
-         val intAnno = shape.getIntProperty(name);
-         intAnno.setValue(intAnno.value + 1);
-         intAnno.value
-     }
+    def int getAndAddIntProperty(Shape shape, String name) {
+        val intAnno = shape.getIntProperty(name);
+        intAnno.setValue(intAnno.value + 1);
+        intAnno.value
+    }
      
-     /**
-      * Helper transforming an TreeIterator (mainly to be used with 'eAllContents')
-      * into an Iterable by creating a dedicated. 
-      */
-     def <T> List<T> toIterable(TreeIterator<T> iterator) {
-     	ImmutableList::<T>copyOf(iterator)
-     }
+    /**
+     * Helper transforming an TreeIterator (mainly to be used with 'eAllContents')
+     * into an Iterable by creating a dedicated. 
+     */
+    def <T> List<T> toIterable(TreeIterator<T> iterator) {
+        ImmutableList::<T>copyOf(iterator)
+    }
+    
+          
+    def ArrayList<Integer> create list: <Integer>newArrayList getListWithElementsTo(Integer size) {
+    	while (list.size < size) {
+            list.add(list.size);
+        }
+        list
+    } 
 }

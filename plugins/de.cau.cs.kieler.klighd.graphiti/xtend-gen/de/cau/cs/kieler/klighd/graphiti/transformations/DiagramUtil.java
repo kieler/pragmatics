@@ -1207,4 +1207,34 @@ public class DiagramUtil {
     ImmutableList<T> _copyOf = ImmutableList.<T>copyOf(iterator);
     return _copyOf;
   }
+  
+  public ArrayList<Integer> getListWithElementsTo(final Integer size) {
+    final ArrayList<?>_cacheKey = CollectionLiterals.newArrayList(size);
+    final ArrayList<Integer> _result;
+    synchronized (_createCache_getListWithElementsTo) {
+      if (_createCache_getListWithElementsTo.containsKey(_cacheKey)) {
+        return _createCache_getListWithElementsTo.get(_cacheKey);
+      }
+      ArrayList<Integer> _newArrayList = CollectionLiterals.<Integer>newArrayList();
+      _result = _newArrayList;
+      _createCache_getListWithElementsTo.put(_cacheKey, _result);
+    }
+    _init_getListWithElementsTo(_result, size);
+    return _result;
+  }
+  
+  private final HashMap<ArrayList<?>,ArrayList<Integer>> _createCache_getListWithElementsTo = CollectionLiterals.newHashMap();
+  
+  private void _init_getListWithElementsTo(final ArrayList<Integer> list, final Integer size) {
+      int _size = list.size();
+      boolean _operator_lessThan = ComparableExtensions.<Integer>operator_lessThan(((Integer)_size), size);
+      Boolean _xwhileexpression = _operator_lessThan;
+      while (_xwhileexpression) {
+        int _size_1 = list.size();
+        list.add(((Integer)_size_1));
+        int _size_2 = list.size();
+        boolean _operator_lessThan_1 = ComparableExtensions.<Integer>operator_lessThan(((Integer)_size_2), size);
+        _xwhileexpression = _operator_lessThan_1;
+      }
+  }
 }
