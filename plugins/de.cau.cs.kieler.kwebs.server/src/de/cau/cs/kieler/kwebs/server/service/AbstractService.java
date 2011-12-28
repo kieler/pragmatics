@@ -75,14 +75,30 @@ public abstract class AbstractService {
     /** Default value for maximum number of elements a single graph may contain. */
     private static final int MAXNUMBER_ELEMENTS = 5000;
     
-    /** Value for maximum number of graphs transmitted in a single request initially set to default value. */
+    /** 
+     * Value for maximum number of graphs transmitted in a single request
+     * initially set to default value. 
+     */
     private int maxGraphs = Configuration.getInstance().getConfigPropertyAsInteger(
-    	Configuration.MAXNUMBER_GRAPHS, MAXNUMBER_GRAPHS
+        Configuration.MAXNUMBER_GRAPHS, MAXNUMBER_GRAPHS
+    );
+
+    /** Whether to test on number of transmitted graphs. */
+    private boolean testMaxGraphs = Configuration.getInstance().getConfigPropertyAsBoolean(
+        Configuration.TESTMAXNUMBER_GRAPHS, true
     );
     
-    /** Value for maximum number of elements a single graph may contain initially set to default value. */
+    /** 
+     * Value for maximum number of elements a single graph may contain
+     * initially set to default value. 
+     */
     private int maxElements = Configuration.getInstance().getConfigPropertyAsInteger(
-    	Configuration.MAXNUMBER_GRAPHS, MAXNUMBER_ELEMENTS
+    	Configuration.MAXELEMENTS_GRAPHS, MAXNUMBER_ELEMENTS
+    );
+
+    /** Whether to test on number elements contained in the transmitted graphs. */
+    private boolean testMaxElements = Configuration.getInstance().getConfigPropertyAsBoolean(
+    	Configuration.TESTMAXELEMENTS_GRAPHS, true
     );
     		
     /**
@@ -183,15 +199,27 @@ public abstract class AbstractService {
         
         // Test if the user graphs are within configured tolerances        
         List<KNode> graphs = inTransData.getTargetGraphs();
-        if (graphs.size() > maxGraphs) {
-        	Logger.log(Severity.WARNING, "Too many graphs in request, maximum number is " + maxGraphs);
-        	throw new RemoteServiceException("Too many graphs in request, maximum number is " + maxGraphs);
+        if (testMaxGraphs && graphs.size() > maxGraphs) {
+        	Logger.log(
+        		Severity.WARNING, 
+        		"Too many graphs in request, maximum number is " + maxGraphs
+        	);
+        	throw new RemoteServiceException(
+        		"Too many graphs in request, maximum number is " + maxGraphs
+        	);
         }
-        for (KNode layout : graphs) {
-        	if (Graphs.countElements(layout) > maxElements) {
-        		Logger.log(Severity.WARNING, "Too many elements in graph, maximum number is " + maxElements);
-        		throw new RemoteServiceException("Too many elements in graph, maximum number is " + maxElements);
-        	}
+        if (testMaxElements) {
+	        for (KNode layout : graphs) {
+	        	if (Graphs.countElements(layout) > maxElements) {
+	        		Logger.log(
+	        			Severity.WARNING, 
+	        			"Too many elements in graph, maximum number is " + maxElements
+	        		);
+	        		throw new RemoteServiceException(
+	        			"Too many elements in graph, maximum number is " + maxElements
+	        		);
+	        	}
+	        }
         }
         // Parse the transmitted layout options and annotate the layout structure
         if (options != null) {
