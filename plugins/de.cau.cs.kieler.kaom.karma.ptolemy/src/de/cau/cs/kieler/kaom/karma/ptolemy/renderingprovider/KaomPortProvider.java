@@ -38,12 +38,12 @@ import ptolemy.kernel.util.NamedObj;
 import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
+import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper;
 import de.cau.cs.kieler.kaom.karma.ptolemy.PtolemyPortBorderItemLocator;
 import de.cau.cs.kieler.kaom.karma.ptolemy.conditions.HasCommentsCondition;
-import de.cau.cs.kieler.karma.IAdvancedRenderingEditPart;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 
 /**
