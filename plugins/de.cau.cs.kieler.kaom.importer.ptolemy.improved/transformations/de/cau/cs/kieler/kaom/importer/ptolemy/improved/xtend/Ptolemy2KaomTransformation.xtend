@@ -50,7 +50,7 @@ import de.cau.cs.kieler.kaom.Port
  * undirected)</p>
  * 
  * <p><b>Note:</b> This transformation cannot simply be reused. To keep things simple, always use
- * a new instance of this transformation for each new model to be transformed.</p>
+ * a new instance for each model to be transformed.</p>
  * 
  * @author cds
  * @author haf
