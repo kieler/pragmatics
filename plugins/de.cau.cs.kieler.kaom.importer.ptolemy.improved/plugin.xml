@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <wizard
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.kaom.importer.ptolemy.improved.wizards.ImportDiagramsWizard"
+            icon="icons/importdiagram_icon.gif"
+            id="de.cau.cs.kieler.kaom.importer.ptolemy.improved.importDiagramsWizard"
+            name="%importWizard.name">
+         <description>
+            %importWizard.description
+         </description>
+      </wizard>
+   </extension>
+</plugin>
