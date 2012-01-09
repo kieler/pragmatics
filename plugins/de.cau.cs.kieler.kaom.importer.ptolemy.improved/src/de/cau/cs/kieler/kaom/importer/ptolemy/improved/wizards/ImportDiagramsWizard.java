@@ -153,6 +153,7 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
         // Save dialog settings
         optionsPage.saveDialogSettings();
         fileSystemSourcesPage.saveDialogSettings();
+        workspaceSourcesPage.saveDialogSettings();
         
         // Retrieve the user's settings
         boolean importFromFileSystem = optionsPage.isFileSystemSource();
