@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2011 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -25,22 +25,22 @@ public final class PtolemyImportConstants {
     /**
      * The possible extensions for Ptolemy diagram files.
      */
-    public static final String[] PTOLEMY_FILE_EXTENSIONS = {"moml", "xml"};
+    public static final String[] PTOLEMY_FILE_EXTENSIONS = {"moml", "xml"}; //$NON-NLS-1$ //$NON-NLS-2$
     
     /**
      * The file extension internally used for temporary Ptolemy model files.
      */
-    public static final String PTOLEMY_INTERNAL_FILE_EXTENSION = "moml";
+    public static final String PTOLEMY_INTERNAL_FILE_EXTENSION = "moml"; //$NON-NLS-1$
     
     /**
      * Our target file extension for model files.
      */
-    public static final String TARGET_MODEL_FILE_EXTENSION = "kaom";
+    public static final String TARGET_MODEL_FILE_EXTENSION = "kaom"; //$NON-NLS-1$
     
     /**
      * Our target file extension for diagram files.
      */
-    public static final String TARGET_DIAGRAM_FILE_EXTENSION = "kaod";
+    public static final String TARGET_DIAGRAM_FILE_EXTENSION = "kaod"; //$NON-NLS-1$
     
     
     /**

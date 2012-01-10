@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2011 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -13,6 +13,7 @@
  */
 
 package de.cau.cs.kieler.kaom.importer.ptolemy.improved.wizards;
+
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -76,7 +77,7 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
         
         setWindowTitle(Messages.ImportDiagramsWizard_title);
         setDefaultPageImageDescriptor(PtolemyImportPlugin.imageDescriptorFromPlugin(
-                PtolemyImportPlugin.PLUGIN_ID, "icons/importdiagram_header.gif"));
+                PtolemyImportPlugin.PLUGIN_ID, "icons/importdiagram_header.gif")); //$NON-NLS-1$
         setDialogSettings(PtolemyImportPlugin.getDefault().getDialogSettings());
         
         // Required for the import process

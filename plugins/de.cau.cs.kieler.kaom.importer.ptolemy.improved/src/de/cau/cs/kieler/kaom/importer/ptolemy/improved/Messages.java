@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2011 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -29,8 +29,12 @@ public final class Messages extends NLS {
     private static final String BUNDLE_NAME =
         "de.cau.cs.kieler.kaom.importer.ptolemy.improved.messages"; //$NON-NLS-1$
     
+    public static String DiagramsImporter_exception_destModelNotSaved;
+
     public static String DiagramsImporter_exception_possibleErrors;
     public static String DiagramsImporter_exception_projectNotExistant;
+
+    public static String DiagramsImporter_exception_sourceModelNotLoaded;
     public static String DiagramsImporter_exception_temporaryFileCreationFailed;
     public static String DiagramsImporter_message_filesExist_prefix;
     public static String DiagramsImporter_message_filesExist_suffix;
@@ -42,6 +46,10 @@ public final class Messages extends NLS {
     public static String DiagramsImporter_task_importingModels;
     public static String DiagramsImporter_title_filesExist;
     public static String ImportDiagramsFileSystemSourcesPage_message;
+    public static String ImportDiagramsOptionsPage_advancedAnnotationsButton_text;
+
+    public static String ImportDiagramsOptionsPage_advancedAnnotationsButton_toolTip;
+
     public static String ImportDiagramsOptionsPage_fileSystemButton_text;
     public static String ImportDiagramsOptionsPage_fileSystemButton_toolTip;
     public static String ImportDiagramsOptionsPage_initializeDiagramFilesButton_text;

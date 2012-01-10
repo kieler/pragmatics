@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2011 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -11,7 +11,6 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-
 package de.cau.cs.kieler.kaom.importer.ptolemy.improved;
 
 import java.awt.geom.Point2D;
@@ -128,48 +127,49 @@ public class PtolemyAnnotationHandler {
     /**
      * Name of the attachedTo annotation.
      */
-    private static final String ANNOTATIONS_ATTACHMENT = "attachedTo";
+    private static final String ANNOTATIONS_ATTACHMENT = "attachedTo"; //$NON-NLS-1$
     
     /**
      * The icon description annotation.
      */
-    private static final String ANNOTATIONS_ICON_DESCRIPTION = "_iconDescription";
+    private static final String ANNOTATIONS_ICON_DESCRIPTION = "_iconDescription"; //$NON-NLS-1$
     
     /**
      * The location annotation.
      */
-    private static final String ANNOTATION_LOCATION = "_location";
+    private static final String ANNOTATION_LOCATION = "_location"; //$NON-NLS-1$
     
     /**
      * Name of the text annotation.
      */
-    private static final String ANNOTATIONS_TEXT = "text";
+    private static final String ANNOTATIONS_TEXT = "text"; //$NON-NLS-1$
     
     /**
      * Tag of an SVG element.
      */
-    private static final String ELEM_SVG = "svg";
+    private static final String ELEM_SVG = "svg"; //$NON-NLS-1$
     
     /**
      * Tag of a TEXT element.
      */
-    private static final String ELEM_TEXT = "text";
+    private static final String ELEM_TEXT = "text"; //$NON-NLS-1$
     
     /**
      * Type name of an attribute in Ptolemy.
      */
-    private static final String TYPE_ATTRIBUTE = "ptolemy.kernel.util.Attribute";
+    private static final String TYPE_ATTRIBUTE = "ptolemy.kernel.util.Attribute"; //$NON-NLS-1$
     
     /**
      * Type name of a string attribute in Ptolemy.
      */
-    private static final String TYPE_STRING_ATTRIBUTE = "ptolemy.kernel.util.StringAttribute";
+    private static final String TYPE_STRING_ATTRIBUTE =
+        "ptolemy.kernel.util.StringAttribute"; //$NON-NLS-1$
     
     /**
      * Type name of a text attribute in Ptolemy.
      */
     private static final String TYPE_TEXT_ATTRIBUTE =
-        "ptolemy.vergil.kernel.attributes.TextAttribute";
+        "ptolemy.vergil.kernel.attributes.TextAttribute"; //$NON-NLS-1$
     
     
     /**
@@ -207,11 +207,11 @@ public class PtolemyAnnotationHandler {
      * @param kaomModel the transformed KAOM model.
      */
     public PtolemyAnnotationHandler(final XMLResource ptolemyModelResource,
-    		final DocumentRoot ptolemyModel, final Entity kaomModel) {
-    	
-    	unknownFeatures.putAll(ptolemyModelResource.getEObjectToExtensionMap());
-    	this.ptolemyModel = ptolemyModel;
-    	this.kaomModel = kaomModel;
+            final DocumentRoot ptolemyModel, final Entity kaomModel) {
+        
+        unknownFeatures.putAll(ptolemyModelResource.getEObjectToExtensionMap());
+        this.ptolemyModel = ptolemyModel;
+        this.kaomModel = kaomModel;
     }
     
     
@@ -219,7 +219,7 @@ public class PtolemyAnnotationHandler {
      * Starts converting annotations and attaching them to the entity they are probably annotating.
      */
     public void handleAnnotations() {
-    	traverseModelTree(kaomModel);
+        traverseModelTree(kaomModel);
     }
     
     
@@ -385,7 +385,7 @@ public class PtolemyAnnotationHandler {
             // one of the following three representations:
             //   "[140.0, 20.0]"     "{140.0, 20.0}"     "140.0, 20.0"
             String locationString = ((TypedStringAnnotation) locationAnnotation).getValue();
-            String[] locationArray = locationString.split("[\\s,\\[\\]{}]+");
+            String[] locationArray = locationString.split("[\\s,\\[\\]{}]+"); //$NON-NLS-1$
             
             // There must be two or three components: an optional empty first string,
             // (occurs with the first two representations outlined above) and the x

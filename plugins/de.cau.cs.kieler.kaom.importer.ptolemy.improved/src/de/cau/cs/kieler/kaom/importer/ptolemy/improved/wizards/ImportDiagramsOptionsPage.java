@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2011 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -53,7 +53,7 @@ public class ImportDiagramsOptionsPage extends WizardPage {
      * Key of the advanced annotations handling option.
      */
     private static final String SETT_OPT_ADV_ANNOTATIONS =
-		PAGE_NAME + ".options.advancedAnnotations"; // $NON_NLS-1$
+        PAGE_NAME + ".options.advancedAnnotations"; //$NON-NLS-1$
     
     /**
      * Key of the initialize KAOD files setting.
@@ -109,7 +109,7 @@ public class ImportDiagramsOptionsPage extends WizardPage {
      *         {@code false} otherwise.
      */
     public boolean isAdvancedAnnotationsHandling() {
-    	return optAdvancedAnnotationsButton.getSelection();
+        return optAdvancedAnnotationsButton.getSelection();
     }
     
     /**
@@ -207,11 +207,13 @@ public class ImportDiagramsOptionsPage extends WizardPage {
         
         // Opt Advanced Annotations Button
         optAdvancedAnnotationsButton = new Button(optGroup, SWT.CHECK);
-        optAdvancedAnnotationsButton.setText("Advanced annotations handling");
-        optAdvancedAnnotationsButton.setToolTipText("Use heuristics to import more annotations and attach them to the element they are most likely annotating.");
+        optAdvancedAnnotationsButton.setText(
+                Messages.ImportDiagramsOptionsPage_advancedAnnotationsButton_text);
+        optAdvancedAnnotationsButton.setToolTipText(
+                Messages.ImportDiagramsOptionsPage_advancedAnnotationsButton_toolTip);
         
         optAdvancedAnnotationsButton.setLayoutData(
-        		new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+                new GridData(SWT.FILL, SWT.BEGINNING, true, false));
         
         // Opt Initialize Diagram Files Button
         optInitializeDiagramFilesButton = new Button(optGroup, SWT.CHECK);
@@ -249,7 +251,7 @@ public class ImportDiagramsOptionsPage extends WizardPage {
         sourceWorkspaceButton.setSelection(!sourceFileSystemButton.getSelection());
         
         optAdvancedAnnotationsButton.setSelection(Utils.getSettingBoolean(
-        		settings, SETT_OPT_ADV_ANNOTATIONS, true));
+                settings, SETT_OPT_ADV_ANNOTATIONS, true));
         optInitializeDiagramFilesButton.setSelection(Utils.getSettingBoolean(
                 settings, SETT_OPT_INIT_KAOD, true));
         optOverwriteButton.setSelection(Utils.getSettingBoolean(

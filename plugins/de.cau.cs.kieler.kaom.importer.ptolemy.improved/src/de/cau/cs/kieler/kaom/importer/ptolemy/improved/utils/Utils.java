@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2011 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -109,7 +109,7 @@ public final class Utils {
     public static String getFileExtension(final String fileName) {
         int extensionIndex = fileName.lastIndexOf('.');
         if (extensionIndex <= 0 || extensionIndex == fileName.length() - 1) {
-            return "";
+            return ""; //$NON-NLS-1$
         }
         
         return fileName.substring(extensionIndex + 1);

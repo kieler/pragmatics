@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2011 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -169,11 +169,14 @@ public class DiagramsImporter implements IRunnableWithProgress {
         // Prepare parser feature map. These options avoid searching for DTDs online, which would
         // require an internet connection to load models
         parserFeatures = Maps.newHashMap();
-        parserFeatures.put("http://xml.org/sax/features/validation",
-        		Boolean.FALSE);
-        parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
+        parserFeatures.put(
+                "http://xml.org/sax/features/validation", //$NON-NLS-1$
                 Boolean.FALSE);
-        parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-external-dtd",
+        parserFeatures.put(
+                "http://apache.org/xml/features/nonvalidating/load-dtd-grammar", //$NON-NLS-1$
+                Boolean.FALSE);
+        parserFeatures.put(
+                "http://apache.org/xml/features/nonvalidating/load-external-dtd", //$NON-NLS-1$
                 Boolean.FALSE);
     }
     
@@ -322,7 +325,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
      */
     private void importFiles(final IProgressMonitor monitor) {
         // Calculate the total work to be done (we allocate two slots of work for each file
-    	// to be imported: model import, and diagram initialization)
+        // to be imported: model import, and diagram initialization)
         int totalWork = sourceFiles.size() * 2;
         
         // Begin the main task
@@ -526,11 +529,11 @@ public class DiagramsImporter implements IRunnableWithProgress {
             srcResource = resourceSet.getResource(sourceFileURI, true);
             ptModel = (DocumentRoot) srcResource.getContents().get(0);
         } catch (Exception e) {
-        	throw new CoreException(new Status(
-        			IStatus.ERROR,
-        			PtolemyImportPlugin.PLUGIN_ID,
-        			"Unable to load source model: " + sourceFile.toString(),
-        			e));
+            throw new CoreException(new Status(
+                    IStatus.ERROR,
+                    PtolemyImportPlugin.PLUGIN_ID,
+                    Messages.DiagramsImporter_exception_sourceModelNotLoaded + sourceFile.toString(),
+                    e));
         }
         
         
@@ -541,9 +544,9 @@ public class DiagramsImporter implements IRunnableWithProgress {
         Injector injector = Guice.createInjector();
         
         Ptolemy2KaomTransformation transformation =
-        		injector.getInstance(Ptolemy2KaomTransformation.class);
+                injector.getInstance(Ptolemy2KaomTransformation.class);
         Ptolemy2KaomOptimization optimization =
-        		injector.getInstance(Ptolemy2KaomOptimization.class);
+                injector.getInstance(Ptolemy2KaomOptimization.class);
         
         // Transform and optimize
         Entity kaomModel = transformation.transform(ptModel);
@@ -551,9 +554,9 @@ public class DiagramsImporter implements IRunnableWithProgress {
         
         // Advanced annotation handling, if requested
         if (advancedAnnotationsHandling) {
-        	PtolemyAnnotationHandler annotationHandler = new PtolemyAnnotationHandler(
-        			(XMLResource) srcResource, ptModel, kaomModel);
-        	annotationHandler.handleAnnotations();
+            PtolemyAnnotationHandler annotationHandler = new PtolemyAnnotationHandler(
+                    (XMLResource) srcResource, ptModel, kaomModel);
+            annotationHandler.handleAnnotations();
         }
         
         
@@ -568,11 +571,11 @@ public class DiagramsImporter implements IRunnableWithProgress {
         try {
             dstResource.save(Collections.EMPTY_MAP);
         } catch (Exception e) {
-        	throw new CoreException(new Status(
-        			IStatus.ERROR,
-        			PtolemyImportPlugin.PLUGIN_ID,
-        			"Unable to save destination model: " + targetFile.toString(),
-        			e));
+            throw new CoreException(new Status(
+                    IStatus.ERROR,
+                    PtolemyImportPlugin.PLUGIN_ID,
+                    Messages.DiagramsImporter_exception_destModelNotSaved + targetFile.toString(),
+                    e));
         }
     }
     

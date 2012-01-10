@@ -13,6 +13,6 @@
  */
 
 /**
- * Utility classes for the import of Ptolemy diagrams.
+ * This package contains the classes defining the Import Ptolemy Models wizard.
  */
-package de.cau.cs.kieler.kaom.importer.ptolemy.improved;
+package de.cau.cs.kieler.kaom.importer.ptolemy.improved.wizards;
