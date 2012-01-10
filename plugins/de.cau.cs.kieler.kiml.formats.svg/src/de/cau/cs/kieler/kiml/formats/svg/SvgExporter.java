@@ -13,6 +13,11 @@
  */
 package de.cau.cs.kieler.kiml.formats.svg;
 
+import org.apache.batik.dom.GenericDOMImplementation;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
@@ -22,20 +27,31 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationData;
  *
  * @author msp
  */
-public class SvgExporter implements IGraphTransformer<KNode, String> {
+public class SvgExporter implements IGraphTransformer<KNode, SVGGraphics2D> {
 
+    /** namespace of the SVG format. */
+    private static final String SVG_NAMESPACE = "http://www.w3.org/2000/svg";
+    
     /**
      * {@inheritDoc}
      */
-    public void transform(TransformationData<KNode, String> data) {
-        // TODO Auto-generated method stub
+    public void transform(TransformationData<KNode, SVGGraphics2D> data) {
+        // create a DOM document for XML output
+        DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
+        Document document = domImpl.createDocument(SVG_NAMESPACE, "svg", null);
         
+        // create an instance of the SVG generator
+        SVGGraphics2D graphics = new SVGGraphics2D(document);
+        data.getTargetGraphs().add(graphics);
+        
+        // draw SVG graphics
+        graphics.fillRect(50, 50, 200, 100);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void transferLayout(TransformationData<KNode, String> data) {
+    public void transferLayout(TransformationData<KNode, SVGGraphics2D> data) {
         throw new UnsupportedOperationException("SVG layout transfer is not supported.");
     }
 

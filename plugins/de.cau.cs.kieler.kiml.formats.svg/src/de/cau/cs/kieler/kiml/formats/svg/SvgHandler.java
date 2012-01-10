@@ -13,45 +13,58 @@
  */
 package de.cau.cs.kieler.kiml.formats.svg;
 
+import java.io.StringWriter;
+
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.batik.svggen.SVGGraphics2DIOException;
+
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
+import de.cau.cs.kieler.kiml.service.formats.TransformationException;
 
 /**
  * Transformation handler for SVG format.
  *
  * @author msp
  */
-public class SvgHandler implements ITransformationHandler<String> {
+public class SvgHandler implements ITransformationHandler<SVGGraphics2D> {
 
     /**
      * {@inheritDoc}
      */
-    public void deserialize(String serializedGraph, TransformationData<String, KNode> transData) {
+    public void deserialize(String serializedGraph, TransformationData<SVGGraphics2D, KNode> transData) {
         throw new UnsupportedOperationException("SVG parsing is not supported.");
     }
 
     /**
      * {@inheritDoc}
      */
-    public String serialize(String graph) {
-        return graph;
+    public String serialize(SVGGraphics2D graphics) {
+        StringWriter writer = new StringWriter();
+        try {
+            graphics.stream(writer, true);
+        } catch (SVGGraphics2DIOException e) {
+            throw new TransformationException(e);
+        }
+        return writer.toString();
     }
 
     /**
      * {@inheritDoc}
      */
-    public IGraphTransformer<String, KNode> getImporter() {
+    public IGraphTransformer<SVGGraphics2D, KNode> getImporter() {
         throw new UnsupportedOperationException("SVG import is not supported.");
     }
+    
+    private SvgExporter exporter = new SvgExporter();
 
     /**
      * {@inheritDoc}
      */
-    public IGraphTransformer<KNode, String> getExporter() {
-        // TODO Auto-generated method stub
-        return null;
+    public IGraphTransformer<KNode, SVGGraphics2D> getExporter() {
+        return exporter;
     }
 
 }
