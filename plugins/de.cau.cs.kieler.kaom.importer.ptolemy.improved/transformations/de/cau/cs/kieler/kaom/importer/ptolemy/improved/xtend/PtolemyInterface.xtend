@@ -16,8 +16,12 @@ package de.cau.cs.kieler.kaom.importer.ptolemy.improved.xtend
 
 import com.google.inject.Inject
 import java.util.ArrayList
+import java.util.HashMap
 import java.util.List
 import org.eclipse.emf.ecore.EObject
+import org.eclipse.core.runtime.CoreException
+import org.eclipse.core.runtime.IStatus
+import org.eclipse.core.runtime.Status
 import org.ptolemy.moml.ClassType
 import org.ptolemy.moml.EntityType
 import ptolemy.actor.IOPort
@@ -34,6 +38,8 @@ import de.cau.cs.kieler.core.annotations.Annotatable
 import de.cau.cs.kieler.core.annotations.AnnotationsFactory
 import de.cau.cs.kieler.kaom.KaomFactory
 import de.cau.cs.kieler.kaom.Port
+import de.cau.cs.kieler.kaom.importer.ptolemy.improved.Messages
+import de.cau.cs.kieler.kaom.importer.ptolemy.improved.PtolemyImportPlugin
 
 
 /**
@@ -50,6 +56,12 @@ class PtolemyInterface {
      */
     @Inject extension TransformationUtils
     
+    /**
+     * A cache mapping qualified class names of Ptolemy actors to their actual instances. If an actor
+     * was already instantiated, there's no need to instantiate it again since that's quite a
+     */
+    HashMap<String, Entity> entityCache = new HashMap<String, Entity>()
+    
     
     /**
      * Tries to instantiate the given entity to return a list of its ports. The entity must either be
@@ -58,19 +70,15 @@ class PtolemyInterface {
      * 
      * @param entity description of the entity.
      * @return list of ports which will be empty if the entity could not be instantiated.
+     * @throws Exception if the instantiation fails.
      */
 	def List<Port> getPortsFromImplementation(EObject entity) {
 	    // Create an empty list of ports which we'll add to
 	    val result = new ArrayList<Port>()
 	    
-	    // Try to instantiate the actor
+	    // Try to instantiate the actor (this is where an exception might be thrown)
 	    var Entity actor = null
-	    
-	    try {
-	        actor = instantiatePtolemyEntity(entity)
-	    } catch (Exception e) {
-	        // Nothing to be done here
-	    }
+        actor = instantiatePtolemyEntity(entity)
 	    
 	    // Add its ports
 	    if (actor != null) {
@@ -147,29 +155,60 @@ class PtolemyInterface {
      * Tries to instantiate the entity referenced by the given entity type.
      * 
      * @param ptEntity entity type describing the entity to instantiate.
+     * @throws Exception if the instantiation fails.
      */
     def private dispatch Entity instantiatePtolemyEntity(EntityType ptEntity) {
-        val className = ptEntity.class1;
-        
-        if (className.equals("ptolemy.domains.modal.kernel.State")) {
-            instantiatePtolemyState(className, ptEntity.name)
-        } else {
-            instantiatePtolemyActor(className, ptEntity.name)
-        }
+        instantiatePtolemyEntityWithCache(ptEntity.class1, ptEntity.name)
     }
     
     /**
      * Tries to instantiate the entity referenced by the given class type.
      * 
      * @param ptClass class type describing the entity to instantiate.
+     * @throws Exception if the instantiation fails.
      */
     def private dispatch Entity instantiatePtolemyEntity(ClassType ptClass) {
-        val className = ptClass.^extends
+        instantiatePtolemyEntityWithCache(ptClass.^extends, ptClass.name)
+    }
+    
+    /**
+     * Instantiates the Ptolemy actor with the given class name. The entity name doesn't matter, but
+     * makes errors make more sense.
+     * 
+     * @param className the fully qualified class name of the actor to instantiate.
+     * @param entityName the actor's name in the model. Useful for error messages.
+     * @return the instantiated entity.
+     * @throws CoreException if the actor couldn't be instantiated.
+     */
+    def private Entity instantiatePtolemyEntityWithCache(String className, String entityName) {
+        val cachedEntity = entityCache.get(className)
         
-        if (className.equals("ptolemy.domains.modal.kernel.State")) {
-            instantiatePtolemyState(className, ptClass.name)
+        if (cachedEntity == null) {
+            // The entity is not already in the cache, so try to instantiate it
+            try {
+                if (className.equals("ptolemy.domains.modal.kernel.State")) {
+                    val entity = instantiatePtolemyState(className, entityName)
+                    entityCache.put(className, entity)
+                    return entity
+                } else {
+                    val entity = instantiatePtolemyActor(className, entityName)
+                    entityCache.put(className, entity)
+                    return entity
+                }
+            } catch (Exception e) {
+                // An exception occurred: wrap it
+                throw new CoreException(new Status(
+                    IStatus::WARNING,
+                    PtolemyImportPlugin::PLUGIN_ID,
+                    Messages::PtolemyTransformation_exception_actorInstantiationFailed
+                        .replace("%1", entityName)
+                        .replace("%2", className),
+                    e
+                ))
+            }
         } else {
-            instantiatePtolemyActor(className, ptClass.name)
+            // The entity is already in the cache, so just return that
+            cachedEntity
         }
     }
     
@@ -181,9 +220,9 @@ class PtolemyInterface {
      *                   influence on the functionality, but results in more readable error messages if
      *                   anything goes wrong.
      * @return the instantiated actor.
-     * @throws Exception may throw different exceptions during parsing.
+     * @throws Exception if the instantiation fails.
      */
-    def private Entity instantiatePtolemyActor(String className, String entityName) throws Exception {
+    def private Entity instantiatePtolemyActor(String className, String entityName) {
         // Get our hands at Ptolemy's internal MoML parser
         MoMLParser::setMoMLFilters(BackwardCompatibility::allFilters())
         val parser = new MoMLParser()
@@ -209,9 +248,9 @@ class PtolemyInterface {
      *                   influence on the functionality, but results in more readable error messages if
      *                   anything goes wrong.
      * @return the instantiated actor.
-     * @throws Exception may throw different exceptions during parsing.
+     * @throws Exception if the instantiation fails.
      */
-    def private Entity instantiatePtolemyState(String className, String entityName) throws Exception {
+    def private Entity instantiatePtolemyState(String className, String entityName) {
         // Get our hands at Ptolemy's internal MoML parser
         MoMLParser::setMoMLFilters(BackwardCompatibility::allFilters())
         val parser = new MoMLParser()

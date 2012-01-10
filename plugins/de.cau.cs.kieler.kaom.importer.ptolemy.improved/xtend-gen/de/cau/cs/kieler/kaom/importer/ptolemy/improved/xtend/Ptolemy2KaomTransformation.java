@@ -11,16 +11,23 @@ import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Linkable;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.Relation;
+import de.cau.cs.kieler.kaom.importer.ptolemy.improved.Messages;
+import de.cau.cs.kieler.kaom.importer.ptolemy.improved.PtolemyImportPlugin;
 import de.cau.cs.kieler.kaom.importer.ptolemy.improved.xtend.PtolemyInterface;
 import de.cau.cs.kieler.kaom.importer.ptolemy.improved.xtend.TransformationUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.xbase.lib.BooleanExtensions;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
+import org.eclipse.xtext.xbase.lib.Exceptions;
+import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IntegerExtensions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
@@ -67,6 +74,17 @@ public class Ptolemy2KaomTransformation {
    */
   @Inject
   private PtolemyInterface ptolemy;
+  
+  /**
+   * List of warnings collected during the transformation. These will usually only be warnings about
+   * actors that couldn't be instantiated.
+   */
+  private ArrayList<IStatus> warnings = new Function0<ArrayList<IStatus>>() {
+    public ArrayList<IStatus> apply() {
+      ArrayList<IStatus> _arrayList = new ArrayList<IStatus>();
+      return _arrayList;
+    }
+  }.apply();
   
   /**
    * Entry point for the whole transformation business. Takes a Ptolemy MOML document's
@@ -256,80 +274,86 @@ public class Ptolemy2KaomTransformation {
   private final HashMap<ArrayList<?>,Link> _createCache_transform_4 = CollectionLiterals.newHashMap();
   
   private void _init_transform(final Link result, final LinkType ptLink, final Entity kaomParent) {
-      EList<Relation> _childRelations = kaomParent.getChildRelations();
-      final Function1<Relation,Boolean> _function = new Function1<Relation,Boolean>() {
-          public Boolean apply(final Relation r) {
-            String _name = r.getName();
-            String _relation = ptLink.getRelation();
-            boolean _equals = _name.equals(_relation);
-            return Boolean.valueOf(_equals);
-          }
-        };
-      Relation _findFirst = IterableExtensions.<Relation>findFirst(_childRelations, _function);
-      final Relation relation = _findFirst;
-      EList<Relation> _childRelations_1 = kaomParent.getChildRelations();
-      final Function1<Relation,Boolean> _function_1 = new Function1<Relation,Boolean>() {
-          public Boolean apply(final Relation r) {
-            String _name = r.getName();
-            String _relation1 = ptLink.getRelation1();
-            boolean _equals = _name.equals(_relation1);
-            return Boolean.valueOf(_equals);
-          }
-        };
-      Relation _findFirst_1 = IterableExtensions.<Relation>findFirst(_childRelations_1, _function_1);
-      final Relation relation1 = _findFirst_1;
-      EList<Relation> _childRelations_2 = kaomParent.getChildRelations();
-      final Function1<Relation,Boolean> _function_2 = new Function1<Relation,Boolean>() {
-          public Boolean apply(final Relation r) {
-            String _name = r.getName();
-            String _relation2 = ptLink.getRelation2();
-            boolean _equals = _name.equals(_relation2);
-            return Boolean.valueOf(_equals);
-          }
-        };
-      Relation _findFirst_2 = IterableExtensions.<Relation>findFirst(_childRelations_2, _function_2);
-      final Relation relation2 = _findFirst_2;
-      Port _xifexpression = null;
-      String _port = ptLink.getPort();
-      boolean _operator_equals = ObjectExtensions.operator_equals(_port, null);
-      if (_operator_equals) {
-        _xifexpression = null;
-      } else {
-        String _port_1 = ptLink.getPort();
-        Port _orCreatePortByName = this.getOrCreatePortByName(kaomParent, _port_1);
-        _xifexpression = _orCreatePortByName;
-      }
-      final Port port = _xifexpression;
-      ArrayList<Linkable> _arrayList = new ArrayList<Linkable>();
-      final ArrayList<Linkable> endpoints = _arrayList;
-      this._transformationUtils.addStringAnnotation(result, "language", "ptolemy");
-      boolean _operator_notEquals = ObjectExtensions.operator_notEquals(relation, null);
-      if (_operator_notEquals) {
-        endpoints.add(relation);
-      }
-      boolean _operator_notEquals_1 = ObjectExtensions.operator_notEquals(relation1, null);
-      if (_operator_notEquals_1) {
-        endpoints.add(relation1);
-      }
-      boolean _operator_notEquals_2 = ObjectExtensions.operator_notEquals(relation2, null);
-      if (_operator_notEquals_2) {
-        endpoints.add(relation2);
-      }
-      boolean _operator_notEquals_3 = ObjectExtensions.operator_notEquals(port, null);
-      if (_operator_notEquals_3) {
-        endpoints.add(port);
-      }
-      int _size = endpoints.size();
-      boolean _operator_equals_1 = IntegerExtensions.operator_equals(_size, 2);
-      if (_operator_equals_1) {
-        {
-          Linkable _get = endpoints.get(0);
-          result.setSource(_get);
-          Linkable _get_1 = endpoints.get(1);
-          result.setTarget(_get_1);
+    try {
+      {
+        EList<Relation> _childRelations = kaomParent.getChildRelations();
+        final Function1<Relation,Boolean> _function = new Function1<Relation,Boolean>() {
+            public Boolean apply(final Relation r) {
+              String _name = r.getName();
+              String _relation = ptLink.getRelation();
+              boolean _equals = _name.equals(_relation);
+              return Boolean.valueOf(_equals);
+            }
+          };
+        Relation _findFirst = IterableExtensions.<Relation>findFirst(_childRelations, _function);
+        final Relation relation = _findFirst;
+        EList<Relation> _childRelations_1 = kaomParent.getChildRelations();
+        final Function1<Relation,Boolean> _function_1 = new Function1<Relation,Boolean>() {
+            public Boolean apply(final Relation r) {
+              String _name = r.getName();
+              String _relation1 = ptLink.getRelation1();
+              boolean _equals = _name.equals(_relation1);
+              return Boolean.valueOf(_equals);
+            }
+          };
+        Relation _findFirst_1 = IterableExtensions.<Relation>findFirst(_childRelations_1, _function_1);
+        final Relation relation1 = _findFirst_1;
+        EList<Relation> _childRelations_2 = kaomParent.getChildRelations();
+        final Function1<Relation,Boolean> _function_2 = new Function1<Relation,Boolean>() {
+            public Boolean apply(final Relation r) {
+              String _name = r.getName();
+              String _relation2 = ptLink.getRelation2();
+              boolean _equals = _name.equals(_relation2);
+              return Boolean.valueOf(_equals);
+            }
+          };
+        Relation _findFirst_2 = IterableExtensions.<Relation>findFirst(_childRelations_2, _function_2);
+        final Relation relation2 = _findFirst_2;
+        Port _xifexpression = null;
+        String _port = ptLink.getPort();
+        boolean _operator_equals = ObjectExtensions.operator_equals(_port, null);
+        if (_operator_equals) {
+          _xifexpression = null;
+        } else {
+          String _port_1 = ptLink.getPort();
+          Port _orCreatePortByName = this.getOrCreatePortByName(kaomParent, _port_1);
+          _xifexpression = _orCreatePortByName;
         }
+        final Port port = _xifexpression;
+        ArrayList<Linkable> _arrayList = new ArrayList<Linkable>();
+        final ArrayList<Linkable> endpoints = _arrayList;
+        this._transformationUtils.addStringAnnotation(result, "language", "ptolemy");
+        boolean _operator_notEquals = ObjectExtensions.operator_notEquals(relation, null);
+        if (_operator_notEquals) {
+          endpoints.add(relation);
+        }
+        boolean _operator_notEquals_1 = ObjectExtensions.operator_notEquals(relation1, null);
+        if (_operator_notEquals_1) {
+          endpoints.add(relation1);
+        }
+        boolean _operator_notEquals_2 = ObjectExtensions.operator_notEquals(relation2, null);
+        if (_operator_notEquals_2) {
+          endpoints.add(relation2);
+        }
+        boolean _operator_notEquals_3 = ObjectExtensions.operator_notEquals(port, null);
+        if (_operator_notEquals_3) {
+          endpoints.add(port);
+        }
+        int _size = endpoints.size();
+        boolean _operator_equals_1 = IntegerExtensions.operator_equals(_size, 2);
+        if (_operator_equals_1) {
+          {
+            Linkable _get = endpoints.get(0);
+            result.setSource(_get);
+            Linkable _get_1 = endpoints.get(1);
+            result.setTarget(_get_1);
+          }
+        }
+        this._transformationUtils.markAsUndirected(result, true);
       }
-      this._transformationUtils.markAsUndirected(result, true);
+    } catch (Exception _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
   }
   
   /**
@@ -383,8 +407,10 @@ public class Ptolemy2KaomTransformation {
    * @param kaomParent the entity to look for ports and actors in.
    * @param name the name of the port to find or create.
    * @return the port.
+   * @throws CoreException if the port name does not follow the expected format, or if the referenced
+   *                       actor could not be found.
    */
-  private Port getOrCreatePortByName(final Entity kaomParent, final String name) {
+  private Port getOrCreatePortByName(final Entity kaomParent, final String name) throws CoreException {
     Port _xblockexpression = null;
     {
       String[] _split = name.split("\\.");
@@ -401,6 +427,10 @@ public class Ptolemy2KaomTransformation {
         _operator_or = BooleanExtensions.operator_or(_operator_lessThan, _operator_greaterThan);
       }
       if (_operator_or) {
+        String _replace = Messages.PtolemyTransformation_exception_malformedPortName.replace("%1", name);
+        Status _status = new Status(IStatus.ERROR, PtolemyImportPlugin.PLUGIN_ID, _replace, null);
+        CoreException _coreException = new CoreException(_status);
+        throw _coreException;
       }
       Entity _switchResult = null;
       int _size_2 = nameParts.size();
@@ -431,6 +461,10 @@ public class Ptolemy2KaomTransformation {
       final Entity actor = _switchResult;
       boolean _operator_equals = ObjectExtensions.operator_equals(actor, null);
       if (_operator_equals) {
+        String _replace_1 = Messages.PtolemyTransformation_exception_portReferencesUnknownActor.replace("%1", name);
+        Status _status_1 = new Status(IStatus.ERROR, PtolemyImportPlugin.PLUGIN_ID, _replace_1, null);
+        CoreException _coreException_1 = new CoreException(_status_1);
+        throw _coreException_1;
       }
       int _size_3 = nameParts.size();
       int _operator_minus = IntegerExtensions.operator_minus(_size_3, 1);
@@ -565,8 +599,20 @@ public class Ptolemy2KaomTransformation {
    * @param entityOrClass the entity or class that was transformed into the KAOM entity.
    */
   private void addChildPorts(final Entity kaomEntity, final EObject entityOrClass) {
-      List<Port> _portsFromImplementation = this.ptolemy.getPortsFromImplementation(entityOrClass);
-      final List<Port> ports = _portsFromImplementation;
+      ArrayList<Port> _arrayList = new ArrayList<Port>();
+      final ArrayList<Port> ports = _arrayList;
+      try {
+        this.ptolemy.getPortsFromImplementation(entityOrClass);
+      } catch (final Throwable _t) {
+        if (_t instanceof Exception) {
+          final Exception e = (Exception)_t;
+          String _message = e.getMessage();
+          Status _status = new Status(IStatus.WARNING, PtolemyImportPlugin.PLUGIN_ID, _message, e);
+          this.warnings.add(_status);
+        } else {
+          throw Exceptions.sneakyThrow(_t);
+        }
+      }
       List<Port> _xifexpression = null;
       if ((entityOrClass instanceof EntityType)) {
         EList<PortType> _port = ((EntityType) entityOrClass).getPort();
@@ -618,5 +664,12 @@ public class Ptolemy2KaomTransformation {
       }
       EList<Port> _childPorts = kaomEntity.getChildPorts();
       _childPorts.addAll(ports);
+  }
+  
+  /**
+   * Returns the list of warnings produced by the transformation.
+   */
+  public List<IStatus> getWarnings() {
+    return this.warnings;
   }
 }

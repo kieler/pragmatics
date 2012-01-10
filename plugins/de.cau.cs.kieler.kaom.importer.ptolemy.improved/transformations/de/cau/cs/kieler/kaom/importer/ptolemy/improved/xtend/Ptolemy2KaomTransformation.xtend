@@ -17,6 +17,9 @@ package de.cau.cs.kieler.kaom.importer.ptolemy.improved.xtend
 import com.google.inject.Inject
 import java.util.ArrayList
 import java.util.List
+import org.eclipse.core.runtime.CoreException
+import org.eclipse.core.runtime.IStatus
+import org.eclipse.core.runtime.Status
 import org.eclipse.emf.ecore.EObject
 import org.ptolemy.moml.ClassType
 import org.ptolemy.moml.DocumentRoot
@@ -33,6 +36,8 @@ import de.cau.cs.kieler.kaom.Entity
 import de.cau.cs.kieler.kaom.KaomFactory
 import de.cau.cs.kieler.kaom.Linkable
 import de.cau.cs.kieler.kaom.Port
+import de.cau.cs.kieler.kaom.importer.ptolemy.improved.Messages
+import de.cau.cs.kieler.kaom.importer.ptolemy.improved.PtolemyImportPlugin
 
 
 /**
@@ -66,6 +71,12 @@ class Ptolemy2KaomTransformation {
      * Interface to the Ptolemy library.
      */
     @Inject PtolemyInterface ptolemy
+    
+    /**
+     * List of warnings collected during the transformation. These will usually only be warnings about
+     * actors that couldn't be instantiated.
+     */
+    ArrayList<IStatus> warnings = new ArrayList<IStatus>()
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -254,14 +265,21 @@ class Ptolemy2KaomTransformation {
      * @param kaomParent the entity to look for ports and actors in.
      * @param name the name of the port to find or create.
      * @return the port.
+     * @throws CoreException if the port name does not follow the expected format, or if the referenced
+     *                       actor could not be found.
      */
-    def private Port getOrCreatePortByName(Entity kaomParent, String name) {
+    def private Port getOrCreatePortByName(Entity kaomParent, String name) throws CoreException {
         // Split the name into its two parts
         val nameParts = newArrayList(name.split("\\."))
         
         // Check if nameParts has the correct size (1 or 2)
         if (nameParts.size() < 1 || nameParts.size() > 2) {
-            // TODO: Raise hell
+            throw new CoreException(new Status(
+                IStatus::ERROR,
+                PtolemyImportPlugin::PLUGIN_ID,
+                Messages::PtolemyTransformation_exception_malformedPortName.replace("%1", name),
+                null
+            ))
         }
         
         // Find the actor
@@ -277,7 +295,12 @@ class Ptolemy2KaomTransformation {
         
         // If the actor is null, raise an error!
         if (actor == null) {
-            // TODO: Raise the error!
+            throw new CoreException(new Status(
+                IStatus::ERROR,
+                PtolemyImportPlugin::PLUGIN_ID,
+                Messages::PtolemyTransformation_exception_portReferencesUnknownActor.replace("%1", name),
+                null
+            ))
         }
         
         // Find the port
@@ -398,7 +421,17 @@ class Ptolemy2KaomTransformation {
      */
     def private void addChildPorts(Entity kaomEntity, EObject entityOrClass) {
         // Get the list of ports defined by the entity's Java implementation, if any
-        val ports = ptolemy.getPortsFromImplementation(entityOrClass)
+        val ports = new ArrayList<Port>()
+        
+        try {
+            ptolemy.getPortsFromImplementation(entityOrClass)
+        } catch (Exception e) {
+            warnings.add(new Status(
+                IStatus::WARNING,
+                PtolemyImportPlugin::PLUGIN_ID,
+                e.message,
+                e))
+        }
         
         // Get the list of ports explicitly defined in the model
         val modelPorts =
@@ -424,5 +457,16 @@ class Ptolemy2KaomTransformation {
         
         // Add all of these ports to the kaom entity
         kaomEntity.childPorts.addAll(ports)
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Return Warnings
+    
+    /**
+     * Returns the list of warnings produced by the transformation.
+     */
+    def List<IStatus> getWarnings() {
+        warnings
     }
 }

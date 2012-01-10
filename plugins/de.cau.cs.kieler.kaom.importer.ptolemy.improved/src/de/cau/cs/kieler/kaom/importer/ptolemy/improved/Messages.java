@@ -30,10 +30,8 @@ public final class Messages extends NLS {
         "de.cau.cs.kieler.kaom.importer.ptolemy.improved.messages"; //$NON-NLS-1$
     
     public static String DiagramsImporter_exception_destModelNotSaved;
-
     public static String DiagramsImporter_exception_possibleErrors;
     public static String DiagramsImporter_exception_projectNotExistant;
-
     public static String DiagramsImporter_exception_sourceModelNotLoaded;
     public static String DiagramsImporter_exception_temporaryFileCreationFailed;
     public static String DiagramsImporter_message_filesExist_prefix;
@@ -45,11 +43,11 @@ public final class Messages extends NLS {
     public static String DiagramsImporter_task_importingDiagrams;
     public static String DiagramsImporter_task_importingModels;
     public static String DiagramsImporter_title_filesExist;
+    
     public static String ImportDiagramsFileSystemSourcesPage_message;
+    
     public static String ImportDiagramsOptionsPage_advancedAnnotationsButton_text;
-
     public static String ImportDiagramsOptionsPage_advancedAnnotationsButton_toolTip;
-
     public static String ImportDiagramsOptionsPage_fileSystemButton_text;
     public static String ImportDiagramsOptionsPage_fileSystemButton_toolTip;
     public static String ImportDiagramsOptionsPage_initializeDiagramFilesButton_text;
@@ -62,13 +60,18 @@ public final class Messages extends NLS {
     public static String ImportDiagramsOptionsPage_title;
     public static String ImportDiagramsOptionsPage_workspaceButton_text;
     public static String ImportDiagramsOptionsPage_workspaceButton_toolTip;
+    
     public static String ImportDiagramsWizard_exceptions_fileListError;
     public static String ImportDiagramsWizard_exceptions_importErrors;
     public static String ImportDiagramsWizard_exceptions_importWarnings;
     public static String ImportDiagramsWizard_exceptions_modelImportError;
     public static String ImportDiagramsWizard_title;
+    
     public static String ImportDiagramsWorkspaceSourcesPage_message;
-    public static String PtolemyHelper_exception_entityInstantiationFailed;
+    
+    public static String PtolemyTransformation_exception_actorInstantiationFailed;
+    public static String PtolemyTransformation_exception_malformedPortName;
+    public static String PtolemyTransformation_exception_portReferencesUnknownActor;
     
     static {
         // initialize resource bundle

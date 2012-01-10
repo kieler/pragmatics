@@ -549,8 +549,18 @@ public class DiagramsImporter implements IRunnableWithProgress {
                 injector.getInstance(Ptolemy2KaomOptimization.class);
         
         // Transform and optimize
-        Entity kaomModel = transformation.transform(ptModel);
-        optimization.optimize(kaomModel);
+        Entity kaomModel = null;
+        
+        try {
+            kaomModel = transformation.transform(ptModel);
+            optimization.optimize(kaomModel);
+        } catch (Exception e) {
+            throw new CoreException(new Status(
+                    IStatus.ERROR,
+                    PtolemyImportPlugin.PLUGIN_ID,
+                    "Model transformation failed: " + e.getMessage(),
+                    e));
+        }
         
         // Advanced annotation handling, if requested
         if (advancedAnnotationsHandling) {
@@ -576,6 +586,17 @@ public class DiagramsImporter implements IRunnableWithProgress {
                     PtolemyImportPlugin.PLUGIN_ID,
                     Messages.DiagramsImporter_exception_destModelNotSaved + targetFile.toString(),
                     e));
+        }
+        
+        
+        // Check if the transformation produced any warnings
+        if (!transformation.getWarnings().isEmpty()) {
+            throw new CoreException(new MultiStatus(
+                    PtolemyImportPlugin.PLUGIN_ID,
+                    IStatus.WARNING,
+                    transformation.getWarnings().toArray(new IStatus[0]),
+                    Messages.DiagramsImporter_exception_possibleErrors + sourceFile.getName(),
+                    null));
         }
     }
     
