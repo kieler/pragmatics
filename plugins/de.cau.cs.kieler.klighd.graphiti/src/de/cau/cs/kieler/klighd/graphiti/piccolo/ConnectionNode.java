@@ -30,8 +30,8 @@ import de.cau.cs.kieler.klighd.piccolo.graph.IGraphEdge;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphNode;
 import de.cau.cs.kieler.klighd.piccolo.graph.IGraphPort;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PChildRepresentedNode;
+import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath;
 import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolox.swt.PSWTPath;
 
 /**
  * A Piccolo node wrapping a Pictogram connection.
@@ -47,7 +47,7 @@ public class ConnectionNode extends PChildRepresentedNode implements IPictogramN
     private AnchorNode sourceAnchor;
     private AnchorNode targetAnchor;
 
-    private PSWTPath polyline = null;
+    private PSWTAdvancedPath polyline = null;
 
     private float[] xps;
     private float[] yps;
@@ -128,7 +128,7 @@ public class ConnectionNode extends PChildRepresentedNode implements IPictogramN
      * @param p
      *            the polyline
      */
-    public void setPolyline(final PSWTPath p) {
+    public void setPolyline(final PSWTAdvancedPath p) {
         // add as child node and set as representation
         addChild(p);
         setRepresentationNode(p);
@@ -155,9 +155,8 @@ public class ConnectionNode extends PChildRepresentedNode implements IPictogramN
         if (xps.length > 2) {
             // if bend points are present use them to determine anchor positions
             source = getSourceAnchor().getAnchorPoint(new Point2D.Double(xps[1], yps[1]));
-            target =
-                    getTargetAnchor().getAnchorPoint(
-                            new Point2D.Double(xps[xps.length - 2], yps[yps.length - 2]));
+            target = getTargetAnchor().getAnchorPoint(
+                    new Point2D.Double(xps[xps.length - 2], yps[yps.length - 2]));
         } else {
             // if no bend points are present use the center points of the connected nodes
             Point2D reference;
@@ -221,24 +220,24 @@ public class ConnectionNode extends PChildRepresentedNode implements IPictogramN
             decoration.updateDecoration(xps, yps);
         }
     }
-    
-//    private void correctSourceAnchor() {
-//        Point2D anchorPoint = sourceAnchor.getAnchorPoint(new Point2D.Double(xps[0], yps[0]));
-//        if (anchorPoint != null) {
-//            xps[0] = (float) anchorPoint.getX();
-//            yps[0] = (float) anchorPoint.getY();
-//        }
-//    }
-//
-//    private void correctTargetAnchor() {
-//        Point2D anchorPoint =
-//                targetAnchor.getAnchorPoint(new Point2D.Double(xps[xps.length - 1],
-//                        yps[yps.length - 1]));
-//        if (anchorPoint != null) {
-//            xps[xps.length - 1] = (float) anchorPoint.getX();
-//            yps[yps.length - 1] = (float) anchorPoint.getY();
-//        }
-//    }
+
+    // private void correctSourceAnchor() {
+    // Point2D anchorPoint = sourceAnchor.getAnchorPoint(new Point2D.Double(xps[0], yps[0]));
+    // if (anchorPoint != null) {
+    // xps[0] = (float) anchorPoint.getX();
+    // yps[0] = (float) anchorPoint.getY();
+    // }
+    // }
+    //
+    // private void correctTargetAnchor() {
+    // Point2D anchorPoint =
+    // targetAnchor.getAnchorPoint(new Point2D.Double(xps[xps.length - 1],
+    // yps[yps.length - 1]));
+    // if (anchorPoint != null) {
+    // xps[xps.length - 1] = (float) anchorPoint.getX();
+    // yps[yps.length - 1] = (float) anchorPoint.getY();
+    // }
+    // }
 
     // Implementation of the ...kligh.piccolo.graph interfaces
 
@@ -301,9 +300,9 @@ public class ConnectionNode extends PChildRepresentedNode implements IPictogramN
             xps[i] = (float) bend.getX();
             yps[i] = (float) bend.getY();
         }
-//        // update anchor points
-//        correctSourceAnchor();
-//        correctTargetAnchor();
+        // // update anchor points
+        // correctSourceAnchor();
+        // correctTargetAnchor();
         // update the polyline to reflect the changes
         updatePolyline();
     }

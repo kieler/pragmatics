@@ -43,14 +43,13 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FreeFormConnection;
 import org.eclipse.graphiti.mm.pictograms.ManhattanConnection;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.mm.pictograms.util.PictogramsSwitch;
 
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.klighd.piccolo.PiccoloDiagramContext;
+import de.cau.cs.kieler.klighd.TransformationContext;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode.HAlignment;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode.VAlignment;
@@ -65,18 +64,20 @@ import edu.umd.cs.piccolox.swt.PSWTText;
 /**
  * A transformation from a Graphiti Pictogram model to a Piccolo diagram context.
  * 
+ * NOT FUNCTIONAL ANYMORE (PICCOLO DIAGRAM CONTEXT REMOVED)
+ * 
  * @author mri
  */
 public class Pictogram2PNodeTransformation extends
-        AbstractTransformation<Diagram, PiccoloDiagramContext> {
-    
+        AbstractTransformation<Diagram, PNode /* PiccoloDiagramContext */> {
+
     /** the identifier for this transformation as specified in the extension. */
     public static final String ID = "de.cau.cs.kieler.klighd.graphiti.pictogram2PNodeTransformation";
 
     /** the property for the element mapping. */
-    private static final IProperty<Map<GraphicsAlgorithmContainer, PNode>> MAPPING_PROPERTY =
-            new de.cau.cs.kieler.core.properties.Property<Map<GraphicsAlgorithmContainer, PNode>>(
-                    "klighd.graphiti.mapping", new HashMap<GraphicsAlgorithmContainer, PNode>());
+    private static final IProperty<Map<GraphicsAlgorithmContainer, PNode>> MAPPING_PROPERTY
+        = new de.cau.cs.kieler.core.properties.Property<Map<GraphicsAlgorithmContainer, PNode>>(
+            "klighd.graphiti.mapping", new HashMap<GraphicsAlgorithmContainer, PNode>());
 
     /** the Pictogram color for white. */
     private static final Color WHITE = StylesFactory.eINSTANCE.createColor();
@@ -105,20 +106,21 @@ public class Pictogram2PNodeTransformation extends
     /**
      * {@inheritDoc}
      */
-    public PiccoloDiagramContext transform(final Diagram diagram) {
+    public PNode /* PiccoloDiagramContext */transform(final Diagram diagram,
+            final TransformationContext<Diagram, PNode> transformationContext) {
         // create mappings
         anchorMap = Maps.newHashMap();
         gaMap = Maps.newHashMap();
         elementMap = Maps.newHashMap();
         // create the diagram context
-        PiccoloDiagramContext diagramContext = new PiccoloDiagramContext();
+        // PiccoloDiagramContext diagramContext = new PiccoloDiagramContext();
         // use two layers, one for nodes and one for edges
         DiagramNode root = new DiagramNode(diagram);
         transferProperties(diagram, root);
         PNode edges = new PNode();
-        diagramContext.addLayerRoot(root);
-        diagramContext.addLayerRoot(edges);
-        diagramContext.setRootNode(root);
+        // diagramContext.addLayerRoot(root);
+        // diagramContext.addLayerRoot(edges);
+        // diagramContext.setRootNode(root);
         // determine default colors from the diagram graphics algorithm
         GraphicsAlgorithm ga = diagram.getGraphicsAlgorithm();
         Color fc, bc;
@@ -138,13 +140,14 @@ public class Pictogram2PNodeTransformation extends
             transformConnection(edges, connection, BLACK, WHITE);
         }
         // remember the mapping
-        getTransformationContext().setProperty(MAPPING_PROPERTY, elementMap);
+        transformationContext.setProperty(MAPPING_PROPERTY, elementMap);
         // reset mappings
         anchorMap = null;
         gaMap = null;
         elementMap = null;
-        
-        return diagramContext;
+
+        // return diagramContext;
+        return root;
     }
 
     /**
@@ -249,7 +252,7 @@ public class Pictogram2PNodeTransformation extends
         }
         // chsch: moved this statement from position A!
         parent.addAnchor(anchorNode);
-        
+
         anchorMap.put(anchor, anchorNode);
         anchorNode.setVisible(anchor.isVisible());
         // try to find the initial anchor position
@@ -278,7 +281,7 @@ public class Pictogram2PNodeTransformation extends
             public ConnectionNode caseManhattanConnection(final ManhattanConnection object) {
                 return transformManhattanConnection(object, fc, bc);
             }
-        } .doSwitch(connection);
+        }.doSwitch(connection);
         // ignore the connection if no PNode representation could be found
         if (node != null) {
             node.setPickable(connection.isActive());
@@ -287,8 +290,8 @@ public class Pictogram2PNodeTransformation extends
             for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
                 GraphicsAlgorithm ga = decorator.getGraphicsAlgorithm();
                 // create the decoration
-                DecorationNode decoration =
-                        new DecorationNode(decorator, !(ga instanceof AbstractText));
+                DecorationNode decoration = new DecorationNode(decorator,
+                        !(ga instanceof AbstractText));
                 decoration.setPickable(false);
                 node.addDecoration(decoration);
                 // transform graphics algorithm for this decorator
@@ -309,16 +312,16 @@ public class Pictogram2PNodeTransformation extends
             ConnectionNode connection = new ConnectionNode(ffc, source, target);
             transferProperties(ffc, connection);
             elementMap.put(ffc, connection);
-            
+
             // chsch: was this actually missing?
             GraphicsAlgorithm ga = ffc.getGraphicsAlgorithm();
             Color gaFc = getForegroundColor(ga, fc);
             Color gaBc = getBackgroundColor(ga, bc);
-            PSWTAdvancedPath path =
-                    transformPolyline((Polyline) ffc.getGraphicsAlgorithm(), gaFc, gaBc);
+            PSWTAdvancedPath path = transformPolyline((Polyline) ffc.getGraphicsAlgorithm(), gaFc,
+                    gaBc);
 
             // PSWTAdvancedPath path =
-            //         transformPolyline((Polyline) ffc.getGraphicsAlgorithm(), fc, bc);
+            // transformPolyline((Polyline) ffc.getGraphicsAlgorithm(), fc, bc);
             path.setPickable(false);
             connection.setPolyline(path);
             return connection;
@@ -381,7 +384,7 @@ public class Pictogram2PNodeTransformation extends
             public PNode caseImage(final Image object) {
                 return transformImage(object);
             }
-        } .doSwitch(ga);
+        }.doSwitch(ga);
         // ignore the graphics algorithm if no Piccolo node representation could be found
         if (node != null) {
             node.setPickable(false);
@@ -430,9 +433,8 @@ public class Pictogram2PNodeTransformation extends
 
     private PSWTAdvancedPath transformRoundedRectangle(final RoundedRectangle rr, final Color fc,
             final Color bc) {
-        PSWTAdvancedPath rrect =
-                PSWTAdvancedPath.createRoundRectangle(0, 0, rr.getWidth(), rr.getHeight(),
-                        rr.getCornerWidth(), rr.getCornerHeight());
+        PSWTAdvancedPath rrect = PSWTAdvancedPath.createRoundRectangle(0, 0, rr.getWidth(),
+                rr.getHeight(), rr.getCornerWidth(), rr.getCornerHeight());
         rrect.setLineWidth(getLineWidth(rr, 1));
         if (rr.getLineVisible()) {
             rrect.setStrokeColor(transformColor(fc));
@@ -448,8 +450,8 @@ public class Pictogram2PNodeTransformation extends
     }
 
     private PSWTAdvancedPath transformEllipse(final Ellipse e, final Color fc, final Color bc) {
-        PSWTAdvancedPath ellipse =
-                PSWTAdvancedPath.createEllipse(0, 0, e.getWidth(), e.getHeight());
+        PSWTAdvancedPath ellipse = PSWTAdvancedPath
+                .createEllipse(0, 0, e.getWidth(), e.getHeight());
         ellipse.setLineWidth(getLineWidth(e, 1));
         if (e.getLineVisible()) {
             ellipse.setStrokeColor(transformColor(fc));
@@ -513,7 +515,7 @@ public class Pictogram2PNodeTransformation extends
         }
         return line;
     }
-    
+
     private static final int GREEK_THRESHOLD = 3;
 
     private PNode transformText(final AbstractText t, final Color fc, final Color bc) {
@@ -561,7 +563,7 @@ public class Pictogram2PNodeTransformation extends
         text.setGreekThreshold(GREEK_THRESHOLD);
         // chsch:
         elementMap.put(t, text);
-        
+
         textBox.addAlignedChild(text, halignment, valignment);
         return textBox;
     }
@@ -660,7 +662,8 @@ public class Pictogram2PNodeTransformation extends
     /**
      * {@inheritDoc}
      */
-    public Object getSourceElement(final Object object) {
+    public Object getSourceElement(final Object object,
+            final TransformationContext<Diagram, PNode> transformationContext) {
         if (object instanceof IPictogramNode) {
             return ((IPictogramNode) object).getPictogramElement();
         }
@@ -670,8 +673,9 @@ public class Pictogram2PNodeTransformation extends
     /**
      * {@inheritDoc}
      */
-    public Object getTargetElement(final Object object) {
-        return getTransformationContext().getProperty(MAPPING_PROPERTY).get(object);
+    public Object getTargetElement(final Object object,
+            final TransformationContext<Diagram, PNode> transformationContext) {
+        return transformationContext.getProperty(MAPPING_PROPERTY).get(object);
     }
 
 }

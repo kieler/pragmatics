@@ -28,8 +28,8 @@ import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
 import de.cau.cs.kieler.klighd.triggers.KlighdResourceDropTrigger.KlighdResourceDropState;
 
 /**
- * A view management combination which EMF resources which are dropped on KLighD views and updates
- * the view with the model loaded from the resource.
+ * A view management combination which loads EMF resources which have been dropped on KLighD views
+ * and updates the view with the model loaded from the resource.
  * 
  * @author mri
  */
@@ -63,13 +63,12 @@ public class KlighdVisualizeDroppedEMFModelCombination extends AbstractCombinati
      */
     private Object loadModel(final IFile file) {
         // TransactionalEditingDomain.Factory factory = TransactionalEditingDomain.Factory.INSTANCE;
-        TransactionalEditingDomain transactionalEditingDomain =
-                DiagramEditingDomainFactory.INSTANCE.createEditingDomain();
+        TransactionalEditingDomain transactionalEditingDomain = DiagramEditingDomainFactory.INSTANCE
+                .createEditingDomain();
         // factory.createEditingDomain();
         ResourceSet resourceSet = transactionalEditingDomain.getResourceSet();
-        Resource resource =
-                resourceSet.createResource(URI.createPlatformResourceURI(file.getFullPath()
-                        .toOSString(), true));
+        Resource resource = resourceSet.createResource(URI.createPlatformResourceURI(file
+                .getFullPath().toOSString(), true));
         try {
             resource.load(null);
         } catch (IOException e) {

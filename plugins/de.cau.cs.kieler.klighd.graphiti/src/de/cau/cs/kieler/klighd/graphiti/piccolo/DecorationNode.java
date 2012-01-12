@@ -122,14 +122,6 @@ public class DecorationNode extends PEmptyNode {
     private float angle(final float x0, final float y0, final float x1, final float y1) {
         float xD = x1 - x0;
         float yD = y1 - y0;
-        // float d = (float) Math.sqrt(xD * xD + yD * yD);
-        // xD /= d;
-        // float angle = (float) Math.acos(xD);
-        // if (yD >= 0) {
-        // return angle;
-        // } else {
-        // return -angle;
-        // }
         return (float) Math.atan2(yD, xD);
     }
 
