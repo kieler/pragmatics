@@ -19,7 +19,7 @@ import java.net.URI;
 /**
  * Interface declaration for the different server managers.
  * 
- * @kieler.rating  2011-08-25 proposed yellow
+ * @kieler.rating  2011-08-25 yellow
  *      reviewed by ckru, msp, mri
  *
  * @author swe

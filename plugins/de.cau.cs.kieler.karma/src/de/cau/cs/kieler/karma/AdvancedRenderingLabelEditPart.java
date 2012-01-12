@@ -10,6 +10,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 import org.eclipse.gmf.runtime.notation.View;
 
+import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
 import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartUtil;
 
 public class AdvancedRenderingLabelEditPart extends LabelEditPart implements IAdvancedRenderingEditPart {

@@ -23,7 +23,7 @@ import java.util.Vector;
  * and the layout service without using a concrete web service architecture. Architecture specific
  * methods still have to be implemented by a concrete web service client.
  *
- * @kieler.rating 2011-08-02 proposed yellow
+ * @kieler.rating 2011-08-02 yellow
  *     reviewed by ckru, mri, msp
  *
  * @author swe

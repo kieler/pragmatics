@@ -44,7 +44,9 @@ import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
 import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
+import de.cau.cs.kieler.kwebs.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.Statistics;
+import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
@@ -55,7 +57,7 @@ import de.cau.cs.kieler.kwebs.util.Graphs;
  * architecture specific service implementations may sub class this class in order to use the provided
  * layout.
  *
- * @kieler.rating  2011-08-25 proposed yellow
+ * @kieler.rating  2011-08-25 yellow
  *      reviewed by ckru, msp, mri
  *      
  * @author swe
@@ -67,11 +69,43 @@ public abstract class AbstractService {
     private static RecursiveGraphLayoutEngine layoutEngine
         = new RecursiveGraphLayoutEngine();
 
+    /** Default value for maximum number of graphs transmitted in a single request. */
+    private static final int MAXNUMBER_GRAPHS = 5;
+    
+    /** Default value for maximum number of elements a single graph may contain. */
+    private static final int MAXNUMBER_ELEMENTS = 5000;
+    
+    /** 
+     * Value for maximum number of graphs transmitted in a single request
+     * initially set to default value. 
+     */
+    private int maxGraphs = Configuration.getInstance().getConfigPropertyAsInteger(
+        Configuration.MAXNUMBER_GRAPHS, MAXNUMBER_GRAPHS
+    );
+
+    /** Whether to test on number of transmitted graphs. */
+    private boolean testMaxGraphs = Configuration.getInstance().getConfigPropertyAsBoolean(
+        Configuration.TESTMAXNUMBER_GRAPHS, true
+    );
+    
+    /** 
+     * Value for maximum number of elements a single graph may contain
+     * initially set to default value. 
+     */
+    private int maxElements = Configuration.getInstance().getConfigPropertyAsInteger(
+    	Configuration.MAXELEMENTS_GRAPHS, MAXNUMBER_ELEMENTS
+    );
+
+    /** Whether to test on number elements contained in the transmitted graphs. */
+    private boolean testMaxElements = Configuration.getInstance().getConfigPropertyAsBoolean(
+    	Configuration.TESTMAXELEMENTS_GRAPHS, true
+    );
+    		
     /**
      * Protected constructor. Initialized the layout data services.
      */
     protected AbstractService() {
-        ServerLayoutDataService.create();
+        ServerLayoutDataService.create();        
     }
     
     /**
@@ -163,16 +197,40 @@ public abstract class AbstractService {
             messageIter.remove();
         }
         
+        // Test if the user graphs are within configured tolerances        
+        List<KNode> graphs = inTransData.getTargetGraphs();
+        if (testMaxGraphs && graphs.size() > maxGraphs) {
+        	Logger.log(
+        		Severity.WARNING, 
+        		"Too many graphs in request, maximum number is " + maxGraphs
+        	);
+        	throw new RemoteServiceException(
+        		"Too many graphs in request, maximum number is " + maxGraphs
+        	);
+        }
+        if (testMaxElements) {
+	        for (KNode layout : graphs) {
+	        	if (Graphs.countElements(layout) > maxElements) {
+	        		Logger.log(
+	        			Severity.WARNING, 
+	        			"Too many elements in graph, maximum number is " + maxElements
+	        		);
+	        		throw new RemoteServiceException(
+	        			"Too many elements in graph, maximum number is " + maxElements
+	        		);
+	        	}
+	        }
+        }
         // Parse the transmitted layout options and annotate the layout structure
         if (options != null) {
-            for (KNode layout : inTransData.getTargetGraphs()) {
+            for (KNode layout : graphs) {
                 annotateGraph(layout, options);
             }
         }
         
         // Actually do the layout on the structure
         double layoutTime = 0;
-        for (KNode layout : inTransData.getTargetGraphs()) {
+        for (KNode layout : graphs) {
             IKielerProgressMonitor layoutMonitor = new BasicProgressMonitor();
             layoutEngine.layout(layout, layoutMonitor);
             layoutTime += layoutMonitor.getExecutionTime() * NANO_FACT;

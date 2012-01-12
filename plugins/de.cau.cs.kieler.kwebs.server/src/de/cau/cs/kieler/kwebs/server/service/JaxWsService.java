@@ -30,7 +30,7 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 /**
  * Service endpoint to be published as JAX-WS web service.
  * 
- * @kieler.rating  2011-08-25 proposed yellow
+ * @kieler.rating  2011-08-25 yellow
  *      reviewed by ckru, msp, mri
  *      
  * @author  swe

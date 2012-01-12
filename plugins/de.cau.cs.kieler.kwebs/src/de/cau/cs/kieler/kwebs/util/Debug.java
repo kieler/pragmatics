@@ -21,7 +21,7 @@ import java.util.TreeSet;
 /**
  * Debugging utilities, mostly for displaying objects.
  * 
- * @kieler.rating  2011-08-02 proposed yellow
+ * @kieler.rating  2011-08-02 yellow
  *     reviewed by ckru, mri, msp
  *     
  * @author  swe

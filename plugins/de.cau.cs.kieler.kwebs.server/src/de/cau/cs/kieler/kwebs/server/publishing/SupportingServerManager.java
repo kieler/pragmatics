@@ -38,7 +38,7 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
  * This class implements a HTTP server which can be used for different kinds of support for
  * the layout service. A {@link HttpHandler} can be registered via extension point.
  *
- * @kieler.rating  2011-08-25 proposed yellow
+ * @kieler.rating  2011-08-25 yellow
  *      reviewed by ckru, msp, mri
  *      
  * @author  swe

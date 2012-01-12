@@ -27,14 +27,17 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 
 /**
- * Calculates port ranks and distributes ports.
+ * Calculates port ranks and distributes ports in a node-relative way. This is in fact the original
+ * way KLay Layered calculated port ranks.
+ * 
+ * <p>Port ranks are calculated by giving each node {@code i} a range of values {@code [i,i+1)} to
+ * distribute their port values in. This effectively gives a node with many ports the same weight as
+ * a node with few ports as opposed to a strategy that just numbers ports from top to bottom.</p>
  * 
  * @author cds
  * @author msp
  * @author ima
- * 
  */
-
 public class NodeRelativePortDistributor implements IPortDistributor {
 
     /** barycenter values for ports. */

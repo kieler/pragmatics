@@ -24,6 +24,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
+import de.cau.cs.kieler.kwebs.server.Application;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.publishing.NotPublishedException;
@@ -223,8 +224,6 @@ public final class ManagementService implements UncaughtExceptionHandler {
                     }
                 } else if (request.equals(ManagementCommands.COMMAND_SHUTDOWN)) {
                     response = "Shutting down server";
-                } else if (request.equals(ManagementCommands.COMMAND_RESTART)) {
-                    response = "Restarting server";
                 }
                 // Send the result of the execution to the management request
                 if (response != null) {
@@ -233,6 +232,9 @@ public final class ManagementService implements UncaughtExceptionHandler {
                 writer.println(acknowledgement);
                 writer.flush();
                 writer.close();
+                if (request.equals(ManagementCommands.COMMAND_SHUTDOWN)) {
+                	Application.getInstance().shutdownServer();
+                }
             } catch (Exception e) {
                 Logger.log(Severity.WARNING, 
                     "Error while processing management request: " + e.getMessage(), 

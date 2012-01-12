@@ -24,7 +24,7 @@ import java.util.Properties;
  * defines constants and default values for accessing and storing application
  * related configuration parameters.
  *
- * @kieler.rating  2011-08-25 proposed yellow
+ * @kieler.rating  2011-08-25 yellow
  *      reviewed by ckru, msp, mri
  *      
  * @author  swe
@@ -192,6 +192,24 @@ public final class Configuration extends Properties {
     /** Port on which the server listens for management requests. */
     public static final String MANAGEMENT_PORT
         = PREFIX + "management.port";
+
+    // Preferences for configuring restrictions on user transmitted graphs
+    
+    /** Maximum number of graphs a user may transmit with a single request. */
+    public static final String MAXNUMBER_GRAPHS
+        = PREFIX + "graphs.maxnumber";
+
+    /** Whether to test on maximum number of graphs a user may transmit with a single request. */
+    public static final String TESTMAXNUMBER_GRAPHS
+        = PREFIX + "graphs.maxnumber.test";
+
+    /** Maximum number of elements a user transmitted graph may contain. */
+    public static final String MAXELEMENTS_GRAPHS
+        = PREFIX + "graphs.maxelements";
+
+    /** Whether to test on maximum number of elements a user transmitted graph may contain. */
+    public static final String TESTMAXELEMENTS_GRAPHS
+        = PREFIX + "graphs.maxelements.test";
         
     //
 
@@ -280,6 +298,50 @@ public final class Configuration extends Properties {
      */
     public synchronized boolean hasConfigProperty(final String key) {
         return containsKey(key);
+    }
+    
+    /**
+     * Returns a configuration property parsed to an integer value. 
+     * 
+     * @param key
+     *            the name of the configuration property
+     * @param defaultValue
+     *            the default value to be returned if the entry does not exist in the
+     *            configuration or it can not be parsed to an integer value
+     * @return
+     */
+    public synchronized int getConfigPropertyAsInteger(final String key, final int defaultValue) {
+    	int value = defaultValue;
+    	if (hasConfigProperty(key)) {
+    		try {
+				value = Integer.parseInt(getConfigProperty(key));
+			} catch (Exception e) {
+				// Nothing to do, returns default value
+			}
+    	}
+    	return value;
+    }
+
+    /**
+     * Returns a configuration property parsed to a boolean value. 
+     * 
+     * @param key
+     *            the name of the configuration property
+     * @param defaultValue
+     *            the default value to be returned if the entry does not exist in the
+     *            configuration or it can not be parsed to a boolean value
+     * @return
+     */
+    public synchronized boolean getConfigPropertyAsBoolean(final String key, final boolean defaultValue) {
+    	boolean value = defaultValue;
+    	if (hasConfigProperty(key)) {
+    		try {
+				value = Boolean.parseBoolean(getConfigProperty(key));
+			} catch (Exception e) {
+				// Nothing to do, returns default value
+			}
+    	}
+    	return value;
     }
     
 }

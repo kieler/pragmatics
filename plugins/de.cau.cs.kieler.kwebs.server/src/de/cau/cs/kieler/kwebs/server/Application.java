@@ -40,7 +40,7 @@ import de.cau.cs.kieler.kwebs.util.Resources;
 /**
  * The main server application.
  *
- * @kieler.rating  2011-08-25 proposed yellow
+ * @kieler.rating  2011-08-25 yellow
  *      reviewed by ckru, msp, mri
  *      
  * @author  swe
@@ -58,9 +58,9 @@ public class Application implements IApplication {
     private ILoggerListener displayLogging;
     
     /** Object to synchronize and wait on for termination request. */
-    private Object termSync
+    private final Object termSync
         = new Object();
-    
+
     /** Whether the server shall terminate. */
     private boolean termRequested
         = false;
@@ -101,11 +101,30 @@ public class Application implements IApplication {
     private Configuration config
         = Configuration.getInstance();
     
+    /** The instance of this application. */
+    private static Application instance;
+    
+    /**
+     * Default constructor for setting the instance field.
+     */
+    public Application() {
+    	instance = this;	
+    }
+    
+    /**
+     * Return this instance.
+     * 
+     * @return this instance
+     */
+    public static final Application getInstance() {
+    	return instance;
+    }
+    
     /**
      * {@inheritDoc}
      */
-    public final Object start(final IApplicationContext context) {
-        
+    public final Object start(final IApplicationContext context) {    	
+    	    	
         System.out.println(
             ApplicationHelper.toDisplayable(ApplicationHelper.TITLE_TEXT).
                 replace("$VERSION$", getVersion())
@@ -123,11 +142,13 @@ public class Application implements IApplication {
         boolean debugMode = false;
         
         // Parse command line arguments
-        @SuppressWarnings("rawtypes")
-        Map argumentsMap = context.getArguments();
         Map<String, String> arguments = null;
-        if (argumentsMap != null && argumentsMap.containsKey(ARGUMENTS_INDEX)) {
-            arguments = Arguments.parseArgs((String[]) argumentsMap.get(ARGUMENTS_INDEX));
+        if (context != null) {
+	        @SuppressWarnings("rawtypes")
+	        Map argumentsMap = context.getArguments();	        
+	        if (argumentsMap != null && argumentsMap.containsKey(ARGUMENTS_INDEX)) {
+	            arguments = Arguments.parseArgs((String[]) argumentsMap.get(ARGUMENTS_INDEX));
+	        }
         }
         
         // Read default config
@@ -199,7 +220,7 @@ public class Application implements IApplication {
         if (config.hasConfigProperty(Configuration.KWEBS_LOGDEBUGMODE)) {
             try {
                 debugMode = Boolean.parseBoolean(
-                        config.getConfigProperty(Configuration.KWEBS_LOGDEBUGMODE)
+                    config.getConfigProperty(Configuration.KWEBS_LOGDEBUGMODE)
                 );
                 if (debugMode) {
                     Logger.setRunMode(Mode.DEBUG);
@@ -254,7 +275,12 @@ public class Application implements IApplication {
             ServicePublisher.getInstance().publish();
             synchronized (termSync) {
                 while (!termRequested) {
-                    termSync.wait();
+                	try {
+                		termSync.wait();
+                	} catch (InterruptedException e) {
+    	    			// Nothing to do, simply wait on synchronization
+    	        		// object again.                		
+                	}
                 }
             }
         } catch (Exception e) {
@@ -281,6 +307,8 @@ public class Application implements IApplication {
         // Unregister display logging
         Logger.removeLoggerListener(displayLogging);
 
+        //FIXME: Unregister logging adapters
+        
         return IApplication.EXIT_OK;
 
     }
@@ -296,8 +324,10 @@ public class Application implements IApplication {
      * Shuts down the server.
      */
     public final synchronized void shutdownServer() {
+    	Logger.log("Shutting down the server.");
+    	// Notify the termination sync loop
         termRequested = true;
-        termSync.notify();
+        termSync.notify();    
     }
 
     /** The plug-in id of the graphviz layouter. */

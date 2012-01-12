@@ -39,10 +39,6 @@ public final class ManagementCommands {
     public static final String COMMAND_UNPUBLISH
         = "UNPUBLISH";
 
-    /** The command for restarting the server. */
-    public static final String COMMAND_RESTART
-        = "RESTART";
-
     /** The command for shutting down the server. */
     public static final String COMMAND_SHUTDOWN
         = "SHUTDOWN";

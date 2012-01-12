@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.Platform;
 /**
  * Logger for the KWebS project.
  *
- * @kieler.rating  2011-08-02 proposed yellow
+ * @kieler.rating  2011-08-02 yellow
  *     reviewed by ckru, mri, msp
  *     
  * @author  swe
