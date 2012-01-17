@@ -61,7 +61,7 @@
                option="de.cau.cs.kieler.expandNodes">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.fixedSize">
+               option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
                default="1.3"
@@ -214,14 +214,6 @@
       </layoutOption>
       <layoutOption
             appliesTo="nodes"
-            default="true"
-            description="Defines whether the size of a node is fixed"
-            id="de.cau.cs.kieler.fixedSize"
-            name="Fixed Size"
-            type="boolean">
-      </layoutOption>
-      <layoutOption
-            appliesTo="nodes"
             default="false"
             description="Whether the node should be handled as a hypernode"
             id="de.cau.cs.kieler.hypernode"
@@ -273,6 +265,15 @@
             id="de.cau.cs.kieler.separateConnComp"
             name="Separate Connected Components"
             type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="nodes"
+            class="de.cau.cs.kieler.kiml.options.SizeConstraint"
+            default="FIXED"
+            description="Whether the size of a node is fixed, or how to minimize its size"
+            id="de.cau.cs.kieler.sizeConstraint"
+            name="Size Constraint"
+            type="enum">
       </layoutOption>
       <layoutOption
             appliesTo="parents"

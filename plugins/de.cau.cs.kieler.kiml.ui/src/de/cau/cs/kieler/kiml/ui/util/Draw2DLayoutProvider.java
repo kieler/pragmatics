@@ -122,9 +122,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         for (KNode knode : layoutNode.getChildren()) {
             Node draw2dNode = new Node(knode);
             KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-            if (!nodeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
-                KimlUtil.resizeNode(knode);
-            }
+            KimlUtil.resizeNode(knode);
             draw2dNode.width = (int) nodeLayout.getWidth();
             draw2dNode.height = (int) nodeLayout.getHeight();
             nodeMap.put(knode, draw2dNode);

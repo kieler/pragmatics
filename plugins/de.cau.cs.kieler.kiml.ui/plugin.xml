@@ -228,7 +228,7 @@ point="org.eclipse.ui.menus">
              option="de.cau.cs.kieler.direction">
        </knownOption>
        <knownOption
-             option="de.cau.cs.kieler.fixedSize">
+             option="de.cau.cs.kieler.sizeConstraint">
        </knownOption>
     </layoutAlgorithm>
  </extension>

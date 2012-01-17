@@ -16,7 +16,7 @@
                type="de.cau.cs.kieler.layout.diagrams.dataFlow">
          </supportedDiagram>
          <knownOption
-               option="de.cau.cs.kieler.fixedSize">
+               option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
                default="RIGHT"

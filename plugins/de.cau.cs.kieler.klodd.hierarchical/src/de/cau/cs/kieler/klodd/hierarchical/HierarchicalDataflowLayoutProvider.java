@@ -289,9 +289,7 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
             KimlUtil.fillPortInfo(node, layoutDirection);
 
             // set node size if not fixed
-            if (!node.getData(KShapeLayout.class).getProperty(LayoutOptions.FIXED_SIZE)) {
-                KimlUtil.resizeNode(node);
-            }
+            KimlUtil.resizeNode(node);
         }
 
         // fill port data for the parent node

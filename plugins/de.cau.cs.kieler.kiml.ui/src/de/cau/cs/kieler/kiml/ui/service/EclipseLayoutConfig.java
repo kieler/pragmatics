@@ -32,6 +32,7 @@ import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.SizeConstraint;
 
 /**
  * A layout configuration for extension point configurations and user preferences.
@@ -194,8 +195,8 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         }
         
         // fall back to dynamic default value of specific options
-        if (LayoutOptions.FIXED_SIZE_ID.equals(optionData.getId())) {
-            return getFixedSizeValue(context);
+        if (LayoutOptions.SIZE_CONSTRAINT_ID.equals(optionData.getId())) {
+            return getSizeConstraintValue(context);
         } else if (LayoutOptions.PORT_CONSTRAINTS_ID.equals(optionData.getId())) {
             return getPortConstraintsValue(context);
         } else if (LayoutOptions.ASPECT_RATIO_ID.equals(optionData.getId())) {
@@ -206,15 +207,23 @@ public class EclipseLayoutConfig implements ILayoutConfig {
     }
     
     /**
-     * Return the dynamic value for the fixed size option.
+     * Return the dynamic value for the size constraint option.
      * 
      * @param context a context for layout configuration
-     * @return {@code true} if the selected node has no children, and {@code false} otherwise
+     * @return {@code FIXED} if the selected node has no children, and {@code MIN_PORTS} or
+     *          {@code MIN_DEFAULT} otherwise
      */
-    private Boolean getFixedSizeValue(final LayoutContext context) {
+    private SizeConstraint getSizeConstraintValue(final LayoutContext context) {
         Set<LayoutOptionData.Target> targets = context.getProperty(LayoutContext.OPT_TARGETS);
         if (targets != null) {
-            return !targets.contains(LayoutOptionData.Target.PARENTS);
+            if (!targets.contains(LayoutOptionData.Target.PARENTS)) {
+                return SizeConstraint.FIXED;
+            }
+            Boolean hasPorts = context.getProperty(DefaultLayoutConfig.HAS_PORTS);
+            if (hasPorts != null && hasPorts) {
+                return SizeConstraint.MIN_PORTS;
+            }
+            return SizeConstraint.MIN_DEFAULT;
         }
         return null;
     }
@@ -262,9 +271,9 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         Object value;
         
         // get dynamic values for specific options
-        value = getFixedSizeValue(context);
+        value = getSizeConstraintValue(context);
         if (value != null) {
-            graphData.setProperty(LayoutOptions.FIXED_SIZE, value);
+            graphData.setProperty(LayoutOptions.SIZE_CONSTRAINT, value);
         }
         value = getPortConstraintsValue(context);
         if (value != null) {

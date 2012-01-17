@@ -40,6 +40,17 @@ public class LLabel extends LShape {
     }
     
     /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        if (text == null) {
+            return "l_" + id;
+        } else {
+            return "l_" + text;
+        }
+    }
+    
+    /**
      * Returns the text of the label.
      * 
      * @return the text
