@@ -52,6 +52,7 @@ import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -254,7 +255,9 @@ public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
                 }
                 target.setProperty(LayoutOptions.ASPECT_RATIO, Float.valueOf(value));
             } else if (Attributes.FIXEDSIZE.equals(name)) {
-                target.setProperty(LayoutOptions.FIXED_SIZE, Boolean.valueOf(value));
+                Boolean fixedSize = Boolean.valueOf(value);
+                target.setProperty(LayoutOptions.SIZE_CONSTRAINT,
+                        fixedSize ? SizeConstraint.FIXED : SizeConstraint.MIN_DEFAULT);
             } else if (Attributes.CONCENTRATE.equals(name)) {
                 target.setProperty(Attributes.CONCENTRATE_PROP, Boolean.valueOf(value));
             } else if (Attributes.DAMPING.equals(name)) {

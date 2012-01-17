@@ -340,13 +340,13 @@ public abstract class OgdfLayouter {
     /**
      * Transforms the given layout graph into an OGML graph (ignores hierarchy).
      * 
-     * @param layoutNode
+     * @param parentNode
      *            the parent node of the layout graph
      * @param progressMonitor
      *            the progress monitor
      * @return an OGML graph
      */
-    private DocumentRoot transformGraph(final KNode layoutNode,
+    private DocumentRoot transformGraph(final KNode parentNode,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Transform KGraph to OGML", 1);
         boolean umlGraph = false;
@@ -364,7 +364,7 @@ public abstract class OgdfLayouter {
         StylesType styles = factory.createStylesType();
         layout.setStyles(styles);
         // transform nodes (only top level)
-        for (KNode node : layoutNode.getChildren()) {
+        for (KNode node : parentNode.getChildren()) {
             String id = generateId(node);
             NodeType ogmlNode = factory.createNodeType();
             ogmlNode.setId(id);
@@ -381,6 +381,7 @@ public abstract class OgdfLayouter {
             location.setX(nodeLayout.getXpos() + nodeLayout.getWidth() / 2);
             location.setY(nodeLayout.getYpos() + nodeLayout.getHeight() / 2);
             ogmlNodeLayout.setLocation(location);
+            KimlUtil.resizeNode(node);
             ShapeType1 shape = factory.createShapeType1();
             shape.setWidth(BigInteger.valueOf(Math.round(nodeLayout.getWidth())));
             shape.setHeight(BigInteger.valueOf(Math.round(nodeLayout.getHeight())));
@@ -393,11 +394,11 @@ public abstract class OgdfLayouter {
             KimlUtil.excludeLabels(node);
         }
         // transform edges
-        for (KNode sourceNode : layoutNode.getChildren()) {
+        for (KNode sourceNode : parentNode.getChildren()) {
             for (KEdge edge : sourceNode.getOutgoingEdges()) {
                 KNode targetNode = edge.getTarget();
                 // ignore cross-hierarchy edges
-                if (targetNode.getParent() == layoutNode) {
+                if (targetNode.getParent() == parentNode) {
                     KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
                     String id = generateId(edge);
                     EdgeType ogmlEdge = factory.createEdgeType();
