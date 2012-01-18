@@ -18,8 +18,8 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.xbase.lib.BooleanExtensions;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
+import org.eclipse.xtext.xbase.lib.ComparableExtensions;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
-import org.eclipse.xtext.xbase.lib.IntegerExtensions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ObjectExtensions;
 
@@ -94,7 +94,7 @@ public class Ptolemy2KaomOptimization {
       boolean portTypesChanged = false;
       boolean relationsChanged = false;
       boolean randomLinkFixed = false;
-      boolean _dowhile = false;
+      Boolean _xdowhileexpression;
       do {
         {
           boolean _inferPortTypes = this.inferPortTypes(unknownPorts, unknownLinks);
@@ -125,8 +125,8 @@ public class Ptolemy2KaomOptimization {
         } else {
           _operator_or_1 = BooleanExtensions.operator_or(_operator_or_2, randomLinkFixed);
         }
-        _dowhile = _operator_or_1;
-      } while(_dowhile);
+        _xdowhileexpression = _operator_or_1;
+      } while(_xdowhileexpression);
   }
   
   /**
@@ -272,8 +272,8 @@ public class Ptolemy2KaomOptimization {
       ListIterator<Port> _listIterator = unknownPorts.listIterator();
       final ListIterator<Port> unknownPortsIterator = _listIterator;
       boolean _hasNext = unknownPortsIterator.hasNext();
-      boolean _while = _hasNext;
-      while (_while) {
+      Boolean _xwhileexpression = _hasNext;
+      while (_xwhileexpression) {
         {
           Port _next = unknownPortsIterator.next();
           final Port unknownPort = _next;
@@ -347,7 +347,7 @@ public class Ptolemy2KaomOptimization {
           }
         }
         boolean _hasNext_1 = unknownPortsIterator.hasNext();
-        _while = _hasNext_1;
+        _xwhileexpression = _hasNext_1;
       }
       _xblockexpression = (result);
     }
@@ -383,8 +383,8 @@ public class Ptolemy2KaomOptimization {
       ListIterator<Relation> _listIterator = unknownRelations.listIterator();
       final ListIterator<Relation> unknownRelationsIterator = _listIterator;
       boolean _hasNext = unknownRelationsIterator.hasNext();
-      boolean _while = _hasNext;
-      while (_while) {
+      Boolean _xwhileexpression = _hasNext;
+      while (_xwhileexpression) {
         {
           Relation _next = unknownRelationsIterator.next();
           final Relation unknownRelation = _next;
@@ -394,7 +394,7 @@ public class Ptolemy2KaomOptimization {
               public Boolean apply(final Link l) {
                 boolean _isMarkedAsUndirected = Ptolemy2KaomOptimization.this._transformationUtils.isMarkedAsUndirected(l);
                 boolean _operator_not = BooleanExtensions.operator_not(_isMarkedAsUndirected);
-                return Boolean.valueOf(_operator_not);
+                return ((Boolean)_operator_not);
               }
             };
           Iterable<Link> _filter = IterableExtensions.<Link>filter(_incomingLinks, _function);
@@ -404,7 +404,7 @@ public class Ptolemy2KaomOptimization {
               public Boolean apply(final Link l) {
                 boolean _isMarkedAsUndirected = Ptolemy2KaomOptimization.this._transformationUtils.isMarkedAsUndirected(l);
                 boolean _operator_not = BooleanExtensions.operator_not(_isMarkedAsUndirected);
-                return Boolean.valueOf(_operator_not);
+                return ((Boolean)_operator_not);
               }
             };
           Iterable<Link> _filter_1 = IterableExtensions.<Link>filter(_outgoingLinks, _function_1);
@@ -413,7 +413,7 @@ public class Ptolemy2KaomOptimization {
           final Function1<Link,Boolean> _function_2 = new Function1<Link,Boolean>() {
               public Boolean apply(final Link l) {
                 boolean _isMarkedAsUndirected = Ptolemy2KaomOptimization.this._transformationUtils.isMarkedAsUndirected(l);
-                return Boolean.valueOf(_isMarkedAsUndirected);
+                return ((Boolean)_isMarkedAsUndirected);
               }
             };
           Iterable<Link> _filter_2 = IterableExtensions.<Link>filter(_incidentLinks, _function_2);
@@ -425,7 +425,7 @@ public class Ptolemy2KaomOptimization {
           if (!conservative) {
             _operator_and = false;
           } else {
-            boolean _operator_equals = IntegerExtensions.operator_equals(undirectedIncidentLinksSize, 1);
+            boolean _operator_equals = ObjectExtensions.operator_equals(((Integer)undirectedIncidentLinksSize), ((Integer)1));
             _operator_and = BooleanExtensions.operator_and(conservative, _operator_equals);
           }
           if (_operator_and) {
@@ -436,7 +436,7 @@ public class Ptolemy2KaomOptimization {
             if (!_operator_not) {
               _operator_and_1 = false;
             } else {
-              boolean _operator_greaterThan = IntegerExtensions.operator_greaterThan(undirectedIncidentLinksSize, 0);
+              boolean _operator_greaterThan = ComparableExtensions.<Integer>operator_greaterThan(((Integer)undirectedIncidentLinksSize), ((Integer)0));
               _operator_and_1 = BooleanExtensions.operator_and(_operator_not, _operator_greaterThan);
             }
             _operator_or = BooleanExtensions.operator_or(_operator_and, _operator_and_1);
@@ -448,12 +448,12 @@ public class Ptolemy2KaomOptimization {
               final Link undirectedLink = _next_1;
               boolean _operator_and_2 = false;
               int _size_1 = IterableExtensions.size(fixedIncomingLinks);
-              boolean _operator_greaterThan_1 = IntegerExtensions.operator_greaterThan(_size_1, 0);
+              boolean _operator_greaterThan_1 = ComparableExtensions.<Integer>operator_greaterThan(((Integer)_size_1), ((Integer)0));
               if (!_operator_greaterThan_1) {
                 _operator_and_2 = false;
               } else {
                 int _size_2 = IterableExtensions.size(fixedOutgoingLinks);
-                boolean _operator_equals_1 = IntegerExtensions.operator_equals(_size_2, 0);
+                boolean _operator_equals_1 = ObjectExtensions.operator_equals(((Integer)_size_2), ((Integer)0));
                 _operator_and_2 = BooleanExtensions.operator_and(_operator_greaterThan_1, _operator_equals_1);
               }
               if (_operator_and_2) {
@@ -470,12 +470,12 @@ public class Ptolemy2KaomOptimization {
               } else {
                 boolean _operator_and_3 = false;
                 int _size_3 = IterableExtensions.size(fixedOutgoingLinks);
-                boolean _operator_greaterThan_2 = IntegerExtensions.operator_greaterThan(_size_3, 0);
+                boolean _operator_greaterThan_2 = ComparableExtensions.<Integer>operator_greaterThan(((Integer)_size_3), ((Integer)0));
                 if (!_operator_greaterThan_2) {
                   _operator_and_3 = false;
                 } else {
                   int _size_4 = IterableExtensions.size(fixedIncomingLinks);
-                  boolean _operator_equals_2 = IntegerExtensions.operator_equals(_size_4, 0);
+                  boolean _operator_equals_2 = ObjectExtensions.operator_equals(((Integer)_size_4), ((Integer)0));
                   _operator_and_3 = BooleanExtensions.operator_and(_operator_greaterThan_2, _operator_equals_2);
                 }
                 if (_operator_and_3) {
@@ -496,7 +496,7 @@ public class Ptolemy2KaomOptimization {
           if (fixedLinkInThisIteration) {
             {
               result = true;
-              boolean _operator_equals_3 = IntegerExtensions.operator_equals(undirectedIncidentLinksSize, 1);
+              boolean _operator_equals_3 = ObjectExtensions.operator_equals(((Integer)undirectedIncidentLinksSize), ((Integer)1));
               if (_operator_equals_3) {
                 unknownRelationsIterator.remove();
               }
@@ -508,7 +508,7 @@ public class Ptolemy2KaomOptimization {
           }
         }
         boolean _hasNext_1 = unknownRelationsIterator.hasNext();
-        _while = _hasNext_1;
+        _xwhileexpression = _hasNext_1;
       }
       _xblockexpression = (result);
     }
@@ -563,21 +563,21 @@ public class Ptolemy2KaomOptimization {
       ListIterator<Relation> _listIterator = _childRelations.listIterator();
       final ListIterator<Relation> relationsIterator = _listIterator;
       boolean _hasNext = relationsIterator.hasNext();
-      boolean _while = _hasNext;
-      while (_while) {
+      Boolean _xwhileexpression = _hasNext;
+      while (_xwhileexpression) {
         {
           Relation _next = relationsIterator.next();
           final Relation relation = _next;
           boolean _operator_and = false;
           EList<Link> _incomingLinks = relation.getIncomingLinks();
           int _size = _incomingLinks.size();
-          boolean _operator_equals = IntegerExtensions.operator_equals(_size, 1);
+          boolean _operator_equals = ObjectExtensions.operator_equals(((Integer)_size), ((Integer)1));
           if (!_operator_equals) {
             _operator_and = false;
           } else {
             EList<Link> _outgoingLinks = relation.getOutgoingLinks();
             int _size_1 = _outgoingLinks.size();
-            boolean _operator_equals_1 = IntegerExtensions.operator_equals(_size_1, 1);
+            boolean _operator_equals_1 = ObjectExtensions.operator_equals(((Integer)_size_1), ((Integer)1));
             _operator_and = BooleanExtensions.operator_and(_operator_equals, _operator_equals_1);
           }
           if (_operator_and) {
@@ -600,7 +600,7 @@ public class Ptolemy2KaomOptimization {
           }
         }
         boolean _hasNext_1 = relationsIterator.hasNext();
-        _while = _hasNext_1;
+        _xwhileexpression = _hasNext_1;
       }
       EList<Entity> _childEntities = root.getChildEntities();
       for (final Entity childEntity : _childEntities) {
@@ -624,8 +624,8 @@ public class Ptolemy2KaomOptimization {
       ListIterator<Annotation> _listIterator = _annotations.listIterator();
       final ListIterator<Annotation> annotationsIterator = _listIterator;
       boolean _hasNext = annotationsIterator.hasNext();
-      boolean _while = _hasNext;
-      while (_while) {
+      Boolean _xwhileexpression = _hasNext;
+      while (_xwhileexpression) {
         {
           Annotation _next = annotationsIterator.next();
           final Annotation annotation = _next;
@@ -654,10 +654,10 @@ public class Ptolemy2KaomOptimization {
           }
         }
         boolean _hasNext_1 = annotationsIterator.hasNext();
-        _while = _hasNext_1;
+        _xwhileexpression = _hasNext_1;
       }
-      EList<Entity> _childEntities = root.getChildEntities();
-      for (final Entity childEntity : _childEntities) {
+      EList<Entity> _childEntities_1 = root.getChildEntities();
+      for (final Entity childEntity : _childEntities_1) {
         this.convertAnnotationsToEntities(childEntity);
       }
   }
