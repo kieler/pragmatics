@@ -224,13 +224,6 @@ public final class LayoutOptions {
     public static final IProperty<Boolean> EXPAND_NODES = new Property<Boolean>(
             EXPAND_NODES_ID, false);
 
-    /** layout option key: size constraint for nodes (boolean). */
-    public static final String FIXED_SIZE_ID = "de.cau.cs.kieler.fixedSize";
-    /**
-     * Whether the size of the associated node is fixed.
-     */
-    public static final IProperty<Boolean> FIXED_SIZE = new Property<Boolean>(FIXED_SIZE_ID, true);
-
     /** layout option key: optimize layout for user interaction (boolean). */
     public static final String INTERACTIVE_ID = "de.cau.cs.kieler.interactive";
     /**
@@ -297,6 +290,16 @@ public final class LayoutOptions {
      */
     public static final IProperty<Boolean> SEPARATE_CC = new Property<Boolean>(SEPARATE_CC_ID);
 
+    /** layout option key: constraints for node sizes (boolean). */
+    public static final String SIZE_CONSTRAINT_ID = "de.cau.cs.kieler.sizeConstraint";
+    /**
+     * Constraint for modifying node size. If set to {@link SizeConstraint#FIXED} and the node is
+     * empty, its size is not changed. Otherwise it is minimized considering some properties,
+     * depending on the chosen minimization level.
+     */
+    public static final IProperty<SizeConstraint> SIZE_CONSTRAINT = new Property<SizeConstraint>(
+            SIZE_CONSTRAINT_ID, SizeConstraint.FIXED);
+    
     /** layout option key: minimal distance between elements (float). */
     public static final String SPACING_ID = "de.cau.cs.kieler.spacing";    
     /**
