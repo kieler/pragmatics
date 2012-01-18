@@ -42,8 +42,17 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  */
 public class DiagramLayoutEngine {
     
-    /** the singleton instance that can be used whenever layout needs to be performed. */
+    /**
+     * The singleton instance that can be used whenever layout needs to be performed.
+     */
     public static final DiagramLayoutEngine INSTANCE = new DiagramLayoutEngine();
+    
+    /**
+     * Property for the diagram layout manager used for automatic layout. This property is
+     * attached to layout mappings created by the {@code layout} methods.
+     */
+    public static final IProperty<IDiagramLayoutManager<?>> DIAGRAM_LM
+            = new Property<IDiagramLayoutManager<?>>("layoutEngine.diagramLayoutManager");
     
     /**
      * Perform layout on the given workbench part.
@@ -97,8 +106,10 @@ public class DiagramLayoutEngine {
         IDiagramLayoutManager<?> layoutManager = EclipseLayoutInfoService.getInstance().getManager(
                 workbenchPart, diagramPart);
         if (layoutManager != null) {
-            return layout(layoutManager, workbenchPart, diagramPart, animate, progressBar,
-                    layoutAncestors, zoom, extraLayoutConfig);
+            LayoutMapping<?> mapping = layout(layoutManager, workbenchPart, diagramPart, animate,
+                    progressBar, layoutAncestors, zoom, extraLayoutConfig);
+            mapping.setProperty(DIAGRAM_LM, layoutManager);
+            return mapping;
         } else {
             throw new UnsupportedOperationException(Messages.getString("kiml.ui.15")
                     + workbenchPart.getTitle() + ".");

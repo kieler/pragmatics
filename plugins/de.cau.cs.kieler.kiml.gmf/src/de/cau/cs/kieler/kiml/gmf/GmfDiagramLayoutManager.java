@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.OperationHistoryFactory;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.ConnectionLocator;
 import org.eclipse.draw2d.IFigure;
@@ -43,6 +47,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeCompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
 import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
+import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramCommandStack;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 import org.eclipse.swt.SWTException;
@@ -51,6 +56,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import com.google.common.collect.BiMap;
 
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KGraphFactory;
@@ -247,10 +253,24 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
 
         // execute the command
         commandStack.execute(mapping.getProperty(LAYOUT_COMMAND));
-
+        
         // refresh the border items in the diagram
         if (diagramEditor != null || mapping.getParentElement() != null) {
             refreshDiagram(diagramEditor, mapping.getParentElement());
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void performUndo(final LayoutMapping<IGraphicalEditPart> mapping) {
+        try {
+            IOperationHistory history = OperationHistoryFactory.getOperationHistory();
+            history.undoOperation(DiagramCommandStack.getICommand(mapping.getProperty(LAYOUT_COMMAND)),
+                    new NullProgressMonitor(), null);
+        } catch (ExecutionException e) {
+            throw new WrappedException(e);
         }
     }
 

@@ -214,16 +214,27 @@ public class LayoutEffect extends AbstractEffect {
     }
 
     /**
-     * Undo a layout effect. For now, only a new layout is executed. This leads to correct
-     * behavior if a list of effects is undone sequentially and the last one was a layout effect.
-     * However, this is not really undoing that layout.
-     * 
-     * TODO: implement real undoing of layout, best with animation. Using the standard command
-     * undo functionality will not do any animation.
+     * Undo a layout effect.
      */
     @Override
     public void undo() {
-        this.execute();
+        if (layoutMapping != null) {
+            undo(layoutMapping);
+        }
+    }
+    
+    /**
+     * Undo the layout effect of the given layout mapping.
+     * 
+     * @param mapping a layout mapping
+     */
+    private static <T> void undo(final LayoutMapping<T> mapping) {
+        @SuppressWarnings("unchecked")
+        IDiagramLayoutManager<T> layoutManager = (IDiagramLayoutManager<T>) mapping.getProperty(
+                DiagramLayoutEngine.DIAGRAM_LM);
+        if (layoutManager != null) {
+            layoutManager.undoLayout(mapping);
+        }
     }
     
     /**
