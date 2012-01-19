@@ -15,6 +15,8 @@ package net.ogdf.bin;
 
 import java.util.LinkedList;
 
+import net.ogdf.bin.OgdfServer.Cleanup;
+
 /**
  * A pool for OGDF server process instances.
  *
@@ -67,7 +69,7 @@ public final class OgdfServerPool {
     public void dispose() {
         synchronized (servers) {
             for (OgdfServer server : servers) {
-                server.endProcess();
+                server.cleanup(Cleanup.STOP);
             }
             servers.clear();
         }
