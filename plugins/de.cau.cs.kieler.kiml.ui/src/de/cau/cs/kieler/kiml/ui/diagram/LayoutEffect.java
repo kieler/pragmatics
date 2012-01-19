@@ -27,6 +27,7 @@ import de.cau.cs.kieler.core.kivi.UndoEffect;
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 
@@ -230,10 +231,14 @@ public class LayoutEffect extends AbstractEffect {
      */
     private static <T> void undo(final LayoutMapping<T> mapping) {
         @SuppressWarnings("unchecked")
-        IDiagramLayoutManager<T> layoutManager = (IDiagramLayoutManager<T>) mapping.getProperty(
+        final IDiagramLayoutManager<T> layoutManager = (IDiagramLayoutManager<T>) mapping.getProperty(
                 DiagramLayoutEngine.DIAGRAM_LM);
         if (layoutManager != null) {
-            layoutManager.undoLayout(mapping);
+            MonitoredOperation.runInUI(new Runnable() {
+                public void run() {
+                    layoutManager.undoLayout(mapping);
+                }
+            }, true);
         }
     }
     
@@ -279,7 +284,11 @@ public class LayoutEffect extends AbstractEffect {
             }
         } else if (otherEffect instanceof UndoEffect) {
             if (((UndoEffect) otherEffect).getEffect() instanceof LayoutEffect) {
-                return this;
+                LayoutEffect other = (LayoutEffect) ((UndoEffect) otherEffect).getEffect();
+                if (this.diagramEditor == other.diagramEditor
+                        && this.diagramPart == other.diagramPart) {
+                    return this;
+                }
             }
         }
         return null;
