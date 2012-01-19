@@ -684,17 +684,16 @@ public abstract class OgdfLayouter {
      * @param progressMonitor
      *            the progress monitor
      * @return a map of layout information
-     * @throws IOException if reading from the OGDF process fails
      */
     private Map<String, KVectorChain> readLayoutInformation(final OgdfServer ogdfServer,
-            final IKielerProgressMonitor progressMonitor) throws IOException {
+            final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Read output from OGDF", 1);
         Map<String, String> outputData = ogdfServer.readOutputData();
         if (outputData == null) {
             ogdfServer.cleanup(Cleanup.ERROR);
             throw new OgdfServerException("No output from the OGDF process."
                     + " Try increasing the timeout value in the preferences"
-                    + "(KIELER / Layout / OGDF).");
+                    + " (KIELER / Layout / OGDF).");
         }
         Map<String, KVectorChain> layoutInformation = new HashMap<String, KVectorChain>(
                 (int) (outputData.size() / MAP_LOAD_FACTOR) + 1);

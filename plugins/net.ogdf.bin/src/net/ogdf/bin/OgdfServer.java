@@ -441,9 +441,8 @@ public class OgdfServer {
      * Read output data from the OGDF server process.
      * 
      * @return key-value map of output data, or {@code null} if the process output was not complete
-     * @throws IOException if reading from the process output fails
      */
-    public Map<String, String> readOutputData() throws IOException {
+    public Map<String, String> readOutputData() {
         Map<String, String> data = new HashMap<String, String>();
         String error = "";
         BufferedReader reader = new BufferedReader(new InputStreamReader(output()));
@@ -451,13 +450,18 @@ public class OgdfServer {
         boolean parseMore = true;
         
         while (parseMore) {
-            String line = reader.readLine();
+            String line = null;
+            try {
+                line = reader.readLine();
+            } catch (IOException exception) {
+                // most probably the stream was closed due to a timeout of the watchdog thread
+            }
             if (line == null) {
                 // the stream is empty although more input is expected
                 return null;
             }
-            switch (state) {
             
+            switch (state) {
             case TYPE:
                 if (line.equals("LAYOUT")) {
                     state = ParseState.DATA;
