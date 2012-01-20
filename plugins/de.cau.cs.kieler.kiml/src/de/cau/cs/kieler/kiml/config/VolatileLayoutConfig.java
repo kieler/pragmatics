@@ -38,6 +38,14 @@ public class VolatileLayoutConfig implements ILayoutConfig {
     private Map<Object, Map<IProperty<?>, Object>> optionMap
             = new HashMap<Object, Map<IProperty<?>, Object>>();
     private Set<IProperty<?>> contextKeys = new HashSet<IProperty<?>>();
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "VolatileLayoutConfig:" + optionMap.toString();
+    }
 
     /**
      * {@inheritDoc}

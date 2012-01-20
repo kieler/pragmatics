@@ -167,9 +167,12 @@ public class LayoutOptionManager {
             config.add(sc);
         }
 
-        // transfer the options from the layout configuration
+        // clear the previous configuration
         KGraphData graphData = graphElement
                 .getData(graphElement instanceof KEdge ? KEdgeLayout.class : KShapeLayout.class);
+        graphData.getProperties().clear();
+        
+        // transfer the options from the layout configuration
         config.transferValues(graphData, context);
 
         // remove the semantic layout configurations again

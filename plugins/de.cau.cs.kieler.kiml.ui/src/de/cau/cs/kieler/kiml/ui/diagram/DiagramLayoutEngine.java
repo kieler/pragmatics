@@ -82,7 +82,9 @@ public class DiagramLayoutEngine {
     }
     
     /**
-     * Perform layout on the given workbench part.
+     * Perform layout on the given workbench part. If zero or one layout configuration is passed,
+     * the layout engine is executed exactly once. If multiple layout configurations are passed,
+     * the layout engine is executed accordingly often.
      * 
      * @param workbenchPart
      *            the workbench part for which layout is performed
@@ -123,7 +125,9 @@ public class DiagramLayoutEngine {
     private static final int MAX_PROGRESS_LEVELS = 3;
 
     /**
-     * Perform layout on the given workbench part using the given layout manager.
+     * Perform layout on the given workbench part using the given layout manager. If zero or one
+     * layout configuration is passed, the layout engine is executed exactly once. If multiple
+     * layout configurations are passed, the layout engine is executed accordingly often.
      * 
      * @param <T> the type of diagram part that is handled by the given diagram layout manager
      * @param layoutManager
@@ -321,7 +325,9 @@ public class DiagramLayoutEngine {
             = new Property<IKielerProgressMonitor>("layout.progressMonitor");
     
     /**
-     * Perform layout on the given layout graph mapping.
+     * Perform layout on the given layout graph mapping. If zero or one layout configuration is
+     * passed, the layout engine is executed exactly once. If multiple layout configurations are
+     * passed, the layout engine is executed accordingly often.
      * 
      * @param mapping
      *            a mapping for the layout graph
@@ -359,17 +365,23 @@ public class DiagramLayoutEngine {
         
         mapping.setProperty(PROGRESS_MONITOR, progressMonitor);
         if (extraLayoutConfigs.isEmpty()) {
-            return layout(mapping, progressMonitor, null);
+            // perform layout without any extra configuration
+            return layout(mapping, progressMonitor);
         } else if (extraLayoutConfigs.size() == 1) {
-            return layout(mapping, progressMonitor, extraLayoutConfigs.get(0));
+            // perform layout once with an extra configuration
+            mapping.getLayoutConfigs().add(extraLayoutConfigs.get(0));
+            return layout(mapping, progressMonitor);
         } else {
+            // perform layout multiple times with different configurations
             progressMonitor.begin("Multiple layout", extraLayoutConfigs.size());
             IStatus status = null;
             for (ILayoutConfig config : extraLayoutConfigs) {
-                status = layout(mapping, progressMonitor.subTask(1), config);
+                mapping.getLayoutConfigs().add(config);
+                status = layout(mapping, progressMonitor.subTask(1));
                 if (!status.isOK()) {
                     return status;
                 }
+                mapping.getLayoutConfigs().remove(config);
             }
             progressMonitor.done();
             return status;
@@ -383,18 +395,13 @@ public class DiagramLayoutEngine {
      *            a mapping for the layout graph
      * @param progressMonitor
      *            a progress monitor to which progress of the layout algorithm is reported
-     * @param extraLayoutConfig
-     *            an additional layout configuration to use, or {@code null}
      * @return a status indicating success or failure
      */
     public IStatus layout(final LayoutMapping<?> mapping,
-            final IKielerProgressMonitor progressMonitor, final ILayoutConfig extraLayoutConfig) {
+            final IKielerProgressMonitor progressMonitor) {
         // configure the layout graph using a layout option manager
         if (mapping.getProperty(PROGRESS_MONITOR) == null) {
             mapping.setProperty(PROGRESS_MONITOR, progressMonitor);
-        }
-        if (extraLayoutConfig != null) {
-            mapping.getLayoutConfigs().add(extraLayoutConfig);
         }
         layoutOptionManager.configure(mapping);
         
