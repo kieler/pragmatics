@@ -54,7 +54,9 @@ import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.model.graphiti.GraphitiUtil;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
+import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
@@ -86,6 +88,10 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     /** list of all connections in the diagram. */
     public static final IProperty<List<Connection>> CONNECTIONS = new Property<List<Connection>>(
             "graphiti.connections");
+    
+    /** the volatile layout config for static properties such as minimal node sizes. */
+    public static final IProperty<VolatileLayoutConfig> STATIC_CONFIG
+            = new Property<VolatileLayoutConfig>("graphiti.staticLayoutConfig");
 
     /**
      * {@inheritDoc}
@@ -101,6 +107,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             final Object diagramPart) {
         LayoutMapping<PictogramElement> mapping = new LayoutMapping<PictogramElement>();
         mapping.setProperty(CONNECTIONS, new LinkedList<Connection>());
+        mapping.setProperty(STATIC_CONFIG, new VolatileLayoutConfig());
 
         if (workbenchPart instanceof DiagramEditor) {
             mapping.setProperty(DIAGRAM_EDITOR, (DiagramEditor) workbenchPart);
@@ -141,6 +148,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         }
         
         // create a layout configuration
+        mapping.getLayoutConfigs().add(mapping.getProperty(STATIC_CONFIG));
         mapping.getLayoutConfigs().add(getLayoutConfig());
 
         return mapping;
@@ -215,12 +223,15 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             final KNode parentNode, final Shape shape) {
         KNode childNode = KimlUtil.createInitializedNode();
         childNode.setParent(parentNode);
+        VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
 
         // set the node's layout
         KShapeLayout nodeLayout = childNode.getData(KShapeLayout.class);
         GraphicsAlgorithm nodeGa = shape.getGraphicsAlgorithm();
         KInsets nodeInsets = calcInsets(nodeGa);
         nodeLayout.setProperty(GraphitiLayoutCommand.INVIS_INSETS, nodeInsets);
+        staticConfig.setValue(GraphitiLayoutCommand.INVIS_INSETS, childNode, LayoutContext.GRAPH_ELEM,
+                nodeInsets);
         KInsets parentInsets = parentNode == null ? null : parentNode.getData(KShapeLayout.class)
                 .getProperty(GraphitiLayoutCommand.INVIS_INSETS);
         if (parentInsets == null) {
@@ -234,8 +245,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
                 nodeGa.getHeight() - nodeInsets.getTop() - nodeInsets.getBottom());
 
         // FIXME find a way to specify the minimal size dynamically
-        nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, MIN_SIZE);
-        nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, MIN_SIZE);
+        staticConfig.setValue(LayoutOptions.MIN_WIDTH, childNode, LayoutContext.GRAPH_ELEM, MIN_SIZE);
+        staticConfig.setValue(LayoutOptions.MIN_HEIGHT, childNode, LayoutContext.GRAPH_ELEM, MIN_SIZE);
 
         mapping.getGraphMap().put(childNode, shape);
 
@@ -413,6 +424,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             final Connection connection) {
         KEdge edge = KimlUtil.createInitializedEdge();
         BiMap<KGraphElement, PictogramElement> graphMap = mapping.getGraphMap();
+        VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
 
         // set target node and port
         KNode targetNode;
@@ -495,7 +507,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
                         placement = EdgeLabelPlacement.TAIL;
                     }
                 }
-                labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, placement);
+                staticConfig.setValue(LayoutOptions.EDGE_LABEL_PLACEMENT, label,
+                        LayoutContext.GRAPH_ELEM, placement);
                 
                 // set label position
                 KVector labelPos;
