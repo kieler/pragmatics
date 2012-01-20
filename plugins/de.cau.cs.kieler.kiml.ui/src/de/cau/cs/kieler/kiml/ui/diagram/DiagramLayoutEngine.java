@@ -111,8 +111,9 @@ public class DiagramLayoutEngine {
             mapping.setProperty(DIAGRAM_LM, layoutManager);
             return mapping;
         } else {
-            throw new UnsupportedOperationException(Messages.getString("kiml.ui.15")
-                    + workbenchPart.getTitle() + ".");
+            throw new UnsupportedOperationException(workbenchPart == null
+                    ? Messages.getString("kiml.ui.17")
+                    : Messages.getString("kiml.ui.15") + workbenchPart.getTitle() + ".");
         }
     }
 
@@ -143,7 +144,7 @@ public class DiagramLayoutEngine {
      *            an additional layout configuration to use, or {@code null}
      * @return the layout mapping used in this session
      */
-    public <T> LayoutMapping<T> layout(final IDiagramLayoutManager<T> layoutManager,
+    protected <T> LayoutMapping<T> layout(final IDiagramLayoutManager<T> layoutManager,
             final IWorkbenchPart workbenchPart, final Object diagramPart,
             final boolean animate, final boolean progressBar, final boolean layoutAncestors,
             final boolean zoom, final ILayoutConfig extraLayoutConfig) {
@@ -153,7 +154,8 @@ public class DiagramLayoutEngine {
             // first phase: build the layout graph
             @Override
             protected void preUIexec() {
-                if (workbenchPart.getSite().getPage().isPartVisible(workbenchPart)) {
+                if (workbenchPart != null
+                        && workbenchPart.getSite().getPage().isPartVisible(workbenchPart)) {
                     layoutMapping.set(layoutManager.buildLayoutGraph(workbenchPart,
                             layoutAncestors ? null : diagramPart));
                 }
@@ -213,7 +215,7 @@ public class DiagramLayoutEngine {
      * @param animate whether animation should be performed
      * @return number of milliseconds to animate, or 0 if no animation is desired
      */
-    public static int calcAnimationTime(final LayoutMapping<?> mapping, final boolean animate) {
+    private static int calcAnimationTime(final LayoutMapping<?> mapping, final boolean animate) {
         if (animate) {
             int graphSize = countNodes(mapping.getLayoutGraph());
             int time = MIN_ANIMATION_TIME + (int) (ANIM_FACT * Math.sqrt(graphSize));
@@ -235,6 +237,69 @@ public class DiagramLayoutEngine {
             count += countNodes(child) + 1;
         }
         return count;
+    }
+    
+    /**
+     * Perform layout with a given progress monitor, possibly without a workbench part.
+     * 
+     * @param workbenchPart
+     *            the workbench part for which layout is performed
+     * @param diagramPart
+     *            the parent diagram part for which layout is performed, or {@code null} if the whole
+     *            diagram shall be layouted
+     * @param progressMonitor
+     *            a progress monitor to which progress of the layout algorithm is reported
+     * @return a status indicating success or failure
+     */
+    public IStatus layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
+            final IKielerProgressMonitor progressMonitor) {
+        IDiagramLayoutManager<?> layoutManager = EclipseLayoutInfoService.getInstance().getManager(
+                workbenchPart, diagramPart);
+        if (layoutManager != null) {
+            return layout(layoutManager, workbenchPart, diagramPart, progressMonitor);
+        } else {
+            throw new UnsupportedOperationException(Messages.getString("kiml.ui.17"));
+        }
+    }
+    
+    /**
+     * Perform layout with a given progress monitor using the given layout manager, possibly
+     * without a workbench part.
+     * 
+     * @param <T> the type of diagram part that is handled by the given diagram layout manager
+     * @param layoutManager
+     *            a diagram layout manager
+     * @param workbenchPart
+     *            the workbench part for which layout is performed
+     * @param diagramPart
+     *            the parent diagram part for which layout is performed, or {@code null} if the whole
+     *            diagram shall be layouted
+     * @param progressMonitor
+     *            a progress monitor to which progress of the layout algorithm is reported
+     * @return a status indicating success or failure
+     */
+    protected <T> IStatus layout(final IDiagramLayoutManager<T> layoutManager,
+            final IWorkbenchPart workbenchPart, final Object diagramPart,
+            final IKielerProgressMonitor progressMonitor) {
+        // SUPPRESS CHECKSTYLE NEXT MagicNumber
+        progressMonitor.begin("Layout Diagram", 3);
+        
+        // build the layout graph
+        IKielerProgressMonitor submon1 = progressMonitor.subTask(1);
+        submon1.begin("Build layout graph", 1);
+        LayoutMapping<T> mapping = layoutManager.buildLayoutGraph(workbenchPart, diagramPart);
+        submon1.done();
+        
+        // perform layout
+        IStatus status = layout(mapping, diagramPart, progressMonitor.subTask(1), null, false);
+        
+        // apply the layout to the diagram
+        IKielerProgressMonitor submon3 = progressMonitor.subTask(1);
+        submon3.begin("Apply layout to the diagram", 1);
+        layoutManager.applyLayout(mapping, false, 0);
+        submon3.done();
+        
+        return status;
     }
 
     /** the layout options manager for configuration of layout graphs. */
@@ -270,7 +335,7 @@ public class DiagramLayoutEngine {
      *            its ancestors
      * @return a status indicating success or failure
      */
-    public IStatus layout(final LayoutMapping<?> mapping, final Object diagramPart,
+    protected IStatus layout(final LayoutMapping<?> mapping, final Object diagramPart,
             final IKielerProgressMonitor progressMonitor, final ILayoutConfig extraLayoutConfig,
             final boolean layoutAncestors) {
         if (layoutAncestors) {
