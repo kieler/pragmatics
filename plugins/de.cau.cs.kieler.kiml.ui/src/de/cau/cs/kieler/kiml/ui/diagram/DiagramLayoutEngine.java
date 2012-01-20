@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.ui.diagram;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -96,18 +98,18 @@ public class DiagramLayoutEngine {
      *            its ancestors
      * @param zoom
      *            if true, automatic zoom-to-fit is activated
-     * @param extraLayoutConfig
-     *            an additional layout configuration to use, or {@code null}
+     * @param extraLayoutConfigs
+     *            list of additional layout configurations to use
      * @return the layout mapping used in this session
      */
     public LayoutMapping<?> layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
             final boolean animate, final boolean progressBar, final boolean layoutAncestors,
-            final boolean zoom, final ILayoutConfig extraLayoutConfig) {
+            final boolean zoom, final List<ILayoutConfig> extraLayoutConfigs) {
         IDiagramLayoutManager<?> layoutManager = EclipseLayoutInfoService.getInstance().getManager(
                 workbenchPart, diagramPart);
         if (layoutManager != null) {
             LayoutMapping<?> mapping = layout(layoutManager, workbenchPart, diagramPart, animate,
-                    progressBar, layoutAncestors, zoom, extraLayoutConfig);
+                    progressBar, layoutAncestors, zoom, extraLayoutConfigs);
             mapping.setProperty(DIAGRAM_LM, layoutManager);
             return mapping;
         } else {
@@ -140,14 +142,14 @@ public class DiagramLayoutEngine {
      *            its ancestors
      * @param zoom
      *            if true, automatic zoom-to-fit is activated
-     * @param extraLayoutConfig
-     *            an additional layout configuration to use, or {@code null}
+     * @param extraLayoutConfigs
+     *            list of additional layout configurations to use
      * @return the layout mapping used in this session
      */
     protected <T> LayoutMapping<T> layout(final IDiagramLayoutManager<T> layoutManager,
             final IWorkbenchPart workbenchPart, final Object diagramPart,
             final boolean animate, final boolean progressBar, final boolean layoutAncestors,
-            final boolean zoom, final ILayoutConfig extraLayoutConfig) {
+            final boolean zoom, final List<ILayoutConfig> extraLayoutConfigs) {
         final Maybe<LayoutMapping<T>> layoutMapping = Maybe.create();
         
         final MonitoredOperation monitoredOperation = new MonitoredOperation() {
@@ -176,7 +178,7 @@ public class DiagramLayoutEngine {
                         kielerMonitor = new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS);
                     }
                     status = layout(layoutMapping.get(), diagramPart, kielerMonitor,
-                            extraLayoutConfig, layoutAncestors);
+                            extraLayoutConfigs, layoutAncestors);
                     kielerMonitor.done();
                 }
                 return status;
@@ -328,15 +330,15 @@ public class DiagramLayoutEngine {
      *            diagram shall be layouted
      * @param progressMonitor
      *            a progress monitor to which progress of the layout algorithm is reported
-     * @param extraLayoutConfig
-     *            an additional layout configuration to use, or {@code null}
+     * @param extraLayoutConfigs
+     *            list of additional layout configurations to use
      * @param layoutAncestors
      *            if true, layout is not only performed for the selected diagram part, but also for
      *            its ancestors
      * @return a status indicating success or failure
      */
     protected IStatus layout(final LayoutMapping<?> mapping, final Object diagramPart,
-            final IKielerProgressMonitor progressMonitor, final ILayoutConfig extraLayoutConfig,
+            final IKielerProgressMonitor progressMonitor, final List<ILayoutConfig> extraLayoutConfigs,
             final boolean layoutAncestors) {
         if (layoutAncestors) {
             // remove all parallel areas from the layout graph
@@ -354,7 +356,24 @@ public class DiagramLayoutEngine {
                 }
             }
         }
-        return layout(mapping, progressMonitor, extraLayoutConfig);
+        
+        mapping.setProperty(PROGRESS_MONITOR, progressMonitor);
+        if (extraLayoutConfigs.isEmpty()) {
+            return layout(mapping, progressMonitor, null);
+        } else if (extraLayoutConfigs.size() == 1) {
+            return layout(mapping, progressMonitor, extraLayoutConfigs.get(0));
+        } else {
+            progressMonitor.begin("Multiple layout", extraLayoutConfigs.size());
+            IStatus status = null;
+            for (ILayoutConfig config : extraLayoutConfigs) {
+                status = layout(mapping, progressMonitor.subTask(1), config);
+                if (!status.isOK()) {
+                    return status;
+                }
+            }
+            progressMonitor.done();
+            return status;
+        }
     }
     
     /**
@@ -371,13 +390,14 @@ public class DiagramLayoutEngine {
     public IStatus layout(final LayoutMapping<?> mapping,
             final IKielerProgressMonitor progressMonitor, final ILayoutConfig extraLayoutConfig) {
         // configure the layout graph using a layout option manager
+        if (mapping.getProperty(PROGRESS_MONITOR) == null) {
+            mapping.setProperty(PROGRESS_MONITOR, progressMonitor);
+        }
         if (extraLayoutConfig != null) {
             mapping.getLayoutConfigs().add(extraLayoutConfig);
         }
         layoutOptionManager.configure(mapping);
         
-        mapping.setProperty(PROGRESS_MONITOR, progressMonitor);
-
         // Fetch the active graph layout engine to be used
         IGraphLayoutEngine layoutEngine = EclipseLayoutInfoService.getInstance().getLayoutEngine();
         try {

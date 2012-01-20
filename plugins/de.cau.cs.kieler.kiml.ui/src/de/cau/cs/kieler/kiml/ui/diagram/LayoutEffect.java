@@ -13,7 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.ui.diagram;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
@@ -29,6 +31,7 @@ import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.LayoutContext;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 
 /**
@@ -210,8 +213,12 @@ public class LayoutEffect extends AbstractEffect {
      */
     public void execute() {
         DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
+        List<ILayoutConfig> configs = new ArrayList<ILayoutConfig>(1);
+        if (layoutConfig != null) {
+            configs.add(layoutConfig);
+        }
         layoutMapping = layoutEngine.layout(diagramEditor, diagramPart, doAnimate, progressBar,
-                layoutAncestors, doZoom, layoutConfig);
+                layoutAncestors, doZoom, configs);
     }
 
     /**

@@ -32,6 +32,7 @@ import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * Default implementation of the layout configuration interface. This configuration handles the
@@ -324,7 +325,10 @@ public class DefaultLayoutConfig implements ILayoutConfig {
      * {@inheritDoc}
      */
     public void transferValues(final KGraphData graphData, final LayoutContext context) {
-        // nothing to do
+        // default value: activate layout for all graph elements
+        if (graphData.getProperty(LayoutOptions.NO_LAYOUT)) {
+            graphData.setProperty(LayoutOptions.NO_LAYOUT, false);
+        }
     }
 
 }
