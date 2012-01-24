@@ -129,7 +129,8 @@ public final class EclipseLayoutInfoService extends LayoutInfoService {
     /**
      * Returns the most suitable layout manager for the given workbench and diagram part.
      * 
-     * @param workbenchPart the workbench part for which the layout manager should be fetched
+     * @param workbenchPart the workbench part for which the layout manager should be
+     *     fetched, or {@code null}
      * @param diagramPart the diagram part for which the layout manager should be
      *     fetched, or {@code null}
      * @return the most suitable diagram layout manager
@@ -138,7 +139,11 @@ public final class EclipseLayoutInfoService extends LayoutInfoService {
             final Object diagramPart) {
         for (Pair<Integer, IDiagramLayoutManager<?>> entry : managers) {
             IDiagramLayoutManager<?> manager = entry.getSecond();
-            if (manager.supports(workbenchPart)
+            if (workbenchPart == null) {
+                if (manager.supports(diagramPart)) {
+                    return manager;
+                }
+            } else if (manager.supports(workbenchPart)
                     && (diagramPart == null || manager.supports(diagramPart))) {
                 return manager;
             }

@@ -56,6 +56,7 @@ import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -210,9 +211,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
             } else {
                 nodeID = getNodeID(childNode, NodeType.NODE, transData);
                 // set width and height
-                if (!nodeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
-                    KimlUtil.resizeNode(childNode);
-                }
+                KimlUtil.resizeNode(childNode);
                 if (nodeLayout.getWidth() > 0) {
                     attributes.add(createAttribute(Attributes.WIDTH, nodeLayout.getWidth() / DPI));
                 }
@@ -803,7 +802,8 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                                     nodeOffset.y = -(baseOffset.y + topy);
                                 }
                                 KimlUtil.resizeNode(parentNode, width, height, false);
-                                parentLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
+                                parentLayout.setProperty(LayoutOptions.SIZE_CONSTRAINT,
+                                        SizeConstraint.FIXED);
                                 break attr_loop;
                             } catch (NumberFormatException exception) {
                                 // ignore exception

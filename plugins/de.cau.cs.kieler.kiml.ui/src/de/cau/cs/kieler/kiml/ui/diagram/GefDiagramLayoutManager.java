@@ -22,6 +22,8 @@ import org.eclipse.gef.editparts.ZoomManager;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 /**
@@ -32,11 +34,16 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
  */
 public abstract class GefDiagramLayoutManager<T> implements IDiagramLayoutManager<T> {
 
+    /** the animation time used for layout. */
+    public static final IProperty<Integer> ANIMATION_TIME = new Property<Integer>(
+            "gef.animationTime", 0);
+    
     /**
      * {@inheritDoc}
      */
     public void applyLayout(final LayoutMapping<T> mapping, final boolean zoomToFit,
             final int animationTime) {
+        mapping.setProperty(ANIMATION_TIME, animationTime);
         Object layoutGraphObj = mapping.getParentElement();
         if (zoomToFit && layoutGraphObj instanceof EditPart) {
             // determine pre- or post-layout zoom
@@ -105,5 +112,30 @@ public abstract class GefDiagramLayoutManager<T> implements IDiagramLayoutManage
      * @param mapping a layout mapping that was created by this layout manager
      */
     protected abstract void applyLayout(LayoutMapping<T> mapping);
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void undoLayout(final LayoutMapping<T> mapping) {
+        int animationTime = mapping.getProperty(ANIMATION_TIME);
+        if (animationTime > 0) {
+            // undo the layout with animation
+            Animation.markBegin();
+            performUndo(mapping);
+            Animation.run(animationTime);
+        } else {
+            // undo the layout without animation
+            performUndo(mapping);
+        }
+    }
+    
+    /**
+     * Perform undo in the original diagram (optional operation).
+     *
+     * @param mapping a layout mapping that was created by this layout manager
+     */
+    protected void performUndo(final LayoutMapping<T> mapping) {
+        throw new UnsupportedOperationException("Undo is not supported by this layout manager.");
+    }
 
 }

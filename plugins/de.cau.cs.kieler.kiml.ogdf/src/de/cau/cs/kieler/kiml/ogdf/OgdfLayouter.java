@@ -13,12 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.ogdf;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.math.BigInteger;
@@ -36,7 +31,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 import net.ogdf.bin.OgdfServer;
-import net.ogdf.bin.OgdfServer.Aborter;
+import net.ogdf.bin.OgdfServer.Cleanup;
+import net.ogdf.bin.OgdfServerException;
 import net.ogdf.ogml.DocumentRoot;
 import net.ogdf.ogml.EdgeType;
 import net.ogdf.ogml.GraphType;
@@ -63,7 +59,6 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.core.util.NonBlockingInputStream;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
@@ -168,10 +163,9 @@ public abstract class OgdfLayouter {
         this.debugCanvas = thecanvas;
     }
 
-    private static final int SMALL_TASK_WORK = 1;
-    private static final int PROCESS_WORK = 5;
-    private static final int LAYOUT_WORK = SMALL_TASK_WORK + SMALL_TASK_WORK + SMALL_TASK_WORK
-            + PROCESS_WORK + SMALL_TASK_WORK;
+    private static final int SUBTASK_WORK = 1;
+    private static final int LAYOUT_WORK = SUBTASK_WORK + SUBTASK_WORK + SUBTASK_WORK + SUBTASK_WORK;
+    static final float MAP_LOAD_FACTOR = 0.75f;
 
     /**
      * Layouts the given graph.
@@ -199,8 +193,8 @@ public abstract class OgdfLayouter {
             resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
                     .put("ogml", new OgmlResourceFactoryImpl());
         }
-        // start the ogdf server process, or retrieve the previously used process
-        Process process = ogdfServer.startProcess(INPUT_FORMAT);
+        // start the OGDF server process, or retrieve the previously used process
+        ogdfServer.initialize(INPUT_FORMAT);
 
         // set the random number generator seed
         setRandomSeed(layoutNode);
@@ -209,48 +203,29 @@ public abstract class OgdfLayouter {
         // prepare the label layout
         prepareLabelLayout(layoutNode);
         // transform the graph
-        DocumentRoot root = transformGraph(layoutNode, progressMonitor.subTask(SMALL_TASK_WORK));
+        DocumentRoot root = transformGraph(layoutNode, progressMonitor.subTask(SUBTASK_WORK));
 
-        // receive the output stream and make it buffered
-        OutputStream outputStream = new BufferedOutputStream(process.getOutputStream());
-        // write the graph to the process
-        writeOgmlGraph(root, outputStream, progressMonitor.subTask(SMALL_TASK_WORK), ogdfServer);
-        // write the buffers to the process
-        writeBuffers(outputStream, progressMonitor.subTask(SMALL_TASK_WORK));
         try {
+            // retrieve the OGDF server input
+            OutputStream outputStream = ogdfServer.input();
+            // write the graph to the process
+            writeOgmlGraph(root, outputStream, progressMonitor.subTask(SUBTASK_WORK), ogdfServer);
             // flush the stream
             outputStream.flush();
-            // wait for the process to finish the layout and send the layout information
-            final IKielerProgressMonitor subMon = progressMonitor.subTask(PROCESS_WORK);
-            subMon.begin("Wait OGDF Reply", 1);
-            boolean dataok = ogdfServer.waitForInput(process.getInputStream(), new Aborter() {
-                public boolean shouldAbort() {
-                    return subMon.isCanceled();
-                }
-            });
-            if (subMon.isCanceled()) {
-                return;
-            }
-            if (!dataok) {
-                // FIXME throw a more specific exception
-                throw new RuntimeException("A timeout occured while waiting for the OGDF process."
-                        + " Try increasing the timeout value in the preferences"
-                        + " (KIELER / Layout / OGDF).");
-            }
-            subMon.done();
-
+        
             // read the layout information
-            Map<String, KVectorChain> layoutInformation =
-                    readLayoutInformation(new BufferedInputStream(process.getInputStream()),
-                            progressMonitor.subTask(SMALL_TASK_WORK), ogdfServer);
+            Map<String, KVectorChain> layoutInformation = readLayoutInformation(ogdfServer,
+                    progressMonitor.subTask(SUBTASK_WORK));
             // apply the layout back to the KGraph
-            applyLayout(layoutNode, layoutInformation);
+            applyLayout(layoutNode, layoutInformation, progressMonitor.subTask(SUBTASK_WORK));
             // perform post-processing
             postProcess(layoutNode);
-
-        } catch (IOException e) {
-            throw new WrappedException(e, "Could not flush stdout.");
+            
+        } catch (IOException exception) {
+            ogdfServer.cleanup(Cleanup.ERROR);
+            throw new WrappedException(exception, "Failed to communicate with the OGDF process.");
         } finally {
+            ogdfServer.cleanup(Cleanup.NORMAL);
             progressMonitor.done();
             reset();
         }
@@ -340,13 +315,13 @@ public abstract class OgdfLayouter {
     /**
      * Transforms the given layout graph into an OGML graph (ignores hierarchy).
      * 
-     * @param layoutNode
+     * @param parentNode
      *            the parent node of the layout graph
      * @param progressMonitor
      *            the progress monitor
      * @return an OGML graph
      */
-    private DocumentRoot transformGraph(final KNode layoutNode,
+    private DocumentRoot transformGraph(final KNode parentNode,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Transform KGraph to OGML", 1);
         boolean umlGraph = false;
@@ -364,7 +339,7 @@ public abstract class OgdfLayouter {
         StylesType styles = factory.createStylesType();
         layout.setStyles(styles);
         // transform nodes (only top level)
-        for (KNode node : layoutNode.getChildren()) {
+        for (KNode node : parentNode.getChildren()) {
             String id = generateId(node);
             NodeType ogmlNode = factory.createNodeType();
             ogmlNode.setId(id);
@@ -381,6 +356,7 @@ public abstract class OgdfLayouter {
             location.setX(nodeLayout.getXpos() + nodeLayout.getWidth() / 2);
             location.setY(nodeLayout.getYpos() + nodeLayout.getHeight() / 2);
             ogmlNodeLayout.setLocation(location);
+            KimlUtil.resizeNode(node);
             ShapeType1 shape = factory.createShapeType1();
             shape.setWidth(BigInteger.valueOf(Math.round(nodeLayout.getWidth())));
             shape.setHeight(BigInteger.valueOf(Math.round(nodeLayout.getHeight())));
@@ -393,11 +369,11 @@ public abstract class OgdfLayouter {
             KimlUtil.excludeLabels(node);
         }
         // transform edges
-        for (KNode sourceNode : layoutNode.getChildren()) {
+        for (KNode sourceNode : parentNode.getChildren()) {
             for (KEdge edge : sourceNode.getOutgoingEdges()) {
                 KNode targetNode = edge.getTarget();
                 // ignore cross-hierarchy edges
-                if (targetNode.getParent() == layoutNode) {
+                if (targetNode.getParent() == parentNode) {
                     KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
                     String id = generateId(edge);
                     EdgeType ogmlEdge = factory.createEdgeType();
@@ -543,15 +519,18 @@ public abstract class OgdfLayouter {
      *            the parent node of the layout graph
      * @param layoutInformation
      *            the layout information
+     * @param progressMonitor
+     *            the progress monitor
      */
     protected void applyLayout(final KNode parentNode,
-            final Map<String, KVectorChain> layoutInformation) {
+            final Map<String, KVectorChain> layoutInformation,
+            final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Apply layout", 1);
         // get the parent node layout
         KShapeLayout parentNodeLayout = parentNode.getData(KShapeLayout.class);
         KVectorChain boundingBox = layoutInformation.get("graph");
         if (boundingBox == null || boundingBox.size() != 2) {
-            // FIXME throw a more specific exception
-            throw new RuntimeException("Malformed layout data received from ogdf server.");
+            throw new OgdfServerException("Malformed layout data received from ogdf server.");
         }
         KVector bbLocation = boundingBox.getFirst();
         KVector bbShape = boundingBox.getLast();
@@ -646,6 +625,7 @@ public abstract class OgdfLayouter {
         float width = boundingBoxWidth + 2 * borderSpacing + insets.getLeft() + insets.getRight();
         float height = boundingBoxHeight + 2 * borderSpacing + insets.getTop() + insets.getBottom();
         KimlUtil.resizeNode(parentNode, width, height, false);
+        progressMonitor.done();
     }
 
     /**
@@ -659,20 +639,18 @@ public abstract class OgdfLayouter {
      *            the progress monitor
      * @param ogdfServer
      *            the OGDF server process interface
+     * @throws IOException if writing to the process fails
      */
     private void writeOgmlGraph(final DocumentRoot root, final OutputStream outputStream,
-            final IKielerProgressMonitor progressMonitor, final OgdfServer ogdfServer) {
+            final IKielerProgressMonitor progressMonitor, final OgdfServer ogdfServer)
+            throws IOException {
         progressMonitor.begin("Serialize OGML graph", 1);
-        try {
-            Resource resource = resourceSet.createResource(URI.createURI("http:///My.ogml"));
-            resource.getContents().add(root);
-            // write to the stream
-            resource.save(outputStream, null);
-            outputStream.flush();
-        } catch (IOException exception) {
-            ogdfServer.endProcess();
-            throw new WrappedException(exception, "Failed to serialize the OGML graph.");
-        }
+        Resource resource = resourceSet.createResource(URI.createURI("http:///My.ogml"));
+        resource.getContents().add(root);
+        // write OGML graph to the process
+        resource.save(outputStream, null);
+        // write the buffers to the process
+        writeBuffers(outputStream);
         progressMonitor.done();
     }
 
@@ -681,12 +659,8 @@ public abstract class OgdfLayouter {
      * 
      * @param outputStream
      *            the output stream
-     * @param progressMonitor
-     *            the progress monitor
      */
-    private void writeBuffers(final OutputStream outputStream,
-            final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Write options", 1);
+    private void writeBuffers(final OutputStream outputStream) {
         PrintStream printStream = new PrintStream(outputStream);
         printStream.print(CHUNK_KEYWORD);
         // write options
@@ -700,88 +674,40 @@ public abstract class OgdfLayouter {
         }
         printStream.print(CHUNK_KEYWORD);
         printStream.flush();
-        progressMonitor.done();
     }
-
+    
     /**
-     * An enumeration for keeping track of the current parser state.
-     */
-    private enum ParseState {
-        TYPE, DATA, ERROR
-    }
-
-    /**
-     * Reads the layout information from the input stream.
+     * Read layout information from the OGDF server process.
      * 
-     * @param inputStream
-     *            the input stream
-     * @param progressMonitor
-     *            the progress monitor
      * @param ogdfServer
      *            the OGDF server process interface
+     * @param progressMonitor
+     *            the progress monitor
+     * @return a map of layout information
      */
-    private Map<String, KVectorChain> readLayoutInformation(final InputStream inputStream,
-            final IKielerProgressMonitor progressMonitor, final OgdfServer ogdfServer) {
-        progressMonitor.begin("Read layout information", 1);
-        Map<String, KVectorChain> layoutInformation = new HashMap<String, KVectorChain>();
-        String error = "";
-        try {
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(
-                            new NonBlockingInputStream(inputStream)));
-            ParseState state = ParseState.TYPE;
-            boolean parseMore = true;
-            while (parseMore) {
-                String line = reader.readLine();
-                if (line == null) {
-                    ogdfServer.endProcess();
-                    // FIXME throw a more specific exception
-                    throw new RuntimeException("Failed to read answer from ogdf server process.");
-                }
-                switch (state) {
-                case TYPE:
-                    if (line.equals("LAYOUT")) {
-                        state = ParseState.DATA;
-                    } else if (line.equals("ERROR")) {
-                        state = ParseState.ERROR;
-                    }
-                    break;
-                case DATA:
-                    if (line.equals("DONE")) {
-                        parseMore = false;
-                    } else {
-                        // try parsing the line
-                        try {
-                            String[] tokens = line.split("=");
-                            if (tokens.length == 2 && tokens[0].length() > 0) {
-                                KVectorChain pointList = new KVectorChain();
-                                pointList.parse(tokens[1]);
-                                layoutInformation.put(tokens[0], pointList);
-                            }
-                        } catch (IllegalArgumentException e) {
-                            // do nothing
-                        }
-                    }
-                    break;
-                case ERROR:
-                    if (line.equals("DONE")) {
-                        throw new RuntimeException(error);
-                    } else {
-                        if (error.length() > 0) {
-                            error += "\n";
-                        }
-                        error += line;
-                    }
-                    break;
-                }
-            }
-        } catch (IOException exception) {
-            ogdfServer.endProcess();
-            throw new RuntimeException(
-                    "Failed to read layout information from ogdf server process.", exception);
-        } finally {
-            progressMonitor.done();
+    private Map<String, KVectorChain> readLayoutInformation(final OgdfServer ogdfServer,
+            final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Read output from OGDF", 1);
+        Map<String, String> outputData = ogdfServer.readOutputData();
+        if (outputData == null) {
+            ogdfServer.cleanup(Cleanup.ERROR);
+            throw new OgdfServerException("No output from the OGDF process."
+                    + " Try increasing the timeout value in the preferences"
+                    + " (KIELER / Layout / OGDF).");
         }
+        Map<String, KVectorChain> layoutInformation = new HashMap<String, KVectorChain>(
+                (int) (outputData.size() / MAP_LOAD_FACTOR) + 1);
+        for (Map.Entry<String, String> entry : outputData.entrySet()) {
+            try {
+                KVectorChain pointList = new KVectorChain();
+                pointList.parse(entry.getValue());
+                layoutInformation.put(entry.getKey(), pointList);
+            } catch (IllegalArgumentException exception) {
+                // the vector chain could not be parsed - ignore the entry
+            }
+        }
+        progressMonitor.done();
         return layoutInformation;
     }
+    
 }

@@ -59,6 +59,13 @@ public interface IDiagramLayoutManager<T> {
             int animationTime);
     
     /**
+     * Undo the layout in the original diagram (optional operation).
+     * 
+     * @param mapping a layout mapping that was created by this layout manager
+     */
+    void undoLayout(LayoutMapping<T> mapping);
+    
+    /**
      * Return a framework-specific layout configuration.
      * 
      * @return a layout configuration for this diagram layout manager

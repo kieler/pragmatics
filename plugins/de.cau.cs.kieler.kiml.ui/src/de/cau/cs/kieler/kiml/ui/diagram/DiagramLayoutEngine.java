@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.ui.diagram;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -42,8 +44,17 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  */
 public class DiagramLayoutEngine {
     
-    /** the singleton instance that can be used whenever layout needs to be performed. */
+    /**
+     * The singleton instance that can be used whenever layout needs to be performed.
+     */
     public static final DiagramLayoutEngine INSTANCE = new DiagramLayoutEngine();
+    
+    /**
+     * Property for the diagram layout manager used for automatic layout. This property is
+     * attached to layout mappings created by the {@code layout} methods.
+     */
+    public static final IProperty<IDiagramLayoutManager<?>> DIAGRAM_LM
+            = new Property<IDiagramLayoutManager<?>>("layoutEngine.diagramLayoutManager");
     
     /**
      * Perform layout on the given workbench part.
@@ -71,7 +82,9 @@ public class DiagramLayoutEngine {
     }
     
     /**
-     * Perform layout on the given workbench part.
+     * Perform layout on the given workbench part. If zero or one layout configuration is passed,
+     * the layout engine is executed exactly once. If multiple layout configurations are passed,
+     * the layout engine is executed accordingly often.
      * 
      * @param workbenchPart
      *            the workbench part for which layout is performed
@@ -87,21 +100,24 @@ public class DiagramLayoutEngine {
      *            its ancestors
      * @param zoom
      *            if true, automatic zoom-to-fit is activated
-     * @param extraLayoutConfig
-     *            an additional layout configuration to use, or {@code null}
+     * @param extraLayoutConfigs
+     *            list of additional layout configurations to use
      * @return the layout mapping used in this session
      */
     public LayoutMapping<?> layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
             final boolean animate, final boolean progressBar, final boolean layoutAncestors,
-            final boolean zoom, final ILayoutConfig extraLayoutConfig) {
+            final boolean zoom, final List<ILayoutConfig> extraLayoutConfigs) {
         IDiagramLayoutManager<?> layoutManager = EclipseLayoutInfoService.getInstance().getManager(
                 workbenchPart, diagramPart);
         if (layoutManager != null) {
-            return layout(layoutManager, workbenchPart, diagramPart, animate, progressBar,
-                    layoutAncestors, zoom, extraLayoutConfig);
+            LayoutMapping<?> mapping = layout(layoutManager, workbenchPart, diagramPart, animate,
+                    progressBar, layoutAncestors, zoom, extraLayoutConfigs);
+            mapping.setProperty(DIAGRAM_LM, layoutManager);
+            return mapping;
         } else {
-            throw new UnsupportedOperationException(Messages.getString("kiml.ui.15")
-                    + workbenchPart.getTitle() + ".");
+            throw new UnsupportedOperationException(workbenchPart == null
+                    ? Messages.getString("kiml.ui.17")
+                    : Messages.getString("kiml.ui.15") + workbenchPart.getTitle() + ".");
         }
     }
 
@@ -109,7 +125,9 @@ public class DiagramLayoutEngine {
     private static final int MAX_PROGRESS_LEVELS = 3;
 
     /**
-     * Perform layout on the given workbench part using the given layout manager.
+     * Perform layout on the given workbench part using the given layout manager. If zero or one
+     * layout configuration is passed, the layout engine is executed exactly once. If multiple
+     * layout configurations are passed, the layout engine is executed accordingly often.
      * 
      * @param <T> the type of diagram part that is handled by the given diagram layout manager
      * @param layoutManager
@@ -128,21 +146,22 @@ public class DiagramLayoutEngine {
      *            its ancestors
      * @param zoom
      *            if true, automatic zoom-to-fit is activated
-     * @param extraLayoutConfig
-     *            an additional layout configuration to use, or {@code null}
+     * @param extraLayoutConfigs
+     *            list of additional layout configurations to use
      * @return the layout mapping used in this session
      */
-    public <T> LayoutMapping<T> layout(final IDiagramLayoutManager<T> layoutManager,
+    protected <T> LayoutMapping<T> layout(final IDiagramLayoutManager<T> layoutManager,
             final IWorkbenchPart workbenchPart, final Object diagramPart,
             final boolean animate, final boolean progressBar, final boolean layoutAncestors,
-            final boolean zoom, final ILayoutConfig extraLayoutConfig) {
+            final boolean zoom, final List<ILayoutConfig> extraLayoutConfigs) {
         final Maybe<LayoutMapping<T>> layoutMapping = Maybe.create();
         
         final MonitoredOperation monitoredOperation = new MonitoredOperation() {
             // first phase: build the layout graph
             @Override
             protected void preUIexec() {
-                if (workbenchPart.getSite().getPage().isPartVisible(workbenchPart)) {
+                if (workbenchPart != null
+                        && workbenchPart.getSite().getPage().isPartVisible(workbenchPart)) {
                     layoutMapping.set(layoutManager.buildLayoutGraph(workbenchPart,
                             layoutAncestors ? null : diagramPart));
                 }
@@ -163,7 +182,7 @@ public class DiagramLayoutEngine {
                         kielerMonitor = new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS);
                     }
                     status = layout(layoutMapping.get(), diagramPart, kielerMonitor,
-                            extraLayoutConfig, layoutAncestors);
+                            extraLayoutConfigs, layoutAncestors);
                     kielerMonitor.done();
                 }
                 return status;
@@ -202,7 +221,7 @@ public class DiagramLayoutEngine {
      * @param animate whether animation should be performed
      * @return number of milliseconds to animate, or 0 if no animation is desired
      */
-    public static int calcAnimationTime(final LayoutMapping<?> mapping, final boolean animate) {
+    private static int calcAnimationTime(final LayoutMapping<?> mapping, final boolean animate) {
         if (animate) {
             int graphSize = countNodes(mapping.getLayoutGraph());
             int time = MIN_ANIMATION_TIME + (int) (ANIM_FACT * Math.sqrt(graphSize));
@@ -225,6 +244,69 @@ public class DiagramLayoutEngine {
         }
         return count;
     }
+    
+    /**
+     * Perform layout with a given progress monitor, possibly without a workbench part.
+     * 
+     * @param workbenchPart
+     *            the workbench part for which layout is performed
+     * @param diagramPart
+     *            the parent diagram part for which layout is performed, or {@code null} if the whole
+     *            diagram shall be layouted
+     * @param progressMonitor
+     *            a progress monitor to which progress of the layout algorithm is reported
+     * @return a status indicating success or failure
+     */
+    public IStatus layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
+            final IKielerProgressMonitor progressMonitor) {
+        IDiagramLayoutManager<?> layoutManager = EclipseLayoutInfoService.getInstance().getManager(
+                workbenchPart, diagramPart);
+        if (layoutManager != null) {
+            return layout(layoutManager, workbenchPart, diagramPart, progressMonitor);
+        } else {
+            throw new UnsupportedOperationException(Messages.getString("kiml.ui.17"));
+        }
+    }
+    
+    /**
+     * Perform layout with a given progress monitor using the given layout manager, possibly
+     * without a workbench part.
+     * 
+     * @param <T> the type of diagram part that is handled by the given diagram layout manager
+     * @param layoutManager
+     *            a diagram layout manager
+     * @param workbenchPart
+     *            the workbench part for which layout is performed
+     * @param diagramPart
+     *            the parent diagram part for which layout is performed, or {@code null} if the whole
+     *            diagram shall be layouted
+     * @param progressMonitor
+     *            a progress monitor to which progress of the layout algorithm is reported
+     * @return a status indicating success or failure
+     */
+    protected <T> IStatus layout(final IDiagramLayoutManager<T> layoutManager,
+            final IWorkbenchPart workbenchPart, final Object diagramPart,
+            final IKielerProgressMonitor progressMonitor) {
+        // SUPPRESS CHECKSTYLE NEXT MagicNumber
+        progressMonitor.begin("Layout Diagram", 3);
+        
+        // build the layout graph
+        IKielerProgressMonitor submon1 = progressMonitor.subTask(1);
+        submon1.begin("Build layout graph", 1);
+        LayoutMapping<T> mapping = layoutManager.buildLayoutGraph(workbenchPart, diagramPart);
+        submon1.done();
+        
+        // perform layout
+        IStatus status = layout(mapping, diagramPart, progressMonitor.subTask(1), null, false);
+        
+        // apply the layout to the diagram
+        IKielerProgressMonitor submon3 = progressMonitor.subTask(1);
+        submon3.begin("Apply layout to the diagram", 1);
+        layoutManager.applyLayout(mapping, false, 0);
+        submon3.done();
+        
+        return status;
+    }
 
     /** the layout options manager for configuration of layout graphs. */
     private LayoutOptionManager layoutOptionManager = new LayoutOptionManager();
@@ -243,7 +325,9 @@ public class DiagramLayoutEngine {
             = new Property<IKielerProgressMonitor>("layout.progressMonitor");
     
     /**
-     * Perform layout on the given layout graph mapping.
+     * Perform layout on the given layout graph mapping. If zero or one layout configuration is
+     * passed, the layout engine is executed exactly once. If multiple layout configurations are
+     * passed, the layout engine is executed accordingly often.
      * 
      * @param mapping
      *            a mapping for the layout graph
@@ -252,15 +336,15 @@ public class DiagramLayoutEngine {
      *            diagram shall be layouted
      * @param progressMonitor
      *            a progress monitor to which progress of the layout algorithm is reported
-     * @param extraLayoutConfig
-     *            an additional layout configuration to use, or {@code null}
+     * @param extraLayoutConfigs
+     *            list of additional layout configurations to use
      * @param layoutAncestors
      *            if true, layout is not only performed for the selected diagram part, but also for
      *            its ancestors
      * @return a status indicating success or failure
      */
-    public IStatus layout(final LayoutMapping<?> mapping, final Object diagramPart,
-            final IKielerProgressMonitor progressMonitor, final ILayoutConfig extraLayoutConfig,
+    protected IStatus layout(final LayoutMapping<?> mapping, final Object diagramPart,
+            final IKielerProgressMonitor progressMonitor, final List<ILayoutConfig> extraLayoutConfigs,
             final boolean layoutAncestors) {
         if (layoutAncestors) {
             // remove all parallel areas from the layout graph
@@ -278,7 +362,30 @@ public class DiagramLayoutEngine {
                 }
             }
         }
-        return layout(mapping, progressMonitor, extraLayoutConfig);
+        
+        mapping.setProperty(PROGRESS_MONITOR, progressMonitor);
+        if (extraLayoutConfigs.isEmpty()) {
+            // perform layout without any extra configuration
+            return layout(mapping, progressMonitor);
+        } else if (extraLayoutConfigs.size() == 1) {
+            // perform layout once with an extra configuration
+            mapping.getLayoutConfigs().add(extraLayoutConfigs.get(0));
+            return layout(mapping, progressMonitor);
+        } else {
+            // perform layout multiple times with different configurations
+            progressMonitor.begin("Multiple layout", extraLayoutConfigs.size());
+            IStatus status = null;
+            for (ILayoutConfig config : extraLayoutConfigs) {
+                mapping.getLayoutConfigs().add(config);
+                status = layout(mapping, progressMonitor.subTask(1));
+                if (!status.isOK()) {
+                    return status;
+                }
+                mapping.getLayoutConfigs().remove(config);
+            }
+            progressMonitor.done();
+            return status;
+        }
     }
     
     /**
@@ -288,20 +395,16 @@ public class DiagramLayoutEngine {
      *            a mapping for the layout graph
      * @param progressMonitor
      *            a progress monitor to which progress of the layout algorithm is reported
-     * @param extraLayoutConfig
-     *            an additional layout configuration to use, or {@code null}
      * @return a status indicating success or failure
      */
     public IStatus layout(final LayoutMapping<?> mapping,
-            final IKielerProgressMonitor progressMonitor, final ILayoutConfig extraLayoutConfig) {
+            final IKielerProgressMonitor progressMonitor) {
         // configure the layout graph using a layout option manager
-        if (extraLayoutConfig != null) {
-            mapping.getLayoutConfigs().add(extraLayoutConfig);
+        if (mapping.getProperty(PROGRESS_MONITOR) == null) {
+            mapping.setProperty(PROGRESS_MONITOR, progressMonitor);
         }
         layoutOptionManager.configure(mapping);
         
-        mapping.setProperty(PROGRESS_MONITOR, progressMonitor);
-
         // Fetch the active graph layout engine to be used
         IGraphLayoutEngine layoutEngine = EclipseLayoutInfoService.getInstance().getLayoutEngine();
         try {

@@ -38,6 +38,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -244,7 +245,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // add a new node to the layered graph, copying its size
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        if (nodeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
+        if (nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT) == SizeConstraint.FIXED) {
             if (node.getChildren().isEmpty()) {
                 // if the node is empty and its size is fixed, the node label won't be moved
                 KimlUtil.excludeLabels(node);

@@ -213,12 +213,12 @@ public class AdvancedRenderingEditPartUtil {
         return false;
     }
 
-    private void addEditPartToCondition(ICondition condition, EditPart editPart) {
+    private void addEditPartToCondition(final ICondition<?> condition, final EditPart editPart) {
         if (condition instanceof IEditPartSensitiveCondition<?>) {
-            ((IEditPartSensitiveCondition<EObject>) condition).setEditPart(editPart);
+            ((IEditPartSensitiveCondition<?>) condition).setEditPart(editPart);
         } else if (condition instanceof CompoundCondition) {
             List<ICondition<?>> childConditions = ((CompoundCondition) condition).getChildConditions();
-            for (ICondition cond : childConditions) {
+            for (ICondition<?> cond : childConditions) {
                 addEditPartToCondition(cond, editPart);
             }
         }

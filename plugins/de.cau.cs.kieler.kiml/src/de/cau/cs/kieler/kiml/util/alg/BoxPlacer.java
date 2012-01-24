@@ -90,9 +90,7 @@ public class BoxPlacer extends AbstractAlgorithm {
         float totalArea = 0.0f;
         for (KNode box : sortedBoxes) {
             KShapeLayout boxLayout = box.getData(KShapeLayout.class);
-            if (!boxLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
-                KimlUtil.resizeNode(box);
-            }
+            KimlUtil.resizeNode(box);
             // invalidate edges, since they are not considered here
             for (KEdge edge : box.getOutgoingEdges()) {
                 edge.getData(KEdgeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);

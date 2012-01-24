@@ -43,6 +43,7 @@ import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.options.SizeConstraint;
 
 /**
  * Utility methods for KGraphs and layout data.
@@ -456,69 +457,83 @@ public final class KimlUtil {
     }
 
     /** minimal size of a node. */
-    private static final float MIN_NODE_SIZE = 16.0f;
+    private static final float MIN_NODE_SIZE = 20.0f;
 
     /**
      * Sets the size of a given node, depending on the minimal size, the number of ports
      * on each side, the insets, and the label.
      * 
      * @param node the node that shall be resized
-     * @return a vector holding the width and height resizing ratio
+     * @return a vector holding the width and height resizing ratio, or {@code null} if the size
+     *     constraint is set to {@code FIXED}
      */
     public static KVector resizeNode(final KNode node) {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+        SizeConstraint sizeConstraint = nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT);
+        if (sizeConstraint == SizeConstraint.FIXED) {
+            return null;
+        }
+        
+        float newWidth = 0, newHeight = 0;
 
-        PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
-        float minNorth = 2, minEast = 2, minSouth = 2, minWest = 2;
-        Direction direction = node.getParent() == null
-                ? nodeLayout.getProperty(LayoutOptions.DIRECTION)
-                : node.getParent().getData(KShapeLayout.class).getProperty(LayoutOptions.DIRECTION);
-        for (KPort port : node.getPorts()) {
-            KShapeLayout portLayout = port.getData(KShapeLayout.class);
-            PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
-            if (portSide == PortSide.UNDEFINED) {
-                portSide = calcPortSide(port, direction);
-                portLayout.setProperty(LayoutOptions.PORT_SIDE, portSide);
-            }
-            if (portConstraints == PortConstraints.FIXED_POS) {
-                switch (portSide) {
-                case NORTH:
-                    minNorth = Math.max(minNorth, portLayout.getXpos()
-                            + portLayout.getWidth());
-                    break;
-                case EAST:
-                    minEast = Math.max(minEast, portLayout.getYpos()
-                            + portLayout.getHeight());
-                    break;
-                case SOUTH:
-                    minSouth = Math.max(minSouth, portLayout.getXpos()
-                            + portLayout.getWidth());
-                    break;
-                case WEST:
-                    minWest = Math.max(minWest, portLayout.getYpos()
-                            + portLayout.getHeight());
-                    break;
+        if (sizeConstraint.arePortsConsidered()) {
+            PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+            float minNorth = 2, minEast = 2, minSouth = 2, minWest = 2;
+            Direction direction = node.getParent() == null
+                    ? nodeLayout.getProperty(LayoutOptions.DIRECTION)
+                    : node.getParent().getData(KShapeLayout.class).getProperty(LayoutOptions.DIRECTION);
+            for (KPort port : node.getPorts()) {
+                KShapeLayout portLayout = port.getData(KShapeLayout.class);
+                PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
+                if (portSide == PortSide.UNDEFINED) {
+                    portSide = calcPortSide(port, direction);
+                    portLayout.setProperty(LayoutOptions.PORT_SIDE, portSide);
                 }
-            } else {
-                switch (portSide) {
-                case NORTH:
-                    minNorth += portLayout.getWidth() + 2;
-                    break;
-                case EAST:
-                    minEast += portLayout.getHeight() + 2;
-                    break;
-                case SOUTH:
-                    minSouth += portLayout.getWidth() + 2;
-                    break;
-                case WEST:
-                    minWest += portLayout.getHeight() + 2;
-                    break;
+                if (portConstraints == PortConstraints.FIXED_POS) {
+                    switch (portSide) {
+                    case NORTH:
+                        minNorth = Math.max(minNorth, portLayout.getXpos()
+                                + portLayout.getWidth());
+                        break;
+                    case EAST:
+                        minEast = Math.max(minEast, portLayout.getYpos()
+                                + portLayout.getHeight());
+                        break;
+                    case SOUTH:
+                        minSouth = Math.max(minSouth, portLayout.getXpos()
+                                + portLayout.getWidth());
+                        break;
+                    case WEST:
+                        minWest = Math.max(minWest, portLayout.getYpos()
+                                + portLayout.getHeight());
+                        break;
+                    }
+                } else {
+                    switch (portSide) {
+                    case NORTH:
+                        minNorth += portLayout.getWidth() + 2;
+                        break;
+                    case EAST:
+                        minEast += portLayout.getHeight() + 2;
+                        break;
+                    case SOUTH:
+                        minSouth += portLayout.getWidth() + 2;
+                        break;
+                    case WEST:
+                        minWest += portLayout.getHeight() + 2;
+                        break;
+                    }
                 }
             }
+            
+            newWidth = Math.max(minNorth, minSouth);
+            newHeight = Math.max(minEast, minWest);
         }
 
-        float newWidth = KielerMath.maxf(MIN_NODE_SIZE, minNorth, minSouth);
-        float newHeight = KielerMath.maxf(MIN_NODE_SIZE, minEast, minWest);
+        if (sizeConstraint.isDefSizeConsidered()) {
+            newWidth = Math.max(newWidth, MIN_NODE_SIZE);
+            newHeight = Math.max(newHeight, MIN_NODE_SIZE);
+        }
         
         return resizeNode(node, newWidth, newHeight, true);
     }
@@ -614,7 +629,7 @@ public final class KimlUtil {
         }
         
         // set fixed size option for the node: now the size is assumed to stay as determined here
-        nodeLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
+        nodeLayout.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.FIXED);
         
         return new KVector(widthRatio, heightRatio);
     }
