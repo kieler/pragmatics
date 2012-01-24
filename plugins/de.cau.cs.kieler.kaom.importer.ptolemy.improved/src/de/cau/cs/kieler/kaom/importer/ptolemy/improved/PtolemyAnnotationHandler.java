@@ -38,8 +38,9 @@ import de.cau.cs.kieler.kaom.Entity;
 
 
 /**
- * Handles Ptolemy annotations and attaches them to the entity they are most
- * likely annotating.
+ * Handles Ptolemy annotations and their associations with actors. For each model
+ * transformation, a new instance must be created and the {@link #handleAnnotations()}
+ * method called.
  * 
  * <p>In Ptolemy, certain annotations in a model are like comments in source code.
  * There are two ways how they can be represented in MOML:</p>
@@ -99,22 +100,63 @@ import de.cau.cs.kieler.kaom.Entity;
  * does contain XML (usually an {@code svg} element and its children), which
  * disturbs the quiet peace of the parser. (which, in turn, disturbs my quiet peace.)
  * The {@code configure} element and its children are then dropped by the parser
- * during the transformation and are added to a list of unknown features. That's
- * where this handler comes in.</p>
+ * during the transformation and are added to a list of unknown features. Recovering
+ * such comments is one of the two tasks of this handler.</p>
  * 
- * <p>The handler is hooked into the transformation workflow just before the
- * transformed model is written to a file. It takes a look at the transformed
- * model and looks for unknown elements. If it finds anything matching the second
- * comment style, it adds a {@code TypedStringAnnotation} to the transformed
- * model element that contains the annotation's text, thus preserving the comment's
- * text even in the face of severely hopeless circumstances. Hurray!</p>
+ * <p>The second task is recognizing links between comments and model elements. Such
+ * links indicate that a comment is providing additional information for a model
+ * element, and should be preserved. In the MoML file, such a link is represented by
+ * the following property:</p>
  * 
- * <p>After that's done, it applies a heuristic to each comment annotation, trying
- * to find the entity it is probably annotating. If it finds any, the comment is
- * attached to it by means of a {@code ReferenceAnnotation} named {@code attachedTo}.
- * If we don't find one, that {@code ReferenceAnnotation} is still added to the
- * comment, but with an empty reference; thus, the presence of this annotation
- * can be used to find out if an annotation represents a comment or not.</p>
+ * <pre>
+ *   &lt;property
+ *         name="_location"
+ *         class="ptolemy.kernel.util.RelativeLocation"
+ *         value="[-195.0, -80.0]"&gt;
+ *         
+ *         &lt;property
+ *               name="relativeTo"
+ *               class="ptolemy.kernel.util.StringAttribute"
+ *               value="Const"/&gt;
+ *         &lt;property
+ *               name="relativeToElementName"
+ *               class="ptolemy.kernel.util.StringAttribute"
+ *               value="entity"/&gt;
+ *   &lt;/property&gt;
+ * </pre>
+ * 
+ * <p>That is, the annotation's {@code _location} property is extended by two additional
+ * properties that define that the location is to be interpreted relative to a given
+ * model element. So far, we only support linking comments to entities, but that could
+ * well be changed.</p>
+ * 
+ * <p>The handler is executed on a Ptolemy model once the model was transformed and
+ * optimized. It takes a look at the transformed model and starts by trying to recover
+ * lost comments, that is, comments of the second of the above styles. If it finds any,
+ * it adds a {@code TypedStringAnnotation} to the transformed model element that contains
+ * the annotation's text, thus preserving the comment's text even in the face of severely
+ * hopeless circumstances. Hurray!</p>
+ * 
+ * <p>After that's done, the model is traversed in an attempt to link annotations to the
+ * model elements they are most likely annotating. There are two cases here:</p>
+ * 
+ * <ol>
+ *   <li>The model contains explicit links between at least one annotation and model
+ *   element. In this case, we assume that the model developer added all the links he
+ *   wants explicitly and only transform such links into the KAOM way of representing
+ *   them.</li>
+ *   
+ *   <li>The model does not contain any explicit such link. In this case, a heuristic
+ *   is applied to each comment annotation, trying to find the entity it is probably
+ *   annotating. The heuristic simply looks for the nearest entity and checks if the
+ *   distance is within a certain threshold value.
+ * </ol>
+ * 
+ * <p>The link between a comment and a model element is represented in the KAOM model
+ * by means of a {@code ReferenceAnnotation} named {@code attachedTo}. This annotation
+ * is added to all comments, whether they are actually attached to anything or not. Thus,
+ * the presence of this annotation indicates whether an annotation represents a comment
+ * or not.</p>
  * 
  * <p>This is still kind of experimental. It does work, but the heuristic is quite
  * simpllistic and doesn't always give correct results.</p>
@@ -125,32 +167,48 @@ public class PtolemyAnnotationHandler {
     
     // CONSTANTS
     /**
-     * Name of the attachedTo annotation.
+     * Name of the {@code attachedTo} annotation.
      */
     private static final String ANNOTATIONS_ATTACHMENT = "attachedTo"; //$NON-NLS-1$
     
     /**
-     * The icon description annotation.
+     * Name of the {@code _iconDescription} annotation.
      */
     private static final String ANNOTATIONS_ICON_DESCRIPTION = "_iconDescription"; //$NON-NLS-1$
     
     /**
-     * The location annotation.
+     * Name of the {@code _location} annotation.
      */
     private static final String ANNOTATION_LOCATION = "_location"; //$NON-NLS-1$
     
     /**
-     * Name of the text annotation.
+     * Name of the {@code relativeTo} annotation.
+     */
+    private static final String ANNOTATION_RELATIVE_TO = "relativeTo"; //$NON-NLS-1$
+    
+    /**
+     * Name of the {@code relativeToElementName} annotation.
+     */
+    private static final String ANNOTATION_RELATIVE_TO_ELEMENT_NAME =
+            "relativeToElementName"; //$NON-NLS-1$ 
+    
+    /**
+     * Name of the {@code text} annotation.
      */
     private static final String ANNOTATIONS_TEXT = "text"; //$NON-NLS-1$
     
     /**
-     * Tag of an SVG element.
+     * The element name identifying Ptolemy entities.
+     */
+    private static final String ELEMENT_NAME_ENTITY = "entity"; //$NON-NLS-1$
+    
+    /**
+     * Tag of an {@code svg} element.
      */
     private static final String ELEM_SVG = "svg"; //$NON-NLS-1$
     
     /**
-     * Tag of a TEXT element.
+     * Tag of a {@code text} element.
      */
     private static final String ELEM_TEXT = "text"; //$NON-NLS-1$
     
@@ -226,7 +284,7 @@ public class PtolemyAnnotationHandler {
     /**
      * Recursively iterates through the model tree looking for annotations
      * representing comments. Such annotations are marked as comments and
-     * an attempt is made to attach them to an entity.
+     * an attempt is made to attach them to a model element.
      * 
      * @param node the current node being examined.
      */
