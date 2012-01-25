@@ -14,10 +14,8 @@
 package de.cau.cs.kieler.kiml.export.ui;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -38,7 +36,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -50,14 +47,12 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
-import de.cau.cs.kieler.kiml.export.AbstractExporter;
 import de.cau.cs.kieler.kiml.export.ExportPlugin;
-import de.cau.cs.kieler.kiml.export.ExportManager;
-import de.cau.cs.kieler.kiml.export.ExporterOption;
+import de.cau.cs.kieler.kiml.service.TransformationService;
+import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
 
 /**
- * The dialog that lets the user select a graph file format and a file to export
- * a graph into.
+ * The dialog that lets the user select a graph file format and a file to export a graph into.
  * 
  * @author mri
  */
@@ -67,18 +62,15 @@ public class ExportDialog extends Dialog {
     private static final int DEFAULT_WIDTH = 500;
     /** the default dialog height. */
     private static final int DEFAULT_HEIGHT = 350;
-    
+
     /** the preference key for the dialog width. */
-    private static final String PREFERENCE_DIALOG_WIDTH =
-            "exportDialog.dialogWidth"; //$NON-NLS-1$
+    private static final String PREFERENCE_DIALOG_WIDTH = "exportDialog.dialogWidth"; //$NON-NLS-1$
     /** the preference key for the dialog height. */
-    private static final String PREFERENCE_DIALOG_HEIGHT =
-            "exportDialog.dialogHeight"; //$NON-NLS-1$
+    private static final String PREFERENCE_DIALOG_HEIGHT = "exportDialog.dialogHeight"; //$NON-NLS-1$
     /** the preference key for the file path. */
     private static final String PREFERENCE_FILE_PATH = "exportDialog.filePath"; //$NON-NLS-1$
     /** the preference key for the workspace path. */
-    private static final String PREFERENCE_WORKSPACE_PATH =
-            "exportDialog.workspacePath"; //$NON-NLS-1$
+    private static final String PREFERENCE_WORKSPACE_PATH = "exportDialog.workspacePath"; //$NON-NLS-1$
     /** the preference key for the selected exporter. */
     private static final String PREFERENCE_EXPORTER = "exportDialog.exporter"; //$NON-NLS-1$
 
@@ -98,18 +90,14 @@ public class ExportDialog extends Dialog {
     private ScrolledComposite scrolledComposite = null;
     /** the export options composite. */
     private Composite optionsComposite = null;
-    /** the mapping of options on the composites. */
-    private Map<AbstractExporter, LinkedList<Control>> optionControls =
-            new HashMap<AbstractExporter, LinkedList<Control>>();
-    /** the mapping of options on the input elements. */
-    private Map<ExporterOption<?>, Object> optionInputs =
-            new HashMap<ExporterOption<?>, Object>();
+    /** the controls used for export options. */
+    private LinkedList<Control> optionControls = new LinkedList<Control>();
     /** the message image. */
     private Label messageImageLabel = null;
     /** the message label. */
     private Label messageLabel = null;
-    /** the last selected exporter. */
-    private AbstractExporter lastExporter = null;
+    /** the last selected graph format data. */
+    private GraphFormatData lastFormat = null;
     /** the selected options. */
     private MapPropertyHolder options = null;
     /** the export file path. */
@@ -131,7 +119,7 @@ public class ExportDialog extends Dialog {
         // receive the preference store
         preferenceStore = ExportPlugin.getDefault().getPreferenceStore();
         // check if there are any exporters registered
-        noExporter = ExportManager.getInstance().getExporterNames().length == 0;
+        noExporter = TransformationService.getInstance().getFormatData().isEmpty();
         // get dialog width and height from the preference store
         int width = preferenceStore.getInt(PREFERENCE_DIALOG_WIDTH);
         if (width > 0) {
@@ -166,7 +154,7 @@ public class ExportDialog extends Dialog {
         Composite composite = (Composite) super.createDialogArea(parent);
         createFileGroup(composite);
         createExportTypeGroup(composite);
-        createExportOptionsGroup(composite);
+//        createExportOptionsGroup(composite);
         createMessageGroup(composite);
 
         return composite;
@@ -176,6 +164,11 @@ public class ExportDialog extends Dialog {
     private static final int FILE_TEXT_WIDTH_HINT = 300;
     private static final int BROWSE_WIDTH_HINT = 150;
 
+    /**
+     * Create group for file selection.
+     * 
+     * @param parent the parent composite
+     */
     private void createFileGroup(final Composite parent) {
         Composite composite = createComposite(parent, FILE_GROUP_COLUMNS);
         // label
@@ -218,8 +211,7 @@ public class ExportDialog extends Dialog {
         gridData.horizontalSpan = 2;
         workspacePathCheckbox.setLayoutData(gridData);
         // load option from preference store
-        boolean workspacePath =
-                preferenceStore.getBoolean(PREFERENCE_WORKSPACE_PATH);
+        boolean workspacePath = preferenceStore.getBoolean(PREFERENCE_WORKSPACE_PATH);
         workspacePathCheckbox.setSelection(workspacePath);
         workspacePathCheckbox.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent event) {
@@ -247,29 +239,40 @@ public class ExportDialog extends Dialog {
 
     private static final int EXPORT_TYPE_COMBO_WIDTH_HINT = 210;
 
+    /**
+     * Create group for export file format selection.
+     * 
+     * @param parent the parent composite
+     */
     private void createExportTypeGroup(final Composite parent) {
         Composite composite = createComposite(parent, 2);
         // label
         Label label = new Label(composite, SWT.NONE);
         label.setText(Messages.ExportDialog_file_format_caption);
         fileFormatCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
-        String[] exporterNames = ExportManager.getInstance().getExporterNames();
-        if (exporterNames.length > 0) {
-            fileFormatCombo.setItems(exporterNames);
-            // load exporter from preference store
-            String exporter = preferenceStore.getString(PREFERENCE_EXPORTER);
-            if (ExportManager.getInstance().getExporterByName(exporter) != null) {
-                fileFormatCombo.setText(exporter);
-            } else {
-                fileFormatCombo.setText(exporterNames[0]);
+        Collection<GraphFormatData> formatData = TransformationService.getInstance().getFormatData();
+        String[] formatNames = new String[formatData.size()];
+        if (formatNames.length > 0) {
+            int i = 0;
+            for (GraphFormatData gfd : formatData) {
+                formatNames[i++] = gfd.getName();
             }
+            fileFormatCombo.setItems(formatNames);
+            // get last exporter from preference store
+            String lastFormatName = preferenceStore.getString(PREFERENCE_EXPORTER);
+            if (lastFormatName.length() > 0) {
+                fileFormatCombo.setText(lastFormatName);
+            } else {
+                fileFormatCombo.setText(formatNames[0]);
+            }
+            updateFormat();
         } else {
             fileFormatCombo.setEnabled(false);
         }
         fileFormatCombo.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent e) {
                 // this order is vital for the functionality of this dialog
-                updateOptions();
+                updateFormat();
                 updateFileText();
                 validateFileText();
             }
@@ -281,183 +284,35 @@ public class ExportDialog extends Dialog {
 
     private static final int EXPORT_OPTIONS_COMPOSITE_MARGIN = 5;
 
+    /**
+     * Create group for additional options for export.
+     * 
+     * @param parent the parent composite
+     */
     private void createExportOptionsGroup(final Composite parent) {
         scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL);
         scrolledComposite.setExpandVertical(true);
         scrolledComposite.setExpandHorizontal(true);
         GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
         scrolledComposite.setLayoutData(data);
-        optionsComposite =
-                createComposite(scrolledComposite, 2,
-                        EXPORT_OPTIONS_COMPOSITE_MARGIN,
-                        EXPORT_OPTIONS_COMPOSITE_MARGIN);
-        for (AbstractExporter exporter : ExportManager.getInstance()
-                .getExporter()) {
-            LinkedList<Control> controls = new LinkedList<Control>();
-            optionControls.put(exporter, controls);
-            for (ExporterOption<?> option : exporter.getOptions()) {
-                createExportOption(optionsComposite, option, controls);
-            }
-        }
+        optionsComposite = createComposite(scrolledComposite, 2, EXPORT_OPTIONS_COMPOSITE_MARGIN,
+                EXPORT_OPTIONS_COMPOSITE_MARGIN);
+        // TODO create general options
+        
         scrolledComposite.setContent(optionsComposite);
-        // update the options composite to show the correct ones
-        if (!noExporter) {
-            updateOptions();
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void createExportOption(final Composite parent,
-            final ExporterOption<?> option, final LinkedList<Control> controls) {
-        Object value = option.getDefault();
-        if (value instanceof Enum<?>) {
-            createEnumExportOption(parent, option, controls);
-        } else if (value instanceof Boolean) {
-            createBooleanExportOption(parent, (ExporterOption<Boolean>) option,
-                    controls);
-        } else if (value instanceof Integer) {
-            createNumberExportOption(parent, option, controls);
-        } else if (value instanceof Float) {
-            createNumberExportOption(parent, option, controls);
-        } else if (value instanceof Double) {
-            createNumberExportOption(parent, option, controls);
-        } else if (value instanceof String) {
-            createStringExportOption(parent, (ExporterOption<String>) option,
-                    controls);
-        }
-    }
-
-    private void createEnumExportOption(final Composite parent,
-            final ExporterOption<?> option, final LinkedList<Control> controls) {
-        Object[] constants = option.getDefault().getClass().getEnumConstants();
-        // keep track of all created buttons
-        LinkedList<Button> buttons = new LinkedList<Button>();
-        // description label
-        Label label = new Label(parent, SWT.NONE);
-        label.setText(option.getDescription() + ":"); //$NON-NLS-1$
-        GridData gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        label.setLayoutData(gridData);
-        controls.add(label);
-        setControlVisibility(label, false);
-        // choices composite
-        Composite choices = new Composite(parent, SWT.NONE);
-        RowLayout rowLayout = new RowLayout();
-        rowLayout.wrap = true;
-        choices.setLayout(rowLayout);
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        choices.setLayoutData(gridData);
-        controls.add(choices);
-        setControlVisibility(choices, false);
-        // load from preference store
-        String lastConstantString =
-                preferenceStore.getString(option.getId());
-        boolean found = false;
-        // choices radio buttons
-        for (Object constant : constants) {
-            Button radio = new Button(choices, SWT.RADIO | SWT.LEFT);
-            radio.setText(constant.toString());
-            buttons.add(radio);
-            // set last selection from preference store
-            if (constant.toString().equals(lastConstantString)) {
-                radio.setSelection(true);
-                found = true;
-            }
-        }
-        // set default selection
-        if (!found) {
-            for (Button button : buttons) {
-                if (button.getText().equals(option.getDefault())) {
-                    button.setSelection(true);
-                    break;
-                }
-            }
-        }
-        optionInputs.put(option, buttons);
-    }
-
-    private void createBooleanExportOption(final Composite parent,
-            final ExporterOption<Boolean> option,
-            final LinkedList<Control> controls) {
-        // choice checkbox
-        Button checkbox = new Button(parent, SWT.CHECK | SWT.LEFT);
-        checkbox.setText(option.getDescription());
-        // load from preference store
-        if (preferenceStore.contains(option.getId())) {
-            checkbox.setSelection(preferenceStore.getBoolean(option
-                    .getId()));
-        } else {
-            checkbox.setSelection(option.getDefault());
-        }
-        GridData gridData = new GridData(SWT.LEFT, SWT.NONE, true, false);
-        gridData.horizontalSpan = 2;
-        checkbox.setLayoutData(gridData);
-        controls.add(checkbox);
-        setControlVisibility(checkbox, false);
-        optionInputs.put(option, checkbox);
-    }
-
-    private static final int OPTION_NUMBER_TEXT_WIDTH = 120;
-
-    private void createNumberExportOption(final Composite parent,
-            final ExporterOption<?> option, final LinkedList<Control> controls) {
-        // description label
-        Label label = new Label(parent, SWT.NONE);
-        label.setText(option.getDescription() + ":"); //$NON-NLS-1$
-        GridData gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        label.setLayoutData(gridData);
-        controls.add(label);
-        setControlVisibility(label, false);
-        // input text
-        Text input = new Text(parent, SWT.BORDER);
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = OPTION_NUMBER_TEXT_WIDTH;
-        input.setLayoutData(gridData);
-        // load from preference store
-        if (preferenceStore.contains(option.getId())) {
-            input.setText(preferenceStore.getString(option.getId()));
-        } else {
-            input.setText(option.getDefault().toString());
-        }
-        controls.add(input);
-        setControlVisibility(input, false);
-        optionInputs.put(option, input);
-    }
-
-    private static final int OPTION_STRING_TEXT_WIDTH = 220;
-
-    private void createStringExportOption(final Composite parent,
-            final ExporterOption<String> option,
-            final LinkedList<Control> controls) {
-        // description label
-        Label label = new Label(parent, SWT.NONE);
-        label.setText(option.getDescription() + ":"); //$NON-NLS-1$
-        GridData gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        label.setLayoutData(gridData);
-        controls.add(label);
-        setControlVisibility(label, false);
-        // input text
-        Text input = new Text(parent, SWT.BORDER);
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = OPTION_STRING_TEXT_WIDTH;
-        input.setLayoutData(gridData);
-        // load from preference store
-        if (preferenceStore.contains(option.getId())) {
-            input.setText(preferenceStore.getString(option.getId()));
-        } else {
-            input.setText(option.getDefault().toString());
-        }
-        controls.add(input);
-        setControlVisibility(input, false);
-        optionInputs.put(option, input);
     }
 
     private static final int MESSAGE_LABEL_WIDTH_HINT = 300;
 
+    /**
+     * Create group for message display.
+     * 
+     * @param parent the parent composite
+     */
     private void createMessageGroup(final Composite parent) {
         Composite composite = createComposite(parent, 2);
         messageImageLabel = new Label(composite, SWT.NONE);
-        messageImageLabel.setImage(JFaceResources
-                .getImage(DLG_IMG_MESSAGE_ERROR));
+        messageImageLabel.setImage(JFaceResources.getImage(DLG_IMG_MESSAGE_ERROR));
         messageImageLabel.setVisible(false);
         messageLabel = new Label(composite, SWT.NONE);
         GridData gridData = new GridData(SWT.FILL, SWT.NONE, true, false);
@@ -466,6 +321,13 @@ public class ExportDialog extends Dialog {
         messageLabel.setVisible(false);
     }
 
+    /**
+     * Create and configure a composite with grid layout.
+     * 
+     * @param parent the parent composite
+     * @param columns the number of columns
+     * @return a new composite
+     */
     private Composite createComposite(final Composite parent, final int columns) {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout gridLayout = new GridLayout();
@@ -479,8 +341,17 @@ public class ExportDialog extends Dialog {
         return composite;
     }
 
-    private Composite createComposite(final Composite parent,
-            final int columns, final int marginWidth, final int marginHeight) {
+    /**
+     * Create and configure a composite with grid layout and a margin.
+     * 
+     * @param parent the parent composite
+     * @param columns the number of columns
+     * @param marginWidth the margin width
+     * @param marginHeight the margin height
+     * @return a new composite
+     */
+    private Composite createComposite(final Composite parent, final int columns,
+            final int marginWidth, final int marginHeight) {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = columns;
@@ -493,9 +364,11 @@ public class ExportDialog extends Dialog {
         return composite;
     }
 
+    /**
+     * Validate the path given in the file selection text.
+     */
     private void validateFileText() {
-        if (fileText.getText().length() > 0
-                && Path.ROOT.isValidPath(fileText.getText())) {
+        if (fileText.getText().length() > 0 && Path.ROOT.isValidPath(fileText.getText())) {
             IPath filePath = new Path(fileText.getText());
             IPath containerPath = filePath.removeLastSegments(1);
             if (filePath.hasTrailingSeparator()) {
@@ -512,15 +385,13 @@ public class ExportDialog extends Dialog {
                 }
                 IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
                 IResource resource = root.findMember(filePath);
-                if (resource != null && resource.exists()
-                        && resource instanceof IContainer) {
+                if (resource != null && resource.exists() && resource instanceof IContainer) {
                     // file path exists but describes a folder
                     setErrorStatus(Messages.ExportDialog_path_not_valid_error);
                     return;
                 }
                 resource = root.findMember(containerPath);
-                if (resource == null || !resource.exists()
-                        || !(resource instanceof IContainer)) {
+                if (resource == null || !resource.exists() || !(resource instanceof IContainer)) {
                     // container does not exist
                     setErrorStatus(Messages.ExportDialog_container_not_exist_error);
                     return;
@@ -546,13 +417,16 @@ public class ExportDialog extends Dialog {
         setOKStatus();
     }
 
+    /**
+     * Open a file dialog for selection in the file system.
+     */
     private void handleFileSystemBrowse() {
         FileDialog fileDialog = new FileDialog(getShell(), SWT.SAVE);
         // FIXME this does not always work ... if the dialog concats the
         // extension it does not check if that file exists
         fileDialog.setOverwrite(true);
         // extensions passed to the dialog have to include the '.'
-        String[] extensions = lastExporter.getExtensions().clone();
+        String[] extensions = lastFormat.getExtensions().clone();
         for (int i = 0; i < extensions.length; ++i) {
             extensions[i] = "." + extensions[i]; //$NON-NLS-1$
         }
@@ -567,6 +441,9 @@ public class ExportDialog extends Dialog {
         }
     }
 
+    /**
+     * Open a file dialog for selection in the workspace.
+     */
     private void handleWorkspaceBrowse() {
         // TODO a better workspace selection dialog would be good, but it seems
         // such a thing does not exist in eclipse for some reason
@@ -581,56 +458,48 @@ public class ExportDialog extends Dialog {
             } else {
                 // if no file extension was specified take the default one
                 fileText.setText(filePath.toString() + "." //$NON-NLS-1$
-                        + lastExporter.getDefaultExtension());
+                        + lastFormat.getExtensions()[0]);
+            }
+        }
+    }
+    
+    /**
+     * Update the graph format from the combo selection.
+     */
+    private void updateFormat() {
+        String formatName = fileFormatCombo.getItem(fileFormatCombo.getSelectionIndex());
+        Collection<GraphFormatData> formatData = TransformationService.getInstance().getFormatData();
+        for (GraphFormatData gfd : formatData) {
+            if (gfd.getName().equals(formatName)) {
+                lastFormat = gfd;
+                break;
             }
         }
     }
 
+    /**
+     * Update the file text from the selected file format (adapt extension).
+     */
     private void updateFileText() {
-        if (fileText.getText().length() > 0
-                && Path.ROOT.isValidPath(fileText.getText())) {
+        if (fileText.getText().length() > 0 && Path.ROOT.isValidPath(fileText.getText())) {
             IPath filePath = new Path(fileText.getText());
             if (filePath.getFileExtension() != null) {
-                if (!filePath.getFileExtension().equals(
-                        lastExporter.getDefaultExtension())) {
-                    fileText.setText(filePath
-                            .removeFileExtension()
-                            .addFileExtension(
-                                    lastExporter.getDefaultExtension())
-                            .toString());
+                if (!filePath.getFileExtension().equals(lastFormat.getExtensions()[0])) {
+                    fileText.setText(filePath.removeFileExtension()
+                            .addFileExtension(lastFormat.getExtensions()[0]).toString());
                 }
             } else {
-                fileText.setText(filePath.addFileExtension(
-                        lastExporter.getDefaultExtension()).toString());
+                fileText.setText(filePath.addFileExtension(lastFormat.getExtensions()[0])
+                        .toString());
             }
         }
     }
 
-    private void updateOptions() {
-        if (lastExporter != null) {
-            List<Control> controls = optionControls.get(lastExporter);
-            if (controls != null) {
-                for (Control control : controls) {
-                    setControlVisibility(control, false);
-                }
-            }
-        }
-        String exporterName =
-                fileFormatCombo.getItem(fileFormatCombo.getSelectionIndex());
-        AbstractExporter exporter =
-                ExportManager.getInstance().getExporterByName(exporterName);
-        List<Control> controls = optionControls.get(exporter);
-        if (controls != null) {
-            for (Control control : controls) {
-                setControlVisibility(control, true);
-            }
-        }
-        optionsComposite.layout();
-        scrolledComposite.setMinHeight(optionsComposite.computeSize(
-                SWT.DEFAULT, SWT.DEFAULT).y);
-        lastExporter = exporter;
-    }
-
+    /**
+     * Set an error status in the message label.
+     * 
+     * @param message the new message
+     */
     private void setErrorStatus(final String message) {
         messageLabel.setText(message);
         messageImageLabel.setVisible(true);
@@ -640,21 +509,15 @@ public class ExportDialog extends Dialog {
                 getButton(IDialogConstants.CANCEL_ID));
     }
 
+    /**
+     * Set an ok status in the message label.
+     */
     private void setOKStatus() {
         messageImageLabel.setVisible(false);
         messageLabel.setVisible(false);
         getButton(IDialogConstants.OK_ID).setEnabled(true);
         getButton(IDialogConstants.OK_ID).getShell().setDefaultButton(
                 getButton(IDialogConstants.OK_ID));
-    }
-
-    // this method assumes that the given control has grid layout data attached
-    private void setControlVisibility(final Control control,
-            final boolean visible) {
-        control.setVisible(visible);
-        GridData data = (GridData) control.getLayoutData();
-        data.exclude = !visible;
-        control.setLayoutData(data);
     }
 
     /**
@@ -679,26 +542,23 @@ public class ExportDialog extends Dialog {
      * 
      * @return the selected exporter
      */
-    public AbstractExporter getExporter() {
-        return lastExporter;
+    public GraphFormatData getFormat() {
+        return lastFormat;
     }
 
     /**
      * Returns the selected export file path.
      * 
-     * @return the selected path or null if the dialog has not successfully
-     *         finished
+     * @return the selected path or null if the dialog has not successfully finished
      */
     public String getExportFile() {
         return exportFile;
     }
 
     /**
-     * Returns whether the selected export file path is relative to the
-     * workspace.
+     * Returns whether the selected export file path is relative to the workspace.
      * 
-     * @return true if the selected export file path is relative to the
-     *         workspace
+     * @return true if the selected export file path is relative to the workspace
      */
     public boolean isExportWorkspacePath() {
         return exportWorkspacePath;
@@ -707,8 +567,7 @@ public class ExportDialog extends Dialog {
     /**
      * Returns the selected options.
      * 
-     * @return the selected options or null if the dialog has not successfully
-     *         finished
+     * @return the selected options or null if the dialog has not successfully finished
      */
     public MapPropertyHolder getOptions() {
         return options;
@@ -720,15 +579,12 @@ public class ExportDialog extends Dialog {
     @Override
     public boolean close() {
         // save settings to preference store
-        preferenceStore.setValue(PREFERENCE_DIALOG_WIDTH, getShell()
-                .getBounds().width);
-        preferenceStore.setValue(PREFERENCE_DIALOG_HEIGHT, getShell()
-                .getBounds().height);
+        preferenceStore.setValue(PREFERENCE_DIALOG_WIDTH, getShell().getBounds().width);
+        preferenceStore.setValue(PREFERENCE_DIALOG_HEIGHT, getShell().getBounds().height);
         preferenceStore.setValue(PREFERENCE_FILE_PATH, fileText.getText());
-        preferenceStore.setValue(PREFERENCE_WORKSPACE_PATH,
-                workspacePathCheckbox.getSelection());
-        preferenceStore.setValue(PREFERENCE_EXPORTER,
-                fileFormatCombo.getItem(fileFormatCombo.getSelectionIndex()));
+        preferenceStore.setValue(PREFERENCE_WORKSPACE_PATH, workspacePathCheckbox.getSelection());
+        String formatName = fileFormatCombo.getItem(fileFormatCombo.getSelectionIndex());
+        preferenceStore.setValue(PREFERENCE_EXPORTER, formatName);
         return super.close();
     }
 
@@ -738,135 +594,11 @@ public class ExportDialog extends Dialog {
     @Override
     protected void okPressed() {
         // create export configuration
-        options = new MapPropertyHolder() {
-        };
+        options = new MapPropertyHolder();
         exportFile = fileText.getText();
         exportWorkspacePath = workspacePathCheckbox.getSelection();
-        // attach options
-        for (ExporterOption<?> option : lastExporter.getOptions()) {
-            attachExportOption(option);
-        }
         // has to be last because it disposes the dialog
         super.okPressed();
     }
 
-    @SuppressWarnings("unchecked")
-    private void attachExportOption(final ExporterOption<?> option) {
-        Object value = option.getDefault();
-        if (value instanceof Enum<?>) {
-            attachEnumExportOption(option);
-        } else if (value instanceof Boolean) {
-            attachBooleanExportOption((ExporterOption<Boolean>) option);
-        } else if (value instanceof Integer) {
-            attachIntegerExportOption((ExporterOption<Integer>) option);
-        } else if (value instanceof Float) {
-            attachFloatExportOption((ExporterOption<Float>) option);
-        } else if (value instanceof Double) {
-            attachDoubleExportOption((ExporterOption<Double>) option);
-        } else if (value instanceof String) {
-            attachStringExportOption((ExporterOption<String>) option);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void attachEnumExportOption(final ExporterOption<?> option) {
-        List<Button> buttons = (List<Button>) optionInputs.get(option);
-        String choice = null;
-        for (Button radio : buttons) {
-            if (radio.getSelection()) {
-                choice = radio.getText();
-                // only one selection is possible
-                break;
-            }
-        }
-        // should always be true
-        if (choice != null) {
-            for (Object constant : option.getDefault().getClass()
-                    .getEnumConstants()) {
-                if (constant.toString().equals(choice)) {
-                    if (!constant.equals(option.getDefault())) {
-                        options.setProperty(option, constant);
-                        preferenceStore.setValue(option.getId(), constant.toString());
-                    } else {
-                        preferenceStore.setToDefault(option.getId());
-                    }
-                    break;
-                }
-            }
-        }
-    }
-
-    private void attachBooleanExportOption(final ExporterOption<Boolean> option) {
-        Button checkbox = (Button) optionInputs.get(option);
-        Boolean value = checkbox.getSelection();
-        if (value != option.getDefault()) {
-            options.setProperty(option, value);
-            preferenceStore.setValue(option.getId(),
-                    value.toString());
-        } else {
-            preferenceStore.setToDefault(option.getId());
-        }
-    }
-
-    private void attachIntegerExportOption(final ExporterOption<Integer> option) {
-        Text input = (Text) optionInputs.get(option);
-        try {
-            Integer value = Integer.parseInt(input.getText());
-            if (value != option.getDefault()) {
-                options.setProperty(option, value);
-                preferenceStore.setValue(option.getId(),
-                        value.toString());
-            } else {
-                preferenceStore.setToDefault(option.getId());
-            }
-        } catch (NumberFormatException e) {
-            // if the text does not contain an integer don't set the option so
-            // the default value is taken
-        }
-    }
-
-    private void attachFloatExportOption(final ExporterOption<Float> option) {
-        Text input = (Text) optionInputs.get(option);
-        try {
-            Float value = Float.parseFloat(input.getText());
-            if (value != option.getDefault()) {
-                options.setProperty(option, value);
-                preferenceStore.setValue(option.getId(),
-                        value.toString());
-            } else {
-                preferenceStore.setToDefault(option.getId());
-            }
-        } catch (NumberFormatException e) {
-            // if the text does not contain a float don't set the option so
-            // the default value is taken
-        }
-    }
-
-    private void attachDoubleExportOption(final ExporterOption<Double> option) {
-        Text input = (Text) optionInputs.get(option);
-        try {
-            Double value = Double.parseDouble(input.getText());
-            if (value != option.getDefault()) {
-                options.setProperty(option, value);
-                preferenceStore.setValue(option.getId(),
-                        value.toString());
-            } else {
-                preferenceStore.setToDefault(option.getId());
-            }
-        } catch (NumberFormatException e) {
-            // if the text does not contain a double don't set the option so
-            // the default value is taken
-        }
-    }
-
-    private void attachStringExportOption(final ExporterOption<String> option) {
-        Text input = (Text) optionInputs.get(option);
-        String value = input.getText();
-        if (value != option.getDefault()) {
-            options.setProperty(option, value);
-            preferenceStore.setValue(option.getId(), value);
-        } else {
-            preferenceStore.setToDefault(option.getId());
-        }
-    }
 }

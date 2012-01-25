@@ -153,7 +153,7 @@ public abstract class TransformationService {
      * Returns the graph format data for the given identifier.
      * 
      * @param id a graph format identifier
-     * @return the corresponding identifier
+     * @return the corresponding format data, or {@code null} if there is none with the given id
      */
     public GraphFormatData getFormatData(final String id) {
         return graphFormatMap.get(id);
