@@ -6,19 +6,10 @@ Bundle-Version: 0.2.0.qualifier
 Bundle-Activator: de.cau.cs.kieler.kiml.export.ExportPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.gef;bundle-version="3.6.0",
- org.eclipse.xtext;bundle-version="2.0.0",
- org.eclipse.xtend;bundle-version="1.0.0",
- org.graphdrawing.graphml;bundle-version="1.0.0",
- org.eclipse.emf.transaction;bundle-version="1.4.0",
- net.ogdf.ogml;bundle-version="1.0.0",
- de.cau.cs.kieler.core.kgraph,
  de.cau.cs.kieler.core,
- de.cau.cs.kieler.kiml.ui,
- de.cau.cs.kieler.core.model,
+ de.cau.cs.kieler.core.kgraph,
  de.cau.cs.kieler.core.ui,
- de.cau.cs.kieler.kiml.graphviz.dot,
- de.cau.cs.kieler.core.model.xtend
+ de.cau.cs.kieler.kiml.ui
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
