@@ -131,13 +131,6 @@ public final class LayoutOptions {
     public static final IProperty<PortSide> PORT_SIDE = new Property<PortSide>(PORT_SIDE_ID,
             PortSide.UNDEFINED);
     
-    /** layout option key: rank of a port (integer).
-     * @deprecated */
-    public static final String PORT_RANK_ID = "de.cau.cs.kieler.portRank";
-    /** port rank property.
-     * @deprecated */
-    public static final IProperty<Integer> PORT_RANK = new Property<Integer>(PORT_RANK_ID, -1);
-    
     /** layout option key: shape of a node (enum). */
     public static final String SHAPE_ID = "de.cau.cs.kieler.shape";
     /**

@@ -19,8 +19,8 @@ import java.util.List;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.Util;
+import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**

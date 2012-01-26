@@ -13,10 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.util;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
@@ -30,7 +28,6 @@ import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -57,67 +54,6 @@ public final class KimlUtil {
      * Hidden constructor to avoid instantiation.
      */
     private KimlUtil() {
-    }
-
-    /**
-     * Comparator class used to sort ports according to their ranks.
-     */
-    public static class PortComparator implements Comparator<KPort>, Serializable {
-        /** the serial version UID. */
-        private static final long serialVersionUID = 7489650936528433087L;
-        /** indicates whether to treat ranks in forward direction. */
-        private boolean forward;
-        /** horizontal or vertical layout direction. */
-        private Direction layoutDirection;
-
-        /**
-         * Creates a port comparator for the given setting.
-         * 
-         * @param theforward indicates whether to treat ranks in forward
-         *            direction
-         * @param thelayoutDirection horizontal or vertical layout direction
-         */
-        public PortComparator(final boolean theforward, final Direction thelayoutDirection) {
-            this.forward = theforward;
-            this.layoutDirection = thelayoutDirection;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public int compare(final KPort port1, final KPort port2) {
-            KShapeLayout layout1 = port1.getData(KShapeLayout.class);
-            KShapeLayout layout2 = port2.getData(KShapeLayout.class);
-            int rank1 = layout1.getProperty(LayoutOptions.PORT_RANK);
-            int rank2 = layout2.getProperty(LayoutOptions.PORT_RANK);
-            PortSide side1 = layout1.getProperty(LayoutOptions.PORT_SIDE);
-            PortSide side2 = layout2.getProperty(LayoutOptions.PORT_SIDE);
-            if (side1 == side2) {
-                return layoutDirection == Direction.DOWN && !forward
-                        || layoutDirection == Direction.RIGHT && forward ? rank1 - rank2
-                        : rank2 - rank1;
-            } else if (layoutDirection == Direction.DOWN) {
-                if (forward) {
-                    return side1 == PortSide.NORTH || side1 == PortSide.EAST
-                            && (side2 == PortSide.SOUTH || side2 == PortSide.WEST)
-                            || side1 == PortSide.SOUTH && side2 == PortSide.WEST ? 1 : -1;
-                } else {
-                    return side1 == PortSide.SOUTH || side1 == PortSide.EAST
-                            && (side2 == PortSide.NORTH || side2 == PortSide.WEST)
-                            || side1 == PortSide.NORTH && side2 == PortSide.WEST ? 1 : -1;
-                }
-            } else {
-                if (forward) {
-                    return side1 == PortSide.WEST || side1 == PortSide.SOUTH
-                            && (side2 == PortSide.EAST || side2 == PortSide.NORTH)
-                            || side1 == PortSide.EAST && side2 == PortSide.NORTH ? 1 : -1;
-                } else {
-                    return side1 == PortSide.EAST || side1 == PortSide.SOUTH
-                            && (side2 == PortSide.WEST || side2 == PortSide.NORTH)
-                            || side1 == PortSide.WEST && side2 == PortSide.NORTH ? 1 : -1;
-                }
-            }
-        }
     }
 
     /**
@@ -281,18 +217,13 @@ public final class KimlUtil {
             public int compare(final KPort port1, final KPort port2) {
                 KShapeLayout port1Layout = port1.getData(KShapeLayout.class);
                 PortSide port1Side = port1Layout.getProperty(LayoutOptions.PORT_SIDE);
-                int port1Rank = port1Layout.getProperty(LayoutOptions.PORT_RANK);
                 KShapeLayout port2Layout = port2.getData(KShapeLayout.class);
                 PortSide port2Side = port2Layout.getProperty(LayoutOptions.PORT_SIDE);
-                int port2Rank = port2Layout.getProperty(LayoutOptions.PORT_RANK);
                 int result = 0;
                 switch (port1Side) {
                 case NORTH:
                     if (port2Side == PortSide.NORTH) {
                         result = Float.compare(port1Layout.getXpos(), port2Layout.getXpos());
-                        if (result == 0) {
-                            result = port1Rank > port2Rank ? 1 : (port1Rank < port2Rank ? -1 : 0);
-                        }
                     } else {
                         result = -1;
                     }
@@ -302,9 +233,6 @@ public final class KimlUtil {
                         result = 1;
                     } else if (port2Side == PortSide.EAST) {
                         result = Float.compare(port1Layout.getYpos(), port2Layout.getYpos());
-                        if (result == 0) {
-                            result = port1Rank > port2Rank ? 1 : (port1Rank < port2Rank ? -1 : 0);
-                        }
                     } else {
                         result = -1;
                     }
@@ -314,9 +242,6 @@ public final class KimlUtil {
                         result = 1;
                     } else if (port2Side == PortSide.SOUTH) {
                         result = Float.compare(port2Layout.getXpos(), port1Layout.getXpos());
-                        if (result == 0) {
-                            result = port1Rank > port2Rank ? 1 : (port1Rank < port2Rank ? -1 : 0);
-                        }
                     } else {
                         result = -1;
                     }
@@ -327,9 +252,6 @@ public final class KimlUtil {
                         result = 1;
                     } else if (port2Side == PortSide.WEST) {
                         result = Float.compare(port2Layout.getYpos(), port1Layout.getYpos());
-                        if (result == 0) {
-                            result = port1Rank > port2Rank ? 1 : (port1Rank < port2Rank ? -1 : 0);
-                        }
                     } else {
                         result = -1;
                     }
@@ -340,120 +262,6 @@ public final class KimlUtil {
         });
         
         return ports;
-    }
-
-    /**
-     * Sets port ranks for all ports of the given node according to their
-     * relative positions.
-     * 
-     * @param node node for which port ranks shall be set
-     */
-    public static void calcPortRanks(final KNode node) {
-        // sort the ports according to their positions
-        KPort[] ports = getSortedPorts(node);
-        // assign ranks according to the new order
-        for (int i = 0; i < ports.length; i++) {
-            ports[i].getData(KShapeLayout.class).setProperty(LayoutOptions.PORT_RANK, i);
-        }
-    }
-
-    /**
-     * Fills all missing data for the ports of the given node, such as port
-     * sides and port ranks.
-     * 
-     * @param node node for which port data shall be created
-     * @param direction layout direction
-     */
-    public static void fillPortInfo(final KNode node, final Direction direction) {
-        KGraphData layoutData = node.getData(KShapeLayout.class);
-        PortConstraints portConstraints = layoutData.getProperty(LayoutOptions.PORT_CONSTRAINTS);
-        if (portConstraints == PortConstraints.FREE) {
-            // set port sides according to layout direction
-            switch (direction) {
-            case DOWN:
-                for (KPort port : node.getPorts()) {
-                    port.getData(KShapeLayout.class).setProperty(
-                            LayoutOptions.PORT_SIDE, calcFlow(port) < 0
-                            ? PortSide.NORTH : PortSide.SOUTH);
-                }
-                break;
-            case UP:
-                for (KPort port : node.getPorts()) {
-                    port.getData(KShapeLayout.class).setProperty(
-                            LayoutOptions.PORT_SIDE, calcFlow(port) < 0
-                            ? PortSide.SOUTH : PortSide.NORTH);
-                }
-                break;
-            case LEFT:
-                for (KPort port : node.getPorts()) {
-                    port.getData(KShapeLayout.class).setProperty(
-                            LayoutOptions.PORT_SIDE, calcFlow(port) < 0
-                            ? PortSide.EAST : PortSide.WEST);
-                }
-                break;
-            default:
-                for (KPort port : node.getPorts()) {
-                    port.getData(KShapeLayout.class).setProperty(LayoutOptions.PORT_SIDE,
-                            calcFlow(port) < 0
-                            ? PortSide.WEST : PortSide.EAST);
-                }
-                break;
-            }
-            layoutData.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
-        } else if (portConstraints != PortConstraints.UNDEFINED) {
-            // set port sides and ranks according to relative position
-            boolean ranksUndefined = false;
-            for (KPort port : node.getPorts()) {
-                KGraphData portLayout = port.getData(KShapeLayout.class);
-                if (portLayout.getProperty(LayoutOptions.PORT_RANK) < 0) {
-                    ranksUndefined = true;
-                }
-                if (portLayout.getProperty(LayoutOptions.PORT_SIDE) == PortSide.UNDEFINED) {
-                    portLayout.setProperty(LayoutOptions.PORT_SIDE, calcPortSide(port, direction));
-                }
-            }
-            if (ranksUndefined) {
-                calcPortRanks(node);
-            }
-        }
-    }
-
-    /**
-     * Determines positions of a sorted set of points by placing them with equal
-     * distances.
-     * 
-     * @param points list of points
-     * @param minPos minimal position for placing
-     * @param maxPos maximal position for placing
-     * @param offset offset to be added to positions
-     * @param vertical if true, the vertical position is processed, else the
-     *            horizontal position is processed
-     * @param forward if true, ports are placed from the minimum to the maximum
-     *            position
-     */
-    public static void placePoints(final List<KPoint> points, final float minPos,
-            final float maxPos, final float offset, final boolean vertical,
-            final boolean forward) {
-        float dist = (maxPos - minPos) / (points.size() + 1);
-        float pos;
-        if (forward) {
-            pos = minPos + offset;
-        } else {
-            pos = maxPos + offset;
-            dist = -dist;
-        }
-
-        if (vertical) {
-            for (KPoint point : points) {
-                pos += dist;
-                point.setY(pos);
-            }
-        } else {
-            for (KPoint point : points) {
-                pos += dist;
-                point.setX(pos);
-            }
-        }
     }
 
     /** minimal size of a node. */
@@ -632,46 +440,6 @@ public final class KimlUtil {
         nodeLayout.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.FIXED);
         
         return new KVector(widthRatio, heightRatio);
-    }
-
-    /**
-     * Determines the flow of the given port, that is the difference between the
-     * number of outgoing edges and the number of incoming edges. Edges that
-     * connect to descendant nodes are counted in their reverse direction.
-     * 
-     * @param port port for which the flow shall be calculated
-     * @return difference between number of outgoing and incoming edges
-     */
-    public static int calcFlow(final KPort port) {
-        int flow = 0;
-        for (KEdge edge : port.getEdges()) {
-            KPort sourcePort = edge.getSourcePort();
-            KPort targetPort = edge.getTargetPort();
-            KNode otherNode = null;
-            if (sourcePort == port) {
-                otherNode = edge.getTarget();
-            } else if (targetPort == port) {
-                otherNode = edge.getSource();
-            }
-            if (otherNode != null) {
-                if (isDescendant(otherNode, port.getNode())) {
-                    if (sourcePort == port) {
-                        flow--;
-                    }
-                    if (targetPort == port) {
-                        flow++;
-                    }
-                } else {
-                    if (sourcePort == port) {
-                        flow++;
-                    }
-                    if (targetPort == port) {
-                        flow--;
-                    }
-                }
-            }
-        }
-        return flow;
     }
 
     /**

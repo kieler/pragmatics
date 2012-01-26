@@ -21,7 +21,7 @@ import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
  * A port in a layered graph. The position of the port is relative to the upper
