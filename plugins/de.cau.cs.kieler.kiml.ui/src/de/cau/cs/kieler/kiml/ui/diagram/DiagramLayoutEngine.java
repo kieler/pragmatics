@@ -364,7 +364,7 @@ public class DiagramLayoutEngine {
         }
         
         mapping.setProperty(PROGRESS_MONITOR, progressMonitor);
-        if (extraLayoutConfigs.isEmpty()) {
+        if (extraLayoutConfigs == null || extraLayoutConfigs.isEmpty()) {
             // perform layout without any extra configuration
             return layout(mapping, progressMonitor);
         } else if (extraLayoutConfigs.size() == 1) {
