@@ -62,6 +62,7 @@ public class ComponentsProcessor extends AbstractAlgorithm {
      */
     public List<LayeredGraph> split(final LayeredGraph graph) {
         Boolean separate = graph.getProperty(LayoutOptions.SEPARATE_CC);
+        List<LayeredGraph> result;
         
         // the graph may only be separated if this feature was requested and if it does not
         // contain any edges connected to external ports
@@ -74,7 +75,7 @@ public class ComponentsProcessor extends AbstractAlgorithm {
             }
             
             // perform DFS starting on each node, collecting connected components
-            List<LayeredGraph> components = new LinkedList<LayeredGraph>();
+            result = new LinkedList<LayeredGraph>();
             for (LNode node : graph.getLayerlessNodes()) {
                 List<LNode> component = dfs(node, null);
                 if (component != null) {
@@ -82,13 +83,14 @@ public class ComponentsProcessor extends AbstractAlgorithm {
                     newGraph.copyProperties(graph);
                     newGraph.getInsets().copy(graph.getInsets());
                     newGraph.getLayerlessNodes().addAll(component);
-                    components.add(newGraph);
+                    result.add(newGraph);
                 }
             }
-            return components;
+        } else {
+            result = new ArrayList<LayeredGraph>(1);
+            result.add(graph);
         }
-        ArrayList<LayeredGraph> result = new ArrayList<LayeredGraph>(1);
-        result.add(graph);
+        
         return result;
     }
     
