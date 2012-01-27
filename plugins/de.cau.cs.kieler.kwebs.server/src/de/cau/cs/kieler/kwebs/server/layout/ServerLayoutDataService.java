@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.Platform;
 
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.service.ProgrammaticLayoutDataService;
+import de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService;
 import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
 import de.cau.cs.kieler.kwebs.server.Application;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
@@ -50,7 +50,7 @@ import de.cau.cs.kieler.kwebs.util.Resources;
  * @kieler.rating  2011-05-09 red
  * @author  swe
  */
-public final class ServerLayoutDataService extends ProgrammaticLayoutDataService {
+public final class ServerLayoutDataService extends ExtensionLayoutDataService {
 
     /** Caching the layout service meta data. */
     private static String serviceDataXMI;
@@ -84,7 +84,6 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
             ServerLayoutDataService lds = new ServerLayoutDataService();
             LayoutDataService.addService(lds);
             lds.loadLayoutProviderExtensions();
-            lds.registerProgrammaticOptions();
         }
     }
     
@@ -383,6 +382,7 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void reportError(final String extensionPoint,
         final IConfigurationElement element, final String attribute,
         final Throwable exception) {
@@ -399,6 +399,7 @@ public final class ServerLayoutDataService extends ProgrammaticLayoutDataService
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void reportError(final CoreException exception) {
         reportError(null, null, null, exception);
     }

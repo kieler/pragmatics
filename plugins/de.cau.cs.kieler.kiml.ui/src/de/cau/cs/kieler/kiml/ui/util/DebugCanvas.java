@@ -25,7 +25,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.Polyline;
 import org.eclipse.draw2d.RectangleFigure;
-import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.PrecisionPoint;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
 import org.eclipse.ui.PlatformUI;
@@ -246,8 +246,8 @@ public class DebugCanvas implements IDebugCanvas {
             final float y2, final Color color) {
         if (layer != null) {
             final Polyline line = new Polyline();
-            line.addPoint(new Point(x1 + xOffset, y1 + yOffset));
-            line.addPoint(new Point(x2 + xOffset, y2 + yOffset));
+            line.addPoint(new PrecisionPoint(x1 + xOffset, y1 + yOffset));
+            line.addPoint(new PrecisionPoint(x2 + xOffset, y2 + yOffset));
             line.setForegroundColor(translateColor(color));
             drawFigure(line);
         }
@@ -262,7 +262,7 @@ public class DebugCanvas implements IDebugCanvas {
             final Label label = new Label();
             label.setText(string);
             label.setForegroundColor(translateColor(color));
-            label.setLocation(new Point(x + xOffset, y + yOffset));
+            label.setLocation(new PrecisionPoint(x + xOffset, y + yOffset));
             drawFigure(label);
         }
     }

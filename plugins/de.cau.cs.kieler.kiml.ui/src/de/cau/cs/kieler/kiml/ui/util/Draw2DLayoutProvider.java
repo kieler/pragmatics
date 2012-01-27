@@ -29,7 +29,6 @@ import org.eclipse.draw2d.graph.Node;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -138,9 +137,6 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
                 if (draw2dTarget != null && draw2dTarget != draw2dSource) {
                     Edge draw2dEdge = new Edge(kedge, draw2dSource, draw2dTarget);
                     graph.edges.add(draw2dEdge);
-                } else {
-                    KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-                    edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 }
             }
         }
@@ -185,12 +181,6 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
                 KPoint targetkPoint = edgeLayout.getTargetPoint();
                 Point targetPoint = pointList.getLastPoint();
                 targetkPoint.setPos(targetPoint.x, targetPoint.y);
-                
-                // disable layout for the edge labels
-                for (KLabel label : kedge.getLabels()) {
-                    KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-                    labelLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
-                }
             }
         }
         

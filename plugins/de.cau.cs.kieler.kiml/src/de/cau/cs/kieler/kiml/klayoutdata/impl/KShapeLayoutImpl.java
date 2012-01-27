@@ -138,6 +138,14 @@ public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
      * @ordered
      */
     protected KInsets insets;
+    
+    /**
+     * <!-- begin-user-doc -->
+     * Whether the position or size has been modified.
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    private boolean modified = false;
 
     /**
      * <!-- begin-user-doc -->
@@ -170,13 +178,15 @@ public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @generated
+     * @generated NOT
      */
     public void setXpos(float newXpos) {
         float oldXpos = xpos;
         xpos = newXpos;
-        if (eNotificationRequired())
+        modified = true;
+        if (eNotificationRequired()) {
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KSHAPE_LAYOUT__XPOS, oldXpos, xpos));
+        }
     }
 
     /**
@@ -191,13 +201,15 @@ public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @generated
+     * @generated NOT
      */
     public void setYpos(float newYpos) {
         float oldYpos = ypos;
         ypos = newYpos;
-        if (eNotificationRequired())
+        modified = true;
+        if (eNotificationRequired()) {
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KSHAPE_LAYOUT__YPOS, oldYpos, ypos));
+        }
     }
 
     /**
@@ -212,13 +224,15 @@ public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @generated
+     * @generated NOT
      */
     public void setWidth(float newWidth) {
         float oldWidth = width;
         width = newWidth;
-        if (eNotificationRequired())
+        modified = true;
+        if (eNotificationRequired()) {
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KSHAPE_LAYOUT__WIDTH, oldWidth, width));
+        }
     }
 
     /**
@@ -233,13 +247,15 @@ public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @generated
+     * @generated NOT
      */
     public void setHeight(float newHeight) {
         float oldHeight = height;
         height = newHeight;
-        if (eNotificationRequired())
+        modified = true;
+        if (eNotificationRequired()) {
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KSHAPE_LAYOUT__HEIGHT, oldHeight, height));
+        }
     }
 
     /**
@@ -295,6 +311,7 @@ public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
         float oldXpos = xpos, oldYpos = ypos;
         xpos = newXpos;
         ypos = newYpos;
+        modified = true;
         if (eNotificationRequired()) {
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KSHAPE_LAYOUT__YPOS, oldYpos, ypos));
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KSHAPE_LAYOUT__XPOS, oldXpos, xpos));
@@ -331,10 +348,33 @@ public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
         float oldWidth = width, oldHeight = height;
         width = newWidth;
         height = newHeight;
+        modified = true;
         if (eNotificationRequired()) {
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KSHAPE_LAYOUT__WIDTH, oldWidth, width));
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KSHAPE_LAYOUT__HEIGHT, oldHeight, height));
         }
+    }
+    
+    /**
+     * <!-- begin-user-doc -->
+     * Whether the position or size has been modified since this shape layout was created or the
+     * flag was reset.
+     * <!-- end-user-doc -->
+     * @return true if the position or size has been modified
+     * @generated NOT
+     */
+    public boolean isModified() {
+        return modified;
+    }
+    
+    /**
+     * <!-- begin-user-doc -->
+     * Reset the modification flag to {@code false}. Layout algorithms should not do this.
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public void resetModificationFlag() {
+        modified = false;
     }
 
     /**

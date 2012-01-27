@@ -27,6 +27,7 @@ import de.cau.cs.kieler.kiml.formats.gml.gml.GmlModel;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 
@@ -164,8 +165,9 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
      * @param parentElement the parent element to which the layout is added
      */
     private void transform(final KShapeLayout shapeLayout, final Element parentElement) {
-        if (shapeLayout.getXpos() != 0 || shapeLayout.getYpos() != 0
-                || shapeLayout.getWidth() != 0 || shapeLayout.getHeight() != 0) {
+        if (!shapeLayout.getProperty(LayoutOptions.NO_LAYOUT) && (shapeLayout.getXpos() != 0
+                || shapeLayout.getYpos() != 0 || shapeLayout.getWidth() != 0
+                || shapeLayout.getHeight() != 0)) {
             Element graphics = GmlFactory.eINSTANCE.createElement();
             graphics.setKey("graphics");
             if (shapeLayout.getXpos() != 0 || shapeLayout.getYpos() != 0) {
@@ -201,9 +203,10 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
     private void transform(final KEdgeLayout edgeLayout, final Element parentElement) {
         KPoint sourcePoint = edgeLayout.getSourcePoint();
         KPoint targetPoint = edgeLayout.getTargetPoint();
-        if (edgeLayout.getBendPoints().size() > 0
+        if (!edgeLayout.getProperty(LayoutOptions.NO_LAYOUT)
+                && (edgeLayout.getBendPoints().size() > 0
                 || sourcePoint.getX() != 0 || sourcePoint.getY() != 0
-                || targetPoint.getX() != 0 || targetPoint.getY() != 0) {
+                || targetPoint.getX() != 0 || targetPoint.getY() != 0)) {
             Element graphics = GmlFactory.eINSTANCE.createElement();
             graphics.setKey("graphics");
             graphics.getElements().add(GmlHandler.createPoint(edgeLayout.getSourcePoint()));

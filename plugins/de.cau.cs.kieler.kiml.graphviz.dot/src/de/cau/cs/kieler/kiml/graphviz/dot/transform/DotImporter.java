@@ -643,27 +643,25 @@ public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
         // transfer label positions
         for (KLabel label : edge.getLabels()) {
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-            if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
-                String attrKey = null;
-                switch (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)) {
-                case CENTER:
-                    attrKey = Attributes.LABELPOS;
-                    break;
-                case HEAD:
-                    attrKey = Attributes.HEADLP;
-                    break;
-                case TAIL:
-                    attrKey = Attributes.TAILLP;
-                    break;
-                }
-                if (attrKey != null) {
-                    removeAttributes(attributes, attrKey);
-                    double xpos = labelLayout.getXpos() + labelLayout.getWidth() / 2 + offset.x;
-                    double ypos = labelLayout.getYpos() + labelLayout.getHeight() / 2 + offset.y;
-                    String posString = "\"" + Double.toString(xpos)
-                            + "," + Double.toString(ypos) + "\"";
-                    attributes.add(DotExporter.createAttribute(attrKey, posString));
-                }
+            String attrKey = null;
+            switch (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)) {
+            case CENTER:
+                attrKey = Attributes.LABELPOS;
+                break;
+            case HEAD:
+                attrKey = Attributes.HEADLP;
+                break;
+            case TAIL:
+                attrKey = Attributes.TAILLP;
+                break;
+            }
+            if (attrKey != null) {
+                removeAttributes(attributes, attrKey);
+                double xpos = labelLayout.getXpos() + labelLayout.getWidth() / 2 + offset.x;
+                double ypos = labelLayout.getYpos() + labelLayout.getHeight() / 2 + offset.y;
+                String posString = "\"" + Double.toString(xpos)
+                        + "," + Double.toString(ypos) + "\"";
+                attributes.add(DotExporter.createAttribute(attrKey, posString));
             }
         }
     }

@@ -120,8 +120,6 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
             float x = offset + random.nextFloat() * (drawWidth - nodeLayout.getWidth());
             float y = offset + random.nextFloat() * (drawHeight - nodeLayout.getHeight());
             nodeLayout.setPos(x, y);
-            // ignore node labels
-            KimlUtil.excludeLabels(node);
         }
         
         // randomize edge positions
@@ -132,8 +130,6 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
                 KNode target = edge.getTarget();
                 if (source.getParent() == target.getParent()) {
                     randomize(edge, source, target, random, totalWidth, totalHeight);
-                } else {
-                    edge.getData(KEdgeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true); 
                 }
             }
         }
@@ -260,7 +256,6 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
             bendPoint.setY(randy);
             edgeLayout.getBendPoints().add(bendPoint);
         }
-        KimlUtil.excludeLabels(edge);
     }
 
 }

@@ -145,10 +145,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     // set properties of the new edge
                     newEdge.copyProperties(edgeLayout);
                     newEdge.checkProperties(Properties.LABEL_SPACING, Properties.EDGE_REP);
-                } else {
-                    // the edge is excluded from layout
-                    KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-                    edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 }
             }
         }
@@ -197,9 +193,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 KVector nodePos = fnode.getPosition().add(offset);
                 nodeLayout.setXpos((float) nodePos.x - nodeLayout.getWidth() / 2);
                 nodeLayout.setYpos((float) nodePos.y - nodeLayout.getHeight() / 2);
-                // ignore ports and labels
-                KimlUtil.excludePorts(knode);
-                KimlUtil.excludeLabels(knode);
             }
         }
         

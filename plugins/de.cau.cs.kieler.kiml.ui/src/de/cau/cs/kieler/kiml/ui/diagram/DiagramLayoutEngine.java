@@ -24,18 +24,25 @@ import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
+import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
+import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
+import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * The entry class for automatic layout of graphical diagrams.
@@ -347,19 +354,36 @@ public class DiagramLayoutEngine {
             final IKielerProgressMonitor progressMonitor, final List<ILayoutConfig> extraLayoutConfigs,
             final boolean layoutAncestors) {
         if (layoutAncestors) {
-            // remove all parallel areas from the layout graph
-            KGraphElement graphElem = mapping.getGraphMap().inverse().get(diagramPart);
-            if (graphElem instanceof KNode) {
-                KNode node = (KNode) graphElem;
-                while (node.getParent() != null) {
-                    KNode parent = node.getParent();
-                    for (KNode child : parent.getChildren()) {
-                        if (child != node) {
-                            KimlUtil.excludeContent(child);
+            // mark all parallel areas for exclusion from layout
+            try {
+                IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(
+                        diagramPart);
+                KGraphElement graphElem = mapping.getGraphMap().inverse().get(bridge.getEditPart(
+                        diagramPart));
+                if (graphElem instanceof KNode && ((KNode) graphElem).getParent() != null) {
+                    KNode node = (KNode) graphElem;
+                    VolatileLayoutConfig vlc = new VolatileLayoutConfig();
+                    do {
+                        KNode parent = node.getParent();
+                        for (KNode child : parent.getChildren()) {
+                            if (child != node) {
+                                // do not layout the content of the child node
+                                vlc.setValue(LayoutOptions.NO_LAYOUT, child,
+                                        LayoutContext.GRAPH_ELEM, true);
+                                // do not change the size of the child node
+                                vlc.setValue(LayoutOptions.SIZE_CONSTRAINT, child,
+                                        LayoutContext.GRAPH_ELEM, SizeConstraint.FIXED);
+                                // do not move the ports of the child node
+                                vlc.setValue(LayoutOptions.PORT_CONSTRAINTS, child,
+                                        LayoutContext.GRAPH_ELEM, PortConstraints.FIXED_POS);
+                            }
                         }
-                    }
-                    node = parent;
+                        node = parent;
+                    } while (node.getParent() != null);
+                    mapping.getLayoutConfigs().add(vlc);
                 }
+            } catch (UnsupportedPartException e) {
+                // ignore exception
             }
         }
         
@@ -373,11 +397,12 @@ public class DiagramLayoutEngine {
             return layout(mapping, progressMonitor);
         } else {
             // perform layout multiple times with different configurations
-            progressMonitor.begin("Multiple layout", extraLayoutConfigs.size());
+            progressMonitor.begin(Messages.getString("kiml.ui.63"),
+                    TOTAL_WORK * extraLayoutConfigs.size());
             IStatus status = null;
             for (ILayoutConfig config : extraLayoutConfigs) {
                 mapping.getLayoutConfigs().add(config);
-                status = layout(mapping, progressMonitor.subTask(1));
+                status = layout(mapping, progressMonitor);
                 if (!status.isOK()) {
                     return status;
                 }
@@ -387,6 +412,10 @@ public class DiagramLayoutEngine {
             return status;
         }
     }
+    
+    private static final float CONFIGURE_WORK = 1;
+    private static final float LAYOUT_WORK = 4;
+    private static final float TOTAL_WORK = CONFIGURE_WORK + LAYOUT_WORK;
     
     /**
      * Perform layout on the given layout graph mapping.
@@ -399,20 +428,23 @@ public class DiagramLayoutEngine {
      */
     public IStatus layout(final LayoutMapping<?> mapping,
             final IKielerProgressMonitor progressMonitor) {
-        // configure the layout graph using a layout option manager
+        boolean newTask = progressMonitor.begin(Messages.getString("kiml.ui.63"), TOTAL_WORK);
         if (mapping.getProperty(PROGRESS_MONITOR) == null) {
             mapping.setProperty(PROGRESS_MONITOR, progressMonitor);
         }
-        layoutOptionManager.configure(mapping);
         
         // Fetch the active graph layout engine to be used
         IGraphLayoutEngine layoutEngine = EclipseLayoutInfoService.getInstance().getLayoutEngine();
         try {
-            
+            // configure the layout graph using a layout option manager
+            layoutOptionManager.configure(mapping, progressMonitor.subTask(CONFIGURE_WORK));
+
             // perform layout on the layout graph
-            layoutEngine.layout(mapping.getLayoutGraph(), progressMonitor);
+            layoutEngine.layout(mapping.getLayoutGraph(), progressMonitor.subTask(LAYOUT_WORK));
             
-            // check for cancellation
+            if (newTask) {
+                progressMonitor.done();
+            }
             if (progressMonitor.isCanceled()) {
                 return new Status(IStatus.CANCEL, KimlUiPlugin.PLUGIN_ID,  null);
             }

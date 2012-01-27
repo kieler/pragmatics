@@ -62,6 +62,8 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.impl.KEdgeLayoutImpl;
+import de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.diagram.GefDiagramLayoutManager;
@@ -243,6 +245,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         }
         nodeLayout.setSize(nodeGa.getWidth() - nodeInsets.getLeft() - nodeInsets.getRight(),
                 nodeGa.getHeight() - nodeInsets.getTop() - nodeInsets.getBottom());
+        // the modification flag must initially be false
+        ((KShapeLayoutImpl) nodeLayout).resetModificationFlag();
 
         // FIXME find a way to specify the minimal size dynamically
         staticConfig.setValue(LayoutOptions.MIN_WIDTH, childNode, LayoutContext.GRAPH_ELEM, MIN_SIZE);
@@ -316,6 +320,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             portLayout.setSize(portGa.getWidth(), portGa.getHeight());
         }
         portLayout.setPos(xPos, yPos);
+        // the modification flag must initially be false
+        ((KShapeLayoutImpl) portLayout).resetModificationFlag();
         
         return port;
     }
@@ -344,6 +350,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             portLayout.setSize(portGa.getWidth(), portGa.getHeight());
         }
         portLayout.setPos(xPos, yPos);
+        // the modification flag must initially be false
+        ((KShapeLayoutImpl) portLayout).resetModificationFlag();
         
         return port;
     }
@@ -404,6 +412,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
             labelLayout.setPos(xpos + offsetx, ypos + offsety);
             labelLayout.setSize(width, height);
+            // the modification flag must initially be false
+            ((KShapeLayoutImpl) labelLayout).resetModificationFlag();
             return label;
         }
         return null;
@@ -484,6 +494,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             }
         }
         allPoints.add(targetPoint);
+        // the modification flag must initially be false
+        ((KEdgeLayoutImpl) edgeLayout).resetModificationFlag();
 
         graphMap.put(edge, connection);
 
@@ -521,6 +533,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
                 labelPos.x += ga.getX();
                 labelPos.y += ga.getY();
                 labelLayout.applyVector(labelPos);
+                // the modification flag must initially be false
+                ((KShapeLayoutImpl) labelLayout).resetModificationFlag();
             }
         }
     }
