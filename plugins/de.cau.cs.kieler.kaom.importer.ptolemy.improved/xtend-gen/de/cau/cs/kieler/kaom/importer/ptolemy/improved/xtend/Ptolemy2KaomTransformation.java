@@ -602,7 +602,8 @@ public class Ptolemy2KaomTransformation {
       ArrayList<Port> _arrayList = new ArrayList<Port>();
       final ArrayList<Port> ports = _arrayList;
       try {
-        this.ptolemy.getPortsFromImplementation(entityOrClass);
+        List<Port> _portsFromImplementation = this.ptolemy.getPortsFromImplementation(entityOrClass);
+        ports.addAll(_portsFromImplementation);
       } catch (final Throwable _t) {
         if (_t instanceof Exception) {
           final Exception e = (Exception)_t;
