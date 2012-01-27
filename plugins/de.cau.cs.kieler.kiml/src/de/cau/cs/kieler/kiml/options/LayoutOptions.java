@@ -130,13 +130,6 @@ public final class LayoutOptions {
      */
     public static final IProperty<PortSide> PORT_SIDE = new Property<PortSide>(PORT_SIDE_ID,
             PortSide.UNDEFINED);
-    
-    /** layout option key: shape of a node (enum). */
-    public static final String SHAPE_ID = "de.cau.cs.kieler.shape";
-    /**
-     * Which shape is to be assumed for the associated node. [programmatically set]
-     */
-    public static final IProperty<Shape> SHAPE = new Property<Shape>(SHAPE_ID, Shape.UNDEFINED);
 
     
     ///////  USER INTERFACE LAYOUT OPTIONS  ///////
