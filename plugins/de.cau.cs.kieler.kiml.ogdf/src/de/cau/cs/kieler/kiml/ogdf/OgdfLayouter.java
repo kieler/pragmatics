@@ -364,9 +364,6 @@ public abstract class OgdfLayouter {
             styles.getNodeStyle().add(ogmlNodeLayout);
             // add the node
             structure.getNode().add(ogmlNode);
-            // ignore ports and labels
-            KimlUtil.excludePorts(node);
-            KimlUtil.excludeLabels(node);
         }
         // transform edges
         for (KNode sourceNode : parentNode.getChildren()) {
@@ -615,7 +612,6 @@ public abstract class OgdfLayouter {
                     KVector labelPos = ogdfLabelLayout.getFirst();
                     toKShape(labelLayout, (float) labelPos.x + offsetX, (float) labelPos.y
                             + offsetY, labelLayout.getWidth(), labelLayout.getHeight());
-                    labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
                 }
             }
         }

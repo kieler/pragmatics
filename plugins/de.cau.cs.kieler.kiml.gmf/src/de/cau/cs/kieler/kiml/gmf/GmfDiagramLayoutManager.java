@@ -76,6 +76,8 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.impl.KEdgeLayoutImpl;
+import de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.diagram.ApplyLayoutRequest;
@@ -388,6 +390,10 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         nodeLayout.setXpos(childBounds.x - containerBounds.x);
         nodeLayout.setYpos(childBounds.y - containerBounds.y);
         nodeLayout.setSize(childBounds.width, childBounds.height);
+        // the modification flag must initially be false
+        ((KShapeLayoutImpl) nodeLayout).resetModificationFlag();
+        
+        // determine minimal size of the node
         try {
             Dimension minSize = nodeFigure.getMinimumSize();
             VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
@@ -447,6 +453,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         float ypos = portBounds.y - nodeBounds.y;
         portLayout.setPos(xpos, ypos);
         portLayout.setSize(portBounds.width, portBounds.height);
+        // the modification flag must initially be false
+        ((KShapeLayoutImpl) portLayout).resetModificationFlag();
 
         mapping.getGraphMap().put(port, portEditPart);
 
@@ -479,6 +487,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                     } catch (SWTException exception) {
                         // ignore exception and leave the label size to (0, 0)
                     }
+                    // the modification flag must initially be false
+                    ((KShapeLayoutImpl) labelLayout).resetModificationFlag();
                 }
             }
         }
@@ -533,6 +543,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             } catch (SWTException exception) {
                 // ignore exception and leave the label size to (0, 0)
             }
+            // the modification flag must initially be false
+            ((KShapeLayoutImpl) labelLayout).resetModificationFlag();
         }
     }
 
@@ -698,6 +710,9 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         Point lastPoint = KimlUiUtil.getAbsolutePoint(figure, pointList.size() - 1);
         targetPoint.setX(lastPoint.x - (float) offset.x);
         targetPoint.setY(lastPoint.y - (float) offset.y);
+        
+        // the modification flag must initially be false
+        ((KEdgeLayoutImpl) edgeLayout).resetModificationFlag();
     }
 
     /**
@@ -786,6 +801,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                         labelLayout.setWidth(labelBounds.width);
                     }
                     labelLayout.setHeight(labelBounds.height);
+                    ((KShapeLayoutImpl) labelLayout).resetModificationFlag();
                     label.setText(labelText);
                     mapping.getGraphMap().put(label, labelEditPart);
                 } else {

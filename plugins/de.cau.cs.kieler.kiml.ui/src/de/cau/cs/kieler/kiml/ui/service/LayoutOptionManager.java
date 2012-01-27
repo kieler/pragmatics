@@ -23,6 +23,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import com.google.common.collect.Maps;
 
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -56,10 +57,13 @@ public class LayoutOptionManager {
     /**
      * Configure the layout graph in the given layout mapping.
      * 
-     * @param layoutMapping
-     *            a layout mapping
+     * @param layoutMapping a layout mapping
+     * @param progressMonitor a progress monitor
      */
-    public void configure(final LayoutMapping<?> layoutMapping) {
+    public void configure(final LayoutMapping<?> layoutMapping,
+            final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Layout configuration", 1);
+        
         // create basic layout configuration
         CompoundLayoutConfig clc = new CompoundLayoutConfig();
         clc.add(new DefaultLayoutConfig());
@@ -71,6 +75,8 @@ public class LayoutOptionManager {
         // configure the layout graph recursively
         KNode layoutGraph = layoutMapping.getLayoutGraph();
         recursiveConf(layoutGraph, layoutMapping, clc);
+        
+        progressMonitor.done();
     }
 
     /**

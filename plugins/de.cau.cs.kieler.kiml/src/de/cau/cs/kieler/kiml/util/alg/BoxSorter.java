@@ -18,7 +18,6 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -29,7 +28,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
-public class BoxSorter extends AbstractAlgorithm {
+public class BoxSorter {
 
     /**
      * Sorts nodes according to priority and size or position. Nodes with
@@ -40,7 +39,6 @@ public class BoxSorter extends AbstractAlgorithm {
      * @return sorted list of children
      */
     public List<KNode> sort(final KNode parentNode, final boolean interactive) {
-        getMonitor().begin("Box sorting", 1);
         List<KNode> sortedBoxes = new LinkedList<KNode>(
                 parentNode.getChildren());
         
@@ -79,7 +77,6 @@ public class BoxSorter extends AbstractAlgorithm {
             }
         });
         
-        getMonitor().done();
         return sortedBoxes;
     }
     

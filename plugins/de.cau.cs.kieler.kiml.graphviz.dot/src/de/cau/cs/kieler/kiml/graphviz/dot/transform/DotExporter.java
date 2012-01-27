@@ -224,7 +224,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                             childNode.getLabels().get(0).getText())));
                 }
                 // add node position if interactive layout is chosen
-                if ((interactive || fullExport)
+                if ((interactive || fullExport && !nodeLayout.getProperty(LayoutOptions.NO_LAYOUT))
                         && (nodeLayout.getXpos() != 0 || nodeLayout.getYpos() != 0)) {
                     double xpos = (nodeLayout.getXpos() + nodeLayout.getWidth() / 2 + offset.x);
                     double ypos = (nodeLayout.getYpos() + nodeLayout.getHeight() / 2 + offset.y);
@@ -304,7 +304,8 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                     KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
                     KPoint sourcePoint = edgeLayout.getSourcePoint();
                     KPoint targetPoint = edgeLayout.getTargetPoint();
-                    if (fullExport && (edgeLayout.getBendPoints().size() > 0
+                    if (fullExport && !edgeLayout.getProperty(LayoutOptions.NO_LAYOUT)
+                            && (edgeLayout.getBendPoints().size() > 0
                             || sourcePoint.getX() != 0 || sourcePoint.getY() != 0
                             || targetPoint.getX() != 0 || targetPoint.getY() != 0)) {
                         KNode referenceNode = source;
@@ -327,9 +328,6 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                     }
                     
                     statements.add(edgeStatement);
-                } else {
-                    KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-                    edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 }
             }
             if (hierarchy) {
@@ -874,9 +872,6 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
         }
         nodeLayout.setXpos(xpos - width / 2);
         nodeLayout.setYpos(ypos - height / 2);
-        // ignore node labels and ports
-        KimlUtil.excludeLabels(knode);
-        KimlUtil.excludePorts(knode);
     }
     
     /**
@@ -1008,7 +1003,6 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                     float xoffset = (combinedWidth - labelLayout.getWidth()) / 2;
                     labelLayout.setXpos(xpos + xoffset);
                     labelLayout.setYpos(ypos);
-                    labelLayout.setProperty(LayoutOptions.NO_LAYOUT, false);
                     ypos += labelLayout.getHeight();
                 }
             }

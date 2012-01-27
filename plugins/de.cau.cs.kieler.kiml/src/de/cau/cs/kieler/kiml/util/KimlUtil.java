@@ -539,52 +539,6 @@ public final class KimlUtil {
     }
     
     /**
-     * Excludes the content of the given node from layout. This means setting the
-     * {@link LayoutOptions#NO_LAYOUT} option to {@code true} for all children.
-     * 
-     * @param node a parent node
-     */
-    public static void excludeContent(final KNode node) {
-        for (KNode child : node.getChildren()) {
-            child.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
-            excludeLabels(child);
-            excludePorts(child);
-            for (KEdge edge : child.getOutgoingEdges()) {
-                edge.getData(KEdgeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
-                excludeLabels(edge);
-            }
-            excludeContent(child);
-        }
-    }
-    
-    /**
-     * Exclude all labels of the given graph element from layout. This means setting the
-     * {@link LayoutOptions#NO_LAYOUT} option to {@code true} for all labels.
-     * 
-     * @param element a graph element with labels
-     */
-    public static void excludeLabels(final KLabeledGraphElement element) {
-        for (KLabel label : element.getLabels()) {
-            label.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
-        }
-    }
-    
-    /**
-     * Exclude all ports of the given graph element from layout. This means setting the
-     * {@link LayoutOptions#NO_LAYOUT} option to {@code true} for all ports and their labels.
-     * 
-     * @param node a node with ports
-     */
-    public static void excludePorts(final KNode node) {
-        for (KPort port : node.getPorts()) {
-            port.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
-            for (KLabel label : port.getLabels()) {
-                label.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
-            }
-        }
-    }
-    
-    /**
      * Set a layout option using a serialized key / value pair.
      * 
      * @param graphData the graph data instance to modify

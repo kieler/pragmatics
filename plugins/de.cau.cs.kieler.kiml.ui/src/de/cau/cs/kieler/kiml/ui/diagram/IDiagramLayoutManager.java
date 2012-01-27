@@ -36,7 +36,10 @@ public interface IDiagramLayoutManager<T> {
 
     /**
      * Build a KGraph instance for the given diagram. The resulting layout graph should reflect
-     * the structure of the original diagram.
+     * the structure of the original diagram. All graph elements must have
+     * {@link de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout KShapeLayouts} or
+     * {@link de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout KEdgeLayouts} attached,
+     * and their modification flags must be set to {@code false}.
      * 
      * @param workbenchPart
      *            the workbench part for which layout is performed
@@ -49,11 +52,14 @@ public interface IDiagramLayoutManager<T> {
             Object diagramPart);
 
     /**
-     * Apply the computed layout back to the diagram.
+     * Apply the computed layout back to the diagram. Graph elements whose modification flags
+     * have not been raised during layout should be ignored.
      * 
      * @param mapping a layout mapping that was created by this layout manager
      * @param zoomToFit whether the diagram should zoom to fit
      * @param animationTime the animation time in milliseconds, or 0 for no animation
+     * @see de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl#isModified()
+     * @see de.cau.cs.kieler.kiml.klayoutdata.impl.KEdgeLayoutImpl#isModified()
      */
     void applyLayout(LayoutMapping<T> mapping, boolean zoomToFit,
             int animationTime);

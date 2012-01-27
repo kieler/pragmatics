@@ -37,7 +37,6 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -245,16 +244,9 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // add a new node to the layered graph, copying its size
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        if (nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT) == SizeConstraint.FIXED) {
-            if (node.getChildren().isEmpty()) {
-                // if the node is empty and its size is fixed, the node label won't be moved
-                KimlUtil.excludeLabels(node);
-            }
-        } else {
-            KVector ratio = KimlUtil.resizeNode(node);
-            if (ratio != null && (ratio.x != 1 || ratio.y != 1)) {
-                newNode.setProperty(Properties.RESIZE_RATIO, ratio);
-            }
+        KVector ratio = KimlUtil.resizeNode(node);
+        if (ratio != null && (ratio.x != 1 || ratio.y != 1)) {
+            newNode.setProperty(Properties.RESIZE_RATIO, ratio);
         }
 
         newNode.getPosition().x = nodeLayout.getXpos();
@@ -402,13 +394,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 // going into an external port)
                 if (kedge.getTarget().getParent() == child.getParent()) {
                     transformEdge(kedge, graph, elemMap, layeredGraph);
-                } else if (kedge.getTarget().getParent() != kedge.getSource()
-                        && kedge.getTarget() != kedge.getSource().getParent()) {
-
-                    // the edge is excluded from layout since it does not
-                    // connect two adjacent hierarchy levels
-                    kedge.getData(KEdgeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
-                    KimlUtil.excludeLabels(kedge);
                 }
             }
         }
@@ -494,13 +479,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 targetPort = (LPort) elemMap.get(kedge.getTargetPort());
             }
             
-            // if the source or target node could not be found, omit the edge
-            if (sourceNode == null || targetNode == null) {
-                edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
-                KimlUtil.excludeLabels(kedge);
-                return;
-            }
-
             // if we have a self-loop, set the appropriate graph property
             if (sourceNode != graph && sourceNode == targetNode) {
                 Set<GraphProperties> graphProperties = layeredGraph.getProperty(
@@ -691,7 +669,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                                     (lport.getPosition().x - lport.getSize().x / 2.0));
                             portLayout.setYpos((float)
                                     (lport.getPosition().y - lport.getSize().y / 2.0));
-                            KimlUtil.excludeLabels(kport);
                         }
                     }
                 }
@@ -704,7 +681,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
                 portLayout.setXpos((float) portPosition.x);
                 portLayout.setYpos((float) portPosition.y);
-                KimlUtil.excludeLabels(kport);
             }
 
             // collect edges

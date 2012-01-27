@@ -17,11 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -33,7 +30,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
-public class BoxPlacer extends AbstractAlgorithm {
+public class BoxPlacer {
 
     /** default value for aspect ratio. */
     public static final float DEF_ASPECT_RATIO = 1.3f;
@@ -91,10 +88,6 @@ public class BoxPlacer extends AbstractAlgorithm {
         for (KNode box : sortedBoxes) {
             KShapeLayout boxLayout = box.getData(KShapeLayout.class);
             KimlUtil.resizeNode(box);
-            // invalidate edges, since they are not considered here
-            for (KEdge edge : box.getOutgoingEdges()) {
-                edge.getData(KEdgeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
-            }
             maxRowWidth = Math.max(maxRowWidth, boxLayout.getWidth());
             totalArea += boxLayout.getWidth() * boxLayout.getHeight();
         }
@@ -128,9 +121,6 @@ public class BoxPlacer extends AbstractAlgorithm {
             broadestRow = Math.max(broadestRow, xpos + width + borderSpacing);
             highestBox = Math.max(highestBox, height);
             xpos += width + minSpacing;
-            // ignore ports and labels
-            KimlUtil.excludePorts(box);
-            KimlUtil.excludeLabels(box);
         }
         broadestRow = Math.max(broadestRow, minTotalWidth);
         float totalHeight = ypos + highestBox + borderSpacing;

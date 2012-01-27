@@ -108,9 +108,8 @@ public final class LayoutOptions {
     public static final String NO_LAYOUT_ID = "de.cau.cs.kieler.noLayout";
     /**
      * No layout is done for the associated element. This is used to mark parts of a diagram to
-     * avoid their inclusion in the layout graph, or to mark parts of the layout graph to avoid
-     * their inclusion when the layout results are transferred back to the diagram.
-     * [programmatically set]
+     * avoid their inclusion in the layout graph, or to mark parts of the layout graph to prevent
+     * layout engines from processing them. [programmatically set]
      */
     public static final IProperty<Boolean> NO_LAYOUT = new Property<Boolean>(NO_LAYOUT_ID, false);
     
