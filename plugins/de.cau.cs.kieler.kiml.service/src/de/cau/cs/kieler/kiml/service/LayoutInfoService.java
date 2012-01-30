@@ -409,12 +409,16 @@ public abstract class LayoutInfoService {
     /**
      * Returns all general layout configurations that are active for the given property holder.
      * 
+     * @param propertyHolder a property holder for activation properties, or {@code null} to
+     *     use only default values
      * @return the active layout configurations
      */
     public final List<ILayoutConfig> getActiveConfigs(final IPropertyHolder propertyHolder) {
         LinkedList<ILayoutConfig> configs = new LinkedList<ILayoutConfig>();
         for (ConfigData data : configData) {
-            if (data.activation == null || propertyHolder.getProperty(data.activation)) {
+            if (data.activation == null
+                    || propertyHolder != null && propertyHolder.getProperty(data.activation)
+                    || propertyHolder == null && data.activation.getDefault()) {
                 configs.add(data.config);
             }
         }

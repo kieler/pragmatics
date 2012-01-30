@@ -60,7 +60,7 @@ public class AnalysisEffect extends AbstractEffect {
     public void execute() {
         // perform the analyses on the active diagram
         final Map<String, Object> results =
-                DiagramAnalyzer.analyse(parentNode, analyses, progressBar);
+                DiagramAnalyzer.analyze(parentNode, analyses, progressBar);
         // visualize the results using silent methods
         VisualizationServices.getInstance().visualize(analyses, results, true);
     }

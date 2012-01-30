@@ -56,7 +56,7 @@ public class AnalysisHandler extends AbstractHandler {
                     "No analyses are selected. Please configure analyses in the button menu.");
         } else {
             // perform the analyses on the active diagram
-            Map<String, Object> results = DiagramAnalyzer.analyse(editorPart, null, analyses, true);
+            Map<String, Object> results = DiagramAnalyzer.analyze(editorPart, null, analyses, true);
             // visualize the results
             VisualizationServices.getInstance().visualize(analyses, results, false);
         }

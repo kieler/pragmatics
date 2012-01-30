@@ -28,6 +28,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import com.google.common.collect.Lists;
+
+import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Dependency;
@@ -381,6 +384,39 @@ public final class AnalysisServices implements IBundleChangedListener {
      */
     public AbstractInfoAnalysis getAnalysisById(final String id) {
         return analysisIdMapping.get(id);
+    }
+    
+    /**
+     * Perform the given analysis on a graph.
+     * 
+     * @param node the parent node of the graph to analyze
+     * @param analysisId analysis identifier
+     * @param resultCache the result cache with stored values
+     * @return the analysis result value
+     */
+    public Object analyze(final KNode node, final String analysisId,
+            final Map<String, Object> resultCache) {
+        Object result = resultCache.get(analysisId);
+        if (result == null) {
+            AbstractInfoAnalysis analysis = analysisIdMapping.get(analysisId);
+            if (analysis != null) {
+                List<AbstractInfoAnalysis> analysesSequence = getExecutionOrder(
+                        Lists.newArrayList(analysis));
+                for (AbstractInfoAnalysis a : analysesSequence) {
+                    if (!resultCache.containsKey(a.getId())) {
+                        try {
+                            Object o = a.doAnalysis(node, resultCache, new BasicProgressMonitor(0));
+                            resultCache.put(a.getId(), o);
+                        } catch (Exception exception) {
+                            resultCache.put(a.getId(), new AnalysisFailed(AnalysisFailed.Type.Failed,
+                                    exception));
+                        }
+                    }
+                }
+                result = resultCache.get(analysisId);
+            }
+        }
+        return result;
     }
 
     /**

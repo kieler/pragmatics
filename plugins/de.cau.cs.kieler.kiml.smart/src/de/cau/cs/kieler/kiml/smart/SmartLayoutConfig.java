@@ -26,7 +26,9 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.smart.rules.LayeredRule;
 
 /**
@@ -127,8 +129,29 @@ public class SmartLayoutConfig implements ILayoutConfig {
      * {@inheritDoc}
      */
     public void enrich(final LayoutContext context) {
-        if (context.getProperty(META_LAYOUT) == null) {
-            provideMetaLayout(context);
+        MetaLayout metaLayout = provideMetaLayout(context);
+        if (context.getProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS)) {
+            // provide content algorithm hint option
+            if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null && metaLayout != null) {
+                String algorithm = (String) metaLayout.getConfig().get(LayoutOptions.ALGORITHM);
+                if (algorithm != null) {
+                    context.setProperty(DefaultLayoutConfig.CONTENT_HINT, algorithm);
+                }
+            }
+            
+            // provide container algorithm hint option
+            Object containerDiagramPart = context.getProperty(LayoutContext.CONTAINER_DIAGRAM_PART);
+            if (context.getProperty(DefaultLayoutConfig.CONTAINER_HINT) == null
+                    && containerDiagramPart != null) {
+                MetaLayout containerMetaLayout = metaLayoutCache.get(containerDiagramPart);
+                if (containerMetaLayout != null) {
+                    String containerAlgorithm = (String) containerMetaLayout.getConfig()
+                            .get(LayoutOptions.ALGORITHM);
+                    if (containerAlgorithm != null) {
+                        context.setProperty(DefaultLayoutConfig.CONTAINER_HINT, containerAlgorithm);
+                    }
+                }
+            }
         }
     }
 

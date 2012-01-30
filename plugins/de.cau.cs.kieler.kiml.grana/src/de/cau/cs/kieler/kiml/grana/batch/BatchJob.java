@@ -95,7 +95,7 @@ public class BatchJob<T> {
                 kgraphProvider.getKGraph(parameter,
                         monitor.subTask(WORK_KGRAPH));
         Map<String, Object> results =
-                DiagramAnalyzer.analyse(graph, analyses,
+                DiagramAnalyzer.analyze(graph, analyses,
                         monitor.subTask(WORK_ANALYSIS));
         BatchJobResult<T> batchJobResult = new BatchJobResult<T>(this, results);
         monitor.done();

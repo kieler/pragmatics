@@ -483,7 +483,7 @@ public final class EvolUtil {
 
             // Perform the measurement.
             Map<String, Object> analysisResults =
-                    DiagramAnalyzer.analyse(parentNode, wantedMetricsList, analyserOptionsMap,
+                    DiagramAnalyzer.analyze(parentNode, wantedMetricsList, analyserOptionsMap,
                             false /* progressBar */);
 
             // Check the results.

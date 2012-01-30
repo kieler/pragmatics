@@ -66,8 +66,8 @@ public class LayoutOptionManager {
         // create basic layout configuration
         CompoundLayoutConfig clc = new CompoundLayoutConfig();
         clc.add(defaultLayoutConfig);
-        clc.addAll(layoutMapping.getLayoutConfigs());
         clc.addAll(LayoutInfoService.getInstance().getActiveConfigs(layoutMapping));
+        clc.addAll(layoutMapping.getLayoutConfigs());
 
         // configure the layout graph recursively
         KNode layoutGraph = layoutMapping.getLayoutGraph();
@@ -89,8 +89,7 @@ public class LayoutOptionManager {
             final ILayoutConfig... extraConfigs) {
         CompoundLayoutConfig clc = new CompoundLayoutConfig();
         clc.add(defaultLayoutConfig);
-        // TODO include configs from the layout info service
-        clc.add(new EclipseLayoutConfig());
+        clc.addAll(LayoutInfoService.getInstance().getActiveConfigs(null));
         clc.addAll(getSemanticConfigs(domainElement));
         for (ILayoutConfig conf : extraConfigs) {
             clc.add(conf);

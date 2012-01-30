@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Smart Layout
-Bundle-SymbolicName: de.cau.cs.kieler.kiml.smart
+Bundle-SymbolicName: de.cau.cs.kieler.kiml.smart;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
