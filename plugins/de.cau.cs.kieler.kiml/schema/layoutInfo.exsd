@@ -21,6 +21,7 @@
             <element ref="diagramType"/>
             <element ref="option"/>
             <element ref="semanticOption"/>
+            <element ref="config"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -140,6 +141,40 @@
                <appInfo>
                   <meta.attribute kind="java" basedOn="de.cau.cs.kieler.kiml.config.SemanticLayoutConfig:"/>
                </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="config">
+      <annotation>
+         <documentation>
+            A general layout option configuration, which can calculate its values in arbitrary manner.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The implementation of the layout configuration.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.config.ILayoutConfig"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="activation" type="string">
+            <annotation>
+               <documentation>
+                  A property identifier used for activation of the layout configuration. If this property is omitted, the configuration is always active.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="default" type="boolean">
+            <annotation>
+               <documentation>
+                  The default activation value (&lt;pre&gt;true&lt;/pre&gt; or &lt;pre&gt;false&lt;/pre&gt;).
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

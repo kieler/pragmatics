@@ -42,6 +42,10 @@ import de.cau.cs.kieler.kiml.options.SizeConstraint;
  */
 public class EclipseLayoutConfig implements ILayoutConfig {
     
+    /** the property for activation of the Eclipse layout config. */
+    public static final Property<Boolean> ACTIVATION = new Property<Boolean>(
+            "de.cau.cs.kieler.kiml.eclipse", true);
+    
     /** the priority for the Eclipse layout configuration. */
     public static final int PRIORITY = 10;
     
