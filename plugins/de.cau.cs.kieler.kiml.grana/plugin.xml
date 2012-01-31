@@ -111,6 +111,30 @@
       </view>
    </extension>
    <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="de.cau.cs.kieler.kiml.grana.canSetupBatch">
+         <with
+               variable="selection">
+            <iterate
+                  ifEmpty="false"
+                  operator="and">
+               <or>
+                 <instanceof
+                     value="org.eclipse.core.resources.IFile">
+                 </instanceof>
+                 <instanceof
+                     value="org.eclipse.core.resources.IFolder">
+                 </instanceof>
+                 <instanceof
+                     value="org.eclipse.core.resources.IProject">
+                 </instanceof>
+               </or>
+            </iterate>
+         </with>
+      </definition>
+   </extension>
+   <extension
          point="de.cau.cs.kieler.kiml.grana.analysisProviders">
       <category
             description="This is the default category."
@@ -425,6 +449,13 @@
                name="West">
          </component>
       </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.basic"
+            class="de.cau.cs.kieler.kiml.grana.analyses.CycleAnalysis"
+            description="An approximate number of cycles determined by the back edges found in a minimizing heuristic."
+            id="de.cau.cs.kieler.kiml.grana.cycles"
+            name="Cycles">
+      </provider>
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.grana.resultVisualizers">
@@ -482,30 +513,6 @@
             description="Perform automatic graph analysis after a layout has been calculated"
             name="Analysis after Layout">
       </combination>
-   </extension>
-   <extension
-         point="org.eclipse.core.expressions.definitions">
-      <definition
-            id="de.cau.cs.kieler.kiml.grana.canSetupBatch">
-         <with
-               variable="selection">
-            <iterate
-                  ifEmpty="false"
-                  operator="and">
-               <or>
-                 <instanceof
-                     value="org.eclipse.core.resources.IFile">
-                 </instanceof>
-                 <instanceof
-                     value="org.eclipse.core.resources.IFolder">
-                 </instanceof>
-                 <instanceof
-                     value="org.eclipse.core.resources.IProject">
-                 </instanceof>
-               </or>
-            </iterate>
-         </with>
-      </definition>
    </extension>
 
 </plugin>
