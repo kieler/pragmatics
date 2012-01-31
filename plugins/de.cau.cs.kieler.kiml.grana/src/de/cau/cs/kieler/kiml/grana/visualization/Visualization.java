@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.grana.visualization;
 
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * This class represents a concrete visualization.
@@ -48,7 +48,7 @@ public class Visualization {
      * @return the visualization result
      */
     @SuppressWarnings("unchecked")
-    public <S> S get(final AbstractInfoAnalysis analysis, final Object result) {
+    public <S> S get(final AnalysisData analysis, final Object result) {
         return (S) visualizer.visualize(analysis, result, null);
     }
 
@@ -67,7 +67,7 @@ public class Visualization {
      * @return the visualization result
      */
     @SuppressWarnings("unchecked")
-    public <S> S apply(final AbstractInfoAnalysis analysis,
+    public <S> S apply(final AnalysisData analysis,
             final Object result, final Object parameter) {
         return (S) visualizer.visualize(analysis, result, parameter);
     }

@@ -19,6 +19,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
+import de.cau.cs.kieler.kiml.ui.service.EclipseAnalysisService;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutDataService;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.service.EclipseTransformationService;
@@ -162,6 +163,7 @@ public class KimlUiPlugin extends AbstractUIPlugin {
         EclipseLayoutDataService.create();
         EclipseLayoutInfoService.create();
         EclipseTransformationService.create();
+        EclipseAnalysisService.create();
         // start with local layouter initially.
         LayoutDataService.setMode(LayoutDataService.ECLIPSEDATASERVICE);
     }

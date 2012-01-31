@@ -19,8 +19,7 @@ Require-Bundle: com.google.guava;bundle-version="8.0.0",
  de.cau.cs.kieler.kiml
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Export-Package: de.cau.cs.kieler.kiml.grana,
- de.cau.cs.kieler.kiml.grana.util,
+Export-Package: de.cau.cs.kieler.kiml.grana.util,
  de.cau.cs.kieler.kiml.grana.visualization
 Bundle-Activator: de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin
 Import-Package: org.eclipse.ui.dialogs

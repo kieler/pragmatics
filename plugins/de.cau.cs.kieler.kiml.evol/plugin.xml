@@ -242,7 +242,7 @@
       </data>
    </extension>
    <extension
-         point="de.cau.cs.kieler.kiml.grana.analysisProviders">
+         point="de.cau.cs.kieler.kiml.service.analysisProviders">
       <category
             description="Analysis providers that yield a value between 0.0 and 1.0"
             id="de.cau.cs.kieler.kiml.evol.metricCategory"

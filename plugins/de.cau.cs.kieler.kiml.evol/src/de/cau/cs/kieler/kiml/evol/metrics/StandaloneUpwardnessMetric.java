@@ -26,8 +26,8 @@ import org.eclipse.emf.common.util.EList;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 /**
  * Experimental upwardness metric. Measures the fraction of upward edges. A more

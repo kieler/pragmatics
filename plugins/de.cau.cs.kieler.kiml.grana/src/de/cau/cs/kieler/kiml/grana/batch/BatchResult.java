@@ -17,7 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * The class which contains the information about the results of an analysis
@@ -28,8 +28,8 @@ import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 public class BatchResult {
 
     /** the analysis which have been performed in the batch run. */
-    private List<AbstractInfoAnalysis> analyses =
-            new LinkedList<AbstractInfoAnalysis>();
+    private List<AnalysisData> analyses =
+            new LinkedList<AnalysisData>();
     /** the results of the individual jobs. */
     private List<BatchJobResult<?>> results =
             new LinkedList<BatchJobResult<?>>();
@@ -43,7 +43,7 @@ public class BatchResult {
      * @param theAnalyses
      *            the analyses performed in the batch run
      */
-    public BatchResult(final List<AbstractInfoAnalysis> theAnalyses) {
+    public BatchResult(final List<AnalysisData> theAnalyses) {
         analyses = theAnalyses;
     }
 
@@ -52,7 +52,7 @@ public class BatchResult {
      * 
      * @return the analyses
      */
-    public List<AbstractInfoAnalysis> getAnalyses() {
+    public List<AnalysisData> getAnalyses() {
         return analyses;
     }
 

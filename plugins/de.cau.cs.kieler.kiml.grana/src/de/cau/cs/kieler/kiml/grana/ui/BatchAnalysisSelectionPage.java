@@ -18,8 +18,8 @@ import java.util.List;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.AnalysisServices;
+import de.cau.cs.kieler.kiml.service.AnalysisService;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * This page displays the available analyses and lets the user select any number
@@ -42,7 +42,7 @@ public class BatchAnalysisSelectionPage extends WizardPage implements
     /** the analysis selection viewer. */
     private AnalysisSelectionViewer viewer;
     /** the initally selected analyses. */
-    private List<AbstractInfoAnalysis> initialAnalyses;
+    private List<AnalysisData> initialAnalyses;
 
     /**
      * Constructs a BatchAnalysisSelectionPage.
@@ -51,7 +51,7 @@ public class BatchAnalysisSelectionPage extends WizardPage implements
      *            the selected analyses
      */
     public BatchAnalysisSelectionPage(
-            final List<AbstractInfoAnalysis> selectedAnalyses) {
+            final List<AnalysisData> selectedAnalyses) {
         super(PAGE_NAME);
         initialAnalyses = selectedAnalyses;
     }
@@ -64,7 +64,7 @@ public class BatchAnalysisSelectionPage extends WizardPage implements
         viewer =
                 new AnalysisSelectionViewer(
                         parent,
-                        AnalysisServices.getInstance().getCategories(),
+                        AnalysisService.getInstance().getCategories(),
                         initialAnalyses);
         setControl(viewer);
         selectionChanged(getAnalyses());
@@ -76,7 +76,7 @@ public class BatchAnalysisSelectionPage extends WizardPage implements
      * 
      * @return the selected analyses
      */
-    public List<AbstractInfoAnalysis> getAnalyses() {
+    public List<AnalysisData> getAnalyses() {
         return viewer.getSelectedAnalyses();
     }
 
@@ -84,7 +84,7 @@ public class BatchAnalysisSelectionPage extends WizardPage implements
      * {@inheritDoc}
      */
     public void selectionChanged(
-            final List<AbstractInfoAnalysis> selectedAnalyses) {
+            final List<AnalysisData> selectedAnalyses) {
         if (selectedAnalyses.size() > 0) {
             setErrorMessage(null);
         } else {

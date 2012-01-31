@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.grana.visualizers;
 
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.visualization.AbstractSimpleVisualizer;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * The simplest possible visualizer. Returns the result of the {@code toString}
@@ -37,7 +37,7 @@ public class ToStringVisualizer extends AbstractSimpleVisualizer<String> {
     /**
      * {@inheritDoc}
      */
-    public String visualize(final AbstractInfoAnalysis analysis,
+    public String visualize(final AnalysisData analysis,
             final Object result) {
         if (result == null) {
             return MESSAGE_NULL_RESULT;

@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.grana.visualization;
 
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * The interface for all analysis result visualizer.
@@ -50,5 +50,5 @@ public interface IVisualizer<S, T> {
      * @return an object that represents the visualization or null if not
      *         applicable
      */
-    S visualize(final AbstractInfoAnalysis analysis, final Object result, final T parameter);
+    S visualize(final AnalysisData analysis, final Object result, final T parameter);
 }

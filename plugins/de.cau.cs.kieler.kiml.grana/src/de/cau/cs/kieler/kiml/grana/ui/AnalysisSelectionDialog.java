@@ -22,17 +22,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.AnalysisCategory;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisCategory;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
- * The dialog that shows a selection of graph analyses to the user to select
- * from.
+ * The dialog that shows a selection of graph analyses to the user to select from.
  * 
  * @author mri
  */
-public class AnalysisSelectionDialog extends Dialog implements
-        ISelectionListener {
+public class AnalysisSelectionDialog extends Dialog implements ISelectionListener {
 
     /** the dialogs title. */
     private static final String TITLE = "Select analyses";
@@ -42,11 +40,11 @@ public class AnalysisSelectionDialog extends Dialog implements
     private static final int HEIGHT = 400;
 
     /** the selected analyses. */
-    private List<AbstractInfoAnalysis> result;
+    private List<AnalysisData> result;
     /** the analyses categories. */
     private List<AnalysisCategory> categories;
     /** the initially selected analyses. */
-    private List<AbstractInfoAnalysis> initialAnalyses;
+    private List<AnalysisData> initialAnalyses;
 
     /**
      * Constructs the dialog.
@@ -60,7 +58,7 @@ public class AnalysisSelectionDialog extends Dialog implements
      */
     public AnalysisSelectionDialog(final Shell parent,
             final List<AnalysisCategory> analysisCategories,
-            final List<AbstractInfoAnalysis> selectedAnalyses) {
+            final List<AnalysisData> selectedAnalyses) {
         super(parent);
         setShellStyle(getShellStyle() | SWT.RESIZE);
         categories = analysisCategories;
@@ -72,7 +70,7 @@ public class AnalysisSelectionDialog extends Dialog implements
      * 
      * @return the analyses
      */
-    public List<AbstractInfoAnalysis> getAnalyses() {
+    public List<AnalysisData> getAnalyses() {
         return result;
     }
 
@@ -82,8 +80,8 @@ public class AnalysisSelectionDialog extends Dialog implements
     @Override
     protected Control createDialogArea(final Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);
-        AnalysisSelectionViewer viewer =
-                new AnalysisSelectionViewer(parent, categories, initialAnalyses);
+        AnalysisSelectionViewer viewer = new AnalysisSelectionViewer(parent, categories,
+                initialAnalyses);
         GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
         data.widthHint = WIDTH;
         data.heightHint = HEIGHT;
@@ -104,8 +102,8 @@ public class AnalysisSelectionDialog extends Dialog implements
     /**
      * {@inheritDoc}
      */
-    public void selectionChanged(
-            final List<AbstractInfoAnalysis> selectedAnalyses) {
+    public void selectionChanged(final List<AnalysisData> selectedAnalyses) {
         result = selectedAnalyses;
     }
+
 }

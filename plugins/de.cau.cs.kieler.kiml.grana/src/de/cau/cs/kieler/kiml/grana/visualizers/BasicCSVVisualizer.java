@@ -13,10 +13,10 @@
  */
 package de.cau.cs.kieler.kiml.grana.visualizers;
 
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.visualization.AbstractSimpleVisualizer;
 import de.cau.cs.kieler.kiml.grana.visualization.Visualization;
 import de.cau.cs.kieler.kiml.grana.visualization.VisualizationServices;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * The basic visualizer for the CSV format.
@@ -39,7 +39,7 @@ public class BasicCSVVisualizer extends AbstractSimpleVisualizer<String> {
      * {@inheritDoc}
      */
     @Override
-    public String visualize(final AbstractInfoAnalysis analysis,
+    public String visualize(final AnalysisData analysis,
             final Object result) {
         String str = "";
         if (result instanceof Object[]) {

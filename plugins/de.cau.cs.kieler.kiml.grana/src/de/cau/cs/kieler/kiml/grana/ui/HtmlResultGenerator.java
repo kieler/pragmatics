@@ -16,8 +16,8 @@ package de.cau.cs.kieler.kiml.grana.ui;
 
 import java.util.List;
 
-import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.visualization.BoundVisualization;
+import de.cau.cs.kieler.kiml.service.AnalysisService;
 
 
 /**
@@ -65,7 +65,7 @@ public final class HtmlResultGenerator {
                 }
                 
                 html += "<H2>"
-                    + AnalysisServices.getInstance().getCategoryById(currentCategory).getName()
+                    + AnalysisService.getInstance().getCategoryById(currentCategory).getName()
                     + "</H2>";
                 html += "<TABLE border=0 cellpadding='10'>";
             }

@@ -18,9 +18,9 @@ import java.util.Map;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
-import de.cau.cs.kieler.kiml.grana.AnalysisFailed.Type;
-import de.cau.cs.kieler.kiml.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisFailed;
+import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisFailed.Type;
 
 /**
  * A layout metric that computes the horizontal compactness (narrowness) of the

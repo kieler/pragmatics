@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * The batch wizard lets the user select any number of diagram files and starts
@@ -54,7 +54,7 @@ public class BatchWizard extends Wizard {
     /** the result file. */
     private IPath resultFile;
     /** the selected analyses. */
-    private List<AbstractInfoAnalysis> selectedAnalyses;
+    private List<AnalysisData> selectedAnalyses;
 
     /**
      * Constructs a BatchWizard without initial file selection.
@@ -140,7 +140,7 @@ public class BatchWizard extends Wizard {
      * 
      * @return the selected analyses
      */
-    public List<AbstractInfoAnalysis> getAnalyses() {
+    public List<AnalysisData> getAnalyses() {
         return selectedAnalyses;
     }
 }

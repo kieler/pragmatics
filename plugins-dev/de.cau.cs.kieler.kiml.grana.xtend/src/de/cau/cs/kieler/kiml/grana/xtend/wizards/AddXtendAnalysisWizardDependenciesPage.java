@@ -33,8 +33,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.AnalysisServices;
+import de.cau.cs.kieler.kiml.service.AnalysisServices;
+import de.cau.cs.kieler.kiml.service.grana.AbstractInfoAnalysis;
 
 /**
  * The dependencies page for the AddXtendAnalysisWizard.<br>

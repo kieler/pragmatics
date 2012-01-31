@@ -18,8 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.kiml.grana.IAnalysisBundle;
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.IBundleChangedListener;
+import de.cau.cs.kieler.kiml.service.grana.AbstractInfoAnalysis;
 
 /**
  * The bundle that supplies the xtend analyses to the graph analysis service.

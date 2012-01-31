@@ -30,10 +30,11 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
-import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
+import de.cau.cs.kieler.kiml.service.AnalysisService;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisFailed;
+import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
@@ -75,7 +76,7 @@ public final class DiagramAnalyzer {
      * @return the analysis result
      */
     public static Object analyze(final IEditorPart editorPart, final EditPart editPart,
-            final AbstractInfoAnalysis analysis, final boolean progressBar) {
+            final AnalysisData analysis, final boolean progressBar) {
         return analyze(editorPart, editPart, analysis, null, progressBar);
     }
 
@@ -97,9 +98,9 @@ public final class DiagramAnalyzer {
      * @return the analysis result
      */
     public static Object analyze(final IEditorPart editorPart, final EditPart editPart,
-            final AbstractInfoAnalysis analysis, final Map<String, Object> options,
+            final AnalysisData analysis, final Map<String, Object> options,
             final boolean progressBar) {
-        List<AbstractInfoAnalysis> analyses = new LinkedList<AbstractInfoAnalysis>();
+        List<AnalysisData> analyses = new LinkedList<AnalysisData>();
         analyses.add(analysis);
         Map<String, Object> result = analyze(editorPart, editPart, analyses, options, progressBar);
         if (result.containsKey(analysis.getId())) {
@@ -125,7 +126,7 @@ public final class DiagramAnalyzer {
      * @return the analyses results
      */
     public static Map<String, Object> analyze(final IEditorPart editorPart,
-            final EditPart editPart, final List<AbstractInfoAnalysis> analyses,
+            final EditPart editPart, final List<AnalysisData> analyses,
             final boolean progressBar) {
         return analyze(editorPart, editPart, analyses, null, progressBar);
     }
@@ -148,9 +149,9 @@ public final class DiagramAnalyzer {
      * @return the analyses results
      */
     public static Map<String, Object> analyze(final IEditorPart editorPart,
-            final EditPart editPart, final List<AbstractInfoAnalysis> analyses,
+            final EditPart editPart, final List<AnalysisData> analyses,
             final Map<String, Object> options, final boolean progressBar) {
-        final List<AbstractInfoAnalysis> analysesSequence = AnalysisServices.getInstance()
+        final List<AnalysisData> analysesSequence = AnalysisService.getInstance()
                 .getExecutionOrder(analyses);
         lastResult = null;
         final IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
@@ -210,7 +211,7 @@ public final class DiagramAnalyzer {
      *            if true, a progress bar is displayed
      * @return the analysis result
      */
-    public static Object analyze(final KNode parentNode, final AbstractInfoAnalysis analysis,
+    public static Object analyze(final KNode parentNode, final AnalysisData analysis,
             final boolean progressBar) {
         return analyze(parentNode, analysis, null, progressBar);
     }
@@ -228,9 +229,9 @@ public final class DiagramAnalyzer {
      *            if true, a progress bar is displayed
      * @return the analysis result
      */
-    public static Object analyze(final KNode parentNode, final AbstractInfoAnalysis analysis,
+    public static Object analyze(final KNode parentNode, final AnalysisData analysis,
             final Map<String, Object> options, final boolean progressBar) {
-        List<AbstractInfoAnalysis> analyses = new LinkedList<AbstractInfoAnalysis>();
+        List<AnalysisData> analyses = new LinkedList<AnalysisData>();
         analyses.add(analysis);
         Map<String, Object> result = analyze(parentNode, analyses, options, progressBar);
         if (result.containsKey(analysis.getId())) {
@@ -252,7 +253,7 @@ public final class DiagramAnalyzer {
      * @return the analyses results
      */
     public static Map<String, Object> analyze(final KNode parentNode,
-            final List<AbstractInfoAnalysis> analyses, final boolean progressBar) {
+            final List<AnalysisData> analyses, final boolean progressBar) {
         return analyze(parentNode, analyses, null, progressBar);
     }
 
@@ -270,9 +271,9 @@ public final class DiagramAnalyzer {
      * @return the analyses results
      */
     public static Map<String, Object> analyze(final KNode parentNode,
-            final List<AbstractInfoAnalysis> analyses, final Map<String, Object> options,
+            final List<AnalysisData> analyses, final Map<String, Object> options,
             final boolean progressBar) {
-        final List<AbstractInfoAnalysis> analysesSequence = AnalysisServices.getInstance()
+        final List<AnalysisData> analysesSequence = AnalysisService.getInstance()
                 .getExecutionOrder(analyses);
         currentGraph = parentNode;
         lastResult = null;
@@ -313,7 +314,7 @@ public final class DiagramAnalyzer {
      *            the progress monitor
      * @return the analysis result
      */
-    public static Object analyze(final KNode parentNode, final AbstractInfoAnalysis analysis,
+    public static Object analyze(final KNode parentNode, final AnalysisData analysis,
             final IKielerProgressMonitor monitor) {
         return analyze(parentNode, analysis, null, monitor);
     }
@@ -331,9 +332,9 @@ public final class DiagramAnalyzer {
      *            the progress monitor
      * @return the analysis result
      */
-    public static Object analyze(final KNode parentNode, final AbstractInfoAnalysis analysis,
+    public static Object analyze(final KNode parentNode, final AnalysisData analysis,
             final Map<String, Object> options, final IKielerProgressMonitor monitor) {
-        List<AbstractInfoAnalysis> analyses = new LinkedList<AbstractInfoAnalysis>();
+        List<AnalysisData> analyses = new LinkedList<AnalysisData>();
         analyses.add(analysis);
         Map<String, Object> result = analyze(parentNode, analyses, options, monitor);
         if (result.containsKey(analysis.getId())) {
@@ -355,7 +356,7 @@ public final class DiagramAnalyzer {
      * @return the analyses results
      */
     public static Map<String, Object> analyze(final KNode parentNode,
-            final List<AbstractInfoAnalysis> analyses, final IKielerProgressMonitor monitor) {
+            final List<AnalysisData> analyses, final IKielerProgressMonitor monitor) {
         return analyze(parentNode, analyses, null, monitor);
     }
 
@@ -373,9 +374,9 @@ public final class DiagramAnalyzer {
      * @return the analyses results
      */
     public static Map<String, Object> analyze(final KNode parentNode,
-            final List<AbstractInfoAnalysis> analyses, final Map<String, Object> options,
+            final List<AnalysisData> analyses, final Map<String, Object> options,
             final IKielerProgressMonitor monitor) {
-        final List<AbstractInfoAnalysis> analysesSequence = AnalysisServices.getInstance()
+        final List<AnalysisData> analysesSequence = AnalysisService.getInstance()
                 .getExecutionOrder(analyses);
         currentGraph = parentNode;
         lastResult = null;
@@ -394,7 +395,7 @@ public final class DiagramAnalyzer {
      * @return the analyses results
      */
     private static Map<String, Object> doAnalyses(final IKielerProgressMonitor monitor,
-            final List<AbstractInfoAnalysis> analyses, final Map<String, Object> options) {
+            final List<AnalysisData> analyses, final Map<String, Object> options) {
         monitor.begin("Begin analyses", analyses.size());
         Map<String, Object> results;
         if (options == null) {
@@ -402,13 +403,15 @@ public final class DiagramAnalyzer {
         } else {
             results = options;
         }
-        for (AbstractInfoAnalysis analysis : analyses) {
+        for (AnalysisData analysis : analyses) {
             try {
                 if (monitor.isCanceled()) {
                     results.put(analysis.getId(), new AnalysisFailed(AnalysisFailed.Type.Canceled));
                 } else {
-                    results.put(analysis.getId(),
-                            analysis.doAnalysis(currentGraph, results, monitor.subTask(1)));
+                    IAnalysis ana = analysis.getInstancePool().fetch();
+                    Object obj = ana.doAnalysis(currentGraph, results, monitor.subTask(1));
+                    results.put(analysis.getId(), obj);
+                    analysis.getInstancePool().release(ana);
                 }
             } catch (Exception e) {
                 results.put(analysis.getId(), new AnalysisFailed(AnalysisFailed.Type.Failed, e));
@@ -417,4 +420,5 @@ public final class DiagramAnalyzer {
         monitor.done();
         return results;
     }
+    
 }

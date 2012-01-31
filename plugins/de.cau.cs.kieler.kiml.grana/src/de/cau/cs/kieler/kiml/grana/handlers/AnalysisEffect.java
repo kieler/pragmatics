@@ -18,9 +18,9 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.util.DiagramAnalyzer;
 import de.cau.cs.kieler.kiml.grana.visualization.VisualizationServices;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * A view management effect for graph analysis.
@@ -32,7 +32,7 @@ public class AnalysisEffect extends AbstractEffect {
     /** the parent node. */
     private KNode parentNode;
     /** the analyses to perform. */
-    private List<AbstractInfoAnalysis> analyses;
+    private List<AnalysisData> analyses;
     /** whether a progress bar should be used. */
     private boolean progressBar;
 
@@ -47,7 +47,7 @@ public class AnalysisEffect extends AbstractEffect {
      *            whether a progress bar should be used
      */
     public AnalysisEffect(final KNode theparentNode,
-            final List<AbstractInfoAnalysis> theanalyses,
+            final List<AnalysisData> theanalyses,
             final boolean theprogressBar) {
         this.parentNode = theparentNode;
         this.analyses = theanalyses;

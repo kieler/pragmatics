@@ -18,8 +18,8 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.util.DiagramAnalyzer;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * The class which represents an analysis batch job.
@@ -88,7 +88,7 @@ public class BatchJob<T> {
      * @throws Exception
      *             any kind of exception
      */
-    public BatchJobResult<T> execute(final List<AbstractInfoAnalysis> analyses,
+    public BatchJobResult<T> execute(final List<AnalysisData> analyses,
             final IKielerProgressMonitor monitor) throws Exception {
         monitor.begin("Executing analysis batch job: " + parameter, WORK);
         KNode graph =

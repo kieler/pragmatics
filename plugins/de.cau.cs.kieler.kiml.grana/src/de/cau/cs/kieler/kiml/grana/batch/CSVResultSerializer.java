@@ -19,9 +19,9 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.visualization.Visualization;
 import de.cau.cs.kieler.kiml.grana.visualization.VisualizationServices;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * A batch result serializer which saves the information as CSV.
@@ -45,7 +45,7 @@ public class CSVResultSerializer implements IBatchResultSerializer {
                 new OutputStreamWriter(outputStream, "UTF-8");
         // write the header
         writer.write("File");
-        for (AbstractInfoAnalysis analysis : batchResult.getAnalyses()) {
+        for (AnalysisData analysis : batchResult.getAnalyses()) {
             if (analysis.getComponents().size() > 0) {
                 for (Pair<String, String> component : analysis.getComponents()) {
                     writer.write(";" + analysis.getName() + " ("
@@ -60,7 +60,7 @@ public class CSVResultSerializer implements IBatchResultSerializer {
         for (BatchJobResult<?> jobResult : batchResult.getJobResults()) {
             writer.write(jobResult.getJob().getParameter().toString());
             Map<String, Object> results = jobResult.getResults();
-            for (AbstractInfoAnalysis analysis : batchResult.getAnalyses()) {
+            for (AnalysisData analysis : batchResult.getAnalyses()) {
                 Object result = results.get(analysis.getId());
                 Visualization visualization =
                         VisualizationServices.getInstance().getVisualization(

@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.grana.visualization;
 
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * This class binds an analysis result to a visualization.
@@ -23,7 +23,7 @@ import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 public class BoundVisualization {
 
     /** the analysis. */
-    private AbstractInfoAnalysis analysis;
+    private AnalysisData analysis;
     /** the analysis result. */
     private Object result;
     /** the visualization. */
@@ -39,7 +39,7 @@ public class BoundVisualization {
      * @param theVisualization
      *            the visualization
      */
-    public BoundVisualization(final AbstractInfoAnalysis theAnalysis,
+    public BoundVisualization(final AnalysisData theAnalysis,
             final Object theResult, final Visualization theVisualization) {
         analysis = theAnalysis;
         result = theResult;
@@ -77,7 +77,7 @@ public class BoundVisualization {
      * 
      * @return the analysis
      */
-    public AbstractInfoAnalysis getAnalysis() {
+    public AnalysisData getAnalysis() {
         return analysis;
     }
 }

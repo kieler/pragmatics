@@ -253,7 +253,7 @@ public class LayoutAlgorithmData implements ILayoutData {
     }
 
     /**
-     * Sets the layout provider that can execute the associated algorithm.
+     * Create a pool for instances of the layout provider.
      *
      * @param providerFactory a factory for layout providers
      */

@@ -15,7 +15,7 @@ package de.cau.cs.kieler.kiml.grana.ui;
 
 import java.util.List;
 
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * The interface for listeners on the selection of an {AnalysisSelectionViewer}.
@@ -30,5 +30,5 @@ public interface ISelectionListener {
      * @param selectedAnalyses
      *            the selected analyses
      */
-    void selectionChanged(final List<AbstractInfoAnalysis> selectedAnalyses);
+    void selectionChanged(final List<AnalysisData> selectedAnalyses);
 }

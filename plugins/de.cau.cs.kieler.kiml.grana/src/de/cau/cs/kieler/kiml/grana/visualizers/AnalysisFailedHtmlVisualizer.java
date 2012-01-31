@@ -13,9 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.grana.visualizers;
 
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.grana.visualization.AbstractSimpleVisualizer;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisFailed;
 
 /**
  * The html visualizer for failed analyses.
@@ -35,7 +35,7 @@ public class AnalysisFailedHtmlVisualizer extends
     /**
      * {@inheritDoc}
      */
-    public String visualize(final AbstractInfoAnalysis analysis,
+    public String visualize(final AnalysisData analysis,
             final Object result) {
         if (result instanceof AnalysisFailed) {
             AnalysisFailed analysisFailed = (AnalysisFailed) result;

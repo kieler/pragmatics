@@ -32,25 +32,21 @@ import org.eclipse.swt.widgets.Composite;
 
 import de.cau.cs.kieler.core.ui.util.TreeViewerCheckStateHandler;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.AnalysisCategory;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisCategory;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
- * A component which displays analysis categories in a given collection and lets
- * the user select any number of analyses specifed in these categories.
+ * A component which displays analysis categories in a given collection and lets the user select any
+ * number of analyses specifed in these categories.
  * 
  * @author mri
  */
-public class AnalysisSelectionViewer extends Composite implements
-        ISelectionChangedListener {
+public class AnalysisSelectionViewer extends Composite implements ISelectionChangedListener {
 
     /** the checkbox tree viewer. */
     private CheckboxTreeViewer treeViewer;
-    /** maps analyses on their parents. */
-    private Map<AbstractInfoAnalysis, AnalysisCategory> parentMap;
     /** the registered selection listeners. */
-    private List<ISelectionListener> listeners =
-            new LinkedList<ISelectionListener>();
+    private List<ISelectionListener> listeners = new LinkedList<ISelectionListener>();
 
     /**
      * The constructor for an AnalysisSelectionViewer.
@@ -63,34 +59,29 @@ public class AnalysisSelectionViewer extends Composite implements
      *            the pre-selected analyses
      */
     public AnalysisSelectionViewer(final Composite parent,
-            final List<AnalysisCategory> theCategories,
-            final List<AbstractInfoAnalysis> selectedAnalyses) {
+            final List<AnalysisCategory> theCategories, final List<AnalysisData> selectedAnalyses) {
         super(parent, SWT.NONE);
         // create the tree viewer
         treeViewer = new CheckboxTreeViewer(this);
         treeViewer.setLabelProvider(new AnalysisLabelProvider());
-        treeViewer
-                .setContentProvider(new AnalysisContentProvider(theCategories));
+        treeViewer.setContentProvider(new AnalysisContentProvider(theCategories));
         treeViewer.setInput(theCategories);
-        
+
         TreeViewerCheckStateHandler checkStateManager = new TreeViewerCheckStateHandler(treeViewer);
         checkStateManager.checkElements(selectedAnalyses);
-        
+
         GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
         treeViewer.getTree().setLayoutData(data);
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 1;
         this.setLayout(gridLayout);
-        AnalysisContentProvider contentProvider =
-                (AnalysisContentProvider) treeViewer.getContentProvider();
-        parentMap = contentProvider.getParentMap();
         treeViewer.addSelectionChangedListener(this);
         // correct initial category selection
         for (AnalysisCategory category : theCategories) {
             if (category.getAnalyses().size() > 0) {
                 boolean allChecked = true;
                 boolean oneChecked = false;
-                for (AbstractInfoAnalysis infoAnalysis : category.getAnalyses()) {
+                for (AnalysisData infoAnalysis : category.getAnalyses()) {
                     if (!treeViewer.getChecked(infoAnalysis)) {
                         allChecked = false;
                     } else {
@@ -112,14 +103,13 @@ public class AnalysisSelectionViewer extends Composite implements
      * 
      * @return the selected analyses
      */
-    public List<AbstractInfoAnalysis> getSelectedAnalyses() {
-        List<AbstractInfoAnalysis> analyses =
-                new LinkedList<AbstractInfoAnalysis>();
+    public List<AnalysisData> getSelectedAnalyses() {
+        List<AnalysisData> analyses = new LinkedList<AnalysisData>();
         Object[] checkedElements = treeViewer.getCheckedElements();
         // add only analyses to the result
         for (Object obj : checkedElements) {
-            if (obj instanceof AbstractInfoAnalysis) {
-                analyses.add((AbstractInfoAnalysis) obj);
+            if (obj instanceof AnalysisData) {
+                analyses.add((AnalysisData) obj);
             }
         }
         return analyses;
@@ -171,13 +161,12 @@ public class AnalysisSelectionViewer extends Composite implements
          */
         public String getText(final Object element) {
 
-            if (element instanceof AbstractInfoAnalysis) {
-                AbstractInfoAnalysis analysis = (AbstractInfoAnalysis) element;
+            if (element instanceof AnalysisData) {
+                AnalysisData analysis = (AnalysisData) element;
                 if (analysis.getComponents().size() > 0) {
                     String label = analysis.getName() + " (";
                     boolean first = true;
-                    for (Pair<String, String> component : analysis
-                            .getComponents()) {
+                    for (Pair<String, String> component : analysis.getComponents()) {
                         if (first) {
                             first = false;
                         } else {
@@ -205,8 +194,8 @@ public class AnalysisSelectionViewer extends Composite implements
     private class AnalysisContentProvider implements ITreeContentProvider {
 
         /** maps analyses on their parents. */
-        private Map<AbstractInfoAnalysis, AnalysisCategory> parentMap =
-                new HashMap<AbstractInfoAnalysis, AnalysisCategory>();
+        private Map<AnalysisData, AnalysisCategory> parentMap
+                = new HashMap<AnalysisData, AnalysisCategory>();
 
         /**
          * Constructs the content provider.
@@ -214,24 +203,14 @@ public class AnalysisSelectionViewer extends Composite implements
          * @param analysisCategories
          *            the analysis categories
          */
-        public AnalysisContentProvider(
-                final Collection<AnalysisCategory> analysisCategories) {
+        public AnalysisContentProvider(final Collection<AnalysisCategory> analysisCategories) {
             super();
             // map analyses on their parents
             for (AnalysisCategory category : analysisCategories) {
-                for (AbstractInfoAnalysis analysis : category.getAnalyses()) {
+                for (AnalysisData analysis : category.getAnalyses()) {
                     parentMap.put(analysis, category);
                 }
             }
-        }
-
-        /**
-         * Returns the map that maps the analyses on their parents.
-         * 
-         * @return the map
-         */
-        public Map<AbstractInfoAnalysis, AnalysisCategory> getParentMap() {
-            return parentMap;
         }
 
         /**
@@ -253,7 +232,7 @@ public class AnalysisSelectionViewer extends Composite implements
          * {@inheritDoc}
          */
         public Object getParent(final Object element) {
-            if (element instanceof AbstractInfoAnalysis) {
+            if (element instanceof AnalysisData) {
                 return parentMap.get(element);
             }
             return null;
@@ -291,8 +270,7 @@ public class AnalysisSelectionViewer extends Composite implements
         /**
          * {@inheritDoc}
          */
-        public void inputChanged(final Viewer viewer, final Object oldInput,
-                final Object newInput) {
+        public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
         }
     }
 }

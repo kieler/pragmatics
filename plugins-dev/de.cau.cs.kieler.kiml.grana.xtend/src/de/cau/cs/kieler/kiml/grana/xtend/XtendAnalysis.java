@@ -27,7 +27,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.model.m2m.TransformException;
 import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
 import de.cau.cs.kieler.kiml.grana.AbstractSimpleInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisFailed;
 
 /**
  * A Xtend analysis. Instances of this class represent xtend extensions.
