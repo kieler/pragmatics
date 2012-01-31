@@ -90,6 +90,9 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
             "basic.edgeDirectedChance", 0.0f);
     /** the option for using ports to connect nodes. */
     public static final Property<Boolean> PORTS = new Property<Boolean>("basic.ports", false);
+    /** the option for allowing cross-hierarchy edges. */
+    public static final Property<Boolean> CROSS_HIERARCHY_EDGES = new Property<Boolean>(
+            "basic.crossHierarchyEdges", false);
 
     // Options for GRAPH_TYPE ANY
 
@@ -149,6 +152,8 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
     private float hierarchyNodesFactor;
     /** the chance for a hypernode to be created instead of a normal one. */
     private float hypernodeChance;
+    /** whether to allow cross-hierarchy edges. */
+    private boolean crossHierarchyEdges;
     /** whether to use ports to connect nodes. */
     private boolean ports;
     /** the chance for creating a directed edge. */
@@ -171,6 +176,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         maxHierarchyLevel = options.getProperty(MAX_HIERARCHY_LEVEL);
         hierarchyNodesFactor = options.getProperty(HIERARCHY_NODES_FACTOR);
         hypernodeChance = options.getProperty(HYPERNODE_CHANCE);
+        crossHierarchyEdges = options.getProperty(CROSS_HIERARCHY_EDGES);
         ports = options.getProperty(PORTS);
         edgeDirectedChance = options.getProperty(EDGE_DIRECTED_CHANCE);
         selfLoops = options.getProperty(SELF_LOOPS);
@@ -179,38 +185,68 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         // generate the graph
         Node graph = factory.createNode();
         int n = options.getProperty(NUMBER_OF_NODES);
+        
         switch (options.getProperty(GRAPH_TYPE)) {
         case ANY: {
+            int m = options.getProperty(NUMBER_OF_EDGES);
+            int minOut = options.getProperty(MIN_OUTGOING_EDGES);
+            int maxOut = options.getProperty(MAX_OUTGOING_EDGES);
             switch (options.getProperty(EDGE_DETERMINATION)) {
             case GRAPH_EDGES:
-                int m = options.getProperty(NUMBER_OF_EDGES);
                 createAnyGraph(graph, n, m, 0);
                 break;
             case OUTGOING_EDGES:
-                int minOut = options.getProperty(MIN_OUTGOING_EDGES);
-                int maxOut = options.getProperty(MAX_OUTGOING_EDGES);
                 createAnyGraph(graph, n, minOut, maxOut, 0);
                 break;
             }
+            if (crossHierarchyEdges) {
+                // collect all created nodes and create edges arbitrarily
+                List<Node> nodes = new LinkedList<Node>();
+                LinkedList<KNode> nodeStack = new LinkedList<KNode>();
+                nodeStack.add(graph);
+                do {
+                    KNode node = nodeStack.pop();
+                    nodes.add((Node) node);
+                    for (KNode child : node.getChildren()) {
+                        nodeStack.push(child);
+                    }
+                } while (!nodeStack.isEmpty());
+                
+                int[] outgoingEdges;
+                switch (options.getProperty(EDGE_DETERMINATION)) {
+                case GRAPH_EDGES:
+                    outgoingEdges = determineOutgoingEdges(nodes, m);
+                    connectRandomlyAndConditional(nodes, outgoingEdges, basicCondition);
+                    break;
+                case OUTGOING_EDGES:
+                    outgoingEdges = determineOutgoingEdges(nodes, minOut, maxOut);
+                    connectRandomlyAndConditional(nodes, outgoingEdges, basicCondition);
+                    break;
+                }
+            }
             break;
         }
+        
         case TREE: {
             int maxDegree = options.getProperty(MAX_DEGREE);
             int maxWidth = options.getProperty(MAX_WIDTH);
             createTree(graph, n, maxDegree, maxWidth, 0);
             break;
         }
+        
         case BICONNECTED: {
             int m = options.getProperty(NUMBER_OF_EDGES);
             createBiconnectedGraph(graph, n, m, 0);
             break;
         }
+        
         case TRICONNECTED: {
             float p1 = (float) Math.random();
             float p2 = 1.0f - p1;
             createTriconnectedGraph(graph, n, p1, p2, 0);
             break;
         }
+        
         case ACYCLIC_NO_TRANSITIV_EDGES: {
             int m = options.getProperty(NUMBER_OF_EDGES);
             boolean planar = options.getProperty(PLANAR);
@@ -219,6 +255,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
             createANTEGraph(graph, n, m, planar, false, false, 0);
             break;
         }
+        
         }
         return graph;
     }
@@ -258,7 +295,9 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         // determine the number of outgoing edges for every node
         int[] outgoingEdges = determineOutgoingEdges(nodes, m);
         // connect the nodes
-        connectRandomlyAndConditional(nodes, outgoingEdges, basicCondition);
+        if (!crossHierarchyEdges) {
+            connectRandomlyAndConditional(nodes, outgoingEdges, basicCondition);
+        }
         // recursively create hierarchy if applicable
         if (hierarchyChance > 0.0f && hierarchyLevel != maxHierarchyLevel) {
             for (Node node : nodes) {
@@ -295,7 +334,9 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         // determine the number of outgoing edges for every node
         int[] outgoingEdges = determineOutgoingEdges(nodes, minOut, maxOut);
         // connect the nodes
-        connectRandomlyAndConditional(nodes, outgoingEdges, basicCondition);
+        if (!crossHierarchyEdges) {
+            connectRandomlyAndConditional(nodes, outgoingEdges, basicCondition);
+        }
         // recursively create hierarchy if applicable
         if (hierarchyChance > 0.0f && hierarchyLevel != maxHierarchyLevel) {
             for (Node node : nodes) {
