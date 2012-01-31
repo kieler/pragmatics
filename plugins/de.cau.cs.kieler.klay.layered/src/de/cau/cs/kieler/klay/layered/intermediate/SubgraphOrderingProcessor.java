@@ -206,6 +206,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         for (LNode key : keys) {
             LayeredGraph graphComponent = subgraphOrderingGraph.get(key);
             // Remove cycles from the graph component.
+            cycleBreaker.reset();
             cycleBreaker.process(graphComponent);
             // Extract a topological sorting from the graph component and store it.
             if (graphComponent.getProperty(Properties.CYCLIC)) {
