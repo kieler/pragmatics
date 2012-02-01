@@ -87,6 +87,8 @@ public class PSWTText extends PNode {
 
     /** Translation offset Y. */
     protected double translateY = 0.0;
+    
+    protected boolean empty = true;
 
     /** Default constructor for PSWTTest. */
     public PSWTText() {
@@ -285,7 +287,9 @@ public class PSWTText extends PNode {
                 pos = index + 1;
             }
         } while (!done);
-
+        
+        empty = lines.size() == 0 || ((String) lines.get(0)).length() == 0;
+        
         recomputeBounds();
     }
 
@@ -405,11 +409,13 @@ public class PSWTText extends PNode {
      * @param ppc The graphics context to paint into.
      */
     public void paintAsGreek(final PPaintContext ppc) {
-        final Graphics2D g2 = ppc.getGraphics();
+        if (!empty) {
+            final Graphics2D g2 = ppc.getGraphics();
 
-        if (greekColor != null) {
-            g2.setBackground(greekColor);
-            ((SWTGraphics2D) g2).fillRect(0, 0, getWidth(), getHeight());
+            if (greekColor != null) {
+                g2.setBackground(greekColor);
+                ((SWTGraphics2D) g2).fillRect(0, 0, getWidth(), getHeight());
+            }
         }
     }
 
