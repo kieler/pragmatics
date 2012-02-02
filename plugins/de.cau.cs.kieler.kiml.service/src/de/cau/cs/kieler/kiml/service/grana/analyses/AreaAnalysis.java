@@ -31,11 +31,10 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  */
 public class AreaAnalysis implements IAnalysis {
 
-    // CONSTANTS
     /**
-     * ID of this analysis.
+     * Identifier of the area analysis.
      */
-    public static final String ANALYSIS_ID = "de.cau.cs.kieler.kiml.grana.area";
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.area";
     
     /**
      * Index of the area width in the result array.
@@ -53,8 +52,8 @@ public class AreaAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        
         progressMonitor.begin("Area analysis", 1);
+        
         Point2D.Float area = computeArea(parentNode);
         progressMonitor.done();
         

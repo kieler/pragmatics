@@ -26,8 +26,10 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -50,7 +52,6 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        
         progressMonitor.begin("Hyperedge crossings analysis", 1);
         
         // Collect all edge segments, merge them and count crossings
@@ -78,15 +79,19 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
      */
     private List<Line2D.Double> collectEdgeSegments(final KNode parentNode) {
         List<Line2D.Double> segments = new LinkedList<Line2D.Double>(); 
-        
+        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+                AnalysisOptions.ANALYZE_HIERARCHY);
         LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
-        nodeQueue.add(parentNode);
+        nodeQueue.addAll(parentNode.getChildren());
         
         while (!nodeQueue.isEmpty()) {
             KNode node = nodeQueue.poll();
             
             // Iterate over the node's outgoing edges
             for (KEdge edge : node.getOutgoingEdges()) {
+                if (!hierarchy && edge.getTarget().getParent() != parentNode) {
+                    continue;
+                }
                 KVectorChain chain = edge.getData(KEdgeLayout.class).createVectorChain();
                 
                 // Translate the bend point coordinates to absolute
@@ -119,7 +124,9 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
             }
             
             // Enqueue the child nodes
-            nodeQueue.addAll(node.getChildren());
+            if (hierarchy) {
+                nodeQueue.addAll(node.getChildren());
+            }
         }
         
         return segments;

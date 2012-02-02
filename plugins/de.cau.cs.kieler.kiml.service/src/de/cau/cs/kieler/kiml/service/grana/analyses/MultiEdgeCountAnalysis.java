@@ -24,6 +24,8 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 
@@ -94,11 +96,17 @@ public class MultiEdgeCountAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        
         progressMonitor.begin("Multi Edge Count Analysis", 1);
-        int multiEdgeCount = countMultiEdges(parentNode);
-        progressMonitor.done();
         
+        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+                AnalysisOptions.ANALYZE_HIERARCHY);
+        
+        int multiEdgeCount = 0;
+        for (KNode node : parentNode.getChildren()) {
+            multiEdgeCount += countMultiEdges(node, hierarchy);
+        }
+        
+        progressMonitor.done();
         return multiEdgeCount;
     }
     
@@ -106,9 +114,10 @@ public class MultiEdgeCountAnalysis implements IAnalysis {
      * Counts the number of multi edges in the graph rooted at the given node.
      * 
      * @param node root of the graph to analyze.
+     * @param hierarchy whether to process hierarchy recursively
      * @return the number of multi edges.
      */
-    public int countMultiEdges(final KNode node) {
+    public int countMultiEdges(final KNode node, final boolean hierarchy) {
         int multiEdges = 0;
         
         // Get the list of outgoing edges. Sort them by port, then by target.
@@ -149,8 +158,10 @@ public class MultiEdgeCountAnalysis implements IAnalysis {
         }
         
         // Recurse
-        for (KNode child : node.getChildren()) {
-            multiEdges += countMultiEdges(child);
+        if (hierarchy) {
+            for (KNode child : node.getChildren()) {
+                multiEdges += countMultiEdges(child, true);
+            }
         }
         
         return multiEdges;

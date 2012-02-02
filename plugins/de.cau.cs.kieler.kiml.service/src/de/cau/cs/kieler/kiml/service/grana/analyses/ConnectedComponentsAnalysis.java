@@ -20,6 +20,8 @@ import java.util.Map;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 /**
@@ -37,7 +39,10 @@ public class ConnectedComponentsAnalysis implements IAnalysis {
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Connected Components Analysis", 1);
         
-        int count = countComponents(parentNode);
+        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+                AnalysisOptions.ANALYZE_HIERARCHY);
+        
+        int count = countComponents(parentNode, hierarchy);
         
         visitedMap.clear();
         progressMonitor.done();
@@ -48,13 +53,16 @@ public class ConnectedComponentsAnalysis implements IAnalysis {
      * Count the number of components in the given node.
      * 
      * @param parent a parent node
+     * @param hierarchy whether hierarchy shall be processed recursively
      * @return the number of components that are children of the node
      */
-    private int countComponents(final KNode parent) {
+    private int countComponents(final KNode parent, final boolean hierarchy) {
         int count = 0;
         for (KNode child : parent.getChildren()) {
             count += dfs(child);
-            count += countComponents(child);
+            if (hierarchy) {
+                count += countComponents(child, true);
+            }
         }
         return count;
     }

@@ -14,11 +14,15 @@
 
 package de.cau.cs.kieler.kiml.service.grana.analyses;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 
@@ -39,34 +43,30 @@ public class SelfLoopAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Self-loop analysis", 1);
         
-        progressMonitor.begin("Self Loop Analysis", 1);
-        int selfLoops = countSelfLoops(parentNode);
-        progressMonitor.done();
+        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+                AnalysisOptions.ANALYZE_HIERARCHY);
         
-        return selfLoops;
-    }
-    
-    /**
-     * Recursively goes through the graph, counting the number of self loops.
-     * 
-     * @param node the graph's root node.
-     * @return the number of self loops found.
-     */
-    private int countSelfLoops(final KNode node) {
+        List<KNode> nodeQueue = new LinkedList<KNode>();
+        nodeQueue.addAll(parentNode.getChildren());
         int selfLoops = 0;
-        
-        // Count this node's self loops
-        for (KEdge edge : node.getOutgoingEdges()) {
-            if (edge.getTarget().equals(node)) {
-                selfLoops++;
+        while (!nodeQueue.isEmpty()) {
+            KNode node = nodeQueue.remove(0);
+            
+            // Count this node's self loops
+            for (KEdge edge : node.getOutgoingEdges()) {
+                if (edge.getTarget().equals(node)) {
+                    selfLoops++;
+                }
+            }
+            
+            if (hierarchy) {
+                nodeQueue.addAll(node.getChildren());
             }
         }
         
-        // Recursively count the childrens' self loops
-        for (KNode child : node.getChildren()) {
-            selfLoops += countSelfLoops(child);
-        }
+        progressMonitor.done();
         
         return selfLoops;
     }

@@ -22,6 +22,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 
@@ -38,31 +39,30 @@ public class HyperNodeCountAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        
-        progressMonitor.begin("Hyper Nodes Analysis", 1);
+        progressMonitor.begin("Hypernodes analysis", 1);
         
         int hyperNodes = 0;
+        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+                AnalysisOptions.ANALYZE_HIERARCHY);
         
         // Iterate through the graph using a queue of nodes discovered
         List<KNode> nodeQueue = new LinkedList<KNode>();
-        nodeQueue.add(parentNode);
-        
+        nodeQueue.addAll(parentNode.getChildren());
         while (nodeQueue.size() > 0) {
             KNode node = nodeQueue.remove(0);
             
             // Check if this is a hyper node
-            KShapeLayout layoutData = node.getData(KShapeLayout.class);
-            if (layoutData != null) {
-                Boolean hyperHyper = layoutData.getProperty(LayoutOptions.HYPERNODE);
-                if (hyperHyper != null && hyperHyper.booleanValue()) {
-                    hyperNodes++;
-                }
+            if (node.getData(KShapeLayout.class).getProperty(LayoutOptions.HYPERNODE)) {
+                hyperNodes++;
             }
             
-            nodeQueue.addAll(node.getChildren());
+            if (hierarchy) {
+                nodeQueue.addAll(node.getChildren());
+            }
         }
         
         progressMonitor.done();
         return hyperNodes;
     }
+    
 }

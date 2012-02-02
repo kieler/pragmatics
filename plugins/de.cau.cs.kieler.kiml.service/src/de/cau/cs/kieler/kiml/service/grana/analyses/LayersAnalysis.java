@@ -21,6 +21,7 @@ import java.util.Map;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 /**
@@ -86,7 +87,9 @@ public class LayersAnalysis implements IAnalysis {
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Layers Analysis", 1);
 
-        int[] count = countLayers(parentNode);
+        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+                AnalysisOptions.ANALYZE_HIERARCHY);
+        int[] count = countLayers(parentNode, hierarchy);
 
         progressMonitor.done();
         return new Object[] { count[0], count[1] };
@@ -96,9 +99,10 @@ public class LayersAnalysis implements IAnalysis {
      * Count the number of layers in the given graph and its nested subgraphs.
      * 
      * @param parentNode the parent node
+     * @param hierarchy whether to process hierarchy recursively
      * @return the number of horizontal / vertical layers, respectively
      */
-    public int[] countLayers(final KNode parentNode) {
+    public int[] countLayers(final KNode parentNode, final boolean hierarchy) {
         // analyze horizontal layers
         List<Layer> horizontalLayers = new LinkedList<Layer>();
         for (KNode node : parentNode.getChildren()) {
@@ -119,10 +123,14 @@ public class LayersAnalysis implements IAnalysis {
         
         // count the number of layers in the nested subgraphs
         int[] count = new int[] { horizontalLayers.size(), verticalLayers.size() };
-        for (KNode child : parentNode.getChildren()) {
-            int[] childResult = countLayers(child);
-            count[0] += childResult[0];
-            count[1] += childResult[1];
+        if (hierarchy) {
+            for (KNode child : parentNode.getChildren()) {
+                if (!child.getChildren().isEmpty()) {
+                    int[] childResult = countLayers(child, true);
+                    count[0] += childResult[0];
+                    count[1] += childResult[1];
+                }
+            }
         }
         return count;
     }

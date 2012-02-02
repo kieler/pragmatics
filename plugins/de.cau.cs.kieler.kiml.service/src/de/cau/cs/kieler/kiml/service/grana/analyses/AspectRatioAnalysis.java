@@ -36,11 +36,10 @@ public class AspectRatioAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        
         progressMonitor.begin("Aspect ratio analysis", 1);
         
         // Fetch the results of the area analysis
-        Object o = results.get(AreaAnalysis.ANALYSIS_ID);
+        Object o = results.get(AreaAnalysis.ID);
         if (o == null) {
             progressMonitor.done();
             

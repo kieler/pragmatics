@@ -16,9 +16,13 @@ package de.cau.cs.kieler.kiml.service.grana.analyses;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Iterables;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 /**
@@ -36,7 +40,9 @@ public class BiconnectedComponentsAnalysis implements IAnalysis {
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Biconnected Components Analysis", 1);
         
-        int count = findComponents(parentNode);
+        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+                AnalysisOptions.ANALYZE_HIERARCHY);
+        int count = findComponents(parentNode, hierarchy);
         
         dfsMap.clear();
         lowpt = null;
@@ -59,9 +65,10 @@ public class BiconnectedComponentsAnalysis implements IAnalysis {
      * is considered as undirected.
      * 
      * @param graph graph to be processed
+     * @param hierarchy whether the whole hierarchy shall be processed
      * @return number of biconnected components
      */
-    public int findComponents(final KNode graph) {
+    public int findComponents(final KNode graph, final boolean hierarchy) {
         nextDfsnum = 1;
         int graphSize = graph.getChildren().size();
         lowpt = new int[graphSize + 1];
@@ -74,9 +81,11 @@ public class BiconnectedComponentsAnalysis implements IAnalysis {
         }
         
         // find components in the nested subgraphs
-        for (KNode node : graph.getChildren()) {
-            if (!node.getChildren().isEmpty()) {
-                count += findComponents(node);
+        if (hierarchy) {
+            for (KNode node : graph.getChildren()) {
+                if (!node.getChildren().isEmpty()) {
+                    count += findComponents(node, true);
+                }
             }
         }
         return count;
@@ -93,9 +102,10 @@ public class BiconnectedComponentsAnalysis implements IAnalysis {
         dfsMap.put(node, dfsNum);
         lowpt[dfsNum] = dfsNum;
         int count = 0;
-        // follow the outgoing edges
-        for (KEdge edge : node.getOutgoingEdges()) {
-            KNode endpoint = edge.getTarget();
+        
+        // follow the outgoing and incoming edges
+        for (KEdge edge : Iterables.concat(node.getOutgoingEdges(), node.getIncomingEdges())) {
+            KNode endpoint = edge.getSource() == node ? edge.getTarget() : edge.getSource();
             if (endpoint.getParent() == node.getParent()) {
                 Integer endpointNum = dfsMap.get(endpoint);
                 if (endpointNum == null) {
@@ -108,21 +118,7 @@ public class BiconnectedComponentsAnalysis implements IAnalysis {
                 }
             }
         }
-        // follow the incoming edges
-        for (KEdge edge : node.getIncomingEdges()) {
-            KNode endpoint = edge.getSource();
-            if (endpoint.getParent() == node.getParent()) {
-                Integer endpointNum = dfsMap.get(endpoint);
-                if (endpointNum == null) {
-                    endpointNum = nextDfsnum;
-                    parent[endpointNum] = dfsNum;
-                    count += dfsVisit(endpoint);
-                    lowpt[dfsNum] = Math.min(lowpt[dfsNum], lowpt[endpointNum]);
-                } else {
-                    lowpt[dfsNum] = Math.min(lowpt[dfsNum], endpointNum);
-                }
-            }
-        }
+        
         // analyze the result
         if (dfsNum >= 2 && lowpt[dfsNum] == parent[dfsNum]) {
             count++;

@@ -49,7 +49,7 @@ public class CoverageAnalysis implements IAnalysis {
         progressMonitor.begin("Node Coverage Analysis", 1);
 
         // Fetch the results of the area and node size analysis
-        Object areaResult = results.get(AreaAnalysis.ANALYSIS_ID);
+        Object areaResult = results.get(AreaAnalysis.ID);
         Object nodeSizeResult = results.get(NodeSizeAnalysis.ANALYSIS_ID);
         if (areaResult == null || nodeSizeResult == null) {
             progressMonitor.done();

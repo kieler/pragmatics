@@ -30,6 +30,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -120,16 +121,23 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Edge Crossings analysis", 1);
         
+        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+                AnalysisOptions.ANALYZE_HIERARCHY);
+        
         // collect all edges and translate their coordinates to absolute
         LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
         List<KEdge> edges = new ArrayList<KEdge>();
         List<KVectorChain> chains = new ArrayList<KVectorChain>();
-        nodeQueue.offer(parentNode);
+        nodeQueue.addAll(parentNode.getChildren());
         while (!nodeQueue.isEmpty()) {
             // poll the first element
             KNode node = nodeQueue.poll();
+            
             // collect the outgoing edges
             for (KEdge edge : node.getOutgoingEdges()) {
+                if (!hierarchy && edge.getTarget().getParent() != parentNode) {
+                    continue;
+                }
                 KVectorChain chain = edge.getData(KEdgeLayout.class).createVectorChain();
                 
                 // translate the bend point coordinates to absolute
@@ -150,8 +158,11 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
                 edges.add(edge);
                 chains.add(chain);
             }
+            
             // enqueue the child nodes
-            nodeQueue.addAll(node.getChildren());
+            if (hierarchy) {
+                nodeQueue.addAll(node.getChildren());
+            }
         }
         
         // count the number of crossings between all edges of the compound graph

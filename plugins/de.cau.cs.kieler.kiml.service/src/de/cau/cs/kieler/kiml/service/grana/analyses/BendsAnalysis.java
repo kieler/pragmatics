@@ -25,6 +25,8 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 /**
@@ -47,11 +49,12 @@ public class BendsAnalysis implements IAnalysis {
     public Object doAnalysis(final KNode parentNode,
             final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        
         progressMonitor.begin("Number of Bends analysis", 1);
         
         // The set of unique bend points
         Set<KVector> uniqueBendPoints = new HashSet<KVector>();
+        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+                AnalysisOptions.ANALYZE_HIERARCHY);
         
         // Per-edge bend point analyses
         int min = Integer.MAX_VALUE;
@@ -63,13 +66,16 @@ public class BendsAnalysis implements IAnalysis {
         
         // Iterate through all nodes
         List<KNode> nodeQueue = new LinkedList<KNode>();
-        nodeQueue.add(parentNode);
+        nodeQueue.addAll(parentNode.getChildren());
         while (nodeQueue.size() > 0) {
             // Pop first element
             KNode node = nodeQueue.remove(0);
             
             // Iterate through the node's edges
             for (KEdge edge : node.getOutgoingEdges()) {
+                if (!hierarchy && edge.getTarget().getParent() != parentNode) {
+                    continue;
+                }
                 KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
                 List<KPoint> bendPoints = edgeLayout.getBendPoints();
                 
@@ -86,7 +92,9 @@ public class BendsAnalysis implements IAnalysis {
                 edges++;
             }
             
-            nodeQueue.addAll(node.getChildren());
+            if (hierarchy) {
+                nodeQueue.addAll(node.getChildren());
+            }
         }
         
         // Compute the average number of bend points per edge

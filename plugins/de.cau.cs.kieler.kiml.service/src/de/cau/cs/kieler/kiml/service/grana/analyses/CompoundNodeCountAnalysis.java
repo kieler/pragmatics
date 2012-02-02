@@ -32,13 +32,17 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * @author cds
  */
 public class CompoundNodeCountAnalysis implements IAnalysis {
+    
+    /**
+     * Identifier of the compound node count analysis.
+     */
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.compoundNodeCount";
 
     /**
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        
         progressMonitor.begin("Compound Nodes Analysis", 1);
         
         int compoundNodes = 0;

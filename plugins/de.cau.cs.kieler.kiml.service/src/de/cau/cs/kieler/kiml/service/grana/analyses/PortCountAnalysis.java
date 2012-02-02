@@ -19,6 +19,8 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 /**
@@ -35,17 +37,25 @@ public class PortCountAnalysis implements IAnalysis {
             final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Number of ports analysis", 1);
+        
+        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+                AnalysisOptions.ANALYZE_HIERARCHY);
+        
         int numberOfports = 0;
         List<KNode> nodeQueue = new LinkedList<KNode>();
-        nodeQueue.add(parentNode);
+        nodeQueue.addAll(parentNode.getChildren());
         while (nodeQueue.size() > 0) {
             // pop first element
             KNode node = nodeQueue.remove(0);
             numberOfports += node.getPorts().size();
 
-            nodeQueue.addAll(node.getChildren());
+            if (hierarchy) {
+                nodeQueue.addAll(node.getChildren());
+            }
         }
+        
         progressMonitor.done();
         return numberOfports;
     }
+    
 }

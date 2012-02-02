@@ -14,6 +14,8 @@
 
 package de.cau.cs.kieler.kiml.service.grana.analyses;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -21,6 +23,8 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 
@@ -33,7 +37,6 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  */
 public class EdgeDirectionAnalysis implements IAnalysis {
     
-    // CONSTANTS
     /**
      * Index of the number of edges going topwards in the result array.
      */
@@ -60,11 +63,48 @@ public class EdgeDirectionAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Edge direction analysis", 1);
         
-        progressMonitor.begin("Edge Direction Analysis", 1);
-        
+        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+                AnalysisOptions.ANALYZE_HIERARCHY);
+
         int[] edgeDirections = {0, 0, 0, 0};
-        computeEdgeDirections(parentNode, edgeDirections);
+        List<KNode> nodeQueue = new LinkedList<KNode>();
+        nodeQueue.addAll(parentNode.getChildren());
+        while (!nodeQueue.isEmpty()) {
+            KNode node = nodeQueue.remove(0);
+            
+            for (KEdge edge : node.getOutgoingEdges()) {
+                if (!hierarchy && edge.getTarget().getParent() != parentNode) {
+                    continue;
+                }
+                
+                KEdgeLayout layoutData = edge.getData(KEdgeLayout.class);
+                KPoint sourcePoint = layoutData.getSourcePoint();
+                KPoint targetPoint = layoutData.getTargetPoint();
+                
+                if (sourcePoint.getX() < targetPoint.getX()) {
+                    edgeDirections[INDEX_RIGHT]++;
+                }
+                
+                if (sourcePoint.getX() > targetPoint.getX()) {
+                    edgeDirections[INDEX_LEFT]++;
+                }
+                
+                if (sourcePoint.getY() < targetPoint.getY()) {
+                    edgeDirections[INDEX_BOTTOM]++;
+                }
+                
+                if (sourcePoint.getY() > targetPoint.getY()) {
+                    edgeDirections[INDEX_TOP]++;
+                }
+            }
+            
+            // Recurse to children
+            if (hierarchy) {
+                nodeQueue.addAll(node.getChildren());
+            }
+        }
         
         progressMonitor.done();
         
@@ -74,43 +114,6 @@ public class EdgeDirectionAnalysis implements IAnalysis {
                 edgeDirections[INDEX_BOTTOM],
                 edgeDirections[INDEX_RIGHT]
         };
-    }
-    
-    /**
-     * Computes the number of edges going in the four directions.
-     * 
-     * @param parentNode the root of the graph whose edges to count.
-     * @param edgeDirections array to accumulate the values in.
-     */
-    private void computeEdgeDirections(final KNode parentNode, final int[] edgeDirections) {
-        // Iterate through the outgoing edges; this also ensures that each edge only
-        // gets analyzed once
-        for (KEdge edge : parentNode.getOutgoingEdges()) {
-            KEdgeLayout layoutData = edge.getData(KEdgeLayout.class);
-            KPoint sourcePoint = layoutData.getSourcePoint();
-            KPoint targetPoint = layoutData.getTargetPoint();
-            
-            if (sourcePoint.getX() < targetPoint.getX()) {
-                edgeDirections[INDEX_RIGHT]++;
-            }
-            
-            if (sourcePoint.getX() > targetPoint.getX()) {
-                edgeDirections[INDEX_LEFT]++;
-            }
-            
-            if (sourcePoint.getY() < targetPoint.getY()) {
-                edgeDirections[INDEX_BOTTOM]++;
-            }
-            
-            if (sourcePoint.getY() > targetPoint.getY()) {
-                edgeDirections[INDEX_TOP]++;
-            }
-        }
-        
-        // Recurse to children
-        for (KNode child : parentNode.getChildren()) {
-            computeEdgeDirections(child, edgeDirections);
-        }
     }
     
 }

@@ -24,6 +24,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -40,10 +41,14 @@ public class PortSideAnalysis implements IAnalysis {
     public Object doAnalysis(final KNode parentNode,
             final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Number of ports analysis", 1);
+        progressMonitor.begin("Port side analysis", 1);
+        
+        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+                AnalysisOptions.ANALYZE_HIERARCHY);
+        
         int north = 0, east = 0, south = 0, west = 0;
         List<KNode> nodeQueue = new LinkedList<KNode>();
-        nodeQueue.add(parentNode);
+        nodeQueue.addAll(parentNode.getChildren());
         while (nodeQueue.size() > 0) {
             KNode node = nodeQueue.remove(0);
             Direction direction = Direction.UNDEFINED;
@@ -74,8 +79,11 @@ public class PortSideAnalysis implements IAnalysis {
                 }
             }
 
-            nodeQueue.addAll(node.getChildren());
+            if (hierarchy) {
+                nodeQueue.addAll(node.getChildren());
+            }
         }
+        
         progressMonitor.done();
         return new Object[] { north, east, south, west };
     }

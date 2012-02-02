@@ -22,6 +22,8 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 /**
@@ -62,19 +64,28 @@ public class EdgeLengthAnalysis implements IAnalysis {
     public Object doAnalysis(final KNode parentNode,
             final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Edge Length analysis", 1);
+        progressMonitor.begin("Edge length analysis", 1);
+        
+        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+                AnalysisOptions.ANALYZE_HIERARCHY);
+
         int numberOfEdges = 0;
         float overallEdgeLength = 0;
         float minEdgeLength = Float.MAX_VALUE;
         float maxEdgeLength = 0;
         List<KNode> nodeQueue = new LinkedList<KNode>();
-        nodeQueue.add(parentNode);
+        nodeQueue.addAll(parentNode.getChildren());
         while (nodeQueue.size() > 0) {
             // pop first element
             KNode node = nodeQueue.remove(0);
+            
             // compute edge length for all outgoing edges
             numberOfEdges += node.getOutgoingEdges().size();
             for (KEdge edge : node.getOutgoingEdges()) {
+                if (!hierarchy && edge.getTarget().getParent() != parentNode) {
+                    continue;
+                }
+                
                 float edgeLength = computeEdgeLength(edge);
                 overallEdgeLength += edgeLength;
                 // min edge length
@@ -86,7 +97,10 @@ public class EdgeLengthAnalysis implements IAnalysis {
                     maxEdgeLength = edgeLength;
                 }
             }
-            nodeQueue.addAll(node.getChildren());
+            
+            if (hierarchy) {
+                nodeQueue.addAll(node.getChildren());
+            }
         }
 
         progressMonitor.done();

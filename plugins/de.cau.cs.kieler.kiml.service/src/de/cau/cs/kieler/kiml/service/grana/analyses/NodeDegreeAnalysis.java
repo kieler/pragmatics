@@ -20,6 +20,8 @@ import java.util.Map;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 /**
@@ -36,7 +38,11 @@ public class NodeDegreeAnalysis implements IAnalysis {
     public Object doAnalysis(final KNode parentNode,
             final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Number of Edges analysis", 1);
+        progressMonitor.begin("Node degree analysis", 1);
+        
+        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+                AnalysisOptions.ANALYZE_HIERARCHY);
+        
         int numberOfNodes = 0;
         int overallNodeDegree = 0;
         int minNodeDegree = Integer.MAX_VALUE;
@@ -50,13 +56,15 @@ public class NodeDegreeAnalysis implements IAnalysis {
             int nodeDegree = 0;
             // node degree outgoing
             for (KEdge edge : node.getOutgoingEdges()) {
-                if (edge.getTarget() != node) {
+                if (edge.getTarget() != node
+                        && (hierarchy || edge.getTarget().getParent() == parentNode)) {
                     nodeDegree++;
                 }
             }
             // node degree incoming
             for (KEdge edge : node.getIncomingEdges()) {
-                if (edge.getSource() != node) {
+                if (edge.getSource() != node
+                        && (hierarchy || edge.getSource().getParent() == parentNode)) {
                     nodeDegree++;
                 }
             }
@@ -69,8 +77,11 @@ public class NodeDegreeAnalysis implements IAnalysis {
                 maxNodeDegree = nodeDegree;
             }
             overallNodeDegree += nodeDegree;
-            numberOfNodes += node.getChildren().size();
-            nodeQueue.addAll(node.getChildren());
+            
+            if (hierarchy) {
+                numberOfNodes += node.getChildren().size();
+                nodeQueue.addAll(node.getChildren());
+            }
         }
 
         progressMonitor.done();

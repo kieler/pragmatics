@@ -26,8 +26,8 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 
 /**
- * A graph analysis that counts the number of compound nodes. Returns a single-component
- * result {@code (int compoundNodes)}.
+ * A graph analysis that counts the number of contained nodes per hierarchy level. The result
+ * has three components for the minimum, average, and maximum value, respectively.
  * 
  * @author cds
  */
@@ -38,8 +38,7 @@ public class CompoundNodeChildCountAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        
-        progressMonitor.begin("Compound Node Child Count Analysis", 1);
+        progressMonitor.begin("Compound node child count analysis", 1);
         
         int minimum = Integer.MAX_VALUE;
         int maximum = Integer.MIN_VALUE;
@@ -48,7 +47,7 @@ public class CompoundNodeChildCountAnalysis implements IAnalysis {
         
         // Iterate through the graph using a queue of nodes discovered
         List<KNode> nodeQueue = new LinkedList<KNode>();
-        nodeQueue.add(parentNode);
+        nodeQueue.addAll(parentNode.getChildren());
         
         while (nodeQueue.size() > 0) {
             KNode node = nodeQueue.remove(0);

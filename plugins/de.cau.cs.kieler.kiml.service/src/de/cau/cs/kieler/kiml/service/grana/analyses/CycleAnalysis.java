@@ -25,6 +25,8 @@ import com.google.common.collect.Iterables;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 /**
@@ -55,29 +57,61 @@ public class CycleAnalysis implements IAnalysis {
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Approximate cycle count", 1);
         
+        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+                AnalysisOptions.ANALYZE_HIERARCHY);
+        int count;
+        
+        if (hierarchy) {
+            List<KNode> nodes = new LinkedList<KNode>();
+            LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
+            nodeQueue.addAll(parentNode.getChildren());
+            while (!nodeQueue.isEmpty()) {
+                KNode node = nodeQueue.removeFirst();
+                nodes.add(node);
+                nodeQueue.addAll(node.getChildren());
+            }
+            count = process(nodes, true);
+        } else {
+            count = process(parentNode.getChildren(), false);
+        }
+
+        progressMonitor.done();
+        return count;
+    }
+    
+    /**
+     * Count the number of back edges in the given graph.
+     * 
+     * @param nodes list of nodes to process
+     * @param hierarchy whether hierarchy should be processed
+     * @return the number of back edges
+     */
+    private int process(final List<KNode> nodes, final boolean hierarchy) {
         // initialize values for the algorithm (sum of priorities of incoming edges and outgoing
         // edges per node, and the "layer" calculated for each node)
-        int unprocessedNodes = parentNode.getChildren().size();
+        int unprocessedNodes = nodes.size();
         indeg = new int[unprocessedNodes];
         outdeg = new int[unprocessedNodes];
         mark = new int[unprocessedNodes];
         
         // iterate over all nodes, ...
         int index = 0;
-        for (KNode node : parentNode.getChildren()) {
+        for (KNode node : nodes) {
             idmap.put(node, index);
             // calculate the sum of edge priorities
             for (KEdge edge : node.getIncomingEdges()) {
-                // ignore self-loops
-                if (edge.getSource() == node) {
+                // ignore self-loops and hierarchy edges
+                if (edge.getSource() == node || !hierarchy
+                        && edge.getSource().getParent() != node.getParent()) {
                     continue;
                 }
                 indeg[index]++;
             }
             
             for (KEdge edge : node.getOutgoingEdges()) {
-                // ignore self-loops
-                if (edge.getTarget() == node) {
+                // ignore self-loops and hierarchy edges
+                if (edge.getTarget() == node || !hierarchy
+                        && edge.getTarget().getParent() != node.getParent()) {
                     continue;
                 }
                 outdeg[index]++;
@@ -123,7 +157,7 @@ public class CycleAnalysis implements IAnalysis {
                 int maxOutflow = Integer.MIN_VALUE;
                 
                 // find the set of unprocessed node (=> mark == 0), with the largest out flow
-                for (KNode node : parentNode.getChildren()) {
+                for (KNode node : nodes) {
                     int id = idmap.get(node);
                     if (mark[id] == 0) {
                         int outflow = outdeg[id] - indeg[id];
@@ -146,8 +180,8 @@ public class CycleAnalysis implements IAnalysis {
         }
 
         // shift negative ranks
-        int shiftBase = parentNode.getChildren().size() + 1;
-        for (index = 0; index < parentNode.getChildren().size(); index++) {
+        int shiftBase = nodes.size() + 1;
+        for (index = 0; index < nodes.size(); index++) {
             if (mark[index] < 0) {
                 mark[index] += shiftBase;
             }
@@ -155,7 +189,7 @@ public class CycleAnalysis implements IAnalysis {
 
         // count edges that point left
         int backEdgeCount = 0;
-        for (KNode node : parentNode.getChildren()) {
+        for (KNode node : nodes) {
             int sourceIx = idmap.get(node);
             // look at the node's outgoing edges
             for (KEdge edge : node.getOutgoingEdges()) {
@@ -167,7 +201,6 @@ public class CycleAnalysis implements IAnalysis {
         }
 
         dispose();
-        progressMonitor.done();
         return backEdgeCount;
     }
     
@@ -194,7 +227,7 @@ public class CycleAnalysis implements IAnalysis {
             KNode endpoint = edge.getSource() == node ? edge.getTarget() : edge.getSource();
             
             // exclude self-loops
-            if (node == endpoint) {
+            if (endpoint == node || !idmap.containsKey(endpoint)) {
                 continue;
             }
             

@@ -23,6 +23,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 /**
@@ -189,16 +190,15 @@ public class NodeEdgeOverlapsAnalysis implements IAnalysis {
     }
 
     /**
-     * Computes the number of crossings between edges from the first and the
-     * second node.
+     * Computes the number of overlaps between the second node and edges from the first node.
      * 
      * @param node1
      *            the first node
      * @param node2
      *            the second node
-     * @return the number of crossings
+     * @return the number of overlaps
      */
-    private int computeNumberOfCrossings(final KNode node1, final KNode node2) {
+    private int computeNumberOfOverlaps(final KNode node1, final KNode node2) {
         if (node1 == node2) {
             return 0;
         }
@@ -231,20 +231,26 @@ public class NodeEdgeOverlapsAnalysis implements IAnalysis {
             final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Node Crossings analysis", 1);
+        
+        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+                AnalysisOptions.ANALYZE_HIERARCHY);
+        
         int numberOfCrossings = 0;
-        List<KNode> nodes = new LinkedList<KNode>();
-        nodes.add(parentNode);
-        while (nodes.size() > 0) {
-            // pop first element
-            KNode node = nodes.remove(0);
+        List<KNode> nodeQueue = new LinkedList<KNode>();
+        nodeQueue.add(parentNode);
+        while (nodeQueue.size() > 0) {
+            // get first element
+            KNode node = nodeQueue.remove(0);
             // compute intersections of all edge segments with all nodes on the same hierarchy
             for (KNode node1 : node.getChildren()) {
                 for (KNode node2 : node.getChildren()) {
-                    // count crossings between edges of the first node and the second node
-                    numberOfCrossings += computeNumberOfCrossings(node1, node2);
+                    // count overlaps between the second node and edges of the first node
+                    numberOfCrossings += computeNumberOfOverlaps(node1, node2);
                 }
             }
-            nodes.addAll(node.getChildren());
+            if (hierarchy) {
+                nodeQueue.addAll(node.getChildren());
+            }
         }
 
         progressMonitor.done();

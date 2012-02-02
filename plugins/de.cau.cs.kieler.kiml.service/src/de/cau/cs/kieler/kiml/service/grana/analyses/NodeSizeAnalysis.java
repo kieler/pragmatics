@@ -17,13 +17,12 @@ package de.cau.cs.kieler.kiml.service.grana.analyses;
 import java.awt.geom.Rectangle2D;
 import java.util.Map;
 
-import org.eclipse.emf.common.util.EList;
-
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 
@@ -45,32 +44,25 @@ public class NodeSizeAnalysis implements IAnalysis {
      * @author cds
      */
     private static class NodeSizeAnalysisState {
-        
-        // This is a private utility class; having private members and public accessors
-        // would be overkill.
-        // CHECKSTYLEOFF VisibilityModifier
-        
         /**
          * The number of nodes analyzed so far.
          */
-        public int nodes = 0;
+        private int nodes = 0;
         
         /**
          * The maximum node size analyzed so far.
          */
-        public float maxSize = Float.NEGATIVE_INFINITY;
+        private float maxSize = Float.NEGATIVE_INFINITY;
         
         /**
          * The minimum node size analyzed so far.
          */
-        public float minSize = Float.POSITIVE_INFINITY;
+        private float minSize = Float.POSITIVE_INFINITY;
         
         /**
          * The sum of the size of all nodes analyzed so far.
          */
-        public float sumOfSize = 0.0f;
-        
-        // CHECKSTYLEON VisibilityModifier
+        private float sumOfSize = 0.0f;
     }
     
 
@@ -106,11 +98,14 @@ public class NodeSizeAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        
-        progressMonitor.begin("Node Size Analysis", 1);
+        progressMonitor.begin("Node size analysis", 1);
         
         NodeSizeAnalysisState state = new NodeSizeAnalysisState();
-        computeNodeSizes(parentNode, state);
+        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+                AnalysisOptions.ANALYZE_HIERARCHY);
+        for (KNode node : parentNode.getChildren()) {
+            computeNodeSizes(node, state, hierarchy);
+        }
         
         progressMonitor.done();
         
@@ -126,16 +121,16 @@ public class NodeSizeAnalysis implements IAnalysis {
     /**
      * Does the actual analysis. If the given node contains further nodes, the node's size
      * is not accounted for in the analysis result. Instead, the analysis proceeds with
-     * analysing the child nodes. If the given node doesn't contain further nodes, the node
+     * analyzing the child nodes. If the given node doesn't contain further nodes, the node
      * is accounted for in the analysis.
      * 
-     * @param node the node to analyse.
+     * @param node the node to analyze.
      * @param state the analysis state to accumulate the results in.
+     * @param hierarchy whether to process hierarchy recursively
      */
-    private void computeNodeSizes(final KNode node, final NodeSizeAnalysisState state) {
-        EList<KNode> children = node.getChildren();
-        
-        if (children.isEmpty()) {
+    private void computeNodeSizes(final KNode node, final NodeSizeAnalysisState state,
+            final boolean hierarchy) {
+        if (!hierarchy || node.getChildren().isEmpty()) {
             // Compute the node size
             Rectangle2D.Float nodeRect = computeNodeRect(node, true, true, true);
             float nodeSize = nodeRect.width * nodeRect.height;
@@ -146,9 +141,9 @@ public class NodeSizeAnalysis implements IAnalysis {
             state.maxSize = Math.max(state.maxSize, nodeSize);
             state.sumOfSize += nodeSize;
         } else {
-            // Analyse the children
-            for (KNode child : children) {
-                computeNodeSizes(child, state);
+            // Analyze the children
+            for (KNode child : node.getChildren()) {
+                computeNodeSizes(child, state, hierarchy);
             }
         }
     }
