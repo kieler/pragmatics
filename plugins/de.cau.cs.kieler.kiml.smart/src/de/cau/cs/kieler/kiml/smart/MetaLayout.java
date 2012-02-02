@@ -17,7 +17,10 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.kiml.service.AnalysisService;
 
 /**
  * A meta layout provides a layout option mapping for graph elements.
@@ -26,12 +29,32 @@ import de.cau.cs.kieler.core.properties.IProperty;
  */
 public class MetaLayout {
     
-    private static final int INITIAL_MAP_SIZE = 3;
-    
+    /** the parent node of the graph. */
+    private KNode graph;
     /** the configuration mapping. */
-    private Map<IProperty<?>, Object> config = Maps.newHashMapWithExpectedSize(INITIAL_MAP_SIZE);
-    /** the time when the cache entry was created. */
+    private Map<IProperty<?>, Object> config;
+    /** the analysis cache. */
+    private Map<String, Object> analysisCache;
+    /** the time when the meta layout instance was created. */
     private long timestamp = System.currentTimeMillis();
+    
+    /**
+     * Return the graph for this meta layout.
+     * 
+     * @return the graph
+     */
+    public KNode getGraph() {
+        return graph;
+    }
+    
+    /**
+     * Set the graph for this meta layout.
+     * 
+     * @param thegraph the graph
+     */
+    public void setGraph(final KNode thegraph) {
+        this.graph = thegraph;
+    }
     
     /**
      * Returns the layout configuration.
@@ -39,7 +62,24 @@ public class MetaLayout {
      * @return the layout configuration
      */
     public Map<IProperty<?>, Object> getConfig() {
+        if (config == null) {
+            config = Maps.newHashMap();
+        }
         return config;
+    }
+    
+    /**
+     * Perform the graph analysis with given identifier.
+     * 
+     * @param analysisId the analysis identifier
+     * @return the result of the graph analysis
+     */
+    public Object analyze(final String analysisId) {
+        if (analysisCache == null) {
+            analysisCache = Maps.newHashMap();
+        }
+        return AnalysisService.getInstance().analyze(graph, analysisId, new BasicProgressMonitor(0),
+                analysisCache);
     }
     
     /**
@@ -49,13 +89,6 @@ public class MetaLayout {
      */
     public long getTimestamp() {
         return timestamp;
-    }
-    
-    /**
-     * Updates the timestamp.
-     */
-    public void updateTimestamp() {
-        timestamp = System.currentTimeMillis();
     }
 
 }

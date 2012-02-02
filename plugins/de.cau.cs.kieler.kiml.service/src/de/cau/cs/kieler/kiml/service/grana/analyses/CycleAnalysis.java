@@ -36,6 +36,9 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * @author msp
  */
 public class CycleAnalysis implements IAnalysis {
+    
+    /** the identifier for the cycle analysis. */
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.cycles";
 
     /** indegree values for the nodes. */
     private int[] indeg;

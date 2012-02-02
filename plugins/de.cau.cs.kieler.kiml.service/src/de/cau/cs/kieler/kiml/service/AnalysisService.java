@@ -344,13 +344,13 @@ public abstract class AnalysisService {
      * Perform the given analysis on a graph using a prepared cache.
      * 
      * @param graph the parent node of the graph to analyze
-     * @param monitor a progress monitor
      * @param analysisId analysis identifier
+     * @param monitor a progress monitor
      * @param resultCache the result cache with stored values
      * @return the analysis result value
      */
-    public Object analyze(final KNode graph, final IKielerProgressMonitor monitor,
-            final String analysisId, final Map<String, Object> resultCache) {
+    public Object analyze(final KNode graph, final String analysisId,
+            final IKielerProgressMonitor monitor, final Map<String, Object> resultCache) {
         AnalysisData analysis = analysisIdMapping.get(analysisId);
         if (analysis != null) {
             Object result = resultCache.get(analysisId);

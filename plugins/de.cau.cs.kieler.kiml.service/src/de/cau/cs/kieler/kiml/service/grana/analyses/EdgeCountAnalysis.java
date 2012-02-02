@@ -30,6 +30,9 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * @author mri
  */
 public class EdgeCountAnalysis implements IAnalysis {
+    
+    /** the identifier of the edge count analysis. */
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.edgeCount";
 
     /**
      * {@inheritDoc}

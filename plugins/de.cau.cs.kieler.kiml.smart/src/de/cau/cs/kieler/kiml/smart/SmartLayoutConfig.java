@@ -42,9 +42,9 @@ public class SmartLayoutConfig implements ILayoutConfig {
     public static final int PRIORITY = 100;
     
     /** the time interval for cache age check. */
-    private static final long CACHE_CHECK_INTERVAL = 20000;
+    private static final long CACHE_CHECK_INTERVAL = 1000;
     /** the maximal time for configurations to stay in the cache. */
-    private static final long CACHE_MAX_AGE = 90000;
+    private static final long CACHE_MAX_AGE = 1000;
 
     /** property for the configuration map. */
     public static final IProperty<MetaLayout> META_LAYOUT
@@ -78,29 +78,8 @@ public class SmartLayoutConfig implements ILayoutConfig {
      * @return a meta layout
      */
     public MetaLayout provideMetaLayout(final LayoutContext context) {
-        long currentTime = System.currentTimeMillis();
         // look for meta layout property in the context
         MetaLayout metaLayout = context.getProperty(META_LAYOUT);
-        if (metaLayout == null) {
-            // look in the meta layout cache
-            metaLayout = metaLayoutCache.get(context.getProperty(LayoutContext.DIAGRAM_PART));
-            if (metaLayout != null) {
-                context.setProperty(META_LAYOUT, metaLayout);
-            }
-        }
-        
-        // check the meta layout cache for old information
-        if (currentTime - lastCheckTime >= CACHE_CHECK_INTERVAL) {
-            @SuppressWarnings("unchecked")
-            Map.Entry<Object, MetaLayout>[] entries = metaLayoutCache.entrySet().toArray(
-                    new Map.Entry[metaLayoutCache.size()]);
-            for (Map.Entry<Object, MetaLayout> entry : entries) {
-                if (entry.getValue().getTimestamp() - currentTime > CACHE_MAX_AGE) {
-                    metaLayoutCache.remove(entry.getKey());
-                }
-            }
-            lastCheckTime = currentTime;
-        }
 
         if (metaLayout == null) {
             // no meta layout present yet - generate one
@@ -108,19 +87,38 @@ public class SmartLayoutConfig implements ILayoutConfig {
             if (graphElement instanceof KNode) {
                 KNode node = (KNode) graphElement;
                 if (!node.getChildren().isEmpty()) {
+                    long currentTime = System.currentTimeMillis();
                     
-                    // perform smart layout on the parent node
-                    metaLayout = smartLayout(node);
-                    
-                    Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
-                    if (diagramPart != null) {
-                        metaLayoutCache.put(diagramPart, metaLayout);
+                    // check the meta layout cache for old information
+                    if (currentTime - lastCheckTime >= CACHE_CHECK_INTERVAL) {
+                        @SuppressWarnings("unchecked")
+                        Map.Entry<Object, MetaLayout>[] entries = metaLayoutCache.entrySet().toArray(
+                                new Map.Entry[metaLayoutCache.size()]);
+                        for (Map.Entry<Object, MetaLayout> entry : entries) {
+                            if (currentTime - entry.getValue().getTimestamp() > CACHE_MAX_AGE) {
+                                metaLayoutCache.remove(entry.getKey());
+                            }
+                        }
+                        lastCheckTime = currentTime;
                     }
-                    context.setProperty(META_LAYOUT, metaLayout);
+                    
+                    // look into the meta layout cache
+                    metaLayout = metaLayoutCache.get(context.getProperty(LayoutContext.DIAGRAM_PART));
+                    if (metaLayout != null) {
+                        context.setProperty(META_LAYOUT, metaLayout);
+                    } else {
+                        
+                        // perform smart layout on the parent node
+                        metaLayout = smartLayout(node);
+                        
+                        Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
+                        if (diagramPart != null) {
+                            metaLayoutCache.put(diagramPart, metaLayout);
+                        }
+                        context.setProperty(META_LAYOUT, metaLayout);
+                    }
                 }
             }
-        } else {
-            metaLayout.updateTimestamp();
         }
         return metaLayout;
     }
@@ -159,10 +157,7 @@ public class SmartLayoutConfig implements ILayoutConfig {
      * {@inheritDoc}
      */
     public Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
-        MetaLayout metaLayout = context.getProperty(META_LAYOUT);
-        if (metaLayout == null) {
-            metaLayout = provideMetaLayout(context);
-        }
+        MetaLayout metaLayout = provideMetaLayout(context);
         if (metaLayout != null) {
             return metaLayout.getConfig().get(optionData);
         }
@@ -173,10 +168,7 @@ public class SmartLayoutConfig implements ILayoutConfig {
      * {@inheritDoc}
      */
     public void transferValues(final KGraphData graphData, final LayoutContext context) {
-        MetaLayout metaLayout = context.getProperty(META_LAYOUT);
-        if (metaLayout == null) {
-            metaLayout = provideMetaLayout(context);
-        }
+        MetaLayout metaLayout = provideMetaLayout(context);
         if (metaLayout != null) {
             for (Map.Entry<IProperty<?>, Object> entry : metaLayout.getConfig().entrySet()) {
                 graphData.setProperty(entry.getKey(), entry.getValue());
@@ -192,8 +184,9 @@ public class SmartLayoutConfig implements ILayoutConfig {
      */
     private MetaLayout smartLayout(final KNode node) {
         MetaLayout metaLayout = new MetaLayout();
+        metaLayout.setGraph(node);
         for (ISmartRule rule : smartRules) {
-            if (rule.isSuitable(node)) {
+            if (rule.isSuitable(metaLayout)) {
                 rule.applyMetaLayout(metaLayout);
                 break;
             }

@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.smart;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
-
 /**
  * Interface for smart layout rules.
  *
@@ -25,10 +23,10 @@ public interface ISmartRule {
     /**
      * Determine whether this smart rule is suitable for the content of the given parent node.
      * 
-     * @param parentNode a parent node in the layout graph
+     * @param metaLayout a meta layout instance
      * @return true if the rule is suitable for the node
      */
-    boolean isSuitable(KNode parentNode);
+    boolean isSuitable(MetaLayout metaLayout);
     
     /**
      * Apply the layout options according to this rule.
