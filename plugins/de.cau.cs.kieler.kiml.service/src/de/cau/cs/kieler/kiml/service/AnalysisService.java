@@ -26,9 +26,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
+import com.google.common.collect.Maps;
+
 import de.cau.cs.kieler.core.WrappedException;
-import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IFactory;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Dependency;
 import de.cau.cs.kieler.core.util.DependencyGraph;
@@ -49,16 +51,14 @@ public abstract class AnalysisService {
     /** identifier of the extension point for analysis providers. */
     public static final String EXTP_ID_ANALYSIS_PROVIDERS
             = "de.cau.cs.kieler.kiml.service.analysisProviders";
-    /** name of the 'provider' element. */
-    public static final String ELEMENT_ANALYSIS_PROVIDER = "provider";
-    /** name of the 'bundle' element. */
-    public static final String ELEMENT_ANALYSIS_BUNDLE = "bundle";
+    /** name of the 'analysis' element. */
+    public static final String ELEMENT_ANALYSIS = "analysis";
     /** name of the 'category' element. */
-    public static final String ELEMENT_ANALYSIS_CATEGORY = "category";
+    public static final String ELEMENT_CATEGORY = "category";
     /** name of the 'dependency' element. */
-    public static final String ELEMENT_ANALYSIS_DEPENDENCY = "dependency";
+    public static final String ELEMENT_DEPENDENCY = "dependency";
     /** name of the 'component' element. */
-    public static final String ELEMENT_ANALYSIS_COMPONENT = "component";
+    public static final String ELEMENT_COMPONENT = "component";
     /** name of the 'analysis' attribute in the extension points. */
     public static final String ATTRIBUTE_ANALYSIS = "analysis";
     /** name of the 'category' attribute in the extension points. */
@@ -150,7 +150,7 @@ public abstract class AnalysisService {
         List<AnalysisData> analyses = new LinkedList<AnalysisData>();
 
         for (IConfigurationElement element : extensions) {
-            if (ELEMENT_ANALYSIS_CATEGORY.equals(element.getName())) {
+            if (ELEMENT_CATEGORY.equals(element.getName())) {
                 // initialize a category from the extension point
                 String id = element.getAttribute(ATTRIBUTE_ID);
                 String name = element.getAttribute(ATTRIBUTE_NAME);
@@ -174,7 +174,7 @@ public abstract class AnalysisService {
                     categoryIdMapping.put(id, category);
                 }
 
-            } else if (ELEMENT_ANALYSIS_PROVIDER.equals(element.getName())) {
+            } else if (ELEMENT_ANALYSIS.equals(element.getName())) {
                 // initialize an analysis from the extension point
                 String id = element.getAttribute(ATTRIBUTE_ID);
                 String name = element.getAttribute(ATTRIBUTE_NAME);
@@ -218,7 +218,7 @@ public abstract class AnalysisService {
                     analysisIdMapping.put(id, analysisData);
                     // read the analysis dependencies
                     for (IConfigurationElement child : element.getChildren()) {
-                        if (ELEMENT_ANALYSIS_DEPENDENCY.equals(child.getName())) {
+                        if (ELEMENT_DEPENDENCY.equals(child.getName())) {
                             String analysisId = child.getAttribute(ATTRIBUTE_ANALYSIS);
                             String weakString = child.getAttribute(ATTRIBUTE_WEAK);
                             if (analysisId == null || analysisId.length() == 0) {
@@ -231,7 +231,7 @@ public abstract class AnalysisService {
                                 analysisData.getDependencies().add(new Dependency<String>(
                                                 analysisId, weak));
                             }
-                        } else if (ELEMENT_ANALYSIS_COMPONENT.equals(child.getName())) {
+                        } else if (ELEMENT_COMPONENT.equals(child.getName())) {
                             String componentName = child.getAttribute(ATTRIBUTE_NAME);
                             String componentAbbreviation = child.getAttribute(ATTRIBUTE_ABBREVIATION);
                             if (componentName == null || componentName.length() == 0) {
@@ -341,37 +341,89 @@ public abstract class AnalysisService {
     }
     
     /**
-     * Perform the given analysis on a graph.
+     * Perform the given analysis on a graph using a prepared cache.
      * 
-     * @param node the parent node of the graph to analyze
+     * @param graph the parent node of the graph to analyze
+     * @param monitor a progress monitor
      * @param analysisId analysis identifier
      * @param resultCache the result cache with stored values
      * @return the analysis result value
      */
-    public Object analyze(final KNode node, final String analysisId,
-            final Map<String, Object> resultCache) {
-        Object result = resultCache.get(analysisId);
-        if (result == null) {
-            AnalysisData analysis = analysisIdMapping.get(analysisId);
-            if (analysis != null) {
-                List<AnalysisData> analysesSequence = getExecutionOrder(analysis);
-                for (AnalysisData ad : analysesSequence) {
-                    if (!resultCache.containsKey(ad.getId())) {
-                        try {
-                            IAnalysis a = ad.getInstancePool().fetch();
-                            Object o = a.doAnalysis(node, resultCache, new BasicProgressMonitor(0));
-                            resultCache.put(ad.getId(), o);
-                            ad.getInstancePool().release(a);
-                        } catch (Exception exception) {
-                            resultCache.put(ad.getId(), new AnalysisFailed(AnalysisFailed.Type.Failed,
-                                    exception));
-                        }
-                    }
+    public Object analyze(final KNode graph, final IKielerProgressMonitor monitor,
+            final String analysisId, final Map<String, Object> resultCache) {
+        AnalysisData analysis = analysisIdMapping.get(analysisId);
+        if (analysis != null) {
+            Object result = resultCache.get(analysisId);
+            if (result == null) {
+                result = analyze(graph, analysis, monitor, resultCache);
+            }
+            return result;
+        }
+        return null;
+    }
+    
+    /**
+     * Perform the given analysis on a graph using a prepared cache.
+     * 
+     * @param graph the parent node of the graph to analyze
+     * @param analysis the analysis to execute
+     * @param monitor a progress monitor
+     * @param resultCache the result cache with stored values
+     * @return the analysis result value
+     */
+    public Object analyze(final KNode graph, final AnalysisData analysis,
+            final IKielerProgressMonitor monitor, final Map<String, Object> resultCache) {
+        List<AnalysisData> analysesSequence = getExecutionOrder(analysis);
+        monitor.begin("Graph analyses", analysesSequence.size());
+        for (AnalysisData ad : analysesSequence) {
+            if (monitor.isCanceled()) {
+                resultCache.put(ad.getId(), new AnalysisFailed(AnalysisFailed.Type.Canceled));
+            } else if (resultCache.containsKey(ad.getId())) {
+                monitor.worked(1);
+            } else {
+                try {
+                    IAnalysis a = ad.getInstancePool().fetch();
+                    Object o = a.doAnalysis(graph, resultCache, monitor.subTask(1));
+                    resultCache.put(ad.getId(), o);
+                    ad.getInstancePool().release(a);
+                } catch (Exception e) {
+                    resultCache.put(ad.getId(), new AnalysisFailed(AnalysisFailed.Type.Failed, e));
                 }
-                result = resultCache.get(analysisId);
             }
         }
-        return result;
+        monitor.done();
+        return resultCache.get(analysis.getId());
+    }
+
+    /**
+     * Perform the given analyses on a graph and create a results cache.
+     *
+     * @param graph the parent node of the graph to analyze
+     * @param analyses the analyses to execute
+     * @param monitor a progress monitor
+     * @return the analyses results
+     */
+    public Map<String, Object> analyze(final KNode graph, final List<AnalysisData> analyses,
+            final IKielerProgressMonitor monitor) {
+        List<AnalysisData> analysesSequence = getExecutionOrder(analyses);
+        monitor.begin("Graph analyses", analysesSequence.size());
+        Map<String, Object> resultCache = Maps.newHashMapWithExpectedSize(analysesSequence.size());
+        for (AnalysisData ad : analysesSequence) {
+            if (monitor.isCanceled()) {
+                resultCache.put(ad.getId(), new AnalysisFailed(AnalysisFailed.Type.Canceled));
+            } else {
+                try {
+                    IAnalysis a = ad.getInstancePool().fetch();
+                    Object o = a.doAnalysis(graph, resultCache, monitor.subTask(1));
+                    resultCache.put(ad.getId(), o);
+                    ad.getInstancePool().release(a);
+                } catch (Exception e) {
+                    resultCache.put(ad.getId(), new AnalysisFailed(AnalysisFailed.Type.Failed, e));
+                }
+            }
+        }
+        monitor.done();
+        return resultCache;
     }
     
     /**

@@ -41,7 +41,8 @@ public class LayoutAnalysisCombination extends AbstractCombination {
         if (mapping != null) {
             final List<AnalysisData> analyses = GranaUtil.getLastAnalysesSelection();
             KNode parentNode = mapping.getLayoutGraph();
-            schedule(new AnalysisEffect(parentNode, analyses, false));
+            schedule(new AnalysisEffect(parentNode, analyses));
         }
     }
+    
 }

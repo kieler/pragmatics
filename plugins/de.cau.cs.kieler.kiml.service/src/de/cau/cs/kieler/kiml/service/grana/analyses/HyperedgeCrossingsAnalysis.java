@@ -56,7 +56,6 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
         
         // Collect all edge segments, merge them and count crossings
         List<Line2D.Double> edgeSegments = collectEdgeSegments(parentNode);
-        printSegments(edgeSegments);
         
         mergeEdgeSegments(edgeSegments);
         
@@ -333,22 +332,6 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
         }
         
         return crossings;
-    }
-    
-    
-    ///////////////////////////////////////////////////////////////////////////////
-    // Debugging
-    
-    /**
-     * Prints the segmetns in the given list to the console.
-     * 
-     * @param segments the segments to print.
-     */
-    private void printSegments(final List<Line2D.Double> segments) {
-        for (Line2D.Double segment : segments) {
-            System.out.println("(" + segment.x1 + ", " + segment.y1 + ") --> ("
-                    + segment.x2 + ", " + segment.y2 + ")");
-        }
     }
     
 }

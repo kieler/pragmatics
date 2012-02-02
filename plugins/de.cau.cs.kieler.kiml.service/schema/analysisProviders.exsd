@@ -18,7 +18,7 @@
       </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="provider"/>
+            <element ref="analysis"/>
             <element ref="category"/>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -48,7 +48,12 @@
       </complexType>
    </element>
 
-   <element name="provider">
+   <element name="analysis">
+      <annotation>
+         <documentation>
+            An analysis contribution, given by the implementation referenced in the &lt;pre&gt;class&lt;/pre&gt; attribute.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="dependency"/>
@@ -57,14 +62,14 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Identifier of the analysis.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  User-friendly name of the analysis.
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>
@@ -74,7 +79,7 @@
          <attribute name="description" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  User-friendly description of the analysis.
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>
@@ -84,7 +89,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The implementing analysis class.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.grana.IAnalysis"/>
@@ -94,7 +99,7 @@
          <attribute name="category" type="string">
             <annotation>
                <documentation>
-                  
+                  An optional category for grouping of analyses.
                </documentation>
                <appinfo>
                   <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.service.analysisProviders/category/@id"/>
@@ -104,7 +109,7 @@
          <attribute name="helper" type="boolean">
             <annotation>
                <documentation>
-                  
+                  Whether this is a helper analysis that should be hidden from the user.
                </documentation>
             </annotation>
          </attribute>
@@ -112,18 +117,23 @@
    </element>
 
    <element name="category">
+      <annotation>
+         <documentation>
+            Definition of an analysis category.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Identifier of the category.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  User-friendly name of the category.
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>
@@ -133,7 +143,7 @@
          <attribute name="description" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  User-friendly description of the category.
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>
@@ -144,21 +154,26 @@
    </element>
 
    <element name="dependency">
+      <annotation>
+         <documentation>
+            A dependency to another analysis is applied when the results calculated by the other analysis are reused. An analysis with a dependency can assume that the required results are present in the results map.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="analysis" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Identifier of the analysis which the dependency points to.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.service.analysisProviders/provider/@id"/>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.service.analysisProviders/analysis/@id"/>
                </appinfo>
             </annotation>
          </attribute>
          <attribute name="weak" type="boolean">
             <annotation>
                <documentation>
-                  
+                  If the dependency is weak, the analysis implementation must be able to cope with the situation where the required results are not present in the results map.
                </documentation>
             </annotation>
          </attribute>
@@ -166,18 +181,23 @@
    </element>
 
    <element name="component">
+      <annotation>
+         <documentation>
+            Definition of results components for analyses that return a fixed-size array of objects. The components must be declared in the same order as the result objects in the returned array.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  User-friendly name of the component.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="abbreviation" type="string">
             <annotation>
                <documentation>
-                  
+                  User-friendly abbreviation of the component.
                </documentation>
             </annotation>
          </attribute>
