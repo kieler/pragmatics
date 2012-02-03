@@ -15,35 +15,31 @@ package de.cau.cs.kieler.kiml.smart.rules;
 
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.grana.analyses.DirectedCycleAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.NodeCountAnalysis;
 import de.cau.cs.kieler.kiml.smart.ISmartRule;
 import de.cau.cs.kieler.kiml.smart.MetaLayout;
 
 /**
- * Smart layout rule for layered layout type.
+ * Smart layout rule for tree layout type.
  *
  * @author msp
  */
-public class LayeredRule implements ISmartRule {
+public class TreeRule implements ISmartRule {
 
     /**
      * {@inheritDoc}
      */
     public double suitability(final MetaLayout metaLayout) {
-        int nodeCount = (Integer) metaLayout.analyze(NodeCountAnalysis.ID);
-        int cycleCount = (Integer) metaLayout.analyze(DirectedCycleAnalysis.ID);
+        boolean isTree = (Boolean) metaLayout.analyze(TreeAnalysis.ID);
         
-        System.out.println("Layered Rule: " + nodeCount + " nodes, " + cycleCount
-                + " cycles, cycle rate = " + ((double) cycleCount / nodeCount));
-        return 1 - (double) Math.min(cycleCount, nodeCount) / nodeCount;
+        System.out.println("Tree Rule: " + isTree);
+        return isTree ? 1 : 0;
     }
 
     /**
      * {@inheritDoc}
      */
     public void applyMetaLayout(final MetaLayout metaLayout) {
-        metaLayout.getConfig().put(LayoutOptions.ALGORITHM, LayoutTypeData.TYPE_LAYERED);
+        metaLayout.getConfig().put(LayoutOptions.ALGORITHM, LayoutTypeData.TYPE_TREE);
     }
 
 }

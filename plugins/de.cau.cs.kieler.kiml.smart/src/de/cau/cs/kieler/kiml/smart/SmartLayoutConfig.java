@@ -28,8 +28,11 @@ import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.smart.rules.LayeredRule;
+import de.cau.cs.kieler.kiml.smart.rules.TreeRule;
 
 /**
  * Smart layout!
@@ -45,6 +48,8 @@ public class SmartLayoutConfig implements ILayoutConfig {
     private static final long CACHE_CHECK_INTERVAL = 1000;
     /** the maximal time for configurations to stay in the cache. */
     private static final long CACHE_MAX_AGE = 1000;
+    /** the suitability threshold at which rules are applied. */
+    private static final double SUITABILITY_THRESHOLD = 0.6;
 
     /** property for the configuration map. */
     public static final IProperty<MetaLayout> META_LAYOUT
@@ -68,6 +73,7 @@ public class SmartLayoutConfig implements ILayoutConfig {
      * Create a smart layout configuration and initialize rules in according priority.
      */
     public SmartLayoutConfig() {
+        smartRules.add(new TreeRule());
         smartRules.add(new LayeredRule());
     }
     
@@ -184,13 +190,22 @@ public class SmartLayoutConfig implements ILayoutConfig {
      */
     private MetaLayout smartLayout(final KNode node) {
         MetaLayout metaLayout = new MetaLayout();
+        node.getData(KShapeLayout.class).setProperty(AnalysisOptions.ANALYZE_HIERARCHY, false);
         metaLayout.setGraph(node);
+        
+        double maxValue = 0;
+        ISmartRule bestRule = null;
         for (ISmartRule rule : smartRules) {
-            if (rule.isSuitable(metaLayout)) {
-                rule.applyMetaLayout(metaLayout);
-                break;
+            double val = rule.suitability(metaLayout);
+            if (val > maxValue) {
+                maxValue = val;
+                bestRule = rule;
             }
         }
+        if (maxValue >= SUITABILITY_THRESHOLD) {
+            bestRule.applyMetaLayout(metaLayout);
+        }
+        
         return metaLayout;
     }
 

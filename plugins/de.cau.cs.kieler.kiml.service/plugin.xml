@@ -98,10 +98,10 @@
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.grana.basic"
-            class="de.cau.cs.kieler.kiml.service.grana.analyses.CycleAnalysis"
-            description="An approximate number of cycles determined by the back edges found in a minimizing heuristic."
-            id="de.cau.cs.kieler.kiml.grana.cycles"
-            name="Cycles">
+            class="de.cau.cs.kieler.kiml.service.grana.analyses.DirectedCycleAnalysis"
+            description="An approximate number of directed cycles determined by the back edges found in a minimizing heuristic."
+            id="de.cau.cs.kieler.kiml.grana.directedCycles"
+            name="Directed Cycles">
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.grana.basic"
@@ -334,6 +334,13 @@
             description="The number of self loops."
             id="de.cau.cs.kieler.kiml.grana.selfLoops"
             name="Self Loops">
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.basic"
+            class="de.cau.cs.kieler.kiml.service.grana.analyses.UndirectedCycleAnalysis"
+            description="An approximate number of undirected cycles."
+            id="de.cau.cs.kieler.kiml.grana.undirectedCycles"
+            name="Undirected Cycles">
       </analysis>
    </extension>
 

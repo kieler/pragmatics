@@ -7,5 +7,16 @@
             class="de.cau.cs.kieler.kiml.smart.SmartLayoutConfig">
       </config>
    </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.service.analysisProviders">
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.basic"
+            class="de.cau.cs.kieler.kiml.smart.rules.TreeAnalysis"
+            description="Check whether the graph is a directed tree."
+            helper="true"
+            id="de.cau.cs.kieler.kiml.smart.tree"
+            name="Directed Tree">
+      </analysis>
+   </extension>
 
 </plugin>

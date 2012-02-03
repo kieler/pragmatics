@@ -30,15 +30,16 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 /**
- * Analysis for approximate cycle count, that is the number of back edges determined by a
- * heuristic that tries to minimize back edges.
+ * Analysis for approximate directed cycle count, that is the number of back edges determined by a
+ * heuristic that tries to minimize back edges. This gives a hint on how many edges need to be reversed
+ * or removed to obtain a directed acyclic graph.
  *
  * @author msp
  */
-public class CycleAnalysis implements IAnalysis {
+public class DirectedCycleAnalysis implements IAnalysis {
     
     /** the identifier for the cycle analysis. */
-    public static final String ID = "de.cau.cs.kieler.kiml.grana.cycles";
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.directedCycles";
 
     /** indegree values for the nodes. */
     private int[] indeg;
@@ -58,7 +59,7 @@ public class CycleAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Approximate cycle count", 1);
+        progressMonitor.begin("Approximate directed cycle count", 1);
         
         boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
                 AnalysisOptions.ANALYZE_HIERARCHY);

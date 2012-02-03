@@ -24,9 +24,9 @@ public interface ISmartRule {
      * Determine whether this smart rule is suitable for the content of the given parent node.
      * 
      * @param metaLayout a meta layout instance
-     * @return true if the rule is suitable for the node
+     * @return a normalized value between 0 and 1 indicating suitability as percentage
      */
-    boolean isSuitable(MetaLayout metaLayout);
+    double suitability(MetaLayout metaLayout);
     
     /**
      * Apply the layout options according to this rule.
