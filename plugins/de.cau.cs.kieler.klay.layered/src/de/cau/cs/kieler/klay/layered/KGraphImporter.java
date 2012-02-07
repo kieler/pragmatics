@@ -479,25 +479,27 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 targetPort = (LPort) elemMap.get(kedge.getTargetPort());
             }
             
-            // if we have a self-loop, set the appropriate graph property
-            if (sourceNode != graph && sourceNode == targetNode) {
-                Set<GraphProperties> graphProperties = layeredGraph.getProperty(
-                        Properties.GRAPH_PROPERTIES);
-                graphProperties.add(GraphProperties.SELF_LOOPS);
+            if (sourceNode != null && targetNode != null) {
+                // if we have a self-loop, set the appropriate graph property
+                if (sourceNode != graph && sourceNode == targetNode) {
+                    Set<GraphProperties> graphProperties = layeredGraph.getProperty(
+                            Properties.GRAPH_PROPERTIES);
+                    graphProperties.add(GraphProperties.SELF_LOOPS);
+                }
+    
+                // create source and target ports if they do not exist yet
+                if (sourcePort == null) {
+                    sourcePort = createPort(sourceNode, edgeLayout.getSourcePoint(), PortType.OUTPUT,
+                            layeredGraph);
+                }
+                
+                if (targetPort == null) {
+                    targetPort = createPort(targetNode, edgeLayout.getTargetPoint(), PortType.INPUT,
+                            layeredGraph);
+                }
+                newEdge.setSource(sourcePort);
+                newEdge.setTarget(targetPort);
             }
-
-            // create source and target ports if they do not exist yet
-            if (sourcePort == null) {
-                sourcePort = createPort(sourceNode, edgeLayout.getSourcePoint(), PortType.OUTPUT,
-                        layeredGraph);
-            }
-            
-            if (targetPort == null) {
-                targetPort = createPort(targetNode, edgeLayout.getTargetPoint(), PortType.INPUT,
-                        layeredGraph);
-            }
-            newEdge.setSource(sourcePort);
-            newEdge.setTarget(targetPort);
         }
 
         // transform the edge's labels
