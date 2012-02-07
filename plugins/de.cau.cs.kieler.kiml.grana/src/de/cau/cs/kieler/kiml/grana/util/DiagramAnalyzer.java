@@ -133,7 +133,11 @@ public final class DiagramAnalyzer {
                 }
             };
             monitoredOperation.runMonitored();
-            return result.get();
+            if (result.get() != null) {
+                return result.get();
+            } else {
+                return Collections.emptyMap();
+            }
 
         } else {
             // perform analysis without a progress bar

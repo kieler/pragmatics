@@ -98,27 +98,23 @@ public class DirectedCycleAnalysis implements IAnalysis {
         outdeg = new int[unprocessedNodes];
         mark = new int[unprocessedNodes];
         
-        // iterate over all nodes, ...
         int index = 0;
         for (KNode node : nodes) {
             idmap.put(node, index);
-            // calculate the sum of edge priorities
             for (KEdge edge : node.getIncomingEdges()) {
                 // ignore self-loops and hierarchy edges
-                if (edge.getSource() == node || !hierarchy
-                        && edge.getSource().getParent() != node.getParent()) {
-                    continue;
+                if (edge.getSource() != node && (hierarchy
+                        || edge.getSource().getParent() == node.getParent())) {
+                    indeg[index]++;
                 }
-                indeg[index]++;
             }
             
             for (KEdge edge : node.getOutgoingEdges()) {
                 // ignore self-loops and hierarchy edges
-                if (edge.getTarget() == node || !hierarchy
-                        && edge.getTarget().getParent() != node.getParent()) {
-                    continue;
+                if (edge.getTarget() != node && (hierarchy
+                        || edge.getTarget().getParent() == node.getParent())) {
+                    outdeg[index]++;
                 }
-                outdeg[index]++;
             }
             
             // collect sources and sinks
@@ -195,11 +191,12 @@ public class DirectedCycleAnalysis implements IAnalysis {
         int backEdgeCount = 0;
         for (KNode node : nodes) {
             int sourceIx = idmap.get(node);
-            // look at the node's outgoing edges
             for (KEdge edge : node.getOutgoingEdges()) {
-                int targetIx = idmap.get(edge.getTarget());
-                if (mark[sourceIx] > mark[targetIx]) {
-                    backEdgeCount++;
+                if (edge.getTarget() != node && idmap.containsKey(edge.getTarget())) {
+                    int targetIx = idmap.get(edge.getTarget());
+                    if (mark[sourceIx] > mark[targetIx]) {
+                        backEdgeCount++;
+                    }
                 }
             }
         }

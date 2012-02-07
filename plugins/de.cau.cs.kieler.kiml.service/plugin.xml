@@ -50,6 +50,21 @@
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.grana.basic"
+            class="de.cau.cs.kieler.kiml.service.grana.analyses.CompoundEdgeAnalysis"
+            description="Counts the number of hierarchy crossing edges and the maximal number of crossed hierarchy levels."
+            id="de.cau.cs.kieler.kiml.grana.compoundEdge"
+            name="Compound Edges">
+         <component
+               abbreviation="Count"
+               name="Count">
+         </component>
+         <component
+               abbreviation="MaxLevels"
+               name="Max. Crossed Levels">
+         </component>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.basic"
             class="de.cau.cs.kieler.kiml.service.grana.analyses.CompoundNodeCountAnalysis"
             description="The number of compound nodes including hierarchies."
             id="de.cau.cs.kieler.kiml.grana.compoundNodeCount"
