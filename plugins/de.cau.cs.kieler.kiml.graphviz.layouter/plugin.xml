@@ -49,7 +49,7 @@
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.fixedSize">
+               option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
                default="8"
@@ -103,7 +103,7 @@
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.fixedSize">
+               option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
                default="8"
@@ -171,7 +171,7 @@
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.fixedSize">
+               option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
                default="8"
@@ -227,7 +227,7 @@
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.fixedSize">
+               option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
                default="8"
@@ -269,7 +269,7 @@
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.fixedSize">
+               option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
                default="8"

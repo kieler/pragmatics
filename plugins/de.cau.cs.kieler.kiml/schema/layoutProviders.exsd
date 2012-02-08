@@ -358,7 +358,7 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                type=&quot;de.cau.cs.kieler.layout.info.types.dataFlow&quot;&gt;
          &lt;/supportedDiagram&gt;
          &lt;knownOption
-               option=&quot;de.cau.cs.kieler.fixedSize&quot;&gt;
+               option=&quot;de.cau.cs.kieler.sizeConstraint&quot;&gt;
          &lt;/knownOption&gt;
          &lt;knownOption
                option=&quot;de.cau.cs.kieler.direction&quot;&gt;

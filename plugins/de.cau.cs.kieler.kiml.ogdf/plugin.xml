@@ -339,6 +339,9 @@
                default="1.3"
                option="de.cau.cs.kieler.aspectRatio">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.sizeConstraint">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -391,6 +394,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.costGen">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.sizeConstraint">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -421,6 +427,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.sizeConstraint">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -450,6 +459,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -486,6 +498,9 @@
          <knownOption
                default="1.3"
                option="de.cau.cs.kieler.aspectRatio">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -556,6 +571,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.minDistCC">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.sizeConstraint">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -592,6 +610,9 @@
          <knownOption
                default="1.3"
                option="de.cau.cs.kieler.aspectRatio">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -633,6 +654,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.treeDistance">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.sizeConstraint">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -664,6 +688,9 @@
                default="50"
                option="de.cau.cs.kieler.kiml.ogdf.option.minDistCC">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.sizeConstraint">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -691,6 +718,9 @@
          <knownOption
                default="16"
                option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
       </layoutAlgorithm>
    </extension>

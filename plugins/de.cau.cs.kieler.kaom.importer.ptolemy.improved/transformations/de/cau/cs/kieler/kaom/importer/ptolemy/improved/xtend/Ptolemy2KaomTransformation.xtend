@@ -424,7 +424,7 @@ class Ptolemy2KaomTransformation {
         val ports = new ArrayList<Port>()
         
         try {
-            ptolemy.getPortsFromImplementation(entityOrClass)
+            ports.addAll(ptolemy.getPortsFromImplementation(entityOrClass))
         } catch (Exception e) {
             warnings.add(new Status(
                 IStatus::WARNING,

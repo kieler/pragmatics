@@ -566,6 +566,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
         if (advancedAnnotationsHandling) {
             PtolemyAnnotationHandler annotationHandler = new PtolemyAnnotationHandler(
                     (XMLResource) srcResource, ptModel, kaomModel);
+            
             annotationHandler.handleAnnotations();
         }
         

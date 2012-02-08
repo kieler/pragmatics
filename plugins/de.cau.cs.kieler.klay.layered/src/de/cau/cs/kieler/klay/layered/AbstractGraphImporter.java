@@ -195,31 +195,37 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         float portOffset = portDummy.getProperty(LayoutOptions.OFFSET);
         
         // Get some properties of the graph
-        KVector size = graph.getSize();
+        KVector graphSize = graph.getSize();
         LInsets.Double insets = graph.getInsets();
         float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
-        KVector offset = graph.getOffset();
+        KVector graphOffset = graph.getOffset();
         
         // The exact coordinates depend on the port's side...
         switch (portDummy.getProperty(Properties.EXT_PORT_SIDE)) {
         case NORTH:
-            portPosition.x += insets.left + borderSpacing + offset.x - (portWidth / 2.0);
+            portPosition.x += insets.left + borderSpacing + graphOffset.x - (portWidth / 2.0);
             portPosition.y = -portHeight - portOffset;
+            portDummy.getPosition().y = -(insets.top + borderSpacing + portOffset + graphOffset.y);
             break;
         
         case EAST:
-            portPosition.x = size.x + insets.left + insets.right + 2 * borderSpacing + portOffset;
-            portPosition.y += insets.top + borderSpacing + offset.y - (portHeight / 2.0);
+            portPosition.x = graphSize.x + insets.left + insets.right + 2 * borderSpacing + portOffset;
+            portPosition.y += insets.top + borderSpacing + graphOffset.y - (portHeight / 2.0);
+            portDummy.getPosition().x = graphSize.x + insets.right + borderSpacing + portOffset
+                    - graphOffset.x;
             break;
         
         case SOUTH:
-            portPosition.x += insets.left + borderSpacing + offset.x - (portWidth / 2.0);
-            portPosition.y = size.y + insets.top + insets.bottom + 2 * borderSpacing + portOffset;
+            portPosition.x += insets.left + borderSpacing + graphOffset.x - (portWidth / 2.0);
+            portPosition.y = graphSize.y + insets.top + insets.bottom + 2 * borderSpacing + portOffset;
+            portDummy.getPosition().y = graphSize.y + insets.bottom + borderSpacing + portOffset
+                    - graphOffset.y;
             break;
         
         case WEST:
             portPosition.x = -portWidth - portOffset;
-            portPosition.y += insets.top + borderSpacing + offset.y - (portHeight / 2.0);
+            portPosition.y += insets.top + borderSpacing + graphOffset.y - (portHeight / 2.0);
+            portDummy.getPosition().x = -(insets.left + borderSpacing + portOffset + graphOffset.x);
             break;
         }
         

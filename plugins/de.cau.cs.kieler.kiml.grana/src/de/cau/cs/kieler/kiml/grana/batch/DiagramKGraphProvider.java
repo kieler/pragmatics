@@ -117,7 +117,7 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
                 // layout if the option is set
                 if (layoutBeforeAnalysis) {
                     DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
-                    IStatus status = layoutEngine.layout(mapping, monitor.subTask(1), null);
+                    IStatus status = layoutEngine.layout(mapping, monitor.subTask(1));
                     if (!status.isOK()) {
                         if (!initialEditors.contains(editorPart)) {
                             page.closeEditor(editorPart, false);

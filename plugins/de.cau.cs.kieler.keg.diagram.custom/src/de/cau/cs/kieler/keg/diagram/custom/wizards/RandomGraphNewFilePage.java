@@ -38,13 +38,17 @@ import de.cau.cs.kieler.keg.diagram.custom.KEGDiagramPlugin;
 public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
 
     /** the preference key for the number of graphs. */
-    private static final String PREFERENCE_NUMBER_OF_GRAPHS = "randomWizard.numberOfGraphs"; //$NON-NLS-1$
+    private static final String PREFERENCE_NUMBER_OF_GRAPHS
+            = "randomWizard.numberOfGraphs"; //$NON-NLS-1$
     /** the preference key for the automatic creation of diagram files. */
-    private static final String PREFERENCE_DIAGRAM_FILES = "randomWizard.diagramFiles"; //$NON-NLS-1$
+    private static final String PREFERENCE_DIAGRAM_FILES
+            = "randomWizard.diagramFiles"; //$NON-NLS-1$
     /** the preference key for the automatic opening of diagram files. */
-    private static final String PREFERENCE_OPEN_DIAGRAM_FILES = "randomWizard.openDiagramFiles"; //$NON-NLS-1$
+    private static final String PREFERENCE_OPEN_DIAGRAM_FILES
+            = "randomWizard.openDiagramFiles"; //$NON-NLS-1$
     /** the preference key for the filename. */
-    private static final String PREFERENCE_FILENAME = "randomWizard.filename"; //$NON-NLS-1$
+    private static final String PREFERENCE_FILENAME
+            = "randomWizard.filename"; //$NON-NLS-1$
 
     /** the number of graphs to be created. */
     private int numberOfGraphs;

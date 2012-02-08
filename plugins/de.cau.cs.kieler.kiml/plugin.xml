@@ -61,7 +61,7 @@
                option="de.cau.cs.kieler.expandNodes">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.fixedSize">
+               option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
                default="1.3"
@@ -155,27 +155,12 @@
       </layoutOption>
       <layoutOption
             advanced="true"
-            default="false"
-            description="Whether the node should be regarded as a comment box instead of a regular node."
-            id="de.cau.cs.kieler.commentBox"
-            name="Comment Box"
-            type="boolean">
-      </layoutOption>
-      <layoutOption
-            advanced="true"
             appliesTo="parents"
             default="false"
             description="Whether additional debug information shall be displayed"
             id="de.cau.cs.kieler.debugMode"
             name="Debug Mode"
             type="boolean">
-      </layoutOption>
-      <layoutOption
-            advanced="true"
-            description="Identifier of a diagram type that is associated with the children of the respective node"
-            id="de.cau.cs.kieler.diagramType"
-            name="Diagram Type"
-            type="string">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
@@ -196,36 +181,11 @@
             type="enum">
       </layoutOption>
       <layoutOption
-            appliesTo="edges"
-            class="de.cau.cs.kieler.kiml.options.EdgeType"
-            default="NONE"
-            description="The type of the edge."
-            id="de.cau.cs.kieler.edgeType"
-            name="Edge Type"
-            type="enum">
-      </layoutOption>
-      <layoutOption
             appliesTo="parents"
             default="false"
             description="If active, nodes are expanded to fill the area of their parent"
             id="de.cau.cs.kieler.expandNodes"
             name="Expand Nodes"
-            type="boolean">
-      </layoutOption>
-      <layoutOption
-            appliesTo="nodes"
-            default="true"
-            description="Defines whether the size of a node is fixed"
-            id="de.cau.cs.kieler.fixedSize"
-            name="Fixed Size"
-            type="boolean">
-      </layoutOption>
-      <layoutOption
-            appliesTo="nodes"
-            default="false"
-            description="Whether the node should be handled as a hypernode"
-            id="de.cau.cs.kieler.hypernode"
-            name="Hypernode"
             type="boolean">
       </layoutOption>
       <layoutOption
@@ -260,29 +220,6 @@
             type="string">
       </layoutOption>
       <layoutOption
-            appliesTo="parents,nodes,edges,ports,labels"
-            default="false"
-            description="Indicates that no layout should be done for the diagram part"
-            id="de.cau.cs.kieler.noLayout"
-            name="No Layout"
-            type="boolean">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            description="Whether each connected component should be processed separately"
-            id="de.cau.cs.kieler.separateConnComp"
-            name="Separate Connected Components"
-            type="boolean">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="-1.0"
-            description="Overall setting for the minimal amount of space to be left between objects"
-            id="de.cau.cs.kieler.spacing"
-            name="Spacing"
-            type="float">
-      </layoutOption>
-      <layoutOption
             appliesTo="nodes"
             class="de.cau.cs.kieler.kiml.options.PortConstraints"
             default="UNDEFINED"
@@ -313,6 +250,126 @@
             name="Randomization Seed"
             type="int">
       </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="Whether each connected component should be processed separately"
+            id="de.cau.cs.kieler.separateConnComp"
+            name="Separate Connected Components"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="nodes"
+            class="de.cau.cs.kieler.kiml.options.SizeConstraint"
+            default="FIXED"
+            description="Whether the size of a node is fixed, or how to minimize its size"
+            id="de.cau.cs.kieler.sizeConstraint"
+            name="Size Constraint"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="-1.0"
+            description="Overall setting for the minimal amount of space to be left between objects"
+            id="de.cau.cs.kieler.spacing"
+            name="Spacing"
+            type="float">
+      </layoutOption>
+     <layoutOption
+           advanced="true"
+           default="false"
+           description="Whether the node should be regarded as a comment box instead of a regular node."
+           id="de.cau.cs.kieler.commentBox"
+           name="Comment Box (programmatic)"
+           type="boolean">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           description="Identifier of a diagram type that is associated with the children of the respective node"
+           id="de.cau.cs.kieler.diagramType"
+           name="Diagram Type (programmatic)"
+           type="string">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           class="de.cau.cs.kieler.kiml.options.EdgeLabelPlacement"
+           default="UNDEFINED"
+           description="Gives a hint on where to put edge labels"
+           id="de.cau.cs.kieler.edgeLabelPlacement"
+           name="Edge Label Placement (programmatic)"
+           type="enum">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           class="de.cau.cs.kieler.kiml.options.EdgeType"
+           default="NONE"
+           description="The type of the edge."
+           id="de.cau.cs.kieler.edgeType"
+           name="Edge Type (programmatic)"
+           type="enum">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           description="Font name used for a label"
+           id="de.cau.cs.kieler.fontName"
+           name="Font Name (programmatic)"
+           type="string">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           description="Font size used for a label"
+           id="de.cau.cs.kieler.fontSize"
+           name="Font Size (programmatic)"
+           type="int">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           default="false"
+           description="Whether the node should be handled as a hypernode"
+           id="de.cau.cs.kieler.hypernode"
+           name="Hypernode (programmatic)"
+           type="boolean">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           default="0"
+           description="The minimal height to which a node can be reduced"
+           id="de.cau.cs.kieler.minHeight"
+           name="Minimal Height (programmatic)"
+           type="float">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           default="0"
+           description="The minimal width to which a node can be reduced"
+           id="de.cau.cs.kieler.minWidth"
+           name="Minimal Width (programmatic)"
+           type="float">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           default="false"
+           description="Indicates that no layout should be done for the diagram part"
+           id="de.cau.cs.kieler.noLayout"
+           name="No Layout (programmatic)"
+           type="boolean">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           default="0"
+           description="The offset of ports on the node border"
+           id="de.cau.cs.kieler.offset"
+           name="Port Offset (programmatic)"
+           type="float">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           class="de.cau.cs.kieler.kiml.options.PortSide"
+           default="UNDEFINED"
+           description="The side of a node on which a port is situated"
+           id="de.cau.cs.kieler.portSide"
+           name="Port Side (programmatic)"
+           type="enum">
+     </layoutOption>
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.layoutInfo">

@@ -458,15 +458,21 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             
             // for connections that support splines the control points are passed without change
             EdgeRouting edgeRouting = edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
-            boolean splineActive = false;
-            if (edgeFigure instanceof SplineConnection) {
-                if (((SplineConnection) edgeFigure).getSplineMode() != SplineConnection.SPLINE_OFF) {
-                    splineActive = true;
+            if (edgeRouting == EdgeRouting.SPLINES) {
+                if (edgeFigure instanceof SplineConnection) {
+                    SplineConnection connection = (SplineConnection) edgeFigure;
+                    if (connection.getSplineMode() == SplineConnection.SPLINE_OFF) {
+                        connection.setSplineMode(SplineConnection.SPLINE_CUBIC);
+                    }
+                } else if (bendPoints.size() >= 1) {
+                    // treat the edge points as control points for splines
+                    pointList = SplineUtilities.approximateSpline(pointList);
                 }
-            }
-            if (edgeRouting == EdgeRouting.SPLINES && bendPoints.size() >= 1 && !splineActive) {
-                // treat the edge points as control points for splines
-                pointList = SplineUtilities.approximateSpline(pointList);
+            } else if (edgeFigure instanceof SplineConnection) {
+                SplineConnection connection = (SplineConnection) edgeFigure;
+                if (connection.getSplineMode() != SplineConnection.SPLINE_OFF) {
+                    connection.setSplineMode(SplineConnection.SPLINE_OFF);
+                }
             }
 
             pointListMap.put(edgeLayout, pointList);

@@ -28,18 +28,22 @@ import org.ptolemy.moml.DocumentRoot;
 import org.ptolemy.moml.EntityType;
 import org.ptolemy.moml.PropertyType;
 
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.AnnotationsFactory;
 import de.cau.cs.kieler.core.annotations.AnnotationsPackage;
 import de.cau.cs.kieler.core.annotations.ReferenceAnnotation;
 import de.cau.cs.kieler.core.annotations.TypedStringAnnotation;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kaom.Entity;
 
 
 /**
- * Handles Ptolemy annotations and attaches them to the entity they are most
- * likely annotating.
+ * Handles Ptolemy annotations and their associations with actors. For each model
+ * transformation, a new instance must be created and the {@link #handleAnnotations()}
+ * method called.
  * 
  * <p>In Ptolemy, certain annotations in a model are like comments in source code.
  * There are two ways how they can be represented in MOML:</p>
@@ -99,22 +103,63 @@ import de.cau.cs.kieler.kaom.Entity;
  * does contain XML (usually an {@code svg} element and its children), which
  * disturbs the quiet peace of the parser. (which, in turn, disturbs my quiet peace.)
  * The {@code configure} element and its children are then dropped by the parser
- * during the transformation and are added to a list of unknown features. That's
- * where this handler comes in.</p>
+ * during the transformation and are added to a list of unknown features. Recovering
+ * such comments is one of the two tasks of this handler.</p>
  * 
- * <p>The handler is hooked into the transformation workflow just before the
- * transformed model is written to a file. It takes a look at the transformed
- * model and looks for unknown elements. If it finds anything matching the second
- * comment style, it adds a {@code TypedStringAnnotation} to the transformed
- * model element that contains the annotation's text, thus preserving the comment's
- * text even in the face of severely hopeless circumstances. Hurray!</p>
+ * <p>The second task is recognizing links between comments and model elements. Such
+ * links indicate that a comment is providing additional information for a model
+ * element, and should be preserved. In the MoML file, such a link is represented by
+ * the following property:</p>
  * 
- * <p>After that's done, it applies a heuristic to each comment annotation, trying
- * to find the entity it is probably annotating. If it finds any, the comment is
- * attached to it by means of a {@code ReferenceAnnotation} named {@code attachedTo}.
- * If we don't find one, that {@code ReferenceAnnotation} is still added to the
- * comment, but with an empty reference; thus, the presence of this annotation
- * can be used to find out if an annotation represents a comment or not.</p>
+ * <pre>
+ *   &lt;property
+ *         name="_location"
+ *         class="ptolemy.kernel.util.RelativeLocation"
+ *         value="[-195.0, -80.0]"&gt;
+ *         
+ *         &lt;property
+ *               name="relativeTo"
+ *               class="ptolemy.kernel.util.StringAttribute"
+ *               value="Const"/&gt;
+ *         &lt;property
+ *               name="relativeToElementName"
+ *               class="ptolemy.kernel.util.StringAttribute"
+ *               value="entity"/&gt;
+ *   &lt;/property&gt;
+ * </pre>
+ * 
+ * <p>That is, the annotation's {@code _location} property is extended by two additional
+ * properties that define that the location is to be interpreted relative to a given
+ * model element. So far, we only support linking comments to entities, but that could
+ * well be changed.</p>
+ * 
+ * <p>The handler is executed on a Ptolemy model once the model was transformed and
+ * optimized. It takes a look at the transformed model and starts by trying to recover
+ * lost comments, that is, comments of the second of the above styles. If it finds any,
+ * it adds a {@code TypedStringAnnotation} to the transformed model element that contains
+ * the annotation's text, thus preserving the comment's text even in the face of severely
+ * hopeless circumstances. Hurray!</p>
+ * 
+ * <p>After that's done, the model is traversed in an attempt to link annotations to the
+ * model elements they are most likely annotating. There are two cases here:</p>
+ * 
+ * <ol>
+ *   <li>The model contains explicit links between at least one annotation and model
+ *   element. In this case, we assume that the model developer added all the links he
+ *   wants explicitly and only transform such links into the KAOM way of representing
+ *   them.</li>
+ *   
+ *   <li>The model does not contain any explicit such link. In this case, a heuristic
+ *   is applied to each comment annotation, trying to find the entity it is probably
+ *   annotating. The heuristic simply looks for the nearest entity and checks if the
+ *   distance is within a certain threshold value.
+ * </ol>
+ * 
+ * <p>The link between a comment and a model element is represented in the KAOM model
+ * by means of a {@code ReferenceAnnotation} named {@code attachedTo}. This annotation
+ * is added to all comments, whether they are actually attached to anything or not. Thus,
+ * the presence of this annotation indicates whether an annotation represents a comment
+ * or not.</p>
  * 
  * <p>This is still kind of experimental. It does work, but the heuristic is quite
  * simpllistic and doesn't always give correct results.</p>
@@ -125,32 +170,48 @@ public class PtolemyAnnotationHandler {
     
     // CONSTANTS
     /**
-     * Name of the attachedTo annotation.
+     * Name of the {@code attachedTo} annotation.
      */
     private static final String ANNOTATIONS_ATTACHMENT = "attachedTo"; //$NON-NLS-1$
     
     /**
-     * The icon description annotation.
+     * Name of the {@code _iconDescription} annotation.
      */
     private static final String ANNOTATIONS_ICON_DESCRIPTION = "_iconDescription"; //$NON-NLS-1$
     
     /**
-     * The location annotation.
+     * Name of the {@code _location} annotation.
      */
     private static final String ANNOTATION_LOCATION = "_location"; //$NON-NLS-1$
     
     /**
-     * Name of the text annotation.
+     * Name of the {@code relativeTo} annotation.
+     */
+    private static final String ANNOTATION_RELATIVE_TO = "relativeTo"; //$NON-NLS-1$
+    
+    /**
+     * Name of the {@code relativeToElementName} annotation.
+     */
+    private static final String ANNOTATION_RELATIVE_TO_ELEMENT_NAME =
+            "relativeToElementName"; //$NON-NLS-1$ 
+    
+    /**
+     * Name of the {@code text} annotation.
      */
     private static final String ANNOTATIONS_TEXT = "text"; //$NON-NLS-1$
     
     /**
-     * Tag of an SVG element.
+     * The element name identifying Ptolemy entities.
+     */
+    private static final String ELEMENT_NAME_ENTITY = "entity"; //$NON-NLS-1$
+    
+    /**
+     * Tag of an {@code svg} element.
      */
     private static final String ELEM_SVG = "svg"; //$NON-NLS-1$
     
     /**
-     * Tag of a TEXT element.
+     * Tag of a {@code text} element.
      */
     private static final String ELEM_TEXT = "text"; //$NON-NLS-1$
     
@@ -197,6 +258,22 @@ public class PtolemyAnnotationHandler {
      */
     private Map<EObject, AnyType> unknownFeatures = new HashMap<EObject, AnyType>();
     
+    /**
+     * A list of attachment annotations for comments that were generated from explicit
+     * attachments done by the Ptolemy model developer. If any of these are present,
+     * the distance heuristic determining comment attachments is disabled. These
+     * annotations are generated while traversing the model tree, and applied once that
+     * is over with.
+     */
+    private List<Pair<Annotatable, Annotation>> explicitAttachments = Lists.newArrayList();
+    
+    /**
+     * A list of attachment annotations for comments that were generated using the
+     * distance heuristic. These annotations are generated while traversing the model tree,
+     * and applied once that is over with if the list of explicit attachments is empty.
+     */
+    private List<Pair<Annotatable, Annotation>> heuristicAttachments = Lists.newArrayList();
+    
     
     /**
      * Creates a new annotation handler for the given XML resource of the input model, the Ptolemy input
@@ -220,13 +297,14 @@ public class PtolemyAnnotationHandler {
      */
     public void handleAnnotations() {
         traverseModelTree(kaomModel);
+        applyAttachmentAnnotations();
     }
     
     
     /**
      * Recursively iterates through the model tree looking for annotations
      * representing comments. Such annotations are marked as comments and
-     * an attempt is made to attach them to an entity.
+     * an attempt is made to attach them to a model element.
      * 
      * @param node the current node being examined.
      */
@@ -247,7 +325,8 @@ public class PtolemyAnnotationHandler {
     /**
      * Determines whether or not the given annotation represents a comment. If
      * so, normalizes the annotation (see item 1 of the class description) and
-     * tries to attach it to an entity.
+     * tries to attach it to an entity. An attempt is also made to determine
+     * which model object to connect the comment to.
      * 
      * @param parent the annotation's parent entity.
      * @param annotation the annotation to look at.
@@ -278,135 +357,9 @@ public class PtolemyAnnotationHandler {
         }
         
         if (isComment) {
-            // Find the entity nearest to the annotation; may be null
-            Entity nearestEntity = findNearestEntity(annotation);
-            
-            // Annotate the annotation with a reference annotation
-            AnnotationsFactory annotationFactory =
-                AnnotationsPackage.eINSTANCE.getAnnotationsFactory();
-            
-            ReferenceAnnotation referenceAnnotation = annotationFactory.createReferenceAnnotation();
-            referenceAnnotation.setName(ANNOTATIONS_ATTACHMENT);
-            referenceAnnotation.setObject(nearestEntity);
-            
-            annotation.getAnnotations().add(referenceAnnotation);
+            // Try to attach the comment annotation to an entity
+            attemptCommentAttachment(annotation);
         }
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////////////
-    // Comment Attachment Handling
-    
-    /**
-     * Finds the entity nearest to an annotation provided they are within a certain
-     * distance of one another.
-     * 
-     * @param annotation the annotation for which to find a nearest entity.
-     * @return the nearest entity, or {@code null} if there was no nearest entity
-     *         in a {@link #MAX_ATTACHMENT_DISTANCE} radius of the annotation.
-     */
-    private Entity findNearestEntity(final Annotation annotation) {
-        // Find the parent and position of the annotation
-        Entity annotationParent = (Entity) annotation.eContainer();
-        Point2D.Double annotationLocation = getLocation(annotation);
-        
-        if (annotationLocation == null) {
-            return null;
-        }
-        
-        // Iterate through the parent's child entities, looking for one that's closest
-        // to the annotation
-        double minDistance = MAX_ATTACHMENT_DISTANCE + 1.0;
-        Entity nearestEntity = null;
-        
-        for (Entity entity : annotationParent.getChildEntities()) {
-            // Find the entity's location
-            Point2D.Double entityLocation = getLocation(entity);
-            if (entityLocation == null) {
-                continue;
-            }
-            
-            // Determine the distance between the entity and the annotation
-            double distance = computeDistance(annotation, annotationLocation, entity,
-                    entityLocation);
-            
-            if (distance < minDistance && distance <= MAX_ATTACHMENT_DISTANCE) {
-                minDistance = distance;
-                nearestEntity = entity;
-            }
-        }
-        
-        return nearestEntity;
-    }
-    
-    /**
-     * Computes the distance between the given annotation and entity.
-     * 
-     * <p>This simple implementation just uses the annotation's and entity's locations
-     * and computes the squared euclidian distance. More sophisticated implementations
-     * could take the annotation and entity sizes into account.</p>
-     * 
-     * @param annotation the annotation.
-     * @param annotationLocation the annotation's location.
-     * @param entity the entity.
-     * @param entityLocation the entity's location.
-     * @return a distance according to some metric.
-     */
-    private double computeDistance(final Annotation annotation,
-            final Point2D.Double annotationLocation, final Entity entity,
-            final Point2D.Double entityLocation) {
-        
-        return (annotationLocation.x - entityLocation.x)
-             * (annotationLocation.x - entityLocation.x)
-             + (annotationLocation.y - entityLocation.y)
-             * (annotationLocation.y - entityLocation.y);
-    }
-    
-    /**
-     * Tries to find the given object's location. This is done by looking for
-     * a {@code location} annotation.
-     * 
-     * @param object the object whose position to find.
-     * @return the object's location.
-     */
-    private Point2D.Double getLocation(final Annotatable object) {
-        // We're turning off the MagicNumber checks because we have a legitimate use
-        // for one...
-        // CHECKSTYLEOFF MagicNumber
-        
-        // Find the location annotation
-        Annotation locationAnnotation = object.getAnnotation(ANNOTATION_LOCATION);
-        if (locationAnnotation == null) {
-            return null;
-        } else if (!(locationAnnotation instanceof TypedStringAnnotation)) {
-            return null;
-        } else {
-            // Split the location string into an array of components. Locations have
-            // one of the following three representations:
-            //   "[140.0, 20.0]"     "{140.0, 20.0}"     "140.0, 20.0"
-            String locationString = ((TypedStringAnnotation) locationAnnotation).getValue();
-            String[] locationArray = locationString.split("[\\s,\\[\\]{}]+"); //$NON-NLS-1$
-            
-            // There must be two or three components: an optional empty first string,
-            // (occurs with the first two representations outlined above) and the x
-            // and y values.
-            int locationArrayLength = locationArray.length;
-            if (locationArrayLength == 2 || locationArrayLength == 3) {
-                try {
-                    Point2D.Double result = new Point2D.Double();
-                    result.x = Double.valueOf(locationArray[locationArrayLength - 2]);
-                    result.y = Double.valueOf(locationArray[locationArrayLength - 1]);
-                    
-                    return result;
-                } catch (NumberFormatException e) {
-                    return null;
-                }
-            } else {
-                return null;
-            }
-        }
-        
-        // CHECKSTYLEON MagicNumber
     }
 
 
@@ -634,5 +587,243 @@ public class PtolemyAnnotationHandler {
         }
         
         return null;
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // Comment Attachment Handling
+    
+    /**
+     * Applies the attachment annotations generated while traversing the model tree to the
+     * respective comment annotations. If there are any explicit attachments, only those are
+     * applied. If not, the heuristically determined attachments are applied.
+     */
+    private void applyAttachmentAnnotations() {
+        List<Pair<Annotatable, Annotation>> attachmentsToApply =
+                explicitAttachments.isEmpty() ? heuristicAttachments : explicitAttachments;
+        
+        for (Pair<Annotatable, Annotation> attachment : attachmentsToApply) {
+            attachment.getFirst().getAnnotations().add(attachment.getSecond());
+        }
+    }
+    
+    /**
+     * Tries to generate a comment attachment for the given comment annotation. The attachment
+     * is produced in the form of an annotation, placed in one of the two attachment annotation
+     * lists. 
+     * 
+     * @param annotation the comment annotation to try to find an attached entity for.
+     */
+    private void attemptCommentAttachment(final Annotation annotation) {
+        Entity attachedEntity = null;
+        boolean explicitlyDefinedAttachment = true;
+        
+        // We first try to find an explicit attachment
+        attachedEntity = findExplicitlyAttachedEntity(annotation);
+        
+        // We may not have found an explicit attachment...
+        if (attachedEntity == null) {
+            explicitlyDefinedAttachment = false;
+            
+            // If the heuristic is still active (that is, if we haven't found any explicit
+            // attachment), summon it!
+            if (explicitAttachments.isEmpty()) {
+                attachedEntity = findNearestEntity(annotation);
+            }
+        }
+        
+        // Generate an attachment annotation
+        AnnotationsFactory annotationFactory =
+            AnnotationsPackage.eINSTANCE.getAnnotationsFactory();
+        
+        ReferenceAnnotation referenceAnnotation = annotationFactory.createReferenceAnnotation();
+        referenceAnnotation.setName(ANNOTATIONS_ATTACHMENT);
+        referenceAnnotation.setObject(attachedEntity);
+        
+        // We directly annotate the comment if we couldn't find an attached entity; if we
+        // were instead able to find one, we add the attachment annotation to one of the
+        // two lists
+        if (attachedEntity == null) {
+            annotation.getAnnotations().add(referenceAnnotation);
+        } else {
+            if (explicitlyDefinedAttachment) {
+                explicitAttachments.add(
+                        new Pair<Annotatable, Annotation>(annotation, referenceAnnotation));
+            } else {
+                heuristicAttachments.add(
+                        new Pair<Annotatable, Annotation>(annotation, referenceAnnotation));
+            }
+        }
+    }
+    
+    /**
+     * Looks for explicit attachment information for the given comment annotation.
+     * 
+     * @param annotation the annotation whose explicit attachment to find.
+     * @return an entity explicitly attached to the given annotation, or {@code null} if no such
+     *         entity could be found.
+     */
+    private Entity findExplicitlyAttachedEntity(final Annotation annotation) {
+        // Find the location annotation
+        Annotation locAnnotation = annotation.getAnnotation(ANNOTATION_LOCATION);
+        if (locAnnotation == null) {
+            return null;
+        }
+        
+        // Check if the location is marked as being relative
+        TypedStringAnnotation relativeToAnnotation =
+                (TypedStringAnnotation) locAnnotation.getAnnotation(ANNOTATION_RELATIVE_TO);
+        TypedStringAnnotation relativeToElementNameAnnotation =
+                (TypedStringAnnotation) locAnnotation.getAnnotation(ANNOTATION_RELATIVE_TO_ELEMENT_NAME);
+        if (relativeToAnnotation == null || relativeToElementNameAnnotation == null) {
+            return null;
+        }
+        
+        // Check if we support the element type the annotation is relative to
+        if (relativeToElementNameAnnotation.getValue() == null
+                || !relativeToElementNameAnnotation.getValue().equals(ELEMENT_NAME_ENTITY)) {
+            
+            return null;
+        }
+        
+        // Otherwise, look for an entity with the given name in the comment annotation's hierarchy
+        // level of the model
+        String entityName = relativeToAnnotation.getValue();
+        
+        return findNamedEntity(annotation, entityName);
+    }
+    
+    /**
+     * From the siblings of the given object, finds the entity with the given name.
+     * 
+     * @param sibling sibling of the entity.
+     * @param name
+     * @return
+     */
+    private Entity findNamedEntity(final Annotation sibling, final String name) {
+        // The annotation's parent must be an entity
+        if (sibling.eContainer() instanceof Entity) {
+            // Find a child entity with the given name
+            for (Entity child : ((Entity) sibling.eContainer()).getChildEntities()) {
+                if (child.getName().equals(name)) {
+                    return child;
+                }
+            }
+        }
+        
+        // We didn't find anything
+        return null;
+    }
+    
+    /**
+     * Finds the entity nearest to an annotation provided they are within a certain
+     * distance of one another.
+     * 
+     * @param annotation the annotation for which to find a nearest entity.
+     * @return the nearest entity, or {@code null} if there was no nearest entity
+     *         in a {@link #MAX_ATTACHMENT_DISTANCE} radius of the annotation.
+     */
+    private Entity findNearestEntity(final Annotation annotation) {
+        // Find the parent and position of the annotation
+        Entity annotationParent = (Entity) annotation.eContainer();
+        Point2D.Double annotationLocation = getLocation(annotation);
+        
+        if (annotationLocation == null) {
+            return null;
+        }
+        
+        // Iterate through the parent's child entities, looking for one that's closest
+        // to the annotation
+        double minDistance = MAX_ATTACHMENT_DISTANCE + 1.0;
+        Entity nearestEntity = null;
+        
+        for (Entity entity : annotationParent.getChildEntities()) {
+            // Find the entity's location
+            Point2D.Double entityLocation = getLocation(entity);
+            if (entityLocation == null) {
+                continue;
+            }
+            
+            // Determine the distance between the entity and the annotation
+            double distance = computeDistance(annotation, annotationLocation, entity,
+                    entityLocation);
+            
+            if (distance < minDistance && distance <= MAX_ATTACHMENT_DISTANCE) {
+                minDistance = distance;
+                nearestEntity = entity;
+            }
+        }
+        
+        return nearestEntity;
+    }
+    
+    /**
+     * Computes the distance between the given annotation and entity.
+     * 
+     * <p>This simple implementation just uses the annotation's and entity's locations
+     * and computes the squared euclidian distance. More sophisticated implementations
+     * could take the annotation and entity sizes into account.</p>
+     * 
+     * @param annotation the annotation.
+     * @param annotationLocation the annotation's location.
+     * @param entity the entity.
+     * @param entityLocation the entity's location.
+     * @return a distance according to some metric.
+     */
+    private double computeDistance(final Annotation annotation,
+            final Point2D.Double annotationLocation, final Entity entity,
+            final Point2D.Double entityLocation) {
+        
+        return (annotationLocation.x - entityLocation.x)
+             * (annotationLocation.x - entityLocation.x)
+             + (annotationLocation.y - entityLocation.y)
+             * (annotationLocation.y - entityLocation.y);
+    }
+    
+    /**
+     * Tries to find the given object's location. This is done by looking for
+     * a {@code location} annotation.
+     * 
+     * @param object the object whose position to find.
+     * @return the object's location.
+     */
+    private Point2D.Double getLocation(final Annotatable object) {
+        // We're turning off the MagicNumber checks because we have a legitimate use
+        // for one...
+        // CHECKSTYLEOFF MagicNumber
+        
+        // Find the location annotation
+        Annotation locationAnnotation = object.getAnnotation(ANNOTATION_LOCATION);
+        if (locationAnnotation == null) {
+            return null;
+        } else if (!(locationAnnotation instanceof TypedStringAnnotation)) {
+            return null;
+        } else {
+            // Split the location string into an array of components. Locations have
+            // one of the following three representations:
+            //   "[140.0, 20.0]"     "{140.0, 20.0}"     "140.0, 20.0"
+            String locationString = ((TypedStringAnnotation) locationAnnotation).getValue();
+            String[] locationArray = locationString.split("[\\s,\\[\\]{}]+"); //$NON-NLS-1$
+            
+            // There must be two or three components: an optional empty first string,
+            // (occurs with the first two representations outlined above) and the x
+            // and y values.
+            int locationArrayLength = locationArray.length;
+            if (locationArrayLength == 2 || locationArrayLength == 3) {
+                try {
+                    Point2D.Double result = new Point2D.Double();
+                    result.x = Double.valueOf(locationArray[locationArrayLength - 2]);
+                    result.y = Double.valueOf(locationArray[locationArrayLength - 1]);
+                    
+                    return result;
+                } catch (NumberFormatException e) {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        }
+        
+        // CHECKSTYLEON MagicNumber
     }
 }

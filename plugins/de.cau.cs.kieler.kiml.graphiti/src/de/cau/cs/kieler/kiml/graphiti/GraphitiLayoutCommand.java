@@ -32,7 +32,6 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -47,6 +46,8 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.impl.KEdgeLayoutImpl;
+import de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -85,16 +86,23 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     }
 
     /**
-     * Adds the given element to this command.
+     * Adds the given element to this command, if it has been modified by a layout algorithm.
      * 
      * @param graphElement an element of the layout graph
      * @param pictogramElement the corresponding pictogram element
      */
     public void add(final KGraphElement graphElement,
             final PictogramElement pictogramElement) {
-        KGraphData layoutData = graphElement.getData(graphElement instanceof KEdge
-                ? KEdgeLayout.class : KShapeLayout.class);
-        if (!layoutData.getProperty(LayoutOptions.NO_LAYOUT)) {
+        boolean modified = false;
+        if (graphElement instanceof KEdge) {
+            KEdgeLayoutImpl edgeLayout = graphElement.getData(KEdgeLayoutImpl.class);
+            modified = edgeLayout.isModified();
+        } else {
+            KShapeLayoutImpl shapeLayout = graphElement.getData(KShapeLayoutImpl.class);
+            modified = shapeLayout.isModified();
+        }
+        
+        if (modified) {
             elements.add(new Pair<KGraphElement, PictogramElement>(graphElement,
                     pictogramElement));
         }

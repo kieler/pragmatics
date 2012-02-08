@@ -74,7 +74,7 @@
                option="de.cau.cs.kieler.aspectRatio">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.fixedSize">
+               option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
                default="RIGHT"

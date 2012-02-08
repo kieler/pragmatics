@@ -447,6 +447,8 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         options.setProperty(RandomGraphGenerator.EDGE_DIRECTED_CHANCE,
                 utilityPage.getEdgeDirectedChance());
         options.setProperty(RandomGraphGenerator.PORTS, utilityPage.getPorts());
+        options.setProperty(RandomGraphGenerator.CROSS_HIERARCHY_EDGES,
+                utilityPage.getCrossHierarchyEdges());
         return options;
     }
 

@@ -108,9 +108,8 @@ public final class LayoutOptions {
     public static final String NO_LAYOUT_ID = "de.cau.cs.kieler.noLayout";
     /**
      * No layout is done for the associated element. This is used to mark parts of a diagram to
-     * avoid their inclusion in the layout graph, or to mark parts of the layout graph to avoid
-     * their inclusion when the layout results are transferred back to the diagram.
-     * [programmatically set]
+     * avoid their inclusion in the layout graph, or to mark parts of the layout graph to prevent
+     * layout engines from processing them. [programmatically set]
      */
     public static final IProperty<Boolean> NO_LAYOUT = new Property<Boolean>(NO_LAYOUT_ID, false);
     
@@ -130,20 +129,6 @@ public final class LayoutOptions {
      */
     public static final IProperty<PortSide> PORT_SIDE = new Property<PortSide>(PORT_SIDE_ID,
             PortSide.UNDEFINED);
-    
-    /** layout option key: rank of a port (integer).
-     * @deprecated */
-    public static final String PORT_RANK_ID = "de.cau.cs.kieler.portRank";
-    /** port rank property.
-     * @deprecated */
-    public static final IProperty<Integer> PORT_RANK = new Property<Integer>(PORT_RANK_ID, -1);
-    
-    /** layout option key: shape of a node (enum). */
-    public static final String SHAPE_ID = "de.cau.cs.kieler.shape";
-    /**
-     * Which shape is to be assumed for the associated node. [programmatically set]
-     */
-    public static final IProperty<Shape> SHAPE = new Property<Shape>(SHAPE_ID, Shape.UNDEFINED);
 
     
     ///////  USER INTERFACE LAYOUT OPTIONS  ///////
@@ -224,13 +209,6 @@ public final class LayoutOptions {
     public static final IProperty<Boolean> EXPAND_NODES = new Property<Boolean>(
             EXPAND_NODES_ID, false);
 
-    /** layout option key: size constraint for nodes (boolean). */
-    public static final String FIXED_SIZE_ID = "de.cau.cs.kieler.fixedSize";
-    /**
-     * Whether the size of the associated node is fixed.
-     */
-    public static final IProperty<Boolean> FIXED_SIZE = new Property<Boolean>(FIXED_SIZE_ID, true);
-
     /** layout option key: optimize layout for user interaction (boolean). */
     public static final String INTERACTIVE_ID = "de.cau.cs.kieler.interactive";
     /**
@@ -297,6 +275,16 @@ public final class LayoutOptions {
      */
     public static final IProperty<Boolean> SEPARATE_CC = new Property<Boolean>(SEPARATE_CC_ID);
 
+    /** layout option key: constraints for node sizes (boolean). */
+    public static final String SIZE_CONSTRAINT_ID = "de.cau.cs.kieler.sizeConstraint";
+    /**
+     * Constraint for modifying node size. If set to {@link SizeConstraint#FIXED} and the node is
+     * empty, its size is not changed. Otherwise it is minimized considering some properties,
+     * depending on the chosen minimization level.
+     */
+    public static final IProperty<SizeConstraint> SIZE_CONSTRAINT = new Property<SizeConstraint>(
+            SIZE_CONSTRAINT_ID, SizeConstraint.FIXED);
+    
     /** layout option key: minimal distance between elements (float). */
     public static final String SPACING_ID = "de.cau.cs.kieler.spacing";    
     /**

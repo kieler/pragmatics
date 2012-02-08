@@ -15,8 +15,6 @@ package de.cau.cs.kieler.kiml.gmf;
 
 import java.util.EnumSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.ListIterator;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
@@ -31,7 +29,6 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.gmf.runtime.notation.NotationFactory;
 import org.eclipse.gmf.runtime.notation.StringValueStyle;
-import org.eclipse.gmf.runtime.notation.Style;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Point;
@@ -46,8 +43,6 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
-import de.cau.cs.kieler.kiml.gmf.layoutoptions.KOption;
-import de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyle;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
 
@@ -86,31 +81,6 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
             }
         }
         return false;
-    }
-    
-    /** @deprecated TODO throw away after use */
-    private void checkDeprecatedStyle(final View view) {
-        ListIterator<Style> styleIter = view.getStyles().listIterator();
-        LinkedList<Object[]> options = new LinkedList<Object[]>();
-        while (styleIter.hasNext()) {
-            Style style = styleIter.next();
-            if (style instanceof LayoutOptionStyle) {
-                LayoutDataService dataService = LayoutDataService.getInstance();
-                for (KOption koption : ((LayoutOptionStyle) style).getOptions()) {
-                    LayoutOptionData<?> optionData = dataService.getOptionData(koption.getKey());
-                    if (optionData != null) {
-                        String prefix = koption.isDefault() ? DEF_PREFIX : PREFIX;
-                        if (getValue(optionData, prefix, view) == null) {
-                            options.add(new Object[] { optionData, koption.getValue(), prefix });
-                        }
-                    }
-                }
-                styleIter.remove();
-            }
-        }
-        for (Object[] option : options) {
-            setValue((LayoutOptionData<?>) option[0], option[1], (String) option[2], view);
-        }
     }
 
     /**
@@ -395,7 +365,6 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
             final Object value) {
         View view = context.getProperty(NOTATION_VIEW);
         if (view != null) {
-            checkDeprecatedStyle(view);
             if (context.getProperty(IMutableLayoutConfig.OPT_RECURSIVE)) {
                 if (value != null) {
                     removeValue(optionData, PREFIX, view, true);
@@ -450,7 +419,6 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
      */
     private void removeValue(final LayoutOptionData<?> optionData, final String prefix,
             final View view, final boolean recursive) {
-        checkDeprecatedStyle(view);
         String optionKey = prefix + optionData.getId();
         Iterator<?> iter = view.getStyles().iterator();
         while (iter.hasNext()) {
@@ -500,8 +468,6 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                 if (key.startsWith(PREFIX) || key.startsWith(DEF_PREFIX)) {
                     iter.remove();
                 }
-            } else if (obj instanceof LayoutOptionStyle) {
-                iter.remove();
             }
         }
         
