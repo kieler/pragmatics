@@ -497,9 +497,12 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             if (!trimmedComponentOrder.contains(node)) {
                 retList.add(node);
             } else {
+                assert (i < trimmedComponentOrder.size());
                 retList.add(trimmedComponentOrder.get(i));
+                // This element of trimmedComponentOrder is used up. 
+                // Go to the next. 
+                i++;
             }
-            i++;
         }
         assert (retList.size() == layerOrder.size());
         return retList;
