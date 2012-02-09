@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -13,6 +13,7 @@
  */
 
 package de.cau.cs.kieler.kaom.importer.ptolemy.wizards;
+
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -32,8 +33,8 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kaom.importer.ptolemy.DiagramsImporter;
-import de.cau.cs.kieler.kaom.importer.ptolemy.KaomImporterPtolemyPlugin;
 import de.cau.cs.kieler.kaom.importer.ptolemy.Messages;
+import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImportPlugin;
 
 
 /**
@@ -75,10 +76,9 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
         super();
         
         setWindowTitle(Messages.ImportDiagramsWizard_title);
-        setDefaultPageImageDescriptor(KaomImporterPtolemyPlugin.imageDescriptorFromPlugin(
-                KaomImporterPtolemyPlugin.PLUGIN_ID,
-                "icons/importdiagram_header.gif"));
-        setDialogSettings(KaomImporterPtolemyPlugin.getDefault().getDialogSettings());
+        setDefaultPageImageDescriptor(PtolemyImportPlugin.imageDescriptorFromPlugin(
+                PtolemyImportPlugin.PLUGIN_ID, "icons/importdiagram_header.gif")); //$NON-NLS-1$
+        setDialogSettings(PtolemyImportPlugin.getDefault().getDialogSettings());
         
         // Required for the import process
         setNeedsProgressMonitor(true);
@@ -154,9 +154,11 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
         // Save dialog settings
         optionsPage.saveDialogSettings();
         fileSystemSourcesPage.saveDialogSettings();
+        workspaceSourcesPage.saveDialogSettings();
         
         // Retrieve the user's settings
         boolean importFromFileSystem = optionsPage.isFileSystemSource();
+        boolean advancedAnnotationsHandling = optionsPage.isAdvancedAnnotationsHandling();
         boolean initializeDiagramFiles = optionsPage.isInitializeDiagramFiles();
         boolean overwriteWithoutWarning = optionsPage.isOverwriteWithoutWarning();
         List<File> sourceFiles = null;
@@ -178,7 +180,7 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
             } catch (Exception e) {
                 IStatus status = new Status(
                             IStatus.ERROR,
-                            KaomImporterPtolemyPlugin.PLUGIN_ID,
+                            PtolemyImportPlugin.PLUGIN_ID,
                             Messages.ImportDiagramsWizard_exceptions_fileListError,
                             e);
                 StatusManager.getManager().handle(status, StatusManager.BLOCK);
@@ -202,7 +204,7 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
             } catch (Exception e) {
                 IStatus status = new Status(
                             IStatus.ERROR,
-                            KaomImporterPtolemyPlugin.PLUGIN_ID,
+                            PtolemyImportPlugin.PLUGIN_ID,
                             Messages.ImportDiagramsWizard_exceptions_fileListError,
                             e);
                 StatusManager.getManager().handle(status, StatusManager.BLOCK);
@@ -215,13 +217,13 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
         
         // Create the importer and let it do its work
         DiagramsImporter importer = new DiagramsImporter(this, sourceFiles, targetContainerPath,
-                initializeDiagramFiles, overwriteWithoutWarning);
+                advancedAnnotationsHandling, initializeDiagramFiles, overwriteWithoutWarning);
         try {
             this.getContainer().run(true, true, importer);
         } catch (Exception e) {
             IStatus status = new Status(
                         IStatus.ERROR,
-                        KaomImporterPtolemyPlugin.PLUGIN_ID,
+                        PtolemyImportPlugin.PLUGIN_ID,
                         Messages.ImportDiagramsWizard_exceptions_modelImportError,
                         e);
             StatusManager.getManager().handle(status, StatusManager.BLOCK);
@@ -256,7 +258,7 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
             
             // Prepare the simplified status object
             MultiStatus simplifiedStatus = new MultiStatus(
-                    KaomImporterPtolemyPlugin.PLUGIN_ID,
+                    PtolemyImportPlugin.PLUGIN_ID,
                     importerStatus.getSeverity(),
                     simplifiedChildren,
                     message,

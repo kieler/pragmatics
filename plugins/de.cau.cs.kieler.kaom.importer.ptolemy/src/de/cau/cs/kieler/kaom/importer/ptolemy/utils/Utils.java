@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -15,10 +15,6 @@
 package de.cau.cs.kieler.kaom.importer.ptolemy.utils;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 
 
 /**
@@ -101,32 +97,6 @@ public final class Utils {
     }
     
     
-    // LAYOUT
-    
-    /**
-     * Inserts the given amount of vertical space into the given container. This is
-     * accomplished by inserting a label with suitable layout data. The container is
-     * assumed to use {@code GridLayout}. This method must only be called at the
-     * beginning of a new line in the layout manager.
-     * 
-     * @param container the container to insert the space into.
-     * @param space the amount of space to insert.
-     * @param columns the number of columns in the grid layout.
-     */
-    public static void insertVerticalSpace(final Composite container, final int space,
-            final int columns) {
-        
-        Label label = new Label(container, SWT.NULL);
-        
-        GridData gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
-        gd.horizontalSpan = columns;
-        gd.minimumHeight = space;
-        gd.heightHint = space;
-        
-        label.setLayoutData(gd);
-    }
-    
-    
     // FILES
     
     /**
@@ -139,7 +109,7 @@ public final class Utils {
     public static String getFileExtension(final String fileName) {
         int extensionIndex = fileName.lastIndexOf('.');
         if (extensionIndex <= 0 || extensionIndex == fileName.length() - 1) {
-            return "";
+            return ""; //$NON-NLS-1$
         }
         
         return fileName.substring(extensionIndex + 1);
