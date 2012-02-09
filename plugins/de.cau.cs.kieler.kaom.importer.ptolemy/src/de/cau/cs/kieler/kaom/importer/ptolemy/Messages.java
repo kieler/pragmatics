@@ -27,7 +27,7 @@ public final class Messages extends NLS {
     // CHECKSTYLEOFF VisibilityModifier
     
     private static final String BUNDLE_NAME =
-        "de.cau.cs.kieler.kaom.importer.ptolemy.improved.messages"; //$NON-NLS-1$
+        "de.cau.cs.kieler.kaom.importer.ptolemy.messages"; //$NON-NLS-1$
     
     public static String DiagramsImporter_exception_destModelNotSaved;
     public static String DiagramsImporter_exception_possibleErrors;

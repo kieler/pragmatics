@@ -222,7 +222,7 @@ class PtolemyInterface {
      * @return the instantiated actor.
      * @throws Exception if the instantiation fails.
      */
-    def private Entity instantiatePtolemyActor(String className, String entityName) {
+    def Entity instantiatePtolemyActor(String className, String entityName) {
         // Get our hands at Ptolemy's internal MoML parser
         MoMLParser::setMoMLFilters(BackwardCompatibility::allFilters())
         val parser = new MoMLParser()
@@ -250,7 +250,7 @@ class PtolemyInterface {
      * @return the instantiated actor.
      * @throws Exception if the instantiation fails.
      */
-    def private Entity instantiatePtolemyState(String className, String entityName) {
+    def Entity instantiatePtolemyState(String className, String entityName) {
         // Get our hands at Ptolemy's internal MoML parser
         MoMLParser::setMoMLFilters(BackwardCompatibility::allFilters())
         val parser = new MoMLParser()
