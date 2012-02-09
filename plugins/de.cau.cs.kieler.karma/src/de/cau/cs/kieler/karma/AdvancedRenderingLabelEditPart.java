@@ -81,4 +81,10 @@ public class AdvancedRenderingLabelEditPart extends LabelEditPart implements IAd
         
     }
     
+    /**
+     * @return the primaryShape
+     */
+    public IFigure getPrimaryShape() {
+        return primaryShape;
+    }
 }

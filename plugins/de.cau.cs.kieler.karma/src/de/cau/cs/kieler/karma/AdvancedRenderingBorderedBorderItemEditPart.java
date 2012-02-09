@@ -96,4 +96,11 @@ public abstract class AdvancedRenderingBorderedBorderItemEditPart extends
             util.updateFigure(primaryShape, this.getModelElement(), this, true);
         }
     }
+    
+    /**
+     * @return the primaryShape
+     */
+    public IFigure getPrimaryShape() {
+        return primaryShape;
+    }
 }

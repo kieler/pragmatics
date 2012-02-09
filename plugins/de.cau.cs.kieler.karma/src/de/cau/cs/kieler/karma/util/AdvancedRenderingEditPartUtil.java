@@ -26,7 +26,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IResizableCompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.TopGraphicEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
@@ -47,6 +49,7 @@ import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.karma.IRenderingProvider.CollapseStatus;
 import de.cau.cs.kieler.karma.SwitchableFigure;
 import de.cau.cs.kieler.karma.conditions.IEditPartSensitiveCondition;
+import de.cau.cs.kieler.karma.kivi.KarmaEffect;
 
 /**
  * Class containing generic method to update the figure and handle the notification. Used to
@@ -97,7 +100,7 @@ public class AdvancedRenderingEditPartUtil {
      */
     public void handleNotificationEvent(final Notification notification,
             final IFigure primaryShape, final EObject modelElement,
-            final AbstractGraphicalEditPart editPart) {
+            final IGraphicalEditPart editPart) {
         Object notifier = notification.getNotifier();      
         boolean coll = this.checkCollapsed(editPart);
         if (editPart instanceof AdvancedRenderingBorderedBorderItemEditPart) {
@@ -150,7 +153,7 @@ public class AdvancedRenderingEditPartUtil {
      * @return true if the figure actually changed, false else.
      */
     public boolean updateFigure(final IFigure figure, final EObject modelElement,
-            final AbstractGraphicalEditPart editPart, final Boolean forceUpdate) {
+            final IGraphicalEditPart editPart, final Boolean forceUpdate) {
         if (conditions != null) {
             IFigure oldFigure;
             SwitchableFigure switchableFigure = null;
@@ -175,6 +178,7 @@ public class AdvancedRenderingEditPartUtil {
                         lastCondition = condition;
                         //get our figure description strings. 
                         //No type check for better performance. The Types are hardcoded in the conditionprovider anyway.
+                        
                         @SuppressWarnings("unchecked")
                         Pair<Integer, Integer> figureSize = (Pair<Integer, Integer>) conditionElement
                                 .get("figureSize");
@@ -185,6 +189,7 @@ public class AdvancedRenderingEditPartUtil {
                         IRenderingProvider renderingProvider = (IRenderingProvider) conditionElement
                                 .get("renderingProvider");
                         //use those descriptions to set the figure and stuff
+                        
                         this.setFigure(renderingProvider, figureParam, oldFigure, modelElement,
                                 switchableFigure, editPart);
                         this.setLayoutManager(figure, renderingProvider, layoutParam, modelElement);
@@ -204,7 +209,9 @@ public class AdvancedRenderingEditPartUtil {
                                 setFixedNodeSize(switchableFigure, figure, size);
                             }
                         }
-
+                        
+                        //KarmaEffect effect = new KarmaEffect(renderingProvider, figure, modelElement, editPart, figureParam, layoutParam, borderItemParam, figureSize, collapseStatus);
+                        //effect.schedule();
                         return true;
                     }
                 }
@@ -291,7 +298,7 @@ public class AdvancedRenderingEditPartUtil {
      * @param figure
      *            the Figure of the BorderItem
      */
-    private void setBorderItemLocator(final AbstractGraphicalEditPart editPart,
+    private void setBorderItemLocator(final IGraphicalEditPart editPart,
             final IRenderingProvider renderingProvider, final String borderItemParam,
             final EObject modelElement, final IFigure figure) {
         // sets the new BoderItemLocator. unfortunately pretty hacked to get the right elements und special cases
