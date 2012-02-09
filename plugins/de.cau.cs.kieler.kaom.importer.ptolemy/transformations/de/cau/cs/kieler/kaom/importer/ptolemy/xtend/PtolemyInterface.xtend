@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kaom.importer.ptolemy.improved.xtend
+package de.cau.cs.kieler.kaom.importer.ptolemy.xtend
 
 
 import com.google.inject.Inject
@@ -38,8 +38,8 @@ import de.cau.cs.kieler.core.annotations.Annotatable
 import de.cau.cs.kieler.core.annotations.AnnotationsFactory
 import de.cau.cs.kieler.kaom.KaomFactory
 import de.cau.cs.kieler.kaom.Port
-import de.cau.cs.kieler.kaom.importer.ptolemy.improved.Messages
-import de.cau.cs.kieler.kaom.importer.ptolemy.improved.PtolemyImportPlugin
+import de.cau.cs.kieler.kaom.importer.ptolemy.Messages
+import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImportPlugin
 
 
 /**
@@ -222,7 +222,7 @@ class PtolemyInterface {
      * @return the instantiated actor.
      * @throws Exception if the instantiation fails.
      */
-    def private Entity instantiatePtolemyActor(String className, String entityName) {
+    def Entity instantiatePtolemyActor(String className, String entityName) {
         // Get our hands at Ptolemy's internal MoML parser
         MoMLParser::setMoMLFilters(BackwardCompatibility::allFilters())
         val parser = new MoMLParser()
@@ -250,7 +250,7 @@ class PtolemyInterface {
      * @return the instantiated actor.
      * @throws Exception if the instantiation fails.
      */
-    def private Entity instantiatePtolemyState(String className, String entityName) {
+    def Entity instantiatePtolemyState(String className, String entityName) {
         // Get our hands at Ptolemy's internal MoML parser
         MoMLParser::setMoMLFilters(BackwardCompatibility::allFilters())
         val parser = new MoMLParser()
