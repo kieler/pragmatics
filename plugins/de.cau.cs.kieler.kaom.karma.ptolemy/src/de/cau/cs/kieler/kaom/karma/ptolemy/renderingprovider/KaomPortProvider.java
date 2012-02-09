@@ -33,6 +33,9 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.swt.graphics.Color;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.NamedObj;
 import de.cau.cs.kieler.core.annotations.Annotatable;
@@ -41,7 +44,7 @@ import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Port;
-import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper;
+import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.PtolemyInterface;
 import de.cau.cs.kieler.kaom.karma.ptolemy.PtolemyPortBorderItemLocator;
 import de.cau.cs.kieler.kaom.karma.ptolemy.conditions.HasCommentsCondition;
 import de.cau.cs.kieler.karma.IRenderingProvider;
@@ -329,10 +332,12 @@ public class KaomPortProvider implements IRenderingProvider {
             return null;
         }
         // Use Ptolemy to load the actor
-        PtolemyHelper ptolemyHelper = new PtolemyHelper();
+        Injector injector = Guice.createInjector();
+        PtolemyInterface ptolemy = injector.getInstance(PtolemyInterface.class);
+        
         NamedObj nObj = null;
         try {
-        nObj = ptolemyHelper.instantiatePtolemyEntity(className);
+            nObj = ptolemy.instantiatePtolemyActor(className, "actor");
         } catch (Exception e) {;
             return null;
         }
