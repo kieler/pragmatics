@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<psf version="2.0">
+<provider id="org.eclipse.egit.core.GitProvider">
+<project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/de.cau.cs.kieler.core"/>
+<project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/de.cau.cs.kieler.core.kgraph"/>
+<project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/de.cau.cs.kieler.core.kgraph.text"/>
+<project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/de.cau.cs.kieler.core.kgraph.text.ui"/>
+<project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/de.cau.cs.kieler.core.kivi"/>
+<project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/de.cau.cs.kieler.core.krendering"/>
+<project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/de.cau.cs.kieler.core.model"/>
+<project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/de.cau.cs.kieler.core.model.xtext"/>
+<project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/de.cau.cs.kieler.core.ui"/>
+<project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/de.cau.cs.kieler.kiml"/>
+<project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/de.cau.cs.kieler.kiml.service"/>
+<project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/de.cau.cs.kieler.kiml.ui"/>
+<project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/de.cau.cs.kieler.klighd"/>
+<project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/de.cau.cs.kieler.klighd.piccolo"/>
+<project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/de.cau.cs.kieler.klighd.xtext"/>
+</provider>
+</psf>
