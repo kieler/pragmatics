@@ -95,4 +95,10 @@ public abstract class AdvancedRenderingShapeNodeEditPart extends ShapeNodeEditPa
         }
     }
 
+    /**
+     * @return the primaryShape
+     */
+    public IFigure getPrimaryShape() {
+        return primaryShape;
+    }
 }

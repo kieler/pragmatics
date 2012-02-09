@@ -189,4 +189,11 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
             util.updateFigure(primaryShape, this.getModelElement(), this, true);
         }
     }
+
+    /**
+     * @return the primaryShape
+     */
+    public IFigure getPrimaryShape() {
+        return primaryShape;
+    }
 }
