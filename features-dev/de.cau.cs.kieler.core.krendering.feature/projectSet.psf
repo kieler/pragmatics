@@ -16,5 +16,6 @@
 <project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/de.cau.cs.kieler.klighd"/>
 <project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/de.cau.cs.kieler.klighd.piccolo"/>
 <project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/de.cau.cs.kieler.klighd.xtext"/>
+<project reference="1.0,git@git.rtsys.informatik.uni-kiel.de:chschprivate/experimental.git,klighd2,plugins/edu.umd.cs.piccolo"/>
 </provider>
 </psf>
