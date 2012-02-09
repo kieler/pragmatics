@@ -15,4 +15,4 @@
 /**
  * Utility classes.
  */
-package de.cau.cs.kieler.kaom.importer.ptolemy.improved.utils;
+package de.cau.cs.kieler.kaom.importer.ptolemy.utils;

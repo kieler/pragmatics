@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.kaom.importer.ptolemy.improved.wizards;
+package de.cau.cs.kieler.kaom.importer.ptolemy.wizards;
 
 
 import java.io.File;
@@ -32,9 +32,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kaom.importer.ptolemy.improved.DiagramsImporter;
-import de.cau.cs.kieler.kaom.importer.ptolemy.improved.PtolemyImportPlugin;
-import de.cau.cs.kieler.kaom.importer.ptolemy.improved.Messages;
+import de.cau.cs.kieler.kaom.importer.ptolemy.DiagramsImporter;
+import de.cau.cs.kieler.kaom.importer.ptolemy.Messages;
+import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImportPlugin;
 
 
 /**

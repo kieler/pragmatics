@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.kaom.importer.ptolemy.improved.utils;
+package de.cau.cs.kieler.kaom.importer.ptolemy.utils;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 

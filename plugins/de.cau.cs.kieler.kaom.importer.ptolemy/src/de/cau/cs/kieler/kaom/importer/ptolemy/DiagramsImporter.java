@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.kaom.importer.ptolemy.improved;
+package de.cau.cs.kieler.kaom.importer.ptolemy;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,10 +62,10 @@ import com.google.inject.Injector;
 
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.diagram.custom.commands.InitKaomDiagramHandler;
-import de.cau.cs.kieler.kaom.importer.ptolemy.improved.utils.Utils;
-import de.cau.cs.kieler.kaom.importer.ptolemy.improved.wizards.ImportDiagramsWizard;
-import de.cau.cs.kieler.kaom.importer.ptolemy.improved.xtend.Ptolemy2KaomOptimization;
-import de.cau.cs.kieler.kaom.importer.ptolemy.improved.xtend.Ptolemy2KaomTransformation;
+import de.cau.cs.kieler.kaom.importer.ptolemy.utils.Utils;
+import de.cau.cs.kieler.kaom.importer.ptolemy.wizards.ImportDiagramsWizard;
+import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.Ptolemy2KaomOptimization;
+import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.Ptolemy2KaomTransformation;
 
 
 /**

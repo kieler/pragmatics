@@ -12,50 +12,72 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.kaom.importer.ptolemy.improved.wizards;
+package de.cau.cs.kieler.kaom.importer.ptolemy.wizards;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 
-import de.cau.cs.kieler.core.ui.wizards.FileSystemResourcesPage;
-import de.cau.cs.kieler.kaom.importer.ptolemy.improved.Messages;
-import de.cau.cs.kieler.kaom.importer.ptolemy.improved.PtolemyImportConstants;
+import de.cau.cs.kieler.core.ui.wizards.WorkspaceResourcesPage;
+import de.cau.cs.kieler.kaom.importer.ptolemy.Messages;
+import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImportConstants;
 
 
 /**
- * A wizard page to import files from the file system.
+ * A wizard page to import files from the workspace.
  * 
  * @author cds
  * @kieler.rating yellow 2010-03-14
  *      reviewed by haf, msp, pkl
  */
-public class ImportDiagramsFileSystemSourcesPage extends FileSystemResourcesPage {
+public class ImportDiagramsWorkspaceSourcesPage extends WorkspaceResourcesPage {
     
     // CONSTANTS
     /**
      * The wizard page name.
      */
-    private static final String PAGE_NAME = "importDiagramsFileSystemSourcesPage"; //$NON-NLS-1$
-    
-    // VARIABLES
-    private IStructuredSelection selection;
+    private static final String PAGE_NAME = "importDiagramsWorkspaceSourcesPage"; //$NON-NLS-1$
     
     
     /**
      * Constructs a new instance.
      * 
-     * @param theSelection the selection the wizard was called on.
+     * @param selection the selection the wizard was called on.
      */
-    public ImportDiagramsFileSystemSourcesPage(final IStructuredSelection theSelection) {
-        super(PAGE_NAME, true, PtolemyImportConstants.PTOLEMY_FILE_EXTENSIONS);
+    public ImportDiagramsWorkspaceSourcesPage(final IStructuredSelection selection) {
+        super(PAGE_NAME, true, PtolemyImportConstants.PTOLEMY_FILE_EXTENSIONS, selection);
         
-        this.setMessage(
-                Messages.ImportDiagramsFileSystemSourcesPage_message);
+        this.setMessage(Messages.ImportDiagramsWorkspaceSourcesPage_message);
+    }
+    
+    
+    /**
+     * Returns the selected source files to import. This method may take a while
+     * to complete and shows its progress using a progress monitor.
+     * 
+     * @param monitor progress monitor.
+     * @return list of selected source files.
+     */
+    public List<File> getSourceFiles(final IProgressMonitor monitor) {
+        List<IResource> selectedResources = this.getResources(monitor);
+        List<File> files = new ArrayList<File>();
         
-        selection = theSelection;
+        for (IResource resource : selectedResources) {
+            if (resource instanceof IFile) {
+                IFile iFile = (IFile) resource;
+                files.add(iFile.getLocation().toFile());
+            }
+        }
+        
+        return files;
     }
     
     
@@ -67,6 +89,7 @@ public class ImportDiagramsFileSystemSourcesPage extends FileSystemResourcesPage
         super.initializeControls();
         
         // Set the initial target container name
+        IStructuredSelection selection = this.getWorkspaceSelection();
         if (!selection.isEmpty()) {
             Object element = selection.getFirstElement();
             
@@ -76,9 +99,11 @@ public class ImportDiagramsFileSystemSourcesPage extends FileSystemResourcesPage
                 if (resource instanceof IContainer) {
                     getTargetGroupCombo().setText(
                             resource.getFullPath().makeRelative().toString());
+                    validate();
                 } else if (resource.getParent() != null) {
                     getTargetGroupCombo().setText(
                             resource.getParent().getFullPath().makeRelative().toString());
+                    validate();
                 }
             }
         }

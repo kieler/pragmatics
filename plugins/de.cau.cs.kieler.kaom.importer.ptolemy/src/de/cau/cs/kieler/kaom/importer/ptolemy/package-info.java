@@ -15,4 +15,4 @@
 /**
  * Utility classes for the import of Ptolemy diagrams.
  */
-package de.cau.cs.kieler.kaom.importer.ptolemy.improved;
+package de.cau.cs.kieler.kaom.importer.ptolemy;

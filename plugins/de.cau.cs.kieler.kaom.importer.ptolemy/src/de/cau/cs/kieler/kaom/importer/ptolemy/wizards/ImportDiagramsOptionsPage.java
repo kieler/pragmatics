@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.kaom.importer.ptolemy.improved.wizards;
+package de.cau.cs.kieler.kaom.importer.ptolemy.wizards;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -24,8 +24,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
-import de.cau.cs.kieler.kaom.importer.ptolemy.improved.Messages;
-import de.cau.cs.kieler.kaom.importer.ptolemy.improved.utils.Utils;
+import de.cau.cs.kieler.kaom.importer.ptolemy.Messages;
+import de.cau.cs.kieler.kaom.importer.ptolemy.utils.Utils;
 
 
 /**

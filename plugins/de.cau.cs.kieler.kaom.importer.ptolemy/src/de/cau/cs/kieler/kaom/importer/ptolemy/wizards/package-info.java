@@ -15,4 +15,4 @@
 /**
  * This package contains the classes defining the Import Ptolemy Models wizard.
  */
-package de.cau.cs.kieler.kaom.importer.ptolemy.improved.wizards;
+package de.cau.cs.kieler.kaom.importer.ptolemy.wizards;
