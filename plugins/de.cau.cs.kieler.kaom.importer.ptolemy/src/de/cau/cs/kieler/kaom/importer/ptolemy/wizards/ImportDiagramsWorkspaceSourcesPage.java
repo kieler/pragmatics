@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -28,7 +28,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 
 import de.cau.cs.kieler.core.ui.wizards.WorkspaceResourcesPage;
 import de.cau.cs.kieler.kaom.importer.ptolemy.Messages;
-import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImporterConstants;
+import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImportConstants;
 
 
 /**
@@ -53,7 +53,7 @@ public class ImportDiagramsWorkspaceSourcesPage extends WorkspaceResourcesPage {
      * @param selection the selection the wizard was called on.
      */
     public ImportDiagramsWorkspaceSourcesPage(final IStructuredSelection selection) {
-        super(PAGE_NAME, true, PtolemyImporterConstants.PTOLEMY_FILE_EXTENSIONS, selection);
+        super(PAGE_NAME, true, PtolemyImportConstants.PTOLEMY_FILE_EXTENSIONS, selection);
         
         this.setMessage(Messages.ImportDiagramsWorkspaceSourcesPage_message);
     }
