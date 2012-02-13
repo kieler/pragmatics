@@ -35,6 +35,7 @@ import de.cau.cs.kieler.kiml.smart.rules.CircularRule;
 import de.cau.cs.kieler.kiml.smart.rules.HierarchyRule;
 import de.cau.cs.kieler.kiml.smart.rules.LayeredRule;
 import de.cau.cs.kieler.kiml.smart.rules.TreeRule;
+import de.cau.cs.kieler.kiml.smart.rules.UnconnectedBoxesRule;
 
 /**
  * Smart layout!
@@ -75,6 +76,7 @@ public class SmartLayoutConfig implements ILayoutConfig {
      * Create a smart layout configuration and initialize rules in according priority.
      */
     public SmartLayoutConfig() {
+        smartRules.add(new UnconnectedBoxesRule());
         smartRules.add(new HierarchyRule());
         smartRules.add(new TreeRule());
         smartRules.add(new CircularRule());
