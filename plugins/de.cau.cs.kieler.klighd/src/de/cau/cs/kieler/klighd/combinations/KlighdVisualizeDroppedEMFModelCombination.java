@@ -20,8 +20,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gmf.runtime.diagram.core.DiagramEditingDomainFactory;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
@@ -63,10 +62,10 @@ public class KlighdVisualizeDroppedEMFModelCombination extends AbstractCombinati
      */
     private Object loadModel(final IFile file) {
         // TransactionalEditingDomain.Factory factory = TransactionalEditingDomain.Factory.INSTANCE;
-        TransactionalEditingDomain transactionalEditingDomain = DiagramEditingDomainFactory.INSTANCE
-                .createEditingDomain();
+//        TransactionalEditingDomain transactionalEditingDomain = DiagramEditingDomainFactory.INSTANCE
+//                .createEditingDomain();
         // factory.createEditingDomain();
-        ResourceSet resourceSet = transactionalEditingDomain.getResourceSet();
+        ResourceSet resourceSet = new ResourceSetImpl();
         Resource resource = resourceSet.createResource(URI.createPlatformResourceURI(file
                 .getFullPath().toOSString(), true));
         try {
