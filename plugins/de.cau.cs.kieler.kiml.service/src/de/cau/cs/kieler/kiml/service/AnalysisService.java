@@ -75,8 +75,8 @@ public abstract class AnalysisService {
     public static final String ATTRIBUTE_ABBREVIATION = "abbreviation";
     /** name of the 'weak' attribute in the extension point. */
     private static final String ATTRIBUTE_WEAK = "weak";
-    /** name of the 'helper' attribute in the extension point. */
-    private static final String ATTRIBUTE_HELPER = "helper";
+    /** name of the 'programmatic' attribute in the extension point. */
+    private static final String ATTRIBUTE_PROGRAMMATIC = "programmatic";
     /** id of the default category. */
     public static final String DEFAULT_CATEGORY_ID
             = "de.cau.cs.kieler.kiml.grana.defaultCategory";
@@ -180,10 +180,8 @@ public abstract class AnalysisService {
                 String name = element.getAttribute(ATTRIBUTE_NAME);
                 String description = element.getAttribute(ATTRIBUTE_DESCRIPTION);
                 String category = element.getAttribute(ATTRIBUTE_CATEGORY);
-                String helperString = element.getAttribute(ATTRIBUTE_HELPER);
-                // if the helper string is invalid the parser returns false, which handles
-                // the case correctly
-                boolean helper = Boolean.parseBoolean(helperString);
+                String isProgrString = element.getAttribute(ATTRIBUTE_PROGRAMMATIC);
+                boolean isProgr = Boolean.parseBoolean(isProgrString);
                 if (id == null || id.length() == 0) {
                     reportError(EXTP_ID_ANALYSIS_PROVIDERS, element, ATTRIBUTE_ID, null);
                 } else if (name == null) {
@@ -213,7 +211,7 @@ public abstract class AnalysisService {
                     analysisData.setName(name);
                     analysisData.setDescription(description);
                     analysisData.setCategory(category);
-                    analysisData.setHelper(helper);
+                    analysisData.setProgrammatic(isProgr);
                     analyses.add(analysisData);
                     analysisIdMapping.put(id, analysisData);
                     // read the analysis dependencies
@@ -266,7 +264,7 @@ public abstract class AnalysisService {
         defaultCategory = categoryIdMapping.get(DEFAULT_CATEGORY_ID);
         // sort analyses into the categories
         for (AnalysisData analysis : analyses) {
-            if (!analysis.isHelper()) {
+            if (!analysis.isProgrammatic()) {
                 AnalysisCategory category = categoryIdMapping.get(analysis.getCategory());
                 // if the category does not exists take default one
                 if (category == null) {

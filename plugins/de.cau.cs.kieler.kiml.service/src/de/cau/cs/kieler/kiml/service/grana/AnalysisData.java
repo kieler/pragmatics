@@ -42,8 +42,8 @@ public class AnalysisData implements ILayoutData, IDepending<String> {
     private String analysisDescription;
     /** the analysis category. */
     private String analysisCategory;
-    /** is the analysis a helper analysis? */
-    private boolean analysisHelper;
+    /** is the analysis programmatic and hidden from the user? */
+    private boolean isProgrAnalysis;
     /** the components. */
     private final List<Pair<String, String>> components = new LinkedList<Pair<String, String>>();
     /** the analysis dependencies. */
@@ -128,21 +128,21 @@ public class AnalysisData implements ILayoutData, IDepending<String> {
     }
 
     /**
-     * Whether this is a helper analysis that should not be shown to the user.
+     * Whether this is a programmatic analysis that should not be shown to the user.
      * 
      * @return true if this is a helper analysis
      */
-    public boolean isHelper() {
-        return analysisHelper;
+    public boolean isProgrammatic() {
+        return isProgrAnalysis;
     }
     
     /**
-     * Set the helper flag.
+     * Set the programmatic flag.
      * 
-     * @param helper whether this is a helper analysis
+     * @param progr whether this is a programmatic analysis
      */
-    public void setHelper(final boolean helper) {
-        this.analysisHelper = helper;
+    public void setProgrammatic(final boolean progr) {
+        this.isProgrAnalysis = progr;
     }
 
     /**

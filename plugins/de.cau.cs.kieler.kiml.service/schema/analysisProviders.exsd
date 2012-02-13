@@ -106,10 +106,10 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="helper" type="boolean">
+         <attribute name="programmatic" type="boolean">
             <annotation>
                <documentation>
-                  Whether this is a helper analysis that should be hidden from the user.
+                  Whether the analysis shall be accessed only programmatically and is hidden from the user (default is false).
                </documentation>
             </annotation>
          </attribute>
