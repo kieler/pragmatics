@@ -574,4 +574,16 @@ public final class KimlUtil {
         }
     }
 
+    /**
+     * Loads all {@link de.cau.cs.kieler.core.properties.IProperty}s of KGraphData elements of a
+     * KNode graph. Concretely, it deserializes {@link de.cau.cs.kieler.core.kgraph.PersistentEntry}
+     * tuples.
+     * 
+     * @author chsch
+     * @param graph
+     *            the root element of the graph to load elements of.
+     */
+    public static void loadDataElements(final KNode graph) {
+        //TODO toBeImplemented
+    }
 }
