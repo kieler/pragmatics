@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -22,7 +22,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Group;
 
 import de.cau.cs.kieler.kaom.importer.ptolemy.Messages;
 import de.cau.cs.kieler.kaom.importer.ptolemy.utils.Utils;
@@ -50,6 +50,12 @@ public class ImportDiagramsOptionsPage extends WizardPage {
         PAGE_NAME + ".source.filesystem"; //$NON-NLS-1$
     
     /**
+     * Key of the advanced annotations handling option.
+     */
+    private static final String SETT_OPT_ADV_ANNOTATIONS =
+        PAGE_NAME + ".options.advancedAnnotations"; //$NON-NLS-1$
+    
+    /**
      * Key of the initialize KAOD files setting.
      */
     private static final String SETT_OPT_INIT_KAOD =
@@ -63,10 +69,11 @@ public class ImportDiagramsOptionsPage extends WizardPage {
     
     // WIDGETS
     private Composite container;
-    private Label sourceLabel;
+    private Group sourceGroup;
     private Button sourceFileSystemButton;
     private Button sourceWorkspaceButton;
-    private Label optLabel;
+    private Group optGroup;
+    private Button optAdvancedAnnotationsButton;
     private Button optInitializeDiagramFilesButton;
     private Button optOverwriteButton;
     
@@ -93,6 +100,16 @@ public class ImportDiagramsOptionsPage extends WizardPage {
      */
     public boolean isFileSystemSource() {
         return sourceFileSystemButton.getSelection();
+    }
+    
+    /**
+     * Checks whether the user wants advanced annotation handling to be turned on or not.
+     * 
+     * @return {@code true} if advanced annotation handling is to be turned on,
+     *         {@code false} otherwise.
+     */
+    public boolean isAdvancedAnnotationsHandling() {
+        return optAdvancedAnnotationsButton.getSelection();
     }
     
     /**
@@ -138,80 +155,84 @@ public class ImportDiagramsOptionsPage extends WizardPage {
         // CHECKSTYLEOFF MagicNumber
         
         GridData gd;
-        GridLayout gl = new GridLayout(3, false);
+        GridLayout gl = new GridLayout(1, false);
+        
         
         // Container Composite
         container = new Composite(parent, SWT.NULL);
         container.setLayout(gl);
         this.setControl(container);
         
-        // Source Label
-        sourceLabel = new Label(container, SWT.NULL);
-        sourceLabel.setText(Messages.ImportDiagramsOptionsPage_sourceLabel_text);
-
-        gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
-        gd.horizontalSpan = 3;
-        sourceLabel.setLayoutData(gd);
+        // Source Group
+        sourceGroup = new Group(container, SWT.NULL);
+        sourceGroup.setText(Messages.ImportDiagramsOptionsPage_sourceGroup_text);
+        
+        gl = new GridLayout(1, false);
+        gl.marginHeight = 10;
+        gl.marginWidth = 10;
+        sourceGroup.setLayout(gl);
+        
+        sourceGroup.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
         
         // Source File System Button
-        sourceFileSystemButton = new Button(container, SWT.RADIO);
+        sourceFileSystemButton = new Button(sourceGroup, SWT.RADIO);
         sourceFileSystemButton.setText(
                 Messages.ImportDiagramsOptionsPage_fileSystemButton_text);
         sourceFileSystemButton.setToolTipText(
                 Messages.ImportDiagramsOptionsPage_fileSystemButton_toolTip);
         
-        gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
-        gd.horizontalIndent = 15;
-        gd.horizontalSpan = 3;
-        sourceFileSystemButton.setLayoutData(gd);
+        sourceFileSystemButton.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
         
         // Source Workspace Button
-        sourceWorkspaceButton = new Button(container, SWT.RADIO);
+        sourceWorkspaceButton = new Button(sourceGroup, SWT.RADIO);
         sourceWorkspaceButton.setText(
                 Messages.ImportDiagramsOptionsPage_workspaceButton_text);
         sourceWorkspaceButton.setToolTipText(
                 Messages.ImportDiagramsOptionsPage_workspaceButton_toolTip);
         
-        gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
-        gd.horizontalIndent = 15;
-        gd.horizontalSpan = 2;
-        sourceWorkspaceButton.setLayoutData(gd);
+        sourceWorkspaceButton.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
         
-        // Vertical Space
-        Utils.insertVerticalSpace(container, 10, 3);
+        // Opt Group
+        optGroup = new Group(container, SWT.NULL);
+        optGroup.setText(Messages.ImportDiagramsOptionsPage_optionsGroup_text);
         
-        // Opt Label
-        optLabel = new Label(container, SWT.NULL);
-        optLabel.setText(
-                Messages.ImportDiagramsOptionsPage_optionsLabel_text);
+        gl = new GridLayout(1, false);
+        gl.marginHeight = 10;
+        gl.marginWidth = 10;
+        optGroup.setLayout(gl);
 
-        gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
-        gd.horizontalSpan = 3;
-        optLabel.setLayoutData(gd);
+        gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+        gd.verticalIndent = 10;
+        optGroup.setLayoutData(gd);
+        
+        // Opt Advanced Annotations Button
+        optAdvancedAnnotationsButton = new Button(optGroup, SWT.CHECK);
+        optAdvancedAnnotationsButton.setText(
+                Messages.ImportDiagramsOptionsPage_advancedAnnotationsButton_text);
+        optAdvancedAnnotationsButton.setToolTipText(
+                Messages.ImportDiagramsOptionsPage_advancedAnnotationsButton_toolTip);
+        
+        optAdvancedAnnotationsButton.setLayoutData(
+                new GridData(SWT.FILL, SWT.BEGINNING, true, false));
         
         // Opt Initialize Diagram Files Button
-        optInitializeDiagramFilesButton = new Button(container, SWT.CHECK);
+        optInitializeDiagramFilesButton = new Button(optGroup, SWT.CHECK);
         optInitializeDiagramFilesButton.setText(
                 Messages.ImportDiagramsOptionsPage_initializeDiagramFilesButton_text);
         optInitializeDiagramFilesButton.setToolTipText(
                 Messages.ImportDiagramsOptionsPage_initializeDiagramFilesButton_toolTip);
         
-        gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
-        gd.horizontalIndent = 15;
-        gd.horizontalSpan = 3;
-        optInitializeDiagramFilesButton.setLayoutData(gd);
+        optInitializeDiagramFilesButton.setLayoutData(
+                new GridData(SWT.FILL, SWT.BEGINNING, true, false));
         
         // Opt Overwrite Button
-        optOverwriteButton = new Button(container, SWT.CHECK);
+        optOverwriteButton = new Button(optGroup, SWT.CHECK);
         optOverwriteButton.setText(
                 Messages.ImportDiagramsOptionsPage_overwriteButton_text);
         optOverwriteButton.setToolTipText(
                 Messages.ImportDiagramsOptionsPage_overwriteButton_toolTip);
         
-        gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
-        gd.horizontalIndent = 15;
-        gd.horizontalSpan = 3;
-        optOverwriteButton.setLayoutData(gd);
+        optOverwriteButton.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
         
         // Initialize controls and validate
         initializeControls();
@@ -229,6 +250,8 @@ public class ImportDiagramsOptionsPage extends WizardPage {
                 settings, SETT_SOURCE_FILESYSTEM, true));
         sourceWorkspaceButton.setSelection(!sourceFileSystemButton.getSelection());
         
+        optAdvancedAnnotationsButton.setSelection(Utils.getSettingBoolean(
+                settings, SETT_OPT_ADV_ANNOTATIONS, true));
         optInitializeDiagramFilesButton.setSelection(Utils.getSettingBoolean(
                 settings, SETT_OPT_INIT_KAOD, true));
         optOverwriteButton.setSelection(Utils.getSettingBoolean(
@@ -242,6 +265,7 @@ public class ImportDiagramsOptionsPage extends WizardPage {
         IDialogSettings settings = this.getDialogSettings();
         
         settings.put(SETT_SOURCE_FILESYSTEM, sourceFileSystemButton.getSelection());
+        settings.put(SETT_OPT_ADV_ANNOTATIONS, optAdvancedAnnotationsButton.getSelection());
         settings.put(SETT_OPT_INIT_KAOD, optInitializeDiagramFilesButton.getSelection());
         settings.put(SETT_OPT_OVERWRITE, optOverwriteButton.getSelection());
     }

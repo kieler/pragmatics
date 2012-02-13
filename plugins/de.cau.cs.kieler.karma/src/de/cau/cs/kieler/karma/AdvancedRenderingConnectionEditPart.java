@@ -89,4 +89,11 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
         return figure;
     }
 
+    /**
+     * @return the primaryShape
+     */
+    public IFigure getPrimaryShape() {
+        return super.getFigure();
+    }
+    
 }

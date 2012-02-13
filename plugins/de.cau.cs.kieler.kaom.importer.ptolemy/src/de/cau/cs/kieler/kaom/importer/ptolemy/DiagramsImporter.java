@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -22,7 +22,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -41,25 +43,29 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.XMIResource;
+import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gmf.runtime.emf.core.GMFEditingDomainFactory;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.ptolemy.moml.MomlPackage;
+import org.ptolemy.moml.DocumentRoot;
 
-import de.cau.cs.kieler.core.annotations.AnnotationsPackage;
-import de.cau.cs.kieler.core.model.xtend.util.XtendStatus;
-import de.cau.cs.kieler.core.model.xtend.util.XtendTransformationUtil;
-import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
-import de.cau.cs.kieler.kaom.KaomPackage;
+import com.google.common.collect.Maps;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
+import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.diagram.custom.commands.InitKaomDiagramHandler;
 import de.cau.cs.kieler.kaom.importer.ptolemy.utils.Utils;
 import de.cau.cs.kieler.kaom.importer.ptolemy.wizards.ImportDiagramsWizard;
+import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.Ptolemy2KaomOptimization;
+import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.Ptolemy2KaomTransformation;
 
 
 /**
@@ -98,6 +104,11 @@ public class DiagramsImporter implements IRunnableWithProgress {
     private IContainer targetContainer;
     
     /**
+     * Whether advanced annotations handling is to be turned on.
+     */
+    private boolean advancedAnnotationsHandling;
+    
+    /**
      * Whether for the imported diagrams KAOD diagram files should be created.
      */
     private boolean initializeDiagramFiles;
@@ -123,6 +134,11 @@ public class DiagramsImporter implements IRunnableWithProgress {
      */
     private List<IStatus> statuses = new ArrayList<IStatus>();
     
+    /**
+     * Map containing a standard list of parser features used for loading EMF resources.
+     */
+    private Map<String, Boolean> parserFeatures = null;
+    
     
     /**
      * Constructs a new instance with the given configuration.
@@ -130,19 +146,38 @@ public class DiagramsImporter implements IRunnableWithProgress {
      * @param wizard the wizard using this importer.
      * @param sourceFiles the list of source files to import.
      * @param targetContainerPath the possibly non-existent container to import them to.
+     * @param advancedAnnotationsHandling whether advanced annotations handling is to be
+     *                                    turned on. If so, additional heuristics are performed
+     *                                    to try an import more annotations, and annotations
+     *                                    are connected to elements they are most likely
+     *                                    annotating.
      * @param initializeDiagramFiles whether to initialize KAOD diagram files.
      * @param overwriteWithoutWarning whether existing files should be overwritten without
      *                                 warning.
      */
     public DiagramsImporter(final ImportDiagramsWizard wizard, final List<File> sourceFiles,
-            final IPath targetContainerPath, final boolean initializeDiagramFiles,
-            final boolean overwriteWithoutWarning) {
+            final IPath targetContainerPath, final boolean advancedAnnotationsHandling,
+            final boolean initializeDiagramFiles, final boolean overwriteWithoutWarning) {
         
         this.wizard = wizard;
         this.sourceFiles = sourceFiles;
         this.targetContainerPath = targetContainerPath;
+        this.advancedAnnotationsHandling = advancedAnnotationsHandling;
         this.initializeDiagramFiles = initializeDiagramFiles;
         this.overwriteWithoutWarning = overwriteWithoutWarning;
+        
+        // Prepare parser feature map. These options avoid searching for DTDs online, which would
+        // require an internet connection to load models
+        parserFeatures = Maps.newHashMap();
+        parserFeatures.put(
+                "http://xml.org/sax/features/validation", //$NON-NLS-1$
+                Boolean.FALSE);
+        parserFeatures.put(
+                "http://apache.org/xml/features/nonvalidating/load-dtd-grammar", //$NON-NLS-1$
+                Boolean.FALSE);
+        parserFeatures.put(
+                "http://apache.org/xml/features/nonvalidating/load-external-dtd", //$NON-NLS-1$
+                Boolean.FALSE);
     }
     
     
@@ -178,11 +213,11 @@ public class DiagramsImporter implements IRunnableWithProgress {
         if (wasImportCanceled) {
             return new Status(
                     IStatus.CANCEL,
-                    KaomImporterPtolemyPlugin.PLUGIN_ID,
+                    PtolemyImportPlugin.PLUGIN_ID,
                     Messages.DiagramsImporter_status_importCanceled);
         } else if (statuses.size() >= 1) {
             return new MultiStatus(
-                    KaomImporterPtolemyPlugin.PLUGIN_ID,
+                    PtolemyImportPlugin.PLUGIN_ID,
                     maxSeverity,
                     statuses.toArray(new IStatus[statuses.size()]),
                     Messages.DiagramsImporter_status_exceptions,
@@ -190,7 +225,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
         } else {
             return new Status(
                     IStatus.OK,
-                    KaomImporterPtolemyPlugin.PLUGIN_ID,
+                    PtolemyImportPlugin.PLUGIN_ID,
                     Messages.DiagramsImporter_status_ok);
         }
     }
@@ -260,7 +295,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
         if (!currContainer.exists()) {
             throw new CoreException(new Status(
                     IStatus.ERROR,
-                    KaomImporterPtolemyPlugin.PLUGIN_ID,
+                    PtolemyImportPlugin.PLUGIN_ID,
                     Messages.DiagramsImporter_exception_projectNotExistant));
         }
         
@@ -289,8 +324,9 @@ public class DiagramsImporter implements IRunnableWithProgress {
      * @param monitor monitor to report progress to.
      */
     private void importFiles(final IProgressMonitor monitor) {
-        // Calculate the total work to be done
-        int totalWork = sourceFiles.size();
+        // Calculate the total work to be done (we allocate two slots of work for each file
+        // to be imported: model import, and diagram initialization)
+        int totalWork = sourceFiles.size() * 2;
         
         // Begin the main task
         monitor.beginTask(Messages.DiagramsImporter_task_importingModels, totalWork);
@@ -320,7 +356,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
                 doImportModelFile(
                         sourceFile,
                         targetFilesBaseName + "." //$NON-NLS-1$
-                            + PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION);
+                            + PtolemyImportConstants.TARGET_MODEL_FILE_EXTENSION);
             } catch (CoreException e) {
                 StatusManager.getManager().handle(e.getStatus(), StatusManager.LOG);
                 statuses.add(e.getStatus());
@@ -333,9 +369,9 @@ public class DiagramsImporter implements IRunnableWithProgress {
                 if (initializeDiagramFiles) {
                     doImportDiagramFile(
                             targetFilesBaseName + "." //$NON-NLS-1$
-                                + PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION,
+                                + PtolemyImportConstants.TARGET_MODEL_FILE_EXTENSION,
                             targetFilesBaseName + "." //$NON-NLS-1$
-                                + PtolemyImporterConstants.TARGET_DIAGRAM_FILE_EXTENSION);
+                                + PtolemyImportConstants.TARGET_DIAGRAM_FILE_EXTENSION);
                 }
             } catch (CoreException e) {
                 StatusManager.getManager().handle(e.getStatus(), StatusManager.LOG);
@@ -374,7 +410,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
         
         IFile file = targetContainer.getFile(new Path(
                 sourceFileBaseName + "." //$NON-NLS-1$
-                    + PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION));
+                    + PtolemyImportConstants.TARGET_MODEL_FILE_EXTENSION));
         if (file.exists()) {
             modelFileNameClash = true;
         }
@@ -382,7 +418,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
         if (initializeDiagramFiles) {
             file = targetContainer.getFile(new Path(
                     sourceFileBaseName + "." //$NON-NLS-1$
-                        + PtolemyImporterConstants.TARGET_DIAGRAM_FILE_EXTENSION));
+                        + PtolemyImportConstants.TARGET_DIAGRAM_FILE_EXTENSION));
             if (file.exists() && initializeDiagramFiles) {
                 diagramFileNameClash = true;
             }
@@ -397,7 +433,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
                 sb.append("    " //$NON-NLS-1$
                         + sourceFileBaseName
                         + "." //$NON-NLS-1$
-                        + PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION
+                        + PtolemyImportConstants.TARGET_MODEL_FILE_EXTENSION
                         + "\n"); //$NON-NLS-1$
             }
             
@@ -405,7 +441,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
                 sb.append("    " //$NON-NLS-1$
                         + sourceFileBaseName
                         + "." //$NON-NLS-1$
-                        + PtolemyImporterConstants.TARGET_DIAGRAM_FILE_EXTENSION
+                        + PtolemyImportConstants.TARGET_DIAGRAM_FILE_EXTENSION
                         + "\n"); //$NON-NLS-1$
             }
             
@@ -433,7 +469,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
                 // We have a new name. Check if it clashes
                 return getBaseFileName(
                         dialog.getValue() + "." //$NON-NLS-1$
-                            + PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION);
+                            + PtolemyImportConstants.TARGET_MODEL_FILE_EXTENSION);
             }
         } else {
             return sourceFileBaseName;
@@ -441,20 +477,147 @@ public class DiagramsImporter implements IRunnableWithProgress {
     }
     
     /**
-     * Returns a version of the source file with moml file extension.
+     * Does the actual work of importing the given file.
+     * 
+     * @param sourceFile the source file to import.
+     * @param targetFileName the name of the target file to import to.
+     * @throws CoreException if the transformation fails.
+     */
+    private void doImportModelFile(final File sourceFile, final String targetFileName)
+        throws CoreException {
+        
+        ///////////////////////////////////////////////
+        // STEP 1: Preparations
+        
+        // Copy the source file to a temporary file with a .moml extension
+        File realSourceFile;
+        try {
+            realSourceFile = ensureMomlFileExtension(sourceFile);
+        } catch (IOException e) {
+            throw new CoreException(new Status(
+                    IStatus.ERROR,
+                    PtolemyImportPlugin.PLUGIN_ID,
+                    Messages.DiagramsImporter_exception_temporaryFileCreationFailed,
+                    e));
+        }
+        
+        // Prepare target file and delete it if it already exists
+        IFile targetFile = targetContainer.getFile(new Path(targetFileName));
+        if (targetFile.exists()) {
+            targetFile.delete(true, null);
+        }
+        
+        // Prepare URIs
+        URI sourceFileURI = URI.createFileURI(realSourceFile.getAbsolutePath());
+        URI targetFileURI = URI.createPlatformResourceURI(targetFile.getFullPath().toString(), true);
+        
+        
+        ///////////////////////////////////////////////
+        // STEP 2: Loading the Source Model
+        
+        // Obtain a new resource set and tell it to save unknown XML elements that can easily appear
+        // in MoML files
+        ResourceSet resourceSet = new ResourceSetImpl();
+        resourceSet.getLoadOptions().put(XMIResource.OPTION_RECORD_UNKNOWN_FEATURE, true);
+        resourceSet.getLoadOptions().put(XMLResource.OPTION_PARSER_FEATURES, parserFeatures);
+        
+        // Load the source model
+        Resource srcResource = null;
+        DocumentRoot ptModel = null;
+        
+        try {
+            srcResource = resourceSet.getResource(sourceFileURI, true);
+            ptModel = (DocumentRoot) srcResource.getContents().get(0);
+        } catch (Exception e) {
+            throw new CoreException(new Status(
+                    IStatus.ERROR,
+                    PtolemyImportPlugin.PLUGIN_ID,
+                    Messages.DiagramsImporter_exception_sourceModelNotLoaded + sourceFile.toString(),
+                    e));
+        }
+        
+        
+        ///////////////////////////////////////////////
+        // STEP 3: Import Process
+        
+        // Two steps: transformation, and optimization
+        Injector injector = Guice.createInjector();
+        
+        Ptolemy2KaomTransformation transformation =
+                injector.getInstance(Ptolemy2KaomTransformation.class);
+        Ptolemy2KaomOptimization optimization =
+                injector.getInstance(Ptolemy2KaomOptimization.class);
+        
+        // Transform and optimize
+        Entity kaomModel = null;
+        
+        try {
+            kaomModel = transformation.transform(ptModel);
+            optimization.optimize(kaomModel);
+        } catch (Exception e) {
+            throw new CoreException(new Status(
+                    IStatus.ERROR,
+                    PtolemyImportPlugin.PLUGIN_ID,
+                    "Model transformation failed: " + e.getMessage(),
+                    e));
+        }
+        
+        // Advanced annotation handling, if requested
+        if (advancedAnnotationsHandling) {
+            PtolemyAnnotationHandler annotationHandler = new PtolemyAnnotationHandler(
+                    (XMLResource) srcResource, ptModel, kaomModel);
+            
+            annotationHandler.handleAnnotations();
+        }
+        
+        
+        ///////////////////////////////////////////////
+        // STEP 4: Saving the Transformed Model
+        
+        // Create a new resource and add our KAOM model to it
+        Resource dstResource = resourceSet.createResource(targetFileURI);
+        dstResource.getContents().add(kaomModel);
+        
+        // Save the resource
+        try {
+            dstResource.save(Collections.EMPTY_MAP);
+        } catch (Exception e) {
+            throw new CoreException(new Status(
+                    IStatus.ERROR,
+                    PtolemyImportPlugin.PLUGIN_ID,
+                    Messages.DiagramsImporter_exception_destModelNotSaved + targetFile.toString(),
+                    e));
+        }
+        
+        
+        // Check if the transformation produced any warnings
+        if (!transformation.getWarnings().isEmpty()) {
+            throw new CoreException(new MultiStatus(
+                    PtolemyImportPlugin.PLUGIN_ID,
+                    IStatus.WARNING,
+                    transformation.getWarnings().toArray(new IStatus[0]),
+                    Messages.DiagramsImporter_exception_possibleErrors + sourceFile.getName(),
+                    null));
+        }
+    }
+    
+    /**
+     * Returns a version of the source file with moml file extension, if is not already a
+     * moml file.
      * 
      * <p>This is necessary because the import can only cope with moml files, not with the
      * more common xml files. To work around this, xml files are copied to the temp
-     * folder, using a file name with a moml extension.</p>
+     * folder, using a file name with a moml extension. If the file already is a moml file,
+     * nothing is copied and the original file is returned.</p>
      *  
      * @param sourceFile the source file to possibly be copied to a temporary moml file.
      * @return moml file to be imported.
      * @throws IOException if the creation of the temporary file failed.
      */
-    private File getTemporarySourceFile(final File sourceFile) throws IOException {
+    private File ensureMomlFileExtension(final File sourceFile) throws IOException {
         // Check if the source file is already a moml file
         if (Utils.getFileExtension(sourceFile.getName()).toLowerCase().equals(
-                PtolemyImporterConstants.PTOLEMY_INTERNAL_FILE_EXTENSION)) {
+                PtolemyImportConstants.PTOLEMY_INTERNAL_FILE_EXTENSION)) {
             
             return sourceFile;
         }
@@ -464,7 +627,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
         
         // Create a temporary file that automatically gets deleted when the VM ends
         File realSourceFile = File.createTempFile(baseName,
-                "." + PtolemyImporterConstants.PTOLEMY_INTERNAL_FILE_EXTENSION); //$NON-NLS-1$
+                "." + PtolemyImportConstants.PTOLEMY_INTERNAL_FILE_EXTENSION); //$NON-NLS-1$
         realSourceFile.deleteOnExit();
         
         // Copy the source file's content to the new file
@@ -482,73 +645,6 @@ public class DiagramsImporter implements IRunnableWithProgress {
         oStream.close();
         
         return realSourceFile;
-    }
-    
-    /**
-     * Does the actual work of importing the given file.
-     * 
-     * @param sourceFile the source file to import.
-     * @param targetFileName the name of the target file to import to.
-     * @throws CoreException if the transformation fails.
-     */
-    private void doImportModelFile(final File sourceFile, final String targetFileName)
-        throws CoreException {
-        
-        URI sourceFileURI, targetFileURI;
-        
-        // Copy the source file to a temporary file with a .moml extension
-        File realSourceFile;
-        try {
-            realSourceFile = getTemporarySourceFile(sourceFile);
-        } catch (IOException e) {
-            throw new CoreException(new Status(
-                    IStatus.ERROR,
-                    KaomImporterPtolemyPlugin.PLUGIN_ID,
-                    Messages.DiagramsImporter_exception_temporaryFileCreationFailed,
-                    e));
-        }
-        
-        // Prepare target file and delete it if it already exists
-        IFile targetFile = targetContainer.getFile(new Path(targetFileName));
-        if (targetFile.exists()) {
-            targetFile.delete(true, null);
-        }
-        
-        // Prepare URIs
-        sourceFileURI = URI.createFileURI(realSourceFile.getAbsolutePath());
-        targetFileURI = URI.createPlatformResourceURI(targetFile.getFullPath().toString(), true);
-        
-        // Setup the transformation
-        String transformation = "models/ptolemy2kaom"; //$NON-NLS-1$
-        String entryFunction = "transform"; //$NON-NLS-1$
-        
-        EPackage p1 = MomlPackage.eINSTANCE;
-        EPackage p2 = KaomPackage.eINSTANCE;
-        EPackage p3 = AnnotationsPackage.eINSTANCE;
-        
-        // Do my bidding, little ones!
-        XtendStatus status = XtendTransformationUtil.model2ModelTransform(
-                new KielerProgressMonitor(new NullProgressMonitor()),
-                transformation,
-                entryFunction,
-                sourceFileURI,
-                targetFileURI,
-                new PtolemyAnnotationHandler(),
-                p1, p2, p3);
-        
-        // Check if everything went fine
-        int severity = status.getSeverity();
-        maxSeverity = Math.max(maxSeverity, severity);
-         
-        if (severity == XtendStatus.WARNING || severity == XtendStatus.ERROR) {
-            throw new CoreException(new MultiStatus(
-                    KaomImporterPtolemyPlugin.PLUGIN_ID,
-                    severity,
-                    new IStatus[] {status},
-                    Messages.DiagramsImporter_exception_possibleErrors + sourceFile.getName(),
-                    status.getException()));
-        }
-        
     }
     
     /**

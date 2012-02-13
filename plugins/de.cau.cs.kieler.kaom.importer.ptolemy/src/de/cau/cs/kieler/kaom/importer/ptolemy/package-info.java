@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -13,6 +13,6 @@
  */
 
 /**
- * Utility classes for the import of Ptolemy2 diagrams.
+ * Utility classes for the import of Ptolemy diagrams.
  */
 package de.cau.cs.kieler.kaom.importer.ptolemy;
