@@ -30,6 +30,9 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * @author msp
  */
 public class CompoundEdgeAnalysis implements IAnalysis {
+    
+    /** identifier of the compound edge analysis. */
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.compoundEdge";
 
     /**
      * {@inheritDoc}

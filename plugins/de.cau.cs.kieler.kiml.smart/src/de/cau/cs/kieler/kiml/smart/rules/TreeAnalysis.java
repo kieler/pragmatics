@@ -44,11 +44,13 @@ public class TreeAnalysis implements IAnalysis {
         boolean isTree = true;
         for (KNode node : parentNode.getChildren()) {
             if (!dfsMark.containsKey(node)) {
-                int faultEdges = dfs(node, 0);
+                int faultEdges = dfs(node);
                 if (faultEdges > 0) {
                     isTree = false;
                     break;
                 }
+                // mark the root of the last DFS run
+                dfsMark.put(node, 0);
             }
         }
         
@@ -61,21 +63,20 @@ public class TreeAnalysis implements IAnalysis {
      * Perform a DFS on the given node.
      * 
      * @param node a node that hasn't been visited yet
-     * @param nextNum the number for marking the node
      * @return the number of fault edges
      */
-    private int dfs(final KNode node, final int nextNum) {
-        dfsMark.put(node, nextNum);
+    private int dfs(final KNode node) {
+        dfsMark.put(node, 1);
         int faultEdges = 0;
         for (KEdge edge : node.getOutgoingEdges()) {
             KNode target = edge.getTarget();
             Integer mark = dfsMark.get(target);
             if (mark == null) {
                 // the target was not visited yet
-                faultEdges += dfs(target, nextNum + 1);
+                faultEdges += dfs(target);
             } else if (mark == 0) {
                 // the target was the root of a previous dfs run - mark it as non-root
-                dfsMark.put(target, nextNum + 1);
+                dfsMark.put(target, 1);
             } else {
                 // the target has been already visited and is not a root
                 faultEdges++;

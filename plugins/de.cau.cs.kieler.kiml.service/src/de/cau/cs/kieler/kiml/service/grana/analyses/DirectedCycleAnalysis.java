@@ -214,6 +214,7 @@ public class DirectedCycleAnalysis implements IAnalysis {
         this.mark = null;
         sources.clear();
         sinks.clear();
+        idmap.clear();
     }
 
     /**

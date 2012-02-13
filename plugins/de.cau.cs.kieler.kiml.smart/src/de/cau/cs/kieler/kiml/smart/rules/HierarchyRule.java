@@ -13,37 +13,37 @@
  */
 package de.cau.cs.kieler.kiml.smart.rules;
 
-import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.grana.analyses.DirectedCycleAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.NodeCountAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.analyses.CompoundEdgeAnalysis;
 import de.cau.cs.kieler.kiml.smart.ISmartRule;
 import de.cau.cs.kieler.kiml.smart.MetaLayout;
 
 /**
- * Smart layout rule for layered layout type.
+ * Smart layout rule for hierarchical graphs with hierarchy crossing edges.
  *
  * @author msp
  */
-public class LayeredRule implements ISmartRule {
+public class HierarchyRule implements ISmartRule {
+    
+    /** identifier of the KLay Layered algorithm. */
+    private static final String KLAY_LAYERED_ID = "de.cau.cs.kieler.klay.layered";
 
     /**
      * {@inheritDoc}
      */
     public double suitability(final MetaLayout metaLayout) {
-        int nodeCount = metaLayout.analyze(NodeCountAnalysis.ID);
-        int cycleCount = metaLayout.analyze(DirectedCycleAnalysis.ID);
+        int compoundEdgeCount = metaLayout.analyze(CompoundEdgeAnalysis.ID, 0);
         
-        System.out.println("Layered Rule: " + nodeCount + " nodes, " + cycleCount
-                + " cycles, cycle rate = " + ((double) cycleCount / nodeCount));
-        return 1 - (double) Math.min(cycleCount, nodeCount) / nodeCount;
+        System.out.println("Hierarchy Rule: " + compoundEdgeCount + " compound edges");
+        return compoundEdgeCount > 0 ? 1 : 0;
     }
 
     /**
      * {@inheritDoc}
      */
     public void applyMetaLayout(final MetaLayout metaLayout) {
-        metaLayout.getConfig().put(LayoutOptions.ALGORITHM, LayoutTypeData.TYPE_LAYERED);
+        metaLayout.getConfig().put(LayoutOptions.ALGORITHM, KLAY_LAYERED_ID);
+        metaLayout.getConfig().put(LayoutOptions.LAYOUT_HIERARCHY, true);
     }
 
 }

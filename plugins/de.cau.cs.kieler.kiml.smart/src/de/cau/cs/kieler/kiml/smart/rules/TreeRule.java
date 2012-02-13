@@ -29,7 +29,7 @@ public class TreeRule implements ISmartRule {
      * {@inheritDoc}
      */
     public double suitability(final MetaLayout metaLayout) {
-        boolean isTree = (Boolean) metaLayout.analyze(TreeAnalysis.ID);
+        boolean isTree = metaLayout.analyze(TreeAnalysis.ID);
         
         System.out.println("Tree Rule: " + isTree);
         return isTree ? 1 : 0;

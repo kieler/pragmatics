@@ -17,10 +17,12 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.service.AnalysisService;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisFailed;
 
 /**
  * A meta layout provides a layout option mapping for graph elements.
@@ -71,15 +73,40 @@ public class MetaLayout {
     /**
      * Perform the graph analysis with given identifier.
      * 
+     * @param <T> result type inferred from the context
      * @param analysisId the analysis identifier
      * @return the result of the graph analysis
      */
-    public Object analyze(final String analysisId) {
+    @SuppressWarnings("unchecked")
+    public <T> T analyze(final String analysisId) {
         if (analysisCache == null) {
             analysisCache = Maps.newHashMap();
         }
-        return AnalysisService.getInstance().analyze(graph, analysisId, new BasicProgressMonitor(0),
-                analysisCache);
+        Object result = AnalysisService.getInstance().analyze(graph, analysisId,
+                new BasicProgressMonitor(0), analysisCache);
+        if (result instanceof AnalysisFailed) {
+            AnalysisFailed fail = (AnalysisFailed) result;
+            if (fail.getException() == null) {
+                throw new RuntimeException("Failed to perform graph analysis.");
+            } else {
+                throw new WrappedException(fail.getException());
+            }
+        }
+        return (T) result;
+    }
+    
+    /**
+     * Perform the graph analysis with given identifier and fetch the result of given index.
+     * 
+     * @param <T> result type inferred from the context
+     * @param analysisId the analysis identifier
+     * @param index array index of the relevant result
+     * @return the result of the graph analysis
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T analyze(final String analysisId, final int index) {
+        Object[] resultArray = analyze(analysisId);
+        return (T) resultArray[index];
     }
     
     /**

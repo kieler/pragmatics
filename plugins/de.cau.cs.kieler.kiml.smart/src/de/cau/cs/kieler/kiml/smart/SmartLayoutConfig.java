@@ -31,6 +31,7 @@ import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
+import de.cau.cs.kieler.kiml.smart.rules.HierarchyRule;
 import de.cau.cs.kieler.kiml.smart.rules.LayeredRule;
 import de.cau.cs.kieler.kiml.smart.rules.TreeRule;
 
@@ -73,6 +74,7 @@ public class SmartLayoutConfig implements ILayoutConfig {
      * Create a smart layout configuration and initialize rules in according priority.
      */
     public SmartLayoutConfig() {
+        smartRules.add(new HierarchyRule());
         smartRules.add(new TreeRule());
         smartRules.add(new LayeredRule());
     }
@@ -195,6 +197,8 @@ public class SmartLayoutConfig implements ILayoutConfig {
         
         double maxValue = 0;
         ISmartRule bestRule = null;
+        System.out.println("=== smart layout for " + (node.getLabels().isEmpty() ? "unlabeled node"
+                : node.getLabels().get(0).getText()) + " ===");
         for (ISmartRule rule : smartRules) {
             double val = rule.suitability(metaLayout);
             if (val > maxValue) {
