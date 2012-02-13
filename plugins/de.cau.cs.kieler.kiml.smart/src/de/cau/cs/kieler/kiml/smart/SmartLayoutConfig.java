@@ -31,6 +31,7 @@ import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
+import de.cau.cs.kieler.kiml.smart.rules.CircularRule;
 import de.cau.cs.kieler.kiml.smart.rules.HierarchyRule;
 import de.cau.cs.kieler.kiml.smart.rules.LayeredRule;
 import de.cau.cs.kieler.kiml.smart.rules.TreeRule;
@@ -76,6 +77,7 @@ public class SmartLayoutConfig implements ILayoutConfig {
     public SmartLayoutConfig() {
         smartRules.add(new HierarchyRule());
         smartRules.add(new TreeRule());
+        smartRules.add(new CircularRule());
         smartRules.add(new LayeredRule());
     }
     

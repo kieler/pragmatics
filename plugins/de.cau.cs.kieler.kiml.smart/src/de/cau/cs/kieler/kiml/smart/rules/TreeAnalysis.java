@@ -40,6 +40,10 @@ public class TreeAnalysis implements IAnalysis {
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Directed tree analysis", 1);
+        if (parentNode.getChildren().isEmpty()) {
+            progressMonitor.done();
+            return false;
+        }
         
         boolean isTree = true;
         for (KNode node : parentNode.getChildren()) {
