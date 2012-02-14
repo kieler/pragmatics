@@ -564,7 +564,9 @@ public class Pictogram2PNodeTransformation extends
         // chsch:
         elementMap.put(t, text);
 
-        textBox.addAlignedChild(text, halignment, valignment);
+        textBox.addChild(text);
+        textBox.setHorizontalAlignment(text, halignment);
+        textBox.setVerticalAlignment(text, valignment);
         return textBox;
     }
 
