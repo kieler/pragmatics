@@ -557,7 +557,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      * @param editPart
      *            an edit part
      */
-    private void addConnections(final LayoutMapping<IGraphicalEditPart> mapping,
+    protected void addConnections(final LayoutMapping<IGraphicalEditPart> mapping,
             final IGraphicalEditPart editPart) {
         for (Object targetConn : editPart.getTargetConnections()) {
             if (targetConn instanceof ConnectionEditPart) {
@@ -575,7 +575,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      * @param mapping
      *            the layout mapping
      */
-    private void processConnections(final LayoutMapping<IGraphicalEditPart> mapping) {
+    protected void processConnections(final LayoutMapping<IGraphicalEditPart> mapping) {
         Map<EReference, KEdge> reference2EdgeMap = new HashMap<EReference, KEdge>();
         for (ConnectionEditPart connection : mapping.getProperty(CONNECTIONS)) {
             boolean isOppositeEdge = false;

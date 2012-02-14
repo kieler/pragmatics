@@ -8,5 +8,28 @@
             priority="5">
       </manager>
    </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.layoutInfo">
+      <option
+            class="org.eclipselabs.damos.dml.System"
+            option="de.cau.cs.kieler.diagramType"
+            value="de.cau.cs.kieler.layout.diagrams.dataFlow">
+      </option>
+      <option
+            class="org.eclipselabs.damos.dml.System"
+            option="de.cau.cs.kieler.direction"
+            value="RIGHT">
+      </option>
+      <option
+            class="org.eclipselabs.damos.dml.System"
+            option="de.cau.cs.kieler.edgeRouting"
+            value="ORTHOGONAL">
+      </option>
+      <option
+            class="org.eclipselabs.damos.dml.System"
+            option="de.cau.cs.kieler.spacing"
+            value="25.0">
+      </option>
+   </extension>
 
 </plugin>

@@ -20,7 +20,6 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.PrecisionRectangle;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.commands.Command;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
@@ -28,26 +27,23 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ResizableCompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
+import org.eclipse.gmf.runtime.diagram.ui.label.ILabelDelegate;
 import org.eclipse.gmf.runtime.draw2d.ui.mapmode.IMapMode;
 import org.eclipse.swt.SWTException;
 import org.eclipselabs.damos.diagram.ui.editparts.ComponentEditPart;
+import org.eclipselabs.damos.diagram.ui.editparts.ITextualContentEditPart;
+import org.eclipselabs.damos.diagram.ui.editparts.PortEditPart;
 import org.eclipselabs.damos.diagram.ui.parts.BlockDiagramEditor;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.model.gmf.GmfFrameworkBridge;
-import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.gmf.GmfLayoutConfig;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.impl.KEdgeLayoutImpl;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.diagram.ApplyLayoutRequest;
@@ -100,7 +96,7 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
         // traverse the children of the layout root part
         buildLayoutGraphRecursively(mapping, layoutRootPart, topNode, layoutRootPart);
         // transform all connections in the selected area
-//        processConnections(mapping);
+        processConnections(mapping);
 
         return mapping;
     }
@@ -155,10 +151,9 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
                 }
             }
 
-            // process a port (border item)
-            if (obj instanceof AbstractBorderItemEditPart) {
-//                createPort(mapping, (AbstractBorderItemEditPart) obj, parentEditPart,
-//                        parentLayoutNode);
+                // process a port
+            if (obj instanceof PortEditPart) {
+                createPort(mapping, (PortEditPart) obj, parentEditPart, parentLayoutNode);
 
                 // process a compartment, which may contain other elements
             } else if (obj instanceof ResizableCompartmentEditPart
@@ -168,12 +163,7 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
 
                 // process a node, which may be a parent of ports, compartments, or other nodes
             } else if (obj instanceof ComponentEditPart) {
-                ComponentEditPart childNodeEditPart = (ComponentEditPart) obj;
-                createNode(mapping, childNodeEditPart, parentLayoutNode);
-
-                // process a label of the current node
-            } else if (obj instanceof IGraphicalEditPart) {
-//                createNodeLabel(mapping, (IGraphicalEditPart) obj, parentEditPart, parentLayoutNode);
+                createNode(mapping, (ComponentEditPart) obj, parentLayoutNode);
             }
         }
     }
@@ -194,12 +184,12 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
         KNode childLayoutNode = KimlUtil.createInitializedNode();
 
         // set location and size
-        Rectangle childBounds = new Rectangle(nodeFigure.getBounds());
+        PrecisionRectangle childBounds = new PrecisionRectangle(nodeFigure.getBounds());
         IMapMode mapMode = ((DiagramRootEditPart) nodeEditPart.getRoot()).getMapMode();
         mapMode.LPtoDP(childBounds);
         KShapeLayout nodeLayout = childLayoutNode.getData(KShapeLayout.class);
-        nodeLayout.setPos(childBounds.x, childBounds.y);
-        nodeLayout.setSize(childBounds.width, childBounds.height);
+        nodeLayout.setPos((float) childBounds.preciseX(), (float) childBounds.preciseY());
+        nodeLayout.setSize((float) childBounds.preciseWidth(), (float) childBounds.preciseHeight());
         // the modification flag must initially be false
         ((KShapeLayoutImpl) nodeLayout).resetModificationFlag();
         
@@ -220,6 +210,59 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
         mapping.getGraphMap().put(childLayoutNode, nodeEditPart);
         // process the child as new current edit part
         buildLayoutGraphRecursively(mapping, nodeEditPart, childLayoutNode, nodeEditPart);
+        
+        // create node label
+        if (nodeEditPart instanceof ITextualContentEditPart) {
+            ILabelDelegate delegate = ((ITextualContentEditPart) nodeEditPart).getContentLabel();
+            KLabel label = KimlUtil.createInitializedLabel(childLayoutNode);
+            label.setText(delegate.getText());
+            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+            Rectangle textBounds = delegate.getTextBounds();
+            labelLayout.setPos(textBounds.x(), textBounds.y());
+            labelLayout.setSize(textBounds.width(), textBounds.height());
+        }
+        
+        // store all the connections to process them later
+        addConnections(mapping, nodeEditPart);
+    }
+    
+    /**
+     * Create a port while building the layout graph.
+     * 
+     * @param mapping
+     *            the layout mapping
+     * @param portEditPart
+     *            the port edit part
+     * @param nodeEditPart
+     *            the parent node edit part
+     * @param knode
+     *            the corresponding layout node
+     * @param layoutConfig
+     *            a layout configuration
+     */
+    private void createPort(final LayoutMapping<IGraphicalEditPart> mapping,
+            final PortEditPart portEditPart, final IGraphicalEditPart nodeEditPart,
+            final KNode knode) {
+        KPort port = KimlUtil.createInitializedPort();
+        port.setNode(knode);
+
+        // set the port's layout, relative to the node position
+        KShapeLayout portLayout = port.getData(KShapeLayout.class);
+        Rectangle portBounds = new PrecisionRectangle(portEditPart.getFigure().getBounds());
+        Rectangle nodeBounds = new PrecisionRectangle(nodeEditPart.getFigure().getBounds());
+        IMapMode mapMode = ((DiagramRootEditPart) nodeEditPart.getRoot()).getMapMode();
+        mapMode.LPtoDP(portBounds);
+        mapMode.LPtoDP(nodeBounds);
+        portLayout.setPos((float) (portBounds.preciseX() - nodeBounds.preciseX()),
+                (float) (portBounds.preciseY() - nodeBounds.preciseY()));
+        portLayout.setSize((float) portBounds.preciseWidth(), (float) portBounds.preciseHeight());
+        // the modification flag must initially be false
+        ((KShapeLayoutImpl) portLayout).resetModificationFlag();
+
+        mapping.getGraphMap().put(port, portEditPart);
+
+        // store all the connections to process them later
+        addConnections(mapping, portEditPart);
     }
 
 }
