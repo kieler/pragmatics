@@ -107,14 +107,15 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                         new EObjectAdapter((View) hostEditPart.getModel()));
                 float xbound = layoutRequest.getXBound();
                 float ybound = layoutRequest.getYBound();
+                float scale = layoutRequest.getScale();
 
                 // retrieve layout data from the request and compute layout data for the command
                 for (Pair<KGraphElement, GraphicalEditPart> layoutPair : layoutRequest
                         .getElements()) {
                     if (layoutPair.getFirst() instanceof KNode) {
-                        addShapeLayout(command, layoutPair.getFirst(), layoutPair.getSecond());
+                        addShapeLayout(command, layoutPair.getFirst(), layoutPair.getSecond(), scale);
                     } else if (layoutPair.getFirst() instanceof KPort) {
-                        addShapeLayout(command, layoutPair.getFirst(), layoutPair.getSecond());
+                        addShapeLayout(command, layoutPair.getFirst(), layoutPair.getSecond(), scale);
                     } else if (layoutPair.getFirst() instanceof KEdge) {
                         addEdgeLayout(command, (KEdge) layoutPair.getFirst(),
                                 (ConnectionEditPart) layoutPair.getSecond());
@@ -150,12 +151,13 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      *            edit part to which layout is applied
      */
     private void addShapeLayout(final GmfLayoutCommand command, final KGraphElement kgraphElement,
-            final GraphicalEditPart editPart) {
+            final GraphicalEditPart editPart, final float scale) {
         KShapeLayout layoutData = kgraphElement.getData(KShapeLayout.class);
         View view = (View) editPart.getModel();
         
         // check whether the location has changed
-        Point newLocation = new Point((int) layoutData.getXpos(), (int) layoutData.getYpos());
+        Point newLocation = new Point((int) (layoutData.getXpos() * scale),
+                (int) (layoutData.getYpos() * scale));
         Object oldx = ViewUtil.getStructuralFeatureValue(view,
                 NotationPackage.eINSTANCE.getLocation_X());
         Object oldy = ViewUtil.getStructuralFeatureValue(view,
@@ -166,7 +168,8 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         }
         
         // check whether the size has changed
-        Dimension newSize = new Dimension((int) layoutData.getWidth(), (int) layoutData.getHeight());
+        Dimension newSize = new Dimension((int) (layoutData.getWidth() * scale),
+                (int) (layoutData.getHeight() * scale));
         Object oldWidth = ViewUtil.getStructuralFeatureValue(view,
                 NotationPackage.eINSTANCE.getSize_Width());
         Object oldHeight = ViewUtil.getStructuralFeatureValue(view,

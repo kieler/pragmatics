@@ -689,7 +689,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      * @param offset
      *            offset to be subtracted from coordinates
      */
-    protected void setEdgeLayout(final KEdgeLayout edgeLayout, final ConnectionEditPart connection,
+    private void setEdgeLayout(final KEdgeLayout edgeLayout, final ConnectionEditPart connection,
             final KVector offset) {
         Connection figure = connection.getConnectionFigure();
         PointList pointList = figure.getPoints();
@@ -730,7 +730,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      * @param offset
      *            the offset for coordinates
      */
-    protected void processEdgeLabels(final LayoutMapping<IGraphicalEditPart> mapping,
+    private void processEdgeLabels(final LayoutMapping<IGraphicalEditPart> mapping,
             final ConnectionEditPart connection, final KEdge edge,
             final EdgeLabelPlacement placement, final KVector offset) {
         VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
