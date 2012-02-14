@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.List;
-
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -47,6 +45,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @see LayerConstraintProcessor
  * @author cds
+ * @author msp
  */
 public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implements ILayoutProcessor {
 
@@ -80,7 +79,8 @@ public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implem
                 reverseEdges(node, PortType.OUTPUT);
             } else if (edgeConstraint == EdgeConstraint.OUTGOING_ONLY) {
                 reverseEdges(node, PortType.INPUT);
-            } else if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
+            } else if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()
+                    && !node.getPorts().isEmpty()) {
                 // Check whether the ports are reversed, in which case all edges are reversed
                 boolean allPortsReversed = true;
                 for (LPort port : node.getPorts()) {
@@ -110,22 +110,24 @@ public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implem
         LPort[] ports = node.getPorts().toArray(new LPort[node.getPorts().size()]);
         for (LPort port : ports) {
             // Only incoming edges
-            List<LEdge> outgoing = port.getOutgoingEdges();
-            if (type != PortType.INPUT && !outgoing.isEmpty()) {
-                LEdge[] edges = outgoing.toArray(new LEdge[outgoing.size()]);
-
-                for (LEdge edge : edges) {
-                    edge.reverse(true);
+            if (type != PortType.INPUT) {
+                LEdge[] outgoing = port.getOutgoingEdges().toArray(
+                        new LEdge[port.getOutgoingEdges().size()]);
+                for (LEdge edge : outgoing) {
+                    if (!edge.getProperty(Properties.REVERSED)) {
+                        edge.reverse(true);
+                    }
                 }
             }
             
             // Only outgoing edges
-            List<LEdge> incoming = port.getIncomingEdges();
-            if (type != PortType.OUTPUT && !incoming.isEmpty()) {
-                LEdge[] edges = incoming.toArray(new LEdge[incoming.size()]);
-
-                for (LEdge edge : edges) {
-                    edge.reverse(true);
+            if (type != PortType.OUTPUT) {
+                LEdge[] incoming = port.getIncomingEdges().toArray(
+                        new LEdge[port.getIncomingEdges().size()]);
+                for (LEdge edge : incoming) {
+                    if (!edge.getProperty(Properties.REVERSED)) {
+                        edge.reverse(true);
+                    }
                 }
             }
         }
