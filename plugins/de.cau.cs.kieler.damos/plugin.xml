@@ -17,16 +17,16 @@
       </option>
       <option
             class="org.eclipselabs.damos.dml.System"
-            option="de.cau.cs.kieler.direction"
-            value="RIGHT">
+            option="de.cau.cs.kieler.spacing"
+            value="25.0">
       </option>
       <option
-            class="org.eclipselabs.damos.dml.System"
-            option="de.cau.cs.kieler.edgeRouting"
-            value="ORTHOGONAL">
+            class="org.eclipselabs.damos.dml.Compound"
+            option="de.cau.cs.kieler.diagramType"
+            value="de.cau.cs.kieler.layout.diagrams.dataFlow">
       </option>
       <option
-            class="org.eclipselabs.damos.dml.System"
+            class="org.eclipselabs.damos.dml.Compound"
             option="de.cau.cs.kieler.spacing"
             value="25.0">
       </option>

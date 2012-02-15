@@ -16,13 +16,18 @@ package de.cau.cs.kieler.damos.layout;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
+import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.PointList;
+import org.eclipse.draw2d.geometry.PrecisionPoint;
 import org.eclipse.draw2d.geometry.PrecisionRectangle;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.commands.Command;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.BorderedBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
@@ -46,12 +51,17 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.model.gmf.GmfFrameworkBridge;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
+import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.impl.KEdgeLayoutImpl;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -179,19 +189,19 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
                 }
             }
 
-                // process a port
-            if (obj instanceof PortEditPart) {
-                createPort(mapping, (PortEditPart) obj, parentEditPart, parentLayoutNode);
+                // process a component port or compound port
+            if (obj instanceof PortEditPart || obj instanceof BorderedBorderItemEditPart) {
+                createPort(mapping, (ShapeNodeEditPart) obj, parentEditPart, parentLayoutNode);
 
                 // process a compartment, which may contain other elements
             } else if (obj instanceof ResizableCompartmentEditPart
                     && ((CompartmentEditPart) obj).getChildren().size() > 0) {
                 CompartmentEditPart compartment = (CompartmentEditPart) obj;
-                    buildLayoutGraphRecursively(mapping, parentEditPart, parentLayoutNode, compartment);
+                buildLayoutGraphRecursively(mapping, parentEditPart, parentLayoutNode, compartment);
 
-                // process a node, which may be a parent of ports, compartments, or other nodes
-            } else if (obj instanceof ComponentEditPart) {
-                createNode(mapping, (ComponentEditPart) obj, parentLayoutNode);
+                // process a component or compound element
+            } else if (obj instanceof AbstractBorderedShapeEditPart) {
+                createNode(mapping, (AbstractBorderedShapeEditPart) obj, parentLayoutNode);
             }
         }
     }
@@ -248,9 +258,11 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
                 label.setText(delegate.getText());
                 KShapeLayout labelLayout = label.getData(KShapeLayout.class);
                 Rectangle textBounds = delegate.getTextBounds();
+                Rectangle nodeBounds = new Rectangle(nodeFigure.getBounds());
+                nodeFigure.translateToAbsolute(nodeBounds);
+                textBounds.translate(-nodeBounds.x, -nodeBounds.y);
                 textBounds.scale(1 / rootEditPart.getZoomManager().getZoom());
-                labelLayout.setPos(textBounds.x() - (float) childBounds.preciseX(),
-                        textBounds.y() - (float) childBounds.preciseY());
+                labelLayout.setPos(textBounds.x, textBounds.y);
                 labelLayout.setSize(textBounds.width(), textBounds.height());
             }
         }
@@ -274,7 +286,7 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
      *            a layout configuration
      */
     private void createPort(final LayoutMapping<IGraphicalEditPart> mapping,
-            final PortEditPart portEditPart, final IGraphicalEditPart nodeEditPart,
+            final ShapeNodeEditPart portEditPart, final IGraphicalEditPart nodeEditPart,
             final KNode knode) {
         IFigure portFigure = portEditPart.getFigure();
         KPort layoutPort = KimlUtil.createInitializedPort();
@@ -396,6 +408,40 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
             break;
         }
         return s;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void setEdgeLayout(final KEdgeLayout edgeLayout, final ConnectionEditPart connection,
+            final KVector offset) {
+        Connection figure = connection.getConnectionFigure();
+        IMapMode mapMode = ((DiagramRootEditPart) connection.getRoot()).getMapMode();
+        PointList pointList = figure.getPoints();
+
+        KPoint sourcePoint = edgeLayout.getSourcePoint();
+        PrecisionPoint firstPoint = new PrecisionPoint(pointList.getFirstPoint());
+        mapMode.LPtoDP(firstPoint);
+        sourcePoint.setX((float) (firstPoint.preciseX() - offset.x));
+        sourcePoint.setY((float) (firstPoint.preciseY() - offset.y));
+
+        for (int i = 1; i < pointList.size() - 1; i++) {
+            PrecisionPoint point = new PrecisionPoint(pointList.getPoint(i));
+            mapMode.LPtoDP(point);
+            KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+            kpoint.setX((float) (point.preciseX() - offset.x));
+            kpoint.setY((float) (point.preciseY() - offset.y));
+            edgeLayout.getBendPoints().add(kpoint);
+        }
+        KPoint targetPoint = edgeLayout.getTargetPoint();
+        PrecisionPoint lastPoint = new PrecisionPoint(pointList.getLastPoint());
+        mapMode.LPtoDP(lastPoint);
+        targetPoint.setX((float) (lastPoint.preciseX() - offset.x));
+        targetPoint.setY((float) (lastPoint.preciseY() - offset.y));
+        
+        // the modification flag must initially be false
+        ((KEdgeLayoutImpl) edgeLayout).resetModificationFlag();
     }
 
 }
