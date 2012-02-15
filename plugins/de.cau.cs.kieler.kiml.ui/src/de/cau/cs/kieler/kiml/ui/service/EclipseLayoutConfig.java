@@ -215,7 +215,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
      */
     private SizeConstraint getSizeConstraintValue(final LayoutContext context) {
         Set<LayoutOptionData.Target> targets = context.getProperty(LayoutContext.OPT_TARGETS);
-        if (targets != null) {
+        if (targets != null && targets.contains(LayoutOptionData.Target.NODES)) {
             if (!targets.contains(LayoutOptionData.Target.PARENTS)) {
                 return SizeConstraint.FIXED;
             }
@@ -238,7 +238,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
     private PortConstraints getPortConstraintsValue(final LayoutContext context) {
         Set<LayoutOptionData.Target> targets = context.getProperty(LayoutContext.OPT_TARGETS);
         Boolean hasPorts = context.getProperty(DefaultLayoutConfig.HAS_PORTS);
-        if (targets != null && hasPorts != null) {
+        if (targets != null && targets.contains(LayoutOptionData.Target.NODES) && hasPorts != null) {
             if (!targets.contains(LayoutOptionData.Target.PARENTS) && hasPorts) {
                 return PortConstraints.FIXED_POS;
             } else {

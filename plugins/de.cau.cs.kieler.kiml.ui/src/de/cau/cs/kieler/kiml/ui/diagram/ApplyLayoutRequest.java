@@ -44,6 +44,8 @@ public class ApplyLayoutRequest extends Request {
     private float boundx = Float.MAX_VALUE;
     /** the upper bound for vertical coordinates. */
     private float boundy = Float.MAX_VALUE;
+    /** the scale factor for all coordinates. */
+    private float scale = 1.0f;
     
     /**
      * Creates a request to apply layout.
@@ -110,6 +112,24 @@ public class ApplyLayoutRequest extends Request {
      */
     public float getYBound() {
         return boundy;
+    }
+    
+    /**
+     * Returns the factor to use for scaling coordinates.
+     * 
+     * @return the scale factor
+     */
+    public float getScale() {
+        return scale;
+    }
+    
+    /**
+     * Sets the factor to use for scaling coordinates.
+     * 
+     * @param thescale the scale factor
+     */
+    public void setScale(final float thescale) {
+        this.scale = thescale;
     }
     
 }

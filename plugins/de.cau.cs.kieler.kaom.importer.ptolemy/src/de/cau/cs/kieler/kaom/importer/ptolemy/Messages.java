@@ -48,6 +48,12 @@ public final class Messages extends NLS {
     
     public static String ImportDiagramsOptionsPage_advancedAnnotationsButton_text;
     public static String ImportDiagramsOptionsPage_advancedAnnotationsButton_toolTip;
+    public static String ImportDiagramsOptionsPage_annotationsGroup_text;
+    public static String ImportDiagramsOptionsPage_annotationsHeuristicsOverrideLabel_text;
+    public static String ImportDiagramsOptionsPage_annotationsHeuristicsOverrideOffButton_text;
+    public static String ImportDiagramsOptionsPage_annotationsHeuristicsOverrideOffButton_toolTip;
+    public static String ImportDiagramsOptionsPage_annotationsHeuristicsOverrideOnButton_text;
+    public static String ImportDiagramsOptionsPage_annotationsHeuristicsOverrideOnButton_toolTip;
     public static String ImportDiagramsOptionsPage_fileSystemButton_text;
     public static String ImportDiagramsOptionsPage_fileSystemButton_toolTip;
     public static String ImportDiagramsOptionsPage_initializeDiagramFilesButton_text;

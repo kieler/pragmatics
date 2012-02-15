@@ -53,7 +53,8 @@ public class ReversedEdgeRestorer extends AbstractAlgorithm implements ILayoutPr
                 // Iterate over all the ports, looking for outgoing edges that should be reversed
                 for (LPort port : node.getPorts()) {
                     // Iterate over a copy of the edges to avoid concurrent modification exceptions
-                    LEdge[] edgeArray = port.getOutgoingEdges().toArray(new LEdge[0]);
+                    LEdge[] edgeArray = port.getOutgoingEdges().toArray(
+                            new LEdge[port.getOutgoingEdges().size()]);
                     
                     for (LEdge edge : edgeArray) {
                         if (edge.getProperty(Properties.REVERSED)) {
