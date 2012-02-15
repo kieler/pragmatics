@@ -17,6 +17,8 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.LayoutManager;
+import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.PrecisionRectangle;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -25,6 +27,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderedShapeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ResizableCompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
@@ -34,6 +37,9 @@ import org.eclipse.swt.SWTException;
 import org.eclipselabs.damos.diagram.ui.editparts.ComponentEditPart;
 import org.eclipselabs.damos.diagram.ui.editparts.ITextualContentEditPart;
 import org.eclipselabs.damos.diagram.ui.editparts.PortEditPart;
+import org.eclipselabs.damos.diagram.ui.figures.ComponentFigure;
+import org.eclipselabs.damos.diagram.ui.figures.StandardComponentLayout;
+import org.eclipselabs.damos.diagram.ui.figures.StandardComponentLayoutData;
 import org.eclipselabs.damos.diagram.ui.parts.BlockDiagramEditor;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -48,6 +54,7 @@ import de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.ui.diagram.ApplyLayoutRequest;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -269,12 +276,13 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
     private void createPort(final LayoutMapping<IGraphicalEditPart> mapping,
             final PortEditPart portEditPart, final IGraphicalEditPart nodeEditPart,
             final KNode knode) {
-        KPort port = KimlUtil.createInitializedPort();
-        port.setNode(knode);
+        IFigure portFigure = portEditPart.getFigure();
+        KPort layoutPort = KimlUtil.createInitializedPort();
+        layoutPort.setNode(knode);
 
         // set the port's layout, relative to the node position
-        KShapeLayout portLayout = port.getData(KShapeLayout.class);
-        Rectangle portBounds = new PrecisionRectangle(portEditPart.getFigure().getBounds());
+        KShapeLayout portLayout = layoutPort.getData(KShapeLayout.class);
+        Rectangle portBounds = new PrecisionRectangle(portFigure.getBounds());
         Rectangle nodeBounds = new PrecisionRectangle(nodeEditPart.getFigure().getBounds());
         IMapMode mapMode = ((DiagramRootEditPart) nodeEditPart.getRoot()).getMapMode();
         mapMode.LPtoDP(portBounds);
@@ -285,10 +293,109 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
         // the modification flag must initially be false
         ((KShapeLayoutImpl) portLayout).resetModificationFlag();
 
-        mapping.getGraphMap().put(port, portEditPart);
+        mapping.getGraphMap().put(layoutPort, portEditPart);
+        
+        // determine the port side from the figure constraint
+        if (nodeEditPart instanceof IBorderedShapeEditPart) {
+            IFigure nodeFigure = ((IBorderedShapeEditPart) nodeEditPart).getMainFigure();
+            LayoutManager layout = nodeFigure.getLayoutManager();
+            if (layout instanceof StandardComponentLayout) {
+                Object layoutData = (StandardComponentLayoutData) layout.getConstraint(portFigure);
+                if (layoutData instanceof StandardComponentLayoutData) {
+                    int sideValue = ((StandardComponentLayoutData) layoutData).sideHint;
+                    if (nodeFigure instanceof ComponentFigure) {
+                        ComponentFigure componentFigure = (ComponentFigure) nodeFigure;
+                        sideValue = transformSide(sideValue, componentFigure.isFlipped(),
+                                componentFigure.getRotation());
+                    }
+                    PortSide portSide = PortSide.UNDEFINED;
+                    switch (sideValue) {
+                    case PositionConstants.NORTH:
+                        portSide = PortSide.NORTH;
+                        break;
+                    case PositionConstants.EAST:
+                        portSide = PortSide.EAST;
+                        break;
+                    case PositionConstants.SOUTH:
+                        portSide = PortSide.SOUTH;
+                        break;
+                    case PositionConstants.WEST:
+                        portSide = PortSide.WEST;
+                        break;
+                    }
+                    if (portSide != PortSide.UNDEFINED) {
+                        VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
+                        staticConfig.setValue(LayoutOptions.PORT_SIDE, layoutPort,
+                                LayoutContext.GRAPH_ELEM, portSide);
+                    }
+                }
+            }
+        }
 
         // store all the connections to process them later
         addConnections(mapping, portEditPart);
+    }
+
+    /**
+     * Transform a port side according to flipping and rotation.
+     * Code copied from {@code org.eclipselabs.damos.diagram.ui.internal.geometry.Geometry}.
+     * 
+     * @param side the default side
+     * @param flipped whether the figure is flipped
+     * @param rotation whether the figure is rotated
+     * @return the transformed side
+     */
+    public static int transformSide(final int side, final boolean flipped, final int rotation) {
+        int s = side;
+        if (flipped) {
+            switch (side) {
+            case PositionConstants.EAST:
+                s = PositionConstants.WEST;
+                break;
+            case PositionConstants.WEST:
+                s = PositionConstants.EAST;
+                break;
+            }
+        }
+        switch (rotation) {
+        case 90: // SUPPRESS CHECKSTYLE MagicNumber
+            switch (s) {
+            case PositionConstants.EAST:
+                return PositionConstants.NORTH;
+            case PositionConstants.WEST:
+                return PositionConstants.SOUTH;
+            case PositionConstants.NORTH:
+                return PositionConstants.WEST;
+            case PositionConstants.SOUTH:
+                return PositionConstants.EAST;
+            }
+            break;
+        case 180: // SUPPRESS CHECKSTYLE MagicNumber
+            switch (s) {
+            case PositionConstants.EAST:
+                return PositionConstants.WEST;
+            case PositionConstants.WEST:
+                return PositionConstants.EAST;
+            case PositionConstants.NORTH:
+                return PositionConstants.SOUTH;
+            case PositionConstants.SOUTH:
+                return PositionConstants.NORTH;
+            }
+            break;
+        case 270: // SUPPRESS CHECKSTYLE MagicNumber
+            switch (s) {
+            case PositionConstants.EAST:
+                return PositionConstants.SOUTH;
+            case PositionConstants.WEST:
+                return PositionConstants.NORTH;
+            case PositionConstants.NORTH:
+                return PositionConstants.EAST;
+            case PositionConstants.SOUTH:
+                return PositionConstants.WEST;
+            }
+            break;
+        }
+        return s;
     }
 
 }
