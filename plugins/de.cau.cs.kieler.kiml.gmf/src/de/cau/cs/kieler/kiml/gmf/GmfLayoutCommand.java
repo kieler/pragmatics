@@ -75,8 +75,7 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
     /** adapter for the view of the base diagram. */
     private IAdaptable diagramViewAdapter;
     /** list of shape layouts to be applied to nodes. */
-    private List<ShapeLayoutData> shapeLayouts =
-            new LinkedList<ShapeLayoutData>();
+    private List<ShapeLayoutData> shapeLayouts = new LinkedList<ShapeLayoutData>();
     /** list of edge layouts to be applied to edges. */
     private List<EdgeLayoutData> edgeLayouts = new LinkedList<EdgeLayoutData>();
     /** indicates whether oblique routing style shall be enforced. */
@@ -92,8 +91,8 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
      * @param adapter
      *            an adapter to the {@code View} of the base diagram
      */
-    public GmfLayoutCommand(final TransactionalEditingDomain domain,
-            final String label, final IAdaptable adapter) {
+    public GmfLayoutCommand(final TransactionalEditingDomain domain, final String label,
+            final IAdaptable adapter) {
         super(domain, label, null);
         this.diagramViewAdapter = adapter;
     }
@@ -104,14 +103,11 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
      * @param view
      *            view from the GMF notation model
      * @param location
-     *            new location for the view, or {@code null} if the location
-     *            shall not be changed
+     *            new location for the view, or {@code null} if the location shall not be changed
      * @param size
-     *            new size for the view, or {@code null} if the size shall not
-     *            be changed
+     *            new size for the view, or {@code null} if the size shall not be changed
      */
-    public void addShapeLayout(final View view, final Point location,
-            final Dimension size) {
+    public void addShapeLayout(final View view, final Point location, final Dimension size) {
         assert view != null;
         ShapeLayoutData layout = new ShapeLayoutData();
         layout.view = view;
@@ -126,17 +122,17 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
      * @param edge
      *            edge from the GMF notation model
      * @param bends
-     *            list of bend points for the edge, or {@code null} if the bend
-     *            points shall not be changed
+     *            list of bend points for the edge, or {@code null} if the bend points shall not be
+     *            changed
      * @param sourceTerminal
-     *            new source terminal, encoded as string, or {@code null} if the
-     *            source terminal shall not be changed
+     *            new source terminal, encoded as string, or {@code null} if the source terminal
+     *            shall not be changed
      * @param targetTerminal
-     *            new target terminal, encoded as string, or {@code null} if the
-     *            target terminal shall not be changed
+     *            new target terminal, encoded as string, or {@code null} if the target terminal
+     *            shall not be changed
      */
-    public void addEdgeLayout(final Edge edge, final PointList bends,
-            final String sourceTerminal, final String targetTerminal) {
+    public void addEdgeLayout(final Edge edge, final PointList bends, final String sourceTerminal,
+            final String targetTerminal) {
         assert edge != null;
         EdgeLayoutData layout = new EdgeLayoutData();
         layout.edge = edge;
@@ -190,26 +186,22 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
         for (EdgeLayoutData edgeLayout : edgeLayouts) {
             // set new bend points of the edge
             if (edgeLayout.bends != null) {
-                List<RelativeBendpoint> newBendpoints =
-                        new ArrayList<RelativeBendpoint>(
-                                edgeLayout.bends.size());
+                List<RelativeBendpoint> newBendpoints = new ArrayList<RelativeBendpoint>(
+                        edgeLayout.bends.size());
                 Point sourcePoint = edgeLayout.bends.getFirstPoint();
                 Point targetPoint = edgeLayout.bends.getLastPoint();
                 for (int i = 0; i < edgeLayout.bends.size(); i++) {
                     Point bend = edgeLayout.bends.getPoint(i);
-                    newBendpoints.add(new RelativeBendpoint(bend.x
-                            - sourcePoint.x, bend.y - sourcePoint.y, bend.x
-                            - targetPoint.x, bend.y - targetPoint.y));
+                    newBendpoints.add(new RelativeBendpoint(bend.x - sourcePoint.x,
+                            bend.y - sourcePoint.y, bend.x - targetPoint.x, bend.y - targetPoint.y));
                 }
-                RelativeBendpoints points =
-                        (RelativeBendpoints) edgeLayout.edge.getBendpoints();
+                RelativeBendpoints points = (RelativeBendpoints) edgeLayout.edge.getBendpoints();
                 points.setPoints(newBendpoints);
             }
 
             // set new source anchor point of the edge
             if (edgeLayout.sourceTerminal != null) {
-                IdentityAnchor anchor =
-                        (IdentityAnchor) edgeLayout.edge.getSourceAnchor();
+                IdentityAnchor anchor = (IdentityAnchor) edgeLayout.edge.getSourceAnchor();
                 if (anchor == null) {
                     anchor = NotationFactory.eINSTANCE.createIdentityAnchor();
                     edgeLayout.edge.setSourceAnchor(anchor);
@@ -218,8 +210,7 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
             }
             // set new target anchor point of the edge
             if (edgeLayout.targetTerminal != null) {
-                IdentityAnchor anchor =
-                        (IdentityAnchor) edgeLayout.edge.getTargetAnchor();
+                IdentityAnchor anchor = (IdentityAnchor) edgeLayout.edge.getTargetAnchor();
                 if (anchor == null) {
                     anchor = NotationFactory.eINSTANCE.createIdentityAnchor();
                     edgeLayout.edge.setTargetAnchor(anchor);
@@ -229,10 +220,8 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
 
             // set routing style to oblique
             if (obliqueRouting) {
-                RoutingStyle routingStyle =
-                        (RoutingStyle) edgeLayout.edge
-                                .getStyle(NotationPackage.eINSTANCE
-                                        .getRoutingStyle());
+                RoutingStyle routingStyle = (RoutingStyle) edgeLayout.edge
+                        .getStyle(NotationPackage.eINSTANCE.getRoutingStyle());
                 if (routingStyle != null) {
                     routingStyle.setRouting(Routing.MANUAL_LITERAL);
                     routingStyle.setSmoothness(Smoothness.NONE_LITERAL);
