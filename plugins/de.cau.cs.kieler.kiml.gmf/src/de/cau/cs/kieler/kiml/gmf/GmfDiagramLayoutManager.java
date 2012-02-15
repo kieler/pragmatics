@@ -201,8 +201,11 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         Rectangle rootBounds = layoutRootPart.getFigure().getBounds();
         if (layoutRootPart instanceof DiagramEditPart) {
             // start with the whole diagram as root for layout
-            KLabel label = KimlUtil.createInitializedLabel(topNode);
-            label.setText(((DiagramEditPart) layoutRootPart).getDiagramView().getName());
+            String labelText = ((DiagramEditPart) layoutRootPart).getDiagramView().getName();
+            if (labelText.length() > 0) {
+                KLabel label = KimlUtil.createInitializedLabel(topNode);
+                label.setText(labelText);
+            }
         } else {
             // start with a specific node as root for layout
             shapeLayout.setPos(rootBounds.x, rootBounds.y);

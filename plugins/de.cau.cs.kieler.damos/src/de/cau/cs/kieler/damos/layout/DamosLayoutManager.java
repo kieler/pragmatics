@@ -1,4 +1,5 @@
-/* KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+/* 
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
@@ -41,6 +42,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.model.gmf.GmfFrameworkBridge;
 import de.cau.cs.kieler.kiml.LayoutContext;
+import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -65,6 +67,10 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
         return object instanceof BlockDiagramEditor || object instanceof ComponentEditPart;
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     protected LayoutMapping<IGraphicalEditPart> buildLayoutGraph(
             final IGraphicalEditPart layoutRootPart) {
         LayoutMapping<IGraphicalEditPart> mapping = new LayoutMapping<IGraphicalEditPart>();
@@ -75,21 +81,25 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
         mapping.setParentElement(layoutRootPart);
 
         // find the diagram edit part
-        mapping.setProperty(DIAGRAM_EDIT_PART,
-                GmfFrameworkBridge.getDiagramEditPart(layoutRootPart));
+        mapping.setProperty(DIAGRAM_EDIT_PART, GmfFrameworkBridge.getDiagramEditPart(layoutRootPart));
 
+        IMapMode mapMode = ((DiagramRootEditPart) layoutRootPart.getRoot()).getMapMode();
         KNode topNode = KimlUtil.createInitializedNode();
         KShapeLayout shapeLayout = topNode.getData(KShapeLayout.class);
-        Rectangle rootBounds = layoutRootPart.getFigure().getBounds();
+        Rectangle rootBounds = new PrecisionRectangle(layoutRootPart.getFigure().getBounds());
+        mapMode.LPtoDP(rootBounds);
         if (layoutRootPart instanceof DiagramEditPart) {
             // start with the whole diagram as root for layout
-            KLabel label = KimlUtil.createInitializedLabel(topNode);
-            label.setText(((DiagramEditPart) layoutRootPart).getDiagramView().getName());
+            String labelText = ((DiagramEditPart) layoutRootPart).getDiagramView().getName();
+            if (labelText.length() > 0) {
+                KLabel label = KimlUtil.createInitializedLabel(topNode);
+                label.setText(labelText);
+            }
         } else {
             // start with a specific node as root for layout
-            shapeLayout.setPos(rootBounds.x, rootBounds.y);
+            shapeLayout.setPos((float) rootBounds.preciseX(), (float) rootBounds.preciseY());
         }
-        shapeLayout.setSize(rootBounds.width, rootBounds.height);
+        shapeLayout.setSize((float) rootBounds.preciseWidth(), (float) rootBounds.preciseHeight());
         mapping.getGraphMap().put(topNode, layoutRootPart);
         mapping.setLayoutGraph(topNode);
 
@@ -123,6 +133,17 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
         // retrieve a command for the request; the command is created by GmfLayoutEditPolicy
         Command applyLayoutCommand = diagramEditPart.getCommand(applyLayoutRequest);
         mapping.setProperty(LAYOUT_COMMAND, applyLayoutCommand);
+    }
+
+    /** the cached layout configuration for Damos. */
+    private DamosLayoutConfig layoutConfig = new DamosLayoutConfig();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IMutableLayoutConfig getLayoutConfig() {
+        return layoutConfig;
     }
     
     /**
@@ -182,10 +203,11 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
             final ShapeNodeEditPart nodeEditPart, final KNode parentKNode) {
         IFigure nodeFigure = nodeEditPart.getFigure();
         KNode childLayoutNode = KimlUtil.createInitializedNode();
+        DiagramRootEditPart rootEditPart = (DiagramRootEditPart) nodeEditPart.getRoot();
 
         // set location and size
         PrecisionRectangle childBounds = new PrecisionRectangle(nodeFigure.getBounds());
-        IMapMode mapMode = ((DiagramRootEditPart) nodeEditPart.getRoot()).getMapMode();
+        IMapMode mapMode = rootEditPart.getMapMode();
         mapMode.LPtoDP(childBounds);
         KShapeLayout nodeLayout = childLayoutNode.getData(KShapeLayout.class);
         nodeLayout.setPos((float) childBounds.preciseX(), (float) childBounds.preciseY());
@@ -214,12 +236,16 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
         // create node label
         if (nodeEditPart instanceof ITextualContentEditPart) {
             ILabelDelegate delegate = ((ITextualContentEditPart) nodeEditPart).getContentLabel();
-            KLabel label = KimlUtil.createInitializedLabel(childLayoutNode);
-            label.setText(delegate.getText());
-            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-            Rectangle textBounds = delegate.getTextBounds();
-            labelLayout.setPos(textBounds.x(), textBounds.y());
-            labelLayout.setSize(textBounds.width(), textBounds.height());
+            if (delegate != null) {
+                KLabel label = KimlUtil.createInitializedLabel(childLayoutNode);
+                label.setText(delegate.getText());
+                KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                Rectangle textBounds = delegate.getTextBounds();
+                textBounds.scale(1 / rootEditPart.getZoomManager().getZoom());
+                labelLayout.setPos(textBounds.x() - (float) childBounds.preciseX(),
+                        textBounds.y() - (float) childBounds.preciseY());
+                labelLayout.setSize(textBounds.width(), textBounds.height());
+            }
         }
         
         // store all the connections to process them later
