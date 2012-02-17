@@ -17,8 +17,6 @@ package de.cau.cs.kieler.kiml.service;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -27,16 +25,10 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.kgraph.PersistentEntry;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.LayoutDataService;
-import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
@@ -72,7 +64,9 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
     public void deserialize(final String serializedGraph,
             final TransformationData<KNode, KNode> transData) {
         super.deserialize(serializedGraph, transData);
-        unpersistDataElements(transData.getSourceGraph());
+        if (transData.getSourceGraph() != null) {
+            KimlUtil.loadDataElements(transData.getSourceGraph());
+        }
     }
 
     /**
@@ -122,54 +116,6 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
      */
     public IGraphTransformer<KNode, KNode> getExporter() {
         return TRANSFORMER;
-    }
-
-    /**
-     * Unpersists all KGraphData elements of a KNode graph.
-     *
-     * @param graph 
-     *            the root element of the graph to unpersist elements of.
-     */
-    private void unpersistDataElements(final KNode graph) {
-        if (graph != null) {
-            TreeIterator<EObject> iterator = graph.eAllContents();
-            EObject eObject  = null;
-            EList<PersistentEntry> persistentEntries = null;
-            LayoutDataService dataService = LayoutDataService.getInstance();
-            KGraphData kgraphData = null;
-            while (iterator.hasNext()) {
-                eObject = iterator.next();
-                if (eObject instanceof KGraphData) {
-                    kgraphData = ((KGraphData) eObject);
-                    persistentEntries = kgraphData.getPersistentEntries();
-                    for (PersistentEntry persistentEntry : persistentEntries) {
-                        String key = persistentEntry.getKey();
-                        String value = persistentEntry.getValue();
-                        if (key != null && value != null) {
-                            LayoutOptionData<?> layoutOptionData = null;
-                            // If we run inside of KIELER we try to get the layout option
-                            // from the data service
-                            if (dataService != null) { 
-                                layoutOptionData = dataService.getOptionData(key);
-                            }
-                            // If we have a valid layout option, parse its value and
-                            // annotate graph
-                            if (layoutOptionData != null) {
-                                Object layoutOptionValue = layoutOptionData
-                                    .parseValue(persistentEntry.getValue());
-                                if (layoutOptionValue != null) {
-                                    kgraphData.setProperty(layoutOptionData, layoutOptionValue);
-                                }
-                            // Unknown options are wrapped by a dynamically instantiated one
-                            } else {
-                                IProperty<String> property = new Property<String>(key);
-                                kgraphData.setProperty(property, value);
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
     
     /**
