@@ -4,7 +4,7 @@
       label="KIELER Layout for GMF"
       version="0.6.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
-      image="icons/kiel_32.gif">
+      plugin="de.cau.cs.kieler.kiml.gmf">
 
    <description url="http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/Projects/KIML">
       The KIELER Infrastructure for Meta Layout provides automatic
