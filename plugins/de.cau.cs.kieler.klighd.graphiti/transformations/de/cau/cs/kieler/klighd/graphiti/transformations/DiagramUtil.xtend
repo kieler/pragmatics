@@ -30,6 +30,8 @@ import de.cau.cs.kieler.core.annotations.FloatAnnotation
 import com.google.inject.Inject
 import java.util.ArrayList
 import de.cau.cs.kieler.core.annotations.StringAnnotation
+import java.util.Map
+import com.google.common.collect.HashBiMap
 
 class DiagramUtil {
 	
@@ -90,15 +92,15 @@ class DiagramUtil {
      * Creates an anchor and a related port figure as well as a port label
      *  onto the east side of a given shape with the port label text 'label'.
      *  The anchor is related to the given EObjects.
+     * 
+     * The create nature of these extensions avoids the relocation the an
+     *  already created port due to the recall of the initializer extension.
      */
-    def Anchor createLabeledEastPortAnchor(Shape shape, String label, EObject eo1) {
-    	shape.createLabeledEastPortAnchor(label, newArrayList(eo1, eo1, eo1))
+    def Anchor create a: shape.createLabeledEastPortAnchor(label, newArrayList(eo1, eo1, eo1)) createLabeledEastPortAnchor(Shape shape, String label, EObject eo1) {
     }
-    def Anchor createLabeledEastPortAnchor(Shape shape, String label, EObject eo1, EObject eo2) {
-    	shape.createLabeledEastPortAnchor(label, newArrayList(eo1, eo2, eo2))
+    def Anchor create a: shape.createLabeledEastPortAnchor(label, newArrayList(eo1, eo2, eo2)) createLabeledEastPortAnchor(Shape shape, String label, EObject eo1, EObject eo2) {
     }
-    def Anchor createLabeledEastPortAnchor(Shape shape, String label, EObject eo1, EObject eo2, EObject eo3) {
-    	shape.createLabeledEastPortAnchor(label, newArrayList(eo1, eo2, eo3))
+    def Anchor create a: shape.createLabeledEastPortAnchor(label, newArrayList(eo1, eo2, eo3)) createLabeledEastPortAnchor(Shape shape, String label, EObject eo1, EObject eo2, EObject eo3) {
     }
 
 
@@ -106,15 +108,15 @@ class DiagramUtil {
      * Creates an anchor and a related port figure as well as a port label
      *  onto the west side of a given shape with the port label text 'label'.
      *  The anchor is related to the given EObjects.
+     * 
+     * The create nature of these extensions avoids the relocation the an
+     *  already created port due to the recall of the initializer extension.
      */
-    def Anchor createLabeledWestPortAnchor(Shape shape, String label, EObject eo1) {
-    	shape.createLabeledWestPortAnchor(label, newArrayList(eo1, eo1, eo1))
+    def Anchor create a: shape.createLabeledWestPortAnchor(label, newArrayList(eo1, eo1, eo1)) createLabeledWestPortAnchor(Shape shape, String label, EObject eo1) {
     }
-    def Anchor createLabeledWestPortAnchor(Shape shape, String label, EObject eo1, EObject eo2) {
-    	shape.createLabeledWestPortAnchor(label, newArrayList(eo1, eo2, eo2))
+    def Anchor create a: shape.createLabeledWestPortAnchor(label, newArrayList(eo1, eo2, eo2)) createLabeledWestPortAnchor(Shape shape, String label, EObject eo1, EObject eo2) {
     }
-    def Anchor createLabeledWestPortAnchor(Shape shape, String label, EObject eo1, EObject eo2, EObject eo3) {
-    	shape.createLabeledWestPortAnchor(label, newArrayList(eo1, eo2, eo3))
+    def Anchor create a: shape.createLabeledWestPortAnchor(label, newArrayList(eo1, eo2, eo3)) createLabeledWestPortAnchor(Shape shape, String label, EObject eo1, EObject eo2, EObject eo3) {
     }
 
 
@@ -325,7 +327,7 @@ class DiagramUtil {
         figure.setForeground(connection.graphicsAlgorithm.foreground);
         figure.setBackground(figure.foreground);
         figure.setFilled(true);  
-        decorator.setVisible(true); val x = 33+7;
+        decorator.setVisible(true);
         decorator.setLocation(if (toHead) Float::valueOf("1.0") - relativeConnectionArrowOffset.value 
         	                         else Float::valueOf("0.0") + relativeConnectionArrowOffset.value);
         decorator.setLocationRelative(true);
@@ -638,14 +640,11 @@ class DiagramUtil {
         eo.value = value;
         eo
     }
-    def StringAnnotation stringEObject(String value) {
-        val eo = AnnotationsFactory::eINSTANCE.createStringAnnotation;
-        eo.value = value;
-        eo
+
+    def StringAnnotation create stringAnno: AnnotationsFactory::eINSTANCE.createStringAnnotation stringEObject(String value) {
+        stringAnno.value = value;        
     }
-    /**
-     * 
-     */
+
     def IntAnnotation create intAnno: AnnotationsFactory::eINSTANCE.createIntAnnotation getIntProperty(Shape shape, String name) {
         intAnno.setName(name);
         intAnno.setValue(0);
@@ -665,6 +664,13 @@ class DiagramUtil {
     def <T> List<T> toIterable(TreeIterator<T> iterator) {
         ImmutableList::<T>copyOf(iterator)
     }
+    
+    /**
+     * Helper providing an inverse map of a map that statisfies the BiMap property.
+     */
+    def <T,U> Map<U,T> toInverse(Map<T,U> map) {
+    	HashBiMap::create(map).inverse
+    } 
     
           
     def ArrayList<Integer> create list: <Integer>newArrayList getListWithElementsTo(Integer size) {
