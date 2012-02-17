@@ -29,6 +29,7 @@ import com.google.common.collect.ImmutableList
 import de.cau.cs.kieler.core.annotations.FloatAnnotation
 import com.google.inject.Inject
 import java.util.ArrayList
+import de.cau.cs.kieler.core.annotations.StringAnnotation
 
 class DiagramUtil {
 	
@@ -634,6 +635,11 @@ class DiagramUtil {
     
     def IntAnnotation intEObject(Integer value) {
         val eo = AnnotationsFactory::eINSTANCE.createIntAnnotation;
+        eo.value = value;
+        eo
+    }
+    def StringAnnotation stringEObject(String value) {
+        val eo = AnnotationsFactory::eINSTANCE.createStringAnnotation;
         eo.value = value;
         eo
     }
