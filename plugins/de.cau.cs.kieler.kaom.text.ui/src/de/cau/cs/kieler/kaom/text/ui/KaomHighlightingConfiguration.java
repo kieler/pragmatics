@@ -18,7 +18,7 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import de.cau.cs.kieler.core.annotations.text.ui.AnnotationsHighlightingConfiguration;
 
 /**
- * Custom {@link IHighlightingConfiguration} contributing to the Kits editor. The required method
+ * Custom {@link IHighlightingConfiguration} contributing to the KAOM editor. The required method
  * {@link IHighlightingConfiguration#configure(org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfigurationAcceptor)}
  * will be provided by the {@link AnnotationsHighlightingConfiguration} and can be specialized in
  * order to add KAOM specific highlighting profiles.
