@@ -21,12 +21,10 @@ import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.Request;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.klayoutdata.impl.KEdgeLayoutImpl;
+import de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl;
 
 /**
  * Request for automatic layout on a set of edit parts of a diagram.
@@ -55,16 +53,23 @@ public class ApplyLayoutRequest extends Request {
     }
 
     /**
-     * Adds the given graph element and edit part to the request. Graph elements
-     * for which the NO_LAYOUT option is active are not included.
+     * Adds the given graph element and edit part to the request, if it has been modified by
+     * a layout algorithm.
      * 
      * @param element graph element with layout data
      * @param editPart the corresponding edit part
      */
     public void addElement(final KGraphElement element, final GraphicalEditPart editPart) {
-        KGraphData layoutData = element.getData(element instanceof KEdge
-                ? KEdgeLayout.class : KShapeLayout.class);
-        if (!(layoutData == null || layoutData.getProperty(LayoutOptions.NO_LAYOUT))) {
+        boolean modified = false;
+        if (element instanceof KEdge) {
+            KEdgeLayoutImpl edgeLayout = element.getData(KEdgeLayoutImpl.class);
+            modified = edgeLayout.isModified();
+        } else {
+            KShapeLayoutImpl shapeLayout = element.getData(KShapeLayoutImpl.class);
+            modified = shapeLayout.isModified();
+        }
+        
+        if (modified) {
             mappingList.add(new Pair<KGraphElement, GraphicalEditPart>(element, editPart));
         }
     }

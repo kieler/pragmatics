@@ -19,20 +19,18 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.ui.statushandlers.StatusManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
-import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper;
-import de.cau.cs.kieler.kaom.karma.ptolemy.Activator;
-
+import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.PtolemyInterface;
 import ptolemy.data.expr.XMLParser;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.ConfigurableAttribute;
@@ -364,8 +362,10 @@ public final class PtolemyFetcher {
 
                 try {
                     // Use Ptolemy to load the actor
-                    PtolemyHelper ptolemyHelper = new PtolemyHelper();
-                    NamedObj nObj = ptolemyHelper.instantiatePtolemyEntity(ptolemyClassString);
+                    Injector injector = Guice.createInjector();
+                    PtolemyInterface ptolemy = injector.getInstance(PtolemyInterface.class);
+                    
+                    NamedObj nObj = ptolemy.instantiatePtolemyActor(ptolemyClassString, "actor");
 
                     if (nObj != null) {
                         return nObj;

@@ -19,7 +19,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
-import de.cau.cs.kieler.kiml.service.ProgrammaticLayoutDataService;
+import de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService;
 import de.cau.cs.kieler.kwebs.servicedata.Category;
 import de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm;
 import de.cau.cs.kieler.kwebs.servicedata.LayoutOption;
@@ -36,7 +36,7 @@ import de.cau.cs.kieler.kwebs.servicedata.transformation.ServiceDataXmiTransform
  * @kieler.rating 2011-05-17 red
  * @author swe
  */
-public abstract class ServiceDataLayoutDataService extends ProgrammaticLayoutDataService/*ExtensionLayoutDataService*/ {
+public abstract class ServiceDataLayoutDataService extends ExtensionLayoutDataService {
 
     /** 
      *  The extension elements created from the layout meta data received
@@ -66,20 +66,23 @@ public abstract class ServiceDataLayoutDataService extends ProgrammaticLayoutDat
             ServiceData serviceData = transformer.deserialize(serviceDataXMI);
             Vector<IConfigurationElement> vectorElements = new Vector<IConfigurationElement>();
             for (Category category : serviceData.getCategories()) {   
-                vectorElements.add(ServiceDataConfigurationElement.getCategoryElementFromModel(category));
+                vectorElements.add(ServiceDataConfigurationElement
+                        .getCategoryElementFromModel(category));
             }
             for (LayoutType type : serviceData.getLayoutTypes()) {                
-                vectorElements.add(ServiceDataConfigurationElement.getLayoutTypeElementFromModel(type));
+                vectorElements.add(ServiceDataConfigurationElement
+                        .getLayoutTypeElementFromModel(type));
             }
             for (LayoutOption option : serviceData.getLayoutOptions()) {
-                vectorElements.add(ServiceDataConfigurationElement.getLayoutOptionElementFromModel(option));
+                vectorElements.add(ServiceDataConfigurationElement
+                        .getLayoutOptionElementFromModel(option));
             }
             for (LayoutAlgorithm algorithm : serviceData.getLayoutAlgorithms()) {
-                vectorElements.add(ServiceDataConfigurationElement.getLayoutAlgorithmElementFromModel(algorithm));
+                vectorElements.add(ServiceDataConfigurationElement
+                        .getLayoutAlgorithmElementFromModel(algorithm));
             }
             extensions = vectorElements.toArray(new IConfigurationElement[0]);
             loadLayoutProviderExtensions();
-            registerProgrammaticOptions();
         } catch (Exception e) {
             reportError("Error while parsing layout server meta data", e);
         }
@@ -99,8 +102,9 @@ public abstract class ServiceDataLayoutDataService extends ProgrammaticLayoutDat
     }
     
     /**
-     * 
+     * {@inheritDoc}
      */
+    @Override
     protected void reportError(final String extensionPoint, final IConfigurationElement element,
         final String attribute, final Throwable exception) {
         reportError(
@@ -112,10 +116,10 @@ public abstract class ServiceDataLayoutDataService extends ProgrammaticLayoutDat
         );
     }
 
-    /*
-     * (non-Javadoc)
-     * @see de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService#reportError(org.eclipse.core.runtime.CoreException)
+    /**
+     * {@inheritDoc}
      */
+    @Override
     protected void reportError(final CoreException e) {
         reportError("Exception occured while parsing meta data", e);
     }
@@ -133,7 +137,7 @@ public abstract class ServiceDataLayoutDataService extends ProgrammaticLayoutDat
      * 
      * @param message
      *            the error message
-     * @param exception
+     * @param throwable
      *            the exception occurred
      */
     protected abstract void reportError(final String message, final Throwable throwable);

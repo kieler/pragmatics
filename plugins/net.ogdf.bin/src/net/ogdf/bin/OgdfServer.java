@@ -12,12 +12,17 @@
  */
 package net.ogdf.bin;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
@@ -31,6 +36,18 @@ import org.osgi.framework.Bundle;
  * @author mri
  */
 public class OgdfServer {
+    
+    /**
+     * Available cleanup modes.
+     */
+    public static enum Cleanup {
+        /** normal cleanup. */
+        NORMAL,
+        /** read error output and stop the OGDF process. */
+        ERROR,
+        /** stop the OGDF process and the watcher thread. */
+        STOP;
+    }
 
     /** the information indicating an UML graph. */
     public static final String INFO_UML_GRAPH = "umlGraph";
@@ -246,6 +263,10 @@ public class OgdfServer {
     private String executable;
     /** the ogdf server process. */
     private Process process;
+    /** the watcher thread used to cancel a blocked read operation. */
+    private Watchdog watchdog;
+    /** the input stream given by the OGDF process. */
+    private InputStream ogdfStream;
     /** a temporary file that should be removed after closing the process. */
     private File tempFile;
 
@@ -351,15 +372,22 @@ public class OgdfServer {
         }
         return execFile;
     }
-
+    
     /**
-     * Starts a new ogdf server process or returns an existing one.
+     * Initialize the OGDF server instance by starting the OGDF process and the
+     * watcher thread as necessary.
      * 
      * @param inputFormat
      *            the graph input format for the ogdf server
-     * @return an instance of the ogdf server process
      */
-    public synchronized Process startProcess(final String inputFormat) {
+    public void initialize(final String inputFormat) {
+        if (watchdog == null) {
+            // start the watcher thread for timeout checking
+            watchdog = new Watchdog();
+            watchdog.setName("OGDF Watchdog");
+            watchdog.start();
+        }
+
         if (process == null) {
             try {
                 if (executable == null) {
@@ -370,55 +398,183 @@ public class OgdfServer {
                 throw new OgdfServerException("Failed to start ogdf server process.", exception);
             }
         }
-        return process;
     }
 
     /**
-     * Closes the currently cached process instance so a new one is created for the next start
-     * process call.
+     * Return the stream that is used to give input to OGDF.
+     * 
+     * @return an output stream for writing to the tool
      */
-    public synchronized void endProcess() {
+    public OutputStream input() {
         if (process != null) {
-            try {
-                process.getOutputStream().close();
-                process.getInputStream().close();
-            } catch (IOException exception) {
-                // ignore exception
-            }
-            process.destroy();
-            process = null;
+            return new BufferedOutputStream(process.getOutputStream());
         }
-        if (tempFile != null) {
-            tempFile.delete();
-            tempFile = null;
-        }
-    }
-
-    /**
-     * Interface for aborter classes, which can be used to abort the process.
-     */
-    public static interface Aborter {
-        /**
-         * Check whether the running process should abort.
-         * 
-         * @return true if the process should abort
-         */
-        boolean shouldAbort();
+        throw new IllegalStateException("OGDF server has not been initialized.");
     }
     
     /**
-     * Waits until there is some input from the given input stream.
+     * Return the stream for reading the output of the OGDF process.
      * 
-     * @param inputStream
-     *            input stream from which input is expected
-     * @return returns whether input arrived
+     * @return an input stream for reading from the tool
      */
-    public boolean waitForInput(final InputStream inputStream) {
-        return waitForInput(inputStream, new Aborter() {
-            public boolean shouldAbort() {
-                return false;
+    private InputStream output() {
+        if (process != null) {
+            synchronized (nextJob) {
+                // create an input stream and make it visible to the watcher thread
+                ogdfStream = process.getInputStream();
+                // wake the watcher, which will then sleep until a timeout occurs
+                nextJob.notify();
             }
-        });
+            return ogdfStream;
+        }
+        throw new IllegalStateException("OGDF server has not been initialized.");
+    }
+    
+    /**
+     * An enumeration for keeping track of the current parser state.
+     */
+    private enum ParseState {
+        TYPE, DATA, ERROR
+    }
+
+    /**
+     * Read output data from the OGDF server process.
+     * 
+     * @return key-value map of output data, or {@code null} if the process output was not complete
+     */
+    public Map<String, String> readOutputData() {
+        Map<String, String> data = new HashMap<String, String>();
+        String error = "";
+        BufferedReader reader = new BufferedReader(new InputStreamReader(output()));
+        ParseState state = ParseState.TYPE;
+        boolean parseMore = true;
+        
+        while (parseMore) {
+            String line = null;
+            try {
+                line = reader.readLine();
+            } catch (IOException exception) {
+                // most probably the stream was closed due to a timeout of the watchdog thread
+            }
+            if (line == null) {
+                // the stream is empty although more input is expected
+                return null;
+            }
+            
+            switch (state) {
+            case TYPE:
+                if (line.equals("LAYOUT")) {
+                    state = ParseState.DATA;
+                } else if (line.equals("ERROR")) {
+                    state = ParseState.ERROR;
+                }
+                break;
+                
+            case DATA:
+                if (line.equals("DONE")) {
+                    parseMore = false;
+                } else {
+                    String[] tokens = line.split("=");
+                    if (tokens.length == 2 && tokens[0].length() > 0) {
+                        data.put(tokens[0], tokens[1]);
+                    }
+                }
+                break;
+                
+            case ERROR:
+                if (line.equals("DONE")) {
+                    throw new OgdfServerException(error);
+                } else {
+                    if (error.length() > 0) {
+                        error += "\n";
+                    }
+                    error += line;
+                }
+                break;
+            }
+            
+        }
+        return data;
+    }
+
+    /** maximal number of characters to read from error stream. */
+    private static final int MAX_ERROR_OUTPUT = 512;
+    /** time to wait before checking process errors. */
+    private static final int PROC_ERROR_TIME = 500;
+    
+    /**
+     * Clean up, optionally preparing the tool for the next use.
+     * 
+     * @param c the cleanup option
+     */
+    public void cleanup(final Cleanup c) {
+        StringBuilder error = null;
+        if (process != null) {
+            InputStream errorStream = process.getErrorStream();
+            try {
+                if (c == Cleanup.ERROR) {
+                    // wait a bit so the process can either terminate or generate error
+                    Thread.sleep(PROC_ERROR_TIME);
+                    // read the error stream to display a meaningful error message
+                    error = new StringBuilder();
+                    int ch;
+                    do {
+                        ch = errorStream.read();
+                        if (ch >= 0) {
+                            error.append((char) ch);
+                        }
+                    } while (error.length() < MAX_ERROR_OUTPUT && ch >= 0);
+                    if (error.length() == 0) {
+                        // no error message -- check for exit value
+                        int exitValue = process.exitValue();
+                        if (exitValue != 0) {
+                            error.append("Process terminated with exit value " + exitValue + ".");
+                        }
+                    }
+                }
+                // if error stream is not empty, the process may not terminate
+                while (errorStream.available() > 0) {
+                    errorStream.read();
+                }
+            } catch (Exception ex) {
+                // ignore exception
+            }
+            
+            // terminate the OGDF process if requested
+            if (c == Cleanup.ERROR || c == Cleanup.STOP) {
+                try {
+                    process.getOutputStream().close();
+                    process.getInputStream().close();
+                } catch (IOException exception) {
+                    // ignore exception
+                }
+                process.destroy();
+                process = null;
+                
+                if (tempFile != null) {
+                    tempFile.delete();
+                    tempFile = null;
+                }
+            }
+        }
+        
+        if (error == null) {
+            synchronized (nextJob) {
+                // reset the stream to indicate that the job is done
+                ogdfStream = null;
+                if (watchdog != null) {
+                    // wake the watcher if it is still waiting for timeout
+                    watchdog.interrupt();
+                    // if requested, reset the watcher to indicate that it should terminate
+                    if (c == Cleanup.STOP) {
+                        watchdog = null;
+                    }
+                }
+            }
+        } else if (error.length() > 0) {
+            // an error output could be read from OGDF, so display that to the user
+            throw new OgdfServerException("OGDF error: " + error.toString());
+        }
     }
 
     /** preference constant for timeout. */
@@ -428,68 +584,69 @@ public class OgdfServer {
     /** minimal timeout for waiting for the server to give some output. */
     public static final int PROCESS_MIN_TIMEOUT = 200;
     
-    /**
-     * Waits until there is some input from the given input stream, with a custom aborter.
-     * 
-     * @param inputStream
-     *            input stream from which input is expected
-     * @param aborter
-     *            aborter used to abort the process
-     * @return returns whether input arrived
-     */
-    public boolean waitForInput(final InputStream inputStream, final Aborter aborter) {
-        IPreferenceStore preferenceStore = OgdfPlugin.getDefault().getPreferenceStore();
-        int timeout = preferenceStore.getInt(PREF_TIMEOUT);
-        if (timeout < PROCESS_MIN_TIMEOUT) {
-            timeout = PROCESS_DEF_TIMEOUT;
-        }
-        return waitForInput(inputStream, aborter, timeout);
-    }
-
-    /** starting wait time for polling input from the server process. */
-    private static final int MIN_INPUT_WAIT = 4;
-    /** maximal wait time for polling input from the server process. */
-    private static final int MAX_INPUT_WAIT = 300;
+    /** synchronization object between the main thread and the watcher thread. */
+    private Object nextJob = new Object();
     
     /**
-     * Waits until there is some input from the given input stream, with a custom aborter and timeout.
-     * 
-     * @param inputStream
-     *            input stream from which input is expected
-     * @param aborter
-     *            aborter used to abort the process
-     * @param timeout
-     *            the number of milliseconds to wait for an answer from the OGDF server process
-     * @return returns whether input arrived
+     * A watcher thread that takes action when a timeout occurs.
      */
-    public boolean waitForInput(final InputStream inputStream, final Aborter aborter,
-            final int timeout) {
-        try {
-            // wait until there is input from the server
-            long startTime = System.currentTimeMillis();
-            try {
-                long sleepTime = MIN_INPUT_WAIT;
-                while (inputStream.available() == 0
-                        && System.currentTimeMillis() - startTime < timeout
-                        && !aborter.shouldAbort()) {
-                    Thread.sleep(sleepTime);
-                    // increase sleep time after each step
-                    if (sleepTime < MAX_INPUT_WAIT) {
-                        sleepTime += MIN_INPUT_WAIT;
+    private class Watchdog extends Thread {
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void run() {
+            do {
+                synchronized (nextJob) {
+                    // the watcher starts working as soon as a stream is made visible
+                    while (ogdfStream == null) {
+                        try {
+                            // wait for notification by the main thread
+                            nextJob.wait();
+                        } catch (InterruptedException ex) {
+                            // an interrupt can happen when a shutdown is requested
+                            if (watchdog == null) {
+                                return;
+                            }
+                        }
                     }
                 }
-            } catch (InterruptedException exception) {
-                // ignore exception
-            }
-            if (inputStream.available() == 0) {
-                endProcess();
-                return false;
-            }
-            return true;
-        } catch (IOException exception) {
-            endProcess();
-            throw new OgdfServerException("Unable to read ogdf server output.", exception);
+                
+                // retrieve the current timeout value
+                IPreferenceStore preferenceStore = OgdfPlugin.getDefault().getPreferenceStore();
+                int timeout = preferenceStore.getInt(PREF_TIMEOUT);
+                if (timeout < PROCESS_MIN_TIMEOUT) {
+                    timeout = PROCESS_DEF_TIMEOUT;
+                }
+                
+                boolean interrupted = false;
+                try {
+                    Thread.sleep(timeout);
+                }  catch (InterruptedException ex) {
+                    // this means the main thread has done a cleanup before the timeout occurred
+                    interrupted = true;
+                }
+                
+                if (!interrupted) {
+                    synchronized (nextJob) {
+                        // timeout has occurred! close the stream so the main thread will wake
+                        Process myProcess = process;
+                        if (myProcess != null) {
+                            try {
+                                myProcess.getInputStream().close();
+                                myProcess.getErrorStream().close();
+                                ogdfStream = null;
+                            } catch (IOException ex) {
+                                // ignore exception
+                            }
+                        }
+                    }
+                }
+                
+            } while (watchdog != null);
         }
+        
     }
     
 }

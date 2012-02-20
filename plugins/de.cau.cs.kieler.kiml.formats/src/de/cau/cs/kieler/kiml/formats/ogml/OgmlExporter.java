@@ -42,6 +42,7 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -124,8 +125,9 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
             nodeList.add(ogmlNode);
             
             // transform node layout
-            if (knodeLayout.getXpos() != 0 || knodeLayout.getYpos() != 0
-                    || knodeLayout.getWidth() != 0 || knodeLayout.getHeight() != 0) {
+            if (!knodeLayout.getProperty(LayoutOptions.NO_LAYOUT) && (knodeLayout.getXpos() != 0
+                    || knodeLayout.getYpos() != 0 || knodeLayout.getWidth() != 0
+                    || knodeLayout.getHeight() != 0)) {
                 NodeLayoutType ogmlNodeLayout = OgmlFactory.eINSTANCE.createNodeLayoutType();
                 ogmlNodeLayout.setIdRef(nodeId);
                 if (knodeLayout.getXpos() != 0 || knodeLayout.getYpos() != 0) {
@@ -189,9 +191,10 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
                 // transform edge layout
                 KPoint sourcePoint = kedgeLayout.getSourcePoint();
                 KPoint targetPoint = kedgeLayout.getTargetPoint();
-                if (kedgeLayout.getBendPoints().size() > 0
+                if (!kedgeLayout.getProperty(LayoutOptions.NO_LAYOUT)
+                        && (kedgeLayout.getBendPoints().size() > 0
                         || sourcePoint.getX() != 0 || sourcePoint.getY() != 0
-                        || targetPoint.getY() != 0 || targetPoint.getY() != 0) {
+                        || targetPoint.getY() != 0 || targetPoint.getY() != 0)) {
                     EdgeLayoutType ogmlEdgeLayout = OgmlFactory.eINSTANCE.createEdgeLayoutType();
                     ogmlEdgeLayout.setIdRef(edgeId);
                     ogmlEdgeLayout.getPoint().add(OgmlHandler.createPoint(sourcePoint, edgeOffset));

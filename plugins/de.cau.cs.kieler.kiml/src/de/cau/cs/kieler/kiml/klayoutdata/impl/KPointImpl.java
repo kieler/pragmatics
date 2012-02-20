@@ -22,6 +22,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
@@ -119,6 +120,9 @@ public class KPointImpl extends EObjectImpl implements KPoint {
     public void setX(float newX) {
         float oldX = x;
         x = newX;
+        if (eContainer instanceof KEdgeLayoutImpl) {
+            ((KEdgeLayoutImpl) eContainer).modified = true;
+        }
         if (eNotificationRequired())
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KPOINT__X, oldX, x));
     }
@@ -140,6 +144,9 @@ public class KPointImpl extends EObjectImpl implements KPoint {
     public void setY(float newY) {
         float oldY = y;
         y = newY;
+        if (eContainer instanceof KEdgeLayoutImpl) {
+            ((KEdgeLayoutImpl) eContainer).modified = true;
+        }
         if (eNotificationRequired())
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KPOINT__Y, oldY, y));
     }
@@ -154,6 +161,9 @@ public class KPointImpl extends EObjectImpl implements KPoint {
         float oldX = x, oldY = y;
         x = newX;
         y = newY;
+        if (eContainer instanceof KEdgeLayoutImpl) {
+            ((KEdgeLayoutImpl) eContainer).modified = true;
+        }
         if (eNotificationRequired()) {
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KPOINT__X, oldX, x));
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KPOINT__Y, oldY, y));
@@ -246,6 +256,21 @@ public class KPointImpl extends EObjectImpl implements KPoint {
                 return y != Y_EDEFAULT;
         }
         return super.eIsSet(featureID);
+    }
+    
+    /**
+     * {@inheritDoc}
+     * @generated NOT
+     */
+    @Override
+    protected void eBasicSetContainer(InternalEObject newContainer, int newContainerFeatureID) {
+        if (eContainer instanceof KEdgeLayoutImpl) {
+            ((KEdgeLayoutImpl) eContainer).modified = true;
+        }
+        super.eBasicSetContainer(newContainer, newContainerFeatureID);
+        if (newContainer instanceof KEdgeLayoutImpl) {
+            ((KEdgeLayoutImpl) newContainer).modified = true;
+        }
     }
 
     /**

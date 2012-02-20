@@ -110,10 +110,6 @@ public class SelfLoopRouter {
             KNode node = selfLoop.getSecond();
             edge.setSource(node);
             edge.setTarget(node);
-            edge.getData(KEdgeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
-            for (KLabel label : edge.getLabels()) {
-                label.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
-            }
         }
     }
     

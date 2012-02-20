@@ -14,6 +14,8 @@
 package de.cau.cs.kieler.kiml.ui.diagram;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
@@ -27,7 +29,9 @@ import de.cau.cs.kieler.core.kivi.UndoEffect;
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.LayoutContext;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 
 /**
@@ -56,8 +60,8 @@ public class LayoutEffect extends AbstractEffect {
     private boolean layoutAncestors = false;
     /** the layout mapping that has been used for layout. */
     private LayoutMapping<?> layoutMapping;
-    /** additional layout options configuration. */
-    private VolatileLayoutConfig layoutConfig;
+    /** additional layout options configurations. */
+    private LinkedList<ILayoutConfig> layoutConfigs = new LinkedList<ILayoutConfig>();
     /** whether the effect should be merged with other layout effects. */
     private boolean doMerge = true;
 
@@ -182,8 +186,9 @@ public class LayoutEffect extends AbstractEffect {
     }
 
     /**
-     * Set a layout option value for this layout effect. The value is only applied for this layout
-     * run and is thrown away afterwards.
+     * Set a layout option value for this layout effect using the last created layout configuration.
+     * The value is only applied for this layout run and is thrown away afterwards. If no layout
+     * configuration is present yet, a new one is created for the given option.
      * 
      * @param object
      *            the domain model element or edit part for which the option shall be set
@@ -194,14 +199,27 @@ public class LayoutEffect extends AbstractEffect {
      *            the value for the layout option
      */
     public void setOption(final Object object, final IProperty<?> option, final Object value) {
-        if (layoutConfig == null) {
-            layoutConfig = new VolatileLayoutConfig();
+        if (layoutConfigs.isEmpty()) {
+            addLayoutConfig();
         }
+        VolatileLayoutConfig config = (VolatileLayoutConfig) layoutConfigs.getLast();
         if (object instanceof EObject) {
-            layoutConfig.setValue(option, object, LayoutContext.DOMAIN_MODEL, value);
+            config.setValue(option, object, LayoutContext.DOMAIN_MODEL, value);
         } else {
-            layoutConfig.setValue(option, object, LayoutContext.DIAGRAM_PART, value);
+            config.setValue(option, object, LayoutContext.DIAGRAM_PART, value);
         }
+    }
+    
+    /**
+     * Add a new layout configuration to this layout effect. This is done implicitly when
+     * {@link #setOption(Object, IProperty, Object)} is used on a layout effect that contains no
+     * layout configuration yet. If a layout configuration is added to a layout effect that
+     * already contains one, the consequence is that automatic layout is performed once more using
+     * the new configuration. This mechanism can be used to perform arbitrarily many different
+     * layouts in a row, which is useful if one layout relies on the results of the previous one.
+     */
+    public void addLayoutConfig() {
+        layoutConfigs.addLast(new VolatileLayoutConfig());
     }
 
     /**
@@ -210,20 +228,35 @@ public class LayoutEffect extends AbstractEffect {
     public void execute() {
         DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
         layoutMapping = layoutEngine.layout(diagramEditor, diagramPart, doAnimate, progressBar,
-                layoutAncestors, doZoom, layoutConfig);
+                layoutAncestors, doZoom, layoutConfigs);
     }
 
     /**
-     * Undo a layout effect. For now, only a new layout is executed. This leads to correct
-     * behavior if a list of effects is undone sequentially and the last one was a layout effect.
-     * However, this is not really undoing that layout.
-     * 
-     * TODO: implement real undoing of layout, best with animation. Using the standard command
-     * undo functionality will not do any animation.
+     * Undo a layout effect.
      */
     @Override
     public void undo() {
-        this.execute();
+        if (layoutMapping != null) {
+            undo(layoutMapping);
+        }
+    }
+    
+    /**
+     * Undo the layout effect of the given layout mapping.
+     * 
+     * @param mapping a layout mapping
+     */
+    private static <T> void undo(final LayoutMapping<T> mapping) {
+        @SuppressWarnings("unchecked")
+        final IDiagramLayoutManager<T> layoutManager = (IDiagramLayoutManager<T>) mapping.getProperty(
+                DiagramLayoutEngine.DIAGRAM_LM);
+        if (layoutManager != null) {
+            MonitoredOperation.runInUI(new Runnable() {
+                public void run() {
+                    layoutManager.undoLayout(mapping);
+                }
+            }, true);
+        }
     }
     
     /**
@@ -259,16 +292,20 @@ public class LayoutEffect extends AbstractEffect {
                 this.doZoom |= other.doZoom;
                 this.doAnimate |= other.doAnimate;
                 this.progressBar |= other.progressBar;
-                if (this.layoutConfig != null && other.layoutConfig != null) {
-                    this.layoutConfig.copyValues(other.layoutConfig);
-                } else if (other.layoutConfig != null) {
-                    this.layoutConfig = other.layoutConfig;
+                ListIterator<ILayoutConfig> configIter = other.layoutConfigs.listIterator(
+                        other.layoutConfigs.size());
+                while (configIter.hasPrevious()) {
+                    this.layoutConfigs.addFirst(configIter.previous());
                 }
                 return this;
             }
         } else if (otherEffect instanceof UndoEffect) {
             if (((UndoEffect) otherEffect).getEffect() instanceof LayoutEffect) {
-                return this;
+                LayoutEffect other = (LayoutEffect) ((UndoEffect) otherEffect).getEffect();
+                if (this.diagramEditor == other.diagramEditor
+                        && this.diagramPart == other.diagramPart) {
+                    return this;
+                }
             }
         }
         return null;

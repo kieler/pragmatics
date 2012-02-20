@@ -8,14 +8,6 @@
     </manager>
  </extension>
  <extension
-       point="org.eclipse.emf.ecore.generated_package">
-    <package
-          class="de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackage"
-          genModel="model/layoutoptions.genmodel"
-          uri="http://kieler.cs.cau.de/LayoutOptions">
-    </package>
- </extension>
- <extension
        point="de.cau.cs.kieler.kiml.layoutInfo">
       <option
             class="org.eclipse.emf.ecoretools.diagram.edit.parts.EClassESuperTypesEditPart"
@@ -34,6 +26,23 @@
       </option>
  </extension>
   <extension
+        point="de.cau.cs.kieler.core.kivi.combinations">
+     <combination
+            active="true"
+            class="de.cau.cs.kieler.kiml.gmf.combinations.LayoutAfterCollapseExpandCombination"
+            description="Call automatic layout after the collapsed state of a compartment has been changed."
+            name="Layout after Collapse/Expand">
+      </combination>
+  </extension>
+ <extension
+       point="org.eclipse.emf.ecore.generated_package">
+    <package
+          class="de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackage"
+          genModel="model/layoutoptions.genmodel"
+          uri="http://kieler.cs.cau.de/LayoutOptions">
+    </package>
+ </extension>
+  <extension
        point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
     <editpolicyProvider
           class="de.cau.cs.kieler.kiml.gmf.LayoutEditPolicyProvider">
@@ -43,13 +52,13 @@
     </editpolicyProvider>
  </extension>
   <extension
-        point="de.cau.cs.kieler.core.kivi.combinations">
-     <combination
-            active="true"
-            class="de.cau.cs.kieler.kiml.gmf.combinations.LayoutAfterCollapseExpandCombination"
-            description="Call automatic layout after the collapsed state of a compartment has been changed."
-            name="Layout after Collapse/Expand">
-      </combination>
+        point="org.eclipse.ui.commands">
+     <command
+           categoryId="de.cau.cs.kieler"
+           defaultHandler="de.cau.cs.kieler.kiml.gmf.LayoutDiagramFileHandler"
+           id="de.cau.cs.kieler.kiml.gmf.layoutDiagramFile"
+           name="Layout Diagram File">
+     </command>
   </extension>
 
 </plugin>

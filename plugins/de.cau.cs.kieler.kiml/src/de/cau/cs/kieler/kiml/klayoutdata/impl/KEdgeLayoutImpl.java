@@ -78,6 +78,14 @@ public class KEdgeLayoutImpl extends KGraphDataImpl implements KEdgeLayout {
      * @ordered
      */
     protected KPoint targetPoint;
+    
+    /**
+     * <!-- begin-user-doc -->
+     * Whether the position or size has been modified.
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    boolean modified = false;
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -131,15 +139,17 @@ public class KEdgeLayoutImpl extends KGraphDataImpl implements KEdgeLayout {
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
+     * @generated NOT
      */
     public void setSourcePoint(KPoint newSourcePoint) {
         if (newSourcePoint != sourcePoint) {
             NotificationChain msgs = null;
-            if (sourcePoint != null)
+            if (sourcePoint != null) {
                 msgs = ((InternalEObject)sourcePoint).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KLayoutDataPackage.KEDGE_LAYOUT__SOURCE_POINT, null, msgs);
-            if (newSourcePoint != null)
+            }
+            if (newSourcePoint != null) {
                 msgs = ((InternalEObject)newSourcePoint).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KLayoutDataPackage.KEDGE_LAYOUT__SOURCE_POINT, null, msgs);
+            }
             msgs = basicSetSourcePoint(newSourcePoint, msgs);
             if (msgs != null) msgs.dispatch();
         }
@@ -176,10 +186,12 @@ public class KEdgeLayoutImpl extends KGraphDataImpl implements KEdgeLayout {
     public void setTargetPoint(KPoint newTargetPoint) {
         if (newTargetPoint != targetPoint) {
             NotificationChain msgs = null;
-            if (targetPoint != null)
+            if (targetPoint != null) {
                 msgs = ((InternalEObject)targetPoint).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KLayoutDataPackage.KEDGE_LAYOUT__TARGET_POINT, null, msgs);
-            if (newTargetPoint != null)
+            }
+            if (newTargetPoint != null) {
                 msgs = ((InternalEObject)newTargetPoint).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KLayoutDataPackage.KEDGE_LAYOUT__TARGET_POINT, null, msgs);
+            }
             msgs = basicSetTargetPoint(newTargetPoint, msgs);
             if (msgs != null) msgs.dispatch();
         }
@@ -237,6 +249,28 @@ public class KEdgeLayoutImpl extends KGraphDataImpl implements KEdgeLayout {
             vectorChain.add(targetPoint.getX(), targetPoint.getY());
         }
         return vectorChain;
+    }
+    
+    /**
+     * <!-- begin-user-doc -->
+     * Whether the source point, target point, or bend points have been modified since this edge
+     * layout was created or the flag was reset.
+     * <!-- end-user-doc -->
+     * @return true if the source point, target point, or bend points have been modified
+     * @generated NOT
+     */
+    public boolean isModified() {
+        return modified;
+    }
+    
+    /**
+     * <!-- begin-user-doc -->
+     * Reset the modification flag to {@code false}. Layout algorithms should not do this.
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public void resetModificationFlag() {
+        modified = false;
     }
 
     /**

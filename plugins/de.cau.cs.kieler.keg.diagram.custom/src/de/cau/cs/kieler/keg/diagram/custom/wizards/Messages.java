@@ -96,6 +96,8 @@ public class Messages extends NLS {
     public static String RandomGraphUtilityPage_max_hierarchy_help;
     public static String RandomGraphUtilityPage_ports_caption;
     public static String RandomGraphUtilityPage_ports_help;
+    public static String RandomGraphUtilityPage_hierarchy_edges_caption;
+    public static String RandomGraphUtilityPage_hierarchy_edges_help;
     public static String RandomGraphUtilityPage_title;
     public static String RandomGraphWizard_generate_and_serialize_task;
     public static String RandomGraphWizard_generating_graphs_task;

@@ -31,6 +31,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.IGraphImporter;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -167,8 +168,6 @@ public class KRailGraphImporter implements IGraphImporter<KNode> {
                     // set properties of the new edge
                     newEdge.setProperty(Properties.PRIORITY,
                             edgeLayout.getProperty(LayoutOptions.PRIORITY));
-                } else {
-                    edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 }
             }
         }
@@ -298,7 +297,7 @@ public class KRailGraphImporter implements IGraphImporter<KNode> {
                 + insets.getLeft() + insets.getRight());
         parentLayout.setHeight((float) layeredGraph.getSize().y + 2 * borderSpacing
                 + insets.getTop() + insets.getBottom());
-        parentLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
+        parentLayout.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.FIXED);
     }
 
     /**

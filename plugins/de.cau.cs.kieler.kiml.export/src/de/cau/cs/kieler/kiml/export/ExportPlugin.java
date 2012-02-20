@@ -16,12 +16,6 @@ package de.cau.cs.kieler.kiml.export;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.cau.cs.kieler.kiml.export.exporter.DotExporter;
-import de.cau.cs.kieler.kiml.export.exporter.GMLExporter;
-import de.cau.cs.kieler.kiml.export.exporter.GraphMLExporter;
-import de.cau.cs.kieler.kiml.export.exporter.KGraphExporter;
-import de.cau.cs.kieler.kiml.export.exporter.OGMLExporter;
-
 /**
  * The activator class controls the plug-in life cycle.
  * 
@@ -48,12 +42,6 @@ public class ExportPlugin extends AbstractUIPlugin {
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
-        
-        ExportManager.getInstance().addExporter(new GraphMLExporter());
-        ExportManager.getInstance().addExporter(new OGMLExporter());
-        ExportManager.getInstance().addExporter(new GMLExporter());
-        ExportManager.getInstance().addExporter(new KGraphExporter());
-        ExportManager.getInstance().addExporter(new DotExporter());
     }
 
     /**

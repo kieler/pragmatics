@@ -49,6 +49,8 @@ public class RandomGraphUtilityPage extends WizardPage {
     private float edgeDirectedChance;
     /** the selected port usage. */
     private boolean ports;
+    /** whether cross-hierarchy edges are allowed. */
+    private boolean crossHierarchyEdges;
 
     /**
      * Constructs a RandomGraphUtilityPage.
@@ -81,6 +83,7 @@ public class RandomGraphUtilityPage extends WizardPage {
         layout.numColumns = 2;
         layout.verticalSpacing = 9;
         composite.setLayout(layout);
+        
         // add HIERARCHY_CHANCE option
         Label label = new Label(composite, SWT.NULL);
         label.setText(Messages.RandomGraphUtilityPage_hierarchy_caption);
@@ -90,6 +93,7 @@ public class RandomGraphUtilityPage extends WizardPage {
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 80;
         hierarchySpinner.setLayoutData(gridData);
+        
         // add MAX_HIERARCHY_LEVEL option
         label = new Label(composite, SWT.NULL);
         label.setText(Messages.RandomGraphUtilityPage_max_hierarchy_caption);
@@ -105,6 +109,7 @@ public class RandomGraphUtilityPage extends WizardPage {
             }
         });
         hierarchyLevelSpinner.setEnabled(hierarchyChance > 0.0f);
+        
         // add HIERARCHY_NODES_FACTOR option
         label = new Label(composite, SWT.NULL);
         label.setText(Messages.RandomGraphUtilityPage_hierarchy_factor_caption);
@@ -134,6 +139,26 @@ public class RandomGraphUtilityPage extends WizardPage {
                 }
             }
         });
+        
+        // add CROSS-HIERARCHY EDGES option
+        final Button hierarchyEdgesButton = new Button(composite, SWT.CHECK);
+        Util.addHelp(hierarchyEdgesButton, Messages.RandomGraphUtilityPage_hierarchy_edges_help);
+        hierarchyEdgesButton.setText(Messages.RandomGraphUtilityPage_hierarchy_edges_caption);
+        hierarchyEdgesButton.setSelection(crossHierarchyEdges);
+        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
+        gridData.horizontalSpan = 2;
+        hierarchyEdgesButton.setLayoutData(gridData);
+        hierarchyEdgesButton.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(final SelectionEvent e) {
+                crossHierarchyEdges = hierarchyEdgesButton.getSelection();
+            }
+
+            public void widgetDefaultSelected(final SelectionEvent e) {
+                // do nothing
+            }
+        });
+        
         // add HYPERNODE_CHANCE option
         label = new Label(composite, SWT.NULL);
         label.setText(Messages.RandomGraphUtilityPage_hypernode_caption);
@@ -148,6 +173,7 @@ public class RandomGraphUtilityPage extends WizardPage {
                 hypernodeChance = ((float) hypernodeSpinner.getSelection()) / 100f;
             }
         });
+        
         // add EDGE_DIRECTED_CHANCE option
         label = new Label(composite, SWT.NULL);
         label.setText(Messages.RandomGraphUtilityPage_directed_caption);
@@ -162,6 +188,7 @@ public class RandomGraphUtilityPage extends WizardPage {
                 edgeDirectedChance = ((float) edgeDirectedSpinner.getSelection()) / 100f;
             }
         });
+        
         // add PORTS option
         final Button portsButton = new Button(composite, SWT.CHECK);
         Util.addHelp(portsButton, Messages.RandomGraphUtilityPage_ports_help);
@@ -198,6 +225,8 @@ public class RandomGraphUtilityPage extends WizardPage {
         preferenceStore.setValue(RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getId(),
                 edgeDirectedChance);
         preferenceStore.setValue(RandomGraphGenerator.PORTS.getId(), ports);
+        preferenceStore.setValue(RandomGraphGenerator.CROSS_HIERARCHY_EDGES.getId(),
+                crossHierarchyEdges);
     }
 
     private void loadPreferences() {
@@ -211,6 +240,8 @@ public class RandomGraphUtilityPage extends WizardPage {
         edgeDirectedChance = preferenceStore.getFloat(RandomGraphGenerator.EDGE_DIRECTED_CHANCE
                 .getId());
         ports = preferenceStore.getBoolean(RandomGraphGenerator.PORTS.getId());
+        crossHierarchyEdges = preferenceStore.getBoolean(RandomGraphGenerator.CROSS_HIERARCHY_EDGES
+                .getId());
     }
 
     private void setDefaultPreferences() {
@@ -227,6 +258,8 @@ public class RandomGraphUtilityPage extends WizardPage {
                 RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getDefault());
         preferenceStore.setDefault(RandomGraphGenerator.PORTS.getId(),
                 RandomGraphGenerator.PORTS.getDefault());
+        preferenceStore.setDefault(RandomGraphGenerator.CROSS_HIERARCHY_EDGES.getId(),
+                RandomGraphGenerator.CROSS_HIERARCHY_EDGES.getDefault());
     }
 
     /**
@@ -282,4 +315,14 @@ public class RandomGraphUtilityPage extends WizardPage {
     public boolean getPorts() {
         return ports;
     }
+    
+    /**
+     * Returns whether cross-hierarchy edges are allowed.
+     * 
+     * @return true if cross-hierarchy edges are allowed
+     */
+    public boolean getCrossHierarchyEdges() {
+        return crossHierarchyEdges;
+    }
+    
 }
