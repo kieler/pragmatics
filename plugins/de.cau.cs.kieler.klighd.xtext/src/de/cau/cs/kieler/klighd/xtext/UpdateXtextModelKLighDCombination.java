@@ -23,6 +23,8 @@ import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
 
 /**
  * A combination for initializing/refreshing of KLighD views of Xtext-based models.
+ * Views initiated by this combination are shared with {@link VisualizeChosenElementCombination}
+ * since they use the compute the (secondary) view ids the same way.
  * 
  * @author chsch
  */

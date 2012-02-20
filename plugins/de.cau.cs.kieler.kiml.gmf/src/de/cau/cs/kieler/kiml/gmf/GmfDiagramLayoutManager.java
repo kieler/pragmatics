@@ -43,7 +43,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeCompartmentEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.ResizableCompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
 import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
@@ -201,8 +201,11 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         Rectangle rootBounds = layoutRootPart.getFigure().getBounds();
         if (layoutRootPart instanceof DiagramEditPart) {
             // start with the whole diagram as root for layout
-            KLabel label = KimlUtil.createInitializedLabel(topNode);
-            label.setText(((DiagramEditPart) layoutRootPart).getDiagramView().getName());
+            String labelText = ((DiagramEditPart) layoutRootPart).getDiagramView().getName();
+            if (labelText.length() > 0) {
+                KLabel label = KimlUtil.createInitializedLabel(topNode);
+                label.setText(labelText);
+            }
         } else {
             // start with a specific node as root for layout
             shapeLayout.setPos(rootBounds.x, rootBounds.y);
@@ -328,7 +331,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                         parentLayoutNode);
 
                 // process a compartment, which may contain other elements
-            } else if (obj instanceof ShapeCompartmentEditPart
+            } else if (obj instanceof ResizableCompartmentEditPart
                     && ((CompartmentEditPart) obj).getChildren().size() > 0) {
                 CompartmentEditPart compartment = (CompartmentEditPart) obj;
                 if (!GmfLayoutConfig.isNoLayout(compartment)) {
@@ -557,7 +560,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      * @param editPart
      *            an edit part
      */
-    private void addConnections(final LayoutMapping<IGraphicalEditPart> mapping,
+    protected void addConnections(final LayoutMapping<IGraphicalEditPart> mapping,
             final IGraphicalEditPart editPart) {
         for (Object targetConn : editPart.getTargetConnections()) {
             if (targetConn instanceof ConnectionEditPart) {
@@ -575,7 +578,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      * @param mapping
      *            the layout mapping
      */
-    private void processConnections(final LayoutMapping<IGraphicalEditPart> mapping) {
+    protected void processConnections(final LayoutMapping<IGraphicalEditPart> mapping) {
         Map<EReference, KEdge> reference2EdgeMap = new HashMap<EReference, KEdge>();
         for (ConnectionEditPart connection : mapping.getProperty(CONNECTIONS)) {
             boolean isOppositeEdge = false;
@@ -730,7 +733,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      * @param offset
      *            the offset for coordinates
      */
-    protected void processEdgeLabels(final LayoutMapping<IGraphicalEditPart> mapping,
+    private void processEdgeLabels(final LayoutMapping<IGraphicalEditPart> mapping,
             final ConnectionEditPart connection, final KEdge edge,
             final EdgeLabelPlacement placement, final KVector offset) {
         VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);

@@ -119,6 +119,12 @@ public class DiagramsImporter implements IRunnableWithProgress {
     private boolean overwriteWithoutWarning;
     
     /**
+     * If {@code true}, the attachment heuristic is disabled once explicit attachments are
+     * found.
+     */
+    private boolean heuristicsOverride;
+    
+    /**
      * Indicates whether the user canceled the import.
      */
     private boolean wasImportCanceled = false;
@@ -154,10 +160,13 @@ public class DiagramsImporter implements IRunnableWithProgress {
      * @param initializeDiagramFiles whether to initialize KAOD diagram files.
      * @param overwriteWithoutWarning whether existing files should be overwritten without
      *                                 warning.
+     * @param heuristicsOverride if {@code true}, the attachment heuristic is disabled once explicit
+     *                           attachments are found.
      */
     public DiagramsImporter(final ImportDiagramsWizard wizard, final List<File> sourceFiles,
             final IPath targetContainerPath, final boolean advancedAnnotationsHandling,
-            final boolean initializeDiagramFiles, final boolean overwriteWithoutWarning) {
+            final boolean initializeDiagramFiles, final boolean overwriteWithoutWarning,
+            final boolean heuristicsOverride) {
         
         this.wizard = wizard;
         this.sourceFiles = sourceFiles;
@@ -165,6 +174,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
         this.advancedAnnotationsHandling = advancedAnnotationsHandling;
         this.initializeDiagramFiles = initializeDiagramFiles;
         this.overwriteWithoutWarning = overwriteWithoutWarning;
+        this.heuristicsOverride = heuristicsOverride;
         
         // Prepare parser feature map. These options avoid searching for DTDs online, which would
         // require an internet connection to load models
@@ -565,7 +575,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
         // Advanced annotation handling, if requested
         if (advancedAnnotationsHandling) {
             PtolemyAnnotationHandler annotationHandler = new PtolemyAnnotationHandler(
-                    (XMLResource) srcResource, ptModel, kaomModel);
+                    (XMLResource) srcResource, ptModel, kaomModel, heuristicsOverride);
             
             annotationHandler.handleAnnotations();
         }

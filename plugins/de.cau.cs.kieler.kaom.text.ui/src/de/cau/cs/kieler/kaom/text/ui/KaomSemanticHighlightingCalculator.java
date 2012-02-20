@@ -20,7 +20,7 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculato
 import de.cau.cs.kieler.core.annotations.text.ui.AnnotationsSemanticHighlightingCalculator;
 
 /**
- * Custom {@link ISemanticHighlightingCalculator} contributing to the Kits editor.
+ * Custom {@link ISemanticHighlightingCalculator} contributing to the KAOM editor.
  * The required method {@link ISemanticHighlightingCalculator#provideHighlightingFor(XtextResource, IHighlightedPositionAcceptor)}
  * will be provided by the {@link AnnotationsSemanticHighlightingCalculator} for efficiency purposes
  * and delegates to {@link AnnotationsSemanticHighlightingCalculator#provideHighlightingFor(AbstractNode, IHighlightedPositionAcceptor)}

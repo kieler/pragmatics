@@ -187,13 +187,14 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
      *          set to {@code true}
      * @return the layout option targets
      */
-    private static Set<LayoutOptionData.Target> findTarget(final IGraphicalEditPart editPart,
+    protected Set<LayoutOptionData.Target> findTarget(final IGraphicalEditPart editPart,
             final Maybe<IGraphicalEditPart> containerEditPart,
             final Maybe<Boolean> hasPorts) {
         Set<LayoutOptionData.Target> partTarget = null;
         if (editPart instanceof AbstractBorderItemEditPart) {
             partTarget = EnumSet.of(LayoutOptionData.Target.PORTS);
             containerEditPart.set((IGraphicalEditPart) editPart.getParent().getParent());
+            
         } else if (editPart instanceof ShapeNodeEditPart) {
             // check whether the node is a parent
             partTarget = EnumSet.of(LayoutOptionData.Target.NODES);
@@ -201,25 +202,37 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
             if (findContainingEditPart(editPart, hasPorts) != null) {
                 partTarget.add(LayoutOptionData.Target.PARENTS);
             }
+            
         } else if (editPart instanceof ConnectionEditPart) {
             partTarget = EnumSet.of(LayoutOptionData.Target.EDGES);
-            containerEditPart.set((IGraphicalEditPart) ((ConnectionEditPart) editPart)
-                    .getSource().getParent());
+            EditPart sourcePart = ((ConnectionEditPart) editPart).getSource();
+            if (sourcePart instanceof AbstractBorderItemEditPart) {
+                containerEditPart.set((IGraphicalEditPart) sourcePart.getParent().getParent());
+            } else {
+                containerEditPart.set((IGraphicalEditPart) sourcePart.getParent());
+            }
+            
         } else if (editPart instanceof LabelEditPart) {
             partTarget = EnumSet.of(LayoutOptionData.Target.LABELS);
             containerEditPart.set((IGraphicalEditPart) editPart.getParent());
             if (containerEditPart.get() instanceof ConnectionEditPart) {
-                containerEditPart.set((IGraphicalEditPart) ((ConnectionEditPart)
-                        containerEditPart.get()).getSource().getParent());
+                EditPart sourcePart = ((ConnectionEditPart) containerEditPart.get()).getSource();
+                if (sourcePart instanceof AbstractBorderItemEditPart) {
+                    containerEditPart.set((IGraphicalEditPart) sourcePart.getParent().getParent());
+                } else {
+                    containerEditPart.set((IGraphicalEditPart) sourcePart.getParent());
+                }
             } else if (containerEditPart.get() instanceof AbstractBorderItemEditPart) {
                 containerEditPart.set((IGraphicalEditPart) containerEditPart.get()
                         .getParent().getParent());
             } else if (containerEditPart.get() instanceof ShapeNodeEditPart) {
                 containerEditPart.set((IGraphicalEditPart) containerEditPart.get().getParent());
             }
+            
         } else if (editPart instanceof DiagramEditPart) {
             partTarget = EnumSet.of(LayoutOptionData.Target.PARENTS);
         }
+        
         if (containerEditPart.get() instanceof CompartmentEditPart) {
             containerEditPart.set((IGraphicalEditPart) containerEditPart.get().getParent());
         }

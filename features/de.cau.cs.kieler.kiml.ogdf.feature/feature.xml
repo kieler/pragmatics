@@ -3,7 +3,8 @@
       id="de.cau.cs.kieler.kiml.ogdf"
       label="KIELER Layout - OGDF Support (optional)"
       version="0.4.0.qualifier"
-      provider-name="Christian-Albrechts-Universität zu Kiel">
+      provider-name="Christian-Albrechts-Universität zu Kiel"
+      plugin="de.cau.cs.kieler.kiml.ogdf">
 
    <description url="http://rtsys.informatik.uni-kiel.de/trac/kieler/">
       Connector for OGDF layouts (Open Graph Drawing Framework). OGDF is a self-contained C++ class library for the automatic layout of diagrams. See &lt;a href=&quot;http://www.ogdf.net/&quot;&gt;www.ogdf.net&lt;/a&gt; for more information.
