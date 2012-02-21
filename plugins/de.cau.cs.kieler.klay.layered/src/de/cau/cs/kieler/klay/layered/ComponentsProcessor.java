@@ -22,6 +22,7 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -35,9 +36,19 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * A processor that is able to split an input graph into connected components and to pack those
  * components after layout.
  * 
+ * <p>If the graph has no external ports, splitting it into components is straightforward and always
+ * works. If on the other hand it does have external ports, splitting the graph into connected
+ * components is problematic because the port positions might introduce constraints on the placement
+ * of the different components. More or less simple solutions have only been implemented for the cases
+ * of port constraints set to {@link de.cau.cs.kieler.kiml.options.PortConstraints#FREE FREE} or
+ * {@link de.cau.cs.kieler.kiml.options.PortConstraints#FIXED_SIDE FIXED_SIDE}. If the graph contains
+ * external ports with port constraints other than these, connected components processing is disabled
+ * even if requested by the user.</p>
+ * 
  * <p>Splitting into components
  * <dl>
- *   <dt>Precondition:</dt><dd>an unlayered graph.</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>an unlayered graph.</dd>
  *   <dt>Postcondition:</dt><dd>a list of graphs that represent the connected components of
  *     the input graph.</dd>
  * </dl>
@@ -51,6 +62,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </p>
  *
  * @author msp
+ * @author cds
  */
 public class ComponentsProcessor extends AbstractAlgorithm {
 
@@ -61,20 +73,32 @@ public class ComponentsProcessor extends AbstractAlgorithm {
      * @return a list of components that can be processed one by one
      */
     public List<LayeredGraph> split(final LayeredGraph graph) {
-        Boolean separate = graph.getProperty(LayoutOptions.SEPARATE_CC);
         List<LayeredGraph> result;
         
-        // the graph may only be separated if this feature was requested and if it does not
-        // contain any edges connected to external ports
-        if (!graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)
-                && (separate == null || separate.booleanValue())) {
-            
-            // set id of all nodes to 0
+        // Whether separate components processing is requested
+        Boolean separateProperty = graph.getProperty(LayoutOptions.SEPARATE_CC);
+        boolean separate = separateProperty == null || separateProperty.booleanValue();
+        
+        // Whether the graph contains external ports
+        boolean extPorts =
+                graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS);
+        
+        // The graph's external port constraints
+        PortConstraints extPortConstraints = graph.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+        boolean compatiblePortConstraints = extPortConstraints == PortConstraints.FREE
+                || extPortConstraints == PortConstraints.FIXED_SIDE;
+        
+        // The graph may only be separated 
+        //  1. Separation was requested.
+        //  2. If the graph contains external ports, port constraints are set to either
+        //     FREE or FIXED_SIDES.
+        if (separate && (compatiblePortConstraints || !extPorts)) {
+            // Set id of all nodes to 0
             for (LNode node : graph.getLayerlessNodes()) {
                 node.id = 0;
             }
             
-            // perform DFS starting on each node, collecting connected components
+            // Perform DFS starting on each node, collecting connected components
             result = new LinkedList<LayeredGraph>();
             for (LNode node : graph.getLayerlessNodes()) {
                 List<LNode> component = dfs(node, null);
