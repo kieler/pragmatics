@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered;
+package de.cau.cs.kieler.klay.layered.components;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -107,12 +107,15 @@ public class ComponentsProcessor extends AbstractAlgorithm {
             result = new LinkedList<LayeredGraph>();
             for (LNode node : graph.getLayerlessNodes()) {
                 Pair<List<LNode>, Set<PortSide>> componentData = dfs(node, null);
+                
                 if (componentData != null) {
                     LayeredGraph newGraph = new LayeredGraph();
+                    
                     newGraph.copyProperties(graph);
                     newGraph.setProperty(Properties.EXT_PORT_CONNECTIONS, componentData.getSecond());
                     newGraph.getInsets().copy(graph.getInsets());
                     newGraph.getLayerlessNodes().addAll(componentData.getFirst());
+                    
                     result.add(newGraph);
                 }
             }
