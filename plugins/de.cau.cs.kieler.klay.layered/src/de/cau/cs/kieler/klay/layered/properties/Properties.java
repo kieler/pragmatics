@@ -139,6 +139,15 @@ public final class Properties {
      */
     public static final IProperty<LNode> EXT_PORT_REPLACED_DUMMY = new Property<LNode>(
             "externalPortReplacedDummy", null);
+    
+    /**
+     * The port sides of external ports a connected component connects to. This property is set
+     * on the layered graph that represents a connected component and defaults to no connections.
+     * If a connected component connects to an external port on the EAST side and to another external
+     * port on the NORTH side, this enumeration will list both sides.
+     */
+    public static final IProperty<Set<PortSide>> EXT_PORT_CONNECTIONS = new Property<Set<PortSide>>(
+            "externalPortConnections", EnumSet.noneOf(PortSide.class));
 
     /**
      * A list of nodes whose barycenters should go into the barycenter calculation of the node this

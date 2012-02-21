@@ -16,13 +16,17 @@ package de.cau.cs.kieler.klay.layered;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -30,6 +34,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -101,12 +106,13 @@ public class ComponentsProcessor extends AbstractAlgorithm {
             // Perform DFS starting on each node, collecting connected components
             result = new LinkedList<LayeredGraph>();
             for (LNode node : graph.getLayerlessNodes()) {
-                List<LNode> component = dfs(node, null);
-                if (component != null) {
+                Pair<List<LNode>, Set<PortSide>> componentData = dfs(node, null);
+                if (componentData != null) {
                     LayeredGraph newGraph = new LayeredGraph();
                     newGraph.copyProperties(graph);
+                    newGraph.setProperty(Properties.EXT_PORT_CONNECTIONS, componentData.getSecond());
                     newGraph.getInsets().copy(graph.getInsets());
-                    newGraph.getLayerlessNodes().addAll(component);
+                    newGraph.getLayerlessNodes().addAll(componentData.getFirst());
                     result.add(newGraph);
                 }
             }
@@ -119,27 +125,50 @@ public class ComponentsProcessor extends AbstractAlgorithm {
     }
     
     /**
-     * Perform a DFS starting on the given node and collect all nodes that are found in the
-     * corresponding connected component.
+     * Perform a DFS starting on the given node, collect all nodes that are found in the corresponding
+     * connected component and return the set of external port sides the component connects to.
      * 
-     * @param node a node
-     * @return the connected component, or {@code null} if the node was already visited
+     * @param node a node.
+     * @param data pair of nodes in the component and external port sides used to produce the result
+     *             during recursive calls. Should be {@code null} when this method is called.
+     * @return a pairing of the connected component and the set of port sides of external ports it
+     *         connects to, or {@code null} if the node was already visited
      */
-    private List<LNode> dfs(final LNode node, final List<LNode> component) {
+    private Pair<List<LNode>, Set<PortSide>> dfs(final LNode node,
+            final Pair<List<LNode>, Set<PortSide>> data) {
+        
         if (node.id == 0) {
+            // Mark the node as visited
             node.id = 1;
-            List<LNode> c = component;
-            if (c == null) {
-                c = new LinkedList<LNode>();
+            
+            // Check if we already have a list of nodes for the connected component
+            Pair<List<LNode>, Set<PortSide>> mutableData = data;
+            if (mutableData == null) {
+                List<LNode> component = new LinkedList<LNode>();
+                Set<PortSide> extPortSides = EnumSet.noneOf(PortSide.class);
+                
+                mutableData = new Pair<List<LNode>, Set<PortSide>>(component, extPortSides);
             }
-            c.add(node);
+            
+            // Add this node to the component
+            mutableData.getFirst().add(node);
+            
+            // Check if this node is an external port dummy and, if so, add its side
+            if (node.getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
+                mutableData.getSecond().add(node.getProperty(Properties.EXT_PORT_SIDE));
+            }
+            
+            // DFS
             for (LPort port1 : node.getPorts()) {
                 for (LPort port2 : port1.getConnectedPorts()) {
-                    dfs(port2.getNode(), c);
+                    dfs(port2.getNode(), mutableData);
                 }
             }
-            return c;
+            
+            return mutableData;
         }
+        
+        // The node was already visited
         return null;
     }
     
@@ -233,6 +262,7 @@ public class ComponentsProcessor extends AbstractAlgorithm {
      */
     private void moveGraph(final LayeredGraph destGraph, final LayeredGraph sourceGraph,
             final double offsetx, final double offsety) {
+        
         KVector graphOffset = sourceGraph.getOffset().translate(offsetx, offsety);
         for (Layer layer : sourceGraph) {
             for (LNode node : layer) {
