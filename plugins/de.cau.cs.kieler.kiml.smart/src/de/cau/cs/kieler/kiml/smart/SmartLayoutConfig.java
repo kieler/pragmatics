@@ -32,6 +32,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.smart.rules.CircularRule;
+import de.cau.cs.kieler.kiml.smart.rules.ForceRule;
 import de.cau.cs.kieler.kiml.smart.rules.HierarchyRule;
 import de.cau.cs.kieler.kiml.smart.rules.LayeredRule;
 import de.cau.cs.kieler.kiml.smart.rules.OrthogonalRule;
@@ -47,17 +48,17 @@ public class SmartLayoutConfig implements ILayoutConfig {
 
     /** the priority for the smart layout configuration. */
     public static final int PRIORITY = 100;
+    /** the suitability threshold at which rules are applied. */
+    public static final double SUITABILITY_THRESHOLD = 0.6;
+
+    /** property for the configuration map. */
+    public static final IProperty<MetaLayout> META_LAYOUT
+            = new Property<MetaLayout>("smartLayout.metaLayout");
     
     /** the time interval for cache age check. */
     private static final long CACHE_CHECK_INTERVAL = 1000;
     /** the maximal time for configurations to stay in the cache. */
     private static final long CACHE_MAX_AGE = 1000;
-    /** the suitability threshold at which rules are applied. */
-    private static final double SUITABILITY_THRESHOLD = 0.6;
-
-    /** property for the configuration map. */
-    public static final IProperty<MetaLayout> META_LAYOUT
-            = new Property<MetaLayout>("smartLayout.metaLayout");
     
     /**
      * {@inheritDoc}
@@ -83,6 +84,7 @@ public class SmartLayoutConfig implements ILayoutConfig {
         smartRules.add(new CircularRule());
         smartRules.add(new LayeredRule());
         smartRules.add(new OrthogonalRule());
+        smartRules.add(new ForceRule());
     }
     
     /**

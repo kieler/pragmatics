@@ -15,38 +15,30 @@ package de.cau.cs.kieler.kiml.smart.rules;
 
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.grana.analyses.DirectedCycleAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.NodeCountAnalysis;
 import de.cau.cs.kieler.kiml.smart.ISmartRule;
 import de.cau.cs.kieler.kiml.smart.MetaLayout;
+import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
 
 /**
- * Smart layout rule for layered layout type.
+ * Smart layout rule for force based layout.
  *
  * @author msp
  */
-public class LayeredRule implements ISmartRule {
+public class ForceRule implements ISmartRule {
 
     /**
      * {@inheritDoc}
      */
     public double suitability(final MetaLayout metaLayout) {
-        int nodeCount = metaLayout.analyze(NodeCountAnalysis.ID);
-        if (nodeCount > 0) {
-            int cycleCount = metaLayout.analyze(DirectedCycleAnalysis.ID);
-            
-            System.out.println("Layered Rule: " + cycleCount
-                    + " cycles, cycle rate = " + ((double) cycleCount / nodeCount));
-            return 1 - (double) Math.min(cycleCount, nodeCount) / nodeCount;
-        }
-        return 0;
+        // force based layout is always applicable to some degree, so take it as fallback solution
+        return SmartLayoutConfig.SUITABILITY_THRESHOLD;
     }
 
     /**
      * {@inheritDoc}
      */
     public void applyMetaLayout(final MetaLayout metaLayout) {
-        metaLayout.getConfig().put(LayoutOptions.ALGORITHM, LayoutTypeData.TYPE_LAYERED);
+        metaLayout.getConfig().put(LayoutOptions.ALGORITHM, LayoutTypeData.TYPE_FORCE);
     }
 
 }
