@@ -123,10 +123,11 @@ public class ComponentsProcessor extends AbstractAlgorithm {
             }
             
             if (extPorts) {
-                // TODO: Change this to the new graph placement algorithm once implemented.
-                graphPlacer = new SimpleRowGraphPlacer();
+                // With external ports connections, we want to use the more complex components
+                // placement algorithm
+                graphPlacer = new ComponentGroupGraphPlacer();
             } else {
-                // If there are no connections to external ports, default to the simpler graph
+                // If there are no connections to external ports, default to the simpler components
                 // placement algorithm
                 graphPlacer = new SimpleRowGraphPlacer();
             }

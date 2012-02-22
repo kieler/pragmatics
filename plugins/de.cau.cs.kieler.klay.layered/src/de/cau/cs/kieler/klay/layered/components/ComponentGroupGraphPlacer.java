@@ -17,7 +17,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * A graph placer that tries to place the components of a graph with taking connections to external
@@ -49,16 +51,38 @@ class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
      * {@inheritDoc}
      */
     public LayeredGraph combine(final List<LayeredGraph> components) {
+        // Create a new layered graph
+        LayeredGraph result = new LayeredGraph();
+        
+        // Check if there are any components to be placed
+        if (components.isEmpty()) {
+            return result;
+        }
+        
+        // Set the graph properties
+        result.copyProperties(components.get(0));
+        result.getInsets().copy(components.get(0).getInsets());
+        
         // Construct component groups
         for (LayeredGraph component : components) {
             addComponent(component);
         }
         
-        // TODO: Place components in each group.
+        // Place components in each group
+        KVector offset = new KVector();
+        float spacing = 2 * components.get(0).getProperty(Properties.OBJ_SPACING);
+        
+        for (ComponentGroup group : componentGroups) {
+            KVector groupSize = placeComponents(group, offset);
+            
+            // Compute the new offset
+            offset.x += spacing + groupSize.x;
+            offset.y += spacing + groupSize.y;
+        }
         
         // TODO: Place groups, if no offset was used in the previous step.
         
-        return null;
+        return result;
     }
     
     
@@ -80,6 +104,22 @@ class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         
         // Create a new component group for the component
         componentGroups.add(new ComponentGroup(component));
+    }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Component Placement
+    
+    /**
+     * Computes a placement for the components in the given component group.
+     * 
+     * @param group the group whose components are to be placed.
+     * @param offset the offset to apply to the group's components along the way.
+     * @return the group's size.
+     */
+    private KVector placeComponents(final ComponentGroup group, final KVector offset) {
+        // TODO: Implement.
+        return null;
     }
 
 }
