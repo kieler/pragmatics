@@ -14,24 +14,18 @@
 package de.cau.cs.kieler.klay.layered.components;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.klay.layered.graph.LEdge;
-import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
@@ -49,6 +43,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * {@link de.cau.cs.kieler.kiml.options.PortConstraints#FIXED_SIDE FIXED_SIDE}. If the graph contains
  * external ports with port constraints other than these, connected components processing is disabled
  * even if requested by the user.</p>
+ * 
+ * <p>For each graph to be split and packed again, a separate instance of this class is required.</p>
  * 
  * <p>Splitting into components
  * <dl>
@@ -70,6 +66,12 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author cds
  */
 public class ComponentsProcessor extends AbstractAlgorithm {
+    
+    /**
+     * Graph placer to be used to combine the different components back into a single graph.
+     */
+    private IGraphPlacer graphPlacer = null;
+    
 
     /**
      * Split the given graph into its connected components.
@@ -119,9 +121,20 @@ public class ComponentsProcessor extends AbstractAlgorithm {
                     result.add(newGraph);
                 }
             }
+            
+            if (extPorts) {
+                // TODO: Change this to the new graph placement algorithm once implemented.
+                graphPlacer = new SimpleRowGraphPlacer();
+            } else {
+                // If there are no connections to external ports, default to the simpler graph
+                // placement algorithm
+                graphPlacer = new SimpleRowGraphPlacer();
+            }
         } else {
             result = new ArrayList<LayeredGraph>(1);
             result.add(graph);
+            
+            graphPlacer = new SimpleRowGraphPlacer();
         }
         
         return result;
@@ -182,105 +195,7 @@ public class ComponentsProcessor extends AbstractAlgorithm {
      * @return a single graph that contains all components
      */
     public LayeredGraph pack(final List<LayeredGraph> components) {
-        if (components.size() == 1) {
-            LayeredGraph graph = components.get(0);
-            // move all nodes away from the layers
-            for (Layer layer : graph) {
-                graph.getLayerlessNodes().addAll(layer.getNodes());
-            }
-            graph.getLayers().clear();
-            return graph;
-        } else if (components.size() <= 0) {
-            return new LayeredGraph();
-        }
-        
-        // assign priorities
-        for (LayeredGraph graph : components) {
-            int priority = 0;
-            for (Layer layer : graph) {
-                for (LNode node : layer) {
-                    priority += node.getProperty(Properties.PRIORITY);
-                }
-            }
-            graph.id = priority;
-        }
-
-        // sort the components by their priority and size
-        Collections.sort(components, new Comparator<LayeredGraph>() {
-            public int compare(final LayeredGraph graph1, final LayeredGraph graph2) {
-                int prio = graph2.id - graph1.id;
-                if (prio == 0) {
-                    double size1 = graph1.getSize().x * graph1.getSize().y;
-                    double size2 = graph2.getSize().x * graph2.getSize().y;
-                    return Double.compare(size1, size2);
-                }
-                return prio;
-            }
-        });
-        
-        LayeredGraph result = new LayeredGraph();
-        result.copyProperties(components.get(0));
-        result.getInsets().copy(components.get(0).getInsets());
-        
-        // determine the maximal row width by the maximal box width and the total area
-        double maxRowWidth = 0.0f;
-        double totalArea = 0.0f;
-        for (LayeredGraph graph : components) {
-            KVector size = graph.getSize();
-            maxRowWidth = Math.max(maxRowWidth, size.x);
-            totalArea += size.x * size.y;
-        }
-        maxRowWidth = Math.max(maxRowWidth, (float) Math.sqrt(totalArea)
-                * result.getProperty(Properties.ASPECT_RATIO));
-        double spacing = 2 * result.getProperty(Properties.OBJ_SPACING);
-
-        // place nodes iteratively into rows
-        double xpos = 0, ypos = 0, highestBox = 0, broadestRow = spacing;
-        for (LayeredGraph graph : components) {
-            KVector size = graph.getSize();
-            if (xpos + size.x > maxRowWidth) {
-                // place the graph into the next row
-                xpos = 0;
-                ypos += highestBox + spacing;
-                highestBox = 0;
-            }
-            moveGraph(result, graph, xpos, ypos);
-            broadestRow = Math.max(broadestRow, xpos + size.x);
-            highestBox = Math.max(highestBox, size.y);
-            xpos += size.x + spacing;
-        }
-        
-        result.getSize().x = broadestRow;
-        result.getSize().y = ypos + highestBox;
-        return result;
-    }
-    
-    /**
-     * Move the source graph into the destination graph using a specified offset.
-     * 
-     * @param destGraph the destination graph
-     * @param sourceGraph the source graph
-     * @param offsetx x coordinate offset
-     * @param offsety y coordinate offset
-     */
-    private void moveGraph(final LayeredGraph destGraph, final LayeredGraph sourceGraph,
-            final double offsetx, final double offsety) {
-        
-        KVector graphOffset = sourceGraph.getOffset().translate(offsetx, offsety);
-        for (Layer layer : sourceGraph) {
-            for (LNode node : layer) {
-                node.getPosition().add(graphOffset);
-                for (LPort port : node.getPorts()) {
-                    for (LEdge edge : port.getOutgoingEdges()) {
-                        edge.getBendPoints().translate(graphOffset);
-                        for (LLabel label : edge.getLabels()) {
-                            label.getPosition().add(graphOffset);
-                        }
-                    }
-                }
-                destGraph.getLayerlessNodes().add(node);
-            }
-        }
+        return graphPlacer.combine(components);
     }
     
 }
