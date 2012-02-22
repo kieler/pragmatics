@@ -172,12 +172,12 @@ class ComponentGroup {
     
     /**
      * Constructs a new component group with the given initial component. This is equivalent to
-     * constructing an empty component group and then calling {@link #place(LayeredGraph)}.
+     * constructing an empty component group and then calling {@link #add(LayeredGraph)}.
      * 
-     * @param component the component to be placed in the group.
+     * @param component the component to be added to the group.
      */
     public ComponentGroup(final LayeredGraph component) {
-        place(component);
+        add(component);
     }
 
     
@@ -185,15 +185,15 @@ class ComponentGroup {
     // Component Placement
     
     /**
-     * Tries to place the given component in the group. Before placing the component, a call to
-     * {@link #canPlace(LayeredGraph)} determines if the component can actually be placed in this
+     * Tries to add the given component to the group. Before adding the component, a call to
+     * {@link #canAdd(LayeredGraph)} determines if the component can actually be added to this
      * group.
      * 
-     * @param component the component to be placed in this group.
-     * @return {@code true} if the component was successfully placed, {@code false} otherwise.
+     * @param component the component to be added to this group.
+     * @return {@code true} if the component was successfully added, {@code false} otherwise.
      */
-    public boolean place(final LayeredGraph component) {
-        if (canPlace(component)) {
+    public boolean add(final LayeredGraph component) {
+        if (canAdd(component)) {
             components.add(component);
             return true;
         } else {
@@ -202,13 +202,13 @@ class ComponentGroup {
     }
     
     /**
-     * Checks whether this group has enough space left to place a given component.
+     * Checks whether this group has enough space left to add a given component.
      * 
-     * @param component the component to be placed in the group.
-     * @return {@code true} if the group has enough space left to place the component, {@code false}
+     * @param component the component to be added to the group.
+     * @return {@code true} if the group has enough space left to add the component, {@code false}
      *         otherwise.
      */
-    private boolean canPlace(final LayeredGraph component) {
+    private boolean canAdd(final LayeredGraph component) {
         // Check if we have a component with incompatible external port sides
         Set<PortSide> candidateSides = component.getProperty(Properties.EXT_PORT_CONNECTIONS);
         Collection<Set<PortSide>> portSideConstraints = CONSTRAINTS.get(candidateSides);

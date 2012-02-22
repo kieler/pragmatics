@@ -195,7 +195,11 @@ public class ComponentsProcessor extends AbstractAlgorithm {
      * @return a single graph that contains all components
      */
     public LayeredGraph pack(final List<LayeredGraph> components) {
-        return graphPlacer.combine(components);
+        LayeredGraph combinedGraph = graphPlacer.combine(components);
+        
+        // TODO: Make sure external port dummies have the correct coordinates.
+        
+        return combinedGraph;
     }
     
 }
