@@ -34,6 +34,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.smart.rules.CircularRule;
 import de.cau.cs.kieler.kiml.smart.rules.HierarchyRule;
 import de.cau.cs.kieler.kiml.smart.rules.LayeredRule;
+import de.cau.cs.kieler.kiml.smart.rules.OrthogonalRule;
 import de.cau.cs.kieler.kiml.smart.rules.TreeRule;
 import de.cau.cs.kieler.kiml.smart.rules.UnconnectedBoxesRule;
 
@@ -81,6 +82,7 @@ public class SmartLayoutConfig implements ILayoutConfig {
         smartRules.add(new TreeRule());
         smartRules.add(new CircularRule());
         smartRules.add(new LayeredRule());
+        smartRules.add(new OrthogonalRule());
     }
     
     /**
