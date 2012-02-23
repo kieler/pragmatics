@@ -56,6 +56,8 @@ public abstract class LayoutInfoService {
     public static final String ELEMENT_CONFIG = "config";
     /** name of the 'activation' attribute in the extension points. */
     public static final String ATTRIBUTE_ACTIVATION = "activation";
+    /** name of the 'activationText' attribute in the extension points. */
+    public static final String ATTRIBUTE_ACTIVATION_TEXT = "activationText";
     /** name of the 'class' attribute in the extension points. */
     public static final String ATTRIBUTE_CLASS = "class";
     /** name of the 'config' attribute in the extension points. */
@@ -74,11 +76,40 @@ public abstract class LayoutInfoService {
     /**
      * Data element for general layout configurations.
      */
-    private static class ConfigData {
+    protected static class ConfigData {
         /** the layout configuration implementation. */
         private ILayoutConfig config;
         /** the activation property. */
         private IProperty<Boolean> activation;
+        /** the text of the activation menu entry. */
+        private String activationText;
+        
+        /**
+         * Returns the layout configuration implementation.
+         * 
+         * @return the layout configuration
+         */
+        public ILayoutConfig getConfig() {
+            return config;
+        }
+        
+        /**
+         * Returns the activation property.
+         * 
+         * @return the activation property
+         */
+        public IProperty<Boolean> getActivationProperty() {
+            return activation;
+        }
+        
+        /**
+         * Returns the activation menu entry text.
+         * 
+         * @return the activation menu entry text
+         */
+        public String getActivationText() {
+            return activationText;
+        }
     }
     
     /** the singleton instance of the layout info service. */
@@ -200,6 +231,8 @@ public abstract class LayoutInfoService {
                         Boolean defaultActivation = def == null ? Boolean.FALSE : Boolean.valueOf(def);
                         data.activation = new Property<Boolean>(activationId, defaultActivation);
                     }
+                    String text = element.getAttribute(ATTRIBUTE_ACTIVATION_TEXT);
+                    data.activationText = text;
                     configData.add(data);
                 } catch (CoreException exception) {
                     reportError(exception);
@@ -423,6 +456,15 @@ public abstract class LayoutInfoService {
             }
         }
         return configs;
+    }
+    
+    /**
+     * Returns all general layout configuration data.
+     * 
+     * @return the registered layout configurations
+     */
+    protected final List<ConfigData> getAllConfigs() {
+        return configData;
     }
 
 }

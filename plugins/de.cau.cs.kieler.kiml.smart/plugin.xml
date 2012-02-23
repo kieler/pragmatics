@@ -4,7 +4,10 @@
    <extension
          point="de.cau.cs.kieler.kiml.layoutInfo">
       <config
-            class="de.cau.cs.kieler.kiml.smart.SmartLayoutConfig">
+            activation="de.cau.cs.kieler.kiml.smart"
+            activationText="Activate Smart Layout"
+            class="de.cau.cs.kieler.kiml.smart.SmartLayoutConfig"
+            default="false">
       </config>
    </extension>
    <extension

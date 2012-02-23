@@ -177,6 +177,16 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="activationText" type="string">
+            <annotation>
+               <documentation>
+                  Optional text to display in the user interface for manual activation of the layout configuration.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

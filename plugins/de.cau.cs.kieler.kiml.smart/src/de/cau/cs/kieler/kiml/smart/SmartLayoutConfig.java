@@ -47,18 +47,21 @@ import de.cau.cs.kieler.kiml.smart.rules.UnconnectedBoxesRule;
 public class SmartLayoutConfig implements ILayoutConfig {
 
     /** the priority for the smart layout configuration. */
-    public static final int PRIORITY = 100;
+    public static final int PRIORITY = 14;
     /** the suitability threshold at which rules are applied. */
     public static final double SUITABILITY_THRESHOLD = 0.6;
 
+    /** property for activation of the smart layout config. */
+    public static final Property<Boolean> ACTIVATION = new Property<Boolean>(
+            "de.cau.cs.kieler.kiml.smart", false);
     /** property for the configuration map. */
     public static final IProperty<MetaLayout> META_LAYOUT
             = new Property<MetaLayout>("smartLayout.metaLayout");
     
     /** the time interval for cache age check. */
-    private static final long CACHE_CHECK_INTERVAL = 1000;
+    private static final long CACHE_CHECK_INTERVAL = 6000;
     /** the maximal time for configurations to stay in the cache. */
-    private static final long CACHE_MAX_AGE = 1000;
+    private static final long CACHE_MAX_AGE = 10000;
     
     /**
      * {@inheritDoc}
@@ -75,7 +78,7 @@ public class SmartLayoutConfig implements ILayoutConfig {
     private List<ISmartRule> smartRules = Lists.newLinkedList();
     
     /**
-     * Create a smart layout configuration and initialize rules in according priority.
+     * Create a smart layout configuration and initialize rules.
      */
     public SmartLayoutConfig() {
         smartRules.add(new UnconnectedBoxesRule());
