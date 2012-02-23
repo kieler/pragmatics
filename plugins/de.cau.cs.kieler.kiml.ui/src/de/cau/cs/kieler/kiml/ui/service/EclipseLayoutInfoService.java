@@ -48,7 +48,6 @@ import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.service.LayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 
 /**
@@ -383,8 +382,7 @@ public final class EclipseLayoutInfoService extends LayoutInfoService {
                         menuItem.setSelection(activation.getDefault());
                         menuItem.addSelectionListener(new SelectionListener() {
                             public void widgetSelected(final SelectionEvent e) {
-                                DiagramLayoutEngine.INSTANCE.setConfigProperty(activation,
-                                        menuItem.getSelection());
+                                getConfigProperties().setProperty(activation, menuItem.getSelection());
                             }
                             public void widgetDefaultSelected(final SelectionEvent e) {
                             }

@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EClass;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutDataService;
@@ -143,6 +144,17 @@ public abstract class LayoutInfoService {
             = new HashMap<String, SemanticLayoutConfig>();
     /** list of general layout configurations. */
     private List<ConfigData> configData = new LinkedList<ConfigData>();
+    /** property map for activation of registered layout configurations. */
+    private MapPropertyHolder configProperties = new MapPropertyHolder();
+    
+    /**
+     * Returns the property holder to activate or deactivate registered layout configurations.
+     * 
+     * @return the property holder for configuration activation
+     */
+    public IPropertyHolder getConfigProperties() {
+        return configProperties;
+    }
     
     /**
      * Report an error that occurred while reading extensions.
@@ -440,18 +452,14 @@ public abstract class LayoutInfoService {
     }
 
     /**
-     * Returns all general layout configurations that are active for the given property holder.
+     * Returns all general layout configurations that are currently active.
      * 
-     * @param propertyHolder a property holder for activation properties, or {@code null} to
-     *     use only default values
      * @return the active layout configurations
      */
-    public final List<ILayoutConfig> getActiveConfigs(final IPropertyHolder propertyHolder) {
+    public final List<ILayoutConfig> getActiveConfigs() {
         LinkedList<ILayoutConfig> configs = new LinkedList<ILayoutConfig>();
         for (ConfigData data : configData) {
-            if (data.activation == null
-                    || propertyHolder != null && propertyHolder.getProperty(data.activation)
-                    || propertyHolder == null && data.activation.getDefault()) {
+            if (data.activation == null || configProperties.getProperty(data.activation)) {
                 configs.add(data.config);
             }
         }

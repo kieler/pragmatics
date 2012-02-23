@@ -27,7 +27,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.UnsupportedPartException;
@@ -63,21 +62,6 @@ public class DiagramLayoutEngine {
      */
     public static final IProperty<IDiagramLayoutManager<?>> DIAGRAM_LM
             = new Property<IDiagramLayoutManager<?>>("layoutEngine.diagramLayoutManager");
-    
-    /**
-     * Property map for layout configurations. The content is transferred to each layout mapping.
-     */
-    private MapPropertyHolder configProperties = new MapPropertyHolder();
-    
-    /**
-     * Activate or deactivate a layout configuration.
-     * 
-     * @param property property for a layout configuration
-     * @param value true to activate the configuration, false to deactivate it
-     */
-    public void setConfigProperty(final IProperty<Boolean> property, final boolean value) {
-        configProperties.setProperty(property, value);
-    }
     
     /**
      * Perform layout on the given workbench part.
@@ -448,7 +432,6 @@ public class DiagramLayoutEngine {
         if (mapping.getProperty(PROGRESS_MONITOR) == null) {
             mapping.setProperty(PROGRESS_MONITOR, progressMonitor);
         }
-        mapping.copyProperties(configProperties);
         
         // Fetch the active graph layout engine to be used
         IGraphLayoutEngine layoutEngine = EclipseLayoutInfoService.getInstance().getLayoutEngine();
