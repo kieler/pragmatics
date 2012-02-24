@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.smart;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -88,6 +90,15 @@ public class SmartLayoutConfig implements ILayoutConfig {
         smartRules.add(new LayeredRule());
         smartRules.add(new OrthogonalRule());
         smartRules.add(new ForceRule());
+    }
+    
+    /**
+     * Returns the currently cached meta layout data.
+     * 
+     * @return the cached meta layout data
+     */
+    public Collection<MetaLayout> getMetaLayouts() {
+        return Collections.unmodifiableCollection(metaLayoutCache.values());
     }
     
     /**

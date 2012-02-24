@@ -370,7 +370,7 @@ public final class EclipseLayoutInfoService extends LayoutInfoService {
      * @param menuManager a menu manager
      */
     public void fillConfigMenu(final IMenuManager menuManager) {
-        for (ConfigData data : getAllConfigs()) {
+        for (ConfigData data : getConfigData()) {
             if (data.getActivationText() != null && data.getActivationText().length() > 0
                     && data.getActivationProperty() != null) {
                 final String text = data.getActivationText();

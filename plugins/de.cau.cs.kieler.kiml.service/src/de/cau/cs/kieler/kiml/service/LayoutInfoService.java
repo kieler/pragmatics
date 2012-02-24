@@ -77,7 +77,7 @@ public abstract class LayoutInfoService {
     /**
      * Data element for general layout configurations.
      */
-    protected static class ConfigData {
+    public static class ConfigData {
         /** the layout configuration implementation. */
         private ILayoutConfig config;
         /** the activation property. */
@@ -471,7 +471,7 @@ public abstract class LayoutInfoService {
      * 
      * @return the registered layout configurations
      */
-    protected final List<ConfigData> getAllConfigs() {
+    public final List<ConfigData> getConfigData() {
         return configData;
     }
 
