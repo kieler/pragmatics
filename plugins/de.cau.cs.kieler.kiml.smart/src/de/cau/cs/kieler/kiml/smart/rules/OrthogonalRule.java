@@ -36,9 +36,8 @@ public class OrthogonalRule implements ISmartRule {
         try {
             int crossingEdges = metaLayout.analyze(PLANARITY_ID);
             int nodeCount = metaLayout.analyze(NodeCountAnalysis.ID);
+            
             if (nodeCount > 0) {
-                System.out.println("Orthogonal Rule: " + crossingEdges
-                        + " crossing edges, crossing rate = " + ((double) crossingEdges / nodeCount));
                 return 1 - (double) Math.min(crossingEdges, nodeCount) / nodeCount;
             }
         } catch (RuntimeException e) {

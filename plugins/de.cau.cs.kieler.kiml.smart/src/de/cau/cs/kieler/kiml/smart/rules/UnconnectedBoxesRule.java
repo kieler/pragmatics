@@ -32,7 +32,6 @@ public class UnconnectedBoxesRule implements ISmartRule {
     public double suitability(final MetaLayout metaLayout) {
         int edgeCount = metaLayout.analyze(EdgeCountAnalysis.ID);
         
-        System.out.println("Unconnected Boxes Rule: " + edgeCount + " edges");
         return edgeCount == 0 ? 1 : 0;
     }
 

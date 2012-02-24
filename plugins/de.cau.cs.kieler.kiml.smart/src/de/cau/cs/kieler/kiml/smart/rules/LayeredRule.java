@@ -35,8 +35,6 @@ public class LayeredRule implements ISmartRule {
         if (nodeCount > 0) {
             int cycleCount = metaLayout.analyze(DirectedCycleAnalysis.ID);
             
-            System.out.println("Layered Rule: " + cycleCount
-                    + " cycles, cycle rate = " + ((double) cycleCount / nodeCount));
             return 1 - (double) Math.min(cycleCount, nodeCount) / nodeCount;
         }
         return 0;

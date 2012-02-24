@@ -33,13 +33,6 @@ import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
-import de.cau.cs.kieler.kiml.smart.rules.CircularRule;
-import de.cau.cs.kieler.kiml.smart.rules.ForceRule;
-import de.cau.cs.kieler.kiml.smart.rules.HierarchyRule;
-import de.cau.cs.kieler.kiml.smart.rules.LayeredRule;
-import de.cau.cs.kieler.kiml.smart.rules.OrthogonalRule;
-import de.cau.cs.kieler.kiml.smart.rules.TreeRule;
-import de.cau.cs.kieler.kiml.smart.rules.UnconnectedBoxesRule;
 
 /**
  * Smart layout!
@@ -83,13 +76,7 @@ public class SmartLayoutConfig implements ILayoutConfig {
      * Create a smart layout configuration and initialize rules.
      */
     public SmartLayoutConfig() {
-        smartRules.add(new UnconnectedBoxesRule());
-        smartRules.add(new HierarchyRule());
-        smartRules.add(new TreeRule());
-        smartRules.add(new CircularRule());
-        smartRules.add(new LayeredRule());
-        smartRules.add(new OrthogonalRule());
-        smartRules.add(new ForceRule());
+        smartRules.addAll(SmartLayoutService.getInstance().getSmartRules());
     }
     
     /**

@@ -34,7 +34,6 @@ public class HierarchyRule implements ISmartRule {
     public double suitability(final MetaLayout metaLayout) {
         int compoundEdgeCount = metaLayout.analyze(CompoundEdgeAnalysis.ID, 0);
         
-        System.out.println("Hierarchy Rule: " + compoundEdgeCount + " compound edges");
         return compoundEdgeCount > 0 ? 1 : 0;
     }
 

@@ -31,7 +31,6 @@ public class TreeRule implements ISmartRule {
     public double suitability(final MetaLayout metaLayout) {
         boolean isTree = metaLayout.analyze(TreeAnalysis.ID);
         
-        System.out.println("Tree Rule: " + isTree);
         return isTree ? 1 : 0;
     }
 

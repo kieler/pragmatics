@@ -31,7 +31,6 @@ public class CircularRule implements ISmartRule {
     public double suitability(final MetaLayout metaLayout) {
         double density = metaLayout.analyze(BiconnectedComponentDensityAnalysis.ID);
         
-        System.out.println("Circular Rule: density = " + density);
         return 1 - density;
     }
 
