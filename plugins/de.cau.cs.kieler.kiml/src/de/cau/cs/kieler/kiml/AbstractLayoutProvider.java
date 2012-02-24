@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kiml;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 
 /**
  * A layout provider executes a layout algorithm to layout the child elements of a node.
@@ -23,15 +22,12 @@ import de.cau.cs.kieler.kiml.util.IDebugCanvas;
  * extension point. All layout providers published to Eclipse this way are collected in the
  * {@link LayoutDataService} singleton, provided the UI plugin is loaded.
  * 
- * @kieler.rating 2011-01-17 proposed yellow
+ * @kieler.rating 2011-01-17 yellow
  *     reviewed by haf, cmot, soh
  * @author ars
  * @author msp
  */
 public abstract class AbstractLayoutProvider {
-
-    /** the debug canvas to use. */
-    private IDebugCanvas debugCanvas;
     
     /**
      * Initialize the layout provider with the given parameter.
@@ -70,27 +66,6 @@ public abstract class AbstractLayoutProvider {
      */
     public boolean supportsHierarchy(final KNode layoutNode) {
         return false;
-    }
-    
-    /**
-     * Sets the current debug canvas. Should not be used by subclasses.
-     * 
-     * @param thedebugCanvas the debug canvas
-     */
-    public final void setDebugCanvas(final IDebugCanvas thedebugCanvas) {
-        this.debugCanvas = thedebugCanvas;
-    }
-
-    /**
-     * Returns the current debug canvas. A debug canvas can be used to draw something onto the
-     * diagram that is layouted in order to analyze and debug the layout algorithm code.
-     * {@link IDebugCanvas#setOffset(KNode, float, float) should be set before anything is
-     * drawn.
-     * 
-     * @return the debug canvas
-     */
-    public final IDebugCanvas getDebugCanvas() {
-        return debugCanvas;
     }
 
 }
