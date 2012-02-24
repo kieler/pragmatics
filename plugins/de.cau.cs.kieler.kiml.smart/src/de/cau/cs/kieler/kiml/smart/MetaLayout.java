@@ -37,6 +37,8 @@ public class MetaLayout {
     private Map<IProperty<?>, Object> config;
     /** the analysis cache. */
     private Map<String, Object> analysisCache;
+    /** the smart layout results. */
+    private Map<ISmartRule, Double> resultMap;
     /** the time when the meta layout instance was created. */
     private long timestamp = System.currentTimeMillis();
     
@@ -68,6 +70,18 @@ public class MetaLayout {
             config = Maps.newHashMap();
         }
         return config;
+    }
+    
+    /**
+     * Returns the map of smart layout rule results.
+     * 
+     * @return the smart layout results
+     */
+    public Map<ISmartRule, Double> getResults() {
+        if (resultMap == null) {
+            resultMap = Maps.newHashMap();
+        }
+        return resultMap;
     }
     
     /**

@@ -203,16 +203,21 @@ public class SmartLayoutConfig implements ILayoutConfig {
         MetaLayout metaLayout = new MetaLayout();
         node.getData(KShapeLayout.class).setProperty(AnalysisOptions.ANALYZE_HIERARCHY, false);
         metaLayout.setGraph(node);
+        Map<ISmartRule, Double> results = metaLayout.getResults();
         
         double maxValue = 0;
         ISmartRule bestRule = null;
-        System.out.println("=== smart layout for " + (node.getLabels().isEmpty() ? "unlabeled node"
-                : node.getLabels().get(0).getText()) + " ===");
         for (ISmartRule rule : smartRules) {
-            double val = rule.suitability(metaLayout);
-            if (val > maxValue) {
-                maxValue = val;
-                bestRule = rule;
+            try {
+                double val = rule.suitability(metaLayout);
+                results.put(rule, val);
+                if (val > maxValue) {
+                    maxValue = val;
+                    bestRule = rule;
+                }
+            } catch (Exception exception) {
+                // the smart layout rule failed, so put a negative value
+                results.put(rule, -1.0);
             }
         }
         if (maxValue >= SUITABILITY_THRESHOLD) {

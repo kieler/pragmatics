@@ -33,15 +33,11 @@ public class OrthogonalRule implements ISmartRule {
      * {@inheritDoc}
      */
     public double suitability(final MetaLayout metaLayout) {
-        try {
-            int crossingEdges = metaLayout.analyze(PLANARITY_ID);
-            int nodeCount = metaLayout.analyze(NodeCountAnalysis.ID);
-            
-            if (nodeCount > 0) {
-                return 1 - (double) Math.min(crossingEdges, nodeCount) / nodeCount;
-            }
-        } catch (RuntimeException e) {
-            // the planarity test is not available, so skip this rule
+        int crossingEdges = metaLayout.analyze(PLANARITY_ID);
+        int nodeCount = metaLayout.analyze(NodeCountAnalysis.ID);
+        
+        if (nodeCount > 0) {
+            return 1 - (double) Math.min(crossingEdges, nodeCount) / nodeCount;
         }
         return 0;
     }
