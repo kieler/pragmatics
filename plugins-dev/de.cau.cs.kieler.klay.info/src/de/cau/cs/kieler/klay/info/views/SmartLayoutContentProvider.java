@@ -22,8 +22,9 @@ import java.util.Map;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import de.cau.cs.kieler.kiml.smart.ISmartRule;
 import de.cau.cs.kieler.kiml.smart.MetaLayout;
+import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
+import de.cau.cs.kieler.kiml.smart.SmartLayoutService.SmartRuleData;
 
 /**
  * Content provider for the smart layout view.
@@ -36,17 +37,17 @@ public class SmartLayoutContentProvider implements ITreeContentProvider {
      * Data class for smart layout rule results.
      */
     public static class ResultData {
-        private ISmartRule smartRule;
+        private SmartRuleData smartRuleData;
         private double suitability;
         private MetaLayout metaLayout;
         
         /**
-         * Returns the smart rule.
+         * Returns the smart rule data.
          * 
-         * @return the smart rule
+         * @return the smart rule data
          */
-        public ISmartRule getSmartRule() {
-            return smartRule;
+        public SmartRuleData getSmartRuleData() {
+            return smartRuleData;
         }
         
         /**
@@ -82,20 +83,25 @@ public class SmartLayoutContentProvider implements ITreeContentProvider {
     public Object[] getChildren(final Object parentElement) {
         if (parentElement instanceof MetaLayout) {
             MetaLayout metaLayout = (MetaLayout) parentElement;
-            Collection<Map.Entry<ISmartRule, Double>> results = metaLayout.getResults().entrySet();
+            Collection<Map.Entry<SmartRuleData, Double>> results = metaLayout.getResults().entrySet();
             ResultData[] dataArray = new ResultData[results.size()];
             int i = 0;
-            for (Map.Entry<ISmartRule, Double> entry : results) {
+            for (Map.Entry<SmartRuleData, Double> entry : results) {
                 ResultData data = new ResultData();
                 data.metaLayout = metaLayout;
-                data.smartRule = entry.getKey();
+                data.smartRuleData = entry.getKey();
                 data.suitability = entry.getValue();
                 dataArray[i++] = data;
             }
             Arrays.sort(dataArray, new Comparator<ResultData>() {
                 public int compare(final ResultData d1, final ResultData d2) {
+                    // add priority bias values
+                    double value1 = d1.suitability + d1.smartRuleData.getPriority()
+                            * SmartLayoutConfig.PRIORITY_BIAS;
+                    double value2 = d2.suitability + d2.smartRuleData.getPriority()
+                            * SmartLayoutConfig.PRIORITY_BIAS;
                     // reverse the result to achieve descending values
-                    return Double.compare(d2.suitability, d1.suitability);
+                    return Double.compare(value2, value1);
                 }
             });
             return dataArray;

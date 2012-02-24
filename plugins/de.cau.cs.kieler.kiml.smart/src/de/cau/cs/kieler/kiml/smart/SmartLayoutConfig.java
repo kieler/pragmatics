@@ -15,10 +15,8 @@ package de.cau.cs.kieler.kiml.smart;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.kgraph.KGraphData;
@@ -33,6 +31,7 @@ import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
+import de.cau.cs.kieler.kiml.smart.SmartLayoutService.SmartRuleData;
 
 /**
  * Smart layout!
@@ -45,6 +44,8 @@ public class SmartLayoutConfig implements ILayoutConfig {
     public static final int PRIORITY = 14;
     /** the suitability threshold at which rules are applied. */
     public static final double SUITABILITY_THRESHOLD = 0.6;
+    /** the priority factor for calculation of bias values. */
+    public static final double PRIORITY_BIAS = 0.01;
 
     /** property for activation of the smart layout config. */
     public static final Property<Boolean> ACTIVATION = new Property<Boolean>(
@@ -69,15 +70,6 @@ public class SmartLayoutConfig implements ILayoutConfig {
     private Map<Object, MetaLayout> metaLayoutCache = Maps.newHashMap();
     /** the last time when the cache was checked for old information. */
     private long lastCheckTime = System.currentTimeMillis();
-    /** list of smart layout rules. */
-    private List<ISmartRule> smartRules = Lists.newLinkedList();
-    
-    /**
-     * Create a smart layout configuration and initialize rules.
-     */
-    public SmartLayoutConfig() {
-        smartRules.addAll(SmartLayoutService.getInstance().getSmartRules());
-    }
     
     /**
      * Returns the currently cached meta layout data.
@@ -200,24 +192,27 @@ public class SmartLayoutConfig implements ILayoutConfig {
      * @return a meta layout instance
      */
     private MetaLayout smartLayout(final KNode node) {
+        Collection<SmartRuleData> smartRules = SmartLayoutService.getInstance().getSmartRules();
         MetaLayout metaLayout = new MetaLayout();
         node.getData(KShapeLayout.class).setProperty(AnalysisOptions.ANALYZE_HIERARCHY, false);
         metaLayout.setGraph(node);
-        Map<ISmartRule, Double> results = metaLayout.getResults();
+        Map<SmartRuleData, Double> results = metaLayout.getResults();
         
         double maxValue = 0;
         ISmartRule bestRule = null;
-        for (ISmartRule rule : smartRules) {
+        for (SmartRuleData ruleData : smartRules) {
             try {
-                double val = rule.suitability(metaLayout);
-                results.put(rule, val);
+                double val = ruleData.getRule().suitability(metaLayout);
+                results.put(ruleData, val);
+                // consider the rule priorities by adding a corresponding bias value
+                val += PRIORITY_BIAS * ruleData.getPriority();
                 if (val > maxValue) {
                     maxValue = val;
-                    bestRule = rule;
+                    bestRule = ruleData.getRule();
                 }
             } catch (Exception exception) {
                 // the smart layout rule failed, so put a negative value
-                results.put(rule, -1.0);
+                results.put(ruleData, -1.0);
             }
         }
         if (maxValue >= SUITABILITY_THRESHOLD) {

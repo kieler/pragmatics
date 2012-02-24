@@ -23,6 +23,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.service.AnalysisService;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisFailed;
+import de.cau.cs.kieler.kiml.smart.SmartLayoutService.SmartRuleData;
 
 /**
  * A meta layout provides a layout option mapping for graph elements.
@@ -38,7 +39,7 @@ public class MetaLayout {
     /** the analysis cache. */
     private Map<String, Object> analysisCache;
     /** the smart layout results. */
-    private Map<ISmartRule, Double> resultMap;
+    private Map<SmartRuleData, Double> resultMap;
     /** the time when the meta layout instance was created. */
     private long timestamp = System.currentTimeMillis();
     
@@ -77,7 +78,7 @@ public class MetaLayout {
      * 
      * @return the smart layout results
      */
-    public Map<ISmartRule, Double> getResults() {
+    public Map<SmartRuleData, Double> getResults() {
         if (resultMap == null) {
             resultMap = Maps.newHashMap();
         }

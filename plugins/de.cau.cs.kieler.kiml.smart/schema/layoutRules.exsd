@@ -71,6 +71,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="priority" type="string">
+            <annotation>
+               <documentation>
+                  An integer value used to determine priority when multiple rules yield the same result. The default value is 0.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

@@ -18,7 +18,6 @@ import org.eclipse.swt.graphics.Image;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.smart.MetaLayout;
-import de.cau.cs.kieler.kiml.smart.SmartLayoutService;
 import de.cau.cs.kieler.klay.info.KimlViewerPlugin;
 import de.cau.cs.kieler.klay.info.views.SmartLayoutContentProvider.ResultData;
 
@@ -81,11 +80,17 @@ public class SmartLayoutLabelProvider extends LabelProvider {
             return name + " - " + timeString(metaLayout.getTimestamp()) + " ago";
         } else  if (element instanceof ResultData) {
             ResultData resultData = (ResultData) element;
-            String name = SmartLayoutService.getInstance().getName(resultData.getSmartRule());
+            String name = resultData.getSmartRuleData().getName();
             if (resultData.getSuitability() < 0) {
                 return name + ": failed";
             } else {
-                return name + ": " + (int) (resultData.getSuitability() * 100) + "%";
+                int suitability = (int) (resultData.getSuitability() * 100);
+                int priority = resultData.getSmartRuleData().getPriority();
+                if (priority != 0) {
+                    return name + ": " + suitability + "%, priority " + priority;
+                } else {
+                    return name + ": " + suitability + "%";
+                }
             }
         }
         return null;

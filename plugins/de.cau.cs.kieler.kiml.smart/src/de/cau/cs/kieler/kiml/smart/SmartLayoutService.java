@@ -15,8 +15,8 @@ package de.cau.cs.kieler.kiml.smart;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -41,6 +41,8 @@ public final class SmartLayoutService {
     protected static final String ATTRIBUTE_CLASS = "class";
     /** name of the 'name' attribute in the extension points. */
     protected static final String ATTRIBUTE_NAME = "name";
+    /** name of the 'priority' attribute in the extension points. */
+    protected static final String ATTRIBUTE_PRIORITY = "priority";
     
     /** the singleton instance of the smart layout service. */
     private static SmartLayoutService instance;
@@ -63,8 +65,44 @@ public final class SmartLayoutService {
         return instance;
     }
     
-    /** map of registered smart layout rules to their names. */
-    private Map<ISmartRule, String> smartRuleMap = new HashMap<ISmartRule, String>();
+    /**
+     * Metadata class for smart layout rules.
+     */
+    public static class SmartRuleData {
+        private ISmartRule rule;
+        private String name;
+        private int priority = 0;
+        
+        /**
+         * Returns the smart layout rule instance.
+         * 
+         * @return the smart layout rule
+         */
+        public ISmartRule getRule() {
+            return rule;
+        }
+        
+        /**
+         * Returns the name of the smart layout rule.
+         * 
+         * @return the name
+         */
+        public String getName() {
+            return name;
+        }
+        
+        /**
+         * Returns the priority of the smart layout rule.
+         * 
+         * @return the priority
+         */
+        public int getPriority() {
+            return priority;
+        }
+    }
+    
+    /** list of registered smart layout rules. */
+    private List<SmartRuleData> smartRules = new LinkedList<SmartRuleData>();
     /** logger for the smart layout plugin. */
     private ILog log;
 
@@ -83,10 +121,18 @@ public final class SmartLayoutService {
         for (IConfigurationElement element : elements) {
             if (ELEMENT_RULE.equals(element.getName())) {
                 try {
-                    ISmartRule smartRule = (ISmartRule) element.createExecutableExtension(
-                            ATTRIBUTE_CLASS);
-                    String name = element.getAttribute(ATTRIBUTE_NAME);
-                    smartRuleMap.put(smartRule, name);
+                    SmartRuleData data = new SmartRuleData();
+                    data.rule = (ISmartRule) element.createExecutableExtension(ATTRIBUTE_CLASS);
+                    data.name = element.getAttribute(ATTRIBUTE_NAME);
+                    try {
+                        String prioString = element.getAttribute(ATTRIBUTE_PRIORITY);
+                        if (prioString != null) {
+                            data.priority = Integer.parseInt(prioString);
+                        }
+                    } catch (NumberFormatException e) {
+                        // ignore exception
+                    }
+                    smartRules.add(data);
                 } catch (CoreException exception) {
                     if (log != null) {
                         log.log(exception.getStatus());
@@ -101,18 +147,8 @@ public final class SmartLayoutService {
      * 
      * @return the registered rules
      */
-    public Collection<ISmartRule> getSmartRules() {
-        return Collections.unmodifiableCollection(smartRuleMap.keySet());
-    }
-    
-    /**
-     * Returns the registered name of the given smart layout rule.
-     * 
-     * @param rule a smart layout rule
-     * @return the registered name, or {@code null} if the rule is not registered
-     */
-    public String getName(final ISmartRule rule) {
-        return smartRuleMap.get(rule);
+    public Collection<SmartRuleData> getSmartRules() {
+        return Collections.unmodifiableCollection(smartRules);
     }
 
 }

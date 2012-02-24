@@ -33,32 +33,38 @@
    <extension
          point="de.cau.cs.kieler.kiml.smart.layoutRules">
       <rule
-            class="de.cau.cs.kieler.kiml.smart.rules.UnconnectedBoxesRule"
-            name="Unconnected Boxes">
-      </rule>
-      <rule
-            class="de.cau.cs.kieler.kiml.smart.rules.CircularRule"
-            name="Circular (biconnected components)">
-      </rule>
-      <rule
             class="de.cau.cs.kieler.kiml.smart.rules.ForceRule"
             name="Force (fallback)">
       </rule>
       <rule
-            class="de.cau.cs.kieler.kiml.smart.rules.HierarchyRule"
-            name="Hierarchy (cross-hierarchy edges)">
-      </rule>
-      <rule
             class="de.cau.cs.kieler.kiml.smart.rules.LayeredRule"
-            name="Layered (directed cycles)">
+            name="Layered (directed cycles)"
+            priority="1">
       </rule>
       <rule
             class="de.cau.cs.kieler.kiml.smart.rules.OrthogonalRule"
-            name="Orthogonal (planarity)">
+            name="Orthogonal (planarity)"
+            priority="2">
+      </rule>
+      <rule
+            class="de.cau.cs.kieler.kiml.smart.rules.CircularRule"
+            name="Circular (biconnected components)"
+            priority="3">
       </rule>
       <rule
             class="de.cau.cs.kieler.kiml.smart.rules.TreeRule"
-            name="Tree (rooted tree)">
+            name="Tree (rooted tree)"
+            priority="4">
+      </rule>
+      <rule
+            class="de.cau.cs.kieler.kiml.smart.rules.UnconnectedBoxesRule"
+            name="Unconnected Boxes"
+            priority="5">
+      </rule>
+      <rule
+            class="de.cau.cs.kieler.kiml.smart.rules.HierarchyRule"
+            name="Hierarchy (cross-hierarchy edges)"
+            priority="5">
       </rule>
    </extension>
 
