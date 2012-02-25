@@ -32,6 +32,11 @@ import java.util.ArrayList
 import de.cau.cs.kieler.core.annotations.StringAnnotation
 import java.util.Map
 import com.google.common.collect.HashBiMap
+import de.cau.cs.kieler.core.annotations.BooleanAnnotation
+import org.eclipse.graphiti.mm.algorithms.Polyline
+import de.cau.cs.kieler.core.annotations.Annotatable
+import org.eclipse.xtext.util.Strings
+
 
 class DiagramUtil {
 	
@@ -71,6 +76,15 @@ class DiagramUtil {
         createShape(o);
     }
 
+    /**
+     * Helper transferring Annotations to shapes or the diagram.
+     */
+    def void tranferAnnotationsOf(PictogramElement p, Annotatable a) {
+		a.annotations.filter(typeof(BooleanAnnotation)).filter[!Strings::isEmpty(it.name)].forEach[p.addProperty(it.name, it.value.toString)];
+		a.annotations.filter(typeof(IntAnnotation)).filter[!Strings::isEmpty(it.name)].forEach[p.addProperty(it.name, it.value.toString)];
+		a.annotations.filter(typeof(FloatAnnotation)).filter[!Strings::isEmpty(it.name)].forEach[p.addProperty(it.name, it.value.toString)];
+		a.annotations.filter(typeof(StringAnnotation)).filter[!Strings::isEmpty(it.name)].forEach[p.addProperty(it.name, it.value)];
+    }
 
     /**
      * Create and add an invisible anchor to 'shape'.
@@ -122,20 +136,32 @@ class DiagramUtil {
 
     def private Anchor createLabeledEastPortAnchor(Shape shape, String label, List<EObject> eos) {
     	val x = shape.graphicsAlgorithm.width
-    	val y = shape.getAndAddIntProperty("eastports") * 15 + verticalPortPlacementOffsetTop.value;
+    	val y = shape.addAndGetIntProperty("eastports") * 15 + verticalPortPlacementOffsetTop.value;
     	val anchor = shape.createPortAnchor(eos, x,y);
     	val rect = anchor.createRectangle(0,0,7,7, "black_black".style);
-    	rect.createLabelText(anchor, -outerHorizontalPortLabelPlacementOffset.value, -2, label, Orientation::ALIGNMENT_RIGHT, "default".font);
+    	if (putPortLabelsOutside.value == true) {
+            rect.createLabelText(anchor, outerHorizontalPortLabelPlacementOffset.value, -2,
+            	label, Orientation::ALIGNMENT_LEFT, "default".font);
+    	} else {
+    	    rect.createLabelText(anchor, -outerHorizontalPortLabelPlacementOffset.value, -2,
+    	    	label, Orientation::ALIGNMENT_RIGHT, "default".font);
+    	}
         shape.graphicsAlgorithm.setHeight(Math::max(shape.graphicsAlgorithm.height, y+15));
     	return anchor    	
     }
 
     def private Anchor createLabeledWestPortAnchor(Shape shape, String label, List<EObject> eos) {
     	val x = -5
-    	val y = shape.getAndAddIntProperty("westports") * 15 + verticalPortPlacementOffsetTop.value;
+    	val y = shape.addAndGetIntProperty("westports") * 15 + verticalPortPlacementOffsetTop.value;
     	val anchor = shape.createPortAnchor(eos,x,y);
     	val rect = anchor.createRectangle(0,0,7,7, "black_black".style);
-    	rect.createLabelText(anchor, outerHorizontalPortLabelPlacementOffset.value, -2, label, Orientation::ALIGNMENT_LEFT, "default".font);
+    	if (putPortLabelsOutside.value == true) {
+    	    rect.createLabelText(anchor, -outerHorizontalPortLabelPlacementOffset.value, -2,
+    	    	label, Orientation::ALIGNMENT_RIGHT, "default".font);
+    	} else {
+    	    rect.createLabelText(anchor,  outerHorizontalPortLabelPlacementOffset.value, -2,
+    	    	label, Orientation::ALIGNMENT_LEFT, "default".font);
+    	}
         shape.graphicsAlgorithm.setHeight(Math::max(shape.graphicsAlgorithm.height, y+15));
     	return anchor
     }
@@ -190,6 +216,15 @@ class DiagramUtil {
      * Default constant. Configured to enable a proper box label placement.
      * Can be reconfigured using '...verticalPortPlacementOffsetTop.setValue'. 
      */
+    def BooleanAnnotation create offset: AnnotationsFactory::eINSTANCE.createBooleanAnnotation getPutPortLabelsOutside() {
+    	offset.value = false;
+    }
+
+
+    /**
+     * Default constant. Configured to enable a proper box label placement.
+     * Can be reconfigured using '...verticalPortPlacementOffsetTop.setValue'. 
+     */
     def IntAnnotation create offset: AnnotationsFactory::eINSTANCE.createIntAnnotation getOuterHorizontalPortLabelPlacementOffset() {
     	offset.value = 10;
     }
@@ -198,17 +233,25 @@ class DiagramUtil {
     /**
      *
      */
-    def Text createText(GraphicsAlgorithm ga, String value, Font font) {
+    def Text createText(GraphicsAlgorithm ga, String value, Font font, Orientation o) {
         val text = AlgorithmsFactory::eINSTANCE.createText
         text.setFont(font);
         text.setForeground("black".color);
         text.setWidth(ga.width);
-        text.setHorizontalAlignment(Orientation::ALIGNMENT_CENTER);
+        text.setHorizontalAlignment(o);
         text.setValue(value);
         ga.graphicsAlgorithmChildren.add(text);
         return text
     }
 
+    def Text createText(GraphicsAlgorithm ga, String value, Font font) {
+    	return createText(ga, value, font, Orientation::ALIGNMENT_CENTER)
+    }
+    
+    def Text createLeftText(GraphicsAlgorithm ga, String value, Font font) {
+    	return createText(ga, value, font, Orientation::ALIGNMENT_LEFT)
+    }
+    
     def Text createText(GraphicsAlgorithm ga, String value) {
         return createText(ga, value, "default".font)
     }
@@ -449,6 +492,34 @@ class DiagramUtil {
     	return rect;
     }
     
+    
+    def Polyline createPolyline(PictogramElement element, Point from, Point to, Style style) {
+    	val line = AlgorithmsFactory::eINSTANCE.createPolyline();
+    	line.points.add(from);
+    	line.points.add(to);
+    	line.setStyle(style);
+    	element.setGraphicsAlgorithm(line);    	
+    	return line;
+    }
+    
+    def Polyline createPolyline(GraphicsAlgorithm parent, Point from, Point to, Style style) {
+    	val line = AlgorithmsFactory::eINSTANCE.createPolyline();
+    	line.points.add(from);
+    	line.points.add(to);
+    	line.setStyle(style);
+        parent.graphicsAlgorithmChildren.add(line);
+    	return line;
+    }
+     
+    def Polyline createPolyline(GraphicsAlgorithm parent, int x1, int x2, int y, Style style) {
+    	return parent.createPolyline(createPoint(x1,y), createPoint(x2,y),style);
+    }
+     
+    def Polyline setVerticalPos(Polyline l, int y) {
+     	l.points.forEach[it.setY(y)];
+     	l
+    }
+
 
     /**
      * Creation of the color elements
@@ -619,6 +690,11 @@ class DiagramUtil {
         font.setSize(12);
         font.setBold(true);
        }
+       case "bold14" : {
+        font.setName("Arial");
+        font.setSize(14);
+        font.setBold(true);
+       }
        case "default" : {
         font.setName("Arial");
         font.setSize(8);
@@ -651,10 +727,17 @@ class DiagramUtil {
     }
 
 
-    def int getAndAddIntProperty(Shape shape, String name) {
+    def int addAndGetIntProperty(Shape shape, String name) {
         val intAnno = shape.getIntProperty(name);
         intAnno.setValue(intAnno.value + 1);
         intAnno.value
+    }
+     
+    def int getAndAddIntProperty(Shape shape, String name) {
+        val intAnno = shape.getIntProperty(name);
+        val value = intAnno.value;
+        intAnno.setValue(value+1);
+        value
     }
      
     /**
