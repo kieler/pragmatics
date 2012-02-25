@@ -36,8 +36,9 @@ import de.cau.cs.kieler.core.annotations.BooleanAnnotation
 import org.eclipse.graphiti.mm.algorithms.Polyline
 import de.cau.cs.kieler.core.annotations.Annotatable
 import org.eclipse.xtext.util.Strings
+import javax.inject.Singleton
 
-
+@Singleton
 class DiagramUtil {
 	
 	@Inject
@@ -79,7 +80,7 @@ class DiagramUtil {
     /**
      * Helper transferring Annotations to shapes or the diagram.
      */
-    def void tranferAnnotationsOf(PictogramElement p, Annotatable a) {
+    def void transferAnnotationsOf(PictogramElement p, Annotatable a) {
 		a.annotations.filter(typeof(BooleanAnnotation)).filter[!Strings::isEmpty(it.name)].forEach[p.addProperty(it.name, it.value.toString)];
 		a.annotations.filter(typeof(IntAnnotation)).filter[!Strings::isEmpty(it.name)].forEach[p.addProperty(it.name, it.value.toString)];
 		a.annotations.filter(typeof(FloatAnnotation)).filter[!Strings::isEmpty(it.name)].forEach[p.addProperty(it.name, it.value.toString)];
@@ -101,6 +102,14 @@ class DiagramUtil {
         anchor
     }
 
+    /**
+     * Just a wrapper to be used to reveal the anchor
+     *  indicating that it has been created already!
+     *  (only for code-readability)
+     */
+    def Anchor getAnchor(Shape s) {
+        createAnchor(s);
+    }
 
     /**
      * Creates an anchor and a related port figure as well as a port label
@@ -233,8 +242,9 @@ class DiagramUtil {
     /**
      *
      */
-    def Text createText(GraphicsAlgorithm ga, String value, Font font, Orientation o) {
+    def Text createText(GraphicsAlgorithm ga, String value, Font font, Orientation o, int xPos) {
         val text = AlgorithmsFactory::eINSTANCE.createText
+        text.setX(xPos);
         text.setFont(font);
         text.setForeground("black".color);
         text.setWidth(ga.width);
@@ -245,11 +255,15 @@ class DiagramUtil {
     }
 
     def Text createText(GraphicsAlgorithm ga, String value, Font font) {
-    	return createText(ga, value, font, Orientation::ALIGNMENT_CENTER)
+    	return createText(ga, value, font, Orientation::ALIGNMENT_CENTER, 0)
+    }
+    
+    def Text createLeftText(GraphicsAlgorithm ga, String value, Font font, int xPos) {
+    	return createText(ga, value, font, Orientation::ALIGNMENT_LEFT, xPos)
     }
     
     def Text createLeftText(GraphicsAlgorithm ga, String value, Font font) {
-    	return createText(ga, value, font, Orientation::ALIGNMENT_LEFT)
+    	return createText(ga, value, font, Orientation::ALIGNMENT_LEFT, 0)
     }
     
     def Text createText(GraphicsAlgorithm ga, String value) {
@@ -345,9 +359,25 @@ class DiagramUtil {
     	connection.setStart(start);
     	return connection
     }
+    def Connection from(Connection connection, Shape start) {
+    	connection.setStart(start.anchor);
+    	return connection
+    }
+    def Connection from(Connection connection, Object start) {
+    	connection.setStart(start.shape.anchor);
+    	return connection
+    }
 
     def Connection to(Connection connection, Anchor end) {
     	connection.setEnd(end);
+    	return connection
+    }
+    def Connection to(Connection connection, Shape end) {
+    	connection.setEnd(end.anchor);
+    	return connection
+    }
+    def Connection to(Connection connection, Object end) {
+    	connection.setEnd(end.shape.anchor);
     	return connection
     }
 
@@ -405,6 +435,53 @@ class DiagramUtil {
         return addTailArrow(connection,  1)
     }
     
+
+    /**
+      *
+      */
+    def ConnectionDecorator addInheritanceConnectionArrow(Connection connection, int scale, boolean toHead) {
+        val decorator = PictogramsFactory::eINSTANCE.createConnectionDecorator;
+        val figure = AlgorithmsFactory::eINSTANCE.createPolygon;
+        if (toHead) {
+            figure.points.addAll(newArrayList(
+        	    createPoint(scale*-8,scale*4), createPoint(scale*-8,scale*-4), createPoint(0,0)
+            ));
+        } else {
+            figure.points.addAll(newArrayList(
+        	    createPoint(scale* 8,scale*4), createPoint(scale* 8,scale*-4), createPoint(0,0)
+            ));
+        }
+        figure.setForeground(connection.graphicsAlgorithm.foreground);
+        figure.setBackground("white".color);
+        figure.setFilled(true); 
+        figure.setLineWidth(connection?.graphicsAlgorithm?.lineWidth); 
+        decorator.setVisible(true);
+        decorator.setLocation(if (toHead) Float::valueOf("1.0") - relativeConnectionArrowOffset.value 
+        	                         else Float::valueOf("0.0") + relativeConnectionArrowOffset.value);
+        decorator.setLocationRelative(true);
+        decorator.setGraphicsAlgorithm(figure);
+        connection.connectionDecorators.add(decorator);
+        return decorator
+    }
+
+    def Connection addInheritanceHeadArrow(Connection connection, int scale) {
+    	connection.addInheritanceConnectionArrow(scale, true);
+    	return connection
+    }
+    
+    def Connection addInheritanceTailArrow(Connection connection, int scale) {
+    	connection.addInheritanceConnectionArrow(scale, false);
+    	return connection
+    }
+    
+    def Connection addInheritanceHeadArrow(Connection connection) {
+        return addInheritanceHeadArrow(connection,  1)
+    }
+    
+    def Connection addInheritanceTailArrow(Connection connection) {
+        return addInheritanceTailArrow(connection,  1)
+    }
+
     /**
      *
      */
