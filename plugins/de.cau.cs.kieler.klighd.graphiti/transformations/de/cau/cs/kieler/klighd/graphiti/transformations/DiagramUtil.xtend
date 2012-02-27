@@ -337,6 +337,21 @@ class DiagramUtil {
     }
 
     /**
+     * Creation of connections and mapping to 2 source element
+     *  with additional specification of linewidth and line color.
+     */
+    def Connection createConnection(EObject eo1, EObject eo2, int width) {
+        val connection = eo1.createConnection(eo2,eo2);
+        connection.graphicsAlgorithm.setLineWidth(width);
+        return connection
+    }
+    def Connection createConnection(EObject eo1, EObject eo2, int width, Color color){
+    	val connection = eo1.createConnection(eo2,width)
+    	connection.graphicsAlgorithm.setForeground(color)
+    	return connection
+    }
+
+    /**
      * Just some wrappers to be used to reveal the connection
      *  indicating that it has been created already!
      *  (only for code-readability)
@@ -771,6 +786,12 @@ class DiagramUtil {
         font.setName("Arial");
         font.setSize(14);
         font.setBold(true);
+       }
+       case "bolditalic14" : {
+        font.setName("Arial");
+        font.setSize(14);
+        font.setBold(true);
+        font.setItalic(true);
        }
        case "default" : {
         font.setName("Arial");
