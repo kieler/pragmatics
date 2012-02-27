@@ -52,34 +52,34 @@ public abstract class AnalysisService {
     public static final String EXTP_ID_ANALYSIS_PROVIDERS
             = "de.cau.cs.kieler.kiml.service.analysisProviders";
     /** name of the 'analysis' element. */
-    public static final String ELEMENT_ANALYSIS = "analysis";
+    protected static final String ELEMENT_ANALYSIS = "analysis";
     /** name of the 'category' element. */
-    public static final String ELEMENT_CATEGORY = "category";
+    protected static final String ELEMENT_CATEGORY = "category";
     /** name of the 'dependency' element. */
-    public static final String ELEMENT_DEPENDENCY = "dependency";
+    protected static final String ELEMENT_DEPENDENCY = "dependency";
     /** name of the 'component' element. */
-    public static final String ELEMENT_COMPONENT = "component";
+    protected static final String ELEMENT_COMPONENT = "component";
     /** name of the 'analysis' attribute in the extension points. */
-    public static final String ATTRIBUTE_ANALYSIS = "analysis";
+    protected static final String ATTRIBUTE_ANALYSIS = "analysis";
     /** name of the 'category' attribute in the extension points. */
-    public static final String ATTRIBUTE_CATEGORY = "category";
+    protected static final String ATTRIBUTE_CATEGORY = "category";
     /** name of the 'class' attribute in the extension points. */
-    public static final String ATTRIBUTE_CLASS = "class";
+    protected static final String ATTRIBUTE_CLASS = "class";
     /** name of the 'description' attribute in the extension points. */
-    public static final String ATTRIBUTE_DESCRIPTION = "description";
+    protected static final String ATTRIBUTE_DESCRIPTION = "description";
     /** name of the 'id' attribute in the extension points. */
-    public static final String ATTRIBUTE_ID = "id";
+    protected static final String ATTRIBUTE_ID = "id";
     /** name of the 'name' attribute in the extension points. */
-    public static final String ATTRIBUTE_NAME = "name";
+    protected static final String ATTRIBUTE_NAME = "name";
     /** name of the 'abbreviation' attribute in the extension points. */
-    public static final String ATTRIBUTE_ABBREVIATION = "abbreviation";
+    protected static final String ATTRIBUTE_ABBREVIATION = "abbreviation";
     /** name of the 'weak' attribute in the extension point. */
-    private static final String ATTRIBUTE_WEAK = "weak";
+    protected static final String ATTRIBUTE_WEAK = "weak";
     /** name of the 'programmatic' attribute in the extension point. */
-    private static final String ATTRIBUTE_PROGRAMMATIC = "programmatic";
+    protected static final String ATTRIBUTE_PROGRAMMATIC = "programmatic";
+    
     /** id of the default category. */
-    public static final String DEFAULT_CATEGORY_ID
-            = "de.cau.cs.kieler.kiml.grana.defaultCategory";
+    public static final String DEFAULT_CATEGORY_ID = "de.cau.cs.kieler.kiml.grana.defaultCategory";
 
     /** the singleton instance. */
     private static AnalysisService instance;

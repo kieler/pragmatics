@@ -36,19 +36,19 @@ import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
 public abstract class TransformationService {
     
     /** identifier of the extension point for layout info. */
-    public static final String EXTP_ID_GRAPH_TRANS = "de.cau.cs.kieler.kiml.service.graphTransformers";
+    protected static final String EXTP_ID_GRAPH_TRANS = "de.cau.cs.kieler.kiml.service.graphTransformers";
     /** name of the 'handler' element in the 'graph transformer' extension point. */
-    public static final String ELEMENT_HANDLER = "handler";
+    protected static final String ELEMENT_HANDLER = "handler";
     /** name of the 'class' attribute in the extension points. */
-    public static final String ATTRIBUTE_CLASS = "class";
+    protected static final String ATTRIBUTE_CLASS = "class";
     /** name of the 'description' attribute in the extension points. */
-    public static final String ATTRIBUTE_DESCRIPTION = "description";
+    protected static final String ATTRIBUTE_DESCRIPTION = "description";
     /** name of the 'extensions' attribute in the extension points. */
-    public static final String ATTRIBUTE_EXTENSIONS = "extensions";
+    protected static final String ATTRIBUTE_EXTENSIONS = "extensions";
     /** name of the 'id' attribute in the extension points. */
-    public static final String ATTRIBUTE_ID = "id";
+    protected static final String ATTRIBUTE_ID = "id";
     /** name of the 'name' attribute in the extension points. */
-    public static final String ATTRIBUTE_NAME = "name";
+    protected static final String ATTRIBUTE_NAME = "name";
     
     /** the singleton instance of the transformation service. */
     private static TransformationService instance;

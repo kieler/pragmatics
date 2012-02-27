@@ -44,35 +44,35 @@ import de.cau.cs.kieler.kiml.config.SemanticLayoutConfig;
 public abstract class LayoutInfoService {
     
     /** identifier of the extension point for layout info. */
-    public static final String EXTP_ID_LAYOUT_INFO = "de.cau.cs.kieler.kiml.layoutInfo";
+    protected static final String EXTP_ID_LAYOUT_INFO = "de.cau.cs.kieler.kiml.layoutInfo";
     /** name of the 'binding' element in the 'layout info' extension point. */
-    public static final String ELEMENT_BINDING = "binding";
+    protected static final String ELEMENT_BINDING = "binding";
     /** name of the 'diagram type' element in the 'layout info' extension point. */
-    public static final String ELEMENT_DIAGRAM_TYPE = "diagramType";
+    protected static final String ELEMENT_DIAGRAM_TYPE = "diagramType";
     /** name of the 'option' element in the 'layout info' extension point. */
-    public static final String ELEMENT_OPTION = "option";
+    protected static final String ELEMENT_OPTION = "option";
     /** name of the 'semantic option' element in the 'layout info' extension point. */
-    public static final String ELEMENT_SEMANTIC_OPTION = "semanticOption";
+    protected static final String ELEMENT_SEMANTIC_OPTION = "semanticOption";
     /** name of the 'config' element in the 'layout info' extension point. */
-    public static final String ELEMENT_CONFIG = "config";
+    protected static final String ELEMENT_CONFIG = "config";
     /** name of the 'activation' attribute in the extension points. */
-    public static final String ATTRIBUTE_ACTIVATION = "activation";
+    protected static final String ATTRIBUTE_ACTIVATION = "activation";
     /** name of the 'activationText' attribute in the extension points. */
-    public static final String ATTRIBUTE_ACTIVATION_TEXT = "activationText";
+    protected static final String ATTRIBUTE_ACTIVATION_TEXT = "activationText";
     /** name of the 'class' attribute in the extension points. */
-    public static final String ATTRIBUTE_CLASS = "class";
+    protected static final String ATTRIBUTE_CLASS = "class";
     /** name of the 'config' attribute in the extension points. */
-    public static final String ATTRIBUTE_CONFIG = "config";
+    protected static final String ATTRIBUTE_CONFIG = "config";
     /** name of the 'default' attribute in the extension points. */
-    public static final String ATTRIBUTE_DEFAULT = "default";
+    protected static final String ATTRIBUTE_DEFAULT = "default";
     /** name of the 'id' attribute in the extension points. */
-    public static final String ATTRIBUTE_ID = "id";
+    protected static final String ATTRIBUTE_ID = "id";
     /** name of the 'name' attribute in the extension points. */
-    public static final String ATTRIBUTE_NAME = "name";
+    protected static final String ATTRIBUTE_NAME = "name";
     /** name of the 'option' attribute in the extension points. */
-    public static final String ATTRIBUTE_OPTION = "option";
+    protected static final String ATTRIBUTE_OPTION = "option";
     /** name of the 'value' attribute in the extension points. */
-    public static final String ATTRIBUTE_VALUE = "value";
+    protected static final String ATTRIBUTE_VALUE = "value";
     
     /**
      * Data element for general layout configurations.

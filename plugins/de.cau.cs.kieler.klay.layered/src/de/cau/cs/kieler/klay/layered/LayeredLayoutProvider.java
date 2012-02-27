@@ -460,27 +460,6 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                 + String.format("%1$02d", slotIndex);
         return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }
-
-    // //////////////////////////////////////////////////////////////////////////////////////
-    // Hierarchy
-    /**
-     * Determines that the LayeredLayoutProvider handles complete hierarchy of the given layout
-     * node.
-     * 
-     * @param layoutNode
-     *            the graph to be layouted.
-     * @return returns true in contrast to the default value.
-     * @override overrides AbstractLayoutProvider.supportsHierarchy, returning true.
-     * 
-     */
-    public boolean supportsHierarchy(final KNode layoutNode) {
-
-        KShapeLayout sourceShapeLayout = layoutNode.getData(KShapeLayout.class);
-
-        // Check if hierarchy handling for a compound graph is requested, choose return value
-        // accordingly
-        return sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
-    }
     
     // /////////////////////////////////////////////////////////////////////////////
     // Processing Strategy Constants

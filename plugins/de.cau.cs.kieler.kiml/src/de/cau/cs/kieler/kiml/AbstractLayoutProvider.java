@@ -46,26 +46,13 @@ public abstract class AbstractLayoutProvider {
     }
 
     /**
-     * Performs the actual layout process, that is attaches layout information
-     * to the given node object.
+     * Perform the actual layout process, that is attach layout information to the children of the
+     * given parent node.
      * 
-     * @param parentNode the parent node which should be laid out
+     * @param parentNode the parent node containing the graph which should be laid out
      * @param progressMonitor progress monitor used to keep track of progress
-     * @throws UnsupportedGraphException if the given KGraph is not supported by
-     *     this algorithm
+     * @throws UnsupportedGraphException if the given graph is not supported by this algorithm
      */
     public abstract void doLayout(KNode parentNode, IKielerProgressMonitor progressMonitor);
-    
-    /**
-     * Determines whether this layout provider would handle the complete hierarchy of the
-     * given layout node. If it does, it is expected to layout not only the first hierarchy
-     * level of the input graph, but also all its children.
-     * 
-     * @param layoutNode the parent node for which layout is requested
-     * @return true if the layout provider supports hierarchy
-     */
-    public boolean supportsHierarchy(final KNode layoutNode) {
-        return false;
-    }
 
 }

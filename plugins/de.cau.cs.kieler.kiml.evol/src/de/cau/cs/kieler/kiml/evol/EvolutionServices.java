@@ -201,7 +201,7 @@ public final class EvolutionServices {
 
         // Store the configuration elements of the metrics.
         for (final IConfigurationElement element : extensions) {
-            if (AnalysisService.ELEMENT_ANALYSIS.equals(element.getName())) {
+            if ("analysis".equals(element.getName())) {
                 String id = element.getAttribute("id");
                 if (metricIds.contains(id)) {
                     this.layoutMetricsMap.put(id, element);

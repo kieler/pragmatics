@@ -14,6 +14,8 @@
 package de.cau.cs.kieler.kiml.options;
 
 import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.StringTokenizer;
 
 import de.cau.cs.kieler.core.util.IDataObject;
 
@@ -31,16 +33,32 @@ public class GraphFeatures implements IDataObject {
      * Definition of specific graph features.
      */
     public enum GraphFeature {
-        /** edges connecting a node with itself. */
+        /**
+         * Edges connecting a node with itself.
+         */
         SELF_LOOPS,
-        /** multiple edges with the same source and target node. */
+        /**
+         * Multiple edges with the same source and target node.
+         */
         MULTI_EDGES,
-        /** labels that are associated with edges. */
+        /**
+         * Labels that are associated with edges.
+         */
         EDGE_LABELS,
-        /** edges are connected to nodes over ports. */
+        /**
+         * Edges are connected to nodes over ports.
+         */
         PORTS,
-        /** edges that connect nodes from different hierarchy levels. */
-        HIERARCHY_EDGES;
+        /**
+         * A full compound graph hierarchy, including edges that connect nodes from different
+         * hierarchy levels, and potentially also edges incident to compound nodes.
+         * @see LayoutOptions#LAYOUT_HIERARCHY
+         */
+        COMPOUND,
+        /**
+         * Edges connect nodes from different clusters, but not the cluster parent nodes.
+         */
+        CLUSTERS;
     }
     
     /** the set of graph features. */
@@ -50,7 +68,12 @@ public class GraphFeatures implements IDataObject {
      * {@inheritDoc}
      */
     public void parse(final String string) {
-        // TODO Auto-generated method stub
+        featureSet.clear();
+        StringTokenizer tokenizer = new StringTokenizer(string, ", \t");
+        while (tokenizer.hasMoreTokens()) {
+            // this may throw an IllegalArgumentException
+            featureSet.add(GraphFeature.valueOf(tokenizer.nextToken().toUpperCase()));
+        }
     }
     
     /**
@@ -58,8 +81,15 @@ public class GraphFeatures implements IDataObject {
      */
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
-        return null;
+        StringBuilder builder = new StringBuilder();
+        Iterator<GraphFeature> featureIter = featureSet.iterator();
+        while (featureIter.hasNext()) {
+            builder.append(featureIter.next().toString());
+            if (featureIter.hasNext()) {
+                builder.append(',');
+            }
+        }
+        return builder.toString();
     }
     
     /**
