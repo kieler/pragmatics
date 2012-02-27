@@ -173,6 +173,25 @@ public class PSWTText extends PNode {
     }
 
     /**
+     * Returns the current greek color.
+     * 
+     * @return the current greek color
+     */
+    public Color getGreekColor() {
+        return greekColor;
+    }
+    
+    /**
+     * Sets the current greek color.
+     * 
+     * @param color
+     *            use this color
+     */
+    public void setGreekColor(final Color color) {
+        greekColor = color;
+    }
+    
+    /**
      * Sets whether the text should be drawn in transparent mode, i.e., whether
      * the background should be drawn or not.
      * 
