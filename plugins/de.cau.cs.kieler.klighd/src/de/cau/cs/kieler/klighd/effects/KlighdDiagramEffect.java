@@ -186,9 +186,11 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      * 
      * @param viewerProviderId
      *            the viewer provider identifier
+     * @return this effect for chaining method calls
      */
-    public void setViewerRequest(final String viewerProviderId) {
+    public KlighdDiagramEffect usingViewer(final String viewerProviderId) {
         setProperty(LightDiagramServices.REQUESTED_VIEWER_PROVIDER, viewerProviderId);
+        return this;
     }
 
     /**
@@ -196,10 +198,12 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      * 
      * @param transformationIds
      *            the transformations identifiers
+     * @return this effect for chaining method calls
      */
-    public void setTransformationsRequest(final String... transformationIds) {
+    public KlighdDiagramEffect usingTransformations(final String... transformationIds) {
         setProperty(LightDiagramServices.REQUESTED_TRANSFORMATIONS,
                 Lists.newArrayList(transformationIds));
+        return this;
     }
 
     /**
@@ -207,9 +211,11 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      * 
      * @param updateStrategyId
      *            the update strategy identifier
+     * @return this effect for chaining method calls
      */
-    public void setUpdateStrategyRequest(final String updateStrategyId) {
+    public KlighdDiagramEffect usingUpdateStrategy(final String updateStrategyId) {
         setProperty(LightDiagramServices.REQUESTED_UPDATE_STRATEGY, updateStrategyId);
+        return this;
     }
 
     /**
