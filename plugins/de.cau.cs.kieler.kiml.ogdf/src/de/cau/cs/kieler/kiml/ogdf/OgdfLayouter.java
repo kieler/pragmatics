@@ -66,7 +66,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -147,20 +146,6 @@ public abstract class OgdfLayouter {
         // reset buffers
         optionBuffer.clear();
         infoBuffer.clear();
-    }
-
-    /** the debug canvas, which can be used to debug the OGDF wrapper. */
-    @SuppressWarnings("unused")
-    private IDebugCanvas debugCanvas;
-
-    /**
-     * Set the debug canvas.
-     * 
-     * @param thecanvas
-     *            the debug canvas
-     */
-    public void setDebugCanvas(final IDebugCanvas thecanvas) {
-        this.debugCanvas = thecanvas;
     }
 
     private static final int SUBTASK_WORK = 1;

@@ -14,10 +14,10 @@
 package de.cau.cs.kieler.kiml.grana.visualizers;
 
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.visualization.IVisualizer;
 import de.cau.cs.kieler.kiml.grana.visualization.Visualization;
 import de.cau.cs.kieler.kiml.grana.visualization.VisualizationServices;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * The html visualizer which simply uses the text visualization as it is.
@@ -47,7 +47,7 @@ public class BasicHtmlVisualizer implements IVisualizer<String, Object> {
     /**
      * {@inheritDoc}
      */
-    public String visualize(final AbstractInfoAnalysis analysis,
+    public String visualize(final AnalysisData analysis,
             final Object result, final Object parameter) {
         
         String str = null;
@@ -93,7 +93,7 @@ public class BasicHtmlVisualizer implements IVisualizer<String, Object> {
      *                   will be listet using one row per result.
      * @return a string with the result table.
      */
-    private String buildResultTable(final AbstractInfoAnalysis analysis, final Object[] results,
+    private String buildResultTable(final AnalysisData analysis, final Object[] results,
             final boolean horizontal) {
 
         StringBuilder builder = new StringBuilder();

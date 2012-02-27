@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kiml;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 
 /**
  * A layout provider executes a layout algorithm to layout the child elements of a node.
@@ -23,15 +22,12 @@ import de.cau.cs.kieler.kiml.util.IDebugCanvas;
  * extension point. All layout providers published to Eclipse this way are collected in the
  * {@link LayoutDataService} singleton, provided the UI plugin is loaded.
  * 
- * @kieler.rating 2011-01-17 proposed yellow
+ * @kieler.rating 2011-01-17 yellow
  *     reviewed by haf, cmot, soh
  * @author ars
  * @author msp
  */
 public abstract class AbstractLayoutProvider {
-
-    /** the debug canvas to use. */
-    private IDebugCanvas debugCanvas;
     
     /**
      * Initialize the layout provider with the given parameter.
@@ -50,47 +46,13 @@ public abstract class AbstractLayoutProvider {
     }
 
     /**
-     * Performs the actual layout process, that is attaches layout information
-     * to the given node object.
+     * Perform the actual layout process, that is attach layout information to the children of the
+     * given parent node.
      * 
-     * @param parentNode the parent node which should be laid out
+     * @param parentNode the parent node containing the graph which should be laid out
      * @param progressMonitor progress monitor used to keep track of progress
-     * @throws UnsupportedGraphException if the given KGraph is not supported by
-     *     this algorithm
+     * @throws UnsupportedGraphException if the given graph is not supported by this algorithm
      */
     public abstract void doLayout(KNode parentNode, IKielerProgressMonitor progressMonitor);
-    
-    /**
-     * Determines whether this layout provider would handle the complete hierarchy of the
-     * given layout node. If it does, it is expected to layout not only the first hierarchy
-     * level of the input graph, but also all its children.
-     * 
-     * @param layoutNode the parent node for which layout is requested
-     * @return true if the layout provider supports hierarchy
-     */
-    public boolean supportsHierarchy(final KNode layoutNode) {
-        return false;
-    }
-    
-    /**
-     * Sets the current debug canvas. Should not be used by subclasses.
-     * 
-     * @param thedebugCanvas the debug canvas
-     */
-    public final void setDebugCanvas(final IDebugCanvas thedebugCanvas) {
-        this.debugCanvas = thedebugCanvas;
-    }
-
-    /**
-     * Returns the current debug canvas. A debug canvas can be used to draw something onto the
-     * diagram that is layouted in order to analyze and debug the layout algorithm code.
-     * {@link IDebugCanvas#setOffset(KNode, float, float) should be set before anything is
-     * drawn.
-     * 
-     * @return the debug canvas
-     */
-    public final IDebugCanvas getDebugCanvas() {
-        return debugCanvas;
-    }
 
 }

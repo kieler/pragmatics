@@ -199,40 +199,6 @@ point="org.eclipse.ui.menus">
     </view>
  </extension>
  <extension
-       point="de.cau.cs.kieler.kiml.layoutProviders">
-    <layoutAlgorithm
-          class="de.cau.cs.kieler.kiml.ui.util.Draw2DLayoutProvider"
-          description="&quot;Directed Graph Layout&quot; provided by the Draw2D framework. This is the same algorithm that is used by the standard layout button of GMF diagrams."
-          id="de.cau.cs.kieler.draw2d"
-          name="Draw2D Layout"
-          preview="images/draw2d.png"
-          type="de.cau.cs.kieler.type.layered">
-       <supportedDiagram
-             priority="1"
-             type="de.cau.cs.kieler.layout.diagrams.general">
-       </supportedDiagram>
-       <supportedDiagram
-             priority="1"
-             type="de.cau.cs.kieler.layout.diagrams.stateMachine">
-       </supportedDiagram>
-       <knownOption
-             default="16"
-             option="de.cau.cs.kieler.spacing">
-       </knownOption>
-       <knownOption
-             default="16"
-             option="de.cau.cs.kieler.borderSpacing">
-       </knownOption>
-       <knownOption
-             default="DOWN"
-             option="de.cau.cs.kieler.direction">
-       </knownOption>
-       <knownOption
-             option="de.cau.cs.kieler.sizeConstraint">
-       </knownOption>
-    </layoutAlgorithm>
- </extension>
- <extension
        point="de.cau.cs.kieler.core.kivi.combinations">
     <combination
           active="true"
@@ -254,10 +220,51 @@ point="org.eclipse.ui.menus">
     </combination>
  </extension>
  <extension
+       point="de.cau.cs.kieler.kiml.layoutProviders">
+    <layoutAlgorithm
+          class="de.cau.cs.kieler.kiml.ui.util.Draw2DLayoutProvider"
+          description="&quot;Directed Graph Layout&quot; provided by the Draw2D framework. This is the same algorithm that is used by the standard layout button of GMF diagrams."
+          id="de.cau.cs.kieler.draw2d"
+          name="Draw2D Layout"
+          preview="images/draw2d.png"
+          type="de.cau.cs.kieler.type.layered">
+       <supportedDiagram
+             priority="1"
+             type="de.cau.cs.kieler.layout.diagrams.general">
+       </supportedDiagram>
+       <supportedFeature
+             feature="MULTI_EDGES">
+       </supportedFeature>
+       <knownOption
+             default="16"
+             option="de.cau.cs.kieler.spacing">
+       </knownOption>
+       <knownOption
+             default="16"
+             option="de.cau.cs.kieler.borderSpacing">
+       </knownOption>
+       <knownOption
+             default="DOWN"
+             option="de.cau.cs.kieler.direction">
+       </knownOption>
+       <knownOption
+             option="de.cau.cs.kieler.sizeConstraint">
+       </knownOption>
+    </layoutAlgorithm>
+ </extension>
+ <extension
        point="de.cau.cs.kieler.kiml.ui.layoutManagers">
     <engine
           class="de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine">
     </engine>
+ </extension>
+ <extension
+       point="de.cau.cs.kieler.kiml.layoutInfo">
+    <config
+          activation="de.cau.cs.kieler.kiml.eclipse"
+          class="de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig"
+          default="true">
+    </config>
  </extension>
    
 </plugin>

@@ -64,9 +64,9 @@ import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.util.DiagramAnalyzer;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.AnalysisService;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
@@ -449,14 +449,14 @@ public final class EvolUtil {
             Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
 
             // Get the metrics.
-            Set<AbstractInfoAnalysis> metrics =
+            Set<AnalysisData> metrics =
                     EvolutionServices.getInstance().getLayoutMetrics();
 
             Map<String, Double> weightsMap = new HashMap<String, Double>(theWeightsMap);
 
-            List<AbstractInfoAnalysis> wantedMetricsList =
-                    new ArrayList<AbstractInfoAnalysis>(metricIds.size());
-            for (final AbstractInfoAnalysis metric : metrics) {
+            List<AnalysisData> wantedMetricsList =
+                    new ArrayList<AnalysisData>(metricIds.size());
+            for (final AnalysisData metric : metrics) {
 
                 String metricId = metric.getId();
                 if (!weightsMap.containsKey(metricId)) {
@@ -482,9 +482,8 @@ public final class EvolUtil {
             analyserOptionsMap.put(EvolPlugin.WEIGHTS_ID, weightsMap);
 
             // Perform the measurement.
-            Map<String, Object> analysisResults =
-                    DiagramAnalyzer.analyse(parentNode, wantedMetricsList, analyserOptionsMap,
-                            false /* progressBar */);
+            Map<String, Object> analysisResults = AnalysisService.getInstance().analyze(parentNode,
+                    wantedMetricsList, new BasicProgressMonitor(0));
 
             // Check the results.
             for (final String metricId : metricIds) {

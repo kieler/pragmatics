@@ -82,6 +82,15 @@ public final class LayoutOptions {
      */
     public static final IProperty<Integer> FONT_SIZE = new Property<Integer>(FONT_SIZE_ID, 0);
     
+    /** layout option key: graph features (object). */
+    public static final String GRAPH_FEATURES_ID = "de.cau.cs.kieler.graphFeatures";
+    /**
+     * Special features of the contained graph.
+     * @see de.cau.cs.kieler.kiml.options.GraphFeatures.GraphFeature
+     */
+    public static final IProperty<GraphFeatures> GRAPH_FEATURES = new Property<GraphFeatures>(
+            GRAPH_FEATURES_ID);
+    
     /** layout option key: hypernode (boolean). */
     public static final String HYPERNODE_ID = "de.cau.cs.kieler.hypernode";
     /**
@@ -231,6 +240,7 @@ public final class LayoutOptions {
      * level of the graph is processed independently, possibly by different layout algorithms,
      * beginning with the lowest level. If it is set, the algorithm is responsible to process
      * all hierarchy levels that are contained in the associated parent node.
+     * @see GraphFeatures.GraphFeature#COMPOUND
      */
     public static final IProperty<Boolean> LAYOUT_HIERARCHY = new Property<Boolean>(
             LAYOUT_HIERARCHY_ID, false);

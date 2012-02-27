@@ -145,26 +145,31 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                 @SuppressWarnings("unchecked")
                 LayoutOptionData<String> algorithmOptionData = (LayoutOptionData<String>)
                         LayoutDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM_ID);
-                // get a layout hint for the content of the focused edit part
-                String contentLayoutHint = getValue(algorithmOptionData, PREFIX, notationView);
-                if (contentLayoutHint == null) {
-                    contentLayoutHint = getValue(algorithmOptionData, DEF_PREFIX,
-                            diagramEditPart.getNotationView());
-                }
-                if (contentLayoutHint != null) {
-                    context.setProperty(DefaultLayoutConfig.CONTENT_HINT, contentLayoutHint);
+                if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null) {
+                    // get a layout hint for the content of the focused edit part
+                    String contentLayoutHint = getValue(algorithmOptionData, PREFIX, notationView);
+                    if (contentLayoutHint == null) {
+                        contentLayoutHint = getValue(algorithmOptionData, DEF_PREFIX,
+                                diagramEditPart.getNotationView());
+                    }
+                    if (contentLayoutHint != null) {
+                        context.setProperty(DefaultLayoutConfig.CONTENT_HINT, contentLayoutHint);
+                    }
                 }
                 
                 // get a layout hint for the container edit part
                 if (containerEditPart.get() != null) {
-                    String containerLayoutHint = getValue(algorithmOptionData, PREFIX,
-                            containerEditPart.get().getNotationView());
-                    if (containerLayoutHint == null) {
-                        containerLayoutHint = getValue(algorithmOptionData, DEF_PREFIX,
-                                diagramEditPart.getNotationView());
-                    }
-                    if (containerLayoutHint != null) {
-                        context.setProperty(DefaultLayoutConfig.CONTAINER_HINT, containerLayoutHint);
+                    if (context.getProperty(DefaultLayoutConfig.CONTAINER_HINT) == null) {
+                        String containerLayoutHint = getValue(algorithmOptionData, PREFIX,
+                                containerEditPart.get().getNotationView());
+                        if (containerLayoutHint == null) {
+                            containerLayoutHint = getValue(algorithmOptionData, DEF_PREFIX,
+                                    diagramEditPart.getNotationView());
+                        }
+                        if (containerLayoutHint != null) {
+                            context.setProperty(DefaultLayoutConfig.CONTAINER_HINT,
+                                    containerLayoutHint);
+                        }
                     }
                     context.setProperty(LayoutContext.CONTAINER_DIAGRAM_PART,
                             containerEditPart.get());

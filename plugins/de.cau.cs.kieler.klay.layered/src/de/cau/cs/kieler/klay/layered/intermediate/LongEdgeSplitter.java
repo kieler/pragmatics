@@ -69,8 +69,9 @@ public class LongEdgeSplitter extends AbstractAlgorithm implements ILayoutProces
                         LPort targetPort = edge.getTarget();
                         int targetIndex = targetPort.getNode().getLayer().getIndex();
                         
-                        // If the edge doesn't go to the next layer, split it
-                        if (layerIndex != targetIndex && targetIndex != layerIter.nextIndex()) {
+                        // If the edge doesn't go to the current or next layer, split it
+                        assert targetIndex >= layerIndex;
+                        if (targetIndex > layerIndex + 1) {
                             // Get the next layer
                             Layer nextLayer = layerIter.next();
                             
