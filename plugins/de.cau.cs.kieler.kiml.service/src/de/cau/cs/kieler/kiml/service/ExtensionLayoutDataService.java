@@ -39,51 +39,51 @@ import de.cau.cs.kieler.kiml.options.GraphFeatures;
 public abstract class ExtensionLayoutDataService extends LayoutDataService {
     
     /** identifier of the extension point for layout providers. */
-    protected static final String EXTP_ID_LAYOUT_PROVIDERS = "de.cau.cs.kieler.kiml.layoutProviders";
+    public static final String EXTP_ID_LAYOUT_PROVIDERS = "de.cau.cs.kieler.kiml.layoutProviders";
     /** name of the 'layout algorithm' element in the 'layout providers' extension point. */
-    protected static final String ELEMENT_LAYOUT_ALGORITHM = "layoutAlgorithm";
+    public static final String ELEMENT_LAYOUT_ALGORITHM = "layoutAlgorithm";
     /** name of the 'layout type' element in the 'layout providers' extension point. */
-    protected static final String ELEMENT_LAYOUT_TYPE = "layoutType";
+    public static final String ELEMENT_LAYOUT_TYPE = "layoutType";
     /** name of the 'category' element in the 'layout providers' extension point. */
-    protected static final String ELEMENT_CATEGORY = "category";
+    public static final String ELEMENT_CATEGORY = "category";
     /** name of the 'known option' element in the 'layout providers' extension point. */
-    protected static final String ELEMENT_KNOWN_OPTION = "knownOption";
+    public static final String ELEMENT_KNOWN_OPTION = "knownOption";
     /** name of the 'layout  option' element in the 'layout providers' extension point. */
-    protected static final String ELEMENT_LAYOUT_OPTION = "layoutOption";
+    public static final String ELEMENT_LAYOUT_OPTION = "layoutOption";
     /** name of the 'supported diagram' element in the 'layout providers' extension point. */
-    protected static final String ELEMENT_SUPPORTED_DIAGRAM = "supportedDiagram";
+    public static final String ELEMENT_SUPPORTED_DIAGRAM = "supportedDiagram";
     /** name of the 'supported feature' element in the 'layout providers' extension point. */
-    protected static final String ELEMENT_SUPPORTED_FEATURE = "supportedFeature";
+    public static final String ELEMENT_SUPPORTED_FEATURE = "supportedFeature";
     /** name of the 'advanced' attribute in the extension points. */
-    protected static final String ATTRIBUTE_ADVANCED = "advanced";
+    public static final String ATTRIBUTE_ADVANCED = "advanced";
     /** name of the 'appliesTo' attribute in the extension points. */
-    protected static final String ATTRIBUTE_APPLIESTO = "appliesTo";
+    public static final String ATTRIBUTE_APPLIESTO = "appliesTo";
     /** name of the 'category' attribute in the extension points. */
-    protected static final String ATTRIBUTE_CATEGORY = "category";
+    public static final String ATTRIBUTE_CATEGORY = "category";
     /** name of the 'class' attribute in the extension points. */
-    protected static final String ATTRIBUTE_CLASS = "class";
+    public static final String ATTRIBUTE_CLASS = "class";
     /** name of the 'default' attribute in the extension points. */
-    protected static final String ATTRIBUTE_DEFAULT = "default";
+    public static final String ATTRIBUTE_DEFAULT = "default";
     /** name of the 'description' attribute in the extension points. */
-    protected static final String ATTRIBUTE_DESCRIPTION = "description";
+    public static final String ATTRIBUTE_DESCRIPTION = "description";
     /** name of the 'feature' attribute in the extension points. */
-    protected static final String ATTRIBUTE_FEATURE = "feature";
+    public static final String ATTRIBUTE_FEATURE = "feature";
     /** name of the 'id' attribute in the extension points. */
-    protected static final String ATTRIBUTE_ID = "id";
+    public static final String ATTRIBUTE_ID = "id";
     /** name of the 'name' attribute in the extension points. */
-    protected static final String ATTRIBUTE_NAME = "name";
+    public static final String ATTRIBUTE_NAME = "name";
     /** name of the 'option' attribute in the extension points. */
-    protected static final String ATTRIBUTE_OPTION = "option";
+    public static final String ATTRIBUTE_OPTION = "option";
     /** name of the 'parameter' attribute in the extension points. */
-    protected static final String ATTRIBUTE_PARAMETER = "parameter";
+    public static final String ATTRIBUTE_PARAMETER = "parameter";
     /** name of the 'priority' attribute in the extension points. */
-    protected static final String ATTRIBUTE_PRIORITY = "priority";
+    public static final String ATTRIBUTE_PRIORITY = "priority";
     /** name of the 'type' attribute in the extension points. */
-    protected static final String ATTRIBUTE_TYPE = "type";
+    public static final String ATTRIBUTE_TYPE = "type";
     /** name of the 'enumValues' attribute used in doing remote layout. */
-    protected static final String ATTRIBUTE_ENUMVALUES = "enumValues";
+    public static final String ATTRIBUTE_ENUMVALUES = "enumValues";
     /** name of the 'implementation' attribute of a layout option of type 'remoteenum'. */
-    protected static final String ATTRIBUTE_IMPLEMENTATION = "implementation";
+    public static final String ATTRIBUTE_IMPLEMENTATION = "implementation";
     
     /**
      * Report an error that occurred while reading extensions.
