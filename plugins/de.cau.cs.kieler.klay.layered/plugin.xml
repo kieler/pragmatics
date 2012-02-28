@@ -29,7 +29,10 @@
                feature="PORTS">
          </supportedFeature>
          <supportedFeature
-               feature="FULL_HIERARCHY">
+               feature="COMPOUND">
+         </supportedFeature>
+         <supportedFeature
+               feature="CLUSTERS">
          </supportedFeature>
          <knownOption
                default="20"

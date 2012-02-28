@@ -40,6 +40,21 @@
                priority="10"
                type="de.cau.cs.kieler.layout.diagrams.stateMachine">
          </supportedDiagram>
+         <supportedFeature
+               feature="SELF_LOOPS">
+         </supportedFeature>
+         <supportedFeature
+               feature="MULTI_EDGES">
+         </supportedFeature>
+         <supportedFeature
+               feature="EDGE_LABELS">
+         </supportedFeature>
+         <supportedFeature
+               feature="COMPOUND">
+         </supportedFeature>
+         <supportedFeature
+               feature="CLUSTERS">
+         </supportedFeature>
          <knownOption
                default="RIGHT"
                option="de.cau.cs.kieler.direction">
@@ -98,6 +113,15 @@
                priority="10"
                type="de.cau.cs.kieler.layout.diagrams.usecaseDiagram">
          </supportedDiagram>
+         <supportedFeature
+               feature="SELF_LOOPS">
+         </supportedFeature>
+         <supportedFeature
+               feature="MULTI_EDGES">
+         </supportedFeature>
+         <supportedFeature
+               feature="EDGE_LABELS">
+         </supportedFeature>
          <knownOption
                default="40"
                option="de.cau.cs.kieler.spacing">
@@ -166,6 +190,18 @@
                priority="4"
                type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
+         <supportedFeature
+               feature="SELF_LOOPS">
+         </supportedFeature>
+         <supportedFeature
+               feature="MULTI_EDGES">
+         </supportedFeature>
+         <supportedFeature
+               feature="EDGE_LABELS">
+         </supportedFeature>
+         <supportedFeature
+               feature="CLUSTERS">
+         </supportedFeature>
          <knownOption
                default="40"
                option="de.cau.cs.kieler.spacing">
@@ -222,6 +258,15 @@
             parameter="TWOPI"
             preview="images/twopi.png"
             type="de.cau.cs.kieler.type.tree">
+         <supportedFeature
+               feature="SELF_LOOPS">
+         </supportedFeature>
+         <supportedFeature
+               feature="MULTI_EDGES">
+         </supportedFeature>
+         <supportedFeature
+               feature="EDGE_LABELS">
+         </supportedFeature>
          <knownOption
                default="60"
                option="de.cau.cs.kieler.spacing">
@@ -264,6 +309,15 @@
             parameter="CIRCO"
             preview="images/circo.png"
             type="de.cau.cs.kieler.type.circle">
+         <supportedFeature
+               feature="SELF_LOOPS">
+         </supportedFeature>
+         <supportedFeature
+               feature="MULTI_EDGES">
+         </supportedFeature>
+         <supportedFeature
+               feature="EDGE_LABELS">
+         </supportedFeature>
          <knownOption
                default="40"
                option="de.cau.cs.kieler.spacing">

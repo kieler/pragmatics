@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.smart;
 
+import java.util.EnumSet;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -21,6 +22,7 @@ import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.kiml.options.GraphFeatures;
 import de.cau.cs.kieler.kiml.service.AnalysisService;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.smart.SmartLayoutService.SmartRuleData;
@@ -38,7 +40,9 @@ public class MetaLayout {
     private Map<IProperty<?>, Object> config;
     /** the analysis cache. */
     private Map<String, Object> analysisCache;
-    /** the smart layout results. */
+    /** set of recognized graph features. */
+    private EnumSet<GraphFeatures> graphFeatures = EnumSet.noneOf(GraphFeatures.class);
+    /** the smart layout rule results. */
     private Map<SmartRuleData, Double> resultMap;
     /** the time when the meta layout instance was created. */
     private long timestamp = System.currentTimeMillis();
@@ -131,6 +135,15 @@ public class MetaLayout {
      */
     public long getTimestamp() {
         return timestamp;
+    }
+    
+    /**
+     * Returns the set of recognized graph features.
+     * 
+     * @return the graph features
+     */
+    public EnumSet<GraphFeatures> getGraphFeatures() {
+        return graphFeatures;
     }
 
 }

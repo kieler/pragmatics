@@ -29,7 +29,7 @@ import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
-import de.cau.cs.kieler.kiml.options.GraphFeatures.GraphFeature;
+import de.cau.cs.kieler.kiml.options.GraphFeatures;
 
 /**
  * A layout data service that reads its content from the Eclipse extension registry.
@@ -305,7 +305,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
                     String featureString = child.getAttribute(ATTRIBUTE_FEATURE);
                     if (featureString != null) {
                         try {
-                            algoData.getSupportedFeatures().add(GraphFeature.valueOf(
+                            algoData.getSupportedFeatures().add(GraphFeatures.valueOf(
                                     featureString.toUpperCase()));
                         } catch (IllegalArgumentException exception) {
                             reportError(EXTP_ID_LAYOUT_PROVIDERS, child, ATTRIBUTE_FEATURE, exception);

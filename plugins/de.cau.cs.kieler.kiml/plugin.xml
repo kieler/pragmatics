@@ -323,14 +323,6 @@
      </layoutOption>
      <layoutOption
            advanced="true"
-           class="de.cau.cs.kieler.kiml.options.GraphFeatures"
-           description="Special features of the graph"
-           id="de.cau.cs.kieler.graphFeatures"
-           name="Graph Features (programmatic)"
-           type="object">
-     </layoutOption>
-     <layoutOption
-           advanced="true"
            default="false"
            description="Whether the node should be handled as a hypernode"
            id="de.cau.cs.kieler.hypernode"

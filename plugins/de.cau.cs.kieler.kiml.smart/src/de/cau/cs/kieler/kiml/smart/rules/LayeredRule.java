@@ -13,12 +13,15 @@
  */
 package de.cau.cs.kieler.kiml.smart.rules;
 
+import de.cau.cs.kieler.core.math.KielerMath;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.grana.analyses.DirectedCycleAnalysis;
 import de.cau.cs.kieler.kiml.service.grana.analyses.NodeCountAnalysis;
 import de.cau.cs.kieler.kiml.smart.ISmartRule;
 import de.cau.cs.kieler.kiml.smart.MetaLayout;
+import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
 
 /**
  * Smart layout rule for layered layout type.
@@ -26,6 +29,9 @@ import de.cau.cs.kieler.kiml.smart.MetaLayout;
  * @author msp
  */
 public class LayeredRule implements ISmartRule {
+    
+    /** the penalty factor for missing graph features. */
+    private static final double FEATURE_PENALTY = 0.6;
 
     /**
      * {@inheritDoc}
@@ -34,8 +40,11 @@ public class LayeredRule implements ISmartRule {
         int nodeCount = metaLayout.analyze(NodeCountAnalysis.ID);
         if (nodeCount > 0) {
             int cycleCount = metaLayout.analyze(DirectedCycleAnalysis.ID);
+            int missingFeatures = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
+                    LayoutTypeData.TYPE_LAYERED);
             
-            return 1 - (double) Math.min(cycleCount, nodeCount) / nodeCount;
+            return (1 - (double) Math.min(cycleCount, nodeCount) / nodeCount)
+                    * KielerMath.pow(FEATURE_PENALTY, missingFeatures);
         }
         return 0;
     }
@@ -44,7 +53,9 @@ public class LayeredRule implements ISmartRule {
      * {@inheritDoc}
      */
     public void applyMetaLayout(final MetaLayout metaLayout) {
-        metaLayout.getConfig().put(LayoutOptions.ALGORITHM, LayoutTypeData.TYPE_LAYERED);
+        LayoutAlgorithmData bestAlgo = SmartLayoutConfig.mostFeasibleAlgorithm(metaLayout,
+                LayoutTypeData.TYPE_LAYERED);
+        metaLayout.getConfig().put(LayoutOptions.ALGORITHM, bestAlgo.getId());
     }
 
 }

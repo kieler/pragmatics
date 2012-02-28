@@ -13,11 +13,14 @@
  */
 package de.cau.cs.kieler.kiml.smart.rules;
 
+import de.cau.cs.kieler.core.math.KielerMath;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.grana.analyses.NodeCountAnalysis;
 import de.cau.cs.kieler.kiml.smart.ISmartRule;
 import de.cau.cs.kieler.kiml.smart.MetaLayout;
+import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
 
 /**
  * Smart layout rule for orthogonalization layout.
@@ -28,6 +31,8 @@ public class OrthogonalRule implements ISmartRule {
     
     /** identifier of the planarity test analysis. */
     private static final String PLANARITY_ID = "de.cau.cs.kieler.klay.planarity";
+    /** the penalty factor for missing graph features. */
+    private static final double FEATURE_PENALTY = 0.6;
 
     /**
      * {@inheritDoc}
@@ -37,7 +42,10 @@ public class OrthogonalRule implements ISmartRule {
         int nodeCount = metaLayout.analyze(NodeCountAnalysis.ID);
         
         if (nodeCount > 0) {
-            return 1 - (double) Math.min(crossingEdges, nodeCount) / nodeCount;
+            int missingFeatures = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
+                    LayoutTypeData.TYPE_ORTHOGONAL);
+            return (1 - (double) Math.min(crossingEdges, nodeCount) / nodeCount)
+                    * KielerMath.pow(FEATURE_PENALTY, missingFeatures);
         }
         return 0;
     }
@@ -46,7 +54,9 @@ public class OrthogonalRule implements ISmartRule {
      * {@inheritDoc}
      */
     public void applyMetaLayout(final MetaLayout metaLayout) {
-        metaLayout.getConfig().put(LayoutOptions.ALGORITHM, LayoutTypeData.TYPE_ORTHOGONAL);
+        LayoutAlgorithmData bestAlgo = SmartLayoutConfig.mostFeasibleAlgorithm(metaLayout,
+                LayoutTypeData.TYPE_ORTHOGONAL);
+        metaLayout.getConfig().put(LayoutOptions.ALGORITHM, bestAlgo.getId());
     }
 
 }

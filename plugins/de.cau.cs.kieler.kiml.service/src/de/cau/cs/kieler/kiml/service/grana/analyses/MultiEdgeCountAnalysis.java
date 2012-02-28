@@ -41,6 +41,9 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  */
 public class MultiEdgeCountAnalysis implements IAnalysis {
     
+    /** identifier of the multi-edge count analysis. */
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.multiEdgeCount";
+    
     /**
      * A comparator for comparing KEdges. 
      * 
@@ -157,7 +160,7 @@ public class MultiEdgeCountAnalysis implements IAnalysis {
             multiEdges += edgesConnectingTwoPorts;
         }
         
-        // Recurse
+        // Recurse if requested
         if (hierarchy) {
             for (KNode child : node.getChildren()) {
                 multiEdges += countMultiEdges(child, true);
