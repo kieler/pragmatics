@@ -78,23 +78,17 @@ public abstract class OgdfLayouter {
     /** default value for border spacing. */
     public static final float DEF_BORDER_SPACING = 15;
 
-    /** layout option identifier for label edge distance. */
-    public static final String LABEL_EDGE_DIST_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance";
     /** default value for label edge distance. */
     public static final float DEF_LABEL_EDGE_DIST = 15.0f;
     /** label edge distance property. */
-    public static final IProperty<Float> LABEL_EDGE_DIST = new Property<Float>(LABEL_EDGE_DIST_ID,
-            DEF_LABEL_EDGE_DIST);
+    public static final IProperty<Float> LABEL_EDGE_DIST = new Property<Float>(
+            "de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance", DEF_LABEL_EDGE_DIST);
 
-    /** layout option identifier for label margin distance. */
-    public static final String LABEL_MARGIN_DIST_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance";
     /** default value for label margin distance. */
     public static final float DEF_LABEL_MARGIN_DIST = 15.0f;
     /** label margin distance property. */
     public static final IProperty<Float> LABEL_MARGIN_DIST = new Property<Float>(
-            LABEL_MARGIN_DIST_ID, DEF_LABEL_MARGIN_DIST);
+            "de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance", DEF_LABEL_MARGIN_DIST);
 
     /** the ogdf server option for the layouter. */
     private static final String OGDF_OPTION_LAYOUTER = "layouter";

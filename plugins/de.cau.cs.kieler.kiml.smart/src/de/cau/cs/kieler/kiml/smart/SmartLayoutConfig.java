@@ -15,7 +15,9 @@ package de.cau.cs.kieler.kiml.smart;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Maps;
 
@@ -24,13 +26,22 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutContext;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.GraphFeatures;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
+import de.cau.cs.kieler.kiml.service.grana.analyses.CompoundEdgeAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeLabelCountAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.analyses.MultiEdgeCountAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.analyses.PortCountAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.analyses.SelfLoopAnalysis;
 import de.cau.cs.kieler.kiml.smart.SmartLayoutService.SmartRuleData;
 
 /**
@@ -197,7 +208,10 @@ public class SmartLayoutConfig implements ILayoutConfig {
         node.getData(KShapeLayout.class).setProperty(AnalysisOptions.ANALYZE_HIERARCHY, false);
         metaLayout.setGraph(node);
         Map<SmartRuleData, Double> results = metaLayout.getResults();
-        
+
+        // determine the specific features of the graph
+        calcGraphFeatures(metaLayout);
+
         double maxValue = 0;
         ISmartRule bestRule = null;
         for (SmartRuleData ruleData : smartRules) {
@@ -215,11 +229,118 @@ public class SmartLayoutConfig implements ILayoutConfig {
                 results.put(ruleData, -1.0);
             }
         }
+        
         if (maxValue >= SUITABILITY_THRESHOLD) {
+            // apply the meta layout of the most suitable rule
             bestRule.applyMetaLayout(metaLayout);
+            // activate hierarchy layout for compound graphs and cluster graphs
+            Set<GraphFeatures> graphFeatures = metaLayout.getGraphFeatures();
+            if (graphFeatures.contains(GraphFeatures.COMPOUND)
+                    || graphFeatures.contains(GraphFeatures.CLUSTERS)) {
+                metaLayout.getConfig().put(LayoutOptions.LAYOUT_HIERARCHY, true);
+            }
         }
         
         return metaLayout;
+    }
+    
+    /**
+     * Calculate the specific features of a graph.
+     * 
+     * @param metaLayout the meta layout instance containing the graph
+     */
+    private void calcGraphFeatures(final MetaLayout metaLayout) {
+        EnumSet<GraphFeatures> graphFeatures = metaLayout.getGraphFeatures();
+        
+        // determine self-loops
+        int selfLoops = metaLayout.analyze(SelfLoopAnalysis.ID);
+        if (selfLoops > 0) {
+            graphFeatures.add(GraphFeatures.SELF_LOOPS);
+        }
+        
+        // determine multi-edges
+        int multiEdges = metaLayout.analyze(MultiEdgeCountAnalysis.ID);
+        if (multiEdges > 0) {
+            graphFeatures.add(GraphFeatures.MULTI_EDGES);
+        }
+        
+        // determine edge labels
+        int edgeLabels = metaLayout.analyze(EdgeLabelCountAnalysis.ID);
+        if (edgeLabels > 0) {
+            graphFeatures.add(GraphFeatures.EDGE_LABELS);
+        }
+        
+        // determine ports
+        int ports = metaLayout.analyze(PortCountAnalysis.ID);
+        if (ports > 0) {
+            graphFeatures.add(GraphFeatures.PORTS);
+        }
+        
+        // determine compound edges
+        Object[] compoundEdgeResult = metaLayout.analyze(CompoundEdgeAnalysis.ID);
+        if ((Integer) compoundEdgeResult[0] > 0) {
+            if ((Integer) compoundEdgeResult[2] == 0) {
+                graphFeatures.add(GraphFeatures.CLUSTERS);
+            } else {
+                graphFeatures.add(GraphFeatures.COMPOUND);
+            }
+        }
+    }
+    
+    /**
+     * Determine the minimal number of features that are not supported by a layout algorithm
+     * of given type. If there is no layout algorithm of that type, the total number of defined
+     * graph features is returned.
+     * 
+     * @param metaLayout meta layout instance
+     * @param typeId the layout type identifier
+     * @return the minimal number of missing features
+     */
+    public static int missingFeaturesFromType(final MetaLayout metaLayout, final String typeId) {
+        LayoutTypeData typeData = LayoutDataService.getInstance().getTypeData(typeId);
+        EnumSet<GraphFeatures> graphFeatures = metaLayout.getGraphFeatures();
+        int missingFeatures = GraphFeatures.values().length;
+        for (LayoutAlgorithmData algorithmData : typeData.getLayouters()) {
+            EnumSet<GraphFeatures> s = EnumSet.copyOf(graphFeatures);
+            s.removeAll(algorithmData.getSupportedFeatures());
+            missingFeatures = Math.min(missingFeatures, s.size());
+        }
+        return missingFeatures;
+    }
+    
+    /**
+     * Determine the layout algorithm of given type that supports the highest number of graph
+     * features of the processed graph. If multiple algorithms have the same number of supported
+     * features, the one with highest registered priority for general diagrams is selected.
+     * 
+     * @param metaLayout meta layout instance
+     * @param typeId the layout type identifier
+     * @return the most feasible layout algorithm data
+     */
+    public static LayoutAlgorithmData mostFeasibleAlgorithm(final MetaLayout metaLayout,
+            final String typeId) {
+        LayoutTypeData typeData = LayoutDataService.getInstance().getTypeData(typeId);
+        EnumSet<GraphFeatures> graphFeatures = metaLayout.getGraphFeatures();
+        int missingFeatures = GraphFeatures.values().length;
+        LayoutAlgorithmData bestAlgo = null;
+        for (LayoutAlgorithmData algorithmData : typeData.getLayouters()) {
+            EnumSet<GraphFeatures> s = EnumSet.copyOf(graphFeatures);
+            s.removeAll(algorithmData.getSupportedFeatures());
+            int m = s.size();
+            if (m < missingFeatures) {
+                missingFeatures = m;
+                bestAlgo = algorithmData;
+            } else if (m == missingFeatures) {
+                int bestPrio = bestAlgo == null ? 0 : bestAlgo.getSupportedPriority(
+                        LayoutDataService.DIAGRAM_TYPE_GENERAL);
+                int currentPrio = algorithmData.getSupportedPriority(
+                        LayoutDataService.DIAGRAM_TYPE_GENERAL);
+                if (bestAlgo == null || currentPrio > bestPrio) {
+                    bestAlgo = algorithmData;
+                }
+            }
+        }
+        return bestAlgo;
     }
 
 }

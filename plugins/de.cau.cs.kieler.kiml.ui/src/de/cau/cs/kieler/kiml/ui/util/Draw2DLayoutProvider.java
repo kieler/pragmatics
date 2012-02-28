@@ -107,12 +107,12 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         graph.setMargin(new Insets((int) borderSpacing));
         Direction layoutDirection = parentLayout.getProperty(LayoutOptions.DIRECTION);
         switch (layoutDirection) {
-        case RIGHT:
-        case LEFT:
-            graph.setDirection(PositionConstants.EAST);
+        case UP:
+        case DOWN:
+            graph.setDirection(PositionConstants.SOUTH);
             break;
         default:
-            graph.setDirection(PositionConstants.SOUTH);
+            graph.setDirection(PositionConstants.EAST);
             break;
         }
         

@@ -404,7 +404,7 @@ public class LayoutDataService {
         List<LayoutOptionData<?>> optionDataList = new LinkedList<LayoutOptionData<?>>();
         for (LayoutOptionData<?> optionData : layoutOptionMap.values()) {
             if (algorithmData.knowsOption(optionData)
-                    || LayoutOptions.ALGORITHM_ID.equals(optionData.getId())) {
+                    || LayoutOptions.ALGORITHM.equals(optionData)) {
                 if (optionData.hasTarget(targetType)) {
                     optionDataList.add(optionData);
                 }

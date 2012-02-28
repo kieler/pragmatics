@@ -244,7 +244,7 @@ point="org.eclipse.ui.menus">
              option="de.cau.cs.kieler.borderSpacing">
        </knownOption>
        <knownOption
-             default="DOWN"
+             default="RIGHT"
              option="de.cau.cs.kieler.direction">
        </knownOption>
        <knownOption

@@ -42,11 +42,9 @@ public final class Properties {
     ///////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS
 
-    /** force model property identifier. */
-    public static final String FORCE_MODEL_ID = "de.cau.cs.kieler.klay.force.model";
     /** force model property. */
     public static final Property<ForceModelStrategy> FORCE_MODEL = new Property<ForceModelStrategy>(
-            FORCE_MODEL_ID, ForceModelStrategy.FRUCHTERMAN_REINGOLD);
+            "de.cau.cs.kieler.klay.force.model", ForceModelStrategy.FRUCHTERMAN_REINGOLD);
     
     /** default value for object spacing. */
     public static final float DEF_SPACING = 80.0f;
@@ -54,36 +52,28 @@ public final class Properties {
     public static final Property<Float> SPACING = new Property<Float>(
             LayoutOptions.SPACING, DEF_SPACING);
     
-    /** default value for aspect ratio. */
-    public static final float DEF_ASPECT_RATIO = 1.6f;
     /** the aspect ratio for packing connected components. */
     public static final Property<Float> ASPECT_RATIO = new Property<Float>(
-            LayoutOptions.ASPECT_RATIO, DEF_ASPECT_RATIO, 0.0f);
+            LayoutOptions.ASPECT_RATIO, 1.6f, 0.0f);
 
     /** priority of nodes or edges. */
     public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 1);
     
-    /** default value for label spacing. */
-    public static final float DEF_LABEL_SPACING = 5.0f;
     /** label spacing property. */
     public static final Property<Float> LABEL_SPACING = new Property<Float>(
-            LayoutOptions.LABEL_SPACING, DEF_LABEL_SPACING, 0.0f);
+            LayoutOptions.LABEL_SPACING, 5.0f, 0.0f);
     
     /** default value for temperature. */
     public static final float DEF_TEMPERATURE = 0.001f;
-    /** temperature property identifier. */
-    public static final String TEMPERATURE_ID = "de.cau.cs.kieler.klay.force.temperature";
     /** temperature property. */
-    public static final Property<Float> TEMPERATURE = new Property<Float>(TEMPERATURE_ID,
-            DEF_TEMPERATURE, 0.0f);
+    public static final Property<Float> TEMPERATURE = new Property<Float>(
+            "de.cau.cs.kieler.klay.force.temperature", DEF_TEMPERATURE, 0.0f);
     
     /** default value for iterations. */
     public static final int DEF_ITERATIONS = 100;
-    /** iterations property identifier. */
-    public static final String ITERATIONS_ID = "de.cau.cs.kieler.klay.force.iterations";
     /** iterations property. */
-    public static final Property<Integer> ITERATIONS = new Property<Integer>(ITERATIONS_ID,
-            DEF_ITERATIONS, 1);
+    public static final Property<Integer> ITERATIONS = new Property<Integer>(
+            "de.cau.cs.kieler.klay.force.iterations", DEF_ITERATIONS, 1);
     
     /** edge repulsive power property identifier. */
     public static final String EDGE_REP_ID = "de.cau.cs.kieler.klay.force.repulsivePower";
@@ -92,11 +82,9 @@ public final class Properties {
     
     /** default value for repulsion factor. */
     public static final float DEF_REPULSION = 5.0f;
-    /** repulsion factor property identifier. */
-    public static final String REPULSION_ID = "de.cau.cs.kieler.klay.force.repulsion";
     /** repulsion factor property. */
-    public static final Property<Float> REPULSION = new Property<Float>(REPULSION_ID,
-            DEF_REPULSION, 0.0f);
+    public static final Property<Float> REPULSION = new Property<Float>(
+            "de.cau.cs.kieler.klay.force.repulsion", DEF_REPULSION, 0.0f);
     
     ///////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

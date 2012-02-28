@@ -1034,7 +1034,7 @@ public final class EvolUtil {
         Population result = new Population();
 
         Set<Object> presentLayoutHintIds =
-                getPropertyValues(configs, LayoutOptions.ALGORITHM_ID);
+                getPropertyValues(configs, LayoutOptions.ALGORITHM.getId());
 
         assert !presentLayoutHintIds.isEmpty() : "Layout hint missing.";
 
@@ -1143,7 +1143,7 @@ public final class EvolUtil {
             ILayoutConfig config = context.getProperty(LAYOUT_CONFIG);
             Object value = config.getValue(optionData, context);
 
-            if (LayoutOptions.ALGORITHM_ID.equals(id)) {
+            if (LayoutOptions.ALGORITHM.getId().equals(id)) {
                 if (value == null) {
                     // layout hint not found
                     continue;

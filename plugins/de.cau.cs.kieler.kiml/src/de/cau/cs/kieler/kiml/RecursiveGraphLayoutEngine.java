@@ -19,7 +19,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.GraphFeatures.GraphFeature;
+import de.cau.cs.kieler.kiml.options.GraphFeatures;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
@@ -67,12 +67,12 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 && !layoutNode.getData(KShapeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
             LayoutAlgorithmData algorithmData = getAlgorithm(layoutNode);
             AbstractLayoutProvider layoutProvider = algorithmData.getProviderPool().fetch();
-            Set<GraphFeature> featureSet = algorithmData.getSupportedFeatures();
+            Set<GraphFeatures> featureSet = algorithmData.getSupportedFeatures();
             // if the layout provider supports hierarchy, it is expected to layout the children
             int nodeCount;
             if (layoutNode.getData(KShapeLayout.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)
-                    && (featureSet.contains(GraphFeature.COMPOUND)
-                            || featureSet.contains(GraphFeature.CLUSTERS))) {
+                    && (featureSet.contains(GraphFeatures.COMPOUND)
+                            || featureSet.contains(GraphFeatures.CLUSTERS))) {
                 nodeCount = countNodes(layoutNode, false);
             } else {
                 nodeCount = layoutNode.getChildren().size();

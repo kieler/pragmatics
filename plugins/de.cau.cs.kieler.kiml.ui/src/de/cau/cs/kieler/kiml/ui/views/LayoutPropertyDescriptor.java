@@ -80,7 +80,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             switch (optionData.getType()) {
             case STRING:
                 LayoutDataService layoutServices = LayoutDataService.getInstance();
-                if (LayoutOptions.ALGORITHM_ID.equals(optionData.getId())) {
+                if (LayoutOptions.ALGORITHM.equals(optionData)) {
                     String layoutHint = (String) element;
                     LayoutTypeData layoutType = layoutServices.getTypeData(layoutHint);
                     if (layoutType != null) {
@@ -126,7 +126,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
     public CellEditor createPropertyEditor(final Composite parent) {
         switch (optionData.getType()) {
         case STRING:
-            if (LayoutOptions.ALGORITHM_ID.equals(optionData.getId())) {
+            if (LayoutOptions.ALGORITHM.equals(optionData)) {
                 return new LayouterHintCellEditor(parent);
             } else {
                 return new TextCellEditor(parent);

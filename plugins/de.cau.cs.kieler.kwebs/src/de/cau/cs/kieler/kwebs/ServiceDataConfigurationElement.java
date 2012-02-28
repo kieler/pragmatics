@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.emf.common.util.EList;
 
 import de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService;
@@ -65,17 +64,19 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
     private Object parent;
 
     /**
+     * Create a configuration element with given name.
      * 
-     * @param thename
+     * @param thename the name
      */
     public ServiceDataConfigurationElement(final String thename) {
         name = thename;
     }
 
     /**
+     * Create a configuration element with given name and value.
      * 
-     * @param thename
-     * @param thevalue
+     * @param thename the name
+     * @param thevalue the value
      */
     public ServiceDataConfigurationElement(final String thename, final String thevalue) {
         name = thename;
@@ -83,11 +84,12 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
     }
     
     /**
+     * Create a configuration element with given name, value, and content.
      * 
-     * @param thename
-     * @param thevalue
-     * @param theattributes
-     * @param thechildren
+     * @param thename the name
+     * @param thevalue the value
+     * @param theattributes the attributes
+     * @param thechildren the child elements
      */
     public ServiceDataConfigurationElement(final String thename, final String thevalue, 
         final Map<String, String> theattributes, final List<IConfigurationElement> thechildren) {
@@ -112,13 +114,13 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
     /**
      * Adds an attribute to this configuration element.
      * 
-     * @param name
+     * @param thename
      *            the name of the attribute
-     * @param value
+     * @param thevalue
      *            the value of the attribute
      */
-    public void addAttribute(final String name, final String value) {
-        attributes.put(name, value);
+    public void addAttribute(final String thename, final String thevalue) {
+        attributes.put(thename, thevalue);
     }
     
     /**
@@ -164,7 +166,8 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
      * 
      * @return a configuration element representing a layout option
      */
-    public static ServiceDataConfigurationElement getLayoutOptionElementFromModel(final LayoutOption option) {
+    public static ServiceDataConfigurationElement getLayoutOptionElementFromModel(
+            final LayoutOption option) {
         ServiceDataConfigurationElement element = new ServiceDataConfigurationElement(
             ExtensionLayoutDataService.ELEMENT_LAYOUT_OPTION
         );
@@ -173,7 +176,8 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
         element.addAttribute(ExtensionLayoutDataService.ATTRIBUTE_TYPE, option.getType());
         element.addAttribute(ExtensionLayoutDataService.ATTRIBUTE_DESCRIPTION, option.getDescription());
         element.addAttribute(ExtensionLayoutDataService.ATTRIBUTE_DEFAULT, option.getDefault());
-        element.addAttribute(ExtensionLayoutDataService.ATTRIBUTE_IMPLEMENTATION, option.getImplementation());
+        element.addAttribute(ExtensionLayoutDataService.ATTRIBUTE_IMPLEMENTATION,
+                option.getImplementation());
         element.addAttribute(ExtensionLayoutDataService.ATTRIBUTE_APPLIESTO, option.getAppliesTo());
         RemoteEnum remoteEnum = option.getRemoteEnum();
         if (remoteEnum != null) {
@@ -204,7 +208,8 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
      * 
      * @return a configuration element representing a layout algorithm
      */
-    public static ServiceDataConfigurationElement getLayoutAlgorithmElementFromModel(final LayoutAlgorithm algorithm) {
+    public static ServiceDataConfigurationElement getLayoutAlgorithmElementFromModel(
+            final LayoutAlgorithm algorithm) {
         ServiceDataConfigurationElement element = new ServiceDataConfigurationElement(
             ExtensionLayoutDataService.ELEMENT_LAYOUT_ALGORITHM
         );
@@ -262,15 +267,15 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
     /**
      * {@inheritDoc}
      */
-    public String getAttribute(final String name) {
-        return attributes.get(name);
+    public String getAttribute(final String thename) {
+        return attributes.get(thename);
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getAttributeAsIs(final String name) {
-        return getAttribute(name);
+    public String getAttributeAsIs(final String thename) {
+        return getAttribute(thename);
     }
 
     /**
@@ -290,11 +295,11 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
     /**
      * {@inheritDoc}
      */
-    public IConfigurationElement[] getChildren(final String name) {
+    public IConfigurationElement[] getChildren(final String thename) {
         java.util.List<IConfigurationElement> result =
             new java.util.ArrayList<IConfigurationElement>(children.size());
         for (IConfigurationElement next : children) {
-            if (next.getName().equals(name)) {
+            if (next.getName().equals(thename)) {
                 result.add(next);
             }
         }
@@ -334,7 +339,7 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
      */
     @Override
     public String toString() {
-        StringBuffer result = new StringBuffer(64);
+        StringBuffer result = new StringBuffer(64); // SUPPRESS CHECKSTYLE MagicNumber
 
         result.append("ConfigurationElement[");
         result.append(getName());
@@ -354,7 +359,7 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
     /**
      * {@inheritDoc}
      */
-    public String getNamespace() throws InvalidRegistryObjectException {
+    public String getNamespace() {
         return null;
     }
 
@@ -368,29 +373,28 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
     /**
      * {@inheritDoc}
      */
-    public String getNamespaceIdentifier() throws InvalidRegistryObjectException {
+    public String getNamespaceIdentifier() {
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public IContributor getContributor() throws InvalidRegistryObjectException {
+    public IContributor getContributor() {
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getAttribute(final String attrName, final String locale) 
-        throws InvalidRegistryObjectException {
+    public String getAttribute(final String attrName, final String locale) {
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getValue(final String locale) throws InvalidRegistryObjectException {
+    public String getValue(final String locale) {
         return null;
     }
     

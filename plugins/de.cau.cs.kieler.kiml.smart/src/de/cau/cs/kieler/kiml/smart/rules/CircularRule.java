@@ -13,10 +13,13 @@
  */
 package de.cau.cs.kieler.kiml.smart.rules;
 
+import de.cau.cs.kieler.core.math.KielerMath;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.smart.ISmartRule;
 import de.cau.cs.kieler.kiml.smart.MetaLayout;
+import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
 
 /**
  * Smart layout rule for circular layout type.
@@ -24,21 +27,28 @@ import de.cau.cs.kieler.kiml.smart.MetaLayout;
  * @author msp
  */
 public class CircularRule implements ISmartRule {
+    
+    /** the penalty factor for missing graph features. */
+    private static final double FEATURE_PENALTY = 0.6;
 
     /**
      * {@inheritDoc}
      */
     public double suitability(final MetaLayout metaLayout) {
         double density = metaLayout.analyze(BiconnectedComponentDensityAnalysis.ID);
+        int missingFeatures = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
+                LayoutTypeData.TYPE_CIRCLE);
         
-        return 1 - density;
+        return (1 - density) * KielerMath.pow(FEATURE_PENALTY, missingFeatures);
     }
 
     /**
      * {@inheritDoc}
      */
     public void applyMetaLayout(final MetaLayout metaLayout) {
-        metaLayout.getConfig().put(LayoutOptions.ALGORITHM, LayoutTypeData.TYPE_CIRCLE);
+        LayoutAlgorithmData bestAlgo = SmartLayoutConfig.mostFeasibleAlgorithm(metaLayout,
+                LayoutTypeData.TYPE_CIRCLE);
+        metaLayout.getConfig().put(LayoutOptions.ALGORITHM, bestAlgo.getId());
     }
 
 }

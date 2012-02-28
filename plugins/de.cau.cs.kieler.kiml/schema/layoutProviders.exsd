@@ -340,7 +340,7 @@ Apart from a set of default layout types offered by KIML, new layout providers a
          <attribute name="feature" type="string" use="required">
             <annotation>
                <documentation>
-                  The supported feature: SELF_LOOPS, MULTI_EDGES, EDGE_LABELS, PORTS, or FULL_HIERARCHY.
+                  The supported feature: SELF_LOOPS, MULTI_EDGES, EDGE_LABELS, PORTS, COMPOUND, or CLUSTERS
                </documentation>
             </annotation>
          </attribute>

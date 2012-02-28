@@ -62,6 +62,10 @@
                abbreviation="MaxLevels"
                name="Max. Crossed Levels">
          </component>
+         <component
+               abbreviation="CompoundEdges"
+               name="Incident to Compound Nodes">
+         </component>
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.grana.basic"
@@ -124,6 +128,13 @@
             description="The number of edges including hierarchies."
             id="de.cau.cs.kieler.kiml.grana.edgeCount"
             name="Edge Count">
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.basic"
+            class="de.cau.cs.kieler.kiml.service.grana.analyses.EdgeLabelCountAnalysis"
+            description="The number of edge labels."
+            id="de.cau.cs.kieler.kiml.grana.edgeLabelCount"
+            name="Edge Label Count">
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.grana.basic"

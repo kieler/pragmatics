@@ -25,7 +25,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 /**
  * An analysis for hierarchy level crossing edges in compound graphs. The first returned component
  * is the number of hierarchy crossing edges, the second component is the maximal number of crossed
- * hierarchy levels.
+ * hierarchy levels, the third component is the number of edges incident to compound nodes.
  *
  * @author msp
  */
@@ -41,8 +41,7 @@ public class CompoundEdgeAnalysis implements IAnalysis {
             IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Compound edge analysis", 1);
 
-        int edgeCount = 0;
-        int maxLevels = 0;
+        int edgeCount = 0, maxLevels = 0, compoundEdges = 0;
         List<KNode> nodeQueue = new LinkedList<KNode>();
         nodeQueue.addAll(parentNode.getChildren());
         while (!nodeQueue.isEmpty()) {
@@ -55,13 +54,17 @@ public class CompoundEdgeAnalysis implements IAnalysis {
                 if (crossedLevels > maxLevels) {
                     maxLevels = crossedLevels;
                 }
+                if (!edge.getSource().getChildren().isEmpty()
+                        || !edge.getTarget().getChildren().isEmpty()) {
+                    compoundEdges++;
+                }
             }
             
             nodeQueue.addAll(node.getChildren());
         }
         
         progressMonitor.done();
-        return new Object[] { edgeCount, maxLevels };
+        return new Object[] { edgeCount, maxLevels, compoundEdges };
     }
     
     /**
