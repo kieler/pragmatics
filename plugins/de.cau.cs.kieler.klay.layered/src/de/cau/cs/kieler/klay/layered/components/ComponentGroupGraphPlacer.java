@@ -33,7 +33,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author cds
  */
-class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
+class ComponentGroupGraphPlacer extends GraphPlacer {
     
     ///////////////////////////////////////////////////////////////////////////////
     // Variables

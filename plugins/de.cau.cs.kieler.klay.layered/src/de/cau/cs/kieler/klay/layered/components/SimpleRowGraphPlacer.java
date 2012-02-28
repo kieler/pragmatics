@@ -34,7 +34,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author msp
  * @author cds
  */
-class SimpleRowGraphPlacer extends AbstractGraphPlacer {
+class SimpleRowGraphPlacer extends GraphPlacer {
 
     /**
      * {@inheritDoc}

@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klay.layered.components;
 
+import java.util.List;
+
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -22,13 +24,21 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
- * Provides a utility method to move graphs to a new destination. Since this functionality is required
- * by virtually all graph placers, they should extend this class instead of implementing
- * {@link IGraphPlacer}.
+ * Takes a list of layered graphs and combines them into a single graph, placing them according to some
+ * algorithm.
  * 
  * @author cds
  */
-abstract class AbstractGraphPlacer implements IGraphPlacer {
+abstract class GraphPlacer {
+    
+    /**
+     * Computes a proper placement for the given graphs and combines them into a single graph.
+     * 
+     * @param components the graphs to be combined.
+     * @return a single graph containing the components.
+     */
+    public abstract LayeredGraph combine(final List<LayeredGraph> components);
+    
 
     /**
      * Move the source graph into the destination graph using a specified offset.
