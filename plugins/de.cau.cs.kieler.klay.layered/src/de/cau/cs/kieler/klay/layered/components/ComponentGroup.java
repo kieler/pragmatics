@@ -56,9 +56,11 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * top three sectors, none of them must be occupied by another component yet. If the addition of a
  * component to this group would cause a constraint to be violated, it cannot be added.</p>
  * 
+ * <p>This class is not supposed to be public, but needs to be for JUnit tests to find it.</p>
+ * 
  * @author cds
  */
-class ComponentGroup {
+public class ComponentGroup {
     
     ///////////////////////////////////////////////////////////////////////////////
     // Constants
