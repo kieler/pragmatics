@@ -33,9 +33,8 @@ public class ExecutionContentProvider implements ITreeContentProvider {
     public Object[] getChildren(final Object parentElement) {
         if (parentElement instanceof IKielerProgressMonitor) {
             return ((IKielerProgressMonitor) parentElement).getSubMonitors().toArray();
-        } else {
-            return new IKielerProgressMonitor[0];
         }
+        return new IKielerProgressMonitor[0];
     }
 
     /**
@@ -44,9 +43,8 @@ public class ExecutionContentProvider implements ITreeContentProvider {
     public Object getParent(final Object element) {
         if (element instanceof IKielerProgressMonitor) {
             return ((IKielerProgressMonitor) element).getParentMonitor();
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -63,9 +61,8 @@ public class ExecutionContentProvider implements ITreeContentProvider {
     public Object[] getElements(final Object inputElement) {
         if (inputElement instanceof List<?>) {
             return ((List<?>) inputElement).toArray();
-        } else {
-            return new Object[0];
         }
+        return new Object[0];
     }
 
     /**

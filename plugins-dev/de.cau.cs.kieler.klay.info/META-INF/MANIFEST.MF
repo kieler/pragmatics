@@ -11,6 +11,7 @@ Require-Bundle: org.eclipse.gmf.runtime.diagram.ui.resources.editor.ide;bundle-v
  de.cau.cs.kieler.core.ui,
  de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.kiml.ui,
+ de.cau.cs.kieler.kiml.smart,
  de.cau.cs.kieler.core.kivi,
  de.cau.cs.kieler.core.kgraph
 Bundle-ActivationPolicy: lazy

@@ -25,6 +25,10 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.EClass;
 
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
@@ -40,27 +44,74 @@ import de.cau.cs.kieler.kiml.config.SemanticLayoutConfig;
 public abstract class LayoutInfoService {
     
     /** identifier of the extension point for layout info. */
-    public static final String EXTP_ID_LAYOUT_INFO = "de.cau.cs.kieler.kiml.layoutInfo";
+    protected static final String EXTP_ID_LAYOUT_INFO = "de.cau.cs.kieler.kiml.layoutInfo";
     /** name of the 'binding' element in the 'layout info' extension point. */
-    public static final String ELEMENT_BINDING = "binding";
+    protected static final String ELEMENT_BINDING = "binding";
     /** name of the 'diagram type' element in the 'layout info' extension point. */
-    public static final String ELEMENT_DIAGRAM_TYPE = "diagramType";
+    protected static final String ELEMENT_DIAGRAM_TYPE = "diagramType";
     /** name of the 'option' element in the 'layout info' extension point. */
-    public static final String ELEMENT_OPTION = "option";
+    protected static final String ELEMENT_OPTION = "option";
     /** name of the 'semantic option' element in the 'layout info' extension point. */
-    public static final String ELEMENT_SEMANTIC_OPTION = "semanticOption";
+    protected static final String ELEMENT_SEMANTIC_OPTION = "semanticOption";
+    /** name of the 'config' element in the 'layout info' extension point. */
+    protected static final String ELEMENT_CONFIG = "config";
+    /** name of the 'activation' attribute in the extension points. */
+    protected static final String ATTRIBUTE_ACTIVATION = "activation";
+    /** name of the 'activationText' attribute in the extension points. */
+    protected static final String ATTRIBUTE_ACTIVATION_TEXT = "activationText";
     /** name of the 'class' attribute in the extension points. */
-    public static final String ATTRIBUTE_CLASS = "class";
+    protected static final String ATTRIBUTE_CLASS = "class";
     /** name of the 'config' attribute in the extension points. */
-    public static final String ATTRIBUTE_CONFIG = "config";
+    protected static final String ATTRIBUTE_CONFIG = "config";
+    /** name of the 'default' attribute in the extension points. */
+    protected static final String ATTRIBUTE_DEFAULT = "default";
     /** name of the 'id' attribute in the extension points. */
-    public static final String ATTRIBUTE_ID = "id";
+    protected static final String ATTRIBUTE_ID = "id";
     /** name of the 'name' attribute in the extension points. */
-    public static final String ATTRIBUTE_NAME = "name";
+    protected static final String ATTRIBUTE_NAME = "name";
     /** name of the 'option' attribute in the extension points. */
-    public static final String ATTRIBUTE_OPTION = "option";
+    protected static final String ATTRIBUTE_OPTION = "option";
     /** name of the 'value' attribute in the extension points. */
-    public static final String ATTRIBUTE_VALUE = "value";
+    protected static final String ATTRIBUTE_VALUE = "value";
+    
+    /**
+     * Data element for general layout configurations.
+     */
+    public static class ConfigData {
+        /** the layout configuration implementation. */
+        private ILayoutConfig config;
+        /** the activation property. */
+        private IProperty<Boolean> activation;
+        /** the text of the activation menu entry. */
+        private String activationText;
+        
+        /**
+         * Returns the layout configuration implementation.
+         * 
+         * @return the layout configuration
+         */
+        public ILayoutConfig getConfig() {
+            return config;
+        }
+        
+        /**
+         * Returns the activation property.
+         * 
+         * @return the activation property
+         */
+        public IProperty<Boolean> getActivationProperty() {
+            return activation;
+        }
+        
+        /**
+         * Returns the activation menu entry text.
+         * 
+         * @return the activation menu entry text
+         */
+        public String getActivationText() {
+            return activationText;
+        }
+    }
     
     /** the singleton instance of the layout info service. */
     private static LayoutInfoService instance;
@@ -91,6 +142,19 @@ public abstract class LayoutInfoService {
     /** mapping of domain class names to semantic layout configurations. */
     private Map<String, SemanticLayoutConfig> semanticConfigMap 
             = new HashMap<String, SemanticLayoutConfig>();
+    /** list of general layout configurations. */
+    private List<ConfigData> configData = new LinkedList<ConfigData>();
+    /** property map for activation of registered layout configurations. */
+    private MapPropertyHolder configProperties = new MapPropertyHolder();
+    
+    /**
+     * Returns the property holder to activate or deactivate registered layout configurations.
+     * 
+     * @return the property holder for configuration activation
+     */
+    public IPropertyHolder getConfigProperties() {
+        return configProperties;
+    }
     
     /**
      * Report an error that occurred while reading extensions.
@@ -165,6 +229,23 @@ public abstract class LayoutInfoService {
                     } else {
                         addSemanticConfig(clazz, config);
                     }
+                } catch (CoreException exception) {
+                    reportError(exception);
+                }
+            } else if (ELEMENT_CONFIG.equals(element.getName())) {
+                // register a general layout configuration from the extension
+                try {
+                    ConfigData data = new ConfigData();
+                    data.config = (ILayoutConfig) element.createExecutableExtension(ATTRIBUTE_CLASS);
+                    String activationId = element.getAttribute(ATTRIBUTE_ACTIVATION);
+                    if (activationId != null) {
+                        String def = element.getAttribute(ATTRIBUTE_DEFAULT);
+                        Boolean defaultActivation = def == null ? Boolean.FALSE : Boolean.valueOf(def);
+                        data.activation = new Property<Boolean>(activationId, defaultActivation);
+                    }
+                    String text = element.getAttribute(ATTRIBUTE_ACTIVATION_TEXT);
+                    data.activationText = text;
+                    configData.add(data);
                 } catch (CoreException exception) {
                     reportError(exception);
                 }
@@ -370,5 +451,28 @@ public abstract class LayoutInfoService {
         return Collections.emptyList();
     }
 
+    /**
+     * Returns all general layout configurations that are currently active.
+     * 
+     * @return the active layout configurations
+     */
+    public final List<ILayoutConfig> getActiveConfigs() {
+        LinkedList<ILayoutConfig> configs = new LinkedList<ILayoutConfig>();
+        for (ConfigData data : configData) {
+            if (data.activation == null || configProperties.getProperty(data.activation)) {
+                configs.add(data.config);
+            }
+        }
+        return configs;
+    }
+    
+    /**
+     * Returns all general layout configuration data.
+     * 
+     * @return the registered layout configurations
+     */
+    public final List<ConfigData> getConfigData() {
+        return configData;
+    }
 
 }

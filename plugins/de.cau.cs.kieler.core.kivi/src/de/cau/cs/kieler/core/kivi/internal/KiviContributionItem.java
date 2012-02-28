@@ -28,6 +28,8 @@ import org.eclipse.core.internal.expressions.CompositeExpression;
 import org.eclipse.core.internal.expressions.EqualsExpression;
 import org.eclipse.core.internal.expressions.OrExpression;
 import org.eclipse.core.internal.expressions.WithExpression;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.bindings.Binding;
@@ -47,8 +49,10 @@ import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.IWorkbenchContribution;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.kivi.KiVi;
+import de.cau.cs.kieler.core.kivi.KiViPlugin;
 import de.cau.cs.kieler.core.kivi.menu.ButtonHandler;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService.ButtonConfiguration;
@@ -410,10 +414,11 @@ public class KiviContributionItem extends CompoundContributionItem implements
             IContributionItem item = items[i];
             int oldItemCount = parent.getItemCount();
             if (item.isVisible()) {
-                try{
-                	item.fill(parent, myIndex);
-                }catch(java.lang.RuntimeException e){
-                	System.out.println(e.getMessage());
+                try {
+                    item.fill(parent, myIndex);
+                } catch (RuntimeException e) {
+                    StatusManager.getManager().handle(new Status(IStatus.ERROR, KiViPlugin.PLUGIN_ID,
+                            "Error while filling the toolbar for KiVi contribution items.", e));
                 }
             }
             int newItemCount = parent.getItemCount();
@@ -424,8 +429,13 @@ public class KiviContributionItem extends CompoundContributionItem implements
     
     private static boolean softUpdate = false;
     
-    public static void setSoftUpdate(boolean _softUpdate) {
-        softUpdate = _softUpdate;
+    /**
+     * Activate or deactivate soft update.
+     * 
+     * @param thesoftUpdate whether soft update is active
+     */
+    public static void setSoftUpdate(final boolean thesoftUpdate) {
+        softUpdate = thesoftUpdate;
     }
 
 }

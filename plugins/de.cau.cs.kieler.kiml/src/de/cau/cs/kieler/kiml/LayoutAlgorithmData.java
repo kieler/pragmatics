@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml;
 
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -22,6 +23,7 @@ import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.core.alg.InstancePool;
+import de.cau.cs.kieler.kiml.options.GraphFeatures.GraphFeature;
 
 /**
  * Data type used to store information for a layout algorithm.
@@ -68,6 +70,8 @@ public class LayoutAlgorithmData implements ILayoutData {
     private Map<LayoutOptionData<?>, Object> knownOptions = Maps.newHashMap();
     /** list of supported diagrams. */
     private List<SupportedDiagram> supportedDiagrams = new LinkedList<SupportedDiagram>();
+    /** set of supported graph features. */
+    private EnumSet<GraphFeature> supportedFeatures = EnumSet.noneOf(GraphFeature.class);
     
     /**
      * {@inheritDoc}
@@ -188,6 +192,15 @@ public class LayoutAlgorithmData implements ILayoutData {
         }
         return MIN_PRIORITY;
     }
+    
+    /**
+     * Returns the set of supported graph features.
+     * 
+     * @return the supported graph features
+     */
+    public EnumSet<GraphFeature> getSupportedFeatures() {
+        return supportedFeatures;
+    }
 
     /**
      * Sets the id.
@@ -253,7 +266,7 @@ public class LayoutAlgorithmData implements ILayoutData {
     }
 
     /**
-     * Sets the layout provider that can execute the associated algorithm.
+     * Create a pool for instances of the layout provider.
      *
      * @param providerFactory a factory for layout providers
      */

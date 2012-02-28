@@ -18,8 +18,8 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.util.DiagramAnalyzer;
+import de.cau.cs.kieler.kiml.service.AnalysisService;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * The class which represents an analysis batch job.
@@ -50,8 +50,8 @@ public class BatchJob<T> {
     }
 
     /**
-     * The alternative constructor for an AnalysisBatchJob using a KGraph
-     * instance instead of a KGraph provider.
+     * The alternative constructor for an AnalysisBatchJob using a KGraph instance instead of a
+     * KGraph provider.
      * 
      * @param param
      *            the parameter
@@ -77,8 +77,8 @@ public class BatchJob<T> {
     private static final int WORK_ANALYSIS = 2;
 
     /**
-     * Executes the job which consists of retrieving a KGraph instance through
-     * the KGraph provider and performing the given analyses on it.
+     * Executes the job which consists of retrieving a KGraph instance through the KGraph provider
+     * and performing the given analyses on it.
      * 
      * @param analyses
      *            the analyses
@@ -88,15 +88,12 @@ public class BatchJob<T> {
      * @throws Exception
      *             any kind of exception
      */
-    public BatchJobResult<T> execute(final List<AbstractInfoAnalysis> analyses,
+    public BatchJobResult<T> execute(final List<AnalysisData> analyses,
             final IKielerProgressMonitor monitor) throws Exception {
         monitor.begin("Executing analysis batch job: " + parameter, WORK);
-        KNode graph =
-                kgraphProvider.getKGraph(parameter,
-                        monitor.subTask(WORK_KGRAPH));
-        Map<String, Object> results =
-                DiagramAnalyzer.analyse(graph, analyses,
-                        monitor.subTask(WORK_ANALYSIS));
+        KNode graph = kgraphProvider.getKGraph(parameter, monitor.subTask(WORK_KGRAPH));
+        Map<String, Object> results = AnalysisService.getInstance().analyze(graph, analyses,
+                monitor.subTask(WORK_ANALYSIS));
         BatchJobResult<T> batchJobResult = new BatchJobResult<T>(this, results);
         monitor.done();
         return batchJobResult;
@@ -125,8 +122,7 @@ public class BatchJob<T> {
         /**
          * {@inheritDoc}
          */
-        public KNode getKGraph(final T param,
-                final IKielerProgressMonitor monitor) {
+        public KNode getKGraph(final T param, final IKielerProgressMonitor monitor) {
             return graph;
         }
     }

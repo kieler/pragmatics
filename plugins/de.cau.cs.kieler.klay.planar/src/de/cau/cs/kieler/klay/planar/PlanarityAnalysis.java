@@ -18,7 +18,7 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
@@ -27,7 +27,9 @@ import de.cau.cs.kieler.klay.planar.planarity.BoyerMyrvoldPlanarityTester;
 import de.cau.cs.kieler.klay.planar.planarity.IPlanarityTester;
 
 /**
- * A graph analysis, that uses planarity testing algorithms to check if a graph is planar.
+ * A graph analysis that uses planarity testing algorithms to check whether a graph is planar.
+ * If the graph is planar, the result is 0. Otherwise it is a hint on the number of edges that
+ * need to be removed in order to obtain a planar subgraph.
  * 
  * @author ocl
  */
@@ -71,6 +73,6 @@ public class PlanarityAnalysis implements IAnalysis {
         // }
 
         progressMonitor.done();
-        return edges.isEmpty();
+        return edges.size();
     }
 }

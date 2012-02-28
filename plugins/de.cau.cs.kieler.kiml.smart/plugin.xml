@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="layoutRules" name="Smart Layout Rules" schema="schema/layoutRules.exsd"/>
+   <extension
+         point="de.cau.cs.kieler.kiml.layoutInfo">
+      <config
+            activation="de.cau.cs.kieler.kiml.smart"
+            activationText="Activate Smart Layout"
+            class="de.cau.cs.kieler.kiml.smart.SmartLayoutConfig"
+            default="false">
+      </config>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.service.analysisProviders">
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.basic"
+            class="de.cau.cs.kieler.kiml.smart.rules.TreeAnalysis"
+            description="Check whether the graph is a directed tree."
+            programmatic="true"
+            id="de.cau.cs.kieler.kiml.smart.tree"
+            name="Directed Tree">
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.basic"
+            class="de.cau.cs.kieler.kiml.smart.rules.BiconnectedComponentDensityAnalysis"
+            description="Average density of the biconnected components, weighted by the number of nodes in each component."
+            id="de.cau.cs.kieler.kiml.smart.biconnectedComponentsDensity"
+            name="Biconnected Components Density"
+            programmatic="true">
+      </analysis>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.smart.layoutRules">
+      <rule
+            class="de.cau.cs.kieler.kiml.smart.rules.ForceRule"
+            name="Force (fallback)">
+      </rule>
+      <rule
+            class="de.cau.cs.kieler.kiml.smart.rules.LayeredRule"
+            name="Layered (directed cycles)"
+            priority="1">
+      </rule>
+      <rule
+            class="de.cau.cs.kieler.kiml.smart.rules.OrthogonalRule"
+            name="Orthogonal (planarity)"
+            priority="2">
+      </rule>
+      <rule
+            class="de.cau.cs.kieler.kiml.smart.rules.CircularRule"
+            name="Circular (biconnected components)"
+            priority="3">
+      </rule>
+      <rule
+            class="de.cau.cs.kieler.kiml.smart.rules.TreeRule"
+            name="Tree (rooted tree)"
+            priority="4">
+      </rule>
+      <rule
+            class="de.cau.cs.kieler.kiml.smart.rules.UnconnectedBoxesRule"
+            name="Unconnected Boxes"
+            priority="5">
+      </rule>
+      <rule
+            class="de.cau.cs.kieler.kiml.smart.rules.HierarchyRule"
+            name="Hierarchy (cross-hierarchy edges)"
+            priority="5">
+      </rule>
+   </extension>
+
+</plugin>

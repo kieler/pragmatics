@@ -30,7 +30,6 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
@@ -38,6 +37,7 @@ import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.service.LayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
 /**
@@ -47,12 +47,11 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
  */
 public class LayoutOptionManager {
 
-    /** the option for the usage of the Eclipse layout config. */
-    public static final Property<Boolean> USE_ECLIPSE_LAYOUT_CONFIG = new Property<Boolean>(
-            "layoutOptionManager.useEclipseLayoutConfig", true);
-    
     /** internal cache of semantic layout configurations. */
     private Map<EClass, List<ILayoutConfig>> semanticConfigMap = Maps.newHashMap();
+    
+    /** the default layout configuration. */
+    private DefaultLayoutConfig defaultLayoutConfig = new DefaultLayoutConfig();
 
     /**
      * Configure the layout graph in the given layout mapping.
@@ -66,10 +65,8 @@ public class LayoutOptionManager {
         
         // create basic layout configuration
         CompoundLayoutConfig clc = new CompoundLayoutConfig();
-        clc.add(new DefaultLayoutConfig());
-        if (layoutMapping.getProperty(USE_ECLIPSE_LAYOUT_CONFIG)) {
-            clc.add(new EclipseLayoutConfig());
-        }
+        clc.add(defaultLayoutConfig);
+        clc.addAll(LayoutInfoService.getInstance().getActiveConfigs());
         clc.addAll(layoutMapping.getLayoutConfigs());
 
         // configure the layout graph recursively
@@ -91,8 +88,8 @@ public class LayoutOptionManager {
     public IMutableLayoutConfig createConfig(final EObject domainElement,
             final ILayoutConfig... extraConfigs) {
         CompoundLayoutConfig clc = new CompoundLayoutConfig();
-        clc.add(new DefaultLayoutConfig());
-        clc.add(new EclipseLayoutConfig());
+        clc.add(defaultLayoutConfig);
+        clc.addAll(LayoutInfoService.getInstance().getActiveConfigs());
         clc.addAll(getSemanticConfigs(domainElement));
         for (ILayoutConfig conf : extraConfigs) {
             clc.add(conf);

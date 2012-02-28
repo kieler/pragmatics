@@ -17,7 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * The class which represents an analysis batch.
@@ -27,7 +27,7 @@ import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 public class Batch {
 
     /** the analyses. */
-    private List<AbstractInfoAnalysis> analyses;
+    private List<AnalysisData> analyses;
     /** the batch jobs. */
     private List<BatchJob<?>> batchJobs = new LinkedList<BatchJob<?>>();
 
@@ -37,7 +37,7 @@ public class Batch {
      * @param theAnalyses
      *            the analyses which will be exectuted in the batch run
      */
-    public Batch(final List<AbstractInfoAnalysis> theAnalyses) {
+    public Batch(final List<AnalysisData> theAnalyses) {
         analyses = theAnalyses;
     }
 

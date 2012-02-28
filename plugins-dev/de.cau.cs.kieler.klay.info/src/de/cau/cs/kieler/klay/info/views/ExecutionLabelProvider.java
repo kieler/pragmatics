@@ -36,8 +36,8 @@ public class ExecutionLabelProvider extends LabelProvider {
      * Creates an execution label provider.
      */
     public ExecutionLabelProvider() {
-        elementImage = KimlViewerPlugin
-                .imageDescriptorFromPlugin(KimlViewerPlugin.PLUGIN_ID, IMAGE_PATH).createImage();
+        elementImage = KimlViewerPlugin.imageDescriptorFromPlugin(
+                KimlViewerPlugin.PLUGIN_ID, IMAGE_PATH).createImage();
     }
 
     /**
@@ -99,6 +99,7 @@ public class ExecutionLabelProvider extends LabelProvider {
         super.dispose();
         if (elementImage != null) {
             elementImage.dispose();
+            elementImage = null;
         }
     }
 

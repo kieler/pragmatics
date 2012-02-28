@@ -24,14 +24,14 @@
       </layoutOption>
    </extension>
    <extension
-         point="de.cau.cs.kieler.kiml.grana.analysisProviders">
-      <provider
+         point="de.cau.cs.kieler.kiml.service.analysisProviders">
+      <analysis
             category="de.cau.cs.kieler.kiml.grana.basic"
             class="de.cau.cs.kieler.klay.planar.PlanarityAnalysis"
-            description="Check if a graph is planar, i.e. if a embedding for the graph exists, so that there are no crossing edges."
-            id="de.cau.cs.kieler.klay.planar.analysis.planarity"
-            name="Planarity Analysis">
-      </provider>
+            description="The number of edges to remove for a planar subgraph, that is one that allows a drawing with no edge crossings."
+            id="de.cau.cs.kieler.klay.planarity"
+            name="Planarity">
+      </analysis>
    </extension>
 
 </plugin>
