@@ -15,11 +15,9 @@ package de.cau.cs.kieler.klay.layered.components;
 
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -65,6 +63,46 @@ class ComponentGroup {
     ///////////////////////////////////////////////////////////////////////////////
     // Constants
     
+    // External Port Connection Constants
+    
+    /** Constant for components with connections to no external port. */
+    public static final Set<PortSide> CONN_C = EnumSet.noneOf(PortSide.class);
+    /** Constant for components with connections to external port sides: west. */
+    public static final Set<PortSide> CONN_W = EnumSet.of(PortSide.WEST);
+    /** Constant for components with connections to external port sides: east. */
+    public static final Set<PortSide> CONN_E = EnumSet.of(PortSide.EAST);
+    /** Constant for components with connections to external port sides: north. */
+    public static final Set<PortSide> CONN_N = EnumSet.of(PortSide.NORTH);
+    /** Constant for components with connections to external port sides: south. */
+    public static final Set<PortSide> CONN_S = EnumSet.of(PortSide.SOUTH);
+    /** Constant for components with connections to external port sides: north, south. */
+    public static final Set<PortSide> CONN_NS = EnumSet.of(PortSide.NORTH, PortSide.SOUTH);
+    /** Constant for components with connections to external port sides: east, west. */
+    public static final Set<PortSide> CONN_WE = EnumSet.of(PortSide.EAST, PortSide.WEST);
+    /** Constant for components with connections to external port sides: north, west. */
+    public static final Set<PortSide> CONN_NW = EnumSet.of(PortSide.NORTH, PortSide.WEST);
+    /** Constant for components with connections to external port sides: north, east. */
+    public static final Set<PortSide> CONN_NE = EnumSet.of(PortSide.NORTH, PortSide.EAST);
+    /** Constant for components with connections to external port sides: south, west. */
+    public static final Set<PortSide> CONN_SW = EnumSet.of(PortSide.SOUTH, PortSide.WEST);
+    /** Constant for components with connections to external port sides: south, east. */
+    public static final Set<PortSide> CONN_SE = EnumSet.of(PortSide.SOUTH, PortSide.EAST);
+    /** Constant for components with connections to external port sides: north, west, east. */
+    public static final Set<PortSide> CONN_NWE = EnumSet.of(
+            PortSide.NORTH, PortSide.WEST, PortSide.EAST);
+    /** Constant for components with connections to external port sides: south, west, east. */
+    public static final Set<PortSide> CONN_SWE = EnumSet.of(
+            PortSide.SOUTH, PortSide.WEST, PortSide.EAST);
+    /** Constant for components with connections to external port sides: west, north, south. */
+    public static final Set<PortSide> CONN_WNS = EnumSet.of(
+            PortSide.WEST, PortSide.NORTH, PortSide.SOUTH);
+    /** Constant for components with connections to external port sides: east, north, south. */
+    public static final Set<PortSide> CONN_ENS = EnumSet.of(
+            PortSide.EAST, PortSide.NORTH, PortSide.SOUTH);
+    
+    
+    // External Port Connection Constraints
+    
     /**
      * A map of constraints used to decide whether a component can be placed in this group.
      * 
@@ -78,76 +116,57 @@ class ComponentGroup {
     private static final Multimap<Set<PortSide>, Set<PortSide>> CONSTRAINTS = HashMultimap.create();
     
     static {
-        // Create the 15 possible port side combination sets (except for the case without port
-        // connections, which doesn't have any constraints)
-        Set<PortSide> w = EnumSet.of(PortSide.WEST);
-        Set<PortSide> e = EnumSet.of(PortSide.EAST);
-        Set<PortSide> n = EnumSet.of(PortSide.NORTH);
-        Set<PortSide> s = EnumSet.of(PortSide.SOUTH);
-
-        Set<PortSide> ns = EnumSet.of(PortSide.NORTH, PortSide.SOUTH);
-        Set<PortSide> we = EnumSet.of(PortSide.EAST, PortSide.WEST);
-        Set<PortSide> nw = EnumSet.of(PortSide.NORTH, PortSide.WEST);
-        Set<PortSide> ne = EnumSet.of(PortSide.NORTH, PortSide.EAST);
-        Set<PortSide> sw = EnumSet.of(PortSide.SOUTH, PortSide.WEST);
-        Set<PortSide> se = EnumSet.of(PortSide.SOUTH, PortSide.EAST);
-        
-        Set<PortSide> nwe = EnumSet.of(PortSide.NORTH, PortSide.WEST, PortSide.EAST);
-        Set<PortSide> swe = EnumSet.of(PortSide.SOUTH, PortSide.WEST, PortSide.EAST);
-        Set<PortSide> wns = EnumSet.of(PortSide.WEST, PortSide.NORTH, PortSide.SOUTH);
-        Set<PortSide> ens = EnumSet.of(PortSide.EAST, PortSide.NORTH, PortSide.SOUTH);
-        
         // Setup constraints
-        CONSTRAINTS.put(w, wns);
-        CONSTRAINTS.put(e, ens);
-        CONSTRAINTS.put(n, nwe);
-        CONSTRAINTS.put(s, swe);
-        CONSTRAINTS.put(ns, we);
-        CONSTRAINTS.put(ns, nwe);
-        CONSTRAINTS.put(ns, swe);
-        CONSTRAINTS.put(we, ns);
-        CONSTRAINTS.put(we, wns);
-        CONSTRAINTS.put(we, ens);
-        CONSTRAINTS.put(nw, nw);
-        CONSTRAINTS.put(nw, nwe);
-        CONSTRAINTS.put(nw, wns);
-        CONSTRAINTS.put(ne, ne);
-        CONSTRAINTS.put(ne, nwe);
-        CONSTRAINTS.put(ne, ens);
-        CONSTRAINTS.put(sw, sw);
-        CONSTRAINTS.put(sw, swe);
-        CONSTRAINTS.put(sw, wns);
-        CONSTRAINTS.put(se, se);
-        CONSTRAINTS.put(se, swe);
-        CONSTRAINTS.put(se, ens);
-        CONSTRAINTS.put(nwe, n);
-        CONSTRAINTS.put(nwe, ns);
-        CONSTRAINTS.put(nwe, nw);
-        CONSTRAINTS.put(nwe, ne);
-        CONSTRAINTS.put(nwe, nwe);
-        CONSTRAINTS.put(nwe, wns);
-        CONSTRAINTS.put(nwe, ens);
-        CONSTRAINTS.put(swe, s);
-        CONSTRAINTS.put(swe, ns);
-        CONSTRAINTS.put(swe, sw);
-        CONSTRAINTS.put(swe, se);
-        CONSTRAINTS.put(swe, swe);
-        CONSTRAINTS.put(swe, wns);
-        CONSTRAINTS.put(swe, ens);
-        CONSTRAINTS.put(wns, w);
-        CONSTRAINTS.put(wns, we);
-        CONSTRAINTS.put(wns, nw);
-        CONSTRAINTS.put(wns, sw);
-        CONSTRAINTS.put(wns, nwe);
-        CONSTRAINTS.put(wns, swe);
-        CONSTRAINTS.put(wns, wns);
-        CONSTRAINTS.put(ens, e);
-        CONSTRAINTS.put(ens, we);
-        CONSTRAINTS.put(ens, ne);
-        CONSTRAINTS.put(ens, se);
-        CONSTRAINTS.put(ens, nwe);
-        CONSTRAINTS.put(ens, swe);
-        CONSTRAINTS.put(ens, ens);
+        CONSTRAINTS.put(CONN_W, CONN_WNS);
+        CONSTRAINTS.put(CONN_E, CONN_ENS);
+        CONSTRAINTS.put(CONN_N, CONN_NWE);
+        CONSTRAINTS.put(CONN_S, CONN_SWE);
+        CONSTRAINTS.put(CONN_NS, CONN_WE);
+        CONSTRAINTS.put(CONN_NS, CONN_NWE);
+        CONSTRAINTS.put(CONN_NS, CONN_SWE);
+        CONSTRAINTS.put(CONN_WE, CONN_NS);
+        CONSTRAINTS.put(CONN_WE, CONN_WNS);
+        CONSTRAINTS.put(CONN_WE, CONN_ENS);
+        CONSTRAINTS.put(CONN_NW, CONN_NW);
+        CONSTRAINTS.put(CONN_NW, CONN_NWE);
+        CONSTRAINTS.put(CONN_NW, CONN_WNS);
+        CONSTRAINTS.put(CONN_NE, CONN_NE);
+        CONSTRAINTS.put(CONN_NE, CONN_NWE);
+        CONSTRAINTS.put(CONN_NE, CONN_ENS);
+        CONSTRAINTS.put(CONN_SW, CONN_SW);
+        CONSTRAINTS.put(CONN_SW, CONN_SWE);
+        CONSTRAINTS.put(CONN_SW, CONN_WNS);
+        CONSTRAINTS.put(CONN_SE, CONN_SE);
+        CONSTRAINTS.put(CONN_SE, CONN_SWE);
+        CONSTRAINTS.put(CONN_SE, CONN_ENS);
+        CONSTRAINTS.put(CONN_NWE, CONN_N);
+        CONSTRAINTS.put(CONN_NWE, CONN_NS);
+        CONSTRAINTS.put(CONN_NWE, CONN_NW);
+        CONSTRAINTS.put(CONN_NWE, CONN_NE);
+        CONSTRAINTS.put(CONN_NWE, CONN_NWE);
+        CONSTRAINTS.put(CONN_NWE, CONN_WNS);
+        CONSTRAINTS.put(CONN_NWE, CONN_ENS);
+        CONSTRAINTS.put(CONN_SWE, CONN_S);
+        CONSTRAINTS.put(CONN_SWE, CONN_NS);
+        CONSTRAINTS.put(CONN_SWE, CONN_SW);
+        CONSTRAINTS.put(CONN_SWE, CONN_SE);
+        CONSTRAINTS.put(CONN_SWE, CONN_SWE);
+        CONSTRAINTS.put(CONN_SWE, CONN_WNS);
+        CONSTRAINTS.put(CONN_SWE, CONN_ENS);
+        CONSTRAINTS.put(CONN_WNS, CONN_W);
+        CONSTRAINTS.put(CONN_WNS, CONN_WE);
+        CONSTRAINTS.put(CONN_WNS, CONN_NW);
+        CONSTRAINTS.put(CONN_WNS, CONN_SW);
+        CONSTRAINTS.put(CONN_WNS, CONN_NWE);
+        CONSTRAINTS.put(CONN_WNS, CONN_SWE);
+        CONSTRAINTS.put(CONN_WNS, CONN_WNS);
+        CONSTRAINTS.put(CONN_ENS, CONN_E);
+        CONSTRAINTS.put(CONN_ENS, CONN_WE);
+        CONSTRAINTS.put(CONN_ENS, CONN_NE);
+        CONSTRAINTS.put(CONN_ENS, CONN_SE);
+        CONSTRAINTS.put(CONN_ENS, CONN_NWE);
+        CONSTRAINTS.put(CONN_ENS, CONN_SWE);
+        CONSTRAINTS.put(CONN_ENS, CONN_ENS);
     }
     
     
@@ -155,9 +174,9 @@ class ComponentGroup {
     // Variables
     
     /**
-     * The list of connected components in this group.
+     * A map mapping external port side combinations to components in this group.
      */
-    private List<LayeredGraph> components = Lists.newLinkedList();
+    private Multimap<Set<PortSide>, LayeredGraph> components = HashMultimap.create();
     
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -194,7 +213,9 @@ class ComponentGroup {
      */
     public boolean add(final LayeredGraph component) {
         if (canAdd(component)) {
-            components.add(component);
+            components.put(
+                    component.getProperty(Properties.EXT_PORT_CONNECTIONS),
+                    component);
             return true;
         } else {
             return false;
@@ -211,13 +232,11 @@ class ComponentGroup {
     private boolean canAdd(final LayeredGraph component) {
         // Check if we have a component with incompatible external port sides
         Set<PortSide> candidateSides = component.getProperty(Properties.EXT_PORT_CONNECTIONS);
-        Collection<Set<PortSide>> portSideConstraints = CONSTRAINTS.get(candidateSides);
+        Collection<Set<PortSide>> constraints = CONSTRAINTS.get(candidateSides);
         
-        for (LayeredGraph existingComponent : components) {
-            Set<PortSide> existingSides = existingComponent.getProperty(Properties.EXT_PORT_CONNECTIONS);
-            
-            if (portSideConstraints.contains(existingSides)) {
-                // A component has one of the incompatible port side sets
+        for (Set<PortSide> constraint : constraints) {
+            if (!components.get(constraint).isEmpty()) {
+                // A component with a conflicting external port side combination exists
                 return false;
             }
         }
