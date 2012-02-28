@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
+import de.cau.cs.kieler.kiml.options.GraphFeatures;
 
 /**
  * A layout data service that reads its content from the Eclipse extension registry.
@@ -51,6 +52,8 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     public static final String ELEMENT_LAYOUT_OPTION = "layoutOption";
     /** name of the 'supported diagram' element in the 'layout providers' extension point. */
     public static final String ELEMENT_SUPPORTED_DIAGRAM = "supportedDiagram";
+    /** name of the 'supported feature' element in the 'layout providers' extension point. */
+    public static final String ELEMENT_SUPPORTED_FEATURE = "supportedFeature";
     /** name of the 'advanced' attribute in the extension points. */
     public static final String ATTRIBUTE_ADVANCED = "advanced";
     /** name of the 'appliesTo' attribute in the extension points. */
@@ -63,6 +66,8 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     public static final String ATTRIBUTE_DEFAULT = "default";
     /** name of the 'description' attribute in the extension points. */
     public static final String ATTRIBUTE_DESCRIPTION = "description";
+    /** name of the 'feature' attribute in the extension points. */
+    public static final String ATTRIBUTE_FEATURE = "feature";
     /** name of the 'id' attribute in the extension points. */
     public static final String ATTRIBUTE_ID = "id";
     /** name of the 'name' attribute in the extension points. */
@@ -76,11 +81,9 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     /** name of the 'type' attribute in the extension points. */
     public static final String ATTRIBUTE_TYPE = "type";
     /** name of the 'enumValues' attribute used in doing remote layout. */
-    public static final String ATTRIBUTE_ENUMVALUES
-        = "enumValues";
-    /** The name of the 'implementation' attribute of a layout option of type 'remoteenum'. */
-    public static final String ATTRIBUTE_IMPLEMENTATION
-        = "implementation";
+    public static final String ATTRIBUTE_ENUMVALUES = "enumValues";
+    /** name of the 'implementation' attribute of a layout option of type 'remoteenum'. */
+    public static final String ATTRIBUTE_IMPLEMENTATION = "implementation";
     
     /**
      * Report an error that occurred while reading extensions.
@@ -274,7 +277,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
             algoData.setType(layoutType);
             typeData.getLayouters().add(algoData);
             
-            // process child elements (known options and supported diagrams)
+            // process child elements (known options and supported diagrams and features)
             for (IConfigurationElement child : element.getChildren()) {
                 if (ELEMENT_KNOWN_OPTION.equals(child.getName())) {
                     String option = child.getAttribute(ATTRIBUTE_OPTION);
@@ -282,23 +285,33 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
                         String defaultValue = child.getAttribute(ATTRIBUTE_DEFAULT);
                         knownOptions.add(new String[] { layouterId, option, defaultValue });
                     } else {
-                        reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
-                                ATTRIBUTE_OPTION, null);
+                        reportError(EXTP_ID_LAYOUT_PROVIDERS, child, ATTRIBUTE_OPTION, null);
                     }
                 } else if (ELEMENT_SUPPORTED_DIAGRAM.equals(child.getName())) {
                     String type = child.getAttribute(ATTRIBUTE_TYPE);
                     if (type == null || type.length() == 0) {
-                        reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
-                                ATTRIBUTE_TYPE, null);
+                        reportError(EXTP_ID_LAYOUT_PROVIDERS, child, ATTRIBUTE_TYPE, null);
                     } else {
                         String priority = child.getAttribute(ATTRIBUTE_PRIORITY);
                         try {
                             algoData.setDiagramSupport(type,
                                     Integer.parseInt(priority));
                         } catch (NumberFormatException exception) {
-                            reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
-                                    ATTRIBUTE_PRIORITY, exception);
+                            reportError(EXTP_ID_LAYOUT_PROVIDERS, child, ATTRIBUTE_PRIORITY,
+                                    exception);
                         }
+                    }
+                } else if (ELEMENT_SUPPORTED_FEATURE.equals(child.getName())) {
+                    String featureString = child.getAttribute(ATTRIBUTE_FEATURE);
+                    if (featureString != null) {
+                        try {
+                            algoData.getSupportedFeatures().add(GraphFeatures.valueOf(
+                                    featureString.toUpperCase()));
+                        } catch (IllegalArgumentException exception) {
+                            reportError(EXTP_ID_LAYOUT_PROVIDERS, child, ATTRIBUTE_FEATURE, exception);
+                        }
+                    } else {
+                        reportError(EXTP_ID_LAYOUT_PROVIDERS, child, ATTRIBUTE_FEATURE, null);
                     }
                 }
             }            
@@ -354,8 +367,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
             return;
         }    
         try {
-            Object defaultValue = optionData.parseValue(
-                    element.getAttribute(ATTRIBUTE_DEFAULT));
+            Object defaultValue = optionData.parseValue(element.getAttribute(ATTRIBUTE_DEFAULT));
             optionData.setDefault(defaultValue);
         } catch (IllegalStateException exception) {
             reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_CLASS, exception);

@@ -21,6 +21,14 @@
             name="Layout Time"
             restorable="true">
       </view>
+      <view
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.klay.info.views.SmartLayoutView"
+            icon="icons/smart.gif"
+            id="de.cau.cs.kieler.klay.info.smart"
+            name="Smart Layout"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="de.cau.cs.kieler.core.kivi.combinations">

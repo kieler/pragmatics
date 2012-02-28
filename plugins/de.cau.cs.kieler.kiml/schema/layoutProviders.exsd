@@ -62,6 +62,7 @@ Layout providers can be grouped using categories, and they can be given a type t
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="knownOption"/>
             <element ref="supportedDiagram"/>
+            <element ref="supportedFeature"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -278,7 +279,7 @@ Apart from a set of default layout types offered by KIML, new layout providers a
    <element name="knownOption">
       <annotation>
          <documentation>
-            Declares that the layout provider knows the option referenced by an identifier. Only the known options of a layout provider can be modified by the user.
+            Declares that the layout algorithm knows the option referenced by an identifier. Only the known options of a layout provider can be modified by the user.
          </documentation>
       </annotation>
       <complexType>
@@ -305,7 +306,7 @@ Apart from a set of default layout types offered by KIML, new layout providers a
    <element name="supportedDiagram">
       <annotation>
          <documentation>
-            Declares that the layout provider supports the diagram referenced by an identifier. If a layout provider supports a specific diagram type and it has the highest priority for that type, it is always chosen as the default layout provider for diagrams of that type. These priorities can be changed in the UI at runtime.
+            Declares that the layout algorithm supports the diagram referenced by an identifier. If a layout provider supports a specific diagram type and it has the highest priority for that type, it is chosen as the default layout provider for diagrams of that type.
          </documentation>
       </annotation>
       <complexType>
@@ -323,6 +324,23 @@ Apart from a set of default layout types offered by KIML, new layout providers a
             <annotation>
                <documentation>
                   An integer value that defines the relative priority of the layout provider for this diagram type. The layout provider with highest priority is chosen as the default provider for that type.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="supportedFeature">
+      <annotation>
+         <documentation>
+            Declares that the layout algorithm supports the graph feature referenced by this element.  Graph feature support is used to automatically determine the most suitable layout algorithm for a graph.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="feature" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The supported feature: SELF_LOOPS, MULTI_EDGES, EDGE_LABELS, PORTS, COMPOUND, or CLUSTERS
                </documentation>
             </annotation>
          </attribute>

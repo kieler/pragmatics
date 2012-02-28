@@ -28,6 +28,18 @@ public class LayoutTypeData implements ILayoutData {
     /** default name for layout types for which no name is given. */
     public static final String DEFAULT_TYPE_NAME = "<Unnamed Type>";
     
+    /** type identifier for layer based algorithms. */
+    public static final String TYPE_LAYERED = "de.cau.cs.kieler.type.layered";
+    /** type identifier for orthogonalization algorithms. */
+    public static final String TYPE_ORTHOGONAL = "de.cau.cs.kieler.type.orthogonal";
+    /** type identifier for force based algorithms. */
+    public static final String TYPE_FORCE = "de.cau.cs.kieler.type.force";
+    /** type identifier for circular algorithms. */
+    public static final String TYPE_CIRCLE = "de.cau.cs.kieler.type.circle";
+    /** type identifier for tree algorithms. */
+    public static final String TYPE_TREE = "de.cau.cs.kieler.type.tree";
+
+    
     /** identifier of the layout type. */
     private String id = "";
     /** user friendly name of the layout type. */

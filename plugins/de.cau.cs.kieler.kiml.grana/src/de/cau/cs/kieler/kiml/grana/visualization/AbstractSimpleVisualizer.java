@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.grana.visualization;
 
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * An abstract base class for result visualizers. It provides a simpler
@@ -30,7 +30,7 @@ public abstract class AbstractSimpleVisualizer<S> implements
     /**
      * {@inheritDoc}
      */
-    public S visualize(final AbstractInfoAnalysis analysis,
+    public S visualize(final AnalysisData analysis,
             final Object result, final Object parameter) {
         return visualize(analysis, result);
     }
@@ -46,6 +46,6 @@ public abstract class AbstractSimpleVisualizer<S> implements
      *            the analysis result
      * @return the visualization result
      */
-    public abstract S visualize(final AbstractInfoAnalysis analysis,
+    public abstract S visualize(final AnalysisData analysis,
             final Object result);
 }

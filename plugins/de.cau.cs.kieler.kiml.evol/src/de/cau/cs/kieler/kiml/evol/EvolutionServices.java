@@ -23,9 +23,9 @@ import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.AnalysisCategory;
-import de.cau.cs.kieler.kiml.grana.AnalysisServices;
+import de.cau.cs.kieler.kiml.service.AnalysisService;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisCategory;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * This singleton class is responsible for reading the evolution extensions.
@@ -90,7 +90,7 @@ public final class EvolutionServices {
     private HashMap<String, IConfigurationElement> layoutMetricsMap;
 
     /** Set of the cached metrics. */
-    private Set<AbstractInfoAnalysis> cachedMetrics;
+    private Set<AnalysisData> cachedMetrics;
 
     /**
      *
@@ -156,7 +156,7 @@ public final class EvolutionServices {
      *
      * @return the set of layout metrics
      */
-    public Set<AbstractInfoAnalysis> getLayoutMetrics() {
+    public Set<AnalysisData> getLayoutMetrics() {
         assert this.cachedMetrics != null;
         return Collections.unmodifiableSet(this.cachedMetrics);
     }
@@ -184,16 +184,16 @@ public final class EvolutionServices {
     private void loadLayoutMetricsExtensions() {
         IConfigurationElement[] extensions =
                 Platform.getExtensionRegistry().getConfigurationElementsFor(
-                        AnalysisServices.EXTP_ID_ANALYSIS_PROVIDERS);
+                        AnalysisService.EXTP_ID_ANALYSIS_PROVIDERS);
 
         // get the metrics via the respective analysis category
         AnalysisCategory metricsCategory =
-                AnalysisServices.getInstance().getCategoryById(METRICS_CATEGORY);
-        List<AbstractInfoAnalysis> metrics = metricsCategory.getAnalyses();
+                AnalysisService.getInstance().getCategoryById(METRICS_CATEGORY);
+        List<AnalysisData> metrics = metricsCategory.getAnalyses();
         assert metrics != null;
         List<String> metricIds = new ArrayList<String>(metrics.size());
 
-        for (final AbstractInfoAnalysis metric : metrics) {
+        for (final AnalysisData metric : metrics) {
             metricIds.add(metric.getId());
         }
 
@@ -201,7 +201,7 @@ public final class EvolutionServices {
 
         // Store the configuration elements of the metrics.
         for (final IConfigurationElement element : extensions) {
-            if (AnalysisServices.ELEMENT_ANALYSIS_PROVIDER.equals(element.getName())) {
+            if ("analysis".equals(element.getName())) {
                 String id = element.getAttribute("id");
                 if (metricIds.contains(id)) {
                     this.layoutMetricsMap.put(id, element);
@@ -211,6 +211,6 @@ public final class EvolutionServices {
 
         // We have the metrics here, so we cache them additionally
         // to storing their configuration element.
-        this.cachedMetrics = new HashSet<AbstractInfoAnalysis>(metrics);
+        this.cachedMetrics = new HashSet<AnalysisData>(metrics);
     }
 }

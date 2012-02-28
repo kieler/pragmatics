@@ -31,33 +31,22 @@ public class TreeLayouter extends OgdfLayouter {
 
     /** 'direction' property. */
     private static final IProperty<Direction> DIRECTION = new Property<Direction>(
-            LayoutOptions.DIRECTION, Direction.UP);
+            LayoutOptions.DIRECTION, Direction.RIGHT);
     /** 'edgeRouting' property. */
     private static final IProperty<EdgeRouting> EDGE_ROUTING = new Property<EdgeRouting>(
             LayoutOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
-    /** the 'siblingDistance' option identifier. */
-    private static final String SIBLING_DISTANCE_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistSibling";
     /** 'siblingDistance' property. */
     private static final IProperty<Float> SIBLING_DISTANCE = new Property<Float>(
-            SIBLING_DISTANCE_ID, 20.0f);
-    /** the 'subtreeDistance' option identifier. */
-    private static final String SUBTREE_DISTANCE_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.subtreeDistance";
-    /** 'subtreeDistance' property. */
+            LayoutOptions.SPACING, 20.0f);
+    /** factor for 'levelDistance' property. */
+    private static final IProperty<Float> LEVEL_DISTANCE = new Property<Float>(
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 1.0f);
+    /** factor for 'subtreeDistance' property. */
     private static final IProperty<Float> SUBTREE_DISTANCE = new Property<Float>(
-            SUBTREE_DISTANCE_ID, 20.0f);
-    /** the 'levelDistance' option identifier. */
-    private static final String LEVEL_DISTANCE_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.levelDistance";
-    /** 'levelDistance' property. */
-    private static final IProperty<Float> LEVEL_DISTANCE = new Property<Float>(LEVEL_DISTANCE_ID,
-            50.0f);
-    /** the 'treeDistance' option identifier. */
-    private static final String TREE_DISTANCE_ID = "de.cau.cs.kieler.kiml.ogdf.option.treeDistance";
-    /** 'treeDistance' property. */
-    private static final IProperty<Float> TREE_DISTANCE = new Property<Float>(TREE_DISTANCE_ID,
-            50.0f);
+            "de.cau.cs.kieler.kiml.ogdf.option.subtreeDistance", 1.0f);
+    /** factor for 'treeDistance' property. */
+    private static final IProperty<Float> TREE_DISTANCE = new Property<Float>(
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 1.0f);
 
     /** the self-loop router algorithm. */
     private SelfLoopRouter loopRouter = new SelfLoopRouter();
@@ -76,17 +65,19 @@ public class TreeLayouter extends OgdfLayouter {
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // direction
         Direction direction = parentLayout.getProperty(DIRECTION);
-        int orientation = OgdfServer.ORIENTATION_BOTTOM_TO_TOP;
+        int orientation;
         switch (direction) {
         case LEFT:
             orientation = OgdfServer.ORIENTATION_RIGHT_TO_LEFT;
             break;
-        case RIGHT:
-            orientation = OgdfServer.ORIENTATION_LEFT_TO_RIGHT;
-            break;
         case UP:
             orientation = OgdfServer.ORIENTATION_TOP_TO_BOTTOM;
             break;
+        case DOWN:
+            orientation = OgdfServer.ORIENTATION_BOTTOM_TO_TOP;
+            break;
+        default:
+            orientation = OgdfServer.ORIENTATION_LEFT_TO_RIGHT;
         }
         addOption(OgdfServer.OPTION_ORIENTATION, orientation);
         // edgeRouting
@@ -96,15 +87,15 @@ public class TreeLayouter extends OgdfLayouter {
         // siblingDistance
         float siblingDistance = parentLayout.getProperty(SIBLING_DISTANCE);
         addOption(OgdfServer.OPTION_SIBLING_DISTANCE, siblingDistance);
-        // subtreeDistance
-        float subtreeDistance = parentLayout.getProperty(SUBTREE_DISTANCE);
-        addOption(OgdfServer.OPTION_SUBTREE_DISTANCE, subtreeDistance);
         // levelDistance
-        float levelDistance = parentLayout.getProperty(LEVEL_DISTANCE);
-        addOption(OgdfServer.OPTION_LEVEL_DISTANCE, levelDistance);
+        float levelDistanceFactor = parentLayout.getProperty(LEVEL_DISTANCE);
+        addOption(OgdfServer.OPTION_LEVEL_DISTANCE, siblingDistance * levelDistanceFactor);
+        // subtreeDistance
+        float subtreeDistanceFactor = parentLayout.getProperty(SUBTREE_DISTANCE);
+        addOption(OgdfServer.OPTION_SUBTREE_DISTANCE, siblingDistance * subtreeDistanceFactor);
         // treeDistance
-        float treeDistance = parentLayout.getProperty(TREE_DISTANCE);
-        addOption(OgdfServer.OPTION_TREE_DISTANCE, treeDistance);
+        float treeDistanceFactor = parentLayout.getProperty(TREE_DISTANCE);
+        addOption(OgdfServer.OPTION_TREE_DISTANCE, siblingDistance * treeDistanceFactor);
         // remove self-loops from the graph
         loopRouter.preProcess(layoutNode);
     }
