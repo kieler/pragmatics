@@ -44,7 +44,7 @@ public class SpringEmbedderFRLayouter extends OgdfLayouter {
             "de.cau.cs.kieler.kiml.ogdf.option.noise", true);
     /** 'minDistCC' property. */
     private static final IProperty<Float> MIN_DIST_CC = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 20.0f);
+            LayoutOptions.SPACING, 20.0f);
 
     /**
      * Constructs a SpringEmbedderFRLayouter.

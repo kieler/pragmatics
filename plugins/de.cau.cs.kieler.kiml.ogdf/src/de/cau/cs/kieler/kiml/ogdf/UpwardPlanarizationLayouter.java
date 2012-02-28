@@ -41,9 +41,9 @@ public class UpwardPlanarizationLayouter extends OgdfLayouter {
     /** 'spacing' property. */
     private static final IProperty<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
             DEF_SPACING);
-    /** 'layerDistance' property. */
+    /** factor for 'layerDistance' property. */
     private static final IProperty<Float> LAYER_DISTANCE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 20.0f);
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 1.0f);
 
     /** the self-loop router algorithm. */
     private SelfLoopRouter loopRouter = new SelfLoopRouter();
@@ -107,8 +107,8 @@ public class UpwardPlanarizationLayouter extends OgdfLayouter {
         float minSpacing = parentLayout.getProperty(SPACING);
         addOption(OgdfServer.OPTION_NODE_DISTANCE, minSpacing);
         // layerDistance
-        float layerDistance = parentLayout.getProperty(LAYER_DISTANCE);
-        addOption(OgdfServer.OPTION_LAYER_DISTANCE, layerDistance);
+        float layerDistanceFactor = parentLayout.getProperty(LAYER_DISTANCE);
+        addOption(OgdfServer.OPTION_LAYER_DISTANCE, minSpacing * layerDistanceFactor);
         // remove self-loops from the graph
         loopRouter.preProcess(layoutNode);
     }

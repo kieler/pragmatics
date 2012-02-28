@@ -33,17 +33,12 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  */
 public class PlanarizationLayouter extends OgdfLayouter {
 
-    /** default value for page ratio. */
-    public static final float DEF_PAGE_RATIO = 1.3f;
-    /** default value for spacing. */
-    public static final float DEF_SPACING = 20.0f;
-
     /** 'aspectRatio' property. */
     private static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
-            LayoutOptions.ASPECT_RATIO, DEF_PAGE_RATIO);
-    /** 'spacing' property. */
-    private static final IProperty<Float> SPACING = new Property<Float>(
-            LayoutOptions.SPACING, DEF_SPACING, 1.0f);
+            LayoutOptions.ASPECT_RATIO, 1.3f);
+    /** 'separation' property. */
+    private static final IProperty<Float> SEPARATION = new Property<Float>(
+            LayoutOptions.SPACING, 20.0f, 1.0f);
     /** 'direction' property. */
     private static final IProperty<Direction> DIRECTION = new Property<Direction>(
             LayoutOptions.DIRECTION, Direction.UP);
@@ -79,8 +74,8 @@ public class PlanarizationLayouter extends OgdfLayouter {
         float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
         addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
         // minSpacing
-        float minSpacing = parentLayout.getProperty(SPACING);
-        addOption(OgdfServer.OPTION_SEPARATION, minSpacing);
+        float separation = parentLayout.getProperty(SEPARATION);
+        addOption(OgdfServer.OPTION_SEPARATION, separation);
         // layoutDirection
         Direction direction = parentLayout.getProperty(DIRECTION);
         int layoutDirection;

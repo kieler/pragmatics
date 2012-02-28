@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Maps;
 
@@ -232,6 +233,12 @@ public class SmartLayoutConfig implements ILayoutConfig {
         if (maxValue >= SUITABILITY_THRESHOLD) {
             // apply the meta layout of the most suitable rule
             bestRule.applyMetaLayout(metaLayout);
+            // activate hierarchy layout for compound graphs and cluster graphs
+            Set<GraphFeatures> graphFeatures = metaLayout.getGraphFeatures();
+            if (graphFeatures.contains(GraphFeatures.COMPOUND)
+                    || graphFeatures.contains(GraphFeatures.CLUSTERS)) {
+                metaLayout.getConfig().put(LayoutOptions.LAYOUT_HIERARCHY, true);
+            }
         }
         
         return metaLayout;

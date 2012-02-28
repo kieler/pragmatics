@@ -27,17 +27,12 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  */
 public class SugiyamaLayouter extends OgdfLayouter {
     
-    /** default value for page ratio. */
-    public static final float DEF_PAGE_RATIO = 1.3f;
-    /** default value for spacing. */
-    public static final float DEF_SPACING = 16.0f;
-
     /** 'aspectRatio' property. */
     private static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
-            LayoutOptions.ASPECT_RATIO, DEF_PAGE_RATIO);
-    /** 'spacing' property. */
-    private static final IProperty<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
-            DEF_SPACING);
+            LayoutOptions.ASPECT_RATIO, 1.3f);
+    /** 'nodeDistance' property. */
+    private static final IProperty<Float> NODE_DISTANCE = new Property<Float>(LayoutOptions.SPACING,
+            16.0f);
     /** 'fails' property. */
     private static final IProperty<Integer> FAILS = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.fails", 4);
@@ -49,10 +44,10 @@ public class SugiyamaLayouter extends OgdfLayouter {
             "de.cau.cs.kieler.kiml.ogdf.option.transpose", true);
     /** 'minDistCC' property. */
     private static final IProperty<Float> MIN_DIST_CC = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 20.0f);
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 1.0f);
     /** 'layerDistance' property. */
     private static final IProperty<Float> LAYER_DISTANCE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 16.0f);
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 1.0f);
 
     /** the self-loop router algorithm. */
     private SelfLoopRouter loopRouter = new SelfLoopRouter();
@@ -73,7 +68,7 @@ public class SugiyamaLayouter extends OgdfLayouter {
         float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
         addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
         // minSpacing
-        float minSpacing = parentLayout.getProperty(SPACING);
+        float minSpacing = parentLayout.getProperty(NODE_DISTANCE);
         addOption(OgdfServer.OPTION_NODE_DISTANCE, minSpacing);
         // fails
         int fails = parentLayout.getProperty(FAILS);
@@ -88,11 +83,11 @@ public class SugiyamaLayouter extends OgdfLayouter {
         Boolean arrangeCCs = parentLayout.getProperty(LayoutOptions.SEPARATE_CC);
         addOption(OgdfServer.OPTION_ARRANGE_CC, arrangeCCs != null && arrangeCCs.booleanValue());
         // minDistCC
-        float minDistCC = parentLayout.getProperty(MIN_DIST_CC);
-        addOption(OgdfServer.OPTION_MIN_DIST_CC, minDistCC);
+        float minDistCCFactor = parentLayout.getProperty(MIN_DIST_CC);
+        addOption(OgdfServer.OPTION_MIN_DIST_CC, minSpacing * minDistCCFactor);
         // layerDistance
-        float layerDistance = parentLayout.getProperty(LAYER_DISTANCE);
-        addOption(OgdfServer.OPTION_LAYER_DISTANCE, layerDistance);
+        float layerDistanceFactor = parentLayout.getProperty(LAYER_DISTANCE);
+        addOption(OgdfServer.OPTION_LAYER_DISTANCE, minSpacing * layerDistanceFactor);
         // remove self-loops from the graph
         loopRouter.preProcess(layoutNode);
     }

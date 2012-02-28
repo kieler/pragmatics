@@ -29,12 +29,9 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  */
 public class DavidsonHarelLayouter extends OgdfLayouter {
 
-    /** default value for spacing. */
-    public static final float DEF_SPACING = 80.0f;
-
     /** 'spacing' property. */
-    private static final IProperty<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
-            DEF_SPACING);
+    private static final IProperty<Float> SPACING = new Property<Float>(
+            LayoutOptions.SPACING, 80.0f);
     /** costs property. */
     private static final IProperty<Costs> COSTS = new Property<Costs>(
             "de.cau.cs.kieler.kiml.ogdf.option.costs", Costs.STANDARD);

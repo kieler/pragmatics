@@ -29,17 +29,12 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  */
 public class GEMLayouter extends OgdfLayouter {
 
-    /** default value for page ratio. */
-    public static final float DEF_PAGE_RATIO = 1.3f;
-    /** default value for spacing. */
-    public static final float DEF_SPACING = 30.0f;
-
     /** 'aspectRatio' property. */
     private static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
-            LayoutOptions.ASPECT_RATIO, DEF_PAGE_RATIO);
-    /** 'spacing' property. */
-    private static final IProperty<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
-            DEF_SPACING);
+            LayoutOptions.ASPECT_RATIO, 1.3f);
+    /** 'desiredLength' property. */
+    private static final IProperty<Float> DESIRED_LENGTH = new Property<Float>(
+            LayoutOptions.SPACING, 30.0f);
     /** 'numberOfRounds' property. */
     private static final IProperty<Integer> NUMBER_OF_ROUNDS = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.numberOfRounds", 20000);
@@ -71,9 +66,9 @@ public class GEMLayouter extends OgdfLayouter {
     private static final IProperty<AttractionFormula> ATTRACTION_FORMULA =
             new Property<AttractionFormula>("de.cau.cs.kieler.kiml.ogdf.option.attractionFormula",
                     AttractionFormula.FRUCHTERMAN_REINGOLD);
-    /** 'minDistCC' property. */
+    /** factor for 'minDistCC' property. */
     private static final IProperty<Float> MIN_DIST_CC = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 20.0f);
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 1.0f);
 
     /**
      * Constructs a GEMLayouter.
@@ -92,8 +87,8 @@ public class GEMLayouter extends OgdfLayouter {
         float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
         addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
         // desiredLength
-        float minSpacing = parentLayout.getProperty(SPACING);
-        addOption(OgdfServer.OPTION_DESIRED_LENGTH, minSpacing);
+        float desiredLength = parentLayout.getProperty(DESIRED_LENGTH);
+        addOption(OgdfServer.OPTION_DESIRED_LENGTH, desiredLength);
         // numberOfRounds
         int numberOfRounds = parentLayout.getProperty(NUMBER_OF_ROUNDS);
         addOption(OgdfServer.OPTION_NUMBER_OF_ROUNDS, numberOfRounds);
@@ -132,8 +127,8 @@ public class GEMLayouter extends OgdfLayouter {
             break;
         }
         // minDistCC
-        float minDistCC = parentLayout.getProperty(MIN_DIST_CC);
-        addOption(OgdfServer.OPTION_MIN_DIST_CC, minDistCC);
+        float minDistCCFactor = parentLayout.getProperty(MIN_DIST_CC);
+        addOption(OgdfServer.OPTION_MIN_DIST_CC, desiredLength * minDistCCFactor);
     }
     
 }

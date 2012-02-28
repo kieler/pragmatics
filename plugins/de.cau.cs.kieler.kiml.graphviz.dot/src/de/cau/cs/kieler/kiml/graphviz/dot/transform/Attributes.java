@@ -44,28 +44,23 @@ public final class Attributes {
     /** If true, use edge concentrators. This merges multiedges into a single edge and
      *  causes partially parallel edges to share part of their paths. */
     public static final String CONCENTRATE = "concentrate";
-    /** layout option identifier for edge concentration. */
-    public static final String CONCENTRATE_ID = "de.cau.cs.kieler.graphviz.concentrate";
     /** edge concentration property. */
     public static final IProperty<Boolean> CONCENTRATE_PROP = new Property<Boolean>(
-            CONCENTRATE_ID, false);
+            "de.cau.cs.kieler.graphviz.concentrate", false);
     
     /** Multiplicative scale factor used to alter the MinQuit (default = 8) and MaxIter
      *  (default = 24) parameters used during crossing minimization. */
     public static final String CROSSMIN_LIMIT = "mclimit";
-    /** layout option identifier for iterations limit. */
-    public static final String ITER_LIMIT_ID = "de.cau.cs.kieler.graphviz.iterationsLimit";
     /** iterations limit property (includes {@link #CROSSMIN_LIMIT} and {@link #SIMPLEX_LIMIT}). */
     public static final IProperty<Float> ITER_LIMIT_PROP = new Property<Float>(
-            ITER_LIMIT_ID, -1.0f);
+            "de.cau.cs.kieler.graphviz.iterationsLimit", -1.0f);
     
     /** Factor damping force motions. On each iteration, a nodes movement is limited to this
      *  factor of its potential motion. */
     public static final String DAMPING = "Damping";
-    /** layout option identifier for damping. */
-    public static final String DAMPING_ID = "de.cau.cs.kieler.graphviz.damping";
     /** damping property. */
-    public static final IProperty<Float> DAMPING_PROP = new Property<Float>(DAMPING_ID, -1.0f);
+    public static final IProperty<Float> DAMPING_PROP = new Property<Float>(
+            "de.cau.cs.kieler.graphviz.damping", -1.0f);
     
     
     /** Set edge type for drawing arrowheads. */
@@ -77,10 +72,9 @@ public final class Attributes {
     /** Terminating condition. If the length squared of all energy gradients
      *  are < epsilon, the algorithm stops. */
     public static final String EPSILON = "epsilon";
-    /** layout option identifier for epsilon value. */
-    public static final String EPSILON_ID = "de.cau.cs.kieler.graphviz.epsilon";
     /** epsilon value property. */
-    public static final IProperty<Float> EPSILON_PROP = new Property<Float>(EPSILON_ID, -1.0f);
+    public static final IProperty<Float> EPSILON_PROP = new Property<Float>(
+            "de.cau.cs.kieler.graphviz.epsilon", -1.0f);
     
     /** If true, the node size is specified by the values of the width and height
      *  attributes only and is not expanded to contain the text label. */
@@ -107,15 +101,16 @@ public final class Attributes {
     /** This, along with labeldistance, determine where the headlabel (taillabel)
      *  are placed with respect to the head (tail) in polar coordinates. */
     public static final String LABELANGLE = "labelangle";
+    /** label angle property. */
+    public static final IProperty<Float> LABEL_ANGLE_PROP = new Property<Float>(
+            "de.cau.cs.kieler.graphviz.labelAngle", -25.0f);
     
     /** Multiplicative scaling factor adjusting the distance that the
      *  head label (tail label) is from the head (tail) node. */
     public static final String LABELDISTANCE = "labeldistance";
-    /** layout option identifier for label distance. */
-    public static final String LABEL_DISTANCE_ID = "de.cau.cs.kieler.graphviz.labelDistance";
     /** label distance property. */
     public static final IProperty<Float> LABEL_DISTANCE_PROP = new Property<Float>(
-            LABEL_DISTANCE_ID, 1.0f);
+            "de.cau.cs.kieler.graphviz.labelDistance", 1.0f);
         
     /** Label position, in points. */
     public static final String LABELPOS = "lp";
@@ -131,11 +126,9 @@ public final class Attributes {
     
     /** Determines if and how node overlaps should be removed (not dot). */
     public static final String OVERLAP = "overlap";
-    /** layout option identifier for node overlap removal. */
-    public static final String OVERLAP_ID = "de.cau.cs.kieler.graphviz.overlapMode";
     /** node overlap removal property. */
     public static final IProperty<OverlapMode> OVERLAP_PROP = new Property<OverlapMode>(
-            OVERLAP_ID, OverlapMode.NONE);
+            "de.cau.cs.kieler.graphviz.overlapMode", OverlapMode.NONE);
     
     /** If true, each connected component of the graph is laid out separately, and then
      *  the graphs are packed together. */
@@ -154,21 +147,18 @@ public final class Attributes {
     
     /** Sets the number of iterations used. */
     public static final String MAXITER = "maxiter";
-    /** layout option identifier for maximum number of iterations. */
-    public static final String MAXITER_ID = "de.cau.cs.kieler.graphviz.maxiter";
     /** maximum number of iterations property. */
-    public static final IProperty<Integer> MAXITER_PROP = new Property<Integer>(MAXITER_ID, -1);
+    public static final IProperty<Integer> MAXITER_PROP = new Property<Integer>(
+            "de.cau.cs.kieler.graphviz.maxiter", -1);
     
     /** Specifies the minimum separation between all nodes (circo only). */
     public static final String MINDIST = "mindist";
     
     /** Specifies how the distance matrix is computed for the input graph. */
     public static final String NEATO_MODEL = "model";
-    /** layout option identifier for Neato distance model. */
-    public static final String NEATO_MODEL_ID = "de.cau.cs.kieler.graphviz.neatoModel";
     /** Neato distance model property. */
     public static final IProperty<NeatoModel> NEATO_MODEL_PROP = new Property<NeatoModel>(
-            NEATO_MODEL_ID, NeatoModel.SHORTPATH);
+            "de.cau.cs.kieler.graphviz.neatoModel", NeatoModel.SHORTPATH);
     
     /** Minimum space between two adjacent nodes in the same rank, in inches. */
     public static final String NODESEP = "nodesep";
@@ -182,6 +172,9 @@ public final class Attributes {
     /** In dot, this gives the desired rank separation, in inches. In twopi,
      *  specifies radial separation of concentric circles. (twopi, dot only) */
     public static final String RANKSEP = "ranksep";
+    /** property for the factor for rank separation used in dot. */
+    public static final IProperty<Float> RANK_SEP_PROP = new Property<Float>(
+            "de.cau.cs.kieler.graphviz.layerSpacingFactor", 1.0f, 0.0f);
     
     /** Specifies margin to leave around nodes when removing node overlap. */
     public static final String SEP = "sep";

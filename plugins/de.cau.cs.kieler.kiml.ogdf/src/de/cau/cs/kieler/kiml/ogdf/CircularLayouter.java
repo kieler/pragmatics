@@ -27,23 +27,21 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  */
 public class CircularLayouter extends OgdfLayouter {
 
-    /** default value for page ratio. */
-    public static final float DEF_PAGE_RATIO = 1.3f;
-    /** default value for spacing. */
-    public static final float DEF_MIN_DIST_CIRCLE = 20.0f;
-
+    /** 'minDistCircle' property. */
+    private static final IProperty<Float> MIN_DIST_CIRCLE = new Property<Float>(
+            LayoutOptions.SPACING, 20.0f);
     /** 'aspectRatio' property. */
     private static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
-            LayoutOptions.ASPECT_RATIO, DEF_PAGE_RATIO);
-    /** 'minDistLevel' property. */
+            LayoutOptions.ASPECT_RATIO, 1.3f);
+    /** factor for 'minDistLevel' property. */
     private static final IProperty<Float> MIN_DIST_LEVEL = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 20.0f);
-    /** 'minDistSibling' property. */
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 1.0f);
+    /** factor for 'minDistSibling' property. */
     private static final IProperty<Float> MIN_DIST_SIBLING = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistSibling", 20.0f);
-    /** 'minDistCC' property. */
+            "de.cau.cs.kieler.kiml.ogdf.option.subtreeDistance", 1.0f);
+    /** factor for 'minDistCC' property. */
     private static final IProperty<Float> MIN_DIST_CC = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 20.0f);
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 1.0f);
 
     /** the self-loop router algorithm. */
     private SelfLoopRouter loopRouter = new SelfLoopRouter();
@@ -64,20 +62,17 @@ public class CircularLayouter extends OgdfLayouter {
         float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
         addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
         // minDistCircle
-        float minDistCircle = parentLayout.getProperty(LayoutOptions.SPACING);
-        if (minDistCircle < 0) {
-            minDistCircle = DEF_MIN_DIST_CIRCLE;
-        }
+        float minDistCircle = parentLayout.getProperty(MIN_DIST_CIRCLE);
         addOption(OgdfServer.OPTION_MIN_DIST_CIRCLE, minDistCircle);
         // minDistLevel
-        float minDistLevel = parentLayout.getProperty(MIN_DIST_LEVEL);
-        addOption(OgdfServer.OPTION_MIN_DIST_LEVEL, minDistLevel);
+        float minDistLevelFactor = parentLayout.getProperty(MIN_DIST_LEVEL);
+        addOption(OgdfServer.OPTION_MIN_DIST_LEVEL, minDistCircle * minDistLevelFactor);
         // minDistSibling
-        float minDistSibling = parentLayout.getProperty(MIN_DIST_SIBLING);
-        addOption(OgdfServer.OPTION_MIN_DIST_SIBLING, minDistSibling);
+        float minDistSiblingFactor = parentLayout.getProperty(MIN_DIST_SIBLING);
+        addOption(OgdfServer.OPTION_MIN_DIST_SIBLING, minDistCircle * minDistSiblingFactor);
         // minDistCC
-        float minDistCC = parentLayout.getProperty(MIN_DIST_CC);
-        addOption(OgdfServer.OPTION_MIN_DIST_CC, minDistCC);
+        float minDistCCFactor = parentLayout.getProperty(MIN_DIST_CC);
+        addOption(OgdfServer.OPTION_MIN_DIST_CC, minDistCircle * minDistCCFactor);
         // remove self-loops from the graph
         loopRouter.preProcess(layoutNode);
     }

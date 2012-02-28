@@ -60,14 +60,14 @@
                option="de.cau.cs.kieler.direction">
          </knownOption>
          <knownOption
-               default="16"
+               default="20"
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
-               default="8"
+               default="10"
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
@@ -75,8 +75,10 @@
                option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               default="1"
                option="de.cau.cs.kieler.graphviz.labelDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.labelAngle">
          </knownOption>
          <knownOption
                default="SPLINES"
@@ -94,6 +96,9 @@
          <knownOption
                default="1.0"
                option="de.cau.cs.kieler.graphviz.iterationsLimit">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.layerSpacingFactor">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -130,7 +135,7 @@
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
-               default="8"
+               default="10"
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
@@ -145,8 +150,10 @@
                option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               default="1"
                option="de.cau.cs.kieler.graphviz.labelDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.labelAngle">
          </knownOption>
          <knownOption
                default="SPLINES"
@@ -210,7 +217,7 @@
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
-               default="8"
+               default="10"
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
@@ -221,8 +228,10 @@
                option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               default="1"
                option="de.cau.cs.kieler.graphviz.labelDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.labelAngle">
          </knownOption>
          <knownOption
                default="SPLINES"
@@ -275,7 +284,7 @@
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
-               default="8"
+               default="10"
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
@@ -283,8 +292,10 @@
                option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               default="1"
                option="de.cau.cs.kieler.graphviz.labelDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.labelAngle">
          </knownOption>
          <knownOption
                default="SPLINES"
@@ -326,7 +337,7 @@
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
-               default="8"
+               default="10"
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
@@ -334,8 +345,10 @@
                option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               default="1"
                option="de.cau.cs.kieler.graphviz.labelDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.labelAngle">
          </knownOption>
          <knownOption
                default="SPLINES"
@@ -358,9 +371,18 @@
       <layoutOption
             appliesTo="edges"
             default="1.0"
-            description="Distance of edge labels to the source or target node"
+            description="Distance of head / tail positioned edge labels to the source or target node"
             id="de.cau.cs.kieler.graphviz.labelDistance"
             name="Label Distance"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="edges"
+            default="-25.0"
+            description="Angle between head / tail positioned edge labels and the corresponding edge."
+            id="de.cau.cs.kieler.graphviz.labelAngle"
+            name="Label Angle"
             type="float">
       </layoutOption>
       <layoutOption
@@ -416,6 +438,15 @@
             id="de.cau.cs.kieler.graphviz.overlapMode"
             name="Overlap Removal"
             type="enum">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="1.0"
+            description="Factor for the spacing of different layers (ranks)"
+            id="de.cau.cs.kieler.graphviz.layerSpacingFactor"
+            name="Layer Spacing Factor"
+            type="float">
       </layoutOption>
    </extension>
 

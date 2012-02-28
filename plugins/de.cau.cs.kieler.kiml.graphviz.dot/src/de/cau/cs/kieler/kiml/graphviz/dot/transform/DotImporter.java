@@ -266,6 +266,8 @@ public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
                 target.setProperty(Attributes.EPSILON_PROP, Float.valueOf(value));
             } else if (Attributes.LABELDISTANCE.equals(name)) {
                 target.setProperty(Attributes.LABEL_DISTANCE_PROP, Float.valueOf(value));
+            } else if (Attributes.LABELANGLE.equals(name)) {
+                target.setProperty(Attributes.LABEL_ANGLE_PROP, Float.valueOf(value));
             } else if (Attributes.MAXITER.equals(name)) {
                 target.setProperty(Attributes.MAXITER_PROP, Integer.valueOf(value));
             } else if (Attributes.CROSSMIN_LIMIT.equals(name)) {
