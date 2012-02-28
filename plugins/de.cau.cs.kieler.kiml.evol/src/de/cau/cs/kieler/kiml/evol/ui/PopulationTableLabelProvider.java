@@ -109,7 +109,7 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
             break;
 
         case 2:
-            IGene<?> hintGene = individual.find(LayoutOptions.ALGORITHM_ID);
+            IGene<?> hintGene = individual.find(LayoutOptions.ALGORITHM.getId());
             String algorithmName = null;
             if (hintGene instanceof ListItemGene) {
                 final String hintId = hintGene.toString();

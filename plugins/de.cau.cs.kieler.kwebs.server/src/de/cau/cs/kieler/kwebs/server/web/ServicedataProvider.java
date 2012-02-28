@@ -368,7 +368,7 @@ public class ServicedataProvider implements IDynamicWebContentProvider {
         
         sb.append("<p>\n<table class='lightgrey' border='1px;' style='border-style:solid;'>\n");
         sb.append("<tr>\n<td>\n");
-        generateForOption(requestData, LayoutOptions.ALGORITHM_ID, sb, true);
+        generateForOption(requestData, LayoutOptions.ALGORITHM.getId(), sb, true);
         sb.append("</td>\n</tr>\n");
         sb.append("</table>\n</p>\n");
         

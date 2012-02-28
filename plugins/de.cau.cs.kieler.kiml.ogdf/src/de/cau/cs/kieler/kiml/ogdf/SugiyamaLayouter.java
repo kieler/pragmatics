@@ -38,28 +38,21 @@ public class SugiyamaLayouter extends OgdfLayouter {
     /** 'spacing' property. */
     private static final IProperty<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
             DEF_SPACING);
-    /** the 'fails' option identifier. */
-    private static final String FAILS_ID = "de.cau.cs.kieler.kiml.ogdf.option.fails";
     /** 'fails' property. */
-    private static final IProperty<Integer> FAILS = new Property<Integer>(FAILS_ID, 4);
-    /** the 'runs' option identifier. */
-    private static final String RUNS_ID = "de.cau.cs.kieler.kiml.ogdf.option.runs";
+    private static final IProperty<Integer> FAILS = new Property<Integer>(
+            "de.cau.cs.kieler.kiml.ogdf.option.fails", 4);
     /** 'runs' property. */
-    private static final IProperty<Integer> RUNS = new Property<Integer>(RUNS_ID, 15);
-    /** the 'transpose' option identifier. */
-    private static final String TRANSPOSE_ID = "de.cau.cs.kieler.kiml.ogdf.option.transpose";
+    private static final IProperty<Integer> RUNS = new Property<Integer>(
+            "de.cau.cs.kieler.kiml.ogdf.option.runs", 15);
     /** 'transpose' property. */
-    private static final IProperty<Boolean> TRANSPOSE = new Property<Boolean>(TRANSPOSE_ID, true);
-    /** the 'minDistCC' option identifier. */
-    private static final String MIN_DIST_CC_ID = "de.cau.cs.kieler.kiml.ogdf.option.minDistCC";
+    private static final IProperty<Boolean> TRANSPOSE = new Property<Boolean>(
+            "de.cau.cs.kieler.kiml.ogdf.option.transpose", true);
     /** 'minDistCC' property. */
-    private static final IProperty<Float> MIN_DIST_CC = new Property<Float>(MIN_DIST_CC_ID, 20.0f);
-    /** the 'layerDistance' option identifier. */
-    private static final String LAYER_DISTANCE_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel";
+    private static final IProperty<Float> MIN_DIST_CC = new Property<Float>(
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 20.0f);
     /** 'layerDistance' property. */
-    private static final IProperty<Float> LAYER_DISTANCE = new Property<Float>(LAYER_DISTANCE_ID,
-            16.0f);
+    private static final IProperty<Float> LAYER_DISTANCE = new Property<Float>(
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 16.0f);
 
     /** the self-loop router algorithm. */
     private SelfLoopRouter loopRouter = new SelfLoopRouter();

@@ -33,26 +33,18 @@ public class SpringEmbedderFRLayouter extends OgdfLayouter {
     /** 'aspectRatio' property. */
     private static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
             LayoutOptions.ASPECT_RATIO, DEF_PAGE_RATIO);
-    /** the 'iterations' option identifier. */
-    private static final String ITERATIONS_ID = "de.cau.cs.kieler.kiml.ogdf.option.iterations";
     /** 'iterations' property. */
     private static final IProperty<Integer> ITERATIONS = new Property<Integer>(
-            ITERATIONS_ID, 400);
-    /** the 'fineness' option identifier. */
-    private static final String FINENESS_ID = "de.cau.cs.kieler.kiml.ogdf.option.fineness";
+            "de.cau.cs.kieler.kiml.ogdf.option.iterations", 400);
     /** 'fineness' property. */
     private static final IProperty<Float> FINENESS = new Property<Float>(
-            FINENESS_ID, 0.51f);
-    /** the 'noise' option identifier. */
-    private static final String NOISE_ID = "de.cau.cs.kieler.kiml.ogdf.option.noise";
+            "de.cau.cs.kieler.kiml.ogdf.option.fineness", 0.51f);
     /** 'noise' property. */
     private static final IProperty<Boolean> NOISE = new Property<Boolean>(
-            NOISE_ID, true);
-    /** the 'minDistCC' option identifier. */
-    private static final String MIN_DIST_CC_ID = "de.cau.cs.kieler.kiml.ogdf.option.minDistCC";
+            "de.cau.cs.kieler.kiml.ogdf.option.noise", true);
     /** 'minDistCC' property. */
     private static final IProperty<Float> MIN_DIST_CC = new Property<Float>(
-            MIN_DIST_CC_ID, 20.0f);
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 20.0f);
 
     /**
      * Constructs a SpringEmbedderFRLayouter.

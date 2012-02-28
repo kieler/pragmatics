@@ -42,30 +42,23 @@ public class PlanarizationLayouter extends OgdfLayouter {
     private static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
             LayoutOptions.ASPECT_RATIO, DEF_PAGE_RATIO);
     /** 'spacing' property. */
-    private static final IProperty<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
-            DEF_SPACING, 1.0f);
+    private static final IProperty<Float> SPACING = new Property<Float>(
+            LayoutOptions.SPACING, DEF_SPACING, 1.0f);
     /** 'direction' property. */
     private static final IProperty<Direction> DIRECTION = new Property<Direction>(
             LayoutOptions.DIRECTION, Direction.UP);
-    /** the 'preprocessCliques' option identifier. */
-    private static final String PREPROCESS_CLIQUES_ID
-        = "de.cau.cs.kieler.kiml.ogdf.option.preprocessCliques";
     /** 'preprocessCliques' property. */
     private static final IProperty<Boolean> PREPROCESS_CLIQUES = new Property<Boolean>(
-            PREPROCESS_CLIQUES_ID, false);
-    /** the 'minCliqueSize' option identifier. */
-    private static final String MIN_CLIQUE_SIZE_ID = "de.cau.cs.kieler.kiml.ogdf.option.minCliqueSize";
+            "de.cau.cs.kieler.kiml.ogdf.option.preprocessCliques", false);
     /** 'minCliqueSize' property. */
     private static final IProperty<Integer> MIN_CLIQUE_SIZE = new Property<Integer>(
-            MIN_CLIQUE_SIZE_ID, 10);
-    /** the 'costAssoc' option identifier. */
-    private static final String COST_ASSOC_ID = "de.cau.cs.kieler.kiml.ogdf.option.costAssoc";
+            "de.cau.cs.kieler.kiml.ogdf.option.minCliqueSize", 10);
     /** 'costAssoc' property. */
-    private static final IProperty<Integer> COST_ASSOC = new Property<Integer>(COST_ASSOC_ID, 1);
-    /** the 'costGen' option identifier. */
-    private static final String COST_GEN_ID = "de.cau.cs.kieler.kiml.ogdf.option.costGen";
+    private static final IProperty<Integer> COST_ASSOC = new Property<Integer>(
+            "de.cau.cs.kieler.kiml.ogdf.option.costAssoc", 1);
     /** 'costGen' property. */
-    private static final IProperty<Integer> COST_GEN = new Property<Integer>(COST_GEN_ID, 4);
+    private static final IProperty<Integer> COST_GEN = new Property<Integer>(
+            "de.cau.cs.kieler.kiml.ogdf.option.costGen", 4);
 
     /** the self-loop router algorithm. */
     private SelfLoopRouter loopRouter = new SelfLoopRouter();

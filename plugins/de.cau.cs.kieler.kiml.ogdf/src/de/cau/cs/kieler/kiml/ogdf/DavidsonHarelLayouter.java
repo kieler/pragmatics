@@ -35,15 +35,13 @@ public class DavidsonHarelLayouter extends OgdfLayouter {
     /** 'spacing' property. */
     private static final IProperty<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
             DEF_SPACING);
-    /** the costs option identifier. */
-    private static final String COSTS_ID = "de.cau.cs.kieler.kiml.ogdf.option.costs";
     /** costs property. */
-    private static final IProperty<Costs> COSTS = new Property<Costs>(COSTS_ID, Costs.STANDARD);
+    private static final IProperty<Costs> COSTS = new Property<Costs>(
+            "de.cau.cs.kieler.kiml.ogdf.option.costs", Costs.STANDARD);
 
-    /** the speed option identifier. */
-    private static final String SPEED_ID = "de.cau.cs.kieler.kiml.ogdf.option.speed";
     /** speed property. */
-    private static final IProperty<Speed> SPEED = new Property<Speed>(SPEED_ID, Speed.MEDIUM);
+    private static final IProperty<Speed> SPEED = new Property<Speed>(
+            "de.cau.cs.kieler.kiml.ogdf.option.speed", Speed.MEDIUM);
 
     /**
      * Constructs a DavidsonHarelLayouter.

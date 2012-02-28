@@ -35,22 +35,15 @@ public class CircularLayouter extends OgdfLayouter {
     /** 'aspectRatio' property. */
     private static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
             LayoutOptions.ASPECT_RATIO, DEF_PAGE_RATIO);
-    /** the 'minDistLevel' option identifier. */
-    private static final String MIN_DIST_LEVEL_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel";
     /** 'minDistLevel' property. */
-    private static final IProperty<Float> MIN_DIST_LEVEL = new Property<Float>(MIN_DIST_LEVEL_ID,
-            20.0f);
-    /** the 'minDistSibling' option identifier. */
-    private static final String MIN_DIST_SIBLING_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistSibling";
+    private static final IProperty<Float> MIN_DIST_LEVEL = new Property<Float>(
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 20.0f);
     /** 'minDistSibling' property. */
     private static final IProperty<Float> MIN_DIST_SIBLING = new Property<Float>(
-            MIN_DIST_SIBLING_ID, 20.0f);
-    /** the 'minDistCC' option identifier. */
-    private static final String MIN_DIST_CC_ID = "de.cau.cs.kieler.kiml.ogdf.option.minDistCC";
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistSibling", 20.0f);
     /** 'minDistCC' property. */
-    private static final IProperty<Float> MIN_DIST_CC = new Property<Float>(MIN_DIST_CC_ID, 20.0f);
+    private static final IProperty<Float> MIN_DIST_CC = new Property<Float>(
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 20.0f);
 
     /** the self-loop router algorithm. */
     private SelfLoopRouter loopRouter = new SelfLoopRouter();

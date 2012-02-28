@@ -35,29 +35,18 @@ public class TreeLayouter extends OgdfLayouter {
     /** 'edgeRouting' property. */
     private static final IProperty<EdgeRouting> EDGE_ROUTING = new Property<EdgeRouting>(
             LayoutOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
-    /** the 'siblingDistance' option identifier. */
-    private static final String SIBLING_DISTANCE_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistSibling";
     /** 'siblingDistance' property. */
     private static final IProperty<Float> SIBLING_DISTANCE = new Property<Float>(
-            SIBLING_DISTANCE_ID, 20.0f);
-    /** the 'subtreeDistance' option identifier. */
-    private static final String SUBTREE_DISTANCE_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.subtreeDistance";
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistSibling", 20.0f);
     /** 'subtreeDistance' property. */
     private static final IProperty<Float> SUBTREE_DISTANCE = new Property<Float>(
-            SUBTREE_DISTANCE_ID, 20.0f);
-    /** the 'levelDistance' option identifier. */
-    private static final String LEVEL_DISTANCE_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.levelDistance";
+            "de.cau.cs.kieler.kiml.ogdf.option.subtreeDistance", 20.0f);
     /** 'levelDistance' property. */
-    private static final IProperty<Float> LEVEL_DISTANCE = new Property<Float>(LEVEL_DISTANCE_ID,
-            50.0f);
-    /** the 'treeDistance' option identifier. */
-    private static final String TREE_DISTANCE_ID = "de.cau.cs.kieler.kiml.ogdf.option.treeDistance";
+    private static final IProperty<Float> LEVEL_DISTANCE = new Property<Float>(
+            "de.cau.cs.kieler.kiml.ogdf.option.levelDistance", 50.0f);
     /** 'treeDistance' property. */
-    private static final IProperty<Float> TREE_DISTANCE = new Property<Float>(TREE_DISTANCE_ID,
-            50.0f);
+    private static final IProperty<Float> TREE_DISTANCE = new Property<Float>(
+            "de.cau.cs.kieler.kiml.ogdf.option.treeDistance", 50.0f);
 
     /** the self-loop router algorithm. */
     private SelfLoopRouter loopRouter = new SelfLoopRouter();

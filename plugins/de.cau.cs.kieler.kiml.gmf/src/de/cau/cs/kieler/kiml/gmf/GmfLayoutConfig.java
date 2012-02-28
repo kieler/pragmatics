@@ -144,7 +144,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                 DiagramEditPart diagramEditPart = GmfFrameworkBridge.getDiagramEditPart(focusEditPart);
                 @SuppressWarnings("unchecked")
                 LayoutOptionData<String> algorithmOptionData = (LayoutOptionData<String>)
-                        LayoutDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM_ID);
+                        LayoutDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM.getId());
                 if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null) {
                     // get a layout hint for the content of the focused edit part
                     String contentLayoutHint = getValue(algorithmOptionData, PREFIX, notationView);

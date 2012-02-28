@@ -26,16 +26,12 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
  */
 public class RadialTreeLayouter extends OgdfLayouter {
 
-    /** the 'levelDistance' option identifier. */
-    private static final String LEVEL_DISTANCE_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel";
     /** 'levelDistance' property. */
-    private static final IProperty<Float> LEVEL_DISTANCE = new Property<Float>(LEVEL_DISTANCE_ID,
-            50.0f);
-    /** the 'ccDistance' option identifier. */
-    private static final String CC_DISTANCE_ID = "de.cau.cs.kieler.kiml.ogdf.option.minDistCC";
+    private static final IProperty<Float> LEVEL_DISTANCE = new Property<Float>(
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 50.0f);
     /** 'ccDistance' property. */
-    private static final IProperty<Float> CC_DISTANCE = new Property<Float>(CC_DISTANCE_ID, 50.0f);
+    private static final IProperty<Float> CC_DISTANCE = new Property<Float>(
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 50.0f);
 
     /** the self-loop router algorithm. */
     private SelfLoopRouter loopRouter = new SelfLoopRouter();

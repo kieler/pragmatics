@@ -40,71 +40,40 @@ public class GEMLayouter extends OgdfLayouter {
     /** 'spacing' property. */
     private static final IProperty<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
             DEF_SPACING);
-    /** the 'numberOfRounds' option identifier. */
-    private static final String NUMBER_OF_ROUNDS_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.numberOfRounds";
     /** 'numberOfRounds' property. */
     private static final IProperty<Integer> NUMBER_OF_ROUNDS = new Property<Integer>(
-            NUMBER_OF_ROUNDS_ID, 20000);
-    /** the 'minimalTemperature' option identifier. */
-    private static final String MINIMAL_TEMPERATURE_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.minimalTemperature";
+            "de.cau.cs.kieler.kiml.ogdf.option.numberOfRounds", 20000);
     /** 'minimalTemperature' property. */
     private static final IProperty<Float> MINIMAL_TEMPERATURE = new Property<Float>(
-            MINIMAL_TEMPERATURE_ID, 0.005f);
-    /** the 'initialTemperature' option identifier. */
-    private static final String INITIAL_TEMPERATURE_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.initialTemperature";
+            "de.cau.cs.kieler.kiml.ogdf.option.minimalTemperature", 0.005f);
     /** 'initialTemperature' property. */
     private static final IProperty<Float> INITIAL_TEMPERATURE = new Property<Float>(
-            INITIAL_TEMPERATURE_ID, 10.0f);
-    /** the 'gravitationalConstant' option identifier. */
-    private static final String GRAVITATIONAL_CONSTANT_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.gravitationalConstant";
+            "de.cau.cs.kieler.kiml.ogdf.option.initialTemperature", 10.0f);
     /** 'gravitationalConstant' property. */
     private static final IProperty<Float> GRAVITATIONAL_CONSTANT = new Property<Float>(
-            GRAVITATIONAL_CONSTANT_ID, 0.0625f);
-    /** the 'maximalDisturbance' option identifier. */
-    private static final String MAXIMAL_DISTURBANCE_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.maximalDisturbance";
+            "de.cau.cs.kieler.kiml.ogdf.option.gravitationalConstant", 0.0625f);
     /** 'maximalDisturbance' property. */
     private static final IProperty<Float> MAXIMAL_DISTURBANCE = new Property<Float>(
-            MAXIMAL_DISTURBANCE_ID, 0.0f);
-    /** the 'rotationAngle' option identifier. */
-    private static final String ROTATION_ANGLE_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.rotationAngle";
+            "de.cau.cs.kieler.kiml.ogdf.option.maximalDisturbance", 0.0f);
     /** 'rotationAngle' property. */
-    private static final IProperty<Float> ROTATION_ANGLE = new Property<Float>(ROTATION_ANGLE_ID,
-            0.33f);
-    /** the 'oscillationAngle' option identifier. */
-    private static final String OSCILLATION_ANGLE_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.oscillationAngle";
+    private static final IProperty<Float> ROTATION_ANGLE = new Property<Float>(
+            "de.cau.cs.kieler.kiml.ogdf.option.rotationAngle", 0.33f);
     /** 'oscillationAngle' property. */
     private static final IProperty<Float> OSCILLATION_ANGLE = new Property<Float>(
-            OSCILLATION_ANGLE_ID, 0.5f);
-    /** the 'rotationSensitivity' option identifier. */
-    private static final String ROTATION_SENSITIVITY_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.rotationSensitivity";
+            "de.cau.cs.kieler.kiml.ogdf.option.oscillationAngle", 0.5f);
     /** 'rotationSensitivity' property. */
     private static final IProperty<Float> ROTATION_SENSITIVITY = new Property<Float>(
-            ROTATION_SENSITIVITY_ID, 0.01f);
-    /** the 'oscillationSensitivity' option identifier. */
-    private static final String OSCILLATION_SENSITIVITY_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.oscillationSensitivity";
+            "de.cau.cs.kieler.kiml.ogdf.option.rotationSensitivity", 0.01f);
     /** 'oscillationSensitivity' property. */
     private static final IProperty<Float> OSCILLATION_SENSITIVITY = new Property<Float>(
-            OSCILLATION_SENSITIVITY_ID, 0.3f);
-    /** the 'attractionFormula' option identifier. */
-    private static final String ATTRACTION_FORMULA_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.attractionFormula";
+            "de.cau.cs.kieler.kiml.ogdf.option.oscillationSensitivity", 0.3f);
     /** 'attractionFormula' property. */
     private static final IProperty<AttractionFormula> ATTRACTION_FORMULA =
-            new Property<AttractionFormula>(ATTRACTION_FORMULA_ID,
+            new Property<AttractionFormula>("de.cau.cs.kieler.kiml.ogdf.option.attractionFormula",
                     AttractionFormula.FRUCHTERMAN_REINGOLD);
-    /** the 'minDistCC' option identifier. */
-    private static final String MIN_DIST_CC_ID = "de.cau.cs.kieler.kiml.ogdf.option.minDistCC";
     /** 'minDistCC' property. */
-    private static final IProperty<Float> MIN_DIST_CC = new Property<Float>(MIN_DIST_CC_ID, 20.0f);
+    private static final IProperty<Float> MIN_DIST_CC = new Property<Float>(
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 20.0f);
 
     /**
      * Constructs a GEMLayouter.
