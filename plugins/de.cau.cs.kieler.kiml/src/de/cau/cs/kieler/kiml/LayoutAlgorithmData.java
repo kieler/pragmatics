@@ -23,7 +23,7 @@ import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.core.alg.InstancePool;
-import de.cau.cs.kieler.kiml.options.GraphFeatures.GraphFeature;
+import de.cau.cs.kieler.kiml.options.GraphFeatures;
 
 /**
  * Data type used to store information for a layout algorithm.
@@ -71,7 +71,7 @@ public class LayoutAlgorithmData implements ILayoutData {
     /** list of supported diagrams. */
     private List<SupportedDiagram> supportedDiagrams = new LinkedList<SupportedDiagram>();
     /** set of supported graph features. */
-    private EnumSet<GraphFeature> supportedFeatures = EnumSet.noneOf(GraphFeature.class);
+    private EnumSet<GraphFeatures> supportedFeatures = EnumSet.noneOf(GraphFeatures.class);
     
     /**
      * {@inheritDoc}
@@ -198,7 +198,7 @@ public class LayoutAlgorithmData implements ILayoutData {
      * 
      * @return the supported graph features
      */
-    public EnumSet<GraphFeature> getSupportedFeatures() {
+    public EnumSet<GraphFeatures> getSupportedFeatures() {
         return supportedFeatures;
     }
 

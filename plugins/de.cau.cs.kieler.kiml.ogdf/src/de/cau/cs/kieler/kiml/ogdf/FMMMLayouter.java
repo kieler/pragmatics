@@ -27,19 +27,13 @@ import de.cau.cs.kieler.kiml.ogdf.options.QualityVsSpeed;
  */
 public class FMMMLayouter extends OgdfLayouter {
 
-    /** the 'quality vs speed' option identifier. */
-    private static final String QUALITY_VS_SPEED_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.qualityVsSpeed";
     /** 'quality vs speed' property. */
     private static final IProperty<QualityVsSpeed> QUALITY_VS_SPEED = new Property<QualityVsSpeed>(
-            QUALITY_VS_SPEED_ID, QualityVsSpeed.BEAUTIFULANDFAST);
+            "de.cau.cs.kieler.kiml.ogdf.option.qualityVsSpeed", QualityVsSpeed.BEAUTIFULANDFAST);
 
-    /** the 'new initial placement' option identifier. */
-    private static final String NEW_INITIAL_PLACEMENT_ID =
-            "de.cau.cs.kieler.kiml.ogdf.option.newInitialPlacement";
     /** 'new initial placement' property. */
     private static final IProperty<Boolean> NEW_INITIAL_PLACEMENT = new Property<Boolean>(
-            NEW_INITIAL_PLACEMENT_ID, false);
+            "de.cau.cs.kieler.kiml.ogdf.option.newInitialPlacement", false);
 
     /** the self-loop router algorithm. */
     private SelfLoopRouter loopRouter = new SelfLoopRouter();

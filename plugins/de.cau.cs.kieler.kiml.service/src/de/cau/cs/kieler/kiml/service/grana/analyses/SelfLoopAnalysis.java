@@ -37,6 +37,9 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * @author cds
  */
 public class SelfLoopAnalysis implements IAnalysis {
+    
+    /** identifier of the self-loops analysis. */
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.selfLoops";
 
     /**
      * {@inheritDoc}

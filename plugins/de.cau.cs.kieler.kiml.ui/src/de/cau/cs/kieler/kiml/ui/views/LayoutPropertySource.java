@@ -95,7 +95,7 @@ public class LayoutPropertySource implements IPropertySource {
         LayoutDataService layoutServices = LayoutDataService.getInstance();
         LayoutOptionData<?> optionData = layoutServices.getOptionData((String) id);
         Object value;
-        if (LayoutOptions.ALGORITHM_ID.equals(id)) {
+        if (LayoutOptions.ALGORITHM.getId().equals(id)) {
             value = layoutContext.getProperty(DefaultLayoutConfig.CONTENT_ALGO).getId();
         } else {
             value = layoutConfig.getValue(optionData, layoutContext);
@@ -178,7 +178,7 @@ public class LayoutPropertySource implements IPropertySource {
         KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.11"));
 
         // if the choice of layout algorithm is affected, refresh the whole layout view
-        if (LayoutOptions.ALGORITHM_ID.equals(id)) {
+        if (LayoutOptions.ALGORITHM.getId().equals(id)) {
             LayoutViewPart layoutView = LayoutViewPart.findView();
             if (layoutView != null) {
                 layoutView.refresh();
@@ -215,7 +215,7 @@ public class LayoutPropertySource implements IPropertySource {
         KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.12"));
         
         // if the choice of layout algorithm is affected, refresh the whole layout view
-        if (LayoutOptions.ALGORITHM_ID.equals(optionData.getId())) {
+        if (LayoutOptions.ALGORITHM.equals(optionData)) {
             LayoutViewPart layoutView = LayoutViewPart.findView();
             if (layoutView != null) {
                 layoutView.refresh();

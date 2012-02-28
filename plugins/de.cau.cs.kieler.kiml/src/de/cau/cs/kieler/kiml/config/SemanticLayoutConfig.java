@@ -75,9 +75,9 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
     public void enrich(final LayoutContext context) {
         LayoutDataService layoutDataService = LayoutDataService.getInstance();
         LayoutOptionData<?> algorithmData = layoutDataService.getOptionData(
-                LayoutOptions.ALGORITHM_ID);
+                LayoutOptions.ALGORITHM.getId());
         LayoutOptionData<?> diagTypeData = layoutDataService.getOptionData(
-                LayoutOptions.DIAGRAM_TYPE_ID);
+                LayoutOptions.DIAGRAM_TYPE.getId());
         
         EObject element = context.getProperty(LayoutContext.DOMAIN_MODEL);
         if (element != null) {

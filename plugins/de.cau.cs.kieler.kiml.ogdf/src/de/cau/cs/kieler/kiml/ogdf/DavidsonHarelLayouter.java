@@ -29,21 +29,16 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  */
 public class DavidsonHarelLayouter extends OgdfLayouter {
 
-    /** default value for spacing. */
-    public static final float DEF_SPACING = 80.0f;
-
     /** 'spacing' property. */
-    private static final IProperty<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
-            DEF_SPACING);
-    /** the costs option identifier. */
-    private static final String COSTS_ID = "de.cau.cs.kieler.kiml.ogdf.option.costs";
+    private static final IProperty<Float> SPACING = new Property<Float>(
+            LayoutOptions.SPACING, 80.0f);
     /** costs property. */
-    private static final IProperty<Costs> COSTS = new Property<Costs>(COSTS_ID, Costs.STANDARD);
+    private static final IProperty<Costs> COSTS = new Property<Costs>(
+            "de.cau.cs.kieler.kiml.ogdf.option.costs", Costs.STANDARD);
 
-    /** the speed option identifier. */
-    private static final String SPEED_ID = "de.cau.cs.kieler.kiml.ogdf.option.speed";
     /** speed property. */
-    private static final IProperty<Speed> SPEED = new Property<Speed>(SPEED_ID, Speed.MEDIUM);
+    private static final IProperty<Speed> SPEED = new Property<Speed>(
+            "de.cau.cs.kieler.kiml.ogdf.option.speed", Speed.MEDIUM);
 
     /**
      * Constructs a DavidsonHarelLayouter.

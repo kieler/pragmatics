@@ -531,7 +531,7 @@ final class GenomeFactory {
         for (final IPropertyDescriptor descriptor : descriptors) {
             String id = (String) descriptor.getId();
             // check property descriptor id
-            if (!LayoutOptions.ALGORITHM_ID.equals(id)) {
+            if (!LayoutOptions.ALGORITHM.getId().equals(id)) {
                 LayoutOptionData<?> data = layoutServices.getOptionData(id);
                 assert data != null : "Layout option not registered: " + id;
 
@@ -578,7 +578,7 @@ final class GenomeFactory {
 
                 String id = data.getId();
 
-                if (LayoutOptions.ALGORITHM_ID.equals(id)) {
+                if (LayoutOptions.ALGORITHM.getId().equals(id)) {
                     // Property is a layout hint --> skip
                     continue;
 
@@ -621,7 +621,7 @@ final class GenomeFactory {
         MutationInfo mutationInfo = new MutationInfo(prob);
 
         ListItemGene hintGene =
-                new ListItemGene(LayoutOptions.ALGORITHM_ID, defaultEntry, typeInfo,
+                new ListItemGene(LayoutOptions.ALGORITHM.getId(), defaultEntry, typeInfo,
                         mutationInfo);
         return hintGene;
     }
@@ -777,7 +777,7 @@ final class GenomeFactory {
             Object value = entry.getValue();
 
             // Check the property descriptor id.
-            assert !LayoutOptions.ALGORITHM_ID.equals(id) : "There should be no algorithm in the collected options.";
+            assert !LayoutOptions.ALGORITHM.getId().equals(id) : "There should be no algorithm in the collected options.";
 
             // There should not be a gene for this option yet.
             assert result.find(id) == null : "Duplicate property: " + id;

@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.smart.rules;
 
+import de.cau.cs.kieler.core.math.KielerMath;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.smart.ISmartRule;
@@ -25,20 +27,28 @@ import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
  * @author msp
  */
 public class ForceRule implements ISmartRule {
+    
+    /** the penalty factor for missing graph features. */
+    private static final double FEATURE_PENALTY = 0.8;
 
     /**
      * {@inheritDoc}
      */
     public double suitability(final MetaLayout metaLayout) {
+        int missingFeatures = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
+                LayoutTypeData.TYPE_FORCE);
         // force based layout is always applicable to some degree, so take it as fallback solution
-        return SmartLayoutConfig.SUITABILITY_THRESHOLD;
+        return SmartLayoutConfig.SUITABILITY_THRESHOLD
+                * KielerMath.pow(FEATURE_PENALTY, missingFeatures);
     }
 
     /**
      * {@inheritDoc}
      */
     public void applyMetaLayout(final MetaLayout metaLayout) {
-        metaLayout.getConfig().put(LayoutOptions.ALGORITHM, LayoutTypeData.TYPE_FORCE);
+        LayoutAlgorithmData bestAlgo = SmartLayoutConfig.mostFeasibleAlgorithm(metaLayout,
+                LayoutTypeData.TYPE_FORCE);
+        metaLayout.getConfig().put(LayoutOptions.ALGORITHM, bestAlgo.getId());
     }
 
 }

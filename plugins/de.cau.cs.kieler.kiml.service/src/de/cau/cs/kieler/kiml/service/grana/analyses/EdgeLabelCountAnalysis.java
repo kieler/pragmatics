@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -18,47 +18,52 @@ import java.util.List;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 /**
- * A graph analysis that computes the number of ports in the given graph.
- * 
+ * Analysis for the number of edge labels.
+ *
  * @author msp
  */
-public class PortCountAnalysis implements IAnalysis {
+public class EdgeLabelCountAnalysis implements IAnalysis {
     
-    /** identifier of the port count analysis. */
-    public static final String ID = "de.cau.cs.kieler.kiml.grana.portCount";
+    /** identifier of the edge label count analysis. */
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.edgeLabelCount";
 
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode,
-            final Map<String, Object> results,
-            final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Number of ports analysis", 1);
+    public Object doAnalysis(KNode parentNode, Map<String, Object> results,
+            IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Edge label count analysis", 1);
         
         boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
                 AnalysisOptions.ANALYZE_HIERARCHY);
         
-        int numberOfports = 0;
+        int labelCount = 0;
         List<KNode> nodeQueue = new LinkedList<KNode>();
         nodeQueue.addAll(parentNode.getChildren());
         while (nodeQueue.size() > 0) {
             // pop first element
             KNode node = nodeQueue.remove(0);
-            numberOfports += node.getPorts().size();
-
+            
+            for (KEdge edge : node.getOutgoingEdges()) {
+                if (hierarchy || edge.getTarget().getParent() == parentNode) {
+                    labelCount += edge.getLabels().size();
+                }
+            }
+            
             if (hierarchy) {
                 nodeQueue.addAll(node.getChildren());
             }
         }
-        
+
         progressMonitor.done();
-        return numberOfports;
+        return labelCount;
     }
-    
+
 }
