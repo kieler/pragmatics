@@ -166,7 +166,10 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
                 group.getComponents(ComponentGroup.CONN_ENS), spacing);
         
         // With the individual placements computed, we now move the components to their final place,
-        // taking the size of other component placements into account
+        // taking the size of other component placements into account (the NW and WNS components stay
+        // at coordinates (0,0) and thus don't need to be moved around)
+        
+        
         
         // TODO: Implement.
         
@@ -181,7 +184,8 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
      * 
      * @param components the components to place.
      * @param spacing the amount of space to leave between two components.
-     * @return the space used by the component placement.
+     * @return the space used by the component placement, including spacing to the right and to the
+     *         bottom of the components.
      */
     private KVector placeComponentsHorizontally(final Collection<LayeredGraph> components,
             final double spacing) {
@@ -196,8 +200,10 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
             size.y = Math.max(size.y, component.getSize().y);
         }
         
-        // Remove the last bit of spacing, if necessary
-        size.x = Math.max(0.0, size.x - spacing);
+        // Add vertical spacing, if necessary
+        if (size.y > 0.0) {
+            size.y += spacing;
+        }
         
         return size;
     }
@@ -222,8 +228,10 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
             size.x = Math.max(size.x, component.getSize().x);
         }
         
-        // Remove the last bit of spacing, if necessary
-        size.y = Math.max(0.0, size.y - spacing);
+        // Add horizontal spacing, if necessary
+        if (size.x > 0.0) {
+            size.x += spacing;
+        }
         
         return size;
     }
