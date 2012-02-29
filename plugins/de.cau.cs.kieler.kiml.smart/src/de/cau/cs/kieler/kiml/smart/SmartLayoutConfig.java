@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.collect.Maps;
 
@@ -205,13 +204,15 @@ public class SmartLayoutConfig implements ILayoutConfig {
     private MetaLayout smartLayout(final KNode node) {
         Collection<SmartRuleData> smartRules = SmartLayoutService.getInstance().getSmartRules();
         MetaLayout metaLayout = new MetaLayout();
-        node.getData(KShapeLayout.class).setProperty(AnalysisOptions.ANALYZE_HIERARCHY, false);
         metaLayout.setGraph(node);
-        Map<SmartRuleData, Double> results = metaLayout.getResults();
 
         // determine the specific features of the graph
-        calcGraphFeatures(metaLayout);
+        EnumSet<GraphFeatures> graphFeatures = calcGraphFeatures(metaLayout);
+        boolean fullHierarchy = graphFeatures.contains(GraphFeatures.COMPOUND)
+                || graphFeatures.contains(GraphFeatures.CLUSTERS);
+        node.getData(KShapeLayout.class).setProperty(AnalysisOptions.ANALYZE_HIERARCHY, fullHierarchy);
 
+        Map<SmartRuleData, Double> results = metaLayout.getResults();
         double maxValue = 0;
         ISmartRule bestRule = null;
         for (SmartRuleData ruleData : smartRules) {
@@ -234,11 +235,7 @@ public class SmartLayoutConfig implements ILayoutConfig {
             // apply the meta layout of the most suitable rule
             bestRule.applyMetaLayout(metaLayout);
             // activate hierarchy layout for compound graphs and cluster graphs
-            Set<GraphFeatures> graphFeatures = metaLayout.getGraphFeatures();
-            if (graphFeatures.contains(GraphFeatures.COMPOUND)
-                    || graphFeatures.contains(GraphFeatures.CLUSTERS)) {
-                metaLayout.getConfig().put(LayoutOptions.LAYOUT_HIERARCHY, true);
-            }
+            metaLayout.getConfig().put(LayoutOptions.LAYOUT_HIERARCHY, fullHierarchy);
         }
         
         return metaLayout;
@@ -249,7 +246,7 @@ public class SmartLayoutConfig implements ILayoutConfig {
      * 
      * @param metaLayout the meta layout instance containing the graph
      */
-    private void calcGraphFeatures(final MetaLayout metaLayout) {
+    private EnumSet<GraphFeatures> calcGraphFeatures(final MetaLayout metaLayout) {
         EnumSet<GraphFeatures> graphFeatures = metaLayout.getGraphFeatures();
         
         // determine self-loops
@@ -285,6 +282,8 @@ public class SmartLayoutConfig implements ILayoutConfig {
                 graphFeatures.add(GraphFeatures.COMPOUND);
             }
         }
+        
+        return graphFeatures;
     }
     
     /**

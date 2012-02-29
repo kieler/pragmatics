@@ -17,6 +17,7 @@ import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.grana.analyses.NodeCountAnalysis;
 import de.cau.cs.kieler.kiml.smart.ISmartRule;
 import de.cau.cs.kieler.kiml.smart.MetaLayout;
 import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
@@ -28,18 +29,28 @@ import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
  */
 public class CircularRule implements ISmartRule {
     
+    /** minimal number of nodes for full result. */
+    private static final int MIN_NODES = 4;
     /** the penalty factor for missing graph features. */
-    private static final double FEATURE_PENALTY = 0.6;
+    private static final double FEATURE_PENALTY = 0.7;
 
     /**
      * {@inheritDoc}
      */
     public double suitability(final MetaLayout metaLayout) {
-        double density = metaLayout.analyze(BiconnectedComponentDensityAnalysis.ID);
-        int missingFeatures = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
-                LayoutTypeData.TYPE_CIRCLE);
-        
-        return (1 - density) * KielerMath.pow(FEATURE_PENALTY, missingFeatures);
+        int nodeCount = metaLayout.analyze(NodeCountAnalysis.ID);
+        if (nodeCount > 0) {
+            double density = metaLayout.analyze(BiconnectedComponentDensityAnalysis.ID);
+            int missingFeatures = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
+                    LayoutTypeData.TYPE_CIRCLE);
+    
+            double result = 1 - density;
+            if (nodeCount < MIN_NODES) {
+                result *= (double) nodeCount / MIN_NODES;
+            }
+            return result * KielerMath.pow(FEATURE_PENALTY, missingFeatures);
+        }
+        return 0;
     }
 
     /**

@@ -17,6 +17,7 @@ import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.grana.analyses.NodeCountAnalysis;
 import de.cau.cs.kieler.kiml.smart.ISmartRule;
 import de.cau.cs.kieler.kiml.smart.MetaLayout;
 import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
@@ -35,11 +36,16 @@ public class ForceRule implements ISmartRule {
      * {@inheritDoc}
      */
     public double suitability(final MetaLayout metaLayout) {
-        int missingFeatures = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
-                LayoutTypeData.TYPE_FORCE);
-        // force based layout is always applicable to some degree, so take it as fallback solution
-        return SmartLayoutConfig.SUITABILITY_THRESHOLD
-                * KielerMath.pow(FEATURE_PENALTY, missingFeatures);
+        int nodeCount = metaLayout.analyze(NodeCountAnalysis.ID);
+        if (nodeCount > 1) {
+            int missingFeatures = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
+                    LayoutTypeData.TYPE_FORCE);
+            
+            // force based layout is always applicable to some degree, so take it as fallback solution
+            return SmartLayoutConfig.SUITABILITY_THRESHOLD
+                    * KielerMath.pow(FEATURE_PENALTY, missingFeatures);
+        }
+        return 0;
     }
 
     /**
