@@ -74,7 +74,7 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
         float spacing = 2 * components.get(0).getProperty(Properties.OBJ_SPACING);
         
         for (ComponentGroup group : componentGroups) {
-            KVector groupSize = placeComponents(group, offset);
+            KVector groupSize = placeComponents(group, offset, spacing);
             
             // Compute the new offset
             offset.x += spacing + groupSize.x;
@@ -111,22 +111,12 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
     
     /* Component placement works as follows.
      * 
-     * Each component group is divided into nine sectors in three rows and three columns. We therefore
-     * have two separating horizontal and vertical lines each whose position we will remember while
-     * placing the components.
+     * We first go through all the possible combinations of external port side connections. For each
+     * combination, we compute a placement for the components with the given combination, remembering
+     * the amount of space the placement takes up.
      * 
-     * To place the components, we work our way through all the different possible combinations of
-     * external port sides the components may be connected to. We don't need to pay attention to which
-     * combinations are possible -- the process of component group creation already took care of that
-     * for us. We start in the top left corner and roughly work our way through the three rows of the
-     * component group, in a certain order. For each collection of components, we call an appropriate
-     * placement method which places the components and returns the amount of space they took up. That
-     * information is then used to keep track of the position of the separating lines, which in turn
-     * give us an idea of where to start placing the next components.
-     * 
-     * Once we're done placing the different components, we use the position of the lowermost horizontal
-     * and the rightmost vertical separating line to calculate how much space this component group takes
-     * up.
+     * We then go through all the combinations again, this time moving the components so as not to
+     * overlap other components.
      */
     
     
@@ -135,108 +125,120 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
      * 
      * @param group the group whose components are to be placed.
      * @param offset the offset to apply to the group's components along the way.
+     * @param spacing the amount of space to leave between two components.
      * @return the group's size.
      */
-    private KVector placeComponents(final ComponentGroup group, final KVector offset) {
-        // Keep track of the positions of the horizontal and vertical separating lines
-        double upperHorizontalLine = 0.0;
-        double lowerHorizontalLine = 0.0;
-        double leftVerticalLine = 0.0;
-        double rightVerticalLine = 0.0;
+    private KVector placeComponents(final ComponentGroup group, final KVector offset,
+            final double spacing) {
         
-        // Components to be placed and the size of their placement
-        Collection<LayeredGraph> components;
-        KVector placementSize;
+        // Determine the spacing between two components
+        // Place the different sector components and remember the amount of space their placement uses.
+        // In this phase, we pretend that no other components are in the component group.
+        KVector sizeC = placeComponentsInRows(
+                group.getComponents(ComponentGroup.CONN_C), spacing);
+        KVector sizeN = placeComponentsHorizontally(
+                group.getComponents(ComponentGroup.CONN_N), spacing);
+        KVector sizeS = placeComponentsHorizontally(
+                group.getComponents(ComponentGroup.CONN_S), spacing);
+        KVector sizeW = placeComponentsVertically(
+                group.getComponents(ComponentGroup.CONN_W), spacing);
+        KVector sizeE = placeComponentsVertically(
+                group.getComponents(ComponentGroup.CONN_E), spacing);
+        KVector sizeNW = placeComponentsHorizontally(
+                group.getComponents(ComponentGroup.CONN_NW), spacing);
+        KVector sizeNE = placeComponentsHorizontally(
+                group.getComponents(ComponentGroup.CONN_NE), spacing);
+        KVector sizeSW = placeComponentsHorizontally(
+                group.getComponents(ComponentGroup.CONN_SW), spacing);
+        KVector sizeSE = placeComponentsHorizontally(
+                group.getComponents(ComponentGroup.CONN_SE), spacing);
+        KVector sizeWE = placeComponentsHorizontally(
+                group.getComponents(ComponentGroup.CONN_WE), spacing);
+        KVector sizeNS = placeComponentsVertically(
+                group.getComponents(ComponentGroup.CONN_NS), spacing);
+        KVector sizeNWE = placeComponentsHorizontally(
+                group.getComponents(ComponentGroup.CONN_NWE), spacing);
+        KVector sizeSWE = placeComponentsHorizontally(
+                group.getComponents(ComponentGroup.CONN_SWE), spacing);
+        KVector sizeWNS = placeComponentsVertically(
+                group.getComponents(ComponentGroup.CONN_WNS), spacing);
+        KVector sizeENS = placeComponentsVertically(
+                group.getComponents(ComponentGroup.CONN_ENS), spacing);
         
+        // With the individual placements computed, we now move the components to their final place,
+        // taking the size of other component placements into account
         
-        // NW component
-        components = group.getComponents(ComponentGroup.CONN_NW);
-        placementSize = placeComponentsHorizontally(components, new KVector(0.0, 0.0));
-        
-        leftVerticalLine = placementSize.x;
-        rightVerticalLine = placementSize.x;
-        upperHorizontalLine = placementSize.y;
-        lowerHorizontalLine = placementSize.y;
-        
-        
-        // NWE component
-        components = group.getComponents(ComponentGroup.CONN_NWE);
-        placementSize = placeComponentsHorizontally(components, new KVector(0.0, 0.0));
-        
-        upperHorizontalLine = placementSize.y;
-        lowerHorizontalLine = placementSize.y;
-        
-        
-        // WNS component
-        components = group.getComponents(ComponentGroup.CONN_WNS);
-        placementSize = placeComponentsHorizontally(components, new KVector(0.0, 0.0));
-
-        leftVerticalLine = placementSize.x;
-        rightVerticalLine = placementSize.x;
-        
-        
-        // N component
-        components = group.getComponents(ComponentGroup.CONN_N);
-        placementSize = placeComponentsHorizontally(components, new KVector(leftVerticalLine, 0.0));
-        
-        upperHorizontalLine = Math.max(upperHorizontalLine, placementSize.y);
-        lowerHorizontalLine = Math.max(lowerHorizontalLine, upperHorizontalLine);
-        rightVerticalLine = Math.max(rightVerticalLine, leftVerticalLine + placementSize.x);
-        
-        
-        // W components
-        components = group.getComponents(ComponentGroup.CONN_W);
-        placementSize = placeComponentsVertically(components, new KVector(0.0, upperHorizontalLine));
-        
-        lowerHorizontalLine = Math.max(lowerHorizontalLine, upperHorizontalLine + placementSize.y);
-        leftVerticalLine = Math.max(leftVerticalLine, placementSize.x);
-        rightVerticalLine = Math.max(rightVerticalLine, leftVerticalLine);
-        
-        
-        // C components
-        components = group.getComponents(ComponentGroup.CONN_C);
-        placementSize = placeComponentsVertically(components, new KVector(
-                leftVerticalLine, upperHorizontalLine));
-        
-        lowerHorizontalLine = Math.max(lowerHorizontalLine, upperHorizontalLine + placementSize.y);
-        rightVerticalLine = Math.max(rightVerticalLine, leftVerticalLine + placementSize.x);
-        
-        // NS components
-        
-        // WE components
-        
+        // TODO: Implement.
         
         
         
         // Return the size of this component group
-        return new KVector(rightVerticalLine, lowerHorizontalLine);
-    }
-    
-    /**
-     * Places the given collection of components along a horizontal line starting at the given top left
-     * coordinate.
-     * 
-     * @param components the components to place.
-     * @param topLeft the top left corner of the placement area.
-     * @return the space used by the component placement.
-     */
-    private KVector placeComponentsHorizontally(final Collection<LayeredGraph> components,
-            final KVector topLeft) {
-        
         return null;
     }
     
     /**
-     * Places the given collection of components along a vertical line starting at the given top left
-     * coordinate.
+     * Places the given collection of components along a horizontal line.
      * 
      * @param components the components to place.
-     * @param topLeft the top left corner of the placement area.
+     * @param spacing the amount of space to leave between two components.
+     * @return the space used by the component placement.
+     */
+    private KVector placeComponentsHorizontally(final Collection<LayeredGraph> components,
+            final double spacing) {
+        
+        KVector size = new KVector();
+        
+        // Iterate over the components and place them
+        for (LayeredGraph component : components) {
+            offsetGraph(component, size.x, 0.0);
+            
+            size.x += spacing + component.getSize().x;
+            size.y = Math.max(size.y, component.getSize().y);
+        }
+        
+        // Remove the last bit of spacing, if necessary
+        size.x = Math.max(0.0, size.x - spacing);
+        
+        return size;
+    }
+    
+    /**
+     * Places the given collection of components along a vertical line.
+     * 
+     * @param components the components to place.
+     * @param spacing the amount of space to leave between two components.
      * @return the space used by the component placement.
      */
     private KVector placeComponentsVertically(final Collection<LayeredGraph> components,
-            final KVector topLeft) {
+            final double spacing) {
         
+        KVector size = new KVector();
+        
+        // Iterate over the components and place them
+        for (LayeredGraph component : components) {
+            offsetGraph(component, 0.0, size.y);
+            
+            size.y += spacing + component.getSize().y;
+            size.x = Math.max(size.x, component.getSize().x);
+        }
+        
+        // Remove the last bit of spacing, if necessary
+        size.y = Math.max(0.0, size.y - spacing);
+        
+        return size;
+    }
+    
+    /**
+     * Place the given collection of components in multiple rows.
+     * 
+     * @param components the components to place.
+     * @param spacing the amount of space to leave between two components.
+     * @return the space used by the component placement.
+     */
+    private KVector placeComponentsInRows(final Collection<LayeredGraph> components,
+            final double spacing) {
+        
+        // TODO: Implement.
         return null;
     }
 
