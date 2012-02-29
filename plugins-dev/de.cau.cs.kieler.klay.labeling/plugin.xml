@@ -16,10 +16,9 @@
             id="de.cau.cs.kieler.klay.labeling"
             name="KLay Label Layouter"
             type="de.cau.cs.kieler.type.labeling">
-         <supportedDiagram
-               priority="15"
-               type="de.cau.cs.kieler.layout.diagrams.general">
-         </supportedDiagram>
+         <supportedFeature
+               feature="EDGE_LABELS">
+         </supportedFeature>
          <knownOption
                option="de.cau.cs.kieler.debugMode">
          </knownOption>

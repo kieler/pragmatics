@@ -16,11 +16,12 @@ package de.cau.cs.kieler.kiml.grana.handlers;
 import java.util.List;
 import java.util.Map;
 
+import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.util.DiagramAnalyzer;
 import de.cau.cs.kieler.kiml.grana.visualization.VisualizationServices;
+import de.cau.cs.kieler.kiml.service.AnalysisService;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * A view management effect for graph analysis.
@@ -32,9 +33,7 @@ public class AnalysisEffect extends AbstractEffect {
     /** the parent node. */
     private KNode parentNode;
     /** the analyses to perform. */
-    private List<AbstractInfoAnalysis> analyses;
-    /** whether a progress bar should be used. */
-    private boolean progressBar;
+    private List<AnalysisData> analyses;
 
     /**
      * Creates an analysis effect.
@@ -43,15 +42,11 @@ public class AnalysisEffect extends AbstractEffect {
      *            the parent node
      * @param theanalyses
      *            the analyses to perform
-     * @param theprogressBar
-     *            whether a progress bar should be used
      */
     public AnalysisEffect(final KNode theparentNode,
-            final List<AbstractInfoAnalysis> theanalyses,
-            final boolean theprogressBar) {
+            final List<AnalysisData> theanalyses) {
         this.parentNode = theparentNode;
         this.analyses = theanalyses;
-        this.progressBar = theprogressBar;
     }
 
     /**
@@ -59,8 +54,8 @@ public class AnalysisEffect extends AbstractEffect {
      */
     public void execute() {
         // perform the analyses on the active diagram
-        final Map<String, Object> results =
-                DiagramAnalyzer.analyse(parentNode, analyses, progressBar);
+        final Map<String, Object> results = AnalysisService.getInstance().analyze(parentNode, analyses,
+                new BasicProgressMonitor(0));
         // visualize the results using silent methods
         VisualizationServices.getInstance().visualize(analyses, results, true);
     }

@@ -84,7 +84,7 @@ public class DiagramTypeDefaultAction extends Action {
         
         if (optionData != null) {
             String valueString = entry.getValueAsString();
-            if (optionData.getId().equals(LayoutOptions.ALGORITHM_ID)) {
+            if (optionData.equals(LayoutOptions.ALGORITHM)) {
                 valueString = LayoutPropertySource.getLayoutHint(valueString);
             }
             EclipseLayoutInfoService.getInstance().storeOption(diagramType, optionData, valueString);

@@ -48,7 +48,7 @@ public class TypeLayoutConfig extends SemanticLayoutConfig {
     protected Object getSemanticValue(final EObject semanticElem,
             final LayoutOptionData<?> layoutOption) {
         if (semanticElem instanceof Entity && layoutOption.getId()
-                .equals(LayoutOptions.DIAGRAM_TYPE_ID)) {
+                .equals(LayoutOptions.DIAGRAM_TYPE.getId())) {
             Entity entity = (Entity) semanticElem;
             Annotation annotation = entity.getAnnotation("DiagramType");
             if (annotation instanceof StringAnnotation) {

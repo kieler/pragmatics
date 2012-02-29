@@ -20,7 +20,7 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 /**
  * Measures the fraction of upward edges in the given KGraph. Returns a Float

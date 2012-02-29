@@ -8,7 +8,7 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.kgraph,
  de.cau.cs.kieler.kiml,
- de.cau.cs.kieler.kiml.grana
+ de.cau.cs.kieler.kiml.service
 Export-Package: de.cau.cs.kieler.klay.planar,
  de.cau.cs.kieler.klay.planar.flownetwork,
  de.cau.cs.kieler.klay.planar.graph,

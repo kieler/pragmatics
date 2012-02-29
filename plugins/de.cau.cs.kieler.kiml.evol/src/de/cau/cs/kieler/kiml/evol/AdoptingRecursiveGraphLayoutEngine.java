@@ -172,7 +172,7 @@ class AdoptingRecursiveGraphLayoutEngine extends RecursiveGraphLayoutEngine {
             assert data != null : "No layout option data for " + id;
 
             // Treat layout hint.
-            if (LayoutOptions.ALGORITHM_ID.equalsIgnoreCase((String) id)) {
+            if (LayoutOptions.ALGORITHM.getId().equalsIgnoreCase((String) id)) {
                 handleAlgorithm(gene, shapeLayout);
                 continue;
             }
@@ -280,7 +280,7 @@ class AdoptingRecursiveGraphLayoutEngine extends RecursiveGraphLayoutEngine {
         Object value = gene.getValue();
         Object id = gene.getId();
 
-        assert !LayoutOptions.ALGORITHM_ID.equalsIgnoreCase((String) id);
+        assert !LayoutOptions.ALGORITHM.getId().equalsIgnoreCase((String) id);
 
         // a normal string option
         targetGraphData.setProperty(data, value.toString());

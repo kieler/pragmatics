@@ -45,38 +45,58 @@ import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
  */
 public final class Properties {
 
-    /** the original object from which a graph element was created. */
+    /**
+     * The original object from which a graph element was created.
+     */
     public static final IProperty<Object> ORIGIN = new Property<Object>("origin");
 
-    /** node type. */
+    /**
+     * Node type.
+     */
     public static final IProperty<NodeType> NODE_TYPE = new Property<NodeType>("nodeType",
             NodeType.NORMAL);
     
-    /** the original bend points. */
+    /**
+     * The original bend points.
+     */
     public static final IProperty<KVectorChain> ORIGINAL_BENDPOINTS = new Property<KVectorChain>(
             "originalBendpoints");
 
-    /** edge type. */
+    /**
+     * Edge type.
+     */
     public static final IProperty<EdgeType> EDGE_TYPE = new Property<EdgeType>("edgeType",
             EdgeType.NORMAL);
 
-    /** flag for reversed edges. */
+    /**
+     * Flag for reversed edges.
+     */
     public static final IProperty<Boolean> REVERSED = new Property<Boolean>("reversed", false);
 
-    /** random number generator for the algorithm. */
+    /**
+     * Random number generator for the algorithm.
+     */
     public static final IProperty<Random> RANDOM = new Property<Random>("random");
 
-    /** width and height ratio by which a node was resized prior to importing. */
+    /**
+     * Width and height ratio by which a node was resized prior to importing.
+     */
     public static final IProperty<KVector> RESIZE_RATIO = new Property<KVector>("resizeRatio");
 
-    /** the source port of a long edge before it was broken into multiple segments. */
+    /**
+     * The source port of a long edge before it was broken into multiple segments.
+     */
     public static final IProperty<LPort> LONG_EDGE_SOURCE = new Property<LPort>("longEdgeSource",
             null);
-    /** the target port of a long edge before it was broken into multiple segments. */
+    /**
+     * The target port of a long edge before it was broken into multiple segments.
+     */
     public static final IProperty<LPort> LONG_EDGE_TARGET = new Property<LPort>("longEdgeTarget",
             null);
 
-    /** edge constraints for nodes. */
+    /**
+     * Edge constraints for nodes.
+     */
     public static final IProperty<EdgeConstraint> EDGE_CONSTRAINT = new Property<EdgeConstraint>(
             "edgeConstraint", EdgeConstraint.NONE);
 
@@ -112,7 +132,9 @@ public final class Properties {
      */
     public static final IProperty<Integer> CROSSING_HINT = new Property<Integer>("crossingHint", 0);
 
-    /** Flags indicating the properties of a graph. */
+    /**
+     * Flags indicating the properties of a graph.
+     */
     public static final IProperty<Set<GraphProperties>> GRAPH_PROPERTIES 
     = new Property<Set<GraphProperties>>("graphProperties", EnumSet.allOf(GraphProperties.class));
 
@@ -255,77 +277,54 @@ public final class Properties {
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS
 
-    /** default value for object spacing. */
-    public static final float DEF_SPACING = 20.0f;
     /** minimal spacing between objects. */
     public static final Property<Float> OBJ_SPACING = new Property<Float>(LayoutOptions.SPACING,
-            DEF_SPACING, 0.0f);
+            20.0f, 0.0f);
     /** spacing to the border of the drawing. */
     public static final Property<Float> BORDER_SPACING = new Property<Float>(
-            LayoutOptions.BORDER_SPACING, DEF_SPACING, 0.0f);
+            LayoutOptions.BORDER_SPACING, 20.0f, 0.0f);
 
-    /** option identifier for edge spacing factor. */
-    public static final String EDGE_SPACING_FACTOR_ID 
-        = "de.cau.cs.kieler.klay.layered.edgeSpacingFactor";
-    /** default value for edge spacing factor. */
-    public static final float DEF_EDGE_SPACING_FACTOR = 0.5f;
     /** factor for minimal spacing between edges. */
     public static final Property<Float> EDGE_SPACING_FACTOR = new Property<Float>(
-            EDGE_SPACING_FACTOR_ID, DEF_EDGE_SPACING_FACTOR);
+            "de.cau.cs.kieler.klay.layered.edgeSpacingFactor", 0.5f);
 
     /** priority of elements. controls how much single edges are emphasized. */
     public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
 
-    /** default value for aspect ratio. */
-    public static final float DEF_ASPECT_RATIO = 1.6f;
     /** the aspect ratio for packing connected components. */
     public static final Property<Float> ASPECT_RATIO = new Property<Float>(
-            LayoutOptions.ASPECT_RATIO, DEF_ASPECT_RATIO, 0.0f);
+            LayoutOptions.ASPECT_RATIO, 1.6f, 0.0f);
 
-    /** option identifier for minimal angle. */
-    public static final String MIN_EDGE_ANGLE_ID = "de.cau.cs.kieler.klay.layered.minimalAngle";
     /** defines the minimal angle a short edge may have. */
     public static final IProperty<Integer> MIN_EDGE_ANGLE = new Property<Integer>(
-            MIN_EDGE_ANGLE_ID, 0);
+            "de.cau.cs.kieler.klay.layered.minimalAngle", 0);
 
-    /** option identifier for distribute nodes. */
-    public static final String DISTRIBUTE_NODES_ID = "de.cau.cs.kieler.klay.layered.distributeNodes";
     /** whether nodes shall be distributed during layer assignment. */
     public static final IProperty<Boolean> DISTRIBUTE_NODES = new Property<Boolean>(
-            DISTRIBUTE_NODES_ID, false);
+            "de.cau.cs.kieler.klay.layered.distributeNodes", false);
 
-    /** option identifier for cycle breaking. */
-    public static final String CYCLE_BREAKING_ID = "de.cau.cs.kieler.klay.layered.cycleBreaking";
     /** property to choose a cycle breaking strategy. */
     public static final IProperty<CycleBreakingStrategy> CYCLE_BREAKING
-            = new Property<CycleBreakingStrategy>(CYCLE_BREAKING_ID, CycleBreakingStrategy.GREEDY);
+            = new Property<CycleBreakingStrategy>("de.cau.cs.kieler.klay.layered.cycleBreaking",
+                    CycleBreakingStrategy.GREEDY);
     
-    /** option identifier for node layering. */
-    public static final String NODE_LAYERING_ID = "de.cau.cs.kieler.klay.layered.nodeLayering";
     /** property to choose a node layering strategy. */
     public static final IProperty<LayeringStrategy> NODE_LAYERING = new Property<LayeringStrategy>(
-            NODE_LAYERING_ID, LayeringStrategy.NETWORK_SIMPLEX);
+            "de.cau.cs.kieler.klay.layered.nodeLayering", LayeringStrategy.NETWORK_SIMPLEX);
 
-    /** option identifier for crossing minimization. */
-    public static final String CROSSMIN_ID = "de.cau.cs.kieler.klay.layered.crossMin";
     /** property to choose a crossing minimization strategy. */
     public static final IProperty<CrossingMinimizationStrategy> CROSSMIN
-            = new Property<CrossingMinimizationStrategy>(CROSSMIN_ID,
+            = new Property<CrossingMinimizationStrategy>("de.cau.cs.kieler.klay.layered.crossMin",
                     CrossingMinimizationStrategy.LAYER_SWEEP);
 
-    /** option identifier for thoroughness. */
-    public static final String THOROUGHNESS_ID = "de.cau.cs.kieler.klay.layered.thoroughness";
     /** property that determines how much effort should be spent. */
-    public static final IProperty<Integer> THOROUGHNESS = new Property<Integer>(THOROUGHNESS_ID, 5, 1);
+    public static final IProperty<Integer> THOROUGHNESS = new Property<Integer>(
+            "de.cau.cs.kieler.klay.layered.thoroughness", 5, 1);
 
-    /** option identifier for layer constraint. */
-    public static final String LAYER_CONSTRAINT_ID = "de.cau.cs.kieler.klay.layered.layerConstraint";
     /** property to set constraints on the node layering. */
     public static final IProperty<LayerConstraint> LAYER_CONSTRAINT = new Property<LayerConstraint>(
-            LAYER_CONSTRAINT_ID, LayerConstraint.NONE);
+            "de.cau.cs.kieler.klay.layered.layerConstraint", LayerConstraint.NONE);
     
-    /** option identifier for port merging. */
-    public static final String MERGE_PORTS_ID = "de.cau.cs.kieler.klay.layered.mergePorts";
     /**
      * Property to enable or disable port merging. Merging ports is only interesting for edges
      * directly connected to nodes instead of ports. When this option is disabled, one port is
@@ -333,14 +332,11 @@ public final class Properties {
      * edges share an input port, and all outgoing edges share an output port.
      */
     public static final IProperty<Boolean> MERGE_PORTS = new Property<Boolean>(
-            MERGE_PORTS_ID, false);
+            "de.cau.cs.kieler.klay.layered.mergePorts", false);
     
-    /** option identifier for interactive layout anchor point. */
-    public static final String INTERACTIVE_LAYOUT_ANCHOR_ID =
-            "de.cau.cs.kieler.klay.layered.interactiveLayoutAnchor";
     /** property that determines which point in a node determines the result of interactive phases. */
     public static final IProperty<AnchorPoint> INTERACTIVE_LAYOUT_ANCHOR = new Property<AnchorPoint>(
-            INTERACTIVE_LAYOUT_ANCHOR_ID, AnchorPoint.CENTER);
+            "de.cau.cs.kieler.klay.layered.interactiveLayoutAnchor", AnchorPoint.CENTER);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

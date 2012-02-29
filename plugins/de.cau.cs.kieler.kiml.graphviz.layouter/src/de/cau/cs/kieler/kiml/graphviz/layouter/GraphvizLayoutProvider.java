@@ -126,15 +126,6 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean supportsHierarchy(final KNode layoutNode) {
-        return layoutNode.getData(KShapeLayout.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)
-                && (command == Command.DOT || command == Command.FDP);
-    }
-
-    /**
      * Writes a serialized version of the Graphviz model to the given output stream.
      * 
      * @param graphvizModel

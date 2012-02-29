@@ -32,6 +32,7 @@ import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Color;
 import org.eclipse.graphiti.mm.algorithms.styles.Font;
+import org.eclipse.graphiti.mm.algorithms.styles.LineStyle;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.algorithms.styles.StylesFactory;
@@ -512,6 +513,24 @@ public class Pictogram2PNodeTransformation extends
             line.setPaint(transformColor(bc));
         } else {
             line.setPaint(null);
+        }
+        switch (p.getLineStyle().getValue()) {
+        case LineStyle.UNSPECIFIED_VALUE:
+        case LineStyle.SOLID_VALUE:
+            line.setLineStyle(de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath.LineStyle.SOLID);
+            break;
+        case LineStyle.DASH_VALUE:
+            line.setLineStyle(de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath.LineStyle.DASH);
+            break;
+        case LineStyle.DASHDOT_VALUE:
+            line.setLineStyle(de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath.LineStyle.DASHDOT);
+            break;
+        case LineStyle.DASHDOTDOT_VALUE:
+            line.setLineStyle(de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath.LineStyle.DASHDOTDOT); // SUPPRESS CHECKSTYLE LineLength
+            break;
+        case LineStyle.DOT_VALUE:
+            line.setLineStyle(de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath.LineStyle.DOT);
+            break;
         }
         return line;
     }
