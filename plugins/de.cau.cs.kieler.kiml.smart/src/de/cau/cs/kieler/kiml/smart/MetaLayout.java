@@ -41,7 +41,7 @@ public class MetaLayout {
     /** the analysis cache. */
     private Map<String, Object> analysisCache;
     /** set of recognized graph features. */
-    private EnumSet<GraphFeatures> graphFeatures = EnumSet.noneOf(GraphFeatures.class);
+    private final EnumSet<GraphFeatures> graphFeatures = EnumSet.noneOf(GraphFeatures.class);
     /** the smart layout rule results. */
     private Map<SmartRuleData, Double> resultMap;
     /** the time when the meta layout instance was created. */

@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.kiml.smart;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Map;
 
@@ -77,7 +76,7 @@ public class SmartLayoutConfig implements ILayoutConfig {
     }
     
     /** the meta layout cache for performance optimization. */
-    private Map<Object, MetaLayout> metaLayoutCache = Maps.newHashMap();
+    private final Map<Object, MetaLayout> metaLayoutCache = Maps.newHashMap();
     /** the last time when the cache was checked for old information. */
     private long lastCheckTime = System.currentTimeMillis();
     
@@ -86,8 +85,8 @@ public class SmartLayoutConfig implements ILayoutConfig {
      * 
      * @return the cached meta layout data
      */
-    public Collection<MetaLayout> getMetaLayouts() {
-        return Collections.unmodifiableCollection(metaLayoutCache.values());
+    public Map<Object, MetaLayout> getMetaLayoutCache() {
+        return metaLayoutCache;
     }
     
     /**
