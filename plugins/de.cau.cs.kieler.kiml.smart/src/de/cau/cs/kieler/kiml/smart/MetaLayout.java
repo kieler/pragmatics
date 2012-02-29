@@ -22,7 +22,7 @@ import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.kiml.options.GraphFeatures;
+import de.cau.cs.kieler.kiml.options.GraphFeature;
 import de.cau.cs.kieler.kiml.service.AnalysisService;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.smart.SmartLayoutService.SmartRuleData;
@@ -41,7 +41,7 @@ public class MetaLayout {
     /** the analysis cache. */
     private Map<String, Object> analysisCache;
     /** set of recognized graph features. */
-    private final EnumSet<GraphFeatures> graphFeatures = EnumSet.noneOf(GraphFeatures.class);
+    private final EnumSet<GraphFeature> graphFeatures = EnumSet.noneOf(GraphFeature.class);
     /** the smart layout rule results. */
     private Map<SmartRuleData, Double> resultMap;
     /** the time when the meta layout instance was created. */
@@ -142,7 +142,7 @@ public class MetaLayout {
      * 
      * @return the graph features
      */
-    public EnumSet<GraphFeatures> getGraphFeatures() {
+    public EnumSet<GraphFeature> getGraphFeatures() {
         return graphFeatures;
     }
 

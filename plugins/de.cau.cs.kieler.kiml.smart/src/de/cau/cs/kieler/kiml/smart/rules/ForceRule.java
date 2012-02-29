@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.smart.rules;
 
-import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -38,12 +37,11 @@ public class ForceRule implements ISmartRule {
     public double suitability(final MetaLayout metaLayout) {
         int nodeCount = metaLayout.analyze(NodeCountAnalysis.ID);
         if (nodeCount > 1) {
-            int missingFeatures = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
+            double fp = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
                     LayoutTypeData.TYPE_FORCE);
             
             // force based layout is always applicable to some degree, so take it as fallback solution
-            return SmartLayoutConfig.SUITABILITY_THRESHOLD
-                    * KielerMath.pow(FEATURE_PENALTY, missingFeatures);
+            return SmartLayoutConfig.SUITABILITY_THRESHOLD * Math.pow(FEATURE_PENALTY, fp);
         }
         return 0;
     }

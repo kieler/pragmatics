@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.smart.rules;
 
-import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -41,14 +40,14 @@ public class CircularRule implements ISmartRule {
         int nodeCount = metaLayout.analyze(NodeCountAnalysis.ID);
         if (nodeCount > 0) {
             double density = metaLayout.analyze(BiconnectedComponentDensityAnalysis.ID);
-            int missingFeatures = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
+            double fp = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
                     LayoutTypeData.TYPE_CIRCLE);
     
             double result = 1 - density;
             if (nodeCount < MIN_NODES) {
                 result *= (double) nodeCount / MIN_NODES;
             }
-            return result * KielerMath.pow(FEATURE_PENALTY, missingFeatures);
+            return result * Math.pow(FEATURE_PENALTY, fp);
         }
         return 0;
     }

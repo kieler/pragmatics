@@ -20,7 +20,8 @@
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <supportedDiagram
                priority="9"
@@ -92,7 +93,8 @@
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <knownOption
                default="UP"
@@ -149,7 +151,8 @@
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.qualityVsSpeed">
@@ -184,7 +187,8 @@
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <knownOption
                default="80"
@@ -223,7 +227,8 @@
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <knownOption
                default="15"
@@ -269,7 +274,8 @@
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <supportedDiagram
                priority="8"
@@ -347,7 +353,8 @@
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <knownOption
                default="15"
@@ -390,7 +397,8 @@
             preview="images/tree.png"
             type="de.cau.cs.kieler.type.tree">
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <knownOption
                default="15"
@@ -437,7 +445,8 @@
             preview="images/radial-tree.png"
             type="de.cau.cs.kieler.type.tree">
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <knownOption
                default="50.0"
@@ -474,7 +483,8 @@
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <knownOption
                default="15"

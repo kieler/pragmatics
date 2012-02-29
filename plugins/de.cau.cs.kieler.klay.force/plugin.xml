@@ -16,10 +16,12 @@
                type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <knownOption
                default="1"
