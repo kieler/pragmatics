@@ -148,7 +148,8 @@
                type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
                feature="EDGE_LABELS"
@@ -184,7 +185,8 @@
             preview="images/davidson-harel.png"
             type="de.cau.cs.kieler.type.force">
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
                feature="EDGE_LABELS"
@@ -224,7 +226,8 @@
             preview="images/fruchterman-reingold.png"
             type="de.cau.cs.kieler.type.force">
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
                feature="EDGE_LABELS"
@@ -271,7 +274,8 @@
             preview="images/gem.png"
             type="de.cau.cs.kieler.type.force">
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
                feature="EDGE_LABELS"
@@ -350,7 +354,8 @@
             preview="images/circular.png"
             type="de.cau.cs.kieler.type.circle">
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
                feature="EDGE_LABELS"
@@ -480,7 +485,8 @@
             preview="images/upward.png"
             type="de.cau.cs.kieler.type.layered">
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
                feature="EDGE_LABELS"

@@ -126,7 +126,8 @@
                priority="1">
          </supportedFeature>
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
                feature="EDGE_LABELS"
@@ -207,7 +208,8 @@
                priority="1">
          </supportedFeature>
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
                feature="EDGE_LABELS"
@@ -334,7 +336,8 @@
                priority="1">
          </supportedFeature>
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
                feature="EDGE_LABELS"
@@ -444,7 +447,7 @@
       <layoutOption
             appliesTo="parents"
             class="de.cau.cs.kieler.kiml.graphviz.dot.transform.OverlapMode"
-            default="NONE"
+            default="PRISM"
             description="Determines if and how node overlaps should be removed."
             id="de.cau.cs.kieler.graphviz.overlapMode"
             name="Overlap Removal"

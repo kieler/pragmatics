@@ -111,6 +111,17 @@ public abstract class LayoutInfoService {
         public String getActivationText() {
             return activationText;
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            if (config == null) {
+                return super.toString();
+            }
+            return config.getClass().getSimpleName();
+        }
     }
     
     /** the singleton instance of the layout info service. */
