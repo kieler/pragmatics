@@ -852,12 +852,16 @@ class DiagramUtil {
     def <T,U> Map<U,T> toInverse(Map<T,U> map) {
     	HashBiMap::create(map).inverse
     } 
-    
           
-    def ArrayList<Integer> create list: <Integer>newArrayList getListWithElementsTo(Integer size) {
+    def ArrayList<Integer> create list: <Integer>newArrayList getListWithElementsAscendingTo(Integer size) {
     	while (list.size < size) {
             list.add(list.size);
         }
         list
-    } 
+    }
+    
+    def ArrayList<Integer> create list: size.listWithElementsAscendingTo getListWithElementsDescendingFrom(Integer size) {
+    	list.reverse
+    }
+    
 }
