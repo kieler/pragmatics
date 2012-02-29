@@ -203,7 +203,7 @@ public class ComponentGroup {
 
     
     ///////////////////////////////////////////////////////////////////////////////
-    // Component Placement
+    // Component Management
     
     /**
      * Tries to add the given component to the group. Before adding the component, a call to
@@ -245,5 +245,17 @@ public class ComponentGroup {
         
         // We haven't found any conflicting components
         return true;
+    }
+    
+    /**
+     * Returns the components in this component group connected to external ports on the given set
+     * of port sides.
+     * 
+     * @param connections external port sides the returned components are to be connected to.
+     * @return the collection of components. If there are no components, an empty collection is
+     *         returned.
+     */
+    public Collection<LayeredGraph> getComponents(final Set<PortSide> connections) {
+        return components.get(connections);
     }
 }

@@ -80,8 +80,6 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
             offset.y += spacing + groupSize.y;
         }
         
-        // TODO: Place groups, if no offset was used in the previous step.
-        
         return result;
     }
     
@@ -118,6 +116,26 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
      * @return the group's size.
      */
     private KVector placeComponents(final ComponentGroup group, final KVector offset) {
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         // TODO: Implement.
         return null;
     }
