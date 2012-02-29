@@ -67,5 +67,29 @@ abstract class GraphPlacer {
             }
         }
     }
+    
+    /**
+     * Offsets the given graph by a given offset without moving its nodes to another graph.
+     * 
+     * @param graph the graph to offset.
+     * @param offsetx x coordinate offset.
+     * @param offsety y coordinate offset.
+     */
+    protected void offsetGraph(final LayeredGraph graph, final double offsetx, final double offsety) {
+        KVector graphOffset = graph.getOffset().translate(offsetx, offsety);
+        for (Layer layer : graph) {
+            for (LNode node : layer) {
+                node.getPosition().add(graphOffset);
+                for (LPort port : node.getPorts()) {
+                    for (LEdge edge : port.getOutgoingEdges()) {
+                        edge.getBendPoints().translate(graphOffset);
+                        for (LLabel label : edge.getLabels()) {
+                            label.getPosition().add(graphOffset);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 }

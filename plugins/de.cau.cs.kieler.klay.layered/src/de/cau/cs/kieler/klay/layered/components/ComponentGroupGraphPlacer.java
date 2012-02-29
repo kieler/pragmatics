@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.components;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -108,6 +109,27 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
     ///////////////////////////////////////////////////////////////////////////////
     // Component Placement
     
+    /* Component placement works as follows.
+     * 
+     * Each component group is divided into nine sectors in three rows and three columns. We therefore
+     * have two separating horizontal and vertical lines each whose position we will remember while
+     * placing the components.
+     * 
+     * To place the components, we work our way through all the different possible combinations of
+     * external port sides the components may be connected to. We don't need to pay attention to which
+     * combinations are possible -- the process of component group creation already took care of that
+     * for us. We start in the top left corner and roughly work our way through the three rows of the
+     * component group, in a certain order. For each collection of components, we call an appropriate
+     * placement method which places the components and returns the amount of space they took up. That
+     * information is then used to keep track of the position of the separating lines, which in turn
+     * give us an idea of where to start placing the next components.
+     * 
+     * Once we're done placing the different components, we use the position of the lowermost horizontal
+     * and the rightmost vertical separating line to calculate how much space this component group takes
+     * up.
+     */
+    
+    
     /**
      * Computes a placement for the components in the given component group.
      * 
@@ -116,27 +138,105 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
      * @return the group's size.
      */
     private KVector placeComponents(final ComponentGroup group, final KVector offset) {
+        // Keep track of the positions of the horizontal and vertical separating lines
+        double upperHorizontalLine = 0.0;
+        double lowerHorizontalLine = 0.0;
+        double leftVerticalLine = 0.0;
+        double rightVerticalLine = 0.0;
+        
+        // Components to be placed and the size of their placement
+        Collection<LayeredGraph> components;
+        KVector placementSize;
+        
+        
+        // NW component
+        components = group.getComponents(ComponentGroup.CONN_NW);
+        placementSize = placeComponentsHorizontally(components, new KVector(0.0, 0.0));
+        
+        leftVerticalLine = placementSize.x;
+        rightVerticalLine = placementSize.x;
+        upperHorizontalLine = placementSize.y;
+        lowerHorizontalLine = placementSize.y;
+        
+        
+        // NWE component
+        components = group.getComponents(ComponentGroup.CONN_NWE);
+        placementSize = placeComponentsHorizontally(components, new KVector(0.0, 0.0));
+        
+        upperHorizontalLine = placementSize.y;
+        lowerHorizontalLine = placementSize.y;
+        
+        
+        // WNS component
+        components = group.getComponents(ComponentGroup.CONN_WNS);
+        placementSize = placeComponentsHorizontally(components, new KVector(0.0, 0.0));
+
+        leftVerticalLine = placementSize.x;
+        rightVerticalLine = placementSize.x;
+        
+        
+        // N component
+        components = group.getComponents(ComponentGroup.CONN_N);
+        placementSize = placeComponentsHorizontally(components, new KVector(leftVerticalLine, 0.0));
+        
+        upperHorizontalLine = Math.max(upperHorizontalLine, placementSize.y);
+        lowerHorizontalLine = Math.max(lowerHorizontalLine, upperHorizontalLine);
+        rightVerticalLine = Math.max(rightVerticalLine, leftVerticalLine + placementSize.x);
+        
+        
+        // W components
+        components = group.getComponents(ComponentGroup.CONN_W);
+        placementSize = placeComponentsVertically(components, new KVector(0.0, upperHorizontalLine));
+        
+        lowerHorizontalLine = Math.max(lowerHorizontalLine, upperHorizontalLine + placementSize.y);
+        leftVerticalLine = Math.max(leftVerticalLine, placementSize.x);
+        rightVerticalLine = Math.max(rightVerticalLine, leftVerticalLine);
+        
+        
+        // C components
+        components = group.getComponents(ComponentGroup.CONN_C);
+        placementSize = placeComponentsVertically(components, new KVector(
+                leftVerticalLine, upperHorizontalLine));
+        
+        lowerHorizontalLine = Math.max(lowerHorizontalLine, upperHorizontalLine + placementSize.y);
+        rightVerticalLine = Math.max(rightVerticalLine, leftVerticalLine + placementSize.x);
+        
+        // NS components
+        
+        // WE components
         
         
         
         
+        // Return the size of this component group
+        return new KVector(rightVerticalLine, lowerHorizontalLine);
+    }
+    
+    /**
+     * Places the given collection of components along a horizontal line starting at the given top left
+     * coordinate.
+     * 
+     * @param components the components to place.
+     * @param topLeft the top left corner of the placement area.
+     * @return the space used by the component placement.
+     */
+    private KVector placeComponentsHorizontally(final Collection<LayeredGraph> components,
+            final KVector topLeft) {
         
+        return null;
+    }
+    
+    /**
+     * Places the given collection of components along a vertical line starting at the given top left
+     * coordinate.
+     * 
+     * @param components the components to place.
+     * @param topLeft the top left corner of the placement area.
+     * @return the space used by the component placement.
+     */
+    private KVector placeComponentsVertically(final Collection<LayeredGraph> components,
+            final KVector topLeft) {
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        // TODO: Implement.
         return null;
     }
 
