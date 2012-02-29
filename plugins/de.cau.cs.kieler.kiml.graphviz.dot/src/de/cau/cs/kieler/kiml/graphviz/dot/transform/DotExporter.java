@@ -494,7 +494,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
             OverlapMode mode = parentLayout.getProperty(Attributes.OVERLAP_PROP);
             if (mode != OverlapMode.NONE) {
                 graphAttrs.add(createAttribute(Attributes.OVERLAP, mode.literal()));
-                graphAttrs.add(createAttribute(Attributes.SEP, minSpacing / 2));
+                graphAttrs.add(createAttribute(Attributes.SEP, "+" + (int) (minSpacing / 2)));
             }
             // enable or disable connected component packing
             Boolean pack = parentLayout.getProperty(LayoutOptions.SEPARATE_CC);

@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.smart.rules;
 
-import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -31,7 +30,7 @@ import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
 public class LayeredRule implements ISmartRule {
     
     /** the penalty factor for missing graph features. */
-    private static final double FEATURE_PENALTY = 0.6;
+    private static final double FEATURE_PENALTY = 0.7;
 
     /**
      * {@inheritDoc}
@@ -40,11 +39,11 @@ public class LayeredRule implements ISmartRule {
         int nodeCount = metaLayout.analyze(NodeCountAnalysis.ID);
         if (nodeCount > 0) {
             int cycleCount = metaLayout.analyze(DirectedCycleAnalysis.ID);
-            int missingFeatures = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
+            double fp = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
                     LayoutTypeData.TYPE_LAYERED);
             
             return (1 - (double) Math.min(cycleCount, nodeCount) / nodeCount)
-                    * KielerMath.pow(FEATURE_PENALTY, missingFeatures);
+                    * Math.pow(FEATURE_PENALTY, fp);
         }
         return 0;
     }

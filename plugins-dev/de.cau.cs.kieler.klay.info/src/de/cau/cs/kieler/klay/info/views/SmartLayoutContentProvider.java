@@ -13,17 +13,13 @@
  */
 package de.cau.cs.kieler.klay.info.views;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import de.cau.cs.kieler.kiml.smart.MetaLayout;
-import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
 import de.cau.cs.kieler.kiml.smart.SmartLayoutService.SmartRuleData;
 
 /**
@@ -40,6 +36,15 @@ public class SmartLayoutContentProvider implements ITreeContentProvider {
         private SmartRuleData smartRuleData;
         private double suitability;
         private MetaLayout metaLayout;
+        
+        /**
+         * Returns the meta layout instance.
+         * 
+         * @return the meta layout
+         */
+        public MetaLayout getMetaLayout() {
+            return metaLayout;
+        }
         
         /**
          * Returns the smart rule data.
@@ -64,8 +69,8 @@ public class SmartLayoutContentProvider implements ITreeContentProvider {
      * {@inheritDoc}
      */
     public Object[] getElements(final Object inputElement) {
-        if (inputElement instanceof List<?>) {
-            return ((List<?>) inputElement).toArray();
+        if (inputElement instanceof Collection<?>) {
+            return ((Collection<?>) inputElement).toArray();
         }
         return new Object[0];
     }
@@ -93,17 +98,6 @@ public class SmartLayoutContentProvider implements ITreeContentProvider {
                 data.suitability = entry.getValue();
                 dataArray[i++] = data;
             }
-            Arrays.sort(dataArray, new Comparator<ResultData>() {
-                public int compare(final ResultData d1, final ResultData d2) {
-                    // add priority bias values
-                    double value1 = d1.suitability + d1.smartRuleData.getPriority()
-                            * SmartLayoutConfig.PRIORITY_BIAS;
-                    double value2 = d2.suitability + d2.smartRuleData.getPriority()
-                            * SmartLayoutConfig.PRIORITY_BIAS;
-                    // reverse the result to achieve descending values
-                    return Double.compare(value2, value1);
-                }
-            });
             return dataArray;
         }
         return new ResultData[0];

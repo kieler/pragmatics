@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.smart.rules;
 
-import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -31,21 +30,26 @@ public class OrthogonalRule implements ISmartRule {
     
     /** identifier of the planarity test analysis. */
     private static final String PLANARITY_ID = "de.cau.cs.kieler.klay.planarity";
+    /** minimal number of nodes for full result. */
+    private static final int MIN_NODES = 5;
     /** the penalty factor for missing graph features. */
-    private static final double FEATURE_PENALTY = 0.6;
+    private static final double FEATURE_PENALTY = 0.7;
 
     /**
      * {@inheritDoc}
      */
     public double suitability(final MetaLayout metaLayout) {
-        int crossingEdges = metaLayout.analyze(PLANARITY_ID);
         int nodeCount = metaLayout.analyze(NodeCountAnalysis.ID);
-        
         if (nodeCount > 0) {
-            int missingFeatures = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
+            int crossingEdges = metaLayout.analyze(PLANARITY_ID);
+            double fp = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
                     LayoutTypeData.TYPE_ORTHOGONAL);
-            return (1 - (double) Math.min(crossingEdges, nodeCount) / nodeCount)
-                    * KielerMath.pow(FEATURE_PENALTY, missingFeatures);
+            
+            double result = 1 - (double) Math.min(crossingEdges, nodeCount) / nodeCount;
+            if (nodeCount < MIN_NODES) {
+                result *= (double) nodeCount / MIN_NODES;
+            }
+            return result * Math.pow(FEATURE_PENALTY, fp);
         }
         return 0;
     }
