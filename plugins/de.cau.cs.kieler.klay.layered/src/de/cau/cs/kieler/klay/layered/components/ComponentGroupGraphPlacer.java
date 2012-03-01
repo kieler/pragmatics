@@ -19,6 +19,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -165,18 +166,61 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
         KVector sizeENS = placeComponentsVertically(
                 group.getComponents(ComponentGroup.CONN_ENS), spacing);
         
+        // Find the maximum height of the three rows and the maximum width of the three columns the
+        // component group is divided into (we're adding a fourth row for WE components and a fourth
+        // column for NS components to make the placement easier later)
+        double colLeftWidth = KielerMath.maxd(sizeNW.x, sizeW.x, sizeSW.x, sizeWNS.x);
+        double colMidWidth = KielerMath.maxd(sizeN.x, sizeC.x, sizeS.x);
+        double colNsWidth = sizeNS.x;
+        double colRightWidth = KielerMath.maxd(sizeNE.x, sizeE.x, sizeSE.x, sizeENS.x);
+        double rowTopHeight = KielerMath.maxd(sizeNW.y, sizeN.y, sizeNE.y, sizeNWE.y);
+        double rowMidHeight = KielerMath.maxd(sizeW.y, sizeC.y, sizeE.y);
+        double rowWeHeight = sizeWE.y;
+        double rowBottomHeight = KielerMath.maxd(sizeSW.y, sizeS.y, sizeSE.y, sizeSWE.y);
+        
         // With the individual placements computed, we now move the components to their final place,
-        // taking the size of other component placements into account (the NW and WNS components stay
-        // at coordinates (0,0) and thus don't need to be moved around)
-        
-        
-        
-        // TODO: Implement.
-        
-        
+        // taking the size of other component placements into account (the NW, NWE, and WNS components
+        // stay at coordinates (0,0) and thus don't need to be moved around)
+        offsetGraphs(group.getComponents(ComponentGroup.CONN_C),
+                colLeftWidth + colNsWidth,
+                rowTopHeight + rowWeHeight);
+        offsetGraphs(group.getComponents(ComponentGroup.CONN_N),
+                colLeftWidth + colNsWidth,
+                0.0);
+        offsetGraphs(group.getComponents(ComponentGroup.CONN_S),
+                colLeftWidth + colNsWidth,
+                rowTopHeight + rowWeHeight + rowMidHeight);
+        offsetGraphs(group.getComponents(ComponentGroup.CONN_W),
+                0.0,
+                rowTopHeight + rowWeHeight);
+        offsetGraphs(group.getComponents(ComponentGroup.CONN_E),
+                colLeftWidth + colNsWidth + colMidWidth,
+                rowTopHeight + rowWeHeight);
+        offsetGraphs(group.getComponents(ComponentGroup.CONN_NE),
+                colLeftWidth + colNsWidth + colMidWidth,
+                0.0);
+        offsetGraphs(group.getComponents(ComponentGroup.CONN_SW),
+                0.0,
+                rowTopHeight + rowWeHeight + rowMidHeight);
+        offsetGraphs(group.getComponents(ComponentGroup.CONN_SE),
+                colLeftWidth + colNsWidth + colMidWidth,
+                rowTopHeight + rowWeHeight + rowMidHeight);
+        offsetGraphs(group.getComponents(ComponentGroup.CONN_WE),
+                0.0,
+                rowTopHeight);
+        offsetGraphs(group.getComponents(ComponentGroup.CONN_NS),
+                colLeftWidth,
+                0.0);
+        offsetGraphs(group.getComponents(ComponentGroup.CONN_SWE),
+                0.0,
+                rowTopHeight + rowWeHeight + rowMidHeight);
+        offsetGraphs(group.getComponents(ComponentGroup.CONN_ENS),
+                colLeftWidth + colNsWidth + colMidWidth,
+                0.0);
         
         // Return the size of this component group
-        return null;
+        return new KVector(colLeftWidth + colMidWidth + colNsWidth + colRightWidth,
+                rowTopHeight + rowMidHeight + rowWeHeight + rowBottomHeight);
     }
     
     /**
@@ -246,8 +290,24 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
     private KVector placeComponentsInRows(final Collection<LayeredGraph> components,
             final double spacing) {
         
-        // TODO: Implement.
-        return null;
+        // TODO: Change implementation to actually produce more than one row.
+        
+        KVector size = new KVector();
+        
+        // Iterate over the components and place them
+        for (LayeredGraph component : components) {
+            offsetGraph(component, size.x, 0.0);
+            
+            size.x += spacing + component.getSize().x;
+            size.y = Math.max(size.y, component.getSize().y);
+        }
+        
+        // Add vertical spacing, if necessary
+        if (size.y > 0.0) {
+            size.y += spacing;
+        }
+        
+        return size;
     }
 
 }

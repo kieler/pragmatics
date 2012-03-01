@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.components;
 
+import java.util.Collection;
 import java.util.List;
 
 import de.cau.cs.kieler.core.math.KVector;
@@ -65,6 +66,22 @@ abstract class GraphPlacer {
                 }
                 destGraph.getLayerlessNodes().add(node);
             }
+        }
+    }
+    
+    /**
+     * 
+     * Offsets the given graphs by a given offset without moving their nodes to another graph.
+     * 
+     * @param graph the graph to offset.
+     * @param offsetx x coordinate offset.
+     * @param offsety y coordinate offset.
+     */
+    protected void offsetGraphs(final Collection<LayeredGraph> graphs, final double offsetx,
+            final double offsety) {
+        
+        for (LayeredGraph graph : graphs) {
+            offsetGraph(graph, offsetx, offsety);
         }
     }
     
