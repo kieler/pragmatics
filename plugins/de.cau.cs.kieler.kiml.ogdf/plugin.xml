@@ -20,7 +20,8 @@
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <supportedDiagram
                priority="9"
@@ -92,7 +93,8 @@
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <knownOption
                default="UP"
@@ -146,10 +148,12 @@
                type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.qualityVsSpeed">
@@ -181,10 +185,12 @@
             preview="images/davidson-harel.png"
             type="de.cau.cs.kieler.type.force">
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <knownOption
                default="80"
@@ -220,10 +226,12 @@
             preview="images/fruchterman-reingold.png"
             type="de.cau.cs.kieler.type.force">
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <knownOption
                default="15"
@@ -266,10 +274,12 @@
             preview="images/gem.png"
             type="de.cau.cs.kieler.type.force">
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <supportedDiagram
                priority="8"
@@ -344,10 +354,12 @@
             preview="images/circular.png"
             type="de.cau.cs.kieler.type.circle">
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <knownOption
                default="15"
@@ -390,7 +402,8 @@
             preview="images/tree.png"
             type="de.cau.cs.kieler.type.tree">
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <knownOption
                default="15"
@@ -437,7 +450,8 @@
             preview="images/radial-tree.png"
             type="de.cau.cs.kieler.type.tree">
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <knownOption
                default="50.0"
@@ -471,10 +485,12 @@
             preview="images/upward.png"
             type="de.cau.cs.kieler.type.layered">
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="-4">
          </supportedFeature>
          <knownOption
                default="15"

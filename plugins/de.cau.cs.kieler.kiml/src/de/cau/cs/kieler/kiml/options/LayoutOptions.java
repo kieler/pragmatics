@@ -196,7 +196,7 @@ public final class LayoutOptions {
      * level of the graph is processed independently, possibly by different layout algorithms,
      * beginning with the lowest level. If it is set, the algorithm is responsible to process
      * all hierarchy levels that are contained in the associated parent node.
-     * @see GraphFeatures.GraphFeature#COMPOUND
+     * @see GraphFeature#COMPOUND
      */
     public static final IProperty<Boolean> LAYOUT_HIERARCHY = new Property<Boolean>(
             "de.cau.cs.kieler.layoutHierarchy", false);

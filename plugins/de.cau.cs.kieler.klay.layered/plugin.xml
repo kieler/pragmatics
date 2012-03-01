@@ -20,13 +20,19 @@
                type="de.cau.cs.kieler.layout.diagrams.dataFlow">
          </supportedDiagram>
          <supportedFeature
-               feature="SELF_LOOPS">
+               feature="SELF_LOOPS"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="PORTS">
+               feature="EDGE_LABELS"
+               priority="-5">
+         </supportedFeature>
+         <supportedFeature
+               feature="PORTS"
+               priority="8">
          </supportedFeature>
          <supportedFeature
                feature="COMPOUND">

@@ -41,16 +41,19 @@
                type="de.cau.cs.kieler.layout.diagrams.stateMachine">
          </supportedDiagram>
          <supportedFeature
-               feature="SELF_LOOPS">
+               feature="SELF_LOOPS"
+               priority="1">
          </supportedFeature>
          <supportedFeature
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="1">
          </supportedFeature>
          <supportedFeature
-               feature="COMPOUND">
+               feature="COMPOUND"
+               priority="-3">
          </supportedFeature>
          <supportedFeature
                feature="CLUSTERS">
@@ -119,13 +122,16 @@
                type="de.cau.cs.kieler.layout.diagrams.usecaseDiagram">
          </supportedDiagram>
          <supportedFeature
-               feature="SELF_LOOPS">
+               feature="SELF_LOOPS"
+               priority="1">
          </supportedFeature>
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="1">
          </supportedFeature>
          <knownOption
                default="40"
@@ -198,13 +204,16 @@
                type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
          <supportedFeature
-               feature="SELF_LOOPS">
+               feature="SELF_LOOPS"
+               priority="1">
          </supportedFeature>
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="1">
          </supportedFeature>
          <supportedFeature
                feature="CLUSTERS">
@@ -268,13 +277,15 @@
             preview="images/twopi.png"
             type="de.cau.cs.kieler.type.tree">
          <supportedFeature
-               feature="SELF_LOOPS">
+               feature="SELF_LOOPS"
+               priority="1">
          </supportedFeature>
          <supportedFeature
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="1">
          </supportedFeature>
          <knownOption
                default="60"
@@ -321,13 +332,16 @@
             preview="images/circo.png"
             type="de.cau.cs.kieler.type.circle">
          <supportedFeature
-               feature="SELF_LOOPS">
+               feature="SELF_LOOPS"
+               priority="1">
          </supportedFeature>
          <supportedFeature
-               feature="MULTI_EDGES">
+               feature="MULTI_EDGES"
+               priority="-2">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS">
+               feature="EDGE_LABELS"
+               priority="1">
          </supportedFeature>
          <knownOption
                default="40"
@@ -433,7 +447,7 @@
       <layoutOption
             appliesTo="parents"
             class="de.cau.cs.kieler.kiml.graphviz.dot.transform.OverlapMode"
-            default="NONE"
+            default="PRISM"
             description="Determines if and how node overlaps should be removed."
             id="de.cau.cs.kieler.graphviz.overlapMode"
             name="Overlap Removal"

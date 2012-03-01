@@ -99,6 +99,17 @@ public final class SmartLayoutService {
         public int getPriority() {
             return priority;
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            if (name == null) {
+                return super.toString();
+            }
+            return name;
+        }
     }
     
     /** list of registered smart layout rules. */

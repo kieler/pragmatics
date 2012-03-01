@@ -323,7 +323,7 @@ Apart from a set of default layout types offered by KIML, new layout providers a
          <attribute name="priority" type="string">
             <annotation>
                <documentation>
-                  An integer value that defines the relative priority of the layout provider for this diagram type. The layout provider with highest priority is chosen as the default provider for that type.
+                  An integer value that defines the relative priority of the layout algorithm for this diagram type. The layout algorithm with highest priority is chosen as the default provider for that type. The default value is 0.
                </documentation>
             </annotation>
          </attribute>
@@ -341,6 +341,13 @@ Apart from a set of default layout types offered by KIML, new layout providers a
             <annotation>
                <documentation>
                   The supported feature: SELF_LOOPS, MULTI_EDGES, EDGE_LABELS, PORTS, COMPOUND, or CLUSTERS
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="string">
+            <annotation>
+               <documentation>
+                  An integer value that defines the relative priority of the layout algorithm for this graph feature. Positive values indicate good support for the feature, negative values indicate rather bad support. The default value is 0.
                </documentation>
             </annotation>
          </attribute>
