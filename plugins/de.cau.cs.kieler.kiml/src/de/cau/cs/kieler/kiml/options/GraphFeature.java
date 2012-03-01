@@ -18,7 +18,7 @@ package de.cau.cs.kieler.kiml.options;
  *
  * @author msp
  */
-public enum GraphFeatures {
+public enum GraphFeature {
 
     /**
      * Edges connecting a node with itself.
@@ -52,7 +52,7 @@ public enum GraphFeatures {
      * @param i ordinal value
      * @return the related enumeration value
      */
-    public static GraphFeatures valueOf(final int i) {
+    public static GraphFeature valueOf(final int i) {
         return values()[i];
     }
 

@@ -128,7 +128,7 @@ public final class Attributes {
     public static final String OVERLAP = "overlap";
     /** node overlap removal property. */
     public static final IProperty<OverlapMode> OVERLAP_PROP = new Property<OverlapMode>(
-            "de.cau.cs.kieler.graphviz.overlapMode", OverlapMode.NONE);
+            "de.cau.cs.kieler.graphviz.overlapMode", OverlapMode.PRISM);
     
     /** If true, each connected component of the graph is laid out separately, and then
      *  the graphs are packed together. */
@@ -202,7 +202,7 @@ public final class Attributes {
     public static final String TAILLP = "tail_lp";
     
     /** Weight of edge. In dot, the heavier the weight, the shorter, straighter
-     *  and more vertical the edge is.  */
+     *  and more vertical the edge is. */
     public static final String WEIGHT = "weight";
 
     /** Width of node, in inches. */

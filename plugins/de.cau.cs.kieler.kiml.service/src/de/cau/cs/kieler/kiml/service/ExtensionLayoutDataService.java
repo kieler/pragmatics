@@ -29,7 +29,7 @@ import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
-import de.cau.cs.kieler.kiml.options.GraphFeatures;
+import de.cau.cs.kieler.kiml.options.GraphFeature;
 
 /**
  * A layout data service that reads its content from the Eclipse extension registry.
@@ -293,9 +293,11 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
                         reportError(EXTP_ID_LAYOUT_PROVIDERS, child, ATTRIBUTE_TYPE, null);
                     } else {
                         String priority = child.getAttribute(ATTRIBUTE_PRIORITY);
+                        if (priority == null || priority.length() == 0) {
+                            algoData.setDiagramSupport(type, 0);
+                        }
                         try {
-                            algoData.setDiagramSupport(type,
-                                    Integer.parseInt(priority));
+                            algoData.setDiagramSupport(type, Integer.parseInt(priority));
                         } catch (NumberFormatException exception) {
                             reportError(EXTP_ID_LAYOUT_PROVIDERS, child, ATTRIBUTE_PRIORITY,
                                     exception);
@@ -303,15 +305,20 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
                     }
                 } else if (ELEMENT_SUPPORTED_FEATURE.equals(child.getName())) {
                     String featureString = child.getAttribute(ATTRIBUTE_FEATURE);
-                    if (featureString != null) {
+                    if (featureString == null || featureString.length() == 0) {
+                        reportError(EXTP_ID_LAYOUT_PROVIDERS, child, ATTRIBUTE_FEATURE, null);
+                    } else {
+                        String priority = child.getAttribute(ATTRIBUTE_PRIORITY);
                         try {
-                            algoData.getSupportedFeatures().add(GraphFeatures.valueOf(
-                                    featureString.toUpperCase()));
+                            GraphFeature feature = GraphFeature.valueOf(featureString.toUpperCase());
+                            if (priority == null || priority.length() == 0) {
+                                algoData.setFeatureSupport(feature, 0);
+                            } else {
+                                algoData.setFeatureSupport(feature, Integer.parseInt(priority));
+                            }
                         } catch (IllegalArgumentException exception) {
                             reportError(EXTP_ID_LAYOUT_PROVIDERS, child, ATTRIBUTE_FEATURE, exception);
                         }
-                    } else {
-                        reportError(EXTP_ID_LAYOUT_PROVIDERS, child, ATTRIBUTE_FEATURE, null);
                     }
                 }
             }            
