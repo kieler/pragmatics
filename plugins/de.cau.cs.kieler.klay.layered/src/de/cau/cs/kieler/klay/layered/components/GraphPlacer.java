@@ -59,7 +59,9 @@ abstract class GraphPlacer {
     }
 
     /**
-     * Move the source graph into the destination graph using a specified offset.
+     * Move the source graph into the destination graph using a specified offset. This method should
+     * only be called once per graph, since it also applies the graph's set offset in addition to the
+     * one given in the methods of this argument.
      * 
      * @param destGraph the destination graph.
      * @param sourceGraph the source graph.
@@ -70,6 +72,7 @@ abstract class GraphPlacer {
             final double offsetx, final double offsety) {
         
         KVector graphOffset = sourceGraph.getOffset().translate(offsetx, offsety);
+        
         for (Layer layer : sourceGraph) {
             for (LNode node : layer) {
                 node.getPosition().add(graphOffset);
@@ -87,7 +90,6 @@ abstract class GraphPlacer {
     }
     
     /**
-     * 
      * Offsets the given graphs by a given offset without moving their nodes to another graph.
      * 
      * @param graph the graph to offset.
@@ -103,14 +105,17 @@ abstract class GraphPlacer {
     }
     
     /**
-     * Offsets the given graph by a given offset without moving its nodes to another graph.
+     * Offsets the given graph by a given offset without moving its nodes to another graph. This
+     * method can be called as many times as possible on a given graph: it does not take the graph's
+     * offset into account.
      * 
      * @param graph the graph to offset.
      * @param offsetx x coordinate offset.
      * @param offsety y coordinate offset.
      */
     protected void offsetGraph(final LayeredGraph graph, final double offsetx, final double offsety) {
-        KVector graphOffset = graph.getOffset().translate(offsetx, offsety);
+        KVector graphOffset = new KVector(offsetx, offsety);
+        
         for (Layer layer : graph) {
             for (LNode node : layer) {
                 node.getPosition().add(graphOffset);

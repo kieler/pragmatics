@@ -244,7 +244,7 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
         for (LayeredGraph component : components) {
             offsetGraph(component, size.x, 0.0);
             
-            size.x += spacing + component.getSize().x;
+            size.x += component.getSize().x + spacing;
             size.y = Math.max(size.y, component.getSize().y);
         }
         
@@ -272,7 +272,7 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
         for (LayeredGraph component : components) {
             offsetGraph(component, 0.0, size.y);
             
-            size.y += spacing + component.getSize().y;
+            size.y += component.getSize().y + spacing;
             size.x = Math.max(size.x, component.getSize().x);
         }
         
@@ -302,7 +302,7 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
         for (LayeredGraph component : components) {
             offsetGraph(component, size.x, 0.0);
             
-            size.x += spacing + component.getSize().x;
+            size.x += component.getSize().x + spacing;
             size.y = Math.max(size.y, component.getSize().y);
         }
         
