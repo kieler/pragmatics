@@ -29,6 +29,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * algorithm.
  * 
  * @author cds
+ * @author msp
  */
 abstract class GraphPlacer {
     
@@ -42,12 +43,28 @@ abstract class GraphPlacer {
     
 
     /**
+     * Move the source graphs into the destination graph using a specified offset.
+     * 
+     * @param destGraph the destination graph.
+     * @param sourceGraph the source graphs.
+     * @param offsetx x coordinate offset.
+     * @param offsety y coordinate offset.
+     */
+    protected void moveGraphs(final LayeredGraph destGraph, final Collection<LayeredGraph> sourceGraphs,
+            final double offsetx, final double offsety) {
+        
+        for (LayeredGraph sourceGraph : sourceGraphs) {
+            moveGraph(destGraph, sourceGraph, offsetx, offsety);
+        }
+    }
+
+    /**
      * Move the source graph into the destination graph using a specified offset.
      * 
-     * @param destGraph the destination graph
-     * @param sourceGraph the source graph
-     * @param offsetx x coordinate offset
-     * @param offsety y coordinate offset
+     * @param destGraph the destination graph.
+     * @param sourceGraph the source graph.
+     * @param offsetx x coordinate offset.
+     * @param offsety y coordinate offset.
      */
     protected void moveGraph(final LayeredGraph destGraph, final LayeredGraph sourceGraph,
             final double offsetx, final double offsety) {

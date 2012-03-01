@@ -75,12 +75,18 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
         float spacing = 2 * components.get(0).getProperty(Properties.OBJ_SPACING);
         
         for (ComponentGroup group : componentGroups) {
-            KVector groupSize = placeComponents(group, offset, spacing);
+            // Place the components
+            KVector groupSize = placeComponents(group, spacing);
+            moveGraphs(result, group.getComponents(), offset.x, offset.y);
             
             // Compute the new offset
-            offset.x += spacing + groupSize.x;
-            offset.y += spacing + groupSize.y;
+            offset.x += groupSize.x;
+            offset.y += groupSize.y;
         }
+        
+        // Set the new graph's new size
+        result.getSize().x = offset.x;
+        result.getSize().y = offset.y;
         
         return result;
     }
@@ -125,12 +131,10 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
      * Computes a placement for the components in the given component group.
      * 
      * @param group the group whose components are to be placed.
-     * @param offset the offset to apply to the group's components along the way.
      * @param spacing the amount of space to leave between two components.
      * @return the group's size.
      */
-    private KVector placeComponents(final ComponentGroup group, final KVector offset,
-            final double spacing) {
+    private KVector placeComponents(final ComponentGroup group, final double spacing) {
         
         // Determine the spacing between two components
         // Place the different sector components and remember the amount of space their placement uses.

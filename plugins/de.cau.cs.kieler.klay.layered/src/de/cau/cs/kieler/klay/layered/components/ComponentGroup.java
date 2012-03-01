@@ -248,6 +248,15 @@ public class ComponentGroup {
     }
     
     /**
+     * Returns all components in this component group.
+     * 
+     * @return the components in this component group.
+     */
+    public Collection<LayeredGraph> getComponents() {
+        return components.values();
+    }
+    
+    /**
      * Returns the components in this component group connected to external ports on the given set
      * of port sides.
      * 
