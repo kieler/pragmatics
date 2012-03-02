@@ -157,9 +157,9 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
                 group.getComponents(ComponentGroup.CONN_SW), spacing);
         KVector sizeSE = placeComponentsHorizontally(
                 group.getComponents(ComponentGroup.CONN_SE), spacing);
-        KVector sizeWE = placeComponentsHorizontally(
+        KVector sizeWE = placeComponentsVertically(
                 group.getComponents(ComponentGroup.CONN_WE), spacing);
-        KVector sizeNS = placeComponentsVertically(
+        KVector sizeNS = placeComponentsHorizontally(
                 group.getComponents(ComponentGroup.CONN_NS), spacing);
         KVector sizeNWE = placeComponentsHorizontally(
                 group.getComponents(ComponentGroup.CONN_NWE), spacing);
@@ -222,9 +222,20 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
                 colLeftWidth + colNsWidth + colMidWidth,
                 0.0);
         
-        // Return the size of this component group
-        return new KVector(colLeftWidth + colMidWidth + colNsWidth + colRightWidth,
-                rowTopHeight + rowMidHeight + rowWeHeight + rowBottomHeight);
+        // Compute this component group's size
+        KVector componentSize = new KVector();
+        componentSize.x = KielerMath.maxd(
+                colLeftWidth + colMidWidth + colNsWidth + colRightWidth,
+                sizeWE.x,
+                sizeNWE.x,
+                sizeSWE.x);
+        componentSize.y = KielerMath.maxd(
+                rowTopHeight + rowMidHeight + rowWeHeight + rowBottomHeight,
+                sizeNS.y,
+                sizeWNS.y,
+                sizeENS.y);
+        
+        return componentSize;
     }
     
     /**
