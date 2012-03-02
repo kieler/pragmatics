@@ -198,8 +198,6 @@ public class ComponentsProcessor extends AbstractAlgorithm {
     public LayeredGraph pack(final List<LayeredGraph> components) {
         LayeredGraph combinedGraph = graphPlacer.combine(components);
         
-        // TODO: Make sure external port dummies have the correct coordinates.
-        
         return combinedGraph;
     }
     

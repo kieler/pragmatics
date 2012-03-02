@@ -305,24 +305,46 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
     private KVector placeComponentsInRows(final Collection<LayeredGraph> components,
             final double spacing) {
         
-        // TODO: Change implementation to actually produce more than one row.
+        /* This code is basically taken from the SimpleRowGraphPlacer. */
         
-        KVector size = new KVector();
+        // Check if there actually are any components
+        if (components.isEmpty()) {
+            return new KVector();
+        }
         
-        // Iterate over the components and place them
+        // Determine the maximal row width by the maximal box width and the total area
+        double maxRowWidth = 0.0f;
+        double totalArea = 0.0f;
         for (LayeredGraph component : components) {
-            offsetGraph(component, size.x, 0.0);
+            KVector componentSize = component.getSize();
+            maxRowWidth = Math.max(maxRowWidth, componentSize.x);
+            totalArea += componentSize.x * componentSize.y;
+        }
+        
+        maxRowWidth = Math.max(maxRowWidth, (float) Math.sqrt(totalArea)
+                * components.iterator().next().getProperty(Properties.ASPECT_RATIO));
+        
+        // Place nodes iteratively into rows
+        double xpos = 0, ypos = 0, highestBox = 0, broadestRow = spacing;
+        for (LayeredGraph graph : components) {
+            KVector size = graph.getSize();
             
-            size.x += component.getSize().x + spacing;
-            size.y = Math.max(size.y, component.getSize().y);
+            if (xpos + size.x > maxRowWidth) {
+                // Place the graph into the next row
+                xpos = 0;
+                ypos += highestBox + spacing;
+                highestBox = 0;
+            }
+            
+            offsetGraph(graph, xpos, ypos);
+            
+            broadestRow = Math.max(broadestRow, xpos + size.x);
+            highestBox = Math.max(highestBox, size.y);
+            
+            xpos += size.x + spacing;
         }
         
-        // Add vertical spacing, if necessary
-        if (size.y > 0.0) {
-            size.y += spacing;
-        }
-        
-        return size;
+        return new KVector(broadestRow + spacing, ypos + highestBox);
     }
 
 }
