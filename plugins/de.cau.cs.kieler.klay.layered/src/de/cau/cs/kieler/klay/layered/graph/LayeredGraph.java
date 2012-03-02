@@ -93,7 +93,7 @@ public class LayeredGraph extends LGraphElement implements Iterable<Layer> {
     
     /**
      * Returns the graph's size including any borders. If the graph represents a
-     * hierarchical node, the returned size represents the node's size. The resturned
+     * hierarchical node, the returned size represents the node's size. The returned
      * size can be modified at will without having any influence on the graph's size
      * or the actual size returned on the next method call.
      * 
