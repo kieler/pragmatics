@@ -344,7 +344,7 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
             xpos += size.x + spacing;
         }
         
-        return new KVector(broadestRow + spacing, ypos + highestBox);
+        return new KVector(broadestRow + spacing, ypos + highestBox + spacing);
     }
 
 }
