@@ -89,15 +89,6 @@
       </menuContribution>
    </extension>
    <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.kiml.grana.ui.GranaGeneralPreferencePage"
-            id="de.cau.cs.kieler.kiml.grana.general"
-            name="Graph Analysis">
-      </page>
-   </extension>
-   <extension
          point="org.eclipse.ui.views">
       <view
             allowMultiple="false"
