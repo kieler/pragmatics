@@ -1110,7 +1110,7 @@ public class SWTGraphics2D extends Graphics2D {
         gc.setLineWidth(getTransformedLineWidth());
         gc.drawArc((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5),
                 (int) (TEMP_RECT.getWidth() + 0.5), (int) (TEMP_RECT.getHeight() + 0.5),
-                (int) (startAngle + 0.5), (int) (startAngle + extent + 0.5));
+                (int) (startAngle + 0.5), (int) (extent + 0.5));
     }
 
     /** {@inheritDoc} */
