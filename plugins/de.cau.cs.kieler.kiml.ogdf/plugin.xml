@@ -320,7 +320,7 @@
                option="de.cau.cs.kieler.kiml.ogdf.option.gravitationalConstant">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.maximalDisturbance.">
+               option="de.cau.cs.kieler.kiml.ogdf.option.maximalDisturbance">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.rotationAngle">
@@ -742,7 +742,7 @@
             appliesTo="parents"
             default="0.0"
             description="The maximal disturbance."
-            id="de.cau.cs.kieler.kiml.ogdf.option.maximalDisturbance."
+            id="de.cau.cs.kieler.kiml.ogdf.option.maximalDisturbance"
             name="Maximal Disturbance"
             type="float">
       </layoutOption>
