@@ -53,24 +53,11 @@ public class PlanarityAnalysis implements IAnalysis {
         progressMonitor.begin("Planarity testing", 1);
 
         // KGraph -> PGraph conversion
-        IGraph graph = this.factory.createGraphFromKGraph(parentNode);
+        IGraph graph = factory.createGraphFromKGraph(parentNode);
 
         // Planarity Testing
-        this.tester.reset();
-        List<IEdge> edges = this.tester.planarSubgraph(graph);
-
-        // String result;
-        // if (edges.isEmpty()) {
-        // result = "The graph is planar.";
-        // } else {
-        // result = "The graph is not planar.<br>Conflicting edges:<br>";
-        // for (IEdge edge : edges) {
-        // KNode src = (KNode) edge.getSource().getProperty(PGraphFactory.TOKGRAPH);
-        // KNode dst = (KNode) edge.getTarget().getProperty(PGraphFactory.TOKGRAPH);
-        // result += "( " + src.getLabel().getText() + " ; " + dst.getLabel().getText()
-        // + " )<br>";
-        // }
-        // }
+        tester.reset();
+        List<IEdge> edges = tester.planarSubgraph(graph);
 
         progressMonitor.done();
         return edges.size();

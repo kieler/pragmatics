@@ -17,6 +17,8 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Status;
+
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.kgraph.KGraphData;
@@ -227,6 +229,9 @@ public class SmartLayoutConfig implements ILayoutConfig {
             } catch (Exception exception) {
                 // the smart layout rule failed, so put a negative value
                 results.put(ruleData, -1.0);
+                SmartLayoutService.getInstance().getLog().log(new Status(Status.ERROR,
+                        SmartLayoutService.PLUGIN_ID, "Error while evaluating rule "
+                        + ruleData.getName(), exception));
             }
         }
         
