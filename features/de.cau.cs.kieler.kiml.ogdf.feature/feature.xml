@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.cau.cs.kieler.kiml.ogdf"
+      id="de.cau.cs.kieler.kiml.ogdf.feature"
       label="KIELER Layout - OGDF Support (optional)"
       version="0.4.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
@@ -221,7 +221,7 @@ litigation.
    <requires>
       <import plugin="de.cau.cs.kieler.kiml"/>
       <import plugin="de.cau.cs.kieler.core"/>
-      <import feature="net.ogdf.bin" version="1.0.0.qualifier" match="greaterOrEqual"/>
+      <import feature="net.ogdf.bin.feature" version="1.0.0.qualifier" match="greaterOrEqual"/>
    </requires>
 
    <plugin

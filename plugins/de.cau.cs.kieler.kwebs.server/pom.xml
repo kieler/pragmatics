@@ -7,6 +7,18 @@
     <artifactId>plugins</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-compiler-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <configuration>
+          <compilerArgument>-err:-forbidden</compilerArgument>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <groupId>de.cau.cs.kieler</groupId>
   <artifactId>de.cau.cs.kieler.kwebs.server</artifactId>
   <version>0.1.0-SNAPSHOT</version>

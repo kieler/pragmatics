@@ -8,7 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <groupId>de.cau.cs.kieler</groupId>
-  <artifactId>de.unido.ls5.eti.toolserver</artifactId>
+  <artifactId>de.unido.ls5.eti.toolserver.feature</artifactId>
   <version>1.5.0-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
 </project>
