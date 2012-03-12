@@ -23,12 +23,12 @@
             <transformation
                   icon="icon/kieler-arrange.gif"
                   menu="true"
-                  name="capsulate"
-                  popup="false"
+                  name="encapsulate"
+                  popup="true"
                   popupbar="true"
                   separated="false"
                   toolbar="false"
-                  transformation="capsulate"
+                  transformation="encapsulate"
                   transformationId="de.cau.cs.kieler.kaom.ksbase.ptolemy.collapse">
             </transformation>
             <transformation
@@ -59,11 +59,8 @@
                class="de.cau.cs.kieler.core.annotations.AnnotationsPackage">
          </package>
          <Xtend2TransformationClass
-               TransformationClass="de.cau.cs.kieler.kaom.ksbase.ptolemy.xtend2Transformations.Xtend2test">
+               TransformationClass="de.cau.cs.kieler.kaom.ksbase.ptolemy.xtend2.PtolemyTransformations">
          </Xtend2TransformationClass>
-         <XtendTransformationFile
-               TransformationFile="transformations/features.ext">
-         </XtendTransformationFile>
       </configuration>
    </extension>
 
