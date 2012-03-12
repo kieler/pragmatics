@@ -128,7 +128,7 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
             public void run() {
                 view = DiagramViewManager.getInstance().createView(id, name, model, propertyHolder);
                 if (view != null) {
-                    viewer = view.getViewer().getActiveViewer();
+                    viewer = view.getContextViewer().getActiveViewer();
                 }
             }
         }, true);

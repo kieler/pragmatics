@@ -97,7 +97,7 @@ public class KlighdUpdateDiagramEffect extends KlighdDiagramEffect {
 
                 setView(view);
                 if (view != null) {
-                    setViewer(view.getViewer().getActiveViewer());
+                    setViewer(view.getContextViewer().getActiveViewer());
                 }
             }
         }, true);

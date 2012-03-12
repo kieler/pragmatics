@@ -83,7 +83,7 @@ public class KlighdSelectionEffect extends AbstractEffect {
                 List<Object> temp = new LinkedList<Object>();
                 for (Object modelElement : elements) {
                     Object diagramElement =
-                            view.getViewer().getCurrentViewContext().getTargetElement(modelElement);
+                            view.getContextViewer().getCurrentViewContext().getTargetElement(modelElement);
                     if (diagramElement != null) {
                         temp.add(diagramElement);
                     }
@@ -92,7 +92,7 @@ public class KlighdSelectionEffect extends AbstractEffect {
             }
             // select the elements
             if (theElements.length > 0) {
-                view.getViewer().setSelection(theElements);
+                view.getContextViewer().setSelection(theElements);
             }
         }
     }

@@ -64,6 +64,13 @@ public class GmfDiagramViewer extends AbstractViewer<Diagram> {
     /**
      * {@inheritDoc}
      */
+    public Diagram getModel() {
+        return null;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     public void startRecording() {
         // TODO Auto-generated method stub
         

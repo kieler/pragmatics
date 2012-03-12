@@ -40,7 +40,7 @@ public class GmfDiagramViewLayoutManager extends GmfDiagramLayoutManager {
     public boolean supports(final Object object) {
         if (object instanceof DiagramViewPart) {
             DiagramViewPart view = (DiagramViewPart) object;
-            return view.getViewer().getActiveViewer() instanceof GmfDiagramViewer;
+            return view.getContextViewer().getActiveViewer() instanceof GmfDiagramViewer;
         } else if (object instanceof ContextViewer) {
             ContextViewer contextViewer = (ContextViewer) object;
             return contextViewer.getActiveViewer() instanceof GmfDiagramViewer;
@@ -80,7 +80,7 @@ public class GmfDiagramViewLayoutManager extends GmfDiagramLayoutManager {
             if (viewer == null) {
                 if (workbenchPart instanceof DiagramViewPart) {
                     DiagramViewPart view = (DiagramViewPart) workbenchPart;
-                    ContextViewer contextViewer = view.getViewer();
+                    ContextViewer contextViewer = view.getContextViewer();
                     IViewer<?> activeViewer = contextViewer.getActiveViewer();
                     if (activeViewer instanceof GmfDiagramViewer) {
                         viewer = (GmfDiagramViewer) activeViewer;
