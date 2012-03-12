@@ -30,6 +30,7 @@ import org.eclipse.emf.ecore.EObject
 
 class PtolemyTransformations {
 
+    //Encapsule the given entities in a single parent
     def encapsulate(List<Entity> entities) {
         //System::out.println("encapsulate")
         val Entity newEntity = KaomFactory::eINSTANCE.createEntity()
@@ -59,6 +60,7 @@ class PtolemyTransformations {
         }
     }
     
+    //adds a new link linking from a port of the parent to an inner entity and moves the old link to the port
     def encapsuleIncoming(Entity parent, Link l, Entity newEntity) {
     	if (containsLink(parent, l.source)) {
             val Port port = KaomFactory::eINSTANCE.createPort()
@@ -74,10 +76,10 @@ class PtolemyTransformations {
             addReferenceAnnotation(l, "oldTarget", l.target)
             l.setTarget(port)
             addStringAnnotation(link, "language", "ptolemy")
-            //addStringAnnotation(port, "language", "ptolemy")
         }
     }
     
+    //adds a new link linking from an inner entity to a port of the parent and moves the old link to the port
     def encapsuleOutgoging(Entity parent, Link l, Entity newEntity, Entity e) {
     	if (containsLink(parent, l.target)) {
             e.childLinks.remove(l)
@@ -102,6 +104,7 @@ class PtolemyTransformations {
         }
     }
     
+    //checks whether the given entity contains the linkable 
     def boolean containsLink(Entity parent, Linkable linkable) {
     	if (parent.childEntities.contains(linkable)) {
     		return true
@@ -114,6 +117,7 @@ class PtolemyTransformations {
     	return false
     }
     
+    //toggles usage of portentities as input and output
     def toggleInputOutput(Entity entity) {
     	if ((entity.getAnnotation("capsuleType") == null) || ((entity.getAnnotation("capsuleType") as StringAnnotation).value == "withoutPorts")) {
     	    val List<Port> childPorts = new LinkedList<Port>()
@@ -170,6 +174,7 @@ class PtolemyTransformations {
     	}
     }
     
+    //moves a link to an outputportentity
     def moveLinkToOutput(Link link, List<Entity> innerEntities, Entity parent) {
         var boolean trigger = false
         for (Entity entity : innerEntities.unmodifiableView) {
@@ -186,7 +191,6 @@ class PtolemyTransformations {
             link.target.incomingLinks.remove(link)
             outputPort.incomingLinks.add(link)
             link.setTarget(outputPort)
-            //if (link.getAnnotation("oldTarget") == null) {
             outputPort.setName("output")
             addStringAnnotation(outputPort, "language", "ptolemy")
             addStringAnnotation(outputPort, "type", "outputPort")
@@ -195,6 +199,7 @@ class PtolemyTransformations {
         }
     }
     
+    //moves a link to an inputportentity
     def moveLinkToInput(Link link, List<Entity> innerEntities, Entity parent) {
         var boolean trigger = false
         for (Entity entity : innerEntities) {
@@ -219,6 +224,7 @@ class PtolemyTransformations {
         }
     }
     
+    //adds a stringannotation to the given annotatable
     def addStringAnnotation(Annotatable annotatable, String name, String value) {
         val StringAnnotation ann = AnnotationsFactory::eINSTANCE.createStringAnnotation()
         ann.setName(name)
@@ -226,6 +232,7 @@ class PtolemyTransformations {
         annotatable.annotations.add(ann)
     }
     
+    //adds a referenceannotation to the given annotatable
     def addReferenceAnnotation(Annotatable annotatable, String name, EObject value) {
         val ReferenceAnnotation ann = AnnotationsFactory::eINSTANCE.createReferenceAnnotation()
         ann.setName(name)
@@ -233,7 +240,7 @@ class PtolemyTransformations {
         annotatable.annotations.add(ann)
     }
     
-    
+    //moves a link from an inputportentity to real input port of the parent
     def moveLinkToInputPort(Link link) {
         if (link.source instanceof Entity) {
             val Entity oldSource = link.source as Entity
@@ -243,18 +250,17 @@ class PtolemyTransformations {
             (oldSource.eContainer as Entity).childEntities.remove(oldSource)
         } else {
             val Port oldSource = link.source as Port
-            //oldSource.childLinks.remove(link)
             (oldSource.eContainer as Entity).childLinks.add(link)
             oldSource.outgoingLinks.remove(link)
             (oldSource.eContainer as Entity).childEntities.remove(oldSource)
         }
-        val Linkable newSource = (((link.getAnnotation("oldSource") as ReferenceAnnotation).object) as Linkable)
-        //debuginfo((Linkable)((ReferenceAnnotation)link.getAnnotation("oldSource")).object)         
+        val Linkable newSource = (((link.getAnnotation("oldSource") as ReferenceAnnotation).object) as Linkable)       
         link.setSource(newSource)
         link.removeAllAnnotations("oldSource")
         newSource.outgoingLinks.add(link)             
     }
     
+    //moves link from outputportentity to real outputport of the parent
     def moveLinkToOutputPort(Link link) {
         if (link.target instanceof Entity) {
             val Entity oldTarget = link.target as Entity
@@ -269,12 +275,12 @@ class PtolemyTransformations {
         
         val newTarget = (((link.getAnnotation("oldTarget") as ReferenceAnnotation).object) as Linkable)
         link.removeAllAnnotations("oldTarget")
-        //debuginfo((Linkable)((ReferenceAnnotation)link.getAnnotation("oldSource")).object) ->
         link.setTarget(newTarget)
         newTarget.incomingLinks.add(link) 
         
     }
     
+    // moves child entity one hierarchy level higher and removes parent
     def flatten(Entity entity) {
     	val Entity parent = entity.eContainer as Entity
     	val List<Port> childPorts = new LinkedList<Port>()
@@ -297,7 +303,7 @@ class PtolemyTransformations {
         parent.childEntities.remove(entity)
     }
     
-    
+    // removes redundant links and redirects the others to the fitting targets
     def moveFlattenOutgoingLink(Link link, List<Entity> innerEntities, Entity parent, Entity entity) {
         var boolean trigger = false
         for (Entity e : innerEntities) {
@@ -312,15 +318,13 @@ class PtolemyTransformations {
             sourcePort.outgoingLinks.add(link)
             
         } else {
-            System::out.println("outgoing")
-            //System::out.println(link.eCrossReferences)
-            //System::out.println(link.eCrossReferences)
             link.source.outgoingLinks.remove(link)
             link.target.incomingLinks.remove(link)
             (link.eContainer as Entity).childLinks.remove(link)
         }
     }
     
+    // removes redundant links and redirects the others to the fitting targets
     def moveFlattenIncomingLink(Link link, List<Entity> innerEntities, Entity parent, Entity entity) {
         var boolean trigger = false
         for (Entity e : innerEntities) {
@@ -334,11 +338,9 @@ class PtolemyTransformations {
             targetPort.incomingLinks.add(link)
             link.setTarget(targetPort)
         } else {
-            System::out.println("incoming")
             link.target.incomingLinks.remove(link)
             link.source.outgoingLinks.remove(link)
             (link.eContainer as Entity).childLinks.remove(link)
-            //System::out.println(link.eCrossReferences)
         }
     }
     
