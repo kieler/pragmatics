@@ -26,12 +26,21 @@ import java.util.LinkedList
 import de.cau.cs.kieler.core.annotations.Annotatable
 import de.cau.cs.kieler.core.annotations.ReferenceAnnotation
 import org.eclipse.emf.ecore.EObject
+import de.cau.cs.kieler.kaom.Relation
 
 
 class PtolemyTransformations {
 
-    //Encapsule the given entities in a single parent
     def encapsulate(List<Entity> entities) {
+        encapsulate(entities, null, null)
+    }
+
+    def encapsulate(List<Entity> entities, List<Link> links) {
+        encapsulate(entities, links, null)
+    }
+
+    //Encapsule the given entities in a single parent
+    def encapsulate(List<Entity> entities, List<Link> links, List<Relation> relations) {
         //System::out.println("encapsulate")
         val Entity newEntity = KaomFactory::eINSTANCE.createEntity()
         val Entity parent = entities.get(0).eContainer as Entity
@@ -40,6 +49,10 @@ class PtolemyTransformations {
         ann.setValue("withoutPorts")
         newEntity.annotations.add(ann)
         parent.childEntities.add(newEntity)
+        for (Relation rel : relations) {
+            (rel.eContainer as Entity).childRelations.remove(rel)
+            newEntity.childRelations.add(rel)
+        }
         for (Entity e : entities) {
         	newEntity.childEntities.add(e)
         	parent.childEntities.remove(e)
@@ -115,6 +128,22 @@ class PtolemyTransformations {
     	   }
     	}
     	return false
+    }
+    
+    def boolean isComplex(Entity entity) {
+        if (entity.childEntities.nullOrEmpty) {
+            return false
+        } else {
+            return true
+        }
+    }
+    
+    def boolean isNotRoot(Entity entity) {
+        if (entity.eContainer != null) {
+            return true
+        } else {
+            return false
+        }
     }
     
     //toggles usage of portentities as input and output

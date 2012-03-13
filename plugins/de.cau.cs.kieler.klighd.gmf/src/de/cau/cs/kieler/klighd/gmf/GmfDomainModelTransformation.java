@@ -18,6 +18,7 @@ import org.eclipse.gmf.runtime.diagram.core.preferences.PreferencesHint;
 import org.eclipse.gmf.runtime.diagram.core.services.ViewService;
 import org.eclipse.gmf.runtime.notation.Diagram;
 
+import de.cau.cs.kieler.klighd.TransformationContext;
 import de.cau.cs.kieler.klighd.transformations.AbstractTransformation;
 
 /**
@@ -36,7 +37,8 @@ public class GmfDomainModelTransformation extends AbstractTransformation<EObject
     /**
      * {@inheritDoc}
      */
-    public Diagram transform(final EObject model) {
+    public Diagram transform(final EObject model,
+            final TransformationContext<EObject, Diagram> context) {
         return createDiagram(model);
     }
     
