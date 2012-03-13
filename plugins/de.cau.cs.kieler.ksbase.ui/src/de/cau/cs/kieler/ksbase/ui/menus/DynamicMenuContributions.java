@@ -442,7 +442,7 @@ public final class DynamicMenuContributions {
                                 } else {
                                     Object res = validation.getFirst().invoke(
                                             transformation.getTransformationClass(),
-                                            validation.getSecond());
+                                            validation.getSecond().toArray());
                                     if (res instanceof Boolean) {
                                         if (!(Boolean) res) {
                                             validationResult = (Boolean) res;

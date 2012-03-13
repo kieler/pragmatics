@@ -50,6 +50,7 @@ import org.eclipse.graphiti.mm.pictograms.util.PictogramsSwitch;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.klighd.TransformationContext;
 import de.cau.cs.kieler.klighd.piccolo.PiccoloDiagramContext;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode.HAlignment;
@@ -105,7 +106,8 @@ public class Pictogram2PNodeTransformation extends
     /**
      * {@inheritDoc}
      */
-    public PiccoloDiagramContext transform(final Diagram diagram) {
+    public PiccoloDiagramContext transform(final Diagram diagram,
+            final TransformationContext<Diagram, PiccoloDiagramContext> transformationContext) {
         // create mappings
         anchorMap = Maps.newHashMap();
         gaMap = Maps.newHashMap();
@@ -138,7 +140,7 @@ public class Pictogram2PNodeTransformation extends
             transformConnection(edges, connection, BLACK, WHITE);
         }
         // remember the mapping
-        getTransformationContext().setProperty(MAPPING_PROPERTY, elementMap);
+        transformationContext.setProperty(MAPPING_PROPERTY, elementMap);
         // reset mappings
         anchorMap = null;
         gaMap = null;
@@ -678,7 +680,8 @@ public class Pictogram2PNodeTransformation extends
     /**
      * {@inheritDoc}
      */
-    public Object getSourceElement(final Object object) {
+    public Object getSourceElement(final Object object,
+            final TransformationContext<Diagram, PiccoloDiagramContext> transformationContext) {
         if (object instanceof IPictogramNode) {
             return ((IPictogramNode) object).getPictogramElement();
         }
@@ -688,8 +691,9 @@ public class Pictogram2PNodeTransformation extends
     /**
      * {@inheritDoc}
      */
-    public Object getTargetElement(final Object object) {
-        return getTransformationContext().getProperty(MAPPING_PROPERTY).get(object);
+    public Object getTargetElement(final Object object,
+            final TransformationContext<Diagram, PiccoloDiagramContext> transformationContext) {
+        return transformationContext.getProperty(MAPPING_PROPERTY).get(object);
     }
 
 }
