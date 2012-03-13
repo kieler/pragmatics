@@ -252,5 +252,67 @@ public class MathTest {
         assertEquals(result, 0, 0.01);
 
     }
+    
+    /**
+     * 
+     * crossingCount is a private function 
+     *  
+     * 
+     */
+    
+    /**
+     * 
+     * bezier is a private function 
+     *  
+     * 
+     */
+    
+    /**
+     * 
+     * Tests some valid combinations of maxi from kielerMath class.
+     * 
+     */
+    @SuppressWarnings("static-access")
+    @Test
+    public void testMaxi() {
+        /** test if the max is 7 */
+        assertEquals(kielerMath.maxi(1,7,5,6), 7);
+      
+
+    }
+    
+    /**
+     * 
+     * Tests some valid combinations of mini from kielerMath class.
+     * 
+     */
+    @SuppressWarnings("static-access")
+    @Test
+    public void testMini() {
+        /** test if the min is 1 */
+        assertEquals(kielerMath.mini(1,7,5,6), 1);
+        /** test if the min is 0 */
+        assertEquals(kielerMath.mini(8,1,9,0), 0);
+        /** test if the min is 8 */
+        assertEquals(kielerMath.mini(8,8,8,8), 8);
+
+    }
+    
+    /**
+     * 
+     * Tests some valid combinations of averagei from kielerMath class.
+     * 
+     */
+    @SuppressWarnings("static-access")
+    @Test
+    public void testAveragei() {
+        /** test if the averagei is 4 */
+        assertEquals(kielerMath.averagei((long) 5,(long) 8,(long) 2,(long) 1), 4);
+        /** test if the averagei is 2 */
+        assertEquals(kielerMath.averagei((long) 5,(long) 0,(long) 2,(long) 1), 2);
+      
+
+    }
+    
 
 }
