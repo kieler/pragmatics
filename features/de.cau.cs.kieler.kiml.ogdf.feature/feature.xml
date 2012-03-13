@@ -221,8 +221,11 @@ litigation.
    <requires>
       <import plugin="de.cau.cs.kieler.kiml"/>
       <import plugin="de.cau.cs.kieler.core"/>
-      <import feature="net.ogdf.bin.feature" version="1.0.0.qualifier" match="greaterOrEqual"/>
    </requires>
+
+   <includes
+         id="net.ogdf.bin.feature"
+         version="0.0.0"/>
 
    <plugin
          id="de.cau.cs.kieler.kiml.ogdf"

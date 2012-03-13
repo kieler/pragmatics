@@ -17,6 +17,11 @@
         <groupId>org.eclipse.tycho.extras</groupId>
         <artifactId>tycho-source-feature-plugin</artifactId>
         <version>${tycho-version}</version>
+        <configuration>
+          <excludes>
+            <feature id="net.ogdf.bin.feature"/>
+          </excludes>
+        </configuration>
         <executions>
           <execution>
             <id>source-feature</id>

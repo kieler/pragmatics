@@ -20,6 +20,7 @@
         <configuration>
           <excludes>
             <plugin id="de.cau.cs.kieler.kaom.examples.ptolemy"/>
+            <feature id="org.ptolemy.feature"/>
           </excludes>
         </configuration>
 
