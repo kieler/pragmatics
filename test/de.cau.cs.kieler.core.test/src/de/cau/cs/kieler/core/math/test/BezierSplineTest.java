@@ -122,7 +122,7 @@ public class BezierSplineTest {
      */
     @Test
     public void testGetBasePoints() {
-     // test if all BasePoints have the same x when a Vertical Curve
+        // test if all BasePoints have the same x when a Vertical Curve
         this.initBezierCurveVertical();
         KVector[] vectors = bs.getBasePoints();
         for (KVector v : vectors) {
@@ -131,6 +131,27 @@ public class BezierSplineTest {
         // test if all InnerPoints have the same y when a Orizontal Curve
         this.initBezierCurvehOrizontal();
         vectors = bs.getBasePoints();
+        for (KVector v : vectors) {
+            assertEquals(v.y, startPnt.y, 0.00000001);
+        }
+    }
+
+    /**
+     * 
+     * Test getPolylineApprx from BezierSpline class.
+     * 
+     */
+    @Test
+    public void testGetPolylineApprx() {
+        // test if all PolylineApprx have the same x when a Vertical Curve
+        this.initBezierCurveVertical();
+        KVector[] vectors = bs.getPolylineApprx(50);
+        for (KVector v : vectors) {
+            assertEquals(v.x, startPnt.x, 0.00000001);
+        }
+        // test if all PolylineApprx have the same y when a Orizontal Curve
+        this.initBezierCurvehOrizontal();
+        vectors = bs.getPolylineApprx(50);
         for (KVector v : vectors) {
             assertEquals(v.y, startPnt.y, 0.00000001);
         }
