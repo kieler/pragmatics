@@ -71,17 +71,8 @@ public class GmfDiagramViewer extends AbstractViewer<Diagram> {
     /**
      * {@inheritDoc}
      */
-    public void startRecording() {
+    public void setRecording(final boolean recording) {
         // TODO Auto-generated method stub
-        
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void stopRecording() {
-        // TODO Auto-generated method stub
-        
     }
 
     /**
