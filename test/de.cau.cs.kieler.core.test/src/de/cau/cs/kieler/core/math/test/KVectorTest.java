@@ -159,7 +159,31 @@ public class KVectorTest {
         v1 = new KVector(0, 20);
         v2 = new KVector(0, 50);
         assertEquals(v1.distance(v2), 30, 0);
-
     }
+    
+    /**
+     * 
+     * Test parse from KVector class.
+     * 
+     */
+    @Test
+    public void testParse() {
+        // init KVector
+        KVector v1 = new KVector(5, 50);
+        KVector v2 = new KVector();
+        v2.parse("(5,50)");
+        v2.parse("{5,50}");
+        assertTrue(v1.equals(v2));
+        v2.parse("[5,50]");
+        assertTrue(v1.equals(v2));
+        v2.parse("{(5,50)}");
+        assertTrue(v1.equals(v2));
+        assertTrue(v1.equals(v2));
+        v2.parse("[(5,50)]");
+        assertTrue(v1.equals(v2));
+        v2.parse("[{5,50}]");
+        assertTrue(v1.equals(v2));
+    }
+    
 
 }
