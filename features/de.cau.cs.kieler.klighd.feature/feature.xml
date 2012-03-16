@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.cau.cs.kieler.klighd"
+      id="de.cau.cs.kieler.klighd.feature"
       label="KIELER Lightweight Diagrams infrastructure"
       version="0.1.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">

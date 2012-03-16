@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="net.ogdf.bin"
+      id="net.ogdf.bin.feature"
       label="OGDF Server Binaries"
       version="1.0.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
