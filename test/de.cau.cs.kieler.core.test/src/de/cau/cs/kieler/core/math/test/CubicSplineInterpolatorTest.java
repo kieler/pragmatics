@@ -37,6 +37,7 @@ public class CubicSplineInterpolatorTest {
      */
     @Test
     public void calculateClosedBezierSplineTest() {
+        
         //test if the endpoint of the returned BezierSpline equal to the startpoint
         KVector v0 = new KVector(5, 50);
         KVector v1 = new KVector(10, 70);
@@ -46,6 +47,20 @@ public class CubicSplineInterpolatorTest {
         KVector[] vectors = {v0,v1,v2,v3,v4};
         BezierSpline b = new CubicSplineInterpolator().calculateClosedBezierSpline(vectors);
         assertTrue(v0.equals(b.getEndPoint()));
+        
+        //test horizontal aligned points
+        v0 = new KVector(5, 50);
+        v1 = new KVector(10, 50);
+        v2 = new KVector(30, 50);
+        v3 = new KVector(60, 50);
+        v4 = new KVector(70, 50);
+        KVector[] vectors_h = {v0,v1,v2,v3,v4};
+        b = new CubicSplineInterpolator().calculateClosedBezierSpline(vectors_h);
+        assertEquals(b.getStartPoint().y,50,0);
+        assertEquals(b.getEndPoint().y,50,0);
+        for(KVector v:b.getInnerPoints()){
+            assertEquals(v.y,50,0);
+        }
         
     }
 
