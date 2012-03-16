@@ -178,7 +178,6 @@ public class KVectorTest {
         assertTrue(v1.equals(v2));
         v2.parse("{(5,50)}");
         assertTrue(v1.equals(v2));
-        assertTrue(v1.equals(v2));
         v2.parse("[(5,50)]");
         assertTrue(v1.equals(v2));
         v2.parse("[{5,50}]");
