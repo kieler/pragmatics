@@ -36,19 +36,27 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.Workbench;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
+import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
 import de.cau.cs.kieler.core.model.triggers.SelectionTrigger.EObjectSelectionState;
 import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationContext;
 import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationEffect;
+import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutEffect;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
+import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
 /**
  * A Combination triggering the KSBasE transformations from kivi menu contributions.
@@ -61,7 +69,7 @@ public class KSBasECombination extends AbstractCombination {
     private EditorTransformationSettings editorSettings;
 
     private HashMap<String, KSBasETransformation> transformations = new HashMap<String, KSBasETransformation>();
-
+    
     /**
      * @param editorSettings
      *            the KSBasE editor settings used as a context for the transformation.
@@ -92,6 +100,7 @@ public class KSBasECombination extends AbstractCombination {
             KSBasETransformation transformation = transformations.get(button.getButtonId());
             if (transformation != null) {
                 IEditorPart editor = button.getEditor();
+                
                 List<EObject> selectionList = new ArrayList<EObject>();
 
                 if (editor instanceof DiagramDocumentEditor) {
@@ -117,7 +126,7 @@ public class KSBasECombination extends AbstractCombination {
                         evokeXtend2(transformation, selectionList, diagramEditor);
                         refreshEditPolicy(diagramEditor);
                         evokeLayout(selectionList, rootObject, button);
-
+                        //setSelection(TransformationUtils.getPostTransformationSelection(), editor);
                         // do xtend1 stuff
                     } else {
                         // map the selection to the parameters of this transformation
@@ -130,11 +139,26 @@ public class KSBasECombination extends AbstractCombination {
                         }
                         // execute xtend transformation
                         if (selectionMapping != null) {
+                            EditPart selectedPart = diagramEditor.getDiagramEditPart().findEditPart(null, selectionList.get(0));
                             evokeXtend(transformation, selectionMapping, diagramEditor);
                             refreshEditPolicy(diagramEditor);
                             evokeLayout(selectionList, rootObject, button);
+                            
+                            if(!selectionList.isEmpty()) {
+                                EditPart selectPart = diagramEditor.getDiagramEditPart().findEditPart(null, selectionList.get(0));
+                                if (selectPart != null) {
+                                    setSelection(selectionList.get(0), editor, selectPart);
+                                } else {
+                                    selectPart = diagramEditor.getDiagramEditPart().findEditPart(null, selectionList.get(0).eContainer());
+                                    if (selectPart != null) {
+                                        setSelection(selectionList.get(0).eContainer(), editor, selectPart);
+                                    }
+                                }
+                            }
+                            
                         }
                     }
+                    
                 } else { // editor is no Diagram Editor
                          // do xtend2 stuff
                     if (transformation.getTransformationClass() != null) {
@@ -145,6 +169,22 @@ public class KSBasECombination extends AbstractCombination {
         }
     }
 
+    public void setSelection(final EObject obj, final IEditorPart editor, final EditPart part) {
+            
+        MonitoredOperation.runInUI(new Runnable() {
+                
+                public void run() {
+                    //if (obj != KSBasECombination.this.lastSelection) {
+                    try {
+                        editor.getEditorSite().getSelectionProvider().setSelection(new StructuredSelection(part));
+                    } catch (Exception e) {
+                        
+                    }
+                   //}
+                    
+                }}, false) ;
+    }
+    
     /**
      * Helper method for xtend2 to bring the current selection to a form we can easier pass as
      * parameters.
