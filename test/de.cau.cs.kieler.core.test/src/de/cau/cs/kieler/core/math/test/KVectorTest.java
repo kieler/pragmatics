@@ -160,7 +160,7 @@ public class KVectorTest {
         v2 = new KVector(0, 50);
         assertEquals(v1.distance(v2), 30, 0);
     }
-    
+
     /**
      * 
      * Test parse from KVector class.
@@ -184,6 +184,58 @@ public class KVectorTest {
         v2.parse("[{5,50}]");
         assertTrue(v1.equals(v2));
     }
-    
+
+    /**
+     * 
+     * Test applyBounds from KVector class.
+     * 
+     */
+    @Test
+    public void testApplyBounds() {
+        /**
+         * 
+         * test if vt.x > lowx and vt.y > lowy (the result must be the same vt)
+         * 
+         */
+        // init KVector v
+        KVector v = new KVector(30, 30);
+        // init KVector vt = v
+        KVector vt = v;
+        // init lower bound KVector v_lower_bound
+        KVector v_lower_bound = new KVector(10, 10);
+        // init upper bound KVector v_upper_bound
+        KVector v_upper_bound = new KVector(40, 40);
+        // test if vt.x > lowx (the result must be the same vt)
+        vt.applyBounds(v_lower_bound.x, v_lower_bound.y, v_upper_bound.x, v_upper_bound.y);
+        assertTrue(vt.equals(v));
+        /**
+         * 
+         * test if vt.x < lowx and vt.y < lowy (the result must be the vt(lowx,lowy))
+         * 
+         */
+        // reinitialize vt
+        vt = v;
+        // init lower bound KVector v_lower_bound
+        v_lower_bound = new KVector(40, 40);
+        // init upper bound KVector v_upper_bound
+        v_upper_bound = new KVector(60, 60);
+        // test if vt.x < lowx and vt.y < lowy (the result must be the vt(lowx,lowy))
+        vt.applyBounds(v_lower_bound.x, v_lower_bound.y, v_upper_bound.x, v_upper_bound.y);
+        assertTrue(vt.equals(v_lower_bound));
+        /**
+         * 
+         * test if vt.x > highx and vt.y > highy (the result must be the vt(highx,highy))
+         * 
+         */
+        // reinitialize vt
+        vt = v;
+        // init lower bound KVector v_lower_bound
+        v_lower_bound = new KVector(20, 20);
+        // init upper bound KVector v_upper_bound
+        v_upper_bound = new KVector(30, 30);
+        // test if vt.x > highx and vt.y > highy (the result must be the vt(highx,highy))
+        vt.applyBounds(v_lower_bound.x, v_lower_bound.y, v_upper_bound.x, v_upper_bound.y);
+        assertTrue(vt.equals(v_upper_bound));
+    }
 
 }
