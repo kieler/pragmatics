@@ -24,6 +24,7 @@ import de.cau.cs.kieler.core.math.KVectorChain;
  * Junit test-class for KVectorChain from de.cau.cs.kieler.core.math: Mathematics utility class for
  * the KIELER projects.
  * 
+ * @author wah
  */
 public class KVectorChainTest {
 
