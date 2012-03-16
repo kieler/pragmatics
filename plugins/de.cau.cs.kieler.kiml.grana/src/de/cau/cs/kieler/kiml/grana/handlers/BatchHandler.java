@@ -48,16 +48,15 @@ import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
 import de.cau.cs.kieler.kiml.grana.ui.BatchWizard;
 
 /**
- * The handler which is responsible for setting up an analysis batch run by
- * launching the appropriate wizard and executing it.
+ * The handler which is responsible for setting up an analysis batch run by launching the
+ * appropriate wizard and executing it.
  * 
  * @author mri
  */
 public class BatchHandler extends AbstractHandler {
 
     /** the error message for a failed batch analysis. */
-    private static final String MESSAGE_BATCH_FAILED =
-            "The batch analysis failed.";
+    private static final String MESSAGE_BATCH_FAILED = "The batch analysis failed.";
 
     private static final int WORK_ALL = 6;
     private static final int WORK_BATCH = 1;
@@ -70,9 +69,8 @@ public class BatchHandler extends AbstractHandler {
     public Object execute(final ExecutionEvent event) throws ExecutionException {
         Shell shell = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
         // get current selection
-        ISelection selection =
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                        .getSelectionService().getSelection();
+        ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                .getSelectionService().getSelection();
         // launch wizard
         final BatchWizard wizard;
         if (selection instanceof IStructuredSelection) {
@@ -82,76 +80,56 @@ public class BatchHandler extends AbstractHandler {
         }
         WizardDialog dialog = new WizardDialog(shell, wizard);
         dialog.create();
-        // on successful wizard comletion start the batch
+        // on successful wizard completion start the batch
         int code = dialog.open();
         if (code == Dialog.OK) {
             try {
                 IRunnableWithProgress runnable = new IRunnableWithProgress() {
                     public void run(final IProgressMonitor uiMonitor) {
-                        IKielerProgressMonitor monitor =
-                                new KielerProgressMonitor(uiMonitor);
+                        IKielerProgressMonitor monitor = new KielerProgressMonitor(uiMonitor);
                         monitor.begin("Starting analysis batch", WORK_ALL);
                         try {
                             // create the batch
-                            Batch batch =
-                                    new Batch(wizard.getAnalyses());
+                            Batch batch = new Batch(wizard.getAnalyses());
                             // create a batch job for every selected file
                             for (IPath file : wizard.getSelectedFiles()) {
-                                DiagramKGraphProvider provider =
-                                        new DiagramKGraphProvider();
-                                provider.setLayoutBeforeAnalysis(wizard
-                                        .getLayoutBeforeAnalysis());
-                                BatchJob<IPath> batchJob =
-                                        new BatchJob<IPath>(file, provider);
+                                DiagramKGraphProvider provider = new DiagramKGraphProvider();
+                                provider.setLayoutBeforeAnalysis(wizard.getLayoutBeforeAnalysis());
+                                BatchJob<IPath> batchJob = new BatchJob<IPath>(file, provider);
                                 batch.appendJob(batchJob);
                             }
                             monitor.worked(WORK_BATCH);
                             // execute the batch
-                            BatchResult result =
-                                    batch.execute(monitor.subTask(WORK_EXECUTE));
+                            BatchResult result = batch.execute(monitor.subTask(WORK_EXECUTE));
                             if (monitor.isCanceled()) {
                                 return;
                             }
                             // serialize the batch result
-                            URI fileURI =
-                                    URI.createPlatformResourceURI(wizard
-                                            .getResultFile().toOSString(), true);
-                            URIConverter uriConverter =
-                                    new ExtensibleURIConverterImpl();
-                            OutputStream outputStream =
-                                    uriConverter.createOutputStream(fileURI);
-                            IBatchResultSerializer serializer =
-                                    new CSVResultSerializer();
+                            URI fileURI = URI.createPlatformResourceURI(wizard.getResultFile()
+                                    .toOSString(), true);
+                            URIConverter uriConverter = new ExtensibleURIConverterImpl();
+                            OutputStream outputStream = uriConverter.createOutputStream(fileURI);
+                            IBatchResultSerializer serializer = new CSVResultSerializer();
                             serializer.serialize(outputStream, result,
                                     monitor.subTask(WORK_SERIALIZE));
                             outputStream.close();
-                            // for (Pair<BatchJob<?>, Exception> job : result
-                            // .getFailedJobs()) {
-                            // job.getSecond().printStackTrace();
-                            // }
                         } catch (Exception e) {
-                            IStatus status =
-                                    new Status(IStatus.ERROR,
-                                            GranaPlugin.PLUGIN_ID, 0,
-                                            MESSAGE_BATCH_FAILED, e);
-                            StatusManager.getManager().handle(status,
-                                    StatusManager.SHOW);
+                            IStatus status = new Status(IStatus.ERROR, GranaPlugin.PLUGIN_ID, 0,
+                                    MESSAGE_BATCH_FAILED, e);
+                            StatusManager.getManager().handle(status, StatusManager.SHOW);
                         } finally {
                             monitor.done();
                         }
                     }
                 };
-                PlatformUI.getWorkbench().getProgressService()
-                        .run(true, true, runnable);
+                PlatformUI.getWorkbench().getProgressService().run(true, true, runnable);
             } catch (InvocationTargetException e) {
-                IStatus status =
-                        new Status(IStatus.ERROR, GranaPlugin.PLUGIN_ID, 0,
-                                MESSAGE_BATCH_FAILED, e);
+                IStatus status = new Status(IStatus.ERROR, GranaPlugin.PLUGIN_ID, 0,
+                        MESSAGE_BATCH_FAILED, e);
                 StatusManager.getManager().handle(status, StatusManager.SHOW);
             } catch (InterruptedException e) {
-                IStatus status =
-                        new Status(IStatus.ERROR, GranaPlugin.PLUGIN_ID, 0,
-                                MESSAGE_BATCH_FAILED, e);
+                IStatus status = new Status(IStatus.ERROR, GranaPlugin.PLUGIN_ID, 0,
+                        MESSAGE_BATCH_FAILED, e);
                 StatusManager.getManager().handle(status, StatusManager.SHOW);
             }
         }

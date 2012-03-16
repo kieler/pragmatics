@@ -56,13 +56,13 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
     private IGraph graph;
 
     /** The list of edges not yet in the planar subgraph. */
-    private LinkedList<IEdge> missingEdges;
-
-    /** The result of the planarity testing algorithm. */
-    private boolean planar;
+    private final LinkedList<IEdge> missingEdges = new LinkedList<IEdge>();
 
     /** The list of graph nodes in reversed DFI order. */
-    private LinkedList<INode> reversedNodes;
+    private final LinkedList<INode> reversedNodes = new LinkedList<INode>();
+
+    /** The result of the planarity testing algorithm. */
+    private boolean planar = true;
 
     /** The external face of the graph. */
     private ManuallyIterable<INode> externalFace;
@@ -157,24 +157,16 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
      */
     private LinkedList<INode>[] pertinentRoots;
 
-    // ======================== Constructor ========================================================
-
     /**
-     * Default Constructor.
+     * {@inheritDoc}
      */
-    public BoyerMyrvoldPlanarityTester() {
-        super();
-        this.missingEdges = new LinkedList<IEdge>();
-        this.reversedNodes = new LinkedList<INode>();
-        this.planar = true;
-    }
-
     @Override
     public void reset() {
-        this.graph = null;
-        this.missingEdges.clear();
-        this.reversedNodes.clear();
-        this.planar = true;
+        super.reset();
+        graph = null;
+        missingEdges.clear();
+        reversedNodes.clear();
+        planar = true;
     }
 
     // ======================== Algorithm Interface ================================================

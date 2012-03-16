@@ -17,6 +17,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.GraphFeature;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
@@ -66,7 +67,11 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             AbstractLayoutProvider layoutProvider = algorithmData.getProviderPool().fetch();
             // if the layout provider supports hierarchy, it is expected to layout the children
             int nodeCount;
-            if (layoutProvider.supportsHierarchy(layoutNode)) {
+            if (layoutNode.getData(KShapeLayout.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)
+                    && (algorithmData.getSupportedPriority(GraphFeature.COMPOUND)
+                            > LayoutAlgorithmData.MIN_PRIORITY
+                        || algorithmData.getSupportedPriority(GraphFeature.CLUSTERS)
+                            > LayoutAlgorithmData.MIN_PRIORITY)) {
                 nodeCount = countNodes(layoutNode, false);
             } else {
                 nodeCount = layoutNode.getChildren().size();

@@ -10,6 +10,7 @@ Require-Bundle: com.google.guava;bundle-version="9.0.0",
  de.cau.cs.kieler.core.kgraph,
  de.cau.cs.kieler.kiml
 Export-Package: de.cau.cs.kieler.klay.layered,
+ de.cau.cs.kieler.klay.layered.components,
  de.cau.cs.kieler.klay.layered.graph,
  de.cau.cs.kieler.klay.layered.intermediate,
  de.cau.cs.kieler.klay.layered.p1cycles,

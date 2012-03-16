@@ -18,17 +18,18 @@
                   separated="true"
                   toolbar="false"
                   transformation="toggleInputOutput"
-                  transformationId="de.cau.cs.kieler.kaom.ksbase.ptolemy.addInputOutput">
+                  transformationId="de.cau.cs.kieler.kaom.ksbase.ptolemy.addInputOutput"
+                  validation="isComplex,isNotRoot">
             </transformation>
             <transformation
                   icon="icon/kieler-arrange.gif"
                   menu="true"
-                  name="capsulate"
-                  popup="false"
+                  name="encapsulate"
+                  popup="true"
                   popupbar="true"
                   separated="false"
                   toolbar="false"
-                  transformation="capsulate"
+                  transformation="encapsulate"
                   transformationId="de.cau.cs.kieler.kaom.ksbase.ptolemy.collapse">
             </transformation>
             <transformation
@@ -40,16 +41,8 @@
                   separated="false"
                   toolbar="false"
                   transformation="flatten"
-                  transformationId="de.cau.cs.kieler.kaom.ksbase.ptolemy.expand">
-            </transformation>
-            <transformation
-                  menu="true"
-                  name="test"
-                  popup="false"
-                  popupbar="false"
-                  toolbar="false"
-                  transformation="test"
-                  transformationId="de.cau.cs.kieler.kaom.ksbase.ptolemy.test">
+                  transformationId="de.cau.cs.kieler.kaom.ksbase.ptolemy.expand"
+                  validation="isComplex,isNotRoot">
             </transformation>
          </transformations>
          <package
@@ -59,11 +52,8 @@
                class="de.cau.cs.kieler.core.annotations.AnnotationsPackage">
          </package>
          <Xtend2TransformationClass
-               TransformationClass="de.cau.cs.kieler.kaom.ksbase.ptolemy.xtend2Transformations.Xtend2test">
+               TransformationClass="de.cau.cs.kieler.kaom.ksbase.ptolemy.xtend2.PtolemyTransformations">
          </Xtend2TransformationClass>
-         <XtendTransformationFile
-               TransformationFile="transformations/features.ext">
-         </XtendTransformationFile>
       </configuration>
    </extension>
 

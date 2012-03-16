@@ -72,7 +72,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
 
     /** small default value for minimal spacing. */
-    public static final float DEF_SPACING_SMALL = 16.0f;
+    public static final float DEF_SPACING_SMALL = 20.0f;
     /** large default value for minimal spacing. */
     public static final float DEF_SPACING_LARGE = 40.0f;
     /** extra-large default value for minimal spacing. */
@@ -406,8 +406,9 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
         
         switch (command) {
         case DOT:
-            graphAttrs.add(createAttribute(Attributes.RANKSEP, minSpacing / DPI));
             graphAttrs.add(createAttribute(Attributes.NODESEP, minSpacing / DPI));
+            float rankSepFactor = parentLayout.getProperty(Attributes.RANK_SEP_PROP);
+            graphAttrs.add(createAttribute(Attributes.RANKSEP, rankSepFactor * minSpacing / DPI));
             // set layout direction
             switch (parentLayout.getProperty(LayoutOptions.DIRECTION)) {
             case DOWN:
@@ -493,7 +494,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
             OverlapMode mode = parentLayout.getProperty(Attributes.OVERLAP_PROP);
             if (mode != OverlapMode.NONE) {
                 graphAttrs.add(createAttribute(Attributes.OVERLAP, mode.literal()));
-                graphAttrs.add(createAttribute(Attributes.SEP, minSpacing / 2));
+                graphAttrs.add(createAttribute(Attributes.SEP, "+" + (int) (minSpacing / 2)));
             }
             // enable or disable connected component packing
             Boolean pack = parentLayout.getProperty(LayoutOptions.SEPARATE_CC);
@@ -566,9 +567,6 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
         return attribute;
     }
 
-    /** default label angle value. */
-    private static final float DEF_LABEL_ANGLE = -25.0f;
-
     /**
      * Set edge labels for the given edge.
      * 
@@ -633,7 +631,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
         // edge overlapping
         if (midLabel.length() > 0) {
             float labelSpacing = edgeLayout.getProperty(LayoutOptions.LABEL_SPACING);
-            int charsToAdd = (labelSpacing < 1 ? 1 : (int) labelSpacing) - 1;
+            int charsToAdd = (labelSpacing < 1 ? 0 : (int) labelSpacing) - 1;
             for (int i = 0; i < charsToAdd; i++) {
                 midLabel.append(isVertical ? "O" : "\nO");
             }
@@ -655,14 +653,14 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
         if (fontSize > 0) {
             attributes.add(createAttribute(Attributes.FONTSIZE, fontSize));
         }
-        // set label distance
-        float distance = edgeLayout.getProperty(Attributes.LABEL_DISTANCE_PROP);
-        if (distance >= 0.0f) {
-            attributes.add(createAttribute(Attributes.LABELDISTANCE, distance));
-            if (distance > 1.0f) {
-                float labelAngle = DEF_LABEL_ANGLE / distance;
-                attributes.add(createAttribute(Attributes.LABELANGLE, labelAngle));
+        // set label distance and angle
+        if (headLabel.length() > 0 || tailLabel.length() > 0) {
+            float distance = edgeLayout.getProperty(Attributes.LABEL_DISTANCE_PROP);
+            if (distance >= 0.0f) {
+                attributes.add(createAttribute(Attributes.LABELDISTANCE, distance));
             }
+            float angle = edgeLayout.getProperty(Attributes.LABEL_ANGLE_PROP);
+            attributes.add(createAttribute(Attributes.LABELANGLE, angle));
         }
     }
 

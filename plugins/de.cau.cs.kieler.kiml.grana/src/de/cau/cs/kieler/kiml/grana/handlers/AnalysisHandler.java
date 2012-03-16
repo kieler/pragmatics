@@ -24,11 +24,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.ui.GranaUIUtil;
 import de.cau.cs.kieler.kiml.grana.util.DiagramAnalyzer;
 import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
 import de.cau.cs.kieler.kiml.grana.visualization.VisualizationServices;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * The handler that is responsible for receiving user input on the analyses to
@@ -49,14 +49,14 @@ public class AnalysisHandler extends AbstractHandler {
         Shell shell = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
         GranaUIUtil.setCurrentShell(shell);
         // get the last selected analyses
-        List<AbstractInfoAnalysis> analyses = GranaUtil.getLastAnalysesSelection();
+        List<AnalysisData> analyses = GranaUtil.getLastAnalysesSelection();
         
         if (analyses.isEmpty()) {
             MessageDialog.openInformation(HandlerUtil.getActiveShell(event), "No Analyses",
                     "No analyses are selected. Please configure analyses in the button menu.");
         } else {
             // perform the analyses on the active diagram
-            Map<String, Object> results = DiagramAnalyzer.analyse(editorPart, null, analyses, true);
+            Map<String, Object> results = DiagramAnalyzer.analyze(editorPart, null, analyses, true);
             // visualize the results
             VisualizationServices.getInstance().visualize(analyses, results, false);
         }

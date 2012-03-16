@@ -18,7 +18,7 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
@@ -27,7 +27,9 @@ import de.cau.cs.kieler.klay.planar.planarity.BoyerMyrvoldPlanarityTester;
 import de.cau.cs.kieler.klay.planar.planarity.IPlanarityTester;
 
 /**
- * A graph analysis, that uses planarity testing algorithms to check if a graph is planar.
+ * A graph analysis that uses planarity testing algorithms to check whether a graph is planar.
+ * If the graph is planar, the result is 0. Otherwise it is a hint on the number of edges that
+ * need to be removed in order to obtain a planar subgraph.
  * 
  * @author ocl
  */
@@ -51,26 +53,13 @@ public class PlanarityAnalysis implements IAnalysis {
         progressMonitor.begin("Planarity testing", 1);
 
         // KGraph -> PGraph conversion
-        IGraph graph = this.factory.createGraphFromKGraph(parentNode);
+        IGraph graph = factory.createGraphFromKGraph(parentNode);
 
         // Planarity Testing
-        this.tester.reset();
-        List<IEdge> edges = this.tester.planarSubgraph(graph);
-
-        // String result;
-        // if (edges.isEmpty()) {
-        // result = "The graph is planar.";
-        // } else {
-        // result = "The graph is not planar.<br>Conflicting edges:<br>";
-        // for (IEdge edge : edges) {
-        // KNode src = (KNode) edge.getSource().getProperty(PGraphFactory.TOKGRAPH);
-        // KNode dst = (KNode) edge.getTarget().getProperty(PGraphFactory.TOKGRAPH);
-        // result += "( " + src.getLabel().getText() + " ; " + dst.getLabel().getText()
-        // + " )<br>";
-        // }
-        // }
+        tester.reset();
+        List<IEdge> edges = tester.planarSubgraph(graph);
 
         progressMonitor.done();
-        return edges.isEmpty();
+        return edges.size();
     }
 }

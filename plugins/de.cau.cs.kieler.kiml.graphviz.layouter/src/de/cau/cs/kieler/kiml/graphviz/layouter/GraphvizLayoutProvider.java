@@ -109,6 +109,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         transData.setSourceGraph(parentNode);
         transData.setProperty(DotExporter.USE_EDGE_IDS, true);
         transData.setProperty(DotExporter.FULL_EXPORT, false);
+        transData.setProperty(DotExporter.COMMAND, command);
         dotHandler.getExporter().transform(transData);
         GraphvizModel graphvizInput = transData.getTargetGraphs().get(0);
         writeDotGraph(graphvizInput, progressMonitor.subTask(1), debugMode, resourceSet);
@@ -123,15 +124,6 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             graphvizTool.cleanup(Cleanup.NORMAL);
             progressMonitor.done();
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean supportsHierarchy(final KNode layoutNode) {
-        return layoutNode.getData(KShapeLayout.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)
-                && (command == Command.DOT || command == Command.FDP);
     }
 
     /**

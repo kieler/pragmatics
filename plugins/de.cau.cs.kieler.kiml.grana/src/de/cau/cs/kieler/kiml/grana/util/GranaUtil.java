@@ -18,9 +18,9 @@ import java.util.List;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
+import de.cau.cs.kieler.kiml.service.AnalysisService;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * A utility class for grana handlers.
@@ -45,7 +45,7 @@ public final class GranaUtil {
      * 
      * @return the last analyses selection
      */
-    public static List<AbstractInfoAnalysis> getLastAnalysesSelection() {
+    public static List<AnalysisData> getLastAnalysesSelection() {
         return getAnalysesSelection(LAST_ANALYSES_PREFERENCE);
     }
 
@@ -57,10 +57,10 @@ public final class GranaUtil {
      *            selection
      * @return the last selected analyses
      */
-    public static List<AbstractInfoAnalysis> getAnalysesSelection(
+    public static List<AnalysisData> getAnalysesSelection(
             final String preferenceKey) {
-        List<AbstractInfoAnalysis> result =
-                new LinkedList<AbstractInfoAnalysis>();
+        List<AnalysisData> result =
+                new LinkedList<AnalysisData>();
         // get the preference store
         IPreferenceStore preferenceStore =
                 GranaPlugin.getDefault().getPreferenceStore();
@@ -68,8 +68,8 @@ public final class GranaUtil {
         String analysesIdsSerialized = preferenceStore.getString(preferenceKey);
         String[] analysesIds = analysesIdsSerialized.split(";");
         for (String analysisId : analysesIds) {
-            AbstractInfoAnalysis analysis =
-                    AnalysisServices.getInstance().getAnalysisById(
+            AnalysisData analysis =
+                    AnalysisService.getInstance().getAnalysisById(
                             analysisId.trim());
             if (analysis != null) {
                 result.add(analysis);
@@ -85,7 +85,7 @@ public final class GranaUtil {
      *            the last analyses selection
      */
     public static void setLastAnalysesSelection(
-            final List<AbstractInfoAnalysis> analyses) {
+            final List<AnalysisData> analyses) {
         setAnalysesSelection(LAST_ANALYSES_PREFERENCE, analyses);
     }
 
@@ -99,13 +99,13 @@ public final class GranaUtil {
      *            the analyses
      */
     public static void setAnalysesSelection(final String preferenceKey,
-            final List<AbstractInfoAnalysis> analyses) {
+            final List<AnalysisData> analyses) {
         // get the preference store
         IPreferenceStore preferenceStore =
                 GranaPlugin.getDefault().getPreferenceStore();
         // serialize the analyses ids
         String analysesIdsSerialized = "";
-        for (AbstractInfoAnalysis analysis : analyses) {
+        for (AnalysisData analysis : analyses) {
             analysesIdsSerialized += analysis.getId() + ";";
         }
         preferenceStore.setValue(preferenceKey, analysesIdsSerialized);

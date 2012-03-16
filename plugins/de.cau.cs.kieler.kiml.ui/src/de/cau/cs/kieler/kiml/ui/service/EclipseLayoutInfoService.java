@@ -28,12 +28,20 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
+import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.LayoutDataService;
@@ -354,6 +362,35 @@ public final class EclipseLayoutInfoService extends LayoutInfoService {
      */
     public Set<String> getRegisteredElements() {
         return registeredElements;
+    }
+    
+    /**
+     * Fill the given menu manager with contribution items for layout configurations.
+     * 
+     * @param menuManager a menu manager
+     */
+    public void fillConfigMenu(final IMenuManager menuManager) {
+        for (ConfigData data : getConfigData()) {
+            if (data.getActivationText() != null && data.getActivationText().length() > 0
+                    && data.getActivationProperty() != null) {
+                final String text = data.getActivationText();
+                final IProperty<Boolean> activation = data.getActivationProperty();
+                menuManager.add(new ContributionItem() {
+                    public void fill(final Menu parent, final int index) {
+                        final MenuItem menuItem = new MenuItem(parent, SWT.CHECK, index);
+                        menuItem.setText(text);
+                        menuItem.setSelection(activation.getDefault());
+                        menuItem.addSelectionListener(new SelectionListener() {
+                            public void widgetSelected(final SelectionEvent e) {
+                                getConfigProperties().setProperty(activation, menuItem.getSelection());
+                            }
+                            public void widgetDefaultSelected(final SelectionEvent e) {
+                            }
+                        });
+                    }
+                });
+            }
+        }
     }
 
 }

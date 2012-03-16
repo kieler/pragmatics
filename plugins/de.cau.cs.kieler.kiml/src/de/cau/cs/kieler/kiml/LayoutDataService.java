@@ -63,24 +63,25 @@ public class LayoutDataService {
     /** the instance of the registry class. */
     private Registry registry = null;
     /** mapping of layout provider identifiers to their data instances. */
-    private Map<String, LayoutAlgorithmData> layoutAlgorithmMap
+    private final Map<String, LayoutAlgorithmData> layoutAlgorithmMap
             = new LinkedHashMap<String, LayoutAlgorithmData>();
     /** mapping of layout option identifiers to their data instances. */
-    private Map<String, LayoutOptionData<?>> layoutOptionMap
+    private final Map<String, LayoutOptionData<?>> layoutOptionMap
             = new LinkedHashMap<String, LayoutOptionData<?>>();
     /** mapping of layout type identifiers to their data instances. */
-    private Map<String, LayoutTypeData> layoutTypeMap = new LinkedHashMap<String, LayoutTypeData>();
+    private final Map<String, LayoutTypeData> layoutTypeMap
+            = new LinkedHashMap<String, LayoutTypeData>();
     /** mapping of category identifiers to their names. */
-    private Map<String, String> categoryMap = new HashMap<String, String>();
+    private final Map<String, String> categoryMap = new HashMap<String, String>();
     
     /** additional map of layout algorithm suffixes to data instances. */
-    private Map<String, LayoutAlgorithmData> algorithmSuffixMap
+    private final Map<String, LayoutAlgorithmData> algorithmSuffixMap
             = new HashMap<String, LayoutAlgorithmData>();
     /** additional map of layout option suffixes to data instances. */
-    private Map<String, LayoutOptionData<?>> optionSuffixMap
+    private final Map<String, LayoutOptionData<?>> optionSuffixMap
             = new HashMap<String, LayoutOptionData<?>>();
     /** additional map of layout type suffixes to data instances. */
-    private Map<String, LayoutTypeData> typeSuffixMap
+    private final Map<String, LayoutTypeData> typeSuffixMap
             = new HashMap<String, LayoutTypeData>();
 
     /** The list of valid layout data service identifiers. */
@@ -404,7 +405,7 @@ public class LayoutDataService {
         List<LayoutOptionData<?>> optionDataList = new LinkedList<LayoutOptionData<?>>();
         for (LayoutOptionData<?> optionData : layoutOptionMap.values()) {
             if (algorithmData.knowsOption(optionData)
-                    || LayoutOptions.ALGORITHM_ID.equals(optionData.getId())) {
+                    || LayoutOptions.ALGORITHM.equals(optionData)) {
                 if (optionData.hasTarget(targetType)) {
                     optionDataList.add(optionData);
                 }

@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.grana.visualizers;
 
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.visualization.AbstractSimpleVisualizer;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * A special visualizer for arrays.
@@ -33,7 +33,7 @@ public class ArrayResultVisualizer extends AbstractSimpleVisualizer<String> {
     /**
      * {@inheritDoc}
      */
-    public String visualize(final AbstractInfoAnalysis analysis,
+    public String visualize(final AnalysisData analysis,
             final Object result) {
         if (result instanceof Object[]) {
             Object[] objects = (Object[]) result;
