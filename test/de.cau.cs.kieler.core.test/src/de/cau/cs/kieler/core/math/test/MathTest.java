@@ -82,13 +82,6 @@ public class MathTest {
         kielerMath.factd(-1);
     }
 
-    /** Tests the Big argument exception of Factd from kielerMath class. */
-    @SuppressWarnings("static-access")
-    @Test(expected = IllegalArgumentException.class)
-    public void testFactdBigIllegalArgumentException() {
-        kielerMath.factd(27);
-    }
-
     /**
      * 
      * Tests some valid combinations of binomiall from kielerMath class.

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.cau.cs.kieler.kiml.graphiti"
+      id="de.cau.cs.kieler.kiml.graphiti.feature"
       label="KIELER Layout for Graphiti"
       version="0.6.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.cau.cs.kieler.kwebs.client.jaxws"
+      id="de.cau.cs.kieler.kwebs.client.jaxws.feature"
       label="KIELER Layout Client over JAX-WS (optional)"
       version="0.1.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
