@@ -175,7 +175,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
         }
     }
 
-    public void setSelection(final EObject obj, final IEditorPart editor, final EditPart part) {
+    public void setSelection(final IEditorPart editor, final EditPart part) {
 
         MonitoredOperation.runInUI(new Runnable() {
 
@@ -185,7 +185,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                     editor.getEditorSite().getSelectionProvider()
                             .setSelection(new StructuredSelection(part));
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
                 // }
 
@@ -457,9 +457,13 @@ public class KSBasECombination extends AbstractCombination implements ITransform
             if (object != null) {
                 object = select;
                 EditPart selectPart = lastEditor.getDiagramEditPart().findEditPart(null, object);
-                if (selectPart != null) {
-                    setSelection(object, lastEditor, selectPart);
+                if (selectPart == null) {
+                    selectPart = lastEditor.getDiagramEditPart().findEditPart(null, object.eContainer());
                 }
+                if (selectPart != null) {
+                    setSelection(lastEditor, selectPart);
+                }
+                
             }
         }
 
