@@ -442,6 +442,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
         if (policy != null) {
             policy.refresh();
         }
+        if (select != null) {      
         if (!((parameters == null) || (parameters.length == 0))) {
             EObject object = null;
             if (parameters[0] instanceof List) {
@@ -463,8 +464,10 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                 if (selectPart != null) {
                     setSelection(lastEditor, selectPart);
                 }
+                select = null;
                 
             }
+        }
         }
 
     }

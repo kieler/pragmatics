@@ -32,6 +32,7 @@ import de.cau.cs.kieler.kaom.Relation
 class PtolemyTransformations {
 
     def encapsulate(List<Entity> entities) {
+        System::out.println("encapsulate")
         encapsulate(entities, null, null)
     }
 
@@ -41,7 +42,7 @@ class PtolemyTransformations {
 
     //Encapsule the given entities in a single parent
     def encapsulate(List<Entity> entities, List<Link> links, List<Relation> relations) {
-        //System::out.println("encapsulate")
+        System::out.println("encapsulate2")
         val Entity newEntity = KaomFactory::eINSTANCE.createEntity()
         val Entity parent = entities.get(0).eContainer as Entity
         val StringAnnotation ann = AnnotationsFactory::eINSTANCE.createStringAnnotation()
