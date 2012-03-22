@@ -176,9 +176,13 @@ public abstract class VisualizeChosenElementCombination extends AbstractCombinat
                     public Boolean exec(final XtextResource state) throws Exception {
                         ILeafNode leaf = NodeModelUtils.findLeafNodeAtOffset(state.getParseResult()
                                 .getRootNode(), selection.getOffset());
-                        EObject o = leaf.getSemanticElement();
-                        setElement(o);
-                        return ModelExpression.this.clazz.isInstance(o);
+                        if (leaf == null) {
+                            return false;
+                        } else {
+                            EObject o = leaf.getSemanticElement();
+                            setElement(o);
+                            return ModelExpression.this.clazz.isInstance(o);
+                        }
                     }
                 });
             } catch (ClassCastException e) {
