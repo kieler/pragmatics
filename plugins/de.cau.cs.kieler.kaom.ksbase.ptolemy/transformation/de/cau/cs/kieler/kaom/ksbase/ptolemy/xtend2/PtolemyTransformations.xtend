@@ -49,10 +49,13 @@ class PtolemyTransformations {
         ann.setValue("withoutPorts")
         newEntity.annotations.add(ann)
         parent.childEntities.add(newEntity)
-        for (Relation rel : relations) {
-            (rel.eContainer as Entity).childRelations.remove(rel)
-            newEntity.childRelations.add(rel)
+        if (relations != null) {
+            for (Relation rel : relations) {
+                (rel.eContainer as Entity).childRelations.remove(rel)
+                newEntity.childRelations.add(rel)
+            }
         }
+        
         for (Entity e : entities) {
         	newEntity.childEntities.add(e)
         	parent.childEntities.remove(e)
