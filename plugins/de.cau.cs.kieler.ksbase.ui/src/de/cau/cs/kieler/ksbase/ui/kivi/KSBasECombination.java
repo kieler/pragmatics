@@ -434,6 +434,9 @@ public class KSBasECombination extends AbstractCombination implements ITransform
         layout.schedule();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void transformationExecuted(String transformationName, Object[] parameters, Object result) {
         // TODO Auto-generated method stub
         //this.refreshEditPolicy(lastEditor);
@@ -472,6 +475,10 @@ public class KSBasECombination extends AbstractCombination implements ITransform
 
     }
     
+    /**
+     * Set an object that will be selected after the next transformation has finished executing.
+     * @param obj the object to be selected
+     */
     public static void selectObject(final Object obj) {
         if (obj instanceof EObject) {
             select = (EObject) obj;
