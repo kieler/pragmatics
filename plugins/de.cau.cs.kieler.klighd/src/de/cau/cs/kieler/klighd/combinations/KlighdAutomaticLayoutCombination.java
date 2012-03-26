@@ -36,7 +36,7 @@ public class KlighdAutomaticLayoutCombination extends AbstractCombination {
      *            the KLighD status state
      */
     public void execute(final KlighdStatusState state) {
-        if (state.getStatus() == Status.CREATE_SUCCESS) {
+        if (state.getStatus() == Status.CREATE_SUCCESS || state.getStatus() == Status.UPDATE) {
             // schedule the layout effect
             IPreferenceStore preferenceStore = getPreferenceStore();
             boolean animate = preferenceStore.getBoolean(LayoutCombination.ANIMATE);
