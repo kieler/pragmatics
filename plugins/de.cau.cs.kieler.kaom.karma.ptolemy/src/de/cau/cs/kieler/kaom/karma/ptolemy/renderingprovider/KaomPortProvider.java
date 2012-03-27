@@ -15,9 +15,16 @@
 package de.cau.cs.kieler.kaom.karma.ptolemy.renderingprovider;
 
 import java.lang.reflect.Constructor;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.OperationHistoryFactory;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
@@ -27,10 +34,21 @@ import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.transaction.Transaction;
+import org.eclipse.emf.workspace.AbstractEMFOperation;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gmf.runtime.diagram.core.commands.SetPropertyCommand;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
+import org.eclipse.gmf.runtime.diagram.ui.internal.properties.Properties;
+import org.eclipse.gmf.runtime.diagram.ui.l10n.DiagramUIMessages;
+import org.eclipse.gmf.runtime.emf.core.util.EObjectAdapter;
+import org.eclipse.gmf.runtime.notation.NotationPackage;
+import org.eclipse.gmf.runtime.notation.RoutingStyle;
+import org.eclipse.gmf.runtime.notation.Smoothness;
+import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 
 import com.google.inject.Guice;
@@ -44,6 +62,8 @@ import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Port;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.PortNameEditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.PortNameEditPart.PortNameFigure;
 import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.PtolemyInterface;
 import de.cau.cs.kieler.kaom.karma.ptolemy.PtolemyPortBorderItemLocator;
 import de.cau.cs.kieler.kaom.karma.ptolemy.conditions.HasCommentsCondition;
@@ -61,17 +81,36 @@ public class KaomPortProvider implements IRenderingProvider {
             final EObject object, final EditPart part) {
         EditPart parentPart = part.getParent();
 
-        // ///TODO make port name invisible. not working yet. (hitting layout makes it visible
-        // again)
-        /*
-         * Object partChild = part.getChildren().get(0); if (partChild instanceof PortNameEditPart)
-         * { PortNameEditPart portNameEditPart = (PortNameEditPart) partChild; if
-         * (portNameEditPart.getFigure() instanceof PortNameFigure) { PortNameFigure pnf =
-         * (PortNameFigure) portNameEditPart.getFigure(); pnf.setText(""); } //
-         * portNameEditPart.getFigure().setVisible(false); //
-         * portNameEditPart.getFigure().setSize(0, 0); //
-         * portNameEditPart.getFigure().setOpaque(false); }
-         */
+        //hide port labels
+        Object partChild = part.getChildren().get(0);
+        if (partChild instanceof PortNameEditPart) {
+            final PortNameEditPart portNameEditPart = (PortNameEditPart) partChild;
+            
+            AbstractEMFOperation emfOp = new AbstractEMFOperation(portNameEditPart.getEditingDomain(),
+                    "hide port labels", Collections.singletonMap(
+                            Transaction.OPTION_UNPROTECTED, true)) {
+                @Override
+                protected IStatus doExecute(final IProgressMonitor monitor,
+                        final IAdaptable info) throws ExecutionException {
+                    SetPropertyCommand c = new SetPropertyCommand(portNameEditPart.getEditingDomain(), new EObjectAdapter(portNameEditPart.getNotationView()), Properties.ID_ISVISIBLE, DiagramUIMessages.Command_hideLabel_Label, Boolean.valueOf(false));
+                    try {
+                        c.execute(null, null);
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                    return Status.OK_STATUS;
+                }
+            };
+
+            try {
+                // execute above operation
+                OperationHistoryFactory.getOperationHistory().execute(emfOp, null, null);
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            
+        }
+
         // ///
         if (parentPart instanceof IAdvancedRenderingEditPart) {
             // we want to know the ptolemy class of the object that owns this port
@@ -237,7 +276,8 @@ public class KaomPortProvider implements IRenderingProvider {
      * {@inheritDoc}
      */
     public BorderItemLocator getBorderItemLocatorByString(final String input,
-            final IFigure parentFigure, final Object locator, final EObject object, final CollapseStatus collapseStatus) {
+            final IFigure parentFigure, final Object locator, final EObject object,
+            final CollapseStatus collapseStatus) {
         EObject container = object.eContainer();
         if (container instanceof Entity) {
             // Get the parent to check if its a compositeactor. If it is ports are done by the
@@ -334,11 +374,12 @@ public class KaomPortProvider implements IRenderingProvider {
         // Use Ptolemy to load the actor
         Injector injector = Guice.createInjector();
         PtolemyInterface ptolemy = injector.getInstance(PtolemyInterface.class);
-        
+
         NamedObj nObj = null;
         try {
             nObj = ptolemy.instantiatePtolemyActor(className, "actor");
-        } catch (Exception e) {;
+        } catch (Exception e) {
+            ;
             return null;
         }
         if (nObj instanceof ptolemy.kernel.Entity) {
