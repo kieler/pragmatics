@@ -67,7 +67,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
     private HashMap<String, KSBasETransformation> transformations = new HashMap<String, KSBasETransformation>();
 
     private static DiagramDocumentEditor lastEditor = null;
-    
+
     private static EObject select = null;
 
     /**
@@ -127,8 +127,6 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                         evokeXtend2(transformation, selectionList, diagramEditor);
                         refreshEditPolicy(diagramEditor);
                         evokeLayout(selectionList, rootObject, button);
-                        // setSelection(TransformationUtils.getPostTransformationSelection(),
-                        // editor);
                         // do xtend1 stuff
                     } else {
                         // map the selection to the parameters of this transformation
@@ -147,21 +145,6 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                             // refreshEditPolicy(diagramEditor);
                             evokeLayout(selectionList, rootObject, button);
 
-                            // if (!selectionList.isEmpty()) {
-                            // EditPart selectPart = diagramEditor.getDiagramEditPart()
-                            // .findEditPart(null, selectionList.get(0));
-                            // if (selectPart != null) {
-                            // setSelection(selectionList.get(0), editor, selectPart);
-                            // } else {
-                            // selectPart = diagramEditor.getDiagramEditPart().findEditPart(
-                            // null, selectionList.get(0).eContainer());
-                            // if (selectPart != null) {
-                            // setSelection(selectionList.get(0).eContainer(), editor,
-                            // selectPart);
-                            // }
-                            // }
-                            // }
-
                         }
                     }
 
@@ -175,6 +158,14 @@ public class KSBasECombination extends AbstractCombination implements ITransform
         }
     }
 
+    /**
+     * This method sets the current selection of the editor to the given part.
+     * 
+     * @param editor
+     *            the editor whose selection to change
+     * @param part
+     *            the editpart that should be selected afterwards
+     */
     public void setSelection(final IEditorPart editor, final EditPart part) {
 
         MonitoredOperation.runInUI(new Runnable() {
@@ -235,7 +226,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
      *            the current selection
      */
     private void evokeXtend2(final KSBasETransformation transformation,
-            final List<EObject> selection, DiagramDocumentEditor editor) {
+            final List<EObject> selection, final DiagramDocumentEditor editor) {
         Method method = null;
         List<Object> params = new LinkedList<Object>();
         // find the right method to execute in the xtend2 transformation class
@@ -245,7 +236,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                 params = new LinkedList<Object>();
                 method = m;
                 int index = 0;
-                int parameterindex = 0;
+                // int parameterindex = 0;
                 for (Type t : m.getGenericParameterTypes()) {
                     Object param = null;
                     for (Object p : selectionCache.values()) {
@@ -264,7 +255,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                     } else {
                         method = null;
                     }
-                    parameterindex++;
+                    // parameterindex++;
 
                 }
 
@@ -286,19 +277,16 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                             Collections.singletonMap(Transaction.OPTION_UNPROTECTED, true)) {
 
                         @Override
-                        protected IStatus doExecute(IProgressMonitor monitor, IAdaptable info)
-                                throws ExecutionException {
+                        protected IStatus doExecute(final IProgressMonitor monitor,
+                                final IAdaptable info) throws ExecutionException {
                             try {
                                 fmethod.invoke(transformation.getTransformationClass(),
                                         fparams.toArray());
                             } catch (IllegalArgumentException e) {
-                                // TODO Auto-generated catch block
                                 e.printStackTrace();
                             } catch (IllegalAccessException e) {
-                                // TODO Auto-generated catch block
                                 e.printStackTrace();
                             } catch (InvocationTargetException e) {
-                                // TODO Auto-generated catch block
                                 e.printStackTrace();
                             }
                             return Status.OK_STATUS;
@@ -315,13 +303,10 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                     method.invoke(transformation.getTransformationClass(), params.toArray());
                 }
             } catch (IllegalArgumentException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 
@@ -402,18 +387,18 @@ public class KSBasECombination extends AbstractCombination implements ITransform
      */
     private void refreshEditPolicy(final DiagramDocumentEditor diagramEditor) {
         try {
-        AbstractEffect refresh = new AbstractEffect() {
-            public void execute() {
-                CanonicalEditPolicy policy = (CanonicalEditPolicy) diagramEditor
-                        .getDiagramEditPart().getEditPolicy("Canonical");
-                if (policy != null) {
-                    policy.refresh();
+            AbstractEffect refresh = new AbstractEffect() {
+                public void execute() {
+                    CanonicalEditPolicy policy = (CanonicalEditPolicy) diagramEditor
+                            .getDiagramEditPart().getEditPolicy("Canonical");
+                    if (policy != null) {
+                        policy.refresh();
+                    }
                 }
-            }
-        };
-        refresh.schedule();
+            };
+            refresh.schedule();
         } catch (Exception e) {
-            //doesn't matter if this fails, just pretend nothing happened.
+            // doesn't matter if this fails, just pretend nothing happened.
         }
     }
 
@@ -441,47 +426,50 @@ public class KSBasECombination extends AbstractCombination implements ITransform
     /**
      * {@inheritDoc}
      */
-    public void transformationExecuted(String transformationName, Object[] parameters, Object result) {
-        // TODO Auto-generated method stub
-        //this.refreshEditPolicy(lastEditor);
-        CanonicalEditPolicy policy = (CanonicalEditPolicy) lastEditor
-                .getDiagramEditPart().getEditPolicy("Canonical");
+    public void transformationExecuted(final String transformationName, final Object[] parameters,
+            final Object result) {
+        CanonicalEditPolicy policy = (CanonicalEditPolicy) lastEditor.getDiagramEditPart()
+                .getEditPolicy("Canonical");
         if (policy != null) {
             policy.refresh();
         }
-        if (select != null) {      
-        if (!((parameters == null) || (parameters.length == 0))) {
-            EObject object = null;
-            if (parameters[0] instanceof List) {
-                List<?> firstParameter = (List<?>) parameters[0];
-                if (!firstParameter.isEmpty() && firstParameter.get(0) instanceof EObject) {
-                    object = (EObject) firstParameter.get(0);
+        if (select != null) {
+            if (!((parameters == null) || (parameters.length == 0))) {
+                EObject object = null;
+                if (parameters[0] instanceof List) {
+                    List<?> firstParameter = (List<?>) parameters[0];
+                    if (!firstParameter.isEmpty() && firstParameter.get(0) instanceof EObject) {
+                        object = (EObject) firstParameter.get(0);
+                        object = select;
+
+                    }
+                } else if (parameters[0] instanceof EObject) {
+                    object = (EObject) parameters[0];
+                }
+                if (object != null) {
                     object = select;
-                    
+                    EditPart selectPart = lastEditor.getDiagramEditPart()
+                            .findEditPart(null, object);
+                    if (selectPart == null) {
+                        selectPart = lastEditor.getDiagramEditPart().findEditPart(null,
+                                object.eContainer());
+                    }
+                    if (selectPart != null) {
+                        setSelection(lastEditor, selectPart);
+                    }
+                    select = null;
+
                 }
-            } else if (parameters[0] instanceof EObject) {
-                object = (EObject) parameters[0];
             }
-            if (object != null) {
-                object = select;
-                EditPart selectPart = lastEditor.getDiagramEditPart().findEditPart(null, object);
-                if (selectPart == null) {
-                    selectPart = lastEditor.getDiagramEditPart().findEditPart(null, object.eContainer());
-                }
-                if (selectPart != null) {
-                    setSelection(lastEditor, selectPart);
-                }
-                select = null;
-                
-            }
-        }
         }
 
     }
-    
+
     /**
      * Set an object that will be selected after the next transformation has finished executing.
-     * @param obj the object to be selected
+     * 
+     * @param obj
+     *            the object to be selected
      */
     public static void selectObject(final Object obj) {
         if (obj instanceof EObject) {
