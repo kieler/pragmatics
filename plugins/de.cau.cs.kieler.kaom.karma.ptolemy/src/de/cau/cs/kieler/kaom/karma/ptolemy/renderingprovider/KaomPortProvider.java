@@ -34,7 +34,7 @@ import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
-import org.eclipse.emf.common.command.Command;
+import org.eclipse.draw2d.geometry.PrecisionPoint;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.Transaction;
@@ -45,17 +45,14 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.diagram.ui.internal.properties.Properties;
 import org.eclipse.gmf.runtime.diagram.ui.l10n.DiagramUIMessages;
 import org.eclipse.gmf.runtime.emf.core.util.EObjectAdapter;
-import org.eclipse.gmf.runtime.notation.NotationPackage;
-import org.eclipse.gmf.runtime.notation.RoutingStyle;
-import org.eclipse.gmf.runtime.notation.Smoothness;
-import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
+
+import ptolemy.kernel.CompositeEntity;
+import ptolemy.kernel.util.NamedObj;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import ptolemy.kernel.CompositeEntity;
-import ptolemy.kernel.util.NamedObj;
 import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
@@ -63,7 +60,6 @@ import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.PortNameEditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.PortNameEditPart.PortNameFigure;
 import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.PtolemyInterface;
 import de.cau.cs.kieler.kaom.karma.ptolemy.PtolemyPortBorderItemLocator;
 import de.cau.cs.kieler.kaom.karma.ptolemy.conditions.HasCommentsCondition;
@@ -81,37 +77,41 @@ public class KaomPortProvider implements IRenderingProvider {
             final EObject object, final EditPart part) {
         EditPart parentPart = part.getParent();
 
-        //hide port labels
-        Object partChild = part.getChildren().get(0);
-        if (partChild instanceof PortNameEditPart) {
-            final PortNameEditPart portNameEditPart = (PortNameEditPart) partChild;
-            
-            AbstractEMFOperation emfOp = new AbstractEMFOperation(portNameEditPart.getEditingDomain(),
-                    "hide port labels", Collections.singletonMap(
-                            Transaction.OPTION_UNPROTECTED, true)) {
-                @Override
-                protected IStatus doExecute(final IProgressMonitor monitor,
-                        final IAdaptable info) throws ExecutionException {
-                    SetPropertyCommand c = new SetPropertyCommand(portNameEditPart.getEditingDomain(), new EObjectAdapter(portNameEditPart.getNotationView()), Properties.ID_ISVISIBLE, DiagramUIMessages.Command_hideLabel_Label, Boolean.valueOf(false));
-                    try {
-                        c.execute(null, null);
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
+        // hide port labels
+        if (part.getChildren() != null && !part.getChildren().isEmpty()) {
+            Object partChild = part.getChildren().get(0);
+            if (partChild instanceof PortNameEditPart) {
+                final PortNameEditPart portNameEditPart = (PortNameEditPart) partChild;
+
+                AbstractEMFOperation emfOp = new AbstractEMFOperation(
+                        portNameEditPart.getEditingDomain(), "hide port labels",
+                        Collections.singletonMap(Transaction.OPTION_UNPROTECTED, true)) {
+                    @Override
+                    protected IStatus doExecute(final IProgressMonitor monitor,
+                            final IAdaptable info) throws ExecutionException {
+                        SetPropertyCommand c = new SetPropertyCommand(
+                                portNameEditPart.getEditingDomain(), new EObjectAdapter(
+                                        portNameEditPart.getNotationView()),
+                                Properties.ID_ISVISIBLE, DiagramUIMessages.Command_hideLabel_Label,
+                                Boolean.valueOf(false));
+                        try {
+                            c.execute(null, null);
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                        return Status.OK_STATUS;
                     }
-                    return Status.OK_STATUS;
+                };
+
+                try {
+                    // execute above operation
+                    OperationHistoryFactory.getOperationHistory().execute(emfOp, null, null);
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
                 }
-            };
 
-            try {
-                // execute above operation
-                OperationHistoryFactory.getOperationHistory().execute(emfOp, null, null);
-            } catch (ExecutionException e) {
-                e.printStackTrace();
             }
-            
         }
-
-        // ///
         if (parentPart instanceof IAdvancedRenderingEditPart) {
             // we want to know the ptolemy class of the object that owns this port
             EObject parentObject = ((IAdvancedRenderingEditPart) parentPart).getModelElement();
@@ -206,10 +206,10 @@ public class KaomPortProvider implements IRenderingProvider {
      */
     private IFigure getPortSvgString(final Color color) {
         PointList pointList = new PointList();
-        pointList.addPoint(new Point(0, PORT_SIZE_LONG_SIDE));
+        pointList.addPoint(new PrecisionPoint(0, PORT_SIZE_LONG_SIDE));
         pointList.addPoint(new Point(0, 0));
-        pointList.addPoint(new Point(PORT_SIZE_LONG_SIDE, PORT_SIZE_SHORT_SIDE));
-        pointList.addPoint(new Point(0, PORT_SIZE_LONG_SIDE));
+        pointList.addPoint(new PrecisionPoint(PORT_SIZE_LONG_SIDE, PORT_SIZE_SHORT_SIDE));
+        pointList.addPoint(new PrecisionPoint(0, PORT_SIZE_LONG_SIDE));
         PolygonShape figure = new PolygonShape();
         figure.setPoints(pointList);
         figure.setBackgroundColor(color);
@@ -229,8 +229,8 @@ public class KaomPortProvider implements IRenderingProvider {
     private IFigure getDownwardsPortSvgString(final Color color) {
         PointList pointList = new PointList();
         pointList.addPoint(new Point(0, 0));
-        pointList.addPoint(new Point(PORT_SIZE_LONG_SIDE, 0));
-        pointList.addPoint(new Point(PORT_SIZE_SHORT_SIDE, PORT_SIZE_LONG_SIDE));
+        pointList.addPoint(new PrecisionPoint(PORT_SIZE_LONG_SIDE, 0));
+        pointList.addPoint(new PrecisionPoint(PORT_SIZE_SHORT_SIDE, PORT_SIZE_LONG_SIDE));
         pointList.addPoint(new Point(0, 0));
         PolygonShape figure = new PolygonShape();
         figure.setPoints(pointList);
@@ -250,10 +250,10 @@ public class KaomPortProvider implements IRenderingProvider {
      */
     private IFigure getUpwardsPortSvgString(final Color color) {
         PointList pointList = new PointList();
-        pointList.addPoint(new Point(0, PORT_SIZE_LONG_SIDE));
-        pointList.addPoint(new Point(PORT_SIZE_LONG_SIDE, PORT_SIZE_LONG_SIDE));
-        pointList.addPoint(new Point(PORT_SIZE_SHORT_SIDE, 0));
-        pointList.addPoint(new Point(0, PORT_SIZE_LONG_SIDE));
+        pointList.addPoint(new PrecisionPoint(0, PORT_SIZE_LONG_SIDE));
+        pointList.addPoint(new PrecisionPoint(PORT_SIZE_LONG_SIDE, PORT_SIZE_LONG_SIDE));
+        pointList.addPoint(new PrecisionPoint(PORT_SIZE_SHORT_SIDE, 0));
+        pointList.addPoint(new PrecisionPoint(0, PORT_SIZE_LONG_SIDE));
         PolygonShape figure = new PolygonShape();
         figure.setPoints(pointList);
         figure.setBackgroundColor(color);
