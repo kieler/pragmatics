@@ -82,36 +82,36 @@ public class KaomPortProvider implements IRenderingProvider {
         EditPart parentPart = part.getParent();
 
         //hide port labels
-        Object partChild = part.getChildren().get(0);
-        if (partChild instanceof PortNameEditPart) {
-            final PortNameEditPart portNameEditPart = (PortNameEditPart) partChild;
-            
-            AbstractEMFOperation emfOp = new AbstractEMFOperation(portNameEditPart.getEditingDomain(),
-                    "hide port labels", Collections.singletonMap(
-                            Transaction.OPTION_UNPROTECTED, true)) {
-                @Override
-                protected IStatus doExecute(final IProgressMonitor monitor,
-                        final IAdaptable info) throws ExecutionException {
-                    SetPropertyCommand c = new SetPropertyCommand(portNameEditPart.getEditingDomain(), new EObjectAdapter(portNameEditPart.getNotationView()), Properties.ID_ISVISIBLE, DiagramUIMessages.Command_hideLabel_Label, Boolean.valueOf(false));
-                    try {
-                        c.execute(null, null);
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
+        if (part.getChildren() != null && !part.getChildren().isEmpty()) {
+            Object partChild = part.getChildren().get(0);
+            if (partChild instanceof PortNameEditPart) {
+                final PortNameEditPart portNameEditPart = (PortNameEditPart) partChild;
+                
+                AbstractEMFOperation emfOp = new AbstractEMFOperation(portNameEditPart.getEditingDomain(),
+                        "hide port labels", Collections.singletonMap(
+                                Transaction.OPTION_UNPROTECTED, true)) {
+                    @Override
+                    protected IStatus doExecute(final IProgressMonitor monitor,
+                            final IAdaptable info) throws ExecutionException {
+                        SetPropertyCommand c = new SetPropertyCommand(portNameEditPart.getEditingDomain(), new EObjectAdapter(portNameEditPart.getNotationView()), Properties.ID_ISVISIBLE, DiagramUIMessages.Command_hideLabel_Label, Boolean.valueOf(false));
+                        try {
+                            c.execute(null, null);
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                        return Status.OK_STATUS;
                     }
-                    return Status.OK_STATUS;
+                };
+    
+                try {
+                    // execute above operation
+                    OperationHistoryFactory.getOperationHistory().execute(emfOp, null, null);
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
                 }
-            };
-
-            try {
-                // execute above operation
-                OperationHistoryFactory.getOperationHistory().execute(emfOp, null, null);
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+                
             }
-            
         }
-
-        // ///
         if (parentPart instanceof IAdvancedRenderingEditPart) {
             // we want to know the ptolemy class of the object that owns this port
             EObject parentObject = ((IAdvancedRenderingEditPart) parentPart).getModelElement();
