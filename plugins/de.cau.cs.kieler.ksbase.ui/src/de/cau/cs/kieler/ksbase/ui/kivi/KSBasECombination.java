@@ -38,16 +38,13 @@ import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.Workbench;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
-import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
+import de.cau.cs.kieler.core.model.m2m.ITransformationListener;
 import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
+import de.cau.cs.kieler.core.model.m2m.TransformationObserver;
 import de.cau.cs.kieler.core.model.triggers.SelectionTrigger.EObjectSelectionState;
 import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationContext;
 import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationEffect;
@@ -56,7 +53,6 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutEffect;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
-import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
 /**
  * A Combination triggering the KSBasE transformations from kivi menu contributions.
@@ -64,12 +60,16 @@ import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
  * @author ckru
  * 
  */
-public class KSBasECombination extends AbstractCombination {
+public class KSBasECombination extends AbstractCombination implements ITransformationListener {
 
     private EditorTransformationSettings editorSettings;
 
     private HashMap<String, KSBasETransformation> transformations = new HashMap<String, KSBasETransformation>();
+
+    private static DiagramDocumentEditor lastEditor = null;
     
+    private static EObject select = null;
+
     /**
      * @param editorSettings
      *            the KSBasE editor settings used as a context for the transformation.
@@ -77,6 +77,7 @@ public class KSBasECombination extends AbstractCombination {
     public KSBasECombination(final EditorTransformationSettings editorSettings) {
         this.editorSettings = editorSettings;
         this.setActive(true);
+        TransformationObserver.getInstance().register(this);
     }
 
     /**
@@ -100,11 +101,11 @@ public class KSBasECombination extends AbstractCombination {
             KSBasETransformation transformation = transformations.get(button.getButtonId());
             if (transformation != null) {
                 IEditorPart editor = button.getEditor();
-                
                 List<EObject> selectionList = new ArrayList<EObject>();
 
                 if (editor instanceof DiagramDocumentEditor) {
                     final DiagramDocumentEditor diagramEditor = (DiagramDocumentEditor) editor;
+                    lastEditor = (DiagramDocumentEditor) editor;
                     List<EditPart> selectedParts = diagramEditor.getDiagramGraphicalViewer()
                             .getSelectedEditParts();
                     EditPart root = diagramEditor.getDiagramGraphicalViewer().getRootEditPart();
@@ -126,7 +127,8 @@ public class KSBasECombination extends AbstractCombination {
                         evokeXtend2(transformation, selectionList, diagramEditor);
                         refreshEditPolicy(diagramEditor);
                         evokeLayout(selectionList, rootObject, button);
-                        //setSelection(TransformationUtils.getPostTransformationSelection(), editor);
+                        // setSelection(TransformationUtils.getPostTransformationSelection(),
+                        // editor);
                         // do xtend1 stuff
                     } else {
                         // map the selection to the parameters of this transformation
@@ -139,26 +141,30 @@ public class KSBasECombination extends AbstractCombination {
                         }
                         // execute xtend transformation
                         if (selectionMapping != null) {
-                            EditPart selectedPart = diagramEditor.getDiagramEditPart().findEditPart(null, selectionList.get(0));
+                            EditPart selectedPart = diagramEditor.getDiagramEditPart()
+                                    .findEditPart(null, selectionList.get(0));
                             evokeXtend(transformation, selectionMapping, diagramEditor);
-                            refreshEditPolicy(diagramEditor);
+                            // refreshEditPolicy(diagramEditor);
                             evokeLayout(selectionList, rootObject, button);
-                            
-                            if(!selectionList.isEmpty()) {
-                                EditPart selectPart = diagramEditor.getDiagramEditPart().findEditPart(null, selectionList.get(0));
-                                if (selectPart != null) {
-                                    setSelection(selectionList.get(0), editor, selectPart);
-                                } else {
-                                    selectPart = diagramEditor.getDiagramEditPart().findEditPart(null, selectionList.get(0).eContainer());
-                                    if (selectPart != null) {
-                                        setSelection(selectionList.get(0).eContainer(), editor, selectPart);
-                                    }
-                                }
-                            }
-                            
+
+                            // if (!selectionList.isEmpty()) {
+                            // EditPart selectPart = diagramEditor.getDiagramEditPart()
+                            // .findEditPart(null, selectionList.get(0));
+                            // if (selectPart != null) {
+                            // setSelection(selectionList.get(0), editor, selectPart);
+                            // } else {
+                            // selectPart = diagramEditor.getDiagramEditPart().findEditPart(
+                            // null, selectionList.get(0).eContainer());
+                            // if (selectPart != null) {
+                            // setSelection(selectionList.get(0).eContainer(), editor,
+                            // selectPart);
+                            // }
+                            // }
+                            // }
+
                         }
                     }
-                    
+
                 } else { // editor is no Diagram Editor
                          // do xtend2 stuff
                     if (transformation.getTransformationClass() != null) {
@@ -169,22 +175,24 @@ public class KSBasECombination extends AbstractCombination {
         }
     }
 
-    public void setSelection(final EObject obj, final IEditorPart editor, final EditPart part) {
-            
+    public void setSelection(final IEditorPart editor, final EditPart part) {
+
         MonitoredOperation.runInUI(new Runnable() {
-                
-                public void run() {
-                    //if (obj != KSBasECombination.this.lastSelection) {
-                    try {
-                        editor.getEditorSite().getSelectionProvider().setSelection(new StructuredSelection(part));
-                    } catch (Exception e) {
-                        
-                    }
-                   //}
-                    
-                }}, false) ;
+
+            public void run() {
+                // if (obj != KSBasECombination.this.lastSelection) {
+                try {
+                    editor.getEditorSite().getSelectionProvider()
+                            .setSelection(new StructuredSelection(part));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                // }
+
+            }
+        }, false);
     }
-    
+
     /**
      * Helper method for xtend2 to bring the current selection to a form we can easier pass as
      * parameters.
@@ -405,7 +413,7 @@ public class KSBasECombination extends AbstractCombination {
         };
         refresh.schedule();
         } catch (Exception e) {
-            //doesn't matter if this fails, just go on as if nothing happened.
+            //doesn't matter if this fails, just pretend nothing happened.
         }
     }
 
@@ -428,6 +436,57 @@ public class KSBasECombination extends AbstractCombination {
             layout = new LayoutEffect(button.getEditor(), rootObject, false);
         }
         layout.schedule();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void transformationExecuted(String transformationName, Object[] parameters, Object result) {
+        // TODO Auto-generated method stub
+        //this.refreshEditPolicy(lastEditor);
+        CanonicalEditPolicy policy = (CanonicalEditPolicy) lastEditor
+                .getDiagramEditPart().getEditPolicy("Canonical");
+        if (policy != null) {
+            policy.refresh();
+        }
+        if (select != null) {      
+        if (!((parameters == null) || (parameters.length == 0))) {
+            EObject object = null;
+            if (parameters[0] instanceof List) {
+                List<?> firstParameter = (List<?>) parameters[0];
+                if (!firstParameter.isEmpty() && firstParameter.get(0) instanceof EObject) {
+                    object = (EObject) firstParameter.get(0);
+                    object = select;
+                    
+                }
+            } else if (parameters[0] instanceof EObject) {
+                object = (EObject) parameters[0];
+            }
+            if (object != null) {
+                object = select;
+                EditPart selectPart = lastEditor.getDiagramEditPart().findEditPart(null, object);
+                if (selectPart == null) {
+                    selectPart = lastEditor.getDiagramEditPart().findEditPart(null, object.eContainer());
+                }
+                if (selectPart != null) {
+                    setSelection(lastEditor, selectPart);
+                }
+                select = null;
+                
+            }
+        }
+        }
+
+    }
+    
+    /**
+     * Set an object that will be selected after the next transformation has finished executing.
+     * @param obj the object to be selected
+     */
+    public static void selectObject(final Object obj) {
+        if (obj instanceof EObject) {
+            select = (EObject) obj;
+        }
     }
 
 }
