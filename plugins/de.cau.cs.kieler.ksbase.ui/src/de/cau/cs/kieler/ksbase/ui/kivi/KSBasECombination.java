@@ -401,6 +401,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
      *            the current diagram editor.
      */
     private void refreshEditPolicy(final DiagramDocumentEditor diagramEditor) {
+        try {
         AbstractEffect refresh = new AbstractEffect() {
             public void execute() {
                 CanonicalEditPolicy policy = (CanonicalEditPolicy) diagramEditor
@@ -411,6 +412,9 @@ public class KSBasECombination extends AbstractCombination implements ITransform
             }
         };
         refresh.schedule();
+        } catch (Exception e) {
+            //doesn't matter if this fails, just pretend nothing happened.
+        }
     }
 
     /**
