@@ -50,7 +50,6 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramCommandStack;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
-import org.eclipse.gmf.runtime.notation.DecorationNode;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.IWorkbenchPart;
@@ -778,8 +777,6 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                 }
                 
                 if (labelText != null && labelText.length() > 0) {
-                    System.out.println("Trasnformed label '" + labelText + "'");
-                    
                     KLabel label = KimlUtil.createInitializedLabel(edge);
                     KShapeLayout labelLayout = label.getData(KShapeLayout.class);
                     if (placement == EdgeLabelPlacement.UNDEFINED) {
