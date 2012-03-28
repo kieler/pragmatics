@@ -777,8 +777,6 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                 }
                 
                 if (labelText != null && labelText.length() > 0) {
-                    System.out.println("Trasnformed label '" + labelText + "'");
-                    
                     KLabel label = KimlUtil.createInitializedLabel(edge);
                     KShapeLayout labelLayout = label.getData(KShapeLayout.class);
                     if (placement == EdgeLabelPlacement.UNDEFINED) {
