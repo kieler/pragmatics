@@ -32,6 +32,7 @@ import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Color;
 import org.eclipse.graphiti.mm.algorithms.styles.Font;
+import org.eclipse.graphiti.mm.algorithms.styles.LineStyle;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.algorithms.styles.StylesFactory;
@@ -43,13 +44,13 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FreeFormConnection;
 import org.eclipse.graphiti.mm.pictograms.ManhattanConnection;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.mm.pictograms.util.PictogramsSwitch;
 
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.klighd.TransformationContext;
 import de.cau.cs.kieler.klighd.piccolo.PiccoloDiagramContext;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode.HAlignment;
@@ -105,7 +106,8 @@ public class Pictogram2PNodeTransformation extends
     /**
      * {@inheritDoc}
      */
-    public PiccoloDiagramContext transform(final Diagram diagram) {
+    public PiccoloDiagramContext transform(final Diagram diagram,
+            final TransformationContext<Diagram, PiccoloDiagramContext> transformationContext) {
         // create mappings
         anchorMap = Maps.newHashMap();
         gaMap = Maps.newHashMap();
@@ -138,7 +140,7 @@ public class Pictogram2PNodeTransformation extends
             transformConnection(edges, connection, BLACK, WHITE);
         }
         // remember the mapping
-        getTransformationContext().setProperty(MAPPING_PROPERTY, elementMap);
+        transformationContext.setProperty(MAPPING_PROPERTY, elementMap);
         // reset mappings
         anchorMap = null;
         gaMap = null;
@@ -511,6 +513,24 @@ public class Pictogram2PNodeTransformation extends
         } else {
             line.setPaint(null);
         }
+        switch (p.getLineStyle().getValue()) {
+        case LineStyle.UNSPECIFIED_VALUE:
+        case LineStyle.SOLID_VALUE:
+            line.setLineStyle(de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath.LineStyle.SOLID);
+            break;
+        case LineStyle.DASH_VALUE:
+            line.setLineStyle(de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath.LineStyle.DASH);
+            break;
+        case LineStyle.DASHDOT_VALUE:
+            line.setLineStyle(de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath.LineStyle.DASHDOT);
+            break;
+        case LineStyle.DASHDOTDOT_VALUE:
+            line.setLineStyle(de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath.LineStyle.DASHDOTDOT); // SUPPRESS CHECKSTYLE LineLength
+            break;
+        case LineStyle.DOT_VALUE:
+            line.setLineStyle(de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath.LineStyle.DOT);
+            break;
+        }
         return line;
     }
     
@@ -660,7 +680,8 @@ public class Pictogram2PNodeTransformation extends
     /**
      * {@inheritDoc}
      */
-    public Object getSourceElement(final Object object) {
+    public Object getSourceElement(final Object object,
+            final TransformationContext<Diagram, PiccoloDiagramContext> transformationContext) {
         if (object instanceof IPictogramNode) {
             return ((IPictogramNode) object).getPictogramElement();
         }
@@ -670,8 +691,9 @@ public class Pictogram2PNodeTransformation extends
     /**
      * {@inheritDoc}
      */
-    public Object getTargetElement(final Object object) {
-        return getTransformationContext().getProperty(MAPPING_PROPERTY).get(object);
+    public Object getTargetElement(final Object object,
+            final TransformationContext<Diagram, PiccoloDiagramContext> transformationContext) {
+        return transformationContext.getProperty(MAPPING_PROPERTY).get(object);
     }
 
 }

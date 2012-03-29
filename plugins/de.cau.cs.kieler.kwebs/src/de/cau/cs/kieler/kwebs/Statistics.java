@@ -33,14 +33,10 @@ import de.cau.cs.kieler.core.properties.Property;
 public class Statistics {
 
     // Property definition
-    
-    /** Identifier for the statistics property. */
-    public static final String STATISTICS_ID
-        = "de.cau.cs.kieler.kwebs.statistics";
 
     /** The statistics property. */
-    public static final IProperty<String> STATISTICS 
-        = new Property<String>(STATISTICS_ID, "");
+    public static final IProperty<String> STATISTICS = new Property<String>(
+            "de.cau.cs.kieler.kwebs.statistics", "");
     
     // Private members
 

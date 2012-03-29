@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.cau.cs.kieler.keg"
+      id="de.cau.cs.kieler.keg.feature"
       label="KIELER Editor for Graphs"
       version="0.4.0.qualifier"
-      provider-name="Christian-Albrechts-Universität zu Kiel">
+      provider-name="Christian-Albrechts-Universität zu Kiel"
+      plugin="de.cau.cs.kieler.keg">
 
    <description>
       A generic graph editor for graph algorithm engineering. The feature includes layout algorithms, graph analysis, and importing / exporting of different graph formats.
@@ -237,8 +238,11 @@ litigation.
       <import feature="org.eclipse.xtend.typesystem.emf" version="1.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.xtext.runtime" version="2.1.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.xtext.ui" version="2.1.0" match="greaterOrEqual"/>
-      <import feature="net.ogdf.bin" version="1.0.0" match="greaterOrEqual"/>
    </requires>
+
+   <includes
+	 id="net.ogdf.bin.feature"
+	 version="0.0.0"/>
 
    <plugin
          id="de.cau.cs.kieler.core"

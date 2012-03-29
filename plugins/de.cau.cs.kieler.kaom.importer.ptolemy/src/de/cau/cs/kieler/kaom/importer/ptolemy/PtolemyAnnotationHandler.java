@@ -274,6 +274,12 @@ public class PtolemyAnnotationHandler {
      */
     private List<Pair<Annotatable, Annotation>> heuristicAttachments = Lists.newArrayList();
     
+    /**
+     * If {@code true}, the attachment heuristic is disabled once explicit attachments are
+     * found.
+     */
+    private boolean heuristicsOverride;
+    
     
     /**
      * Creates a new annotation handler for the given XML resource of the input model, the Ptolemy input
@@ -282,13 +288,16 @@ public class PtolemyAnnotationHandler {
      * @param ptolemyModelResource XML resource holding the input Ptolemy model.
      * @param ptolemyModel the input Ptolemy model.
      * @param kaomModel the transformed KAOM model.
+     * @param heuristicsOverride if {@code true}, the attachment heuristic is disabled once explicit
+     *                           attachments are found.
      */
     public PtolemyAnnotationHandler(final XMLResource ptolemyModelResource,
-            final DocumentRoot ptolemyModel, final Entity kaomModel) {
+            final DocumentRoot ptolemyModel, final Entity kaomModel, final boolean heuristicsOverride) {
         
         unknownFeatures.putAll(ptolemyModelResource.getEObjectToExtensionMap());
         this.ptolemyModel = ptolemyModel;
         this.kaomModel = kaomModel;
+        this.heuristicsOverride = heuristicsOverride;
     }
     
     
@@ -595,15 +604,22 @@ public class PtolemyAnnotationHandler {
     
     /**
      * Applies the attachment annotations generated while traversing the model tree to the
-     * respective comment annotations. If there are any explicit attachments, only those are
-     * applied. If not, the heuristically determined attachments are applied.
+     * respective comment annotations. If the heuristics override is turned on and there are
+     * explicit attachments, only those are applied. If not, the heuristically determined
+     * attachments are applied.
      */
     private void applyAttachmentAnnotations() {
-        List<Pair<Annotatable, Annotation>> attachmentsToApply =
-                explicitAttachments.isEmpty() ? heuristicAttachments : explicitAttachments;
-        
-        for (Pair<Annotatable, Annotation> attachment : attachmentsToApply) {
+        // Explicit attachments are always applied
+        for (Pair<Annotatable, Annotation> attachment : explicitAttachments) {
             attachment.getFirst().getAnnotations().add(attachment.getSecond());
+        }
+        
+        // If there are no explicit attachments or the heuristics override is turned off,
+        // apply heuristically determined attachments
+        if (!heuristicsOverride || explicitAttachments.isEmpty()) {
+            for (Pair<Annotatable, Annotation> attachment : heuristicAttachments) {
+                attachment.getFirst().getAnnotations().add(attachment.getSecond());
+            }
         }
     }
     
@@ -627,7 +643,7 @@ public class PtolemyAnnotationHandler {
             
             // If the heuristic is still active (that is, if we haven't found any explicit
             // attachment), summon it!
-            if (explicitAttachments.isEmpty()) {
+            if (explicitAttachments.isEmpty() || !heuristicsOverride) {
                 attachedEntity = findNearestEntity(annotation);
             }
         }

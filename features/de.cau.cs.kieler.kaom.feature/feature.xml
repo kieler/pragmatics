@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.cau.cs.kieler.kaom"
+      id="de.cau.cs.kieler.kaom.feature"
       label="KIELER Actor Oriented Modeling"
       version="0.4.0.qualifier"
-      provider-name="Christian-Albrechts-Universität zu Kiel">
+      provider-name="Christian-Albrechts-Universität zu Kiel"
+      plugin="de.cau.cs.kieler.kaom">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
       KIELER Actor Oriented Modeling: a generic metamodel that can be used to represent models from arbitrary data flow languages. An importer for Ptolemy models is included as well as a library of standard Ptolemy demos.
@@ -239,8 +240,11 @@ litigation.
       <import feature="org.eclipse.xtend.typesystem.emf" version="1.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.xtext.runtime" version="2.1.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.xtext.ui" version="2.1.0" match="greaterOrEqual"/>
-      <import feature="org.ptolemy" version="8.0.0" match="greaterOrEqual"/>
    </requires>
+
+   <includes
+         id="org.ptolemy.feature"
+         version="0.0.0"/>
 
    <plugin
          id="de.cau.cs.kieler.core"

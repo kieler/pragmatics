@@ -9,7 +9,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="y" lowerBound="1" eType="#//KYPosition"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KRendering" abstract="true" eSuperTypes="../../de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KGraphData">
+  <eClassifiers xsi:type="ecore:EClass" name="KRendering" abstract="true" eSuperTypes="platform:/resource/de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KGraphData">
     <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//KContainerRendering"
         eOpposite="#//KContainerRendering/children"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="references" upperBound="-1"
@@ -42,6 +42,9 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="yOffset" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="relative" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KContainerRendering" abstract="true"
       eSuperTypes="#//KRendering">
@@ -54,13 +57,13 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="startAngle" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="arcAngle" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KStyle">
+  <eClassifiers xsi:type="ecore:EClass" name="KStyle" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EReference" name="rendering" eType="#//KRendering"
         eOpposite="#//KRendering/styles"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="propagateToChildren" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KRenderingLibrary" eSuperTypes="../../de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KGraphData">
+  <eClassifiers xsi:type="ecore:EClass" name="KRenderingLibrary" eSuperTypes="platform:/resource/de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KGraphData">
     <eStructuralFeatures xsi:type="ecore:EReference" name="renderings" upperBound="-1"
         eType="#//KRendering" containment="true"/>
   </eClassifiers>
@@ -109,6 +112,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="KPolylinePlacementData" eSuperTypes="#//KPlacementData">
     <eStructuralFeatures xsi:type="ecore:EReference" name="points" lowerBound="1"
         upperBound="-1" eType="#//KPosition" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="detailPlacementData" eType="#//KPlacementData"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KCustomRendering" eSuperTypes="#//KContainerRendering">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="className" lowerBound="1"
@@ -127,12 +132,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="lineWidth" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KVisibility" eSuperTypes="#//KStyle">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lineVisible" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="filled" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="LineStyle">
     <eLiterals name="SOLID"/>
     <eLiterals name="DASH" value="1"/>
@@ -148,11 +147,13 @@
     <eLiterals name="LEFT"/>
     <eLiterals name="CENTER" value="1"/>
     <eLiterals name="RIGHT" value="2"/>
+    <eLiterals name="EEnumLiteral0" value="3"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="VerticalAlignment">
     <eLiterals name="TOP"/>
     <eLiterals name="CENTER" value="1"/>
     <eLiterals name="BOTTOM" value="2"/>
+    <eLiterals name="EEnumLiteral0" value="3"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KVerticalAlignment" eSuperTypes="#//KStyle">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="verticalAlignment" lowerBound="1"
@@ -175,4 +176,23 @@
   <eClassifiers xsi:type="ecore:EClass" name="KTopPosition" eSuperTypes="#//KYPosition"/>
   <eClassifiers xsi:type="ecore:EClass" name="KBottomPosition" eSuperTypes="#//KYPosition"/>
   <eClassifiers xsi:type="ecore:EClass" name="KSpline" eSuperTypes="#//KPolyline"/>
+  <eClassifiers xsi:type="ecore:EClass" name="KForegroundVisibility" eSuperTypes="#//KVisibility"/>
+  <eClassifiers xsi:type="ecore:EClass" name="KVisibility" abstract="true" eSuperTypes="#//KStyle">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="visible" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KBackgroundVisibility" eSuperTypes="#//KVisibility"/>
+  <eClassifiers xsi:type="ecore:EClass" name="KFontBold" eSuperTypes="#//KStyle">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bold" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KFontItalic" eSuperTypes="#//KStyle">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="italic" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KFontName" eSuperTypes="#//KStyle">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KFontSize" eSuperTypes="#//KStyle">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
 </ecore:EPackage>

@@ -33,6 +33,7 @@ import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.klay.layered.components.ComponentsProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
@@ -459,27 +460,6 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         String debugFileName = Util.getDebugOutputFileBaseName(graph) + "fulldebug-slot"
                 + String.format("%1$02d", slotIndex);
         return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
-    }
-
-    // //////////////////////////////////////////////////////////////////////////////////////
-    // Hierarchy
-    /**
-     * Determines that the LayeredLayoutProvider handles complete hierarchy of the given layout
-     * node.
-     * 
-     * @param layoutNode
-     *            the graph to be layouted.
-     * @return returns true in contrast to the default value.
-     * @override overrides AbstractLayoutProvider.supportsHierarchy, returning true.
-     * 
-     */
-    public boolean supportsHierarchy(final KNode layoutNode) {
-
-        KShapeLayout sourceShapeLayout = layoutNode.getData(KShapeLayout.class);
-
-        // Check if hierarchy handling for a compound graph is requested, choose return value
-        // accordingly
-        return sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
     }
     
     // /////////////////////////////////////////////////////////////////////////////

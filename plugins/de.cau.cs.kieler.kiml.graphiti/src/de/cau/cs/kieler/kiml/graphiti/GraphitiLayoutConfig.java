@@ -154,7 +154,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
                 
                 @SuppressWarnings("unchecked")
                 LayoutOptionData<String> algorithmOptionData = (LayoutOptionData<String>)
-                        LayoutDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM_ID);
+                        LayoutDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM.getId());
                 // get a layout hint for the content of the focused pictogram element
                 String contentLayoutHint = getValue(algorithmOptionData, PREFIX, pictogramElem);
                 if (contentLayoutHint == null && diagram != null) {

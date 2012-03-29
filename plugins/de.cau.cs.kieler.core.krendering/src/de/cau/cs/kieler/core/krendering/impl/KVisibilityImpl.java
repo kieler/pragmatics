@@ -29,53 +29,32 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.core.krendering.impl.KVisibilityImpl#isLineVisible <em>Line Visible</em>}</li>
- *   <li>{@link de.cau.cs.kieler.core.krendering.impl.KVisibilityImpl#isFilled <em>Filled</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.core.krendering.impl.KVisibilityImpl#isVisible <em>Visible</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class KVisibilityImpl extends KStyleImpl implements KVisibility {
+public abstract class KVisibilityImpl extends KStyleImpl implements KVisibility {
     /**
-     * The default value of the '{@link #isLineVisible() <em>Line Visible</em>}' attribute.
+     * The default value of the '{@link #isVisible() <em>Visible</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #isLineVisible()
+     * @see #isVisible()
      * @generated
      * @ordered
      */
-    protected static final boolean LINE_VISIBLE_EDEFAULT = false;
+    protected static final boolean VISIBLE_EDEFAULT = false;
 
     /**
-     * The cached value of the '{@link #isLineVisible() <em>Line Visible</em>}' attribute.
+     * The cached value of the '{@link #isVisible() <em>Visible</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #isLineVisible()
+     * @see #isVisible()
      * @generated
      * @ordered
      */
-    protected boolean lineVisible = LINE_VISIBLE_EDEFAULT;
-
-    /**
-     * The default value of the '{@link #isFilled() <em>Filled</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #isFilled()
-     * @generated
-     * @ordered
-     */
-    protected static final boolean FILLED_EDEFAULT = false;
-
-    /**
-     * The cached value of the '{@link #isFilled() <em>Filled</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #isFilled()
-     * @generated
-     * @ordered
-     */
-    protected boolean filled = FILLED_EDEFAULT;
+    protected boolean visible = VISIBLE_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -101,8 +80,8 @@ public class KVisibilityImpl extends KStyleImpl implements KVisibility {
      * <!-- end-user-doc -->
      * @generated
      */
-    public boolean isLineVisible() {
-        return lineVisible;
+    public boolean isVisible() {
+        return visible;
     }
 
     /**
@@ -110,32 +89,11 @@ public class KVisibilityImpl extends KStyleImpl implements KVisibility {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setLineVisible(boolean newLineVisible) {
-        boolean oldLineVisible = lineVisible;
-        lineVisible = newLineVisible;
+    public void setVisible(boolean newVisible) {
+        boolean oldVisible = visible;
+        visible = newVisible;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KRenderingPackage.KVISIBILITY__LINE_VISIBLE, oldLineVisible, lineVisible));
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public boolean isFilled() {
-        return filled;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void setFilled(boolean newFilled) {
-        boolean oldFilled = filled;
-        filled = newFilled;
-        if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KRenderingPackage.KVISIBILITY__FILLED, oldFilled, filled));
+            eNotify(new ENotificationImpl(this, Notification.SET, KRenderingPackage.KVISIBILITY__VISIBLE, oldVisible, visible));
     }
 
     /**
@@ -146,10 +104,8 @@ public class KVisibilityImpl extends KStyleImpl implements KVisibility {
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case KRenderingPackage.KVISIBILITY__LINE_VISIBLE:
-                return isLineVisible();
-            case KRenderingPackage.KVISIBILITY__FILLED:
-                return isFilled();
+            case KRenderingPackage.KVISIBILITY__VISIBLE:
+                return isVisible();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -162,11 +118,8 @@ public class KVisibilityImpl extends KStyleImpl implements KVisibility {
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case KRenderingPackage.KVISIBILITY__LINE_VISIBLE:
-                setLineVisible((Boolean)newValue);
-                return;
-            case KRenderingPackage.KVISIBILITY__FILLED:
-                setFilled((Boolean)newValue);
+            case KRenderingPackage.KVISIBILITY__VISIBLE:
+                setVisible((Boolean)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -180,11 +133,8 @@ public class KVisibilityImpl extends KStyleImpl implements KVisibility {
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case KRenderingPackage.KVISIBILITY__LINE_VISIBLE:
-                setLineVisible(LINE_VISIBLE_EDEFAULT);
-                return;
-            case KRenderingPackage.KVISIBILITY__FILLED:
-                setFilled(FILLED_EDEFAULT);
+            case KRenderingPackage.KVISIBILITY__VISIBLE:
+                setVisible(VISIBLE_EDEFAULT);
                 return;
         }
         super.eUnset(featureID);
@@ -198,10 +148,8 @@ public class KVisibilityImpl extends KStyleImpl implements KVisibility {
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case KRenderingPackage.KVISIBILITY__LINE_VISIBLE:
-                return lineVisible != LINE_VISIBLE_EDEFAULT;
-            case KRenderingPackage.KVISIBILITY__FILLED:
-                return filled != FILLED_EDEFAULT;
+            case KRenderingPackage.KVISIBILITY__VISIBLE:
+                return visible != VISIBLE_EDEFAULT;
         }
         return super.eIsSet(featureID);
     }
@@ -216,10 +164,8 @@ public class KVisibilityImpl extends KStyleImpl implements KVisibility {
         if (eIsProxy()) return super.toString();
 
         StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (lineVisible: ");
-        result.append(lineVisible);
-        result.append(", filled: ");
-        result.append(filled);
+        result.append(" (visible: ");
+        result.append(visible);
         result.append(')');
         return result.toString();
     }

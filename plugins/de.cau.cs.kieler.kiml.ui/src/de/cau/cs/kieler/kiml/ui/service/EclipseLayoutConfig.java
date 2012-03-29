@@ -42,6 +42,10 @@ import de.cau.cs.kieler.kiml.options.SizeConstraint;
  */
 public class EclipseLayoutConfig implements ILayoutConfig {
     
+    /** the property for activation of the Eclipse layout config. */
+    public static final Property<Boolean> ACTIVATION = new Property<Boolean>(
+            "de.cau.cs.kieler.kiml.eclipse", true);
+    
     /** the priority for the Eclipse layout configuration. */
     public static final int PRIORITY = 10;
     
@@ -195,11 +199,11 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         }
         
         // fall back to dynamic default value of specific options
-        if (LayoutOptions.SIZE_CONSTRAINT_ID.equals(optionData.getId())) {
+        if (LayoutOptions.SIZE_CONSTRAINT.equals(optionData)) {
             return getSizeConstraintValue(context);
-        } else if (LayoutOptions.PORT_CONSTRAINTS_ID.equals(optionData.getId())) {
+        } else if (LayoutOptions.PORT_CONSTRAINTS.equals(optionData)) {
             return getPortConstraintsValue(context);
-        } else if (LayoutOptions.ASPECT_RATIO_ID.equals(optionData.getId())) {
+        } else if (LayoutOptions.ASPECT_RATIO.equals(optionData)) {
             return getAspectRatioValue(context);
         }
         
@@ -215,7 +219,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
      */
     private SizeConstraint getSizeConstraintValue(final LayoutContext context) {
         Set<LayoutOptionData.Target> targets = context.getProperty(LayoutContext.OPT_TARGETS);
-        if (targets != null) {
+        if (targets != null && targets.contains(LayoutOptionData.Target.NODES)) {
             if (!targets.contains(LayoutOptionData.Target.PARENTS)) {
                 return SizeConstraint.FIXED;
             }
@@ -238,7 +242,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
     private PortConstraints getPortConstraintsValue(final LayoutContext context) {
         Set<LayoutOptionData.Target> targets = context.getProperty(LayoutContext.OPT_TARGETS);
         Boolean hasPorts = context.getProperty(DefaultLayoutConfig.HAS_PORTS);
-        if (targets != null && hasPorts != null) {
+        if (targets != null && targets.contains(LayoutOptionData.Target.NODES) && hasPorts != null) {
             if (!targets.contains(LayoutOptionData.Target.PARENTS) && hasPorts) {
                 return PortConstraints.FIXED_POS;
             } else {

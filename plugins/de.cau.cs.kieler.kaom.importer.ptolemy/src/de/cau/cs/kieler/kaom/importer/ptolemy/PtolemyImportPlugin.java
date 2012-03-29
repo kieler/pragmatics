@@ -27,7 +27,7 @@ public class PtolemyImportPlugin extends AbstractUIPlugin {
 
     /** The plug-in ID. */
     public static final String PLUGIN_ID =
-            "de.cau.cs.kieler.kaom.importer.ptolemy.improved"; //$NON-NLS-1$
+            "de.cau.cs.kieler.kaom.importer.ptolemy"; //$NON-NLS-1$
 
     /** The shared instance. */
     private static PtolemyImportPlugin plugin;

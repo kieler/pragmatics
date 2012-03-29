@@ -4,10 +4,15 @@
    <extension
          point="de.cau.cs.kieler.core.kivi.combinations">
       <combination
-            active="true"
+            active="false"
             class="de.cau.cs.kieler.klighd.xtext.UpdateXtextModelKLighDCombination"
             description="Updates the KlighD view if a model change in an Xtext editor happens"
             name="Create graphical views of textual specifications">
+      </combination>
+      <combination
+            active="true"
+            class="de.cau.cs.kieler.klighd.xtext.HighlightChosenElementInXtextEditorCombination"
+            name="Highlight the (Xtext-)definitions of selected elements in KLighD diagrams">
       </combination>
    </extension>
 

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.cau.cs.kieler.kiml.graphiti"
+      id="de.cau.cs.kieler.kiml.graphiti.feature"
       label="KIELER Layout for Graphiti"
       version="0.6.0.qualifier"
-      provider-name="Christian-Albrechts-Universität zu Kiel">
+      provider-name="Christian-Albrechts-Universität zu Kiel"
+      plugin="de.cau.cs.kieler.kiml.graphiti">
 
    <description url="http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/Projects/KIML">
       The KIELER Infrastructure for Meta Layout provides automatic

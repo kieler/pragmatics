@@ -18,24 +18,37 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.OperationHistoryFactory;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.transaction.Transaction;
+import org.eclipse.emf.workspace.AbstractEMFOperation;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
+import de.cau.cs.kieler.core.model.m2m.ITransformationListener;
 import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
+import de.cau.cs.kieler.core.model.m2m.TransformationObserver;
 import de.cau.cs.kieler.core.model.triggers.SelectionTrigger.EObjectSelectionState;
 import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationContext;
 import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationEffect;
+import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutEffect;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
@@ -47,12 +60,15 @@ import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
  * @author ckru
  * 
  */
-public class KSBasECombination extends AbstractCombination {
+public class KSBasECombination extends AbstractCombination implements ITransformationListener {
 
     private EditorTransformationSettings editorSettings;
 
-    private HashMap<String, KSBasETransformation> transformations = 
-            new HashMap<String, KSBasETransformation>();
+    private HashMap<String, KSBasETransformation> transformations = new HashMap<String, KSBasETransformation>();
+
+    private static DiagramDocumentEditor lastEditor = null;
+
+    private static EObject select = null;
 
     /**
      * @param editorSettings
@@ -61,6 +77,7 @@ public class KSBasECombination extends AbstractCombination {
     public KSBasECombination(final EditorTransformationSettings editorSettings) {
         this.editorSettings = editorSettings;
         this.setActive(true);
+        TransformationObserver.getInstance().register(this);
     }
 
     /**
@@ -88,6 +105,7 @@ public class KSBasECombination extends AbstractCombination {
 
                 if (editor instanceof DiagramDocumentEditor) {
                     final DiagramDocumentEditor diagramEditor = (DiagramDocumentEditor) editor;
+                    lastEditor = (DiagramDocumentEditor) editor;
                     List<EditPart> selectedParts = diagramEditor.getDiagramGraphicalViewer()
                             .getSelectedEditParts();
                     EditPart root = diagramEditor.getDiagramGraphicalViewer().getRootEditPart();
@@ -106,10 +124,9 @@ public class KSBasECombination extends AbstractCombination {
                     }
                     // do xtend2 stuff
                     if (transformation.getTransformationClass() != null) {
-                        evokeXtend2(transformation, selectionList);
+                        evokeXtend2(transformation, selectionList, diagramEditor);
                         refreshEditPolicy(diagramEditor);
                         evokeLayout(selectionList, rootObject, button);
-
                         // do xtend1 stuff
                     } else {
                         // map the selection to the parameters of this transformation
@@ -122,19 +139,49 @@ public class KSBasECombination extends AbstractCombination {
                         }
                         // execute xtend transformation
                         if (selectionMapping != null) {
+                            EditPart selectedPart = diagramEditor.getDiagramEditPart()
+                                    .findEditPart(null, selectionList.get(0));
                             evokeXtend(transformation, selectionMapping, diagramEditor);
-                            refreshEditPolicy(diagramEditor);
+                            // refreshEditPolicy(diagramEditor);
                             evokeLayout(selectionList, rootObject, button);
+
                         }
                     }
+
                 } else { // editor is no Diagram Editor
                          // do xtend2 stuff
                     if (transformation.getTransformationClass() != null) {
-                        evokeXtend2(transformation, selection.getSelectedObjects());
+                        evokeXtend2(transformation, selection.getSelectedObjects(), null);
                     }
                 }
             }
         }
+    }
+
+    /**
+     * This method sets the current selection of the editor to the given part.
+     * 
+     * @param editor
+     *            the editor whose selection to change
+     * @param part
+     *            the editpart that should be selected afterwards
+     */
+    public void setSelection(final IEditorPart editor, final EditPart part) {
+
+        MonitoredOperation.runInUI(new Runnable() {
+
+            public void run() {
+                // if (obj != KSBasECombination.this.lastSelection) {
+                try {
+                    editor.getEditorSite().getSelectionProvider()
+                            .setSelection(new StructuredSelection(part));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                // }
+
+            }
+        }, false);
     }
 
     /**
@@ -143,8 +190,7 @@ public class KSBasECombination extends AbstractCombination {
      * 
      * @param selection
      *            the current selection
-     * @return the current selection of a hashmap with type as key and proposed parameter as
-     *         value
+     * @return the current selection of a hashmap with type as key and proposed parameter as value
      */
     private HashMap<Object, Object> getSelectionHash(final List<EObject> selection) {
         HashMap<Object, Object> selectionCache = new HashMap<Object, Object>();
@@ -162,46 +208,42 @@ public class KSBasECombination extends AbstractCombination {
             }
         }
         /*
-        // a cache to eliminate concurrent modification error
-        List<Object> cache = new LinkedList<Object>();
-        cache.addAll(selectionCache.values());
-        // Also put the element of a list of length = 1 in there for non list single object
-        // parameters.
-        for (Object obj : cache) {
-            if (obj instanceof List) {
-                if (((List<?>) obj).size() == 1) {
-                    selectionCache.put(((List<?>) obj).get(0), ((List<?>) obj).get(0));
-                }
-            }
-        }
-        */
+         * // a cache to eliminate concurrent modification error List<Object> cache = new
+         * LinkedList<Object>(); cache.addAll(selectionCache.values()); // Also put the element of a
+         * list of length = 1 in there for non list single object // parameters. for (Object obj :
+         * cache) { if (obj instanceof List) { if (((List<?>) obj).size() == 1) {
+         * selectionCache.put(((List<?>) obj).get(0), ((List<?>) obj).get(0)); } } }
+         */
         return selectionCache;
     }
 
     /**
      * Method to execute the given xtend2 transformation.
-     * @param transformation the xtend2 transformation to execute
-     * @param selection the current selection
+     * 
+     * @param transformation
+     *            the xtend2 transformation to execute
+     * @param selection
+     *            the current selection
      */
     private void evokeXtend2(final KSBasETransformation transformation,
-            final List<EObject> selection) {
+            final List<EObject> selection, final DiagramDocumentEditor editor) {
         Method method = null;
         List<Object> params = new LinkedList<Object>();
-        //find the right method to execute in the xtend2 transformation class
+        // find the right method to execute in the xtend2 transformation class
         for (Method m : transformation.getTransformationClass().getClass().getMethods()) {
             if (m.getName().equals(transformation.getTransformation())) {
                 HashMap<Object, Object> selectionCache = this.getSelectionHash(selection);
                 params = new LinkedList<Object>();
                 method = m;
                 int index = 0;
-                int parameterindex = 0;
+                // int parameterindex = 0;
                 for (Type t : m.getGenericParameterTypes()) {
                     Object param = null;
                     for (Object p : selectionCache.values()) {
                         if (this.match(t, p) && !params.contains(p)) {
                             param = p;
                             break;
-                        } else if ((p instanceof List) && (((List<?>) p).size() >= index + 1) 
+                        } else if ((p instanceof List) && (((List<?>) p).size() >= index + 1)
                                 && match(t, ((List<?>) p).get(index))) {
                             param = ((List<?>) p).get(index);
                             index++;
@@ -213,8 +255,8 @@ public class KSBasECombination extends AbstractCombination {
                     } else {
                         method = null;
                     }
-                    parameterindex++;
-                    
+                    // parameterindex++;
+
                 }
 
                 if (method != null) {
@@ -223,18 +265,48 @@ public class KSBasECombination extends AbstractCombination {
 
             }
         }
-        //if you found a fitting method execute it
+        // if you found a fitting method execute it
         if (method != null) {
             try {
-                method.invoke(transformation.getTransformationClass(), params.toArray());
+                if (editor != null) {
+
+                    final Method fmethod = method;
+                    final List<Object> fparams = params;
+                    AbstractEMFOperation emfOp = new AbstractEMFOperation(
+                            editor.getEditingDomain(), "xtend2 transformation",
+                            Collections.singletonMap(Transaction.OPTION_UNPROTECTED, true)) {
+
+                        @Override
+                        protected IStatus doExecute(final IProgressMonitor monitor,
+                                final IAdaptable info) throws ExecutionException {
+                            try {
+                                fmethod.invoke(transformation.getTransformationClass(),
+                                        fparams.toArray());
+                            } catch (IllegalArgumentException e) {
+                                e.printStackTrace();
+                            } catch (IllegalAccessException e) {
+                                e.printStackTrace();
+                            } catch (InvocationTargetException e) {
+                                e.printStackTrace();
+                            }
+                            return Status.OK_STATUS;
+                        }
+
+                    };
+                    try {
+                        // execute above operation
+                        OperationHistoryFactory.getOperationHistory().execute(emfOp, null, null);
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    method.invoke(transformation.getTransformationClass(), params.toArray());
+                }
             } catch (IllegalArgumentException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 
@@ -287,9 +359,13 @@ public class KSBasECombination extends AbstractCombination {
 
     /**
      * Method to execute a given Xtend1 transformation.
-     * @param transformation the transformation to execute
-     * @param selectionMapping the current selection
-     * @param diagramEditor the current diagram editor
+     * 
+     * @param transformation
+     *            the transformation to execute
+     * @param selectionMapping
+     *            the current selection
+     * @param diagramEditor
+     *            the current diagram editor
      */
     private void evokeXtend(final KSBasETransformation transformation,
             final List<Object> selectionMapping, final DiagramDocumentEditor diagramEditor) {
@@ -305,26 +381,36 @@ public class KSBasECombination extends AbstractCombination {
 
     /**
      * Method to refresh the CanonicalEditPolicy to show the changes done by a transformation.
-     * @param diagramEditor the current diagram editor.
+     * 
+     * @param diagramEditor
+     *            the current diagram editor.
      */
     private void refreshEditPolicy(final DiagramDocumentEditor diagramEditor) {
-        AbstractEffect refresh = new AbstractEffect() {
-            public void execute() {
-                CanonicalEditPolicy policy = (CanonicalEditPolicy) diagramEditor
-                        .getDiagramEditPart().getEditPolicy("Canonical");
-                if (policy != null) {
-                    policy.refresh();
+        try {
+            AbstractEffect refresh = new AbstractEffect() {
+                public void execute() {
+                    CanonicalEditPolicy policy = (CanonicalEditPolicy) diagramEditor
+                            .getDiagramEditPart().getEditPolicy("Canonical");
+                    if (policy != null) {
+                        policy.refresh();
+                    }
                 }
-            }
-        };
-        refresh.schedule();
+            };
+            refresh.schedule();
+        } catch (Exception e) {
+            // doesn't matter if this fails, just pretend nothing happened.
+        }
     }
 
     /**
      * Method to execute the layout so that it adapts to recent changes done by a transformation.
-     * @param selectionList the current selection
-     * @param rootObject the root element to do the layout on if nothing is selected.
-     * @param button the button triggering this combination to get the editor from
+     * 
+     * @param selectionList
+     *            the current selection
+     * @param rootObject
+     *            the root element to do the layout on if nothing is selected.
+     * @param button
+     *            the button triggering this combination to get the editor from
      */
     private void evokeLayout(final List<EObject> selectionList, final EObject rootObject,
             final ButtonState button) {
@@ -335,6 +421,61 @@ public class KSBasECombination extends AbstractCombination {
             layout = new LayoutEffect(button.getEditor(), rootObject, false);
         }
         layout.schedule();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void transformationExecuted(final String transformationName, final Object[] parameters,
+            final Object result) {
+        if (lastEditor != null) {
+            CanonicalEditPolicy policy = (CanonicalEditPolicy) lastEditor.getDiagramEditPart()
+                    .getEditPolicy("Canonical");
+            if (policy != null) {
+                policy.refresh();
+            }
+            if (select != null) {
+                if (!((parameters == null) || (parameters.length == 0))) {
+                    EObject object = null;
+                    if (parameters[0] instanceof List) {
+                        List<?> firstParameter = (List<?>) parameters[0];
+                        if (!firstParameter.isEmpty() && firstParameter.get(0) instanceof EObject) {
+                            object = (EObject) firstParameter.get(0);
+                            object = select;
+
+                        }
+                    } else if (parameters[0] instanceof EObject) {
+                        object = (EObject) parameters[0];
+                    }
+                    if (object != null) {
+                        object = select;
+                        EditPart selectPart = lastEditor.getDiagramEditPart().findEditPart(null,
+                                object);
+                        if (selectPart == null) {
+                            selectPart = lastEditor.getDiagramEditPart().findEditPart(null,
+                                    object.eContainer());
+                        }
+                        if (selectPart != null) {
+                            setSelection(lastEditor, selectPart);
+                        }
+                        select = null;
+
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Set an object that will be selected after the next transformation has finished executing.
+     * 
+     * @param obj
+     *            the object to be selected
+     */
+    public static void selectObject(final Object obj) {
+        if (obj instanceof EObject) {
+            select = (EObject) obj;
+        }
     }
 
 }

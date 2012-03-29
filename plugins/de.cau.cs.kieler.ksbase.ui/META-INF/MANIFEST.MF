@@ -36,6 +36,7 @@ Export-Package: de.cau.cs.kieler.ksbase.ui;uses:="org.eclipse.ui.plugin,org.osgi
    org.eclipse.jface.viewers,
    org.eclipse.emf.transaction,
    org.eclipse.gef",
+ de.cau.cs.kieler.ksbase.ui.kivi,
  de.cau.cs.kieler.ksbase.ui.listener,
  de.cau.cs.kieler.ksbase.ui.menus,
  de.cau.cs.kieler.ksbase.ui.test;uses:="org.eclipse.core.expressions",

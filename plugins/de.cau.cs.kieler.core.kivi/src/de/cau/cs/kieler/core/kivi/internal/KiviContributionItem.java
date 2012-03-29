@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.core.kivi.internal;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,8 @@ import org.eclipse.core.internal.expressions.CompositeExpression;
 import org.eclipse.core.internal.expressions.EqualsExpression;
 import org.eclipse.core.internal.expressions.OrExpression;
 import org.eclipse.core.internal.expressions.WithExpression;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.bindings.Binding;
@@ -47,8 +50,10 @@ import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.IWorkbenchContribution;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.kivi.KiVi;
+import de.cau.cs.kieler.core.kivi.KiViPlugin;
 import de.cau.cs.kieler.core.kivi.menu.ButtonHandler;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService.ButtonConfiguration;
@@ -272,8 +277,9 @@ public class KiviContributionItem extends CompoundContributionItem implements
                             (BindingService) Workbench.getInstance().getService(IBindingService.class);
                     ParameterizedCommand pc = ((CommandContributionItem) item).getCommand();
                     if (config.getShortcutContext() == null) {
-                        TriggerSequence[] oldBindings = bindingService.getActiveBindingsFor(pc.getId());
-                        if (oldBindings != null && oldBindings.length == 0) {
+                        //TriggerSequence[] oldBindings = bindingService.getActiveBindingsFor(pc);
+                        //if (oldBindings != null && oldBindings.length == 0) {
+                            if (bindingService.getConflictsFor(config.getKeySequence()) == null) {
                             bindingService.addBinding(new KeyBinding(
                                     config.getKeySequence(),
                                     pc,
@@ -285,8 +291,9 @@ public class KiviContributionItem extends CompoundContributionItem implements
                                     Binding.USER));
                         }
                     } else {
-                        TriggerSequence[] oldBindings = bindingService.getActiveBindingsFor(pc.getId());
-                        if (oldBindings != null && oldBindings.length == 0) {
+                        //TriggerSequence[] oldBindings = bindingService.getActiveBindingsFor(pc);
+                        //if (oldBindings != null && oldBindings.length == 0) {
+                        if (bindingService.getConflictsFor(config.getKeySequence()) == null) {
                             bindingService.addBinding(new KeyBinding(
                                     config.getKeySequence(),
                                     pc,
@@ -410,10 +417,11 @@ public class KiviContributionItem extends CompoundContributionItem implements
             IContributionItem item = items[i];
             int oldItemCount = parent.getItemCount();
             if (item.isVisible()) {
-                try{
-                	item.fill(parent, myIndex);
-                }catch(java.lang.RuntimeException e){
-                	System.out.println(e.getMessage());
+                try {
+                    item.fill(parent, myIndex);
+                } catch (RuntimeException e) {
+                    StatusManager.getManager().handle(new Status(IStatus.ERROR, KiViPlugin.PLUGIN_ID,
+                            "Error while filling the toolbar for KiVi contribution items.", e));
                 }
             }
             int newItemCount = parent.getItemCount();
@@ -424,8 +432,13 @@ public class KiviContributionItem extends CompoundContributionItem implements
     
     private static boolean softUpdate = false;
     
-    public static void setSoftUpdate(boolean _softUpdate) {
-        softUpdate = _softUpdate;
+    /**
+     * Activate or deactivate soft update.
+     * 
+     * @param thesoftUpdate whether soft update is active
+     */
+    public static void setSoftUpdate(final boolean thesoftUpdate) {
+        softUpdate = thesoftUpdate;
     }
 
 }

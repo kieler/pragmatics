@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.cau.cs.kieler.kiml.graphviz"
+      id="de.cau.cs.kieler.kiml.graphviz.feature"
       label="KIELER Layout - Graphviz Support (optional)"
       version="0.6.0.qualifier"
-      provider-name="Christian-Albrechts-Universität zu Kiel">
+      provider-name="Christian-Albrechts-Universität zu Kiel"
+      plugin="de.cau.cs.kieler.kiml.graphviz.layouter">
 
    <description url="http://rtsys.informatik.uni-kiel.de/trac/kieler/">
       Connector for Graphviz layouts; the Graphviz tool is not shipped with this feature and has to be installed separately from &lt;a href=&quot;http://www.graphviz.org/&quot;&gt;www.graphviz.org&lt;/a&gt;. For Windows platforms and non-standard Unix installations the path to the &quot;dot&quot; executable must be configured in the preferences.

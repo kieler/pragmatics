@@ -174,8 +174,11 @@ public class PGraphFactory implements IGraphFactory {
                 }
                 INode source = map.get(kedge.getSource());
                 INode target = map.get(kedge.getTarget());
-                IEdge edge = graph.addEdge(source, target, true);
-                edge.setProperty(IGraphFactory.TOKGRAPH, kedge);
+                // FIXME planarization fails if there are multi-edges or self-loops, so suppress them
+                if (!source.isAdjacent(target) && source != target) {
+                    IEdge edge = graph.addEdge(source, target, true);
+                    edge.setProperty(IGraphFactory.TOKGRAPH, kedge);
+                }
             }
         }
         return graph;

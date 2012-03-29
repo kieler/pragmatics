@@ -88,7 +88,7 @@ public class EditPartDefaultAction extends Action {
 
         if (optionData != null) {
             String valueString = entry.getValueAsString();
-            if (optionData.getId().equals(LayoutOptions.ALGORITHM_ID)) {
+            if (optionData.equals(LayoutOptions.ALGORITHM)) {
                 valueString = LayoutPropertySource.getLayoutHint(valueString);
             }
             EclipseLayoutInfoService.getInstance().storeOption(editPart, optionData,

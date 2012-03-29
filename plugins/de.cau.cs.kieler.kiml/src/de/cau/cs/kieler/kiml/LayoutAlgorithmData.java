@@ -13,15 +13,13 @@
  */
 package de.cau.cs.kieler.kiml;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.core.alg.InstancePool;
+import de.cau.cs.kieler.kiml.options.GraphFeature;
 
 /**
  * Data type used to store information for a layout algorithm.
@@ -37,17 +35,6 @@ public class LayoutAlgorithmData implements ILayoutData {
     public static final int MIN_PRIORITY = Integer.MIN_VALUE >> 2;
     /** default name for layout algorithms for which no name is given. */
     public static final String DEFAULT_LAYOUTER_NAME = "<Unnamed Layouter>";
-
-    /** internal data type for storage of supported diagram information. */
-    private static final class SupportedDiagram {
-        /** identifier of the diagram type. */
-        private String type;
-        /** associated priority value, must be greater than MIN_PRIORITY. */
-        private int priority = 0;
-        
-        private SupportedDiagram() {
-        }
-    }
     
     /** identifier of the layout provider. */
     private String id = "";
@@ -65,9 +52,11 @@ public class LayoutAlgorithmData implements ILayoutData {
     private Object imageData;
     
     /** Map of known layout options. Keys are option data, values are the default values. */
-    private Map<LayoutOptionData<?>, Object> knownOptions = Maps.newHashMap();
-    /** list of supported diagrams. */
-    private List<SupportedDiagram> supportedDiagrams = new LinkedList<SupportedDiagram>();
+    private final Map<LayoutOptionData<?>, Object> knownOptions = Maps.newHashMap();
+    /** map of supported diagrams. */
+    private final Map<String, Integer> supportedDiagrams = Maps.newHashMap();
+    /** map of supported graph features. */
+    private final Map<GraphFeature, Integer> supportedFeatures = Maps.newEnumMap(GraphFeature.class);
     
     /**
      * {@inheritDoc}
@@ -136,55 +125,61 @@ public class LayoutAlgorithmData implements ILayoutData {
     }
     
     /**
-     * Sets support for the given diagram type. If the priority is less or
-     * equal to {@link MIN_PRIORITY}, the type is treated as not supported.
+     * Sets support for the given diagram type. If the priority is less or equal to
+     * {@link MIN_PRIORITY}, the type is treated as not supported.
      * 
      * @param diagramType identifier of diagram type
-     * @param priority priority value, or {@code MIN_PRIORITY} if the diagram type
-     *     is not supported
+     * @param priority priority value, or {@code MIN_PRIORITY} if the diagram type is not supported
      */
     public void setDiagramSupport(final String diagramType, final int priority) {
         if (priority > MIN_PRIORITY) {
-            SupportedDiagram supportedDiagram0 = null;
-            for (SupportedDiagram supportedDiagram1 : supportedDiagrams) {
-                if (diagramType.equals(supportedDiagram1.type)) {
-                    supportedDiagram0 = supportedDiagram1;
-                    break;
-                }
-            }
-            if (supportedDiagram0 == null) {
-                supportedDiagram0 = new SupportedDiagram();
-                supportedDiagram0.type = diagramType;
-                supportedDiagrams.add(supportedDiagram0);
-            }
-            supportedDiagram0.priority = priority;
+            supportedDiagrams.put(diagramType, priority);
         } else {
-            ListIterator<SupportedDiagram> suppdIter = supportedDiagrams.listIterator();
-            while (suppdIter.hasNext()) {
-                SupportedDiagram supportedDiagram = suppdIter.next();
-                if (diagramType.equals(supportedDiagram.type)) {
-                    suppdIter.remove();
-                    break;
-                }
-            }
+            supportedDiagrams.remove(diagramType);
         }
     }
     
     /**
-     * Returns the supported priority for the given diagram type. If the
-     * type is not supported, {@link MIN_PRIORITY} is returned.
+     * Returns the supported priority for the given diagram type. If the type is not supported,
+     * {@link MIN_PRIORITY} is returned.
      * 
      * @param diagramType diagram type identifier
-     * @return associated priority, or {@code MIN_PRIORITY} if the diagram
-     *     type is not supported
+     * @return associated priority, or {@code MIN_PRIORITY} if the diagram type is not supported
      */
     public int getSupportedPriority(final String diagramType) {
-        if (diagramType != null) {
-            for (SupportedDiagram supportedDiagram : supportedDiagrams) {
-                if (diagramType.equals(supportedDiagram.type)) {
-                    return supportedDiagram.priority;
-                }
-            }
+        Integer result = supportedDiagrams.get(diagramType);
+        if (result != null) {
+            return result;
+        }
+        return MIN_PRIORITY;
+    }
+    
+    /**
+     * Sets support for the given graph feature. If the priority is less or equal to
+     * {@link MIN_PRIORITY}, the feature is treated as not supported.
+     * 
+     * @param graphFeature the graph feature
+     * @param priority priority value, or {@code MIN_PRIORITY} if the feature is not supported
+     */
+    public void setFeatureSupport(final GraphFeature graphFeature, final int priority) {
+        if (priority > MIN_PRIORITY) {
+            supportedFeatures.put(graphFeature, priority);
+        } else {
+            supportedFeatures.remove(graphFeature);
+        }
+    }
+    
+    /**
+     * Returns the supported priority for the given graph feature. If the feature is not supported,
+     * {@link MIN_PRIORITY} is returned.
+     * 
+     * @param graphFeature the graph feature
+     * @return associated priority, or {@code MIN_PRIORITY} if the feature is not supported
+     */
+    public int getSupportedPriority(final GraphFeature graphFeature) {
+        Integer result = supportedFeatures.get(graphFeature);
+        if (result != null) {
+            return result;
         }
         return MIN_PRIORITY;
     }
@@ -253,7 +248,7 @@ public class LayoutAlgorithmData implements ILayoutData {
     }
 
     /**
-     * Sets the layout provider that can execute the associated algorithm.
+     * Create a pool for instances of the layout provider.
      *
      * @param providerFactory a factory for layout providers
      */

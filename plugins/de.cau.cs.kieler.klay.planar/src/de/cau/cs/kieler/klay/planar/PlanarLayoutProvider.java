@@ -47,11 +47,10 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
 
     // ======================== Layout Options =====================================================
 
-    /** The layout option ID for the planar testing algorithm option. */
-    public static final String PLANAR_TESTING_ALGORITHM_ID = "de.cau.cs.kieler.klay.planar.planarityTest";
     /** property for planar testing algorithm. */
-    public static final IProperty<PlanarityTestStrategy> PLANAR_TESTING_ALGORITHM = new Property<PlanarityTestStrategy>(
-            PLANAR_TESTING_ALGORITHM_ID, PlanarityTestStrategy.BOYER_MYRVOLD_ALGORITHM);
+    public static final IProperty<PlanarityTestStrategy> PLANAR_TESTING_ALGORITHM
+            = new Property<PlanarityTestStrategy>("de.cau.cs.kieler.klay.planar.planarityTest",
+            PlanarityTestStrategy.BOYER_MYRVOLD_ALGORITHM);
 
     // ======================== Attributes =========================================================
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.unido.ls5.eti.toolserver"
+      id="de.unido.ls5.eti.toolserver.feature"
       label="jETI Embedded Tool Server"
       version="1.5.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">

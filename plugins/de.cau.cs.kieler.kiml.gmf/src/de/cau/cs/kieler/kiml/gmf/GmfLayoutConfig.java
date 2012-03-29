@@ -144,27 +144,32 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                 DiagramEditPart diagramEditPart = GmfFrameworkBridge.getDiagramEditPart(focusEditPart);
                 @SuppressWarnings("unchecked")
                 LayoutOptionData<String> algorithmOptionData = (LayoutOptionData<String>)
-                        LayoutDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM_ID);
-                // get a layout hint for the content of the focused edit part
-                String contentLayoutHint = getValue(algorithmOptionData, PREFIX, notationView);
-                if (contentLayoutHint == null) {
-                    contentLayoutHint = getValue(algorithmOptionData, DEF_PREFIX,
-                            diagramEditPart.getNotationView());
-                }
-                if (contentLayoutHint != null) {
-                    context.setProperty(DefaultLayoutConfig.CONTENT_HINT, contentLayoutHint);
+                        LayoutDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM.getId());
+                if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null) {
+                    // get a layout hint for the content of the focused edit part
+                    String contentLayoutHint = getValue(algorithmOptionData, PREFIX, notationView);
+                    if (contentLayoutHint == null) {
+                        contentLayoutHint = getValue(algorithmOptionData, DEF_PREFIX,
+                                diagramEditPart.getNotationView());
+                    }
+                    if (contentLayoutHint != null) {
+                        context.setProperty(DefaultLayoutConfig.CONTENT_HINT, contentLayoutHint);
+                    }
                 }
                 
                 // get a layout hint for the container edit part
                 if (containerEditPart.get() != null) {
-                    String containerLayoutHint = getValue(algorithmOptionData, PREFIX,
-                            containerEditPart.get().getNotationView());
-                    if (containerLayoutHint == null) {
-                        containerLayoutHint = getValue(algorithmOptionData, DEF_PREFIX,
-                                diagramEditPart.getNotationView());
-                    }
-                    if (containerLayoutHint != null) {
-                        context.setProperty(DefaultLayoutConfig.CONTAINER_HINT, containerLayoutHint);
+                    if (context.getProperty(DefaultLayoutConfig.CONTAINER_HINT) == null) {
+                        String containerLayoutHint = getValue(algorithmOptionData, PREFIX,
+                                containerEditPart.get().getNotationView());
+                        if (containerLayoutHint == null) {
+                            containerLayoutHint = getValue(algorithmOptionData, DEF_PREFIX,
+                                    diagramEditPart.getNotationView());
+                        }
+                        if (containerLayoutHint != null) {
+                            context.setProperty(DefaultLayoutConfig.CONTAINER_HINT,
+                                    containerLayoutHint);
+                        }
                     }
                     context.setProperty(LayoutContext.CONTAINER_DIAGRAM_PART,
                             containerEditPart.get());
@@ -187,13 +192,14 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
      *          set to {@code true}
      * @return the layout option targets
      */
-    private static Set<LayoutOptionData.Target> findTarget(final IGraphicalEditPart editPart,
+    protected Set<LayoutOptionData.Target> findTarget(final IGraphicalEditPart editPart,
             final Maybe<IGraphicalEditPart> containerEditPart,
             final Maybe<Boolean> hasPorts) {
         Set<LayoutOptionData.Target> partTarget = null;
         if (editPart instanceof AbstractBorderItemEditPart) {
             partTarget = EnumSet.of(LayoutOptionData.Target.PORTS);
             containerEditPart.set((IGraphicalEditPart) editPart.getParent().getParent());
+            
         } else if (editPart instanceof ShapeNodeEditPart) {
             // check whether the node is a parent
             partTarget = EnumSet.of(LayoutOptionData.Target.NODES);
@@ -201,25 +207,37 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
             if (findContainingEditPart(editPart, hasPorts) != null) {
                 partTarget.add(LayoutOptionData.Target.PARENTS);
             }
+            
         } else if (editPart instanceof ConnectionEditPart) {
             partTarget = EnumSet.of(LayoutOptionData.Target.EDGES);
-            containerEditPart.set((IGraphicalEditPart) ((ConnectionEditPart) editPart)
-                    .getSource().getParent());
+            EditPart sourcePart = ((ConnectionEditPart) editPart).getSource();
+            if (sourcePart instanceof AbstractBorderItemEditPart) {
+                containerEditPart.set((IGraphicalEditPart) sourcePart.getParent().getParent());
+            } else {
+                containerEditPart.set((IGraphicalEditPart) sourcePart.getParent());
+            }
+            
         } else if (editPart instanceof LabelEditPart) {
             partTarget = EnumSet.of(LayoutOptionData.Target.LABELS);
             containerEditPart.set((IGraphicalEditPart) editPart.getParent());
             if (containerEditPart.get() instanceof ConnectionEditPart) {
-                containerEditPart.set((IGraphicalEditPart) ((ConnectionEditPart)
-                        containerEditPart.get()).getSource().getParent());
+                EditPart sourcePart = ((ConnectionEditPart) containerEditPart.get()).getSource();
+                if (sourcePart instanceof AbstractBorderItemEditPart) {
+                    containerEditPart.set((IGraphicalEditPart) sourcePart.getParent().getParent());
+                } else {
+                    containerEditPart.set((IGraphicalEditPart) sourcePart.getParent());
+                }
             } else if (containerEditPart.get() instanceof AbstractBorderItemEditPart) {
                 containerEditPart.set((IGraphicalEditPart) containerEditPart.get()
                         .getParent().getParent());
             } else if (containerEditPart.get() instanceof ShapeNodeEditPart) {
                 containerEditPart.set((IGraphicalEditPart) containerEditPart.get().getParent());
             }
+            
         } else if (editPart instanceof DiagramEditPart) {
             partTarget = EnumSet.of(LayoutOptionData.Target.PARENTS);
         }
+        
         if (containerEditPart.get() instanceof CompartmentEditPart) {
             containerEditPart.set((IGraphicalEditPart) containerEditPart.get().getParent());
         }

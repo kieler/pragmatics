@@ -77,7 +77,6 @@ public class KRenderingFactoryImpl extends EFactoryImpl implements KRenderingFac
             case KRenderingPackage.KIMAGE: return createKImage();
             case KRenderingPackage.KDECORATOR_PLACEMENT_DATA: return createKDecoratorPlacementData();
             case KRenderingPackage.KARC: return createKArc();
-            case KRenderingPackage.KSTYLE: return createKStyle();
             case KRenderingPackage.KRENDERING_LIBRARY: return createKRenderingLibrary();
             case KRenderingPackage.KRENDERING_REF: return createKRenderingRef();
             case KRenderingPackage.KCHILD_AREA: return createKChildArea();
@@ -92,7 +91,6 @@ public class KRenderingFactoryImpl extends EFactoryImpl implements KRenderingFac
             case KRenderingPackage.KFOREGROUND_COLOR: return createKForegroundColor();
             case KRenderingPackage.KBACKGROUND_COLOR: return createKBackgroundColor();
             case KRenderingPackage.KLINE_WIDTH: return createKLineWidth();
-            case KRenderingPackage.KVISIBILITY: return createKVisibility();
             case KRenderingPackage.KLINE_STYLE: return createKLineStyle();
             case KRenderingPackage.KVERTICAL_ALIGNMENT: return createKVerticalAlignment();
             case KRenderingPackage.KHORIZONTAL_ALIGNMENT: return createKHorizontalAlignment();
@@ -101,6 +99,12 @@ public class KRenderingFactoryImpl extends EFactoryImpl implements KRenderingFac
             case KRenderingPackage.KTOP_POSITION: return createKTopPosition();
             case KRenderingPackage.KBOTTOM_POSITION: return createKBottomPosition();
             case KRenderingPackage.KSPLINE: return createKSpline();
+            case KRenderingPackage.KFOREGROUND_VISIBILITY: return createKForegroundVisibility();
+            case KRenderingPackage.KBACKGROUND_VISIBILITY: return createKBackgroundVisibility();
+            case KRenderingPackage.KFONT_BOLD: return createKFontBold();
+            case KRenderingPackage.KFONT_ITALIC: return createKFontItalic();
+            case KRenderingPackage.KFONT_NAME: return createKFontName();
+            case KRenderingPackage.KFONT_SIZE: return createKFontSize();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
@@ -232,16 +236,6 @@ public class KRenderingFactoryImpl extends EFactoryImpl implements KRenderingFac
     public KArc createKArc() {
         KArcImpl kArc = new KArcImpl();
         return kArc;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public KStyle createKStyle() {
-        KStyleImpl kStyle = new KStyleImpl();
-        return kStyle;
     }
 
     /**
@@ -389,16 +383,6 @@ public class KRenderingFactoryImpl extends EFactoryImpl implements KRenderingFac
      * <!-- end-user-doc -->
      * @generated
      */
-    public KVisibility createKVisibility() {
-        KVisibilityImpl kVisibility = new KVisibilityImpl();
-        return kVisibility;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public KLineStyle createKLineStyle() {
         KLineStyleImpl kLineStyle = new KLineStyleImpl();
         return kLineStyle;
@@ -472,6 +456,66 @@ public class KRenderingFactoryImpl extends EFactoryImpl implements KRenderingFac
     public KSpline createKSpline() {
         KSplineImpl kSpline = new KSplineImpl();
         return kSpline;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public KForegroundVisibility createKForegroundVisibility() {
+        KForegroundVisibilityImpl kForegroundVisibility = new KForegroundVisibilityImpl();
+        return kForegroundVisibility;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public KBackgroundVisibility createKBackgroundVisibility() {
+        KBackgroundVisibilityImpl kBackgroundVisibility = new KBackgroundVisibilityImpl();
+        return kBackgroundVisibility;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public KFontBold createKFontBold() {
+        KFontBoldImpl kFontBold = new KFontBoldImpl();
+        return kFontBold;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public KFontItalic createKFontItalic() {
+        KFontItalicImpl kFontItalic = new KFontItalicImpl();
+        return kFontItalic;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public KFontName createKFontName() {
+        KFontNameImpl kFontName = new KFontNameImpl();
+        return kFontName;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public KFontSize createKFontSize() {
+        KFontSizeImpl kFontSize = new KFontSizeImpl();
+        return kFontSize;
     }
 
     /**

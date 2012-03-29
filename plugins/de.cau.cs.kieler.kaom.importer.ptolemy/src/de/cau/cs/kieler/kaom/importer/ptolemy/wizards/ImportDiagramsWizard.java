@@ -161,6 +161,7 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
         boolean advancedAnnotationsHandling = optionsPage.isAdvancedAnnotationsHandling();
         boolean initializeDiagramFiles = optionsPage.isInitializeDiagramFiles();
         boolean overwriteWithoutWarning = optionsPage.isOverwriteWithoutWarning();
+        boolean heuristicsOverride = optionsPage.isHeuristicsOverrideEnabled();
         List<File> sourceFiles = null;
         final Maybe<List<File>> sourceFilesWrapper = new Maybe<List<File>>();
         IPath targetContainerPath = null;
@@ -217,7 +218,8 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
         
         // Create the importer and let it do its work
         DiagramsImporter importer = new DiagramsImporter(this, sourceFiles, targetContainerPath,
-                advancedAnnotationsHandling, initializeDiagramFiles, overwriteWithoutWarning);
+                advancedAnnotationsHandling, initializeDiagramFiles, overwriteWithoutWarning,
+                heuristicsOverride);
         try {
             this.getContainer().run(true, true, importer);
         } catch (Exception e) {

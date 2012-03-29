@@ -918,13 +918,31 @@ public interface KRenderingPackage extends EPackage {
     int KDECORATOR_PLACEMENT_DATA__RELATIVE = KPLACEMENT_DATA_FEATURE_COUNT + 3;
 
     /**
+     * The feature id for the '<em><b>Width</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KDECORATOR_PLACEMENT_DATA__WIDTH = KPLACEMENT_DATA_FEATURE_COUNT + 4;
+
+    /**
+     * The feature id for the '<em><b>Height</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KDECORATOR_PLACEMENT_DATA__HEIGHT = KPLACEMENT_DATA_FEATURE_COUNT + 5;
+
+    /**
      * The number of structural features of the '<em>KDecorator Placement Data</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KDECORATOR_PLACEMENT_DATA_FEATURE_COUNT = KPLACEMENT_DATA_FEATURE_COUNT + 4;
+    int KDECORATOR_PLACEMENT_DATA_FEATURE_COUNT = KPLACEMENT_DATA_FEATURE_COUNT + 6;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.impl.KArcImpl <em>KArc</em>}' class.
@@ -1615,13 +1633,22 @@ public interface KRenderingPackage extends EPackage {
     int KPOLYLINE_PLACEMENT_DATA__POINTS = KPLACEMENT_DATA_FEATURE_COUNT + 0;
 
     /**
+     * The feature id for the '<em><b>Detail Placement Data</b></em>' containment reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KPOLYLINE_PLACEMENT_DATA__DETAIL_PLACEMENT_DATA = KPLACEMENT_DATA_FEATURE_COUNT + 1;
+
+    /**
      * The number of structural features of the '<em>KPolyline Placement Data</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KPOLYLINE_PLACEMENT_DATA_FEATURE_COUNT = KPLACEMENT_DATA_FEATURE_COUNT + 1;
+    int KPOLYLINE_PLACEMENT_DATA_FEATURE_COUNT = KPLACEMENT_DATA_FEATURE_COUNT + 2;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.impl.KCustomRenderingImpl <em>KCustom Rendering</em>}' class.
@@ -1971,61 +1998,6 @@ public interface KRenderingPackage extends EPackage {
     int KLINE_WIDTH_FEATURE_COUNT = KSTYLE_FEATURE_COUNT + 1;
 
     /**
-     * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.impl.KVisibilityImpl <em>KVisibility</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.core.krendering.impl.KVisibilityImpl
-     * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKVisibility()
-     * @generated
-     */
-    int KVISIBILITY = 29;
-
-    /**
-     * The feature id for the '<em><b>Rendering</b></em>' container reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KVISIBILITY__RENDERING = KSTYLE__RENDERING;
-
-    /**
-     * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KVISIBILITY__PROPAGATE_TO_CHILDREN = KSTYLE__PROPAGATE_TO_CHILDREN;
-
-    /**
-     * The feature id for the '<em><b>Line Visible</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KVISIBILITY__LINE_VISIBLE = KSTYLE_FEATURE_COUNT + 0;
-
-    /**
-     * The feature id for the '<em><b>Filled</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KVISIBILITY__FILLED = KSTYLE_FEATURE_COUNT + 1;
-
-    /**
-     * The number of structural features of the '<em>KVisibility</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KVISIBILITY_FEATURE_COUNT = KSTYLE_FEATURE_COUNT + 2;
-
-    /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.impl.KLineStyleImpl <em>KLine Style</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2033,7 +2005,7 @@ public interface KRenderingPackage extends EPackage {
      * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKLineStyle()
      * @generated
      */
-    int KLINE_STYLE = 30;
+    int KLINE_STYLE = 29;
 
     /**
      * The feature id for the '<em><b>Rendering</b></em>' container reference.
@@ -2079,7 +2051,7 @@ public interface KRenderingPackage extends EPackage {
      * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKVerticalAlignment()
      * @generated
      */
-    int KVERTICAL_ALIGNMENT = 31;
+    int KVERTICAL_ALIGNMENT = 30;
 
     /**
      * The feature id for the '<em><b>Rendering</b></em>' container reference.
@@ -2125,7 +2097,7 @@ public interface KRenderingPackage extends EPackage {
      * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKHorizontalAlignment()
      * @generated
      */
-    int KHORIZONTAL_ALIGNMENT = 32;
+    int KHORIZONTAL_ALIGNMENT = 31;
 
     /**
      * The feature id for the '<em><b>Rendering</b></em>' container reference.
@@ -2171,7 +2143,7 @@ public interface KRenderingPackage extends EPackage {
      * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKXPosition()
      * @generated
      */
-    int KX_POSITION = 33;
+    int KX_POSITION = 32;
 
     /**
      * The feature id for the '<em><b>Absolute</b></em>' attribute.
@@ -2208,7 +2180,7 @@ public interface KRenderingPackage extends EPackage {
      * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKYPosition()
      * @generated
      */
-    int KY_POSITION = 34;
+    int KY_POSITION = 33;
 
     /**
      * The feature id for the '<em><b>Absolute</b></em>' attribute.
@@ -2245,7 +2217,7 @@ public interface KRenderingPackage extends EPackage {
      * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKLeftPosition()
      * @generated
      */
-    int KLEFT_POSITION = 35;
+    int KLEFT_POSITION = 34;
 
     /**
      * The feature id for the '<em><b>Absolute</b></em>' attribute.
@@ -2282,7 +2254,7 @@ public interface KRenderingPackage extends EPackage {
      * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKRightPosition()
      * @generated
      */
-    int KRIGHT_POSITION = 36;
+    int KRIGHT_POSITION = 35;
 
     /**
      * The feature id for the '<em><b>Absolute</b></em>' attribute.
@@ -2319,7 +2291,7 @@ public interface KRenderingPackage extends EPackage {
      * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKTopPosition()
      * @generated
      */
-    int KTOP_POSITION = 37;
+    int KTOP_POSITION = 36;
 
     /**
      * The feature id for the '<em><b>Absolute</b></em>' attribute.
@@ -2356,7 +2328,7 @@ public interface KRenderingPackage extends EPackage {
      * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKBottomPosition()
      * @generated
      */
-    int KBOTTOM_POSITION = 38;
+    int KBOTTOM_POSITION = 37;
 
     /**
      * The feature id for the '<em><b>Absolute</b></em>' attribute.
@@ -2393,7 +2365,7 @@ public interface KRenderingPackage extends EPackage {
      * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKSpline()
      * @generated
      */
-    int KSPLINE = 39;
+    int KSPLINE = 38;
 
     /**
      * The feature id for the '<em><b>Properties</b></em>' map.
@@ -2477,6 +2449,328 @@ public interface KRenderingPackage extends EPackage {
     int KSPLINE_FEATURE_COUNT = KPOLYLINE_FEATURE_COUNT + 0;
 
     /**
+     * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.impl.KVisibilityImpl <em>KVisibility</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.core.krendering.impl.KVisibilityImpl
+     * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKVisibility()
+     * @generated
+     */
+    int KVISIBILITY = 40;
+
+    /**
+     * The feature id for the '<em><b>Rendering</b></em>' container reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KVISIBILITY__RENDERING = KSTYLE__RENDERING;
+
+    /**
+     * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KVISIBILITY__PROPAGATE_TO_CHILDREN = KSTYLE__PROPAGATE_TO_CHILDREN;
+
+    /**
+     * The feature id for the '<em><b>Visible</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KVISIBILITY__VISIBLE = KSTYLE_FEATURE_COUNT + 0;
+
+    /**
+     * The number of structural features of the '<em>KVisibility</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KVISIBILITY_FEATURE_COUNT = KSTYLE_FEATURE_COUNT + 1;
+
+    /**
+     * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.impl.KForegroundVisibilityImpl <em>KForeground Visibility</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.core.krendering.impl.KForegroundVisibilityImpl
+     * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKForegroundVisibility()
+     * @generated
+     */
+    int KFOREGROUND_VISIBILITY = 39;
+
+    /**
+     * The feature id for the '<em><b>Rendering</b></em>' container reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFOREGROUND_VISIBILITY__RENDERING = KVISIBILITY__RENDERING;
+
+    /**
+     * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFOREGROUND_VISIBILITY__PROPAGATE_TO_CHILDREN = KVISIBILITY__PROPAGATE_TO_CHILDREN;
+
+    /**
+     * The feature id for the '<em><b>Visible</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFOREGROUND_VISIBILITY__VISIBLE = KVISIBILITY__VISIBLE;
+
+    /**
+     * The number of structural features of the '<em>KForeground Visibility</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFOREGROUND_VISIBILITY_FEATURE_COUNT = KVISIBILITY_FEATURE_COUNT + 0;
+
+    /**
+     * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.impl.KBackgroundVisibilityImpl <em>KBackground Visibility</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.core.krendering.impl.KBackgroundVisibilityImpl
+     * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKBackgroundVisibility()
+     * @generated
+     */
+    int KBACKGROUND_VISIBILITY = 41;
+
+    /**
+     * The feature id for the '<em><b>Rendering</b></em>' container reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KBACKGROUND_VISIBILITY__RENDERING = KVISIBILITY__RENDERING;
+
+    /**
+     * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KBACKGROUND_VISIBILITY__PROPAGATE_TO_CHILDREN = KVISIBILITY__PROPAGATE_TO_CHILDREN;
+
+    /**
+     * The feature id for the '<em><b>Visible</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KBACKGROUND_VISIBILITY__VISIBLE = KVISIBILITY__VISIBLE;
+
+    /**
+     * The number of structural features of the '<em>KBackground Visibility</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KBACKGROUND_VISIBILITY_FEATURE_COUNT = KVISIBILITY_FEATURE_COUNT + 0;
+
+    /**
+     * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.impl.KFontBoldImpl <em>KFont Bold</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.core.krendering.impl.KFontBoldImpl
+     * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKFontBold()
+     * @generated
+     */
+    int KFONT_BOLD = 42;
+
+    /**
+     * The feature id for the '<em><b>Rendering</b></em>' container reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_BOLD__RENDERING = KSTYLE__RENDERING;
+
+    /**
+     * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_BOLD__PROPAGATE_TO_CHILDREN = KSTYLE__PROPAGATE_TO_CHILDREN;
+
+    /**
+     * The feature id for the '<em><b>Bold</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_BOLD__BOLD = KSTYLE_FEATURE_COUNT + 0;
+
+    /**
+     * The number of structural features of the '<em>KFont Bold</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_BOLD_FEATURE_COUNT = KSTYLE_FEATURE_COUNT + 1;
+
+    /**
+     * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.impl.KFontItalicImpl <em>KFont Italic</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.core.krendering.impl.KFontItalicImpl
+     * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKFontItalic()
+     * @generated
+     */
+    int KFONT_ITALIC = 43;
+
+    /**
+     * The feature id for the '<em><b>Rendering</b></em>' container reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_ITALIC__RENDERING = KSTYLE__RENDERING;
+
+    /**
+     * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_ITALIC__PROPAGATE_TO_CHILDREN = KSTYLE__PROPAGATE_TO_CHILDREN;
+
+    /**
+     * The feature id for the '<em><b>Italic</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_ITALIC__ITALIC = KSTYLE_FEATURE_COUNT + 0;
+
+    /**
+     * The number of structural features of the '<em>KFont Italic</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_ITALIC_FEATURE_COUNT = KSTYLE_FEATURE_COUNT + 1;
+
+    /**
+     * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.impl.KFontNameImpl <em>KFont Name</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.core.krendering.impl.KFontNameImpl
+     * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKFontName()
+     * @generated
+     */
+    int KFONT_NAME = 44;
+
+    /**
+     * The feature id for the '<em><b>Rendering</b></em>' container reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_NAME__RENDERING = KSTYLE__RENDERING;
+
+    /**
+     * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_NAME__PROPAGATE_TO_CHILDREN = KSTYLE__PROPAGATE_TO_CHILDREN;
+
+    /**
+     * The feature id for the '<em><b>Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_NAME__NAME = KSTYLE_FEATURE_COUNT + 0;
+
+    /**
+     * The number of structural features of the '<em>KFont Name</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_NAME_FEATURE_COUNT = KSTYLE_FEATURE_COUNT + 1;
+
+    /**
+     * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.impl.KFontSizeImpl <em>KFont Size</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.core.krendering.impl.KFontSizeImpl
+     * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKFontSize()
+     * @generated
+     */
+    int KFONT_SIZE = 45;
+
+    /**
+     * The feature id for the '<em><b>Rendering</b></em>' container reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_SIZE__RENDERING = KSTYLE__RENDERING;
+
+    /**
+     * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_SIZE__PROPAGATE_TO_CHILDREN = KSTYLE__PROPAGATE_TO_CHILDREN;
+
+    /**
+     * The feature id for the '<em><b>Size</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_SIZE__SIZE = KSTYLE_FEATURE_COUNT + 0;
+
+    /**
+     * The number of structural features of the '<em>KFont Size</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_SIZE_FEATURE_COUNT = KSTYLE_FEATURE_COUNT + 1;
+
+    /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.LineStyle <em>Line Style</em>}' enum.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2484,7 +2778,7 @@ public interface KRenderingPackage extends EPackage {
      * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getLineStyle()
      * @generated
      */
-    int LINE_STYLE = 40;
+    int LINE_STYLE = 46;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.HorizontalAlignment <em>Horizontal Alignment</em>}' enum.
@@ -2494,7 +2788,7 @@ public interface KRenderingPackage extends EPackage {
      * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getHorizontalAlignment()
      * @generated
      */
-    int HORIZONTAL_ALIGNMENT = 41;
+    int HORIZONTAL_ALIGNMENT = 47;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.VerticalAlignment <em>Vertical Alignment</em>}' enum.
@@ -2504,7 +2798,7 @@ public interface KRenderingPackage extends EPackage {
      * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getVerticalAlignment()
      * @generated
      */
-    int VERTICAL_ALIGNMENT = 42;
+    int VERTICAL_ALIGNMENT = 48;
 
 
     /**
@@ -2750,6 +3044,28 @@ public interface KRenderingPackage extends EPackage {
      * @generated
      */
     EAttribute getKDecoratorPlacementData_Relative();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KDecoratorPlacementData#getWidth <em>Width</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Width</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KDecoratorPlacementData#getWidth()
+     * @see #getKDecoratorPlacementData()
+     * @generated
+     */
+    EAttribute getKDecoratorPlacementData_Width();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KDecoratorPlacementData#getHeight <em>Height</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Height</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KDecoratorPlacementData#getHeight()
+     * @see #getKDecoratorPlacementData()
+     * @generated
+     */
+    EAttribute getKDecoratorPlacementData_Height();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KContainerRendering <em>KContainer Rendering</em>}'.
@@ -3144,6 +3460,17 @@ public interface KRenderingPackage extends EPackage {
     EReference getKPolylinePlacementData_Points();
 
     /**
+     * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.core.krendering.KPolylinePlacementData#getDetailPlacementData <em>Detail Placement Data</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference '<em>Detail Placement Data</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KPolylinePlacementData#getDetailPlacementData()
+     * @see #getKPolylinePlacementData()
+     * @generated
+     */
+    EReference getKPolylinePlacementData_DetailPlacementData();
+
+    /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KCustomRendering <em>KCustom Rendering</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3258,38 +3585,6 @@ public interface KRenderingPackage extends EPackage {
      * @generated
      */
     EAttribute getKLineWidth_LineWidth();
-
-    /**
-     * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KVisibility <em>KVisibility</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for class '<em>KVisibility</em>'.
-     * @see de.cau.cs.kieler.core.krendering.KVisibility
-     * @generated
-     */
-    EClass getKVisibility();
-
-    /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KVisibility#isLineVisible <em>Line Visible</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Line Visible</em>'.
-     * @see de.cau.cs.kieler.core.krendering.KVisibility#isLineVisible()
-     * @see #getKVisibility()
-     * @generated
-     */
-    EAttribute getKVisibility_LineVisible();
-
-    /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KVisibility#isFilled <em>Filled</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Filled</em>'.
-     * @see de.cau.cs.kieler.core.krendering.KVisibility#isFilled()
-     * @see #getKVisibility()
-     * @generated
-     */
-    EAttribute getKVisibility_Filled();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KLineStyle <em>KLine Style</em>}'.
@@ -3467,6 +3762,131 @@ public interface KRenderingPackage extends EPackage {
      * @generated
      */
     EClass getKSpline();
+
+    /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KForegroundVisibility <em>KForeground Visibility</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>KForeground Visibility</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KForegroundVisibility
+     * @generated
+     */
+    EClass getKForegroundVisibility();
+
+    /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KVisibility <em>KVisibility</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>KVisibility</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KVisibility
+     * @generated
+     */
+    EClass getKVisibility();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KVisibility#isVisible <em>Visible</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Visible</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KVisibility#isVisible()
+     * @see #getKVisibility()
+     * @generated
+     */
+    EAttribute getKVisibility_Visible();
+
+    /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KBackgroundVisibility <em>KBackground Visibility</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>KBackground Visibility</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KBackgroundVisibility
+     * @generated
+     */
+    EClass getKBackgroundVisibility();
+
+    /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KFontBold <em>KFont Bold</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>KFont Bold</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KFontBold
+     * @generated
+     */
+    EClass getKFontBold();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KFontBold#isBold <em>Bold</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Bold</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KFontBold#isBold()
+     * @see #getKFontBold()
+     * @generated
+     */
+    EAttribute getKFontBold_Bold();
+
+    /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KFontItalic <em>KFont Italic</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>KFont Italic</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KFontItalic
+     * @generated
+     */
+    EClass getKFontItalic();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KFontItalic#isItalic <em>Italic</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Italic</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KFontItalic#isItalic()
+     * @see #getKFontItalic()
+     * @generated
+     */
+    EAttribute getKFontItalic_Italic();
+
+    /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KFontName <em>KFont Name</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>KFont Name</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KFontName
+     * @generated
+     */
+    EClass getKFontName();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KFontName#getName <em>Name</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Name</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KFontName#getName()
+     * @see #getKFontName()
+     * @generated
+     */
+    EAttribute getKFontName_Name();
+
+    /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KFontSize <em>KFont Size</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>KFont Size</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KFontSize
+     * @generated
+     */
+    EClass getKFontSize();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KFontSize#getSize <em>Size</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Size</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KFontSize#getSize()
+     * @see #getKFontSize()
+     * @generated
+     */
+    EAttribute getKFontSize_Size();
 
     /**
      * Returns the meta object for enum '{@link de.cau.cs.kieler.core.krendering.LineStyle <em>Line Style</em>}'.
@@ -3721,6 +4141,22 @@ public interface KRenderingPackage extends EPackage {
          * @generated
          */
         EAttribute KDECORATOR_PLACEMENT_DATA__RELATIVE = eINSTANCE.getKDecoratorPlacementData_Relative();
+
+        /**
+         * The meta object literal for the '<em><b>Width</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KDECORATOR_PLACEMENT_DATA__WIDTH = eINSTANCE.getKDecoratorPlacementData_Width();
+
+        /**
+         * The meta object literal for the '<em><b>Height</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KDECORATOR_PLACEMENT_DATA__HEIGHT = eINSTANCE.getKDecoratorPlacementData_Height();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.impl.KContainerRenderingImpl <em>KContainer Rendering</em>}' class.
@@ -4049,6 +4485,14 @@ public interface KRenderingPackage extends EPackage {
         EReference KPOLYLINE_PLACEMENT_DATA__POINTS = eINSTANCE.getKPolylinePlacementData_Points();
 
         /**
+         * The meta object literal for the '<em><b>Detail Placement Data</b></em>' containment reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference KPOLYLINE_PLACEMENT_DATA__DETAIL_PLACEMENT_DATA = eINSTANCE.getKPolylinePlacementData_DetailPlacementData();
+
+        /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.impl.KCustomRenderingImpl <em>KCustom Rendering</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -4145,32 +4589,6 @@ public interface KRenderingPackage extends EPackage {
          * @generated
          */
         EAttribute KLINE_WIDTH__LINE_WIDTH = eINSTANCE.getKLineWidth_LineWidth();
-
-        /**
-         * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.impl.KVisibilityImpl <em>KVisibility</em>}' class.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see de.cau.cs.kieler.core.krendering.impl.KVisibilityImpl
-         * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKVisibility()
-         * @generated
-         */
-        EClass KVISIBILITY = eINSTANCE.getKVisibility();
-
-        /**
-         * The meta object literal for the '<em><b>Line Visible</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute KVISIBILITY__LINE_VISIBLE = eINSTANCE.getKVisibility_LineVisible();
-
-        /**
-         * The meta object literal for the '<em><b>Filled</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute KVISIBILITY__FILLED = eINSTANCE.getKVisibility_Filled();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.impl.KLineStyleImpl <em>KLine Style</em>}' class.
@@ -4327,6 +4745,116 @@ public interface KRenderingPackage extends EPackage {
          * @generated
          */
         EClass KSPLINE = eINSTANCE.getKSpline();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.impl.KForegroundVisibilityImpl <em>KForeground Visibility</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.core.krendering.impl.KForegroundVisibilityImpl
+         * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKForegroundVisibility()
+         * @generated
+         */
+        EClass KFOREGROUND_VISIBILITY = eINSTANCE.getKForegroundVisibility();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.impl.KVisibilityImpl <em>KVisibility</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.core.krendering.impl.KVisibilityImpl
+         * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKVisibility()
+         * @generated
+         */
+        EClass KVISIBILITY = eINSTANCE.getKVisibility();
+
+        /**
+         * The meta object literal for the '<em><b>Visible</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KVISIBILITY__VISIBLE = eINSTANCE.getKVisibility_Visible();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.impl.KBackgroundVisibilityImpl <em>KBackground Visibility</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.core.krendering.impl.KBackgroundVisibilityImpl
+         * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKBackgroundVisibility()
+         * @generated
+         */
+        EClass KBACKGROUND_VISIBILITY = eINSTANCE.getKBackgroundVisibility();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.impl.KFontBoldImpl <em>KFont Bold</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.core.krendering.impl.KFontBoldImpl
+         * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKFontBold()
+         * @generated
+         */
+        EClass KFONT_BOLD = eINSTANCE.getKFontBold();
+
+        /**
+         * The meta object literal for the '<em><b>Bold</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KFONT_BOLD__BOLD = eINSTANCE.getKFontBold_Bold();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.impl.KFontItalicImpl <em>KFont Italic</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.core.krendering.impl.KFontItalicImpl
+         * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKFontItalic()
+         * @generated
+         */
+        EClass KFONT_ITALIC = eINSTANCE.getKFontItalic();
+
+        /**
+         * The meta object literal for the '<em><b>Italic</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KFONT_ITALIC__ITALIC = eINSTANCE.getKFontItalic_Italic();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.impl.KFontNameImpl <em>KFont Name</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.core.krendering.impl.KFontNameImpl
+         * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKFontName()
+         * @generated
+         */
+        EClass KFONT_NAME = eINSTANCE.getKFontName();
+
+        /**
+         * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KFONT_NAME__NAME = eINSTANCE.getKFontName_Name();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.impl.KFontSizeImpl <em>KFont Size</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.core.krendering.impl.KFontSizeImpl
+         * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getKFontSize()
+         * @generated
+         */
+        EClass KFONT_SIZE = eINSTANCE.getKFontSize();
+
+        /**
+         * The meta object literal for the '<em><b>Size</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KFONT_SIZE__SIZE = eINSTANCE.getKFontSize_Size();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.LineStyle <em>Line Style</em>}' enum.

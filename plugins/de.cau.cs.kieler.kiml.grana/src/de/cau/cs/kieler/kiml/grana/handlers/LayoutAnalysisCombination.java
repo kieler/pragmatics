@@ -18,8 +18,8 @@ import java.util.List;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutEffect;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
@@ -39,9 +39,10 @@ public class LayoutAnalysisCombination extends AbstractCombination {
     public void execute(final EffectTriggerState<LayoutEffect> layoutState) {
         LayoutMapping<?> mapping = layoutState.getEffect().getMapping();
         if (mapping != null) {
-            final List<AbstractInfoAnalysis> analyses = GranaUtil.getLastAnalysesSelection();
+            final List<AnalysisData> analyses = GranaUtil.getLastAnalysesSelection();
             KNode parentNode = mapping.getLayoutGraph();
-            schedule(new AnalysisEffect(parentNode, analyses, false));
+            schedule(new AnalysisEffect(parentNode, analyses));
         }
     }
+    
 }

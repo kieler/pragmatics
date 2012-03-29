@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KIELER Smart Layout
+Bundle-SymbolicName: de.cau.cs.kieler.kiml.smart;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: com.google.guava;bundle-version="10.0.0",
+ org.eclipse.core.runtime;bundle-version="3.7.0",
+ de.cau.cs.kieler.core,
+ de.cau.cs.kieler.core.kgraph,
+ de.cau.cs.kieler.kiml,
+ de.cau.cs.kieler.kiml.service
+Export-Package: de.cau.cs.kieler.kiml.smart

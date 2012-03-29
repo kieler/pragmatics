@@ -162,12 +162,21 @@ public class AdvancedRenderingCompartmentCollapseHandle extends AbstractHandle i
         if (NotationPackage.eINSTANCE.getDrawerStyle_Collapsed() == notification.getFeature()) {
             switchableCollapseFigure.setCollapsed(notification.getNewBooleanValue());
             EditPart part = this.getOwner().getParent();
-            if (part instanceof IAdvancedRenderingEditPart) {
-                ((IAdvancedRenderingEditPart) part).handleNotificationEvent(notification);
-            }
+            triggerEvents(part, notification);
         }
     }
 
+    private void triggerEvents(EditPart part, Notification n) {
+        if (n != null && part instanceof IAdvancedRenderingEditPart) {
+            ((IAdvancedRenderingEditPart) part).handleNotificationEvent(n);
+        }
+        for (Object o: part.getChildren()) {
+            if (o instanceof EditPart) {
+                triggerEvents((EditPart) o, n);
+            }
+        }
+    }
+    
     /**
      * @see org.eclipse.gef.handles.AbstractHandle#createDragTracker()
      */

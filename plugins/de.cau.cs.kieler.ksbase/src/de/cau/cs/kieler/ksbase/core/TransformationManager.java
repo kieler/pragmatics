@@ -36,6 +36,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.dialogs.EditorSelectionDialog;
 import org.osgi.framework.Bundle;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
@@ -482,9 +485,17 @@ public final class TransformationManager {
             IConfigurationElement[] xtend2transformations = 
                     settings.getChildren("Xtend2TransformationClass");
             if (xtend2transformations != null && xtend2transformations.length > 0) {
+                Injector injector = Guice.createInjector();
                 for (IConfigurationElement tf : xtend2transformations) {
                     try {
-                        editor.getTransformationClasses().add(tf.createExecutableExtension("TransformationClass"));
+                      //MyXtendClass transformation = Guice.createInjector(new AbstractGenericModule() {}).getInstance(MyXtendClass.class);
+                        //String className = tf.getAttribute("TransformationClass");
+                        //Class<?> c = Class.forName(className, true, ClassLoader.getSystemClassLoader());
+                        //Class<?> c = ClassLoader.getSystemClassLoader().loadClass(className);
+                        Class<?> c = tf.createExecutableExtension("TransformationClass").getClass();
+                        Object transformationClass = injector.getInstance(c);
+                        
+                        editor.getTransformationClasses().add(transformationClass);
                     } catch (CoreException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();

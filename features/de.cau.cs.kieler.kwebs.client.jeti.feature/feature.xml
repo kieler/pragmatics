@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.cau.cs.kieler.kwebs.client.jeti"
+      id="de.cau.cs.kieler.kwebs.client.jeti.feature"
       label="KIELER Layout Client over jETI (optional)"
       version="0.1.0.qualifier"
-      provider-name="Christian-Albrechts-Universität zu Kiel">
+      provider-name="Christian-Albrechts-Universität zu Kiel"
+      plugin="de.cau.cs.kieler.kwebs.client.jeti">
 
    <description url="http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/Projects/KWebS">
       This feature enables jETI web service based layout in KIELER. By using this service, no local installation of layout algorithms is required, since automatic diagram layout is calculated on a remote server. This feature uses libraries of the jETI project from the TU Dortmund.

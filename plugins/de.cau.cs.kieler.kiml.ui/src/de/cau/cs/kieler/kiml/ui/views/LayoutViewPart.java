@@ -187,6 +187,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         addPopupActions(page.getControl().getMenu());
         IMenuManager menuManager = actionBars.getMenuManager();
         menuManager.add(new RemoveOptionsAction(this, Messages.getString("kiml.ui.30")));
+        EclipseLayoutInfoService.getInstance().fillConfigMenu(menuManager);
         IToolBarManager toolBarManager = actionBars.getToolBarManager();
         toolBarManager.add(new SelectionInfoAction(this, Messages.getString("kiml.ui.37")));
         

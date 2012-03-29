@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KIELER Bridge to Damos
+Bundle-SymbolicName: de.cau.cs.kieler.damos;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
+Require-Bundle: com.google.guava;bundle-version="10.0.0",
+ org.eclipse.gmf.runtime.diagram.ui;bundle-version="1.5.0",
+ org.eclipse.gmf.runtime.diagram.ui.resources.editor.ide;bundle-version="1.2.0",
+ org.eclipselabs.damos.diagram.ui;bundle-version="0.3.0",
+ org.eclipselabs.damos.dml;bundle-version="0.3.0",
+ de.cau.cs.kieler.core,
+ de.cau.cs.kieler.core.model.gmf,
+ de.cau.cs.kieler.core.kgraph,
+ de.cau.cs.kieler.kiml.ui,
+ de.cau.cs.kieler.kiml.gmf

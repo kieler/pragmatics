@@ -27,8 +27,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * Singleton class for global access to the KIML GRANA result visualization.
@@ -261,7 +261,7 @@ public final class VisualizationServices {
      * @param silent
      *            true if only silent visualization methods should be used
      */
-    public void visualize(final List<AbstractInfoAnalysis> analyses,
+    public void visualize(final List<AnalysisData> analyses,
             final Map<String, Object> results, final boolean silent) {
         Map<String, List<BoundVisualization>> typeBoundVisualizationsMap =
                 new HashMap<String, List<BoundVisualization>>();
@@ -273,7 +273,7 @@ public final class VisualizationServices {
                     boundVisualizations = new LinkedList<BoundVisualization>();
                     typeBoundVisualizationsMap.put(method.getType(),
                             boundVisualizations);
-                    for (AbstractInfoAnalysis analysis : analyses) {
+                    for (AnalysisData analysis : analyses) {
                         Object result = results.get(analysis.getId());
                         Visualization visualization =
                                 getVisualization(method.getType(), result);

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kiml.ui.layoutManagers">
+      <manager
+            class="de.cau.cs.kieler.damos.layout.DamosLayoutManager"
+            priority="5">
+      </manager>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.layoutInfo">
+      <option
+            class="org.eclipselabs.damos.dml.System"
+            option="de.cau.cs.kieler.diagramType"
+            value="de.cau.cs.kieler.layout.diagrams.dataFlow">
+      </option>
+      <option
+            class="org.eclipselabs.damos.dml.System"
+            option="de.cau.cs.kieler.spacing"
+            value="25.0">
+      </option>
+      <option
+            class="org.eclipselabs.damos.dml.Compound"
+            option="de.cau.cs.kieler.diagramType"
+            value="de.cau.cs.kieler.layout.diagrams.dataFlow">
+      </option>
+      <option
+            class="org.eclipselabs.damos.dml.Compound"
+            option="de.cau.cs.kieler.spacing"
+            value="25.0">
+      </option>
+   </extension>
+
+</plugin>

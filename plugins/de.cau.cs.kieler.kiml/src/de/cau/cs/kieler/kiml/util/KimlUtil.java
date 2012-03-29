@@ -27,7 +27,10 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -558,20 +561,61 @@ public final class KimlUtil {
     }
 
     /**
-     * Persists all KGraphData elements of a KNode graph.
+     * Persists all KGraphData elements of a KGraph by serializing the contained properties into
+     * {@link de.cau.cs.kieler.core.kgraph.PersistentEntry} tuples.
      *
      * @param graph
      *            the root element of the graph to persist elements of.
      */
     public static void persistDataElements(final KNode graph) {
         TreeIterator<EObject> iterator = graph.eAllContents();
-        EObject eObject = null;
         while (iterator.hasNext()) {
-            eObject = iterator.next();
+            EObject eObject = iterator.next();
             if (eObject instanceof KGraphData) {
                 ((KGraphData) eObject).makePersistent();
             }
         }
     }
 
+    /**
+     * Loads all {@link de.cau.cs.kieler.core.properties.IProperty} of KGraphData elements of a
+     * KGraph by deserializing {@link de.cau.cs.kieler.core.kgraph.PersistentEntry} tuples.
+     * 
+     * @param graph
+     *            the root element of the graph to load elements of.
+     */
+    public static void loadDataElements(final KNode graph) {
+        LayoutDataService dataService = LayoutDataService.getInstance();
+        TreeIterator<EObject> iterator = graph.eAllContents();
+        while (iterator.hasNext()) {
+            EObject eObject = iterator.next();
+            if (eObject instanceof KGraphData) {
+                KGraphData kgraphData = (KGraphData) eObject;
+                for (PersistentEntry persistentEntry : kgraphData.getPersistentEntries()) {
+                    String key = persistentEntry.getKey();
+                    String value = persistentEntry.getValue();
+                    if (key != null && value != null) {
+                        LayoutOptionData<?> layoutOptionData = null;
+                        // Try to get the layout option from the data service.
+                        if (dataService != null) { 
+                            layoutOptionData = dataService.getOptionData(key);
+                        }
+                        // If we have a valid layout option, parse its value.
+                        if (layoutOptionData != null) {
+                            Object layoutOptionValue = layoutOptionData.parseValue(
+                                    persistentEntry.getValue());
+                            if (layoutOptionValue != null) {
+                                kgraphData.setProperty(layoutOptionData, layoutOptionValue);
+                            }
+                        // Unknown options are wrapped by a dynamically instantiated one.
+                        } else {
+                            IProperty<String> property = new Property<String>(key);
+                            kgraphData.setProperty(property, value);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
 }

@@ -6,13 +6,19 @@ import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.core.krendering.KArc;
 import de.cau.cs.kieler.core.krendering.KBackgroundColor;
+import de.cau.cs.kieler.core.krendering.KBackgroundVisibility;
 import de.cau.cs.kieler.core.krendering.KBottomPosition;
 import de.cau.cs.kieler.core.krendering.KChildArea;
 import de.cau.cs.kieler.core.krendering.KCustomRendering;
 import de.cau.cs.kieler.core.krendering.KDecoratorPlacementData;
 import de.cau.cs.kieler.core.krendering.KDirectPlacementData;
 import de.cau.cs.kieler.core.krendering.KEllipse;
+import de.cau.cs.kieler.core.krendering.KFontBold;
+import de.cau.cs.kieler.core.krendering.KFontItalic;
+import de.cau.cs.kieler.core.krendering.KFontName;
+import de.cau.cs.kieler.core.krendering.KFontSize;
 import de.cau.cs.kieler.core.krendering.KForegroundColor;
+import de.cau.cs.kieler.core.krendering.KForegroundVisibility;
 import de.cau.cs.kieler.core.krendering.KGridPlacement;
 import de.cau.cs.kieler.core.krendering.KGridPlacementData;
 import de.cau.cs.kieler.core.krendering.KHorizontalAlignment;
@@ -33,11 +39,9 @@ import de.cau.cs.kieler.core.krendering.KRoundedRectangle;
 import de.cau.cs.kieler.core.krendering.KSpline;
 import de.cau.cs.kieler.core.krendering.KStackPlacement;
 import de.cau.cs.kieler.core.krendering.KStackPlacementData;
-import de.cau.cs.kieler.core.krendering.KStyle;
 import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.core.krendering.KTopPosition;
 import de.cau.cs.kieler.core.krendering.KVerticalAlignment;
-import de.cau.cs.kieler.core.krendering.KVisibility;
 import de.cau.cs.kieler.core.krendering.text.services.KRenderingGrammarAccess;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -139,6 +143,14 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 					return; 
 				}
 				else break;
+			case KRenderingPackage.KBACKGROUND_VISIBILITY:
+				if(context == grammarAccess.getKBackgroundVisibilityRule() ||
+				   context == grammarAccess.getKStyleRule() ||
+				   context == grammarAccess.getKVisibilityRule()) {
+					sequence_KBackgroundVisibility(context, (KBackgroundVisibility) semanticObject); 
+					return; 
+				}
+				else break;
 			case KRenderingPackage.KBOTTOM_POSITION:
 				if(context == grammarAccess.getKBottomPositionRule() ||
 				   context == grammarAccess.getKYPositionRule()) {
@@ -181,10 +193,46 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 					return; 
 				}
 				else break;
+			case KRenderingPackage.KFONT_BOLD:
+				if(context == grammarAccess.getKFontBoldRule() ||
+				   context == grammarAccess.getKStyleRule()) {
+					sequence_KFontBold(context, (KFontBold) semanticObject); 
+					return; 
+				}
+				else break;
+			case KRenderingPackage.KFONT_ITALIC:
+				if(context == grammarAccess.getKFontItalicRule() ||
+				   context == grammarAccess.getKStyleRule()) {
+					sequence_KFontItalic(context, (KFontItalic) semanticObject); 
+					return; 
+				}
+				else break;
+			case KRenderingPackage.KFONT_NAME:
+				if(context == grammarAccess.getKFontNameRule() ||
+				   context == grammarAccess.getKStyleRule()) {
+					sequence_KFontName(context, (KFontName) semanticObject); 
+					return; 
+				}
+				else break;
+			case KRenderingPackage.KFONT_SIZE:
+				if(context == grammarAccess.getKFontSizeRule() ||
+				   context == grammarAccess.getKStyleRule()) {
+					sequence_KFontSize(context, (KFontSize) semanticObject); 
+					return; 
+				}
+				else break;
 			case KRenderingPackage.KFOREGROUND_COLOR:
 				if(context == grammarAccess.getKForegroundColorRule() ||
 				   context == grammarAccess.getKStyleRule()) {
 					sequence_KForegroundColor(context, (KForegroundColor) semanticObject); 
+					return; 
+				}
+				else break;
+			case KRenderingPackage.KFOREGROUND_VISIBILITY:
+				if(context == grammarAccess.getKForegroundVisibilityRule() ||
+				   context == grammarAccess.getKStyleRule() ||
+				   context == grammarAccess.getKVisibilityRule()) {
+					sequence_KForegroundVisibility(context, (KForegroundVisibility) semanticObject); 
 					return; 
 				}
 				else break;
@@ -319,13 +367,6 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 					return; 
 				}
 				else break;
-			case KRenderingPackage.KSTYLE:
-				if(context == grammarAccess.getKStyleRule() ||
-				   context == grammarAccess.getKStyle_ImplRule()) {
-					sequence_KStyle_Impl(context, (KStyle) semanticObject); 
-					return; 
-				}
-				else break;
 			case KRenderingPackage.KTEXT:
 				if(context == grammarAccess.getKRenderingRule() ||
 				   context == grammarAccess.getKTextRule()) {
@@ -347,13 +388,6 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 					return; 
 				}
 				else break;
-			case KRenderingPackage.KVISIBILITY:
-				if(context == grammarAccess.getKStyleRule() ||
-				   context == grammarAccess.getKVisibilityRule()) {
-					sequence_KVisibility(context, (KVisibility) semanticObject); 
-					return; 
-				}
-				else break;
 			}
 		if (errorAcceptor != null) errorAcceptor.accept(diagnosticProvider.createInvalidContextOrTypeDiagnostic(semanticObject, context));
 	}
@@ -361,13 +395,9 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	/**
 	 * Constraint:
 	 *     (
-	 *         startAngle=EFloat? 
-	 *         arcAngle=EFloat? 
-	 *         (references+=[KRenderingRef|EString] references+=[KRenderingRef|EString]*)? 
-	 *         placementData=KPlacementData? 
-	 *         (styles+=KStyle styles+=KStyle*)? 
-	 *         (children+=KRendering children+=KRendering*)? 
-	 *         childPlacement=KPlacement?
+	 *         startAngle=EFloat 
+	 *         arcAngle=EFloat 
+	 *         ((styles+=KStyle styles+=KStyle*)? placementData=KPlacementData? (children+=KRendering children+=KRendering*)? childPlacement=KPlacement?)?
 	 *     )
 	 */
 	protected void sequence_KArc(EObject context, KArc semanticObject) {
@@ -377,7 +407,7 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (propagateToChildren?='propagateToChildren' red=EInt green=EInt blue=EInt)
+	 *     (red=EInt green=EInt blue=EInt propagateToChildren?='!'?)
 	 */
 	protected void sequence_KBackgroundColor(EObject context, KBackgroundColor semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -386,16 +416,35 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (absolute=EFloat? relative=EFloat?)
+	 *     (visible=EBoolean propagateToChildren?='!'?)
 	 */
-	protected void sequence_KBottomPosition(EObject context, KBottomPosition semanticObject) {
+	protected void sequence_KBackgroundVisibility(EObject context, KBackgroundVisibility semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
 	/**
 	 * Constraint:
-	 *     ((references+=[KRenderingRef|EString] references+=[KRenderingRef|EString]*)? placementData=KPlacementData? (styles+=KStyle styles+=KStyle*)?)
+	 *     (absolute=EFloat relative=EFloat)
+	 */
+	protected void sequence_KBottomPosition(EObject context, KBottomPosition semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, KRenderingPackage.Literals.KY_POSITION__ABSOLUTE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KRenderingPackage.Literals.KY_POSITION__ABSOLUTE));
+			if(transientValues.isValueTransient(semanticObject, KRenderingPackage.Literals.KY_POSITION__RELATIVE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KRenderingPackage.Literals.KY_POSITION__RELATIVE));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getKBottomPositionAccess().getAbsoluteEFloatParserRuleCall_2_0(), semanticObject.getAbsolute());
+		feeder.accept(grammarAccess.getKBottomPositionAccess().getRelativeEFloatParserRuleCall_3_0(), semanticObject.getRelative());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (((styles+=KStyle styles+=KStyle*)? placementData=KPlacementData?)?)
 	 */
 	protected void sequence_KChildArea(EObject context, KChildArea semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -405,13 +454,14 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	/**
 	 * Constraint:
 	 *     (
-	 *         className=EString 
-	 *         bundleName=EString 
-	 *         (references+=[KRenderingRef|EString] references+=[KRenderingRef|EString]*)? 
-	 *         placementData=KPlacementData? 
-	 *         (styles+=KStyle styles+=KStyle*)? 
-	 *         (children+=KRendering children+=KRendering*)? 
-	 *         childPlacement=KPlacement?
+	 *         (
+	 *             className=EString 
+	 *             bundleName=EString 
+	 *             (styles+=KStyle styles+=KStyle*)? 
+	 *             placementData=KPlacementData? 
+	 *             (children+=KRendering children+=KRendering*)? 
+	 *             childPlacement=KPlacement?
+	 *         )?
 	 *     )
 	 */
 	protected void sequence_KCustomRendering(EObject context, KCustomRendering semanticObject) {
@@ -421,7 +471,14 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (relative?='relative' location=EFloat xOffset=EFloat? yOffset=EFloat?)
+	 *     (
+	 *         relative?='relative' 
+	 *         location=EFloat 
+	 *         xOffset=EFloat? 
+	 *         yOffset=EFloat? 
+	 *         width=EFloat? 
+	 *         height=EFloat?
+	 *     )
 	 */
 	protected void sequence_KDecoratorPlacementData(EObject context, KDecoratorPlacementData semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -442,14 +499,19 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
 		feeder.accept(grammarAccess.getKDirectPlacementDataAccess().getTopLeftKPositionParserRuleCall_3_0(), semanticObject.getTopLeft());
-		feeder.accept(grammarAccess.getKDirectPlacementDataAccess().getBottomRightKPositionParserRuleCall_5_0(), semanticObject.getBottomRight());
+		feeder.accept(grammarAccess.getKDirectPlacementDataAccess().getBottomRightKPositionParserRuleCall_6_0(), semanticObject.getBottomRight());
 		feeder.finish();
 	}
 	
 	
 	/**
 	 * Constraint:
-	 *     ((bendPoints+=KPoint bendPoints+=KPoint*)? sourcePoint=KPoint targetPoint=KPoint)
+	 *     (
+	 *         sourcePoint=KPoint 
+	 *         targetPoint=KPoint 
+	 *         (bendPoints+=KPoint bendPoints+=KPoint*)? 
+	 *         (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)?
+	 *     )
 	 */
 	protected void sequence_KEdgeLayout(EObject context, KEdgeLayout semanticObject) {
 		superSequencer.createSequence(context, semanticObject);
@@ -458,13 +520,7 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (
-	 *         (references+=[KRenderingRef|EString] references+=[KRenderingRef|EString]*)? 
-	 *         placementData=KPlacementData? 
-	 *         (styles+=KStyle styles+=KStyle*)? 
-	 *         (children+=KRendering children+=KRendering*)? 
-	 *         childPlacement=KPlacement?
-	 *     )
+	 *     (((styles+=KStyle styles+=KStyle*)? placementData=KPlacementData? childPlacement=KPlacement? (children+=KRendering children+=KRendering*)?)?)
 	 */
 	protected void sequence_KEllipse(EObject context, KEllipse semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -473,9 +529,54 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (propagateToChildren?='propagateToChildren' red=EInt green=EInt blue=EInt)
+	 *     (propagateToChildren?='!'?)
+	 */
+	protected void sequence_KFontBold(EObject context, KFontBold semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (propagateToChildren?='!'?)
+	 */
+	protected void sequence_KFontItalic(EObject context, KFontItalic semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (name=EString propagateToChildren?='!'?)
+	 */
+	protected void sequence_KFontName(EObject context, KFontName semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (size=EInt propagateToChildren?='!'?)
+	 */
+	protected void sequence_KFontSize(EObject context, KFontSize semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (red=EInt green=EInt blue=EInt propagateToChildren?='!'?)
 	 */
 	protected void sequence_KForegroundColor(EObject context, KForegroundColor semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (visible=EBoolean propagateToChildren?='!'?)
+	 */
+	protected void sequence_KForegroundVisibility(EObject context, KForegroundVisibility semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -516,14 +617,14 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getKGridPlacementAccess().getNumColumnsEIntParserRuleCall_3_0(), semanticObject.getNumColumns());
+		feeder.accept(grammarAccess.getKGridPlacementAccess().getNumColumnsEIntParserRuleCall_2_0(), semanticObject.getNumColumns());
 		feeder.finish();
 	}
 	
 	
 	/**
 	 * Constraint:
-	 *     (propagateToChildren?='propagateToChildren' horizontalAlignment=HorizontalAlignment)
+	 *     (horizontalAlignment=HorizontalAlignment propagateToChildren?='!')
 	 */
 	protected void sequence_KHorizontalAlignment(EObject context, KHorizontalAlignment semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -533,13 +634,9 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	/**
 	 * Constraint:
 	 *     (
-	 *         bundleName=EString 
+	 *         bundleName=EString? 
 	 *         imagePath=EString 
-	 *         (references+=[KRenderingRef|EString] references+=[KRenderingRef|EString]*)? 
-	 *         placementData=KPlacementData? 
-	 *         (styles+=KStyle styles+=KStyle*)? 
-	 *         (children+=KRendering children+=KRendering*)? 
-	 *         childPlacement=KPlacement?
+	 *         ((styles+=KStyle styles+=KStyle*)? placementData=KPlacementData? (children+=KRendering children+=KRendering*)? childPlacement=KPlacement?)?
 	 *     )
 	 */
 	protected void sequence_KImage(EObject context, KImage semanticObject) {
@@ -558,16 +655,26 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (absolute=EFloat? relative=EFloat?)
+	 *     (absolute=EFloat relative=EFloat)
 	 */
 	protected void sequence_KLeftPosition(EObject context, KLeftPosition semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, KRenderingPackage.Literals.KX_POSITION__ABSOLUTE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KRenderingPackage.Literals.KX_POSITION__ABSOLUTE));
+			if(transientValues.isValueTransient(semanticObject, KRenderingPackage.Literals.KX_POSITION__RELATIVE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KRenderingPackage.Literals.KX_POSITION__RELATIVE));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getKLeftPositionAccess().getAbsoluteEFloatParserRuleCall_2_0(), semanticObject.getAbsolute());
+		feeder.accept(grammarAccess.getKLeftPositionAccess().getRelativeEFloatParserRuleCall_3_0(), semanticObject.getRelative());
+		feeder.finish();
 	}
 	
 	
 	/**
 	 * Constraint:
-	 *     (propagateToChildren?='propagateToChildren' lineStyle=LineStyle)
+	 *     (lineStyle=LineStyle propagateToChildren?='!'?)
 	 */
 	protected void sequence_KLineStyle(EObject context, KLineStyle semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -576,7 +683,7 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (propagateToChildren?='propagateToChildren' lineWidth=EInt)
+	 *     (lineWidth=EInt propagateToChildren?='!'?)
 	 */
 	protected void sequence_KLineWidth(EObject context, KLineWidth semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -594,7 +701,7 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (x=EFloat? y=EFloat?)
+	 *     (x=EFloat y=EFloat)
 	 */
 	protected void sequence_KPoint(EObject context, KPoint semanticObject) {
 		superSequencer.createSequence(context, semanticObject);
@@ -603,13 +710,7 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (
-	 *         (references+=[KRenderingRef|EString] references+=[KRenderingRef|EString]*)? 
-	 *         placementData=KPlacementData? 
-	 *         (styles+=KStyle styles+=KStyle*)? 
-	 *         (children+=KRendering children+=KRendering*)? 
-	 *         childPlacement=KPlacement?
-	 *     )
+	 *     (((styles+=KStyle styles+=KStyle*)? placementData=KPlacementData? childPlacement=KPlacement? (children+=KRendering children+=KRendering*)?)?)
 	 */
 	protected void sequence_KPolygon(EObject context, KPolygon semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -618,7 +719,7 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (points+=KPosition points+=KPosition*)
+	 *     (points+=KPosition points+=KPosition* detailPlacementData=KPlacementData?)
 	 */
 	protected void sequence_KPolylinePlacementData(EObject context, KPolylinePlacementData semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -627,13 +728,7 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (
-	 *         (references+=[KRenderingRef|EString] references+=[KRenderingRef|EString]*)? 
-	 *         placementData=KPlacementData? 
-	 *         (styles+=KStyle styles+=KStyle*)? 
-	 *         (children+=KRendering children+=KRendering*)? 
-	 *         childPlacement=KPlacement?
-	 *     )
+	 *     (((styles+=KStyle styles+=KStyle*)? placementData=KPlacementData? childPlacement=KPlacement? (children+=KRendering children+=KRendering*)?)?)
 	 */
 	protected void sequence_KPolyline_Impl(EObject context, KPolyline semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -653,21 +748,15 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getKPositionAccess().getXKXPositionParserRuleCall_3_0(), semanticObject.getX());
-		feeder.accept(grammarAccess.getKPositionAccess().getYKYPositionParserRuleCall_5_0(), semanticObject.getY());
+		feeder.accept(grammarAccess.getKPositionAccess().getXKXPositionParserRuleCall_0_0(), semanticObject.getX());
+		feeder.accept(grammarAccess.getKPositionAccess().getYKYPositionParserRuleCall_2_0(), semanticObject.getY());
 		feeder.finish();
 	}
 	
 	
 	/**
 	 * Constraint:
-	 *     (
-	 *         (references+=[KRenderingRef|EString] references+=[KRenderingRef|EString]*)? 
-	 *         placementData=KPlacementData? 
-	 *         (styles+=KStyle styles+=KStyle*)? 
-	 *         (children+=KRendering children+=KRendering*)? 
-	 *         childPlacement=KPlacement?
-	 *     )
+	 *     (((styles+=KStyle styles+=KStyle*)? placementData=KPlacementData? childPlacement=KPlacement? (children+=KRendering children+=KRendering*)?)?)
 	 */
 	protected void sequence_KRectangle(EObject context, KRectangle semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -685,12 +774,7 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (
-	 *         (references+=[KRenderingRef|EString] references+=[KRenderingRef|EString]*)? 
-	 *         rendering=[KRendering|EString] 
-	 *         placementData=KPlacementData? 
-	 *         (styles+=KStyle styles+=KStyle*)?
-	 *     )
+	 *     (rendering=[KRendering|EString] (placementData=KPlacementData? (styles+=KStyle styles+=KStyle*)?)?)
 	 */
 	protected void sequence_KRenderingRef(EObject context, KRenderingRef semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -699,10 +783,20 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (absolute=EFloat? relative=EFloat?)
+	 *     (absolute=EFloat relative=EFloat)
 	 */
 	protected void sequence_KRightPosition(EObject context, KRightPosition semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, KRenderingPackage.Literals.KX_POSITION__ABSOLUTE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KRenderingPackage.Literals.KX_POSITION__ABSOLUTE));
+			if(transientValues.isValueTransient(semanticObject, KRenderingPackage.Literals.KX_POSITION__RELATIVE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KRenderingPackage.Literals.KX_POSITION__RELATIVE));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getKRightPositionAccess().getAbsoluteEFloatParserRuleCall_2_0(), semanticObject.getAbsolute());
+		feeder.accept(grammarAccess.getKRightPositionAccess().getRelativeEFloatParserRuleCall_3_0(), semanticObject.getRelative());
+		feeder.finish();
 	}
 	
 	
@@ -711,11 +805,7 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	 *     (
 	 *         cornerWidth=EFloat 
 	 *         cornerHeight=EFloat 
-	 *         (references+=[KRenderingRef|EString] references+=[KRenderingRef|EString]*)? 
-	 *         placementData=KPlacementData? 
-	 *         (styles+=KStyle styles+=KStyle*)? 
-	 *         (children+=KRendering children+=KRendering*)? 
-	 *         childPlacement=KPlacement?
+	 *         ((styles+=KStyle styles+=KStyle*)? placementData=KPlacementData? childPlacement=KPlacement? (children+=KRendering children+=KRendering*)?)?
 	 *     )
 	 */
 	protected void sequence_KRoundedRectangle(EObject context, KRoundedRectangle semanticObject) {
@@ -725,7 +815,14 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (xpos=EFloat? ypos=EFloat? width=EFloat? height=EFloat? insets=KInsets?)
+	 *     (
+	 *         xpos=EFloat? 
+	 *         ypos=EFloat? 
+	 *         width=EFloat? 
+	 *         height=EFloat? 
+	 *         insets=KInsets? 
+	 *         (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)?
+	 *     )
 	 */
 	protected void sequence_KShapeLayout(EObject context, KShapeLayout semanticObject) {
 		superSequencer.createSequence(context, semanticObject);
@@ -734,13 +831,7 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (
-	 *         (references+=[KRenderingRef|EString] references+=[KRenderingRef|EString]*)? 
-	 *         placementData=KPlacementData? 
-	 *         (styles+=KStyle styles+=KStyle*)? 
-	 *         (children+=KRendering children+=KRendering*)? 
-	 *         childPlacement=KPlacement?
-	 *     )
+	 *     (((styles+=KStyle styles+=KStyle*)? placementData=KPlacementData? (children+=KRendering children+=KRendering*)? childPlacement=KPlacement?)?)
 	 */
 	protected void sequence_KSpline(EObject context, KSpline semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -774,23 +865,15 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     propagateToChildren?='propagateToChildren'
-	 */
-	protected void sequence_KStyle_Impl(EObject context, KStyle semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Constraint:
 	 *     (
-	 *         clip?='clip' 
 	 *         text=EString? 
-	 *         (references+=[KRenderingRef|EString] references+=[KRenderingRef|EString]*)? 
-	 *         placementData=KPlacementData? 
-	 *         (styles+=KStyle styles+=KStyle*)? 
-	 *         (children+=KRendering children+=KRendering*)? 
-	 *         childPlacement=KPlacement?
+	 *         (
+	 *             clip?='clip'? 
+	 *             (styles+=KStyle styles+=KStyle*)? 
+	 *             placementData=KPlacementData? 
+	 *             (children+=KRendering children+=KRendering*)? 
+	 *             childPlacement=KPlacement?
+	 *         )?
 	 *     )
 	 */
 	protected void sequence_KText(EObject context, KText semanticObject) {
@@ -800,27 +883,28 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (absolute=EFloat? relative=EFloat?)
+	 *     (absolute=EFloat relative=EFloat)
 	 */
 	protected void sequence_KTopPosition(EObject context, KTopPosition semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, KRenderingPackage.Literals.KY_POSITION__ABSOLUTE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KRenderingPackage.Literals.KY_POSITION__ABSOLUTE));
+			if(transientValues.isValueTransient(semanticObject, KRenderingPackage.Literals.KY_POSITION__RELATIVE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KRenderingPackage.Literals.KY_POSITION__RELATIVE));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getKTopPositionAccess().getAbsoluteEFloatParserRuleCall_2_0(), semanticObject.getAbsolute());
+		feeder.accept(grammarAccess.getKTopPositionAccess().getRelativeEFloatParserRuleCall_3_0(), semanticObject.getRelative());
+		feeder.finish();
 	}
 	
 	
 	/**
 	 * Constraint:
-	 *     (propagateToChildren?='propagateToChildren' verticalAlignment=VerticalAlignment)
+	 *     (verticalAlignment=VerticalAlignment propagateToChildren?='!'?)
 	 */
 	protected void sequence_KVerticalAlignment(EObject context, KVerticalAlignment semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Constraint:
-	 *     (propagateToChildren?='propagateToChildren' lineVisible?='lineVisible' filled?='filled')
-	 */
-	protected void sequence_KVisibility(EObject context, KVisibility semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -830,6 +914,6 @@ public class AbstractKRenderingSemanticSequencer extends AbstractSemanticSequenc
 	 *     (key=EString value=EString?)
 	 */
 	protected void sequence_PersistentEntry(EObject context, PersistentEntry semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
+		superSequencer.createSequence(context, semanticObject);
 	}
 }
