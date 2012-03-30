@@ -746,9 +746,16 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             if (obj instanceof LabelEditPart) {
                 LabelEditPart labelEditPart = (LabelEditPart) obj;
                 IFigure labelFigure = labelEditPart.getFigure();
+                
+                // Check if the label is visible in the first place
+                if (labelFigure != null && !labelFigure.isVisible()) {
+                    continue;
+                }
+                
                 Rectangle labelBounds = KimlUiUtil.getAbsoluteBounds(labelFigure);
                 String labelText = null;
                 Dimension iconBounds = null;
+                
                 if (labelFigure instanceof WrappingLabel) {
                     WrappingLabel wrappingLabel = (WrappingLabel) labelFigure;
                     labelText = wrappingLabel.getText();
@@ -768,6 +775,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                         labelText = "O " + labelText;
                     }
                 }
+                
                 if (labelText != null && labelText.length() > 0) {
                     KLabel label = KimlUtil.createInitializedLabel(edge);
                     KShapeLayout labelLayout = label.getData(KShapeLayout.class);

@@ -428,41 +428,42 @@ public class KSBasECombination extends AbstractCombination implements ITransform
      */
     public void transformationExecuted(final String transformationName, final Object[] parameters,
             final Object result) {
-        CanonicalEditPolicy policy = (CanonicalEditPolicy) lastEditor.getDiagramEditPart()
-                .getEditPolicy("Canonical");
-        if (policy != null) {
-            policy.refresh();
-        }
-        if (select != null) {
-            if (!((parameters == null) || (parameters.length == 0))) {
-                EObject object = null;
-                if (parameters[0] instanceof List) {
-                    List<?> firstParameter = (List<?>) parameters[0];
-                    if (!firstParameter.isEmpty() && firstParameter.get(0) instanceof EObject) {
-                        object = (EObject) firstParameter.get(0);
+        if (lastEditor != null) {
+            CanonicalEditPolicy policy = (CanonicalEditPolicy) lastEditor.getDiagramEditPart()
+                    .getEditPolicy("Canonical");
+            if (policy != null) {
+                policy.refresh();
+            }
+            if (select != null) {
+                if (!((parameters == null) || (parameters.length == 0))) {
+                    EObject object = null;
+                    if (parameters[0] instanceof List) {
+                        List<?> firstParameter = (List<?>) parameters[0];
+                        if (!firstParameter.isEmpty() && firstParameter.get(0) instanceof EObject) {
+                            object = (EObject) firstParameter.get(0);
+                            object = select;
+
+                        }
+                    } else if (parameters[0] instanceof EObject) {
+                        object = (EObject) parameters[0];
+                    }
+                    if (object != null) {
                         object = select;
+                        EditPart selectPart = lastEditor.getDiagramEditPart().findEditPart(null,
+                                object);
+                        if (selectPart == null) {
+                            selectPart = lastEditor.getDiagramEditPart().findEditPart(null,
+                                    object.eContainer());
+                        }
+                        if (selectPart != null) {
+                            setSelection(lastEditor, selectPart);
+                        }
+                        select = null;
 
                     }
-                } else if (parameters[0] instanceof EObject) {
-                    object = (EObject) parameters[0];
-                }
-                if (object != null) {
-                    object = select;
-                    EditPart selectPart = lastEditor.getDiagramEditPart()
-                            .findEditPart(null, object);
-                    if (selectPart == null) {
-                        selectPart = lastEditor.getDiagramEditPart().findEditPart(null,
-                                object.eContainer());
-                    }
-                    if (selectPart != null) {
-                        setSelection(lastEditor, selectPart);
-                    }
-                    select = null;
-
                 }
             }
         }
-
     }
 
     /**
