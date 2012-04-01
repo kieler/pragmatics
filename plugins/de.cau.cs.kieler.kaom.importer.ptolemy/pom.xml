@@ -22,6 +22,9 @@
             <goals>
               <goal>compile</goal>
             </goals>
+            <!-- This is an evil hack. Javadoc generation calls generate-sources twice and xtend compiler failes
+                 if xtend-gen is not empty normally xtend compiler should run in generate-sources phase -->
+            <phase>process-sources</phase>
           </execution>
         </executions>
       </plugin>
