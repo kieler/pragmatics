@@ -487,14 +487,16 @@ public class SWTGraphics2D extends Graphics2D {
     // SUPPORT METHODS
     // /////////////////////////////
 
+    private static final double[] MATRIX_BUFFER = new double[6];
+    
     /**
      * Updates the SWT transform instance such that it matches AWTs counterpart.
      */
     private void updateSWTTransform() {
-        final double[] m = new double[6];
-        transform.getMatrix(m);
-        swtTransform.setElements((float) m[0], (float) m[1], (float) m[2], (float) m[3],
-                (float) m[4], (float) m[5]);
+        transform.getMatrix(MATRIX_BUFFER);
+        swtTransform.setElements((float) MATRIX_BUFFER[0], (float) MATRIX_BUFFER[1],
+                (float) MATRIX_BUFFER[2], (float) MATRIX_BUFFER[3], (float) MATRIX_BUFFER[4],
+                (float) MATRIX_BUFFER[5]);
     }
 
     /**
@@ -747,6 +749,8 @@ public class SWTGraphics2D extends Graphics2D {
      *            whether a background should be painted behind the text
      */
     public void drawString(final String str, final int x, final int y, final boolean isTransparent) {
+        // FIXME this is a workaround for Eclipse Bug 335769
+        gc.getGCData().state |= 1 << 9;
         gc.setTransform(swtTransform);
         gc.drawString(str, x, y, isTransparent);
         gc.setTransform(null);
@@ -861,6 +865,8 @@ public class SWTGraphics2D extends Graphics2D {
      *            flags to apply to the string as defined by SWT
      */
     public void drawText(final String str, final int x, final int y, final int flags) {
+        // FIXME this is a workaround for Eclipse Bug 335769
+        gc.getGCData().state |= 1 << 9;
         gc.setTransform(swtTransform);
         gc.drawText(str, x, y, flags);
         gc.setTransform(null);
@@ -1155,6 +1161,8 @@ public class SWTGraphics2D extends Graphics2D {
     public void drawPath(final Path p) {
         gc.setLineWidth((int) lineWidth);
         gc.setTransform(swtTransform);
+        // FIXME this is a workaround for Eclipse Bug 335769
+        gc.getGCData().state |= 1 << 9;
         gc.drawPath(p);
         gc.setTransform(null);
     }
@@ -1167,6 +1175,8 @@ public class SWTGraphics2D extends Graphics2D {
      */
     public void fillPath(final Path p) {
         gc.setTransform(swtTransform);
+        // FIXME this is a workaround for Eclipse Bug 335769
+        gc.getGCData().state |= 1 << 9;
         gc.fillPath(p);
         gc.setTransform(null);
     }
