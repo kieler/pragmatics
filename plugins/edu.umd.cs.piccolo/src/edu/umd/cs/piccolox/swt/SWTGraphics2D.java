@@ -75,6 +75,7 @@ import org.eclipse.swt.graphics.Transform;
  * 
  * There is an outstanding SWT bug request #33319 for more efficient polyline/polygon rendering
  * methods. It also appears that most of the code below could be made obselete by bug fix #6490
+ * (wrong bug?)
  * 
  * A lot of this may also be duplicated in GEF - the eclipse Graphical Editor Framework
  * 
