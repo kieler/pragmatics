@@ -409,10 +409,10 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
             IContributionItem item = items[i];
             int oldItemCount = parent.getItemCount();
             if (item.isVisible()) {
-                try{
-                	item.fill(parent, myIndex);
-                }catch(java.lang.RuntimeException e){
-                	System.out.println(e.getMessage());
+                try {
+                    item.fill(parent, myIndex);
+                } catch (java.lang.RuntimeException e) {
+                    System.out.println(e.getMessage());
                 }
             }
             int newItemCount = parent.getItemCount();
@@ -423,8 +423,13 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
     
     private static boolean softUpdate = false;
     
-    public static void setSoftUpdate(boolean _softUpdate) {
-        softUpdate = _softUpdate;
+    /**
+     * Activate or deactivate soft update.
+     * 
+     * @param softUpdate whether soft update is active
+     */
+    public static void setSoftUpdate(final boolean softUpdate) {
+        KSBasEContributionItem.softUpdate = softUpdate;
     }
 
 }
