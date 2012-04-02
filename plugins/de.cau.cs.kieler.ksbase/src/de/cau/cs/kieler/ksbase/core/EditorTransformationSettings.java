@@ -165,7 +165,7 @@ public class EditorTransformationSettings implements Serializable {
      * @param contribution
      *            The contribution to append to the list of menu contributions.
      */
-    public final void addMenuContribution(final KSBasEMenuContribution contribution) {
+    public final void addMenuContribution(final KSBasEMenuContribution contribution) { // NO_UCD
         if (contribution != null) {
             this.menuContributions.add(contribution);
         }
@@ -548,8 +548,8 @@ public class EditorTransformationSettings implements Serializable {
         return hash;
     }
 
-    public void addTransformationClass(Object classObject) {
-
+    public void addTransformationClass(final Object classObject) {
+       transformationClasses.add(classObject);
     }
 
     /**
