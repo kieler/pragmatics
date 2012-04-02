@@ -31,7 +31,6 @@ import org.eclipse.core.internal.expressions.WithExpression;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.bindings.Binding;
-import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.actions.CompoundContributionItem;
@@ -110,10 +109,8 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
 
     // dunno how to get the formatter to make a linebreak here
     // CHECKSTYLEOFF MaximumLineLength
-    private static Map<String, IContributionItem> idButtonMap
-            = new HashMap<String, IContributionItem>();
-    private static Map<IContributionItem, ButtonHandler> buttonsHandlerMap
-            = new HashMap<IContributionItem, ButtonHandler>();
+    private static Map<String, IContributionItem> idButtonMap = new HashMap<String, IContributionItem>();
+    private static Map<IContributionItem, ButtonHandler> buttonsHandlerMap = new HashMap<IContributionItem, ButtonHandler>();
     private static Map<IContributionItem, ButtonHandler> oldButtonsHandlerMap;
     private static List<IContributionItem> buttons = new ArrayList<IContributionItem>();
 
@@ -124,10 +121,8 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
      * @author chsch
      */
     private enum InternalLocationScheme {
-        MENU,
-        POPUP,
-        TOOLBAR;
-        
+        MENU, POPUP, TOOLBAR;
+
         public boolean isContainedIn(final LocationScheme theLocation) {
             switch (this) {
             case MENU:
@@ -150,9 +145,9 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
             }
         }
     }
-    
+
     private InternalLocationScheme location;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -162,7 +157,7 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
         this.menuService = (InternalMenuService) serviceLocator.getService(IMenuService.class);
         this.evaluationService = (IEvaluationService) serviceLocator
                 .getService(IEvaluationService.class);
-        
+
         if (this.getId().endsWith("menu")) {
             this.location = InternalLocationScheme.MENU;
         } else if (this.getId().endsWith("popup")) {
@@ -202,14 +197,14 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
             // only create a button if the corresponding combination is active
             if (config.isSeparator()) {
                 if (this.location.isContainedIn(config.getLocationSchemeExpression())) {
-                    //unload(config.getId());
+                    // unload(config.getId());
                     Separator separator = new Separator();
-                    
+
                     separator.setId(config.getId());
                     idButtonMap.put(config.getId(), separator);
                     buttonsHandlerMap.put(separator, new ButtonHandler());
                     buttons.add(separator);
-                    
+
                     Expression visibilityExpression = null;
                     // specify visibility for active editors
                     if (config.getActiveEditors() != null && config.getActiveEditors().length > 0) {
@@ -235,114 +230,108 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
                         }
                     }
                     if (visibilityExpression != null) {
-                        menuService.registerVisibleWhen(separator, visibilityExpression, null, null);
+                        menuService
+                                .registerVisibleWhen(separator, visibilityExpression, null, null);
                     }
-                    
+
                 }
             } else {
-                
-            if (config.getResponsiveCombination().isActive()
-                    && this.location.isContainedIn(config.getLocationSchemeExpression())) {
-                
-                
-                // get a command and register the Kivi ButtonHandler for it
-                Command cmd = commandService.getCommand(config.getId());
-                Category category = commandService.getCategory("de.cau.cs.kieler");
-                IParameter[] params = {};
-                cmd.define(config.getLabel(), null, category, params);
-                // define a Handler for the command
-                ButtonHandler buttonHandler = new ButtonHandler();
-                cmd.setHandler(buttonHandler);
 
-                //System.out.println("Created command " + cmd.getId() + " " + cmd.isDefined());
-                // now specify the button
-                CommandContributionItemParameter parameter = new CommandContributionItemParameter(
-                        serviceLocator, config.getId(), config.getId(),
-                        new HashMap<String, String>(), config.getIcon(), null, null,
-                        config.getLabel(), null, config.getTooltip(), config.getStyle(), null,
-                        false);
-                // this is the button
-                IContributionItem item;
-                item = new CommandContributionItem(parameter);
-                
-                //bind keysequence to command
-                if (config.getKeySequence() != null) {
-                    BindingService bindingService = 
-                            (BindingService) Workbench.getInstance().getService(IBindingService.class);
-                    ParameterizedCommand pc = ((CommandContributionItem) item).getCommand();
-                    if (config.getShortcutContext() == null) {
-                        TriggerSequence[] oldBindings = bindingService.getActiveBindingsFor(pc.getId());
-                        if (oldBindings != null && oldBindings.length == 0) {
-                            bindingService.addBinding(new KeyBinding(
-                                    config.getKeySequence(),
-                                    pc,
-                                    bindingService.getActiveScheme().getId(),
-                                    IContextService.CONTEXT_ID_WINDOW,
-                                    null,
-                                    null,
-                                    null,
-                                    Binding.USER));
-                        }
-                    } else {
-                        TriggerSequence[] oldBindings = bindingService.getActiveBindingsFor(pc.getId());
-                        if (oldBindings != null && oldBindings.length == 0) {
-                            bindingService.addBinding(new KeyBinding(
-                                    config.getKeySequence(),
-                                    pc,
-                                    bindingService.getActiveScheme().getId(),
-                                    config.getShortcutContext(),
-                                    null,
-                                    null,
-                                    null,
-                                    Binding.USER));
+                if (config.getResponsiveCombination().isActive()
+                        && this.location.isContainedIn(config.getLocationSchemeExpression())) {
+
+                    // get a command and register the Kivi ButtonHandler for it
+                    Command cmd = commandService.getCommand(config.getId());
+                    Category category = commandService.getCategory("de.cau.cs.kieler");
+                    IParameter[] params = {};
+                    cmd.define(config.getLabel(), null, category, params);
+                    // define a Handler for the command
+                    ButtonHandler buttonHandler = new ButtonHandler();
+                    cmd.setHandler(buttonHandler);
+
+                    // System.out.println("Created command " + cmd.getId() + " " + cmd.isDefined());
+                    // now specify the button
+                    CommandContributionItemParameter parameter = new CommandContributionItemParameter(
+                            serviceLocator, config.getId(), config.getId(),
+                            new HashMap<String, String>(), config.getIcon(), null, null,
+                            config.getLabel(), null, config.getTooltip(), config.getStyle(), null,
+                            false);
+                    // this is the button
+                    IContributionItem item;
+                    item = new CommandContributionItem(parameter);
+
+                    // bind keysequence to command
+                    if (config.getKeySequence() != null) {
+                        BindingService bindingService = (BindingService) Workbench.getInstance()
+                                .getService(IBindingService.class);
+                        ParameterizedCommand pc = ((CommandContributionItem) item).getCommand();
+                        if (config.getShortcutContext() == null) {
+                            // TriggerSequence[] oldBindings =
+                            // bindingService.getActiveBindingsFor(pc);
+                            // if (oldBindings != null && oldBindings.length == 0) {
+                            if (bindingService.getConflictsFor(config.getKeySequence()) == null) {
+                                bindingService.addBinding(new KeyBinding(config.getKeySequence(),
+                                        pc, bindingService.getActiveScheme().getId(),
+                                        IContextService.CONTEXT_ID_WINDOW, null, null, null,
+                                        Binding.USER));
+                            }
+                        } else {
+                            // TriggerSequence[] oldBindings =
+                            // bindingService.getActiveBindingsFor(pc);
+                            // if (oldBindings != null && oldBindings.length == 0) {
+                            if (bindingService.getConflictsFor(config.getKeySequence()) == null) {
+                                bindingService.addBinding(new KeyBinding(config.getKeySequence(),
+                                        pc, bindingService.getActiveScheme().getId(), config
+                                                .getShortcutContext(), null, null, null,
+                                        Binding.USER));
+                            }
                         }
                     }
-                }
-                
-                //deactivate the old button if it exists
-                unload(config.getId());
-                // remember some relations between button, its handler and the
-                // corresponding configuration
-                idButtonMap.put(config.getId(), item);
-                buttonsHandlerMap.put(item, buttonHandler);
-                buttons.add(item);
 
-                // specify visibility
-                Expression visibilityExpression = null;
-                // specify visibility for active editors
-                if (config.getActiveEditors() != null && config.getActiveEditors().length > 0) {
-                    CompositeExpression or = new OrExpression();
-                    visibilityExpression = or;
-                    for (String editorId : config.getActiveEditors()) {
-                        CompositeExpression with = new WithExpression("activeEditorId");
-                        Expression equals = new EqualsExpression(editorId);
-                        with.add(equals);
-                        or.add(with);
+                    // deactivate the old button if it exists
+                    unload(config.getId());
+                    // remember some relations between button, its handler and the
+                    // corresponding configuration
+                    idButtonMap.put(config.getId(), item);
+                    buttonsHandlerMap.put(item, buttonHandler);
+                    buttons.add(item);
+
+                    // specify visibility
+                    Expression visibilityExpression = null;
+                    // specify visibility for active editors
+                    if (config.getActiveEditors() != null && config.getActiveEditors().length > 0) {
+                        CompositeExpression or = new OrExpression();
+                        visibilityExpression = or;
+                        for (String editorId : config.getActiveEditors()) {
+                            CompositeExpression with = new WithExpression("activeEditorId");
+                            Expression equals = new EqualsExpression(editorId);
+                            with.add(equals);
+                            or.add(with);
+                        }
                     }
-                }
-                // specify visibility for a given core expression
-                if (config.getVisibilityExpression() != null) {
-                    if (visibilityExpression == null) {
-                        visibilityExpression = config.getVisibilityExpression();
-                    } else {
-                        // there are some active editor specifications already
-                        CompositeExpression and = new AndExpression();
-                        and.add(visibilityExpression);
-                        and.add(config.getVisibilityExpression());
-                        visibilityExpression = and;
+                    // specify visibility for a given core expression
+                    if (config.getVisibilityExpression() != null) {
+                        if (visibilityExpression == null) {
+                            visibilityExpression = config.getVisibilityExpression();
+                        } else {
+                            // there are some active editor specifications already
+                            CompositeExpression and = new AndExpression();
+                            and.add(visibilityExpression);
+                            and.add(config.getVisibilityExpression());
+                            visibilityExpression = and;
+                        }
                     }
+                    if (visibilityExpression != null) {
+                        menuService.registerVisibleWhen(item, visibilityExpression, null, null);
+                    }
+
+                    // if (!config.getResponsiveCombination().isActive()) {
+                    // item.setVisible(false);
+                    // } else {
+                    // item.setVisible(true);
+                    // }
                 }
-                if (visibilityExpression != null) {
-                    menuService.registerVisibleWhen(item, visibilityExpression, null, null);
-                }
-                
-                // if (!config.getResponsiveCombination().isActive()) {
-                // item.setVisible(false);
-                // } else {
-                // item.setVisible(true);
-                // }
             }
-        }
         }
         // request evaluation of all visibility expressions registered for a certain
         // variable. This must be done to show buttons also from the beginning,
@@ -375,11 +364,12 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
             }
         }
     }
-    
+
     /**
      * Unload old buttons, i.e. send a not-pushed trigger if it was pushed before.
      * 
-     * @param buttonID the button identifier
+     * @param buttonID
+     *            the button identifier
      */
     private static void unload(final String buttonID) {
         if (!softUpdate) {
@@ -403,7 +393,7 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
         if (myIndex == -1) {
             myIndex = parent.getItemCount();
         }
-        
+
         IContributionItem[] items = getContributionItems();
         for (int i = 0; i < items.length; i++) {
             IContributionItem item = items[i];
@@ -420,13 +410,14 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
             myIndex += numAdded;
         }
     }
-    
+
     private static boolean softUpdate = false;
-    
+
     /**
      * Activate or deactivate soft update.
      * 
-     * @param softUpdate whether soft update is active
+     * @param softUpdate
+     *            whether soft update is active
      */
     public static void setSoftUpdate(final boolean softUpdate) {
         KSBasEContributionItem.softUpdate = softUpdate;
