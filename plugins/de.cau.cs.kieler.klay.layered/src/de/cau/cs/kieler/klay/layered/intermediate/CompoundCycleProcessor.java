@@ -232,7 +232,9 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                 }
             }
         }
+        
         reverseCyclicEdges(layeredGraph, cycleRemovalGraph);
+        
         int toDescendantSize = toDescendantEdges.size();
         for (int i = 0; i < toDescendantSize; i++) {
             LEdge edge = toDescendantEdges.get(i);
@@ -245,7 +247,7 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                 edge.reverse(true);
             }
         }
-
+       
         getMonitor().done();
     }
 
@@ -317,7 +319,19 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
             }
         }
 
+//        for(LEdge ledge: edgesToReverse){
+//        	LNode target = ledge.getTarget().getNode();
+//        	LNode source = ledge.getSource().getNode();
+//        	LEdge test = ledge;
+//        }
+        
         reverseEdges(edgesToReverse, layeredGraph);
+        
+//        for(LEdge ledge: edgesToReverse){
+//        	LNode target = ledge.getTarget().getNode();
+//        	LNode source = ledge.getSource().getNode();
+//        	LEdge test = ledge;
+//        }
     }
 
     /**
@@ -340,11 +354,12 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
             LPort newSource = edge.getTarget();
             LPort newTarget = edge.getSource();
 
-            if (sourceNodeType != NodeType.NORMAL) {
+            // Änderung
+            if (targetNodeType != NodeType.NORMAL) {
                 newSource = getOppositePort(target, layeredGraph);
             }
 
-            if (targetNodeType != NodeType.NORMAL) {
+            if (sourceNodeType != NodeType.NORMAL) {
                 newTarget = getOppositePort(source, layeredGraph);
             }
 
