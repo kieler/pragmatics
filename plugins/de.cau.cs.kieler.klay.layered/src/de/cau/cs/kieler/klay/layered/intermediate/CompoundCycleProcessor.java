@@ -232,9 +232,9 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                 }
             }
         }
-        
+
         reverseCyclicEdges(layeredGraph, cycleRemovalGraph);
-        
+
         int toDescendantSize = toDescendantEdges.size();
         for (int i = 0; i < toDescendantSize; i++) {
             LEdge edge = toDescendantEdges.get(i);
@@ -247,7 +247,7 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                 edge.reverse(true);
             }
         }
-       
+
         getMonitor().done();
     }
 
@@ -319,19 +319,19 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
             }
         }
 
-//        for(LEdge ledge: edgesToReverse){
-//        	LNode target = ledge.getTarget().getNode();
-//        	LNode source = ledge.getSource().getNode();
-//        	LEdge test = ledge;
-//        }
-        
+        // for(LEdge ledge: edgesToReverse){
+        // LNode target = ledge.getTarget().getNode();
+        // LNode source = ledge.getSource().getNode();
+        // LEdge test = ledge;
+        // }
+
         reverseEdges(edgesToReverse, layeredGraph);
-        
-//        for(LEdge ledge: edgesToReverse){
-//        	LNode target = ledge.getTarget().getNode();
-//        	LNode source = ledge.getSource().getNode();
-//        	LEdge test = ledge;
-//        }
+
+        // for(LEdge ledge: edgesToReverse){
+        // LNode target = ledge.getTarget().getNode();
+        // LNode source = ledge.getSource().getNode();
+        // LEdge test = ledge;
+        // }
     }
 
     /**

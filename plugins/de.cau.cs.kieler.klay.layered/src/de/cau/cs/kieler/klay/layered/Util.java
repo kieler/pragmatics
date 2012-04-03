@@ -172,13 +172,14 @@ public final class Util {
         LNode cChild = child;
         NodeType nodeTypeParent = parent.getProperty(Properties.NODE_TYPE);
         NodeType nodeTypeChild = child.getProperty(Properties.NODE_TYPE);
-        if ((nodeTypeParent != NodeType.NORMAL) && (nodeTypeParent != NodeType.UPPER_COMPOUND_BORDER)) {
+        if ((nodeTypeParent != NodeType.NORMAL)
+                && (nodeTypeParent != NodeType.UPPER_COMPOUND_BORDER)) {
             cParent = parent.getProperty(Properties.COMPOUND_NODE);
         }
         if ((nodeTypeChild != NodeType.NORMAL) && (nodeTypeChild != NodeType.UPPER_COMPOUND_BORDER)) {
             cChild = child.getProperty(Properties.COMPOUND_NODE);
         }
-       
+
         LNode current = cChild;
         LGraphElement currentParent = getParent(current);
         // Nodes that are directly contained by the layered graph carry it in their parent property.
@@ -233,7 +234,7 @@ public final class Util {
             return node.getProperty(Properties.COMPOUND_NODE).getProperty(Properties.CHILDREN);
         }
     }
-    
+
     /**
      * Get the compound node an LNode belongs to.
      * 
@@ -298,8 +299,19 @@ public final class Util {
                 // source and target
                 if (sourceNodeCompound == targetNodeCompound) {
                     retNode = sourceNodeCompound;
-                // if the edge is hierarchy-crossing, choose the compound node of the target
+                    // if the edge is hierarchy-crossing, choose the compound node of the target
                 } else {
+                    // LinkedList<LNode> sourceTargetList = new LinkedList<LNode>();
+                    // sourceTargetList.add(sourceNode);
+                    // sourceTargetList.add(targetNode);
+                    // propagatePair(sourceTargetList, elemMap);
+                    // LGraphElement container =
+                    // sourceTargetList.getFirst().getProperty(Properties.PARENT);
+                    // if (container instanceof LayeredGraph) {
+                    // retNode = null;
+                    // } else {
+                    // retNode = (LNode) container;
+                    // }
                     retNode = targetNodeCompound;
                 }
             }
@@ -328,7 +340,7 @@ public final class Util {
 
         return retNode;
     }
-    
+
     /**
      * Finds for a pair of LNodes the pair of ancestors with a common parent that is highest in
      * depth in the inclusion tree. Each of the ancestors may be the given node itself.
@@ -383,7 +395,7 @@ public final class Util {
         sourceTargetList.addFirst(newSource);
         sourceTargetList.addLast(newTarget);
     }
-    
+
     /**
      * Returns the KNode the given node is representing (in case of normal or compound dummy nodes)
      * or directly related to - port node in case of Port dummies, target node origin in case of

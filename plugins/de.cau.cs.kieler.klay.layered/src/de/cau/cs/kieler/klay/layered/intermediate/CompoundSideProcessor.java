@@ -81,7 +81,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
             Layer spanEnd = findSpanEnd(lnode, layers);
             int startIndex = lnode.getLayer().getIndex();
             int endIndex = spanEnd.getIndex();
-            insertSideDummies(startIndex, endIndex, layers, lnode, null, null);
+            insertSideDummies(startIndex, endIndex, layers, lnode, null, null, layeredGraph);
         }
         getMonitor().done();
     }
@@ -103,10 +103,11 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
      *            the edge to connect the side dummy node on top of the layer to.
      * @param upperConnector
      *            the edge to connect the side dummy node at the bottom of the layer to.
+     * @param layeredGraph
      */
     private void insertSideDummies(final int startIndex, final int endIndex,
             final List<Layer> layers, final LNode openingBorder, final LEdge lowerConnector,
-            final LEdge upperConnector) {
+            final LEdge upperConnector, final LayeredGraph layeredGraph) {
 
         // get the insets for origin of openingBorder
         KInsets insets = openingBorder.getProperty(Properties.ORIGINAL_INSETS);
@@ -117,8 +118,8 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
         Layer layer = layers.get(startIndex);
         List<LNode> layerNodes = layer.getNodes();
 
-        int lowerIndex = findUltimateIndex(layer, openingBorder, true);
-        int upperIndex = findUltimateIndex(layer, openingBorder, false);
+        int lowerIndex = findUltimateIndex(layer, openingBorder, true, layeredGraph);
+        int upperIndex = findUltimateIndex(layer, openingBorder, false, layeredGraph);
 
         // create lower side node (higher layer index)
         LNode lowerSideDummy = new LNode();
@@ -179,7 +180,8 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
             upperEdge.setSource(highPortEast);
 
             // handle next layer
-            insertSideDummies(startIndex + 1, endIndex, layers, openingBorder, lowerEdge, upperEdge);
+            insertSideDummies(startIndex + 1, endIndex, layers, openingBorder, lowerEdge,
+                    upperEdge, layeredGraph);
         }
     }
 
@@ -223,11 +225,12 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
      * @param lowerSide
      *            flag indicating, whether the highest (true) or lowest (false) ordered node is to
      *            be found.
+     * @param layeredGraph
      * @return returns the Node highest in the ordering of the layer among those representing the
      *         compoundNode or any of its descendants.
      */
     private int findUltimateIndex(final Layer layer, final LNode upperBorder,
-            final boolean lowerSide) {
+            final boolean lowerSide, final LayeredGraph layeredGraph) {
         List<LNode> nodes = layer.getNodes();
         KNode upperBorderOrigin = (KNode) upperBorder.getProperty(Properties.ORIGIN);
         int ret = 0;
@@ -247,9 +250,21 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
             if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
                 LNode sourceNode = lnode.getProperty(Properties.LONG_EDGE_SOURCE).getNode();
                 LNode targetNode = lnode.getProperty(Properties.LONG_EDGE_TARGET).getNode();
-                if ((Util.isDescendant(sourceNode, upperBorder))
-                        || (Util.isDescendant(targetNode, upperBorder))) {
-                    ret = compareIndex(lnode, ret, lowerSide);
+                // if (Util.getRelatedCompoundNode(lnode, layeredGraph) == upperBorder) {
+                // ret = compareIndex(lnode, ret, lowerSide);
+                // }
+
+                // following four lines original
+                if (sourceNode.getProperty(Properties.PARENT) == targetNode
+                        .getProperty(Properties.PARENT)) {
+                    if ((Util.isDescendant(sourceNode, upperBorder))
+                            || (Util.isDescendant(targetNode, upperBorder))) {
+                        ret = compareIndex(lnode, ret, lowerSide);
+                    }
+                } else {
+                    if (Util.isDescendant(targetNode, upperBorder)) {
+                        ret = compareIndex(lnode, ret, lowerSide);
+                    }
                 }
 
                 // Object origin = edge.getProperty(Properties.ORIGIN);
