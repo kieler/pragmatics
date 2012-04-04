@@ -17,6 +17,7 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -83,9 +84,16 @@ public class HierarchicalPortPositionProcessor extends AbstractAlgorithm impleme
         
         double graphHeight = layeredGraph.getActualSize().y;
         
-        // Iterate over external port dummies
+        // Iterate over the layer's nodes
         for (LNode node : layer) {
+            // We only care about external port dummies...
             if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
+                continue;
+            }
+            
+            // ...representing eastern or western ports.
+            PortSide extPortSide = node.getProperty(Properties.EXT_PORT_SIDE);
+            if (extPortSide != PortSide.EAST && extPortSide != PortSide.WEST) {
                 continue;
             }
             
