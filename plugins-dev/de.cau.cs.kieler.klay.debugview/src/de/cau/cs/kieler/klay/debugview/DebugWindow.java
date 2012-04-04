@@ -675,7 +675,7 @@ public class DebugWindow extends Window {
         
         // Browser
         colorKeyBrowser = new Browser(sashForm, SWT.BORDER);
-        colorKeyBrowser.setText(ColorKeyPage.getColorKeyText(colorKeyBrowser));
+        colorKeyBrowser.setText(LegendPage.getColorKeyText(colorKeyBrowser));
         
         // Set sash form weights
         sashForm.setWeights(new int[] {30, 50, 30});

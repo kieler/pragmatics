@@ -19,11 +19,11 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
- * Generates an HTML page that explains the color keys used for dummy nodes.
+ * Generates an HTML page that explains the node labels and the color keys used for dummy nodes.
  * 
  * @author cds
  */
-public final class ColorKeyPage {
+public final class LegendPage {
     /**
      * The initial capacity of the string builder used to build the HTML color key text.
      */
@@ -38,13 +38,13 @@ public final class ColorKeyPage {
     /**
      * This class doesn't need to be instantiated.
      */
-    private ColorKeyPage() {
+    private LegendPage() {
         // Private constructor.
     }
     
     
     /**
-     * Returns an HTML text that explains the color keys.
+     * Returns an HTML text that explains the drawings.
      * 
      * @param control a control used to find system fonts.
      * @return the HTML text.
@@ -80,7 +80,17 @@ public final class ColorKeyPage {
         sb.append(".bordered {border:1px solid #666666;} "); //$NON-NLS-1$
         sb.append(" --></style></head><body>"); //$NON-NLS-1$
         
-        // Introductory text
+        // LEGEND
+        sb.append("<h1>"); //$NON-NLS-1$
+        sb.append(Messages.LegendPage_NodeLabels_Heading);
+        sb.append("</h1><p>"); //$NON-NLS-1$
+        sb.append(Messages.LegendPage_NodeLabels_Text);
+        sb.append("</p>"); //$NON-NLS-1$
+        sb.append("<pre>"); //$NON-NLS-1$
+        sb.append(Messages.LegendPage_NodeLabels_Pattern);
+        sb.append("</pre>"); //$NON-NLS-1$
+        
+        // COLOR KEYS
         sb.append("<h1>"); //$NON-NLS-1$
         sb.append(Messages.ColorKeyPage_Heading);
         sb.append("</h1><p>"); //$NON-NLS-1$
