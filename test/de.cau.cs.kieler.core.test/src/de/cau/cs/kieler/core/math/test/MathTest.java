@@ -38,12 +38,11 @@ public class MathTest {
      */
 
     /** Tests some valid combinations of Factl from kielerMath class. */
-    @SuppressWarnings("static-access")
     @Test
     public void testFactl() {
-        assertEquals(kielerMath.factl(0), 1);
-        assertEquals(kielerMath.factl(1), 1);
-        assertEquals(kielerMath.factl(20), 2432902008176640000L);
+        assertEquals(KielerMath.factl(0), 1);
+        assertEquals(KielerMath.factl(1), 1);
+        assertEquals(KielerMath.factl(20), 2432902008176640000L);
 
     }
 
