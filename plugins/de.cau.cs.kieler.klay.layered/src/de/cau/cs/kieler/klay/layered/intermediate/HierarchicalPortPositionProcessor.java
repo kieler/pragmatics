@@ -59,8 +59,13 @@ public class HierarchicalPortPositionProcessor extends AbstractAlgorithm impleme
         
         List<Layer> layers = layeredGraph.getLayers();
         
-        if (!layers.isEmpty()) {
+        // We're interested in EAST and WEST external port dummies only; since they can only be in
+        // the first or last layer, only fix coordinates of nodes in those two layers
+        if (layers.size() > 0) {
             fixCoordinates(layers.get(0), layeredGraph);
+        }
+        
+        if (layers.size() > 1) {
             fixCoordinates(layers.get(layers.size() - 1), layeredGraph);
         }
         
@@ -99,12 +104,12 @@ public class HierarchicalPortPositionProcessor extends AbstractAlgorithm impleme
             
             double finalYCoordinate = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
             
-            // Depending on the port constraints applying to external ports, the coordinate
-            // needs some fixing up
             if (portConstraints == PortConstraints.FIXED_RATIO) {
+                // finalYCoordinate is a ratio that must be multiplied with the graph's height
                 finalYCoordinate *= graphHeight;
             }
-            
+
+            // Apply the node's new Y coordinate
             node.getPosition().y = finalYCoordinate;
             node.borderToContentAreaCoordinates(false, true);
         }

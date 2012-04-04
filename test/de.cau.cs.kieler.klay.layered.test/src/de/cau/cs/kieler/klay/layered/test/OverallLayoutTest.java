@@ -42,6 +42,8 @@ import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
  */
 public class OverallLayoutTest {
     
+    // TODO: Add a test to check whether node sizes suffice to hold their ports.
+    
     /**
      * Create a simple test graph. The graph has at least two nodes and an edge, the nodes have
      * predefined sizes with fixed size constraint, but neither nodes nor edges have predefined

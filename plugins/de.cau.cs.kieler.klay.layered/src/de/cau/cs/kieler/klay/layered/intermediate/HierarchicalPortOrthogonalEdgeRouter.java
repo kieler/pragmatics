@@ -658,6 +658,10 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
         KVector offset = graph.getOffset();
         KVector graphActualSize = graph.getActualSize();
         
+        double newActualGraphHeight = graphActualSize.y;
+        
+        // During the first iteration, EAST and WEST dummy nodes are fixed. This may change the height
+        // of the graph, so we're setting y coordinates of NORTH and SOUTH dummies in a second iteration
         for (LNode node : layer) {
             if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
                 // We're only looking for hierarchical port dummies
@@ -665,6 +669,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             }
             
             PortSide extPortSide = node.getProperty(Properties.EXT_PORT_SIDE);
+            KVector extPortSize = node.getProperty(Properties.EXT_PORT_SIZE);
             KVector nodePosition = node.getPosition();
             
             // Set x coordinate
@@ -679,19 +684,42 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             }
             
             // Set y coordinate
+            double requiredActualGraphHeight = 0.0;
+            
             switch (extPortSide) {
             case EAST:
             case WEST:
-                if (constraints.isRatioFixed()) {
+                if (constraints == PortConstraints.FIXED_RATIO) {
                     double ratio = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
                     nodePosition.y = graphActualSize.y * ratio;
+                    requiredActualGraphHeight = nodePosition.y + extPortSize.y;
                     node.borderToContentAreaCoordinates(false, true);
-                } else if (constraints.isPosFixed()) {
+                } else if (constraints == PortConstraints.FIXED_POS) {
                     nodePosition.y = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
+                    requiredActualGraphHeight = nodePosition.y + extPortSize.y;
                     node.borderToContentAreaCoordinates(false, true);
                 }
                 break;
+            }
             
+            newActualGraphHeight = Math.max(newActualGraphHeight, requiredActualGraphHeight);
+        }
+        
+        // Make the graph larger, if necessary
+        graph.getSize().y += newActualGraphHeight - graphActualSize.y;
+        
+        // Iterate over NORTH and SOUTH dummies now that the graph's height is fixed
+        for (LNode node : layer) {
+            if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
+                // We're only looking for hierarchical port dummies
+                continue;
+            }
+            
+            PortSide extPortSide = node.getProperty(Properties.EXT_PORT_SIDE);
+            KVector nodePosition = node.getPosition();
+            
+            // Set y coordinate
+            switch (extPortSide) {
             case NORTH:
                 nodePosition.y = -offset.y - borderSpacing - insets.top;
                 break;
