@@ -1,5 +1,5 @@
 /*
- * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+a * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
@@ -36,7 +36,6 @@ public class ComponentGroupTest {
     public void testValidConstraints() {
         // Add two N, E, W, S, and C components each to a single compound group
         ComponentGroup group = new ComponentGroup();
-        
         assertTrue(group.add(generateGraph(ComponentGroup.CONN_N)));
         assertTrue(group.add(generateGraph(ComponentGroup.CONN_N)));
         assertTrue(group.add(generateGraph(ComponentGroup.CONN_S)));
@@ -50,7 +49,6 @@ public class ComponentGroupTest {
         
         // Add a horizontal and two E, W, and C components each to a single compound group
         group = new ComponentGroup();
-        
         assertTrue(group.add(generateGraph(ComponentGroup.CONN_WE)));
         assertTrue(group.add(generateGraph(ComponentGroup.CONN_WE)));
         assertTrue(group.add(generateGraph(ComponentGroup.CONN_W)));
@@ -62,7 +60,6 @@ public class ComponentGroupTest {
         
         // Add a vertical and two N, S, and C components each to a single compound group
         group = new ComponentGroup();
-
         assertTrue(group.add(generateGraph(ComponentGroup.CONN_NS)));
         assertTrue(group.add(generateGraph(ComponentGroup.CONN_NS)));
         assertTrue(group.add(generateGraph(ComponentGroup.CONN_N)));
@@ -71,8 +68,6 @@ public class ComponentGroupTest {
         assertTrue(group.add(generateGraph(ComponentGroup.CONN_S)));
         assertTrue(group.add(generateGraph(ComponentGroup.CONN_C)));
         assertTrue(group.add(generateGraph(ComponentGroup.CONN_C)));
-        
-        // TODO: Add more test cases.
     }
     
     /**
@@ -82,7 +77,6 @@ public class ComponentGroupTest {
     public void testInvalidConstraints() {
         // Add a horizontal and a vertical component to a single component group
         ComponentGroup group = new ComponentGroup();
-
         assertTrue(group.add(generateGraph(ComponentGroup.CONN_WE)));
         assertFalse(group.add(generateGraph(ComponentGroup.CONN_NS)));
         assertFalse(group.add(generateGraph(ComponentGroup.CONN_WNS)));
@@ -90,13 +84,21 @@ public class ComponentGroupTest {
         
         // Do the reverse
         group = new ComponentGroup();
-
         assertTrue(group.add(generateGraph(ComponentGroup.CONN_NS)));
         assertFalse(group.add(generateGraph(ComponentGroup.CONN_WE)));
         assertFalse(group.add(generateGraph(ComponentGroup.CONN_NWE)));
         assertFalse(group.add(generateGraph(ComponentGroup.CONN_SWE)));
         
-        // TODO: Add more test cases.
+        // Add graphs to each corner
+        group = new ComponentGroup();
+        assertTrue(group.add(generateGraph(ComponentGroup.CONN_NW)));
+        assertTrue(group.add(generateGraph(ComponentGroup.CONN_NE)));
+        assertTrue(group.add(generateGraph(ComponentGroup.CONN_SW)));
+        assertTrue(group.add(generateGraph(ComponentGroup.CONN_SE)));
+        assertFalse(group.add(generateGraph(ComponentGroup.CONN_ENS)));
+        assertFalse(group.add(generateGraph(ComponentGroup.CONN_NWE)));
+        assertFalse(group.add(generateGraph(ComponentGroup.CONN_SWE)));
+        assertFalse(group.add(generateGraph(ComponentGroup.CONN_WNS)));
     }
     
     
