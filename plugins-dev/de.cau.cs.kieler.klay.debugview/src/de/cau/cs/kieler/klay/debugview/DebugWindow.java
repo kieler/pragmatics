@@ -65,8 +65,7 @@ import de.cau.cs.kieler.core.ui.util.DragDropScrollHandler;
 
 /**
  * The debug window houses controls that allow the user to inspect the debug output
- * produced by Klay Layered. This could at some point also support zooming, but that's
- * not implemented yet.
+ * produced by Klay Layered.
  * 
  * @author cds
  */
