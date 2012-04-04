@@ -48,22 +48,29 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
      * Creates a dummy for an external port. The dummy will have just one port. The port is on
      * the eastern side for western external ports, and on the western side for all other ports.
      * 
-     * <p>The returned dummy node is decorated with some properties. Its {@link Properties#NODE_TYPE}
-     * is set to {@link NodeType#EXTERNAL_PORT}. Its {@link Properties#ORIGIN} is set
-     * to the external port object. The {@link LayoutOptions#PORT_CONSTRAINTS} are set to
-     * {@link PortConstraints#FIXED_POS}. For western and eastern port dummies, the
-     * {@link Properties#LAYER_CONSTRAINT} is set to{@link LayerConstraint#FIRST_SEPARATE}
-     * and {@link LayerConstraint#LAST_SEPARATE}, respectively. For northern and southern
-     * port dummies, the {@link Properties#IN_LAYER_CONSTRAINT} is set to
-     * {@link InLayerConstraint#TOP} and {@link InLayerConstraint#BOTTOM},
-     * respectively. For eastern dummies, the {@link Properties#EDGE_CONSTRAINT} is set to
-     * {@link EdgeConstraint#OUTGOING_ONLY}; for all other dummies, it is set to
-     * {@link EdgeConstraint#INCOMING_ONLY}. {@link Properties#EXT_PORT_SIDE} is
-     * set to the side of the external port represented. If the port constraints of the original
-     * port's node are set to {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS},
-     * the dummy node's {@link Properties#EXT_PORT_RATIO_OR_POSITION} property is set to the port's
-     * original position, defined relative to the original node's origin. (as opposed to relative to
-     * the node's content area)</p>
+     * <p>The returned dummy node is decorated with some properties:</p>
+     * <ul>
+     *   <li>Its {@link Properties#NODE_TYPE} is set to {@link NodeType#EXTERNAL_PORT}.</li>
+     *   <li>Its {@link Properties#ORIGIN} is set to the external port object.</li>
+     *   <li>The {@link LayoutOptions#PORT_CONSTRAINTS} are set to
+     *     {@link PortConstraints#FIXED_POS}.</li>
+     *   <li>For western and eastern port dummies, the {@link Properties#LAYER_CONSTRAINT} is set to
+     *     {@link LayerConstraint#FIRST_SEPARATE} and {@link LayerConstraint#LAST_SEPARATE},
+     *     respectively.</li>
+     *   <li>For northern and southern port dummies, the {@link Properties#IN_LAYER_CONSTRAINT} is set to
+     *     {@link InLayerConstraint#TOP} and {@link InLayerConstraint#BOTTOM}, respectively.</li>
+     *   <li>For eastern dummies, the {@link Properties#EDGE_CONSTRAINT} is set to
+     *     {@link EdgeConstraint#OUTGOING_ONLY}; for all other dummies, it is set to
+     *     {@link EdgeConstraint#INCOMING_ONLY}.</li>
+     *   <li>{@link Properties#EXT_PORT_SIDE} is set to the side of the external port represented.</li>
+     *   <li>If the port constraints of the original port's node are set to
+     *     {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS}, the dummy node's
+     *     {@link Properties#EXT_PORT_RATIO_OR_POSITION} property is set to the port's original position,
+     *     defined relative to the original node's origin. (as opposed to relative to the node's content
+     *     area)</li>
+     *   <li>The {@link Properties#EXT_PORT_SIZE} property is set to the size of the external port the
+     *     the dummy represents, while the size of the dummy itself is set to {@code (0, 0)}.</li>
+     * </ul>
      * 
      * @param port the port object the dummy will represent.
      * @param portConstraints constraints for external ports.
@@ -88,6 +95,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         LNode dummy = new LNode();
         dummy.setProperty(Properties.NODE_TYPE, NodeType.EXTERNAL_PORT);
         dummy.setProperty(Properties.ORIGIN, port);
+        dummy.setProperty(Properties.EXT_PORT_SIZE, portSize);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         
         LPort dummyPort = new LPort();
