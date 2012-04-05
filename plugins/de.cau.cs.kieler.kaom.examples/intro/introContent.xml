@@ -2,12 +2,12 @@
 	  <extensionContent
         id="de.cau.cs.kieler.intro.kaom"
         name="KAOM Quick Start"
-        path="samples/@de.cau.cs.kieler.intro.samples/group/quickstarts/quickstarts.anchor">
+        path="samples/@de.cau.cs.kieler.intro.samples/quickstarts/quickstarts.anchor">
 
         <link
             label="KAOM Quick Start"
             url="http://org.eclipse.ui.intro/runAction?pluginId=de.cau.cs.kieler.kex.ui&amp;class=de.cau.cs.kieler.kex.ui.actions.QuickStartAction&amp;id=de.cau.cs.kieler.kex.ui&amp;exampleId=de.cau.cs.kieler.kaom.ramp_add&amp;sourceType=KIELER&amp;projectName=kaom_quickstart"
-            id="kaom-quick-start"
+            id="kieler-samples-link"
             style-id="content-link">
 			<text>Creates a project with the KAOM standard example "rampAdd".</text>
         </link>
