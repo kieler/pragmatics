@@ -76,19 +76,19 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 public abstract class OgdfLayouter {
 
     /** default value for border spacing. */
-    public static final float DEF_BORDER_SPACING = 15;
+    public static final float DEF_BORDER_SPACING = 15.0f;
 
-    /** default value for label edge distance. */
-    public static final float DEF_LABEL_EDGE_DIST = 15.0f;
     /** label edge distance property. */
     public static final IProperty<Float> LABEL_EDGE_DIST = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance", DEF_LABEL_EDGE_DIST);
+            "de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance", 15.0f);
 
-    /** default value for label margin distance. */
-    public static final float DEF_LABEL_MARGIN_DIST = 15.0f;
     /** label margin distance property. */
     public static final IProperty<Float> LABEL_MARGIN_DIST = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance", DEF_LABEL_MARGIN_DIST);
+            "de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance", 15.0f);
+    
+    /** label placement property. */
+    public static final IProperty<Boolean> PLACE_LABELS = new Property<Boolean>(
+            "de.cau.cs.kieler.kiml.ogdf.option.placeLabels", true);
 
     /** the ogdf server option for the layouter. */
     private static final String OGDF_OPTION_LAYOUTER = "layouter";
@@ -280,13 +280,13 @@ public abstract class OgdfLayouter {
         // edgeDistance
         float edgeDistance = parentLayout.getProperty(LABEL_EDGE_DIST);
         if (edgeDistance < 0) {
-            edgeDistance = DEF_LABEL_EDGE_DIST;
+            edgeDistance = LABEL_EDGE_DIST.getDefault();
         }
         addOption(OgdfServer.OPTION_LABEL_EDGE_DISTANCE, edgeDistance);
         // marginDistance
         float marginDistance = parentLayout.getProperty(LABEL_MARGIN_DIST);
         if (marginDistance < 0) {
-            marginDistance = DEF_LABEL_MARGIN_DIST;
+            marginDistance = LABEL_MARGIN_DIST.getDefault();
         }
         addOption(OgdfServer.OPTION_LABEL_MARGIN_DISTANCE, marginDistance);
     }
@@ -534,6 +534,7 @@ public abstract class OgdfLayouter {
             }
         }
         // apply edge layout
+        boolean processLabels = parentNodeLayout.getProperty(PLACE_LABELS);
         for (Map.Entry<String, KEdge> entry : id2EdgeMap.entrySet()) {
             KEdge kedge = entry.getValue();
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
@@ -560,37 +561,39 @@ public abstract class OgdfLayouter {
                 }
             }
             // set label layout
-            boolean makeMult1 = false, makeMult2 = false;
-            for (KLabel label : kedge.getLabels()) {
-                KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-                EdgeLabelPlacement placement =
-                        labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
-                int labelType = OgdfServer.LABEL_TYPE_NAME;
-                switch (placement) {
-                case HEAD:
-                    if (makeMult2) {
-                        labelType = OgdfServer.LABEL_TYPE_MULT2;
-                    } else {
-                        labelType = OgdfServer.LABEL_TYPE_END2;
+            if (processLabels) {
+                boolean makeMult1 = false, makeMult2 = false;
+                for (KLabel label : kedge.getLabels()) {
+                    KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                    EdgeLabelPlacement placement =
+                            labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+                    int labelType = OgdfServer.LABEL_TYPE_NAME;
+                    switch (placement) {
+                    case HEAD:
+                        if (makeMult2) {
+                            labelType = OgdfServer.LABEL_TYPE_MULT2;
+                        } else {
+                            labelType = OgdfServer.LABEL_TYPE_END2;
+                        }
+                        makeMult2 = !makeMult2;
+                        break;
+                    case TAIL:
+                        if (makeMult1) {
+                            labelType = OgdfServer.LABEL_TYPE_MULT1;
+                        } else {
+                            labelType = OgdfServer.LABEL_TYPE_END1;
+                        }
+                        makeMult1 = !makeMult1;
+                        break;
                     }
-                    makeMult2 = !makeMult2;
-                    break;
-                case TAIL:
-                    if (makeMult1) {
-                        labelType = OgdfServer.LABEL_TYPE_MULT1;
-                    } else {
-                        labelType = OgdfServer.LABEL_TYPE_END1;
+                    KVectorChain ogdfLabelLayout =
+                            layoutInformation.get(entry.getKey() + OgdfServer.EDGE_LABEL_SUFFIX
+                                    + labelType);
+                    if (ogdfLabelLayout != null && ogdfLabelLayout.size() > 0) {
+                        KVector labelPos = ogdfLabelLayout.getFirst();
+                        toKShape(labelLayout, (float) labelPos.x + offsetX, (float) labelPos.y
+                                + offsetY, labelLayout.getWidth(), labelLayout.getHeight());
                     }
-                    makeMult1 = !makeMult1;
-                    break;
-                }
-                KVectorChain ogdfLabelLayout =
-                        layoutInformation.get(entry.getKey() + OgdfServer.EDGE_LABEL_SUFFIX
-                                + labelType);
-                if (ogdfLabelLayout != null && ogdfLabelLayout.size() > 0) {
-                    KVector labelPos = ogdfLabelLayout.getFirst();
-                    toKShape(labelLayout, (float) labelPos.x + offsetX, (float) labelPos.y
-                            + offsetY, labelLayout.getWidth(), labelLayout.getHeight());
                 }
             }
         }
