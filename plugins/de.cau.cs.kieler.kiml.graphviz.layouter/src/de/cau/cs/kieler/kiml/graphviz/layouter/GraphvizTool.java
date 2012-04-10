@@ -78,7 +78,7 @@ public class GraphvizTool {
     /** the watcher thread used to cancel a blocked read operation. */
     private Watchdog watchdog;
     /** the input stream given by the Graphviz process. */
-    private GraphvizStream graphvizStream;
+    private InputStream graphvizStream;
     
     /**
      * Create a Graphviz tool instance for the given command.
@@ -117,25 +117,7 @@ public class GraphvizTool {
         }
 
         if (process == null) {
-            // get a string to the dot executable
-            IPreferenceStore preferenceStore =
-                    GraphvizLayouterPlugin.getDefault().getPreferenceStore();
-            String dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
-            if (!new File(dotExecutable).exists()) {
-                boolean foundExec = false;
-                for (String location : DEFAULT_LOCS) {
-                    dotExecutable = location + "dot";
-                    if (new File(dotExecutable).exists()) {
-                        foundExec = true;
-                        break;
-                    }
-                }
-                if (!foundExec) {
-                    handleExecPath();
-                    // fetch the executable string again after the user has entered a new path
-                    dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
-                }
-            }
+            String dotExecutable = getDotExecutable();
             
             // assemble the final list of command-line arguments
             List<String> args = Lists.newArrayList(
@@ -156,6 +138,35 @@ public class GraphvizTool {
                         + " Please check your Graphviz installation.");
             }
         }
+    }
+
+    /**
+     * Returns the dot executable path.
+     * 
+     * @return path to the dot executable.
+     */
+    public static String getDotExecutable() {
+        // get a string to the dot executable
+        IPreferenceStore preferenceStore =
+                GraphvizLayouterPlugin.getDefault().getPreferenceStore();
+        String dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
+        if (!new File(dotExecutable).exists()) {
+            boolean foundExec = false;
+            for (String location : DEFAULT_LOCS) {
+                dotExecutable = location + "dot";
+                if (new File(dotExecutable).exists()) {
+                    foundExec = true;
+                    break;
+                }
+            }
+            if (!foundExec) {
+                handleExecPath();
+                // fetch the executable string again after the user has entered a new path
+                dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
+            }
+        }
+        
+        return dotExecutable;
     }
 
     /**
