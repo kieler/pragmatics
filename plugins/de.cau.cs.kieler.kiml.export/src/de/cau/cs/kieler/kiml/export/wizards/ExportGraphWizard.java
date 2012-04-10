@@ -13,201 +13,62 @@
  */
 package de.cau.cs.kieler.kiml.export.wizards;
 
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
-
 /**
- * A wizard for Exporting graphs from various file formats into the KEG format.
+ * A wizard for Exporting graphs from workspace.
  * 
- * @author mri
+ * @author wah
  */
 public class ExportGraphWizard extends Wizard implements IExportWizard {
 
-     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean performFinish() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+    /** the page from which to select the workspace source files and the target folder. */
+    private ExportGraphWorkspaceSourcesPage workspaceSourcesPage;
+    /** the selection the import wizard was called on. */
+    private IStructuredSelection selection;
 
     /**
-     * {@inheritDoc}
+     * Constructs a graph Export wizard.
      */
-    public void init(IWorkbench workbench, IStructuredSelection selection) {
-        // TODO Auto-generated method stub
-        
+    public ExportGraphWizard() {
+        super();
+
     }
 
     /**
      * {@inheritDoc}
      */
     public void addPages() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean canFinish() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void createPageControls(Composite pageContainer) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void dispose() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IWizardContainer getContainer() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Image getDefaultPageImage() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IDialogSettings getDialogSettings() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IWizardPage getNextPage(IWizardPage page) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IWizardPage getPage(String pageName) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int getPageCount() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IWizardPage[] getPages() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IWizardPage getPreviousPage(IWizardPage page) {
-        // TODO Auto-generated method stub
-        return null;
+        workspaceSourcesPage = new ExportGraphWorkspaceSourcesPage(selection);
+        addPage(workspaceSourcesPage);
     }
 
     /**
      * {@inheritDoc}
      */
     public IWizardPage getStartingPage() {
-        // TODO Auto-generated method stub
-        return null;
+        // determine the starting page
+        return workspaceSourcesPage;
     }
 
     /**
      * {@inheritDoc}
      */
-    public RGB getTitleBarColor() {
-        // TODO Auto-generated method stub
-        return null;
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        setWindowTitle(Messages.ExportGraphWizard_title);
+        // TODO KEGImporterPlugin
+        // setDialogSettings(KEGImporterPlugin.getDefault().getDialogSettings());
+        this.selection = selection;
+        setNeedsProgressMonitor(true);
+
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String getWindowTitle() {
-        // TODO Auto-generated method stub
-        return null;
+    public boolean performFinish() {
+        return true;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isHelpAvailable() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean needsPreviousAndNextButtons() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean needsProgressMonitor() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean performCancel() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setContainer(IWizardContainer wizardContainer) {
-        // TODO Auto-generated method stub
-        
-    }
-
 
 }
