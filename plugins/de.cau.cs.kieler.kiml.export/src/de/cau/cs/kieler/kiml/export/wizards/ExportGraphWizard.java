@@ -66,6 +66,7 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
     }
 
     public boolean performFinish() {
+        workspaceSourcesPage.close();
         return true;
     }
 
