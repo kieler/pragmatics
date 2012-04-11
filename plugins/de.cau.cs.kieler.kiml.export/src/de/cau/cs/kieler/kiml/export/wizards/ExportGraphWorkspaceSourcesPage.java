@@ -18,14 +18,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -33,10 +28,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
 import de.cau.cs.kieler.core.ui.wizards.WorkspaceResourcesPage;
-import de.cau.cs.kieler.kiml.export.wizards.Messages;
 import de.cau.cs.kieler.kiml.service.TransformationService;
 import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
 
@@ -92,17 +85,6 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
             fileFormatCombo.setEnabled(false);
         }
         return targetGroup;
-        // Composite composite = parent;
-        // Label label = new Label(composite, SWT.NONE);
-        // label.setText(Messages.ExportDialog_file_format_caption);
-        // Combo fileFormatCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
-        // String[] formatNames = getGraphFileExtensions();
-        // if (formatNames.length > 0) {
-        // fileFormatCombo.setItems(formatNames);
-        // } else {
-        // fileFormatCombo.setEnabled(false);
-        // }
-        // return composite;
     }
 
     /**
