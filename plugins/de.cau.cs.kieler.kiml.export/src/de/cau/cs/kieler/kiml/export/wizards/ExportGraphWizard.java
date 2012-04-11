@@ -60,8 +60,6 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
      */
     public void init(IWorkbench workbench, IStructuredSelection selection) {
         setWindowTitle(Messages.ExportGraphWizard_title);
-        // TODO KEGImporterPlugin
-        // setDialogSettings(KEGImporterPlugin.getDefault().getDialogSettings());
         this.selection = selection;
         setNeedsProgressMonitor(true);
 

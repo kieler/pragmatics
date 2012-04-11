@@ -38,6 +38,7 @@ public class Messages extends NLS {
 
     public static String ExportGraphWizard_Exporting_workspace_task;
     public static String ExportGraphWizard_title;
+    public static String ExportDialog_file_format_caption;
 
     static {
         // initialize resource bundle
