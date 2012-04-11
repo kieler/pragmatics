@@ -4,9 +4,11 @@ Bundle-SymbolicName: de.cau.cs.kieler.klay.debugview;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Localization: plugin
 Bundle-Activator: de.cau.cs.kieler.klay.debugview.KlayDebugViewPlugin
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- de.cau.cs.kieler.core.ui;bundle-version="0.4.0",
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
+ de.cau.cs.kieler.core.ui,
+ de.cau.cs.kieler.kiml.graphviz.dot,
+ de.cau.cs.kieler.kiml.graphviz.layouter,
  de.cau.cs.kieler.klay.layered
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
