@@ -20,7 +20,12 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -163,9 +168,43 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         }
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean doValidate() {
+        
+        super.doValidate();
+
+        return isValidTargetProject();
+    }
     
     /**
-     *  actions to do when closing the window.
+     * function to check if target directory is in an existing project in the current workspace.
+     * 
+     * @return true if valid target project and false otherwise
+     */
+    private boolean isValidTargetProject() {
+        IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+        //get the selected target path
+        IPath targetpath = getTargetContainerPath();
+        //get the project name
+        String parentnode = (!targetpath.isEmpty() ? targetpath.segment(0) : "");
+        //compare all projects with the selected project name and return true when
+        //the project already exists
+        if (workspaceRoot.getProjects().length > 0) {
+            for (IProject project : workspaceRoot.getProjects()) {
+                if (parentnode.equals(project.getName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * actions to do when closing the window.
      * 
      * 
      */
@@ -174,5 +213,5 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         String formatName = fileFormatCombo.getItem(fileFormatCombo.getSelectionIndex());
         preferenceStore.setValue(PREFERENCE_EXPORTER, formatName);
     }
-    
+
 }
