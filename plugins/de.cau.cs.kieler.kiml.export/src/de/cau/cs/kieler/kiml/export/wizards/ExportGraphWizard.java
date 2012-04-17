@@ -13,6 +13,11 @@
  */
 package de.cau.cs.kieler.kiml.export.wizards;
 
+import java.io.File;
+
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -65,9 +70,72 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean performFinish() {
+        if (!checkTargetDirectory()) {
+            return false;
+        }
+        
+        if (!checkTargetFiles()) {
+            return false;
+        }
+        
+        //TODO run the export code
+      
         workspaceSourcesPage.close();
+
         return true;
+    }
+    
+    /**
+     * if target file exists then ask for replace, ignore or cancel.
+     * 
+     * @return true if finish or false if cancel
+     */    
+    private boolean checkTargetFiles() {
+        for (File file : workspaceSourcesPage.getSourceFiles(null)){
+            //TODO if file exist ask for replace, ignore or cancel
+            //file.exists()
+        }
+        return true;
+    }
+
+    /**
+     * If target directory exists then return true. If not then ask to create it.
+     * 
+     * 
+     * @return return true if target directory is ready, false otherwise
+     */
+    private boolean checkTargetDirectory() {
+        IPath targetPath = ResourcesPlugin.getWorkspace().getRoot().getLocation()
+                .append(workspaceSourcesPage.getTargetWorksapceDirectory());
+        if (new File(targetPath.toString()).exists()) {
+            return true;
+        } else {
+            if (MessageDialog.openConfirm(null,
+                    Messages.ExportGraphWizard_title_createTargetFolder, workspaceSourcesPage
+                            .getTargetWorksapceDirectory().toString()
+                            + " "
+                            + Messages.ExportGraphWizard_question_createTargetFolder)) {
+                return createTargetDirectory();
+            } else {
+                return false;
+            }
+
+        }
+    }
+
+    /**
+     * create the target directory if not exists.
+     * 
+     * @return true if success false otherwise
+     */
+    private boolean createTargetDirectory() {
+        IPath targetPath = ResourcesPlugin.getWorkspace().getRoot().getLocation()
+                .append(workspaceSourcesPage.getTargetWorksapceDirectory());
+        return new File(targetPath.toString()).mkdirs();
     }
 
 }

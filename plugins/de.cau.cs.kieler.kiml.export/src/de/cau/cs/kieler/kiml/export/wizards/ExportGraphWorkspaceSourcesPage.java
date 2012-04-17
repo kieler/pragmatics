@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -170,16 +172,35 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
     }
 
     /**
+     * Returns the target directory selected from the user.
+     * 
+     * @return target directory
+     */
+    public IPath getTargetWorksapceDirectory() {
+
+        return getTargetContainerPath();
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     protected boolean doValidate() {
-        
-        super.doValidate();
-
-        return isValidTargetProject();
+        if (!super.doValidate()) {
+            return false;
+        }
+        // return false if no files in grayedTreeItems are selected
+        if (!(getSourceFiles(null).size() > 0)) {
+            return false;
+        }
+        // return false if no valid target project
+        if (!isValidTargetProject()) {
+            super.setErrorMessage(Messages.WorkspaceResourcesPage_errors_NoValidDestinationSelected);
+            return false;
+        }
+        return true;
     }
-    
+
     /**
      * function to check if target directory is in an existing project in the current workspace.
      * 
@@ -187,12 +208,12 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      */
     private boolean isValidTargetProject() {
         IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-        //get the selected target path
-        IPath targetpath = getTargetContainerPath();
-        //get the project name
-        String parentnode = (!targetpath.isEmpty() ? targetpath.segment(0) : "");
-        //compare all projects with the selected project name and return true when
-        //the project already exists
+        // get the selected target path
+        IPath targetPath = getTargetContainerPath();
+        // get the project name
+        String parentnode = (!targetPath.isEmpty() ? targetPath.segment(0) : "");
+        // compare all projects with the selected project name and return true when
+        // the project already exists
         if (workspaceRoot.getProjects().length > 0) {
             for (IProject project : workspaceRoot.getProjects()) {
                 if (parentnode.equals(project.getName())) {
@@ -203,6 +224,10 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         return false;
     }
 
+    
+    public String getTargetFormat() {
+        return fileFormatCombo.getItem(fileFormatCombo.getSelectionIndex());
+    }
     /**
      * actions to do when closing the window.
      * 
@@ -210,8 +235,6 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      */
     public void close() {
         // save settings to preference store
-        String formatName = fileFormatCombo.getItem(fileFormatCombo.getSelectionIndex());
-        preferenceStore.setValue(PREFERENCE_EXPORTER, formatName);
+        preferenceStore.setValue(PREFERENCE_EXPORTER, getTargetFormat());
     }
-
 }
