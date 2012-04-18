@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.planar.orthogonal;
+package de.cau.cs.kieler.klay.planar.p3compact;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,16 +24,21 @@ import java.util.Stack;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.klay.planar.ILayoutPhase;
+import de.cau.cs.kieler.klay.planar.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver;
 import de.cau.cs.kieler.klay.planar.flownetwork.SuccessiveShortestPathFlowSolver;
-import de.cau.cs.kieler.klay.planar.graph.IEdge;
-import de.cau.cs.kieler.klay.planar.graph.IFace;
-import de.cau.cs.kieler.klay.planar.graph.IGraph;
-import de.cau.cs.kieler.klay.planar.graph.IGraphElement;
 import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
-import de.cau.cs.kieler.klay.planar.graph.INode;
-import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
-import de.cau.cs.kieler.klay.planar.orthogonal.OrthogonalRepresentation.OrthogonalAngle;
+import de.cau.cs.kieler.klay.planar.graph.PEdge;
+import de.cau.cs.kieler.klay.planar.graph.PFace;
+import de.cau.cs.kieler.klay.planar.graph.PGraph;
+import de.cau.cs.kieler.klay.planar.graph.PGraphElement;
+import de.cau.cs.kieler.klay.planar.graph.PGraphFactory;
+import de.cau.cs.kieler.klay.planar.graph.PNode;
+import de.cau.cs.kieler.klay.planar.intermediate.IntermediateLayoutProcessor;
+import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
+import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
+import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
  * A compaction algorithm that minimizes the length of horizontal and vertical edge segments
@@ -43,33 +48,57 @@ import de.cau.cs.kieler.klay.planar.orthogonal.OrthogonalRepresentation.Orthogon
  * 
  * @author ocl
  */
-public class TidyRectangleCompactor extends AbstractAlgorithm implements ICompactor {
+public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayoutPhase {
 
     // ======================== Constants ==========================================================
 
     /** Property to convert a node in the flow network to a node or face in the graph. */
-    public static final Property<IGraphElement> NETWORKTOGRAPH = new Property<IGraphElement>(
+    public static final Property<PGraphElement> NETWORKTOGRAPH = new Property<PGraphElement>(
             "de.cau.cs.kieler.klay.planar.properties.networktograph");
 
     // ======================== Attributes =========================================================
 
     /** The graph the algorithm works on. */
-    private IGraph graph;
+    private PGraph graph;
 
     /** The orthogonal representation of the graph. */
     private OrthogonalRepresentation orthogonal;
+
+    /**
+     * {@inheritDoc}
+     */
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(PGraph graph) {
+        IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy();
+        strategy.addLayoutProcessor(IntermediateProcessingStrategy.AFTER_PHASE_4,
+                IntermediateLayoutProcessor.DUMMYNODE_REMOVING_PROCESSOR);
+        return strategy;
+    }
 
     // ======================== Algorithm ==========================================================
 
     /**
      * {@inheritDoc}
      */
-    public void compact(final IGraph g, final OrthogonalRepresentation o) {
+    public void process(final PGraph pgraph) {
+        this.graph = pgraph;
+        this.orthogonal = pgraph.getProperty(Properties.ORTHO_REPRESENTATION);
+
+        // Create networks and solve
+        Pair<PGraph, PGraph> networks = this.createFlowNetworks();
+        IFlowNetworkSolver solver = new SuccessiveShortestPathFlowSolver();
+        solver.findFlow(networks.getFirst());
+        solver.findFlow(networks.getSecond());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void compact(final PGraph g, final OrthogonalRepresentation o) {
         this.graph = g;
         this.orthogonal = o;
 
         // Create networks and solve
-        Pair<IGraph, IGraph> networks = this.createFlowNetworks();
+        Pair<PGraph, PGraph> networks = this.createFlowNetworks();
         IFlowNetworkSolver solver = new SuccessiveShortestPathFlowSolver();
         solver.findFlow(networks.getFirst());
         solver.findFlow(networks.getSecond());
@@ -82,16 +111,16 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ICompac
      * 
      * @return the flow network
      */
-    private Pair<IGraph, IGraph> createFlowNetworks() {
+    private Pair<PGraph, PGraph> createFlowNetworks() {
         IGraphFactory factory = new PGraphFactory();
-        IGraph vertical = factory.createEmptyGraph();
-        IGraph horizontal = factory.createEmptyGraph();
-        Map<IFace, INode> verticalMap = new HashMap<IFace, INode>();
-        Map<IFace, INode> horizontalMap = new HashMap<IFace, INode>();
+        PGraph vertical = factory.createEmptyGraph();
+        PGraph horizontal = factory.createEmptyGraph();
+        Map<PFace, PNode> verticalMap = new HashMap<PFace, PNode>();
+        Map<PFace, PNode> horizontalMap = new HashMap<PFace, PNode>();
 
         // Create nodes for every graph face
-        for (IFace face : this.graph.getFaces()) {
-            INode newnode;
+        for (PFace face : this.graph.getFaces()) {
+            PNode newnode;
             newnode = vertical.addNode();
             newnode.setProperty(NETWORKTOGRAPH, face);
             verticalMap.put(face, newnode);
@@ -102,23 +131,23 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ICompac
 
         // Create arcs for vertical or horizontal edges
         // Traverse graph with DFS
-        Set<IEdge> visited = new HashSet<IEdge>(this.graph.getEdgeCount() * 2);
-        Stack<IEdge> edges = new Stack<IEdge>();
+        Set<PEdge> visited = new HashSet<PEdge>(this.graph.getEdgeCount() * 2);
+        Stack<PEdge> edges = new Stack<PEdge>();
         Stack<Pair<Boolean, Boolean>> direction = new Stack<Pair<Boolean, Boolean>>();
-        for (IEdge edge : this.graph.getEdges()) {
+        for (PEdge edge : this.graph.getEdges()) {
             if (!visited.contains(edge)) {
                 edges.push(edge);
                 direction.push(new Pair<Boolean, Boolean>(false, false));
                 while (!edges.isEmpty()) {
                     // TODO create arcs
-                    // IEdge current = edges.pop();
+                    // PEdge current = edges.pop();
                     // Pair<Boolean, Boolean> dir = direction.pop();
 
-                    List<INode> list = new LinkedList<INode>();
+                    List<PNode> list = new LinkedList<PNode>();
                     list.add(edge.getSource());
                     list.add(edge.getTarget());
-                    for (INode n : list) {
-                        for (Pair<IEdge, OrthogonalAngle> pair : this.orthogonal.getAngles(n)) {
+                    for (PNode n : list) {
+                        for (Pair<PEdge, OrthogonalAngle> pair : this.orthogonal.getAngles(n)) {
                             if (!visited.contains(pair.getFirst())) {
                                 edges.push(pair.getFirst());
                                 // TODO determine directions
@@ -130,6 +159,7 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ICompac
             }
         }
 
-        return new Pair<IGraph, IGraph>(vertical, horizontal);
+        return new Pair<PGraph, PGraph>(vertical, horizontal);
     }
+
 }

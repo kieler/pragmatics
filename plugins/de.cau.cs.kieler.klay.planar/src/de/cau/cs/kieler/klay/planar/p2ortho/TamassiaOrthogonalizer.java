@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.planar.orthogonal;
+package de.cau.cs.kieler.klay.planar.p2ortho;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,31 +21,35 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.klay.planar.ILayoutPhase;
+import de.cau.cs.kieler.klay.planar.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver;
 import de.cau.cs.kieler.klay.planar.flownetwork.SuccessiveShortestPathFlowSolver;
-import de.cau.cs.kieler.klay.planar.graph.IEdge;
-import de.cau.cs.kieler.klay.planar.graph.IFace;
-import de.cau.cs.kieler.klay.planar.graph.IGraph;
-import de.cau.cs.kieler.klay.planar.graph.IGraphElement;
 import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
-import de.cau.cs.kieler.klay.planar.graph.INode;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
-import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
-import de.cau.cs.kieler.klay.planar.orthogonal.OrthogonalRepresentation.OrthogonalAngle;
+import de.cau.cs.kieler.klay.planar.graph.PEdge;
+import de.cau.cs.kieler.klay.planar.graph.PFace;
+import de.cau.cs.kieler.klay.planar.graph.PGraph;
+import de.cau.cs.kieler.klay.planar.graph.PGraphElement;
+import de.cau.cs.kieler.klay.planar.graph.PGraphFactory;
+import de.cau.cs.kieler.klay.planar.graph.PNode;
+import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
 import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
+import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
  * Orthogonalizer based on the bend minimizing algorithm for 4-planar graphs by R. Tamassia. Note
  * that this orthogonalizer works only on planar graphs with a degree of at most 4.
  * 
  * @author ocl
+ * @author pkl
  */
-public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthogonalizer {
+public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayoutPhase {
 
     // ======================== Constants ==========================================================
 
     /** Property to convert a node in the flow network to a node or face in the graph. */
-    public static final Property<IGraphElement> NETWORKTOGRAPH = new Property<IGraphElement>(
+    public static final Property<PGraphElement> NETWORKTOGRAPH = new Property<PGraphElement>(
             "de.cau.cs.kieler.klay.planar.properties.networktograph");
 
     /** The maximal node degree in an orthogonal layout. */
@@ -54,34 +58,39 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
     // ======================== Attributes =========================================================
 
     /** The graph the algorithm works on. */
-    private IGraph graph;
+    private PGraph graph;
 
     /**
      * The arcs in the flow network from a node to an adjacent face. The flow in these arcs specify
      * the sum of angles at the source node in the target face.
      */
-    private LinkedList<IEdge> nodeArcs;
+    private LinkedList<PEdge> nodeArcs;
 
     /**
      * The arcs in the flow network from a face to an adjacent face. The flow in these arcs specify
      * the number of bends along the edge between the two faces. For every two faces, there are two
      * arcs, one for each direction.
      */
-    private LinkedList<Pair<IEdge, IEdge>> faceArcs;
+    private LinkedList<Pair<PEdge, PEdge>> faceArcs;
 
     // ======================== Algorithm ==========================================================
 
     /**
-     * {@inheritDoc}
+     * This takes a planar graph and computes an orthogonal representation defining the shape of the
+     * orthogonal graph.
+     * 
+     * @param g
+     *            the graph to draw as orthogonal graph
+     * @return an orthogonal representation of the graph
      */
-    public OrthogonalRepresentation orthogonalize(final IGraph g) {
+    public OrthogonalRepresentation orthogonalize(final PGraph g) {
         getMonitor().begin("Orthogonalization", 1);
 
         // Initialization
         this.graph = g;
 
         // Solve flow network and compute orthogonal representation
-        IGraph network = this.createFlowNetwork();
+        PGraph network = this.createFlowNetwork();
         IFlowNetworkSolver solver = new SuccessiveShortestPathFlowSolver();
         solver.findFlow(network);
         OrthogonalRepresentation orthogonal = this.computeAngles(network);
@@ -98,25 +107,25 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
      * 
      * @return the flow network to compute the minimal number of bends
      */
-    private IGraph createFlowNetwork() {
+    private PGraph createFlowNetwork() {
         IGraphFactory factory = new PGraphFactory();
-        IGraph network = factory.createEmptyGraph();
-        HashMap<INode, INode> nodes = new HashMap<INode, INode>();
-        HashMap<IFace, INode> faces = new HashMap<IFace, INode>();
-        this.nodeArcs = new LinkedList<IEdge>();
-        this.faceArcs = new LinkedList<Pair<IEdge, IEdge>>();
+        PGraph network = factory.createEmptyGraph();
+        HashMap<PNode, PNode> nodes = new HashMap<PNode, PNode>();
+        HashMap<PFace, PNode> faces = new HashMap<PFace, PNode>();
+        this.nodeArcs = new LinkedList<PEdge>();
+        this.faceArcs = new LinkedList<Pair<PEdge, PEdge>>();
 
         // Creating source nodes for every graph node
-        for (INode node : this.graph.getNodes()) {
+        for (PNode node : this.graph.getNodes()) {
             int supply = MAXDEGREE - node.getAdjacentEdgeCount();
 
             // Check if node has a valid degree
             if (supply < 0) {
-                throw new IllegalArgumentException("The node " + node.getID()
+                throw new IllegalArgumentException("The node " + node.id
                         + ") has a higher degree than the maximal allowed " + MAXDEGREE);
             }
 
-            INode newnode = network.addNode();
+            PNode newnode = network.addNode();
             newnode.setProperty(NETWORKTOGRAPH, node);
             newnode.setProperty(IFlowNetworkSolver.SUPPLY, supply);
             nodes.put(node, newnode);
@@ -124,7 +133,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
 
         // Creating sink nodes for every graph face
         boolean internal = false;
-        for (IFace face : this.graph.getFaces()) {
+        for (PFace face : this.graph.getFaces()) {
             int supply = -1 * face.getAdjacentNodeCount();
             if (internal) {
                 supply += MAXDEGREE;
@@ -133,20 +142,20 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
                 supply -= MAXDEGREE;
             }
 
-            INode newnode = network.addNode();
+            PNode newnode = network.addNode();
             newnode.setProperty(NETWORKTOGRAPH, face);
             newnode.setProperty(IFlowNetworkSolver.SUPPLY, supply);
             faces.put(face, newnode);
         }
 
         // Creating arcs for every node adjacent to the face
-        for (IFace face : this.graph.getFaces()) {
-            for (INode node : face.adjacentNodes()) {
+        for (PFace face : this.graph.getFaces()) {
+            for (PNode node : face.adjacentNodes()) {
                 if (!nodes.containsKey(node)) {
                     throw new InconsistentGraphModelException(
                             "Attempted to link non-existent nodes by an edge.");
                 }
-                IEdge newedge = network.addEdge(nodes.get(node), faces.get(face), true);
+                PEdge newedge = network.addEdge(nodes.get(node), faces.get(face), true);
                 newedge.setProperty(IFlowNetworkSolver.CAPACITY, MAXDEGREE);
                 newedge.setProperty(IFlowNetworkSolver.FLOW, 1);
                 newedge.setProperty(IPathFinder.PATHCOST, 0);
@@ -155,22 +164,22 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
         }
 
         // Creating arcs for every face adjacent to the face
-        for (IEdge edge : this.graph.getEdges()) {
-            IFace left = edge.getLeftFace();
-            IFace right = edge.getRightFace();
+        for (PEdge edge : this.graph.getEdges()) {
+            PFace left = edge.getLeftFace();
+            PFace right = edge.getRightFace();
 
             if (!faces.containsKey(left) || !faces.containsKey(right)) {
                 throw new InconsistentGraphModelException(
                         "Attempted to link non-existent nodes by an edge.");
             }
 
-            IEdge edgeLeft = network.addEdge(faces.get(left), faces.get(right), true);
+            PEdge edgeLeft = network.addEdge(faces.get(left), faces.get(right), true);
             edgeLeft.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
             edgeLeft.setProperty(IPathFinder.PATHCOST, 1);
-            IEdge edgeRight = network.addEdge(faces.get(right), faces.get(left), true);
+            PEdge edgeRight = network.addEdge(faces.get(right), faces.get(left), true);
             edgeRight.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
             edgeRight.setProperty(IPathFinder.PATHCOST, 1);
-            this.faceArcs.add(new Pair<IEdge, IEdge>(edgeLeft, edgeRight));
+            this.faceArcs.add(new Pair<PEdge, PEdge>(edgeLeft, edgeRight));
         }
 
         return network;
@@ -181,17 +190,17 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
      * 
      * @return an orthogonal representation encoding the graph shape
      */
-    private OrthogonalRepresentation computeAngles(final IGraph network) {
+    private OrthogonalRepresentation computeAngles(final PGraph network) {
         OrthogonalRepresentation orthogonal = new OrthogonalRepresentation();
 
         // Flow in face arcs define bends in edges
-        for (Pair<IEdge, IEdge> pair : this.faceArcs) {
-            IFace face1 = (IFace) pair.getFirst().getSource().getProperty(NETWORKTOGRAPH);
+        for (Pair<PEdge, PEdge> pair : this.faceArcs) {
+            PFace face1 = (PFace) pair.getFirst().getSource().getProperty(NETWORKTOGRAPH);
             if (face1 != pair.getSecond().getTarget().getProperty(NETWORKTOGRAPH)) {
                 throw new InconsistentGraphModelException(
                         "The flow network has not been build correctly.");
             }
-            IFace face2 = (IFace) pair.getSecond().getSource().getProperty(NETWORKTOGRAPH);
+            PFace face2 = (PFace) pair.getSecond().getSource().getProperty(NETWORKTOGRAPH);
             if (face2 != pair.getFirst().getTarget().getProperty(NETWORKTOGRAPH)) {
                 throw new InconsistentGraphModelException(
                         "The flow network has not been build correctly.");
@@ -224,7 +233,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
             }
 
             boolean first = true;
-            for (IEdge edge : face1.getEdges(face2)) {
+            for (PEdge edge : face1.getEdges(face2)) {
                 if (first) {
                     first = false;
 
@@ -244,23 +253,23 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
         }
 
         // Flow in node arcs define angles in nodes
-        for (IEdge arc : this.nodeArcs) {
-            INode node = (INode) arc.getSource().getProperty(NETWORKTOGRAPH);
-            IFace face = (IFace) arc.getTarget().getProperty(NETWORKTOGRAPH);
+        for (PEdge arc : this.nodeArcs) {
+            PNode node = (PNode) arc.getSource().getProperty(NETWORKTOGRAPH);
+            PFace face = (PFace) arc.getTarget().getProperty(NETWORKTOGRAPH);
 
-            List<Pair<IEdge, OrthogonalAngle>> nodeList;
+            List<Pair<PEdge, OrthogonalAngle>> nodeList;
             nodeList = orthogonal.getAngles(node);
             if (nodeList == null) {
-                nodeList = new LinkedList<Pair<IEdge, OrthogonalAngle>>();
-                for (IEdge edge : node.adjacentEdges()) {
-                    nodeList.add(new Pair<IEdge, OrthogonalAngle>(edge, null));
+                nodeList = new LinkedList<Pair<PEdge, OrthogonalAngle>>();
+                for (PEdge edge : node.adjacentEdges()) {
+                    nodeList.add(new Pair<PEdge, OrthogonalAngle>(edge, null));
                 }
                 orthogonal.setAngles(node, nodeList);
             }
 
             int numEdges = 0;
-            for (Pair<IEdge, OrthogonalAngle> pair : nodeList) {
-                IEdge edge = pair.getFirst();
+            for (Pair<PEdge, OrthogonalAngle> pair : nodeList) {
+                PEdge edge = pair.getFirst();
                 if (((node == edge.getSource()) && (face == edge.getRightFace()))
                         || ((node == edge.getTarget()) && (face == edge.getLeftFace()))) {
                     numEdges++;
@@ -268,8 +277,8 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
             }
 
             int i = numEdges;
-            for (Pair<IEdge, OrthogonalAngle> pair : nodeList) {
-                IEdge edge = pair.getFirst();
+            for (Pair<PEdge, OrthogonalAngle> pair : nodeList) {
+                PEdge edge = pair.getFirst();
                 if (((node == edge.getSource()) && (face == edge.getRightFace()))
                         || ((node == edge.getTarget()) && (face == edge.getLeftFace()))) {
                     i--;
@@ -284,6 +293,33 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
         }
 
         return orthogonal;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void process(final PGraph pgraph) {
+        getMonitor().begin("Orthogonalization", 1);
+
+        // Initialization
+        this.graph = pgraph;
+
+        // Solve flow network and compute orthogonal representation
+        PGraph network = this.createFlowNetwork();
+        IFlowNetworkSolver solver = new SuccessiveShortestPathFlowSolver();
+        solver.findFlow(network);
+        OrthogonalRepresentation orthogonal = this.computeAngles(network);
+
+        getMonitor().done();
+        pgraph.setProperty(Properties.ORTHO_REPRESENTATION, orthogonal);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(PGraph graph) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

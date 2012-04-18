@@ -11,15 +11,15 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.planar.orthogonal;
+package de.cau.cs.kieler.klay.planar.p2ortho;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.klay.planar.graph.IEdge;
-import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.graph.PEdge;
+import de.cau.cs.kieler.klay.planar.graph.PNode;
 
 /**
  * An encoding class for an orthogonal representation. Formally, an orthogonal representation is a
@@ -28,6 +28,7 @@ import de.cau.cs.kieler.klay.planar.graph.INode;
  * edge forms with the next edge in the list.
  * 
  * @author ocl
+ * @author pkl
  */
 public class OrthogonalRepresentation {
 
@@ -52,10 +53,10 @@ public class OrthogonalRepresentation {
     // ======================== Attributes =========================================================
 
     /** The bends along each edge. */
-    private Map<IEdge, OrthogonalAngle[]> bendData;
+    private Map<PEdge, OrthogonalAngle[]> bendData;
 
     /** The angles in a node. */
-    private Map<INode, List<Pair<IEdge, OrthogonalAngle>>> angleData;
+    private Map<PNode, List<Pair<PEdge, OrthogonalAngle>>> angleData;
 
     // ======================== Constructor ========================================================
 
@@ -63,8 +64,8 @@ public class OrthogonalRepresentation {
      * Create a new orthogonal representation.
      */
     public OrthogonalRepresentation() {
-        this.bendData = new HashMap<IEdge, OrthogonalAngle[]>();
-        this.angleData = new HashMap<INode, List<Pair<IEdge, OrthogonalAngle>>>();
+        this.bendData = new HashMap<PEdge, OrthogonalAngle[]>();
+        this.angleData = new HashMap<PNode, List<Pair<PEdge, OrthogonalAngle>>>();
     }
 
     // ======================== Getters and Setters ================================================
@@ -76,7 +77,7 @@ public class OrthogonalRepresentation {
      *            an edge in the graph
      * @return an array containing left or right bends
      */
-    public OrthogonalAngle[] getBends(final IEdge edge) {
+    public OrthogonalAngle[] getBends(final PEdge edge) {
         return this.bendData.get(edge);
     }
 
@@ -88,7 +89,7 @@ public class OrthogonalRepresentation {
      * @param bends
      *            an array containing left or right bends
      */
-    public void setBends(final IEdge edge, final OrthogonalAngle[] bends) {
+    public void setBends(final PEdge edge, final OrthogonalAngle[] bends) {
         this.bendData.put(edge, bends);
     }
 
@@ -100,7 +101,7 @@ public class OrthogonalRepresentation {
      * @return a list containing the ordered list of edges on the node, together with the angle it
      *         forms with the next edge
      */
-    public List<Pair<IEdge, OrthogonalAngle>> getAngles(final INode node) {
+    public List<Pair<PEdge, OrthogonalAngle>> getAngles(final PNode node) {
         return this.angleData.get(node);
     }
 
@@ -113,7 +114,7 @@ public class OrthogonalRepresentation {
      *            a list containing the ordered list of edges on the node, together with the angle
      *            it forms with the next edge
      */
-    public void setAngles(final INode node, final List<Pair<IEdge, OrthogonalAngle>> angles) {
+    public void setAngles(final PNode node, final List<Pair<PEdge, OrthogonalAngle>> angles) {
         this.angleData.put(node, angles);
     }
 

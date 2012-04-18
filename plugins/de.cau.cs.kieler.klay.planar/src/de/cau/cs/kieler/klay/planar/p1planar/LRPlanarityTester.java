@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.planar.planarity;
+package de.cau.cs.kieler.klay.planar.p1planar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,9 +24,12 @@ import java.util.Stack;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.klay.planar.graph.IEdge;
-import de.cau.cs.kieler.klay.planar.graph.IGraph;
-import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.ILayoutPhase;
+import de.cau.cs.kieler.klay.planar.IntermediateProcessingStrategy;
+import de.cau.cs.kieler.klay.planar.graph.PEdge;
+import de.cau.cs.kieler.klay.planar.graph.PGraph;
+import de.cau.cs.kieler.klay.planar.graph.PNode;
+import de.cau.cs.kieler.klay.planar.properties.Properties;
 import de.cau.cs.kieler.klay.planar.util.IFunction;
 
 /**
@@ -45,15 +48,14 @@ import de.cau.cs.kieler.klay.planar.util.IFunction;
  * "Das Links Rechts Planaritätskriterium" (seminar paper, German, downloadable from:
  * {@linkplain www.inf.uni-konstanz.de/algo/lehre/ws08/projekt/ausarbeitungen/kaiser.pdf}).
  * 
- * @see de.cau.cs.kieler.klay.planar.planarity.rtprak.planarization.IPlanarityTester
- *      IPlanarityTester
+ * @see de.cau.cs.kieler.klay.planar.p1planar.rtprak.planarization.IPlanarityTester IPlanarityTester
  * @see de.cau.cs.kieler.klay.planar.graph.impl.IGraph IGraph
- * @see de.cau.cs.kieler.klay.planar.graph.impl.INode INode
- * @see de.cau.cs.kieler.klay.planar.graph.impl.IEdge IEdge
+ * @see de.cau.cs.kieler.klay.planar.graph.impl.PNode PNode
+ * @see de.cau.cs.kieler.klay.planar.graph.impl.PEdge PEdge
  * 
  * @author pdo
  */
-public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTester {
+public class LRPlanarityTester extends AbstractAlgorithm implements ILayoutPhase {
 
     // ====================== Attributes ======================================
 
@@ -67,22 +69,22 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * during current iteration. A list of all crossing edges is saved in {@code planarSubgraph()}
      * itself.
      */
-    private LinkedList<IEdge> crossingEdges;
+    private LinkedList<PEdge> crossingEdges;
 
     /** The DFS-roots of all connected components in the graph. */
-    private LinkedList<INode> roots;
+    private LinkedList<PNode> roots;
 
     /** Source node of every edge in the DFS-oriented tree. */
-    private INode[] dfsSource;
+    private PNode[] dfsSource;
 
     /** Target node of every edge in the DFS-oriented tree. */
-    private INode[] dfsTarget;
+    private PNode[] dfsTarget;
 
     /**
      * The parent tree edge of every node in the depth-first-search or {@code null}, if the node is
      * the root of a connected component.
      */
-    private IEdge[] parentEdge;
+    private PEdge[] parentEdge;
 
     /**
      * The tree path distance of all nodes to the root of the DFS-tree in the current connected
@@ -121,7 +123,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * of an edge defines a singly linked list, whose last element is the edge, whose reference is
      * {@code null}.
      */
-    private IEdge[] ref;
+    private PEdge[] ref;
 
     /**
      * If one edge's reference {@code ref} is not {@code null}, it indicates, whether these two
@@ -148,41 +150,41 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * return point of a conflict pair is not lower than the highest return point in any conflict
      * pair deeper in the stack.
      */
-    private Stack<Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>>> conflicts;
+    private Stack<Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>>> conflicts;
 
     /**
      * Lowest conflict pair regarding each edge in the conflicts stack or {@code null}, if all stack
      * elements are related to the edge. Note, that this has to be an arrayList, since a simple
      * array of this generic type cannot be instantiated.
      */
-    private ArrayList<Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>>> stackBottom;
+    private ArrayList<Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>>> stackBottom;
 
     /**
      * Back edge returning to the lowpoint of each edge (i.e. the final edge in its lowest return
      * path or the edge itself, if it's a back edge).
      */
-    private IEdge[] lowptEdge;
+    private PEdge[] lowptEdge;
 
     /**
      * Rightmost adjacent edge of each node, that belongs to the lately traversed outgoing tree
      * edge. In the embedding phase, it indicates the position, where incoming back edges assigned
      * to the left side of an outgoing tree edge have to be inserted.
      */
-    private IEdge[] leftRef;
+    private PEdge[] leftRef;
 
     /**
      * Tree edge leading into next DFS-subtree (i.e. outgoing tree edge of every node). It indicates
      * the position, where incoming back edge assigned to the right side of the outgoing tree edge
      * have to be inserted.
      */
-    private IEdge[] rightRef;
+    private PEdge[] rightRef;
 
     /**
      * Leftmost outgoing tree edge respectively incoming back edge in the adjacency list of every
      * node. It indicates the initial edge in the order of all outgoing tree edges and incoming back
      * edges adjacent to a node, determined by {@code embeddingDFS()}.
      */
-    private IEdge[] initialRef;
+    private PEdge[] initialRef;
 
     // ====================== Constructor =====================================
 
@@ -191,8 +193,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      */
     public LRPlanarityTester() {
         super();
-        roots = new LinkedList<INode>();
-        crossingEdges = new LinkedList<IEdge>();
+        roots = new LinkedList<PNode>();
+        crossingEdges = new LinkedList<PEdge>();
     }
 
     // ====================== Methods =====================================
@@ -219,15 +221,15 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
         crossingEdges.clear();
 
         if (dfsSource == null || numEdges > dfsSource.length) {
-            dfsSource = new INode[numEdges];
-            dfsTarget = new INode[numEdges];
+            dfsSource = new PNode[numEdges];
+            dfsTarget = new PNode[numEdges];
             lowpt = new int[numEdges];
             lowpt2 = new int[numEdges];
             nestingDepth = new int[numEdges];
-            ref = new IEdge[numEdges];
+            ref = new PEdge[numEdges];
             side = new int[numEdges];
             Arrays.fill(side, 1);
-            lowptEdge = new IEdge[numEdges];
+            lowptEdge = new PEdge[numEdges];
         } else {
             Arrays.fill(dfsSource, null);
             Arrays.fill(side, 1);
@@ -236,18 +238,18 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
         if (height == null || numNodes > height.length) {
             height = new int[numNodes];
             Arrays.fill(height, -1);
-            parentEdge = new IEdge[numNodes];
+            parentEdge = new PEdge[numNodes];
         } else {
             Arrays.fill(height, -1);
             Arrays.fill(parentEdge, null);
         }
         if (conflicts == null) {
-            conflicts = new Stack<Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>>>();
+            conflicts = new Stack<Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>>>();
         } else {
             conflicts.clear();
         }
         if (stackBottom == null || numEdges > stackBottom.size()) {
-            stackBottom = new ArrayList<Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>>>(numEdges);
+            stackBottom = new ArrayList<Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>>>(numEdges);
             for (int i = 0; i < numEdges; i++) {
                 stackBottom.add(null);
             }
@@ -256,9 +258,9 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
         }
         if (mode) {
             if (initialRef == null || numNodes > initialRef.length) {
-                initialRef = new IEdge[numNodes];
-                leftRef = new IEdge[numNodes];
-                rightRef = new IEdge[numNodes];
+                initialRef = new PEdge[numNodes];
+                leftRef = new PEdge[numNodes];
+                rightRef = new PEdge[numNodes];
             } else {
                 Arrays.fill(initialRef, null);
                 Arrays.fill(leftRef, null);
@@ -268,38 +270,132 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph graph) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void process(final PGraph pgraph) {
+
+        getMonitor().begin("Planar embedding", 1);
+        if (pgraph == null) {
+            throw new NullPointerException("Input graph is null.");
+        }
+
+        pgraph.reindex();
+        initialize(pgraph.getNodeCount(), pgraph.getEdgeCount(), true);
+
+        // determine planar subgraph: remove all crossing edges
+        LinkedList<PEdge> deletedCrossing = new LinkedList<PEdge>();
+        do {
+            isPlanar = true;
+
+            // - orientation phase -
+            for (PNode node : pgraph.getNodes()) {
+                if (height[node.id] == -1) {
+                    height[node.id] = 0;
+                    roots.add(node);
+                    orientationDFS(node);
+                }
+            }
+
+            // - testing phase -
+            // sort adjacency lists according to non-decreasing nesting depth
+            for (PNode node : pgraph.getNodes()) {
+                sortAdjacencyList(node);
+            }
+            // test planarity
+            for (PNode root : roots) {
+                testingDFS(root, true);
+            }
+
+            // delete crossing edges
+            deletedCrossing.addAll(crossingEdges);
+            for (PEdge edge : crossingEdges) {
+                pgraph.removeEdge(edge);
+            }
+            crossingEdges.clear();
+
+            // initialize attributes for next iteration
+            if (!isPlanar) {
+                roots.clear();
+                Arrays.fill(dfsSource, null);
+                Arrays.fill(height, -1);
+                Arrays.fill(parentEdge, null);
+                Arrays.fill(side, 1);
+                Arrays.fill(ref, null);
+                conflicts.clear();
+            }
+        } while (!isPlanar);
+
+        // - embedding phase -
+        // determine sign of each edge and update nesting depth accordingly
+        for (PEdge edge : pgraph.getEdges()) {
+            nestingDepth[edge.id] *= sign(edge);
+        }
+        // sort adjacency lists according to non-decreasing nesting depth
+        for (PNode node : pgraph.getNodes()) {
+            sortAdjacencyList(node);
+        }
+        // determine order for outgoing edges, incoming edges are already ordered in the desired way
+        for (PNode root : roots) {
+            embeddingDFS(root);
+        }
+        // merge order of adjacent edges
+        for (PNode node : pgraph.getNodes()) {
+            mergeEmbedding(node);
+        }
+        // convert crossingEdges to match return type
+        LinkedList<PEdge> removedEdges = new LinkedList<PEdge>();
+        for (PEdge edge : deletedCrossing) {
+            removedEdges.add(edge);
+        }
+
+        getMonitor().done();
+        pgraph.setProperty(Properties.INSERTABLE_EDGES, removedEdges);
+    }
+
+    /**
      * Tests the input graph for planarity based on the Left-Right-Planarity criterion in linear
      * time. If the graph is planar, this method will return {@code true} and {@code false}
      * otherwise. Note, that the algorithm re-indexes the input graph as a side effect before
      * testing (i.e. all indices of the input graph's components will be set back to unique values
      * between {@code 0} and the individual component count).
      * 
-     * @param iGraph
+     * 
+     * @param pgraph
      *            the graph to check for planarity.
      * @return {@code true}, if the graph is planar, {@code false} otherwise
      * 
      * @see de.cau.cs.rtprak.planarization.OrthogonalLayoutProvider OrthogonalLayoutProvider
-     * @see de.cau.cs.kieler.klay.planar.alg.planarity.rtprak.planarization.IPlanarityTester
+     * @see de.cau.cs.kieler.klay.planar.p1planar.alg.planarity.rtprak.planarization.IPlanarityTester
      *      IPlanarityTester
      * @see de.cau.cs.rtprak.planarization.graph.IGraph IGraph
-     * @see de.cau.cs.rtprak.planarization.graph.INode INode
-     * @see de.cau.cs.rtprak.planarization.graph.IEdge IEdge
+     * @see de.cau.cs.rtprak.planarization.graph.PNode PNode
+     * @see de.cau.cs.rtprak.planarization.graph.PEdge PEdge
+     * 
+     * 
      */
-    public boolean testPlanarity(final IGraph iGraph) {
+    public boolean testPlanarity(final PGraph pgraph) {
 
         getMonitor().begin("Test planarity", 1);
-        if (iGraph == null) {
+        if (pgraph == null) {
             throw new NullPointerException("Input graph is null.");
         }
 
-        iGraph.reindex();
-        initialize(iGraph.getNodeCount(), iGraph.getEdgeCount(), false);
+        pgraph.reindex();
+        initialize(pgraph.getNodeCount(), pgraph.getEdgeCount(), false);
         isPlanar = true;
 
         // - orientation phase -
-        for (INode node : iGraph.getNodes()) {
-            if (height[node.getID()] == -1) {
-                height[node.getID()] = 0;
+        for (PNode node : pgraph.getNodes()) {
+            if (height[node.id] == -1) {
+                height[node.id] = 0;
                 roots.add(node);
                 orientationDFS(node);
             }
@@ -307,11 +403,11 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
         // - testing phase -
         // sort adjacency lists according to non-decreasing nesting depth
-        for (INode node : iGraph.getNodes()) {
+        for (PNode node : pgraph.getNodes()) {
             sortAdjacencyList(node);
         }
         // test planarity
-        for (INode root : roots) {
+        for (PNode root : roots) {
             testingDFS(root, false);
             if (!isPlanar) {
                 getMonitor().done();
@@ -340,14 +436,14 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      *         have been removed therefore (empty, if fully planar).
      * 
      * @see de.cau.cs.rtprak.planarization.OrthogonalLayoutProvider OrthogonalLayoutProvider
-     * @see de.cau.cs.kieler.klay.planar.alg.planarity.rtprak.planarization.IPlanarityTester
+     * @see de.cau.cs.kieler.klay.planar.p1planar.alg.planarity.rtprak.planarization.IPlanarityTester
      *      IPlanarityTester
      * @see de.cau.cs.rtprak.planarization.graph.IGraph IGraph
-     * @see de.cau.cs.rtprak.planarization.graph.INode INode
-     * @see de.cau.cs.rtprak.planarization.graph.IEdge IEdge
+     * @see de.cau.cs.rtprak.planarization.graph.PNode PNode
+     * @see de.cau.cs.rtprak.planarization.graph.PEdge PEdge
      * @see de.cau.cs.kieler.core.util.Pair Pair
      */
-    public List<IEdge> planarSubgraph(final IGraph iGraph) {
+    public List<PEdge> planarSubgraph(final PGraph iGraph) {
 
         getMonitor().begin("Planar embedding", 1);
         if (iGraph == null) {
@@ -358,14 +454,14 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
         initialize(iGraph.getNodeCount(), iGraph.getEdgeCount(), true);
 
         // determine planar subgraph: remove all crossing edges
-        LinkedList<IEdge> deletedCrossing = new LinkedList<IEdge>();
+        LinkedList<PEdge> deletedCrossing = new LinkedList<PEdge>();
         do {
             isPlanar = true;
 
             // - orientation phase -
-            for (INode node : iGraph.getNodes()) {
-                if (height[node.getID()] == -1) {
-                    height[node.getID()] = 0;
+            for (PNode node : iGraph.getNodes()) {
+                if (height[node.id] == -1) {
+                    height[node.id] = 0;
                     roots.add(node);
                     orientationDFS(node);
                 }
@@ -373,17 +469,17 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
             // - testing phase -
             // sort adjacency lists according to non-decreasing nesting depth
-            for (INode node : iGraph.getNodes()) {
+            for (PNode node : iGraph.getNodes()) {
                 sortAdjacencyList(node);
             }
             // test planarity
-            for (INode root : roots) {
+            for (PNode root : roots) {
                 testingDFS(root, true);
             }
 
             // delete crossing edges
             deletedCrossing.addAll(crossingEdges);
-            for (IEdge edge : crossingEdges) {
+            for (PEdge edge : crossingEdges) {
                 iGraph.removeEdge(edge);
             }
             crossingEdges.clear();
@@ -402,24 +498,24 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
         // - embedding phase -
         // determine sign of each edge and update nesting depth accordingly
-        for (IEdge edge : iGraph.getEdges()) {
-            nestingDepth[edge.getID()] *= sign(edge);
+        for (PEdge edge : iGraph.getEdges()) {
+            nestingDepth[edge.id] *= sign(edge);
         }
         // sort adjacency lists according to non-decreasing nesting depth
-        for (INode node : iGraph.getNodes()) {
+        for (PNode node : iGraph.getNodes()) {
             sortAdjacencyList(node);
         }
         // determine order for outgoing edges, incoming edges are already ordered in the desired way
-        for (INode root : roots) {
+        for (PNode root : roots) {
             embeddingDFS(root);
         }
         // merge order of adjacent edges
-        for (INode node : iGraph.getNodes()) {
+        for (PNode node : iGraph.getNodes()) {
             mergeEmbedding(node);
         }
         // convert crossingEdges to match return type
-        LinkedList<IEdge> removedEdges = new LinkedList<IEdge>();
-        for (IEdge edge : deletedCrossing) {
+        LinkedList<PEdge> removedEdges = new LinkedList<PEdge>();
+        for (PEdge edge : deletedCrossing) {
             removedEdges.add(edge);
         }
 
@@ -441,44 +537,44 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * @param v
      *            the root of the current DFS-subtree
      */
-    private void orientationDFS(final INode v) {
+    private void orientationDFS(final PNode v) {
 
-        IEdge uv = parentEdge[v.getID()];
-        for (IEdge vw : v.adjacentEdges()) {
-            if (dfsSource[vw.getID()] != null || vw.getSource().equals(vw.getTarget())) {
+        PEdge uv = parentEdge[v.id];
+        for (PEdge vw : v.adjacentEdges()) {
+            if (dfsSource[vw.id] != null || vw.getSource().equals(vw.getTarget())) {
                 // vw has already been visited or is self-loop
                 continue;
             }
             // orient vw in DFS
-            INode w = v.getAdjacentNode(vw);
-            dfsSource[vw.getID()] = v;
-            dfsTarget[vw.getID()] = w;
-            lowpt[vw.getID()] = height[v.getID()];
-            lowpt2[vw.getID()] = height[v.getID()];
-            if (height[w.getID()] == -1) {
+            PNode w = v.getAdjacentNode(vw);
+            dfsSource[vw.id] = v;
+            dfsTarget[vw.id] = w;
+            lowpt[vw.id] = height[v.id];
+            lowpt2[vw.id] = height[v.id];
+            if (height[w.id] == -1) {
                 // vw is tree edge
-                parentEdge[w.getID()] = vw;
-                height[w.getID()] = height[v.getID()] + 1;
+                parentEdge[w.id] = vw;
+                height[w.id] = height[v.id] + 1;
                 orientationDFS(w);
             } else {
                 // vw is back edge
-                lowpt[vw.getID()] = height[w.getID()];
+                lowpt[vw.id] = height[w.id];
             }
             // determine nesting depth
-            nestingDepth[vw.getID()] = lowpt[vw.getID()] << 1;
-            if (lowpt2[vw.getID()] < height[v.getID()]) {
+            nestingDepth[vw.id] = lowpt[vw.id] << 1;
+            if (lowpt2[vw.id] < height[v.id]) {
                 // vw has at least a second (higher) return path
-                nestingDepth[vw.getID()]++;
+                nestingDepth[vw.id]++;
             }
             // update lowpoints of parent edge uv
             if (uv != null) {
-                if (lowpt[vw.getID()] < lowpt[uv.getID()]) {
-                    lowpt2[uv.getID()] = Math.min(lowpt[uv.getID()], lowpt2[vw.getID()]);
-                    lowpt[uv.getID()] = lowpt[vw.getID()];
-                } else if (lowpt[vw.getID()] > lowpt[uv.getID()]) {
-                    lowpt2[uv.getID()] = Math.min(lowpt2[uv.getID()], lowpt[vw.getID()]);
+                if (lowpt[vw.id] < lowpt[uv.id]) {
+                    lowpt2[uv.id] = Math.min(lowpt[uv.id], lowpt2[vw.id]);
+                    lowpt[uv.id] = lowpt[vw.id];
+                } else if (lowpt[vw.id] > lowpt[uv.id]) {
+                    lowpt2[uv.id] = Math.min(lowpt2[uv.id], lowpt[vw.id]);
                 } else {
-                    lowpt2[uv.getID()] = Math.min(lowpt2[uv.getID()], lowpt2[vw.getID()]);
+                    lowpt2[uv.id] = Math.min(lowpt2[uv.id], lowpt2[vw.id]);
                 }
             }
         }
@@ -535,13 +631,13 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      *            (designed for planar subgraph determination). If {@code false}, it will only run
      *            until one crossing edge is identified (designed for simple planarity testing)
      */
-    private void testingDFS(final INode v, final boolean mode) {
+    private void testingDFS(final PNode v, final boolean mode) {
 
-        IEdge uv = parentEdge[v.getID()];
-        IEdge vw1 = null;
-        for (IEdge vw : v.adjacentEdges()) {
+        PEdge uv = parentEdge[v.id];
+        PEdge vw1 = null;
+        for (PEdge vw : v.adjacentEdges()) {
             // adjacent edges of v are already ordered by nesting depth
-            if (vw.getSource().equals(vw.getTarget()) || dfsTarget[vw.getID()].equals(v)) {
+            if (vw.getSource().equals(vw.getTarget()) || dfsTarget[vw.id].equals(v)) {
                 // vw is incoming edge or self-loop
                 continue;
             }
@@ -552,33 +648,33 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
             if (!conflicts.isEmpty()) {
                 // define stack interval related to vw:
                 // stackBottom[vw] is first conflict pair not belonging to vw
-                stackBottom.set(vw.getID(), conflicts.peek());
+                stackBottom.set(vw.id, conflicts.peek());
             }
-            if (vw.equals(parentEdge[dfsTarget[vw.getID()].getID()])) {
+            if (vw.equals(parentEdge[dfsTarget[vw.id].id])) {
                 // vw is tree edge
-                testingDFS(dfsTarget[vw.getID()], mode);
+                testingDFS(dfsTarget[vw.id], mode);
             } else {
                 // vw is back edge
-                lowptEdge[vw.getID()] = vw;
+                lowptEdge[vw.id] = vw;
                 // push it as a new conflict pair on stack
-                conflicts.push(new Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>>(
-                        new Pair<IEdge, IEdge>(null, null), new Pair<IEdge, IEdge>(vw, vw)));
+                conflicts.push(new Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>>(
+                        new Pair<PEdge, PEdge>(null, null), new Pair<PEdge, PEdge>(vw, vw)));
             }
             if (!(isPlanar || mode)) {
                 // graph already turned out to be non-planar
                 return;
             }
             // integrate new return edges
-            if (lowpt[vw.getID()] < height[v.getID()]) {
+            if (lowpt[vw.id] < height[v.id]) {
                 // vw has return edge
                 if (vw.equals(vw1)) {
-                    lowptEdge[uv.getID()] = lowptEdge[vw1.getID()];
+                    lowptEdge[uv.id] = lowptEdge[vw1.id];
                 } else {
                     // vw1 has no constraints so far, add constraints of every other edge
-                    Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>> p = newConflictPair();
+                    Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>> p = newConflictPair();
                     // merge all edges into right side, since vw1 constrains them
                     do {
-                        Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>> q = conflicts.pop();
+                        Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>> q = conflicts.pop();
                         if (q.getFirst().getFirst() != null && q.getFirst().getSecond() != null) {
                             swap(q);
                         }
@@ -590,29 +686,29 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                                 return;
                             }
                         }
-                        if (lowpt[q.getSecond().getFirst().getID()] > lowpt[uv.getID()]) {
+                        if (lowpt[q.getSecond().getFirst().id] > lowpt[uv.id]) {
                             // merge intervals
                             if (p.getSecond().getFirst() == null
                                     && p.getSecond().getSecond() == null) {
                                 // topmost interval
                                 p.getSecond().setSecond(q.getSecond().getSecond());
                             } else {
-                                ref[p.getSecond().getFirst().getID()] = q.getSecond().getSecond();
+                                ref[p.getSecond().getFirst().id] = q.getSecond().getSecond();
                             }
                             p.getSecond().setFirst(q.getSecond().getFirst());
                         } else {
                             // align
-                            ref[q.getSecond().getFirst().getID()] = lowptEdge[uv.getID()];
+                            ref[q.getSecond().getFirst().id] = lowptEdge[uv.id];
                         }
 
                     } while (!conflicts.isEmpty()
-                            && !conflicts.peek().equals(stackBottom.get(vw.getID())));
+                            && !conflicts.peek().equals(stackBottom.get(vw.id)));
                     // merge all conflicting previous return edges into left interval, since all
                     // previous vws constrain them
                     while (!conflicts.isEmpty()
                             && (conflicting(conflicts.peek().getFirst(), vw) || conflicting(
                                     conflicts.peek().getSecond(), vw))) {
-                        Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>> q = conflicts.pop();
+                        Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>> q = conflicts.pop();
                         if (conflicting(q.getSecond(), vw)) {
                             swap(q);
                         }
@@ -626,7 +722,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                         }
                         // merge intervals
                         if (p.getSecond().getFirst() != null) {
-                            ref[p.getSecond().getFirst().getID()] = q.getSecond().getSecond();
+                            ref[p.getSecond().getFirst().id] = q.getSecond().getSecond();
                             if (q.getSecond().getFirst() != null) {
                                 p.getSecond().setFirst(q.getSecond().getFirst());
 
@@ -636,7 +732,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                             // topmost interval
                             p.getFirst().setSecond(q.getFirst().getSecond());
                         } else {
-                            ref[p.getFirst().getFirst().getID()] = q.getFirst().getSecond();
+                            ref[p.getFirst().getFirst().id] = q.getFirst().getSecond();
                         }
                         p.getFirst().setFirst(q.getFirst().getFirst());
                     }
@@ -652,50 +748,50 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
         // They are not part of any constraints deeper in the stack.
         if (uv != null) {
             // v is not the root
-            INode u = dfsSource[uv.getID()];
+            PNode u = dfsSource[uv.id];
             // drop entire conflict pairs only containing edges that return to parent u
-            while (!conflicts.isEmpty() && lowest(conflicts.peek()) == height[u.getID()]) {
-                Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>> p = conflicts.pop();
+            while (!conflicts.isEmpty() && lowest(conflicts.peek()) == height[u.id]) {
+                Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>> p = conflicts.pop();
                 if (p.getFirst().getFirst() != null) {
-                    side[p.getFirst().getFirst().getID()] = -1;
+                    side[p.getFirst().getFirst().id] = -1;
                 }
             }
             if (!conflicts.isEmpty()) {
                 // final conflict pair to consider: only some edge return to parent u
-                Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>> p = conflicts.pop();
+                Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>> p = conflicts.pop();
                 // remove those edges from left interval
                 while (p.getFirst().getSecond() != null
-                        && dfsTarget[p.getFirst().getSecond().getID()].equals(u)) {
-                    p.getFirst().setSecond(ref[p.getFirst().getSecond().getID()]);
+                        && dfsTarget[p.getFirst().getSecond().id].equals(u)) {
+                    p.getFirst().setSecond(ref[p.getFirst().getSecond().id]);
                 }
                 if (p.getFirst().getSecond() == null && p.getFirst().getFirst() != null) {
                     // left interval has just been emptied
                     // append edge to opposite interval (necessary to determine absolute side later)
-                    ref[p.getFirst().getFirst().getID()] = p.getSecond().getFirst();
+                    ref[p.getFirst().getFirst().id] = p.getSecond().getFirst();
                     // indicate, that the edge belongs to a different side
-                    side[p.getFirst().getFirst().getID()] = -1;
+                    side[p.getFirst().getFirst().id] = -1;
                     p.getFirst().setFirst(null);
                 }
                 // remove those edges from right interval
                 while (p.getSecond().getSecond() != null
-                        && dfsTarget[p.getSecond().getSecond().getID()].equals(u)) {
-                    p.getSecond().setSecond(ref[p.getSecond().getSecond().getID()]);
+                        && dfsTarget[p.getSecond().getSecond().id].equals(u)) {
+                    p.getSecond().setSecond(ref[p.getSecond().getSecond().id]);
                 }
                 if (p.getSecond().getSecond() == null && p.getSecond().getFirst() != null) {
                     // right interval has just been emptied
                     // append edge to opposite interval (necessary to determine absolute side later)
-                    ref[p.getSecond().getFirst().getID()] = p.getFirst().getFirst();
+                    ref[p.getSecond().getFirst().id] = p.getFirst().getFirst();
                     // indicate, that the edge belongs to a different side
-                    side[p.getSecond().getFirst().getID()] = -1;
+                    side[p.getSecond().getFirst().id] = -1;
                     p.getSecond().setFirst(null);
                 }
                 conflicts.push(p);
             }
             // set reference to the highest return edge: vw belongs to the same side as its parent
-            if (lowpt[uv.getID()] < height[u.getID()]) {
+            if (lowpt[uv.id] < height[u.id]) {
                 // u has return edge
-                IEdge highLeft = null;
-                IEdge highRight = null;
+                PEdge highLeft = null;
+                PEdge highRight = null;
                 if (!conflicts.isEmpty()) {
                     highLeft = conflicts.peek().getFirst().getSecond();
                     highRight = conflicts.peek().getSecond().getSecond();
@@ -703,10 +799,10 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                 // set reference only to determine the edges absolute side later (has no effect on
                 // conflict pair itself)
                 if (highLeft != null
-                        && (highRight == null || lowpt[highLeft.getID()] > lowpt[highRight.getID()])) {
-                    ref[uv.getID()] = highLeft;
+                        && (highRight == null || lowpt[highLeft.id] > lowpt[highRight.id])) {
+                    ref[uv.id] = highLeft;
                 } else {
-                    ref[uv.getID()] = highRight;
+                    ref[uv.id] = highRight;
                 }
             }
         }
@@ -729,45 +825,45 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * @param v
      *            the root of the current DFS-subtree
      */
-    private void embeddingDFS(final INode v) {
+    private void embeddingDFS(final PNode v) {
 
-        for (IEdge vw : v.adjacentEdges()) {
-            if (vw.getSource().equals(vw.getTarget()) || !dfsSource[vw.getID()].equals(v)) {
+        for (PEdge vw : v.adjacentEdges()) {
+            if (vw.getSource().equals(vw.getTarget()) || !dfsSource[vw.id].equals(v)) {
                 // vw is incoming edge or self-loop
                 continue;
             }
-            INode w = dfsTarget[vw.getID()];
-            if (vw.equals(parentEdge[w.getID()])) {
+            PNode w = dfsTarget[vw.id];
+            if (vw.equals(parentEdge[w.id])) {
                 // vw is tree edge
-                if (initialRef[v.getID()] == null) {
-                    initialRef[v.getID()] = vw;
+                if (initialRef[v.id] == null) {
+                    initialRef[v.id] = vw;
                 }
-                if (rightRef[v.getID()] != null) {
+                if (rightRef[v.id] != null) {
                     // determine rightmost adjacent edge of previously traversed subtree
-                    IEdge rightmost = rightRef[v.getID()];
-                    while (ref[rightmost.getID()] != null) {
-                        rightmost = ref[rightmost.getID()];
+                    PEdge rightmost = rightRef[v.id];
+                    while (ref[rightmost.id] != null) {
+                        rightmost = ref[rightmost.id];
                     }
-                    leftRef[v.getID()] = rightmost;
-                    ref[rightmost.getID()] = vw;
+                    leftRef[v.id] = rightmost;
+                    ref[rightmost.id] = vw;
                 }
-                rightRef[v.getID()] = vw;
+                rightRef[v.id] = vw;
                 embeddingDFS(w);
             } else {
                 // vw is back edge
-                if (side[vw.getID()] == 1) {
+                if (side[vw.id] == 1) {
                     // place vw directly after rightRef[w]
-                    ref[vw.getID()] = ref[rightRef[w.getID()].getID()];
-                    ref[rightRef[w.getID()].getID()] = vw;
+                    ref[vw.id] = ref[rightRef[w.id].id];
+                    ref[rightRef[w.id].id] = vw;
                 } else {
                     // place vw directly after leftRef[w]
-                    if (leftRef[w.getID()] == null) {
+                    if (leftRef[w.id] == null) {
                         // vw belongs to leftmost outgoing tree edge
-                        ref[vw.getID()] = initialRef[w.getID()];
-                        initialRef[w.getID()] = vw;
+                        ref[vw.id] = initialRef[w.id];
+                        initialRef[w.id] = vw;
                     } else {
-                        ref[vw.getID()] = ref[leftRef[w.getID()].getID()];
-                        ref[leftRef[w.getID()].getID()] = vw;
+                        ref[vw.id] = ref[leftRef[w.id].id];
+                        ref[leftRef[w.id].id] = vw;
                     }
                 }
             }
@@ -788,12 +884,12 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      *            the edge to compute its sign
      * @return the sign of the input edge
      */
-    private int sign(final IEdge edge) {
-        if (ref[edge.getID()] != null) {
-            side[edge.getID()] *= sign(ref[edge.getID()]);
-            ref[edge.getID()] = null;
+    private int sign(final PEdge edge) {
+        if (ref[edge.id] != null) {
+            side[edge.id] *= sign(ref[edge.id]);
+            ref[edge.id] = null;
         }
-        return side[edge.getID()];
+        return side[edge.id];
     }
 
     /**
@@ -813,9 +909,9 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * 
      * @see de.cau.cs.kieler.core.util.Pair Pair
      */
-    private boolean conflicting(final Pair<IEdge, IEdge> interval, final IEdge edge) {
+    private boolean conflicting(final Pair<PEdge, PEdge> interval, final PEdge edge) {
         return ((interval.getFirst() != null || interval.getSecond() != null) && lowpt[interval
-                .getSecond().getID()] > lowpt[edge.getID()]);
+                .getSecond().id] > lowpt[edge.id]);
     }
 
     /**
@@ -830,16 +926,16 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * 
      * @see de.cau.cs.kieler.core.util.Pair Pair
      */
-    private int lowest(final Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>> pair) {
+    private int lowest(final Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>> pair) {
 
         if (pair.getFirst().getFirst() == null && pair.getFirst().getSecond() == null) {
-            return lowpt[pair.getSecond().getFirst().getID()];
+            return lowpt[pair.getSecond().getFirst().id];
         }
         if (pair.getSecond().getFirst() == null && pair.getSecond().getSecond() == null) {
-            return lowpt[pair.getFirst().getFirst().getID()];
+            return lowpt[pair.getFirst().getFirst().id];
         }
-        return Math.min(lowpt[pair.getFirst().getFirst().getID()], lowpt[pair.getSecond()
-                .getFirst().getID()]);
+        return Math
+                .min(lowpt[pair.getFirst().getFirst().id], lowpt[pair.getSecond().getFirst().id]);
     }
 
     /**
@@ -850,12 +946,12 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * 
      * @see de.cau.cs.kieler.core.util.Pair Pair
      */
-    private Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>> newConflictPair() {
+    private Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>> newConflictPair() {
 
-        Pair<IEdge, IEdge> left = new Pair<IEdge, IEdge>(null, null);
-        Pair<IEdge, IEdge> right = new Pair<IEdge, IEdge>(null, null);
+        Pair<PEdge, PEdge> left = new Pair<PEdge, PEdge>(null, null);
+        Pair<PEdge, PEdge> right = new Pair<PEdge, PEdge>(null, null);
 
-        return new Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>>(left, right);
+        return new Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>>(left, right);
     }
 
     /**
@@ -867,8 +963,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * 
      * @see de.cau.cs.kieler.core.util.Pair Pair
      */
-    private void swap(final Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>> pair) {
-        Pair<IEdge, IEdge> p = pair.getFirst();
+    private void swap(final Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>> pair) {
+        Pair<PEdge, PEdge> p = pair.getFirst();
         pair.setFirst(pair.getSecond());
         pair.setSecond(p);
     }
@@ -890,33 +986,33 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * 
      * @see de.cau.cs.kieler.core.util.Pair Pair
      */
-    private LinkedList<IEdge> removeConflicts(
-            final Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>> pair, final IEdge edge) {
+    private LinkedList<PEdge> removeConflicts(
+            final Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>> pair, final PEdge edge) {
 
-        LinkedList<IEdge> left = new LinkedList<IEdge>();
-        LinkedList<IEdge> right = new LinkedList<IEdge>();
-        IEdge currentLeft = pair.getFirst().getSecond();
-        IEdge currentRight = pair.getSecond().getSecond();
+        LinkedList<PEdge> left = new LinkedList<PEdge>();
+        LinkedList<PEdge> right = new LinkedList<PEdge>();
+        PEdge currentLeft = pair.getFirst().getSecond();
+        PEdge currentRight = pair.getSecond().getSecond();
 
         if (edge != null) {
             // determine all edges on each interval, conflicting with input edge
-            while (currentLeft != null && lowpt[currentLeft.getID()] > lowpt[edge.getID()]) {
+            while (currentLeft != null && lowpt[currentLeft.id] > lowpt[edge.id]) {
                 left.add(currentLeft);
-                currentLeft = ref[currentLeft.getID()];
+                currentLeft = ref[currentLeft.id];
             }
-            while (currentRight != null && lowpt[currentRight.getID()] > lowpt[edge.getID()]) {
+            while (currentRight != null && lowpt[currentRight.id] > lowpt[edge.id]) {
                 right.add(currentRight);
-                currentRight = ref[currentRight.getID()];
+                currentRight = ref[currentRight.id];
             }
         } else {
             // determine all edges on each interval
             while (currentLeft != null) {
                 left.add(currentLeft);
-                currentLeft = ref[currentLeft.getID()];
+                currentLeft = ref[currentLeft.id];
             }
             while (currentRight != null) {
                 right.add(currentRight);
-                currentRight = ref[currentRight.getID()];
+                currentRight = ref[currentRight.id];
             }
         }
         // remove edges
@@ -951,10 +1047,10 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * @param node
      *            the node to sort its adjacency list
      */
-    private void sortAdjacencyList(final INode node) {
-        node.sort(new IFunction<IEdge, Integer>() {
-            public Integer evaluate(final IEdge element) {
-                return nestingDepth[element.getID()];
+    private void sortAdjacencyList(final PNode node) {
+        node.sort(new IFunction<PEdge, Integer>() {
+            public Integer evaluate(final PEdge element) {
+                return nestingDepth[element.id];
             }
         });
     }
@@ -973,27 +1069,27 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * @param node
      *            the node to merge its determined edge orders
      */
-    private void mergeEmbedding(final INode node) {
+    private void mergeEmbedding(final PNode node) {
 
         // Nothing needs to be done for small lists
         if (node.getAdjacentEdgeCount() <= 1) {
             return;
         }
 
-        IEdge treeEdge = null;
-        HashSet<IEdge> loops = new HashSet<IEdge>();
-        LinkedHashSet<IEdge> rest = new LinkedHashSet<IEdge>();
+        PEdge treeEdge = null;
+        HashSet<PEdge> loops = new HashSet<PEdge>();
+        LinkedHashSet<PEdge> rest = new LinkedHashSet<PEdge>();
         boolean insertionPoint = false;
-        for (IEdge edge : node.adjacentEdges()) {
+        for (PEdge edge : node.adjacentEdges()) {
             if (edge.getSource() == edge.getTarget()) {
                 // Remember self loops
                 loops.add(edge);
 
-            } else if (!(node == dfsSource[edge.getID()]) && (edge == parentEdge[node.getID()])) {
+            } else if (!(node == dfsSource[edge.id]) && (edge == parentEdge[node.id])) {
                 // Remember incoming tree edge
                 treeEdge = edge;
 
-            } else if ((edge == parentEdge[dfsTarget[edge.getID()].getID()]) && !insertionPoint) {
+            } else if ((edge == parentEdge[dfsTarget[edge.id].id]) && !insertionPoint) {
                 // Mark leftmost outgoing tree edge as insertion point
                 insertionPoint = true;
 
@@ -1004,7 +1100,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
         }
 
         // Move self loops to the beginning of the list
-        for (IEdge loop : loops) {
+        for (PEdge loop : loops) {
             node.moveToStart(loop);
         }
 
@@ -1014,16 +1110,17 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
         }
 
         // Move outgoing back edges and incoming tree edges to the end of the list
-        IEdge toAdd = initialRef[node.getID()];
+        PEdge toAdd = initialRef[node.id];
         while (toAdd != null) {
             node.moveToEnd(toAdd);
             rest.remove(toAdd);
-            toAdd = ref[toAdd.getID()];
+            toAdd = ref[toAdd.id];
         }
 
         // Move all edges after insertion point to the end of the list
-        for (IEdge edge : rest) {
+        for (PEdge edge : rest) {
             node.moveToEnd(edge);
         }
     }
+
 }

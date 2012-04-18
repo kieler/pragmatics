@@ -11,16 +11,19 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.planar.orthogonal;
+package de.cau.cs.kieler.klay.planar.p2ortho;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.klay.planar.graph.IEdge;
-import de.cau.cs.kieler.klay.planar.graph.IGraph;
-import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.ILayoutPhase;
+import de.cau.cs.kieler.klay.planar.IntermediateProcessingStrategy;
+import de.cau.cs.kieler.klay.planar.graph.PEdge;
+import de.cau.cs.kieler.klay.planar.graph.PGraph;
+import de.cau.cs.kieler.klay.planar.graph.PNode;
+import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
  * Implementation of the Quod orthogonilazation algorithm, based on the paper "Quasi-Orthogonal
@@ -29,8 +32,9 @@ import de.cau.cs.kieler.klay.planar.graph.INode;
  * with cages.
  * 
  * @author ocl
+ * @author pkl
  */
-public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonalizer {
+public class QuodOrthogonalizer extends AbstractAlgorithm implements ILayoutPhase {
 
     // ======================== Helper Classes =====================================================
 
@@ -46,13 +50,13 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
         // -------------------- Attributes ---------------------------------------------------------
 
         /** The graph the cage is a part of. */
-        private IGraph graph;
+        private PGraph graph;
 
         /** The original node replaced by the cage. */
-        private INode cageNode;
+        private PNode cageNode;
 
         /** A mapping from the ring nodes to the corresponding edges. */
-        private LinkedHashMap<INode, IEdge> map;
+        private LinkedHashMap<PNode, PEdge> map;
 
         // -------------------- Constructor --------------------------------------------------------
 
@@ -62,22 +66,22 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
          * @param node
          *            the node to replace
          */
-        public Cage(final INode node) {
+        public Cage(final PNode node) {
             this.cageNode = node;
             this.graph = this.cageNode.getParent();
-            this.map = new LinkedHashMap<INode, IEdge>(this.cageNode.getAdjacentEdgeCount() * 2);
+            this.map = new LinkedHashMap<PNode, PEdge>(this.cageNode.getAdjacentEdgeCount() * 2);
 
             // Create temporary list to not break the iterator
-            LinkedList<IEdge> edges = new LinkedList<IEdge>();
-            for (IEdge edge : this.cageNode.adjacentEdges()) {
+            LinkedList<PEdge> edges = new LinkedList<PEdge>();
+            for (PEdge edge : this.cageNode.adjacentEdges()) {
                 edges.add(edge);
             }
 
             // Create cage nodes
-            INode first = null;
-            INode previous = null;
-            INode current = null;
-            for (IEdge edge : edges) {
+            PNode first = null;
+            PNode previous = null;
+            PNode current = null;
+            for (PEdge edge : edges) {
                 previous = current;
                 current = this.graph.addNode();
                 this.map.put(current, edge);
@@ -99,9 +103,9 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
          */
         public void remove() {
             // Since we use a linked hash map, the edges are added in the original order
-            for (Map.Entry<INode, IEdge> entry : this.map.entrySet()) {
-                INode node = entry.getKey();
-                IEdge edge = entry.getValue();
+            for (Map.Entry<PNode, PEdge> entry : this.map.entrySet()) {
+                PNode node = entry.getKey();
+                PEdge edge = entry.getValue();
                 edge.move(node, this.cageNode);
                 this.graph.removeNode(node);
             }
@@ -112,19 +116,24 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
     // TODO does leaving the cage nodes in the graph influence the flow network?
 
     /**
-     * {@inheritDoc}
+     * This takes a planar graph and computes an orthogonal representation defining the shape of the
+     * orthogonal graph.
+     * 
+     * @param graph
+     *            the graph to draw as orthogonal graph
+     * @return an orthogonal representation of the graph
      */
-    public OrthogonalRepresentation orthogonalize(final IGraph graph) {
+    public OrthogonalRepresentation orthogonalize(final PGraph graph) {
 
         // Replace high-degree nodes with cages
         LinkedList<Cage> cages = new LinkedList<Cage>();
-        for (INode node : graph.getNodes()) {
+        for (PNode node : graph.getNodes()) {
             if (node.getAdjacentEdgeCount() > TamassiaOrthogonalizer.MAXDEGREE) {
                 cages.add(new Cage(node));
             }
         }
 
-        IOrthogonalizer orthogonalizer = new TamassiaOrthogonalizer();
+        TamassiaOrthogonalizer orthogonalizer = new TamassiaOrthogonalizer();
         OrthogonalRepresentation orthogonal = orthogonalizer.orthogonalize(graph);
 
         // TODO force cages as rectangles
@@ -135,6 +144,38 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
         }
 
         return orthogonal;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void process(PGraph graph) {
+        // Replace high-degree nodes with cages
+        LinkedList<Cage> cages = new LinkedList<Cage>();
+        for (PNode node : graph.getNodes()) {
+            if (node.getAdjacentEdgeCount() > TamassiaOrthogonalizer.MAXDEGREE) {
+                cages.add(new Cage(node));
+            }
+        }
+
+        TamassiaOrthogonalizer orthogonalizer = new TamassiaOrthogonalizer();
+        OrthogonalRepresentation orthogonal = orthogonalizer.orthogonalize(graph);
+
+        // TODO force cages as rectangles
+
+        // Remove the cages from the graph
+        for (Cage cage : cages) {
+            cage.remove();
+        }
+        graph.setProperty(Properties.ORTHO_REPRESENTATION, orthogonal);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(PGraph graph) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
