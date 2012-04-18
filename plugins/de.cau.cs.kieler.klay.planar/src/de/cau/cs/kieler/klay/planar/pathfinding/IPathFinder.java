@@ -19,8 +19,8 @@ import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.klay.planar.graph.IEdge;
-import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.graph.PEdge;
+import de.cau.cs.kieler.klay.planar.graph.PNode;
 
 /**
  * Interface for algorithms to find a path in a graph. Uses the Strategy design pattern to provide a
@@ -56,7 +56,7 @@ public interface IPathFinder extends IAlgorithm {
      *            the target node of the path
      * @return the list of edges defining a path between {@code source} and {@code target}
      */
-    List<IEdge> findPath(INode source, INode target);
+    List<PEdge> findPath(PNode source, PNode target);
 
     /**
      * Find a path in a graph between two node. The algorithm looks for a valid path in the parent
@@ -72,7 +72,7 @@ public interface IPathFinder extends IAlgorithm {
      *            a condition that defines if an edge can be entered from a specific node
      * @return the list of edges defining a path between {@code source} and {@code target}
      */
-    List<IEdge> findPath(INode source, INode target, ICondition<Pair<INode, IEdge>> condition);
+    List<PEdge> findPath(PNode source, PNode target, ICondition<Pair<PNode, PEdge>> condition);
 
     /**
      * Interface for algorithms to find the shortest path in a graph.

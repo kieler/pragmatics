@@ -16,9 +16,7 @@ package de.cau.cs.kieler.klay.planar.graph;
 import java.io.File;
 import java.io.IOException;
 
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.properties.Property;
 
 /**
  * An interface for the creation of graph objects. This interface implements the factory method
@@ -30,24 +28,12 @@ import de.cau.cs.kieler.core.properties.Property;
  */
 public interface IGraphFactory {
 
-    // ======================== Properties =========================================================
-
-    /** Property to convert an {@code IGraphElement} to its corresponding {@code KGraphElement}. */
-    Property<KGraphElement> TOKGRAPH = new Property<KGraphElement>(
-            "de.cau.cs.kieler.klay.planar.properties.tokgraph");
-
-    /** Property to convert between a graph element and its element in the dual graph. */
-    Property<IGraphElement> TODUALGRAPH = new Property<IGraphElement>(
-            "de.cau.cs.kieler.klay.planar.properties.todualgraph");
-
-    // ======================== Graph Creation =====================================================
-
     /**
      * Create an empty graph instance. The resulting graph will not contain any edges or nodes.
      * 
      * @return an empty graph
      */
-    IGraph createEmptyGraph();
+    PGraph createEmptyGraph();
 
     /**
      * Create a full graph. In a full graph, every node is connected to every other node via an
@@ -57,7 +43,7 @@ public interface IGraphFactory {
      *            the number of nodes in the graph
      * @return a full graph with the given number of nodes
      */
-    IGraph createFullGraph(int nodes);
+    PGraph createFullGraph(int nodes);
 
     /**
      * Create a random graph with a given number of nodes and edges.
@@ -68,7 +54,7 @@ public interface IGraphFactory {
      *            the number of edges in the random graph
      * @return a random graph
      */
-    IGraph createRandomGraph(int nodes, int edges);
+    PGraph createRandomGraph(int nodes, int edges);
 
     /**
      * Create a graph base on an existing graph. This method does not guarantee an exact copy of the
@@ -78,7 +64,7 @@ public interface IGraphFactory {
      *            the graph to copy
      * @return a copy of the given graph
      */
-    IGraph createGraphCopy(IGraph graph);
+    PGraph createGraphCopy(PGraph graph);
 
     /**
      * Generate the dual graph of another graph. The dual graph is a graph, that has a node for
@@ -88,7 +74,7 @@ public interface IGraphFactory {
      *            the graph to create the dual graph of
      * @return the dual graph to this graph
      */
-    IGraph createDualGraph(IGraph graph);
+    PGraph createDualGraph(PGraph graph);
 
     /**
      * Create a graph from a {@code KGraph} instance.
@@ -97,7 +83,7 @@ public interface IGraphFactory {
      *            a {@code KNode} to base the graph upon
      * @return a graph corresponding to {@code kgraph}
      */
-    IGraph createGraphFromKGraph(KNode kgraph);
+    PGraph createGraphFromKGraph(KNode kgraph);
 
     /**
      * Create a graph based on a file in the DIMACS format.
@@ -108,6 +94,11 @@ public interface IGraphFactory {
      * @throws IOException
      *             if problems during file reading occur
      */
-    IGraph createGraphFromDIMACS(File dimacs) throws IOException;
+    PGraph createGraphFromDIMACS(File dimacs) throws IOException;
+
+    /**
+     * @param pgraph
+     */
+    void applyLayout(PGraph pgraph);
 
 }

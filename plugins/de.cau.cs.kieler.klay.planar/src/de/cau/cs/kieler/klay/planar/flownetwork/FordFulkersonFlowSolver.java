@@ -19,9 +19,9 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver.IMaximumFlowSolver;
-import de.cau.cs.kieler.klay.planar.graph.IEdge;
-import de.cau.cs.kieler.klay.planar.graph.IGraph;
-import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.graph.PEdge;
+import de.cau.cs.kieler.klay.planar.graph.PGraph;
+import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.pathfinding.BFSPathFinder;
 import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
 
@@ -35,12 +35,12 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
     /**
      * {@inheritDoc}
      */
-    public void findFlow(final IGraph network) {
+    public void findFlow(final PGraph network) {
 
         // Add source and sink nodes
-        INode source = network.addNode();
-        INode sink = network.addNode();
-        for (INode node : network.getNodes()) {
+        PNode source = network.addNode();
+        PNode sink = network.addNode();
+        for (PNode node : network.getNodes()) {
             int s = node.getProperty(IFlowNetworkSolver.SUPPLY);
             if (s > 0) {
                 network.addEdge(source, node, true);
@@ -51,10 +51,10 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
 
         // Initialize path finder and path condition
         IPathFinder pathFinder = new BFSPathFinder();
-        ICondition<Pair<INode, IEdge>> cond = new ICondition<Pair<INode, IEdge>>() {
-            public boolean evaluate(final Pair<INode, IEdge> object) {
-                INode node = object.getFirst();
-                IEdge edge = object.getSecond();
+        ICondition<Pair<PNode, PEdge>> cond = new ICondition<Pair<PNode, PEdge>>() {
+            public boolean evaluate(final Pair<PNode, PEdge> object) {
+                PNode node = object.getFirst();
+                PEdge edge = object.getSecond();
                 int cap = 0;
                 if (edge.isDirected() && (node == edge.getSource())) {
                     cap = edge.getProperty(CAPACITY) - edge.getProperty(FLOW);
@@ -66,11 +66,11 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
             }
         };
 
-        List<IEdge> path = pathFinder.findPath(source, sink, cond);
+        List<PEdge> path = pathFinder.findPath(source, sink, cond);
         while (path != null) {
             // Get minimal capacity along path
             int value = Integer.MAX_VALUE;
-            for (IEdge edge : path) {
+            for (PEdge edge : path) {
                 int cap = edge.getProperty(RESIDUALCAPACITY);
                 if (cap < value) {
                     value = cap;
@@ -78,7 +78,7 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
             }
 
             // Update flow along path
-            for (IEdge edge : path) {
+            for (PEdge edge : path) {
                 int flow = edge.getProperty(FLOW);
                 edge.setProperty(FLOW, flow + value);
             }

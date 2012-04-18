@@ -8,12 +8,15 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.kgraph,
  de.cau.cs.kieler.kiml,
- de.cau.cs.kieler.kiml.service
+ de.cau.cs.kieler.kiml.service,
+ com.google.guava;bundle-version="10.0.1"
 Export-Package: de.cau.cs.kieler.klay.planar,
  de.cau.cs.kieler.klay.planar.flownetwork,
  de.cau.cs.kieler.klay.planar.graph,
- de.cau.cs.kieler.klay.planar.graph.impl,
- de.cau.cs.kieler.klay.planar.orthogonal,
+ de.cau.cs.kieler.klay.planar.intermediate,
+ de.cau.cs.kieler.klay.planar.p1planar,
+ de.cau.cs.kieler.klay.planar.p2ortho,
+ de.cau.cs.kieler.klay.planar.p3compact,
  de.cau.cs.kieler.klay.planar.pathfinding,
- de.cau.cs.kieler.klay.planar.planarity,
+ de.cau.cs.kieler.klay.planar.properties,
  de.cau.cs.kieler.klay.planar.util

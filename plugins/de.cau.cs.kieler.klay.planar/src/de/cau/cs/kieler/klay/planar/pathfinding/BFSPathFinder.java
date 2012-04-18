@@ -19,8 +19,8 @@ import java.util.Queue;
 
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.klay.planar.graph.IEdge;
-import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.graph.PEdge;
+import de.cau.cs.kieler.klay.planar.graph.PNode;
 
 /**
  * Use a Breadth First Search to find a path between two nodes in any graph.
@@ -32,51 +32,51 @@ public class BFSPathFinder extends AbstractPathFinder {
     /**
      * {@inheritDoc}
      */
-    public List<IEdge> findPath(final INode source, final INode target,
-            final ICondition<Pair<INode, IEdge>> condition) {
+    public List<PEdge> findPath(final PNode source, final PNode target,
+            final ICondition<Pair<PNode, PEdge>> condition) {
 
         // Initialize arrays
         int size = source.getParent().getNodeCount();
         boolean[] visited = new boolean[size];
-        IEdge[] edges = new IEdge[size];
+        PEdge[] edges = new PEdge[size];
 
-        Queue<INode> queue = new LinkedList<INode>();
+        Queue<PNode> queue = new LinkedList<PNode>();
         queue.add(source);
 
         while (!queue.isEmpty()) {
-            INode current = queue.remove();
+            PNode current = queue.remove();
 
             // Stop if the target is reached
             if (current == target) {
-                LinkedList<IEdge> path = new LinkedList<IEdge>();
-                INode pathNode = current;
-                IEdge pathEdge = edges[pathNode.getID()];
+                LinkedList<PEdge> path = new LinkedList<PEdge>();
+                PNode pathNode = current;
+                PEdge pathEdge = edges[pathNode.id];
                 while (pathEdge != null) {
                     path.addFirst(pathEdge);
                     pathNode = pathNode.getAdjacentNode(pathEdge);
-                    pathEdge = edges[pathNode.getID()];
+                    pathEdge = edges[pathNode.id];
                 }
                 return path;
             }
 
             // Add neighbors to queue
-            for (IEdge edge : current.adjacentEdges()) {
-                INode neighbor = current.getAdjacentNode(edge);
+            for (PEdge edge : current.adjacentEdges()) {
+                PNode neighbor = current.getAdjacentNode(edge);
 
                 // Ignore visited nodes
-                if (visited[neighbor.getID()]) {
+                if (visited[neighbor.id]) {
                     continue;
                 }
 
                 // Check edge condition
-                if (!condition.evaluate(new Pair<INode, IEdge>(neighbor, edge))) {
+                if (!condition.evaluate(new Pair<PNode, PEdge>(neighbor, edge))) {
                     continue;
                 }
 
                 queue.add(neighbor);
-                edges[neighbor.getID()] = edge;
+                edges[neighbor.id] = edge;
             }
-            visited[current.getID()] = true;
+            visited[current.id] = true;
         }
 
         // Finished without reaching the target

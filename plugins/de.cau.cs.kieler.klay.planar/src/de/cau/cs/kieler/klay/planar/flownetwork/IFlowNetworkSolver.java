@@ -15,7 +15,7 @@ package de.cau.cs.kieler.klay.planar.flownetwork;
 
 import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.klay.planar.graph.IGraph;
+import de.cau.cs.kieler.klay.planar.graph.PGraph;
 
 /**
  * Interface for algorithms to solve problems in flow networks. Uses the Strategy design pattern to
@@ -62,7 +62,7 @@ public interface IFlowNetworkSolver extends IAlgorithm {
      * @param network
      *            the network to work on
      */
-    void findFlow(IGraph network);
+    void findFlow(PGraph network);
 
     /**
      * Interface for algorithms to solve the maximum flow problem in a flow network. The maximum
