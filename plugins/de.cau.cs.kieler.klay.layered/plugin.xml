@@ -113,6 +113,12 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.interactiveLayoutAnchor">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.knownOption1">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.nodePlace">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
@@ -203,6 +209,15 @@
             description="Determines which point of a node is considered by interactive layout phases."
             id="de.cau.cs.kieler.klay.layered.interactiveLayoutAnchor"
             name="Interactive Layout Anchor"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy"
+            default="LINEAR_SEGMENTS"
+            description="Strategy for Node Placement"
+            id="de.cau.cs.kieler.klay.layered.nodePlace"
+            name="Node Placement"
             type="enum">
       </layoutOption>
    </extension>
