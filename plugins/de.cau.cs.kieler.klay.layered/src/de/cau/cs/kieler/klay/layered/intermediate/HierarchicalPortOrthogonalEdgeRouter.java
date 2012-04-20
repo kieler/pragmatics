@@ -259,9 +259,6 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             switch (constraints) {
             case FREE:
             case FIXED_SIDE:
-                calculateNorthSouthDummyPositions(dummy);
-                break;
-                
             case FIXED_ORDER:
                 calculateNorthSouthDummyPositions(dummy);
                 break;
@@ -551,7 +548,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
     // STEP 4: REMOVE TEMPORARY DUMMIES
     
     /**
-     * Removes the temporary hierarchical port dummies, reconnecting their incoming
+     * Removes the temporary hierarchical port dummies, reconnecting their incoming and outgoing
      * edges to the original dummies and setting the appropriate bend points.
      * 
      * @param layeredGraph the layered graph.
@@ -572,21 +569,46 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                     continue;
                 }
                 
-                // There must be a port where all edges come in, and a port with an edge connecting
-                // node and origin
-                LPort nodeInPort = node.getPorts().get(0);
-                LPort nodeOutPort = node.getPorts().get(1);
+                // There must be a port where all edges come in, another port where edges go out, and
+                // a port with an edge connecting node and origin (that one was added previously by
+                // this processor)
+                LPort nodeInPort = null;
+                LPort nodeOutPort = null;
+                LPort nodeOriginPort = null;
                 
-                LEdge nodeToOriginEdge = nodeOutPort.getOutgoingEdges().get(0);
+                for (LPort port : node.getPorts()) {
+                    switch (port.getSide()) {
+                    case WEST:
+                        nodeInPort = port;
+                        break;
+                    
+                    case EAST:
+                        nodeOutPort = port;
+                        break;
+                        
+                    default:
+                        nodeOriginPort = port;
+                    }
+                }
                 
-                // Retrieve the edge connecting node and origin, and get its list of bend points
-                KVectorChain bendPoints = new KVectorChain();
+                // Find the edge connecting this dummy to the original external port dummy that we
+                // restored just a while ago
+                LEdge nodeToOriginEdge = nodeOriginPort.getOutgoingEdges().get(0);
+                
+                // Compute bend points for incoming edges
+                KVectorChain incomingEdgeBendPoints = new KVectorChain(nodeToOriginEdge.getBendPoints());
                 
                 KVector firstBendPoint = new KVector(nodeInPort.getPosition());
                 firstBendPoint.add(node.getPosition());
-                bendPoints.add(firstBendPoint);
+                incomingEdgeBendPoints.add(0, firstBendPoint);
                 
-                bendPoints.addAll(nodeToOriginEdge.getBendPoints());
+                // Compute bend points for outgoing edges
+                KVectorChain outgoingEdgeBendPoints = KVectorChain.reverse(
+                        nodeToOriginEdge.getBendPoints());
+                
+                KVector lastBendPoint = new KVector(nodeOutPort.getPosition());
+                lastBendPoint.add(node.getPosition());
+                outgoingEdgeBendPoints.add(lastBendPoint);
                 
                 // Retrieve the original hierarchical port dummy
                 LNode replacedDummy = (LNode) node.getProperty(Properties.EXT_PORT_REPLACED_DUMMY);
@@ -597,7 +619,15 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                 
                 for (LEdge edge : edges) {
                     edge.setTarget(replacedDummyPort);
-                    edge.getBendPoints().addAll(bendPoints);
+                    edge.getBendPoints().addAll(incomingEdgeBendPoints);
+                }
+                
+                // Reroute all the output port's edges
+                edges = nodeOutPort.getOutgoingEdges().toArray(new LEdge[0]);
+                
+                for (LEdge edge : edges) {
+                    edge.setSource(replacedDummyPort);
+                    edge.getBendPoints().addAll(0, outgoingEdgeBendPoints);
                 }
                 
                 // Remove connection between node and original hierarchical port dummy
