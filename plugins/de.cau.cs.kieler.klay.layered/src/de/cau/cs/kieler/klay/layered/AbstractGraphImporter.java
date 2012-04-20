@@ -46,7 +46,9 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
     
     /**
      * Creates a dummy for an external port. The dummy will have just one port. The port is on
-     * the eastern side for western external ports, and on the western side for all other ports.
+     * the eastern side for western external ports, on the western side for eastern external ports,
+     * on the southern side for northern external ports, and on the northern side for southern
+     * external ports.
      * 
      * <p>The returned dummy node is decorated with some properties:</p>
      * <ul>
@@ -60,8 +62,8 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
      *   <li>For northern and southern port dummies, the {@link Properties#IN_LAYER_CONSTRAINT} is set to
      *     {@link InLayerConstraint#TOP} and {@link InLayerConstraint#BOTTOM}, respectively.</li>
      *   <li>For eastern dummies, the {@link Properties#EDGE_CONSTRAINT} is set to
-     *     {@link EdgeConstraint#OUTGOING_ONLY}; for all other dummies, it is set to
-     *     {@link EdgeConstraint#INCOMING_ONLY}.</li>
+     *     {@link EdgeConstraint#OUTGOING_ONLY}; for western dummies, it is set to
+     *     {@link EdgeConstraint#INCOMING_ONLY}; for all other dummies, it is left unset.</li>
      *   <li>{@link Properties#EXT_PORT_SIDE} is set to the side of the external port represented.</li>
      *   <li>If the port constraints of the original port's node are set to
      *     {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS}, the dummy node's
@@ -131,7 +133,6 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         
         case NORTH:
             dummy.setProperty(Properties.IN_LAYER_CONSTRAINT, InLayerConstraint.TOP);
-            dummy.setProperty(Properties.EDGE_CONSTRAINT, EdgeConstraint.INCOMING_ONLY);
             dummy.getSize().x = portSize.x;
             dummyPort.setSide(PortSide.SOUTH);
             dummyPort.getPosition().x = portSize.x / 2.0;
@@ -139,7 +140,6 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         
         case SOUTH:
             dummy.setProperty(Properties.IN_LAYER_CONSTRAINT, InLayerConstraint.BOTTOM);
-            dummy.setProperty(Properties.EDGE_CONSTRAINT, EdgeConstraint.INCOMING_ONLY);
             dummy.getSize().x = portSize.x;
             dummyPort.setSide(PortSide.NORTH);
             dummyPort.getPosition().x = portSize.x / 2.0;
