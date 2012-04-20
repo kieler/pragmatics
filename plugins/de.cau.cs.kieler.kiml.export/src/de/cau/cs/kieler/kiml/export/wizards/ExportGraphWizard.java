@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.export.wizards;
 
 import java.io.File;
+import java.io.FilenameFilter;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -77,29 +78,59 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
         if (!checkTargetDirectory()) {
             return false;
         }
-        
-        if (!checkTargetFiles()) {
+
+        if (!targetFilesHandler()) {
             return false;
         }
-        
-        //TODO run the export code
-      
+
         workspaceSourcesPage.close();
 
         return true;
     }
-    
+
     /**
      * if target file exists then ask for replace, ignore or cancel.
      * 
-     * @return true if finish or false if cancel
-     */    
-    private boolean checkTargetFiles() {
-        for (File file : workspaceSourcesPage.getSourceFiles(null)){
-            //TODO if file exist ask for replace, ignore or cancel
-            //file.exists()
+     * @return true if ignore or replace and false if cancel
+     */
+    private boolean targetFilesHandler() {
+        for (File file : workspaceSourcesPage.getSourceFiles(null)) {
+            String[] dialogButtonLabels = { "Ignore", "Replace", "Cancel" };
+            File newFile = changeFileExtension(workspaceSourcesPage.getTargetFormat(), file);
+            if (newFile.exists()) {
+                MessageDialog msgd = new MessageDialog(null, "Confirm", null, "A file named '"
+                        + newFile.getName() + "' already exists in '"
+                        + workspaceSourcesPage.getTargetWorksapceDirectory()
+                        + "'. Do you want to replace it?", 0, dialogButtonLabels, 0);
+                
+                switch (msgd.open()) {
+                case 0://Ignore
+                    return true;
+
+                case 1://Replace
+                    //TODO function to convert graph
+                    return true;
+
+                default://Cancel
+                    return false;
+                }
+            }
         }
         return true;
+    }
+
+    /**
+     * change the file extension name.
+     * 
+     * 
+     * @param extension
+     * @param file
+     * @return the new file with the new extension
+     */
+    private File changeFileExtension(final String extension, final File file) {
+        int dotPos = file.getPath().lastIndexOf(".");
+        String strFileName = file.getPath().substring(0, dotPos).concat(".").concat(extension);
+        return new File(strFileName);
     }
 
     /**
