@@ -52,7 +52,7 @@ public class HyperedgeDummyMerger extends AbstractAlgorithm implements ILayoutPr
      * {@inheritDoc}
      */
     public void process(final LayeredGraph layeredGraph) {
-        getMonitor().begin("Edge splitting", 1);
+        getMonitor().begin("Hyperedge merging", 1);
         
         // Iterate through the layers
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
