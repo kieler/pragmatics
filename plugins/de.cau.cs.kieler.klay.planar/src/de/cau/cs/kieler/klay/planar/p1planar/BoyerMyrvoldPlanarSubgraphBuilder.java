@@ -32,12 +32,12 @@ import de.cau.cs.kieler.klay.planar.util.ManuallyIterable.Direction;
 import de.cau.cs.kieler.klay.planar.util.ManuallyIterable.ManualIterator;
 
 /**
- * An algorithm for planar testing by John M. Boyer and Wendy J. Myrvold. Based on the paper "On the
- * Cutting Edge: Simplified O(n) Planarity by Edge Addition". The algorithm is based on the idea of
- * copying the nodes of the whole graph, and then insert the edges one by as long as the graph is
- * planar. This modified version tried to do this in-place, by removing all edges during
- * preprocessing, and re-inserting them one by one. The algorithm also uses virtual root nodes,
- * images of a node that are inserted for every child node of the parent, to mark biconnected
+ * An algorithm for building a planar subgraph by John M. Boyer and Wendy J. Myrvold. Based on the
+ * paper "On the Cutting Edge: Simplified O(n) Planarity by Edge Addition". The algorithm is based
+ * on the idea of copying the nodes of the whole graph, and then insert the edges one by as long as
+ * the graph is planar. This modified version tried to do this in-place, by removing all edges
+ * during preprocessing, and re-inserting them one by one. The algorithm also uses virtual root
+ * nodes, images of a node that are inserted for every child node of the parent, to mark biconnected
  * components in the graph. Every virtual root in the graph is the root point of a biconnected
  * component, and it is removed as soon as biconnected components are merged into larger ones. After
  * preprocessing the graph with a DFS to create the virtual roots, build a DFS tree and determine
@@ -50,8 +50,9 @@ import de.cau.cs.kieler.klay.planar.util.ManuallyIterable.ManualIterator;
  * all biconnected components traversed on the way are merged into one and the backedge is embedded.
  * 
  * @author ocl
+ * @author pkl
  */
-public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements ILayoutPhase {
+public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayoutPhase {
 
     // ======================== Attributes
     // =========================================================
@@ -71,8 +72,7 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IL
     /** The external face of the graph. */
     private ManuallyIterable<PNode> externalFace;
 
-    // ======================== Node Properties
-    // ====================================================
+    // ======================== Node Properties =================================================
 
     /**
      * The Depth First Search index for every node. Indicates the order in which the nodes were
@@ -188,7 +188,7 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IL
      * {@inheritDoc}
      */
     public void process(final PGraph thegraph) {
-        getMonitor().begin("Planarity Testing", 1);
+        getMonitor().begin("Planar Subgraph Building", 1);
         this.graph = thegraph;
         planarity();
         graph.setProperty(Properties.INSERTABLE_EDGES, this.missingEdges);
@@ -226,7 +226,7 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IL
      * 
      */
     public List<PEdge> planarSubgraph(final PGraph g) {
-        getMonitor().begin("Planarity Testing", 1);
+        getMonitor().begin("Planar Subgraph Building", 1);
         this.graph = g;
         this.planarity();
         getMonitor().done();
@@ -254,7 +254,7 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IL
      * roots from the graph.
      * 
      * @param inputGraph
-     *            the input graph to test]
+     *            the input graph to build a planar subgraph]
      */
     // Initialization of arrays for node properties require unchecked casts
     @SuppressWarnings("unchecked")

@@ -602,12 +602,14 @@ public class PGraph extends PNode implements Serializable {
      * @param writer
      *            the writer to output the graph to. An attempt is made to close the writer when
      *            finished.
+     * @param directed
+     *            if the output graph should be directed.
      * @throws IOException
      *             if anything goes wrong with the writer.
      */
-    public void writeDotGraph(final Writer writer) throws IOException {
+    public void writeDotGraph(final Writer writer, final boolean directed) throws IOException {
         // Begin the graph
-        writer.write("graph {\n");
+        writer.write(directed ? "digraph {\n" : "graph {\n");
         // graph options
         writer.write("    rankdir=LR;\n");
         // Write the nodes and edges
@@ -659,7 +661,8 @@ public class PGraph extends PNode implements Serializable {
             // Go through all edges and output those that have this node as
             // their source
             for (PEdge edge : node.outgoingEdges()) {
-                writer.write("    " + node.hashCode() + " -- " + edge.getTarget().hashCode());
+                writer.write("    " + node.hashCode() + (directed ? "->" : " -- ")
+                        + edge.getTarget().hashCode());
                 writer.write(";\n");
             }
         }

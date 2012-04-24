@@ -55,7 +55,7 @@ import de.cau.cs.kieler.klay.planar.util.IFunction;
  * 
  * @author pdo
  */
-public class LRPlanarityTester extends AbstractAlgorithm implements ILayoutPhase {
+public class LRPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayoutPhase {
 
     // ====================== Attributes ======================================
 
@@ -189,9 +189,9 @@ public class LRPlanarityTester extends AbstractAlgorithm implements ILayoutPhase
     // ====================== Constructor =====================================
 
     /**
-     * Default Constructor for {@link LRPlanarityTester}. It creates a new instance of this class.
+     * Default Constructor for {@link LRPlanarSubgraphBuilder}. It creates a new instance of this class.
      */
-    public LRPlanarityTester() {
+    public LRPlanarSubgraphBuilder() {
         super();
         roots = new LinkedList<PNode>();
         crossingEdges = new LinkedList<PEdge>();

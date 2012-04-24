@@ -14,6 +14,8 @@
 package de.cau.cs.kieler.klay.planar;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 
@@ -57,6 +59,46 @@ public final class Util {
      */
     public static String getDebugOutputFileBaseName(final PGraph graph) {
         return Integer.toString(graph.hashCode() & ((1 << (Integer.SIZE / 2)) - 1)) + "-";
+    }
+
+    /**
+     * 
+     */
+    public static void clearTmpDir() {
+        String path = Util.getDebugOutputPath();
+        for (File innerFile : new File(path).listFiles()) {
+            innerFile.delete();
+        }
+
+    }
+
+    /**
+     * Creates a writer for the given graph. The file name to be written to is assembled from the
+     * graph's hash code and the slot index. Writes the graph in a dot output file.
+     * 
+     * @param graph
+     *            the stored graph
+     * 
+     * @param slotIndex
+     *            the slot before whose execution the graph is written
+     * 
+     * @param directed
+     *            if the output graph should be stored as directed graph
+     * 
+     */
+    public static void storeGraph(final PGraph graph, final int slotIndex, final boolean directed) {
+        try {
+            String path = Util.getDebugOutputPath();
+            new File(path).mkdirs();
+
+            String debugFileName = Util.getDebugOutputFileBaseName(graph) + "fulldebug-slot"
+                    + String.format("%1$02d", slotIndex);
+
+            graph.writeDotGraph(new FileWriter(new File(path + File.separator + debugFileName
+                    + ".dot")), directed);
+        } catch (IOException e) {
+            // do nothing
+        }
     }
 
 }

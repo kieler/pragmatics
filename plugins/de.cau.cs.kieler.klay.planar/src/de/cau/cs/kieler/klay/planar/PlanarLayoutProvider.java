@@ -13,9 +13,6 @@
  */
 package de.cau.cs.kieler.klay.planar;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -33,9 +30,9 @@ import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PGraphFactory;
 import de.cau.cs.kieler.klay.planar.intermediate.IntermediateLayoutProcessor;
-import de.cau.cs.kieler.klay.planar.p1planar.BoyerMyrvoldPlanarityTester;
+import de.cau.cs.kieler.klay.planar.p1planar.BoyerMyrvoldPlanarSubgraphBuilder;
 import de.cau.cs.kieler.klay.planar.p1planar.EdgeInsertionPlanarization;
-import de.cau.cs.kieler.klay.planar.p1planar.LRPlanarityTester;
+import de.cau.cs.kieler.klay.planar.p1planar.LRPlanarSubgraphBuilder;
 import de.cau.cs.kieler.klay.planar.p1planar.PlanarityTestStrategy;
 import de.cau.cs.kieler.klay.planar.p2ortho.TamassiaOrthogonalizer;
 import de.cau.cs.kieler.klay.planar.p3compact.GiottoCompactor;
@@ -54,7 +51,7 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
     /** Graph factory. */
     private IGraphFactory factory = new PGraphFactory();
     /** phase 1: algorithm for planar testing and building a subgraph. */
-    private ILayoutPhase tester = new BoyerMyrvoldPlanarityTester();
+    private ILayoutPhase subgraphBuilder = new BoyerMyrvoldPlanarSubgraphBuilder();
     /** phase 2: algorithm for inserting edges that are removed in the step before. */
     private ILayoutPhase edgeInserter = new EdgeInsertionPlanarization();
     /** phase 3: algorithm for orthogonalization. */
@@ -162,19 +159,20 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
      */
     private void updateModules(final PGraph graph) {
         if (graph.getProperty(Properties.PLANAR_TESTING_ALGORITHM) == PlanarityTestStrategy.BOYER_MYRVOLD_ALGORITHM) {
-            if (!(this.tester instanceof BoyerMyrvoldPlanarityTester)) {
-                this.tester = new BoyerMyrvoldPlanarityTester();
+            if (!(this.subgraphBuilder instanceof BoyerMyrvoldPlanarSubgraphBuilder)) {
+                this.subgraphBuilder = new BoyerMyrvoldPlanarSubgraphBuilder();
             }
         } else {
-            if (!(this.tester instanceof LRPlanarityTester)) {
-                this.tester = new LRPlanarityTester();
+            if (!(this.subgraphBuilder instanceof LRPlanarSubgraphBuilder)) {
+                this.subgraphBuilder = new LRPlanarSubgraphBuilder();
             }
         }
 
         // update intermediate processor strategy
         intermediateProcessingStrategy.clear();
-        intermediateProcessingStrategy.addAll(tester.getIntermediateProcessingStrategy(graph))
-                .addAll(edgeInserter.getIntermediateProcessingStrategy(graph));
+        intermediateProcessingStrategy.addAll(
+                subgraphBuilder.getIntermediateProcessingStrategy(graph)).addAll(
+                edgeInserter.getIntermediateProcessingStrategy(graph));
         // .addAll(orthogonalizer.getIntermediateProcessingStrategy(graph))
         // .addAll(compactor.getIntermediateProcessingStrategy(graph))
         // .addAll(this.getIntermediateProcessingStrategy(graph))
@@ -183,22 +181,21 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
         algorithm.clear();
         algorithm
                 .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_1));
-        algorithm.add(tester);
+        algorithm.add(subgraphBuilder);
         algorithm
                 .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_2));
         algorithm.add(edgeInserter);
-        // algorithm
-        // .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_3));
-        // algorithm.add(orthogonalizer);
-        // algorithm
-        // .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_4));
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_3));
+        algorithm.add(orthogonalizer);
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_4));
         // algorithm.add(compactor);
         // algorithm
         // .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.AFTER_PHASE_4));
     }
 
-    // /////////////////////////////////////////////////////////////////////////////
-    // Layout
+    // ======================================= Layout ===============================
 
     /**
      * Perform the four phases of the topology-shape-metrics layouter.
@@ -216,7 +213,7 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
         monitor.begin("Component Layout", algorithm.size());
 
         if (graph.getProperty(LayoutOptions.DEBUG_MODE)) {
-            clearTmpDir();
+            Util.clearTmpDir();
             // Debug Mode!
             // Prints the algorithm configuration and outputs the whole graph to a file
             // before each slot execution
@@ -234,14 +231,14 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
                     return;
                 }
                 // Graph debug output
-                storeGraph(graph, slotIndex++);
+                Util.storeGraph(graph, slotIndex++, false);
 
                 processor.reset(monitor.subTask(1));
                 processor.process(graph);
             }
 
             // Graph debug output
-            storeGraph(graph, slotIndex++);
+            Util.storeGraph(graph, slotIndex++, false);
         } else {
             // invoke each layout processor
             for (ILayoutProcessor processor : algorithm) {
@@ -256,40 +253,4 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
         monitor.done();
     }
 
-    // ======================== Debug ====================================
-
-    /**
-     * 
-     */
-    private void clearTmpDir() {
-        String path = Util.getDebugOutputPath();
-        for (File innerFile : new File(path).listFiles()) {
-            innerFile.delete();
-        }
-
-    }
-
-    /**
-     * Creates a writer for the given graph. The file name to be written to is assembled from the
-     * graph's hash code and the slot index. Writes the graph in a dot output file.
-     * 
-     * @param graph
-     *            the stored graph
-     * @param slotIndex
-     *            the slot before whose execution the graph is written
-     */
-    private void storeGraph(final PGraph graph, final int slotIndex) {
-        try {
-            String path = Util.getDebugOutputPath();
-            new File(path).mkdirs();
-
-            String debugFileName = Util.getDebugOutputFileBaseName(graph) + "fulldebug-slot"
-                    + String.format("%1$02d", slotIndex);
-
-            graph.writeDotGraph(new FileWriter(new File(path + File.separator + debugFileName
-                    + ".dot")));
-        } catch (IOException e) {
-            // do nothing
-        }
-    }
 }

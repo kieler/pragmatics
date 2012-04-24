@@ -21,7 +21,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PGraphFactory;
-import de.cau.cs.kieler.klay.planar.p1planar.BoyerMyrvoldPlanarityTester;
+import de.cau.cs.kieler.klay.planar.p1planar.BoyerMyrvoldPlanarSubgraphBuilder;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
@@ -39,7 +39,7 @@ public class PlanarityAnalysis implements IAnalysis {
     private IGraphFactory factory = new PGraphFactory();
 
     /** Algorithm for planar testing. */
-    private ILayoutPhase tester = new BoyerMyrvoldPlanarityTester();
+    private ILayoutPhase tester = new BoyerMyrvoldPlanarSubgraphBuilder();
 
     // ======================== Analysis ===========================================================
 

@@ -28,9 +28,11 @@ import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
 
 /**
  * Solve the minimum cost flow problem on flow networks using the successive shortest path
- * algorithm.
+ * algorithm. A good reference for constructing the Successive Shortest Path algorithm is
+ * http://community.topcoder.com/tc?module=Static&d1=tutorials&d2=minimumCostFlow2
  * 
  * @author ocl
+ * @author pkl
  */
 public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implements
         IMinimumCostFlowSolver {
@@ -46,12 +48,17 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
         // Add source and sink nodes
         PNode source = network.addNode();
         PNode sink = network.addNode();
+        // Add some edges as follows
         for (PNode node : network.getNodes()) {
             int s = node.getProperty(SUPPLY);
+            // for each node i with bi > 0, add a source arc (s,i) with
+            // capacity bi and cost 0.
             if (s > 0) {
                 PEdge edge = network.addEdge(source, node, true);
                 edge.setProperty(CAPACITY, s);
                 edge.setProperty(IPathFinder.PATHCOST, 0);
+                // for each node i with bi < 0, add a sink arc (i,t) with
+                // capacity -bi and cost 0.
             } else if (s < 0) {
                 PEdge edge = network.addEdge(node, sink, true);
                 edge.setProperty(CAPACITY, -s);

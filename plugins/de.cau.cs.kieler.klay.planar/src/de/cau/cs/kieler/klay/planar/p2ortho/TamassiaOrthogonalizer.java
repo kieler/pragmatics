@@ -23,6 +23,7 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
 import de.cau.cs.kieler.klay.planar.IntermediateProcessingStrategy;
+import de.cau.cs.kieler.klay.planar.Util;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver;
 import de.cau.cs.kieler.klay.planar.flownetwork.SuccessiveShortestPathFlowSolver;
 import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
@@ -170,7 +171,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
 
             if (!faces.containsKey(left) || !faces.containsKey(right)) {
                 throw new InconsistentGraphModelException(
-                        "Attempted to link non-existent nodes by an edge.");
+                        "Attempted to link non-existent face by an edge.");
             }
 
             PEdge edgeLeft = network.addEdge(faces.get(left), faces.get(right), true);
@@ -306,18 +307,17 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
 
         // Solve flow network and compute orthogonal representation
         PGraph network = this.createFlowNetwork();
+        Util.storeGraph(network, 20, true);
         IFlowNetworkSolver solver = new SuccessiveShortestPathFlowSolver();
         solver.findFlow(network);
-        OrthogonalRepresentation orthogonal = this.computeAngles(network);
-
+        pgraph.setProperty(Properties.ORTHO_REPRESENTATION, this.computeAngles(network));
         getMonitor().done();
-        pgraph.setProperty(Properties.ORTHO_REPRESENTATION, orthogonal);
     }
 
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(PGraph graph) {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph graph) {
         // TODO Auto-generated method stub
         return null;
     }
